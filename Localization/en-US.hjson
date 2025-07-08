@@ -612,6 +612,11 @@ Mods: {
 			Crossbowman.DisplayName: Crossbowman
 			IACTStage3target.DisplayName: AACT Stage3target
 			FrostNova.DisplayName: Frost Nova
+			Pompeii.DisplayName: Pompeii
+			IceCleaver.DisplayName: Ice Cleaver
+			Oneiros.DisplayName: Oneiros
+			SnowCaster.DisplayName: Snow Caster
+			SnowSoldier.DisplayName: Snow Soldier
 		}
 
 		# Friendly
@@ -716,6 +721,29 @@ Mods: {
 			TestProj2.DisplayName: Test Proj2
 			TestProj3.DisplayName: Test Proj3
 			AACTEndShow.DisplayName: AACT End Show
+			Blizzard.DisplayName: Blizzard
+			BlizzardStorm.DisplayName: Blizzard Storm
+			BlizzardStormStarter.DisplayName: Blizzard Storm Starter
+			Cube.DisplayName: Cube
+			CubeVertex.DisplayName: Cube Vertex
+			BlackIceProjectile.DisplayName: Black Ice Projectile
+			BlackIce.DisplayName: Black Ice
+			FNIceRingMKI.DisplayName: F N Ice Ring M K I
+			FNIceRingRound.DisplayName: F N Ice Ring Round
+			BlackIceExplode.DisplayName: Black Ice Explode
+			BlackIceIntro.DisplayName: Black Ice Intro
+			FNIceRingChoice.DisplayName: F N Ice Ring Choice
+			FNInvincibleEffect.DisplayName: F N Invincible Effect
+			FNBanFloor.DisplayName: F N Ban Floor
+			BlackIceFloor.DisplayName: Black Ice Floor
+			PmpFireBall.DisplayName: Pmp Fire Ball
+			PmpFireRain.DisplayName: Pmp Fire Rain
+			PmpExplode.DisplayName: Pmp Explode
+			Icebreak.DisplayName: Icebreak
+			Iceexplode.DisplayName: Iceexplode
+			Oneirosbomb.DisplayName: Oneirosbomb
+			Snowcastershoot.DisplayName: Snowcastershoot
+			FNIceDust.DisplayName: F N Ice Dust
 		}
 
 		ButtonName.button2: Annihilation operation
@@ -752,7 +780,9 @@ Mods: {
 				Complete: The bombing drone from the empire have been destroyed.
 			}
 
-			AACT.Collapsed: collapsed.
+			AACT.Collapsed: "{0} collapsed."
+			FN.AllFloorBanned: "{0} didn't realize that there was no place to stand."
+			Pmp.GetTooClose: "{0} stood on the erupting volcano."
 		}
 
 		Configs: {

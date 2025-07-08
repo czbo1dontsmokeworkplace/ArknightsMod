@@ -612,6 +612,11 @@ Mods: {
 			Crossbowman.DisplayName: 弩手
 			IACTStage3target.DisplayName: 邪魔炮火中枢先兆者（三阶段目标）
 			FrostNova.DisplayName: 霜星
+			// Pompeii.DisplayName: Pompeii
+			// IceCleaver.DisplayName: Ice Cleaver
+			// Oneiros.DisplayName: Oneiros
+			// SnowCaster.DisplayName: Snow Caster
+			// SnowSoldier.DisplayName: Snow Soldier
 		}
 
 		# Friendly
@@ -716,6 +721,29 @@ Mods: {
 			// TestProj2.DisplayName: Test Proj2
 			// TestProj3.DisplayName: Test Proj3
 			AACTEndShow.DisplayName: 邪魔炮火中枢先兆者尾杀演出
+			// Blizzard.DisplayName: Blizzard
+			// BlizzardStorm.DisplayName: Blizzard Storm
+			// BlizzardStormStarter.DisplayName: Blizzard Storm Starter
+			// Cube.DisplayName: Cube
+			// CubeVertex.DisplayName: Cube Vertex
+			// BlackIceProjectile.DisplayName: Black Ice Projectile
+			// BlackIce.DisplayName: Black Ice
+			// FNIceRingMKI.DisplayName: F N Ice Ring M K I
+			// FNIceRingRound.DisplayName: F N Ice Ring Round
+			// BlackIceExplode.DisplayName: Black Ice Explode
+			// BlackIceIntro.DisplayName: Black Ice Intro
+			// FNIceRingChoice.DisplayName: F N Ice Ring Choice
+			// FNInvincibleEffect.DisplayName: F N Invincible Effect
+			// FNBanFloor.DisplayName: F N Ban Floor
+			// BlackIceFloor.DisplayName: Black Ice Floor
+			// PmpFireBall.DisplayName: Pmp Fire Ball
+			// PmpFireRain.DisplayName: Pmp Fire Rain
+			// PmpExplode.DisplayName: Pmp Explode
+			// Icebreak.DisplayName: Icebreak
+			// Iceexplode.DisplayName: Iceexplode
+			// Oneirosbomb.DisplayName: Oneirosbomb
+			// Snowcastershoot.DisplayName: Snowcastershoot
+			// FNIceDust.DisplayName: F N Ice Dust
 		}
 
 		ButtonName.button2: 剿灭作战
@@ -752,7 +780,9 @@ Mods: {
 				Complete: 来自帝国的轰炸无人机已被击毁...
 			}
 
-			AACT.Collapsed: 坍缩了。
+			AACT.Collapsed: "{0}坍缩了。"
+			FN.AllFloorBanned: "{0}没有留意到自己已无立足之地。"
+			Pmp.GetTooClose: "{0}站在了喷发的活火山口上。"
 		}
 
 		Configs: {

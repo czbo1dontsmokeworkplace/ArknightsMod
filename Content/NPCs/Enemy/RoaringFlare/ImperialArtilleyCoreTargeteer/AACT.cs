@@ -104,7 +104,6 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)//贴图，位置，大小区域，光亮颜色，转动角度，中心点坐标，缩放倍率，特殊效果(翻转)，图层
 		{
 			//鉴于layerdepth是个废物，越靠下出现的实际上越在上层
-			//光环部分，参数见ai
 			Texture2D AACTitself = ModContent.Request<Texture2D>("ArknightsMod/Content/NPCs/Enemy/RoaringFlare/ImperialArtilleyCoreTargeteer/AACT").Value;
 
 			if (AACTcrashed != true) {
@@ -117,7 +116,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 			}
 			//基准绘制
 			Main.EntitySpriteDraw(AACTitself, NPC.Center - Main.screenPosition + new Vector2(0, 3), new Rectangle(0, 0, AACTitself.Width, AACTitself.Height), Color.White, NPC.rotation, new Vector2(AACTitself.Width / 2, AACTitself.Height / 2), originscale, SpriteEffects.None, 0);
-
+			//光环部分，参数见ai
 			if (AACTcrashed != true) {
 				if (nodamage == true && AACTstage < 3)//次数盾
 			{
@@ -225,7 +224,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 			if (MISSChance > 0.9f && nodamage == false && AACTstage == 2 && zoomtimer == 0) {
 				NPC.dontTakeDamage = true;
 				nodamage = true;
-				SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Assets/Sound/ImperialArtilleyCoreTargeteer/Shield") with { Volume = 1f, Pitch = 0f }, Player.Center);
+				SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/AACTShield") with { Volume = 1f, Pitch = 0f }, Player.Center);
 				//CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Center.Y, 10, 10), new Color(200,0,0) , "SHIELD", false, false);
 			}
 		}
@@ -237,7 +236,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 			if (MISSChance > 0.9f && nodamage == false && AACTstage == 2 && zoomtimer == 0) {
 				NPC.dontTakeDamage = true;
 				nodamage = true;
-				SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Assets/Sound/ImperialArtilleyCoreTargeteer/Shield") with { Volume = 1f, Pitch = 0f }, Player.Center);
+				SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/AACTShield") with { Volume = 1f, Pitch = 0f }, Player.Center);
 				//CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Center.Y, 10, 10), new Color(200,0, 0), "SHIELD", false, false);
 			}
 		}
@@ -353,6 +352,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		private int random1in3;
 		private bool isPosLocked = false;
 		private Vector2 OldCenter;
+		private int stg2musictimer;
 		#endregion
 
 		public static int SubNPCType() {
@@ -430,10 +430,16 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 					Music = MusicLoader.GetMusicSlot(Mod, "Music/IACTBoss3");//音乐三
 				}
 				else if (timer1to2 > 0 && timer1to2 <= 120) {
-					Music = MusicLoader.GetMusicSlot(Mod, "Assets/Sounds/ImperialArtilleyCoreTargeteer/none");//一转二阶段
+					Music = MusicLoader.GetMusicSlot(Mod, "Assets/Sound/none");//一转二阶段
 				}
 				else if (AACTstage >= 2) {
-					Music = MusicLoader.GetMusicSlot(Mod, "Music/Andskotarnir");//邪魔
+					stg2musictimer++;
+					if (stg2musictimer <= 1340) {
+						Music = MusicLoader.GetMusicSlot(Mod, "Assets/OriginalMusic/AACTintro");
+					}
+					else {
+						Music = MusicLoader.GetMusicSlot(Mod, "Assets/OriginalMusic/AACTloop");
+					}
 				}
 			}
 
@@ -469,7 +475,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 					RingThick = 6;
 					if (distance > 66.67f) {
 						Player.Center = NPC.Center + new Vector2(0, randtplength).RotateRandom(Math.PI * 2);//传送
-						SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Assets/Sound/ImperialArtilleyCoreTargeteer/Teleport") with { Volume = 1f, Pitch = 0f }, Player.Center);
+						SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/AACTTeleport") with { Volume = 1f, Pitch = 0f }, Player.Center);
 					}
 				}
 
@@ -477,7 +483,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 
 				if (Main.netMode != NetmodeID.Server && !Terraria.Graphics.Effects.Filters.Scene["LightRing"].IsActive()) {
 					Terraria.Graphics.Effects.Filters.Scene.Activate("LightRing", NPC.Center).GetShader().UseColor(redcolor, 0, 0).UseTargetPosition(NPC.Center + new Vector2(0, 3)).UseIntensity(STG2RingRad).UseOpacity(RingThick).UseProgress(RingLight);
-					SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Assets/Sound/ImperialArtilleyCoreTargeteer/Shield") with { Volume = 1f, Pitch = 0f }, Player.Center);
+					SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/AACTShield") with { Volume = 1f, Pitch = 0f }, Player.Center);
 				}
 				if (Main.netMode != NetmodeID.Server && Terraria.Graphics.Effects.Filters.Scene["LightRing"].IsActive()) {
 					Terraria.Graphics.Effects.Filters.Scene.Activate("LightRing", NPC.Center).GetShader().UseColor(redcolor, 0, 0).UseTargetPosition(NPC.Center + new Vector2(0, 3)).UseIntensity(STG2RingRad).UseOpacity(RingThick).UseProgress(RingLight);
@@ -512,7 +518,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 			if (nodamage == true && NPC.dontTakeDamage == true) {
 				teleportscalezoom = true;
 				if (nodamagetimer >= 88 && nodamagetimer < 90) {
-					SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Assets/Sound/ImperialArtilleyCoreTargeteer/Teleport") with { Volume = 1f, Pitch = 0f }, Player.Center);
+					SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/AACTTeleport") with { Volume = 1f, Pitch = 0f }, Player.Center);
 					if (AACTstage == 2) {
 						NPC.Center = Player.Center + new Vector2(0, randtplength).RotateRandom(Math.PI * 2);//传送
 					}
@@ -951,8 +957,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 			#region 转阶段
 			if (truestage1to2 == 1)//一二阶段转阶段锁血以及攻击
 			{
-				if ((int)timer1to2 == 5) {
-					SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Assets/Sound/ImperialArtilleyCoreTargeteer/Collapsal") with { Volume = 0.9f, Pitch = 0f }, Player.Center);
+				if ((int)timer1to2 == 30) {
+					SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Assets/Sound/ImperialArtilleyCoreTargeteer/AACTstart") with { Volume = 0.8f, Pitch = 0f }, Player.Center);
 				}
 
 				if (timer1to2 >= 120) {
@@ -991,7 +997,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 						NPC.velocity = Vector2.Lerp(NPC.velocity, Vector2.Zero, 0.05f);
 						if ((int)timer1to2 == 115) {
 							Projectile.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ModContent.ProjectileType<IACTScreenWave>(), 0, 0f, 0, 0);
-							SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Assets/Sound/ImperialArtilleyCoreTargeteer/Teleport") with { Volume = 1f, Pitch = 0f }, Player.Center);
+							SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/AACTTeleport") with { Volume = 1f, Pitch = 0f }, Player.Center);
 							DeathTP();
 						}
 						if ((int)timer1to2 == 119) {
@@ -1003,7 +1009,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 						//NPC.life = (int)(NPC.lifeMax * expertHealthFrac);
 						AACTstage = 2;
 						if (timer1to2 == 150 || timer1to2 == 179) {
-							SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Assets/Sound/ImperialArtilleyCoreTargeteer/Teleport") with { Volume = 1f, Pitch = 0f }, Player.Center);
+							SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/AACTTeleport") with { Volume = 1f, Pitch = 0f }, Player.Center);
 							DeathTP();
 						}
 					}
@@ -1103,7 +1109,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 							AACTstage = 3;
 						}
 						if (timer2to3 == 240 || timer2to3 == 270 || timer2to3 == 300 || timer2to3 == 330 || timer2to3 == 359) {
-							SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Assets/Sound/ImperialArtilleyCoreTargeteer/Teleport") with { Volume = 1f, Pitch = 0f }, Player.Center);
+							SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/AACTTeleport") with { Volume = 1f, Pitch = 0f }, Player.Center);
 							DeathTP();
 						}
 						//NPC.life = (int)(NPC.lifeMax * expertHealthFrac / 2);
@@ -1232,6 +1238,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 			{
 				if (deathcheck == 1)//触发checkdead之后
 				{
+					NPC.damage = 0;
 					if (stgendsafetimer < 1500) {
 						endtimer++;
 
@@ -1284,6 +1291,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 							}
 							if ((int)stgendsafetimer == 0) {
 								Projectile.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ModContent.ProjectileType<AACTEndShow>(), 0, 0f, 0, 0);
+								SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/AACTTeleport") with { Volume = 1f, Pitch = 0f }, Player.Center);
 								//Projectile Endshow = Projectile.NewProjectileDirect(newSource, NPC.Center, Vector2.Zero, ModContent.ProjectileType<AACTEndSHow>(), 0, 0, NPC.whoAmI);
 								//AACTEndSHow SubEnd = (AACTEndSHow)Endshow.ModProjectile;
 								//SubEnd.ParentIndex = NPC.whoAmI;
@@ -1291,12 +1299,23 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 							}
 							if ((int)stgendsafetimer >= 0) {
 								float t = 1 - stgendsafetimer / 2500;
-								targetX = (float)(480 * (t - t * stgendsafetimer / 1500) * Math.Sin(2 * stgendsafetimer * Math.PI / 180 / (1 - stgendsafetimer / 1800)));
-								targetY = (float)(-480 * (t - t * stgendsafetimer / 1500) * Math.Cos(2 * stgendsafetimer * Math.PI / 180 / (1 - stgendsafetimer / 1800)));
-								NPC.velocity = new Vector2(OldCenter.X, OldCenter.Y) + new Vector2(targetX, targetY) - NPC.Center;//期间的位置变动
+								//float npcradX = 540 - 360 * MathF.Sin(MathHelper.Pi * stgendsafetimer / 3000);
+								float npcradX = 190;
+								float Rad = 480 + 4 * stgendsafetimer / 50;
+								//float npcradY = 180 + 4 * stgendsafetimer / 25;
+								//float plrradX = 240 + 3 * stgendsafetimer / 25;
+								//float plrradY = 240 + stgendsafetimer / 25;
+								float npctgtX = (float)(Rad * (t - t * stgendsafetimer / 1500) * Math.Sin(2 * stgendsafetimer * Math.PI / npcradX / (1 - stgendsafetimer / 1800)));
+								float npctgtY = (float)(-Rad * (t - t * stgendsafetimer / 1500) * Math.Cos(2 * stgendsafetimer * Math.PI / 180 / (1 - stgendsafetimer / 1800)));
+								//float plrtgtX = (float)(-360 * (t - t * stgendsafetimer / 1500) * Math.Sin(2 * stgendsafetimer * Math.PI / plrradX / (1 - stgendsafetimer / 1800)));
+								//float plrtgtY = (float)(360 * (t - t * stgendsafetimer / 1500) * Math.Cos(2 * stgendsafetimer * Math.PI / plrradY / (1 - stgendsafetimer / 1800)));
+								NPC.velocity = new Vector2(OldCenter.X, OldCenter.Y) + new Vector2(npctgtX, npctgtY) - NPC.Center;//期间的位置变动
+
+								//Player.Center = NPC.Center + new Vector2(plrtgtX, plrtgtY);
+								Player.Center = OldCenter + new Vector2(Main.rand.NextFloat(0, stgendsafetimer / 100), 0).RotatedByRandom(float.Pi * 2);
 								endexplodespeed = (int)(Main.rand.NextFloat(0, 60));
 								if ((int)endexplodespeed >= 57) {
-									Projectile.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ModContent.ProjectileType<ExplodeAimPro>(), (int)(NPC.damage), 0f, 0, 0);
+									Projectile.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ModContent.ProjectileType<ExplodeAimPro>(), 0, 0f, 0, 114);
 								}
 							}
 						}
@@ -1306,6 +1325,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 						deathtimer++;
 						if (deathtimer <= 1) {
 							Projectile.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ModContent.ProjectileType<IACTScreenWave>(), 0, 0f, 0, 0);
+							Player.velocity = new Vector2(Main.rand.NextFloat(12, 24), 0).RotatedByRandom(float.Pi*2);
 						}
 						if (deathtimer <= 360) {
 							NPC.velocity.X = NPC.velocity.X * (360 - deathtimer) / 360;
@@ -1375,7 +1395,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 				stage1to2r = Main.rand.Next(450, 511);
 				stage1to2atkspeed = Main.rand.Next(36, 46);
 			}
-			SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Assets/Sound/ImperialArtilleyCoreTargeteer/Teleport") with { Volume = 1f, Pitch = 0f }, Player.Center);
+			SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/AACTTeleport") with { Volume = 1f, Pitch = 0f }, Player.Center);
 			return;
 		}
 
@@ -1393,7 +1413,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 				stage2to3r = Main.rand.Next(390, 481);
 				stage2to3atkspeed = Main.rand.Next(32, 43);
 			}
-			SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Assets/Sound/ImperialArtilleyCoreTargeteer/Teleport") with { Volume = 1f, Pitch = 0f }, Player.Center);
+			SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/AACTTeleport") with { Volume = 1f, Pitch = 0f }, Player.Center);
 			return;
 		}
 
@@ -1613,7 +1633,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		private float b;
 		private float a;
 
-		private float CalcPos(float velocity, float time) {
+		private static float CalcPos(float velocity, float time) {
 			return velocity * time * (1 - time / 120);
 		}
 
@@ -1654,7 +1674,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 			}
 
 			if (timer == 10) {// >= 10
-							  //if(summonedframes == false) {
+			//if(summonedframes == false) {
 				for (int i = 0; i < 4; i++) {
 					if (Main.masterMode) {
 						randspeed = Main.rand.NextFloat(9.6f, 10.8f);
@@ -1744,7 +1764,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 							player.Heal((int)-SeekForNPCs.ai[2]);
 							SeekForNPCs.ai[2] = Math.Max(SeekForNPCs.ai[2] * Main.rand.NextFloat(2f, 4f), 2f);
 							if (player.statLife <= 0) {
-								player.KillMe(PlayerDeathReason.ByCustomReason(player.name + Language.GetTextValue("Mods.ArknightsMod.StatusMessage.AACT.Collapsed")), 99999, 0);
+								player.KillMe(PlayerDeathReason.ByCustomReason(NetworkText.FromKey("Mods.ArknightsMod.StatusMessage.AACT.Collapsed", player.name)), 99999, 0);
 							}
 						}
 						else {
@@ -1849,7 +1869,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 			NPC.width = 1;
 			NPC.height = 1;
 			NPC.aiStyle = 0;
-			NPC.defense = 99999;
+			NPC.defense = 2147483647;
 			NPC.alpha = 0;
 			NPC.damage = 0;
 			NPC.friendly = false;
@@ -1862,27 +1882,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 
 		public int AACTstg3TH {
 			get {
-				if (ishealthget == false) {
+				if (!ishealthget) {
 					ishealthget = true;
-					if (Main.masterMode) {
-						lasthealth = Main.rand.Next(16, 21);
-						usehealth = lasthealth;
-						return lasthealth;
-					}
-					else if (Main.expertMode) {
-						lasthealth = Main.rand.Next(12, 17);
-						usehealth = lasthealth;
-						return lasthealth;
-					}
-					else {
-						lasthealth = Main.rand.Next(8, 13);
-						usehealth = lasthealth;
-						return lasthealth;
-					}
+					lasthealth = Main.masterMode ? Main.rand.Next(16, 21) : (Main.expertMode ? Main.rand.Next(12, 17) : Main.rand.Next(8, 13));
+					usehealth = lasthealth;
 				}
-				else {
-					return lasthealth;
-				}
+				return lasthealth;
 			}
 		}
 
@@ -1968,7 +1973,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 			if (cooldown <= 0) {
 				NPC.dontTakeDamage = false;
 				if (iscooldownsoundplayed == true) {
-					SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Assets/Sound/ImperialArtilleyCoreTargeteer/Teleport") with { Volume = 1f, Pitch = 0f }, Player.Center);
+					SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/AACTTeleport") with { Volume = 1f, Pitch = 0f }, Player.Center);
 					iscooldownsoundplayed = false;
 				}
 			}
@@ -2473,7 +2478,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 
 		public override bool PreDraw(ref Color lightColor) {
 			Texture2D trailtexture = ModContent.Request<Texture2D>("ArknightsMod/Common/VisualEffects/LineTrail").Value;
-			TrailMaker.ProjectileDrawTailByConstWidth(Projectile, trailtexture, Vector2.Zero, new Color(r, g, 240), new Color(0, 0, 0), 25f * Math.Min(timer / 600, 1), true);
+			TrailMaker.ProjectileDrawTailByConstWidth(Projectile, trailtexture, Vector2.Zero, new Color(r, g, 240), new Color(0, 0, 0), 18f * Math.Min(timer / 600, 1), true);
 			return true;
 		}
 	}

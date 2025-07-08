@@ -11,6 +11,7 @@ using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.ItemDropRules;
 using ArknightsMod.Content.Items.Material;
 using static Terraria.ModLoader.ModContent;
+using Terraria.DataStructures;
 
 namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTargeteer
 {
@@ -1622,7 +1623,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 			if (missled != true) {
 				randomx = Main.rand.NextFloat(-300, 300);
 
-				Projectile.NewProjectile(newSource, Projectile.Center.X + randomx, Projectile.Center.Y - 1800, -randomx / 60, 0, ModContent.ProjectileType<MisslePro>(), 20, 0f, 0, 0);
+				Projectile.NewProjectile(newSource, Projectile.Center.X + randomx, Projectile.Center.Y - 1800, -randomx / 60, 0, ModContent.ProjectileType<MisslePro>(), 20, 0f, 0, Projectile.ai[0]);
 				missled = true;
 			}
 
@@ -1666,7 +1667,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 
 			if (timer == 60) {
 				SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Assets/Sound/ImperialArtilleyCoreTargeteer/Explode") with { Volume = 1f, Pitch = 0f }, Projectile.Center);
-				Projectile.NewProjectile(newSource, Projectile.Center.X, Projectile.Center.Y, 0, 0, ModContent.ProjectileType<ExplodeAreaPro>(), 15, 0f, 0, 0);
+				Projectile.NewProjectile(newSource, Projectile.Center.X, Projectile.Center.Y, 0, 0, ModContent.ProjectileType<ExplodeAreaPro>(), 15, 0f, 0, Projectile.ai[0]);
 			}
 		}
 	}
@@ -2099,6 +2100,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 			Projectile.hide = true;
 		}
 
+		public override void OnSpawn(IEntitySource source) {
+			if (Projectile.ai[0] == 114) {
+				Projectile.damage = 0;
+			}
+		}
+
 		public override void AI() {
 			Vector2 dustPos = Projectile.Center + new Vector2(Main.rand.NextFloat(16), 0).RotatedByRandom(MathHelper.TwoPi);
 			Dust dust = Dust.NewDustPerfect(dustPos, 55, Velocity: Vector2.Zero, Scale: 1.5f);
@@ -2469,6 +2476,11 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 
 		private float speedy;
 
+		public override void OnSpawn(IEntitySource source) {
+			if (Projectile.ai[0] == 114) {
+				Projectile.damage = 0;
+			}
+		}
 		public override void AI() {
 			Projectile.ai[0]++;
 			Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
