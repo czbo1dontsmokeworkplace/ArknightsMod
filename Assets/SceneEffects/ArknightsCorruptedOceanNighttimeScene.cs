@@ -1,6 +1,7 @@
-﻿using ArknightsMod.Common.Configs;
-using Terraria;
+﻿using Terraria;
+using Terraria.IO;
 using Terraria.ModLoader;
+using Terraria.WorldBuilding;
 
 namespace ArknightsMod.Assets.SceneEffects
 {
@@ -16,10 +17,11 @@ namespace ArknightsMod.Assets.SceneEffects
 			if (WorldGen.GetWorldSize() is WorldGen.WorldSize.Large) {
 				return Main.player[Main.myPlayer].active && !Main.dayTime && (Main.player[Main.myPlayer].position.X <= 6080 || Main.player[Main.myPlayer].position.X >= WorldGen.WorldSizeLargeX * 16 - 6080) && Main.player[Main.myPlayer].ZoneCorrupt && !Main.player[Main.myPlayer].ZoneCrimson && !Main.player[Main.myPlayer].ZoneHallow;
 			}
+			else if (WorldGen.GetWorldSize() is WorldGen.WorldSize.Medium) {
+				return Main.player[Main.myPlayer].active && !Main.dayTime && (Main.player[Main.myPlayer].position.X <= 6080 || Main.player[Main.myPlayer].position.X >= WorldGen.WorldSizeMediumX * 16 - 6080) && Main.player[Main.myPlayer].ZoneCorrupt && !Main.player[Main.myPlayer].ZoneCrimson && !Main.player[Main.myPlayer].ZoneHallow;
+			}
 			else {
-				return WorldGen.GetWorldSize() is WorldGen.WorldSize.Medium
-					? Main.player[Main.myPlayer].active && !Main.dayTime && (Main.player[Main.myPlayer].position.X <= 6080 || Main.player[Main.myPlayer].position.X >= WorldGen.WorldSizeMediumX * 16 - 6080) && Main.player[Main.myPlayer].ZoneCorrupt && !Main.player[Main.myPlayer].ZoneCrimson && !Main.player[Main.myPlayer].ZoneHallow
-					: Main.player[Main.myPlayer].active && !Main.dayTime && (Main.player[Main.myPlayer].position.X <= 6080 || Main.player[Main.myPlayer].position.X >= WorldGen.WorldSizeSmallX * 16 - 6080) && Main.player[Main.myPlayer].ZoneCorrupt && !Main.player[Main.myPlayer].ZoneCrimson && !Main.player[Main.myPlayer].ZoneHallow;
+				return Main.player[Main.myPlayer].active && !Main.dayTime && (Main.player[Main.myPlayer].position.X <= 6080 || Main.player[Main.myPlayer].position.X >= WorldGen.WorldSizeSmallX * 16 - 6080) && Main.player[Main.myPlayer].ZoneCorrupt && !Main.player[Main.myPlayer].ZoneCrimson && !Main.player[Main.myPlayer].ZoneHallow;
 			}
 		}
 	}

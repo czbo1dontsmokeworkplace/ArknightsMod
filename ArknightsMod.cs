@@ -24,6 +24,8 @@ using ArknightsMod.Content.Buffs;
 using Humanizer;
 using ReLogic.Content;
 using ArknightsMod.Assets.Effects;
+using ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTargeteer;
+using System;
 
 namespace ArknightsMod
 {
@@ -86,20 +88,14 @@ namespace ArknightsMod
 				Filters.Scene["AACTSTG3RBNoise"] = new Filter(new ScreenShaderData(new Ref<Effect>(AACTSTG3RBNoise), "AACTSTG3RBNoise"), EffectPriority.VeryHigh);
 				Filters.Scene["AACTSTG3RBNoise"].Load();
 
-				/*FNTwistedRing = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/FNTwistedRing", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+				FNTwistedRing = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/FNTwistedRing", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 				Filters.Scene["FNTwistedRing"] = new Filter(new ScreenShaderData(new Ref<Effect>(FNTwistedRing), "FNTwistedRing"), EffectPriority.VeryHigh);
-				Filters.Scene["FNTwistedRing"].Load();*/
+				Filters.Scene["FNTwistedRing"].Load();
 			}
-			Filters.Scene["AshStorm"] = new Filter(
-		   new ScreenShaderData("FilterAsh").UseColor(1f, 0.8f, 0.5f),
-		   EffectPriority.High
-	   );
+			Filters.Scene["AshStorm"] = new Filter(new ScreenShaderData("FilterAsh").UseColor(1f, 0.8f, 0.5f),EffectPriority.High);
 
 			LoadClient();
 			SkyManager.Instance["ArknightsMod:UnionInvadeSky"] = new UnionInvadeSky();
-
-
-
 
 			MusicLoader.AddMusic(this, "Assets/OriginalMusic/AACTintro");
 			MusicLoader.AddMusic(this, "Assets/OriginalMusic/AACTloop");
@@ -244,4 +240,3 @@ namespace ArknightsMod
 		
 	}
 }
-

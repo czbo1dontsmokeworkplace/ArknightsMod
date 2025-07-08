@@ -513,7 +513,7 @@ Mods: {
 			}
 
 			IATSummon: {
-				DisplayName: Suspicious Remote Control
+				DisplayName: Suspicious Remote Control·Lower Version
 				Tooltip:
 					'''
 					Maybe only need a tiny signal , it can call something [c/FF0000:dangerous].
@@ -596,6 +596,21 @@ Mods: {
 			TacticalBattleRecord: {
 				DisplayName: Tactical Battle Record
 				Tooltip: ""
+
+			AACTSummon: {
+				DisplayName: Suspicious Remote Control·Higher Version
+				Tooltip:
+					'''
+					Maybe only need a tiny signal , it can call something [c/FF0000:dangerous].
+					Call [c/FF0000:the polluted military nuke weapon]
+					[c/FF0000:Only during NIGHT]
+					[c/FF0000:"It also appears to have been polluted by ANDSKOTARNIR."]
+					'''
+			}
+
+			Spicycandy: {
+				Tooltip: ""
+				DisplayName: Spicycandy
 			}
 		}
 
@@ -728,6 +743,13 @@ Mods: {
 			IACTIntro.DisplayName: I A C T Intro
 			IATIntro.DisplayName: I A T Intro
 			Crossbowman.DisplayName: Crossbowman
+			IACTStage3target.DisplayName: AACT Stage3target
+			FrostNova.DisplayName: Frost Nova
+			Pompeii.DisplayName: Pompeii
+			IceCleaver.DisplayName: Ice Cleaver
+			Oneiros.DisplayName: Oneiros
+			SnowCaster.DisplayName: Snow Caster
+			SnowSoldier.DisplayName: Snow Soldier
 		}
 
 		# Friendly
@@ -773,6 +795,7 @@ Mods: {
 
 		Bestiary: {
 			Soldier: One of Reunion's basic melee soldiers. Equipped with illegally obtained weapons and armor, they wear masks to conceal their identities during operation.
+			Crossbowman: One of Reunion's basic ranged soldiers. Equipped with illegally obtained weapons and armor, they wear masks to conceal their identities during operations.
 			OriginiumSlug: An infected wild creature. Due to their low intelligence, they are easily controlled by enemy casters for use as cannon fodder during invasions.
 			OriginiumSlugAlpha: An infected wild creature that is more dangerous than a normal Originium Slug. Due to their low intelligence, they are easily controlled by enemy casters for use as cannon fodder during invasions.
 			OriginiumSlugBeta: An infected wild creature that is more dangerous than an Originium Slug Alpha. Due to their low intelligence, they are easily controlled by enemy caster for use as cannon fodder during invasions.
@@ -781,6 +804,7 @@ Mods: {
 			IAT: A heavily-armored, sturdily-built drone operated by artillery casters of the Ursus army. They presage the withering firepower of the Ursus Artillery.
 			MortarGunner: One of Reunion's special ranged soldiers. Equipped with pilfered military-grade Originium launchers, they launch explosive attacks from hard-to-defend positions, making them a significant threat to back-line Operators.
 			TheFirstToTalk: The first beautiful living being to speak human language before civilized man. Seaborn.
+			AACT: A heavily-armored, sturdily-built core drone operated by artillery technicians of the Ursus army. It was highly infected by ANDSKOTARNIR due to staying in Sami for too long. It continuously emits attack signals and will eliminate all detected life.
 		}
 
 		Projectiles: {
@@ -803,10 +827,6 @@ Mods: {
 			ISTG3OutRing.DisplayName: IACTSTG3TGT
 			missle.DisplayName: Missle
 			misslepro.DisplayName: Missle II
-			HitboxRedCorner4.DisplayName: Hitbox
-			HitboxRedCorner3.DisplayName: Hitbox
-			HitboxRedCorner2.DisplayName: Hitbox
-			HitboxRedCorner1.DisplayName: Hitbox
 			ExplodeAimPro.DisplayName: Explode Aim
 			ExplodeAim.DisplayName: Explode Aim
 			HitboxRedFrame.DisplayName: Hitbox Red Frame
@@ -860,6 +880,51 @@ Mods: {
 			Missle.DisplayName: Missle
 			MisslePro.DisplayName: Missle Pro
 			CrossbowmanBolt.DisplayName: Crossbowman Bolt
+			HitboxRedCorner.DisplayName: Hitbox Red Corner
+			PozemkaCrossbowSentry.DisplayName: Typewritter
+			PozemkaCrossbowSentryProjectile.DisplayName: Typewritter Bolt
+			PozemkaCrossbowProjectile.DisplayName: Pozemka Crossbow Bolt
+			AcidOgSlugProjectile.DisplayName: Acid Drop
+			AACTDeathdust.DisplayName: AACTDeathdust
+			ExplodeWave.DisplayName: Explode Wave
+			Missle.DisplayName: Missle
+			MisslePro.DisplayName: Missle Mk.II
+			CrossbowmanBolt.DisplayName: Bolt
+			CollapsedFrame.DisplayName: Collapsed Frame
+			CollapsedExplodeAim.DisplayName: Collapsed Explode Aim
+			CollapsedHitboxblueCore.DisplayName: Collapsed PreHit Core
+			FrostNovaYellowAura.DisplayName: Frost Nova Yellow Aura
+			FrostNovaWhiteRing.DisplayName: Frost Nova White Ring
+			FrostNovaSmoke.DisplayName: Frost Nova Smoke
+			FrostNovaRevival.DisplayName: Frost Nova Revival
+			FrostNovaJump.DisplayName: Frost Nova Jump
+			TestProj1.DisplayName: Test Proj1
+			TestProj2.DisplayName: Test Proj2
+			TestProj3.DisplayName: Test Proj3
+			AACTEndShow.DisplayName: AACT End Show
+			Blizzard.DisplayName: Blizzard
+			BlizzardStorm.DisplayName: Blizzard Storm
+			BlizzardStormStarter.DisplayName: Blizzard Storm Starter
+			Cube.DisplayName: Cube
+			CubeVertex.DisplayName: Cube Vertex
+			BlackIceProjectile.DisplayName: Black Ice Projectile
+			BlackIce.DisplayName: Black Ice
+			FNIceRingMKI.DisplayName: F N Ice Ring M K I
+			FNIceRingRound.DisplayName: F N Ice Ring Round
+			BlackIceExplode.DisplayName: Black Ice Explode
+			BlackIceIntro.DisplayName: Black Ice Intro
+			FNIceRingChoice.DisplayName: F N Ice Ring Choice
+			FNInvincibleEffect.DisplayName: F N Invincible Effect
+			FNBanFloor.DisplayName: F N Ban Floor
+			BlackIceFloor.DisplayName: Black Ice Floor
+			PmpFireBall.DisplayName: Pmp Fire Ball
+			PmpFireRain.DisplayName: Pmp Fire Rain
+			PmpExplode.DisplayName: Pmp Explode
+			Icebreak.DisplayName: Icebreak
+			Iceexplode.DisplayName: Iceexplode
+			Oneirosbomb.DisplayName: Oneirosbomb
+			Snowcastershoot.DisplayName: Snowcastershoot
+			FNIceDust.DisplayName: F N Ice Dust
 		}
 
 		ButtonName.button2: Annihilation operation
@@ -885,6 +950,7 @@ Mods: {
 
 		StatusMessage: {
 			IACT: {
+				Intro: Detected entities that entered the restricted area without permission, marked as targets for attack.
 				Summon: You feel the threat from the empire...
 				Summon2: Detected the suspicious target. ERASE.
 				Stage1to2: Target strength is higher than prediction, import the advanced permission to implement the strike.
@@ -894,21 +960,15 @@ Mods: {
 				End: Detected severe damage to the main structure, initiating self destruct mode.
 				Complete: The bombing drone from the empire have been destroyed.
 			}
+
+			AACT.Collapsed: "{0} collapsed."
+			FN.AllFloorBanned: "{0} didn't realize that there was no place to stand."
+			Pmp.GetTooClose: "{0} stood on the erupting volcano."
 		}
 
 		Configs: {
 			MusicConfig: {
 				DisplayName: Music Config
-
-				EnableArknightsDaytime: {
-					Label: Enable ArknightsDaytime Music
-					Tooltip: ""
-				}
-
-				EnableArknightsNighttime: {
-					Label: Enable ArknightsNighttime Music
-					Tooltip: ""
-				}
 
 				EnableArknightsOceanDaytime: {
 					Label: Enable ArknightsOceanDaytime Music
@@ -951,32 +1011,57 @@ Mods: {
 				}
 
 				EnableArknightsHallowedOceanDaytime: {
-					Label: Enable Arknights Hallowed Ocean Daytime
+					Label: Enable Arknights Hallowed Ocean Daytime Music
 					Tooltip: ""
 				}
 
 				EnableArknightsHallowedOceanNighttime: {
-					Label: Enable Arknights Hallowed Ocean Nighttime
+					Label: Enable Arknights Hallowed Ocean Nighttime Music
+					Tooltip: ""
+				}
+
+				EnableArknightsSpaceDaytime: {
+					Label: Enable Arknights Space Daytime Music
+					Tooltip: ""
+				}
+
+				EnableArknightsSpaceNighttimeLow: {
+					Label: Enable Arknights Space Nighttime Music
+					Tooltip: ""
+				}
+
+				EnableArknightsSpaceNighttimeHigh: {
+					Label: Enable Arknights Space Nighttime Special Music
+					Tooltip: ""
+				}
+
+				EnableArknightsForestDaytime: {
+					Label: Enable Arknights Forest Daytime Music
+					Tooltip: ""
+				}
+
+				EnableArknightsForestNighttime: {
+					Label: Enable Arknights Forest Nighttime Music
 					Tooltip: ""
 				}
 
 				EnableArknightsCorruptedOceanDaytime: {
-					Label: Enable Arknights Corrupted Ocean Daytime
+					Label: Enable Arknights Corrupted Ocean Daytime Music
 					Tooltip: ""
 				}
 
 				EnableArknightsCorruptedOceanNighttime: {
-					Label: Enable Arknights Corrupted Ocean Nighttime
+					Label: Enable Arknights Corrupted Ocean Nighttime Music
 					Tooltip: ""
 				}
 
 				EnableArknightsCrimsonOceanDaytime: {
-					Label: Enable Arknights Crimson Ocean Daytime
+					Label: Enable Arknights Crimson Ocean Daytime Music
 					Tooltip: ""
 				}
 
 				EnableArknightsCrimsonOceanNighttime: {
-					Label: Enable Arknights Crimson Ocean Nighttime
+					Label: Enable Arknights Crimson Ocean Nighttime Music
 					Tooltip: ""
 				}
 			}

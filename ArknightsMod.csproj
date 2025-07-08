@@ -17,5 +17,14 @@
   <ItemGroup>
     <Folder Include="Assets\LevelDatas\Skills\" />
     <Folder Include="Common\UI\BattleRecord\Images\" />
+    <None Remove="Assets\Effects\AACTSTG3RBFence.fx" />
+    <None Remove="Assets\Effects\AACTSTG3RBNoise.fx" />
+    <None Remove="Assets\Effects\CollapesdExplosion.fx" />
+    <None Remove="Assets\Effects\CollapsedExplosionPart2.fx" />
+    <None Remove="Assets\Effects\FNTwistedRing.fx" />
+    <None Remove="Common\VisualEffects\ArknightsModVertexTrailDrawType.cs.disabled" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Common\VisualEffects\ArknightsModVertexTrailDrawType.cs.disabled" />
   </ItemGroup>
 </Project>

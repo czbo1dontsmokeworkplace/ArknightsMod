@@ -1,5 +1,4 @@
-﻿using ArknightsMod.Common.Configs;
-using Terraria;
+﻿using Terraria;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Assets.SceneEffects
@@ -8,7 +7,8 @@ namespace ArknightsMod.Assets.SceneEffects
 	{
 		public override int Music => MusicLoader.GetMusicSlot(Mod, "Music/trimountsky");
 		public override SceneEffectPriority Priority => SceneEffectPriority.Environment;
-		public override bool IsLoadingEnabled(Mod mod) {
+		public override bool IsLoadingEnabled(Mod mod)
+		{
 			return ModContent.GetInstance<MusicConfig>().EnableArknightsSpaceDaytime;
 		}
 

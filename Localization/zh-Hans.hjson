@@ -610,6 +610,21 @@ Mods: {
 			TacticalBattleRecord: {
 				// DisplayName: Tactical Battle Record
 				// Tooltip: ""
+
+			AACTSummon: {
+				DisplayName: 奇怪的信号发射器·高配版
+				Tooltip:
+					'''
+					似乎只要按下这个按钮，这个玩意就会发出[c/FF0000:奇怪]的信号
+					召唤[c/FF0000:被邪魔严重污染的军用打击系统]
+					[c/FF0000:只能在晚上使用]
+					[c/FF0000:“似乎它本身也被邪魔污染了。”]
+					'''
+			}
+
+			Spicycandy: {
+				DisplayName: 辣味糖
+				// Tooltip: ""
 			}
 		}
 
@@ -716,9 +731,9 @@ Mods: {
 			BasinSeaReaper.DisplayName: 钵海收割者
 			TheFirstToTalk.DisplayName: 首言者
 			MortarGunner.DisplayName: 炮手
-			snowcaster.DisplayName: 雪怪小队术士
-			Snowsoldier.DisplayName: 雪怪小队
-			icecleaver.DisplayName: 雪怪小队凿冰人
+			SnowCaster.DisplayName: 雪怪小队术士
+			SnowSoldier.DisplayName: 雪怪小队
+			IceCleaver.DisplayName: 雪怪小队凿冰人
 			Seniorcaster.DisplayName: 高阶术士
 			Oneiros.DisplayName: 虚幻
 			Hound.DisplayName: 猎狗
@@ -742,6 +757,7 @@ Mods: {
 			// IACTIntro.DisplayName: I A C T Intro
 			// IATIntro.DisplayName: I A T Intro
 			// Crossbowman.DisplayName: Crossbowman
+			// Pompeii.DisplayName: Pompeii
 		}
 
 		# Friendly
@@ -787,6 +803,7 @@ Mods: {
 
 		Bestiary: {
 			Soldier: 整合运动的基础近身作战人员。装备了被缴获或非法渠道获得到的武器和服装，使用统一的面具和服装掩盖自己身份参与行动。
+			Crossbowman: 整合运动的基础射击作战人员。装备了被缴获或非法渠道获得到的武器和服装，使用统一的面具和服装掩盖自己身份参与行动。
 			OriginiumSlug: 野生的被感染生物。这种低智能生物极有可能会被敌方术师操纵，以进入人工设施内发动集群攻击。
 			OriginiumSlugAlpha: 野生的被感染生物，比一般源石虫更具有威胁。这种低智能生物极有可能会被敌方术师操纵，以进入人工设施内发动集群攻击。
 			OriginiumSlugBeta: 野生的被感染生物，比源石虫Alpha更具有威胁。这种低智能生物极有可能会被敌方术师操纵，以进入人工设施内发动集群攻击
@@ -795,6 +812,7 @@ Mods: {
 			IAT: 乌萨斯军炮兵术师操作的无人机，装甲厚重，材质坚实。正是他们引导了乌萨斯炮兵猛烈的炮火袭击。
 			MortarGunner: 整合运动的特殊远程作战人员。配备了缴获的军用源石爆破物发射器，常在难以设防的位置发动袭击，对我后方目标有巨大威胁。
 			TheFirstToTalk: 第一个在文明面前说出人类语言的美丽生物。海嗣。
+			AACT: 因久留萨米而被被邪魔侵染的乌萨斯军炮兵术师操作的无人机中枢，持续发射攻击信号，会清除检测到的一切生命。
 		}
 
 		Projectiles: {
@@ -832,6 +850,7 @@ Mods: {
 			// HitboxRedCornerSmall2.DisplayName: Hitbox
 			// HitboxRedCornerSmall3.DisplayName: Hitbox
 			// HitboxRedCornerSmall4.DisplayName: Hitbox
+			HitboxRedCorner.DisplayName: 爆炸区域边框
 			PozemkaCrossbowSentry.DisplayName: “打字机”
 			PozemkaCrossbowSentryProjectile.DisplayName: 鸿雪的弩箭
 			PozemkaCrossbowProjectile.DisplayName: 鸿雪的弩箭
@@ -878,6 +897,46 @@ Mods: {
 			// Missle.DisplayName: Missle
 			// MisslePro.DisplayName: Missle Pro
 			// CrossbowmanBolt.DisplayName: Crossbowman Bolt
+			AACTDeathdust.DisplayName: AACT死亡粒子效果
+			ExplodeWave.DisplayName: 爆炸波纹
+			Missle.DisplayName: 导弹
+			MisslePro.DisplayName: 二阶导弹
+			CrossbowmanBolt.DisplayName: 弩箭
+			CollapsedFrame.DisplayName: 坍缩框架
+			CollapsedExplodeAim.DisplayName: 坍缩爆炸核心
+			CollapsedHitboxblueCore.DisplayName: 坍缩预判核心
+			// FrostNovaYellowAura.DisplayName: Frost Nova Yellow Aura
+			// FrostNovaWhiteRing.DisplayName: Frost Nova White Ring
+			// FrostNovaSmoke.DisplayName: Frost Nova Smoke
+			// FrostNovaRevival.DisplayName: Frost Nova Revival
+			// FrostNovaJump.DisplayName: Frost Nova Jump
+			// TestProj1.DisplayName: Test Proj1
+			// TestProj2.DisplayName: Test Proj2
+			// TestProj3.DisplayName: Test Proj3
+			AACTEndShow.DisplayName: 邪魔炮火中枢先兆者尾杀演出
+			// Blizzard.DisplayName: Blizzard
+			// BlizzardStorm.DisplayName: Blizzard Storm
+			// BlizzardStormStarter.DisplayName: Blizzard Storm Starter
+			// Cube.DisplayName: Cube
+			// CubeVertex.DisplayName: Cube Vertex
+			// BlackIceProjectile.DisplayName: Black Ice Projectile
+			// BlackIce.DisplayName: Black Ice
+			// FNIceRingMKI.DisplayName: F N Ice Ring M K I
+			// FNIceRingRound.DisplayName: F N Ice Ring Round
+			// BlackIceExplode.DisplayName: Black Ice Explode
+			// BlackIceIntro.DisplayName: Black Ice Intro
+			// FNIceRingChoice.DisplayName: F N Ice Ring Choice
+			// FNInvincibleEffect.DisplayName: F N Invincible Effect
+			// FNBanFloor.DisplayName: F N Ban Floor
+			// BlackIceFloor.DisplayName: Black Ice Floor
+			// PmpFireBall.DisplayName: Pmp Fire Ball
+			// PmpFireRain.DisplayName: Pmp Fire Rain
+			// PmpExplode.DisplayName: Pmp Explode
+			// Icebreak.DisplayName: Icebreak
+			// Iceexplode.DisplayName: Iceexplode
+			// Oneirosbomb.DisplayName: Oneirosbomb
+			// Snowcastershoot.DisplayName: Snowcastershoot
+			// FNIceDust.DisplayName: F N Ice Dust
 		}
 
 		ButtonName.button2: 剿灭作战
@@ -903,6 +962,7 @@ Mods: {
 
 		StatusMessage: {
 			IACT: {
+				Intro: 检测到未经许可擅自闯入禁区的实体，标记为打击目标.
 				Summon: 你感受到了来自帝国的威胁...
 				Summon2: 发现可疑目标，予以抹除.
 				Stage1to2: 目标强度高于预测强度，调用高阶权限实施打击.
@@ -912,90 +972,79 @@ Mods: {
 				End: 检测到主结构严重损毁，启动自毁模式...
 				Complete: 来自帝国的轰炸无人机已被击毁...
 			}
+
+			AACT.Collapsed: "{0}坍缩了。"
+			FN.AllFloorBanned: "{0}没有留意到自己已无立足之地。"
+			Pmp.GetTooClose: "{0}站在了喷发的活火山口上。"
 		}
 
 		Configs: {
 			MusicConfig: {
 				DisplayName: 音乐配置文件
 
-				EnableArknightsDaytime: {
-					// Label: Enable ArknightsDaytime Music
-					// Tooltip: ""
-				}
-
-				EnableArknightsNighttime: {
-					// Label: Enable ArknightsNighttime Music
-					// Tooltip: ""
-				}
-
 				EnableArknightsOceanDaytime: {
 					Label: 启用明日方舟海洋白天音乐
 					Tooltip: 使用音乐：Ready?
 				}
 
-				EnableArknightsOceanNighttimeScene: {
-					// Label: Enable ArknightsOceanNighttime Music
-					// Tooltip: ""
-				}
-
 				EnableArknightsOceanNighttime: {
-					// Label: Enable Arknights Ocean Nighttime
-					// Tooltip: ""
-				}
-
-				EnableArknightsSpaceDaytime: {
-					// Label: Enable Arknights Space Daytime
-					// Tooltip: ""
-				}
-
-				EnableArknightsSpaceNighttimeLow: {
-					// Label: Enable Arknights Space Nighttime Low
-					// Tooltip: ""
-				}
-
-				EnableArknightsSpaceNighttimeHigh: {
-					// Label: Enable Arknights Space Nighttime High
-					// Tooltip: ""
-				}
-
-				EnableArknightsForestDaytime: {
-					// Label: Enable Arknights Forest Daytime
-					// Tooltip: ""
-				}
-
-				EnableArknightsForestNighttime: {
-					// Label: Enable Arknights Forest Nighttime
-					// Tooltip: ""
+					Label: 启用明日方舟海洋夜晚音乐
+					Tooltip: 使用音乐：海愿
 				}
 
 				EnableArknightsHallowedOceanDaytime: {
-					// Label: Enable Arknights Hallowed Ocean Daytime
-					// Tooltip: ""
+					Label: 启用明日方舟神圣海洋白天音乐
+					Tooltip: 使用音乐：生路主界面曲
 				}
 
 				EnableArknightsHallowedOceanNighttime: {
-					// Label: Enable Arknights Hallowed Ocean Nighttime
-					// Tooltip: ""
+					Label: 启用明日方舟神圣海洋夜晚音乐
+					Tooltip: 使用音乐：倒置树影
+				}
+
+				EnableArknightsSpaceDaytime: {
+					Label: 启用明日方舟太空白天音乐
+					Tooltip: 使用音乐：特里蒙的天空
+				}
+
+				EnableArknightsSpaceNighttimeLow: {
+					Label: 启用明日方舟太空夜晚音乐
+					Tooltip: 使用音乐：群星见我
+				}
+
+				EnableArknightsSpaceNighttimeHigh: {
+					Label: 启用明日方舟太空夜晚隐藏音乐
+					Tooltip: 使用音乐：Ad Astra
+				}
+
+				EnableArknightsForestDaytime: {
+					Label: 启用明日方舟森林白天音乐
+					Tooltip: 使用音乐：生命流
+				}
+
+				EnableArknightsForestNighttime: {
+					Label: 启用明日方舟森林夜晚音乐
+					Tooltip: 使用音乐：如我所见主界面曲
 				}
 
 				EnableArknightsCorruptedOceanDaytime: {
-					// Label: Enable Arknights Corrupted Ocean Daytime
-					// Tooltip: ""
+					Label: 启用明日方舟腐化海洋白天音乐
+					Tooltip: 使用音乐：暗潮
 				}
 
 				EnableArknightsCorruptedOceanNighttime: {
-					// Label: Enable Arknights Corrupted Ocean Nighttime
-					// Tooltip: ""
+					Label: 启用明日方舟腐化海洋夜晚音乐
+					Tooltip: 使用音乐：蔓延
 				}
 
 				EnableArknightsCrimsonOceanDaytime: {
-					// Label: Enable Arknights Crimson Ocean Daytime
-					// Tooltip: ""
+					Label: 启用明日方舟猩红海洋白天音乐
+					Tooltip: 使用音乐：共振
 				}
 
 				EnableArknightsCrimsonOceanNighttime: {
-					// Label: Enable Arknights Crimson Ocean Nighttime
-					// Tooltip: ""
+					Label: 启用明日方舟猩红海洋夜晚音乐
+					Tooltip: 使用音乐：礁石不朽
 				}
 			}
 

@@ -1,11 +1,8 @@
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
-using Terraria.Audio;
+using Terraria.ID;
+using Terraria.ModLoader;
 using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.ItemDropRules;
-using Terraria.ID;
 using Terraria.ModLoader.Utilities;
 using Terraria.Localization;
 using System;
@@ -15,8 +12,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.Audio;
 using static Terraria.ModLoader.ModContent;
-using ArknightsMod.Common.Damageclasses;
-using ArknightsMod.Content.Projectiles;
 
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 {
@@ -33,7 +28,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 		public override void SetDefaults() {
 			NPC.lifeMax = 45;
-			NPC.damage = 4;
+			NPC.damage = 0;
 			NPC.defense = 5;
 			NPC.knockBackResist = 0.5f;//击退抗性，0f为最高，1f为最低
 			NPC.width = 32;
@@ -76,8 +71,11 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			if (Projectile.hostile == true) {
 				return false;
 			}
+			else if (Projectile.friendly == true) {
+				return null;
+			}
 			else {
-				return Projectile.friendly == true ? null : false;
+				return false;
 			}
 		}
 
@@ -122,10 +120,6 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			diffY = Player.Center.Y - NPC.Center.Y;
 			ax = 0.3f;
 			distance = (float)Math.Sqrt(Math.Pow(diffX / 16, 2) + Math.Pow(diffY / 16, 2));//到玩家的距离（格数）
-			if (NPC.velocity.X != 0) {
-				NPC.spriteDirection = Math.Sign(NPC.velocity.X);
-				NPC.rotation = 0; 
-			}
 			if (Main.masterMode) {
 				atkloop = 90;
 				atkrange = 30;
@@ -174,7 +168,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 					//attacktimer = 0;
 				}
 			}
-			else if (distance >= escrange) {//中间范围，只攻击不移动
+			else if(distance >= escrange) {//中间范围，只攻击不移动
 				timer++;
 				NPC.velocity.X = float.Lerp(NPC.velocity.X, 0, 0.1f);
 				if (timer >= atkloop) {
@@ -247,7 +241,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				return;
 			}
 		}
-		private int jumpCD;
+
 		private void Escape() {//往远离玩家方向走，可选择攻击或不攻击
 			escapetimer++;
 			isescape = true;
@@ -255,7 +249,6 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			isatk = false;
 			isstuck = false;
 			if (escapetimer <= escapetime) {
-				jumpCD++;
 				Player Player = Main.player[NPC.target];
 				Vector2 velDiff = NPC.velocity - Player.velocity;
 				int haltDirectionX = velDiff.X > 0 ? 1 : -1;
@@ -269,11 +262,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				NPC.velocity.X = Math.Min(vx, Math.Max(-vx, NPC.velocity.X));
 				if (NPC.velocity.Y == 0) {
 					jumpstage += 1;
-
-					if (jumpstage >= 1&&jumpCD>=60) {
+					if (jumpstage >= 1) {
 						NPC.velocity.Y -= jumpspeed;
 						jumpstage = 0;
-						jumpCD = 0;
 						jumptimes += 1;
 						if (jumptimes >= 3) {
 							jumptimes = 0;
@@ -304,8 +295,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				isstuck = false;
 				if (attacktimer == 50) {
 					directionchoose = Player.Center.X - NPC.Center.X >= 0 ? 1 : -1;
-					angle = (float)Math.Atan((Player.Center.Y - NPC.Center.Y) / (Player.Center.X - NPC.Center.X));
-					Projectile.NewProjectile(newSource, NPC.Center, new Vector2(directionchoose * 8f, 0).RotatedBy(angle), ModContent.ProjectileType<CrossbowmanBolt>(), 12, 0.8f, 0, 0);
+					angle = (float)Math.Atan((Player.Center.Y - NPC.Center.Y)/(Player.Center.X - NPC.Center.X));
+					Projectile.NewProjectile(newSource, NPC.Center, new Vector2(directionchoose * 8f,0).RotatedBy(angle), ModContent.ProjectileType<CrossbowmanBolt>(), 12, 0.8f, 0, 0);
 					SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/Crossbow") with { Volume = 1f, Pitch = 0f }, NPC.Center);
 				}
 			}
@@ -322,7 +313,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			frameHeight = 56;
 			if (iswalk == true || isescape == true) {
 				walkframe++;
-				framecount = walkframe / 20;
+				framecount = (int)(walkframe / 20);
 				if (framecount > 13) {
 					walkframe = 0;
 				}
@@ -333,49 +324,11 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			}
 			if (isatk == true) {
 				atkframe++;
-				framecount = atkframe / 10 + 15;
+				framecount = (int)(atkframe / 10) + 15;
 				NPC.frame.Y = framecount * frameHeight;
 				if (framecount > 18) {
 					NPC.frame.Y = 15 * frameHeight;
 					atkframe = 0;
-				}
-			}
-		}
-		public override void OnKill() {
-			SoundStyle ghostSound = SoundID.NPCDeath6 with {
-				Pitch = -0.4f, // 范围[-1.0, 1.0]，-0.5表示降低八度
-				Volume = 0.6f  // 可选调整音量
-			};
-			SoundEngine.PlaySound(ghostSound, NPC.Center);
-			for (int i = 0; i < 25; i++) // 总粒子数
-	{
-				// 70%概率生成黑色，30%概率生成橙色
-				bool isBlack = Main.rand.NextFloat() < 0.7f;
-
-				Dust dust = Dust.NewDustPerfect(
-					NPC.Center,
-					isBlack ? DustID.Asphalt : DustID.FireworksRGB, // 黑色或橙色
-					Main.rand.NextVector2Circular(5, 5),
-					Alpha: 150,
-					Scale: Main.rand.NextFloat(1.2f, 2f)
-				);
-
-				// 统一物理参数
-				dust.noGravity = true;
-				dust.fadeIn = 1.5f;
-				dust.rotation = Main.rand.NextFloat(MathHelper.TwoPi);
-			}
-		}
-		public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers) {
-			if (SpellDamageConfig.SpellProjectiles.Contains(projectile.type)) {
-				// 法术伤害无视护甲
-				modifiers.ScalingArmorPenetration += 1f;
-				// 0.95倍伤害减免
-				modifiers.FinalDamage *= 1f;
-
-				for (int i = 0; i < 3; i++) {
-					Dust.NewDust(NPC.position, NPC.width, NPC.height,
-						DustID.MagicMirror, 0, 0, 150, Color.LightBlue, 0.7f);
 				}
 			}
 		}
@@ -416,7 +369,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			Projectile.velocity = Vector2.Lerp(Projectile.velocity, 0.833f * Projectile.velocity, 0.01f);
 			Projectile.rotation = Projectile.velocity.ToRotation();
 			Dust dust;
-			Vector2 position = Projectile.Center + new Vector2(0, 3);
+			Vector2 position = Projectile.Center + new Vector2(0,3);
 			dust = Terraria.Dust.NewDustPerfect(position, 279, new Vector2(0f, 0f), 0, new Color(255, 255, 255), 1f);
 		}
 	}
