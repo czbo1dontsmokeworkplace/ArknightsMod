@@ -559,6 +559,96 @@ Mods: {
 				// DisplayName: Tactical Battle Record
 				// Tooltip: ""
 			}
+
+			TogawaSakikoBody: {
+				// DisplayName: Togawa Sakiko Body
+				// Tooltip: ""
+			}
+
+			TogawaSakikoHead: {
+				// DisplayName: Togawa Sakiko Head
+				// Tooltip: ""
+			}
+
+			TogawaSakikoLegs: {
+				// DisplayName: Togawa Sakiko Legs
+				// Tooltip: ""
+			}
+
+			SakiSword: {
+				// DisplayName: Saki Sword
+				// Tooltip: ""
+			}
+
+			BrightWeeping: {
+				// DisplayName: Bright Weeping
+				// Tooltip: ""
+			}
+
+			ChitinousBlade: {
+				// DisplayName: Chitinous Blade
+				// Tooltip: ""
+			}
+
+			EmptyFeatheredBeast: {
+				// DisplayName: Empty Feathered Beast
+				// Tooltip: ""
+			}
+
+			FirstAidMedicineKit: {
+				// DisplayName: First Aid Medicine Kit
+				// Tooltip: ""
+			}
+
+			GoldBone: {
+				// DisplayName: Gold Bone
+				// Tooltip: ""
+			}
+
+			GoldenGinChalice: {
+				// DisplayName: Golden Gin Chalice
+				// Tooltip: ""
+			}
+
+			KingsArmor: {
+				// DisplayName: Kings Armor
+				// Tooltip: ""
+			}
+
+			KingsCrown: {
+				// DisplayName: Kings Crown
+				// Tooltip: ""
+			}
+
+			KingsStaff: {
+				// DisplayName: Kings Staff
+				// Tooltip: ""
+			}
+
+			KnightlyCodexRenewed: {
+				// DisplayName: Knightly Codex Renewed
+				// Tooltip: ""
+			}
+
+			ManifestationPendant: {
+				// DisplayName: Manifestation Pendant
+				// Tooltip: ""
+			}
+
+			PerfumeForTheShow: {
+				// DisplayName: Perfume For The Show
+				// Tooltip: ""
+			}
+
+			QiyuanMask: {
+				// DisplayName: Qiyuan Mask
+				// Tooltip: ""
+			}
+
+			VanillaSauceSoda: {
+				// DisplayName: Vanilla Sauce Soda
+				// Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -737,6 +827,15 @@ Mods: {
 			// Missle.DisplayName: Missle
 			// MisslePro.DisplayName: Missle Pro
 			// CrossbowmanBolt.DisplayName: Crossbowman Bolt
+			// SakiSlashHit.DisplayName: Saki Slash Hit
+			// SakiSwordWhite.DisplayName: Saki Sword White
+			// SakiNote1.DisplayName: Saki Note1
+			// SakiNote2Bright.DisplayName: Saki Note2 Bright
+			// SakiNote2Dark.DisplayName: Saki Note2 Dark
+			// SakiNoteCommon.DisplayName: Saki Note Common
+			// SakiNoteIdle.DisplayName: Saki Note Idle
+			// SakiSwordBlack.DisplayName: Saki Sword Black
+			// SakiSlashHit2.DisplayName: Saki Slash Hit2
 		}
 
 		ButtonName.button2: 剿灭作战
