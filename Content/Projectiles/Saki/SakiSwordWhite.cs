@@ -175,11 +175,8 @@ namespace ArknightsMod.Content.Projectiles.Saki
 		{
 			if (!Main.dedServ)
 			{
-				PremultiplyTexture(Request<Texture2D>("ArknightsMod/Content/Projectiles/Saki/Assets/star_268", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value);
-				PremultiplyTexture(Request<Texture2D>("ArknightsMod/Content/Projectiles/Saki/Assets/star_268_2", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value);
 				PremultiplyTexture(Request<Texture2D>("ArknightsMod/Content/Projectiles/Saki/Assets/oblvns_skin_04", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value);
 				PremultiplyTexture(Request<Texture2D>("ArknightsMod/Content/Projectiles/Saki/Assets/oblvns_skin_05", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value);
-				PremultiplyTexture(Request<Texture2D>("ArknightsMod/Content/Projectiles/Saki/Assets/oblvns_trail", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value);
 			}
 		}
 		public static void PremultiplyTexture(Texture2D texture) {

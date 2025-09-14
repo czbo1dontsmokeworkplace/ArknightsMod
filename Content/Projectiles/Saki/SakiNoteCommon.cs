@@ -13,6 +13,7 @@ using static System.Net.Mime.MediaTypeNames;
 using Microsoft.Xna.Framework.Graphics.PackedVector;
 using ArknightsMod.Common.VisualEffects;
 using Humanizer;
+using ArknightsMod.Common;
 
 namespace ArknightsMod.Content.Projectiles.Saki
 {
@@ -171,15 +172,20 @@ namespace ArknightsMod.Content.Projectiles.Saki
 				0f, tex.Size() / 2, Projectile.scale * 0.7f, SpriteEffects.None, 0f);
 
 			Main.spriteBatch.End();
-			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, Main.DefaultSamplerState, DepthStencilState.Default,
+			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default,
 				Main.Rasterizer, null, Main.GameViewMatrix.ZoomMatrix);
 
 			for (int i = 0; i < 2; i++) {
 				DrawStar(Projectile.Center, Main.rand.NextFloat(7, 10));
 			}
 
-			DrawTrail((int)(4 * Projectile.scale), "oblvns_trail2", "oblvns_trail2");
+			DrawTrail((int)(12 * Projectile.scale), "oblvns_trail2", "oblvns_trail2");
 			DrawTrail((int)(12 * Projectile.scale), "oblvns_trail", "oblvns_trail");
+			DrawTrail((int)(8 * Projectile.scale), "oblvns_trail3", "oblvns_trail3");
+
+			Main.spriteBatch.End();
+			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default,
+				Main.Rasterizer, null, Main.GameViewMatrix.ZoomMatrix);
 
 			return false;
 		}
@@ -281,8 +287,8 @@ namespace ArknightsMod.Content.Projectiles.Saki
 				Main.graphics.GraphicsDevice.Textures[0] = ModContent.Request<Texture2D>($"ArknightsMod/Content/Projectiles/Saki/Assets/{tex1}").Value;
 				Main.graphics.GraphicsDevice.Textures[1] = ModContent.Request<Texture2D>($"ArknightsMod/Content/Projectiles/Saki/Assets/{tex2}").Value;
 				shader.CurrentTechnique.Passes[0].Apply();
-				Main.graphics.GraphicsDevice.BlendState = BlendState.Additive;
 				Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, triangleList.ToArray(), 0, triangleList.Count / 3);
+
 			}
 		}
 		Effect shader = ModContent.Request<Effect>("ArknightsMod/Content/Projectiles/Saki/Assets/Sakiko").Value;

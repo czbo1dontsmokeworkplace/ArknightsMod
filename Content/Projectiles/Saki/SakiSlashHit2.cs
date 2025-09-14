@@ -52,6 +52,18 @@ namespace ArknightsMod.Content.Projectiles.Saki
 				Vector2 scale = new Vector2(1f, progress) * 0.5f * Projectile.scale;
 				Main.spriteBatch.Draw(tex1, drawPosition, new Rectangle(0, 128, 256, 128), Color.White * Projectile.Opacity, Projectile.rotation + MathHelper.PiOver2 * i, origin, scale, 0, 0f);
 			}
+
+			if (Projectile.timeLeft < 20) {
+				for (int i = 0; i < 4; i++) {
+					float progress = (Projectile.timeLeft+20) / 20f;
+					progress = MathHelper.Clamp(progress, 0.2f, 1.5f);
+					Texture2D tex1 = ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Saki/Assets/ray_129").Value;
+					Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+					Vector2 origin = new Vector2(0, tex1.Height / 4);
+					Vector2 scale = new Vector2(1f, progress) * 0.3f * Projectile.scale;
+					Main.spriteBatch.Draw(tex1, drawPosition, new Rectangle(0, 128, 256, 128), Color.White * Projectile.Opacity, Projectile.rotation+MathHelper.PiOver4 + MathHelper.PiOver2 * i, origin, scale, 0, 0f);
+				}
+			}
 			Main.spriteBatch.End();
 			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default,
 				Main.Rasterizer, null, Main.GameViewMatrix.ZoomMatrix);

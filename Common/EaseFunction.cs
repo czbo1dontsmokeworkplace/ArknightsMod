@@ -28,7 +28,7 @@ using Terraria.Chat;
 using Terraria.GameContent;
 using static tModPorter.ProgressUpdate;
 
-namespace ArknightsMod.Content.Projectiles.Saki
+namespace ArknightsMod.Common
 {
     public static class EaseFunction
     {
@@ -85,7 +85,7 @@ namespace ArknightsMod.Content.Projectiles.Saki
         {
             x = Math.Clamp(x, xMin, xMax);
             float t = (x - xMin) / (xMax - xMin);
-            float s = 1.70158f * 1.525f; // 标准 easeInOutBack 参数
+            float s = 1.70158f * 1.525f;
             float easeInOutBackValue;
 
             if (t < 0.5f)
@@ -118,34 +118,34 @@ namespace ArknightsMod.Content.Projectiles.Saki
         {
             peakPercentage = Math.Clamp(peakPercentage, 0f, 1f);
 
-            // 计算峰值对应的 x 值
+            //计算峰值对应的x值
             float xPeak = xMin + (xMax - xMin) * peakPercentage;
 
             x = Math.Clamp(x, xMin, xMax);
 
-            // y 的变化幅度
+            //y的变化幅度
             float yRange = yMax - yMin;
             float t;
 
-            // 根据 x 的位置计算缓动效果
+            //根据x的位置计算缓动效果
             if (x <= xPeak)
             {
-                t = (x - xPeak) / (xMin - xPeak); // 归一化到 [0, 1]
+                t = (x - xPeak) / (xMin - xPeak); //归一化到[0, 1]
             }
             else
             {
-                t = (x - xPeak) / (xMax - xPeak); // 归一化到 [0, 1]
+                t = (x - xPeak) / (xMax - xPeak); //归一化到[0, 1]
             }
 
-            // 根据 isConcave 决定公式
+            //根据isConcave决定公式
             if (isConcave)
             {
-                // 凹形状 (最大值位于峰值)
+                //凹形状 (最大值位于峰值)
                 return yMin + yRange * (1 - t * t);
             }
             else
             {
-                // 凸形状 (最小值位于峰值)
+                //凸形状 (最小值位于峰值)
                 return yMax - yRange * (1 - t * t);
             }
         }
@@ -195,10 +195,10 @@ namespace ArknightsMod.Content.Projectiles.Saki
         /// <returns></returns>
         public static Vector2 CubicBezier(Vector2 Start, Vector2 ControlPoint1, Vector2 ControlPoint2, Vector2 End, float progress)
         {
-            // 确保 progress 在 [0, 1] 范围内
+            //确保progress在[0, 1]范围内
             progress = Math.Clamp(progress, 0, 1);
 
-            // 三次贝塞尔曲线公式
+            //三次贝塞尔曲线公式
             float x = (float)(
                 Math.Pow(1 - progress, 3) * Start.X +
                 3 * Math.Pow(1 - progress, 2) * progress * ControlPoint1.X +
@@ -261,20 +261,20 @@ namespace ArknightsMod.Content.Projectiles.Saki
         }
         public static Vector2 GetQuadraticPoint(float x, float maxValue, Vector2 startPoint, Vector2 endPoint, float StandardY)
         {
-            // Step 1: 确定顶点 (h, k)
-            float h = (endPoint.X + startPoint.X) * 0.5f; // 顶点的 X 坐标
-            float k = StandardY + maxValue;        // 顶点的 Y 坐标
+            //确定顶点 (h, k)
+            float h = (endPoint.X + startPoint.X) * 0.5f; //顶点的 X 坐标
+            float k = StandardY + maxValue;        //顶点的 Y 坐标
 
-            // Step 2: 计算系数 a
-            float x1 = startPoint.X; // 起点的 X 坐标
-            float y1 = StandardY; // 起点的 Y 坐标
+            //计算系数a
+            float x1 = startPoint.X; //起点的X坐标
+            float y1 = StandardY; //起点的Y坐标
             float a = (y1 - k) / ((x1 - h) * (x1 - h));
 
-            // Step 3: 根据输入的 x 计算对应的 Y 值
-            float interpolatedX = MathHelper.Lerp(startPoint.X, endPoint.X, x); // 线性插值 X 坐标
-            float interpolatedY = a * (interpolatedX - h) * (interpolatedX - h) + k; // 抛物线计算 Y 坐标
+            //根据输入的x计算对应的Y值
+            float interpolatedX = MathHelper.Lerp(startPoint.X, endPoint.X, x); //线性插值X坐标
+            float interpolatedY = a * (interpolatedX - h) * (interpolatedX - h) + k; //抛物线计算Y坐标
 
-            // Step 4: 返回计算出的点
+            //返回计算出的点
             return new Vector2(interpolatedX, interpolatedY);
         }
     }

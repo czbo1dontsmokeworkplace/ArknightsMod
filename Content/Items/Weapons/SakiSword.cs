@@ -23,7 +23,7 @@ namespace ArknightsMod.Content.Items.Weapons
             Item.useAnimation = 18;
             Item.useStyle = 5;
             Item.knockBack = 5f;
-            Item.shootSpeed = 5f;
+            Item.shootSpeed = 6f;
             Item.shoot = ProjectileType<SakiSwordWhite>();
             Item.noUseGraphic = true;
             Item.noMelee = true;
@@ -61,13 +61,13 @@ namespace ArknightsMod.Content.Items.Weapons
 					timer = 0;
 					Vector2 velocity = Main.MouseWorld - Player.Center;
 					velocity.Normalize();
-					velocity *= 3;
+					velocity *= 4;
 					Projectile.NewProjectile(null, Player.Center, velocity,
 						ProjectileType<SakiNoteIdle>(), Item.damage, Item.knockBack, Player.whoAmI);
 				}
 			}
 			if (skills == 3) {
-				Player.GetAttackSpeed(DamageClass.Melee) += 0.25f;
+				Player.GetAttackSpeed(DamageClass.Melee) += 0.40f;
 			}
 		}
 
@@ -112,10 +112,12 @@ namespace ArknightsMod.Content.Items.Weapons
 					ProjectileType<SakiSwordWhite>(), damage, knockback, player.whoAmI, swordDir == 1 ? 1 : -1);
 				}
 				else if (skills == 2) {
-					Projectile.NewProjectile(source, position, velocity,
+					damage = (int)(damage * 1.1f);
+					int p = Projectile.NewProjectile(source, position, velocity * 1.3f,
 							ProjectileType<SakiNote2Dark>(), damage, knockback, player.whoAmI);
 					Projectile.NewProjectile(source, position, velocity,
 					ProjectileType<SakiSwordBlack>(), damage, knockback, player.whoAmI, swordDir == 1 ? 1 : -1);
+					(Main.projectile[p].ModProjectile as SakiNote2Dark).maxSpeed = 8.2f;
 				}
 				else if (skills == 3) {
 					Projectile.NewProjectile(source, position, velocity * 0.6f,
@@ -126,14 +128,24 @@ namespace ArknightsMod.Content.Items.Weapons
 					sword.outroSpeed = 45;
 				}
 				else if(skills == 4) {
-					Projectile.NewProjectile(source, position, velocity * 0.6f,
+					damage = (int)(damage * 2.2f);
+					int p1 = Projectile.NewProjectile(source, position, velocity * 0.6f,
 							ProjectileType<SakiNote2Bright>(), damage, knockback, player.whoAmI);
-					Projectile.NewProjectile(source, position, velocity * 0.6f,
+					(Main.projectile[p1].ModProjectile as SakiNote2Bright).collideMax = 1;
+
+					int p2 = Projectile.NewProjectile(source, position, velocity * 0.6f,
 							ProjectileType<SakiNote2Bright>(), damage, knockback, player.whoAmI);
-					Projectile.NewProjectile(source, position, velocity * 0.6f,
+					(Main.projectile[p2].ModProjectile as SakiNote2Bright).collideMax = 1;
+
+					int p3 = Projectile.NewProjectile(source, position, velocity * 0.6f,
 							ProjectileType<SakiNote2Dark>(), damage, knockback, player.whoAmI);
-					Projectile.NewProjectile(source, position, velocity * 0.6f,
+					(Main.projectile[p3].ModProjectile as SakiNote2Dark).collideMax = 1;
+
+					int p4 = Projectile.NewProjectile(source, position, velocity * 0.6f,
 							ProjectileType<SakiNote2Dark>(), damage, knockback, player.whoAmI);
+					(Main.projectile[p4].ModProjectile as SakiNote2Dark).collideMax = 1;
+
+
 					Projectile.NewProjectile(source, position, velocity,
 					ProjectileType<SakiSwordWhite>(), damage, knockback, player.whoAmI, swordDir == 1 ? 1 : -1);
 					Projectile.NewProjectile(source, position, velocity,

@@ -649,6 +649,36 @@ Mods: {
 				// DisplayName: Vanilla Sauce Soda
 				// Tooltip: ""
 			}
+
+			WisdelCannon: {
+				// DisplayName: Wisdel Cannon
+				// Tooltip: ""
+			}
+
+			WisdelBody: {
+				// DisplayName: Wisdel Body
+				// Tooltip: ""
+			}
+
+			WisdelHead: {
+				// DisplayName: Wisdel Head
+				// Tooltip: ""
+			}
+
+			WisdelLegs: {
+				// DisplayName: Wisdel Legs
+				// Tooltip: ""
+			}
+
+			OblivionisDefault: {
+				// DisplayName: Oblivionis Default
+				// Tooltip: ""
+			}
+
+			WisdelDefault: {
+				// DisplayName: Wisdel Default
+				// Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -836,6 +866,11 @@ Mods: {
 			// SakiNoteIdle.DisplayName: Saki Note Idle
 			// SakiSwordBlack.DisplayName: Saki Sword Black
 			// SakiSlashHit2.DisplayName: Saki Slash Hit2
+			// Wisdel_Probe.DisplayName: Wisdel_ Probe
+			// WisdelProbe1.DisplayName: Wisdel Probe1
+			// WisdelProbe2.DisplayName: Wisdel Probe2
+			// WisdelProbe3.DisplayName: Wisdel Probe3
+			// WisdelProbe4.DisplayName: Wisdel Probe4
 		}
 
 		ButtonName.button2: 剿灭作战

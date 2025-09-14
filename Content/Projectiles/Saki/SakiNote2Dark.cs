@@ -13,6 +13,7 @@ using static System.Net.Mime.MediaTypeNames;
 using Microsoft.Xna.Framework.Graphics.PackedVector;
 using ArknightsMod.Common.VisualEffects;
 using Humanizer;
+using ArknightsMod.Common;
 
 namespace ArknightsMod.Content.Projectiles.Saki
 {
@@ -86,6 +87,8 @@ namespace ArknightsMod.Content.Projectiles.Saki
 
 		public float[] oldrot = new float[40];
 		public Vector2[] oldpos = new Vector2[40];
+
+		public float maxSpeed = 4f;
 		public override void AI() {
 			for (int i = oldrot.Length - 1; i > 0; i--) {
 				oldrot[i] = oldrot[i - 1];
@@ -126,7 +129,7 @@ namespace ArknightsMod.Content.Projectiles.Saki
 				}
 			}
 			if (flag) {
-				float speed = 7;
+				float speed = maxSpeed;
 				Vector2 vector = new Vector2(Projectile.position.X + Projectile.width * 0.5f, Projectile.position.Y + Projectile.height * 0.5f);
 				float velX = centerX - vector.X;
 				float velY = centerY - vector.Y;
@@ -181,7 +184,7 @@ namespace ArknightsMod.Content.Projectiles.Saki
 				0f, glow.Size() / 2, Projectile.scale * 0.15f, SpriteEffects.None, 0f);
 
 			Main.spriteBatch.End();
-			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, Main.DefaultSamplerState, DepthStencilState.Default,
+			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default,
 				Main.Rasterizer, null, Main.GameViewMatrix.ZoomMatrix);
 
 			for (int i = 0; i < 2; i++)
@@ -189,8 +192,13 @@ namespace ArknightsMod.Content.Projectiles.Saki
 				DrawStar(Projectile.Center, Main.rand.NextFloat(7, 10));
 			}
 
-			DrawTrail((int)(4 * Projectile.scale), "oblvns_trail2", "oblvns_trail2");
+			DrawTrail((int)(12 * Projectile.scale), "oblvns_trail4", "oblvns_trail4");
 			DrawTrail((int)(12 * Projectile.scale), "oblvns_trail", "oblvns_trail");
+			DrawTrail((int)(8 * Projectile.scale), "oblvns_trail3", "oblvns_trail3");
+
+			Main.spriteBatch.End();
+			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default,
+				Main.Rasterizer, null, Main.GameViewMatrix.ZoomMatrix);
 
 			return false;
         }
@@ -294,7 +302,6 @@ namespace ArknightsMod.Content.Projectiles.Saki
 				Main.graphics.GraphicsDevice.Textures[0] = ModContent.Request<Texture2D>($"ArknightsMod/Content/Projectiles/Saki/Assets/{tex1}").Value;
 				Main.graphics.GraphicsDevice.Textures[1] = ModContent.Request<Texture2D>($"ArknightsMod/Content/Projectiles/Saki/Assets/{tex2}").Value;
 				shader.CurrentTechnique.Passes[0].Apply();
-				Main.graphics.GraphicsDevice.BlendState = BlendState.Additive;
 				Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, triangleList.ToArray(), 0, triangleList.Count / 3);
 			}
 		}

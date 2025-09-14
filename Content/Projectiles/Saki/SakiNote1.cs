@@ -13,6 +13,7 @@ using static System.Net.Mime.MediaTypeNames;
 using Microsoft.Xna.Framework.Graphics.PackedVector;
 using ArknightsMod.Common.VisualEffects;
 using Humanizer;
+using ArknightsMod.Common;
 
 namespace ArknightsMod.Content.Projectiles.Saki
 {
@@ -122,7 +123,7 @@ namespace ArknightsMod.Content.Projectiles.Saki
 			}
 			if (flag)
 			{
-				float speed = 7;
+				float speed = 9;
 				Vector2 vector = new Vector2(Projectile.position.X + Projectile.width * 0.5f, Projectile.position.Y + Projectile.height * 0.5f);
 				float velX = centerX - vector.X;
 				float velY = centerY - vector.Y;
@@ -159,9 +160,14 @@ namespace ArknightsMod.Content.Projectiles.Saki
 			{
 				DrawStar(Projectile.Center, Main.rand.NextFloat(10, 12) * Projectile.scale);
 			}
+			float scale = Math.Min(Projectile.scale, 1f);
+			DrawTrail((int)(12 * scale), "oblvns_trail2", "oblvns_trail2");
+			DrawTrail((int)(12 * scale), "oblvns_trail", "oblvns_trail");
+			DrawTrail((int)(8 * scale), "oblvns_trail3", "oblvns_trail3");
 
-			DrawTrail((int)(4 * Projectile.scale), "oblvns_trail2", "oblvns_trail2");
-			DrawTrail((int)(12 * Projectile.scale), "oblvns_trail", "oblvns_trail");
+			Main.spriteBatch.End();
+			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default,
+				Main.Rasterizer, null, Main.GameViewMatrix.ZoomMatrix);
 
 			return false;
         }

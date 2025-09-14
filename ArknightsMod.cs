@@ -16,7 +16,17 @@ namespace ArknightsMod
 	{
 		public static int OrundumCurrencyId;
 		internal Closure.AOSystem CurrentAO;
-		public const string noTexture = "ArknightsMod/Assets/null";//空材质
+		/// <summary>
+		/// 空材质
+		/// </summary>
+		/// 
+		public const string noTexture = "ArknightsMod/Assets/null";
+
+		/// <summary>
+		/// 音效目录
+		/// </summary>
+		public const string SoundPath = "ArknightsMod/Assets/Sound/";
+
 		public static Effect IACTSW;//冲击波涟漪效果shader（如IACT）
 		public static Effect AACTTP;//缩小效果shader（AACT传送）
 		public static Effect AACTOC;//变色效果shader（AACT）
