@@ -32,7 +32,10 @@ namespace ArknightsMod.Common
 {
     public static class EaseFunction
     {
-        public static float EaseOutQuint(float x, float xMin, float xMax, float yMin, float yMax)
+		public static float Ease(int value, int inMin, int inMax, float outMin, float outMax) {
+			return (float)(value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
+		}
+		public static float EaseOutQuint(float x, float xMin, float xMax, float yMin, float yMax)
         {
             float normalizedX = (x - xMin) / (xMax - xMin);
             float easedValue = 1 - (float)Math.Pow(1 - normalizedX, 5);

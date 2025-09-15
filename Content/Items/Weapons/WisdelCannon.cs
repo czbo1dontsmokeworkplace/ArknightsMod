@@ -38,7 +38,7 @@ namespace ArknightsMod.Content.Items.Weapons
         {
             if (player.ownedProjectileCounts[ModContent.ProjectileType<Wisdel_Probe>()] <= 0)
             {
-				for (int i = 0; i < 4; i++) {
+				for (int i = 3; i >= 0; i--) {
 					Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center,
 						Vector2.Zero, ModContent.ProjectileType<Wisdel_Probe>(),
 						player.GetWeaponDamage(Item), player.GetWeaponKnockback(Item), player.whoAmI,

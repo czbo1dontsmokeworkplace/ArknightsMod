@@ -871,6 +871,8 @@ Mods: {
 			// WisdelProbe2.DisplayName: Wisdel Probe2
 			// WisdelProbe3.DisplayName: Wisdel Probe3
 			// WisdelProbe4.DisplayName: Wisdel Probe4
+			// WisdelShotNormal.DisplayName: Wisdel Shot Normal
+			// WisdelHitNormal.DisplayName: Wisdel Hit Normal
 		}
 
 		ButtonName.button2: 剿灭作战
