@@ -1,4 +1,5 @@
 ﻿using ArknightsMod.Common;
+using ArknightsMod.Common.Particle;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -10,6 +11,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.Graphics.Renderers;
 using Terraria.ID;
 using Terraria.ModLoader;
 using WisdelItem = ArknightsMod.Content.Items.Weapons.WisdelCannon;
@@ -76,10 +78,14 @@ namespace ArknightsMod.Content.Projectiles.Wisdel
 		/// </summary>
 		public float Rotation;
 
+		public float RotationCombined;
+
 		/// <summary>
 		/// 位置
 		/// </summary>
 		public Vector2 Position;
+
+
 
 		/// <summary>
 		/// 组合后相对位置
@@ -115,7 +121,6 @@ namespace ArknightsMod.Content.Projectiles.Wisdel
 				overPlayers.Add(index);
 			}
 		}
-
 		public override void AI()
         {
             Player player = Main.player[Projectile.owner];
@@ -156,12 +161,16 @@ namespace ArknightsMod.Content.Projectiles.Wisdel
 				player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full,
 					Projectile.rotation - MathHelper.PiOver2);
 
+				
+				float offset = EaseFunction.QuadraticEase(player.wisdel().combineAnimationTimer, 0, 30, -0.4f, 0f, false, 0.9f);
+				float totalRot = mouseDir.ToRotation() + offset*player.direction;
+
 				Position = player.RotatedRelativePoint(player.MountedCenter
-					+ (pos - new Vector2(-40, 2 * mouseDir2D)).RotatedBy(mouseDir.ToRotation()));
+					+ (pos - new Vector2(-40, 2 * mouseDir2D)).RotatedBy(totalRot));
 
-				Rotation = mouseDir.ToRotation();
-
+				Rotation = totalRot;
 				Projectile.direction = 1;
+				player.wisdel().currentUse = 0;
 			}
 
 			// 需要弹幕所有者操作的部分，确保只有弹幕所有者处理鼠标输入
@@ -244,6 +253,7 @@ namespace ArknightsMod.Content.Projectiles.Wisdel
 
 			// 待机状态
 			else {
+				player.wisdel().channelTimer = 0;
 				// 重置状态
 				ResetToDefaultState(player);
 			}
@@ -270,7 +280,10 @@ namespace ArknightsMod.Content.Projectiles.Wisdel
 				ModeSwitch(player);
 			}
 			// 待机状态
-			else {
+			else
+			{
+				UpdateCannonShoot(player);
+				player.wisdel().channelTimer = 0;
 			}
 		}
 		public void ModeSwitch(Player player)
@@ -357,6 +370,11 @@ namespace ArknightsMod.Content.Projectiles.Wisdel
 			// 最大蓄力时间
 			int channelTimeMax = (int)(player.HeldItem.useAnimation * player.GetWeaponAttackSpeed(player.HeldItem) / 3);
 
+			if (player.wisdel().channelTimer == (int)(channelTimeMax * 0.5f)) {
+				if (Main.netMode != NetmodeID.Server) {
+					SoundEngine.PlaySound(ShootReload, Projectile.position);
+				}
+			}
 			// 当超过蓄力时间，并且冷却结束：发射
 			if (player.wisdel().channelTimer > channelTimeMax && player.wisdel().coolDown <= 0)
 			{
@@ -368,7 +386,7 @@ namespace ArknightsMod.Content.Projectiles.Wisdel
 					SoundEngine.PlaySound(Shoot, Projectile.position);
 				}
 
-				// 占位符弹幕
+				// 弹幕
 				int p = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, (Main.MouseWorld - Projectile.Center)
 						.SafeNormalize(default) * 16,
 					ModContent.ProjectileType<WisdelShotNormal>(), Projectile.damage, Projectile.knockBack,
@@ -389,11 +407,104 @@ namespace ArknightsMod.Content.Projectiles.Wisdel
 		/// 组合状态瞄准
 		/// </summary>
 		/// <param name="player"></param>
-		public void UpdateCannonAiming(Player player) {
+		public void UpdateCannonAiming(Player player)
+		{
+			if (player.wisdel().channelTimer == 1) {
+				if (Main.netMode != NetmodeID.Server) {
+					SoundEngine.PlaySound(Aim, Projectile.Center);
+				}
+			}
+			player.wisdel().channelTimer++;
+		}
+		public void UpdateCannonShoot(Player player)
+		{
+			// 最大蓄力时间
+			int channelTimeMax = 22;
+			
+			// 当超过蓄力时间，并且冷却结束：发射
+			if (player.wisdel().channelTimer > channelTimeMax && player.wisdel().coolDown <= 0) {
+				Projectile.netUpdate = true;
+				player.wisdel().combineAnimationTimer = 30;
+				if (Main.netMode != NetmodeID.Server) {
+					SoundEngine.PlaySound(Shoot.WithPitchOffset(-0.1f), Projectile.position);
+				}
+				player.velocity.X -= player.direction * 3;
+				// 弹幕
+				int p = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, (Main.MouseWorld - Projectile.Center)
+						.SafeNormalize(default) * 16,
+					ModContent.ProjectileType<WisdelShotLarge>(), (int)(Projectile.damage * 2.2f), Projectile.knockBack,
+					Projectile.owner);
 
-			// 瞄准时使玩家转向
-			int mouseDir2D = Main.MouseWorld.X - player.Center.X > 0 ? 1 : -1;
-			player.ChangeDir(mouseDir2D);
+				Vector2 velocity = Main.MouseWorld - Projectile.Center;
+				velocity.Normalize();
+				Vector2 c = new Vector2(60 * Projectile.direction, 0).RotatedBy(Projectile.rotation);
+				Projectile circle = Projectile.NewProjectileDirect(null, Projectile.Center + c, velocity,
+										 ModContent.ProjectileType<WisdelShotBigCircle>(), 0,
+										 Projectile.knockBack, Projectile.owner,
+										 30, 10);
+
+				UpdateCannonParticle(velocity);
+
+				// 统一冷却
+				player.wisdel().coolDown = 90;
+			}
+		}
+
+		public void UpdateCannonParticle(Vector2 velocity) {
+			for (int i = 0; i < 20; i++) {
+				Vector2 pos = new Vector2(50 * Projectile.direction, 0).RotatedBy(Projectile.rotation);
+				Vector2 vec = velocity;
+				if (float.IsNaN(vec.X) || float.IsNaN(vec.Y)) {
+					vec = -Vector2.UnitY;
+				}
+				float speedX = vec.X * 6 + Main.rand.NextFloat(-4f, 4.1f);
+				float speedY = vec.Y * 6 + Main.rand.NextFloat(-4f, 4.1f);
+
+				DefaultParticle particle = new DefaultParticle(Projectile.Center + pos,
+				new Vector2(speedX, speedY), 120, Main.rand.NextFloat(0.2f, 0.5f) * 4f, new Color(249, 90, 100), true);
+				particle.Deformation = new Vector2(0.25f, 1f);
+				if (Main.rand.NextBool(2)) {
+					particle.Scale = Main.rand.NextFloat(0.2f, 0.5f) * Main.rand.NextFloat(0.5f, 2f);
+					if (particle.Scale < 1f) {
+						particle.Velocity *= 2f;
+						//particle.fadeIn = true;
+						if (Main.rand.NextBool(5)) {
+							float size = Math.Min(particle.Deformation.X, particle.Deformation.Y);
+							particle.Deformation = new Vector2(size, size * 3);
+						}
+						else if (Main.rand.NextBool(5))
+							particle.Deformation.Y /= 2;
+					}
+				}
+				particle.Spawn();
+			}
+			for (int i = 0; i < 5; i++) {
+				Vector2 pos = new Vector2(50 * Projectile.direction, 0).RotatedBy(Projectile.rotation);
+				Vector2 vec = velocity;
+				if (float.IsNaN(vec.X) || float.IsNaN(vec.Y)) {
+					vec = -Vector2.UnitY;
+				}
+				float speedX = vec.X * 6 + Main.rand.NextFloat(-4f, 4.1f);
+				float speedY = vec.Y * 6 + Main.rand.NextFloat(-4f, 4.1f);
+
+				DefaultParticleNonPre particle = new DefaultParticleNonPre(Projectile.Center + pos,
+				new Vector2(speedX, speedY), 120, Main.rand.NextFloat(0.2f, 0.5f) * 4f, Color.Black, true);
+				particle.Deformation = new Vector2(0.25f, 1f);
+				if (Main.rand.NextBool(2)) {
+					particle.Scale = Main.rand.NextFloat(0.2f, 0.5f) * Main.rand.NextFloat(0.5f, 2f);
+					if (particle.Scale < 1f) {
+						particle.Velocity *= 2f;
+						//particle.fadeIn = true;
+						if (Main.rand.NextBool(5)) {
+							float size = Math.Min(particle.Deformation.X, particle.Deformation.Y);
+							particle.Deformation = new Vector2(size, size * 3);
+						}
+						else if (Main.rand.NextBool(5))
+							particle.Deformation.Y /= 2;
+					}
+				}
+				particle.Spawn();
+			}
 		}
 
 		/// <summary>

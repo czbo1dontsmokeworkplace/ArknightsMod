@@ -873,6 +873,9 @@ Mods: {
 			WisdelProbe4.DisplayName: Wisdel Probe4
 			WisdelShotNormal.DisplayName: Wisdel Shot Normal
 			WisdelHitNormal.DisplayName: Wisdel Hit Normal
+			WisdelShotLarge.DisplayName: Wisdel Shot Large
+			WisdelShotBigCircle.DisplayName: Wisdel Shot Big Circle
+			WisdelExplode.DisplayName: Wisdel Explode
 		}
 
 		ButtonName.button2: Annihilation operation

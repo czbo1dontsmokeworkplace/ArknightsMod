@@ -15,10 +15,11 @@ using Terraria.Graphics;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.WorldBuilding;
 
 namespace ArknightsMod.Content.Projectiles.Wisdel
 {
-	public class WisdelShotNormal : ModProjectile
+	public class WisdelShotLarge : ModProjectile
 	{
 		public override void SetStaticDefaults()
 		{
@@ -27,11 +28,11 @@ namespace ArknightsMod.Content.Projectiles.Wisdel
         }
 		public override void SetDefaults()
 		{
-            Projectile.width = 18;
-			Projectile.height = 18;
+            Projectile.width = 30;
+			Projectile.height = 30;
 			Projectile.aiStyle = -1;
 			Projectile.penetrate = -1;
-			Projectile.scale = 1f;
+			Projectile.scale = 1.2f;
 			Projectile.timeLeft = 180;
 			Projectile.tileCollide = false;
 			Projectile.friendly = true;
@@ -49,7 +50,7 @@ namespace ArknightsMod.Content.Projectiles.Wisdel
             
 			if (hasHit) {
 				Projectile.velocity *= 0.5f;
-				Projectile.alpha += 10;
+				Projectile.alpha += 8;
 				if (Projectile.alpha > 255) {
 					Projectile.Kill();
 				}
@@ -57,45 +58,17 @@ namespace ArknightsMod.Content.Projectiles.Wisdel
 		}
         public override void OnKill(int timeLeft)
         {
-			if (!hasHit)
-			{
-				SoundEngine.PlaySound(Wisdel_Probe.ShootBlast.WithVolumeScale(1.5f), Projectile.position);
-				Projectile.NewProjectile
+			Player player = Main.player[Projectile.owner];
+			SoundEngine.PlaySound(Wisdel_Probe.Explode.WithVolumeScale(1.5f), Projectile.position);
+			Projectile.NewProjectile
 				(new EntitySource_Parent(Projectile), Projectile.Center, Vector2.Zero,
 				ModContent.ProjectileType<WisdelHitNormal>(), 0, 0, Projectile.owner);
 
-				for (int i = 0; i < 6; i++) {
-					Vector2 newVelocity = Projectile.velocity.RotatedByRandom(MathHelper.ToRadians(30));
-					newVelocity *= Main.rand.NextFloat(0.1f, 0.35f) * 3f;
-					Vector2 offset = new Vector2(Main.rand.Next(-Projectile.width, Projectile.width),
-						Main.rand.Next(-Projectile.height, Projectile.height)) / 8f;
-					DefaultParticleNonPre p = new DefaultParticleNonPre(Projectile.Center + offset,
-					newVelocity, 90, Main.rand.NextFloat(0.35f, 0.5f) * 4f, Color.Black, true); ;
-					p.Deformation = new Vector2(0.1f, 0.6f) * Main.rand.NextFloat(1, 2);
-					p.Spawn();
-				}
-				for (int i = 0; i < 6; i++) {
-					Vector2 newVelocity = Projectile.velocity.RotatedByRandom(MathHelper.ToRadians(30));
-					newVelocity *= Main.rand.NextFloat(0.1f, 0.35f) * 3f;
-					Vector2 offset = new Vector2(Main.rand.Next(-Projectile.width, Projectile.width),
-						Main.rand.Next(-Projectile.height, Projectile.height)) / 8f;
-					DefaultParticle p = new DefaultParticle(Projectile.Center + offset,
-					newVelocity, 90, Main.rand.NextFloat(0.35f, 0.5f) * 4f, new Color(249, 90, 100), true);
-					p.Deformation = new Vector2(0.1f, 0.6f) * Main.rand.NextFloat(1, 2);
-					p.Spawn();
-				}
-				for (int i = 0; i < Main.rand.Next(6, 12); i++) {
-					Vector2 newVelocity = Vector2.One.RotatedByRandom(MathHelper.ToRadians(360));
-					newVelocity *= Main.rand.NextFloat(0.1f, 0.35f) * 10;
-					Vector2 offset = new Vector2(Main.rand.Next(-Projectile.width, Projectile.width),
-						Main.rand.Next(-Projectile.height, Projectile.height)) / 8f;
+			Projectile.NewProjectile
+			(new EntitySource_Parent(Projectile), Projectile.Center, Vector2.Zero,
+			ModContent.ProjectileType<WisdelExplode>(), 0, 0, Projectile.owner);
 
-					DefaultParticle p = new DefaultParticle(Projectile.Center + offset,
-					newVelocity, 90, Main.rand.NextFloat(0.2f, 0.5f) * 3.5f, new Color(249, 90, 100), true);
-					p.Deformation = new Vector2(0.35f, 0.4f) * Main.rand.NextFloat(1, 2);
-					p.Spawn();
-				}
-			}
+			Explode(player);
 		}
 		public override bool? CanDamage()
 		{
@@ -106,51 +79,69 @@ namespace ArknightsMod.Content.Projectiles.Wisdel
 		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Player player = Main.player[Projectile.owner];
-			if (!hasHit)
+			HitEffect(target.Center);
+			Explode(player, target);
+			hasHit = true;
+        }
+		public void Explode(Player player, NPC ignoreNPC = null)
+		{
+			foreach (NPC npc in Main.npc)
 			{
-				SoundEngine.PlaySound(Wisdel_Probe.ShootBlast.WithVolumeScale(1.5f), Projectile.position);
+				if (npc != ignoreNPC && npc.active && Vector2.Distance(npc.Center, Projectile.Center) < 16 * 25)
+				{
+					NPC.HitInfo info = new();
+					bool crit = Main.rand.Next(100) < Projectile.CritChance;
+					info.Damage = (int)(Projectile.damage * (crit ? 2f : 1f) * Main.rand.NextFloat(0.95f, 1.051f));
+					info.Knockback = (npc.type == NPCID.TargetDummy ? 0 : Projectile.knockBack);
+					info.HitDirection = (npc.position.X - player.position.X > 0 ? 1 : -1);
+					info.Crit = crit;
+					info.DamageType = Projectile.DamageType;
+					npc.StrikeNPC(info);
+					HitEffect(npc.Center);
+				}
+			}
+		}
+		public void HitEffect(Vector2 center) {
 
-				Projectile.NewProjectile
-				(new EntitySource_Parent(Projectile), target.Center, Vector2.Zero,
+			Projectile.NewProjectile
+				(new EntitySource_Parent(Projectile), center, Vector2.Zero,
 				ModContent.ProjectileType<WisdelHitNormal>(), 0, 0, Projectile.owner);
 
-				for (int i = 0; i < 6; i++) {
-					Vector2 newVelocity = Projectile.velocity.RotatedByRandom(MathHelper.ToRadians(30));
-					newVelocity *= Main.rand.NextFloat(0.1f, 0.35f) * 1.5f;
-					DefaultParticleNonPre p = new DefaultParticleNonPre(target.Center + new Vector2(Main.rand.Next(-Projectile.width, Projectile.width), Main.rand.Next(-Projectile.height, Projectile.height)) / 2f,
-					newVelocity, 90, Main.rand.NextFloat(0.35f, 0.5f) * 4f, Color.Black, true);
-					p.Deformation = new Vector2(0.1f, 0.6f) * Main.rand.NextFloat(1, 2);
-					p.Spawn();
-				}
-				for (int i = 0; i < 6; i++) {
-					Vector2 newVelocity = Projectile.velocity.RotatedByRandom(MathHelper.ToRadians(30));
-					newVelocity *= Main.rand.NextFloat(0.1f, 0.35f) * 1.5f;
-					DefaultParticle p = new DefaultParticle(target.Center + new Vector2(Main.rand.Next(-Projectile.width, Projectile.width), Main.rand.Next(-Projectile.height, Projectile.height)) / 2f,
-					newVelocity, 90, Main.rand.NextFloat(0.35f, 0.5f) * 4f, new Color(249, 90, 100), true);
-					p.Deformation = new Vector2(0.1f, 0.6f) * Main.rand.NextFloat(1, 2);
-					p.Spawn();
-				}
-				hasHit = true;
+
+			for (int i = 0; i < 12; i++) {
+				Vector2 newVelocity = Projectile.velocity.RotatedByRandom(MathHelper.ToRadians(360));
+				newVelocity *= Main.rand.NextFloat(0.1f, 0.35f) * 1.5f;
+				DefaultParticleNonPre p = new DefaultParticleNonPre(center,
+				newVelocity, 90, Main.rand.NextFloat(0.35f, 0.5f) * 4f, Color.Black, true);
+				p.Deformation = new Vector2(0.1f, 0.6f) * Main.rand.NextFloat(1, 2);
+				p.Spawn();
 			}
-			
-            for (int i = 0; i < Main.rand.Next(6, 12); i++)
-            {
-                Vector2 newVelocity = Vector2.One.RotatedByRandom(MathHelper.ToRadians(360));
-                newVelocity *= Main.rand.NextFloat(0.1f, 0.35f) * 10;
+			for (int i = 0; i < 12; i++) {
+				Vector2 newVelocity = Projectile.velocity.RotatedByRandom(MathHelper.ToRadians(360));
+				newVelocity *= Main.rand.NextFloat(0.1f, 0.35f) * 1.5f;
+				DefaultParticle p = new DefaultParticle(center,
+				newVelocity, 90, Main.rand.NextFloat(0.35f, 0.5f) * 4f, new Color(249, 90, 100), true);
+				p.Deformation = new Vector2(0.1f, 0.6f) * Main.rand.NextFloat(1, 2);
+				p.Spawn();
+			}
+
+			for (int i = 0; i < Main.rand.Next(6, 12); i++) {
+				Vector2 newVelocity = Vector2.One.RotatedByRandom(MathHelper.ToRadians(360));
+				newVelocity *= Main.rand.NextFloat(0.1f, 0.35f) * 10;
 				if (!Main.rand.NextBool(4)) {
-					DefaultParticle p = new DefaultParticle(target.Center + new Vector2(Main.rand.Next(-Projectile.width, Projectile.width), Main.rand.Next(-Projectile.height, Projectile.height)) / 2f,
+					DefaultParticle p = new DefaultParticle(center + new Vector2(Main.rand.Next(-Projectile.width, Projectile.width), Main.rand.Next(-Projectile.height, Projectile.height)) / 2f,
 					newVelocity, 90, Main.rand.NextFloat(0.2f, 0.5f) * 3.5f, new Color(249, 90, 100), true);
 					p.Deformation = new Vector2(0.35f, 0.4f) * Main.rand.NextFloat(1, 2);
 					p.Spawn();
 				}
 				else {
-					DefaultParticleNonPre p = new DefaultParticleNonPre(target.Center + new Vector2(Main.rand.Next(-Projectile.width, Projectile.width), Main.rand.Next(-Projectile.height, Projectile.height)) / 2f,
+					DefaultParticleNonPre p = new DefaultParticleNonPre(center + new Vector2(Main.rand.Next(-Projectile.width, Projectile.width), Main.rand.Next(-Projectile.height, Projectile.height)) / 2f,
 				newVelocity, 90, Main.rand.NextFloat(0.2f, 0.5f) * 3.5f, Color.Black, true);
 					p.Deformation = new Vector2(0.35f, 0.4f) * Main.rand.NextFloat(1, 2);
 					p.Spawn();
 				}
-            }
-        }
+			}
+		}
 		public override bool PreDraw(ref Color lightColor) {
 			Player player = Main.player[Projectile.owner];
 			Color color = Color.HotPink;
@@ -158,7 +149,7 @@ namespace ArknightsMod.Content.Projectiles.Wisdel
 			if (!hasCollide) { 
 				Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null,
 				new Color(color.R, color.G, color.B, Projectile.alpha),
-				Projectile.rotation, tex.Size() / 2, Projectile.scale * new Vector2(0.2f, 0.4f), SpriteEffects.None, 0f);
+				Projectile.rotation, tex.Size() / 2, Projectile.scale * new Vector2(0.2f, 0.4f)*1.5f, SpriteEffects.None, 0f);
 			}
 			Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.AnisotropicClamp,
@@ -182,7 +173,7 @@ namespace ArknightsMod.Content.Projectiles.Wisdel
 
             VertexStrip.StripHalfWidthFunction widthFunction = (prog) =>
             {
-				return 12f * MathHelper.Lerp(1f, 0.5f, prog / 1.5f);
+				return 28f * MathHelper.Lerp(1f, 0.5f, prog / 1.5f);
 			};
 
             VertexStrip strip = new VertexStrip();
@@ -199,7 +190,7 @@ namespace ArknightsMod.Content.Projectiles.Wisdel
 			strip.PrepareStrip(Projectile.oldPos, rotations.Prepend(rotations.FirstOrDefault()).ToArray(),
 				colorFunction, widthFunction, -Main.screenPosition
 				+ new Vector2(Projectile.width, Projectile.height) / 2
-				+ new Vector2(-1, 0).RotatedBy(Projectile.rotation));
+				+ new Vector2(-2, 0).RotatedBy(Projectile.rotation));
 			strip.DrawTrail();
 			Main.pixelShader.CurrentTechnique.Passes[0].Apply();
 
@@ -207,7 +198,7 @@ namespace ArknightsMod.Content.Projectiles.Wisdel
 				return;
 			Texture2D tex = TextureAssets.Projectile[Type].Value;
 			Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null,
-				Color.White * Projectile.Opacity, Projectile.rotation, tex.Size() / 2, Projectile.scale, SpriteEffects.None, 0f);
+				Color.White * Projectile.Opacity, Projectile.rotation, tex.Size() / 2, Projectile.scale*new Vector2(0.8f,1.5f), SpriteEffects.None, 0f);
 
 		}
 		private float transitToDark;

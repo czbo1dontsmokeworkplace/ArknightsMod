@@ -105,19 +105,52 @@ namespace ArknightsMod.Common
             float mappedOutput = outputMin + easeInOutBackValue * outputRange;
             return mappedOutput;
         }
+		/// <summary>
+		/// 弹性缓动
+		/// </summary>
+		/// <param name="x">自变量</param>
+		/// <param name="xMin">定义域最小值</param>
+		/// <param name="xMax">定义域最大值</param>
+		/// <param name="yMin">值域最小值</param>
+		/// <param name="yMax">值域最大值</param>
+		/// <param name="firstOvershoot">第一次波谷相对于最大值域的比例。值为正数时，第一次震荡会超过目标值（向上震荡）。值为负数时，第一次震荡会低于起始值（向下震荡）</param>
+		/// <returns></returns>
+		public static float EaseOutElastic(float x, float xMin, float xMax, float yMin, float yMax, float firstOvershoot = 0f)
+		{
+			float c4 = (2 * (float)Math.PI) / 3;
+			float t = (x - xMin) / (xMax - xMin);
 
-        /// <summary>
-        /// 二次缓动
-        /// </summary>
-        /// <param name="x">当前 x 值</param>
-        /// <param name="xMin">x 的最小值</param>
-        /// <param name="xMax">x 的最大值</param>
-        /// <param name="yMin">y 的最小值</param>
-        /// <param name="yMax">y 的最大值</param>
-        /// <param name="peakPercentage">峰值或谷值在 x 区间的位置百分比 (0-1)</param>
-        /// <param name="isConcave">是否是凹形状 (false 为凹形，true 为凸形)</param>
-        /// <returns>对应的 y 值</returns>
-        public static float QuadraticEase(float x, float xMin, float xMax, float yMin, float yMax, bool isConcave, float peakPercentage = 0.5f)
+			// 计算弹性部分
+			float elastic;
+			if (t == 0) {
+				elastic = 0;
+			}
+			else if (t == 1) {
+				elastic = 1;
+			}
+			else {
+				// 调整参数以控制第一次震荡的最低点
+				float amplitudeFactor = 1.0f + firstOvershoot;
+				float decayFactor = -10.0f / amplitudeFactor;
+
+				elastic = (float)(amplitudeFactor * Math.Pow(2, decayFactor * t) *
+								  Math.Sin((t * 10 - 0.75) * c4) + 1);
+			}
+
+			return yMin + elastic * (yMax - yMin);
+		}
+		/// <summary>
+		/// 二次缓动
+		/// </summary>
+		/// <param name="x">当前 x 值</param>
+		/// <param name="xMin">x 的最小值</param>
+		/// <param name="xMax">x 的最大值</param>
+		/// <param name="yMin">y 的最小值</param>
+		/// <param name="yMax">y 的最大值</param>
+		/// <param name="peakPercentage">峰值或谷值在 x 区间的位置百分比 (0-1)</param>
+		/// <param name="isConcave">是否是凹形状 (false 为凹形，true 为凸形)</param>
+		/// <returns>对应的 y 值</returns>
+		public static float QuadraticEase(float x, float xMin, float xMax, float yMin, float yMax, bool isConcave, float peakPercentage = 0.5f)
         {
             peakPercentage = Math.Clamp(peakPercentage, 0f, 1f);
 
