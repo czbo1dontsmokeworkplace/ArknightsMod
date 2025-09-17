@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using ArknightsMod.Content.Items.Armor.Vanity.Sniper;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.DataStructures;
@@ -7,43 +8,35 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Vanity.Guard
 {
-	// See also: ExampleCostume
 	[AutoloadEquip(EquipType.Head)]
-	public class MelanthaHead : ModItem
+	public class MelanthaHead : ArknightsVanityHead
 	{
 		public override void Load() {
-			// The code below runs only if we're not loading on a server
 			if (Main.netMode == NetmodeID.Server)
 				return;
-
-			// Add equip textures
 			EquipLoader.AddEquipTexture(Mod, $"{Texture}_{EquipType.Back}", EquipType.Back, this);
 		}
-		public override void SetStaticDefaults() {
-			// DisplayName.SetDefault("Arknights Doctor's Hood");
-			Item.ResearchUnlockCount = 1;
-			if (Main.netMode == NetmodeID.Server)
-				return;
-			ArmorIDs.Head.Sets.DrawHead[Item.headSlot] = false;
-		}
-
-		public override void SetDefaults() {
-			Item.width = 32;
-			Item.height = 52;
-			Item.rare = ItemRarityID.Orange; // Same rarity as Arknights
-			Item.vanity = true;
-		}
-
-		//public override void AddRecipes()
-		//{
-		//    Recipe recipe = CreateRecipe();
-		//    recipe.AddRecipeGroup(RecipeGroupID.Wood, 2);
-		//    recipe.AddTile(TileID.WorkBenches);
-		//    recipe.Register();
-		//}
+		public override int Rarity => ItemRarityID.Orange;
 	}
+
+	[AutoloadEquip(EquipType.Body)]
+	public class MelanthaBody : ArknightsVanityBody
+	{
+		public override int Rarity => ItemRarityID.Orange;
+	}
+
+	[AutoloadEquip(EquipType.Legs)]
+	public class MelanthaLegs : ArknightsVanityLegs
+	{
+		public override int Rarity => ItemRarityID.Orange;
+	}
+
 	public class MelanthaHeadLayer : PlayerDrawLayer
 	{
+		public override bool GetDefaultVisibility(PlayerDrawSet drawInfo) {
+			Item head = new(ModContent.ItemType<MelanthaHead>());
+			return drawInfo.drawPlayer.head == head.headSlot && !drawInfo.drawPlayer.dead;
+		}
 		protected override void Draw(ref PlayerDrawSet drawInfo) {
 			var drawPlayer = drawInfo.drawPlayer;
 			var texture = ModContent.Request<Texture2D>("ArknightsMod/Content/Items/Armor/Vanity/Guard/MelanthaHead_Back", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
@@ -52,13 +45,11 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Guard
 			drawPosition += new Vector2(0, drawPlayer.height - 48f);
 			drawPosition = new Vector2((int)drawPosition.X, (int)drawPosition.Y);
 
-			if (drawPlayer.armor[10].type == ModContent.ItemType<MelanthaHead>()) {
-				var data = new DrawData(texture, drawPosition, null,
+			var data = new DrawData(texture, drawPosition, null,
 					drawInfo.colorArmorBody, drawPlayer.fullRotation, drawInfo.bodyVect, 1f, drawInfo.playerEffect, 0) {
-					shader = dyeShader
-				};
-				drawInfo.DrawDataCache.Add(data);
-			}
+				shader = dyeShader
+			};
+			drawInfo.DrawDataCache.Add(data);
 		}
 		public override Position GetDefaultPosition() => new BeforeParent(PlayerDrawLayers.BackAcc);
 	}

@@ -679,6 +679,36 @@ Mods: {
 				DisplayName: Wisdel Default
 				Tooltip: ""
 			}
+
+			RaidianBody: {
+				DisplayName: Raidian Body
+				Tooltip: ""
+			}
+
+			RaidianHead: {
+				DisplayName: Raidian Head
+				Tooltip: ""
+			}
+
+			RaidianLegs: {
+				DisplayName: Raidian Legs
+				Tooltip: ""
+			}
+
+			OblivionisBody: {
+				DisplayName: Oblivionis Body
+				Tooltip: ""
+			}
+
+			OblivionisHead: {
+				DisplayName: Oblivionis Head
+				Tooltip: ""
+			}
+
+			OblivionisLegs: {
+				DisplayName: Oblivionis Legs
+				Tooltip: ""
+			}
 		}
 
 		Buffs: {

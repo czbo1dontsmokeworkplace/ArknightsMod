@@ -1,34 +1,21 @@
-﻿using Terraria;
+﻿using ArknightsMod.Content.Items.Armor.Vanity.Sniper;
+using System.Collections.Generic;
+using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Consumables
 {
-	public class WisdelDefault : ModItem
+	public class WisdelDefault : ArknightsVanityBag
 	{
-		public override void SetStaticDefaults() {
-			Item.ResearchUnlockCount = 1;
-		}
-
-		public override void SetDefaults() {
-			Item.maxStack = 9999;
-			Item.consumable = true;
-			Item.width = 28;
-			Item.height = 50;
-			Item.rare = ItemRarityID.White;
-		}
-
-		public override bool CanRightClick() {
-			return true;
-		}
-
-		public override void ModifyItemLoot(ItemLoot itemLoot) {
-			IItemDropRule rule = ItemDropRule.Common(ModContent.ItemType<Armor.Vanity.Sniper.WisdelHead>(), 1);
-			rule.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Armor.Vanity.Sniper.WisdelBody>(), 1));
-			rule.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Armor.Vanity.Sniper.WisdelLegs>(), 1));
-
-			itemLoot.Add(rule);
+		protected override List<int> GetItems() {
+			return new List<int>
+			{
+			ModContent.ItemType<WisdelHead>(),
+			ModContent.ItemType<WisdelBody>(),
+			ModContent.ItemType<WisdelLegs>()
+		};
 		}
 	}
 }

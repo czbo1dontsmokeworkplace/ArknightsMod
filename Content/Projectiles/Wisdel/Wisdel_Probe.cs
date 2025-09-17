@@ -78,6 +78,9 @@ namespace ArknightsMod.Content.Projectiles.Wisdel
 		/// </summary>
 		public float Rotation;
 
+		/// <summary>
+		/// 组合后相对位置
+		/// </summary>
 		public float RotationCombined;
 
 		/// <summary>
@@ -85,11 +88,6 @@ namespace ArknightsMod.Content.Projectiles.Wisdel
 		/// </summary>
 		public Vector2 Position;
 
-
-
-		/// <summary>
-		/// 组合后相对位置
-		/// </summary>
 		public Vector2 GetAssembledPosition()
 		{
 			Vector2 pos = Style switch {
@@ -429,6 +427,7 @@ namespace ArknightsMod.Content.Projectiles.Wisdel
 					SoundEngine.PlaySound(Shoot.WithPitchOffset(-0.1f), Projectile.position);
 				}
 				player.velocity.X -= player.direction * 3;
+
 				// 弹幕
 				int p = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, (Main.MouseWorld - Projectile.Center)
 						.SafeNormalize(default) * 16,
@@ -450,7 +449,8 @@ namespace ArknightsMod.Content.Projectiles.Wisdel
 			}
 		}
 
-		public void UpdateCannonParticle(Vector2 velocity) {
+		public void UpdateCannonParticle(Vector2 velocity)
+		{
 			for (int i = 0; i < 20; i++) {
 				Vector2 pos = new Vector2(50 * Projectile.direction, 0).RotatedBy(Projectile.rotation);
 				Vector2 vec = velocity;
