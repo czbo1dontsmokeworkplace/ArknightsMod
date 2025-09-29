@@ -754,6 +754,26 @@ Mods: {
 				DisplayName: Bagpipe Default
 				Tooltip: ""
 			}
+
+			FiammettaBody: {
+				DisplayName: Fiammetta Body
+				Tooltip: ""
+			}
+
+			FiammettaHead: {
+				DisplayName: Fiammetta Head
+				Tooltip: ""
+			}
+
+			FiammettaLegs: {
+				DisplayName: Fiammetta Legs
+				Tooltip: ""
+			}
+
+			FiammettaDefault: {
+				DisplayName: Fiammetta Default
+				Tooltip: ""
+			}
 		}
 
 		Buffs: {
