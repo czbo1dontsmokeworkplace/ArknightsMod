@@ -46,7 +46,7 @@ public class WisdelWingLayer : PlayerDrawLayer
 		}
 		drawInfo.DrawDataCache.Add(
 			new DrawData(texture, new Vector2(drawX, drawY + offsetY + drawInfo.drawPlayer.gfxOffY),
-			null, Color.White, 0f, texture.Size() * 0.5f, 1f, drawInfo.drawPlayer.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0)
+			null, drawInfo.colorArmorBody, 0f, texture.Size() * 0.5f, 1f, drawInfo.drawPlayer.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0)
 			{
 				shader = dyeShader
 			});

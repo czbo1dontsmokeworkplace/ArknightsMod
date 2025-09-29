@@ -709,6 +709,51 @@ Mods: {
 				DisplayName: Oblivionis Legs
 				Tooltip: ""
 			}
+
+			MortisBody: {
+				DisplayName: Mortis Body
+				Tooltip: ""
+			}
+
+			MortisHead: {
+				DisplayName: Mortis Head
+				Tooltip: ""
+			}
+
+			MortisLegs: {
+				DisplayName: Mortis Legs
+				Tooltip: ""
+			}
+
+			RaidianDefault: {
+				DisplayName: Raidian Default
+				Tooltip: ""
+			}
+
+			MortisDefault: {
+				DisplayName: Mortis Default
+				Tooltip: ""
+			}
+
+			BagpipeBody: {
+				DisplayName: Bagpipe Body
+				Tooltip: ""
+			}
+
+			BagpipeHead: {
+				DisplayName: Bagpipe Head
+				Tooltip: ""
+			}
+
+			BagpipeLegs: {
+				DisplayName: Bagpipe Legs
+				Tooltip: ""
+			}
+
+			BagpipeDefault: {
+				DisplayName: Bagpipe Default
+				Tooltip: ""
+			}
 		}
 
 		Buffs: {
