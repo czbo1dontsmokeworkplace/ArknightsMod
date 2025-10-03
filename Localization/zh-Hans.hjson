@@ -774,6 +774,36 @@ Mods: {
 				// DisplayName: Fiammetta Default
 				// Tooltip: ""
 			}
+
+			ArtsBlade: {
+				// DisplayName: Arts Blade
+				// Tooltip: ""
+			}
+
+			Blueberry: {
+				// DisplayName: Blueberry
+				// Tooltip: ""
+			}
+
+			BlueberryDarkChocolate: {
+				// DisplayName: Blueberry Dark Chocolate
+				// Tooltip: ""
+			}
+
+			DarkChocolate: {
+				// DisplayName: Dark Chocolate
+				// Tooltip: ""
+			}
+
+			PozyBow: {
+				// DisplayName: Pozy Bow
+				// Tooltip: ""
+			}
+
+			SchwarzBow: {
+				// DisplayName: Schwarz Bow
+				// Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -971,6 +1001,11 @@ Mods: {
 			// WisdelShotLarge.DisplayName: Wisdel Shot Large
 			// WisdelShotBigCircle.DisplayName: Wisdel Shot Big Circle
 			// WisdelExplode.DisplayName: Wisdel Explode
+			// ArmorPiercingArrowhead.DisplayName: Armor Piercing Arrowhead
+			// BlueberryDarkChocolateProjectile.DisplayName: Blueberry Dark Chocolate Projectile
+			// BlueberryProjectile.DisplayName: Blueberry Projectile
+			// DarkChocolateProjectile.DisplayName: Dark Chocolate Projectile
+			// PenNib.DisplayName: Pen Nib
 		}
 
 		ButtonName.button2: 剿灭作战
