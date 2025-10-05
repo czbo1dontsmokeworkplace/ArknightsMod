@@ -42,7 +42,7 @@ namespace ArknightsMod.Content.Projectiles.Wisdel
 		public int timer;
 		public override void AI()
 		{
-			if (++timer > 30)
+			if (++timer > 10)
 			{
 				Projectile.tileCollide = true;
 			}
@@ -59,14 +59,13 @@ namespace ArknightsMod.Content.Projectiles.Wisdel
         public override void OnKill(int timeLeft)
         {
 			Player player = Main.player[Projectile.owner];
-			SoundEngine.PlaySound(Wisdel_Probe.Explode.WithVolumeScale(1.5f), Projectile.position);
 			Projectile.NewProjectile
 				(new EntitySource_Parent(Projectile), Projectile.Center, Vector2.Zero,
 				ModContent.ProjectileType<WisdelHitNormal>(), 0, 0, Projectile.owner);
 
 			Projectile.NewProjectile
 			(new EntitySource_Parent(Projectile), Projectile.Center, Vector2.Zero,
-			ModContent.ProjectileType<WisdelExplode>(), 0, 0, Projectile.owner);
+			ModContent.ProjectileType<WisdelExplode>(), 0, 0, Projectile.owner, hasHit ? 0 : 10);
 
 			Explode(player);
 		}
@@ -85,14 +84,17 @@ namespace ArknightsMod.Content.Projectiles.Wisdel
         }
 		public void Explode(Player player, NPC ignoreNPC = null)
 		{
+			HitEffect(Projectile.Center);
 			foreach (NPC npc in Main.npc)
 			{
-				if (npc != ignoreNPC && npc.active && Vector2.Distance(npc.Center, Projectile.Center) < 16 * 25)
+				bool immortal = npc.dontTakeDamage || npc.townNPC;
+				bool noKnockback = (npc.type == NPCID.TargetDummy || npc.knockBackResist == 0 || npc.immortal);
+				if (npc != ignoreNPC && npc.active && !immortal && Vector2.Distance(npc.Center, Projectile.Center) < 16 * 25)
 				{
 					NPC.HitInfo info = new();
 					bool crit = Main.rand.Next(100) < Projectile.CritChance;
 					info.Damage = (int)(Projectile.damage * (crit ? 2f : 1f) * Main.rand.NextFloat(0.95f, 1.051f));
-					info.Knockback = (npc.type == NPCID.TargetDummy ? 0 : Projectile.knockBack);
+					info.Knockback = noKnockback ? 0f : Projectile.knockBack;
 					info.HitDirection = (npc.position.X - player.position.X > 0 ? 1 : -1);
 					info.Crit = crit;
 					info.DamageType = Projectile.DamageType;

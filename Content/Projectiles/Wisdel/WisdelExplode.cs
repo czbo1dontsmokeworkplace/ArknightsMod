@@ -5,7 +5,9 @@ using ArknightsMod.Common.Particle;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles.Wisdel
@@ -30,6 +32,17 @@ namespace ArknightsMod.Content.Projectiles.Wisdel
 		public int timer;
 		public override void AI()
 		{
+			if (Projectile.ai[0] > 0) {
+				Projectile.ai[0]--;
+				Projectile.timeLeft = 120;
+				return;
+			}
+			if (Projectile.ai[1] == 0) {
+				if (Main.netMode != NetmodeID.Server) {
+					SoundEngine.PlaySound(Wisdel_Probe.Explode.WithVolumeScale(1.5f), Projectile.position);
+				}
+				Projectile.ai[1] = 1;
+			}
 			Player player = Main.player[Projectile.owner];
 			timer++;
 			if (timer == 5) {
@@ -101,6 +114,9 @@ namespace ArknightsMod.Content.Projectiles.Wisdel
 		}
 		public override bool PreDraw(ref Color lightColor)
 		{
+			if (Projectile.ai[0] > 0) {
+				return false;
+			}
 			Main.spriteBatch.End();
 			Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.Default,
 				Main.Rasterizer, null, Main.GameViewMatrix.ZoomMatrix);
@@ -131,8 +147,8 @@ namespace ArknightsMod.Content.Projectiles.Wisdel
 				Main.Rasterizer, null, Main.GameViewMatrix.ZoomMatrix);
 
 
-			float scale = Oscillate(timer, 0, 28, 0.75f, 1.2f, 0.6f, overshootTime: 0.1f, oscillationDecay: 6);
-			scale = Math.Clamp(scale, 0.5f, 1f);
+			float scale = Oscillate(timer, 0, 28, 0.75f, 1.2f, 0.6f, overshootTime: 0.1f, firstReturnTime:0.4f, oscillationDecay: 3);
+			scale = Math.Clamp(scale, 0.5f, 1.2f);
 			float opacity = EaseFunction.Ease(timer, 60, 120, 1f, 0f);
 			opacity = Math.Clamp(opacity, 0f, 1f);
 			Color color = Color.White;
