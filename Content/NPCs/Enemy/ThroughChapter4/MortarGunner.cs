@@ -12,7 +12,7 @@ using System;
 using Terraria.Audio;
 
 using Microsoft.Xna.Framework.Graphics;
-using ArknightsMod.Common.Damageclasses;
+using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
 
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 {

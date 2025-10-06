@@ -16,7 +16,7 @@ using System.Reflection.Metadata;
 using Humanizer;
 using Terraria.Audio;
 using ArknightsMod.Common.VisualEffects;
-using ArknightsMod.Common.Damageclasses;
+using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
 
 
 

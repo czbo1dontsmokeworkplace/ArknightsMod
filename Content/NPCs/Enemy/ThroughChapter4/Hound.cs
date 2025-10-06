@@ -1,5 +1,5 @@
-﻿using ArknightsMod.Common.Damageclasses;
-using ArknightsMod.Content.Items.Material;
+﻿using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;

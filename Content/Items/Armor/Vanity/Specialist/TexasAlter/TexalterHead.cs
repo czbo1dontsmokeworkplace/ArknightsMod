@@ -1,0 +1,34 @@
+﻿using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+
+namespace ArknightsMod.Content.Items.Armor.Vanity.Specialist.TexasAlter
+{
+	// See also: ExampleCostume
+	[AutoloadEquip(EquipType.Head)]
+	public class TexalterHead : ModItem
+	{
+		public override void SetStaticDefaults() {
+			// DisplayName.SetDefault("Arknights Doctor's Hood");
+			Item.ResearchUnlockCount = 1;
+			if (Main.netMode == NetmodeID.Server)
+				return;
+			ArmorIDs.Head.Sets.DrawHead[Item.headSlot] = false;
+		}
+
+		public override void SetDefaults() {
+			Item.width = 32;
+			Item.height = 34;
+			Item.rare = ItemRarityID.Cyan; // +1 rarity as Arknights (Cyan = star 6)
+			Item.vanity = true;
+		}
+
+		//public override void AddRecipes()
+		//{
+		//    Recipe recipe = CreateRecipe();
+		//    recipe.AddRecipeGroup(RecipeGroupID.Wood, 2);
+		//    recipe.AddTile(TileID.WorkBenches);
+		//    recipe.Register();
+		//}
+	}
+}

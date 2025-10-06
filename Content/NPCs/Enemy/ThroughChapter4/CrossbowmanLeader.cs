@@ -12,8 +12,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.Audio;
 using static Terraria.ModLoader.ModContent;
-using ArknightsMod.Common.Damageclasses;
 using ArknightsMod.Content.Projectiles;
+using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
 
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 {

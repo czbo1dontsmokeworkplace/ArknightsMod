@@ -15,7 +15,10 @@ using ArknightsMod.Content.Buffs;
 
 namespace ArknightsMod.Content.Items.Consumables
 {
-
+	public class RAfood : ModPlayer
+	{
+		public static List<int> RAfoodBuff = [ModContent.BuffType<RAMeatchipBuff>(), ModContent.BuffType<RARicecrabBuff>()];
+	}
 	public class RAMeatchip : ModItem
 	{
 		public override void SetStaticDefaults() {

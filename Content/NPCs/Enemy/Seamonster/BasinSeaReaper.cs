@@ -15,7 +15,7 @@ using System;
 using Terraria.Audio;
 using ArknightsMod;
 using MonoMod.Core.Platforms;
-using ArknightsMod.Common.Damageclasses;
+using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
 
 
 

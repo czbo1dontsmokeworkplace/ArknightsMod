@@ -1,5 +1,5 @@
-﻿using ArknightsMod.Common.Damageclasses;
-using ArknightsMod.Content.NPCs.Enemy.TillChapter7;
+﻿using ArknightsMod.Content.NPCs.Enemy.TillChapter7;
+using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -438,7 +438,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			target.immuneTime = 0;
 		}
 		public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers) {
-			target.GetModPlayer<Common.Players.ImmunePlayer>().ImmuneMultiplier = 0.6f; // 免疫倍数
+			target.GetModPlayer<Players.ImmunePlayer>().ImmuneMultiplier = 0.6f; // 免疫倍数
 			modifiers.ArmorPenetration += 9999f;
 			if (Main.expertMode)
 				modifiers.FinalDamage *= 0.9f; // 专家模式伤害 ×1.5

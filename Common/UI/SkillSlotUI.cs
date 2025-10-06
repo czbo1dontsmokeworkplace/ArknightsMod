@@ -1,5 +1,5 @@
-﻿using ArknightsMod.Common.Items;
-using ArknightsMod.Common.Players;
+﻿using ArknightsMod.Players;
+using ArknightsMod.Systems.Gameplay.Skill;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;

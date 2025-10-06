@@ -26,7 +26,7 @@ namespace ArknightsMod.Content.Items.Weapons
 			Item.knockBack = 6;
 			Item.value = Item.sellPrice(0, 0, 0, 20);
 			Item.rare = ItemRarityID.White;
-			Item.shoot = ModContent.ProjectileType<DurinWandProjectile>();
+			Item.shoot = ModContent.ProjectileType<DurinWand_Projectile>();
 			Item.crit = 2; // The percent chance at hitting an enemy with a crit, plus the default amount of 4.
 			Item.shootSpeed = 8f;
 

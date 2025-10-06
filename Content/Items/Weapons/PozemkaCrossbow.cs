@@ -1,7 +1,6 @@
-﻿using ArknightsMod.Common.Items;
-using ArknightsMod.Common.Players;
+﻿using ArknightsMod.Systems.Gameplay.Skill;
 using ArknightsMod.Content.Buffs;
-using ArknightsMod.Content.Projectiles;
+using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -9,6 +8,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using ArknightsMod.Content.Projectiles.Pozyomka;
 
 namespace ArknightsMod.Content.Items.Weapons
 {
@@ -60,7 +60,7 @@ namespace ArknightsMod.Content.Items.Weapons
 			Item.noMelee = true;
 			Item.channel = true; //Channel so that you can held the weapon [Important]
 			Item.knockBack = 5;
-			Item.shoot = ModContent.ProjectileType<PozemkaCrossbowProjectile>();
+			Item.shoot = ModContent.ProjectileType<PozemkaCrossbow_Projectile>();
 			Item.shootSpeed = 20f;
 			Item.useAmmo = AmmoID.Arrow;
 			Item.crit = 0; // The percent chance at hitting an enemy with a crit, plus the default amount of 4.
@@ -164,10 +164,10 @@ namespace ArknightsMod.Content.Items.Weapons
 		public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback) {
 			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
 			if (!modPlayer.SummonMode) {
-				type = ModContent.ProjectileType<PozemkaCrossbowProjectile>();
+				type = ModContent.ProjectileType<PozemkaCrossbow_Projectile>();
 			}
 			else {
-				type = ModContent.ProjectileType<PozemkaCrossbowSentry>();
+				type = ModContent.ProjectileType<PozemkaCrossbow_Sentry>();
 				position = Main.MouseWorld;
 				velocity *= 0;
 				modPlayer.SummonMode = false;

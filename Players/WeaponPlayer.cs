@@ -1,0 +1,401 @@
+﻿using ArknightsMod.Common.UI;
+using ArknightsMod.Content.Items.Weapons;
+using Terraria;
+using Terraria.ModLoader;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework.Graphics;
+using Terraria.Localization;
+using ArknightsMod.Systems.Gameplay.Skill;
+using ArknightsMod.Content.Items.Weapons.ChenSword;
+
+namespace ArknightsMod.Players
+{
+	public class WeaponPlayer : ModPlayer
+	{
+		protected override bool CloneNewInstances => true;
+		public SkillData CurrentSkill => SkillData[Skill];
+		public int SkillCount { get; private set; }
+		public readonly SkillData[] SkillData = new SkillData[3];
+
+		// 技能资源管理
+		public int SkillCharge;
+		public int SkillChargeMax;
+		public bool SkillActive;
+		public int SkillTimer;
+		public int SP;
+		public int StockCount;
+		public int Div;
+		public int Skill;
+		public bool SummonMode;
+		public bool SkillInitialize = true;
+
+		// 位置信息
+		public float mousePositionX;
+		public float mousePositionY;
+		public float playerPositionX;
+		public float playerPositionY;
+
+		// 武器状态
+		public bool HoldBagpipeSpear = false;
+		public bool HoldChenSword = false;
+		public bool HoldKroosCrossbow = false;
+		public bool HoldPozemkaCrossbow = false;
+		public bool HoldNianWeapon = false;
+
+		private int oldHeld;
+		private int oldSkill;
+
+		// 技能数据结构
+		public int HowManySkills = 0;
+		public List<int?> InitialSP = new() { null, null, null };
+		public List<int?> InitialSPs1List = new() { null, null, null, null, null, null, null, null, null, null };
+		public List<int?> InitialSPs2List = new() { null, null, null, null, null, null, null, null, null, null };
+		public List<int?> InitialSPs3List = new() { null, null, null, null, null, null, null, null, null, null };
+		public List<int?> MaxSP = new() { null, null, null };
+		public List<int?> MaxSPs1List = new() { null, null, null, null, null, null, null, null, null, null };
+		public List<int?> MaxSPs2List = new() { null, null, null, null, null, null, null, null, null, null };
+		public List<int?> MaxSPs3List = new() { null, null, null, null, null, null, null, null, null, null };
+		public List<float> SkillActiveTime = new() { 0, 0, 0 };
+		public List<float> SkillActiveTimeS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		public List<float> SkillActiveTimeS2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		public List<float> SkillActiveTimeS3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		public List<int> SkillLevel = new() { 0, 0, 0 };
+		public List<int> StockMax = new() { 0, 0, 0 };
+		public List<int> StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		public List<int> StockMaxS2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		public List<int> StockMaxS3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		public List<bool> AutoTrigger = new() { false, false, false };
+		public List<bool> ChargeTypeIsPerSecond = new() { false, false, false };
+		public string IconName = "";
+		public List<bool> ShowSummonIconBySkills = new() { false, false, false };
+
+		public void InitSkill() {
+			SkillData skill = CurrentSkill;
+			SkillLevelData data = skill.CurrentLevelData;
+			Div = skill.ChargeType == SkillChargeType.Auto ? 60 : 1;
+			int initSP = data.InitSP;
+			int maxSP = data.MaxSP;
+
+			if (initSP == maxSP) {
+				SkillCharge = 0;
+				StockCount = 1;
+				SP = StockCount == data.MaxStack ? maxSP : 0;
+			}
+			else {
+				SkillCharge = initSP * Div;
+				StockCount = 0;
+				SP = initSP;
+			}
+
+			SkillChargeMax = maxSP * Div;
+			SkillTimer = 0;
+			SkillActive = false;
+			SummonMode = false;
+		}
+
+		public void SetSkill(int skill) {
+			if (SkillInitialize) {
+				Skill = skill;
+				if (ChargeTypeIsPerSecond[Skill])
+					Div = 60;
+				else
+					Div = 1;
+
+				SkillCharge = InitialSP[Skill] != null ? (int)InitialSP[Skill] * Div : 0;
+				SP = InitialSP[Skill] != null ? (int)InitialSP[Skill] : 0;
+				SkillChargeMax = MaxSP[Skill] != null ? (int)MaxSP[Skill] * Div : 0;
+				SkillTimer = 0;
+				StockCount = 0;
+				SkillActive = false;
+
+				if (InitialSP[Skill] == MaxSP[Skill]) {
+					SkillCharge = 0;
+					StockCount++;
+					SP = StockCount == StockMax[Skill] ? (int)MaxSP[Skill] : 0;
+				}
+
+				SummonMode = false;
+				SkillInitialize = false;
+			}
+		}
+
+		public override void ResetEffects() {
+			// 更新武器状态
+			HoldBagpipeSpear = Main.LocalPlayer.HeldItem.ModItem is BagpipeSpear;
+			HoldChenSword = Main.LocalPlayer.HeldItem.ModItem is ChenSword;
+			HoldKroosCrossbow = Main.LocalPlayer.HeldItem.ModItem is KroosCrossbow;
+			HoldPozemkaCrossbow = Main.LocalPlayer.HeldItem.ModItem is PozemkaCrossbow;
+			HoldNianWeapon = Main.LocalPlayer.HeldItem.ModItem is NianWeapon;
+
+			// 基于武器的技能系统
+			Item item = Main.LocalPlayer.HeldItem;
+			if (item.ModItem is UpgradeWeaponBase ark) {
+				int type = item.type;
+				if (type != oldHeld) {
+					oldHeld = type;
+					oldSkill = -1;
+					Skill = 0;
+					SkillCount = 0;
+
+					for (int i = 0; i < 3; i++) {
+						SkillData data = ark.GetSkillData(i);
+						SkillData[i] = data;
+						SkillCount += data == null ? 0 : 1;
+					}
+
+					SelectSkills.ChangeSkillSlot(ark);
+				}
+
+				if (oldSkill != Skill) {
+					oldSkill = Skill;
+					InitSkill();
+				}
+			}
+			else {
+				// 旧版武器支持
+				SetAllSkillsData();
+			}
+		}
+
+		public void TryAutoCharge() {
+			if (CurrentSkill?.ChargeType == SkillChargeType.Auto)
+				AutoCharge();
+		}
+
+		public void AutoCharge() {
+			if (CurrentSkill != null) {
+				SkillLevelData data = CurrentSkill.CurrentLevelData;
+				if (!SkillActive && StockCount < data.MaxStack) {
+					if (++SkillCharge % 60 == 0)
+						SP++;
+
+					if (SkillCharge == SkillChargeMax) {
+						SkillCharge = 0;
+						SP = ++StockCount == data.MaxStack ? data.MaxSP : 0;
+					}
+				}
+			}
+			else {
+				// 旧版自动充能逻辑
+				if (!SkillActive && StockCount < StockMax[Skill]) {
+					SkillCharge += 1;
+					if (SkillCharge != 0 && SkillCharge % 60 == 0)
+						SP += 1;
+
+					if (SkillCharge == SkillChargeMax) {
+						SkillCharge = 0;
+						StockCount += 1;
+						SP = StockCount == StockMax[Skill] ? (int)MaxSP[Skill] : 0;
+					}
+				}
+			}
+		}
+
+		public void OffensiveRecovery() {
+			if (CurrentSkill != null) {
+				SkillLevelData data = CurrentSkill.CurrentLevelData;
+				if (!SkillActive && StockCount < data.MaxStack) {
+					SkillCharge++;
+					SP++;
+				}
+
+				if (SkillCharge == SkillChargeMax) {
+					SkillCharge = 0;
+					SP = ++StockCount == data.MaxStack ? data.MaxSP : 0;
+				}
+			}
+			else {
+				// 旧版攻击恢复逻辑
+				if (!SkillActive && StockCount < StockMax[Skill]) {
+					SkillCharge += 1;
+					if (SkillCharge != 0)
+						SP += 1;
+				}
+
+				if (SkillCharge == SkillChargeMax) {
+					SkillCharge = 0;
+					StockCount += 1;
+					SP = StockCount == StockMax[Skill] ? (int)MaxSP[Skill] : 0;
+				}
+			}
+		}
+
+		public void UpdateActiveSkill() {
+			if (SkillActive) {
+				if (CurrentSkill != null) {
+					if (CurrentSkill.AutoUpdateActive && ++SkillTimer >= CurrentSkill.CurrentLevelData.ActiveTime * 60)
+						SkillActive = false;
+				}
+				else {
+					SkillTimer++;
+					if (SkillTimer == SkillActiveTime[Skill] * 60)
+						SkillActive = false;
+				}
+			}
+		}
+
+		public void StrikeSkill() {
+			if (SkillActive) {
+				SkillTimer++;
+				if (SkillTimer == 10)
+					SkillActive = false;
+			}
+		}
+
+		public void DelStockCount() {
+			if (CurrentSkill != null) {
+				if (StockCount-- == CurrentSkill.CurrentLevelData.MaxStack)
+					SP = 0;
+			}
+			else {
+				if (StockCount == StockMax[Skill])
+					SP = 0;
+				StockCount -= 1;
+			}
+		}
+
+		public void SetSkillData() {
+			if (HowManySkills < 1) {
+				InitialSPs1List = new() { null, null, null, null, null, null, null, null, null, null };
+				MaxSPs1List = new() { null, null, null, null, null, null, null, null, null, null };
+			}
+			if (HowManySkills < 2) {
+				InitialSPs2List = new() { null, null, null, null, null, null, null, null, null, null };
+				MaxSPs2List = new() { null, null, null, null, null, null, null, null, null, null };
+			}
+			if (HowManySkills < 3) {
+				InitialSPs3List = new() { null, null, null, null, null, null, null, null, null, null };
+				MaxSPs3List = new() { null, null, null, null, null, null, null, null, null, null };
+			}
+
+			InitialSP = new() {
+				InitialSPs1List[SkillLevel[0] - 1],
+				InitialSPs2List[SkillLevel[1] - 1],
+				InitialSPs3List[SkillLevel[2] - 1]
+			};
+
+			MaxSP = new() {
+				MaxSPs1List[SkillLevel[0] - 1],
+				MaxSPs2List[SkillLevel[1] - 1],
+				MaxSPs3List[SkillLevel[2] - 1]
+			};
+
+			SkillActiveTime = new() {
+				SkillActiveTimeS1List[SkillLevel[0] - 1],
+				SkillActiveTimeS2List[SkillLevel[1] - 1],
+				SkillActiveTimeS3List[SkillLevel[2] - 1]
+			};
+
+			StockMax = new() {
+				StockMaxS1List[SkillLevel[0] - 1],
+				StockMaxS2List[SkillLevel[1] - 1],
+				StockMaxS3List[SkillLevel[2] - 1]
+			};
+		}
+
+		public void SetAllSkillsData() {
+			if (HoldBagpipeSpear) {
+				IconName = "BagpipeSpear";
+				HowManySkills = 3;
+				SkillLevel = new() { 10, 10, 10 };
+				ChargeTypeIsPerSecond = new() { true, true, true };
+				AutoTrigger = new() { false, true, false };
+				ShowSummonIconBySkills = new() { false, false, false };
+
+				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 15 };
+				InitialSPs2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				InitialSPs3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 25 };
+				MaxSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 33 };
+				MaxSPs2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 4 };
+				MaxSPs3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 40 };
+				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 35f };
+				SkillActiveTimeS2List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0.5f };
+				SkillActiveTimeS3List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 20f };
+				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+				StockMaxS2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 };
+				StockMaxS3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+				SetSkillData();
+			}
+			else if (HoldChenSword) {
+				IconName = "ChenSword";
+				HowManySkills = 2;
+				SkillLevel = new() { 10, 10, 10 };
+				ChargeTypeIsPerSecond = new() { false, false, false };
+				AutoTrigger = new() { true, false, false };
+				ShowSummonIconBySkills = new() { false, false, false };
+
+				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				InitialSPs2List = new() { 10, 10, 10, 10, 10, 10, 10, 13, 16, 20 };
+				MaxSPs1List = new() { 7, 7, 7, 6, 6, 6, 5, 5, 5, 4 };
+				MaxSPs2List = new() { 40, 40, 40, 38, 38, 38, 36, 34, 32, 30 };
+				SkillActiveTimeS1List = new() { 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f };
+				SkillActiveTimeS2List = new() { 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f };
+				StockMaxS1List = new() { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+				StockMaxS2List = new() { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+				SetSkillData();
+			}
+			else if (HoldKroosCrossbow) {
+				IconName = "KroosCrossbow";
+				HowManySkills = 1;
+				SkillLevel = new() { 7, 7, 7 };
+				ChargeTypeIsPerSecond = new() { false, true, false };
+				AutoTrigger = new() { true, false, false };
+				ShowSummonIconBySkills = new() { false, false, false };
+
+				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				MaxSPs1List = new() { 0, 0, 0, 0, 0, 0, 4, 0, 0, 0 };
+				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0.2f, 0f, 0f, 0f };
+				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 };
+				SetSkillData();
+			}
+			else if (HoldPozemkaCrossbow) {
+				IconName = "PozemkaCrossbow";
+				HowManySkills = 3;
+				SkillLevel = new() { 10, 10, 10 };
+				ChargeTypeIsPerSecond = new() { false, true, true };
+				AutoTrigger = new() { true, false, false };
+				ShowSummonIconBySkills = new() { true, true, true };
+
+				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				InitialSPs2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 9 };
+				InitialSPs3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 23 };
+				MaxSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 20 };
+				MaxSPs2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 9 };
+				MaxSPs3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 35 };
+				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 30f };
+				SkillActiveTimeS2List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0.4f };
+				SkillActiveTimeS3List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 30f };
+				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+				StockMaxS2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 };
+				StockMaxS3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+				SetSkillData();
+			}
+			else if (HoldNianWeapon) {
+				IconName = "NianWeapon";
+				HowManySkills = 3;
+				SkillLevel = new() { 10, 10, 10 };
+				ChargeTypeIsPerSecond = new() { false, true, true };
+				AutoTrigger = new() { true, false, false };
+				ShowSummonIconBySkills = new() { true, true, true };
+
+				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				InitialSPs2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 9 };
+				InitialSPs3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 23 };
+				MaxSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 20 };
+				MaxSPs2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 9 };
+				MaxSPs3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 35 };
+				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 30f };
+				SkillActiveTimeS2List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0.4f };
+				SkillActiveTimeS3List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 30f };
+				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+				StockMaxS2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 };
+				StockMaxS3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+				SetSkillData();
+			}
+
+			if (HowManySkills > 0) {
+				SetSkill(Skill);
+			}
+		}
+	}
+}

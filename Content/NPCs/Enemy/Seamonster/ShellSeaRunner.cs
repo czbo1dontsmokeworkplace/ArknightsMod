@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Http.Headers;
 using Terraria.GameContent.Biomes.Desert;
-using ArknightsMod.Common.Damageclasses;
+using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
 
 
 

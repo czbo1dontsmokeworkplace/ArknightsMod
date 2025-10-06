@@ -35,7 +35,7 @@ namespace ArknightsMod.Content.Items.Weapons
 			Item.rare = ItemRarityID.White;
 			Item.value = Item.sellPrice(0, 0, 3, 20);
 
-			Item.shoot = ModContent.ProjectileType<YatoKatanaProjectile>(); // The projectile is what makes a shortsword work
+			Item.shoot = ModContent.ProjectileType<YatoKatana_Projectile>(); // The projectile is what makes a shortsword work
 			Item.shootSpeed = 2.3f; // This value bleeds into the behavior of the projectile as velocity, keep that in mind when tweaking values
 
 			// The sound that this item plays when used. Need "using Terraria.Audio;"

@@ -1,0 +1,35 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Terraria.ModLoader;
+using Terraria.ID;
+using Terraria;
+using Terraria.GameContent.Creative;
+using ArknightsMod.Content.Items.Armor.Vanity;
+
+namespace ArknightsMod.Content.Items.Armor.Vanity.Specialist.Manticore
+{
+    [AutoloadEquip(EquipType.Head)]
+    public class ManticoreHead : ArknightsVanityHead
+    {
+		public override int Rarity => ItemRarityID.LightPurple;
+        public override void Load()
+        {
+		}
+        public override void UpdateEquip(Player player)
+        {
+        }
+        public override bool IsArmorSet(Item head, Item body, Item legs)
+        {
+            return body.type == ModContent.ItemType<ManticoreBody>() && legs.type == ModContent.ItemType<ManticoreLegs>();
+        }
+        public override void UpdateArmorSet(Player player)
+        {
+            player.AddBuff(BuffID.Invisibility, 1);
+            player.setBonus = "彩蛋！哦呼~你隐身啦~";
+        }
+    } 
+}

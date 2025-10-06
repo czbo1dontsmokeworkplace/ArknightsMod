@@ -8,7 +8,7 @@ using Terraria.ID;
 using Terraria.GameContent;
 using ReLogic.Utilities;
 using Terraria.DataStructures;
-using ArknightsMod.Common.Damageclasses;
+using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
 
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 {

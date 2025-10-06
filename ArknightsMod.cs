@@ -1,4 +1,4 @@
-using ArknightsMod.Common.Items;
+using ArknightsMod.Systems.Gameplay.Skill;
 using ArknightsMod.Content.Items;
 using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.NPCs.Friendly;
@@ -8,7 +8,7 @@ using Terraria.GameContent.UI;
 using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
-using Terraria;
+using Terraria.ModLoader;
 using ArknightsMod.Content.NPCs.Enemy.Seamonster;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -25,7 +25,7 @@ using Humanizer;
 using ReLogic.Content;
 using ArknightsMod.Assets.Effects;
 using ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTargeteer;
-using System;
+
 
 namespace ArknightsMod
 {
@@ -33,7 +33,17 @@ namespace ArknightsMod
 	{
 		public static int OrundumCurrencyId;
 		internal Closure.AOSystem CurrentAO;
-		public const string noTexture = "ArknightsMod/Assets/null";//空材质
+		/// <summary>
+		/// 空材质
+		/// </summary>
+		/// 
+		public const string noTexture = "ArknightsMod/Assets/null";
+
+		/// <summary>
+		/// 音效目录
+		/// </summary>
+		public const string PathSoundCommon = "ArknightsMod/Assets/Sound/";
+		public const string PathProjectileExclusives = "ArknightsMod/Content/Projectiles/";
 		public static Effect IACTSW;//冲击波涟漪效果shader（如IACT）
 		public static Effect AACTTP;//缩小效果shader（AACT传送）
 		public static Effect AACTOC;//变色效果shader（AACT）
@@ -44,6 +54,7 @@ namespace ArknightsMod
 		public static Effect AACTSTG3RBFence;//红蓝光栅效果（AACT三阶段）
 		public static Effect AACTSTG3RBNoise;//红蓝噪声效果（AACT三阶段）
 		public static Effect FNTwistedRing;//霜星限制阈（扭曲环效果）
+		public const string AssetPath = "ArknightsMod/Sound/";
 
 		public override void Load() {
 			UpgradeItemBase.LoadLevelData(this);
@@ -125,118 +136,9 @@ namespace ArknightsMod
 	//}
 	//}
 	//}
-	public class SanUI : ModSystem
-	{
-		internal Santable santable;
-		internal UserInterface sanUserInterface;
-		public override void Load() {
-			santable = new Santable();
-			santable.Activate();
-			sanUserInterface = new UserInterface();
-			sanUserInterface.SetState(santable);
-		}
-		public override void UpdateUI(GameTime gameTime) {
-			if (Santable.Visible) {
-				sanUserInterface?.Update(gameTime);
-			}
-			base.UpdateUI(gameTime);
-		}
-		public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers) {
-			int MouseTextIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Text"));
-			if (MouseTextIndex != -1) {
-				layers.Insert(MouseTextIndex, new LegacyGameInterfaceLayer(
-					"ArknightsMod : Santable",
-					delegate {
-						if (Santable.Visible)
-							santable.Draw(Main.spriteBatch);
-						return true;
-					},
-					InterfaceScaleType.UI)
-				);
-			}
-			base.ModifyInterfaceLayers(layers);
-		}
-		
-	}
 	
-	public class RAfood : ModPlayer {
-		public static List<int> RAfoodBuff = [ModContent.BuffType<RAMeatchipBuff>(), ModContent.BuffType<RARicecrabBuff>()];
-	}
+	
+	
 
 
-	public class San : ModPlayer
-	{
-		public int CurrentSan = 1000;
-		public int MadnessCD = 600;
-		public int madtime;
-		public int madframe;
-
-		public override void PreUpdate() {
-			MadnessCD++;
-			var newSource = Player.GetSource_FromThis();
-			if (CurrentSan <= 0) {
-				Player.AddBuff(31, 90);
-				Player.AddBuff(23, 240);
-				Player.Hurt(PlayerDeathReason.ByCustomReason("精神崩溃"), 200, 1, false, false, 0, true, 1000, 1000, 0);
-				CurrentSan = 1000;
-				SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/Madness") with { Volume = 1f, Pitch = 0f }, Player.Center);
-				MadnessCD = 0;
-				Projectile.NewProjectile(newSource, Player.Center + new Vector2(100, 180), new Vector2(0, 0), ModContent.ProjectileType<SanCrash>(), 0, 0);
-
-			}
-
-			foreach (var npc in Main.ActiveNPCs) {
-
-				if (npc.type == ModContent.NPCType<BasinSeaReaper>() && ((float)Math.Pow((npc.position.X - Player.position.X), 2) + (float)Math.Pow((npc.position.Y - Player.position.Y), 2) <= 36000) && npc.life <= npc.lifeMax * 0.99 && MadnessCD > 600) {
-					CurrentSan -= 5;
-
-				}
-
-			}
-			if (MadnessCD % 2 == 0 && CurrentSan < 1000) {
-				CurrentSan += 1;
-			}
-		}
-		public override void OnHitByNPC(NPC npc, Player.HurtInfo hurtInfo) {
-			if (npc.type == ModContent.NPCType<DeepSeaSlider>() && MadnessCD > 600) {
-				CurrentSan -= 100;
-			}
-			if (npc.type == ModContent.NPCType<TheFirstToTalk>() && MadnessCD > 600) {
-				CurrentSan -= 300;
-				if (Main.expertMode) {
-					CurrentSan -= 50;
-				}
-			}
-		}
-		public override void OnHitByProjectile(Projectile proj, Player.HurtInfo hurtInfo) {
-			if (proj.type == ModContent.ProjectileType<TFTTShoot>() && MadnessCD > 600) {
-				CurrentSan -= 400;
-				if (Main.expertMode) {
-					CurrentSan -= 100;
-				}
-			}
-			if (proj.type == ModContent.ProjectileType<seashoot>() && MadnessCD > 600) {
-				CurrentSan -= 300;
-			}
-			if (proj.type == ModContent.ProjectileType<TFTTSkillshoot>() && MadnessCD > 600) {
-				CurrentSan -= 300;
-			}
-			if (proj.type == ModContent.ProjectileType<TFTTRush2>() && MadnessCD > 600) {
-				CurrentSan -= 300;
-			}
-			if (proj.type == ModContent.ProjectileType<TFTTRush>() && MadnessCD > 600) {
-				CurrentSan -= 300;
-			}
-			if (proj.type == ModContent.ProjectileType<PocketSeaCrawlerShoot>() && MadnessCD > 600) {
-				CurrentSan -= 300;
-			}
-			if (proj.type == ModContent.ProjectileType<PocketSeaCrawlerShoot2>() && MadnessCD > 600) {
-				CurrentSan -= 300;
-			}
-		}
-		public override void OnEnterWorld() {
-			Santable.Visible = true;
-		}
-		
-	}
 }

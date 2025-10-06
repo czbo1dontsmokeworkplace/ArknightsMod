@@ -1,6 +1,6 @@
-﻿using ArknightsMod.Common.Items;
-using ArknightsMod.Common.UI.BattleRecord;
+﻿using ArknightsMod.Common.UI.BattleRecord;
 using ArknightsMod.Common.UI.BattleRecord.Calculators;
+using ArknightsMod.Systems.Gameplay.Skill;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;

@@ -53,7 +53,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 			NPC.boss = true;
 			NPC.npcSlots = 10f;
 			NPC.aiStyle = -1;
-			NPC.BossBar = ModContent.GetInstance<FNBossBar>();
+			NPC.BossBar = ModContent.GetInstance<NoBossBar>();
 			NPC.dontTakeDamage = true;
 			NPC.Opacity = 0f;
 		}

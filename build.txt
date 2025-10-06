@@ -5,3 +5,4 @@ homepage = https://discord.gg/XKM2jeS9hY
 hideCode = true
 hideResources = true
 buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*, .git\*
+unsafe = true

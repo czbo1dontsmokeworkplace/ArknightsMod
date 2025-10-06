@@ -8,6 +8,9 @@ using Microsoft.Xna.Framework.Graphics;
 using ArknightsMod.Common.VisualEffects;
 using Terraria.DataStructures;
 using Terraria.Localization;
+using static Terraria.ModLoader.ModContent;
+using ArknightsMod.Content.BossBars;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 {
@@ -51,7 +54,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
             NPC.height = 154;
             NPC.lifeMax = 4000;
             NPC.defense = 15;
-            NPC.damage = 160;
+            NPC.damage = 80;
             NPC.knockBackResist = 0f;
             NPC.boss = true;
             NPC.lavaImmune = false;
@@ -59,13 +62,38 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.aiStyle = -1;
+			NPC.BossBar = ModContent.GetInstance<NoBossBar>();
 			Music = MusicLoader.GetMusicSlot(Mod, "Music/PmpBoss");
+		}
+
+		//NPC专家模式|大师模式血量倍率（普通模式血量*倍率*2|血量*倍率*3）
+		public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment) {
+			NPC.lifeMax = (int)(NPC.lifeMax * 0.75f * balance);
+			NPC.damage = (int)(NPC.damage * 0.75f);
 		}
 
 		public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers) {
 			target.buffImmune[BuffID.OnFire] = false;
 			if (!target.HasBuff(BuffID.OnFire)) {
 				target.AddBuff(BuffID.OnFire, Main.masterMode ? 180 : Main.expertMode ? 180 : 270);
+			}
+		}
+
+		public override bool? CanBeHitByItem(Player player, Item item)//无敌帧
+		{
+			return null;
+		}
+
+		public override bool? CanBeHitByProjectile(Projectile Projectile)//不被敌方弹幕和无来源弹幕攻击&闪避
+		{
+			if (Projectile.hostile == true) {
+				return false;
+			}
+			else if (Projectile.friendly == true) {
+				return null;
+			}
+			else {
+				return false;
 			}
 		}
 
@@ -79,7 +107,53 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
             return true;
         }
 
-        public override void AI()
+		private bool ispmpstg2 = false;
+
+		#region 自定义血条
+		public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position) {
+			return false;
+		}
+
+		private float Bartimer;
+		private float TargetHealthBarLength;
+		private float ActualHealthBarLength;
+
+		//自制血条
+		public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
+			//发光图层
+			Texture2D PmpGlow = ModContent.Request<Texture2D>("ArknightsMod/Content/NPCs/Enemy/OF/Pmp/Pompeii_glow").Value;
+			Main.EntitySpriteDraw(PmpGlow, NPC.Center - Main.screenPosition + new Vector2(0, 3) + new Vector2(0, (_currentFrame * PmpGlow.Height / 53 / 2)).RotatedBy(NPC.rotation), new Rectangle(0, (int)(_currentFrame * PmpGlow.Height / 53f), PmpGlow.Width, PmpGlow.Height / 53), Color.White, NPC.rotation, new Vector2(PmpGlow.Width / 2, (_currentFrame + 1) * (PmpGlow.Height / 53) / 2), 1f, NPC.direction < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0);
+
+			Texture2D BarTexBot = ModContent.Request<Texture2D>("ArknightsMod/Content/BossBars/PmpBossBarBot").Value;
+			Texture2D BarTexMed2 = ModContent.Request<Texture2D>("ArknightsMod/Content/BossBars/PmpBossBarMed2").Value;
+			Texture2D BarTexMed = ModContent.Request<Texture2D>("ArknightsMod/Content/BossBars/PmpBossBarMed").Value;
+			if (!_hasEnteredTailKill) {
+				Bartimer++;
+				if (Bartimer > 120) {
+					Bartimer = 120;
+				}
+			}
+			else {
+				Bartimer--;
+				if (Bartimer < 0) {
+					Bartimer = 0;
+				}
+			}
+			TargetHealthBarLength = BarTexMed.Width * NPC.life / NPC.lifeMax * Bartimer / 120;
+			if (ActualHealthBarLength > TargetHealthBarLength / 4) {
+				ActualHealthBarLength--;
+			}
+			if (ActualHealthBarLength < TargetHealthBarLength / 4) {
+				ActualHealthBarLength++;
+			}
+			float fixedscr = Main.screenWidth > 1920 ? ((Main.screenWidth - 1920) / 1920f * 2.75f + 1) * (Main.screenHeight > 1080 ? Main.screenHeight / 1080f : 1) : 1;
+			Main.EntitySpriteDraw(BarTexBot, new Vector2(Main.screenWidth / 2, Main.screenHeight / 2 + (Main.screenHeight / 2 - 108 * fixedscr) / Main.GameZoomTarget), new Rectangle(0, 0, (int)(BarTexBot.Width), BarTexBot.Height), Color.White * (Bartimer / 180), 0, new Vector2(BarTexBot.Width / 2, BarTexBot.Height / 2), 1 / Main.GameZoomTarget, SpriteEffects.None, 0);
+			Main.EntitySpriteDraw(BarTexMed2, new Vector2(Main.screenWidth / 2, Main.screenHeight / 2 + (Main.screenHeight / 2 - 106 * fixedscr) / Main.GameZoomTarget), new Rectangle(0, 0, (int)(ActualHealthBarLength * 4), BarTexMed.Height), Color.White * (Bartimer / 120), 0, new Vector2(BarTexMed.Width / 2, BarTexMed.Height / 2), 1 / Main.GameZoomTarget, SpriteEffects.None, 0);
+			Main.EntitySpriteDraw(BarTexMed, new Vector2(Main.screenWidth / 2, Main.screenHeight / 2 + (Main.screenHeight / 2 - 106 * fixedscr) / Main.GameZoomTarget), new Rectangle(0, 0, (int)(TargetHealthBarLength), BarTexMed.Height), Color.White * (Bartimer / 120), 0, new Vector2(BarTexMed.Width / 2, BarTexMed.Height / 2), 1 / Main.GameZoomTarget, SpriteEffects.None, 0);
+		}
+		#endregion
+
+		public override void AI()
         {
             NPC.TargetClosest();
             Player player = Main.player[NPC.target];
@@ -106,8 +180,17 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 			#endregion
 
 			ExecuteStateMachine(player);
-            UpdateAnimation(); 
-        }
+            UpdateAnimation();
+
+			if ((float)NPC.life / (float)NPC.lifeMax <= 0.5f && !ispmpstg2) {
+				Projectile.NewProjectile(null, NPC.Center, Vector2.Zero, ProjectileType<PMPSTG2Effect>(), 0, 0f, -1, 1800, 1);
+				Projectile.NewProjectile(null, NPC.Center, Vector2.Zero, ProjectileType<PMPSTG2Effect>(), 0, 0f, -1, 1800, 0.5f);
+				Projectile.NewProjectile(null, NPC.Center, Vector2.Zero, ProjectileType<PMPSTG2Effect>(), 0, 0f, -1, 1800, -0.5f);
+				Projectile.NewProjectile(null, NPC.Center, Vector2.Zero, ProjectileType<PMPSTG2Effect>(), 0, 0f, -1, 1800, -1);
+				ispmpstg2 = true;
+			}
+
+		}
 
         private void ExecuteStateMachine(Player player)
         {
@@ -187,12 +270,6 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
         {
             NPC.frame = new Rectangle(0, _currentFrame * frameHeight, NPC.width, frameHeight);
         }
-
-		//发光图层
-		public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
-			Texture2D PmpGlow = ModContent.Request<Texture2D>("ArknightsMod/Content/NPCs/Enemy/OF/Pmp/Pompeii_glow").Value;
-			Main.EntitySpriteDraw(PmpGlow, NPC.Center - Main.screenPosition + new Vector2(0, 3) + new Vector2(0, (_currentFrame * PmpGlow.Height / 53 / 2)).RotatedBy(NPC.rotation), new Rectangle(0, (int)(_currentFrame * PmpGlow.Height / 53f), PmpGlow.Width, PmpGlow.Height / 53), Color.White, NPC.rotation, new Vector2(PmpGlow.Width / 2, (_currentFrame + 1) * (PmpGlow.Height / 53) / 2), 1f, NPC.direction < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0);
-		}
 		#endregion
 
 		private void Mode1Crawl(Player player)
@@ -224,26 +301,33 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 
         private void Mode2ShootFireballs(Player player)
         {
-
+			int modetimermax = (float)NPC.life / (float)NPC.lifeMax > 0.5f ? 60 : 90;
 			NPC.velocity = Vector2.Lerp(NPC.velocity, Vector2.Zero, 0.1f);
 			int shootnum = Main.masterMode ? Main.rand.Next(6, 10) : Main.expertMode ? Main.rand.Next(4, 7) : Main.rand.Next(3, 6);
             if (_modeTimer == 20)
             {
                 for (int i = 0; i < shootnum; i++)
                 {
-					Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + new Vector2(55f * NPC.direction, -35f), Vector2.Zero, ModContent.ProjectileType<PmpFireBall>(), 120, 6f, Main.myPlayer);
+					Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + new Vector2(55f * NPC.direction, -35f), Vector2.Zero, ModContent.ProjectileType<PmpFireBall>(), 30, 6f, Main.myPlayer);
                 }
                 SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
             }
 
 			if ((Main.expertMode || Main.masterMode) && _modeTimer == 40) {
 				for (int i = 0; i < shootnum; i++) {
-					Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + new Vector2(55f * NPC.direction, -35f), Vector2.Zero, ModContent.ProjectileType<PmpFireBall>(), 120, 6f, Main.myPlayer);
+					Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + new Vector2(55f * NPC.direction, -35f), Vector2.Zero, ModContent.ProjectileType<PmpFireBall>(), 40, 6f, Main.myPlayer);
 				}
 				SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
 			}
 
-            if (++_modeTimer >= 60)
+			if (modetimermax == 90 && _modeTimer == 60) {
+				for (int i = 0; i < shootnum; i++) {
+					Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + new Vector2(55f * NPC.direction, -35f), Vector2.Zero, ModContent.ProjectileType<PmpFireBall>(), 40, 6f, Main.myPlayer);
+				}
+				SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
+			}
+
+            if (++_modeTimer >= modetimermax)
             {
                 _currentState = AIState.Mode3Idle;
                 _modeTimer = 0;
@@ -253,12 +337,25 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 
         private void Mode3Idle()
         {
+			Player Player = Main.player[Main.myPlayer];
 			//float timecount = Main.masterMode ? 2 : Main.expertMode ? 2.5f : 3;
 			float timecount = 3;
+
+			if (_modeTimer == 60) {
+				for (int i = 0; i < 100; i++) {
+					Dust dust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.Torch);
+					dust.velocity = Main.rand.NextVector2Circular(20f, 20f);
+					dust.scale = 2.5f;
+					dust.noGravity = true;
+				}
+				SoundEngine.PlaySound(SoundID.Item14, NPC.Center);
+				Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<PmpExplode>(), 50, 0, Main.myPlayer, 0);
+			}
 
 			if (_modeTimer >= 90 && _modeTimer <= 105) {
 				Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + new Vector2(-25f * NPC.direction, -70f), Vector2.Zero, ModContent.ProjectileType<PmpFireRain>(), 0, 0, Main.myPlayer, 0);
 			}
+
 			if (_modeTimer == 90) {
 				SoundEngine.PlaySound(SoundID.Item11, NPC.Center);
 			}
@@ -282,7 +379,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
                 for (int i = 0; i < fireballCount; i++)
                 {
                     Vector2 spawnPos = new Vector2(player.Center.X + Main.rand.NextFloat(-600, 600), player.Center.Y + Main.rand.NextFloat(-120, 120) - 600);
-					Projectile.NewProjectile(NPC.GetSource_FromAI(), spawnPos, Vector2.Zero, ModContent.ProjectileType<PmpFireRain>(), 75, 6f, Main.myPlayer, 1);
+					Projectile.NewProjectile(NPC.GetSource_FromAI(), spawnPos, Vector2.Zero, ModContent.ProjectileType<PmpFireRain>(), 35, 6f, Main.myPlayer, 1);
                 }
                 _fireRainCounter++;
                 SoundEngine.PlaySound(SoundID.Item34, NPC.Center);
@@ -300,6 +397,17 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
         private void Mode5Idle()
         {
 			float timecount = Main.masterMode ? 1.5f : Main.expertMode ? 2 : 2.5f;
+
+			if (_modeTimer == 15 && ispmpstg2) {
+				for (int i = 0; i < 100; i++) {
+					Dust dust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.Torch);
+					dust.velocity = Main.rand.NextVector2Circular(20f, 20f);
+					dust.scale = 2.5f;
+					dust.noGravity = true;
+				}
+				SoundEngine.PlaySound(SoundID.Item14, NPC.Center);
+				Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<PmpExplode>(), 50, 0, Main.myPlayer, 0);
+			}
 
 			if (++_modeTimer >= 60 * timecount)
             {
@@ -356,8 +464,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 
 				for (int i = 0; i < shootnum; i++)
                 {
-					Vector2 spawnPos = new Vector2(NPC.Center.X + Main.rand.NextFloat(-600, 600), NPC.Center.Y + Main.rand.NextFloat(-60, 60) - 540);
-					Projectile.NewProjectile(NPC.GetSource_FromAI(), spawnPos, Vector2.Zero, ModContent.ProjectileType<PmpFireRain>(), 75, 6f, Main.myPlayer, 1);
+					//Vector2 spawnPos = new Vector2(NPC.Center.X + Main.rand.NextFloat(-600, 600), NPC.Center.Y + Main.rand.NextFloat(-60, 60) - 540);
+					Vector2 spawnPos = new Vector2(player.Center.X + Main.rand.NextFloat(-600, 600), player.Center.Y + Main.rand.NextFloat(-120, 120) - 720);
+					Projectile.NewProjectile(NPC.GetSource_FromAI(), spawnPos, Vector2.Zero, ModContent.ProjectileType<PmpFireRain>(), 50, 6f, Main.myPlayer, 1);
 				}
                 SoundEngine.PlaySound(SoundID.Item11, NPC.Center);
             }
@@ -406,7 +515,6 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 	//火球
 	public class PmpFireBall : ModProjectile
 	{
-
 		public override string Texture => ArknightsMod.noTexture;
 
 		public override void SetStaticDefaults() {
@@ -423,7 +531,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 			Projectile.ignoreWater = true;
 			Projectile.timeLeft = 600;
 			Projectile.alpha = 0;
-			Projectile.damage = 40;
+			Projectile.damage = 30;
 			//Projectile.light = 1f;
 			Projectile.friendly = false;
 			Projectile.hostile = true;
@@ -508,11 +616,11 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 			Projectile.height = 30;
 			Projectile.aiStyle = 0;
 			Projectile.penetrate = -1;
-			Projectile.tileCollide = true;
+			Projectile.tileCollide = false;
 			Projectile.ignoreWater = true;
 			Projectile.timeLeft = 600;
 			Projectile.alpha = 0;
-			Projectile.damage = 60;
+			Projectile.damage = 30;
 			//Projectile.light = 1f;
 			Projectile.friendly = false;
 			Projectile.hostile = true;
@@ -526,6 +634,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 		private Vector2 spawnPos;
 		private float vx;
 		private float vy;
+		private float shakeOpacity = 1;
+		private float shakeT = Main.rand.NextFloat(3, 10);
 
 		public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers) {
 			target.buffImmune[BuffID.OnFire] = false;
@@ -577,24 +687,30 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 				Projectile.Opacity = timer / 30f;
 				Projectile.scale = timer / 30f;
 			}
+			else {
+				shakeOpacity = 0.4f * MathF.Cos(float.Pi * timer / shakeT) + 0.6f;
+			}
 
-			
 			Projectile.velocity = Projectile.ai[0] == 1 ? new Vector2(0, vy) : new Vector2(vx, -vy);
 
 			timer++;
+
+			if (timer > 60f) {
+				Projectile.tileCollide = true;
+			}
 		}
 
 		public override void PostDraw(Color lightColor) {
 			Texture2D text = ModContent.Request<Texture2D>("ArknightsMod/Content/NPCs/Enemy/OF/Pmp/PmpFireStar").Value;
-			Main.EntitySpriteDraw(text, Projectile.Center - Main.screenPosition - Projectile.velocity * 0.5f, new Rectangle(0, 0, text.Width, text.Height), new Color(r, g, b) * Projectile.Opacity, Projectile.rotation, new Vector2(text.Width / 2, text.Height / 2), 1f * new Vector2(0.25f, 1f), SpriteEffects.None, 0);
-			Main.EntitySpriteDraw(text, Projectile.Center - Main.screenPosition - Projectile.velocity * 0.5f, new Rectangle(0, 0, text.Width, text.Height), new Color(r, g, b) * Projectile.Opacity, Projectile.rotation + float.Pi / 2, new Vector2(text.Width / 2, text.Height / 2), 1f * new Vector2(0.25f, 1f), SpriteEffects.None, 0);
-			Main.EntitySpriteDraw(text, Projectile.Center - Main.screenPosition - Projectile.velocity * 0.5f, new Rectangle(0, 0, text.Width, text.Height), new Color(r, g + 120, 150) * Projectile.Opacity, Projectile.rotation, new Vector2(text.Width / 2, text.Height / 2), 0.6f * new Vector2(0.25f, 1f), SpriteEffects.None, 0);
-			Main.EntitySpriteDraw(text, Projectile.Center - Main.screenPosition - Projectile.velocity * 0.5f, new Rectangle(0, 0, text.Width, text.Height), new Color(r, g + 120, 150) * Projectile.Opacity, Projectile.rotation + float.Pi / 2, new Vector2(text.Width / 2, text.Height / 2), 0.6f * new Vector2(0.25f, 1f), SpriteEffects.None, 0);
+			Main.EntitySpriteDraw(text, Projectile.Center - Main.screenPosition - Projectile.velocity * 0.5f, new Rectangle(0, 0, text.Width, text.Height), new Color(r, g, b) * Projectile.Opacity * shakeOpacity, Projectile.rotation, new Vector2(text.Width / 2, text.Height / 2), 1f * new Vector2(0.25f, 1f), SpriteEffects.None, 0);
+			Main.EntitySpriteDraw(text, Projectile.Center - Main.screenPosition - Projectile.velocity * 0.5f, new Rectangle(0, 0, text.Width, text.Height), new Color(r, g, b) * Projectile.Opacity * shakeOpacity, Projectile.rotation + float.Pi / 2, new Vector2(text.Width / 2, text.Height / 2), 1f * new Vector2(0.25f, 1f), SpriteEffects.None, 0);
+			Main.EntitySpriteDraw(text, Projectile.Center - Main.screenPosition - Projectile.velocity * 0.5f, new Rectangle(0, 0, text.Width, text.Height), new Color(r, g + 120, 150) * Projectile.Opacity * shakeOpacity, Projectile.rotation, new Vector2(text.Width / 2, text.Height / 2), 0.6f * new Vector2(0.25f, 1f), SpriteEffects.None, 0);
+			Main.EntitySpriteDraw(text, Projectile.Center - Main.screenPosition - Projectile.velocity * 0.5f, new Rectangle(0, 0, text.Width, text.Height), new Color(r, g + 120, 150) * Projectile.Opacity * shakeOpacity, Projectile.rotation + float.Pi / 2, new Vector2(text.Width / 2, text.Height / 2), 0.6f * new Vector2(0.25f, 1f), SpriteEffects.None, 0);
 		}
 
 		public override bool PreDraw(ref Color lightColor) {
 			Texture2D trailtexture = ModContent.Request<Texture2D>("ArknightsMod/Common/VisualEffects/LineTrail").Value;
-			TrailMaker.ProjectileDrawTailByConstWidth(Projectile, trailtexture, Vector2.Zero, new Color(r, g, b), new Color(0, 0, 0), 10f, true);
+			TrailMaker.ProjectileDrawTailByConstWidth(Projectile, trailtexture, Vector2.Zero, new Color(r, g, b) * shakeOpacity, new Color(0, 0, 0), 10f, true);
 			return true;
 		}
 
@@ -616,18 +732,18 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 		public override string Texture => ArknightsMod.noTexture;
 
 		public override void SetDefaults() {
-			Projectile.width = 1;
-			Projectile.height = 1;
+			Projectile.width = 320;
+			Projectile.height = 320;
 			Projectile.aiStyle = 0;
 			Projectile.penetrate = -1;
 			Projectile.tileCollide = true;
 			Projectile.ignoreWater = true;
 			Projectile.timeLeft = 75;
 			Projectile.alpha = 0;
-			Projectile.damage = 0;
+			Projectile.damage = 50;
 			Projectile.friendly = false;
 			Projectile.hostile = true;
-			Projectile.scale = 0f;
+			Projectile.scale = 1f;
 		}
 
 		private int shadertimer = 0;//充当utime
@@ -660,12 +776,104 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 					Terraria.Graphics.Effects.Filters.Scene["IACTSW"].GetShader().UseProgress(3 * progress).UseOpacity(distortStrength * (1 - progress / 1f));
 				}
 			}
+
+			if (shadertimer >= 5) {
+				Projectile.damage = 0;
+			}
 		}
 
 		public override void OnKill(int timeLeft) {
 			if (Main.netMode != NetmodeID.Server && Terraria.Graphics.Effects.Filters.Scene["IACTSW"].IsActive()) {
 				Terraria.Graphics.Effects.Filters.Scene["IACTSW"].Deactivate();
 			}
+		}
+	}
+
+	public class PMPSTG2Effect : ModProjectile
+	{
+		public override string Texture => ArknightsMod.noTexture;
+
+		public override void SetStaticDefaults() {
+			ProjectileID.Sets.TrailingMode[Type] = 2;
+			ProjectileID.Sets.TrailCacheLength[Type] = 10;
+		}
+
+		public override void SetDefaults() {
+			Projectile.width = 1;
+			Projectile.height = 1;
+			Projectile.aiStyle = 0;
+			Projectile.penetrate = -1;
+			Projectile.tileCollide = false;
+			Projectile.ignoreWater = true;
+			Projectile.timeLeft = 900;
+			Projectile.alpha = 0;
+			Projectile.damage = 0;
+			Projectile.friendly = false;
+			Projectile.hostile = false;
+			Projectile.scale = 1f;
+		}
+
+		private float timer;
+		private float drawopacity;
+		private float dotX;
+		private float dotY;
+		private int r;
+		private int g;
+		private int b;
+
+		private NPC HostNPC = null;
+
+		public static int HostNPCType() {
+			return ModContent.NPCType<Pompeii>();
+		}
+
+		//寻找主体
+		public override void OnSpawn(IEntitySource source) {
+			Projectile.timeLeft = (int)Projectile.ai[0];
+			for (int i = 0; i < Main.maxNPCs; i++) {
+				HostNPC = Main.npc[i];
+				if (HostNPC.active && HostNPC.type == HostNPCType()) {
+					break;
+				}
+			}
+		}
+
+		public override void AI() {
+			timer++;
+			Lighting.AddLight(Projectile.Center, 10);
+			Projectile.velocity = Vector2.Zero;
+			float offset = 0.04f * MathF.Cos(timer * float.Pi / 39f) + 0.36f;
+			float delta = 0.2f * MathF.Cos(timer * float.Pi / 41f) + 0.5f;
+			float maxd = 10 * MathF.Cos(timer * float.Pi / 29f);
+			dotX = (70 + maxd) * MathF.Sin((timer / 10 + offset + delta * Projectile.ai[1]) * float.Pi);
+			dotY = (70 - maxd) * Projectile.ai[1] * (1- offset) * MathF.Cos((timer / 9 + (1 - delta) * Projectile.ai[1]) * float.Pi);
+			Projectile.Center = HostNPC.Center + new Vector2(dotX, dotY + 24) + 4 * HostNPC.velocity;
+
+			if (timer <= 60f) {
+				drawopacity += 0.75f / 60f;
+			}
+			else if (Projectile.timeLeft <= 60f) {
+				drawopacity -= 0.75f / 60f;
+			}
+			else {
+				drawopacity = 0.75f;
+			}
+
+			r = 235 + 20 * (int)MathF.Sin(timer * MathHelper.Pi / 180);
+			g = 20 + 20 * (int)MathF.Sin(timer * MathHelper.Pi / 180);
+
+			if (!HostNPC.active) {
+				Projectile.Kill();
+			}
+			if (Projectile.timeLeft > 60) {
+				Projectile.timeLeft = (float)HostNPC.life / (float)HostNPC.lifeMax < 0.5f ? 1800 : 60;
+			}
+		}
+
+		public override bool PreDraw(ref Color lightColor) {
+			Texture2D trailtexture = ModContent.Request<Texture2D>("ArknightsMod/Common/VisualEffects/LineTrail").Value;
+			TrailMaker.ProjectileDrawTailByConstWidth(Projectile, trailtexture, Vector2.Zero, new Color(r, g, 0) * drawopacity, new Color(0, 0, 0), 15f, true);
+			return true;
 		}
 	}
 }

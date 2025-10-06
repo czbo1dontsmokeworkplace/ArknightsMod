@@ -13,7 +13,7 @@ using System.Net.Http.Headers;
 using Terraria.GameContent.Biomes.Desert;
 using System;
 using Terraria.Audio;
-using ArknightsMod.Common.Damageclasses;
+using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
 
 
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4 //记得把BakaMod改成ArknightsMod

@@ -30,7 +30,7 @@ namespace ArknightsMod.Content.Items.Weapons
 			Item.rare = ItemRarityID.Yellow;
 			Item.value = Item.sellPrice(0, 0, 4, 0);
 
-			Item.shoot = ModContent.ProjectileType<ShinginzanProjectile>(); // The projectile is what makes a shortsword work
+			Item.shoot = ModContent.ProjectileType<Shinginzan_Projectile>(); // The projectile is what makes a shortsword work
 			Item.shootSpeed = 4f; // This value bleeds into the behavior of the projectile as velocity, keep that in mind when tweaking values
 
 			Item.UseSound = SoundID.Item69; // The sound when the weapon is being used.

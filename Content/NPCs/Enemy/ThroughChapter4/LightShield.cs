@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Common.Damageclasses;
+﻿using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -261,7 +261,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		public override void OnHitPlayer(Player target, Player.HurtInfo info) {
 		}
 		public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers) {
-			target.GetModPlayer<Common.Players.ImmunePlayer>().ImmuneMultiplier = 1f; // 免疫倍数
+			target.GetModPlayer<Players.ImmunePlayer>().ImmuneMultiplier = 1f; // 免疫倍数
 		}
 	}
 }

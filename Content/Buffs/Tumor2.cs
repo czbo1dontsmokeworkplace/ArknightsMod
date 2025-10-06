@@ -15,7 +15,7 @@ using System;
 using Mono.Cecil;
 using System.Reflection.Metadata;
 using Terraria.GameContent;
-using ArknightsMod.Common.Damageclasses;
+using ArknightsMod.Systems.Gameplay.Enums;
 
 namespace ArknightsMod.Content.Buffs
 {

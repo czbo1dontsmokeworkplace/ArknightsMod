@@ -9,10 +9,9 @@ using Terraria;
 using Terraria.GameContent.UI.Elements;
 using Terraria.ModLoader;
 using Terraria.UI;
-using ArknightsMod.Common.Players;
-using ArknightsMod.Content.Items.Weapons;
+using ArknightsMod.Players;
+using ArknightsMod.Systems.Gameplay.Elemental;
 using Terraria.GameContent;
-using System.Collections.Generic;
 using Terraria.GameContent.Events;
 using Microsoft.Xna.Framework.Input;
 using Terraria.Audio;
@@ -38,9 +37,11 @@ namespace ArknightsMod.Common.UI
 		private int SanCD;
 
 		public override void Draw(SpriteBatch spriteBatch) {
-			CurrenSan = Main.LocalPlayer.GetModPlayer<San>().CurrentSan;
-			SanCD = Main.LocalPlayer.GetModPlayer<San>().MadnessCD;
+			int WhoAmI = Main.LocalPlayer.whoAmI;
+			CurrenSan = ElementalSystem.GetElemental(0, WhoAmI);
+			SanCD = 0;
 
+			//not ready yet in v0.2.6
 			if (1000 >= CurrenSan && CurrenSan >= 916) {
 				spriteBatch.Draw(ModContent.Request<Texture2D>("ArknightsMod/Common/UI/Santable").Value, new Vector2((Main.screenWidth*0.775f), (Main.screenHeight*0.1f)), new Rectangle(0, 43 * 12, 43, 43), Color.White, 0, new Vector2(20, 20), 1.5f, 0, 0);
 			}

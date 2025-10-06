@@ -4,6 +4,15 @@
   <PropertyGroup>
     <AssemblyName>ArknightsMod</AssemblyName>
     <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <Platform>AnyCPU</Platform>
+    <Configuration>Debug</Configuration>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Optimize>True</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <Optimize>False</Optimize>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Content\Items\BattleRecords\DrillBattleRecord.png" />
@@ -17,6 +26,7 @@
   <ItemGroup>
     <Folder Include="Assets\LevelDatas\Skills\" />
     <Folder Include="Common\UI\BattleRecord\Images\" />
+    <Folder Include="UI\" />
     <None Remove="Assets\Effects\AACTSTG3RBFence.fx" />
     <None Remove="Assets\Effects\AACTSTG3RBNoise.fx" />
     <None Remove="Assets\Effects\CollapesdExplosion.fx" />

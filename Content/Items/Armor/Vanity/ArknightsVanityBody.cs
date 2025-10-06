@@ -1,0 +1,31 @@
+﻿using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+
+namespace ArknightsMod.Content.Items.Armor.Vanity
+{
+	public abstract class ArknightsVanityBody : ModItem
+	{
+		public virtual int Rarity => ItemRarityID.Cyan;
+		public virtual int Value => 15000;
+		public sealed override void SetStaticDefaults() {
+			Item.ResearchUnlockCount = 1;
+			if (Main.netMode == NetmodeID.Server)
+				return;
+			ArmorIDs.Body.Sets.HidesTopSkin[Item.bodySlot] = true;
+			ArmorIDs.Body.Sets.HidesArms[Item.bodySlot] = true;
+			SafeSetStaticDefaults();
+		}
+
+		public sealed override void SetDefaults() {
+			Item.width = 28;
+			Item.height = 24;
+			Item.rare = Rarity;
+			Item.value = Value;
+			Item.vanity = true;
+			SafeSetDefaults();
+		}
+		public virtual void SafeSetDefaults() { }
+		public virtual void SafeSetStaticDefaults() { }
+	}
+}
