@@ -74,7 +74,7 @@ namespace ArknightsMod.Content.Events
 	   ModContent.GetInstance<EventUISystem>().progressBar);
 			MonstersKilled = 0;
 			Main.NewText("识别入侵者身份“整合运动”，启动全舰防御", Color.Orange);
-			Main.curMusic = MusicLoader.GetMusicSlot("ArknightsMod/Music/UnionInvade");
+			Main.curMusic = MusicLoader.GetMusicSlot("ArknightsMod/Sounds/Music/UnionInvade");
 
 		}
 
@@ -119,7 +119,7 @@ namespace ArknightsMod.Content.Events
 			}
 		}
 		public class UnionInvadeMusic : ModSceneEffect {
-			public override int Music => MusicLoader.GetMusicSlot(Mod, "Music/UnionInvade");
+			public override int Music => MusicLoader.GetMusicSlot(Mod, "Sounds/Music/UnionInvade");
 			public override SceneEffectPriority Priority => SceneEffectPriority.Event;
 
 			public override bool IsSceneEffectActive(Player player) {

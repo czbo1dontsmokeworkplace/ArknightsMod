@@ -63,7 +63,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.aiStyle = -1;
 			NPC.BossBar = ModContent.GetInstance<NoBossBar>();
-			Music = MusicLoader.GetMusicSlot(Mod, "Music/PmpBoss");
+			Music = MusicLoader.GetMusicSlot(Mod, "Sounds/Music/PmpBoss");
 		}
 
 		//NPC专家模式|大师模式血量倍率（普通模式血量*倍率*2|血量*倍率*3）

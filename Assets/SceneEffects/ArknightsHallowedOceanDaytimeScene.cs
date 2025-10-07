@@ -8,7 +8,7 @@ namespace ArknightsMod.Assets.SceneEffects
 {
 	internal class ArknightsHallowedOceanDaytimeScene : ModSceneEffect
 	{
-		public override int Music => MusicLoader.GetMusicSlot(Mod, "Music/pathoflife");
+		public override int Music => MusicLoader.GetMusicSlot(Mod, "Sounds/Music/pathoflife");
 		public override SceneEffectPriority Priority => SceneEffectPriority.BiomeHigh;
 		public override bool IsLoadingEnabled(Mod mod)
 		{

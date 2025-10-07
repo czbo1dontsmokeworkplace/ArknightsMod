@@ -251,13 +251,13 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 			#region 音乐
 			if (!Main.dedServ) {
 				if (FNStage <= 1) {
-					Music = MusicLoader.GetMusicSlot(Mod, "Music/FrostnovaStage1");//一阶段
+					Music = MusicLoader.GetMusicSlot(Mod, "Sounds/Music/FrostnovaStage1");//一阶段
 				}
 				else if (FNStage == 1.5f || FNStage == 2) {
-					Music = MusicLoader.GetMusicSlot(Mod, "Music/FrostnovaStage2");//二阶段
+					Music = MusicLoader.GetMusicSlot(Mod, "Sounds/Music/FrostnovaStage2");//二阶段
 				}
 				else if (FNStage >= 3) {
-					Music = MusicLoader.GetMusicSlot(Mod, "Music/FrostnovaDeath");//死亡
+					Music = MusicLoader.GetMusicSlot(Mod, "Sounds/Music/FrostnovaDeath");//死亡
 				}
 			}
 			#endregion

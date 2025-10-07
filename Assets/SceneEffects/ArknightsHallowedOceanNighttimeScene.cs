@@ -8,7 +8,7 @@ namespace ArknightsMod.Assets.SceneEffects
 {
 	internal class ArknightsHallowedOceanNighttimeScene : ModSceneEffect
 	{
-		public override int Music => MusicLoader.GetMusicSlot(Mod, "Music/upsidedowntreeshadow");
+		public override int Music => MusicLoader.GetMusicSlot(Mod, "Sounds/Music/upsidedowntreeshadow");
 		public override SceneEffectPriority Priority => SceneEffectPriority.BiomeHigh;
 		public override bool IsLoadingEnabled(Mod mod)
 		{

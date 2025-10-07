@@ -6,7 +6,7 @@ namespace ArknightsMod.Assets.SceneEffects
 {
 	internal class ArknightsSpaceNighttimeHighScene : ModSceneEffect
 	{
-		public override int Music => MusicLoader.GetMusicSlot(Mod, "Music/adastra");
+		public override int Music => MusicLoader.GetMusicSlot(Mod, "Sounds/Music/adastra");
 		public override SceneEffectPriority Priority => SceneEffectPriority.Environment;
 		public override bool IsLoadingEnabled(Mod mod)
 		{

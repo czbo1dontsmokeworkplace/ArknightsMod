@@ -314,7 +314,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 			float acceleration = 0.1f;
 			float maxSpeed = 2f;
 			float angle = (float)Math.Atan((p.Center.Y - NPC.Center.Y) / (p.Center.X - NPC.Center.X));
-			Music = MusicLoader.GetMusicSlot("ArknightsMod/Music/TFTT");
+			Music = MusicLoader.GetMusicSlot("ArknightsMod/Sounds/Music/TFTT");
 			//炮兵模块
 			PWH = p.position.Y - 15 - NPC.position.Y;
 			PWD = p.position.X - NPC.position.X;

@@ -411,7 +411,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 
 			if (!Main.dedServ) {
 				if (AACTstage <= 1) {
-					Music = MusicLoader.GetMusicSlot(Mod, "Music/IACTBoss3");//音乐三
+					Music = MusicLoader.GetMusicSlot(Mod, "Sounds/Music/IACTBoss3");//音乐三
 				}
 				else if (timer1to2 > 0 && timer1to2 <= 120) {
 					Music = MusicLoader.GetMusicSlot(Mod, "Assets/Sound/none");//一转二阶段

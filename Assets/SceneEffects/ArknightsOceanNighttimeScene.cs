@@ -6,7 +6,7 @@ namespace ArknightsMod.Assets.SceneEffects
 {
 	internal class ArknightsOceanNighttimeScene : ModSceneEffect
 	{
-		public override int Music => MusicLoader.GetMusicSlot(Mod, "Music/seawonder");
+		public override int Music => MusicLoader.GetMusicSlot(Mod, "Sounds/Music/seawonder");
 		public override SceneEffectPriority Priority => SceneEffectPriority.BiomeLow;
 		public override bool IsLoadingEnabled(Mod mod)
 		{

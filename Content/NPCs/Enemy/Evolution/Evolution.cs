@@ -58,7 +58,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution
 			NPC.scale = 2f;
 			NPC.boss = true;
 			NPC.knockBackResist = 0;
-			Music = MusicLoader.GetMusicSlot("ArknightsMod/Music/Evolution");
+			Music = MusicLoader.GetMusicSlot("ArknightsMod/Sounds/Music/Evolution");
 			if (Main.expertMode || Main.masterMode) {
 				NPC.lifeMax = (int)(NPC.lifeMax * 0.75);
 				NPC.damage = (int)(NPC.damage * 0.75);

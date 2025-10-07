@@ -6,7 +6,7 @@ namespace ArknightsMod.Assets.SceneEffects
 {
 	internal class ArknightsForestDaytimeScene : ModSceneEffect
 	{
-		public override int Music => MusicLoader.GetMusicSlot(Mod, "Music/lifeglow");
+		public override int Music => MusicLoader.GetMusicSlot(Mod, "Sounds/Music/lifeglow");
 		public override SceneEffectPriority Priority => SceneEffectPriority.BiomeLow;
 		public override bool IsLoadingEnabled(Mod mod) {
 			return ModContent.GetInstance<MusicConfig>().EnableArknightsForestDaytime;

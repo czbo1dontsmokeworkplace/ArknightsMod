@@ -6,7 +6,7 @@ namespace ArknightsMod.Assets.SceneEffects
 {
 	internal class ArknightsSpaceDaytimeScene : ModSceneEffect
 	{
-		public override int Music => MusicLoader.GetMusicSlot(Mod, "Music/trimountsky");
+		public override int Music => MusicLoader.GetMusicSlot(Mod, "Sounds/Music/trimountsky");
 		public override SceneEffectPriority Priority => SceneEffectPriority.Environment;
 		public override bool IsLoadingEnabled(Mod mod)
 		{
