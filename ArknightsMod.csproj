@@ -15,6 +15,12 @@
     <Optimize>False</Optimize>
   </PropertyGroup>
   <ItemGroup>
+    <AdditionalFiles Remove="Library\Spine\**" />
+    <Compile Remove="Library\Spine\**" />
+    <EmbeddedResource Remove="Library\Spine\**" />
+    <None Remove="Library\Spine\**" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="Content\Items\BattleRecords\DrillBattleRecord.png" />
     <None Remove="Content\Items\BattleRecords\FrontlineBattleRecord.png" />
     <None Remove="Content\Items\BattleRecords\StrategicBattleRecord.png" />
