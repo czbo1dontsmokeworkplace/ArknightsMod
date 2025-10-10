@@ -47,26 +47,20 @@ namespace ArknightsMod.Assets.Effects
         public override void Draw(SpriteBatch spriteBatch, float minDepth, float maxDepth)
         {
             var destRect = new Rectangle(
-    -(int)(playerWorldPos.X / (Main.maxTilesX * 20f) * Main.screenWidth),
-    -730 - (int)(playerWorldPos.Y / (Main.maxTilesY * 7f) * Main.screenHeight),
-    (int)(1.6f * Main.screenWidth),
-    (int)(1.6f * Main.screenHeight)
+                -(int)(playerWorldPos.X / (Main.maxTilesX * 20f) * Main.screenWidth),
+                -730 - (int)(playerWorldPos.Y / (Main.maxTilesY * 7f) * Main.screenHeight),
+                (int)(1.6f * Main.screenWidth),
+                (int)(1.6f * Main.screenHeight));
 
-);
             destRect.X -= (int)(destRect.Width * 0.15f);
             if (_intensity > 0.01f && maxDepth >= 0 && minDepth < 0)
             {
-                spriteBatch.Draw(
-     _skyTexture,
-     destRect,
-     Color.White * _intensity
- );
+                spriteBatch.Draw(_skyTexture, destRect, Color.White * _intensity);
                 //spriteBatch.Draw(
                 //_skyTexture ??= ArknightsMod.UnionInvadeSkyTexture, // 安全后备
                 //new Rectangle((int)(playerWorldPos.X / Main.maxTilesX * 8f) * Main.screenWidth, -100 + (int)(playerWorldPos.Y / Main.maxTilesY * 4f) * Main.screenHeight, (int)2f * Main.screenWidth, (int)2f * Main.screenHeight),
                 // Color.White * _intensity
                 // ); ,
-
             }
         }
 
