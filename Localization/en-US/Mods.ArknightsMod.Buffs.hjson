@@ -1,0 +1,64 @@
+AcidOgSlugDebuff: {
+	DisplayName: Acid Og Slug Debuff
+	Description: Mods.ArknightsMod.Buffs.AcidOgSlugDebuff.Description
+}
+
+BagpipeSpearS1: {
+	DisplayName: Bagpipe Spear S1
+	Description: Mods.ArknightsMod.Buffs.BagpipeSpearS1.Description
+}
+
+BagpipeSpearS2: {
+	DisplayName: Bagpipe Spear S2
+	Description: Mods.ArknightsMod.Buffs.BagpipeSpearS2.Description
+}
+
+BagpipeSpearS3: {
+	DisplayName: Bagpipe Spear S3
+	Description: Mods.ArknightsMod.Buffs.BagpipeSpearS3.Description
+}
+
+ChenSwordS3: {
+	DisplayName: Chen Sword S3
+	Description: Mods.ArknightsMod.Buffs.ChenSwordS3.Description
+}
+
+ExusiaiRingAndWingBuff: {
+	DisplayName: Exusiai Ring And Wing Buff
+	Description: Mods.ArknightsMod.Buffs.ExusiaiRingAndWingBuff.Description
+}
+
+KroosCrossbowS1: {
+	DisplayName: Kroos Crossbow S1
+	Description: Mods.ArknightsMod.Buffs.KroosCrossbowS1.Description
+}
+
+MostimaRingAndWingBuff: {
+	DisplayName: Mostima Ring And Wing Buff
+	Description: Mods.ArknightsMod.Buffs.MostimaRingAndWingBuff.Description
+}
+
+RAMeatchipBuff: {
+	DisplayName: R A Meatchip Buff
+	Description: Mods.ArknightsMod.Buffs.RAMeatchipBuff.Description
+}
+
+RARicecrabBuff: {
+	DisplayName: R A Ricecrab Buff
+	Description: Mods.ArknightsMod.Buffs.RARicecrabBuff.Description
+}
+
+StunDebuff: {
+	DisplayName: Stun Debuff
+	Description: Mods.ArknightsMod.Buffs.StunDebuff.Description
+}
+
+Tumor1: {
+	DisplayName: Tumor1
+	Description: Mods.ArknightsMod.Buffs.Tumor1.Description
+}
+
+Tumor2: {
+	DisplayName: Tumor2
+	Description: Mods.ArknightsMod.Buffs.Tumor2.Description
+}

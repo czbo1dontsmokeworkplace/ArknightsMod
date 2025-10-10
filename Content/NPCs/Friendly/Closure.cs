@@ -41,7 +41,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		}
 
 		public override List<string> SetNPCNameList() {
-			return new List<string> { Language.GetTextValue("Mods.ArknightsMod.NameList.Closure") };
+			return new List<string> { Language.GetTextValue($"Mods.ArknightsMod.NPCs.{GetType().Name}.DisplayName") };
 		}
 
 		public override void SetDefaults() {
@@ -84,10 +84,6 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			chat.Add(Language.GetTextValue("Mods.ArknightsMod.Dialogue.Closure.Dialogue6"));
 			chat.Add(Language.GetTextValue("Mods.ArknightsMod.Dialogue.Closure.Dialogue7"));
 			chat.Add(Language.GetTextValue("Mods.ArknightsMod.Dialogue.Closure.Dialogue8"));
-			//if (LanternNight.LanternsUp)
-			//{
-			//    chat.Add("You have done well, indeed you have. You've a strong arm, strong faith, and most importantly, a strong heart.", 1.5);
-			//}
 			return chat;
 		}
 		public override void SetChatButtons(ref string button, ref string button2) {

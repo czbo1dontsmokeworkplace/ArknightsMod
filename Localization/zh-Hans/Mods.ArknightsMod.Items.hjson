@@ -1,0 +1,1089 @@
+# Weapons
+YatoKatana: {
+	DisplayName: 夜刀的剑
+	Tooltip: "'夜刀，入队。'"
+}
+
+DurinWand: {
+	DisplayName: 杜林的法杖//我参加
+	Tooltip: 她看起来十分困乏。
+}
+
+KroosCrossbow: {
+	DisplayName: 克洛丝的弩
+	Tooltip: "'在~这~里~哦'"
+}
+
+Shinginzan: {
+	DisplayName: 真银斩
+	Tooltip:
+		'''
+		[c/FF00000:(未完成的物品)]
+		'银灰，你的盟友，前来助力。'
+		'''
+}
+
+BagpipeSpear: {
+	DisplayName: 破城矛
+	Tooltip:
+		'''
+		左键点击物品栏下方技能图标以切换技能
+		'我和我的破城矛，来自维多利亚！'
+		'''
+}
+
+ChenSword: {
+	DisplayName: 赤霄
+	Tooltip: 无论什么时候，陈总是会站在队伍的前端。
+}
+
+ThornsSword: {
+	DisplayName: 棘刺的剑
+	Tooltip: "'看仔细，这才是伊比利亚的至高之术！'"
+}
+
+PozemkaCrossbow: {
+	DisplayName: 鸿雪的弩
+	Tooltip: "'只要在地上生活，就一定会有拿起武器的那一天，我知道。'"
+}
+
+# Accessories
+ExusiaiWings: {
+	DisplayName: Exusiai's wings
+	Tooltip: "'苹果派！'"
+}
+
+DoctorHood: {
+	# Armor/Vanity
+	DisplayName: 明日方舟博士的兜帽
+	// Tooltip: ""
+}
+
+DoctorJacket: {
+	DisplayName: 明日方舟博士的夹克
+	// Tooltip: ""
+}
+
+DoctorPants: {
+	DisplayName: 明日方舟博士的裤子
+	// Tooltip: ""
+}
+
+AmiyaBody: {
+	DisplayName: 阿米娅的上衣
+	// Tooltip: ""
+}
+
+AmiyaHead: {
+	DisplayName: 阿米娅的头套
+	// Tooltip: ""
+}
+
+AmiyaLegs: {
+	DisplayName: 阿米娅的下装
+	// Tooltip: ""
+}
+
+MelanthaBody: {
+	DisplayName: 玫兰莎的上衣
+	// Tooltip: ""
+}
+
+MelanthaHead: {
+	DisplayName: 玫兰莎的头套
+	// Tooltip: ""
+}
+
+MelanthaLegs: {
+	DisplayName: 玫兰莎的下装
+	// Tooltip: ""
+}
+
+MatoimaruBody: {
+	DisplayName: 缠丸的上衣
+	// Tooltip: ""
+}
+
+MatoimaruHead: {
+	DisplayName: 缠丸的头套
+	// Tooltip: ""
+}
+
+MatoimaruLegs: {
+	DisplayName: 缠丸的下装
+	// Tooltip: ""
+}
+
+IndigoBody: {
+	DisplayName: 深靛的上衣
+	// Tooltip: ""
+}
+
+IndigoHead: {
+	DisplayName: 深靛的头套
+	// Tooltip: ""
+}
+
+IndigoLegs: {
+	DisplayName: 深靛的下装
+	// Tooltip: ""
+}
+
+ChenHead: {
+	DisplayName: 陈的头套
+	// Tooltip: ""
+}
+
+ChenBody: {
+	DisplayName: 陈的上衣
+	// Tooltip: ""
+}
+
+ChenLegs: {
+	DisplayName: 陈的下装
+	// Tooltip: ""
+}
+
+MudrockBody: {
+	DisplayName: 泥岩的上衣
+	Tooltip: 右键以切换样式
+}
+
+MudrockChestplate: {
+	DisplayName: 泥岩的胸甲
+	Tooltip: 右键以切换样式
+}
+
+MudrockGreaves: {
+	DisplayName: 泥岩的下装
+	Tooltip: ""
+}
+
+MudrockHead: {
+	DisplayName: 泥岩的头套
+	Tooltip: 右键以切换样式
+}
+
+MudrockHelmet: {
+	DisplayName: 泥岩的头盔
+	Tooltip: 右键以切换样式
+}
+
+WBody: {
+	DisplayName: W的上衣
+	// Tooltip: ""
+}
+
+WHead: {
+	DisplayName: W的头套
+	// Tooltip: ""
+}
+
+WLegs: {
+	DisplayName: W的下装
+	// Tooltip: ""
+}
+
+TexalterBody: {
+	DisplayName: 缄默德克萨斯的上衣
+	// Tooltip: ""
+}
+
+TexalterHead: {
+	DisplayName: 缄默德克萨斯的头套
+	// Tooltip: ""
+}
+
+TexalterLegs: {
+	DisplayName: 缄默德克萨斯的下装
+	// Tooltip: ""
+}
+
+# Consumables
+StartBag: {
+	DisplayName: 明日方舟博士的衣服
+	Tooltip:
+		'''
+		{$CommonItemTooltip.RightClickToOpen}
+		所有干员的装备由罗德岛发放。当然，你的也是。
+		'''
+}
+
+AmiyaDefault: {
+	DisplayName: 阿米娅的服饰（常规）
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+MelanthaDefault: {
+	DisplayName: 玫兰莎的服饰（常规）
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+MatoimaruDefault: {
+	DisplayName: 缠丸的服饰（常规）
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+IndigoDefault: {
+	DisplayName: 深靛的服饰（常规）
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+ChenDefault: {
+	DisplayName: 陈的服饰（常规）
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+MudrockDefault: {
+	DisplayName: 泥岩的服饰（常规）
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+WDefault: {
+	DisplayName: W的服饰（常规）
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+TexalterDefault: {
+	DisplayName: 缄默德克萨斯的服饰（常规）
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+# Material
+OrirockCluster: {
+	DisplayName: 固源岩组
+	Tooltip: 从地表开采出的岩石固块组。
+}
+
+OrirockConcentration: {
+	DisplayName: 提纯源岩
+	Tooltip: 从地表开采出的岩石固块组提纯出的物质。
+}
+
+Polyketon: {
+	DisplayName: 酮凝集
+	Tooltip: 少量的工业用有机化合物。
+}
+
+Aketon: {
+	DisplayName: 酮凝集组
+	Tooltip: 中等量的工业用有机化合物。
+}
+
+KetonColloid: {
+	DisplayName: 酮阵列
+	Tooltip: 大量的工业用有机化合物。
+}
+
+MnTri: {
+	DisplayName: 三水锰矿
+	Tooltip: 用于提炼冶炼用的金属矿物。
+}
+
+GP: {
+	DisplayName: 五水研磨石
+	Tooltip: 用于精加工武器零件的高级研磨石。
+}
+
+RMA24: {
+	DisplayName: RMA70-24
+	Tooltip: 一种十分敏感且有优秀传导效果的矿物。
+}
+
+LoxicKohl: {
+	DisplayName: 扭转醇
+	Tooltip: 片状有机化合物。
+}
+
+WHKohl: {
+	DisplayName: 白马醇
+	Tooltip: 扭转醇精加工后的产物。
+}
+
+Device: {
+	DisplayName: 装置
+	Tooltip: 一套相对完整的装置。
+}
+
+IntegratedDevice: {
+	DisplayName: 全新装置
+	Tooltip: 一套全新装配而成的装置。
+}
+
+OptimizedDevice: {
+	DisplayName: 改量装置
+	Tooltip: 经过大量私自改造的装置。
+}
+
+Oriron: {
+	DisplayName: 异铁
+	Tooltip: 罕见的工业材料。
+}
+
+OrironCluster: {
+	DisplayName: 异铁组
+	Tooltip: 珍贵的工业材料。
+}
+
+OrironBlock: {
+	DisplayName: 异铁块
+	Tooltip: 价值高昂的工业材料。
+}
+
+Sugar: {
+	DisplayName: 糖
+	Tooltip: 机械化制作的少量糖块。
+}
+
+SugarPack: {
+	DisplayName: 糖组
+	Tooltip: 机械化制作的中等量糖块。
+}
+
+SugarLump: {
+	DisplayName: 糖聚块
+	Tooltip: 机械化制作的大量糖块。
+}
+
+Polyester: {
+	DisplayName: 聚酸酯
+	Tooltip: 工业制造所需的零散聚酸酯。
+}
+
+PolyesterPack: {
+	DisplayName: 聚酸酯组
+	Tooltip: 工业制造所需的一组聚酸酯。
+}
+
+PolyesterLump: {
+	DisplayName: 聚酸酯块
+	Tooltip: 工业制造所需的成块聚酸酯。
+}
+
+CoagulatingGel: {
+	DisplayName: 凝胶
+	Tooltip: 一种高强度的可塑性材料。
+}
+
+PolymerizedGel: {
+	DisplayName: 聚合凝胶
+	Tooltip: 一种具备极高强度的可塑性材料。
+}
+
+# Placeable
+OrirockCube: {
+	DisplayName: 固源岩
+	Tooltip: 从地表开采出的岩石固块。
+}
+
+MnOre: {
+	DisplayName: 轻锰矿
+	Tooltip: 用于提炼冶炼用的金属矿物。
+}
+
+Grind: {
+	DisplayName: 研磨石
+	Tooltip: 用于加工武器零件的研磨石。
+}
+
+RMA12: {
+	DisplayName: RMA70-12
+	Tooltip: 一种敏感且有良好传导效果的矿物。
+}
+
+DareUsa: {
+	# Furniture
+	DisplayName: 懒人沙发兔
+	# Furniture
+	Tooltip: 很大很大的兔兔，很软，很可爱，很舒服。
+}
+
+AnniversaryWheel: {
+	DisplayName: 周年庆典转盘
+	Tooltip:
+		'''
+		这个轮盘是准备给懒人刷取材料用的。
+		右击转动轮盘，通过公平的抽奖获取素材。
+		??? “绝对没有暗箱操作”
+		'''
+}
+
+Orundum: {
+	DisplayName: 合成玉
+	Tooltip: 常用于招募干员。
+}
+
+IncandescentAlloy: {
+	DisplayName: 炽合金
+	Tooltip: 电子工业用特殊高熔点合金。
+}
+
+IncandescentAlloyBlock: {
+	DisplayName: 炽合金块
+	Tooltip: 产量稀少的电子工业用特殊高熔点合金。
+}
+
+CrystallineComponent: {
+	DisplayName: 晶体元件
+	Tooltip: 可以制作与合成更高级的源石电子元件。
+}
+
+CompoundCF: {
+	DisplayName: 化合切削液
+	Tooltip: 一种金属加工时必备的工业试剂。
+}
+
+CrystallineCircuit: {
+	DisplayName: 晶体电路
+	Tooltip: 重要的源石工业材料，是制作源石晶体单元的基础元件。
+}
+
+PP: {
+	DisplayName: 聚合剂
+	Tooltip: 复杂的液态工业产物。
+}
+
+TSA: {
+	DisplayName: 转质盐聚块
+	Tooltip: 经过精炼处理的化合物结晶块。
+}
+
+SSS: {
+	DisplayName: 半自然溶剂
+	Tooltip: 一种物理性能优异，耐酸碱性良好的活性溶剂。
+}
+
+CEU: {
+	DisplayName: 晶体电子单元
+	Tooltip: 昂贵的源石工业产品。
+}
+
+RefinedSolvent: {
+	DisplayName: 精炼溶剂
+	Tooltip: 经特殊工艺制作而成特殊涂料。
+}
+
+D32Steel: {
+	DisplayName: D32钢
+	Tooltip: 自然界中不应存在的人造金属材料，呈固态。
+}
+
+NucleicCrystalSinter: {
+	DisplayName: 烧结核凝晶
+	Tooltip: 对工艺要求极高的现代科技产物。
+}
+
+CFSolution: {
+	DisplayName: 切削原液
+	Tooltip: 由多种活性溶剂配置而成的原液。
+}
+
+BipolarNanoflake: {
+	DisplayName: 双极纳米片
+	Tooltip: 现代工业的创造力结晶。
+}
+
+TransmutedSalt: {
+	DisplayName: 转质盐组
+	Tooltip: 经过粗炼处理的化合物结晶。
+}
+
+#Summon
+IACTSummon: {
+	DisplayName: 奇怪的信号发射器
+	Tooltip:
+		'''
+		似乎只要按下这个按钮，这个玩意就会发出[c/FF0000:奇怪]的信号
+		召唤[c/FF0000:遗落的军用打击系统]
+		[c/FF0000:只能在晚上使用]
+		'''
+}
+
+IATSummon: {
+	DisplayName: 奇怪的信号发射器·低配版
+	Tooltip:
+		'''
+		似乎只要按下这个按钮，这个玩意就会发出[c/FF0000:奇怪]的信号
+		召唤[c/FF0000:遗落的军用打击系统]
+		[c/FF0000:只能在晚上使用]
+		'''
+}
+
+OriginiumSlugBanner: {
+	DisplayName: 源石虫旗
+	// Tooltip: ""
+}
+
+OriginiumSlugAlphaBanner: {
+	DisplayName: 源石虫Alpha旗
+	// Tooltip: ""
+}
+
+OriginiumSlugBetaBanner: {
+	DisplayName: 源石虫Beta旗
+	// Tooltip: ""
+}
+
+AcidOgSlugBanner: {
+	DisplayName: 酸液源石虫旗
+	// Tooltip: ""
+}
+
+CorruptedRecord: {
+	DisplayName: 腐蚀的伊比利亚唱片
+	Tooltip: 收下它的冲动来自一种不知名的渴求。
+}
+
+DrillBattleRecord: {
+	// DisplayName: Drill Battle Record
+	// Tooltip: ""
+}
+
+TFTTS: {
+	DisplayName: 深海邀请函
+	Tooltip:
+		'''
+		用恐鱼血水书写的邀请函，邀请一位美丽得体的海洋访客
+		不消耗
+		'''
+}
+
+RAWater: {
+	DisplayName: 清水
+	Tooltip: 净化后可以作为饮用水直接饮用，也能在设施建设中发挥作用。
+}
+
+RAlegmeat: {
+	DisplayName: 带骨腿肉
+	Tooltip: 紧实的腿肉连带着坚硬的骨头，自带一股草木香味。
+}
+
+RARicecrab: {
+	DisplayName: 蟹肉碎拌饭
+	Tooltip:
+		'''
+		热腾腾的杂粮中加入了岩壳蟹肉，吃起来朴素中略带鲜味。
+		食用后4分钟内:
+		最大生命值+8%,防御力+8%
+		'''
+}
+
+RAMeatchip: {
+	DisplayName: 脆肉薯条转醇
+	Tooltip:
+		'''
+		选取荒地上随处可见的肉作为原料，和粗细不一的薯条一起在锅中煎炸而成。
+		食用后5分钟内:
+		攻击力+15%,攻击速度+15%
+		'''
+}
+
+UnionInvader: {
+	DisplayName: 破损的整合运动旗帜
+	Tooltip: 白天使用以召唤整合运动的先锋部队
+}
+
+FrontlineBattleRecord: {
+	// DisplayName: Frontline Battle Record
+	// Tooltip: ""
+}
+
+StrategicBattleRecord: {
+	// DisplayName: Strategic Battle Record
+	// Tooltip: ""
+}
+
+TacticalBattleRecord: {
+	// DisplayName: Tactical Battle Record
+	// Tooltip: ""
+}
+
+Nianweapon: {
+	// DisplayName: Nianweapon
+	// Tooltip: ""
+}
+
+WMusicBox: {
+	DisplayName: 音乐盒(W)
+	Tooltip: 原曲是Renegade
+}
+
+MostimaRingAndWing: {
+	// DisplayName: Mostima Ring And Wing
+	// Tooltip: ""
+}
+
+RosmontisBackpack: {
+	// DisplayName: Rosmontis Backpack
+	// Tooltip: ""
+}
+
+HazeBody: {
+	// DisplayName: Haze Body
+	// Tooltip: ""
+}
+
+HazeHead: {
+	// DisplayName: Haze Head
+	// Tooltip: ""
+}
+
+HazeLegs: {
+	// DisplayName: Haze Legs
+	// Tooltip: ""
+}
+
+MostimaBody: {
+	// DisplayName: Mostima Body
+	// Tooltip: ""
+}
+
+MostimaHead: {
+	// DisplayName: Mostima Head
+	// Tooltip: ""
+}
+
+MostimaLegs: {
+	// DisplayName: Mostima Legs
+	// Tooltip: ""
+}
+
+LaPlumaBody: {
+	// DisplayName: La Pluma Body
+	// Tooltip: ""
+}
+
+LaPlumaHead: {
+	// DisplayName: La Pluma Head
+	// Tooltip: ""
+}
+
+LaPlumaLegs: {
+	// DisplayName: La Pluma Legs
+	// Tooltip: ""
+}
+
+UtageBody: {
+	// DisplayName: Utage Body
+	// Tooltip: ""
+}
+
+UtageHead: {
+	// DisplayName: Utage Head
+	// Tooltip: ""
+}
+
+UtageLegs: {
+	// DisplayName: Utage Legs
+	// Tooltip: ""
+}
+
+KaltsitBody: {
+	// DisplayName: Kaltsit Body
+	// Tooltip: ""
+}
+
+KaltsitHead: {
+	// DisplayName: Kaltsit Head
+	// Tooltip: ""
+}
+
+KaltsitLegs: {
+	// DisplayName: Kaltsit Legs
+	// Tooltip: ""
+}
+
+ExusiaiBody: {
+	// DisplayName: Exusiai Body
+	// Tooltip: ""
+}
+
+ExusiaiHead: {
+	// DisplayName: Exusiai Head
+	// Tooltip: ""
+}
+
+ExusiaiLegs: {
+	// DisplayName: Exusiai Legs
+	// Tooltip: ""
+}
+
+FartoothBody: {
+	// DisplayName: Fartooth Body
+	// Tooltip: ""
+}
+
+FartoothHead: {
+	// DisplayName: Fartooth Head
+	// Tooltip: ""
+}
+
+FartoothLegs: {
+	// DisplayName: Fartooth Legs
+	// Tooltip: ""
+}
+
+KkdyAlterBody: {
+	// DisplayName: Kkdy Alter Body
+	// Tooltip: ""
+}
+
+KkdyAlterHead: {
+	// DisplayName: Kkdy Alter Head
+	// Tooltip: ""
+}
+
+KkdyAlterLegs: {
+	// DisplayName: Kkdy Alter Legs
+	// Tooltip: ""
+}
+
+RosmontisBody: {
+	// DisplayName: Rosmontis Body
+	// Tooltip: ""
+}
+
+RosmontisHead: {
+	// DisplayName: Rosmontis Head
+	// Tooltip: ""
+}
+
+RosmontisLegs: {
+	// DisplayName: Rosmontis Legs
+	// Tooltip: ""
+}
+
+ManticoreBody: {
+	// DisplayName: Manticore Body
+	// Tooltip: ""
+}
+
+ManticoreHead: {
+	// DisplayName: Manticore Head
+	// Tooltip: ""
+}
+
+ManticoreLegs: {
+	// DisplayName: Manticore Legs
+	// Tooltip: ""
+}
+
+AACTSummon: {
+	// DisplayName: A A C T Summon
+	// Tooltip: ""
+}
+
+Spicycandy: {
+	DisplayName: 辣味糖
+	// Tooltip: ""
+}
+
+ExusiaiVector: {
+	// DisplayName: Exusiai Vector
+	// Tooltip: ""
+}
+
+ExusiaiVector_Ammo: {
+	// DisplayName: Exusiai Vector_ Ammo
+	// Tooltip: ""
+}
+
+FangSpear: {
+	// DisplayName: Fang Spear
+	// Tooltip: ""
+}
+
+KroosAlterCrossbow: {
+	// DisplayName: Kroos Alter Crossbow
+	// Tooltip: ""
+}
+
+OrchidUmbrellla: {
+	// DisplayName: Orchid Umbrellla
+	// Tooltip: ""
+}
+
+ShawAxe: {
+	// DisplayName: Shaw Axe
+	// Tooltip: ""
+}
+
+ShawWaterCannon: {
+	// DisplayName: Shaw Water Cannon
+	// Tooltip: ""
+}
+
+OblivionisBody: {
+	// DisplayName: Oblivionis Body
+	// Tooltip: ""
+}
+
+OblivionisHead: {
+	// DisplayName: Oblivionis Head
+	// Tooltip: ""
+}
+
+OblivionisLegs: {
+	// DisplayName: Oblivionis Legs
+	// Tooltip: ""
+}
+
+SakiSword: {
+	// DisplayName: Saki Sword
+	// Tooltip: ""
+}
+
+WisadelCannon: {
+	// DisplayName: Wisadel Cannon
+	// Tooltip: ""
+}
+
+BrightWeeping: {
+	// DisplayName: Bright Weeping
+	// Tooltip: ""
+}
+
+ChitinousBlade: {
+	// DisplayName: Chitinous Blade
+	// Tooltip: ""
+}
+
+EmptyFeatheredBeast: {
+	// DisplayName: Empty Feathered Beast
+	// Tooltip: ""
+}
+
+FirstAidMedicineKit: {
+	// DisplayName: First Aid Medicine Kit
+	// Tooltip: ""
+}
+
+GoldBone: {
+	// DisplayName: Gold Bone
+	// Tooltip: ""
+}
+
+GoldenGinChalice: {
+	// DisplayName: Golden Gin Chalice
+	// Tooltip: ""
+}
+
+KingsArmor: {
+	// DisplayName: Kings Armor
+	// Tooltip: ""
+}
+
+KingsCrown: {
+	// DisplayName: Kings Crown
+	// Tooltip: ""
+}
+
+KingsStaff: {
+	// DisplayName: Kings Staff
+	// Tooltip: ""
+}
+
+KnightlyCodexRenewed: {
+	// DisplayName: Knightly Codex Renewed
+	// Tooltip: ""
+}
+
+ManifestationPendant: {
+	// DisplayName: Manifestation Pendant
+	// Tooltip: ""
+}
+
+PerfumeForTheShow: {
+	// DisplayName: Perfume For The Show
+	// Tooltip: ""
+}
+
+QiyuanMask: {
+	// DisplayName: Qiyuan Mask
+	// Tooltip: ""
+}
+
+VanillaSauceSoda: {
+	// DisplayName: Vanilla Sauce Soda
+	// Tooltip: ""
+}
+
+FiammettaBody: {
+	// DisplayName: Fiammetta Body
+	// Tooltip: ""
+}
+
+FiammettaHead: {
+	// DisplayName: Fiammetta Head
+	// Tooltip: ""
+}
+
+FiammettaLegs: {
+	// DisplayName: Fiammetta Legs
+	// Tooltip: ""
+}
+
+MelaniteBody: {
+	// DisplayName: Melanite Body
+	// Tooltip: ""
+}
+
+MelaniteHead: {
+	// DisplayName: Melanite Head
+	// Tooltip: ""
+}
+
+MelaniteLegs: {
+	// DisplayName: Melanite Legs
+	// Tooltip: ""
+}
+
+WisadelBody: {
+	// DisplayName: Wisadel Body
+	// Tooltip: ""
+}
+
+WisadelHead: {
+	// DisplayName: Wisadel Head
+	// Tooltip: ""
+}
+
+WisadelLegs: {
+	// DisplayName: Wisadel Legs
+	// Tooltip: ""
+}
+
+MortisBody: {
+	// DisplayName: Mortis Body
+	// Tooltip: ""
+}
+
+MortisHead: {
+	// DisplayName: Mortis Head
+	// Tooltip: ""
+}
+
+MortisLegs: {
+	// DisplayName: Mortis Legs
+	// Tooltip: ""
+}
+
+LingBody: {
+	// DisplayName: Ling Body
+	// Tooltip: ""
+}
+
+LingHead: {
+	// DisplayName: Ling Head
+	// Tooltip: ""
+}
+
+LingLegs: {
+	// DisplayName: Ling Legs
+	// Tooltip: ""
+}
+
+RaidianBody: {
+	// DisplayName: Raidian Body
+	// Tooltip: ""
+}
+
+RaidianHead: {
+	// DisplayName: Raidian Head
+	// Tooltip: ""
+}
+
+RaidianLegs: {
+	// DisplayName: Raidian Legs
+	// Tooltip: ""
+}
+
+BagpipeBody: {
+	// DisplayName: Bagpipe Body
+	// Tooltip: ""
+}
+
+BagpipeHead: {
+	// DisplayName: Bagpipe Head
+	// Tooltip: ""
+}
+
+BagpipeLegs: {
+	// DisplayName: Bagpipe Legs
+	// Tooltip: ""
+}
+
+BagpipeDefault: {
+	// DisplayName: Bagpipe Default
+	// Tooltip: ""
+}
+
+FiammettaDefault: {
+	// DisplayName: Fiammetta Default
+	// Tooltip: ""
+}
+
+MortisDefault: {
+	// DisplayName: Mortis Default
+	// Tooltip: ""
+}
+
+OblivionisDefault: {
+	// DisplayName: Oblivionis Default
+	// Tooltip: ""
+}
+
+RaidianDefault: {
+	// DisplayName: Raidian Default
+	// Tooltip: ""
+}
+
+WisdelDefault: {
+	// DisplayName: Wisdel Default
+	// Tooltip: ""
+}
+
+ArtsBlade: {
+	// DisplayName: Arts Blade
+	// Tooltip: ""
+}
+
+Blueberry: {
+	// DisplayName: Blueberry
+	// Tooltip: ""
+}
+
+BlueberryDarkChocolate: {
+	// DisplayName: Blueberry Dark Chocolate
+	// Tooltip: ""
+}
+
+DarkChocolate: {
+	// DisplayName: Dark Chocolate
+	// Tooltip: ""
+}
+
+sw: {
+	// DisplayName: sw
+	// Tooltip: ""
+}
+
+PozyBow: {
+	// DisplayName: Pozy Bow
+	// Tooltip: ""
+}
+
+SchwarzBow: {
+	// DisplayName: Schwarz Bow
+	// Tooltip: ""
+}
+
+PozyomkaBow: {
+	// DisplayName: Pozyomka Bow
+	// Tooltip: ""
+}
+
+NianWeapon: {
+	// DisplayName: Nian Weapon
+	// Tooltip: ""
+}
