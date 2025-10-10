@@ -5,7 +5,9 @@ using ArknightsMod.Common.Particle;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles.Wisadel
@@ -13,8 +15,7 @@ namespace ArknightsMod.Content.Projectiles.Wisadel
 	public class WisdelExplode : ModProjectile
 	{
 		public override string Texture => ArknightsMod.noTexture;
-		public override void SetDefaults()
-		{
+		public override void SetDefaults() {
 			Projectile.width = 48;
 			Projectile.height = 48;
 			Projectile.friendly = true;
@@ -28,8 +29,18 @@ namespace ArknightsMod.Content.Projectiles.Wisadel
 			Projectile.noEnchantmentVisuals = true;
 		}
 		public int timer;
-		public override void AI()
-		{
+		public override void AI() {
+			if (Projectile.ai[0] > 0) {
+				Projectile.ai[0]--;
+				Projectile.timeLeft = 120;
+				return;
+			}
+			if (Projectile.ai[1] == 0) {
+				if (Main.netMode != NetmodeID.Server) {
+					SoundEngine.PlaySound(Wisdel_Probe.Explode.WithVolumeScale(1.5f), Projectile.position);
+				}
+				Projectile.ai[1] = 1;
+			}
 			Player player = Main.player[Projectile.owner];
 			timer++;
 			if (timer == 5) {
@@ -40,8 +51,7 @@ namespace ArknightsMod.Content.Projectiles.Wisadel
 
 			overPlayers.Add(index);
 		}
-		public override bool ShouldUpdatePosition()
-		{
+		public override bool ShouldUpdatePosition() {
 			return false;
 		}
 		public override bool? CanDamage() => false;
@@ -61,8 +71,7 @@ namespace ArknightsMod.Content.Projectiles.Wisadel
 		/// <returns></returns>
 		public static float Oscillate(float x, float xMin, float xMax,
 			float minY1, float maxY, float minY2,
-			float overshootTime = 0.1f, float firstReturnTime = 0.3f, float oscillationDecay = 4.0f)
-		{
+			float overshootTime = 0.1f, float firstReturnTime = 0.3f, float oscillationDecay = 4.0f) {
 			// 归一化
 			float t = (x - xMin) / (xMax - xMin);
 			// 参数验证
@@ -99,8 +108,10 @@ namespace ArknightsMod.Content.Projectiles.Wisadel
 				return minY2 + amplitude * oscillation;
 			}
 		}
-		public override bool PreDraw(ref Color lightColor)
-		{
+		public override bool PreDraw(ref Color lightColor) {
+			if (Projectile.ai[0] > 0) {
+				return false;
+			}
 			Main.spriteBatch.End();
 			Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.Default,
 				Main.Rasterizer, null, Main.GameViewMatrix.ZoomMatrix);
@@ -112,15 +123,15 @@ namespace ArknightsMod.Content.Projectiles.Wisadel
 			Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 
 			drawPosition += new Vector2(0, -40);
-			Vector2 origin = tex.Size() * 0.5f;
+			Vector2 origin = Utils.Size(tex) * 0.5f;
 			Vector2 Scale = new Vector2(0.9f, 1) * 1.5f;
 
-			
+
 			float bloomScale = Oscillate(timer, 0, 28, 0.5f, 0.9f, 0.6f, overshootTime: 0.1f, oscillationDecay: 6);
 			bloomScale = Math.Clamp(bloomScale, 0f, 1f);
 			float bloomOpacity = EaseFunction.Ease(timer, 0, 30, 0.8f, 0f);
 			bloomOpacity = Math.Clamp(bloomOpacity, 0f, 1f);
-			var bloomColor = Color.Lerp(Color.White, new Color(170, 108, 210), timer / 10f);
+			Color bloomColor = Color.Lerp(Color.White, new Color(170, 108, 210), timer / 10f);
 
 			Main.spriteBatch.Draw(texglow, drawPosition, null,
 				bloomColor * bloomOpacity, Projectile.rotation, origin, bloomScale * Scale, 0, 0f);
@@ -131,8 +142,8 @@ namespace ArknightsMod.Content.Projectiles.Wisadel
 				Main.Rasterizer, null, Main.GameViewMatrix.ZoomMatrix);
 
 
-			float scale = Oscillate(timer, 0, 28, 0.75f, 1.2f, 0.6f, overshootTime: 0.1f, oscillationDecay: 6);
-			scale = Math.Clamp(scale, 0.5f, 1f);
+			float scale = Oscillate(timer, 0, 28, 0.75f, 1.2f, 0.6f, overshootTime: 0.1f, firstReturnTime: 0.4f, oscillationDecay: 3);
+			scale = Math.Clamp(scale, 0.5f, 1.2f);
 			float opacity = EaseFunction.Ease(timer, 60, 120, 1f, 0f);
 			opacity = Math.Clamp(opacity, 0f, 1f);
 			Color color = Color.White;
@@ -157,7 +168,7 @@ namespace ArknightsMod.Content.Projectiles.Wisadel
 			Vector2 hlOrigin = hightlight.Size() / 2;
 			float hlScale = Oscillate(timer, 0, 28, 2f, 5f, 4f, overshootTime: 0.1f, oscillationDecay: 6);
 			hlScale = Math.Clamp(hlScale, 0f, 100f);
-			var hlColor = new Color(249, 90, 100);
+			Color hlColor = new Color(249, 90, 100);
 			float hlOpacity = EaseFunction.Ease(timer, 5, 60, 1f, 0f);
 			hlOpacity = Math.Clamp(hlOpacity, 0f, 1f);
 
