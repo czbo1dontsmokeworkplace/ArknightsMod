@@ -64,15 +64,13 @@ namespace ArknightsMod.Content.Buffs
 			stunDebuff = false;
 		}
 
-		public override void DrawEffects(
-			PlayerDrawSet drawInfo,
-			ref float r, ref float g, ref float b, ref float a,
-			ref bool fullBright
-			)
+		public override void DrawEffects(PlayerDrawSet drawInfo, ref float r, ref float g, ref float b, ref float a, ref bool fullBright)
 		{
-			r *= 0.8f;
-			g *= 0.8f;
-			b *= 0.8f;
+			if (stunDebuff) {
+				r *= 0.8f;
+				g *= 0.8f;
+				b *= 0.8f;
+			}
 		}
 	}
 
