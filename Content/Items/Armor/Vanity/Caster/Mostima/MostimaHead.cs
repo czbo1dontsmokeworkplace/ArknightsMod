@@ -12,26 +12,10 @@ using Terraria.GameContent.Creative;
 namespace ArknightsMod.Content.Items.Armor.Vanity.Caster.Mostima
 {
     [AutoloadEquip(EquipType.Head)]
-    public class MostimaHead : ModItem
+    public class MostimaHead : ArknightsVanityHead
     {
-        public override void SetStaticDefaults()
-        {
-            CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
-            if (Main.netMode == NetmodeID.Server)
-                return;
-            ArmorIDs.Head.Sets.DrawHead[Item.headSlot] = false;
-            ArmorIDs.Head.Sets.IsTallHat[Item.headSlot] = true;
-        }
-        public override void SetDefaults()
-        {
-            Item.rare = ItemRarityID.Cyan;
-            Item.value = 15000;
-            Item.vanity = true;
-        }
-        public override void UpdateEquip(Player player)
-        {
-        }
-        public override bool IsArmorSet(Item head, Item body, Item legs)
+		public override int Rarity => 6;
+		public override bool IsArmorSet(Item head, Item body, Item legs)
         {
             return body.type == ModContent.ItemType<MostimaBody>() && legs.type == ModContent.ItemType<MostimaLegs>();
         }

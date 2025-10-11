@@ -11,12 +11,13 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Defender.Mudrock
 {
 	[AutoloadEquip(EquipType.Head)]
 	internal class MudrockHelmet : ArknightsVanityHead {
-
+		public override int Rarity => 6;
 	}
 
 	[AutoloadEquip(EquipType.Body)]
 	internal class MudrockChestplate : ArknightsVanityBody
 	{
+		public override int Rarity => 6;
 		internal class MudrockChestplate_EX : PlayerDrawLayer
 		{
 			private Asset<Texture2D> MudrockChestplate_EX_Texture;

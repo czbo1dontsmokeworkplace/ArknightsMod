@@ -12,27 +12,8 @@ using Terraria.GameContent.Creative;
 namespace ArknightsMod.Content.Items.Armor.Vanity.Caster.Haze
 {
     [AutoloadEquip(EquipType.Body)]
-    public class HazeBody : ModItem
+    public class HazeBody : ArknightsVanityBody
     {
-        public override void SetStaticDefaults()
-        {
-            CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
-            if (Main.netMode == NetmodeID.Server)
-                return;
-            ArmorIDs.Body.Sets.HidesTopSkin[Item.bodySlot] = true;
-            ArmorIDs.Body.Sets.HidesArms[Item.bodySlot] = true;
-        }
-        public override void SetDefaults()
-        {
-            Item.rare = ItemRarityID.Cyan;
-            Item.value = 15000;
-            Item.vanity = true;
-        }
-        public override void Load()
-        {
-        }
-        public override void UpdateEquip(Player player)
-        {
-        }
-    } 
+		public override int Rarity => 4;
+	} 
 }

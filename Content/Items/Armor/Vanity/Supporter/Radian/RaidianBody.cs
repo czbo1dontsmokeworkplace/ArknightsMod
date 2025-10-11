@@ -2,10 +2,10 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace ArknightsMod.Content.Items.Armor.Vanity.Guard.Chen
+namespace ArknightsMod.Content.Items.Armor.Vanity.Supporter.Radian
 {
 	[AutoloadEquip(EquipType.Body)]
-	public class ChenBody : ArknightsVanityBody
+	public class RaidianBody : ArknightsVanityBody
 	{
 		public override int Rarity => 6;
 	}

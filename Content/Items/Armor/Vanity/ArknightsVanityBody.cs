@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using System;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -6,7 +7,10 @@ namespace ArknightsMod.Content.Items.Armor.Vanity
 {
 	public abstract class ArknightsVanityBody : ModItem
 	{
-		public virtual int Rarity => ItemRarityID.Cyan;
+		/// <summary>
+		/// 干员的星数，请输入1~6
+		/// </summary>
+		public virtual int Rarity => 6;
 		public virtual int Value => 15000;
 		public sealed override void SetStaticDefaults() {
 			Item.ResearchUnlockCount = 1;
@@ -20,7 +24,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanity
 		public sealed override void SetDefaults() {
 			Item.width = 28;
 			Item.height = 24;
-			Item.rare = Rarity;
+			Item.rare = ArknightsVanityHead.GetRarity(Rarity);
 			Item.value = Value;
 			Item.vanity = true;
 			SafeSetDefaults();

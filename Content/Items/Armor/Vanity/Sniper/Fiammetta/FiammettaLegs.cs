@@ -12,19 +12,9 @@ using Terraria.GameContent.Creative;
 namespace ArknightsMod.Content.Items.Armor.Vanity.Sniper.Fiammetta
 {
 	[AutoloadEquip(EquipType.Legs)]
-	public class FiammettaLegs : ModItem
+	public class FiammettaLegs : ArknightsVanityLegs
 	{
-		public override void SetStaticDefaults() {
-			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
-			if (Main.netMode == NetmodeID.Server)
-				return;
-			ArmorIDs.Legs.Sets.HidesBottomSkin[Item.legSlot] = true;
-		}
-		public override void SetDefaults() {
-			Item.rare = ItemRarityID.LightPurple;
-			Item.value = 15000;
-			Item.vanity = true;
-		}
+		public override int Rarity => 6;
 		public override void Load() {
 		}
 		public override void UpdateEquip(Player player) {

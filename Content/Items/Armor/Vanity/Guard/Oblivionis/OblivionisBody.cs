@@ -15,6 +15,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Guard.Oblivionis
 	[AutoloadEquip(EquipType.Body)]
 	public class OblivionisBody : ArknightsVanityBody
 	{
+		public override int Rarity => 6;
 		public override int Value => 560000;
 		public override void Load() {
 

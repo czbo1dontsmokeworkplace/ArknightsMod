@@ -4,21 +4,18 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Vanity.Specialist.TexasAlter
 {
-	// See also: ExampleCostume
 	[AutoloadEquip(EquipType.Body)]
-	public class TexalterBody : ModItem
+	public class TexalterBody : ArknightsVanityBody
 	{
+		public override int Rarity => 6;
 		public override void Load() {
-			// The code below runs only if we're not loading on a server
 			if (Main.netMode == NetmodeID.Server)
 				return;
 
-			// Add equip textures
 			EquipLoader.AddEquipTexture(Mod, $"{Texture}_{EquipType.Back}", EquipType.Back, this);
 		}
-		public override void SetStaticDefaults() {
-			// DisplayName.SetDefault("Arknights Doctor's Jacket");
-			Item.ResearchUnlockCount = 1;
+		public override void SafeSetStaticDefaults()
+		{
 			if (Main.netMode == NetmodeID.Server)
 				return;
 
@@ -29,20 +26,5 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Specialist.TexasAlter
 			ArmorIDs.Body.Sets.IncludedCapeBack[Item.bodySlot] = cape;
 			ArmorIDs.Body.Sets.IncludedCapeBackFemale[Item.bodySlot] = cape;
 		}
-
-		public override void SetDefaults() {
-			Item.width = 38;
-			Item.height = 26;
-			Item.rare = ItemRarityID.Cyan; // +1 rarity as Arknights (Cyan = star 6)
-			Item.vanity = true;
-		}
-
-		//public override void AddRecipes()
-		//{
-		//    Recipe recipe = CreateRecipe();
-		//    recipe.AddRecipeGroup(RecipeGroupID.Wood, 2);
-		//    recipe.AddTile(TileID.WorkBenches);
-		//    recipe.Register();
-		//}
 	}
 }

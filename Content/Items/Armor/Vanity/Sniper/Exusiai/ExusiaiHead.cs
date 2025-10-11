@@ -14,26 +14,10 @@ using ArknightsMod.Content.Items.Armor.Vanity.Sniper.Exusiai;
 namespace ArknightsMod.Content.Items.Armor.Vanity.Sniper.Exusiai
 {
     [AutoloadEquip(EquipType.Head)]
-    public class ExusiaiHead : ModItem
+    public class ExusiaiHead : ArknightsVanityHead
     {
-        public override void SetStaticDefaults()
-        {
-            CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
-            if (Main.netMode == NetmodeID.Server)
-                return;
-            ArmorIDs.Head.Sets.DrawHead[Item.headSlot] = false;
-            ArmorIDs.Head.Sets.IsTallHat[Item.headSlot] = true;
-        }
-        public override void SetDefaults()
-        {
-            Item.rare = ItemRarityID.Cyan;
-            Item.value = 15000;
-            Item.vanity = true;
-        }
-        public override void Load()
-        {
-        }
-        public override void UpdateEquip(Player player)
+		public override int Rarity => 6;
+		public override void UpdateEquip(Player player)
         {
             Lighting.AddLight(player.Center, new Vector3(1f, 1f, 1f));
         }
