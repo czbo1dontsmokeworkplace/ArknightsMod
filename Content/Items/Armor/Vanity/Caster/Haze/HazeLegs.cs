@@ -12,26 +12,8 @@ using Terraria.GameContent.Creative;
 namespace ArknightsMod.Content.Items.Armor.Vanity.Caster.Haze
 {
     [AutoloadEquip(EquipType.Legs)]
-    public class HazeLegs : ModItem
+    public class HazeLegs : ArknightsVanityLegs
     {
-        public override void SetStaticDefaults()
-        {
-            CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
-            if (Main.netMode == NetmodeID.Server)
-                return;
-            ArmorIDs.Legs.Sets.HidesBottomSkin[Item.legSlot] = true;
-        }
-        public override void SetDefaults()
-        {
-            Item.rare = ItemRarityID.Cyan;
-            Item.value = 15000;
-            Item.vanity = true;
-        }
-        public override void Load()
-        {
-        }
-        public override void UpdateEquip(Player player)
-        {
-        }
-    } 
+		public override int Rarity => 4;
+	} 
 }

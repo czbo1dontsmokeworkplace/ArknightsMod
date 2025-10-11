@@ -1,0 +1,47 @@
+BagpipeSpear: {
+	1: {
+		Label: Mods.ArknightsMod.Skills.BagpipeSpear.1.Label
+		Desc: Mods.ArknightsMod.Skills.BagpipeSpear.1.Desc
+	}
+
+	2: {
+		Label: Mods.ArknightsMod.Skills.BagpipeSpear.2.Label
+		Desc: Mods.ArknightsMod.Skills.BagpipeSpear.2.Desc
+	}
+
+	3: {
+		Label: Mods.ArknightsMod.Skills.BagpipeSpear.3.Label
+		Desc: Mods.ArknightsMod.Skills.BagpipeSpear.3.Desc
+	}
+}
+
+ChenSword: {
+	1: {
+		Label: Mods.ArknightsMod.Skills.ChenSword.1.Label
+		Desc: Mods.ArknightsMod.Skills.ChenSword.1.Desc
+	}
+}
+
+KroosCrossbow: {
+	1: {
+		Label: Mods.ArknightsMod.Skills.KroosCrossbow.1.Label
+		Desc: Mods.ArknightsMod.Skills.KroosCrossbow.1.Desc
+	}
+}
+
+PozemkaCrossbow: {
+	1: {
+		Label: Mods.ArknightsMod.Skills.PozemkaCrossbow.1.Label
+		Desc: Mods.ArknightsMod.Skills.PozemkaCrossbow.1.Desc
+	}
+
+	2: {
+		Label: Mods.ArknightsMod.Skills.PozemkaCrossbow.2.Label
+		Desc: Mods.ArknightsMod.Skills.PozemkaCrossbow.2.Desc
+	}
+
+	3: {
+		Label: Mods.ArknightsMod.Skills.PozemkaCrossbow.3.Label
+		Desc: Mods.ArknightsMod.Skills.PozemkaCrossbow.3.Desc
+	}
+}

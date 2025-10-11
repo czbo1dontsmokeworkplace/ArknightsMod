@@ -1,0 +1,41 @@
+DamageClasses.SpellDamage.DisplayName: 法术伤害
+ButtonName.button2: 剿灭作战
+UI.UpgradeUI.Upgrade: 提升等级
+UpgradeWeapon.LevelPreview.Damage: 伤害
+Currencies.OrundumCurrency: 合成玉
+
+StatusMessage: {
+	IACT: {
+		Intro: 检测到未经许可擅自闯入禁区的实体，标记为打击目标.
+		Summon: 你感受到了来自帝国的威胁...
+		Summon2: 发现可疑目标，予以抹除.
+		Stage1to2: 目标强度高于预测强度，调用高阶权限实施打击.
+		Stage2to3: 目标强度过高，调用最终权限实施打击.
+		Stage2: 估算目标运动趋势，实施精确打击.
+		Stage3: 已获得最高权限，启动多功能辅助系统.
+		End: 检测到主结构严重损毁，启动自毁模式...
+		Complete: 来自帝国的轰炸无人机已被击毁...
+	}
+
+	AACT.Collapsed: "{0}坍缩了。"
+	FN.AllFloorBanned: "{0}没有留意到自己已无立足之地。"
+	Pmp.GetTooClose: "{0}站在了喷发的活火山口上。"
+}
+
+WorldGen: {
+	GrindPassMessage: "{$Mods.ArknightsMod.Items.Grind.DisplayName}"
+	MnOrePassMessage: "{$Mods.ArknightsMod.Items.MnOre.DisplayName}"
+	OrirockCubePassMessage: "{$Mods.ArknightsMod.Items.OrirockCube.DisplayName}"
+	RMA12PassMessage: "{$Mods.ArknightsMod.Items.RMA12.DisplayName}"
+}
+
+Tiles: {
+	BannerTile.MapEntry: 敌怪旗
+	AnniversaryWheel.MapEntry: "{$Mods.ArknightsMod.Items.AnniversaryWheel.DisplayName}"
+	DareUsa.MapEntry: "{$Mods.ArknightsMod.Items.DareUsa.DisplayName}"
+	Grind.MapEntry: "{$Mods.ArknightsMod.Items.Grind.DisplayName}"
+	MnOre.MapEntry: "{$Mods.ArknightsMod.Items.MnOre.DisplayName}"
+	OrirockCube.MapEntry: "{$Mods.ArknightsMod.Items.OrirockCube.DisplayName}"
+	RMA12.MapEntry: "{$Mods.ArknightsMod.Items.RMA12.DisplayName}"
+	WMusicBoxTile.MapEntry: 音乐盒(W)
+}
