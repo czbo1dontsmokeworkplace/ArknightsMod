@@ -3,7 +3,7 @@ using ArknightsMod.Content.Items.Weapons;
 using Terraria;
 using Terraria.ModLoader;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
 using Terraria.Localization;
 using ArknightsMod.Systems.Gameplay.Skill;
 using ArknightsMod.Content.Items.Weapons.ChenSword;
@@ -71,6 +71,12 @@ namespace ArknightsMod.Players
 
 		public void InitSkill() {
 			SkillData skill = CurrentSkill;
+
+			if (skill == null) {
+				Main.NewText($"[{GetType()}] 错误: 当前技能数据mp.CurrentSkill为null", Color.Red);
+				return;
+			}
+
 			SkillLevelData data = skill.CurrentLevelData;
 			Div = skill.ChargeType == SkillChargeType.Auto ? 60 : 1;
 			int initSP = data.InitSP;

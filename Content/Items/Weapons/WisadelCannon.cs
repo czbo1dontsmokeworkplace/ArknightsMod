@@ -10,6 +10,8 @@ using Microsoft.Xna.Framework;
 using Terraria.DataStructures;
 using Terraria.Audio;
 using ArknightsMod.Content.Projectiles.Wisadel;
+using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Tiles;
 
 namespace ArknightsMod.Content.Items.Weapons
 {
@@ -17,7 +19,7 @@ namespace ArknightsMod.Content.Items.Weapons
     {
         public override void SetDefaults()
         {
-            Item.damage = 520;
+            Item.damage = 237;
             Item.Size = new(90, 32);
             Item.knockBack = 15;
             Item.rare = ItemRarityID.Red;
@@ -52,5 +54,12 @@ namespace ArknightsMod.Content.Items.Weapons
             type = ProjectileID.Bullet;
         }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) => false;
-    }
+		public override void AddRecipes() {
+			Recipe recipe = CreateRecipe();
+			recipe.AddIngredient(ModContent.ItemType<OrironBlock>());
+			recipe.AddIngredient(ModContent.ItemType<OptimizedDevice>());
+			recipe.AddTile(ModContent.TileType<FactoryTile>());
+			recipe.Register();
+		}
+	}
 }

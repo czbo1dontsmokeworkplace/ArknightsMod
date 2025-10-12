@@ -9,6 +9,8 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using ArknightsMod.Content.Projectiles.Pozyomka;
+using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Tiles;
 
 namespace ArknightsMod.Content.Items.Weapons
 {
@@ -196,9 +198,9 @@ namespace ArknightsMod.Content.Items.Weapons
 
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.CEU>(3);
-			recipe.AddIngredient<Material.OrirockConcentration>(9);
-			recipe.AddTile(TileID.WorkBenches);
+			recipe.AddIngredient<OptimizedDevice>(1);
+			recipe.AddIngredient<RMA24>(1);
+			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}
 	}

@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent.UI.Elements;
@@ -73,16 +74,48 @@ namespace ArknightsMod.Common.UI
 				return;
 			mp.Skill = index;
 			SkillData data = mp.CurrentSkill;
-			ins.skillLevel.SetText((data.ForceReplaceLevel ?? data.Level).ToString());
+
+			if (data == null) {
+				/*var stackTrace = new StackTrace();
+				var frame = stackTrace.GetFrame(1);
+				var method = frame.GetMethod();
+				var callingClass = method.DeclaringType.Name;
+				Main.NewText($"[{callingClass}] 错误: 当前技能数据mp.CurrentSkill为null", Color.Red);*/
+				return;
+			}
+
+			// 添加 null 检查防止 NullReferenceException
+			if (ins?.skillLevel != null) {
+				ins.skillLevel.SetText((data.ForceReplaceLevel ?? data.Level).ToString());
+			}
+			else {
+				// 详细的错误提示
+				string errorMsg = "UI元素初始化失败: ";
+				if (ins == null)
+					errorMsg += "技能UI实例(ins)为null，请确保UI已正确初始化";
+				else
+					errorMsg += "技能等级文本框(skillLevel)为null，请检查UI元素绑定";
+
+				// 输出错误信息（根据你的框架选择合适的方式）
+				Main.NewText(errorMsg, Color.Red);
+				// 或者使用日志系统
+				// YourMod.Instance.Logger.Error(errorMsg);
+
+				// 调试用异常抛出（正式版可注释掉）
+				// throw new InvalidOperationException(errorMsg);
+			}
+
 			//SoundEngine.PlaySound(click);
-			SummonSkillSlot summon = ins.summon;
+			SummonSkillSlot summon = ins?.summon; // 这里也添加了null检查
 			if (!data.SummonSkill) {
 				if (summon == null)
 					return;
 				summon.usable = false;
 				return;
 			}
-			ins.ActiveSummonUI(data.SummonIcon.Value);
+
+			// 确保ins不为null再调用ActiveSummonUI
+			ins?.ActiveSummonUI(data.SummonIcon.Value);
 		}
 		public static void ChangeSkillSlot(UpgradeWeaponBase ark) {
 			ins.s1.SetSkill(ark.GetSkillData(0));

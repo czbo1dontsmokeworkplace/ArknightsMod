@@ -1,4 +1,5 @@
 ﻿using ArknightsMod.Content.Projectiles;
+using ArknightsMod.Content.Tiles;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using System;
@@ -54,7 +55,7 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
 			Item.scale = 0.8f;
 
 			// Weapon Properties
-			Item.damage = 71;
+			Item.damage = 122;
 			Item.knockBack = 2.5f;
 			// Item.noUseGraphic = true; // When true, the item's sprite will not be visible while the item is in use. This is true because the spear projectile is what's shown so we do not want to show the spear sprite as well.
 			Item.DamageType = DamageClass.Melee;
@@ -196,7 +197,7 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
 				.AddIngredient<Material.OrirockConcentration>(9)
 				.AddIngredient<Material.KetonColloid>(4)
 				.AddIngredient<Material.OrironBlock>(4)
-				.AddTile(TileID.Anvils)
+				.AddTile(ModContent.TileType<FactoryTile>())
 				.Register();
 		}
 

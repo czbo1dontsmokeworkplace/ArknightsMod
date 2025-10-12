@@ -22,11 +22,10 @@ namespace ArknightsMod.Content.Items.Weapons
 		}
 
 		public override void SetDefaults() {
-			Item.damage = 12;
+			Item.damage = 30;
 			Item.DamageType = DamageClass.Ranged;
 			Item.width = 120;
 			Item.height = 60;
-			Item.scale = 0.5f;
 			Item.useTime = 8;
 			Item.useAnimation = 8;
 			Item.reuseDelay = 10;

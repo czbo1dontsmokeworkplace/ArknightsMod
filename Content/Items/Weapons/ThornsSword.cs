@@ -1,4 +1,5 @@
 using ArknightsMod.Content.Projectiles;
+using ArknightsMod.Content.Tiles;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent.Creative;
@@ -51,7 +52,7 @@ namespace ArknightsMod.Content.Items.Weapons
 				.AddIngredient<Material.OrirockConcentration>(4)
 				.AddIngredient<Material.KetonColloid>(4)
 				.AddIngredient<Material.OrironBlock>(6)
-				.AddTile(TileID.Anvils)
+				.AddTile(ModContent.TileType<FactoryTile>())
 				.Register();
 		}
 

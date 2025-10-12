@@ -7,6 +7,7 @@ using Terraria.Audio;
 using ArknightsMod.Content.Buffs;
 using System;
 using ArknightsMod.Players;
+using ArknightsMod.Content.Tiles;
 
 namespace ArknightsMod.Content.Items.Weapons
 {
@@ -199,7 +200,7 @@ namespace ArknightsMod.Content.Items.Weapons
 			CreateRecipe()
 				.AddIngredient<Material.PP>(4)
 				.AddIngredient<Material.OrirockConcentration>(9)
-				.AddTile(TileID.Anvils)
+				.AddTile(ModContent.TileType<FactoryTile>())
 				.Register();
 		}
 

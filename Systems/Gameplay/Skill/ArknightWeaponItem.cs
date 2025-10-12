@@ -1,4 +1,5 @@
 ﻿using ArknightsMod.Content.Items.Weapons;
+using Microsoft.Xna.Framework;
 using ArknightsMod.Players;
 using Terraria;
 using Terraria.ModLoader;
@@ -12,6 +13,12 @@ namespace ArknightsMod.Systems.Gameplay.Skill
 				return;
 			var mp = player.GetModPlayer<WeaponPlayer>();
 			var skill = mp.CurrentSkill;
+
+			if (skill == null) {
+				//Main.NewText($"[{GetType()}] 错误: 当前技能数据mp.CurrentSkill为null", Color.Red);
+				return;
+			}
+
 			mp.TryAutoCharge();
 			if (skill.AutoUpdateActive)
 				mp.UpdateActiveSkill();

@@ -33,7 +33,7 @@ namespace ArknightsMod.Content.Items.Weapons
             Item.autoReuse = true;
 
             // Weapon Properties
-            Item.damage = 16;
+            Item.damage = 31;
             Item.knockBack = 1f;
             Item.shootSpeed = 3f;
             Item.shoot = ModContent.ProjectileType<FangSpear_Stab>();

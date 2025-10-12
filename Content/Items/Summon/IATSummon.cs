@@ -5,6 +5,7 @@ using Terraria.ModLoader;
 using static Terraria.ModLoader.ModContent;
 using Terraria.Localization;
 using ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTargeteer;
+using ArknightsMod.Content.Tiles;
 
 namespace ArknightsMod.Content.Items.Summon
 {
@@ -54,7 +55,7 @@ namespace ArknightsMod.Content.Items.Summon
 			recipe.AddIngredient(ModContent.ItemType<Content.Items.Material.IncandescentAlloy>(), 3);
 			recipe.AddIngredient(ModContent.ItemType<Content.Items.Material.CrystallineComponent>(), 3);
 			recipe.AddIngredient(ModContent.ItemType<Content.Items.Material.IntegratedDevice>(), 3);
-			recipe.AddTile(TileID.Anvils);
+			recipe.AddTile(ModContent.TileType<FactoryTile>());
             recipe.Register();
         }
 	}

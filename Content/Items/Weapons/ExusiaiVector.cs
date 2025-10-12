@@ -18,7 +18,7 @@ namespace ArknightsMod.Content.Items.Weapons
             Item.useAnimation = 15;
             Item.reuseDelay = 15;
             Item.shootSpeed = 8f;
-            Item.damage = 18;
+            Item.damage = 108;
             Item.knockBack = 5f;
             Item.shoot = ModContent.ProjectileType<ExusiaiVector_Bullet>();
             Item.DamageType = DamageClass.Ranged;

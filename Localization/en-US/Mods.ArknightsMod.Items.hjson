@@ -1073,3 +1073,33 @@ NianWeapon: {
 	DisplayName: Nian Weapon
 	Tooltip: ""
 }
+
+BeagleWeapon: {
+	DisplayName: Beagle Weapon
+	Tooltip: ""
+}
+
+TyphonBow: {
+	DisplayName: Typhon Bow
+	Tooltip: ""
+}
+
+TexasBody: {
+	DisplayName: Texas Body
+	Tooltip: ""
+}
+
+TexasHead: {
+	DisplayName: Texas Head
+	Tooltip: ""
+}
+
+TexasLegs: {
+	DisplayName: Texas Legs
+	Tooltip: ""
+}
+
+FactoryItem: {
+	DisplayName: Factory Item
+	Tooltip: ""
+}

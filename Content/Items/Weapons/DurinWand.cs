@@ -1,4 +1,6 @@
-﻿using ArknightsMod.Content.Projectiles;
+﻿using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Projectiles;
+using ArknightsMod.Content.Tiles;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -13,7 +15,7 @@ namespace ArknightsMod.Content.Items.Weapons
 		}
 
 		public override void SetDefaults() {
-			Item.damage = 5;
+			Item.damage = 47;
 			Item.DamageType = DamageClass.Magic;
 			Item.mana = 2;
 			Item.width = 14;
@@ -40,12 +42,12 @@ namespace ArknightsMod.Content.Items.Weapons
 			//};
 		}
 
-		//     public override void AddRecipes()
-		//     {
-		//         Recipe recipe = CreateRecipe();
-		//recipe.AddRecipeGroup(RecipeGroupID.Wood, 10);
-		//         recipe.AddTile(TileID.WorkBenches);
-		//         recipe.Register();
-		//     }
+		public override void AddRecipes() {
+			Recipe recipe = CreateRecipe();
+			recipe.AddIngredient(ItemID.ManaCrystal);
+			recipe.AddIngredient(ModContent.ItemType<OrironCluster>());
+			recipe.AddTile(ModContent.TileType<FactoryTile>());
+			recipe.Register();
+		}
 	}
 }

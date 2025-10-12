@@ -8,6 +8,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria;
 using ArknightsMod.Content.Projectiles;
+using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Tiles;
 
 namespace ArknightsMod.Content.Items.Weapons
 {
@@ -32,12 +34,19 @@ namespace ArknightsMod.Content.Items.Weapons
 
             Item.UseSound = SoundID.Item1;
 
-            Item.SetWeaponValues(1, 0);//伤害，击退
+            Item.SetWeaponValues(38, 0);//伤害，击退
 
             Item.SetShopValues(ItemRarityColor.Green2, Item.sellPrice(gold: 1));
 
             Item.autoReuse = true;
             Item.noMelee = true;
         }
-    }
+		public override void AddRecipes() {
+			Recipe recipe = CreateRecipe();
+			recipe.AddIngredient(ModContent.ItemType<CoagulatingGel>());
+			recipe.AddIngredient(ModContent.ItemType<Oriron>());
+			recipe.AddTile(ModContent.TileType<FactoryTile>());
+			recipe.Register();
+		}
+	}
 }

@@ -11,6 +11,8 @@ using Terraria;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using ArknightsMod.Content.Projectiles;
+using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Tiles;
 
 namespace ArknightsMod.Content.Items.Weapons
 {
@@ -24,7 +26,7 @@ namespace ArknightsMod.Content.Items.Weapons
             Item.useAnimation = 15;
             Item.reuseDelay = 15;
             Item.shootSpeed = 8f;
-            Item.damage = 19;
+            Item.damage = 82;
             Item.knockBack = 3f;
             Item.shoot = ModContent.ProjectileType<KroosAlterCrossbow_Hold>();
             Item.DamageType = DamageClass.Ranged;
@@ -50,5 +52,12 @@ namespace ArknightsMod.Content.Items.Weapons
         {
             return new Vector2(0, 4);
         }
-    }
+		public override void AddRecipes() {
+			Recipe recipe = CreateRecipe();
+			recipe.AddIngredient(ModContent.ItemType<Aketon>());
+			recipe.AddIngredient(ModContent.ItemType<OrironCluster>());
+			recipe.AddTile(ModContent.TileType<FactoryTile>());
+			recipe.Register();
+		}
+	}
 }
