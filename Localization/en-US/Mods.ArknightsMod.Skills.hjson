@@ -45,3 +45,10 @@ PozemkaCrossbow: {
 		Desc: Mods.ArknightsMod.Skills.PozemkaCrossbow.3.Desc
 	}
 }
+
+AdnachielCrossbow: {
+	1: {
+		Label: Mods.ArknightsMod.Skills.AdnachielCrossbow.1.Label
+		Desc: Mods.ArknightsMod.Skills.AdnachielCrossbow.1.Desc
+	}
+}

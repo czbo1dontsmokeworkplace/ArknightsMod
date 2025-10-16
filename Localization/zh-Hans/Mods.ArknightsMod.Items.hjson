@@ -1117,3 +1117,8 @@ FactoryItem: {
 	DisplayName: 加工站
 	Tooltip: 用于特殊合成
 }
+
+AdnachielCrossbow: {
+	// DisplayName: Adnachiel Crossbow
+	// Tooltip: ""
+}

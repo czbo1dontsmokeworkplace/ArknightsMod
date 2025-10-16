@@ -125,3 +125,9 @@ DarkChocolateProjectile.DisplayName: Dark Chocolate Projectile
 MGL_Shield.DisplayName: M G L_ Shield
 MGL_Sword.DisplayName: M G L_ Sword
 TyphonArrow.DisplayName: Typhon Arrow
+Arrow.DisplayName: Arrow
+Arrow_Circle.DisplayName: Arrow_ Circle
+Arrow_Effect.DisplayName: Arrow_ Effect
+Adnachiel_Arrow.DisplayName: Adnachiel_ Arrow
+Adnachiel_Arrow_Circle.DisplayName: Adnachiel_ Arrow_ Circle
+Adnachiel_Arrow_Effect.DisplayName: Adnachiel_ Arrow_ Effect

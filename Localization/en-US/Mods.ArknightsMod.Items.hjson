@@ -1103,3 +1103,8 @@ FactoryItem: {
 	DisplayName: Factory Item
 	Tooltip: ""
 }
+
+AdnachielCrossbow: {
+	DisplayName: Adnachiel Crossbow
+	Tooltip: ""
+}
