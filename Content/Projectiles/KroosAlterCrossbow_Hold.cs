@@ -1,11 +1,12 @@
-﻿using Microsoft.Xna.Framework;
+﻿using ArknightsMod.Content.Items.Weapons;
+using ArknightsMod.Players;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
+using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria;
-using System;
-using Microsoft.Xna.Framework.Graphics;
-using ArknightsMod.Content.Items.Weapons;
 
 namespace ArknightsMod.Content.Projectiles
 {
@@ -30,7 +31,8 @@ namespace ArknightsMod.Content.Projectiles
 
         public override void AI()
         {
-            Player player = Main.player[Projectile.owner];
+			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
+			Player player = Main.player[Projectile.owner];
 
             if (player.dead || !player.active || player.HeldItem.type != ModContent.ItemType<KroosAlterCrossbow>() || !player.channel)
             {
@@ -38,7 +40,7 @@ namespace ArknightsMod.Content.Projectiles
                 return;
             }
 
-            Skill = 0;
+
 
             if (player.channel)
             {
@@ -47,7 +49,7 @@ namespace ArknightsMod.Content.Projectiles
                 Projectile.ai[0]++;
 
                 #region 一技能
-                if (Skill == 1)
+                if (modPlayer.Skill == 0 && modPlayer.SkillActive)
                 {
                     if (Projectile.ai[0] < player.HeldItem.useTime)
                     {
@@ -95,9 +97,9 @@ namespace ArknightsMod.Content.Projectiles
                 }
                 #endregion
                 #region 二技能
-                else if (Skill == 2)
+                else if (modPlayer.Skill == 1 && modPlayer.SkillActive)
                 {
-                    int shotsPerInterval = counter < 40 ? 2 : 4;
+					int shotsPerInterval = counter < 32 ? 2 : 4;
                     if (Projectile.ai[0] < player.HeldItem.useTime)
                     {
                         int interval = player.HeldItem.useTime / shotsPerInterval;
@@ -180,9 +182,11 @@ namespace ArknightsMod.Content.Projectiles
 
         private void ShootBullet(Player player, float rot)
         {
-            if (player.HasAmmo(player.inventory[player.selectedItem]))
+			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
+			if (player.HasAmmo(player.inventory[player.selectedItem]))
             {
-                bool canUse = player.channel && player.HasAmmo(player.inventory[player.selectedItem]) && !player.noItems && !player.CCed;
+
+				bool canUse = player.channel && player.HasAmmo(player.inventory[player.selectedItem]) && !player.noItems && !player.CCed;
                 int weaponAmmo;
                 float shootSpeed;
                 int weaponDamage;
@@ -195,7 +199,10 @@ namespace ArknightsMod.Content.Projectiles
                     out weaponAmmo,
                     canUse
                     );
-                Projectile.NewProjectileDirect(player.GetSource_ItemUse_WithPotentialAmmo(player.inventory[player.selectedItem], weaponAmmo),
+				if (modPlayer.Skill == 0&&modPlayer.StockCount == 0) {
+					modPlayer.OffensiveRecovery();
+				}
+				Projectile.NewProjectileDirect(player.GetSource_ItemUse_WithPotentialAmmo(player.inventory[player.selectedItem], weaponAmmo),
                     player.Center,
                     Projectile.velocity.RotatedByRandom(rot),
                     ModContent.ProjectileType<KroosAlterCrossbow_Arrow>(),

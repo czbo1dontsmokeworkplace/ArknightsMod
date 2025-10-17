@@ -1,17 +1,18 @@
-﻿using Microsoft.Xna.Framework;
+﻿using ArknightsMod.Players;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Terraria.Audio;
-using Terraria.ID;
 using Terraria;
-using Terraria.ModLoader;
-using Microsoft.Xna.Framework.Graphics;
+using Terraria.Audio;
 using Terraria.GameContent;
-using Terraria.Map;
 using Terraria.Graphics.Shaders;
+using Terraria.ID;
+using Terraria.Map;
+using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles
 {
@@ -103,9 +104,10 @@ namespace ArknightsMod.Content.Projectiles
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Projectile.ai[1] += 0.2f;
+			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
+			Projectile.ai[1] += 0.2f;
             #region 一技能
-            if (Skill == 1)
+            if (modPlayer.Skill == 0 && modPlayer.SkillActive)
             {
                 if (Main.rand.NextBool(2))
                 {
@@ -151,7 +153,7 @@ namespace ArknightsMod.Content.Projectiles
             }
             #endregion
             #region 二技能
-            else if (Skill == 2)
+            else if (modPlayer.Skill == 1 && modPlayer.SkillActive)
             {
                 var d = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.YellowTorch);
                 d.noGravity = true;

@@ -4,7 +4,15 @@ BagpipeSpear,1,2,1,1,1,0
 BagpipeSpear,2,3,1,0,1,0
 ChenSword,0,1,2,0,0,0
 KroosCrossbow,0,1,2,1,1,0
+KroosAlterCrossbow,0,1,2,0,1,0
+KroosAlterCrossbow,1,2,1,0,1,0
+ExusiaiVector,0,1,2,1,1,0
+ExusiaiVector,1,2,1,0,1,0
+ExusiaiVector,2,3,1,1,1,0
 AdnachielCrossbow,0,1,1,0,1,0
 PozemkaCrossbow,0,1,2,1,0,1
 PozemkaCrossbow,1,2,1,0,1,1
 PozemkaCrossbow,2,3,1,0,1,1
+Lava_Dagger,0,1,1,0,1,0
+Shirayuki_Shuriken,0,1,1,0,1,0
+Shirayuki_Shuriken,1,2,1,0,1,0

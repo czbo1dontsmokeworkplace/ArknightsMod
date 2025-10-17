@@ -1108,3 +1108,13 @@ AdnachielCrossbow: {
 	DisplayName: Adnachiel Crossbow
 	Tooltip: ""
 }
+
+Lava_Dagger: {
+	DisplayName: Lava_ Dagger
+	Tooltip: ""
+}
+
+Shirayuki_Shuriken: {
+	DisplayName: Shirayuki_ Shuriken
+	Tooltip: ""
+}

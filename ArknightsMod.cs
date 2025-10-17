@@ -54,6 +54,7 @@ namespace ArknightsMod
 		public static Effect AACTSTG3RBFence;//红蓝光栅效果（AACT三阶段）
 		public static Effect AACTSTG3RBNoise;//红蓝噪声效果（AACT三阶段）
 		public static Effect FNTwistedRing;//霜星限制阈（扭曲环效果）
+		public static Effect LavaExplosionShaderEffect;//炎熔的爆炸效果
 		public const string AssetPath = "ArknightsMod/Sound/";
 
 		public override void Load() {
@@ -102,6 +103,10 @@ namespace ArknightsMod
 				FNTwistedRing = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/FNTwistedRing", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 				Filters.Scene["FNTwistedRing"] = new Filter(new ScreenShaderData(new Ref<Effect>(FNTwistedRing), "FNTwistedRing"), EffectPriority.VeryHigh);
 				Filters.Scene["FNTwistedRing"].Load();
+
+				LavaExplosionShaderEffect = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/LavaExplosionShaderEffect", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+				Filters.Scene["LavaExplosionShaderEffect"] = new Filter(new ScreenShaderData(new Ref<Effect>(LavaExplosionShaderEffect), "LavaExplosionShaderEffect"), EffectPriority.VeryHigh);
+				Filters.Scene["LavaExplosionShaderEffect"].Load();
 			}
 			Filters.Scene["AshStorm"] = new Filter(new ScreenShaderData("FilterAsh").UseColor(1f, 0.8f, 0.5f),EffectPriority.High);
 

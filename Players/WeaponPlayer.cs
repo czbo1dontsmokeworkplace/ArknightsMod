@@ -39,6 +39,10 @@ namespace ArknightsMod.Players
 		public bool HoldBagpipeSpear = false;
 		public bool HoldChenSword = false;
 		public bool HoldKroosCrossbow = false;
+		public bool HoldShirayuki_Shuriken = false;
+		public bool HoldLava_Dagger = false;
+		public bool HoldKroosAlterCrossbow = false;
+		public bool HoldExusiaiVector = false;
 		public bool HoldPozemkaCrossbow = false;
 		public bool HoldNianWeapon = false;
 
@@ -129,7 +133,11 @@ namespace ArknightsMod.Players
 			// 更新武器状态
 			HoldBagpipeSpear = Main.LocalPlayer.HeldItem.ModItem is BagpipeSpear;
 			HoldChenSword = Main.LocalPlayer.HeldItem.ModItem is ChenSword;
+			HoldExusiaiVector = Main.LocalPlayer.HeldItem.ModItem is ExusiaiVector;
 			HoldKroosCrossbow = Main.LocalPlayer.HeldItem.ModItem is KroosCrossbow;
+			HoldShirayuki_Shuriken = Main.LocalPlayer.HeldItem.ModItem is Shirayuki_Shuriken;
+			HoldLava_Dagger = Main.LocalPlayer.HeldItem.ModItem is Lava_Dagger;
+			HoldKroosAlterCrossbow = Main.LocalPlayer.HeldItem.ModItem is KroosAlterCrossbow;
 			HoldPozemkaCrossbow = Main.LocalPlayer.HeldItem.ModItem is PozemkaCrossbow;
 			HoldNianWeapon = Main.LocalPlayer.HeldItem.ModItem is NianWeapon;
 
@@ -352,6 +360,70 @@ namespace ArknightsMod.Players
 				MaxSPs1List = new() { 0, 0, 0, 0, 0, 0, 4, 0, 0, 0 };
 				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0.2f, 0f, 0f, 0f };
 				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 };
+				SetSkillData();
+			}
+			else if (HoldShirayuki_Shuriken) {
+				IconName = "Shirayuki_Shuriken";
+				HowManySkills = 1;
+				SkillLevel = new() { 10, 10, 10 };
+				ChargeTypeIsPerSecond = new() { false, true, false };
+				AutoTrigger = new() { true, false, false };
+				ShowSummonIconBySkills = new() { false, false, false };
+
+				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				MaxSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f };
+				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				SetSkillData();
+			}
+			else if (HoldLava_Dagger) {
+				IconName = "Lava_Dagger";
+				HowManySkills = 1;
+				SkillLevel = new() { 7, 7, 7 };
+				ChargeTypeIsPerSecond = new() { false, true, false };
+				AutoTrigger = new() { true, false, false };
+				ShowSummonIconBySkills = new() { false, false, false };
+
+				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				MaxSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f };
+				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				SetSkillData();
+			}
+			else if (HoldKroosAlterCrossbow) {
+				IconName = "KroosAlterCrossbow";
+				HowManySkills = 1;
+				SkillLevel = new() { 10, 10, 10 };
+				ChargeTypeIsPerSecond = new() { false, true, false };
+				AutoTrigger = new() { true, false, false };
+				ShowSummonIconBySkills = new() { false, false, false };
+
+				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				MaxSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f };
+				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				SetSkillData();
+			}
+			else if (HoldExusiaiVector) {
+				IconName = "ExusiaiVector";
+				HowManySkills = 3;
+				SkillLevel = new() { 10, 10, 10 };
+				ChargeTypeIsPerSecond = new() { false, true, false };
+				AutoTrigger = new() { true, false, false };
+				ShowSummonIconBySkills = new() { false, false, false };
+
+				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				InitialSPs2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 25 };
+				InitialSPs3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 20 };
+				MaxSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 4 };
+				MaxSPs2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 35 };
+				MaxSPs3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 30 };
+				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0.2f };
+				SkillActiveTimeS2List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 15f };
+				SkillActiveTimeS3List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 15f };
+				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+				StockMaxS2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+				StockMaxS3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
 				SetSkillData();
 			}
 			else if (HoldPozemkaCrossbow) {

@@ -1,8 +1,9 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
-using Terraria.ModLoader;
-using Terraria;
+using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using Terraria;
+using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles
 {
@@ -32,16 +33,17 @@ namespace ArknightsMod.Content.Projectiles
         }
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Value;
+			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
+			Texture2D texture = Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Value;
             Vector2 origin = texture.Size() * 0.5f;
             Vector2 position = Projectile.Center - Main.screenPosition;
 
             Color color;
-            if (Skill == 1)
+            if (modPlayer.Skill == 0 && modPlayer.SkillActive)
             {
                 color = new Color(204, 126, 57, 0) * Projectile.Opacity;
             }
-            else if (Skill == 2)
+            else if (modPlayer.Skill == 1 && modPlayer.SkillActive)
             {
                 color = new Color(9, 161, 130, 0) * Projectile.Opacity;
             }
@@ -112,16 +114,17 @@ namespace ArknightsMod.Content.Projectiles
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Value;
+			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
+			Texture2D texture = Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Value;
             Vector2 origin = texture.Size() * 0.5f;
             Vector2 position = Projectile.Center - Main.screenPosition;
 
             Color color;
-            if (Skill == 1)
+            if (modPlayer.Skill == 0 && modPlayer.SkillActive)
             {
                 color = new Color(204, 126, 57, 0) * Projectile.Opacity;
             }
-            else if (Skill == 2)
+            else if (modPlayer.Skill == 1 && modPlayer.SkillActive)
             {
                 color = new Color(9, 161, 130, 0) * Projectile.Opacity;
             }
@@ -183,16 +186,17 @@ namespace ArknightsMod.Content.Projectiles
         }
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Value;
+			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
+			Texture2D texture = Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Value;
             Vector2 origin = texture.Size() * 0.5f;
             Vector2 position = Projectile.Center - Main.screenPosition;
 
             Color color;
-            if (Skill == 1)
+            if (modPlayer.Skill == 0 && modPlayer.SkillActive)
             {
                 color = new Color(204, 126, 57, 0) * Projectile.Opacity;
             }
-            else if (Skill == 2)
+            else if (modPlayer.Skill == 1 && modPlayer.SkillActive)
             {
                 color = new Color(9, 161, 130, 0) * Projectile.Opacity;
             }

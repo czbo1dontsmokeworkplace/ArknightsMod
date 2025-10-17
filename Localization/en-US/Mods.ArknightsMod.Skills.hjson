@@ -52,3 +52,51 @@ AdnachielCrossbow: {
 		Desc: Mods.ArknightsMod.Skills.AdnachielCrossbow.1.Desc
 	}
 }
+
+ExusiaiVector: {
+	1: {
+		Desc: Mods.ArknightsMod.Skills.ExusiaiVector.1.Desc
+		Label: Mods.ArknightsMod.Skills.ExusiaiVector.1.Label
+	}
+
+	2: {
+		Desc: Mods.ArknightsMod.Skills.ExusiaiVector.2.Desc
+		Label: Mods.ArknightsMod.Skills.ExusiaiVector.2.Label
+	}
+
+	3: {
+		Desc: Mods.ArknightsMod.Skills.ExusiaiVector.3.Desc
+		Label: Mods.ArknightsMod.Skills.ExusiaiVector.3.Label
+	}
+}
+
+KroosAlterCrossbow: {
+	1: {
+		Desc: Mods.ArknightsMod.Skills.KroosAlterCrossbow.1.Desc
+		Label: Mods.ArknightsMod.Skills.KroosAlterCrossbow.1.Label
+	}
+
+	2: {
+		Label: Mods.ArknightsMod.Skills.KroosAlterCrossbow.2.Label
+		Desc: Mods.ArknightsMod.Skills.KroosAlterCrossbow.2.Desc
+	}
+}
+
+Lava_Dagger: {
+	1: {
+		Desc: Mods.ArknightsMod.Skills.Lava_Dagger.1.Desc
+		Label: Mods.ArknightsMod.Skills.Lava_Dagger.1.Label
+	}
+}
+
+Shirayuki_Shuriken: {
+	1: {
+		Desc: Mods.ArknightsMod.Skills.Shirayuki_Shuriken.1.Desc
+		Label: Mods.ArknightsMod.Skills.Shirayuki_Shuriken.1.Label
+	}
+
+	2: {
+		Desc: Mods.ArknightsMod.Skills.Shirayuki_Shuriken.2.Desc
+		Label: Mods.ArknightsMod.Skills.Shirayuki_Shuriken.2.Label
+	}
+}
