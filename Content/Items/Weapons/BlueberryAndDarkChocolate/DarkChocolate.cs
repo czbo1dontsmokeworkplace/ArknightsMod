@@ -31,7 +31,7 @@ namespace ArknightsMod.Content.Items.Weapons.BlueberryAndDarkChocolate
 			Item.shootSpeed = 2f;
 		}
 
-		SoundStyle OmertosaAttackSound = new SoundStyle("ArknightsMod/Assets/Sound/OmertosaAttackSound") with
+		SoundStyle OmertosaAttackSound = new SoundStyle("ArknightsMod/Content/Projectiles/TexasAlter/OmertosaAttackSound") with
 		{
 			Volume = 0.5f,
 			PitchVariance = 0.3f,

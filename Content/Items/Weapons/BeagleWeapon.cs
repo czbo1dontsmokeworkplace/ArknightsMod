@@ -14,7 +14,6 @@ namespace ArknightsMod.Content.Items.Weapons
 {
     public class BeagleWeapon : ModItem
     {
-        public override string Texture => base.Texture + "_Sword";
         public override void SetDefaults()
         {
             Item.damage = 25; // »ù´¡ÉËº¦

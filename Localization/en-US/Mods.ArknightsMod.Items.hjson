@@ -1118,3 +1118,48 @@ Shirayuki_Shuriken: {
 	DisplayName: Shirayuki_ Shuriken
 	Tooltip: ""
 }
+
+SariaBody: {
+	DisplayName: Saria Body
+	Tooltip: ""
+}
+
+SariaHead: {
+	DisplayName: Saria Head
+	Tooltip: ""
+}
+
+SariaLegs: {
+	DisplayName: Saria Legs
+	Tooltip: ""
+}
+
+WarfarinBody: {
+	DisplayName: Warfarin Body
+	Tooltip: ""
+}
+
+WarfarinHead: {
+	DisplayName: Warfarin Head
+	Tooltip: ""
+}
+
+WarfarinLegs: {
+	DisplayName: Warfarin Legs
+	Tooltip: ""
+}
+
+DorothyBody: {
+	DisplayName: Dorothy Body
+	Tooltip: ""
+}
+
+DorothyHead: {
+	DisplayName: Dorothy Head
+	Tooltip: ""
+}
+
+DorothyLegs: {
+	DisplayName: Dorothy Legs
+	Tooltip: ""
+}
