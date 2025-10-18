@@ -188,7 +188,7 @@ namespace ArknightsMod.Content.Items.Weapons
 
         public override Vector2? HoldoutOffset()
         {
-            return new Vector2(0f, 0f);
+            return new Vector2(-16f, 2f);
         }
     }
 }
