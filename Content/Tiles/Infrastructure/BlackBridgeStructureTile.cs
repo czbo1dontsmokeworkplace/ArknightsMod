@@ -15,6 +15,7 @@ namespace ArknightsMod.Content.Tiles.Infrastructure
 		public override void SetDefaults() {
 			DustType = DustID.Stone;
 			AddMapEntry(Color.DarkGray);
+			Main.tileMergeDirt[Type] = false;
 		}
 	}
 }
