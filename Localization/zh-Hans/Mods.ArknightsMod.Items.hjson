@@ -1272,3 +1272,18 @@ DisplayItem: {
 	// DisplayName: Display Item
 	// Tooltip: ""
 }
+
+SkadiBody: {
+	// DisplayName: Skadi Body
+	// Tooltip: ""
+}
+
+SkadiHead: {
+	// DisplayName: Skadi Head
+	// Tooltip: ""
+}
+
+SkadiLegs: {
+	// DisplayName: Skadi Legs
+	// Tooltip: ""
+}
