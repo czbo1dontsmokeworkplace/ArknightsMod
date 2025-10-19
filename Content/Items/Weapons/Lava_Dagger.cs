@@ -27,6 +27,19 @@ namespace ArknightsMod.Content.Items.Weapons
 				MaxInstances = 4,
 			};
 		}
+		public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
+		{
+			Texture2D tex = ModContent.Request<Texture2D>("ArknightsMod/Content/Items/Weapons/LavaWeapon").Value;
+			spriteBatch.Draw(tex, position, null, drawColor, 0f, tex.Size() / 2, scale, SpriteEffects.None, 0f);
+			return false;
+		}
+		public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
+		{
+			Texture2D tex = ModContent.Request<Texture2D>("ArknightsMod/Content/Items/Weapons/LavaWeapon").Value;
+			spriteBatch.Draw(tex, Item.position - tex.Size() / 2 - Main.screenPosition, null,
+				lightColor, rotation, tex.Size() / 2, scale, SpriteEffects.None, 0f);
+			return false;
+		}
 		public override void SetDefaults()
 		{
 			Item.damage = 64;
