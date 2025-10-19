@@ -1287,3 +1287,23 @@ SkadiLegs: {
 	// DisplayName: Skadi Legs
 	// Tooltip: ""
 }
+
+CartonLarge: {
+	// DisplayName: Carton Large
+	// Tooltip: ""
+}
+
+CartonMiddle: {
+	// DisplayName: Carton Middle
+	// Tooltip: ""
+}
+
+CartonPile: {
+	// DisplayName: Carton Pile
+	// Tooltip: ""
+}
+
+CartonSmall: {
+	// DisplayName: Carton Small
+	// Tooltip: ""
+}
