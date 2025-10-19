@@ -7,16 +7,15 @@ using Terraria.DataStructures;
 using Terraria.ModLoader;
 using Terraria.Audio;
 using Terraria.ObjectData;
-using ArknightsMod.Content.Items.Placeable;
+using ArknightsMod.Content.Items.Placeable.Infrastructure;
 
-namespace ArknightsMod.Content.Tiles
+namespace ArknightsMod.Content.Tiles.Infrastructure
 {
 	public class FactoryTile : ModTile
 	{
         public override void SetStaticDefaults()
         {
             Main.tileFrameImportant[Type] = true;
-            Main.tileNoFail[Type] = true;
             Main.tileObsidianKill[Type] = true;
             TileObjectData.newTile.CopyFrom(TileObjectData.Style3x2);
 			TileObjectData.newTile.Origin = new Point16(1, 4);

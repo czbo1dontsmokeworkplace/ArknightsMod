@@ -10,6 +10,7 @@ using Terraria;
 using ArknightsMod.Content.Projectiles;
 using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Content.Tiles;
+using ArknightsMod.Content.Tiles.Infrastructure;
 
 namespace ArknightsMod.Content.Items.Weapons
 {

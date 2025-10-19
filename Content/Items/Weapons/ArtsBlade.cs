@@ -6,6 +6,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using ArknightsMod.Content.Tiles;
+using ArknightsMod.Content.Tiles.Infrastructure;
 
 namespace ArknightsMod.Content.Items.Weapons
 {

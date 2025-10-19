@@ -8,6 +8,7 @@ using ArknightsMod.Content.Buffs;
 using System;
 using ArknightsMod.Players;
 using ArknightsMod.Content.Tiles;
+using ArknightsMod.Content.Tiles.Infrastructure;
 
 namespace ArknightsMod.Content.Items.Weapons
 {

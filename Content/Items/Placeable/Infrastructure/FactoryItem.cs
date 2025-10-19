@@ -1,16 +1,15 @@
 using ArknightsMod.Content.Items.Placeable;
-using ArknightsMod.Content.Tiles;
+using ArknightsMod.Content.Tiles.Infrastructure;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace ArknightsMod.Content.Items.Placeable
+namespace ArknightsMod.Content.Items.Placeable.Infrastructure
 {
 	public class FactoryItem : ModItem
 	{
 		public override void SetStaticDefaults() {
-			ItemID.Sets.CanGetPrefixes[Type] = false;
+			Item.ResearchUnlockCount = 100;
 		}
-
 		public override void SetDefaults() {
 			Item.DefaultToPlaceableTile(ModContent.TileType<FactoryTile>(), 0);
 		}

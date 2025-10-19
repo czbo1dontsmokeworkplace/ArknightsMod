@@ -1163,3 +1163,98 @@ DorothyLegs: {
 	DisplayName: Dorothy Legs
 	Tooltip: ""
 }
+
+BlackBridgeStructure: {
+	DisplayName: Black Bridge Structure
+	Tooltip: ""
+}
+
+BridgeStructure: {
+	DisplayName: Bridge Structure
+	Tooltip: ""
+}
+
+BridgeStructureWallItem: {
+	DisplayName: Bridge Structure Wall Item
+	Tooltip: ""
+}
+
+CanteenBlockItem: {
+	DisplayName: Canteen Block Item
+	Tooltip: ""
+}
+
+CanteenWallItem: {
+	DisplayName: Canteen Wall Item
+	Tooltip: ""
+}
+
+RhodesHugeScreen: {
+	DisplayName: Rhodes Huge Screen
+	Tooltip: ""
+}
+
+RhodesScreen: {
+	DisplayName: Rhodes Screen
+	Tooltip: ""
+}
+
+RhodesScreenRed: {
+	DisplayName: Rhodes Screen Red
+	Tooltip: ""
+}
+
+ElectroplatingItem: {
+	DisplayName: Electroplating Item
+	Tooltip: ""
+}
+
+ElectroplatingPlatformItem: {
+	DisplayName: Electroplating Platform Item
+	Tooltip: ""
+}
+
+GlassCurtainItem: {
+	DisplayName: Glass Curtain Item
+	Tooltip: ""
+}
+
+OfficeBlockItem: {
+	DisplayName: Office Block Item
+	Tooltip: ""
+}
+
+OfficeWallItem: {
+	DisplayName: Office Wall Item
+	Tooltip: ""
+}
+
+MedicalBlockItem: {
+	DisplayName: Medical Block Item
+	Tooltip: ""
+}
+
+MedicalDesk: {
+	DisplayName: Medical Desk
+	Tooltip: ""
+}
+
+MedicalWallItem: {
+	DisplayName: Medical Wall Item
+	Tooltip: ""
+}
+
+PipeItem: {
+	DisplayName: Pipe Item
+	Tooltip: ""
+}
+
+VentilationDuctItem: {
+	DisplayName: Ventilation Duct Item
+	Tooltip: ""
+}
+
+DisplayItem: {
+	DisplayName: Display Item
+	Tooltip: ""
+}
