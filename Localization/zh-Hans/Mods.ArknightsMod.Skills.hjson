@@ -100,3 +100,20 @@ Shirayuki_Shuriken: {
 		// Label: Mods.ArknightsMod.Skills.Shirayuki_Shuriken.2.Label
 	}
 }
+
+WuQi_Item_JiCi: {
+	1: {
+		// Desc: Mods.ArknightsMod.Skills.WuQi_Item_JiCi.1.Desc
+		// Label: Mods.ArknightsMod.Skills.WuQi_Item_JiCi.1.Label
+	}
+
+	2: {
+		// Label: Mods.ArknightsMod.Skills.WuQi_Item_JiCi.2.Label
+		// Desc: Mods.ArknightsMod.Skills.WuQi_Item_JiCi.2.Desc
+	}
+
+	3: {
+		// Desc: Mods.ArknightsMod.Skills.WuQi_Item_JiCi.3.Desc
+		// Label: Mods.ArknightsMod.Skills.WuQi_Item_JiCi.3.Label
+	}
+}

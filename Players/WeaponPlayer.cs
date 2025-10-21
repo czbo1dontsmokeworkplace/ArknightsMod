@@ -41,6 +41,7 @@ namespace ArknightsMod.Players
 		public bool HoldKroosCrossbow = false;
 		public bool HoldShirayuki_Shuriken = false;
 		public bool HoldLava_Dagger = false;
+		public bool HoldWuQi_Item_JiCi = false;
 		public bool HoldKroosAlterCrossbow = false;
 		public bool HoldExusiaiVector = false;
 		public bool HoldPozemkaCrossbow = false;
@@ -135,6 +136,7 @@ namespace ArknightsMod.Players
 			HoldChenSword = Main.LocalPlayer.HeldItem.ModItem is ChenSword;
 			HoldExusiaiVector = Main.LocalPlayer.HeldItem.ModItem is ExusiaiVector;
 			HoldKroosCrossbow = Main.LocalPlayer.HeldItem.ModItem is KroosCrossbow;
+			HoldWuQi_Item_JiCi = Main.LocalPlayer.HeldItem.ModItem is WuQi_Item_JiCi;
 			HoldShirayuki_Shuriken = Main.LocalPlayer.HeldItem.ModItem is Shirayuki_Shuriken;
 			HoldLava_Dagger = Main.LocalPlayer.HeldItem.ModItem is Lava_Dagger;
 			HoldKroosAlterCrossbow = Main.LocalPlayer.HeldItem.ModItem is KroosAlterCrossbow;
@@ -246,6 +248,9 @@ namespace ArknightsMod.Players
 						SkillActive = false;
 				}
 			}
+		}
+		public void UpdateActiveSkill2() {
+			CurrentSkill.AutoUpdateActive = false;
 		}
 
 		public void StrikeSkill() {
@@ -360,6 +365,20 @@ namespace ArknightsMod.Players
 				MaxSPs1List = new() { 0, 0, 0, 0, 0, 0, 4, 0, 0, 0 };
 				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0.2f, 0f, 0f, 0f };
 				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 };
+				SetSkillData();
+			}
+			else if (HoldWuQi_Item_JiCi) {
+				IconName = "WuQi_Item_JiCi";
+				HowManySkills = 1;
+				SkillLevel = new() { 10, 10, 10 };
+				ChargeTypeIsPerSecond = new() { false, true, false };
+				AutoTrigger = new() { true, false, false };
+				ShowSummonIconBySkills = new() { false, false, false };
+
+				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				MaxSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f };
+				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 				SetSkillData();
 			}
 			else if (HoldShirayuki_Shuriken) {

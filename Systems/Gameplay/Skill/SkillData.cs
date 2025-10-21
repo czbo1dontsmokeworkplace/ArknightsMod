@@ -65,6 +65,9 @@ namespace ArknightsMod.Systems.Gameplay.Skill
 		/// </summary>
 		public bool SummonSkill;
 
+
+
+		public bool IsPermanent;
 		/// <summary>
 		/// 等级数据
 		/// </summary>

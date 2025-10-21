@@ -66,3 +66,18 @@ Tumor2: {
 	// DisplayName: Tumor2
 	// Description: Mods.ArknightsMod.Buffs.Tumor2.Description
 }
+
+gutucs: {
+	// DisplayName: gutucs
+	// Description: Mods.ArknightsMod.Buffs.gutucs.Description
+}
+
+sjds: {
+	// DisplayName: sjds
+	// Description: Mods.ArknightsMod.Buffs.sjds.Description
+}
+
+sjds2: {
+	// DisplayName: sjds2
+	// Description: Mods.ArknightsMod.Buffs.sjds2.Description
+}

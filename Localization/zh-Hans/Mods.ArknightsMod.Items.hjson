@@ -1132,3 +1132,13 @@ Shirayuki_Shuriken: {
 	// DisplayName: Shirayuki_ Shuriken
 	// Tooltip: ""
 }
+
+WuQi_Item_JiCi: {
+	// DisplayName: Wu Qi_ Item_ Ji Ci
+	// Tooltip: ""
+}
+
+RAmeat: {
+	// DisplayName: R Ameat
+	// Tooltip: ""
+}

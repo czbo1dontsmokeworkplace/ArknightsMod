@@ -99,6 +99,11 @@ Dropconfig: {
 		Label: 酸液源石虫的异铁掉落率
 		Tooltip: 数值越小，掉落概率越大，数值为1时必定掉落此物
 	}
+
+	DropLS: {
+		// Label: Drop L S
+		// Tooltip: ""
+	}
 }
 
 MonsterConfig: {

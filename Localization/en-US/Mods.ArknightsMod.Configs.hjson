@@ -99,6 +99,11 @@ Dropconfig: {
 		Label: Drop Acid Og Slug
 		Tooltip: ""
 	}
+
+	DropLS: {
+		Label: Drop L S
+		Tooltip: ""
+	}
 }
 
 MonsterConfig: {

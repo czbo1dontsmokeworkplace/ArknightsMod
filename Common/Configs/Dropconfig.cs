@@ -10,6 +10,10 @@ public class Dropconfig : ModConfig
 	[Range(1, 100)]
 	public int DropOriginiumSlug;
 
+	[DefaultValue(1)]
+	[Range(1, 100)]
+	public int DropLS;
+
 	[DefaultValue(7)]
 	[Range(1, 100)]
 	public int DropOriginiumSlugAlpha;
