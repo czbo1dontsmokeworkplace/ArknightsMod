@@ -1,5 +1,6 @@
 using ArknightsMod.Content.Projectiles;
 using ArknightsMod.Content.Tiles;
+using ArknightsMod.Content.Tiles.Infrastructure;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent.Creative;

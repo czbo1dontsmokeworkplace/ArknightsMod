@@ -22,7 +22,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Vanguard.Bagpipe
 			protected override void Draw(ref PlayerDrawSet drawInfo) {
 
 				Texture2D texture = ModContent.Request<Texture2D>
-					("ArknightsMod/Content/Items/Armor/Vanity/Vanguard/BagpipeHead_BackHair").Value;
+					("ArknightsMod/Content/Items/Armor/Vanity/Vanguard/Bagpipe/BagpipeHead_BackHair").Value;
 
 				var offset = new Vector2(0, -3);
 

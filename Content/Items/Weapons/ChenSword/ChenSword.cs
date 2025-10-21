@@ -1,5 +1,6 @@
 ﻿using ArknightsMod.Content.Projectiles;
 using ArknightsMod.Content.Tiles;
+using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using System;
