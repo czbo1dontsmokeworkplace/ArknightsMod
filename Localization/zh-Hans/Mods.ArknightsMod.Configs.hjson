@@ -101,8 +101,8 @@ Dropconfig: {
 	}
 
 	DropLS: {
-		// Label: Drop L S
-		// Tooltip: ""
+		Label: 小角跳兽的圆圆肉片掉落率
+		Tooltip: 数值越小，掉落概率越大，数值为1时必定掉落此物
 	}
 }
 

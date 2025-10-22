@@ -11,16 +11,17 @@ using System.Linq;
 using System.Collections.Generic;
 using Terraria.GameContent;
 
+
 namespace ArknightsMod.Content.Items.Accessories.Rogue
 {
-    public class KnightlyCodexRenewed : ModItem
+    public class toubiwanju : ModItem
     {
         public override void SetDefaults()
         {
             Item.width = 24;
             Item.height = 24;
-            Item.value = Item.sellPrice(12, 0, 0, 0);
-            Item.rare = ItemRarityID.Cyan;
+            Item.value = Item.sellPrice(16, 0, 0, 0);
+            Item.rare = ItemRarityID.Master;
             Item.accessory = true;
         }
 
@@ -30,7 +31,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue
             int totalGoldCoins = CountPlayerGold(player);
 
             // 每5金币增加3%攻速
-            float attackSpeedBonus = (totalGoldCoins / 500) * 0.05f;
+            float attackSpeedBonus = (totalGoldCoins / 500) * 0.03f;
             player.GetAttackSpeed(DamageClass.Generic) += attackSpeedBonus;
         }
 

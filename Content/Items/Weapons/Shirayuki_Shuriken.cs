@@ -28,7 +28,7 @@ namespace ArknightsMod.Content.Items.Weapons
 
 		public override void SetDefaults()
 		{
-			Item.damage = 70;
+			Item.damage = 100;
 			Item.knockBack = 1f;
 			Item.useAnimation = 84;
 			Item.useTime = 84;

@@ -3,11 +3,11 @@ IceCleaver.DisplayName: 雪怪小队凿冰人
 Oneiros.DisplayName: 虚幻
 SnowCaster.DisplayName: 雪怪小队术士
 SnowSoldier.DisplayName: 雪怪小队
-// Evolution.DisplayName: Evolution
-// tumor1.DisplayName: tumor1
-// tumor2.DisplayName: tumor2
+Evolution.DisplayName: “进化的本质”
+tumor1.DisplayName: 畸变赘生物
+tumor2.DisplayName: 畸变恶性瘤
 AcidOgSlug.DisplayName: 酸液源石虫
-// Pompeii.DisplayName: Pompeii
+Pompeii.DisplayName: “庞贝”
 AACT.DisplayName: 邪魔炮火中枢先兆者
 AACTIntro.DisplayName: 邪魔炮火中枢先兆者（引物）
 AACTStage3TrueHealth.DisplayName: 邪魔炮火中枢先兆者（三阶段代理NPC）
@@ -19,29 +19,29 @@ IATIntro.DisplayName: 帝国炮火先兆者（引物）
 BasinSeaReaper.DisplayName: 钵海收割者
 DeepSeaSlider.DisplayName: 底海滑动者
 FloatingSeaDrifter.DisplayName: 浮海飘航者
-// NourishedPiercer.DisplayName: Nourished Piercer
+NourishedPiercer.DisplayName: 富营养的穿刺者
 PocketSeaCrawler.DisplayName: 囊海爬行者
 PrimalSeaPiercer.DisplayName: 始海穿刺者
 ShellSeaRunner.DisplayName: 壳海狂奔者
 TheFirstToTalk.DisplayName: 首言者
-// Caster.DisplayName: Caster
+Caster.DisplayName: 术士
 Crossbowman.DisplayName: 弩手
-// CrossbowmanLeader.DisplayName: Crossbowman Leader
-// DoubleSword.DisplayName: Double Sword
+CrossbowmanLeader.DisplayName: 弩手组长
+DoubleSword.DisplayName: 双持剑士
 Drone.DisplayName: 妖怪
-// DroneII.DisplayName: Drone I I
+DroneII.DisplayName: 妖怪MKII
 Hound.DisplayName: 猎狗
-// HoundPro.DisplayName: Hound Pro
-// LightShield.DisplayName: Light Shield
+HoundPro.DisplayName: 猎狗pro
+LightShield.DisplayName: 轻甲卫兵
 MortarGunner.DisplayName: 炮手
 OriginiumSlug.DisplayName: 源石虫
 OriginiumSlugAlpha.DisplayName: 源石虫Alpha
 OriginiumSlugBeta.DisplayName: 源石虫Beta
 Seniorcaster.DisplayName: 高阶术士
-// ShieldGuard.DisplayName: Shield Guard
+ShieldGuard.DisplayName: 重装防御者
 Soldier.DisplayName: 士兵
-// SoldierLeader.DisplayName: Soldier Leader
-// InsaneZombieL.DisplayName: Insane Zombie L
+SoldierLeader.DisplayName: 士兵组长
+InsaneZombieL.DisplayName: 狂暴宿主组长
 
 Closure: {
 	DisplayName: 可露希尔
@@ -87,4 +87,4 @@ Cannot: {
 	}
 }
 
-// LeporibeastShorthorn.DisplayName: Leporibeast Shorthorn
+LeporibeastShorthorn.DisplayName: 小角跳兽

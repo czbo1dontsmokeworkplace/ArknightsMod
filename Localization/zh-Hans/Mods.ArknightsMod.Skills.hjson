@@ -17,103 +17,126 @@ BagpipeSpear: {
 
 ChenSword: {
 	1: {
-		// Label: Mods.ArknightsMod.Skills.ChenSword.1.Label
-		// Desc: Mods.ArknightsMod.Skills.ChenSword.1.Desc
+		Label: 赤霄·绝影
+		Desc: 对目标发动10次连续斩击，每次造成相当于攻击力320%的物理伤害
 	}
 }
 
 KroosCrossbow: {
 	1: {
-		// Label: Mods.ArknightsMod.Skills.KroosCrossbow.1.Label
-		// Desc: Mods.ArknightsMod.Skills.KroosCrossbow.1.Desc
+		Label: 二连射·自动
+		Desc: 下次攻击时连续射击2次，每次射击造成相当于攻击力140%的物理伤害
 	}
 }
 
 PozemkaCrossbow: {
 	1: {
-		// Label: Mods.ArknightsMod.Skills.PozemkaCrossbow.1.Label
-		// Desc: Mods.ArknightsMod.Skills.PozemkaCrossbow.1.Desc
+		Label: 抑扬格
+		Desc:
+			'''
+			攻击力+60%，攻击时，40%几率当次攻击的攻击力提升至225%
+			持续时间无限
+			'''
 	}
 
 	2: {
-		// Label: Mods.ArknightsMod.Skills.PozemkaCrossbow.2.Label
-		// Desc: Mods.ArknightsMod.Skills.PozemkaCrossbow.2.Desc
+		Label: 点题
+		Desc:
+			'''
+			点击右键立即对前方进行3次攻击，每次造成自身攻击力230%的物理伤害
+			可充能2次
+			'''
 	}
 
 	3: {
-		// Label: Mods.ArknightsMod.Skills.PozemkaCrossbow.3.Label
-		// Desc: Mods.ArknightsMod.Skills.PozemkaCrossbow.3.Desc
+		Label: 锐笔速写
+		Desc: 攻击间隔缩短，每次攻击的攻击力提升至200%（对25格内的敌人提升至255%）
 	}
 }
 
 AdnachielCrossbow: {
 	1: {
-		// Label: Mods.ArknightsMod.Skills.AdnachielCrossbow.1.Label
-		// Desc: Mods.ArknightsMod.Skills.AdnachielCrossbow.1.Desc
+		Label: 攻击力强化·a型
+		Desc: 攻击力+50%
 	}
 }
 
 ExusiaiVector: {
 	1: {
-		// Desc: Mods.ArknightsMod.Skills.ExusiaiVector.1.Desc
-		// Label: Mods.ArknightsMod.Skills.ExusiaiVector.1.Label
+		Desc: 下次攻击变为3连射，每次射击造成相当于攻击力145%的伤害
+		Label: 冲锋模式
 	}
 
 	2: {
-		// Desc: Mods.ArknightsMod.Skills.ExusiaiVector.2.Desc
-		// Label: Mods.ArknightsMod.Skills.ExusiaiVector.2.Label
+		Desc: 攻击变为4连射，每次射击造成相当于攻击力125%的伤害
+		Label: 扫射模式
 	}
 
 	3: {
-		// Desc: Mods.ArknightsMod.Skills.ExusiaiVector.3.Desc
-		// Label: Mods.ArknightsMod.Skills.ExusiaiVector.3.Label
+		Desc:
+			'''
+			攻击变为5连射，攻击间隔一定程度缩短，攻击力提升至110%
+			技能会自动开启
+			'''
+		Label: 过载模式
 	}
 }
 
 KroosAlterCrossbow: {
 	1: {
-		// Desc: Mods.ArknightsMod.Skills.KroosAlterCrossbow.1.Desc
-		// Label: Mods.ArknightsMod.Skills.KroosAlterCrossbow.1.Label
+		Desc: 攻击力+40%，攻击变为2连射，大幅降低仇恨值
+		Label: 无痕
 	}
 
 	2: {
-		// Label: Mods.ArknightsMod.Skills.KroosAlterCrossbow.2.Label
-		// Desc: Mods.ArknightsMod.Skills.KroosAlterCrossbow.2.Desc
+		Label: 封喉
+		Desc: 攻击间隔较大幅度缩短，攻击变为2连射，发射32次箭矢后技能剩余时间内攻击变为4连射
 	}
 }
 
 Lava_Dagger: {
 	1: {
-		// Desc: Mods.ArknightsMod.Skills.Lava_Dagger.1.Desc
-		// Label: Mods.ArknightsMod.Skills.Lava_Dagger.1.Label
+		Desc: 攻击速度+50
+		Label: 战术咏唱·a型
 	}
 }
 
 Shirayuki_Shuriken: {
 	1: {
-		// Desc: Mods.ArknightsMod.Skills.Shirayuki_Shuriken.1.Desc
-		// Label: Mods.ArknightsMod.Skills.Shirayuki_Shuriken.1.Label
+		Desc: 射弹可达到的最远距离增加
+		Label: 敌飙
 	}
 
 	2: {
-		// Desc: Mods.ArknightsMod.Skills.Shirayuki_Shuriken.2.Desc
-		// Label: Mods.ArknightsMod.Skills.Shirayuki_Shuriken.2.Label
+		Desc: 攻击变为投掷回旋的大飞镖，使命中目标每秒受到相当于攻击力80%的伤害
+		Label: 凝武
 	}
 }
 
 WuQi_Item_JiCi: {
 	1: {
-		// Desc: Mods.ArknightsMod.Skills.WuQi_Item_JiCi.1.Desc
-		// Label: Mods.ArknightsMod.Skills.WuQi_Item_JiCi.1.Label
+		Desc: 攻击力+100%
+		Label: 攻击力强化·y型
 	}
 
 	2: {
-		// Label: Mods.ArknightsMod.Skills.WuQi_Item_JiCi.2.Label
-		// Desc: Mods.ArknightsMod.Skills.WuQi_Item_JiCi.2.Desc
+		Label: 护身尖刺
+		Desc: 停止攻击，攻击力+60%，防御力+110%，受到敌人攻击时释放尖刺对前方敌人进行一次远程攻击（每0.6秒最多触发一次）
 	}
 
 	3: {
-		// Desc: Mods.ArknightsMod.Skills.WuQi_Item_JiCi.3.Desc
-		// Label: Mods.ArknightsMod.Skills.WuQi_Item_JiCi.3.Label
+		Desc:
+			'''
+			射弹可达到的最远距离增加并且可追踪目标，攻击力+60%，攻击速度+25，远程攻击不再降低攻击力
+			第二次及以后使用时能力加成变为最初的两倍，且持续时间无限
+			'''
+		Label: 至高之术
+	}
+}
+
+BeagleWeapon: {
+	1: {
+		Desc: 防御力+50%
+		Label: 防御力强化·a型
 	}
 }

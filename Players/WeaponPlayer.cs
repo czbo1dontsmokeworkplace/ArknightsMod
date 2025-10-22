@@ -39,6 +39,7 @@ namespace ArknightsMod.Players
 		public bool HoldBagpipeSpear = false;
 		public bool HoldChenSword = false;
 		public bool HoldKroosCrossbow = false;
+		public bool HoldBeagleWeapon = false;
 		public bool HoldShirayuki_Shuriken = false;
 		public bool HoldLava_Dagger = false;
 		public bool HoldWuQi_Item_JiCi = false;
@@ -136,6 +137,7 @@ namespace ArknightsMod.Players
 			HoldChenSword = Main.LocalPlayer.HeldItem.ModItem is ChenSword;
 			HoldExusiaiVector = Main.LocalPlayer.HeldItem.ModItem is ExusiaiVector;
 			HoldKroosCrossbow = Main.LocalPlayer.HeldItem.ModItem is KroosCrossbow;
+			HoldBeagleWeapon = Main.LocalPlayer.HeldItem.ModItem is BeagleWeapon;
 			HoldWuQi_Item_JiCi = Main.LocalPlayer.HeldItem.ModItem is WuQi_Item_JiCi;
 			HoldShirayuki_Shuriken = Main.LocalPlayer.HeldItem.ModItem is Shirayuki_Shuriken;
 			HoldLava_Dagger = Main.LocalPlayer.HeldItem.ModItem is Lava_Dagger;
@@ -365,6 +367,20 @@ namespace ArknightsMod.Players
 				MaxSPs1List = new() { 0, 0, 0, 0, 0, 0, 4, 0, 0, 0 };
 				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0.2f, 0f, 0f, 0f };
 				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 };
+				SetSkillData();
+			}
+			else if (HoldBeagleWeapon) {
+				IconName = "BeagleWeapon";
+				HowManySkills = 1;
+				SkillLevel = new() { 7, 7, 7 };
+				ChargeTypeIsPerSecond = new() { false, true, false };
+				AutoTrigger = new() { true, false, false };
+				ShowSummonIconBySkills = new() { false, false, false };
+
+				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				MaxSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f };
+				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 				SetSkillData();
 			}
 			else if (HoldWuQi_Item_JiCi) {

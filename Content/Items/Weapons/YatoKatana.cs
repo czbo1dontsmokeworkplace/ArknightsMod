@@ -39,7 +39,7 @@ namespace ArknightsMod.Content.Items.Weapons
 			Item.shootSpeed = 2.3f; // This value bleeds into the behavior of the projectile as velocity, keep that in mind when tweaking values
 
 			// The sound that this item plays when used. Need "using Terraria.Audio;"
-			Item.UseSound = use;
+			Item.UseSound = SoundID.Item1;
 		}
 
 		public override void AddRecipes() {

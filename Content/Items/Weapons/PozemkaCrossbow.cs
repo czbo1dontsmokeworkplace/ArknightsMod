@@ -1,6 +1,10 @@
-﻿using ArknightsMod.Systems.Gameplay.Skill;
-using ArknightsMod.Content.Buffs;
+﻿using ArknightsMod.Content.Buffs;
+using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Projectiles.Pozyomka;
+using ArknightsMod.Content.Tiles;
+using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
+using ArknightsMod.Systems.Gameplay.Skill;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -8,10 +12,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using ArknightsMod.Content.Projectiles.Pozyomka;
-using ArknightsMod.Content.Items.Material;
-using ArknightsMod.Content.Tiles;
-using ArknightsMod.Content.Tiles.Infrastructure;
+using static ArknightsMod.Content.Items.Accessories.Rogue.Scout;
 
 namespace ArknightsMod.Content.Items.Weapons
 {
@@ -49,7 +50,7 @@ namespace ArknightsMod.Content.Items.Weapons
 		}
 
 		public override void SetDefaults() {
-			Item.damage = 100;
+			Item.damage = 196;
 			Item.DamageType = DamageClass.Ranged;
 			Item.width = 88;
 			Item.height = 44;
@@ -67,11 +68,44 @@ namespace ArknightsMod.Content.Items.Weapons
 			Item.shootSpeed = 20f;
 			Item.useAmmo = AmmoID.Arrow;
 			Item.crit = 0; // The percent chance at hitting an enemy with a crit, plus the default amount of 4.
-
+			Item.autoReuse = true;
 
 			Item.rare = ItemRarityID.Yellow;
 			Item.value = Item.sellPrice(0, 0, 10, 0);
 
+		}
+		public class Skill1on : ModPlayer
+		{
+			public bool hasSkill1on = false;
+
+			public override void ResetEffects() {
+				hasSkill1on = false;
+			}
+			public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) {
+				if (hasSkill1on==true && Main.rand.Next(10) < 4) {
+					// 应用倍率
+					modifiers.FinalDamage *= 2.25f;
+				}
+			}
+		}
+		public class Skill3on : ModPlayer
+		{
+			public bool hasSkill3on = false;
+
+			public override void ResetEffects() {
+				hasSkill3on = false;
+			}
+			public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) {
+				float distance = Vector2.Distance(Player.Center, target.Center);
+				if (hasSkill3on == true && distance < 400) {
+					modifiers.FinalDamage *= 2.55f;
+				}
+				else if (hasSkill3on == true && distance >= 400) {
+					modifiers.FinalDamage *= 2f;
+				}
+				else 
+					return;
+			}
 		}
 		public override bool AltFunctionUse(Player player) => true;
 		public override bool CanUseItem(Player player) {
@@ -126,7 +160,7 @@ namespace ArknightsMod.Content.Items.Weapons
 								}
 							}
 							else {
-								Item.crit = 36;
+
 								Item.UseSound = PozemkaCrossbowS0;
 							}
 						}
@@ -156,10 +190,11 @@ namespace ArknightsMod.Content.Items.Weapons
 				//S1
 				if (modPlayer.Skill == 0 && modPlayer.SkillActive == true) {
 					damage *= 1.6f;
+					player.GetModPlayer<Skill1on>().hasSkill1on = true;
 				}
 				//S3
 				if (modPlayer.Skill == 2 && modPlayer.SkillActive == true) {
-					damage *= 2.0f;
+					player.GetModPlayer<Skill3on>().hasSkill3on = true;
 				}
 			}
 		}

@@ -31,7 +31,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue
             int totalGoldCoins = CountPlayerGold(player);
 
             // 每5金币增加3%攻速
-            float attackSpeedBonus = (totalGoldCoins / 500) * 0.03f;
+            float attackSpeedBonus = (totalGoldCoins / 500) * 0.07f;
             player.GetAttackSpeed(DamageClass.Generic) += attackSpeedBonus;
         }
 

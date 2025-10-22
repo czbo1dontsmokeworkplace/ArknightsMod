@@ -88,7 +88,7 @@ namespace ArknightsMod.Content.Items.Weapons
             Item.rare = ModContent.RarityType<Mrfzxyd>();//稀有度
             Item.autoReuse = true;//是否可以连续使用
             Item.noMelee = true;//贴图是否造成伤害
-            Item.shoot = 88;
+            Item.shoot = 87;
             Item.shootSpeed = 16;//弹幕射速
             Item.useTurn = false;
             Item.noUseGraphic = true;

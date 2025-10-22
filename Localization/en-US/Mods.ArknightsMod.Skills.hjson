@@ -117,3 +117,10 @@ WuQi_Item_JiCi: {
 		Label: Mods.ArknightsMod.Skills.WuQi_Item_JiCi.3.Label
 	}
 }
+
+BeagleWeapon: {
+	1: {
+		Desc: Mods.ArknightsMod.Skills.BeagleWeapon.1.Desc
+		Label: Mods.ArknightsMod.Skills.BeagleWeapon.1.Label
+	}
+}

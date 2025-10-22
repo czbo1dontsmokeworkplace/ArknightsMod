@@ -1119,7 +1119,6 @@ Shirayuki_Shuriken: {
 	Tooltip: ""
 }
 
-<<<<<<< HEAD
 WuQi_Item_JiCi: {
 	DisplayName: Wu Qi_ Item_ Ji Ci
 	Tooltip: ""
@@ -1127,7 +1126,9 @@ WuQi_Item_JiCi: {
 
 RAmeat: {
 	DisplayName: R Ameat
-=======
+	Tooltip: ""
+}
+
 SariaBody: {
 	DisplayName: Saria Body
 	Tooltip: ""
@@ -1300,6 +1301,55 @@ CartonPile: {
 
 CartonSmall: {
 	DisplayName: Carton Small
->>>>>>> 63f59bfac6f8f23ed609ce23475c71d98554dbad
+	Tooltip: ""
+}
+
+Dajingmi: {
+	DisplayName: Dajingmi
+	Tooltip: ""
+}
+
+Reshuihu: {
+	DisplayName: Reshuihu
+	Tooltip: ""
+}
+
+midiexiangzhiyong: {
+	DisplayName: midiexiangzhiyong
+	Tooltip: ""
+}
+
+Zhengqijiawei: {
+	DisplayName: Zhengqijiawei
+	Tooltip: ""
+}
+
+weizhiyiqi: {
+	DisplayName: weizhiyiqi
+	Tooltip: ""
+}
+
+Scout: {
+	DisplayName: Scout
+	Tooltip: ""
+}
+
+jinweijunzhifeng: {
+	DisplayName: jinweijunzhifeng
+	Tooltip: ""
+}
+
+toubiwanju: {
+	DisplayName: toubiwanju
+	Tooltip: ""
+}
+
+shengsu: {
+	DisplayName: shengsu
+	Tooltip: ""
+}
+
+tongshuaidiaoxiang: {
+	DisplayName: tongshuaidiaoxiang
 	Tooltip: ""
 }

@@ -1,4 +1,4 @@
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.GameContent;
@@ -21,7 +21,7 @@ namespace ArknightsMod.Common.Items
         {
             if (isKingItem)
             {
-                string txt = Language.GetTextValue("Mods.ArknightsMod.Dialogue.King");
+                string txt = Language.GetTextValue("国王收藏品");
                 tooltips.Add(new TooltipLine(Mod, "KingItem", txt));
             }
         }

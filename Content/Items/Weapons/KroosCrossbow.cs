@@ -39,7 +39,7 @@ namespace ArknightsMod.Content.Items.Weapons
 			Item.shootSpeed = 9f;
 			Item.useAmmo = AmmoID.Arrow;
 			Item.crit = 16; // The percent chance at hitting an enemy with a crit, plus the default amount of 4.
-
+			Item.autoReuse = true;
 
 			Item.rare = ItemRarityID.Blue;
 			Item.value = Item.sellPrice(0, 0, 3, 20);

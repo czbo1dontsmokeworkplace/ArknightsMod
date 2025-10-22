@@ -14,25 +14,29 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace ArknightsMod.Content.Projectiles.Beagle
 {
-    public class MGL_Player : ModPlayer
-    {
-        public override void PostUpdate()
-        {
-            var it = Player.HeldItem;
-            if (it.type == ModContent.ItemType<BeagleWeapon>())
-            {
-                if (Player.ownedProjectileCounts[ModContent.ProjectileType<MGL_Sword>()] == 0)
-                {
-                    Projectile.NewProjectile(Player.GetSource_FromThis(), Player.Center, Vector2.Zero, ModContent.ProjectileType<MGL_Sword>(), it.damage, it.knockBack, Player.whoAmI);
-                }
-            }
 
-            base.PostUpdate();
-        }
-        public override void ModifyHitByNPC(NPC npc, ref Player.HurtModifiers modifiers)
-        {
+	public class MGL_Player : ModPlayer
+	{
+		public override void PostUpdate() {
+			var it = Player.HeldItem;
+			if (it.type == ModContent.ItemType<BeagleWeapon>()) {
+				if (Player.ownedProjectileCounts[ModContent.ProjectileType<MGL_Sword>()] == 0) {
+					Projectile.NewProjectile(Player.GetSource_FromThis(), Player.Center, Vector2.Zero, ModContent.ProjectileType<MGL_Sword>(), it.damage, it.knockBack, Player.whoAmI);
+				}
+			}
+
+			base.PostUpdate();
+		}
+		public override void UpdateEquips() {
+			var it = Player.HeldItem;
+			if (it.type == ModContent.ItemType<BeagleWeapon>() && Main.mouseRight) {
+				Player.statDefense *= 1.5f;
+			}
+			base.UpdateEquips();
+		}
+		public override void ModifyHitByNPC(NPC npc, ref Player.HurtModifiers modifiers) {/*
             var it = Player.HeldItem;
-            if (it.type == ModContent.ItemType<BeagleWeapon>() && Main.mouseRight)
+            if (it.type == ModContent.ItemType<MGL>() && Main.mouseRight)
                 if ((npc.Center.X - Player.Center.X) * Player.direction >= 0)
                 {
                     var defense = Player.statDefense;
@@ -45,12 +49,13 @@ namespace ArknightsMod.Content.Projectiles.Beagle
 
                     modifiers.FinalDamage *= dam2 / dam1;
                 }
-            base.ModifyHitByNPC(npc, ref modifiers);
-        }
-        public override void ModifyHitByProjectile(Projectile proj, ref Player.HurtModifiers modifiers)
-        {
+            */
+			base.ModifyHitByNPC(npc, ref modifiers);
+		}
+		public override void ModifyHitByProjectile(Projectile proj, ref Player.HurtModifiers modifiers) {
+			/*
             var it = Player.HeldItem;
-            if (it.type == ModContent.ItemType<BeagleWeapon>() && Main.mouseRight)
+            if (it.type == ModContent.ItemType<MGL>() && Main.mouseRight)
                 if ((proj.Center.X - Player.Center.X) * Player.direction >= 0)
                 {
                     var defense = Player.statDefense;
@@ -63,39 +68,38 @@ namespace ArknightsMod.Content.Projectiles.Beagle
 
                     modifiers.FinalDamage *= dam2 / dam1;
                 }
-            base.ModifyHitByProjectile(proj, ref modifiers);
-        }
-        public static void QuicklyDraw_Proj(Projectile proj, float? scale = null, Color? col = null, float? rotation = null, Vector2? Center = null, Texture2D tx = null, SpriteEffects? spE = null, Vector2? Ori = null)
-        {
-            Player player = Main.player[proj.owner];
-            Texture2D TX = tx == default ? TextureAssets.Projectile[proj.type].Value : tx;
-            Color Col = !col.HasValue ? Lighting.GetColor((int)(player.Center.X / 16f), (int)(player.Center.Y / 16f)) : col.Value;
+            */
+			base.ModifyHitByProjectile(proj, ref modifiers);
+		}
+		public static void QuicklyDraw_Proj(Projectile proj, float? scale = null, Color? col = null, float? rotation = null, Vector2? Center = null, Texture2D tx = null, SpriteEffects? spE = null, Vector2? Ori = null) {
+			Player player = Main.player[proj.owner];
+			Texture2D TX = tx == default ? TextureAssets.Projectile[proj.type].Value : tx;
+			Color Col = !col.HasValue ? Lighting.GetColor((int)(player.Center.X / 16f), (int)(player.Center.Y / 16f)) : col.Value;
 
 
-            if (player != null)
-            {
-                float sc = !scale.HasValue ? 1 : scale.Value;
-                SpriteEffects spe = !spE.HasValue ? player.direction == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None : spE.Value;
-                float Ro = !rotation.HasValue ? proj.rotation - MathHelper.PiOver4 * (spe == SpriteEffects.None ? 1 : -1) : rotation.Value - MathHelper.PiOver4 * (spe == SpriteEffects.None ? 1 : -1);
+			if (player != null) {
+				float sc = !scale.HasValue ? 1 : scale.Value;
+				SpriteEffects spe = !spE.HasValue ? player.direction == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None : spE.Value;
+				float Ro = !rotation.HasValue ? proj.rotation - MathHelper.PiOver4 * (spe == SpriteEffects.None ? 1 : -1) : rotation.Value - MathHelper.PiOver4 * (spe == SpriteEffects.None ? 1 : -1);
 
-                float Dir = spe == SpriteEffects.None ? 1 : -1;
-                Vector2 Cent = !Center.HasValue ? proj.Center : Center.Value;
+				float Dir = spe == SpriteEffects.None ? 1 : -1;
+				Vector2 Cent = !Center.HasValue ? proj.Center : Center.Value;
 
-                var ori = !Ori.HasValue ? new Vector2((TX.Width / 2 - TX.Width / 2 * Dir), TX.Height) : Ori.Value;
-                Main.spriteBatch.Draw(TX,
-                                      Cent - Main.screenPosition,
-                                      null,
-                                      Col,
-                                      Ro,
-                                      ori,
-                                      sc,
-                                      spe,
-                                      0);
-            }
-        }
+				var ori = !Ori.HasValue ? new Vector2((TX.Width / 2 - TX.Width / 2 * Dir), TX.Height) : Ori.Value;
+				Main.spriteBatch.Draw(TX,
+									  Cent - Main.screenPosition,
+									  null,
+									  Col,
+									  Ro,
+									  ori,
+									  sc,
+									  spe,
+									  0);
+			}
+		}
 
-    }
-    public class MGL_Sword : ModProjectile
+	}
+	public class MGL_Sword : ModProjectile
     {
 		Player player => Main.player[Projectile.owner];
         Item item => player.HeldItem;
@@ -156,7 +160,7 @@ namespace ArknightsMod.Content.Projectiles.Beagle
         public override void AI()
         {
             Projectile.velocity = -Vector2.UnitY.RotatedBy(Projectile.rotation);
-            if (item.type != ModContent.ItemType<BeagleWeapon>()) Projectile.Kill();
+            if (player.dead || !player.active || item.type != ModContent.ItemType<BeagleWeapon>()) Projectile.Kill();
             if (Projectile.ai[1] <= 0)
             {
                 var LerpVal = Math.Clamp(Projectile.ai[0] / 40f, 0, 1);
@@ -248,7 +252,7 @@ namespace ArknightsMod.Content.Projectiles.Beagle
         }
         public override void AI()
         {
-            if (item.type != ModContent.ItemType<BeagleWeapon>()) Projectile.Kill();
+            if (player.dead || !player.active || item.type != ModContent.ItemType<BeagleWeapon>()) Projectile.Kill();
             if (Projectile.ai[1] <= 0)
             {
                 var LerpVal = Math.Clamp(Projectile.ai[0] / 40f, 0, 1);
