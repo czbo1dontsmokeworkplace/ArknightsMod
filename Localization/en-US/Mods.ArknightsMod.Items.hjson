@@ -1413,3 +1413,13 @@ lwt: {
 	DisplayName: lwt
 	Tooltip: ""
 }
+
+YinHui: {
+	DisplayName: Yin Hui
+	Tooltip: ""
+}
+
+posunzhuangzhi: {
+	DisplayName: posunzhuangzhi
+	Tooltip: ""
+}

@@ -124,3 +124,20 @@ BeagleWeapon: {
 		Label: Mods.ArknightsMod.Skills.BeagleWeapon.1.Label
 	}
 }
+
+YinHui: {
+	1: {
+		Desc: Mods.ArknightsMod.Skills.YinHui.1.Desc
+		Label: Mods.ArknightsMod.Skills.YinHui.1.Label
+	}
+
+	2: {
+		Label: Mods.ArknightsMod.Skills.YinHui.2.Label
+		Desc: Mods.ArknightsMod.Skills.YinHui.2.Desc
+	}
+
+	3: {
+		Desc: Mods.ArknightsMod.Skills.YinHui.3.Desc
+		Label: Mods.ArknightsMod.Skills.YinHui.3.Label
+	}
+}
