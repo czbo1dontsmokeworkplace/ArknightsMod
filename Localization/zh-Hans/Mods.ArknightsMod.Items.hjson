@@ -1537,3 +1537,13 @@ lwt: {
 	DisplayName: 史尔特尔的莱万汀
 	Tooltip: 未完成的武器
 }
+
+YinHui: {
+	DisplayName: 银灰的手杖
+	Tooltip: “银灰，你的盟友，前来助力。你不会让我失望的，对吗。”
+}
+
+posunzhuangzhi: {
+	DisplayName: 破损装置
+	Tooltip: 一些残破的装置
+}
