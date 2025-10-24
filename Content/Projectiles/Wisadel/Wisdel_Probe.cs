@@ -143,12 +143,24 @@ namespace ArknightsMod.Content.Projectiles.Wisadel
 			// 三技能情况下：组合
 			else if (Mode == 1)
 			{
-				Vector2 mouseDir = (Main.MouseWorld - Projectile.Center)
+				Vector2 MouseWorld = Main.MouseWorld;
+				Vector2 playerPos = player.Center;
+				Vector2 toMouse = MouseWorld - playerPos;
+				float minDistance = 90f;
+
+				// 限制最小距离
+				if (toMouse.Length() < minDistance) {
+					toMouse = toMouse.SafeNormalize(Vector2.UnitX) * minDistance;
+					MouseWorld = playerPos + toMouse;
+					toMouse = MouseWorld - playerPos;
+				}
+
+				Vector2 mouseDir = (MouseWorld - Projectile.Center)
 								.SafeNormalize(default);
 
 				Vector2 pos = GetAssembledPosition();
 
-				int mouseDir2D = Main.MouseWorld.X - player.Center.X > 0 ? 1 : -1;
+				int mouseDir2D = MouseWorld.X - player.Center.X > 0 ? 1 : -1;
 				if (mouseDir2D == -1) {
 					pos = new Vector2(pos.X, -pos.Y);
 				}
@@ -161,7 +173,7 @@ namespace ArknightsMod.Content.Projectiles.Wisadel
 
 				
 				float offset = EaseFunction.QuadraticEase(player.wisdel().combineAnimationTimer, 0, 30, -0.4f, 0f, false, 0.9f);
-				float totalRot = mouseDir.ToRotation() + offset*player.direction;
+				float totalRot = mouseDir.ToRotation() + offset * player.direction;
 
 				Position = player.RotatedRelativePoint(player.MountedCenter
 					+ (pos - new Vector2(-40, 2 * mouseDir2D)).RotatedBy(totalRot));
@@ -351,7 +363,7 @@ namespace ArknightsMod.Content.Projectiles.Wisadel
 								.SafeNormalize(default);
 			Projectile.velocity = mouseDir;
 			Rotation = MathF.Atan2(mouseDir.Y * Projectile.direction, mouseDir.X * Projectile.direction);
-
+			player.ChangeDir(Main.MouseWorld.X - player.Center.X > 0 ? 1 : -1);
 			UpdateNormalShoot(player);
 
 		}
@@ -384,12 +396,36 @@ namespace ArknightsMod.Content.Projectiles.Wisadel
 					SoundEngine.PlaySound(Shoot, Projectile.position);
 				}
 
+				Vector2 playerPos = player.Center;
+				Vector2 mouseWorld = Main.MouseWorld;
+				Vector2 toMouse = mouseWorld - playerPos;
+				Vector2 direction = toMouse.SafeNormalize(Vector2.UnitX);
+				float checkStep = 4f;
+				float checkLength = toMouse.Length();
+				bool blocked = false;
+				Vector2 blockedPos = mouseWorld;
+
+				for (float i = 0f; i < checkLength; i += checkStep) {
+					Vector2 checkPos = playerPos + direction * i;
+					Point tile = checkPos.ToTileCoordinates();
+
+					if (WorldGen.SolidTile(tile.X, tile.Y)) {
+						blocked = true;
+						blockedPos = playerPos + direction * (i - checkStep); // 上一个没被挡的位置
+						break;
+					}
+				}
+
+				if (blocked) {
+					mouseWorld = blockedPos;
+				}
 				// 弹幕
-				int p = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, (Main.MouseWorld - Projectile.Center)
+				int p = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, (mouseWorld - Projectile.Center)
 						.SafeNormalize(default) * 16,
 					ModContent.ProjectileType<WisdelShotNormal>(), Projectile.damage, Projectile.knockBack,
 					Projectile.owner);
-
+				var shot = Main.projectile[p].ModProjectile as WisdelShotNormal;
+				shot.aimPos = mouseWorld;
 				// 统一冷却
 				player.wisdel().coolDown = 30;
 
@@ -428,11 +464,37 @@ namespace ArknightsMod.Content.Projectiles.Wisadel
 				}
 				player.velocity.X -= player.direction * 3;
 
+				Vector2 playerPos = player.Center;
+				Vector2 mouseWorld = Main.MouseWorld;
+				Vector2 toMouse = mouseWorld - playerPos;
+				Vector2 direction = toMouse.SafeNormalize(Vector2.UnitX);
+				float checkStep = 4f;
+				float checkLength = toMouse.Length();
+				bool blocked = false;
+				Vector2 blockedPos = mouseWorld;
+
+				for (float i = 0f; i < checkLength; i += checkStep) {
+					Vector2 checkPos = playerPos + direction * i;
+					Point tile = checkPos.ToTileCoordinates();
+
+					if (WorldGen.SolidTile(tile.X, tile.Y)) {
+						blocked = true;
+						blockedPos = playerPos + direction * (i - checkStep); // 上一个没被挡的位置
+						break;
+					}
+				}
+
+				if (blocked) {
+					mouseWorld = blockedPos;
+				}
 				// 弹幕
-				int p = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, (Main.MouseWorld - Projectile.Center)
+				int p = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, (mouseWorld - Projectile.Center)
 						.SafeNormalize(default) * 16,
 					ModContent.ProjectileType<WisdelShotLarge>(), (int)(Projectile.damage * 2.2f), Projectile.knockBack,
 					Projectile.owner);
+
+				var shot = Main.projectile[p].ModProjectile as WisdelShotLarge;
+				shot.aimPos = mouseWorld;
 
 				Vector2 velocity = Main.MouseWorld - Projectile.Center;
 				velocity.Normalize();

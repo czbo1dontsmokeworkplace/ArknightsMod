@@ -15,22 +15,32 @@ namespace ArknightsMod.Content.Projectiles.Wisadel
 		public override string Texture => ArknightsMod.noTexture;
 		public override void SetDefaults()
 		{
-			Projectile.width = 48;
-			Projectile.height = 48;
+			Projectile.width = 32;
+			Projectile.height = 32;
 			Projectile.friendly = true;
-			Projectile.DamageType = DamageClass.MeleeNoSpeed;
+			Projectile.DamageType = DamageClass.Ranged;
 			Projectile.ignoreWater = true;
 			Projectile.tileCollide = false;
 			Projectile.penetrate = -1;
 			Projectile.timeLeft = 60;
 			Projectile.scale = 1f;
 			Projectile.usesLocalNPCImmunity = true;
+			Projectile.localNPCHitCooldown = 20;
 			Projectile.noEnchantmentVisuals = true;
 		}
 		public int timer;
+		
 		public override void AI()
 		{
 			timer++;
+
+			if (Projectile.ai[0] == 666 && timer == 15)
+			{
+				WisdelShotNormal.Aftershock(Projectile, Main.player[Projectile.owner], Projectile.damage);
+			}
+		}
+		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+		{
 		}
 		public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI) {
 
@@ -40,6 +50,8 @@ namespace ArknightsMod.Content.Projectiles.Wisadel
 		{
 			return false;
 		}
+
+		
 		public override bool? CanDamage() => false;
 		
 		public override bool PreDraw(ref Color lightColor)

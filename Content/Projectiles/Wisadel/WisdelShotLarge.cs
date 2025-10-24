@@ -38,10 +38,14 @@ namespace ArknightsMod.Content.Projectiles.Wisadel
 
 		}
 		public int timer;
-		public override void AI() {
-			if (++timer > 10) {
-				Projectile.tileCollide = true;
-			}
+		public bool hasreachedTarget = false;
+		public Vector2 aimPos = Vector2.Zero;
+		public override void AI()
+		{
+			timer++;
+			Vector2 oldPosition = Projectile.position - Projectile.velocity;
+			Vector2 newPosition = Projectile.position;
+
 			Projectile.rotation = Projectile.velocity.ToRotation() + 1.57079637f;
 
 			if (hasHit) {
@@ -51,6 +55,32 @@ namespace ArknightsMod.Content.Projectiles.Wisadel
 					Projectile.Kill();
 				}
 			}
+			if (IsPointOnLineSegment(oldPosition, newPosition, aimPos, 32f)) // 32f为容差范围
+			{
+				Projectile.tileCollide = true;
+				hasreachedTarget = true;
+			}
+		}
+		private bool IsPointOnLineSegment(Vector2 start, Vector2 end, Vector2 point, float tolerance) {
+			// 计算点到线段的距离
+			float distance = DistanceToLineSegment(point, start, end);
+			return distance <= tolerance;
+		}
+
+		private float DistanceToLineSegment(Vector2 p, Vector2 a, Vector2 b) {
+			Vector2 ab = b - a;
+			Vector2 ap = p - a;
+
+			float dot = Vector2.Dot(ap, ab);
+			float lengthSquared = ab.LengthSquared();
+
+			if (dot <= 0)
+				return ap.Length();
+			if (dot >= lengthSquared)
+				return (p - b).Length();
+
+			Vector2 projection = a + (dot / lengthSquared) * ab;
+			return (p - projection).Length();
 		}
 		public override void OnKill(int timeLeft) {
 			Player player = Main.player[Projectile.owner];

@@ -37,14 +37,14 @@ namespace ArknightsMod.Content.Items.Weapons
 				skills++;
 				if (skills > 4)
 					skills = 0;
-				string text = skills switch {
+				/*string text = skills switch {
 					0 => "普通攻击：释放单个音符",
 					1 => "一技能：释放从大到小8个音符，伤害逐渐降低",
 					2 => "二技能：物伤：释放穿透性钢琴音符，造成范围伤害",
 	                3 => "二技能：法伤：攻速增加，释放飞行速度较低的风琴音符",
 					4 => "三技能：每次释放4个音符，两个追踪攻击力最高的敌人造成物伤，两个追踪血量最低的敌人造成法伤"
 				};
-				Main.NewText(text, Color.LightSkyBlue);
+				Main.NewText(text, Color.LightSkyBlue);*/
 			}
             return player.ownedProjectileCounts[ProjectileType<SakiSwordWhite>()] <= 0&& player.ownedProjectileCounts[ProjectileType<SakiSwordBlack>()] <= 0;
         }
