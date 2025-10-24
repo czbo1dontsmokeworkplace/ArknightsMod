@@ -1,14 +1,15 @@
-﻿using Terraria;
-using Terraria.ModLoader;
-using Terraria.Audio;
+﻿using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using Terraria.ID;
-using Terraria.GameContent;
 using ReLogic.Utilities;
+using System;
+using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
-using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
+using Terraria.GameContent;
+using Terraria.GameContent.Bestiary;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 {
@@ -58,8 +59,15 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			NPC.defense = 5;
 			NPC.HitSound = SoundID.NPCHit4;
 			NPC.DeathSound = SoundID.NPCDeath14;
+			NPC.value = 50f;
 			NPC.noGravity = true;
 			NPC.noTileCollide = true;
+		}
+		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Surface,
+				new FlavorTextBestiaryInfoElement("敌方人员操纵的无人机，被其内部某些人称为妖怪。装备有远程操控施术单元，可能是由附近隐蔽的术师远程操作。虽然不一定能对穿戴防具的人体构成大量损害，但仍然会对一般人员对构成一定威胁。"),
+			});	
 		}
 
 		public override void OnSpawn(IEntitySource source) {

@@ -1,4 +1,5 @@
 ﻿using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Items.Placeable.Banners;
 using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -15,6 +16,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Utilities;
+using static Terraria.ModLoader.ModContent;
 
 
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4 //记得把BakaMod改成ArknightsMod
@@ -34,8 +36,10 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4 //记得把BakaMod改�
 			NPC.knockBackResist = 0.8f; //击退抗性
 			NPC.value = Item.buyPrice(0, 0, 1, 0); //掉的钱
 			NPC.HitSound = SoundID.NPCHit1; //受击音效
-			Banner = NPC.type;
+
 			NPC.DeathSound = SoundID.NPCDeath5;
+			Banner = NPC.type;
+			BannerItem = ItemType<HoundBanner>();
 			//BannerItem = ModContent.ItemType<旗帜>(); 此处是每击杀50个该NPC掉的旗帜
 		}
 		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
@@ -43,7 +47,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4 //记得把BakaMod改�
 			{
 				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Times.NightTime,
 				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Surface,
-				new FlavorTextBestiaryInfoElement("Mods.CalamityMod.Bestiary.Rotdog")
+				new FlavorTextBestiaryInfoElement("整合运动技术侦察部队操纵的生物。身上装备着某个品牌的监控设备。由于优良的隐蔽性和行动速度，较为容易突破防御造成大量破坏，需要注意。")
 			});
 		}
 		public override void FindFrame(int frameHeight) {

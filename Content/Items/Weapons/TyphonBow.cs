@@ -1,14 +1,22 @@
+using ArknightsMod.Content.Projectiles.Typhon;
+using ArknightsMod.Content.Tiles.Infrastructure;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using ArknightsMod.Content.Projectiles.Typhon;
 
 namespace ArknightsMod.Content.Items.Weapons
 {
 	public class TyphonBow : ModItem
 	{
+		public override void AddRecipes() {
+			Recipe recipe = CreateRecipe();
+			recipe.AddIngredient<Material.PP>(4);
+			recipe.AddIngredient<Material.RefinedSolvent>(7);
+			recipe.AddTile(ModContent.TileType<FactoryTile>());
+			recipe.Register();
+		}
 		public override void SetDefaults()
 		{
 			Item.damage = 50;

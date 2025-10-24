@@ -66,6 +66,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 
 		//}
 		// }
+		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Ocean,
+				new FlavorTextBestiaryInfoElement("爬上海岸的恐鱼。挥舞着坚韧的腕肢。。"),
+			});
+		}
 		public override bool? CanFallThroughPlatforms() {
 			Player player = Main.player[NPC.target];
 			return (player.position.Y + player.height) - (NPC.position.Y + NPC.height) > 0;

@@ -1,3 +1,4 @@
+using ArknightsMod.Content.Tiles.Infrastructure;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -26,5 +27,11 @@ namespace ArknightsMod.Content.Items
 		//		.AddTile(TileID.WorkBenches)
 		//		.Register();
 		//}
+		public override void AddRecipes() {
+			Recipe recipe = CreateRecipe(10);
+			recipe.AddIngredient<Material.yuanshisuipian>();
+			recipe.AddTile(ModContent.TileType<FactoryTile>());
+			recipe.Register();
+		}
 	}
 }

@@ -40,6 +40,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 				NPC.frame.Y = frameHeight;
 			}
 		}
+		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Ocean,
+				new FlavorTextBestiaryInfoElement("掺杂了杂质的恐鱼，身体组织的密度超过了部分合金。被它刺伤的患者会觉得自己被点着了。"),
+			});
+		}
 		public override void SetDefaults() {
 			NPC.width = 60;
 			NPC.height = 60;

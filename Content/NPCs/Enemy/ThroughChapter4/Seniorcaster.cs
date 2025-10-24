@@ -53,7 +53,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		private int lastHealthThreshold; // 记录上次触发传送的血量阈值
 		private bool isTeleporting;      // 是否正在传送
 		private int teleportTimer;
-
+		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Surface,
+				new FlavorTextBestiaryInfoElement("整合运动的精英法术作战人员。相比一般术师，更频繁使用难以释放的范围攻击法术，需要小心针对。"),
+			});
+		}
 		public override void FindFrame(int frameHeight) {
 
 			attackframeY = 14 * frameHeight;

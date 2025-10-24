@@ -44,6 +44,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 				NPC.damage = (int)(NPC.damage * 0.8);
 			}
 		}
+		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Ocean,
+				new FlavorTextBestiaryInfoElement("发出尖锐声响的恐鱼。储存营养的行为被打断时会立刻对身边的威胁进行回击，直到感受不到任何其他物种的生命现象为止。"),
+			});
+		}
 		private bool awake;
 		private bool sleep = true;
 		private float wondertime;

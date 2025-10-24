@@ -1,4 +1,5 @@
 ﻿using ArknightsMod.Content.Projectiles;
+using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
 using Microsoft.Build.Evaluation;
 using Microsoft.Xna.Framework;
@@ -15,6 +16,12 @@ namespace ArknightsMod.Content.Items.Weapons
 {
 	public class Lava_Dagger : UpgradeWeaponBase
 	{
+		public override void AddRecipes() {
+			Recipe recipe = CreateRecipe();
+			recipe.AddIngredient<Material.Oriron>(2);
+			recipe.AddTile(ModContent.TileType<FactoryTile>());
+			recipe.Register();
+		}
 		private static SoundStyle SkillActive1;
 		private static SoundStyle NoSound;
 		public override void Load() {

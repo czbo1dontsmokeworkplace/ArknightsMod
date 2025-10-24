@@ -55,6 +55,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 		private float diffY;
 		private int directionchoose;
 		private float angle;
+		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Ocean,
+				new FlavorTextBestiaryInfoElement("生长出固态器官的恐鱼。身体的其他部分似乎也在逐渐组建出坚不可摧的外棘。"),
+			});
+		}
 		public override void FindFrame(int frameHeight) {
 			NPC.TargetClosest(true);
 			NPC.spriteDirection = -NPC.direction;

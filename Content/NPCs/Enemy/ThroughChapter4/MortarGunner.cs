@@ -52,6 +52,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		private int jumpCD = 0;
 		private int directionchoose;
 		private int attacktime;
+		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Surface,
+				new FlavorTextBestiaryInfoElement("整合运动的特殊远程作战人员。配备了缴获的军用源石爆破物发射器，常在难以设防的位置发动袭击，对我后方目标有巨大威胁。"),
+			});
+		}
 		public override void FindFrame(int frameHeight) {
 			NPC.TargetClosest(true);
 

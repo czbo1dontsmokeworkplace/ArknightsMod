@@ -46,7 +46,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 		private float maxspeed = 1.1f;
 		private int jumpCD = 0;
 		private int directionchoose;
-		
+		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Snow,
+				new FlavorTextBestiaryInfoElement("雪怪小队中的基础法术作战人员，来自西北冻原的感染者游击队。通过特殊的装置与法术让我方干员陷入寒冷状态，降低攻击速度，并在寒冷进一步加剧时陷入冻结状态。"),
+			});
+		}
 		public override void FindFrame(int frameHeight) {
 
 			attackframeY = 6 * frameHeight;

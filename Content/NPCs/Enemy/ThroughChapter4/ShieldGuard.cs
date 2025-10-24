@@ -1,12 +1,13 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
-using Terraria.GameContent.ItemDropRules;
-using Terraria.ID;
 using Terraria;
-using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent.Bestiary;
+using Terraria.GameContent.ItemDropRules;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 {
@@ -62,7 +63,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			NPC.noTileCollide = false;
 			
 		}
-
+		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Surface,
+				new FlavorTextBestiaryInfoElement("整合运动的近身作战人员。装备有沉重的全套防具，且能熟练参与战斗，极难被击溃，可能是受过正规训练的作战人员，需要小心应对。"),
+			});
+		}
 		public override void AI() {
 			// 目标锁定
 			Player target = Main.player[NPC.target];

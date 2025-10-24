@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Terraria.Localization;
 using ArknightsMod.Systems.Gameplay.Skill;
-using ArknightsMod.Content.Items.Weapons.ChenSword;
 
 namespace ArknightsMod.Players
 {
@@ -134,7 +133,6 @@ namespace ArknightsMod.Players
 		public override void ResetEffects() {
 			// 更新武器状态
 			HoldBagpipeSpear = Main.LocalPlayer.HeldItem.ModItem is BagpipeSpear;
-			HoldChenSword = Main.LocalPlayer.HeldItem.ModItem is ChenSword;
 			HoldExusiaiVector = Main.LocalPlayer.HeldItem.ModItem is ExusiaiVector;
 			HoldKroosCrossbow = Main.LocalPlayer.HeldItem.ModItem is KroosCrossbow;
 			HoldBeagleWeapon = Main.LocalPlayer.HeldItem.ModItem is BeagleWeapon;

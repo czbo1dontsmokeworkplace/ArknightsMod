@@ -1,3 +1,4 @@
+using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -17,6 +18,12 @@ namespace ArknightsMod.Content.Items.Weapons
 {
 	public class BeagleWeapon : UpgradeWeaponBase
 	{
+		public override void AddRecipes() {
+			Recipe recipe = CreateRecipe();
+			recipe.AddIngredient<Placeable.OrirockCube>(4);
+			recipe.AddTile(ModContent.TileType<FactoryTile>());
+			recipe.Register();
+		}
 		private static SoundStyle SkillActive3;
 		private static SoundStyle NoSound;
 		public override void Load() {

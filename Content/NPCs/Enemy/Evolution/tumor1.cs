@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.GameContent.Bestiary;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -33,7 +34,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution
 			NPC.noTileCollide = false;
 			
 		}
-
+		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Surface,
+				new FlavorTextBestiaryInfoElement("在辐射变异与源石感染双重作用下诞生的扭曲生物。"),
+			});
+		}
 		public override void AI() {
 
 

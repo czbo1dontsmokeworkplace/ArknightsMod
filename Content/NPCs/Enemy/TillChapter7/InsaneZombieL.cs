@@ -104,7 +104,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.TillChapter7
 			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
 				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Times.NightTime,
 				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.TheDungeon,
-				new FlavorTextBestiaryInfoElement(Language.GetTextValue("Mods.ArknightsMod.Bestiary.DoubleSword")),
+				new FlavorTextBestiaryInfoElement(Language.GetTextValue("彻底失去理智的敌方士兵，会逐渐持续失去生命。感染已经深入骨髓，比一般的狂暴宿主更具进攻欲望。难以想象这样的生物会存在于战场之上。")),
 			});
 		}
 		public override void SetStaticDefaults() {

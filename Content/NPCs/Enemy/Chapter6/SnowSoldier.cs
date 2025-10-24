@@ -34,8 +34,13 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 			NPC.aiStyle = -1;
 			NPC.scale = 1f;
 		}
+		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Snow,
+				new FlavorTextBestiaryInfoElement("雪怪小队基础近身作战人员，来自西北冻原的感染者游击队。擅长攻击我方被冻结的干员。"),
+			});
+		}
 
-		
 		private int AttackCD=0;
 		private bool attack;
 		private bool walk=true;

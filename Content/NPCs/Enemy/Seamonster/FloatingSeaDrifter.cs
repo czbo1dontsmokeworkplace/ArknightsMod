@@ -52,7 +52,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 			}
 
 		}
-
+		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Ocean,
+				new FlavorTextBestiaryInfoElement("漂浮在空中的恐鱼。下一代似乎会更擅长在空气中游弋。"),
+			});
+		}
 		public override void SetDefaults()
 		{
 			NPC.width = 84;

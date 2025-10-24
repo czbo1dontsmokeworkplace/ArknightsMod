@@ -30,7 +30,7 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
                                       null,
                                       Col,
                                       Ro,
-                                      new Vector2(TX.Width / 2 - TX.Width / 2 * Dir, TX.Height),
+                                      new Vector2((TX.Width / 2 - TX.Width / 2 * Dir), TX.Height),
                                       sc,
                                       spe,
                                       0);
@@ -55,7 +55,7 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
                                       null,
                                       Col,
                                       Ro,
-                                      new Vector2(TX.Width / 2 - TX.Width / 2 * (spe == SpriteEffects.None ? 1 : -1), TX.Height),
+                                      new Vector2((TX.Width / 2 - TX.Width / 2 * (spe == SpriteEffects.None ? 1 : -1)), TX.Height),
                                       sc * player.HeldItem.scale,
                                       spe,
                                       0);
@@ -65,7 +65,7 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
         {
             if (rota + next_time + change_roat == 0) return new Vector2(a, 0);
             //用草稿纸推出来的公式
-            float y = (float)Math.Pow(a * a / (1 / (float)Math.Tan(rota + next_time + change_roat)
+            float y = (float)Math.Pow((a * a) / (1 / (float)Math.Tan(rota + next_time + change_roat)
                 / (float)Math.Tan(rota + next_time + change_roat) + a * a / b / b), 0.5);
             //Main.NewText((long)((rota + next_time + change_roat) * 57.3));
             float x = y / (float)Math.Tan(rota + next_time + change_roat);

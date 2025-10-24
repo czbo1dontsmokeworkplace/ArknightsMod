@@ -51,7 +51,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
 				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Times.NightTime,
 				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.TheDungeon,
-				new FlavorTextBestiaryInfoElement(Language.GetTextValue("Mods.ArknightsMod.Bestiary.DoubleSword")),
+				new FlavorTextBestiaryInfoElement(Language.GetTextValue("整合运动的近身作战人员。装备了被缴获或非法渠道获得到的武器和护具，装备更加完整，更接近一般正规训练的近战人员，也使他们不能以普通战术针对。")),
 			});
 		}
 		public override void SetStaticDefaults() {

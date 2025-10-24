@@ -1,5 +1,6 @@
 ﻿using ArknightsMod.Content.Projectiles;
 using ArknightsMod.Content.Projectiles.Pozyomka;
+using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -104,9 +105,8 @@ namespace ArknightsMod.Content.Items.Weapons
 
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.IntegratedDevice>(1);
-			recipe.AddIngredient<Material.OrironCluster>(1);
-			recipe.AddTile(TileID.WorkBenches);
+			recipe.AddIngredient<Material.Polyester>(2);
+			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}
 	}

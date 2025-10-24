@@ -1,16 +1,17 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ModLoader;
-using Terraria.Audio;
-using Terraria.ID;
-using System;
-using Microsoft.Xna.Framework.Graphics;
-using ArknightsMod.Common.VisualEffects;
-using Terraria.DataStructures;
-using Terraria.Localization;
-using static Terraria.ModLoader.ModContent;
+﻿using ArknightsMod.Common.VisualEffects;
 using ArknightsMod.Content.BossBars;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
+using Terraria;
+using Terraria.Audio;
+using Terraria.DataStructures;
+using Terraria.GameContent.Bestiary;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 
 namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 {
@@ -40,8 +41,13 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
         private const int FrameSpeed = 5;
         private int _frameResetFlag;
 		private float escapetimer;
-
-        public override void SetStaticDefaults()
+		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Surface,
+				new FlavorTextBestiaryInfoElement("巨型的野生被感染生物。在特殊的高温环境中诞生的变异生物个体。不仅它的外观可怖，它自身的高温也让任何人不敢轻易靠近。从古至今就有不少对于巨型生物的目击报告，但若是能亲眼看见这么巨大的感染生物，恐怕永远都无法忘记吧……"),
+			});
+		}
+		public override void SetStaticDefaults()
         {
             Main.npcFrameCount[Type] = 53;
             NPCID.Sets.BossBestiaryPriority.Add(Type);

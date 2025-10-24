@@ -6,6 +6,7 @@ using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.GameContent.Bestiary;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -43,7 +44,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution
 		private int LeftShield = 0;
 		private int RightShield = 0;
 		private int AllShield = 0;
-
+		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Surface,
+				new FlavorTextBestiaryInfoElement("不应行于这片大地的狂人，不应存于彼端世界的奇物，二者的结合诞生出了这一超越生物常理的“进化”之节点。它的存在本质与泰拉的一切相悖，它不该活着，它不能活着。"),
+			});
+		}
 		public override void SetStaticDefaults() {
 			Main.npcFrameCount[Type] = frameNumber;
 			NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers() { // Influences how the NPC looks in the Bestiary

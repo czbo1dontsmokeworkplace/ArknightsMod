@@ -44,8 +44,7 @@ namespace ArknightsMod.Content.Items.Weapons
         }
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient(ModContent.ItemType<CoagulatingGel>());
-			recipe.AddIngredient(ModContent.ItemType<Oriron>());
+			recipe.AddIngredient<Material.Polyester>(2);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

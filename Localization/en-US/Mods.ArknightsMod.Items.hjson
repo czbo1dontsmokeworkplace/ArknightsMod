@@ -1353,3 +1353,63 @@ tongshuaidiaoxiang: {
 	DisplayName: tongshuaidiaoxiang
 	Tooltip: ""
 }
+
+yuanyan: {
+	DisplayName: yuanyan
+	Tooltip: ""
+}
+
+daitang: {
+	DisplayName: daitang
+	Tooltip: ""
+}
+
+shuangtong: {
+	DisplayName: shuangtong
+	Tooltip: ""
+}
+
+yitiesuipian: {
+	DisplayName: yitiesuipian
+	Tooltip: ""
+}
+
+zhiyuanliao: {
+	DisplayName: zhiyuanliao
+	Tooltip: ""
+}
+
+yuanshisuipian: {
+	Tooltip: ""
+	DisplayName: yuanshisuipian
+}
+
+HoundBanner: {
+	DisplayName: Hound Banner
+	Tooltip: ""
+}
+
+HoundproBanner: {
+	DisplayName: Houndpro Banner
+	Tooltip: ""
+}
+
+SurtrBody: {
+	DisplayName: Surtr Body
+	Tooltip: ""
+}
+
+SurtrHead: {
+	DisplayName: Surtr Head
+	Tooltip: ""
+}
+
+SurtrLegs: {
+	DisplayName: Surtr Legs
+	Tooltip: ""
+}
+
+lwt: {
+	DisplayName: lwt
+	Tooltip: ""
+}

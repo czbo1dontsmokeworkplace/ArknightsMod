@@ -79,7 +79,13 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
             NPC.noGravity = false;
 
         }
-        public override void AI()
+		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Ocean,
+				new FlavorTextBestiaryInfoElement("长出四肢的恐鱼，但它体内没有骨头。似乎捕食过岸上的四足动物。"),
+			});
+		}
+		public override void AI()
         {
 			
             NPC.ai[3]++;

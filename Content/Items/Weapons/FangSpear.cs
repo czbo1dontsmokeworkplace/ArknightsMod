@@ -1,13 +1,14 @@
-﻿using System;
+﻿using ArknightsMod.Content.Projectiles;
+using ArknightsMod.Content.Tiles.Infrastructure;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria;
-using ArknightsMod.Content.Projectiles;
 
 namespace ArknightsMod.Content.Items.Weapons
 {
@@ -56,5 +57,11 @@ namespace ArknightsMod.Content.Items.Weapons
 
             return null;
         }
-    }
+		public override void AddRecipes() {
+			Recipe recipe = CreateRecipe();
+			recipe.AddIngredient<Material.Polyester>(2);
+			recipe.AddTile(ModContent.TileType<FactoryTile>());
+			recipe.Register();
+		}
+	}
 }

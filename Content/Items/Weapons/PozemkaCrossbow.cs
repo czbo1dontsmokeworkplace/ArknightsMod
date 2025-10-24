@@ -18,6 +18,7 @@ namespace ArknightsMod.Content.Items.Weapons
 {
 	public class PozemkaCrossbow : UpgradeWeaponBase
 	{
+
 		private static SoundStyle SkillActive1;
 		private static SoundStyle PozemkaCrossbowS0;
 		private static SoundStyle PozemkaCrossbowS2;
@@ -234,8 +235,8 @@ namespace ArknightsMod.Content.Items.Weapons
 
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<OptimizedDevice>(1);
-			recipe.AddIngredient<RMA24>(1);
+			recipe.AddIngredient<Material.CEU>(3);
+			recipe.AddIngredient<Material.OrirockConcentration>(9);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

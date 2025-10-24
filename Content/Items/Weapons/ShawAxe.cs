@@ -1,12 +1,13 @@
-﻿using System;
+﻿using ArknightsMod.Content.Tiles.Infrastructure;
+using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria;
-using Microsoft.Xna.Framework;
 
 namespace ArknightsMod.Content.Items.Weapons
 {
@@ -35,5 +36,11 @@ namespace ArknightsMod.Content.Items.Weapons
         {
             base.MeleeEffects(player, hitbox);
         }
-    }
+		public override void AddRecipes() {
+			Recipe recipe = CreateRecipe();
+			recipe.AddIngredient<Material.Oriron>(2);
+			recipe.AddTile(ModContent.TileType<FactoryTile>());
+			recipe.Register();
+		}
+	}
 }

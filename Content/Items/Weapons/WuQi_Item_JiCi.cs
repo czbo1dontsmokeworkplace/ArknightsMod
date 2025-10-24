@@ -1,6 +1,8 @@
 ﻿using ArknightsMod.Content.Buffs;
+using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Content.XiYaoDu;
 using ArknightsMod.Players;
+using ArknightsMod.Systems.Gameplay.Skill;
 using Microsoft.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -19,7 +21,6 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
-using ArknightsMod.Systems.Gameplay.Skill;
 using Terraria.Graphics;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -37,6 +38,13 @@ namespace ArknightsMod.Content.Items.Weapons
 {
     public class WuQi_Item_JiCi : UpgradeWeaponBase
 	{
+		public override void AddRecipes() {
+			Recipe recipe = CreateRecipe();
+			recipe.AddIngredient<Material.PP>(4);
+			recipe.AddIngredient<Material.OrironBlock>(6);
+			recipe.AddTile(ModContent.TileType<FactoryTile>());
+			recipe.Register();
+		}
 		private int skillcs = 0;
 
 		private static SoundStyle SkillActive1;

@@ -1,4 +1,5 @@
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Material
@@ -26,5 +27,11 @@ namespace ArknightsMod.Content.Items.Material
 		//		.AddTile(TileID.WorkBenches)
 		//		.Register();
 		//}
+		public override void AddRecipes() {
+			CreateRecipe()
+				.AddIngredient<Material.shuangtong>(3)
+				.AddTile(TileID.WorkBenches)
+				.Register();
+		}
 	}
 }

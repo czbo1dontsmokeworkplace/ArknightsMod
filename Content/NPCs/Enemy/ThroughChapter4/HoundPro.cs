@@ -1,19 +1,21 @@
-﻿using Terraria;
-using Terraria.Localization;
+﻿using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Items.Placeable.Banners;
+using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Net.Http.Headers;
+using System.Security.Cryptography.X509Certificates;
+using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent.Bestiary;
+using Terraria.GameContent.Biomes.Desert;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Utilities;
-using Microsoft.Xna.Framework;
-using ArknightsMod.Content.Items.Material;
-using Microsoft.Xna.Framework.Graphics;
-using System.Security.Cryptography.X509Certificates;
-using System.Net.Http.Headers;
-using Terraria.GameContent.Biomes.Desert;
-using System;
-using Terraria.Audio;
-using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
+using static Terraria.ModLoader.ModContent;
 
 
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4 //记得把BakaMod改成ArknightsMod
@@ -34,6 +36,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4 //记得把BakaMod改�
 			NPC.value = Item.buyPrice(0, 0, 1, 0); //掉的钱
 			NPC.HitSound = SoundID.NPCHit1; //受击音效
 			Banner = NPC.type;
+			BannerItem = ItemType<HoundproBanner>();
 			NPC.DeathSound = SoundID.NPCDeath5;
 			//BannerItem = ModContent.ItemType<旗帜>(); 此处是每击杀50个该NPC掉的旗帜
 		}
@@ -42,7 +45,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4 //记得把BakaMod改�
 			{
 				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Times.NightTime,
 				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Surface,
-				new FlavorTextBestiaryInfoElement("Mods.CalamityMod.Bestiary.Rotdog")
+				new FlavorTextBestiaryInfoElement("整合运动技术侦察部队操纵的生物，比一般猎狗更具有作战能力。身上装备着某个牌子的监控设备。由于优良的隐蔽性和行动速度，较为容易突破防御造成大量破坏，需要注意。")
 			});
 		}
 		public override void FindFrame(int frameHeight) {

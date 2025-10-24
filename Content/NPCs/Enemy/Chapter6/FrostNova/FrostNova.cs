@@ -69,7 +69,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Times.NightTime,
 				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Snow,
 
-				new FlavorTextBestiaryInfoElement(Language.GetTextValue("Mods.ArknightsMod.Bestiary.FrostNova"))
+				new FlavorTextBestiaryInfoElement(Language.GetTextValue("整合运动法术部队干部，以术师身份参与整合运动，少数能在正面战场以压倒性的法术进行攻击的敌方目标。指挥的队伍中有一支名为“雪怪”的特殊术师小队参与一些特别行动。和她名字一样，给人一种冰冷的感觉。为了最后的战斗解放了所剩无几的生命。大地的凛冽已经有所觉悟，我们能否与之为敌？"))
 			});
 		}
 

@@ -1,6 +1,7 @@
 ﻿using ArknightsMod.Content.Buffs;
 using ArknightsMod.Content.Projectiles;
 using ArknightsMod.Content.Projectiles.Pozyomka;
+using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using System;
@@ -12,8 +13,16 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Weapons
 {
+
     public class ExusiaiVector : UpgradeWeaponBase
 	{
+		public override void AddRecipes() {
+			Recipe recipe = CreateRecipe();
+			recipe.AddIngredient<Material.PP>(4);
+			recipe.AddIngredient<Material.SugarLump>(5);
+			recipe.AddTile(ModContent.TileType<FactoryTile>());
+			recipe.Register();
+		}
 		private static SoundStyle SkillActive1;
 		private static SoundStyle ExusiaiVectorA;
 		private static SoundStyle ExusiaiVectorS;

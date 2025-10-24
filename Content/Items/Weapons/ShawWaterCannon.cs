@@ -1,14 +1,15 @@
-﻿using System;
+﻿using ArknightsMod.Content.Projectiles;
+using ArknightsMod.Content.Tiles.Infrastructure;
+using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria;
-using Microsoft.Xna.Framework;
-using Terraria.DataStructures;
-using ArknightsMod.Content.Projectiles;
 
 namespace ArknightsMod.Content.Items.Weapons
 {
@@ -51,5 +52,11 @@ namespace ArknightsMod.Content.Items.Weapons
         {
             return offset;
         }
-    }
+		public override void AddRecipes() {
+			Recipe recipe = CreateRecipe();
+			recipe.AddIngredient<Material.Oriron>(2);
+			recipe.AddTile(ModContent.TileType<FactoryTile>());
+			recipe.Register();
+		}
+	}
 }

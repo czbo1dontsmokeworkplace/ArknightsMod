@@ -38,4 +38,6 @@ Tiles: {
 	OrirockCube.MapEntry: "{$Mods.ArknightsMod.Items.OrirockCube.DisplayName}"
 	RMA12.MapEntry: "{$Mods.ArknightsMod.Items.RMA12.DisplayName}"
 	WMusicBoxTile.MapEntry: Music Box (W)
+	HoundTile.MapEntry: Hound Tile
+	HoundproTile.MapEntry: Houndpro Tile
 }

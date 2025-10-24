@@ -43,6 +43,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 			}
 
 		}
+		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Ocean,
+				new FlavorTextBestiaryInfoElement("生长出固态器官的饱食的恐鱼。在月光下会静静摇摆。"),
+			});
+		}
 		private bool approach=true;
 		private bool attack=false;
 		private bool leave=false;

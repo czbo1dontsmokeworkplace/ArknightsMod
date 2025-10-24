@@ -1,4 +1,5 @@
 ﻿using ArknightsMod.Content.Projectiles;
+using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -105,6 +106,12 @@ namespace ArknightsMod.Content.Items.Weapons
 			}
 
 			return false;
+		}
+		public override void AddRecipes() {
+			Recipe recipe = CreateRecipe();
+			recipe.AddIngredient<Placeable.OrirockCube>(4);
+			recipe.AddTile(ModContent.TileType<FactoryTile>());
+			recipe.Register();
 		}
 
 	}

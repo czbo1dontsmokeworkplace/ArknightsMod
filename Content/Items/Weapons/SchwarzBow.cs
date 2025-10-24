@@ -1,17 +1,25 @@
-using System;
+using ArknightsMod.Content.Projectiles.Schwarz;
+using ArknightsMod.Content.Tiles.Infrastructure;
 using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static Mono.CompilerServices.SymbolWriter.CodeBlockEntry;
-using ArknightsMod.Content.Projectiles.Schwarz;
 
 namespace ArknightsMod.Content.Items.Weapons
 {
     public class SchwarzBow : ModItem
     {
-        public override void SetDefaults()
+		public override void AddRecipes() {
+			Recipe recipe = CreateRecipe();
+			recipe.AddIngredient<Material.D32Steel>(4);
+			recipe.AddIngredient<Material.OrironBlock>(5);
+			recipe.AddTile(ModContent.TileType<FactoryTile>());
+			recipe.Register();
+		}
+		public override void SetDefaults()
         {
             // Modders can use Item.DefaultToRangedWeapon to quickly set many common properties, such as: useTime, useAnimation, useStyle, autoReuse, DamageType, shoot, shootSpeed, useAmmo, and noMelee. These are all shown individually here for teaching purposes.
 

@@ -1472,8 +1472,68 @@ tongshuaidiaoxiang: {
 	Tooltip:
 		'''
 		+10%伤害，最大生命值+10%
-		如果有boss存在则额外+20%伤害，=20%最大生命值
+		如果有boss存在则额外+20%伤害，+20%最大生命值
 		"画像中描绘了一位杰出之人，她让互相猜疑的君王握手言和，让语言不通的士兵并肩站立......
 		如果她还活着，泰拉一统似乎也并非天方夜谭。"
 		'''
+}
+
+yuanyan: {
+	DisplayName: 源岩
+	Tooltip: 从地表开采出的岩石
+}
+
+daitang: {
+	DisplayName: 代糖
+	Tooltip: 机械化制作的廉价天然糖替代产物
+}
+
+shuangtong: {
+	DisplayName: 双酮
+	Tooltip: 极少量的工业用有机化合物
+}
+
+yitiesuipian: {
+	DisplayName: 异铁碎片
+	Tooltip: 普普通通的工业材料
+}
+
+zhiyuanliao: {
+	DisplayName: 酯原料
+	Tooltip: 工业制造所需的酯原料
+}
+
+yuanshisuipian: {
+	Tooltip: 从污染区域中收集到的源石碎片，用以制作合成玉
+	DisplayName: 源石碎片
+}
+
+HoundBanner: {
+	DisplayName: 猎狗旗
+	// Tooltip: ""
+}
+
+HoundproBanner: {
+	DisplayName: 猎狗pro旗
+	Tooltip: ""
+}
+
+SurtrBody: {
+	DisplayName: 史尔特尔的上衣
+	// Tooltip: ""
+}
+
+SurtrHead: {
+	DisplayName: 史尔特尔的头套
+	// Tooltip: ""
+}
+
+SurtrLegs: {
+	DisplayName: 史尔特尔的下装
+	// Tooltip: ""
+}
+
+lwt: {
+	DisplayName: 史尔特尔的莱万汀
+	Tooltip: 未完成的武器
 }

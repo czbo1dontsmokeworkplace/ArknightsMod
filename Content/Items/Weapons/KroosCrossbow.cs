@@ -1,4 +1,5 @@
-﻿using ArknightsMod.Players;
+﻿using ArknightsMod.Content.Tiles.Infrastructure;
+using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
@@ -91,9 +92,8 @@ namespace ArknightsMod.Content.Items.Weapons
 
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Placeable.RMA12>(1);
-			recipe.AddIngredient<Placeable.Grind>(1);
-			recipe.AddTile(TileID.WorkBenches);
+			recipe.AddIngredient<Material.Sugar>(2);
+			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}
 	}

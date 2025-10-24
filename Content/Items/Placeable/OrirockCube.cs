@@ -21,5 +21,11 @@ namespace ArknightsMod.Content.Items.Placeable
 			Item.height = 42;
 			Item.value = Item.sellPrice(0, 0, 0, 30);
 		}
+		public override void AddRecipes() {
+			CreateRecipe()
+				.AddIngredient<Material.yuanyan>(3)
+				.AddTile(TileID.WorkBenches)
+				.Register();
+		}
 	}
 }
