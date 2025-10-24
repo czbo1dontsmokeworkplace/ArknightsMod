@@ -1,6 +1,5 @@
 ﻿using ArknightsMod.Content.Buffs;
 using ArknightsMod.Content.Tiles.Infrastructure;
-using ArknightsMod.Content.XiYaoDu;
 using ArknightsMod.Content.Projectiles;
 using ArknightsMod.Players;
 using ArknightsMod.Systems.Gameplay.Skill;
@@ -29,6 +28,7 @@ using static System.Net.Mime.MediaTypeNames;
 using static Terraria.Graphics.VertexStrip;
 using static Terraria.ModLoader.PlayerDrawLayer;
 using Color = Microsoft.Xna.Framework.Color;
+using ArknightsMod.Content.Rarities;
 
 
 namespace ArknightsMod.Content.Items.Weapons
@@ -54,7 +54,7 @@ namespace ArknightsMod.Content.Items.Weapons
             Item.useAnimation = 22;//动画显示时间
 			Item.knockBack = 2f;//击退
             Item.value = 200000;//大概是价格吧 
-            Item.rare = ModContent.RarityType<Mrfzxyd>();//稀有度
+            Item.rare = ModContent.RarityType<ArknightsRarities>();//稀有度
             Item.autoReuse = true;//是否可以连续使用
             Item.noMelee = true;//贴图是否造成伤害
             Item.shoot = 87;
