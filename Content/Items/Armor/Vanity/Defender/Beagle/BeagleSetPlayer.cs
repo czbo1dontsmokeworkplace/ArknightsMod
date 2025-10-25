@@ -17,8 +17,8 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Defender.Beagle
         {
             if (BeagleSetActive)
             {
-                modifiers.FinalDamage *= 0.9f; 
-            }
+				modifiers.FinalDamage *= 0.9f;
+			}
         }
     }
 }
