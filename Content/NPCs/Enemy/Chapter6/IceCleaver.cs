@@ -39,12 +39,6 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 			NPC.aiStyle = -1;
 			NPC.scale = 1f;
 		}
-		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
-			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
-				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Snow,
-				new FlavorTextBestiaryInfoElement("雪怪小队中的特殊近身作战人员，来自西北冻原的感染者游击队。出没在战场上的收割者，使用特制的长刀，能够轻易重创被冻结的我方干员，因而被称作凿冰人。"),
-			});
-		}
 		public override void OnSpawn(IEntitySource source) {
 			fadeTimer = 60; // 持续60帧
 			NPC.color = Color.Black; // 初始为纯黑
