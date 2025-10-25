@@ -40,12 +40,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 			NPC.scale = 2f;
 			NPC.noGravity = true;
 		}
-		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
-			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
-				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Snow,
-				new FlavorTextBestiaryInfoElement("敌方人员操纵的无人机，飞行速度缓慢。携带有特殊冰爆弹头，将会在接近干员时投掷，造成群体法术伤害以及群体冻结效果。属于暴鸰的衍生机体，为了携带特殊弹头而失去了空载加速的能力。"),
-			});
-		}
+
 
 		private int AttackCD = 0;
 		private bool attack = false;
