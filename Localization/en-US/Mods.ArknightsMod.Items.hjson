@@ -1438,3 +1438,18 @@ BeagleLegs: {
 	DisplayName: Beagle Legs
 	Tooltip: ""
 }
+
+ArmorBeagleLegs: {
+	Tooltip: ""
+	DisplayName: Armor Beagle Legs
+}
+
+ArmorBeagleHead: {
+	Tooltip: ""
+	DisplayName: Armor Beagle Head
+}
+
+ArmorBeagleBody: {
+	Tooltip: ""
+	DisplayName: Armor Beagle Body
+}

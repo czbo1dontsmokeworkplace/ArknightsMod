@@ -177,8 +177,10 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		private int NumOfBanFloorOneTime = 0;
 
 		//召唤雪怪小队机制变量
-		float[] summontime = Main.masterMode ? new float[4] { 60f, 480f, 1080f, 1920f } : Main.expertMode ? new float[3] { 60f, 480f, 1080f } : new float[2] { 60f, 480f };
-		int summontimes = 0;
+		int summontime = Main.masterMode ?4: Main.expertMode ? 3: 2;//召唤总波次
+		int summontimes = 0;//当前召唤波次
+		int summonCD = 0;
+		bool isnpcdefeated;
 		int isallnpcdefeated = 0;
 		int[] subNPCType = new int[6] { ModContent.NPCType<SnowCaster>(), ModContent.NPCType<SnowSoldier>(), ModContent.NPCType<Oneiros>(), ModContent.NPCType<IceCleaver>(),ModContent.NPCType<SnowSniper>(),ModContent.NPCType<SnowHound>() };
 		int SummonTypeChoice=0;
@@ -740,73 +742,68 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 			#region 复活后召唤龙卷风和雪怪小队并将场地切片
 			if (FNStage == 2f) {
 				ReBirthTimer++;
+				if (summonCD > 600 || summonCD == 0) {
+					summonCD = 0;
+				}
+				else {
+					summonCD++;
+				}
+				isnpcdefeated = true;
+				for (int i = 0; i < Main.maxNPCs; i++) {
+					NPC SeekForNPCs = Main.npc[i];
+					if (SeekForNPCs.active && Array.Exists(subNPCType, x => x == SeekForNPCs.type)) {
+						isnpcdefeated = false;//判断是否有雪怪小队存活
+						break;
+					}
+				}
+				if (summonCD==0&&isnpcdefeated&&summontimes<summontime)
+				{
+					summontimes++;
+					for(int j=0; j < 2; j++) {
+						int randomChoice = Main.rand.Next(0,5);//四选二
+						switch (randomChoice) {
+							case 0:
+								NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowCaster>());
+								for (int i = 0; i < 3; i++) {
+									NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowSoldier>());
+								}
+								break;
+							case 1:
+								NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowCaster>());
+								for (int i = 0; i < 2; i++) {
+									NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowHound>());
+								}
+								break;
+							case 2:
+								for (int i = 0; i < 2; i++) {
+									NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowSniper>());
+									NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<Oneiros>());
+								}
+								break;
+							case 3:
+								NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<IceCleaver>());
+								for (int i = 0; i < 2; i++) {
+									NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowHound>());
+								}
+								break;
+							case 4:
+								for (int i = 0; i < 3; i++) {
+									NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowSoldier>());
+								}
+								for (int i = 0; i < 2; i++) {
+									NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowSniper>());
+								}
+								break;
 
-				if (Array.Exists(summontime, x => x == ReBirthTimer)) {
-					summontimes++;
-				}
 
-				if (summontimes == 1) {
-					for (int i = 0; i < 10; i++) {
-						NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowSoldier>());
-					}
-					for (int i = 0; i < 2; i++) {
-						NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowCaster>());
-					}
-					summontimes++;
-				}
-				else if (summontimes == 3) {
-					for (int i = 0; i < 4; i++) {
-						NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowSoldier>());
-					}
-					for (int i = 0; i < 4; i++) {
-						NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowCaster>());
-					}
-					for (int i = 0; i < 2; i++) {
-						NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<Oneiros>());
-					}
-					for (int i = 0; i < 2; i++) {
-						NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<IceCleaver>());
-					}
-					summontimes++;
-				}
-				else if (summontimes == 5) {
-					for (int i = 0; i < 2; i++) {
-						NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowSoldier>());
-					}
-					for (int i = 0; i < 2; i++) {
-						NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowCaster>());
-					}
-					for (int i = 0; i < 4; i++) {
-						NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<Oneiros>());
-					}
-					for (int i = 0; i < 2; i++) {
-						NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<IceCleaver>());
-					}
-					summontimes++;
-				}
-				else if (summontimes == 7) {
-					for (int i = 0; i < 2; i++) {
-						NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowCaster>());
-					}
-					for (int i = 0; i < 4; i++) {
-						NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<Oneiros>());
-					}
-					for (int i = 0; i < 4; i++) {
-						NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<IceCleaver>());
-					}
-					summontimes++;
-				}
-
-				if (ReBirthTimer > (Main.masterMode ? 1920f : Main.expertMode ? 1080f : 480f)) {
-					bool isnpcexist = false;
-					for (int i = 0; i < Main.maxNPCs; i++) {
-						NPC SeekForNPCs = Main.npc[i];
-						if (SeekForNPCs.active && Array.Exists(subNPCType, x => x == SeekForNPCs.type)) {
-							isnpcexist = true;
-							break;
 						}
 					}
-					if (!isnpcexist) {
+				}
+				
+				
+
+				if (summontimes>=summontime) {
+					if (isnpcdefeated) {
 						isallnpcdefeated = 1;
 					}
 				}
