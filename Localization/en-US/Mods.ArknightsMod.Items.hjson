@@ -1423,3 +1423,18 @@ posunzhuangzhi: {
 	DisplayName: posunzhuangzhi
 	Tooltip: ""
 }
+
+BeagleBody: {
+	DisplayName: Beagle Body
+	Tooltip: ""
+}
+
+BeagleHead: {
+	DisplayName: Beagle Head
+	Tooltip: ""
+}
+
+BeagleLegs: {
+	DisplayName: Beagle Legs
+	Tooltip: ""
+}

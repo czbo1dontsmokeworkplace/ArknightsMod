@@ -1547,3 +1547,18 @@ posunzhuangzhi: {
 	DisplayName: 破损装置
 	Tooltip: 一些残破的装置
 }
+
+BeagleBody: {
+	// DisplayName: Beagle Body
+	// Tooltip: ""
+}
+
+BeagleHead: {
+	// DisplayName: Beagle Head
+	// Tooltip: ""
+}
+
+BeagleLegs: {
+	// DisplayName: Beagle Legs
+	// Tooltip: ""
+}
