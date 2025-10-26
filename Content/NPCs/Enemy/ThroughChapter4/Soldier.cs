@@ -177,8 +177,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		}
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
 
-			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Material.Device>(), 8, 1, 1));
-			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Material.Polyketon>(), 8, 1, 1));
+			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Material.posunzhuangzhi>(), 8, 1, 1));
+			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Material.shuangtong>(), 8, 1, 1));
 
 		}
 
