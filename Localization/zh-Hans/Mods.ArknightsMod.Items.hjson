@@ -1562,3 +1562,23 @@ BeagleLegs: {
 	// DisplayName: Beagle Legs
 	// Tooltip: ""
 }
+
+ChandelierItem: {
+	// DisplayName: Chandelier Item
+	// Tooltip: ""
+}
+
+LampItem: {
+	// DisplayName: Lamp Item
+	// Tooltip: ""
+}
+
+LightTube: {
+	// DisplayName: Light Tube
+	// Tooltip: ""
+}
+
+RhodesStatusScreen: {
+	// DisplayName: Rhodes Status Screen
+	// Tooltip: ""
+}

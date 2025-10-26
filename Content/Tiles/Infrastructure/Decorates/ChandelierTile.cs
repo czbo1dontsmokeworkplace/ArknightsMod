@@ -11,9 +11,9 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 
-namespace ArknightsMod.Content.Tiles.Infrastructure
+namespace ArknightsMod.Content.Tiles.Infrastructure.Decorates
 {
-	public class DisplayTile : ModTile
+	public class ChandelierTile : ModTile
 	{
 		public override void SetStaticDefaults()
 		{
@@ -25,22 +25,13 @@ namespace ArknightsMod.Content.Tiles.Infrastructure
 			DustType = DustID.Electric;
 
 			TileObjectData.newTile.CopyFrom(TileObjectData.Style1x2Top);
-			TileObjectData.newTile.Width = 3;
-			TileObjectData.newTile.Height = 3;
-			TileObjectData.newTile.Origin = new Point16(1, 0);
-			TileObjectData.newTile.CoordinateHeights = [16, 16, 16];
-			//TileObjectData.newTile.CoordinatePaddingFix = new Point16(0, -2);
-
-			TileObjectData.newTile.Direction = TileObjectDirection.PlaceRight;
-			TileObjectData.newTile.StyleWrapLimit = 2;
-			TileObjectData.newTile.StyleMultiplier = 2;
-			TileObjectData.newTile.StyleHorizontal = true;
-			TileObjectData.newAlternate.CopyFrom(TileObjectData.newTile);
-			TileObjectData.newAlternate.Direction = TileObjectDirection.PlaceLeft;
-			TileObjectData.addAlternate(1);
+			TileObjectData.newTile.Width = 2;
+			TileObjectData.newTile.Height = 2;
+			TileObjectData.newTile.Origin = new Point16(0, 0);
+			TileObjectData.newTile.CoordinateHeights = [16, 16];
 			TileObjectData.addTile(Type);
 
-			AddMapEntry(Color.Olive);
+			AddMapEntry(new Color(166, 157, 157));
 		}
 
 		public override void NumDust(int i, int j, bool fail, ref int num) {
@@ -51,9 +42,10 @@ namespace ArknightsMod.Content.Tiles.Infrastructure
 			TileDrawer.DrawTileGlowMask(spriteBatch, i, j, Texture, Type);
 		}
 		public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) {
-			r = 0.38f;
-			g = 0.85f;
-			b = 1f;
+			float strength = 1.5f;
+			r = 0.65f * strength;
+			g = 0.61f * strength;
+			b = 0.61f * strength;
 		}
 	}
 }
