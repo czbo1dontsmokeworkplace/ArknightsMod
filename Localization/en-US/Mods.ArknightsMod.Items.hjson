@@ -1439,22 +1439,17 @@ BeagleLegs: {
 	Tooltip: ""
 }
 
-ChandelierItem: {
-	DisplayName: Chandelier Item
+ArmorBeagleLegs: {
 	Tooltip: ""
+	DisplayName: Armor Beagle Legs
 }
 
-LampItem: {
-	DisplayName: Lamp Item
+ArmorBeagleHead: {
 	Tooltip: ""
+	DisplayName: Armor Beagle Head
 }
 
-LightTube: {
-	DisplayName: Light Tube
+ArmorBeagleBody: {
 	Tooltip: ""
-}
-
-RhodesStatusScreen: {
-	DisplayName: Rhodes Status Screen
-	Tooltip: ""
+	DisplayName: Armor Beagle Body
 }

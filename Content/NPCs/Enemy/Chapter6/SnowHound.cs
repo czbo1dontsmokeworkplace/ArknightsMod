@@ -25,7 +25,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 		}
 		public override void SetDefaults() {
 			NPC.aiStyle = -1; //战士ai类型 //蛇蜥怪ai
-			NPC.damage = 70; //伤害
+			NPC.damage = 17; //伤害
 			NPC.width = 46; //宽度，我不会填，照着灾厄的血犬填的
 			NPC.height = 30; //高度，我不会填，照着灾厄的血犬填的
 			NPC.defense = 0; //防御力
@@ -175,10 +175,6 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 				modifiers.SourceDamage *= 1.5f;
 
 			}
-			if (Main.expertMode)
-				modifiers.SourceDamage *= 1.5f; // 专家模式伤害 ×1.5
-			if (Main.masterMode)
-				modifiers.SourceDamage *= 2f;   // 大师模式伤害 ×2
 		}
 	}
 }

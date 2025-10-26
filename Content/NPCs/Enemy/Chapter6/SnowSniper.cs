@@ -32,7 +32,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 		public override void SetDefaults() {
 			NPC.width = 17;
 			NPC.height = 40;
-			NPC.damage = 58;
+			NPC.damage = 14;
 			NPC.defense = 16;
 			NPC.lifeMax = 500;
 			NPC.HitSound = SoundID.NPCHit1;
@@ -62,7 +62,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 				NPC.frame.Y += frameHeight;
 				framecounter = 0;
 			}
-			if (walk) {
+			if (walk==true) {
 				if (NPC.velocity == Vector2.Zero)
 				{
 					if(NPC.frame.Y >= (27 * frameHeight))
@@ -126,10 +126,10 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 			if (attack == true) {
 				NPC.velocity.X = 0;
 				AttackCD++;
-				if (AttackCD == 1) {
-					Projectile.NewProjectile(NPC.GetSource_FromThis(), new Vector2(NPC.position.X, NPC.position.Y + 20), new Vector2(directionchoose * 10f, 0).RotatedBy(angle), ModContent.ProjectileType<SnowSniper_Shot>(),58, 0.8f);
+				if (AttackCD == 18) {
+					Projectile.NewProjectile(NPC.GetSource_FromThis(), new Vector2(NPC.position.X, NPC.position.Y + 20), new Vector2(directionchoose * 10f, 0).RotatedBy(angle), ModContent.ProjectileType<SnowSniper_Shot>(),14, 0.8f);
 				}
-				if (AttackCD > 54) {
+				if (AttackCD > 45) {
 					attack = false;
 					walk = true;
 					AttackCD = 0;
@@ -159,7 +159,6 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 		public override void SetDefaults() {
 			Projectile.width = 32;
 			Projectile.height = 6;
-			Projectile.damage = 58;
 			Projectile.penetrate = 1;
 			Projectile.hostile = true;
 
@@ -182,12 +181,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 		public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers) {
 			if (target.frozen == true) {
 				modifiers.SourceDamage *= 1.5f;
-
 			}
-			if (Main.expertMode)
-				modifiers.SourceDamage *= 1.5f; // 专家模式伤害 ×1.5
-			if (Main.masterMode)
-				modifiers.SourceDamage *= 2f;   // 大师模式伤害 ×2
 		}
 		
 	}
