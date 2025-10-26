@@ -1453,3 +1453,23 @@ ArmorBeagleBody: {
 	Tooltip: ""
 	DisplayName: Armor Beagle Body
 }
+
+RhodesStatusScreen: {
+	DisplayName: Rhodes Status Screen
+	Tooltip: ""
+}
+
+ChandelierItem: {
+	DisplayName: Chandelier Item
+	Tooltip: ""
+}
+
+LampItem: {
+	DisplayName: Lamp Item
+	Tooltip: ""
+}
+
+LightTube: {
+	DisplayName: Light Tube
+	Tooltip: ""
+}
