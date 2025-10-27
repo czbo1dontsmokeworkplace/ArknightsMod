@@ -64,6 +64,8 @@ Closure: {
 		LikeNPC_Princess: I like {NPCName}.
 		Princess_LovesNPC: I like {NPCName}.
 	}
+
+	Census.SpawnCondition: Conditions unknown
 }
 
 Level11.DisplayName: Level11
@@ -87,6 +89,8 @@ Cannot: {
 		LikeNPC_Princess: I like {NPCName}.
 		Princess_LovesNPC: I like {NPCName}.
 	}
+
+	Census.SpawnCondition: Conditions unknown
 }
 
 LeporibeastShorthorn.DisplayName: Leporibeast Shorthorn

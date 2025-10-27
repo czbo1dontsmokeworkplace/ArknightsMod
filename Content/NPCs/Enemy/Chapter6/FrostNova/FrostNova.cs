@@ -759,8 +759,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 				if (summonCD==0&&isnpcdefeated&&summontimes<summontime)
 				{
 					summontimes++;
-					for(int j=0; j < 2; j++) {
-						int randomChoice = Main.rand.Next(0,5);//四选二
+					isnpcdefeated = false;
+					int Choice1,Choice2;
+					Choice1= Main.rand.Next(0, 5);
+					Choice2=Main.rand.Next(0, 5);
+					for (int j=0; j < 2; j++) {
+						int randomChoice =j==0?Choice1:Choice2;//四选二
 						switch (randomChoice) {
 							case 0:
 								NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowCaster>());
@@ -799,11 +803,19 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 						}
 					}
 				}
-				
-				
 
-				if (summontimes>=summontime) {
-					if (isnpcdefeated) {
+
+
+				if (ReBirthTimer > (Main.masterMode ? 1920f : Main.expertMode ? 1080f : 480f)&&summontimes>=summontime) {
+					bool isnpcexist = false;
+					for (int i = 0; i < Main.maxNPCs; i++) {
+						NPC SeekForNPCs = Main.npc[i];
+						if (SeekForNPCs.active && Array.Exists(subNPCType, x => x == SeekForNPCs.type)) {
+							isnpcexist = true;
+							break;
+						}
+					}
+					if (!isnpcexist) {
 						isallnpcdefeated = 1;
 					}
 				}
