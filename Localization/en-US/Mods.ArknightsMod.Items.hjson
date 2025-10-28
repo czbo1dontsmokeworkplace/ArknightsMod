@@ -1503,3 +1503,118 @@ MizukiLegs: {
 	DisplayName: Mizuki Legs
 	Tooltip: ""
 }
+
+ArmorSariaBody: {
+	DisplayName: Armor Saria Body
+	Tooltip: ""
+}
+
+ArmorSariaHead: {
+	DisplayName: Armor Saria Head
+	Tooltip: ""
+}
+
+ArmorSariaLegs: {
+	DisplayName: Armor Saria Legs
+	Tooltip: ""
+}
+
+DorothyDefault: {
+	DisplayName: Dorothy Default
+	Tooltip: ""
+}
+
+BeagleDefault: {
+	DisplayName: Beagle Default
+	Tooltip: ""
+}
+
+CivilightEternaDefault: {
+	DisplayName: Civilight Eterna Default
+	Tooltip: ""
+}
+
+ExusiaiDefault: {
+	DisplayName: Exusiai Default
+	Tooltip: ""
+}
+
+FartoothDefault: {
+	DisplayName: Fartooth Default
+	Tooltip: ""
+}
+
+HazeDefault: {
+	DisplayName: Haze Default
+	Tooltip: ""
+}
+
+KaltsitDefault: {
+	DisplayName: Kaltsit Default
+	Tooltip: ""
+}
+
+KroosAlterDefault: {
+	DisplayName: Kroos Alter Default
+	Tooltip: ""
+}
+
+LaPlumaDefault: {
+	DisplayName: La Pluma Default
+	Tooltip: ""
+}
+
+LingDefault: {
+	DisplayName: Ling Default
+	Tooltip: ""
+}
+
+ManticoreDefault: {
+	DisplayName: Manticore Default
+	Tooltip: ""
+}
+
+MelaniteDefault: {
+	DisplayName: Melanite Default
+	Tooltip: ""
+}
+
+MostimaDefault: {
+	DisplayName: Mostima Default
+	Tooltip: ""
+}
+
+RosmontisDefault: {
+	DisplayName: Rosmontis Default
+	Tooltip: ""
+}
+
+SariaDefault: {
+	DisplayName: Saria Default
+	Tooltip: ""
+}
+
+SkadiDefault: {
+	DisplayName: Skadi Default
+	Tooltip: ""
+}
+
+SurtrDefault: {
+	DisplayName: Surtr Default
+	Tooltip: ""
+}
+
+UtageDefault: {
+	DisplayName: Utage Default
+	Tooltip: ""
+}
+
+WarfarinDefault: {
+	DisplayName: Warfarin Default
+	Tooltip: ""
+}
+
+MizukiDefault: {
+	DisplayName: Mizuki Default
+	Tooltip: ""
+}
