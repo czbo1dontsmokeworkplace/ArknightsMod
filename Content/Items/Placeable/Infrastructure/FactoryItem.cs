@@ -22,7 +22,9 @@ namespace ArknightsMod.Content.Items.Placeable.Infrastructure
 		}
 		public override void AddRecipes() {
 			Recipe recipe= CreateRecipe();
+
 			recipe.AddIngredient(ModContent.ItemType<OrironShard>(), 4);
+
 			recipe.AddRecipeGroup("IronBar", 4);
 			recipe.AddTile(TileID.WorkBenches);
 			recipe.Register();
