@@ -52,40 +52,35 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Defender.Mudrock
 	}
 	internal class MudrockItemChange : GlobalItem
 	{
-		private static bool isRightClickHandled = false; 
-		public override bool CanRightClick(Item item) {
-			int type = item.type;
-			if (type == ModContent.ItemType<MudrockHelmet>() || type == ModContent.ItemType<MudrockHead>()) {
-					if (Main.mouseRight && !isRightClickHandled) {
-					item.ChangeItemType(item.type == ModContent.ItemType<MudrockHelmet>() ? ModContent.ItemType<MudrockHead>() : ModContent.ItemType<MudrockHelmet>());
+		public override void RightClick(Item item, Player player)
+		{
+			if (item.type == ModContent.ItemType<MudrockHelmet>() || item.type == ModContent.ItemType<MudrockHead>())
+			{
+				int targetType = item.type == ModContent.ItemType<MudrockHelmet>()
+						? ModContent.ItemType<MudrockHead>()
+						: ModContent.ItemType<MudrockHelmet>();
 
-					SoundEngine.PlaySound(SoundID.Grab);
-
-					Main.stackSplit = 30;
-					Main.mouseRightRelease = false;
-					Recipe.FindRecipes();
-					isRightClickHandled = true; 
-				}
-				else if (!Main.mouseRight && isRightClickHandled) {
-					isRightClickHandled = false;
-				}
-				return false;
+				item.ChangeItemType(targetType);
+				item.stack++;
+				return;
 			}
-			if (type == ModContent.ItemType<MudrockChestplate>() || type == ModContent.ItemType<MudrockBody>()) {				
-				if (Main.mouseRight && !isRightClickHandled) {
-					item.ChangeItemType(item.type == ModContent.ItemType<MudrockChestplate>() ? ModContent.ItemType<MudrockBody>() : ModContent.ItemType<MudrockChestplate>());
 
-					SoundEngine.PlaySound(SoundID.Grab);
+			if (item.type == ModContent.ItemType<MudrockChestplate>() || item.type == ModContent.ItemType<MudrockBody>())
+			{
+				int targetType = item.type == ModContent.ItemType<MudrockChestplate>()
+						? ModContent.ItemType<MudrockBody>()
+						: ModContent.ItemType<MudrockChestplate>();
 
-					Main.stackSplit = 30;
-					Main.mouseRightRelease = false;
-					Recipe.FindRecipes();
-					isRightClickHandled = true; 
-				}
-				else if (!Main.mouseRight && isRightClickHandled) {
-					isRightClickHandled = false;
-				}
-				return false;
+				item.ChangeItemType(targetType);
+				item.stack++;
+				return;
+			}
+		}
+		public override bool CanRightClick(Item item)
+		{
+			if (item.type == ModContent.ItemType<MudrockHelmet>() || item.type == ModContent.ItemType<MudrockHead>()||
+				item.type == ModContent.ItemType<MudrockChestplate>() || item.type == ModContent.ItemType<MudrockBody>()) {
+				return true;
 			}
 			return base.CanRightClick(item);
 		}

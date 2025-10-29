@@ -1,11 +1,12 @@
 ﻿using ArknightsMod.Common.UI;
 using ArknightsMod.Content.Items.Weapons;
-using Terraria;
-using Terraria.ModLoader;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using Terraria.Localization;
+using ArknightsMod.Content.Items.Weapons.ChenSword;
 using ArknightsMod.Systems.Gameplay.Skill;
+using Microsoft.Xna.Framework;
+using System.Collections.Generic;
+using Terraria;
+using Terraria.Localization;
+using Terraria.ModLoader;
 
 namespace ArknightsMod.Players
 {
@@ -38,11 +39,12 @@ namespace ArknightsMod.Players
 		public bool HoldBagpipeSpear = false;
 		public bool HoldChenSword = false;
 		public bool HoldKroosCrossbow = false;
-		public bool HoldYinHui = false;
+		public bool HoldChenSword_Item = false;
+		public bool HoldSilverAshWeapon = false;
 		public bool HoldBeagleWeapon = false;
 		public bool HoldShirayuki_Shuriken = false;
 		public bool HoldLava_Dagger = false;
-		public bool HoldWuQi_Item_JiCi = false;
+		public bool HoldThornsWeapon = false;
 		public bool HoldKroosAlterCrossbow = false;
 		public bool HoldExusiaiVector = false;
 		public bool HoldPozemkaCrossbow = false;
@@ -136,9 +138,10 @@ namespace ArknightsMod.Players
 			HoldBagpipeSpear = Main.LocalPlayer.HeldItem.ModItem is BagpipeSpear;
 			HoldExusiaiVector = Main.LocalPlayer.HeldItem.ModItem is ExusiaiVector;
 			HoldKroosCrossbow = Main.LocalPlayer.HeldItem.ModItem is KroosCrossbow;
-			HoldYinHui = Main.LocalPlayer.HeldItem.ModItem is YinHui;
+			HoldChenSword_Item = Main.LocalPlayer.HeldItem.ModItem is ChenSword_Item;
+			HoldSilverAshWeapon = Main.LocalPlayer.HeldItem.ModItem is SilverAshWeapon;
 			HoldBeagleWeapon = Main.LocalPlayer.HeldItem.ModItem is BeagleWeapon;
-			HoldWuQi_Item_JiCi = Main.LocalPlayer.HeldItem.ModItem is WuQi_Item_JiCi;
+			HoldThornsWeapon = Main.LocalPlayer.HeldItem.ModItem is ThornsWeapon;
 			HoldShirayuki_Shuriken = Main.LocalPlayer.HeldItem.ModItem is Shirayuki_Shuriken;
 			HoldLava_Dagger = Main.LocalPlayer.HeldItem.ModItem is Lava_Dagger;
 			HoldKroosAlterCrossbow = Main.LocalPlayer.HeldItem.ModItem is KroosAlterCrossbow;
@@ -369,8 +372,22 @@ namespace ArknightsMod.Players
 				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 };
 				SetSkillData();
 			}
-			else if (HoldYinHui) {
-				IconName = "YinHui";
+			else if (HoldChenSword_Item) {
+				IconName = "ChenSword_Item";
+				HowManySkills = 1;
+				SkillLevel = new() { 10, 10, 10 };
+				ChargeTypeIsPerSecond = new() { false, true, false };
+				AutoTrigger = new() { true, false, false };
+				ShowSummonIconBySkills = new() { false, false, false };
+
+				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				MaxSPs1List = new() { 0, 0, 0, 0, 0, 0, 4, 0, 0, 0 };
+				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0.2f, 0f, 0f, 0f };
+				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 };
+				SetSkillData();
+			}
+			else if (HoldSilverAshWeapon) {
+				IconName = "SilverAshWeapon";
 				HowManySkills = 1;
 				SkillLevel = new() { 10,10,10 };
 				ChargeTypeIsPerSecond = new() { false, true, false };
@@ -397,8 +414,8 @@ namespace ArknightsMod.Players
 				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 				SetSkillData();
 			}
-			else if (HoldWuQi_Item_JiCi) {
-				IconName = "WuQi_Item_JiCi";
+			else if (HoldThornsWeapon) {
+				IconName = "ThornsWeapon";
 				HowManySkills = 1;
 				SkillLevel = new() { 10, 10, 10 };
 				ChargeTypeIsPerSecond = new() { false, true, false };

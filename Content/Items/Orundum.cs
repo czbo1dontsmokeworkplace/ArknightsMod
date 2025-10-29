@@ -29,7 +29,7 @@ namespace ArknightsMod.Content.Items
 		//}
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe(10);
-			recipe.AddIngredient<Material.yuanshisuipian>();
+			recipe.AddIngredient<Material.OriginiumShard>();
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

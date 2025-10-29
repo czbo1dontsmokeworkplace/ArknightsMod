@@ -23,7 +23,7 @@ namespace ArknightsMod.Content.Items.Placeable
 		}
 		public override void AddRecipes() {
 			CreateRecipe()
-				.AddIngredient<Material.yuanyan>(3)
+				.AddIngredient<Material.Orirock>(3)
 				.AddTile(TileID.WorkBenches)
 				.Register();
 		}

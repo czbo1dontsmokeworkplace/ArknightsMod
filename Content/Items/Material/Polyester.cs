@@ -29,7 +29,7 @@ namespace ArknightsMod.Content.Items.Material
 		//}
 		public override void AddRecipes() {
 			CreateRecipe()
-				.AddIngredient<Material.zhiyuanliao>(3)
+				.AddIngredient<Material.Ester>(3)
 				.AddTile(TileID.WorkBenches)
 				.Register();
 		}

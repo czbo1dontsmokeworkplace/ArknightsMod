@@ -275,17 +275,17 @@ KetonColloid: {
 	Tooltip: 大量的工业用有机化合物。
 }
 
-MnTri: {
+ManganeseTrihydrate: {
 	DisplayName: 三水锰矿
 	Tooltip: 用于提炼冶炼用的金属矿物。
 }
 
-GP: {
+GrindstonePentahydrate: {
 	DisplayName: 五水研磨石
 	Tooltip: 用于精加工武器零件的高级研磨石。
 }
 
-RMA24: {
+RMA7024: {
 	DisplayName: RMA70-24
 	Tooltip: 一种十分敏感且有优秀传导效果的矿物。
 }
@@ -295,7 +295,7 @@ LoxicKohl: {
 	Tooltip: 片状有机化合物。
 }
 
-WHKohl: {
+WhiteHorseKohl: {
 	DisplayName: 白马醇
 	Tooltip: 扭转醇精加工后的产物。
 }
@@ -376,17 +376,17 @@ OrirockCube: {
 	Tooltip: 从地表开采出的岩石固块。
 }
 
-MnOre: {
+ManganeseOre: {
 	DisplayName: 轻锰矿
 	Tooltip: 用于提炼冶炼用的金属矿物。
 }
 
-Grind: {
+Grindstone: {
 	DisplayName: 研磨石
 	Tooltip: 用于加工武器零件的研磨石。
 }
 
-RMA12: {
+RMA7012: {
 	DisplayName: RMA70-12
 	Tooltip: 一种敏感且有良好传导效果的矿物。
 }
@@ -428,7 +428,7 @@ CrystallineComponent: {
 	Tooltip: 可以制作与合成更高级的源石电子元件。
 }
 
-CompoundCF: {
+CompoundCuttingFluid: {
 	DisplayName: 化合切削液
 	Tooltip: 一种金属加工时必备的工业试剂。
 }
@@ -438,22 +438,22 @@ CrystallineCircuit: {
 	Tooltip: 重要的源石工业材料，是制作源石晶体单元的基础元件。
 }
 
-PP: {
+PolymerizationPreparation: {
 	DisplayName: 聚合剂
 	Tooltip: 复杂的液态工业产物。
 }
 
-TSA: {
+TransmutedSaltAgglomerate: {
 	DisplayName: 转质盐聚块
 	Tooltip: 经过精炼处理的化合物结晶块。
 }
 
-SSS: {
+SemiSyntheticSolvent: {
 	DisplayName: 半自然溶剂
 	Tooltip: 一种物理性能优异，耐酸碱性良好的活性溶剂。
 }
 
-CEU: {
+CrystallineElectronicUnit: {
 	DisplayName: 晶体电子单元
 	Tooltip: 昂贵的源石工业产品。
 }
@@ -473,7 +473,7 @@ NucleicCrystalSinter: {
 	Tooltip: 对工艺要求极高的现代科技产物。
 }
 
-CFSolution: {
+CuttingFluidSolution: {
 	DisplayName: 切削原液
 	Tooltip: 由多种活性溶剂配置而成的原液。
 }
@@ -847,7 +847,7 @@ BrightWeeping: {
 		'''
 }
 
-ChitinousBlade: {
+ChitinousRipper: {
 	DisplayName: 几丁质刺刃
 	Tooltip:
 		'''
@@ -950,7 +950,7 @@ PerfumeForTheShow: {
 		'''
 }
 
-QiyuanMask: {
+AbyssalWyrdmask: {
 	DisplayName: 奇渊面具
 	Tooltip:
 		'''
@@ -1198,7 +1198,7 @@ Shirayuki_Shuriken: {
 	Tooltip: “无人生还，大胜。”
 }
 
-WuQi_Item_JiCi: {
+ThornsWeapon: {
 	DisplayName: 棘刺的剑
 	Tooltip: “看仔细，这才是伊比利亚的至高之术！”
 }
@@ -1383,7 +1383,7 @@ CartonSmall: {
 	// Tooltip: ""
 }
 
-Dajingmi: {
+TheProfoundSilence: {
 	DisplayName: 《大静谧》
 	Tooltip:
 		'''
@@ -1392,7 +1392,7 @@ Dajingmi: {
 		'''
 }
 
-Reshuihu: {
+HotWaterKettle: {
 	DisplayName: 热水壶
 	Tooltip:
 		'''
@@ -1402,7 +1402,7 @@ Reshuihu: {
 		'''
 }
 
-midiexiangzhiyong: {
+RosmontissEmbrace: {
 	DisplayName: 迷迭香之拥
 	Tooltip:
 		'''
@@ -1411,7 +1411,7 @@ midiexiangzhiyong: {
 		'''
 }
 
-Zhengqijiawei: {
+OldSteamArmor: {
 	DisplayName: 古旧的蒸汽甲胄
 	Tooltip:
 		'''
@@ -1420,7 +1420,7 @@ Zhengqijiawei: {
 		'''
 }
 
-weizhiyiqi: {
+UnknownInstrument: {
 	DisplayName: 未知仪器
 	Tooltip:
 		'''
@@ -1429,7 +1429,7 @@ weizhiyiqi: {
 		'''
 }
 
-Scout: {
+ScoutsScope: {
 	DisplayName: Scout的狙击镜
 	Tooltip:
 		'''
@@ -1439,7 +1439,7 @@ Scout: {
 		'''
 }
 
-jinweijunzhifeng: {
+VieuxVanguardsBlade: {
 	DisplayName: 老近卫军之锋
 	Tooltip:
 		'''
@@ -1448,7 +1448,7 @@ jinweijunzhifeng: {
 		'''
 }
 
-toubiwanju: {
+CoinOperatedToy: {
 	DisplayName: 投币玩具
 	Tooltip:
 		'''
@@ -1458,7 +1458,7 @@ toubiwanju: {
 		'''
 }
 
-shengsu: {
+FatalBoltsDivineSpeed: {
 	DisplayName: 残弩-神速
 	Tooltip:
 		'''
@@ -1467,7 +1467,7 @@ shengsu: {
 		'''
 }
 
-tongshuaidiaoxiang: {
+CommandersPortrait: {
 	DisplayName: 统帅肖像
 	Tooltip:
 		'''
@@ -1478,32 +1478,32 @@ tongshuaidiaoxiang: {
 		'''
 }
 
-yuanyan: {
+Orirock: {
 	DisplayName: 源岩
 	Tooltip: 从地表开采出的岩石
 }
 
-daitang: {
+SugarSubstitute: {
 	DisplayName: 代糖
 	Tooltip: 机械化制作的廉价天然糖替代产物
 }
 
-shuangtong: {
+Diketon: {
 	DisplayName: 双酮
 	Tooltip: 极少量的工业用有机化合物
 }
 
-yitiesuipian: {
+OrironShard: {
 	DisplayName: 异铁碎片
 	Tooltip: 普普通通的工业材料
 }
 
-zhiyuanliao: {
+Ester: {
 	DisplayName: 酯原料
 	Tooltip: 工业制造所需的酯原料
 }
 
-yuanshisuipian: {
+OriginiumShard: {
 	Tooltip: 从污染区域中收集到的源石碎片，用以制作合成玉
 	DisplayName: 源石碎片
 }
@@ -1533,17 +1533,217 @@ SurtrLegs: {
 	// Tooltip: ""
 }
 
-lwt: {
+SurtrLaevatain: {
 	DisplayName: 史尔特尔的莱万汀
 	Tooltip: 未完成的武器
 }
 
-YinHui: {
+SilverAshWeapon: {
 	DisplayName: 银灰的手杖
 	Tooltip: “银灰，你的盟友，前来助力。你不会让我失望的，对吗。”
 }
 
-posunzhuangzhi: {
+DamagedDevice: {
 	DisplayName: 破损装置
 	Tooltip: 一些残破的装置
+}
+
+BeagleBody: {
+	// DisplayName: Beagle Body
+	// Tooltip: ""
+}
+
+BeagleHead: {
+	// DisplayName: Beagle Head
+	// Tooltip: ""
+}
+
+BeagleLegs: {
+	// DisplayName: Beagle Legs
+	// Tooltip: ""
+}
+
+ArmorBeagleLegs: {
+	// Tooltip: ""
+	// DisplayName: Armor Beagle Legs
+}
+
+ArmorBeagleHead: {
+	// Tooltip: ""
+	// DisplayName: Armor Beagle Head
+}
+
+ArmorBeagleBody: {
+	// Tooltip: ""
+	// DisplayName: Armor Beagle Body
+}
+
+RhodesStatusScreen: {
+	// DisplayName: Rhodes Status Screen
+	// Tooltip: ""
+}
+
+ChandelierItem: {
+	// DisplayName: Chandelier Item
+	// Tooltip: ""
+}
+
+LampItem: {
+	// DisplayName: Lamp Item
+	// Tooltip: ""
+}
+
+LightTube: {
+	// DisplayName: Light Tube
+	// Tooltip: ""
+}
+
+CivilightEternaBody: {
+	// DisplayName: Civilight Eterna Body
+	// Tooltip: ""
+}
+
+CivilightEternaHead: {
+	// DisplayName: Civilight Eterna Head
+	// Tooltip: ""
+}
+
+CivilightEternaLegs: {
+	// DisplayName: Civilight Eterna Legs
+	// Tooltip: ""
+}
+
+MizukiBody: {
+	// DisplayName: Mizuki Body
+	// Tooltip: ""
+}
+
+MizukiHead: {
+	// DisplayName: Mizuki Head
+	// Tooltip: ""
+}
+
+MizukiLegs: {
+	// DisplayName: Mizuki Legs
+	// Tooltip: ""
+}
+
+ArmorSariaBody: {
+	// DisplayName: Armor Saria Body
+	// Tooltip: ""
+}
+
+ArmorSariaHead: {
+	// DisplayName: Armor Saria Head
+	// Tooltip: ""
+}
+
+ArmorSariaLegs: {
+	// DisplayName: Armor Saria Legs
+	// Tooltip: ""
+}
+
+DorothyDefault: {
+	// DisplayName: Dorothy Default
+	// Tooltip: ""
+}
+
+BeagleDefault: {
+	// DisplayName: Beagle Default
+	// Tooltip: ""
+}
+
+CivilightEternaDefault: {
+	// DisplayName: Civilight Eterna Default
+	// Tooltip: ""
+}
+
+ExusiaiDefault: {
+	// DisplayName: Exusiai Default
+	// Tooltip: ""
+}
+
+FartoothDefault: {
+	// DisplayName: Fartooth Default
+	// Tooltip: ""
+}
+
+HazeDefault: {
+	// DisplayName: Haze Default
+	// Tooltip: ""
+}
+
+KaltsitDefault: {
+	// DisplayName: Kaltsit Default
+	// Tooltip: ""
+}
+
+KroosAlterDefault: {
+	// DisplayName: Kroos Alter Default
+	// Tooltip: ""
+}
+
+LaPlumaDefault: {
+	// DisplayName: La Pluma Default
+	// Tooltip: ""
+}
+
+LingDefault: {
+	// DisplayName: Ling Default
+	// Tooltip: ""
+}
+
+ManticoreDefault: {
+	// DisplayName: Manticore Default
+	// Tooltip: ""
+}
+
+MelaniteDefault: {
+	// DisplayName: Melanite Default
+	// Tooltip: ""
+}
+
+MostimaDefault: {
+	// DisplayName: Mostima Default
+	// Tooltip: ""
+}
+
+RosmontisDefault: {
+	// DisplayName: Rosmontis Default
+	// Tooltip: ""
+}
+
+SariaDefault: {
+	// DisplayName: Saria Default
+	// Tooltip: ""
+}
+
+SkadiDefault: {
+	// DisplayName: Skadi Default
+	// Tooltip: ""
+}
+
+SurtrDefault: {
+	// DisplayName: Surtr Default
+	// Tooltip: ""
+}
+
+UtageDefault: {
+	// DisplayName: Utage Default
+	// Tooltip: ""
+}
+
+WarfarinDefault: {
+	// DisplayName: Warfarin Default
+	// Tooltip: ""
+}
+
+MizukiDefault: {
+	// DisplayName: Mizuki Default
+	// Tooltip: ""
+}
+
+ChenSword_Item: {
+	DisplayName: 陈的赤霄
+	// Tooltip: ""
 }

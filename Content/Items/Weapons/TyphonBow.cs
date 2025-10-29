@@ -12,7 +12,7 @@ namespace ArknightsMod.Content.Items.Weapons
 	{
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.PP>(4);
+			recipe.AddIngredient<Material.PolymerizationPreparation>(4);
 			recipe.AddIngredient<Material.RefinedSolvent>(7);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();

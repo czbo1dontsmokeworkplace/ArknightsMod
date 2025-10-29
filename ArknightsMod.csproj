@@ -22,7 +22,6 @@
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Assets\LevelDatas\Skills\" />
     <Folder Include="Common\UI\BattleRecord\Images\" />
     <Folder Include="UI\" />
     <None Remove="Assets\Effects\AACTSTG3RBFence.fx" />

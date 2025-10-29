@@ -31,7 +31,7 @@ namespace ArknightsMod.Players
 			}
 			if (Main.myPlayer != Player.whoAmI)
 				return;  // 只处理本地玩家
-			bool isHoldingTargetWeapon = Player.HeldItem.type == ModContent.ItemType<YinHui>();
+			bool isHoldingTargetWeapon = Player.HeldItem.type == ModContent.ItemType<SilverAshWeapon>();
 			if (!isHoldingTargetWeapon) {
 				Player.GetModPlayer<yinhui2player>().yinhui2 = false;
 			}
@@ -47,7 +47,7 @@ namespace ArknightsMod.Players
 			}
 			if (Main.myPlayer != Player.whoAmI)
 				return;  // 只处理本地玩家
-			bool isHoldingTargetWeapon2 = Player.HeldItem.type == ModContent.ItemType<YinHui>();
+			bool isHoldingTargetWeapon2 = Player.HeldItem.type == ModContent.ItemType<SilverAshWeapon>();
 			if (!isHoldingTargetWeapon2) {
 				Player.GetModPlayer<yinhui3player>().yinhui3 = false;
 			}

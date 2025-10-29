@@ -1,5 +1,12 @@
-using ArknightsMod.Content.Items.Placeable;
+using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Projectiles;
+using ArknightsMod.Content.Projectiles.Pozyomka;
 using ArknightsMod.Content.Tiles.Infrastructure;
+using ArknightsMod.Players;
+using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -12,6 +19,13 @@ namespace ArknightsMod.Content.Items.Placeable.Infrastructure
 		}
 		public override void SetDefaults() {
 			Item.DefaultToPlaceableTile(ModContent.TileType<FactoryTile>(), 0);
+		}
+		public override void AddRecipes() {
+			Recipe recipe= CreateRecipe();
+			recipe.AddIngredient(ModContent.ItemType<OrironShard>(), 4);
+			recipe.AddRecipeGroup("IronBar", 4);
+			recipe.AddTile(TileID.WorkBenches);
+			recipe.Register();
 		}
 	}
 }

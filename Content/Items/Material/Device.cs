@@ -22,7 +22,7 @@ namespace ArknightsMod.Content.Items.Material
 
 		public override void AddRecipes() {
 			CreateRecipe()
-				.AddIngredient<Material.posunzhuangzhi>(3)
+				.AddIngredient<Material.DamagedDevice>(3)
 				.AddTile(TileID.WorkBenches)
 				.Register();
 		}

@@ -12,7 +12,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static ArknightsMod.Content.Items.Accessories.Rogue.Scout;
+using static ArknightsMod.Content.Items.Accessories.Rogue.ScoutsScope;
 
 namespace ArknightsMod.Content.Items.Weapons
 {
@@ -235,7 +235,7 @@ namespace ArknightsMod.Content.Items.Weapons
 
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.CEU>(3);
+			recipe.AddIngredient<Material.CrystallineElectronicUnit>(3);
 			recipe.AddIngredient<Material.OrirockConcentration>(9);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();

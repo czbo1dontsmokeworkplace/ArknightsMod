@@ -199,7 +199,7 @@ namespace ArknightsMod.Content.Items.Weapons
 
 		public override void AddRecipes() {
 			CreateRecipe()
-				.AddIngredient<Material.PP>(4)
+				.AddIngredient<Material.PolymerizationPreparation>(4)
 				.AddIngredient<Material.OrirockConcentration>(9)
 				.AddTile(ModContent.TileType<FactoryTile>())
 				.Register();

@@ -23,9 +23,9 @@ namespace ArknightsMod.Content.Items.Material
 		// Please see Content/ExampleRecipes.cs for a detailed explanation of recipe creation.
 		public override void AddRecipes() {
 			CreateRecipe()
-				.AddIngredient<MnTri>(1)
-				.AddIngredient<GP>(1)
-				.AddIngredient<RMA24>(1)
+				.AddIngredient<ManganeseTrihydrate>(1)
+				.AddIngredient<GrindstonePentahydrate>(1)
+				.AddIngredient<RMA7024>(1)
 				.AddTile(TileID.WorkBenches)
 				.Register();
 		}

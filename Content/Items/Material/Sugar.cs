@@ -29,7 +29,7 @@ namespace ArknightsMod.Content.Items.Material
 		//}
 		public override void AddRecipes() {
 			CreateRecipe()
-				.AddIngredient<Material.daitang>(3)
+				.AddIngredient<Material.SugarSubstitute>(3)
 				.AddTile(TileID.WorkBenches)
 				.Register();
 		}

@@ -25,7 +25,7 @@ namespace ArknightsMod.Content.Items.Material
 			CreateRecipe()
 				.AddIngredient<IntegratedDevice>(1)
 				.AddIngredient<OrirockCluster>(2)
-				.AddIngredient<Placeable.Grind>(1)
+				.AddIngredient<Placeable.Grindstone>(1)
 				.AddTile(TileID.WorkBenches)
 				.Register();
 		}
