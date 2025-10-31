@@ -1747,3 +1747,8 @@ ChenSword_Item: {
 	DisplayName: 陈的赤霄
 	// Tooltip: ""
 }
+
+OriginiumIngot: {
+	DisplayName: 源石锭
+	// Tooltip: ""
+}

@@ -1,8 +1,11 @@
 DamageClasses.SpellDamage.DisplayName: 法术伤害
-ButtonName.button2: 剿灭作战
 UI.UpgradeUI.Upgrade: 提升等级
 UpgradeWeapon.LevelPreview.Damage: 伤害
-Currencies.OrundumCurrency: 合成玉
+
+Currencies: {
+	OrundumCurrency: 合成玉
+	OriginiumIngotCurrency: 源石锭
+}
 
 StatusMessage: {
 	IACT: {

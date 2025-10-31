@@ -12,7 +12,9 @@ namespace ArknightsMod.Content.NPCs.Friendly
 	[AutoloadHead]
 	public class Closure : ModNPC
 	{
-		public const string ShopName = "Shop";
+		public static string[] ShopName => ["Shop", "Shop2"];
+
+		public static int ButtonCount;
 
 		public override void SetStaticDefaults() {
 			Main.npcFrameCount[NPC.type] = 22;
@@ -41,7 +43,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		}
 
 		public override List<string> SetNPCNameList() {
-			return new List<string> { Language.GetTextValue($"Mods.ArknightsMod.NPCs.{GetType().Name}.DisplayName") };
+			return [Language.GetTextValue($"Mods.ArknightsMod.NPCs.{GetType().Name}.DisplayName")];
 		}
 
 		public override void SetDefaults() {
@@ -86,18 +88,33 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			chat.Add(Language.GetTextValue("Mods.ArknightsMod.Dialogue.Closure.Dialogue8"));
 			return chat;
 		}
+
 		public override void SetChatButtons(ref string button, ref string button2) {
-			button = Language.GetTextValue("LegacyInterface.28");
-			button2 = Language.GetTextValue("Mods.ArknightsMod.ButtonName.button2");
+			string Text = ButtonCount switch {
+				1 => this.GetLocalizedValue("Buttons.Shop2"),
+				2 => this.GetLocalizedValue("Buttons.Annihilation"),
+				_ => Language.GetTextValue("LegacyInterface.28"),
+			};
+			button = Text;
+			button2 = this.GetLocalizedValue("Buttons.Switch");
 		}
 
 		public override void OnChatButtonClicked(bool firstButton, ref string shop) {
 			if (firstButton) {
-				shop = ShopName;
+				switch (ButtonCount) {
+					case 0:
+					case 1:
+						shop = ShopName[ButtonCount];
+						break;
+					case 2:
+						AO();
+						break;
+				}
 				return;
 			}
 			else {
-				AO();
+				ButtonCount++;
+				ButtonCount %= 3;
 			}
 		}
 
@@ -245,59 +262,61 @@ namespace ArknightsMod.Content.NPCs.Friendly
 
 		// Not completely finished, but below is what the NPC will sell
 		public override void AddShops() {
-			var npcShop = new NPCShop(Type, ShopName)
+			var npcShop = new NPCShop(Type, ShopName[0])
 				.Add(new Item(ModContent.ItemType<Items.Material.Polyketon>()) {
-					shopCustomPrice = 1,
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
 				.Add(new Item(ModContent.ItemType<Items.Material.Oriron>()) {
-					shopCustomPrice = 1,
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
 				.Add(new Item(ModContent.ItemType<Items.Material.Sugar>()) {
-					shopCustomPrice = 1,
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
 				.Add(new Item(ModContent.ItemType<Items.Material.Device>()) {
-					shopCustomPrice = 1,
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
 				.Add(new Item(ModContent.ItemType<Items.Material.Polyester>()) {
-					shopCustomPrice = 1,
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
 				.Add(new Item(ModContent.ItemType<Items.Material.LoxicKohl>()) {
-					shopCustomPrice = 1,
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
 				.Add(new Item(ModContent.ItemType<Items.Material.CoagulatingGel>()) {
-					shopCustomPrice = 1,
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
 				.Add(new Item(ModContent.ItemType<Items.Material.IncandescentAlloy>()) {
-					shopCustomPrice = 1,
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
 				.Add(new Item(ModContent.ItemType<Items.Material.CrystallineComponent>()) {
-					shopCustomPrice = 1,
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
 				.Add(new Item(ModContent.ItemType<Items.Material.CompoundCuttingFluid>()) {
-					shopCustomPrice = 1,
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
 				.Add(new Item(ModContent.ItemType<Items.Material.SemiSyntheticSolvent>()) {
-					shopCustomPrice = 1,
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
 				.Add(new Item(ModContent.ItemType<Items.Material.TransmutedSalt>()) {
-					shopCustomPrice = 1,
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
 				.Add(new Item(ModContent.ItemType<Items.Placeable.Furniture.DareUsa>()) {
-					shopCustomPrice = 1,
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
+				});
+			npcShop.Register();
+			npcShop = new NPCShop(Type, ShopName[1])
 				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.AmiyaDefault>()) {
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId

@@ -4,7 +4,6 @@ using Terraria.GameContent.Personalities;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using Terraria.ModLoader.IO;
 using Terraria.Utilities;
 
 namespace ArknightsMod.Content.NPCs.Friendly
@@ -35,7 +34,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		}
 
 		public override List<string> SetNPCNameList() {
-			return new List<string> { Language.GetTextValue($"Mods.ArknightsMod.NPCs.{GetType().Name}.DisplayName") };
+			return [Language.GetTextValue($"Mods.ArknightsMod.NPCs.{GetType().Name}.DisplayName")];
 		}
 
 		public override void SetDefaults() {
@@ -88,18 +87,21 @@ namespace ArknightsMod.Content.NPCs.Friendly
 				return;
 			}
 		}
+
 		public override void AddShops() {
-			/*var npcShop = new NPCShop(Type, ShopName)
-				.Add(new Item(ModContent.ItemType<Items.Material.Polyketon>()) {
-					shopCustomPrice = 1,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<Items.Material.Oriron>()) {
-					shopCustomPrice = 1,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				});
-				
-			npcShop.Register();*/
+			var npcShop = new NPCShop(Type, ShopName);
+			foreach (var modItem in Mod.GetContent<ModItem>()) {
+				if (modItem.GetType().Namespace == "ArknightsMod.Content.Items.Accessories.Rogue"){
+					if (modItem.Type == ModContent.ItemType<Items.Accessories.Rogue.HotWaterKettle>())
+						continue;
+					Item item = new(modItem.Type) {
+						shopSpecialCurrency = ArknightsMod.OriginiumIngotCurrencyId
+					};
+					npcShop.Add(item);
+				}
+			}
+
+			npcShop.Register();
 		}
 
 		public override void TownNPCAttackStrength(ref int damage, ref float knockback) {

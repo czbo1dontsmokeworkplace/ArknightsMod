@@ -1,8 +1,11 @@
 DamageClasses.SpellDamage.DisplayName: Arcane Damage
-ButtonName.button2: Annihilation
 UI.UpgradeUI.Upgrade: Level Up
 UpgradeWeapon.LevelPreview.Damage: Damage
-Currencies.OrundumCurrency: Orundum
+
+Currencies: {
+	OrundumCurrency: Orundum
+	OriginiumIngotCurrency: Originium Ingot
+}
 
 StatusMessage: {
 	IACT: {

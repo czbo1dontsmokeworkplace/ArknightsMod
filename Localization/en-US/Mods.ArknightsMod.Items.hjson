@@ -1620,6 +1620,11 @@ MizukiDefault: {
 }
 
 ChenSword_Item: {
-	DisplayName: Chen Sword_ Item
+	DisplayName: Chen Sword
+	Tooltip: ""
+}
+
+OriginiumIngot: {
+	DisplayName: Originium Ingot
 	Tooltip: ""
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.ModLoader;
@@ -7,9 +8,11 @@ namespace ArknightsMod.Players
 {
 	public class InventoryPlayer : ModPlayer
 	{
-		public int JustPickupOriginiumIngot; // 刚刚拾起且未显示拾取效果的源石锭数量
+		private int justPickupOriginiumIngot;
+		internal int JustPickupOriginiumIngot { get => (int)MathHelper.Clamp(justPickupOriginiumIngot, 0, 20); set => justPickupOriginiumIngot = (int)MathHelper.Clamp(value, 0, 20); } // 刚刚拾起且未显示拾取效果的源石锭数量
 		internal List<int> PickupOriginiumIngotEffectCount = []; // 源石锭拾取效果剩余时间计数列表
 		internal const int MaxPickupOriginiumIngotEffectCount = 5; // 最大同时显示源石锭拾取效果数
+
 		// AddStartingItems is a method you can use to add items to the player's starting inventory.
 		// It is also called when the player dies a mediumcore death
 		// Return an enumerable with the items you want to add to the inventory.
@@ -33,7 +36,7 @@ namespace ArknightsMod.Players
 		public override void ResetEffects() {
 			List<int> counts = PickupOriginiumIngotEffectCount;
 
-			if (JustPickupOriginiumIngot > 0) { // 如果未显示拾取效果的源石锭数量大于0
+			if (Player.miscCounter % 6 == 0 && JustPickupOriginiumIngot > 0) { // 如果未显示拾取效果的源石锭数量大于0
 				if (counts.Count < MaxPickupOriginiumIngotEffectCount) { // 如果效果数小于最大显示数
 					counts.Add(25); // 添加新的效果计数
 					JustPickupOriginiumIngot--;

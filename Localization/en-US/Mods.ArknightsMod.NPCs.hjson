@@ -65,6 +65,12 @@ Closure: {
 		Princess_LovesNPC: I like {NPCName}.
 	}
 
+	Buttons: {
+		Shop2: Fashion Shop
+		Annihilation: Annihilation
+		Switch: Switch
+	}
+
 	Census.SpawnCondition: Conditions unknown
 }
 

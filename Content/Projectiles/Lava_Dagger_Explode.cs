@@ -132,10 +132,10 @@ namespace ArknightsMod.Content.Projectiles
 				Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState,
 					DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
-				ArknightsMod.LavaExplosionShaderEffect.Parameters["opacity"].SetValue(Projectile.Opacity);
-				ArknightsMod.LavaExplosionShaderEffect.Parameters["orangeThreshold"].SetValue(0.8f);
-				ArknightsMod.LavaExplosionShaderEffect.Parameters["yellowThreshold"].SetValue(0.9f);
-				ArknightsMod.LavaExplosionShaderEffect.CurrentTechnique.Passes[0].Apply();
+				ArknightsMod.LavaExplosionShaderEffect.Value.Parameters["opacity"].SetValue(Projectile.Opacity);
+				ArknightsMod.LavaExplosionShaderEffect.Value.Parameters["orangeThreshold"].SetValue(0.8f);
+				ArknightsMod.LavaExplosionShaderEffect.Value.Parameters["yellowThreshold"].SetValue(0.9f);
+				ArknightsMod.LavaExplosionShaderEffect.Value.CurrentTechnique.Passes[0].Apply();
 
 				for (int i = 0; i < 2; i++)
 				{

@@ -441,12 +441,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 				//形变和其他因素无关
 				if (Main.netMode != NetmodeID.Server && !Terraria.Graphics.Effects.Filters.Scene["FNTwistedRing"].IsActive()) {
 					Terraria.Graphics.Effects.Filters.Scene.Activate("FNTwistedRing", NPC.Center).GetShader().UseColor(FNShaderRingColorR, FNShaderRingColorG, FNShaderRingColorB).UseTargetPosition(NPC.Center + new Vector2(0, 3)).UseIntensity(FNShaderRingIntensity * FNTPOpacity).UseOpacity(FNShaderRingOpacity).UseProgress(FNShaderRingProgress * FNTPOpacity);
-					ArknightsMod.FNTwistedRing.Parameters["uTime"].SetValue((float)Main.time / 64);
+					ArknightsMod.FNTwistedRing.Value.Parameters["uTime"].SetValue((float)Main.time / 64);
 					//SoundEngine.PlaySound(SoundID.NPCHit5);
 				}
 				if (Main.netMode != NetmodeID.Server && Terraria.Graphics.Effects.Filters.Scene["FNTwistedRing"].IsActive()) {
 					Terraria.Graphics.Effects.Filters.Scene.Activate("FNTwistedRing", NPC.Center).GetShader().UseColor(FNShaderRingColorR, FNShaderRingColorG, FNShaderRingColorB).UseTargetPosition(NPC.Center + new Vector2(0, 3)).UseIntensity(FNShaderRingIntensity * FNTPOpacity).UseOpacity(FNShaderRingOpacity).UseProgress(FNShaderRingProgress * FNTPOpacity);
-					ArknightsMod.FNTwistedRing.Parameters["uTime"].SetValue((float)Main.time / 64);
+					ArknightsMod.FNTwistedRing.Value.Parameters["uTime"].SetValue((float)Main.time / 64);
 				}
 			}
 			else if (FNDeathStart || escapetimer != 0 || player.dead || player.active == false) {

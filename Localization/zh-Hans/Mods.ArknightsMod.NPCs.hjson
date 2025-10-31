@@ -65,6 +65,12 @@ Closure: {
 		Princess_LovesNPC: 我喜欢 {NPCName}。
 	}
 
+	Buttons: {
+		Shop2: 时装商店
+		Annihilation: 剿灭作战
+		Switch: 切换
+	}
+
 	// Census.SpawnCondition: Conditions unknown
 }
 
