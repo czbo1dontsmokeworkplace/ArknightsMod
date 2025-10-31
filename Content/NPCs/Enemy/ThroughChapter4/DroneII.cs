@@ -1,4 +1,5 @@
-﻿using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
+﻿using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Utilities;
@@ -8,8 +9,10 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.Bestiary;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Utilities;
 
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 {
@@ -18,6 +21,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		// ===== 基础属性 =====
 		private int targetPlayer;
 		private float targetHeight;
+		private float targetOffset;
 		private float moveSpeed = 3f;
 		private Vector2 lastPosition;
 
@@ -73,8 +77,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			targetPlayer = NPC.FindClosestPlayer();
 			Player player = Main.player[targetPlayer];
 
-			// 初始高度设为玩家上方1/3屏幕处
-			targetHeight = player.position.Y - Main.screenHeight / Main.rand.NextFloat(3f,4.4f);
+			targetOffset = Main.screenHeight / Main.rand.NextFloat(3.5f, 5);
 
 			// 初始方向面向玩家
 			NPC.direction = player.Center.X > NPC.Center.X ? 1 : -1;
@@ -85,7 +88,6 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 		public override void AI() {
 			// 执行顺序很重要！
-			CheckHeightDanger();
 			if (NPC.ai[0] <= 0) {
 				UpdateMovement();
 			}
@@ -209,33 +211,36 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 			Player player = Main.player[targetPlayer];
 
-			// 上升阶段
+			// 初始高度设为玩家上方1/3屏幕处
+			targetHeight = player.position.Y - targetOffset;
+			// 升降阶段（
 			if (NPC.position.Y > targetHeight) {
 				NPC.velocity.X = moveSpeed * NPC.direction;
-				NPC.velocity.Y = -moveSpeed * 0.6f;
+				NPC.velocity.Y = -moveSpeed * 0.5f;
+				NPC.noTileCollide = true;
+			}
+			else if (NPC.position.Y < targetHeight) {
+				NPC.velocity.X = moveSpeed * NPC.direction;
+				NPC.velocity.Y = moveSpeed * 0.5f;
 				NPC.noTileCollide = true;
 			}
 			// 巡航阶段
-			else {
-				NPC.noTileCollide = true;
-				NPC.velocity.X = moveSpeed * NPC.direction;
-				NPC.velocity.Y = 0;
+			NPC.noTileCollide = true;
+			NPC.velocity.X = moveSpeed * NPC.direction;
 
-				// 边缘检测
-				float screenLeft = Main.screenPosition.X + 50;
-				float screenRight = Main.screenPosition.X + Main.screenWidth - 50 - NPC.width;
+			// 边缘检测
+			float screenLeft = Main.screenPosition.X + Main.screenWidth / 6;
+			float screenRight = Main.screenPosition.X + Main.screenWidth * 5 / 6 - NPC.width;
 
-				bool shouldTurn = (NPC.position.X < screenLeft && NPC.velocity.X < 0) ||
-								 (NPC.position.X > screenRight && NPC.velocity.X > 0) ||
-								 (Vector2.Distance(lastPosition, NPC.position) < 0.5f && ++stuckTimer > 180);
+			bool shouldTurn = (NPC.position.X < screenLeft && NPC.velocity.X < 0) ||
+							 (NPC.position.X > screenRight && NPC.velocity.X > 0) ||
+							 (Vector2.Distance(lastPosition, NPC.position) < 0.5f && ++stuckTimer > 180);
 
-				lastPosition = NPC.position;
-				if (shouldTurn==true) {
-					NPC.direction *= -1;
-					NPC.spriteDirection *= -1;
-				}
+			lastPosition = NPC.position;
+			if (shouldTurn == true) {
+				NPC.direction *= -1;
+				NPC.spriteDirection *= -1;
 			}
-			
 		}
 
 		// ===== [4] 动画系统 =====
@@ -349,6 +354,13 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				Dust.NewDust(NPC.position, NPC.width, NPC.height,
 					DustID.Smoke, Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-3f, 3f));
 			}
+		}
+		public override float SpawnChance(NPCSpawnInfo spawnInfo) {
+			return SpawnCondition.OverworldDaySlime.Chance * 0.3f;
+		}
+		public override void ModifyNPCLoot(NPCLoot npcLoot) {
+			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OrironShard>(), ModContent.GetInstance<Dropconfig>().DropDrone1, 2, 5));
+			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Ester>(), ModContent.GetInstance<Dropconfig>().DropDrone2*2, 1, 2));
 		}
 	}
 }

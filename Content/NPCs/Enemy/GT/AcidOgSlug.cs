@@ -61,7 +61,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.GT
 
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
 
-			npcLoot.Add(ItemDropRule.Common(ItemType<Items.Material.Polyester>(), ModContent.GetInstance<Dropconfig>().DropAcidOgSlug, 1, 2));
+			npcLoot.Add(ItemDropRule.Common(ItemType<Items.Material.Polyester>(), ModContent.GetInstance<Dropconfig>().DropAcidOgSlug1, 1, 2));
+			npcLoot.Add(ItemDropRule.Common(ItemType<Items.Material.LoxicKohl>(), ModContent.GetInstance<Dropconfig>().DropAcidOgSlug2, 1, 2));
 
 		}
 
