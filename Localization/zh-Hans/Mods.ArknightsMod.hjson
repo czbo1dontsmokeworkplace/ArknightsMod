@@ -43,4 +43,12 @@ Tiles: {
 	WMusicBoxTile.MapEntry: 音乐盒(W)
 	// HoundTile.MapEntry: Hound Tile
 	// HoundproTile.MapEntry: Houndpro Tile
+	// SolidColorLowSofa.MapEntry: Solid Color Low Sofa
+	// ClearBlackTV.MapEntry: Clear Black T V
+	// GrayFiberRug.MapEntry: Gray Fiber Rug
+	// MatteBlackFloorTile.MapEntry: Matte Black Floor Tile
+	// MinimalBlackClock.MapEntry: Minimal Black Clock
+	// PorcelainBed.MapEntry: Porcelain Bed
+	// PorcelainNightstand.MapEntry: Porcelain Nightstand
+	// SolidCheckeredBookcase.MapEntry: Solid Checkered Bookcase
 }

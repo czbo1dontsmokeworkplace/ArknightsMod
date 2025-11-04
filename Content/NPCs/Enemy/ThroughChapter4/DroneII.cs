@@ -1,5 +1,6 @@
 ﻿using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
+using Humanizer;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Utilities;
@@ -22,35 +23,47 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		private int targetPlayer;
 		private float targetHeight;
 		private float targetOffset;
-		private float moveSpeed = 3f;
+		private float moveSpeed = 3.6f;     // 比 Drone 更快
 		private Vector2 lastPosition;
 
 		// ===== 攻击系统 =====
 		private int attackCooldown = 0;
-		private int preAttackDirection = 1;
 		private bool isInAttackPhase = false;
 		private int shootTimer = 0;
-		private int stuckTimer = 0;          // 卡住检测计时器
-		private SlotId engineLoadSoundSlot;  // 转向音效槽
-		private const float EdgeBuffer = 50f;// 屏幕边缘缓冲距离
-
-
-		// ===== 翻转动画系统 =====
-		private bool isFlipping = false;
-		private float flipProgress = 0f;
-		private int flipDirection = 1;
-		private Vector2 customScale = Vector2.One;
+		private int stuckTimer = 0;          // 卡住检测
 
 		// ===== 动画系统 =====
 		private int frame = 0;
 		private int frameCounter = 0;
 
-		// ===== 音效系统 =====
-		private SlotId engineSoundSlot;
-		private float enginePitch = 0f;
-		private int heightAlarmTimer; // 高度超时计时器
-		private const float MaxAllowedHeight = 0.6f; // 0.6个屏幕高度
-		private const int MaxHeightTime = 300; // 5秒(60帧/秒 * 5)
+		// （可选）高度自毁
+		private int heightAlarmTimer;                  // 高度超时计时器
+		private const float MaxAllowedHeight = 0.6f;   // 0.6 屏高度
+		private const int MaxHeightTime = 300;    // 5 秒
+
+		// ===== AI 状态/出生点等（与 Drone 相同逻辑）=====
+		private enum AIState { Idle, Attack }
+		private AIState state = AIState.Idle;
+
+		private Vector2 homeAnchor;
+		private int turnCooldown = 0;        // 撞墙返航冷却
+		private int platformDropTimer = 0;   // 下平台短暂穿透帧
+		private const int PlatformDropFrames = 8;
+
+		// Idle 漂浮（非对称上下界，便于“抬高最低点”）
+		private float idlePhase = 0f;
+		private const float IdlePeriodFrames = 110f; // 比 Drone 快一点点
+		private const float IdleMinRaiseUp = 40f;    // 最低点上抬（更高）
+		private const float IdleMaxDropDown = 12f;   // 最高点下压
+
+		// 索敌距离（更敏锐）
+		private const float LockRange = 600f;
+		private const float LoseRange = 1200f;
+		private const int StuckLoseTime = 150;
+
+		// —— 可选：固定巡航半径（如要启用，取消注释并在 UpdateMovement 里用它替换屏幕边界）——
+		private const float patrolHalfWidth = 300f;
+
 		public override void SetStaticDefaults() {
 			Main.npcFrameCount[NPC.type] = 2;
 		}
@@ -58,199 +71,272 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		public override void SetDefaults() {
 			NPC.width = 30;
 			NPC.height = 20;
-			NPC.lifeMax = 90;
-			NPC.damage = 30;
+			NPC.lifeMax = 90;    // 更耐打
+			NPC.damage = 30;     // 更痛
 			NPC.defense = 5;
-			NPC.value = 60f;
 			NPC.HitSound = SoundID.NPCHit4;
 			NPC.DeathSound = SoundID.NPCDeath14;
+			NPC.value = 60f;
+
 			NPC.noGravity = true;
-			NPC.noTileCollide = false;
+			NPC.noTileCollide = false; // 不穿墙；仅下平台阶段短暂 true
+			NPC.aiStyle = -1;
 		}
+
 		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
 			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
 				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Surface,
-				new FlavorTextBestiaryInfoElement("敌方人员操纵的无人机，妖怪的改进版，继承了原版的名字，称为妖怪MKII。装备有可发射的小型铳和远程操控施术单元，可能是由附近隐蔽的术师远程操作。虽然不一定能对穿戴防具的人体构成大量损害，但仍然会对一般人员构成一定威胁。"),
+				new FlavorTextBestiaryInfoElement("敌方“妖怪 MKII”，在无人机基础上改进了火力模块，具备短连发能力。"),
 			});
 		}
+
+		public override float SpawnChance(NPCSpawnInfo spawnInfo) {
+			return SpawnCondition.OverworldDaySlime.Chance * 0.1f;
+		}
+
+		public override void ModifyNPCLoot(NPCLoot npcLoot) {
+			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OrironShard>(), ModContent.GetInstance<Dropconfig>().DropDrone1, 2, 5));
+			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Ester>(), ModContent.GetInstance<Dropconfig>().DropDrone2 * 2, 1, 2));
+		}
+
 		public override void OnSpawn(IEntitySource source) {
 			targetPlayer = NPC.FindClosestPlayer();
 			Player player = Main.player[targetPlayer];
 
-			targetOffset = Main.screenHeight / Main.rand.NextFloat(3.5f, 5);
+			homeAnchor = NPC.Center;
+			moveSpeed = Main.rand.NextFloat(2.8f, 4f); // 比 Drone 稍快的随机范围
+			targetOffset = Main.screenHeight / Main.rand.NextFloat(3.5f, 5f);
 
-			// 初始方向面向玩家
 			NPC.direction = player.Center.X > NPC.Center.X ? 1 : -1;
-			NPC.spriteDirection = NPC.direction;
-
-			moveSpeed = Main.rand.NextFloat(2.8f, 4f);
+			NPC.spriteDirection = NPC.direction; // 撤销翻转修改，贴图=移动方向
 		}
 
 		public override void AI() {
-			// 执行顺序很重要！
-			if (NPC.ai[0] <= 0) {
-				UpdateMovement();
+			if (turnCooldown > 0)
+				turnCooldown--;
+			if (platformDropTimer > 0)
+				platformDropTimer--;
+
+			int p = Player.FindClosest(NPC.Center, NPC.width, NPC.height);
+			Player player = Main.player[p];
+			float distToPlayer = Vector2.Distance(NPC.Center, player.Center);
+
+			// —— 状态切换：与 Drone 一致 —— 
+			if (!player.active || player.dead) {
+				state = AIState.Idle;
 			}
-			UpdateAttackSystem();
+			else {
+				if (state == AIState.Idle && distToPlayer <= LockRange)
+					state = AIState.Attack;
+				else if (state == AIState.Attack) {
+					if (Vector2.Distance(lastPosition, NPC.position) < 0.5f)
+						stuckTimer++;
+					else
+						stuckTimer = Math.Max(0, stuckTimer - 2);
+
+					if (distToPlayer > LoseRange || stuckTimer > StuckLoseTime) {
+						state = AIState.Idle;
+						stuckTimer = 0;
+					}
+				}
+			}
+
+			// —— 目标高度：Idle 漂浮 / Attack 盯玩家头顶 —— 
+			if (state == AIState.Idle) {
+				idlePhase += MathHelper.TwoPi / IdlePeriodFrames;
+				float minY = homeAnchor.Y - IdleMinRaiseUp;
+				float maxY = homeAnchor.Y + IdleMaxDropDown;
+				float t = 0.5f * (1f + (float)Math.Sin(idlePhase));
+				targetHeight = MathHelper.Lerp(minY, maxY, t);
+			}
+			else {
+				targetHeight = player.position.Y - targetOffset;
+			}
+
+			// —— 移动（会下平台 / 撞墙返航 / 不穿墙）——
+			UpdateMovement(targetHeight, state == AIState.Idle);
+
+			// —— 攻击：MKII 连发（22/14 帧各补一枪）——
+			if (state == AIState.Attack)
+				UpdateAttackSystem(player);
+
+			// —— 可选：高度越界自毁 —— 
+			CheckHeightDanger(player);
+
+			// —— 动画 —— 
 			UpdateAnimation();
+
+			lastPosition = NPC.position;
 		}
 
-		// ===== [1] 攻击系统 =====
-		private void UpdateAttackSystem() {
-			Player player = Main.player[targetPlayer];
-			Vector2 velocity = Vector2.Normalize(player.Center - NPC.Center) * 14f;
-			// 攻击阶段视觉控制
+		// ===== 移动（与 Drone 一致） =====
+		private void UpdateMovement(float targetY, bool idleMode) {
+			// 水平：Idle 原地；Attack 巡航
+			float vx = idleMode ? 0f : moveSpeed * NPC.direction;
+
+			// 垂直：向 targetHeight 靠拢
+			float vy = 0f;
+			if (NPC.position.Y > targetY)
+				vy = -moveSpeed * 0.5f;
+			else if (NPC.position.Y < targetY)
+				vy = moveSpeed * 0.5f;
+
+			// 会下平台：需要下降 + 脚下是平台 + 落点安全
+			bool wantDescend = vy > 0f;
+			if (platformDropTimer == 0 && wantDescend && IsStandingOnPlatform() && IsDropSpaceClear(12))
+				platformDropTimer = PlatformDropFrames;
+
+			NPC.noTileCollide = platformDropTimer > 0;
+			if (platformDropTimer > 0 && vy < 3f)
+				vy = 3f;
+
+			NPC.velocity.X = vx;
+			NPC.velocity.Y = vy;
+
+			// 撞墙返航（仅 Attack/有水平移动时）
+			if (!idleMode) {
+				bool solidAhead = IsSolidAhead(NPC.direction, 8);
+				if (turnCooldown == 0 && (NPC.collideX || solidAhead)) {
+					NPC.direction *= -1;
+					NPC.spriteDirection = NPC.direction; // 保持与方向一致
+					NPC.velocity.X = 0f;
+					turnCooldown = 12;
+					NPC.netUpdate = true;
+				}
+			}
+
+			// 垂直去抖（非下穿阶段）
+			if (!NPC.noTileCollide && NPC.collideY)
+				NPC.velocity.Y = 0f;
+
+			NPC.spriteDirection = NPC.direction; // 贴图 = 移动方向
+
+			// —— 保留 Drone 的“屏幕边缘检测”作为兜底（你也可以换成 homeAnchor±半径的固定巡航）——
+			float screenLeft = Main.screenPosition.X + Main.screenWidth / 6f;
+			float screenRight = Main.screenPosition.X + Main.screenWidth * 5f / 6f;
+
+			bool edgeTurn =
+				(!idleMode && NPC.position.X < screenLeft && NPC.velocity.X < 0) ||
+				(!idleMode && NPC.position.X > screenRight && NPC.velocity.X > 0) ||
+				(Vector2.Distance(lastPosition, NPC.position) < 0.5f && ++stuckTimer > 180);
+
+			if (edgeTurn && !idleMode && turnCooldown == 0) {
+				NPC.direction *= -1;
+				NPC.spriteDirection = NPC.direction;
+				NPC.velocity.X = 0f;
+				turnCooldown = 12;
+				NPC.netUpdate = true;
+			}
+		}
+
+		// ===== 攻击（含冷却区间 22/14 帧连发） =====
+		private void UpdateAttackSystem(Player player) {
 			if (isInAttackPhase) {
-				// 强制贴图面向玩家（不改变实际移动方向）
-				NPC.spriteDirection = player.Center.X > NPC.Center.X ? 1 : -1;
-
-				if (--attackCooldown <= 0) {
+				if (--attackCooldown <= 0)
 					isInAttackPhase = false;
-					NPC.spriteDirection = NPC.direction; // 恢复原方向
-				}
 			}
 
-			// 射击冷却
 			if (NPC.ai[0] > 0) {
-				NPC.ai[0]--; // 冷却计时
-				NPC.velocity *= 0.9f; // 减速效果
-				if (NPC.ai[0] == 22) {
-					Projectile.NewProjectile(
-				NPC.GetSource_FromAI(),
-				NPC.Center,
-				velocity,
-				ProjectileID.BulletDeadeye,
-				11,
-				1f,
-				Main.myPlayer,
-				0f,
-				NPC.whoAmI);
+				NPC.ai[0]--;
+				NPC.velocity *= 0.9f;
+
+				// 冷却区间第 22 / 14 帧各补一枪（MKII 特性）
+				if (NPC.ai[0] == 22 || NPC.ai[0] == 14) {
+					Vector2 v2 = Vector2.Normalize(player.Center - NPC.Center) * 14f;
+					Projectile.NewProjectile(NPC.GetSource_FromAI(),
+						NPC.Center, v2, ProjectileID.BulletDeadeye, 11, 1f, Main.myPlayer, 0f, NPC.whoAmI);
 				}
-				if (NPC.ai[0] == 14) {
-					Projectile.NewProjectile(
-				NPC.GetSource_FromAI(),
-				NPC.Center,
-				velocity,
-				ProjectileID.BulletDeadeye,
-				11,
-				1f,
-				Main.myPlayer,
-				0f,
-				NPC.whoAmI);
-				}
-				return; // 冷却期间跳过其他行为
+				return;
 			}
 
-			// 射击逻辑
 			if (++shootTimer >= 300 && NPC.position.Y <= targetHeight) {
-				ShootAtPlayer(player);
+				Vector2 v = Vector2.Normalize(player.Center - NPC.Center) * 14f;
+				FirePrimary(v);
 				shootTimer = 0;
 			}
 		}
 
-		private void ShootAtPlayer(Player player) {
-			// 记录攻击前方向
-			preAttackDirection = NPC.direction;
-
-			// 进入攻击阶段
+		private void FirePrimary(Vector2 velocity) {
 			isInAttackPhase = true;
-			attackCooldown = 30; // 0.5秒
+			attackCooldown = 30;
 
-			// 计算弹道
-			Vector2 velocity = Vector2.Normalize(player.Center - NPC.Center) * 14f;
-
-			// 发射海盗神射手子弹
 			Projectile.NewProjectile(
 				NPC.GetSource_FromAI(),
 				NPC.Center,
 				velocity,
 				ProjectileID.BulletDeadeye,
-				11,
+				11,           // 比 Drone 高的伤害
 				1f,
-				Main.myPlayer,
-				0f,
-				NPC.whoAmI);
+				Main.myPlayer, 0f, NPC.whoAmI);
 
-			// 攻击效果
 			SoundEngine.PlaySound(SoundID.Item11 with { Volume = 0.7f }, NPC.Center);
-			NPC.velocity *= 0.2f; // 后坐力
-			NPC.ai[0] = 30; // 行为冷却
+			NPC.velocity *= 0.2f;
+			NPC.ai[0] = 30; // 冷却区间，22/14 帧连发在 UpdateAttackSystem 里触发
 		}
 
-		// ===== [2] 翻转系统 =====
-		private void UpdateFlipSystem() {
-			if (!isFlipping)
-				return;
+		// ===== 工具：前向探针/平台/下穿空间 =====
+		private bool IsSolidAhead(int dir, int probe = 8) {
+			float offsetX = dir == 1 ? NPC.width / 2f : -(NPC.width / 2f) - probe;
+			Vector2 probePos = new Vector2(NPC.Center.X + offsetX, NPC.position.Y);
 
-			flipProgress += 0.05f;
+			if (Collision.SolidCollision(probePos, probe, NPC.height))
+				return true;
 
-			// 3D翻转效果
-			float angle = flipDirection * MathHelper.Pi * flipProgress;
-			customScale.X = (float)Math.Abs(Math.Cos(angle));
-			customScale.Y = 1f + 0.2f * (float)Math.Sin(angle);
-			NPC.rotation = angle;
-
-			// 翻转过半时改变实际方向
-			if (flipProgress > 0.5f) {
-				NPC.direction = flipDirection;
-				NPC.spriteDirection = flipDirection;
-			}
-
-			// 动画结束
-			if (flipProgress >= 1f) {
-				isFlipping = false;
-				customScale = Vector2.One;
-				NPC.rotation = 0f;
-			}
+			Point p1 = probePos.ToTileCoordinates();
+			Point p2 = (probePos + new Vector2(probe, NPC.height)).ToTileCoordinates();
+			for (int x = p1.X; x <= p2.X; x++)
+				for (int y = p1.Y; y <= p2.Y; y++) {
+					if (!WorldGen.InWorld(x, y, 1))
+						continue;
+					Tile t = Framing.GetTileSafely(x, y);
+					if (t.HasTile && (Main.tileSolid[t.TileType] || TileID.Sets.Platforms[t.TileType]))
+						return true;
+				}
+			return false;
 		}
 
-		// ===== [3] 移动系统 =====
-		private void UpdateMovement() {
-			if (isFlipping)
-				return; // 翻转期间暂停移动
-
-			Player player = Main.player[targetPlayer];
-
-			// 初始高度设为玩家上方1/3屏幕处
-			targetHeight = player.position.Y - targetOffset;
-			// 升降阶段（
-			if (NPC.position.Y > targetHeight) {
-				NPC.velocity.X = moveSpeed * NPC.direction;
-				NPC.velocity.Y = -moveSpeed * 0.5f;
-				NPC.noTileCollide = true;
-			}
-			else if (NPC.position.Y < targetHeight) {
-				NPC.velocity.X = moveSpeed * NPC.direction;
-				NPC.velocity.Y = moveSpeed * 0.5f;
-				NPC.noTileCollide = true;
-			}
-			// 巡航阶段
-			NPC.noTileCollide = true;
-			NPC.velocity.X = moveSpeed * NPC.direction;
-
-			// 边缘检测
-			float screenLeft = Main.screenPosition.X + Main.screenWidth / 6;
-			float screenRight = Main.screenPosition.X + Main.screenWidth * 5 / 6 - NPC.width;
-
-			bool shouldTurn = (NPC.position.X < screenLeft && NPC.velocity.X < 0) ||
-							 (NPC.position.X > screenRight && NPC.velocity.X > 0) ||
-							 (Vector2.Distance(lastPosition, NPC.position) < 0.5f && ++stuckTimer > 180);
-
-			lastPosition = NPC.position;
-			if (shouldTurn == true) {
-				NPC.direction *= -1;
-				NPC.spriteDirection *= -1;
-			}
+		private bool IsStandingOnPlatform() {
+			Rectangle feet = new Rectangle((int)NPC.position.X, (int)NPC.Bottom.Y, NPC.width, 2);
+			Point p1 = new Vector2(feet.Left, feet.Top).ToTileCoordinates();
+			Point p2 = new Vector2(feet.Right, feet.Bottom).ToTileCoordinates();
+			for (int x = p1.X; x <= p2.X; x++)
+				for (int y = p1.Y; y <= p2.Y; y++) {
+					if (!WorldGen.InWorld(x, y, 1))
+						continue;
+					Tile t = Framing.GetTileSafely(x, y);
+					if (t.HasTile && TileID.Sets.Platforms[t.TileType])
+						return true;
+				}
+			return false;
 		}
 
-		// ===== [4] 动画系统 =====
+		private bool IsDropSpaceClear(int dropPixels) {
+			Vector2 probePos = new Vector2(NPC.position.X, NPC.position.Y + 2);
+			int w = NPC.width;
+			int h = Math.Max(2, dropPixels);
+			if (Collision.SolidCollision(probePos, w, h))
+				return false;
+
+			Point p1 = probePos.ToTileCoordinates();
+			Point p2 = (probePos + new Vector2(w, h)).ToTileCoordinates();
+			for (int x = p1.X; x <= p2.X; x++)
+				for (int y = p1.Y; y <= p2.Y; y++) {
+					if (!WorldGen.InWorld(x, y, 1))
+						continue;
+					Tile t = Framing.GetTileSafely(x, y);
+					if (t.HasTile && Main.tileSolid[t.TileType] && !TileID.Sets.Platforms[t.TileType])
+						return false;
+				}
+			return true;
+		}
+
+		// ===== 动画 =====
 		public override void FindFrame(int frameHeight) {
 			NPC.frame.Y = frame * frameHeight;
 		}
 
 		private void UpdateAnimation() {
-			// 攻击/翻转期间不更新常规动画
-			if (isInAttackPhase || isFlipping)
+			if (isInAttackPhase)
 				return;
 
 			if (++frameCounter >= 7) {
@@ -259,108 +345,48 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			}
 		}
 
-		// ===== [5] 音效系统 =====
-
-		private void UpdateEngineSound() {
-			if (!SoundEngine.TryGetActiveSound(engineSoundSlot, out var activeSound) || !activeSound.IsPlaying) {
-				engineSoundSlot = SoundEngine.PlaySound(
-					SoundID.Item66 with {
-						Volume = 0.4f,
-						Pitch = enginePitch,
-						MaxInstances = 3
-					},
-					NPC.Center);
-			}
-			else {
-				activeSound.Position = NPC.Center;
-				activeSound.Pitch = enginePitch;
-			}
-		}
-
-		// ===== [6] 伤害系统 =====
-		public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers) {
-			if (SpellDamageConfig.SpellProjectiles.Contains(projectile.type)) {
-				// 法术伤害无视护甲
-				modifiers.ScalingArmorPenetration += 1f;
-				// 0.95倍伤害减免
-				modifiers.FinalDamage *= 0.95f;
-			}
-		}
-
-		// ===== [7] 绘制系统 =====
+		// ===== 绘制 =====
 		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
 			Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
 			Vector2 drawPos = NPC.Center - screenPos;
 			SpriteEffects effects = NPC.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
-			// 应用自定义变换
 			Main.EntitySpriteDraw(
 				texture,
 				drawPos,
 				NPC.frame,
 				drawColor,
-				NPC.rotation,
+				0f,
 				NPC.frame.Size() * 0.5f,
-				customScale,
+				1f,
 				effects,
 				0);
 
 			return false;
 		}
-		private void CheckHeightDanger() {
-			Player player = Main.player[targetPlayer];
-			float screenHeight = Main.screenHeight;
 
-			// 计算相对高度差（单位：像素）
-			float heightDiff = NPC.position.Y - player.position.Y;
-
-			// 超过警戒高度
-			if (heightDiff < -screenHeight * MaxAllowedHeight) {
+		// ===== 高度越界自毁（可选） =====
+		private void CheckHeightDanger(Player player) {
+			float screenH = Main.screenHeight;
+			float heightDiff = NPC.position.Y - player.position.Y; // 负值：在玩家上方
+			if (heightDiff < -screenH * MaxAllowedHeight) {
 				if (++heightAlarmTimer > MaxHeightTime) {
 					DespawnWithEffect();
-					return;
 				}
 			}
 			else {
-				heightAlarmTimer = Math.Max(0, heightAlarmTimer - 2); // 恢复计数
+				heightAlarmTimer = Math.Max(0, heightAlarmTimer - 2);
 			}
 		}
+
 		private void DespawnWithEffect() {
-			// 粒子效果
 			for (int i = 0; i < 30; i++) {
-				Dust.NewDustPerfect(
-					NPC.Center,
-					DustID.Smoke,
-					Main.rand.NextVector2Circular(3, 3),
-					100, Color.Gray, 1.5f
-				);
+				Dust.NewDustPerfect(NPC.Center, DustID.Smoke,
+					Main.rand.NextVector2Circular(3, 3), 100, Color.Gray, 1.5f);
 			}
-
-			// 音效
 			SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 0.7f }, NPC.Center);
-
-			// 实际刷出
 			NPC.active = false;
 			NPC.netUpdate = true;
-
-			// 重生逻辑（可选）
-		}
-		public override void OnKill() {
-			// 停止所有音效
-
-			// 爆炸效果
-			SoundEngine.PlaySound(SoundID.Item14, NPC.Center);
-			for (int i = 0; i < 10; i++) {
-				Dust.NewDust(NPC.position, NPC.width, NPC.height,
-					DustID.Smoke, Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-3f, 3f));
-			}
-		}
-		public override float SpawnChance(NPCSpawnInfo spawnInfo) {
-			return SpawnCondition.OverworldDaySlime.Chance * 0.3f;
-		}
-		public override void ModifyNPCLoot(NPCLoot npcLoot) {
-			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OrironShard>(), ModContent.GetInstance<Dropconfig>().DropDrone1, 2, 5));
-			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Ester>(), ModContent.GetInstance<Dropconfig>().DropDrone2*2, 1, 2));
 		}
 	}
 }

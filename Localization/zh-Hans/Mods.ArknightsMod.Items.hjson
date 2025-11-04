@@ -1752,3 +1752,43 @@ OriginiumIngot: {
 	DisplayName: 源石锭
 	// Tooltip: ""
 }
+
+SolidColorLowSofa: {
+	// DisplayName: Solid Color Low Sofa
+	// Tooltip: ""
+}
+
+ClearBlackTV: {
+	// DisplayName: Clear Black T V
+	// Tooltip: ""
+}
+
+GrayFiberRug: {
+	// DisplayName: Gray Fiber Rug
+	// Tooltip: ""
+}
+
+MatteBlackFloorTile: {
+	// DisplayName: Matte Black Floor Tile
+	// Tooltip: ""
+}
+
+MinimalBlackClock: {
+	// DisplayName: Minimal Black Clock
+	// Tooltip: ""
+}
+
+PorcelainBed: {
+	// DisplayName: Porcelain Bed
+	// Tooltip: ""
+}
+
+PorcelainNightstand: {
+	// DisplayName: Porcelain Nightstand
+	// Tooltip: ""
+}
+
+SolidCheckeredBookcase: {
+	// DisplayName: Solid Checkered Bookcase
+	// Tooltip: ""
+}
