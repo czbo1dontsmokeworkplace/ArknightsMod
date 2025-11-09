@@ -20,10 +20,13 @@
     <None Remove="Content\Items\BattleRecords\TacticalBattleRecord.png" />
   </ItemGroup>
   <ItemGroup>
+    <AdditionalFiles Remove="UI\**" />
+    <Compile Remove="UI\**" />
+    <EmbeddedResource Remove="UI\**" />
+    <None Remove="UI\**" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Common\UI\BattleRecord\Images\" />
-    <Folder Include="UI\" />
     <None Remove="Assets\Effects\AACTSTG3RBFence.fx" />
     <None Remove="Assets\Effects\AACTSTG3RBNoise.fx" />
     <None Remove="Assets\Effects\CollapesdExplosion.fx" />
