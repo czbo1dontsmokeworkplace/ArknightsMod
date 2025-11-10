@@ -249,7 +249,406 @@ TexalterDefault: {
 	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 }
 
-# Material
+BeagleDefault: {
+	DisplayName: Beagle Default
+	Tooltip: ""
+}
+
+CivilightEternaDefault: {
+	DisplayName: Civilight Eterna Default
+	Tooltip: ""
+}
+
+ExusiaiDefault: {
+	DisplayName: Exusiai Default
+	Tooltip: ""
+}
+
+DorothyDefault: {
+	DisplayName: Dorothy Default
+	Tooltip: ""
+}
+
+FartoothDefault: {
+	DisplayName: Fartooth Default
+	Tooltip: ""
+}
+
+HazeDefault: {
+	DisplayName: Haze Default
+	Tooltip: ""
+}
+
+KaltsitDefault: {
+	DisplayName: Kaltsit Default
+	Tooltip: ""
+}
+
+KroosAlterDefault: {
+	DisplayName: Kroos Alter Default
+	Tooltip: ""
+}
+
+LaPlumaDefault: {
+	DisplayName: La Pluma Default
+	Tooltip: ""
+}
+
+LingDefault: {
+	DisplayName: Ling Default
+	Tooltip: ""
+}
+
+ManticoreDefault: {
+	DisplayName: Manticore Default
+	Tooltip: ""
+}
+
+MostimaDefault: {
+	DisplayName: Mostima Default
+	Tooltip: ""
+}
+
+MelaniteDefault: {
+	DisplayName: Melanite Default
+	Tooltip: ""
+}
+
+RosmontisDefault: {
+	DisplayName: Rosmontis Default
+	Tooltip: ""
+}
+
+SariaDefault: {
+	DisplayName: Saria Default
+	Tooltip: ""
+}
+
+SkadiDefault: {
+	DisplayName: Skadi Default
+	Tooltip: ""
+}
+
+SurtrDefault: {
+	DisplayName: Surtr Default
+	Tooltip: ""
+}
+
+WarfarinDefault: {
+	DisplayName: Warfarin Default
+	Tooltip: ""
+}
+
+UtageDefault: {
+	DisplayName: Utage Default
+	Tooltip: ""
+}
+
+LapplandDefault: {
+	DisplayName: Lappland Default
+	Tooltip: ""
+}
+
+BeagleBody: {
+	DisplayName: Beagle Body
+	Tooltip: ""
+}
+
+BeagleHead: {
+	DisplayName: Beagle Head
+	Tooltip: ""
+}
+
+BeagleLegs: {
+	DisplayName: Beagle Legs
+	Tooltip: ""
+}
+
+CivilightEternaBody: {
+	DisplayName: Civilight Eterna Body
+	Tooltip: ""
+}
+
+CivilightEternaHead: {
+	DisplayName: Civilight Eterna Head
+	Tooltip: ""
+}
+
+CivilightEternaLegs: {
+	DisplayName: Civilight Eterna Legs
+	Tooltip: ""
+}
+
+ExusiaiBody: {
+	DisplayName: Exusiai Body
+	Tooltip: ""
+}
+
+ExusiaiHead: {
+	DisplayName: Exusiai Head
+	Tooltip: ""
+}
+
+ExusiaiLegs: {
+	DisplayName: Exusiai Legs
+	Tooltip: ""
+}
+
+DorothyBody: {
+	DisplayName: Dorothy Body
+	Tooltip: ""
+}
+
+DorothyHead: {
+	DisplayName: Dorothy Head
+	Tooltip: ""
+}
+
+DorothyLegs: {
+	DisplayName: Dorothy Legs
+	Tooltip: ""
+}
+
+FartoothBody: {
+	DisplayName: Fartooth Body
+	Tooltip: ""
+}
+
+FartoothHead: {
+	DisplayName: Fartooth Head
+	Tooltip: ""
+}
+
+FartoothLegs: {
+	DisplayName: Fartooth Legs
+	Tooltip: ""
+}
+
+HazeBody: {
+	DisplayName: Haze Body
+	Tooltip: ""
+}
+
+HazeHead: {
+	DisplayName: Haze Head
+	Tooltip: ""
+}
+
+HazeLegs: {
+	DisplayName: Haze Legs
+	Tooltip: ""
+}
+
+KaltsitBody: {
+	DisplayName: Kaltsit Body
+	Tooltip: ""
+}
+
+KaltsitHead: {
+	DisplayName: Kaltsit Head
+	Tooltip: ""
+}
+
+KaltsitLegs: {
+	DisplayName: Kaltsit Legs
+	Tooltip: ""
+}
+
+KroosAlterBody: {
+	DisplayName: Kroos Alter's outfit (Body)
+	Tooltip: ""
+}
+
+KroosAlterHead: {
+	DisplayName: Kroos Alter's outfit (Head)
+	Tooltip: ""
+}
+
+KroosAlterLegs: {
+	DisplayName: Kroos Alter's outfit (Legs)
+	Tooltip: ""
+}
+
+LaPlumaBody: {
+	DisplayName: La Pluma Body
+	Tooltip: ""
+}
+
+LaPlumaHead: {
+	DisplayName: La Pluma Head
+	Tooltip: ""
+}
+
+LaPlumaLegs: {
+	DisplayName: La Pluma Legs
+	Tooltip: ""
+}
+
+LingBody: {
+	DisplayName: Ling Body
+	Tooltip: ""
+}
+
+LingHead: {
+	DisplayName: Ling Head
+	Tooltip: ""
+}
+
+LingLegs: {
+	DisplayName: Ling Legs
+	Tooltip: ""
+}
+
+ManticoreBody: {
+	DisplayName: Manticore Body
+	Tooltip: ""
+}
+
+ManticoreHead: {
+	DisplayName: Manticore Head
+	Tooltip: ""
+}
+
+ManticoreLegs: {
+	DisplayName: Manticore Legs
+	Tooltip: ""
+}
+
+MostimaBody: {
+	DisplayName: Mostima Body
+	Tooltip: ""
+}
+
+MostimaHead: {
+	DisplayName: Mostima Head
+	Tooltip: ""
+}
+
+MostimaLegs: {
+	DisplayName: Mostima Legs
+	Tooltip: ""
+}
+
+MelaniteBody: {
+	DisplayName: Melanite Body
+	Tooltip: ""
+}
+
+MelaniteHead: {
+	DisplayName: Melanite Head
+	Tooltip: ""
+}
+
+MelaniteLegs: {
+	DisplayName: Melanite Legs
+	Tooltip: ""
+}
+
+RosmontisBody: {
+	DisplayName: Rosmontis Body
+	Tooltip: ""
+}
+
+RosmontisHead: {
+	DisplayName: Rosmontis Head
+	Tooltip: ""
+}
+
+RosmontisLegs: {
+	DisplayName: Rosmontis Legs
+	Tooltip: ""
+}
+
+SariaBody: {
+	DisplayName: Saria Body
+	Tooltip: ""
+}
+
+SariaHead: {
+	DisplayName: Saria Head
+	Tooltip: ""
+}
+
+SariaLegs: {
+	DisplayName: Saria Legs
+	Tooltip: ""
+}
+
+SkadiBody: {
+	DisplayName: Skadi Body
+	Tooltip: ""
+}
+
+SkadiHead: {
+	DisplayName: Skadi Head
+	Tooltip: ""
+}
+
+SkadiLegs: {
+	DisplayName: Skadi Legs
+	Tooltip: ""
+}
+
+SurtrBody: {
+	DisplayName: Surtr Body
+	Tooltip: ""
+}
+
+SurtrHead: {
+	DisplayName: Surtr Head
+	Tooltip: ""
+}
+
+SurtrLegs: {
+	DisplayName: Surtr Legs
+	Tooltip: ""
+}
+
+WarfarinBody: {
+	DisplayName: Warfarin Body
+	Tooltip: ""
+}
+
+WarfarinHead: {
+	DisplayName: Warfarin Head
+	Tooltip: ""
+}
+
+WarfarinLegs: {
+	DisplayName: Warfarin Legs
+	Tooltip: ""
+}
+
+UtageBody: {
+	DisplayName: Utage Body
+	Tooltip: ""
+}
+
+UtageHead: {
+	DisplayName: Utage Head
+	Tooltip: ""
+}
+
+UtageLegs: {
+	DisplayName: Utage Legs
+	Tooltip: ""
+}
+
+LapplandBody: {
+	DisplayName: Lappland Body
+	Tooltip: ""
+}
+
+LapplandHead: {
+	DisplayName: Lappland Head
+	Tooltip: ""
+}
+
+LapplandLegs: {
+	DisplayName: Lappland Legs
+	Tooltip: ""
+}
+
 OrirockCluster: {
 	DisplayName: Orirock Cluster
 	Tooltip: A conglomerate rock mined from the ground.
@@ -604,111 +1003,6 @@ RosmontisBackpack: {
 	Tooltip: ""
 }
 
-HazeBody: {
-	DisplayName: Haze Body
-	Tooltip: ""
-}
-
-HazeHead: {
-	DisplayName: Haze Head
-	Tooltip: ""
-}
-
-HazeLegs: {
-	DisplayName: Haze Legs
-	Tooltip: ""
-}
-
-MostimaBody: {
-	DisplayName: Mostima Body
-	Tooltip: ""
-}
-
-MostimaHead: {
-	DisplayName: Mostima Head
-	Tooltip: ""
-}
-
-MostimaLegs: {
-	DisplayName: Mostima Legs
-	Tooltip: ""
-}
-
-LaPlumaBody: {
-	DisplayName: La Pluma Body
-	Tooltip: ""
-}
-
-LaPlumaHead: {
-	DisplayName: La Pluma Head
-	Tooltip: ""
-}
-
-LaPlumaLegs: {
-	DisplayName: La Pluma Legs
-	Tooltip: ""
-}
-
-UtageBody: {
-	DisplayName: Utage Body
-	Tooltip: ""
-}
-
-UtageHead: {
-	DisplayName: Utage Head
-	Tooltip: ""
-}
-
-UtageLegs: {
-	DisplayName: Utage Legs
-	Tooltip: ""
-}
-
-KaltsitBody: {
-	DisplayName: Kaltsit Body
-	Tooltip: ""
-}
-
-KaltsitHead: {
-	DisplayName: Kaltsit Head
-	Tooltip: ""
-}
-
-KaltsitLegs: {
-	DisplayName: Kaltsit Legs
-	Tooltip: ""
-}
-
-ExusiaiBody: {
-	DisplayName: Exusiai Body
-	Tooltip: ""
-}
-
-ExusiaiHead: {
-	DisplayName: Exusiai Head
-	Tooltip: ""
-}
-
-ExusiaiLegs: {
-	DisplayName: Exusiai Legs
-	Tooltip: ""
-}
-
-FartoothBody: {
-	DisplayName: Fartooth Body
-	Tooltip: ""
-}
-
-FartoothHead: {
-	DisplayName: Fartooth Head
-	Tooltip: ""
-}
-
-FartoothLegs: {
-	DisplayName: Fartooth Legs
-	Tooltip: ""
-}
-
 KkdyAlterBody: {
 	DisplayName: Kkdy Alter Body
 	Tooltip: ""
@@ -721,36 +1015,6 @@ KkdyAlterHead: {
 
 KkdyAlterLegs: {
 	DisplayName: Kkdy Alter Legs
-	Tooltip: ""
-}
-
-RosmontisBody: {
-	DisplayName: Rosmontis Body
-	Tooltip: ""
-}
-
-RosmontisHead: {
-	DisplayName: Rosmontis Head
-	Tooltip: ""
-}
-
-RosmontisLegs: {
-	DisplayName: Rosmontis Legs
-	Tooltip: ""
-}
-
-ManticoreBody: {
-	DisplayName: Manticore Body
-	Tooltip: ""
-}
-
-ManticoreHead: {
-	DisplayName: Manticore Head
-	Tooltip: ""
-}
-
-ManticoreLegs: {
-	DisplayName: Manticore Legs
 	Tooltip: ""
 }
 
@@ -909,21 +1173,6 @@ FiammettaLegs: {
 	Tooltip: ""
 }
 
-MelaniteBody: {
-	DisplayName: Melanite Body
-	Tooltip: ""
-}
-
-MelaniteHead: {
-	DisplayName: Melanite Head
-	Tooltip: ""
-}
-
-MelaniteLegs: {
-	DisplayName: Melanite Legs
-	Tooltip: ""
-}
-
 WisadelBody: {
 	DisplayName: Wisadel Body
 	Tooltip: ""
@@ -951,21 +1200,6 @@ MortisHead: {
 
 MortisLegs: {
 	DisplayName: Mortis Legs
-	Tooltip: ""
-}
-
-LingBody: {
-	DisplayName: Ling Body
-	Tooltip: ""
-}
-
-LingHead: {
-	DisplayName: Ling Head
-	Tooltip: ""
-}
-
-LingLegs: {
-	DisplayName: Ling Legs
 	Tooltip: ""
 }
 
@@ -1129,51 +1363,6 @@ RAmeat: {
 	Tooltip: ""
 }
 
-SariaBody: {
-	DisplayName: Saria Body
-	Tooltip: ""
-}
-
-SariaHead: {
-	DisplayName: Saria Head
-	Tooltip: ""
-}
-
-SariaLegs: {
-	DisplayName: Saria Legs
-	Tooltip: ""
-}
-
-WarfarinBody: {
-	DisplayName: Warfarin Body
-	Tooltip: ""
-}
-
-WarfarinHead: {
-	DisplayName: Warfarin Head
-	Tooltip: ""
-}
-
-WarfarinLegs: {
-	DisplayName: Warfarin Legs
-	Tooltip: ""
-}
-
-DorothyBody: {
-	DisplayName: Dorothy Body
-	Tooltip: ""
-}
-
-DorothyHead: {
-	DisplayName: Dorothy Head
-	Tooltip: ""
-}
-
-DorothyLegs: {
-	DisplayName: Dorothy Legs
-	Tooltip: ""
-}
-
 BlackBridgeStructure: {
 	DisplayName: Black Bridge Structure
 	Tooltip: ""
@@ -1266,21 +1455,6 @@ VentilationDuctItem: {
 
 DisplayItem: {
 	DisplayName: Display Item
-	Tooltip: ""
-}
-
-SkadiBody: {
-	DisplayName: Skadi Body
-	Tooltip: ""
-}
-
-SkadiHead: {
-	DisplayName: Skadi Head
-	Tooltip: ""
-}
-
-SkadiLegs: {
-	DisplayName: Skadi Legs
 	Tooltip: ""
 }
 
@@ -1394,21 +1568,6 @@ HoundproBanner: {
 	Tooltip: ""
 }
 
-SurtrBody: {
-	DisplayName: Surtr Body
-	Tooltip: ""
-}
-
-SurtrHead: {
-	DisplayName: Surtr Head
-	Tooltip: ""
-}
-
-SurtrLegs: {
-	DisplayName: Surtr Legs
-	Tooltip: ""
-}
-
 SurtrLaevatain: {
 	DisplayName: Surtr Laevatain
 	Tooltip: ""
@@ -1421,21 +1580,6 @@ SilverAshWeapon: {
 
 DamagedDevice: {
 	DisplayName: Damaged Device
-	Tooltip: ""
-}
-
-BeagleBody: {
-	DisplayName: Beagle Body
-	Tooltip: ""
-}
-
-BeagleHead: {
-	DisplayName: Beagle Head
-	Tooltip: ""
-}
-
-BeagleLegs: {
-	DisplayName: Beagle Legs
 	Tooltip: ""
 }
 
@@ -1474,21 +1618,6 @@ LightTube: {
 	Tooltip: ""
 }
 
-CivilightEternaBody: {
-	DisplayName: Civilight Eterna Body
-	Tooltip: ""
-}
-
-CivilightEternaHead: {
-	DisplayName: Civilight Eterna Head
-	Tooltip: ""
-}
-
-CivilightEternaLegs: {
-	DisplayName: Civilight Eterna Legs
-	Tooltip: ""
-}
-
 MizukiBody: {
 	DisplayName: Mizuki Body
 	Tooltip: ""
@@ -1516,101 +1645,6 @@ ArmorSariaHead: {
 
 ArmorSariaLegs: {
 	DisplayName: Armor Saria Legs
-	Tooltip: ""
-}
-
-DorothyDefault: {
-	DisplayName: Dorothy Default
-	Tooltip: ""
-}
-
-BeagleDefault: {
-	DisplayName: Beagle Default
-	Tooltip: ""
-}
-
-CivilightEternaDefault: {
-	DisplayName: Civilight Eterna Default
-	Tooltip: ""
-}
-
-ExusiaiDefault: {
-	DisplayName: Exusiai Default
-	Tooltip: ""
-}
-
-FartoothDefault: {
-	DisplayName: Fartooth Default
-	Tooltip: ""
-}
-
-HazeDefault: {
-	DisplayName: Haze Default
-	Tooltip: ""
-}
-
-KaltsitDefault: {
-	DisplayName: Kaltsit Default
-	Tooltip: ""
-}
-
-KroosAlterDefault: {
-	DisplayName: Kroos Alter Default
-	Tooltip: ""
-}
-
-LaPlumaDefault: {
-	DisplayName: La Pluma Default
-	Tooltip: ""
-}
-
-LingDefault: {
-	DisplayName: Ling Default
-	Tooltip: ""
-}
-
-ManticoreDefault: {
-	DisplayName: Manticore Default
-	Tooltip: ""
-}
-
-MelaniteDefault: {
-	DisplayName: Melanite Default
-	Tooltip: ""
-}
-
-MostimaDefault: {
-	DisplayName: Mostima Default
-	Tooltip: ""
-}
-
-RosmontisDefault: {
-	DisplayName: Rosmontis Default
-	Tooltip: ""
-}
-
-SariaDefault: {
-	DisplayName: Saria Default
-	Tooltip: ""
-}
-
-SkadiDefault: {
-	DisplayName: Skadi Default
-	Tooltip: ""
-}
-
-SurtrDefault: {
-	DisplayName: Surtr Default
-	Tooltip: ""
-}
-
-UtageDefault: {
-	DisplayName: Utage Default
-	Tooltip: ""
-}
-
-WarfarinDefault: {
-	DisplayName: Warfarin Default
 	Tooltip: ""
 }
 

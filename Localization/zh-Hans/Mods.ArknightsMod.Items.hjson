@@ -249,7 +249,406 @@ TexalterDefault: {
 	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 }
 
-# Material
+BeagleDefault: {
+	DisplayName: 米格鲁的服饰（常规）
+	Tooltip: ""
+}
+
+CivilightEternaDefault: {
+	DisplayName: 魔王的服饰（常规）
+	Tooltip: ""
+}
+
+ExusiaiDefault: {
+	DisplayName: 能天使的服饰（常规）
+	Tooltip: ""
+}
+
+DorothyDefault: {
+	DisplayName: 多萝西的服饰（常规）
+	Tooltip: ""
+}
+
+FartoothDefault: {
+	DisplayName: 远牙的服饰（常规）
+	Tooltip: ""
+}
+
+HazeDefault: {
+	DisplayName: 夜烟的服饰（常规）
+	Tooltip: ""
+}
+
+KaltsitDefault: {
+	DisplayName: 凯尔西的服饰（常规）
+	Tooltip: ""
+}
+
+KroosAlterDefault: {
+	DisplayName: 寒芒克洛丝的服饰（常规）
+	Tooltip: ""
+}
+
+LaPlumaDefault: {
+	DisplayName: 羽毛笔的服饰（常规）
+	Tooltip: ""
+}
+
+LingDefault: {
+	DisplayName: 令的服饰（常规）
+	Tooltip: ""
+}
+
+ManticoreDefault: {
+	DisplayName: 狮蝎的服饰（常规）
+	Tooltip: ""
+}
+
+MostimaDefault: {
+	DisplayName: 莫斯提马的服饰（常规）
+	Tooltip: ""
+}
+
+MelaniteDefault: {
+	DisplayName: 玫拉的服饰（常规）
+	Tooltip: ""
+}
+
+RosmontisDefault: {
+	DisplayName: 迷迭香的服饰（常规）
+	Tooltip: ""
+}
+
+SariaDefault: {
+	DisplayName: 塞雷娅的服饰（常规）
+	Tooltip: ""
+}
+
+SkadiDefault: {
+	DisplayName: 斯卡蒂的服饰（常规）
+	Tooltip: ""
+}
+
+SurtrDefault: {
+	DisplayName: 史尔特尔的服饰（常规）
+	Tooltip: ""
+}
+
+WarfarinDefault: {
+	DisplayName: 华法琳的服饰（常规）
+	Tooltip: ""
+}
+
+UtageDefault: {
+	DisplayName: 宴的服饰（常规）
+	Tooltip: ""
+}
+
+LapplandDefault: {
+	DisplayName: 拉普兰德的服饰（常规）
+	Tooltip: ""
+}
+
+BeagleBody: {
+	DisplayName: 米格鲁的上衣
+	Tooltip: ""
+}
+
+BeagleHead: {
+	DisplayName: 米格鲁的头饰
+	Tooltip: ""
+}
+
+BeagleLegs: {
+	DisplayName: 米格鲁的裤子
+	Tooltip: ""
+}
+
+CivilightEternaBody: {
+	DisplayName: 魔王的上衣
+	Tooltip: ""
+}
+
+CivilightEternaHead: {
+	DisplayName: 魔王的头饰
+	Tooltip: ""
+}
+
+CivilightEternaLegs: {
+	DisplayName: 魔王的裤子
+	Tooltip: ""
+}
+
+ExusiaiBody: {
+	DisplayName: 能天使的上衣
+	// Tooltip: ""
+}
+
+ExusiaiHead: {
+	DisplayName: 能天使的头套
+	// Tooltip: ""
+}
+
+ExusiaiLegs: {
+	DisplayName: 能天使的下装
+	// Tooltip: ""
+}
+
+DorothyBody: {
+	DisplayName: 多萝西的上衣
+	// Tooltip: ""
+}
+
+DorothyHead: {
+	DisplayName: 多萝西的头套
+	// Tooltip: ""
+}
+
+DorothyLegs: {
+	DisplayName: 多萝西的下装
+	// Tooltip: ""
+}
+
+FartoothBody: {
+	DisplayName: 远牙的上衣
+	// Tooltip: ""
+}
+
+FartoothHead: {
+	DisplayName: 远牙的头套
+	// Tooltip: ""
+}
+
+FartoothLegs: {
+	DisplayName: 远牙的下装
+	// Tooltip: ""
+}
+
+HazeBody: {
+	DisplayName: 夜烟的上衣
+	// Tooltip: ""
+}
+
+HazeHead: {
+	DisplayName: 夜烟的头套
+	// Tooltip: ""
+}
+
+HazeLegs: {
+	DisplayName: 夜烟的下装
+	// Tooltip: ""
+}
+
+KaltsitBody: {
+	DisplayName: 凯尔希的上衣
+	// Tooltip: ""
+}
+
+KaltsitHead: {
+	DisplayName: 凯尔希的头套
+	// Tooltip: ""
+}
+
+KaltsitLegs: {
+	DisplayName: 凯尔希的下装
+	// Tooltip: ""
+}
+
+KroosAlterBody: {
+	DisplayName: 寒芒克洛丝的上衣
+	// Tooltip: ""
+}
+
+KroosAlterHead: {
+	DisplayName: 寒芒克洛丝的头套
+	// Tooltip: ""
+}
+
+KroosAlterLegs: {
+	DisplayName: 寒芒克洛丝的下装
+	// Tooltip: ""
+}
+
+LaPlumaBody: {
+	DisplayName: 羽毛笔的上衣
+	// Tooltip: ""
+}
+
+LaPlumaHead: {
+	DisplayName: 羽毛笔的头套
+	// Tooltip: ""
+}
+
+LaPlumaLegs: {
+	DisplayName: 羽毛笔的下装
+	// Tooltip: ""
+}
+
+LingBody: {
+	DisplayName: 令的上衣
+	// Tooltip: ""
+}
+
+LingHead: {
+	DisplayName: 令的头套
+	// Tooltip: ""
+}
+
+LingLegs: {
+	DisplayName: 令的下装
+	// Tooltip: ""
+}
+
+ManticoreBody: {
+	DisplayName: 狮蝎的上衣
+	// Tooltip: ""
+}
+
+ManticoreHead: {
+	DisplayName: 狮蝎的头套
+	// Tooltip: ""
+}
+
+ManticoreLegs: {
+	DisplayName: 狮蝎的下装
+	// Tooltip: ""
+}
+
+MostimaBody: {
+	DisplayName: 莫斯提马的上衣
+	// Tooltip: ""
+}
+
+MostimaHead: {
+	DisplayName: 莫斯提马的头套
+	// Tooltip: ""
+}
+
+MostimaLegs: {
+	DisplayName: 莫斯提马的下装
+	// Tooltip: ""
+}
+
+MelaniteBody: {
+	DisplayName: 玫拉的上衣
+	// Tooltip: ""
+}
+
+MelaniteHead: {
+	DisplayName: 玫拉的头套
+	// Tooltip: ""
+}
+
+MelaniteLegs: {
+	DisplayName: 玫拉的下装
+	// Tooltip: ""
+}
+
+RosmontisBody: {
+	DisplayName: 迷迭香的上衣
+	// Tooltip: ""
+}
+
+RosmontisHead: {
+	DisplayName: 迷迭香的头套
+	// Tooltip: ""
+}
+
+RosmontisLegs: {
+	DisplayName: 迷迭香的下装
+	// Tooltip: ""
+}
+
+SariaBody: {
+	DisplayName: 赛雷娅的上衣
+	// Tooltip: ""
+}
+
+SariaHead: {
+	DisplayName: 赛雷娅的头套
+	// Tooltip: ""
+}
+
+SariaLegs: {
+	DisplayName: 赛雷娅的下装
+	// Tooltip: ""
+}
+
+SkadiBody: {
+	DisplayName: 斯卡蒂的上衣
+	// Tooltip: ""
+}
+
+SkadiHead: {
+	DisplayName: 斯卡蒂的头套
+	// Tooltip: ""
+}
+
+SkadiLegs: {
+	DisplayName: 斯卡蒂的下装
+	// Tooltip: ""
+}
+
+SurtrBody: {
+	DisplayName: 史尔特尔的上衣
+	// Tooltip: ""
+}
+
+SurtrHead: {
+	DisplayName: 史尔特尔的头套
+	// Tooltip: ""
+}
+
+SurtrLegs: {
+	DisplayName: 史尔特尔的下装
+	// Tooltip: ""
+}
+
+WarfarinBody: {
+	DisplayName: 华法琳的上衣
+	// Tooltip: ""
+}
+
+WarfarinHead: {
+	DisplayName: 华法琳的头套
+	// Tooltip: ""
+}
+
+WarfarinLegs: {
+	DisplayName: 华法琳的下装
+	// Tooltip: ""
+}
+
+UtageBody: {
+	DisplayName: 宴的上衣
+	// Tooltip: ""
+}
+
+UtageHead: {
+	DisplayName: 宴的头套
+	// Tooltip: ""
+}
+
+UtageLegs: {
+	DisplayName: 宴的下装
+	// Tooltip: ""
+}
+
+LapplandBody: {
+	DisplayName: 拉普兰德的上衣
+	// Tooltip: ""
+}
+
+LapplandHead: {
+	DisplayName: 拉普兰德的头套
+	// Tooltip: ""
+}
+
+LapplandLegs: {
+	DisplayName: 拉普兰德的下装
+	// Tooltip: ""
+}
+
 OrirockCluster: {
 	DisplayName: 固源岩组
 	Tooltip: 从地表开采出的岩石固块组。
@@ -618,111 +1017,6 @@ RosmontisBackpack: {
 	// Tooltip: ""
 }
 
-HazeBody: {
-	DisplayName: 夜烟的上衣
-	// Tooltip: ""
-}
-
-HazeHead: {
-	DisplayName: 夜烟的头套
-	// Tooltip: ""
-}
-
-HazeLegs: {
-	DisplayName: 夜烟的下装
-	// Tooltip: ""
-}
-
-MostimaBody: {
-	DisplayName: 莫斯提马的上衣
-	// Tooltip: ""
-}
-
-MostimaHead: {
-	DisplayName: 莫斯提马的头套
-	// Tooltip: ""
-}
-
-MostimaLegs: {
-	DisplayName: 莫斯提马的下装
-	// Tooltip: ""
-}
-
-LaPlumaBody: {
-	DisplayName: 羽毛笔的上衣
-	// Tooltip: ""
-}
-
-LaPlumaHead: {
-	DisplayName: 羽毛笔的头套
-	// Tooltip: ""
-}
-
-LaPlumaLegs: {
-	DisplayName: 羽毛笔的下装
-	// Tooltip: ""
-}
-
-UtageBody: {
-	DisplayName: 宴的上衣
-	// Tooltip: ""
-}
-
-UtageHead: {
-	DisplayName: 宴的头套
-	// Tooltip: ""
-}
-
-UtageLegs: {
-	DisplayName: 宴的下装
-	// Tooltip: ""
-}
-
-KaltsitBody: {
-	DisplayName: 凯尔希的上衣
-	// Tooltip: ""
-}
-
-KaltsitHead: {
-	DisplayName: 凯尔希的头套
-	// Tooltip: ""
-}
-
-KaltsitLegs: {
-	DisplayName: 凯尔希的下装
-	// Tooltip: ""
-}
-
-ExusiaiBody: {
-	DisplayName: 能天使的上衣
-	// Tooltip: ""
-}
-
-ExusiaiHead: {
-	DisplayName: 能天使的头套
-	// Tooltip: ""
-}
-
-ExusiaiLegs: {
-	DisplayName: 能天使的下装
-	// Tooltip: ""
-}
-
-FartoothBody: {
-	DisplayName: 远牙的上衣
-	// Tooltip: ""
-}
-
-FartoothHead: {
-	DisplayName: 远牙的头套
-	// Tooltip: ""
-}
-
-FartoothLegs: {
-	DisplayName: 远牙的下装
-	// Tooltip: ""
-}
-
 KkdyAlterBody: {
 	DisplayName: 寒芒克洛丝的上衣
 	// Tooltip: ""
@@ -735,36 +1029,6 @@ KkdyAlterHead: {
 
 KkdyAlterLegs: {
 	DisplayName: 寒芒克洛丝的下装
-	// Tooltip: ""
-}
-
-RosmontisBody: {
-	DisplayName: 迷迭香的上衣
-	// Tooltip: ""
-}
-
-RosmontisHead: {
-	DisplayName: 迷迭香的头套
-	// Tooltip: ""
-}
-
-RosmontisLegs: {
-	DisplayName: 迷迭香的下装
-	// Tooltip: ""
-}
-
-ManticoreBody: {
-	DisplayName: 狮蝎的上衣
-	// Tooltip: ""
-}
-
-ManticoreHead: {
-	DisplayName: 狮蝎的头套
-	// Tooltip: ""
-}
-
-ManticoreLegs: {
-	DisplayName: 狮蝎的下装
 	// Tooltip: ""
 }
 
@@ -984,21 +1248,6 @@ FiammettaLegs: {
 	// Tooltip: ""
 }
 
-MelaniteBody: {
-	DisplayName: 玫拉的上衣
-	// Tooltip: ""
-}
-
-MelaniteHead: {
-	DisplayName: 玫拉的头套
-	// Tooltip: ""
-}
-
-MelaniteLegs: {
-	DisplayName: 玫拉的下装
-	// Tooltip: ""
-}
-
 WisadelBody: {
 	DisplayName: 维什戴尔的上衣
 	// Tooltip: ""
@@ -1026,21 +1275,6 @@ MortisHead: {
 
 MortisLegs: {
 	DisplayName: 若叶睦的下装
-	// Tooltip: ""
-}
-
-LingBody: {
-	DisplayName: 令的上衣
-	// Tooltip: ""
-}
-
-LingHead: {
-	DisplayName: 令的头套
-	// Tooltip: ""
-}
-
-LingLegs: {
-	DisplayName: 令的下装
 	// Tooltip: ""
 }
 
@@ -1208,51 +1442,6 @@ RAmeat: {
 	Tooltip: ""
 }
 
-SariaBody: {
-	DisplayName: 赛雷娅的上衣
-	// Tooltip: ""
-}
-
-SariaHead: {
-	DisplayName: 赛雷娅的头套
-	// Tooltip: ""
-}
-
-SariaLegs: {
-	DisplayName: 赛雷娅的下装
-	// Tooltip: ""
-}
-
-WarfarinBody: {
-	DisplayName: 华法琳的上衣
-	// Tooltip: ""
-}
-
-WarfarinHead: {
-	DisplayName: 华法琳的头套
-	// Tooltip: ""
-}
-
-WarfarinLegs: {
-	DisplayName: 华法琳的下装
-	// Tooltip: ""
-}
-
-DorothyBody: {
-	DisplayName: 多萝西的上衣
-	// Tooltip: ""
-}
-
-DorothyHead: {
-	DisplayName: 多萝西的头套
-	// Tooltip: ""
-}
-
-DorothyLegs: {
-	DisplayName: 多萝西的下装
-	// Tooltip: ""
-}
-
 BlackBridgeStructure: {
 	DisplayName: 黑舰桥块
 	// Tooltip: ""
@@ -1345,21 +1534,6 @@ VentilationDuctItem: {
 
 DisplayItem: {
 	DisplayName: 显示屏
-	// Tooltip: ""
-}
-
-SkadiBody: {
-	DisplayName: 斯卡蒂的上衣
-	// Tooltip: ""
-}
-
-SkadiHead: {
-	DisplayName: 斯卡蒂的头套
-	// Tooltip: ""
-}
-
-SkadiLegs: {
-	DisplayName: 斯卡蒂的下装
 	// Tooltip: ""
 }
 
@@ -1518,21 +1692,6 @@ HoundproBanner: {
 	Tooltip: ""
 }
 
-SurtrBody: {
-	DisplayName: 史尔特尔的上衣
-	// Tooltip: ""
-}
-
-SurtrHead: {
-	DisplayName: 史尔特尔的头套
-	// Tooltip: ""
-}
-
-SurtrLegs: {
-	DisplayName: 史尔特尔的下装
-	// Tooltip: ""
-}
-
 SurtrLaevatain: {
 	DisplayName: 史尔特尔的莱万汀
 	Tooltip: 未完成的武器
@@ -1546,21 +1705,6 @@ SilverAshWeapon: {
 DamagedDevice: {
 	DisplayName: 破损装置
 	Tooltip: 一些残破的装置
-}
-
-BeagleBody: {
-	// DisplayName: Beagle Body
-	// Tooltip: ""
-}
-
-BeagleHead: {
-	// DisplayName: Beagle Head
-	// Tooltip: ""
-}
-
-BeagleLegs: {
-	// DisplayName: Beagle Legs
-	// Tooltip: ""
 }
 
 ArmorBeagleLegs: {
@@ -1598,21 +1742,6 @@ LightTube: {
 	// Tooltip: ""
 }
 
-CivilightEternaBody: {
-	// DisplayName: Civilight Eterna Body
-	// Tooltip: ""
-}
-
-CivilightEternaHead: {
-	// DisplayName: Civilight Eterna Head
-	// Tooltip: ""
-}
-
-CivilightEternaLegs: {
-	// DisplayName: Civilight Eterna Legs
-	// Tooltip: ""
-}
-
 MizukiBody: {
 	// DisplayName: Mizuki Body
 	// Tooltip: ""
@@ -1640,101 +1769,6 @@ ArmorSariaHead: {
 
 ArmorSariaLegs: {
 	// DisplayName: Armor Saria Legs
-	// Tooltip: ""
-}
-
-DorothyDefault: {
-	// DisplayName: Dorothy Default
-	// Tooltip: ""
-}
-
-BeagleDefault: {
-	// DisplayName: Beagle Default
-	// Tooltip: ""
-}
-
-CivilightEternaDefault: {
-	// DisplayName: Civilight Eterna Default
-	// Tooltip: ""
-}
-
-ExusiaiDefault: {
-	// DisplayName: Exusiai Default
-	// Tooltip: ""
-}
-
-FartoothDefault: {
-	// DisplayName: Fartooth Default
-	// Tooltip: ""
-}
-
-HazeDefault: {
-	// DisplayName: Haze Default
-	// Tooltip: ""
-}
-
-KaltsitDefault: {
-	// DisplayName: Kaltsit Default
-	// Tooltip: ""
-}
-
-KroosAlterDefault: {
-	// DisplayName: Kroos Alter Default
-	// Tooltip: ""
-}
-
-LaPlumaDefault: {
-	// DisplayName: La Pluma Default
-	// Tooltip: ""
-}
-
-LingDefault: {
-	// DisplayName: Ling Default
-	// Tooltip: ""
-}
-
-ManticoreDefault: {
-	// DisplayName: Manticore Default
-	// Tooltip: ""
-}
-
-MelaniteDefault: {
-	// DisplayName: Melanite Default
-	// Tooltip: ""
-}
-
-MostimaDefault: {
-	// DisplayName: Mostima Default
-	// Tooltip: ""
-}
-
-RosmontisDefault: {
-	// DisplayName: Rosmontis Default
-	// Tooltip: ""
-}
-
-SariaDefault: {
-	// DisplayName: Saria Default
-	// Tooltip: ""
-}
-
-SkadiDefault: {
-	// DisplayName: Skadi Default
-	// Tooltip: ""
-}
-
-SurtrDefault: {
-	// DisplayName: Surtr Default
-	// Tooltip: ""
-}
-
-UtageDefault: {
-	// DisplayName: Utage Default
-	// Tooltip: ""
-}
-
-WarfarinDefault: {
-	// DisplayName: Warfarin Default
 	// Tooltip: ""
 }
 

@@ -96,7 +96,13 @@ Cannot: {
 		Princess_LovesNPC: 我喜欢 {NPCName}。
 	}
 
+	Buttons: {
+		Shop: 商店
+		Touch: 摸一下
+	}
+
 	// Census.SpawnCondition: Conditions unknown
 }
 
 LeporibeastShorthorn.DisplayName: 小角跳兽
+// Cragpincer.DisplayName: Cragpincer

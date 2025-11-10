@@ -96,7 +96,13 @@ Cannot: {
 		Princess_LovesNPC: I like {NPCName}.
 	}
 
+	Buttons: {
+		Shop: Shop
+		Touch: TouchGoods
+	}
+
 	Census.SpawnCondition: Conditions unknown
 }
 
 LeporibeastShorthorn.DisplayName: Leporibeast Shorthorn
+Cragpincer.DisplayName: Cragpincer

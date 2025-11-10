@@ -264,22 +264,30 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		public override void AddShops() {
 			var npcShop = new NPCShop(Type, ShopName[0])
 				.Add(new Item(ModContent.ItemType<Items.Material.Polyketon>()) {
-					shopCustomPrice = 30,
+					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
 				.Add(new Item(ModContent.ItemType<Items.Material.Oriron>()) {
-					shopCustomPrice = 30,
+					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
 				.Add(new Item(ModContent.ItemType<Items.Material.Sugar>()) {
-					shopCustomPrice = 30,
+					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
 				.Add(new Item(ModContent.ItemType<Items.Material.Device>()) {
-					shopCustomPrice = 30,
+					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
 				.Add(new Item(ModContent.ItemType<Items.Material.Polyester>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<Items.Placeable.ManganeseOre>()) {
+					shopCustomPrice = 30,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<Items.Placeable.Grindstone>()) {
 					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
