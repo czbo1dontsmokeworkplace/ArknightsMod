@@ -21,7 +21,7 @@ namespace ArknightsMod.Content.Items.Material
 			Item.width = 32;
 			Item.maxStack = Item.CommonMaxStack;
 			Item.material = true;
-			Item.value = Item.sellPrice(5, 0, 0, 00);
+			Item.value = Item.sellPrice(0, 2, 0, 00);
 		}
 	}
 }

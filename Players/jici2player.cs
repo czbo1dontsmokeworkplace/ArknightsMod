@@ -35,7 +35,7 @@ namespace ArknightsMod.Players
 			}
 			if (Main.myPlayer != Player.whoAmI)
 				return;  // 只处理本地玩家
-			bool isHoldingTargetWeapon = Player.HeldItem.type == ModContent.ItemType<WuQi_Item_JiCi>();
+			bool isHoldingTargetWeapon = Player.HeldItem.type == ModContent.ItemType<ThornsWeapon>();
 			if (!isHoldingTargetWeapon) {
 				Player.GetModPlayer<jici2player>().JiCi2 = false;
 			}
@@ -47,7 +47,7 @@ namespace ArknightsMod.Players
         {
             if (JiCi2 && JiCi2_JSQ == 0)
             {
-                float js = Player.HeldItem.type == ModContent.ItemType<WuQi_Item_JiCi>() ? 1.6f : .8f;
+                float js = Player.HeldItem.type == ModContent.ItemType<ThornsWeapon>() ? 1.6f : .8f;
                 JiCi2_JSQ = 1;
                 Vector2 velocity = (Main.MouseWorld - Player.Center).SafeNormalize(Vector2.Zero) * 10f;
 				SoundStyle SoundStyle1 = new SoundStyle("ArknightsMod/Sounds/JiCi2");
@@ -60,7 +60,7 @@ namespace ArknightsMod.Players
         {
             if (JiCi2 && JiCi2_JSQ == 0)
             {
-                float js = Player.HeldItem.type == ModContent.ItemType<WuQi_Item_JiCi>() ? 1.6f : .8f;
+                float js = Player.HeldItem.type == ModContent.ItemType<ThornsWeapon>() ? 1.6f : .8f;
                 JiCi2_JSQ = 1;
                 Vector2 velocity = (Main.MouseWorld - Player.Center).SafeNormalize(Vector2.Zero) * 10f;
 				SoundStyle SoundStyle1 = new SoundStyle("ArknightsMod/Sounds/JiCi2");

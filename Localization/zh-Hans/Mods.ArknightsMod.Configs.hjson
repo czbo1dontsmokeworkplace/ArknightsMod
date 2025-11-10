@@ -104,6 +104,26 @@ Dropconfig: {
 		Label: 小角跳兽的圆圆肉片掉落率
 		Tooltip: 数值越小，掉落概率越大，数值为1时必定掉落此物
 	}
+
+	DropAcidOgSlug1: {
+		// Label: Drop Acid Og Slug1
+		// Tooltip: ""
+	}
+
+	DropAcidOgSlug2: {
+		// Label: Drop Acid Og Slug2
+		// Tooltip: ""
+	}
+
+	DropDrone1: {
+		// Label: Drop Drone1
+		// Tooltip: ""
+	}
+
+	DropDrone2: {
+		// Label: Drop Drone2
+		// Tooltip: ""
+	}
 }
 
 MonsterConfig: {

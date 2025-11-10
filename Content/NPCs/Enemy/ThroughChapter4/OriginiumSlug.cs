@@ -18,7 +18,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		private int direction;
 
 		public override bool IsLoadingEnabled(Mod mod) {
-			return ModContent.GetInstance<MonsterConfig>().EnableOriginiumSlug;
+			return GetInstance<MonsterConfig>().EnableOriginiumSlug;
 		}
 
 		public override void SetStaticDefaults() {
@@ -52,7 +52,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
 
-			npcLoot.Add(ItemDropRule.Common(ItemType<Items.Placeable.OrirockCube>(), ModContent.GetInstance<Dropconfig>().DropOriginiumSlug, 1, 2));
+			npcLoot.Add(ItemDropRule.Common(ItemType<Items.Placeable.OrirockCube>(), GetInstance<Dropconfig>().DropOriginiumSlug, 1, 2));
 
 		}
 

@@ -1,4 +1,10 @@
-﻿using Terraria;
+﻿using ArknightsMod.Content.Items.Armor.Vanity.Supporter.Ling;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using ArknightsMod.Content.Items.Armor.Vanity;
@@ -6,7 +12,7 @@ using ArknightsMod.Content.Items.Armor.Vanity;
 namespace ArknightsMod.Content.Items.Armor.Vanity.Specialist.Mizuki
 {
 	[AutoloadEquip(EquipType.Body)]
-	public class MizukiBody : ArknightsVanityBody
+	internal class MizukiBody : ArknightsVanityBody
 	{
 		public override int Rarity => 6;
 		public override void Load() {

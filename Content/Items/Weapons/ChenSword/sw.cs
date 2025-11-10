@@ -1,28 +1,32 @@
 ﻿using ArknightsMod.Content.Items.Placeable.Infrastructure;
+using ArknightsMod.Content.Tiles.Infrastructure;
+using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Mono.Cecil;
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
+using System.Runtime.Intrinsics.X86;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.RGB;
 using Terraria.ID;
 using Terraria.ModLoader;
-using ArknightsMod.Content.Tiles.Infrastructure;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ArknightsMod.Content.Items.Weapons.ChenSword
 { 
-	// This is a basic item template.
-	// Please see tModLoader's ExampleMod for every other example:
-	// https://github.com/tModLoader/tModLoader/tree/stable/ExampleMod
-	public class sw : ModItem
+	public enum ChenSword_Style {
+		Normal = 0,
+		Skill_1 = 1,
+		Skill_2 = 2,
+		Skill_3 = 3
+	}
+	public class ChenSword_Item : UpgradeWeaponBase
 	{
-        /// <summary>
-        /// 偷懒写的，记得改（）
-        /// </summary>
-        public override string Texture => new sw_Proj_1().Texture;
         public override void SetDefaults()
 		{
             Item.damage = 137;
@@ -31,7 +35,7 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
             Item.width = 64;
             Item.height = 64;
             Item.scale = 1f;
-            Item.rare = 2;
+            Item.rare = 10;
             Item.knockBack = 9f;
             Item.value = Item.buyPrice(0, 0, 80, 0);
             Item.useTurn = false;
@@ -43,16 +47,115 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
             Item.noUseGraphic = true;
             Item.noMelee = true;
         }
-        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
-        {
-            Projectile.NewProjectile(source, player.Center, Vector2.Zero, ModContent.ProjectileType<sw_Proj_1>(), damage, knockback, player.whoAmI);
-            //return false;
-            return base.Shoot(player, source, position, velocity, type, damage, knockback);
-        }
+		/// <summary>
+		/// 这个是生成手持弹幕的代码，如果只是要设置使用的技能，就不用动后面的其他屎山了-只需要填第一个参数就能选择你使用的技能  使用样例看下面shoot函数 
+		/// </summary>
+		/// <param name="st"></param>
+		static void CreatProj(ChenSword_Style st,Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
+
+
+			var p1 = Projectile.NewProjectileDirect(source, player.Center, Vector2.Zero, ModContent.ProjectileType<sw_Proj_1>(), damage, knockback, player.whoAmI).ModProjectile as sw_Proj_1;
+
+
+			var p2 = Projectile.NewProjectileDirect(source, player.Center, Vector2.Zero, ModContent.ProjectileType<sw_Proj_2>(), damage, knockback, player.whoAmI).ModProjectile as sw_Proj_2;
+			p1.Sword_Style = st;
+				p2.Sword_Style = st;
+		}
+		private ChenSword_Style testv = ChenSword_Style.Normal;
+		public override bool AltFunctionUse(Player player) => true;
+		public override bool CanUseItem(Player player) {
+			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
+			if (Main.myPlayer == player.whoAmI) {
+				if (player.altFunctionUse == 2) {
+					if (!modPlayer.SummonMode) {
+						//s2
+						if (modPlayer.Skill == 1 && modPlayer.StockCount > 0 && !modPlayer.SkillActive) {
+							player.controlUseItem = false;
+							modPlayer.SkillActive = true;
+							modPlayer.SkillTimer = 0;
+
+							modPlayer.DelStockCount();
+						}
+						//s3
+						else if (modPlayer.Skill == 2 && modPlayer.StockCount > 0 && !modPlayer.SkillActive) {
+							modPlayer.SkillActive = true;
+							modPlayer.SkillTimer = 0;
+							modPlayer.DelStockCount();
+						}
+						else
+						return false;
+					}
+				}
+				else {
+					if (!modPlayer.SummonMode) {
+						// S1
+						if (modPlayer.Skill == 0) {
+							if (modPlayer.StockCount == 0) {
+								modPlayer.OffensiveRecovery();
+							}
+							else if (modPlayer.StockCount > 0) {
+								modPlayer.SkillActive = true;
+								modPlayer.SkillTimer = 0;
+								modPlayer.DelStockCount();
+							}
+						}
+						//S2
+						if (modPlayer.Skill == 1&&!modPlayer.SkillActive) {
+							if (modPlayer.StockCount == 0) {
+								modPlayer.OffensiveRecovery();
+							}
+						}
+						//s3
+						if (modPlayer.Skill == 2 && !modPlayer.SkillActive) {
+							if (modPlayer.StockCount == 0) {
+								modPlayer.OffensiveRecovery();
+							}
+						}
+					}
+				}
+			}
+			return base.CanUseItem(player);
+		}
+
+		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+			{
+			///写在这 这是一个简单的四种方式轮流使用的样例
+			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
+
+
+
+			SoundStyle NS = new SoundStyle("ArknightsMod/Sounds/ChenSwordNoSkill") {
+				MaxInstances = 4
+			};
+			if (modPlayer.Skill == 0 && modPlayer.SkillActive) {
+				CreatProj(ChenSword_Style.Skill_1, player, source, position, velocity, type, (int)(damage * 3.2), knockback);
+
+			}
+			else if (modPlayer.Skill == 1 && modPlayer.SkillActive) {
+				CreatProj(ChenSword_Style.Skill_2, player, source, position, velocity, type, (int)(damage * 5), knockback);
+				CreatProj(ChenSword_Style.Skill_2, player, source, position, velocity, type, (int)(damage * 5), knockback);
+
+				modPlayer.StockCount = 0;
+			}
+			else if (modPlayer.Skill == 2 && modPlayer.SkillActive) {
+				CreatProj(ChenSword_Style.Skill_3, player, source, position, velocity, type, (int)(damage * 3.2), knockback);
+
+				modPlayer.StockCount = 0;
+			}
+			else {
+				if (!modPlayer.SkillActive) {
+					SoundEngine.PlaySound(NS, player.position);
+					CreatProj(ChenSword_Style.Normal, player, source, position, velocity, type, damage, knockback);
+				}
+			}
+			return false;
+			//return base.Shoot(player, source, position, velocity, type, damage, knockback);
+		}
+
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.PP>(4);
-			recipe.AddIngredient<Material.WHKohl>(6);
+			recipe.AddIngredient<Material.PolymerizationPreparation>(4);
+			recipe.AddIngredient<Material.WhiteHorseKohl>(6);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}
@@ -61,13 +164,13 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
     {
         static Texture2D t1;
         static Texture2D t2;
-        public override void Load()
-        {
-            t1 = ModContent.Request<Texture2D>(Texture, AssetRequestMode.ImmediateLoad).Value;
-            t2 = ModContent.Request<Texture2D>("ArknightsMod/Content/Items/Weapons/ChenSword/OnHit_Dust_2", AssetRequestMode.ImmediateLoad).Value;
+		public override void Load()
+		{
+			t1 = ModContent.Request<Texture2D>(Texture, AssetRequestMode.ImmediateLoad).Value;
+			t2 = ModContent.Request<Texture2D>("ArknightsMod/Content/Items/Weapons/ChenSword/OnHit_Dust_2", AssetRequestMode.ImmediateLoad).Value;
 
-            base.Load();
-        }
+			base.Load();
+		}
         public override void OnSpawn(Dust d)
         {
             d.color = Color.White;
@@ -157,6 +260,7 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
         private static Texture2D Skill_1_Release_Effect_2;
 
         private Player player => Main.player[Projectile.owner];
+		public ChenSword_Style Sword_Style = 0;
         public override void Load()
         {
             SwordLightTex = ModContent.Request<Texture2D>("ArknightsMod/Content/Items/Weapons/ChenSword/SwordLightTail_7", AssetRequestMode.ImmediateLoad).Value;
@@ -164,7 +268,7 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
             Skill_1_Release_Effect_2 = ModContent.Request<Texture2D>("ArknightsMod/Content/Items/Weapons/ChenSword/Skill_1_Release_Effect_2", AssetRequestMode.ImmediateLoad).Value;
             base.Load();
         }
-        public override void SetDefaults()
+		public override void SetDefaults()
         {
             Projectile.width = 32;
             Projectile.height = 40;
@@ -175,13 +279,35 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
             Projectile.tileCollide = false;//false就能让他穿墙
             Projectile.penetrate = -1;//表示能穿透几次
             Projectile.ignoreWater = true;//无视液体
-            //Swing_AI
-            //Projectile.timeLeft = 80;
+										  //Swing_AI
+			if (Sword_Style == 0) {
+				Projectile.timeLeft = 76;
+				Projectile.ai[0] = 0;
+			}
 
-            //Skill_1_AI
-            Projectile.timeLeft = 80;
+			if (Sword_Style == ChenSword_Style.Skill_1) {
+				Projectile.timeLeft = 24;
+				Projectile.ai[0] = 77;
+
+			}
+			if (Sword_Style == ChenSword_Style.Skill_2)
+				Projectile.timeLeft = 80;
         }
-        public override void SetStaticDefaults()
+		public override void OnSpawn(IEntitySource source) {
+			if (Sword_Style == 0) {
+				Projectile.timeLeft = 76;
+				Projectile.ai[0] = 0;
+			}
+
+			if (Sword_Style == ChenSword_Style.Skill_1) {
+				Projectile.timeLeft = 24;
+				Projectile.ai[0] = 77;
+
+			}
+			if (Sword_Style == ChenSword_Style.Skill_2)
+				Projectile.timeLeft = 80;
+		}
+		public override void SetStaticDefaults()
         {
             ProjectileID.Sets.TrailingMode[Type] = 2;
             ProjectileID.Sets.TrailCacheLength[Type] = 14;
@@ -195,7 +321,9 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
             Projectile.ai[0]++;
             if (Projectile.ai[0] >= 76)
             {
-                player.heldProj = Projectile.whoAmI;
+				if (Sword_Style == 0)
+					Projectile.Kill();
+					player.heldProj = Projectile.whoAmI;
                 player.itemAnimation = player.itemTime = 6;
                 Projectile.velocity = new Vector2(0, -2).RotatedBy(Projectile.rotation);
                 var time = Projectile.ai[0] - 76;
@@ -386,10 +514,13 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
             return false;
 
         }
-        #endregion
+		#endregion
 
-        #region 技能1
-        private bool Skill_1_Coll(Rectangle projHitbox, Rectangle targetHitbox)
+		#region 技能1
+		#endregion
+
+		#region 技能2
+		private bool Skill_2_Coll(Rectangle projHitbox, Rectangle targetHitbox)
         {
             if (Projectile.ai[1] > 0)
             {
@@ -405,10 +536,10 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
                     , ref point);
                 if (K && Collision.CanHit(player.Center, 1, 1, targetHitbox.TopLeft(), targetHitbox.Width, targetHitbox.Height)) return true;
 
-            }
+			}
             return false;
         }
-        private class Skill_1_Release_Dust_1 : ModDust
+        private class Skill_2_Release_Dust_1 : ModDust
         {
             public override void OnSpawn(Dust dust)
             {
@@ -423,6 +554,8 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
             public override bool Update(Dust dust)
             {
                 dust.fadeIn = MathHelper.Lerp(dust.fadeIn, 1, 0.3f);
+				dust.velocity *= .5f;
+				dust.position += dust.velocity;
                 if (dust.alpha < 0) dust.active = false;
                 else dust.alpha -= 10;
                 return false;
@@ -435,12 +568,54 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
             }
             public override bool PreDraw(Dust dust)
             {
-                for (int i = 0; i < 3; i++)
-                    Main.spriteBatch.Draw(t, dust.position - Main.screenPosition, null, dust.color * (float)(dust.alpha / 130f) * dust.fadeIn, dust.rotation == 1 ? 0 : MathHelper.Pi, t.Size() / 2f + new Vector2(25, 0), dust.scale, dust.rotation == 1 ? SpriteEffects.None : SpriteEffects.FlipVertically, 0);
-                return false;
+				float fadeVal = (float)(dust.alpha / 130f) * dust.fadeIn;
+
+				var plaCopy = Main.LocalPlayer.clientClone();
+				plaCopy.CopyVisuals(Main.LocalPlayer);
+				for (int i = 0; i < plaCopy.armor.Length; i++) {
+					plaCopy.armor[i] = Main.LocalPlayer.armor[i].Clone();
+					//Main.NewText(plaCopy.armor[i].type);
+				}
+				for (int i = 0; i < plaCopy.dye.Length; i++) {
+					plaCopy.dye[i] = Main.LocalPlayer.dye[i].Clone();
+					//Main.NewText(plaCopy.armor[i].type);
+				}
+				plaCopy.ResetEffects();
+				plaCopy.ResetVisibleAccessories();
+				plaCopy.invis = false;
+				plaCopy.UpdateDyes();
+				plaCopy.DisplayDollUpdate();
+				plaCopy.skipAnimatingValuesInPlayerFrame = true;
+				plaCopy.PlayerFrame();
+				plaCopy.skipAnimatingValuesInPlayerFrame = false;
+
+				plaCopy.immuneAlpha = (int)(255 * (1.0f - fadeVal));
+
+				for (int j = 0; j < 3; j++) {
+
+					Main.PlayerRenderer.DrawPlayer(Main.Camera, plaCopy, dust.position - new Vector2(12, 11), plaCopy.direction * .1f, new Vector2(12, 21), 0, 1.3f);
+					//sb.Draw(t, Projectile.oldPos[i] + Projectile.Size * 0.5f - Main.screenPosition, null, Color.White * a * aa, Projectile.rotation + MathHelper.Pi, t.Size() * 0.5f, 0.45f, eff, 0);
+				}
+
+				{
+					var t = sw_Proj_2. sw_Proj_2_t2.Value;
+					Main.spriteBatch.Draw(t,
+						  dust.position - Main.screenPosition,
+								  null,
+								  Color.White * fadeVal * .8f,
+								  -plaCopy.direction * 2-MathHelper.PiOver4,
+								  new Vector2(0, t.Height),
+								  .9f,
+								  0,
+								  0);
+				}
+
+
+				//Main.spriteBatch.Draw(t, dust.position - Main.screenPosition, null, dust.color * (float)(dust.alpha / 130f) * dust.fadeIn, dust.rotation == 1 ? 0 : MathHelper.Pi, t.Size() / 2f + new Vector2(25, 0), dust.scale, dust.rotation == 1 ? SpriteEffects.None : SpriteEffects.FlipVertically, 0);
+				return false;
             }
         }
-        private void Skill_1_AI()
+        private void Skill_2_AI()
         {
             var rand = Main.rand;
             if (Projectile.ai[0] == 0)
@@ -475,10 +650,15 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
             {
                 if (Projectile.ai[1] == 0)
                 {
+					SoundStyle S2 = new SoundStyle("ArknightsMod/Sounds/ChenSwordSkill2") {
 
-                    Projectile.timeLeft = 35;
-                    Dust.NewDustPerfect(player.Center, ModContent.DustType<Skill_1_Release_Dust_1>()).rotation = player.direction;
-                    //222黄
+						MaxInstances = 2
+					};
+					SoundEngine.PlaySound(S2, player.position);
+					Projectile.timeLeft = 35;
+                    Dust.NewDustPerfect(player.Center - Vector2.UnitX * player.direction * 40, ModContent.DustType<Skill_2_Release_Dust_1>(), Vector2.UnitX * player.direction * 50).rotation = player.direction;
+					
+					//222黄
                     //219红
                     //for (int ii = 0; ii < 3; ii++)
                     {
@@ -533,7 +713,7 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
             Projectile.Center = player.MountedCenter + new Vector2(player.direction * 30 - x_, 3 + x_ * player.direction * 0.3f);
             Projectile.ai[0]++;
         }
-        private void Skill_1_Draw(SpriteBatch sb)
+        private void Skill_2_Draw(SpriteBatch sb)
         {
             Projectile.KZ_QuicklyDraw_Proj(Swing_DrawScale);
             if (Projectile.ai[1] > 0)
@@ -572,8 +752,8 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
         }
         #endregion
 
-        #region 技能2
-        private void Skill_2_AI()
+        #region 技能3
+        private void Skill_3_AI()
         {
             Projectile.rotation = (-MathHelper.Pi + 0.9f) * player.direction;
             Projectile.Center = player.MountedCenter + new Vector2(21 * player.direction, -20);
@@ -600,7 +780,7 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
             Projectile.Kill();
 
         }
-        private void Skill_2_Draw()
+        private void Skill_3_Draw()
         {
             Projectile.KZ_QuicklyDraw_Proj(Swing_DrawScale);
         }
@@ -609,9 +789,21 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
 
         public override void AI()
         {
-            //Swing_AI();
-            Skill_1_AI();
-            //Skill_2_AI();
+			if (Sword_Style == ChenSword_Style.Normal) {
+				Swing_AI();
+			}
+			if (Sword_Style == ChenSword_Style.Skill_1) {
+				if (Projectile.ai[0] < 76)
+					Projectile.ai[0] = 77;
+				Swing_AI();
+
+			}
+			if (Sword_Style == ChenSword_Style.Skill_2) {
+				Skill_2_AI();
+			}
+						if (Sword_Style == ChenSword_Style.Skill_3) {
+				Skill_3_AI();
+			}
             base.AI();
         }
         public override bool PreDraw(ref Color lightColor)
@@ -619,14 +811,35 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
             var sb = Main.spriteBatch;
             var gd = Main.graphics.GraphicsDevice;
 
-            //Swing_Draw(sb, gd);
-            Skill_1_Draw(sb);
-            //Skill_2_Draw();
-            return false;
+			if (Sword_Style == ChenSword_Style.Normal) {
+				Swing_Draw(sb, gd);
+			}
+			if (Sword_Style == ChenSword_Style.Skill_1) {
+				Swing_Draw(sb, gd);
+
+			}
+			if (Sword_Style == ChenSword_Style.Skill_2) {
+				Skill_2_Draw(sb);
+			}
+			if (Sword_Style == ChenSword_Style.Skill_3) {
+				Skill_3_Draw();
+			}
+			return false;
         }
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            return Skill_1_Coll(projHitbox, targetHitbox);
+			if (Sword_Style == ChenSword_Style.Normal) {
+				return Swing_Coll(projHitbox, targetHitbox);
+			}
+			if (Sword_Style == ChenSword_Style.Skill_1) {
+				return Swing_Coll(projHitbox, targetHitbox);
+
+			}
+			if (Sword_Style == ChenSword_Style.Skill_2) {
+				return Skill_2_Coll(projHitbox, targetHitbox);
+			}
+			if (Sword_Style == ChenSword_Style.Skill_3) {
+			}
             //return Swing_Coll(projHitbox, targetHitbox);
             return false;
         }
@@ -644,7 +857,17 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Target.Enqueue(target);
-            Dust.NewDustDirect(target.position, target.Hitbox.Width, target.Hitbox.Height, ModContent.DustType<OnHit_Dust_1>());
+			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
+			SoundStyle S1 = new SoundStyle("ArknightsMod/Sounds/ChenSwordSkill1") {
+				MaxInstances = 4
+			};
+
+			if (modPlayer.Skill == 0) {
+				target.AddBuff(31, 90);
+				SoundEngine.PlaySound(S1, player.position);
+				base.OnHitNPC(target, hit, damageDone);
+			}
+			Dust.NewDustDirect(target.position, target.Hitbox.Width, target.Hitbox.Height, ModContent.DustType<OnHit_Dust_1>());
             base.OnHitNPC(target, hit, damageDone);
         }
     }
@@ -656,10 +879,12 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
         Texture2D SwordLightTex => sw_Proj_1.SwordLightTex;
         public static Texture2D LightCircle_1;
         private static Asset<Texture2D> sw_Proj_2_old;
-        private static Asset<Texture2D> sw_Proj_2_t2;
+        internal static Asset<Texture2D> sw_Proj_2_t2;
         private static Texture2D SwordLightTex_8;
         private Player player => Main.player[Projectile.owner];
-        public override void Load()
+		public ChenSword_Style Sword_Style = 0;
+
+		public override void Load()
         {
             LightCircle_1 = ModContent.Request<Texture2D>("ArknightsMod/Content/Items/Weapons/ChenSword/LightCircle_1", AssetRequestMode.ImmediateLoad).Value;
             SwordLightTex_8 = ModContent.Request<Texture2D>("ArknightsMod/Content/Items/Weapons/ChenSword/SwordLightTail_8", AssetRequestMode.ImmediateLoad).Value;
@@ -679,7 +904,21 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
             Projectile.penetrate = -1;//表示能穿透几次
             Projectile.ignoreWater = true;//无视液体
             Projectile.timeLeft = 95;
-        }
+
+		}
+		public override void OnSpawn(IEntitySource source) {
+
+			if (Sword_Style == 0) {
+				Projectile.timeLeft = 76;
+				Projectile.ai[0] = 0;
+			}
+
+			if (Sword_Style == ChenSword_Style.Skill_1) {
+				Projectile.timeLeft = 16;
+				Projectile.ai[0] = 77;
+
+			}
+		}
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.TrailingMode[Type] = 2;
@@ -693,7 +932,18 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
         }
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            return Swing_Coll(projHitbox, targetHitbox);
+			if (Sword_Style == ChenSword_Style.Normal) {
+				return Swing_Coll(projHitbox, targetHitbox);
+			}
+			if (Sword_Style == ChenSword_Style.Skill_1) {
+			}
+			if (Sword_Style == ChenSword_Style.Skill_2) {
+				//return Skill_2_Coll(projHitbox, targetHitbox);
+			}
+			if (Sword_Style == ChenSword_Style.Skill_3) {
+			}
+
+			//return Swing_Coll(projHitbox, targetHitbox);
             //return false;
             return false;
         }
@@ -723,8 +973,11 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
                 player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation + MathHelper.Pi);
                 player.itemAnimation = player.itemTime = 6;
 
-            }
-            Projectile.velocity = new Vector2(0, -3).RotatedBy(Projectile.rotation);
+			}
+			else if (Sword_Style == 0)
+				Projectile.Kill();
+
+			Projectile.velocity = new Vector2(0, -3).RotatedBy(Projectile.rotation);
             if (Projectile.ai[0] == 0)
             {
                 Projectile.ai[1] = (Main.MouseWorld - player.Center).ToRotation() + MathHelper.PiOver2;
@@ -758,21 +1011,12 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
                     if (player.controlUseItem) Projectile.timeLeft = 94;
 
                 }
-                if (Projectile.ai[0] < 86)
-                {
-                    Projectile.rotation = Projectile.rotation.AngleLerp(  MathHelper.Pi + 0.5f * player.direction, 0.1f);
-
-                    Projectile.Center = Vector2.Lerp(Projectile.Center, player.MountedCenter + new Vector2(19 * player.direction, -30), 0.1f);
-                }
-                else
-                {
-                    Projectile.rotation = MathHelper.Pi + 0.5f * player.direction;
-
-                    Projectile.Center = player.MountedCenter + new Vector2(19 * player.direction, -30);
-                }
                 Swing_DrawScale = Vector2.Lerp(Swing_DrawScale, new Vector2(0.8f), 0.1f);
-            }
-            Projectile.ai[0]++;
+				Projectile.rotation = Projectile.rotation.AngleLerp(MathHelper.Pi + 0.5f * player.direction, 0.1f);
+				Projectile.Center = Vector2.Lerp(Projectile.Center, player.MountedCenter + new Vector2(19 * player.direction, -30), 0.1f);
+
+			}
+			Projectile.ai[0]++;
         }
         private void Swing_Draw(SpriteBatch sb, GraphicsDevice gd)
         {
@@ -929,10 +1173,13 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
             return false;
 
         }
-        #endregion
+		#endregion
 
-        #region 技能1
-        private void Skill_1_AI()
+		#region 技能1
+		#endregion
+
+		#region 技能2
+		private void Skill_2_AI()
         {
             Projectile.rotation = MathHelper.Pi + 0.5f * player.direction;
 
@@ -950,14 +1197,14 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
             }
             Projectile.Kill();
         }
-        private void Skill_1_Draw()
+        private void Skill_2_Draw()
         {
             Projectile.KZ_QuicklyDraw_Proj(Swing_DrawScale);
         }
         #endregion
 
-        #region 技能2
-        private class Skill_2_Dust_1 : ModDust
+        #region 技能3
+        private class Skill_3_Dust_1 : ModDust
         {
 
             static Texture2D t1;
@@ -995,7 +1242,7 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
             }
 
         }
-        private class Skill_2_Dust_2 : ModDust
+        private class Skill_3_Dust_2 : ModDust
         {
 
             static Texture2D t1;
@@ -1047,7 +1294,7 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
             }
 
         }
-        private class Skill_2_Dust_3 : ModDust
+        private class Skill_3_Dust_3 : ModDust
         {
 
             static Texture2D t1;
@@ -1093,7 +1340,7 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
             }
 
         }
-        private class Skill_2_Dust_4 : ModDust
+        private class Skill_3_Dust_4 : ModDust
         {
 
             static Texture2D t1;
@@ -1189,12 +1436,14 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
                                 }
                                 if (Projectile.ai[1] > 0)
                                 {
-                                    HeadPos =  Vector2.Lerp(HeadPos, AttackPos, 0.1f);
+
+									HeadPos =  Vector2.Lerp(HeadPos, AttackPos, 0.1f);
                                     Projectile.Center = HeadPos;
                                     if (Vector2.Distance(RecordPos[RecordPos.Count - 1], HeadPos) > 10)
                                     {
                                         RecordPos.Add(HeadPos);
-                                    }
+
+									}
                                     Projectile.rotation = Projectile.rotation.AngleLerp((HeadPos - OldHeadPos).ToRotation(), 0.1f);//ro +  MathHelper.PiOver2 * player.direction;
                                 }
                                 else
@@ -1218,7 +1467,8 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
                                     {
                                         if (Vector2.Distance(RecordPos[RecordPos.Count - 1], HeadPos) > 10)
                                         {
-                                            RecordPos.Add(HeadPos);
+
+											RecordPos.Add(HeadPos);
                                         }
                                     }
                                     for (int i = 0; i < RecordPos.Count - 1; ++i)
@@ -1237,7 +1487,7 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
 
                                 if (p.ai[0] == 80)
                                 {
-                                    var d = Dust.NewDustPerfect(HeadPos, ModContent.DustType<Skill_2_Dust_1>());
+                                    var d = Dust.NewDustPerfect(HeadPos, ModContent.DustType<Skill_3_Dust_1>());
                                 }
 
                             }
@@ -1323,7 +1573,7 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
                 return false;
             }
         }
-        private class Skill_2_Attack_Proj : ModProjectile
+        private class Skill_3_Attack_Proj : ModProjectile
         {
             public override void SetDefaults()
             {
@@ -1344,7 +1594,7 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
                 ProjectileID.Sets.TrailCacheLength[Type] = 10;
                 base.SetStaticDefaults();
             }
-
+			Player player => Main.player[Projectile.owner];
             private Queue<NPC> Target = new Queue<NPC>();
             private static Texture2D[] Tex = new Texture2D[4];
             public override void Load()
@@ -1369,7 +1619,8 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
                 Projectile.velocity *= 0.9f;
                 Projectile.rotation = Projectile.velocity.ToRotation();
                 Projectile.ai[0]++;
-                /*switch (T_Count)
+
+				/*switch (T_Count)
                 {
                     case 0:
                         {
@@ -1378,57 +1629,97 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
                         break;
                 }*/
 
-                base.AI();
+				base.AI();
             }
-            public override bool PreDraw(ref Color lightColor)
-            {
-                var sb = Main.spriteBatch;
-                var gd = Main.graphics.GraphicsDevice;
-                {
+			public override bool PreDraw(ref Color lightColor) {
+				var sb = Main.spriteBatch;
+				var gd = Main.graphics.GraphicsDevice;
+				{
 
-                    List<Vertex> vertices = new List<Vertex>();
+					List<Vertex> vertices = new List<Vertex>();
 
-                    if (Projectile.ai[0] != 0)
-                    {
-                        sb.End();
-                        sb.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+					if (Projectile.ai[0] != 0) {
+						sb.End();
+						sb.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
-                        for (float i = 0; i <= 1; i += 0.1f)
-                        {
-                            var p = Vector2.Lerp(Projectile.Center, RecordCenter, i) - Main.screenPosition;
-                            var col = Color.Lerp(Color.White, Color.Red, Math.Clamp(i * 2, 0, 1)) * (Projectile.timeLeft / 20f);
-                            // col = Color.Lerp(col, Color.Orange, Math.Clamp((i - 0.3f) * 2, 0, 1))
-                            vertices.Add(new Vertex(p + new Vector2(0, -23).RotatedBy(Projectile.rotation), new Vector3(((float)i), 0, 0), col));
+						for (float i = 0; i <= 1; i += 0.1f) {
+							var p = Vector2.Lerp(Projectile.Center, RecordCenter, i) - Main.screenPosition;
+							var col = Color.Lerp(Color.White, Color.Red, Math.Clamp(i * 2, 0, 1)) * (Projectile.timeLeft / 20f);
+							// col = Color.Lerp(col, Color.Orange, Math.Clamp((i - 0.3f) * 2, 0, 1))
+							vertices.Add(new Vertex(p + new Vector2(0, -23).RotatedBy(Projectile.rotation), new Vector3(((float)i), 0, 0), col));
 
-                            vertices.Add(new Vertex(p + new Vector2(0, 23).RotatedBy(Projectile.rotation), new Vector3(((float)i), 1, 0), col));
+							vertices.Add(new Vertex(p + new Vector2(0, 23).RotatedBy(Projectile.rotation), new Vector3(((float)i), 1, 0), col));
 
-                            //Main.NewText(p);
-                        }
-                        if (vertices.Count >= 3)
-                        {
-                            //Main.NewText(Color.Red.ToVector3());
-                            gd.Textures[0] = SwordLightTex_8;
-                            gd.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices.ToArray(), 0, vertices.Count - 2);
+							//Main.NewText(p);
+						}
+						if (vertices.Count >= 3) {
+							//Main.NewText(Color.Red.ToVector3());
+							gd.Textures[0] = SwordLightTex_8;
+							gd.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices.ToArray(), 0, vertices.Count - 2);
 
-                        }
-                        sb.End();
-                        sb.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+						}
+						sb.End();
+						sb.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
-                    }
+					}
 
-                }
+				}
+				var a = Projectile.timeLeft / 25f;
 
+				{
+					var plaCopy = player.clientClone();
+					plaCopy.CopyVisuals(player);
+					for (int i = 0; i < plaCopy.armor.Length; i++) {
+						plaCopy.armor[i] = player.armor[i].Clone();
+						//Main.NewText(plaCopy.armor[i].type);
+					}
+					for (int i = 0; i < plaCopy.dye.Length; i++) {
+						plaCopy.dye[i] = player.dye[i].Clone();
+						//Main.NewText(plaCopy.armor[i].type);
+					}
+					plaCopy.ResetEffects();
+					plaCopy.ResetVisibleAccessories();
+					plaCopy.invis = false;
+					plaCopy.UpdateDyes();
+					plaCopy.DisplayDollUpdate();
+					plaCopy.skipAnimatingValuesInPlayerFrame = true;
+					plaCopy.PlayerFrame();
+					plaCopy.skipAnimatingValuesInPlayerFrame = false;
 
-                var t = Tex[T_Count];
-                var a = Projectile.timeLeft / 25f;
-                var eff = Projectile.velocity.X > 0 ? SpriteEffects.FlipVertically : SpriteEffects.None;
-                for (int i = Projectile.oldPos.Length - 2; i >= 0; i--)
-                {
-                    float aa = i / (float)(Projectile.oldPos.Length);
-                    sb.Draw(t, Projectile.oldPos[i] + Projectile.Size * 0.5f - Main.screenPosition, null, Color.White * a * aa, Projectile.rotation + MathHelper.Pi, t.Size() * 0.5f, 0.45f, eff, 0);
-                }
-                return false;
-            }
+					plaCopy.immuneAlpha = 0;
+
+					var t = Tex[T_Count];
+					var eff = Projectile.velocity.X > 0 ? SpriteEffects.FlipVertically : SpriteEffects.None;
+					var rota = 0f;
+					if (Projectile.velocity.X > 0) {
+						plaCopy.direction = 1;
+						rota = MathHelper.Pi;
+					}
+					else {
+						plaCopy.direction = -1;
+					}
+					for (int i = Projectile.oldPos.Length - 2; i >= 0; i--) {
+						float aa = i / (float)(Projectile.oldPos.Length);
+						plaCopy.immuneAlpha = (int)(255 * (1f - a * aa) * .7f);
+
+						Main.PlayerRenderer.DrawPlayer(Main.Camera, plaCopy, Projectile.oldPos[i] + Projectile.Size * 0.5f - new Vector2(12, 21), Projectile.rotation + rota + MathHelper.Pi, new Vector2(12, 21), 0, 1);
+						//sb.Draw(t, Projectile.oldPos[i] + Projectile.Size * 0.5f - Main.screenPosition, null, Color.White * a * aa, Projectile.rotation + MathHelper.Pi, t.Size() * 0.5f, 0.45f, eff, 0);
+					}
+				}
+				{
+					var t = sw_Proj_2_t2.Value;
+					Main.spriteBatch.Draw(t,
+						  Projectile.Center - Projectile.velocity.SafeNormalize(Vector2.Zero) * 20 - Main.screenPosition,
+						  null,
+						  Color.White * a * .8f,
+						  Projectile.rotation + MathHelper.PiOver4,
+						  new Vector2(0, t.Height),
+						  .8f,
+						  0,
+						  0);
+				}
+				return false;
+			}
             public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
             {
                 Target.Enqueue(target);
@@ -1440,7 +1731,8 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
             }
         }
         private Vector2 AttackPos = Vector2.Zero;
-        private void Skill_2_AI()
+		private bool _playedSkill3Sound = false;
+		private void Skill_3_AI()
         {
             var rand = Main.rand;
             player.heldProj = Projectile.whoAmI;
@@ -1448,9 +1740,16 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
             player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation + MathHelper.Pi);
             player.itemAnimation = player.itemTime = 6;
             Swing_DrawScale = new Vector2(1);
-            //Main.NewText(player.MountedCenter);
+			//Main.NewText(player.MountedCenter);
+			StatModifier meleeDamageMod = player.GetTotalDamage(DamageClass.Melee);
 
-            if (!player.controlUseItem)
+			int baseDamage = player.HeldItem.damage;
+
+			float finalDamage = meleeDamageMod.ApplyTo(baseDamage);
+
+			int dynamicDamage = (int)Math.Round(finalDamage * 3.2f);
+
+			if (!player.controlUseItem)
             {
                 if (Projectile.localAI[0] == 0 && Projectile.ai[0] > 80)
                 {
@@ -1466,7 +1765,8 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
             {
                 if (Projectile.ai[0] > 80)
                 {
-                    player.velocity *= 0;
+
+					player.velocity *= 0;
                     Swing_DrawScale = Vector2.Zero;
                     player.immuneAlpha = 255;
                     var ScrPla = player.GetModPlayer<Skill_2_Player>();
@@ -1480,9 +1780,17 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
                         var AttackStartPos = AttackPos + new Vector2(110 * AttackDir, 0).RotatedBy(AttackRo);
                         var AttackStartPos_Vel = new Vector2(-30 * AttackDir, 0).RotatedBy(AttackRo).RotatedByRandom(0.2);
 
-                        var p = Projectile.NewProjectileDirect(player.GetSource_FromThis(), AttackStartPos, AttackStartPos_Vel, ModContent.ProjectileType<Skill_2_Attack_Proj>(), 50, 1);
+                        var p = Projectile.NewProjectileDirect(player.GetSource_FromThis(), AttackStartPos, AttackStartPos_Vel, ModContent.ProjectileType<Skill_3_Attack_Proj>(), dynamicDamage, 1, player.whoAmI);
                         float dust_RandRo = rand.NextFloat(-0.3f, 0.3f);
-                        for (int dustC = 0; dustC < 30; dustC++)
+						if (!_playedSkill3Sound) {
+							// 播放音效并标记为已播放
+							SoundStyle S3 = new SoundStyle("ArknightsMod/Sounds/ChenSwordSkill3") {
+								MaxInstances = 2
+							};
+							SoundEngine.PlaySound(S3, player.position);
+							_playedSkill3Sound = true;
+						}
+						for (int dustC = 0; dustC < 30; dustC++)
                         {
                             int dt = 222 + (rand.NextBool(3) ? -3 : 0);
                             var u = Dust.NewDustPerfect(AttackPos, dt);
@@ -1490,17 +1798,18 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
                             u.velocity = AttackStartPos_Vel.RotatedBy(dust_RandRo).RotatedByRandom(0.4) * 0.2f * rand.NextFloat(0.5f, 1.5f);
                             u.fadeIn = 0.4f;
                             u.scale = 0.5f;
-                        }
+
+						}
                         //圆圈
                         {
                             var randVec = new Vector2(rand.NextFloat(-20, 20)).RotatedByRandom(7);
-                            var u = Dust.NewDustPerfect(AttackPos + randVec, ModContent.DustType<Skill_2_Dust_4>());
+                            var u = Dust.NewDustPerfect(AttackPos + randVec, ModContent.DustType<Skill_3_Dust_4>());
                             u.fadeIn = rand.NextFloat(0.15f, 0.3f);
                         }
                         //刀锋
                         {
                             var randVec = new Vector2(rand.NextFloat(-20, 20)).RotatedByRandom(7);
-                            var d = Dust.NewDustPerfect(AttackPos + randVec, ModContent.DustType<Skill_2_Dust_2>());
+                            var d = Dust.NewDustPerfect(AttackPos + randVec, ModContent.DustType<Skill_3_Dust_2>());
                             d.velocity = AttackRo.ToRotationVector2();
                         }
                     }
@@ -1523,7 +1832,7 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
                         }                               
                         //刀锋切割
                         {
-                            var d = Dust.NewDustPerfect(AttackPos, ModContent.DustType<Skill_2_Dust_2>());
+                            var d = Dust.NewDustPerfect(AttackPos, ModContent.DustType<Skill_3_Dust_2>());
                             d.rotation = AttackRo;
                             d.fadeIn = 0.05f;
                             d.rotation = 5;
@@ -1533,7 +1842,7 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
                         {
                             for (int i = -1; i <= 1; i += 2)
                             {
-                                var u = Dust.NewDustPerfect(AttackPos, ModContent.DustType<Skill_2_Dust_3>());
+                                var u = Dust.NewDustPerfect(AttackPos, ModContent.DustType<Skill_3_Dust_3>());
                                 u.velocity = new Vector2(15 * i, 0);
                                 u.color = Color.Orange;
                             }
@@ -1541,11 +1850,11 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
 
                         //圆圈
                         {
-                            var u = Dust.NewDustPerfect(AttackPos, ModContent.DustType<Skill_2_Dust_4>());
+                            var u = Dust.NewDustPerfect(AttackPos, ModContent.DustType<Skill_3_Dust_4>());
                             u.fadeIn = 0.8f;
                         }
 
-                        var p = Projectile.NewProjectileDirect(player.GetSource_FromThis(), AttackStartPos, AttackStartPos_Vel, ModContent.ProjectileType<Skill_2_Attack_Proj>(), 50, 1);
+                        var p = Projectile.NewProjectileDirect(player.GetSource_FromThis(), AttackStartPos, AttackStartPos_Vel, ModContent.ProjectileType<Skill_3_Attack_Proj>(), dynamicDamage, 1, player.whoAmI);
 
                     }
                 }
@@ -1576,7 +1885,7 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
 
             }
         }
-        private void Skill_2_Draw(GraphicsDevice gd)
+        private void Skill_3_Draw(GraphicsDevice gd)
         {
             TextureAssets.Projectile[Type] = sw_Proj_2_t2;
                 List<Vertex> vertices = new List<Vertex>();
@@ -1632,20 +1941,48 @@ namespace ArknightsMod.Content.Items.Weapons.ChenSword
         #endregion
         public override void AI()
         {
-            //Swing_AI();
-            Skill_1_AI();
-            //Skill_2_AI();
-            base.AI();
+			if (Sword_Style == ChenSword_Style.Normal) {
+				Swing_AI();
+			}
+			if (Sword_Style == ChenSword_Style.Skill_1) {
+				Swing_AI();
+				if (Projectile.ai[0] < 76)
+					Projectile.ai[0] = 77;
+			}
+			if (Sword_Style == ChenSword_Style.Skill_2) {
+				Skill_2_AI();
+			}
+			if (Sword_Style == ChenSword_Style.Skill_3) {
+				Skill_3_AI();
+			}
+
+			//Swing_AI();
+			//Skill_2_AI();
+			//Skill_2_AI();
+			base.AI();
         }
         public override bool PreDraw(ref Color lightColor)
         {
             var sb = Main.spriteBatch;
             var gd = Main.graphics.GraphicsDevice;
-            //Swing_Draw(sb, gd);
-            Skill_1_Draw();
-            //Skill_2_Draw(gd);
+			if (Sword_Style == ChenSword_Style.Normal) {
+				Swing_Draw(sb, gd);
+			}
+			if (Sword_Style == ChenSword_Style.Skill_1) {
+				Swing_Draw(sb, gd);
 
-            return false;
+			}
+			if (Sword_Style == ChenSword_Style.Skill_2) {
+				Skill_2_Draw();
+			}
+			if (Sword_Style == ChenSword_Style.Skill_3) {
+				Skill_3_Draw(gd);
+			}
+			//Swing_Draw(sb, gd);
+			//Skill_2_Draw();
+			//Skill_2_Draw(gd);
+
+			return false;
         }
 
     }

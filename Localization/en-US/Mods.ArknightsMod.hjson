@@ -1,8 +1,11 @@
 DamageClasses.SpellDamage.DisplayName: Arcane Damage
-ButtonName.button2: Annihilation
 UI.UpgradeUI.Upgrade: Level Up
 UpgradeWeapon.LevelPreview.Damage: Damage
-Currencies.OrundumCurrency: Orundum
+
+Currencies: {
+	OrundumCurrency: Orundum
+	OriginiumIngotCurrency: Originium Ingot
+}
 
 StatusMessage: {
 	IACT: {
@@ -23,21 +26,29 @@ StatusMessage: {
 }
 
 WorldGen: {
-	GrindPassMessage: "{$Mods.ArknightsMod.Items.Grind.DisplayName}"
-	MnOrePassMessage: "{$Mods.ArknightsMod.Items.MnOre.DisplayName}"
+	GrindstonePassMessage: "{$Mods.ArknightsMod.Items.Grindstone.DisplayName}"
+	ManganeseOrePassMessage: "{$Mods.ArknightsMod.Items.ManganeseOre.DisplayName}"
 	OrirockCubePassMessage: "{$Mods.ArknightsMod.Items.OrirockCube.DisplayName}"
-	RMA12PassMessage: "{$Mods.ArknightsMod.Items.RMA12.DisplayName}"
+	RMA7012PassMessage: "{$Mods.ArknightsMod.Items.RMA7012.DisplayName}"
 }
 
 Tiles: {
 	BannerTile.MapEntry: Banner
 	AnniversaryWheel.MapEntry: "{$Mods.ArknightsMod.Items.AnniversaryWheel.DisplayName}"
 	DareUsa.MapEntry: "{$Mods.ArknightsMod.Items.DareUsa.DisplayName}"
-	Grind.MapEntry: "{$Mods.ArknightsMod.Items.Grind.DisplayName}"
-	MnOre.MapEntry: "{$Mods.ArknightsMod.Items.MnOre.DisplayName}"
+	Grindstone.MapEntry: Grindstone
+	ManganeseOre.MapEntry: Manganese Ore
 	OrirockCube.MapEntry: "{$Mods.ArknightsMod.Items.OrirockCube.DisplayName}"
-	RMA12.MapEntry: "{$Mods.ArknightsMod.Items.RMA12.DisplayName}"
+	RMA7012.MapEntry: "{$Mods.ArknightsMod.Items.RMA7012.DisplayName}"
 	WMusicBoxTile.MapEntry: Music Box (W)
 	HoundTile.MapEntry: Hound Tile
 	HoundproTile.MapEntry: Houndpro Tile
+	SolidColorLowSofa.MapEntry: Solid Color Low Sofa
+	ClearBlackTV.MapEntry: Clear Black T V
+	GrayFiberRug.MapEntry: Gray Fiber Rug
+	MatteBlackFloorTile.MapEntry: Matte Black Floor Tile
+	MinimalBlackClock.MapEntry: Minimal Black Clock
+	PorcelainBed.MapEntry: Porcelain Bed
+	PorcelainNightstand.MapEntry: Porcelain Nightstand
+	SolidCheckeredBookcase.MapEntry: Solid Checkered Bookcase
 }

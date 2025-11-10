@@ -24,7 +24,7 @@ namespace ArknightsMod.Content.Items.Material
 			CreateRecipe()
 				.AddIngredient<Aketon>(2)
 				.AddIngredient<SugarPack>(1)
-				.AddIngredient<Placeable.MnOre>(1)
+				.AddIngredient<Placeable.ManganeseOre>(1)
 				.AddTile(TileID.WorkBenches)
 				.Register();
 		}

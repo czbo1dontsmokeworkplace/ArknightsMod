@@ -104,6 +104,26 @@ Dropconfig: {
 		Label: Drop L S
 		Tooltip: ""
 	}
+
+	DropAcidOgSlug1: {
+		Label: Drop Acid Og Slug1
+		Tooltip: ""
+	}
+
+	DropAcidOgSlug2: {
+		Label: Drop Acid Og Slug2
+		Tooltip: ""
+	}
+
+	DropDrone1: {
+		Label: Drop Drone1
+		Tooltip: ""
+	}
+
+	DropDrone2: {
+		Label: Drop Drone2
+		Tooltip: ""
+	}
 }
 
 MonsterConfig: {

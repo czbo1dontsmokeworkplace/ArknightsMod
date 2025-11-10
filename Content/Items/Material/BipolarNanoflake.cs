@@ -24,7 +24,7 @@ namespace ArknightsMod.Content.Items.Material
 		public override void AddRecipes() {
 			CreateRecipe()
 				.AddIngredient<OptimizedDevice>(1)
-				.AddIngredient<WHKohl>(2)
+				.AddIngredient<WhiteHorseKohl>(2)
 				.AddTile(TileID.WorkBenches)
 				.Register();
 		}

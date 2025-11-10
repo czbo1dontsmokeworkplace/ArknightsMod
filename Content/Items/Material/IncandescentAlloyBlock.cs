@@ -24,7 +24,7 @@ namespace ArknightsMod.Content.Items.Material
 		public override void AddRecipes() {
 			CreateRecipe()
 				.AddIngredient<IntegratedDevice>(1)
-				.AddIngredient<Placeable.Grind>(1)
+				.AddIngredient<Placeable.Grindstone>(1)
 				.AddIngredient<IncandescentAlloy>(1)
 				.AddTile(TileID.WorkBenches)
 				.Register();

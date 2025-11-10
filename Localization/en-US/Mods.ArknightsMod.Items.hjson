@@ -275,17 +275,17 @@ KetonColloid: {
 	Tooltip: A large amount of industrial organic compound.
 }
 
-MnTri: {
+ManganeseTrihydrate: {
 	DisplayName: Manganese Trihydrate
 	Tooltip: A metal ore used for metallurgy.
 }
 
-GP: {
+GrindstonePentahydrate: {
 	DisplayName: Grindstone Pentahydrate
 	Tooltip: An advanced grindstone used in the finish machining of weapon parts.
 }
 
-RMA24: {
+RMA7024: {
 	DisplayName: RMA70-24
 	Tooltip: A highly sensitive mineral with outstanding conductivity.
 }
@@ -295,7 +295,7 @@ LoxicKohl: {
 	Tooltip: A flaky organic compound.
 }
 
-WHKohl: {
+WhiteHorseKohl: {
 	DisplayName: White Horse Kohl
 	Tooltip: A product made from Loxic Kohl after fine processing.
 }
@@ -376,17 +376,17 @@ OrirockCube: {
 	Tooltip: Orirock cube mined from the ground.
 }
 
-MnOre: {
+ManganeseOre: {
 	DisplayName: Manganese Ore
 	Tooltip: A metal ore used for metallurgy.
 }
 
-Grind: {
+Grindstone: {
 	DisplayName: Grindstone
 	Tooltip: A grindstone used to process weapon parts.
 }
 
-RMA12: {
+RMA7012: {
 	DisplayName: RMA70-12
 	Tooltip: A sensitive mineral with high conductivity.
 }
@@ -428,7 +428,7 @@ CrystallineComponent: {
 	Tooltip: Can be manufactured and assembled into more advanced Originium electric components.
 }
 
-CompoundCF: {
+CompoundCuttingFluid: {
 	DisplayName: Compound Cutting Fluid
 	Tooltip: An industrial agent necessary for metal processing.
 }
@@ -438,22 +438,22 @@ CrystallineCircuit: {
 	Tooltip: A fundamental part of manufacturing Originium crystal assemblies.
 }
 
-PP: {
+PolymerizationPreparation: {
 	DisplayName: Polymerization Preparation
 	Tooltip: A complicated liquid industrial product.
 }
 
-TSA: {
+TransmutedSaltAgglomerate: {
 	DisplayName: Transmuted Salt Agglomerate
 	Tooltip: A compound crystal mass that has undergone high-tolerance refinement.
 }
 
-SSS: {
+SemiSyntheticSolvent: {
 	DisplayName: Semi-Synthetic Solvent
 	Tooltip: An active solvent with excellent physical characteristics, and good resistance to acids and bases.
 }
 
-CEU: {
+CrystallineElectronicUnit: {
 	DisplayName: Crystalline Electronic Unit
 	Tooltip: An expensive Originium industry product.
 }
@@ -473,7 +473,7 @@ NucleicCrystalSinter: {
 	Tooltip: A product of modern technology that requires the ultimate in industrial craft.
 }
 
-CFSolution: {
+CuttingFluidSolution: {
 	DisplayName: Cutting Fluid Solution
 	Tooltip: A stock solution prepared from a variety of active solvents.
 }
@@ -829,8 +829,8 @@ BrightWeeping: {
 	Tooltip: ""
 }
 
-ChitinousBlade: {
-	DisplayName: Chitinous Blade
+ChitinousRipper: {
+	DisplayName: Chitinous Ripper
 	Tooltip: ""
 }
 
@@ -884,8 +884,8 @@ PerfumeForTheShow: {
 	Tooltip: ""
 }
 
-QiyuanMask: {
-	DisplayName: Qiyuan Mask
+AbyssalWyrdmask: {
+	DisplayName: Abyssal Wyrdmask
 	Tooltip: ""
 }
 
@@ -1119,8 +1119,8 @@ Shirayuki_Shuriken: {
 	Tooltip: ""
 }
 
-WuQi_Item_JiCi: {
-	DisplayName: Wu Qi_ Item_ Ji Ci
+ThornsWeapon: {
+	DisplayName: Thorns Sword
 	Tooltip: ""
 }
 
@@ -1304,84 +1304,84 @@ CartonSmall: {
 	Tooltip: ""
 }
 
-Dajingmi: {
-	DisplayName: Dajingmi
+TheProfoundSilence: {
+	DisplayName: The Profound Silence
 	Tooltip: ""
 }
 
-Reshuihu: {
-	DisplayName: Reshuihu
+HotWaterKettle: {
+	DisplayName: Hot Water Kettle
 	Tooltip: ""
 }
 
-midiexiangzhiyong: {
-	DisplayName: midiexiangzhiyong
+RosmontissEmbrace: {
+	DisplayName: Rosmontiss Embrace
 	Tooltip: ""
 }
 
-Zhengqijiawei: {
-	DisplayName: Zhengqijiawei
+OldSteamArmor: {
+	DisplayName: Old Steam Armor
 	Tooltip: ""
 }
 
-weizhiyiqi: {
-	DisplayName: weizhiyiqi
+UnknownInstrument: {
+	DisplayName: Unknown Instrument
 	Tooltip: ""
 }
 
-Scout: {
-	DisplayName: Scout
+ScoutsScope: {
+	DisplayName: Scouts Scope
 	Tooltip: ""
 }
 
-jinweijunzhifeng: {
-	DisplayName: jinweijunzhifeng
+VieuxVanguardsBlade: {
+	DisplayName: Vieux Vanguards Blade
 	Tooltip: ""
 }
 
-toubiwanju: {
-	DisplayName: toubiwanju
+CoinOperatedToy: {
+	DisplayName: Coin Operated Toy
 	Tooltip: ""
 }
 
-shengsu: {
-	DisplayName: shengsu
+FatalBoltsDivineSpeed: {
+	DisplayName: Fatal Bolts Divine Speed
 	Tooltip: ""
 }
 
-tongshuaidiaoxiang: {
-	DisplayName: tongshuaidiaoxiang
+CommandersPortrait: {
+	DisplayName: Commanders Portrait
 	Tooltip: ""
 }
 
-yuanyan: {
-	DisplayName: yuanyan
+Orirock: {
+	DisplayName: Orirock
 	Tooltip: ""
 }
 
-daitang: {
-	DisplayName: daitang
+SugarSubstitute: {
+	DisplayName: Sugar Substitute
 	Tooltip: ""
 }
 
-shuangtong: {
-	DisplayName: shuangtong
+Diketon: {
+	DisplayName: Diketon
 	Tooltip: ""
 }
 
-yitiesuipian: {
-	DisplayName: yitiesuipian
+OrironShard: {
+	DisplayName: Oriron Shard
 	Tooltip: ""
 }
 
-zhiyuanliao: {
-	DisplayName: zhiyuanliao
+Ester: {
+	DisplayName: Ester
 	Tooltip: ""
 }
 
-yuanshisuipian: {
+OriginiumShard: {
 	Tooltip: ""
-	DisplayName: yuanshisuipian
+	DisplayName: Originium Shard
 }
 
 HoundBanner: {
@@ -1409,18 +1409,18 @@ SurtrLegs: {
 	Tooltip: ""
 }
 
-lwt: {
-	DisplayName: lwt
+SurtrLaevatain: {
+	DisplayName: Surtr Laevatain
 	Tooltip: ""
 }
 
-YinHui: {
-	DisplayName: Yin Hui
+SilverAshWeapon: {
+	DisplayName: SilverAsh Weapon
 	Tooltip: ""
 }
 
-posunzhuangzhi: {
-	DisplayName: posunzhuangzhi
+DamagedDevice: {
+	DisplayName: Damaged Device
 	Tooltip: ""
 }
 
@@ -1474,6 +1474,21 @@ LightTube: {
 	Tooltip: ""
 }
 
+CivilightEternaBody: {
+	DisplayName: Civilight Eterna Body
+	Tooltip: ""
+}
+
+CivilightEternaHead: {
+	DisplayName: Civilight Eterna Head
+	Tooltip: ""
+}
+
+CivilightEternaLegs: {
+	DisplayName: Civilight Eterna Legs
+	Tooltip: ""
+}
+
 MizukiBody: {
 	DisplayName: Mizuki Body
 	Tooltip: ""
@@ -1486,5 +1501,170 @@ MizukiHead: {
 
 MizukiLegs: {
 	DisplayName: Mizuki Legs
+	Tooltip: ""
+}
+
+ArmorSariaBody: {
+	DisplayName: Armor Saria Body
+	Tooltip: ""
+}
+
+ArmorSariaHead: {
+	DisplayName: Armor Saria Head
+	Tooltip: ""
+}
+
+ArmorSariaLegs: {
+	DisplayName: Armor Saria Legs
+	Tooltip: ""
+}
+
+DorothyDefault: {
+	DisplayName: Dorothy Default
+	Tooltip: ""
+}
+
+BeagleDefault: {
+	DisplayName: Beagle Default
+	Tooltip: ""
+}
+
+CivilightEternaDefault: {
+	DisplayName: Civilight Eterna Default
+	Tooltip: ""
+}
+
+ExusiaiDefault: {
+	DisplayName: Exusiai Default
+	Tooltip: ""
+}
+
+FartoothDefault: {
+	DisplayName: Fartooth Default
+	Tooltip: ""
+}
+
+HazeDefault: {
+	DisplayName: Haze Default
+	Tooltip: ""
+}
+
+KaltsitDefault: {
+	DisplayName: Kaltsit Default
+	Tooltip: ""
+}
+
+KroosAlterDefault: {
+	DisplayName: Kroos Alter Default
+	Tooltip: ""
+}
+
+LaPlumaDefault: {
+	DisplayName: La Pluma Default
+	Tooltip: ""
+}
+
+LingDefault: {
+	DisplayName: Ling Default
+	Tooltip: ""
+}
+
+ManticoreDefault: {
+	DisplayName: Manticore Default
+	Tooltip: ""
+}
+
+MelaniteDefault: {
+	DisplayName: Melanite Default
+	Tooltip: ""
+}
+
+MostimaDefault: {
+	DisplayName: Mostima Default
+	Tooltip: ""
+}
+
+RosmontisDefault: {
+	DisplayName: Rosmontis Default
+	Tooltip: ""
+}
+
+SariaDefault: {
+	DisplayName: Saria Default
+	Tooltip: ""
+}
+
+SkadiDefault: {
+	DisplayName: Skadi Default
+	Tooltip: ""
+}
+
+SurtrDefault: {
+	DisplayName: Surtr Default
+	Tooltip: ""
+}
+
+UtageDefault: {
+	DisplayName: Utage Default
+	Tooltip: ""
+}
+
+WarfarinDefault: {
+	DisplayName: Warfarin Default
+	Tooltip: ""
+}
+
+MizukiDefault: {
+	DisplayName: Mizuki Default
+	Tooltip: ""
+}
+
+ChenSword_Item: {
+	DisplayName: Chen Sword
+	Tooltip: ""
+}
+
+OriginiumIngot: {
+	DisplayName: Originium Ingot
+	Tooltip: ""
+}
+
+SolidColorLowSofa: {
+	DisplayName: Solid Color Low Sofa
+	Tooltip: ""
+}
+
+ClearBlackTV: {
+	DisplayName: Clear Black T V
+	Tooltip: ""
+}
+
+GrayFiberRug: {
+	DisplayName: Gray Fiber Rug
+	Tooltip: ""
+}
+
+MatteBlackFloorTile: {
+	DisplayName: Matte Black Floor Tile
+	Tooltip: ""
+}
+
+MinimalBlackClock: {
+	DisplayName: Minimal Black Clock
+	Tooltip: ""
+}
+
+PorcelainBed: {
+	DisplayName: Porcelain Bed
+	Tooltip: ""
+}
+
+PorcelainNightstand: {
+	DisplayName: Porcelain Nightstand
+	Tooltip: ""
+}
+
+SolidCheckeredBookcase: {
+	DisplayName: Solid Checkered Bookcase
 	Tooltip: ""
 }

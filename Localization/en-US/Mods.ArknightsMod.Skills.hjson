@@ -101,20 +101,20 @@ Shirayuki_Shuriken: {
 	}
 }
 
-WuQi_Item_JiCi: {
+ThornsWeapon: {
 	1: {
-		Desc: Mods.ArknightsMod.Skills.WuQi_Item_JiCi.1.Desc
-		Label: Mods.ArknightsMod.Skills.WuQi_Item_JiCi.1.Label
+		Desc: Mods.ArknightsMod.Skills.ThornsWeapon.1.Desc
+		Label: Mods.ArknightsMod.Skills.ThornsWeapon.1.Label
 	}
 
 	2: {
-		Label: Mods.ArknightsMod.Skills.WuQi_Item_JiCi.2.Label
-		Desc: Mods.ArknightsMod.Skills.WuQi_Item_JiCi.2.Desc
+		Label: Mods.ArknightsMod.Skills.ThornsWeapon.2.Label
+		Desc: Mods.ArknightsMod.Skills.ThornsWeapon.2.Desc
 	}
 
 	3: {
-		Desc: Mods.ArknightsMod.Skills.WuQi_Item_JiCi.3.Desc
-		Label: Mods.ArknightsMod.Skills.WuQi_Item_JiCi.3.Label
+		Desc: Mods.ArknightsMod.Skills.ThornsWeapon.3.Desc
+		Label: Mods.ArknightsMod.Skills.ThornsWeapon.3.Label
 	}
 }
 
@@ -125,19 +125,36 @@ BeagleWeapon: {
 	}
 }
 
-YinHui: {
+SilverAshWeapon: {
 	1: {
-		Desc: Mods.ArknightsMod.Skills.YinHui.1.Desc
-		Label: Mods.ArknightsMod.Skills.YinHui.1.Label
+		Desc: Mods.ArknightsMod.Skills.SilverAshWeapon.1.Desc
+		Label: Mods.ArknightsMod.Skills.SilverAshWeapon.1.Label
 	}
 
 	2: {
-		Label: Mods.ArknightsMod.Skills.YinHui.2.Label
-		Desc: Mods.ArknightsMod.Skills.YinHui.2.Desc
+		Label: Mods.ArknightsMod.Skills.SilverAshWeapon.2.Label
+		Desc: Mods.ArknightsMod.Skills.SilverAshWeapon.2.Desc
 	}
 
 	3: {
-		Desc: Mods.ArknightsMod.Skills.YinHui.3.Desc
-		Label: Mods.ArknightsMod.Skills.YinHui.3.Label
+		Desc: Mods.ArknightsMod.Skills.SilverAshWeapon.3.Desc
+		Label: Mods.ArknightsMod.Skills.SilverAshWeapon.3.Label
+	}
+}
+
+ChenSword_Item: {
+	1: {
+		Desc: Mods.ArknightsMod.Skills.ChenSword_Item.1.Desc
+		Label: Mods.ArknightsMod.Skills.ChenSword_Item.1.Label
+	}
+
+	2: {
+		Desc: Mods.ArknightsMod.Skills.ChenSword_Item.2.Desc
+		Label: Mods.ArknightsMod.Skills.ChenSword_Item.2.Label
+	}
+
+	3: {
+		Label: Mods.ArknightsMod.Skills.ChenSword_Item.3.Label
+		Desc: Mods.ArknightsMod.Skills.ChenSword_Item.3.Desc
 	}
 }

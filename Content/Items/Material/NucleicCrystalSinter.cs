@@ -23,8 +23,8 @@ namespace ArknightsMod.Content.Items.Material
 		// Please see Content/ExampleRecipes.cs for a detailed explanation of recipe creation.
 		public override void AddRecipes() {
 			CreateRecipe()
-				.AddIngredient<TSA>(1)
-				.AddIngredient<CFSolution>(1)
+				.AddIngredient<TransmutedSaltAgglomerate>(1)
+				.AddIngredient<CuttingFluidSolution>(1)
 				.AddIngredient<RefinedSolvent>(2)
 				.AddTile(TileID.WorkBenches)
 				.Register();

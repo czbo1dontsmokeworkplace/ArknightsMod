@@ -18,7 +18,7 @@ namespace ArknightsMod.Content.Items.Weapons
 	{
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.PP>(4);
+			recipe.AddIngredient<Material.PolymerizationPreparation>(4);
 			recipe.AddIngredient<Material.SugarLump>(5);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();

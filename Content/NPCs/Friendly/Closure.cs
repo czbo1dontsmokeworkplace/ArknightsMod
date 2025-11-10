@@ -12,7 +12,9 @@ namespace ArknightsMod.Content.NPCs.Friendly
 	[AutoloadHead]
 	public class Closure : ModNPC
 	{
-		public const string ShopName = "Shop";
+		public static string[] ShopName => ["Shop", "Shop2"];
+
+		public static int ButtonCount;
 
 		public override void SetStaticDefaults() {
 			Main.npcFrameCount[NPC.type] = 22;
@@ -41,7 +43,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		}
 
 		public override List<string> SetNPCNameList() {
-			return new List<string> { Language.GetTextValue($"Mods.ArknightsMod.NPCs.{GetType().Name}.DisplayName") };
+			return [Language.GetTextValue($"Mods.ArknightsMod.NPCs.{GetType().Name}.DisplayName")];
 		}
 
 		public override void SetDefaults() {
@@ -86,18 +88,33 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			chat.Add(Language.GetTextValue("Mods.ArknightsMod.Dialogue.Closure.Dialogue8"));
 			return chat;
 		}
+
 		public override void SetChatButtons(ref string button, ref string button2) {
-			button = Language.GetTextValue("LegacyInterface.28");
-			button2 = Language.GetTextValue("Mods.ArknightsMod.ButtonName.button2");
+			string Text = ButtonCount switch {
+				1 => this.GetLocalizedValue("Buttons.Shop2"),
+				2 => this.GetLocalizedValue("Buttons.Annihilation"),
+				_ => Language.GetTextValue("LegacyInterface.28"),
+			};
+			button = Text;
+			button2 = this.GetLocalizedValue("Buttons.Switch");
 		}
 
 		public override void OnChatButtonClicked(bool firstButton, ref string shop) {
 			if (firstButton) {
-				shop = ShopName;
+				switch (ButtonCount) {
+					case 0:
+					case 1:
+						shop = ShopName[ButtonCount];
+						break;
+					case 2:
+						AO();
+						break;
+				}
 				return;
 			}
 			else {
-				AO();
+				ButtonCount++;
+				ButtonCount %= 3;
 			}
 		}
 
@@ -245,88 +262,186 @@ namespace ArknightsMod.Content.NPCs.Friendly
 
 		// Not completely finished, but below is what the NPC will sell
 		public override void AddShops() {
-			var npcShop = new NPCShop(Type, ShopName)
+			var npcShop = new NPCShop(Type, ShopName[0])
 				.Add(new Item(ModContent.ItemType<Items.Material.Polyketon>()) {
-					shopCustomPrice = 1,
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
 				.Add(new Item(ModContent.ItemType<Items.Material.Oriron>()) {
-					shopCustomPrice = 1,
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
 				.Add(new Item(ModContent.ItemType<Items.Material.Sugar>()) {
-					shopCustomPrice = 1,
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
 				.Add(new Item(ModContent.ItemType<Items.Material.Device>()) {
-					shopCustomPrice = 1,
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
 				.Add(new Item(ModContent.ItemType<Items.Material.Polyester>()) {
-					shopCustomPrice = 1,
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
 				.Add(new Item(ModContent.ItemType<Items.Material.LoxicKohl>()) {
-					shopCustomPrice = 1,
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
 				.Add(new Item(ModContent.ItemType<Items.Material.CoagulatingGel>()) {
-					shopCustomPrice = 1,
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
 				.Add(new Item(ModContent.ItemType<Items.Material.IncandescentAlloy>()) {
-					shopCustomPrice = 1,
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
 				.Add(new Item(ModContent.ItemType<Items.Material.CrystallineComponent>()) {
-					shopCustomPrice = 1,
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
-				.Add(new Item(ModContent.ItemType<Items.Material.CompoundCF>()) {
-					shopCustomPrice = 1,
+				.Add(new Item(ModContent.ItemType<Items.Material.CompoundCuttingFluid>()) {
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
-				.Add(new Item(ModContent.ItemType<Items.Material.SSS>()) {
-					shopCustomPrice = 1,
+				.Add(new Item(ModContent.ItemType<Items.Material.SemiSyntheticSolvent>()) {
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
 				.Add(new Item(ModContent.ItemType<Items.Material.TransmutedSalt>()) {
-					shopCustomPrice = 1,
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
 				.Add(new Item(ModContent.ItemType<Items.Placeable.Furniture.DareUsa>()) {
-					shopCustomPrice = 1,
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<Items.Consumables.AmiyaDefault>()) {
+				});
+			npcShop.Register();
+			npcShop = new NPCShop(Type, ShopName[1])
+				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.AmiyaDefault>()) {
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
-				.Add(new Item(ModContent.ItemType<Items.Consumables.MelanthaDefault>()) {
+				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.MelanthaDefault>()) {
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
-				.Add(new Item(ModContent.ItemType<Items.Consumables.MatoimaruDefault>()) {
+				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.MatoimaruDefault>()) {
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
-				.Add(new Item(ModContent.ItemType<Items.Consumables.IndigoDefault>()) {
+				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.IndigoDefault>()) {
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
-				.Add(new Item(ModContent.ItemType<Items.Consumables.ChenDefault>()) {
+				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.ChenDefault>()) {
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
-				.Add(new Item(ModContent.ItemType<Items.Consumables.WDefault>()) {
+				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.WDefault>()) {
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
-				.Add(new Item(ModContent.ItemType<Items.Consumables.MudrockDefault>()) {
+				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.MudrockDefault>()) {
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
-				.Add(new Item(ModContent.ItemType<Items.Consumables.TexalterDefault>()) {
+				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.OblivionisDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.RaidianDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.WisdelDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.BagpipeDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.FiammettaDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.BeagleDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.CivilightEternaDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.DorothyDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.ExusiaiDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.FartoothDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.HazeDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.KaltsitDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.KroosAlterDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.LaPlumaDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.LingDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.ManticoreDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.MelaniteDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.MostimaDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.RosmontisDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.SariaDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.SkadiDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.SurtrDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.UtageDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.WarfarinDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.TexalterDefault>()) {
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				});

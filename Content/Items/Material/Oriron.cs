@@ -29,7 +29,7 @@ namespace ArknightsMod.Content.Items.Material
 		//}
 		public override void AddRecipes() {
 			CreateRecipe()
-				.AddIngredient<Material.yitiesuipian>(3)
+				.AddIngredient<Material.OrironShard>(3)
 				.AddTile(TileID.WorkBenches)
 				.Register();
 		}
