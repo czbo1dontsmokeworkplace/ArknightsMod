@@ -26,10 +26,5 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Specialist.Manticore
         {
             return body.type == ModContent.ItemType<ManticoreBody>() && legs.type == ModContent.ItemType<ManticoreLegs>();
         }
-        public override void UpdateArmorSet(Player player)
-        {
-            player.AddBuff(BuffID.Invisibility, 1);
-            player.setBonus = "彩蛋！哦呼~你隐身啦~";
-        }
     } 
 }

@@ -1473,3 +1473,18 @@ LightTube: {
 	DisplayName: Light Tube
 	Tooltip: ""
 }
+
+MizukiBody: {
+	DisplayName: Mizuki Body
+	Tooltip: ""
+}
+
+MizukiHead: {
+	DisplayName: Mizuki Head
+	Tooltip: ""
+}
+
+MizukiLegs: {
+	DisplayName: Mizuki Legs
+	Tooltip: ""
+}

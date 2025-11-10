@@ -29,7 +29,7 @@ namespace ArknightsMod.Content.Tiles.Infrastructure
 			TileObjectData.newTile.Height = 3;
 			TileObjectData.newTile.Origin = new Point16(1, 0);
 			TileObjectData.newTile.CoordinateHeights = [16, 16, 16];
-			//TileObjectData.newTile.CoordinatePaddingFix = new Point16(0, -2);
+			AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTorch);
 
 			TileObjectData.newTile.Direction = TileObjectDirection.PlaceRight;
 			TileObjectData.newTile.StyleWrapLimit = 2;

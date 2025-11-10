@@ -31,6 +31,7 @@ namespace ArknightsMod.Content.Tiles.Infrastructure.Decorates
 			TileObjectData.newTile.CoordinateHeights = [16, 16];
 			TileObjectData.addTile(Type);
 
+			AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTorch);
 			AddMapEntry(new Color(166, 157, 157));
 		}
 
@@ -41,11 +42,16 @@ namespace ArknightsMod.Content.Tiles.Infrastructure.Decorates
 		{
 			TileDrawer.DrawTileGlowMask(spriteBatch, i, j, Texture, Type);
 		}
-		public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) {
-			float strength = 1.5f;
-			r = 0.65f * strength;
-			g = 0.61f * strength;
-			b = 0.61f * strength;
+		public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
+		{
+			Tile tile = Framing.GetTileSafely(i, j);
+			if (tile.TileFrameY >= 1 * 18 && tile.TileFrameY < 2 * 18)
+			{
+				float strength = 1.5f;
+				r = 0.65f * strength;
+				g = 0.61f * strength;
+				b = 0.61f * strength;
+			}
 		}
 	}
 }

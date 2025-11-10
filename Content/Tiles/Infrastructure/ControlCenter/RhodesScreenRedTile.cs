@@ -25,7 +25,8 @@ namespace ArknightsMod.Content.Tiles.Infrastructure.ControlCenter
             TileObjectData.newTile.LavaDeath = false;
             TileObjectData.addTile(Type);
             AddMapEntry(new Color(86, 32, 39));
-            TileID.Sets.FramesOnKillWall[Type] = true;
+			AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTorch);
+			TileID.Sets.FramesOnKillWall[Type] = true;
             DustType = DustID.Electric;
             Main.tileLighted[Type] = true;
         }

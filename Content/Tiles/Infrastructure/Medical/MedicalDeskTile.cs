@@ -25,6 +25,8 @@ namespace ArknightsMod.Content.Tiles.Infrastructure.Medical
 			TileObjectData.newTile.Height = 3;
 			TileObjectData.newTile.CoordinateHeights = [16, 16, 16];
 			TileObjectData.addTile(Type);
+			AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTorch);
+			AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTable);
 			DustType = DustID.Electric;
 			Main.tileLighted[Type] = true;
 			AddMapEntry(new Color(151, 197, 159));
@@ -37,10 +39,15 @@ namespace ArknightsMod.Content.Tiles.Infrastructure.Medical
 		{
 			//TileDrawer.DrawTileGlowMask(spriteBatch, i, j, Texture, Type);
 		}
-		public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) {
-			r = 0.38f;
-			g = 0.85f;
-			b = 1f;
+		public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
+		{
+			Tile tile = Framing.GetTileSafely(i, j);
+			if (tile.TileFrameY < 1 * 18 && tile.TileFrameX < 2 * 18)
+			{
+				r = 0.38f;
+				g = 0.85f;
+				b = 1f;
+			}
 		}
 	}
 }

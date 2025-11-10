@@ -28,6 +28,7 @@ namespace ArknightsMod.Content.Tiles.Infrastructure.Decorates
 			DustType = DustID.Electric;
 			Main.tileLighted[Type] = true;
 			AddMapEntry(new Color(166, 157, 157));
+			AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTorch);
 		}
         public override void NumDust(int i, int j, bool fail, ref int num)
         {
@@ -37,11 +38,15 @@ namespace ArknightsMod.Content.Tiles.Infrastructure.Decorates
 		{
 			TileDrawer.DrawTileGlowMask(spriteBatch, i, j, Texture, Type);
 		}
-		public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) {
-			float strength = 1.5f;
-			r = 0.65f * strength;
-			g = 0.61f * strength;
-			b = 0.61f * strength;
+		public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
+		{
+			Tile tile = Framing.GetTileSafely(i, j);
+			if (tile.TileFrameY <= 1 * 18) {
+				float strength = 1.5f;
+				r = 0.65f * strength;
+				g = 0.61f * strength;
+				b = 0.61f * strength;
+			}
 		}
 	}
 }

@@ -23,6 +23,7 @@ namespace ArknightsMod.Content.Tiles.Infrastructure
 			Main.tileLavaDeath[Type] = false;
 			Main.tileLighted[Type] = true;
 			Main.tileBlockLight[Type] = false;
+			AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTorch);
 
 			TileObjectData.newTile.CopyFrom(TileObjectData.StyleAlch);
 			TileObjectData.newTile.CoordinateWidth = 16;
