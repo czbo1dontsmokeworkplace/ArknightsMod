@@ -1708,18 +1708,63 @@ DamagedDevice: {
 }
 
 ArmorBeagleLegs: {
-	// Tooltip: ""
-	// DisplayName: Armor Beagle Legs
+	Tooltip: ""
+	DisplayName: 米格鲁的腿部
 }
 
 ArmorBeagleHead: {
-	// Tooltip: ""
-	// DisplayName: Armor Beagle Head
+	Tooltip: 套装效果：受伤减少10%
+	DisplayName: 米格鲁的头部
 }
 
 ArmorBeagleBody: {
-	// Tooltip: ""
-	// DisplayName: Armor Beagle Body
+	Tooltip: ""
+	DisplayName: 米格鲁的躯干
+}
+
+ArmorMelanthaBody: {
+	DisplayName: 玫兰莎的躯干
+	Tooltip: ""
+}
+
+ArmorMelanthaHead: {
+	DisplayName: 玫兰莎的头部
+	Tooltip: 套装效果：攻击力加4%
+}
+
+ArmorMelanthaLegs: {
+	DisplayName: 玫兰莎的腿部
+	Tooltip: ""
+}
+
+ArmorMatoimaruBody: {
+	DisplayName: 缠丸的躯干
+	Tooltip: ""
+}
+
+ArmorMatoimaruHead: {
+	DisplayName: 缠丸的头部
+	Tooltip: 套装效果：防御力减少20%，生命值+20%
+}
+
+ArmorMatoimaruLegs: {
+	DisplayName: 缠丸的腿部
+	Tooltip: ""
+}
+
+ArmorKkdyAlterBody: {
+	DisplayName: 寒芒克洛丝的躯干
+	Tooltip: ""
+}
+
+ArmorKkdyAlterHead: {
+	DisplayName: 寒芒克洛丝的头部
+	Tooltip: 套装效果：攻击时，20%几率当次攻击的攻击力提升至150%，并使敌人迷惑0.2秒
+}
+
+ArmorKkdyAlterLegs: {
+	DisplayName: 寒芒克洛丝的腿部
+	Tooltip: ""
 }
 
 RhodesStatusScreen: {

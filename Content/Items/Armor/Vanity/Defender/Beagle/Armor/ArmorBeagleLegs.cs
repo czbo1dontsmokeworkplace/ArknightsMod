@@ -1,3 +1,4 @@
+using ArknightsMod.Content.Tiles.Infrastructure;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -15,5 +16,12 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Defender.Beagle.Armor
 		public override void UpdateArmorEquip(Player player)
         {
         }
-    }
+		public override void AddRecipes() {
+			CreateRecipe()
+			.AddIngredient(ModContent.ItemType<BeagleLegs>(), 1)
+			.AddIngredient(ModContent.ItemType<Orundum>(), 30)
+			.AddTile(ModContent.TileType<FactoryTile>())
+			.Register();
+		}
+	}
 }

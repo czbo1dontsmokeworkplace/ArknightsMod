@@ -1598,6 +1598,51 @@ ArmorBeagleBody: {
 	DisplayName: Armor Beagle Body
 }
 
+ArmorMelanthaBody: {
+	DisplayName: Armor Melantha Body
+	Tooltip: ""
+}
+
+ArmorMelanthaHead: {
+	DisplayName: Armor Melantha Head
+	Tooltip: ""
+}
+
+ArmorMelanthaLegs: {
+	DisplayName: Armor Melantha Legs
+	Tooltip: ""
+}
+
+ArmorMatoimaruBody: {
+	DisplayName: Armor Matoimaru Body
+	Tooltip: ""
+}
+
+ArmorMatoimaruHead: {
+	DisplayName: Armor Matoimaru Head
+	Tooltip: ""
+}
+
+ArmorMatoimaruLegs: {
+	DisplayName: Armor Matoimaru Legs
+	Tooltip: ""
+}
+
+ArmorKkdyAlterBody: {
+	DisplayName: Armor Kkdy Alter Body
+	Tooltip: ""
+}
+
+ArmorKkdyAlterHead: {
+	DisplayName: Armor Kkdy Alter Head
+	Tooltip: ""
+}
+
+ArmorKkdyAlterLegs: {
+	DisplayName: Armor Kkdy Alter Legs
+	Tooltip: ""
+}
+
 RhodesStatusScreen: {
 	DisplayName: Rhodes Status Screen
 	Tooltip: ""

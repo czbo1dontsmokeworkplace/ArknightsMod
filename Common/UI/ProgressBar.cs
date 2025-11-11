@@ -100,6 +100,9 @@ public class EventProgressBar : UIState
 		public override void Load() {
 			progressBar = new EventProgressBar();
 			eventInterface = new UserInterface();
+			if (Main.dedServ) {
+				return;
+			}
 			eventInterface.SetState(progressBar);
 		}
 

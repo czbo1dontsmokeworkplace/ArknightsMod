@@ -1,4 +1,5 @@
-﻿using ArknightsMod.Content.Items.Armor.Vanity.Sniper.Wisadel;
+﻿using ArknightsMod.Content.Items.Armor.Vanity.Defender.Beagle.Armor;
+using ArknightsMod.Content.Items.Armor.Vanity.Sniper.Wisadel;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -18,11 +19,13 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Guard.Melantha
 
 			EquipLoader.AddEquipTexture(Mod, $"{Texture}_{EquipType.Back}", EquipType.Back, this);
 		}
+		
 		internal class MelanthaHeadLayer : PlayerDrawLayer
 		{
 			public override bool GetDefaultVisibility(PlayerDrawSet drawInfo) {
-				Item head = new(ModContent.ItemType<MelanthaHead>());
-				return drawInfo.drawPlayer.head == head.headSlot && !drawInfo.drawPlayer.dead;
+				Item head1 = new(ModContent.ItemType<MelanthaHead>());
+				Item head2 = new(ModContent.ItemType<Armor.ArmorMelanthaHead>());
+				return (drawInfo.drawPlayer.head == head1.headSlot|| drawInfo.drawPlayer.head == head2.headSlot) && !drawInfo.drawPlayer.dead;
 			}
 			protected override void Draw(ref PlayerDrawSet drawInfo) {
 				var texture = ModContent.Request<Texture2D>("ArknightsMod/Content/Items/Armor/Vanity/Guard/Melantha/MelanthaHead_Back", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;

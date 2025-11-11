@@ -1,4 +1,5 @@
 using ArknightsMod.Content.Items.Armor.Vanity.Defender.Beagle.Armor;
+using ArknightsMod.Content.Tiles.Infrastructure;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
@@ -27,5 +28,12 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Defender.Beagle.Armor
 			player.setBonus = "";
             player.GetModPlayer<BeagleSetPlayer>().BeagleSetActive = true;
         }
-    }
+		public override void AddRecipes() {
+			CreateRecipe()
+			.AddIngredient(ModContent.ItemType<BeagleHead>(), 1)
+			.AddIngredient(ModContent.ItemType<Orundum>(), 30)
+			.AddTile(ModContent.TileType<FactoryTile>())
+			.Register();
+		}
+	}
 }

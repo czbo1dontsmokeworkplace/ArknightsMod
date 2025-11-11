@@ -23,7 +23,8 @@ namespace ArknightsMod.Content.Tiles.Infrastructure
 			TileObjectData.newTile.CoordinateHeights = [16, 16, 16, 16, 16];
 			TileObjectData.addTile(Type);
             DustType = DustID.Iron;
-			AddMapEntry(new Color(60, 58, 45) * 2);
+			LocalizedText name = CreateMapEntryName();
+			AddMapEntry(new Color(60, 58, 45)*2, name);
 			RegisterItemDrop(ModContent.ItemType<FactoryItem>());
         }
         public override void NumDust(int i, int j, bool fail, ref int num)

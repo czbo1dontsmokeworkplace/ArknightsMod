@@ -40,6 +40,7 @@ Tiles: {
 	ManganeseOre.MapEntry: "{$Mods.ArknightsMod.Items.ManganeseOre.DisplayName}"
 	OrirockCube.MapEntry: "{$Mods.ArknightsMod.Items.OrirockCube.DisplayName}"
 	RMA7012.MapEntry: "{$Mods.ArknightsMod.Items.RMA7012.DisplayName}"
+	FactoryTile.MapEntry: 加工站
 	WMusicBoxTile.MapEntry: 音乐盒(W)
 	// HoundTile.MapEntry: Hound Tile
 	// HoundproTile.MapEntry: Houndpro Tile

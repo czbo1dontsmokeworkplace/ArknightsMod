@@ -3,8 +3,8 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Vanity.Defender.Beagle.Armor
 {
-    public class BeagleSetPlayer : ModPlayer
-    {
+    public class BeagleSetPlayer : ArknightsArmorPlayer
+	{
         public bool BeagleSetActive;
 
         public override void ResetEffects()

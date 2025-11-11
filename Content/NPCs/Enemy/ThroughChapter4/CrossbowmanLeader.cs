@@ -52,7 +52,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		}
 
 		public override float SpawnChance(NPCSpawnInfo spawnInfo) {
-			return SpawnCondition.OverworldNightMonster.Chance * 0.05f;
+			if (NPC.downedBoss1 || NPC.downedBoss2 || NPC.downedBoss3 || NPC.downedQueenBee || Main.hardMode) {
+				return SpawnCondition.OverworldNightMonster.Chance * 0.01f;
+			}
+			else {
+				return 0f;
+			}
 		}
 
 		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
@@ -120,7 +125,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			Player Player = Main.player[NPC.target];
 			diffX = Player.Center.X - NPC.Center.X;
 			diffY = Player.Center.Y - NPC.Center.Y;
-			ax = 0.3f;
+			ax = 0.2f;
 			distance = (float)Math.Sqrt(Math.Pow(diffX / 16, 2) + Math.Pow(diffY / 16, 2));//到玩家的距离（格数）
 			if (NPC.velocity.X != 0) {
 				NPC.spriteDirection = Math.Sign(NPC.velocity.X);
@@ -132,7 +137,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				escrange = 15;
 				jumpspeed = 6f;
 				escapetime = 300;
-				vx = 3f;
+				vx = 1.5f;
 			}
 			else if (Main.expertMode) {
 				atkloop = 120;
@@ -140,7 +145,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				escrange = 10;
 				jumpspeed = 5f;
 				escapetime = 240;
-				vx = 2.5f;
+				vx = 1.2f;
 			}
 			else {
 				atkloop = 180;
@@ -148,7 +153,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				escrange = 10;
 				jumpspeed = 4f;
 				escapetime = 180;
-				vx = 2f;
+				vx = 1f;
 			}
 			//玩家死亡
 			if (!Player.active || Player.dead) {

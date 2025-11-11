@@ -29,10 +29,11 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		// 消失计时器：记录NPC已存在的帧数（60帧=1秒）
 		private int despawnTimer = 0;
 		// 最大存在时间（例如：3000帧=50秒，可自行调整）
-		private const int MaxExistTime = 3600;
+		private const int MaxExistTime = 360;
 		// 最大距离：超过此距离则消失（例如：2000像素，约125个砖块）
-		private const float MaxDistanceFromPlayer = 2000f;
+		private const float MaxDistanceFromPlayer = 1f;
 		public bool isnpcexist = false;
+		public int summoncd = 0;
 
 		int[] Eliteslist = new int[5] { ModContent.NPCType<ShieldGuard>(),ModContent.NPCType<IceCleaver>(), ModContent.NPCType<Seniorcaster>(), ModContent.NPCType<InsaneZombieL>(), ModContent.NPCType<Oneiros>()};
 
@@ -59,27 +60,39 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		public override List<string> SetNPCNameList() {
 			return [Language.GetTextValue($"Mods.ArknightsMod.NPCs.{GetType().Name}.DisplayName")];
 		}
-
 		public override void SetDefaults() {
 			NPC.townNPC = true;
-			NPC.friendly = true;
+			NPC.friendly = false;
+			NPC.dontTakeDamage = false;
 			NPC.width = 18;
 			NPC.height = 40;
 			NPC.aiStyle = 7;
-			NPC.damage = 90;
-			NPC.defense = 15;
+			NPC.damage = 0;
+			NPC.defense = 99;
 			NPC.lifeMax = 1000;
 			NPC.HitSound = SoundID.NPCHit1;
 			NPC.DeathSound = SoundID.NPCDeath1;
-			NPC.knockBackResist = 0.5f;
+			NPC.knockBackResist = 0f;
 			AnimationType = NPCID.Guide;
 			NPC.dontTakeDamage = true;
+
 		}
 
 		
 		public override bool CanGoToStatue(bool toQueenStatue) => true;
 
-
+		public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone) {
+			if (summoncd <= 0) {
+				summonElites();
+				summoncd = 600;
+			}
+		}
+		public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone) {
+			if (summoncd <= 0) {
+				summonElites();
+				summoncd = 600;
+			}
+		}
 
 		public override string GetChat() {
 			WeightedRandom<string> chat = new();
@@ -128,14 +141,24 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			);
 		}
 		public override void AI() {
-
+			if (summoncd > 0) {
+				summoncd--;
+			}
 
 			// 2. 距离消失：远离玩家后消失（可选，增强临时感）
 			Player player = Main.player[NPC.target];
 			if (player != null && player.active) {
 				float distance = Vector2.Distance(NPC.Center, player.Center);
-				if (distance > MaxDistanceFromPlayer) {
-					Despawn();
+				if (distance >= MaxDistanceFromPlayer) {
+					despawnTimer++;
+					if (despawnTimer >= 1200) {
+						Despawn();
+						despawnTimer = 0;
+						return;
+					}
+				}
+				else {
+					despawnTimer = 0;
 					return;
 				}
 			}
@@ -156,19 +179,214 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			NPC.netUpdate = true;
 		}
 		private void DropLoot() {
-			// 在NPC位置生成物品
-			Item.NewItem(
-				NPC.GetSource_Loot(),
-				NPC.getRect(), // 掉落范围（NPC碰撞箱）
-				ModContent.ItemType<OriginiumIngot>(), // 物品ID
-				2 // 数量
-			);
+			// 1. 生成 0-23 的随机数（24 个物品）
+			int randomIndex = Main.rand.Next(24);
+
+			// 2. 根据随机数选择物品
+			switch (randomIndex) {
+				case 0: // AbyssalWyrdmask
+					Item.NewItem(
+						NPC.GetSource_Loot(),
+						NPC.getRect(),
+						ModContent.ItemType<Items.Accessories.Rogue.AbyssalWyrdmask>(),
+						1
+					);
+					break;
+				case 1: // BrightWeeping
+					Item.NewItem(
+						NPC.GetSource_Loot(),
+						NPC.getRect(),
+						ModContent.ItemType<Items.Accessories.Rogue.BrightWeeping>(),
+						1
+					);
+					break;
+				case 2: // ChitinousRipper
+					Item.NewItem(
+						NPC.GetSource_Loot(),
+						NPC.getRect(),
+						ModContent.ItemType<Items.Accessories.Rogue.ChitinousRipper>(),
+						1
+					);
+					break;
+				case 3: // CoinOperatedToy
+					Item.NewItem(
+						NPC.GetSource_Loot(),
+						NPC.getRect(),
+						ModContent.ItemType<Items.Accessories.Rogue.CoinOperatedToy>(),
+						1
+					);
+					break;
+				case 4: // CommandersPortrait
+					Item.NewItem(
+						NPC.GetSource_Loot(),
+						NPC.getRect(),
+						ModContent.ItemType<Items.Accessories.Rogue.CommandersPortrait>(),
+						1
+					);
+					break;
+				case 5: // EmptyFeatheredBeast
+					Item.NewItem(
+						NPC.GetSource_Loot(),
+						NPC.getRect(),
+						ModContent.ItemType<Items.Accessories.Rogue.EmptyFeatheredBeast>(),
+						1
+					);
+					break;
+				case 6: // FatalBoltsDivineSpeed
+					Item.NewItem(
+						NPC.GetSource_Loot(),
+						NPC.getRect(),
+						ModContent.ItemType<Items.Accessories.Rogue.FatalBoltsDivineSpeed>(),
+						1
+					);
+					break;
+				case 7: // FirstAidMedicineKit
+					Item.NewItem(
+						NPC.GetSource_Loot(),
+						NPC.getRect(),
+						ModContent.ItemType<Items.Accessories.Rogue.FirstAidMedicineKit>(),
+						1
+					);
+					break;
+				case 8: // GoldBone
+					Item.NewItem(
+						NPC.GetSource_Loot(),
+						NPC.getRect(),
+						ModContent.ItemType<Items.Accessories.Rogue.GoldBone>(),
+						1
+					);
+					break;
+				case 9: // GoldenGinChalice
+					Item.NewItem(
+						NPC.GetSource_Loot(),
+						NPC.getRect(),
+						ModContent.ItemType<Items.Accessories.Rogue.GoldenGinChalice>(),
+						1
+					);
+					break;
+				case 10: // HotWaterKettle
+					Item.NewItem(
+						NPC.GetSource_Loot(),
+						NPC.getRect(),
+						ModContent.ItemType<Items.Accessories.Rogue.HotWaterKettle>(),
+						1
+					);
+					break;
+				case 11: // KingsArmor
+					Item.NewItem(
+						NPC.GetSource_Loot(),
+						NPC.getRect(),
+						ModContent.ItemType<Items.Accessories.Rogue.KingsArmor>(),
+						1
+					);
+					break;
+				case 12: // KingsCrown
+					Item.NewItem(
+						NPC.GetSource_Loot(),
+						NPC.getRect(),
+						ModContent.ItemType<Items.Accessories.Rogue.KingsCrown>(),
+						1
+					);
+					break;
+				case 13: // KingsStaff
+					Item.NewItem(
+						NPC.GetSource_Loot(),
+						NPC.getRect(),
+						ModContent.ItemType<Items.Accessories.Rogue.KingsStaff>(),
+						1
+					);
+					break;
+				case 14: // KnightlyCodexRenewed
+					Item.NewItem(
+						NPC.GetSource_Loot(),
+						NPC.getRect(),
+						ModContent.ItemType<Items.Accessories.Rogue.KnightlyCodexRenewed>(),
+						1
+					);
+					break;
+				case 15: // ManifestationPendant
+					Item.NewItem(
+						NPC.GetSource_Loot(),
+						NPC.getRect(),
+						ModContent.ItemType<Items.Accessories.Rogue.ManifestationPendant>(),
+						1
+					);
+					break;
+				case 16: // OldSteamArmor
+					Item.NewItem(
+						NPC.GetSource_Loot(),
+						NPC.getRect(),
+						ModContent.ItemType<Items.Accessories.Rogue.OldSteamArmor>(),
+						1
+					);
+					break;
+				case 17: // PerfumeForTheShow
+					Item.NewItem(
+						NPC.GetSource_Loot(),
+						NPC.getRect(),
+						ModContent.ItemType<Items.Accessories.Rogue.PerfumeForTheShow>(),
+						1
+					);
+					break;
+				case 18: // RosmontissEmbrace
+					Item.NewItem(
+						NPC.GetSource_Loot(),
+						NPC.getRect(),
+						ModContent.ItemType<Items.Accessories.Rogue.RosmontissEmbrace>(),
+						1
+					);
+					break;
+				case 19: // ScoutsScope
+					Item.NewItem(
+						NPC.GetSource_Loot(),
+						NPC.getRect(),
+						ModContent.ItemType<Items.Accessories.Rogue.ScoutsScope>(),
+						1
+					);
+					break;
+				case 20: // TheProfoundSilence
+					Item.NewItem(
+						NPC.GetSource_Loot(),
+						NPC.getRect(),
+						ModContent.ItemType<Items.Accessories.Rogue.TheProfoundSilence>(),
+						1
+					);
+					break;
+				case 21: // UnknownInstrument
+					Item.NewItem(
+						NPC.GetSource_Loot(),
+						NPC.getRect(),
+						ModContent.ItemType<Items.Accessories.Rogue.UnknownInstrument>(),
+						1
+					);
+					break;
+				case 22: // VanillaSauceSoda
+					Item.NewItem(
+						NPC.GetSource_Loot(),
+						NPC.getRect(),
+						ModContent.ItemType<Items.Accessories.Rogue.VanillaSauceSoda>(),
+						1
+					);
+					break;
+				case 23: // 未列出的物品（理论上不会触发，因为Main.rand.Next(24)范围是0-23）
+						 // 为完整性添加，实际不需要
+					Item.NewItem(
+						NPC.GetSource_Loot(),
+						NPC.getRect(),
+						ModContent.ItemType<Items.Accessories.Rogue.VanillaSauceSoda>(),
+						1
+					);
+					break;
+
+					
+			}
 			Despawn();
 		}
 
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
-			npcLoot.Add(ItemDropRule.Common(ArknightsMod.OriginiumIngotCurrencyId, 1, 2, 3));
+			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OriginiumIngot>(), 1, 2, 3));
 		}
+			
 		public override void OnChatButtonClicked(bool firstButton, ref string shop) {
 			if (firstButton) {
 				shop = ShopName;
@@ -231,7 +449,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 
 			npcShop.Register();
 		}
-
+		
 		public override void TownNPCAttackStrength(ref int damage, ref float knockback) {
 			damage = 30;
 			knockback = 4f;
@@ -251,6 +469,9 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		
 		private void TrySpawnMerchant() {
 			Player player = Main.player[Main.myPlayer];
+			if (IsNPCAlreadySpawned()) {
+				return;
+			}
 			if (player == null || !player.active)
 				return;
 			if (NPC.downedBoss1 || NPC.downedBoss2 || NPC.downedBoss3 || NPC.downedQueenBee || Main.hardMode) {
@@ -279,7 +500,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 				NPC.NewNPC(new EntitySource_WorldEvent(), (int)spawnPos.X, (int)spawnPos.Y, npcType);
 			}
 		}
-
+		
 		public override void PostUpdateNPCs() {
 			if (!Main.gameInactive && Main.hasFocus) {
 				if (spawnCooldown > 0) {
@@ -293,6 +514,16 @@ namespace ArknightsMod.Content.NPCs.Friendly
 					spawnCooldown = Main.rand.Next(MinCooldown, MaxCooldown);
 				}
 			}
+		}
+		private bool IsNPCAlreadySpawned() {
+			int npcType = ModContent.NPCType<Cannot>();
+			// 遍历所有NPC，检查是否存在目标类型且活跃的实例
+			foreach (NPC npc in Main.npc) {
+				if (npc.active && npc.type == npcType) {
+					return true; // 已存在
+				}
+			}
+			return false; // 不存在
 		}
 	}
 }

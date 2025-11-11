@@ -47,7 +47,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		private bool walk;
 		private bool attack;
 		private float maxspeed1 = 1.1f;
-		private float maxspeed2 = 4.5f;
+		private float maxspeed2 = 1.8f;
 		private int Framespeed = 9;
 		public override void FindFrame(int frameHeight) {
 			NPC.TargetClosest(true);
@@ -147,10 +147,10 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				rushtime++;
 				attackCD++;
 				if (NPC.position.X - p.position.X < -50 && NPC.velocity.X < maxspeed2) {
-					NPC.velocity.X += 0.6f;
+					NPC.velocity.X += 0.2f;
 				}
 				if (NPC.position.X - p.position.X > 50 && NPC.velocity.X > -maxspeed2) {
-					NPC.velocity.X += -0.6f;
+					NPC.velocity.X += -0.2f;
 				}
 
 				if (Math.Abs(NPC.velocity.X) <= 1.8f) {
@@ -185,7 +185,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		}
 
 		public override float SpawnChance(NPCSpawnInfo spawnInfo) {
-			return SpawnCondition.OverworldNightMonster.Chance * 0.5f; // Spawn with 1/5th the chance of a regular zombie.
+			return SpawnCondition.OverworldNightMonster.Chance * 0.2f; // Spawn with 1/5th the chance of a regular zombie.
 		}
 
 		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {

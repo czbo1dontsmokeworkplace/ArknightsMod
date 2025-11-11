@@ -78,8 +78,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4 //记得把BakaMod改�
 			NPC.ai[1]++;
 			NPC.TargetClosest(true);
 			Player p = Main.player[NPC.target];
-			float acceleration = 0.06f;
-			float maxSpeed = 2.5f;
+			float acceleration = 0.08f;
+			float maxSpeed = 3.2f;
 			if (NPC.ai[3] <= 200) {
 
 				if (NPC.Center.X > (p.Center.X + 10)) {
@@ -142,7 +142,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4 //记得把BakaMod改�
 		}
 		public override float SpawnChance(NPCSpawnInfo spawnInfo) {
 			//此处写刷怪率，这里写的是正常夜间怪的刷怪率
-			return SpawnCondition.OverworldNightMonster.Chance*0.25f; //此处可以乘上一个因数来调整刷怪率
+			if (NPC.downedBoss1 || NPC.downedBoss2 || NPC.downedBoss3 || NPC.downedQueenBee || Main.hardMode) {
+				return SpawnCondition.OverworldNightMonster.Chance * 0.1f; //此处可以乘上一个因数来调整刷怪率
+			}
+			else {
+				return 0f;
+			}
 		}
 		public override void HitEffect(NPC.HitInfo hit) {
 			//此处写该NPC被击中时产生的效果

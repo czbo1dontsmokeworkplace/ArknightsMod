@@ -449,6 +449,10 @@ namespace ArknightsMod.Content.NPCs.Friendly
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
+				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.LapplandDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
 				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.TexalterDefault>()) {
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
