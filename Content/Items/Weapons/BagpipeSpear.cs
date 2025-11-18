@@ -33,7 +33,7 @@ namespace ArknightsMod.Content.Items.Weapons
 			Item.autoReuse = false; // Allows the player to hold click to automatically use the item again. Most spears don't autoReuse, but it's possible when used in conjunction with CanUseItem()
 
 			// Weapon Properties
-			Item.damage = 76;
+			Item.damage = 59;
 			Item.knockBack = 2.5f;
 			Item.noUseGraphic = true; // When true, the item's sprite will not be visible while the item is in use. This is true because the spear projectile is what's shown so we do not want to show the spear sprite as well.
 			Item.DamageType = DamageClass.Melee;

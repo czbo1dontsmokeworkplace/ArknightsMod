@@ -16,13 +16,13 @@ namespace ArknightsMod.Content.Items.Weapons
 		}
 
 		public override void SetDefaults() {
-			Item.damage = 47;
+			Item.damage = 24;
 			Item.DamageType = DamageClass.Magic;
 			Item.mana = 2;
 			Item.width = 14;
 			Item.height = 14;
-			Item.useTime = 40;
-			Item.useAnimation = 40;
+			Item.useTime = 48;
+			Item.useAnimation = 48;
 			Item.useStyle = ItemUseStyleID.Shoot;
 			Item.noMelee = true;
 			Item.channel = true; //Channel so that you can held the weapon [Important]

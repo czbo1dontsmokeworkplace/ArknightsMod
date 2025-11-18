@@ -49,7 +49,7 @@ namespace ArknightsMod.Content.Items.Weapons
 		}
 		public override void SetDefaults()
 		{
-			Item.damage = 64;
+			Item.damage = 32;
 			Item.knockBack = 3f;
 			Item.useAnimation = 87;
 			Item.useTime = 87;

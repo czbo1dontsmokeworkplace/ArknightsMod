@@ -37,7 +37,7 @@ namespace ArknightsMod.Content.Items.Weapons
 			};
 		}
 		public override void SetDefaults() {
-			Item.damage = 25; // 基础伤害
+			Item.damage = 18; // 基础伤害
 			Item.knockBack = 7;
 			Item.crit = 2; // 爆击率
 			Item.DamageType = DamageClass.Melee; // 伤害类型

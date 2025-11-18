@@ -44,11 +44,11 @@ namespace ArknightsMod.Content.Items.Weapons
         {
             Item.width = 54;
             Item.height = 28;
-            Item.useTime = 15;
-            Item.useAnimation = 15;
-            Item.reuseDelay = 15;
+            Item.useTime = 30;
+            Item.useAnimation = 30;
+            Item.reuseDelay = 10;
             Item.shootSpeed = 8f;
-            Item.damage = 131;
+            Item.damage = 54;
             Item.knockBack = 5f;
             Item.shoot = ModContent.ProjectileType<ExusiaiVector_Bullet>();
             Item.DamageType = DamageClass.Ranged;
@@ -92,8 +92,8 @@ namespace ArknightsMod.Content.Items.Weapons
 				}
 				else {
 					if (!modPlayer.SummonMode) {
-						Item.useAnimation = 15;
-						Item.useTime = 15;
+						Item.useAnimation = 30;
+						Item.useTime = 30;
 						// S1
 						if (modPlayer.Skill == 0) {
 							if (modPlayer.StockCount == 0) {
@@ -101,7 +101,7 @@ namespace ArknightsMod.Content.Items.Weapons
 								Item.UseSound = ExusiaiVectorA;
 							}
 							else if (modPlayer.StockCount > 0) {
-								Item.useTime =5;
+								Item.useTime =10;
 								modPlayer.SkillActive = true;
 								modPlayer.SkillTimer = 0;
 								modPlayer.DelStockCount();
@@ -110,7 +110,7 @@ namespace ArknightsMod.Content.Items.Weapons
 						}
 						// S2
 						if (modPlayer.Skill == 1 && modPlayer.SkillActive) {
-							Item.useTime = 4;
+							Item.useTime = 8;
 							Item.UseSound = ExusiaiVectorS;
 							SoundEngine.PlaySound(Item.UseSound.Value, player.Center);
 						}
@@ -120,7 +120,7 @@ namespace ArknightsMod.Content.Items.Weapons
 						// S3
 						if (modPlayer.Skill == 2 && modPlayer.SkillActive) {
 							Item.useAnimation = 10;
-							Item.useTime = 2;
+							Item.useTime = 4;
 							Item.UseSound = ExusiaiVectorS;
 							SoundEngine.PlaySound(Item.UseSound.Value, player.Center);
 						}

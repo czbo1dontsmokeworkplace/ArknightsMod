@@ -14,7 +14,7 @@ namespace ArknightsMod.Content.Items.Weapons.BlueberryAndDarkChocolate
 
         public override void SetDefaults()
 		{
-			Item.damage = 170;
+			Item.damage = 93;
             Item.DamageType = DamageClass.Melee;
             Item.width = 66;
 			Item.height = 70;

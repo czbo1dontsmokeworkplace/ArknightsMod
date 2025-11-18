@@ -84,13 +84,13 @@ namespace ArknightsMod.Content.Items.Weapons
 		private int skill = 0;
 		public override void SetDefaults()
         {
-            Item.damage = 154;//攻击力
+            Item.damage = 71;//攻击力
             Item.DamageType = DamageClass.Melee;
             Item.width = 71;//丢出体积
             Item.height = 104;//丢出体积
             Item.scale = 1;//图片缩放
-            Item.useTime = 30;//使用一次时间 
-            Item.useAnimation = 30;//动画显示时间
+            Item.useTime = 39;//使用一次时间 
+            Item.useAnimation = 39;//动画显示时间
             Item.knockBack = 2f;//击退
             Item.value = 200000;//大概是价格吧
             Item.rare = ModContent.RarityType<ArknightsRarities>();//稀有度
