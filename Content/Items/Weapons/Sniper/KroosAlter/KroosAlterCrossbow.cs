@@ -99,6 +99,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.KroosAlter
 				if (modPlayer.Skill == 0 && modPlayer.SkillActive == true) {
 					damage *= 1.4f;
 					player.aggro -= 1250;
+					Item.useTime = 15;
 				}
 				if (modPlayer.Skill == 1 && modPlayer.SkillActive == true && Item.type == ModContent.ItemType<KroosAlterCrossbow>()) {
 					Item.useTime = 15;

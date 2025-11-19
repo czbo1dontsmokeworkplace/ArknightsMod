@@ -232,7 +232,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.KroosAlter
                     SpriteEffects.None,
                     0
                 );
-                Texture2D glow = ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/KroosAlterCrossbow_ArrowGlow").Value;
+                Texture2D glow = ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Sniper/KroosAlter/KroosAlterCrossbow_ArrowGlow").Value;
                 Main.EntitySpriteDraw(
                     glow,
                     Projectile.Center - Main.screenPosition,
