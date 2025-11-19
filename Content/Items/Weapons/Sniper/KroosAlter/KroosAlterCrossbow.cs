@@ -23,6 +23,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.KroosAlter
     {
 		private static SoundStyle SkillActive1;
 		private static SoundStyle NoSound;
+		public int Skill2HitCounter = 0;
 		public override void SetDefaults()
         {
             Item.width = 52;
@@ -127,6 +128,13 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.KroosAlter
 			recipe.AddIngredient(ModContent.ItemType<OrironCluster>());
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
+		}
+		public override void UpdateInventory(Player player) {
+			// 技能结束清零
+			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
+			if (modPlayer.SkillActive==false) {
+				Skill2HitCounter = 0;
+			}
 		}
 	}
 }

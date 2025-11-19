@@ -32,10 +32,16 @@ namespace ArknightsMod.Content.Projectiles.Sniper.KroosAlter
         public override void AI()
         {
 			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
-			Player player = Main.player[Projectile.owner];
+            Player player = Main.player[Projectile.owner];
 
-            if (player.dead || !player.active || player.HeldItem.type != ModContent.ItemType<KroosAlterCrossbow>() || !player.channel)
-            {
+            // 获取当前手持的 Kroos 弩（ModItem 实例）
+            KroosAlterCrossbow crossbow = null;
+            if (player.HeldItem.ModItem is KroosAlterCrossbow cb) {
+                crossbow = cb;
+            }
+
+            if (player.dead || !player.active || player.HeldItem.type != ModContent.ItemType<KroosAlterCrossbow>() || !player.channel) {
+                // ✅ 销毁前不清空计数器！保留进度
                 Projectile.Kill();
                 return;
             }
@@ -97,50 +103,43 @@ namespace ArknightsMod.Content.Projectiles.Sniper.KroosAlter
                 }
                 #endregion
                 #region 二技能
-                else if (modPlayer.Skill == 1 && modPlayer.SkillActive)
+                if (modPlayer.Skill == 1 && modPlayer.SkillActive)
                 {
-					int shotsPerInterval = counter < 32 ? 2 : 4;
+                    // ✅ 从 ModItem 读取累计次数
+                    int shotsPerInterval = crossbow?.Skill2HitCounter < 32 ? 2 : 4;
+
                     if (Projectile.ai[0] < player.HeldItem.useTime)
                     {
-                        int interval = player.HeldItem.useTime / shotsPerInterval;
+                        int interval = Math.Max(1, player.HeldItem.useTime / shotsPerInterval);
 
                         if (Projectile.ai[0] % interval == 0)
                         {
-                            //射弹
+                            // 射弹、特效、音效...
                             ShootBullet(player, MathHelper.ToRadians(2));
-                            //爆炸粒子效果
                             ShootEffect(player);
-                            //爆炸圆环效果
                             Projectile.NewProjectile(Projectile.GetSource_FromAI(),
                                 Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.Zero) * 16,
                                 Projectile.velocity.SafeNormalize(Vector2.Zero),
                                 ModContent.ProjectileType<KroostheKeenGlint_Crossbow_Circle1>(),
-                                0,
-                                0,
-                                player.whoAmI,
-                                0,
-                                0,
-                                Skill
-                                );
-                            //音效
-                            SoundStyle SkillSound = new SoundStyle("ArknightsMod/Sounds/p_atk_krossbow_n") with
-                            {
-                                Volume = 0.5f
-                            };
+                                0, 0, player.whoAmI, 0, 0, Skill
+                            );
+
+                            SoundStyle SkillSound = new("ArknightsMod/Sounds/p_atk_krossbow_n") { Volume = 0.5f };
                             SoundEngine.PlaySound(SkillSound, Projectile.position);
 
                             Projectile.ai[1]++;
-                            Projectile.localAI[0]++;
-                            //Main.NewText(Projectile.localAI[0]);
+
+                            // ✅ 关键：累计攻击次数 +1（存在 ModItem 中）
+                            if (crossbow != null)
+                                crossbow.Skill2HitCounter++;
 
                             if (Projectile.ai[1] >= 4)
                             {
-                                Projectile.ai[0] = player.HeldItem.useTime; // 进入useDelay阶段
+                                Projectile.ai[0] = player.HeldItem.useTime;
                                 Projectile.ai[1] = 0;
                             }
                         }
                     }
-                    // 冷却阶段处理
                     else if (Projectile.ai[0] >= player.HeldItem.useTime + player.HeldItem.reuseDelay)
                     {
                         Projectile.ai[0] = 0;
