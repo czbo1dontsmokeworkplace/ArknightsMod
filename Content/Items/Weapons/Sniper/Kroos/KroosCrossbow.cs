@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-﻿using ArknightsMod.Content.Tiles.Infrastructure;
-=======
 using ArknightsMod.Content.Tiles.Infrastructure;
->>>>>>> 5d230e039490815ed5110361b37f58005be7024d
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Terraria;
