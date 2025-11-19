@@ -11,7 +11,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Defender.Beagle.Armor
 		public override (float ratio, int value) LifeReplacement => (0.25f, 76);
 		public override void SetArmorDefaults()
 		{
-			Item.defense = 12;
+			Item.defense = 6;
 		}
 		public override void UpdateArmorEquip(Player player)
         {
