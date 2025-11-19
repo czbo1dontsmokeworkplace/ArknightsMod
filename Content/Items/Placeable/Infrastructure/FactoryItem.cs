@@ -1,6 +1,4 @@
 using ArknightsMod.Content.Items.Material;
-using ArknightsMod.Content.Projectiles;
-using ArknightsMod.Content.Projectiles.Pozyomka;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;

@@ -5,7 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Terraria.UI.Chat;
-using ArknightsMod.Content.Items.Weapons;
+using ArknightsMod.Content.Items.Weapons.Guard.SilverAsh;
 using System.Security.Policy;
 using UtfUnknown.Core.Analyzers.Chinese;
 using Microsoft.Xna.Framework.Graphics;
@@ -23,14 +23,14 @@ namespace ArknightsMod.Players
 		public bool yinhui2=false;
 		public override void ResetEffects()
         {
-			//¼¬´Ì2¼¼ÄÜÌØÊâÐ§¹û
+			//ï¿½ï¿½ï¿½ï¿½2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½
 			if (yinhui2 == true)
             {
 				Player.statDefense *= 2f;
 				Player.lifeRegen += (int)(Player.statLifeMax2 * 0.12f);
 			}
 			if (Main.myPlayer != Player.whoAmI)
-				return;  // Ö»´¦Àí±¾µØÍæ¼Ò
+				return;  // Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			bool isHoldingTargetWeapon = Player.HeldItem.type == ModContent.ItemType<SilverAshWeapon>();
 			if (!isHoldingTargetWeapon) {
 				Player.GetModPlayer<yinhui2player>().yinhui2 = false;
@@ -46,7 +46,7 @@ namespace ArknightsMod.Players
 				Player.statDefense *= 0.3f;
 			}
 			if (Main.myPlayer != Player.whoAmI)
-				return;  // Ö»´¦Àí±¾µØÍæ¼Ò
+				return;  // Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			bool isHoldingTargetWeapon2 = Player.HeldItem.type == ModContent.ItemType<SilverAshWeapon>();
 			if (!isHoldingTargetWeapon2) {
 				Player.GetModPlayer<yinhui3player>().yinhui3 = false;

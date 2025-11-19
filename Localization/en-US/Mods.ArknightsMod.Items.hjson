@@ -4,6 +4,15 @@ YatoKatana: {
 	Tooltip: "'Yato has joined the team.'"
 }
 
+NoirShield: {
+	DisplayName: Noir's Shield
+	Tooltip: 
+		'''
+		holding this shield provides 5 defense
+		No damage? Knockback is fine.
+		'''
+}
+
 DurinWand: {
 	DisplayName: Durin's wand
 	Tooltip: She looks quite sleepy.
