@@ -4,6 +4,15 @@ YatoKatana: {
 	Tooltip: "'夜刀，入队。'"
 }
 
+NoirShield: {
+	DisplayName: 黑角的盾
+	Tooltip:
+		'''
+		手持此盾使防御力加5
+		没伤害？击退就完事了
+		'''
+}
+
 DurinWand: {
 	DisplayName: 杜林的法杖
 	Tooltip: 她看起来十分困乏。

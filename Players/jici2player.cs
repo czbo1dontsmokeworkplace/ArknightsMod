@@ -5,7 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Terraria.UI.Chat;
-using ArknightsMod.Content.Items.Weapons;
+using ArknightsMod.Content.Items.Weapons.Guard.Thorns;
 using System.Security.Policy;
 using UtfUnknown.Core.Analyzers.Chinese;
 using Microsoft.Xna.Framework.Graphics;
@@ -23,18 +23,18 @@ namespace ArknightsMod.Players
 		public bool JiCi2=false;
 		public override void ResetEffects()
         {
-			//¼¬´Ì2¼¼ÄÜÌØÊâÐ§¹û
+			//ï¿½ï¿½ï¿½ï¿½2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½
 			if (JiCi2 == true)
             {
                 if (JiCi2_JSQ > 0) JiCi2_JSQ++;
                 if (JiCi2_JSQ > 36) JiCi2_JSQ = 0;
                 Player.statDefense *= 2.1f;
-				Player.controlUseItem = false; // ´ËÊ±ÉèÖÃ²»»á±»ºóÐøÊäÈë¸²¸Ç
+				Player.controlUseItem = false; // ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ã²ï¿½ï¿½á±»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë¸²ï¿½ï¿½
 				Player.itemAnimation = 0;
 				Player.itemTime = 0;
 			}
 			if (Main.myPlayer != Player.whoAmI)
-				return;  // Ö»´¦Àí±¾µØÍæ¼Ò
+				return;  // Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			bool isHoldingTargetWeapon = Player.HeldItem.type == ModContent.ItemType<ThornsWeapon>();
 			if (!isHoldingTargetWeapon) {
 				Player.GetModPlayer<jici2player>().JiCi2 = false;

@@ -1,6 +1,24 @@
 ﻿using ArknightsMod.Common.UI;
 using ArknightsMod.Content.Items.Weapons;
-using ArknightsMod.Content.Items.Weapons.ChenSword;
+using ArknightsMod.Content.Items.Weapons.Vanguard.Bagpipe;
+using ArknightsMod.Content.Items.Weapons.Sniper.Exusiai;
+using ArknightsMod.Content.Items.Weapons.Sniper.Kroos;
+using ArknightsMod.Content.Items.Weapons.Guard.Chen;
+using ArknightsMod.Content.Items.Weapons.Guard.Thorns;
+using ArknightsMod.Content.Items.Weapons.Defender.Beagle;
+using ArknightsMod.Content.Items.Weapons.Guard.SilverAsh;
+using ArknightsMod.Content.Items.Weapons.Sniper.Shirayuki;
+using ArknightsMod.Content.Items.Weapons.Caster.Lava;
+using ArknightsMod.Content.Items.Weapons.Sniper.KroosAlter;
+using ArknightsMod.Content.Items.Weapons.Sniper.Pozemka;
+using ArknightsMod.Content.Items.Weapons.Defender.Nian;
+using ArknightsMod.Content.Items.Weapons.Defender.NoirCorne;
+
+
+
+
+
+
 using ArknightsMod.Systems.Gameplay.Skill;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
@@ -12,6 +30,7 @@ namespace ArknightsMod.Players
 {
 	public class WeaponPlayer : ModPlayer
 	{
+		public int defenseBonus = 0;
 		protected override bool CloneNewInstances => true;
 		public SkillData CurrentSkill => SkillData[Skill];
 		public int SkillCount { get; private set; }
@@ -49,6 +68,7 @@ namespace ArknightsMod.Players
 		public bool HoldExusiaiVector = false;
 		public bool HoldPozemkaCrossbow = false;
 		public bool HoldNianWeapon = false;
+		public bool HoldNoirShield = false;
 
 		private int oldHeld;
 		private int oldSkill;
@@ -134,6 +154,7 @@ namespace ArknightsMod.Players
 		}
 
 		public override void ResetEffects() {
+			defenseBonus = 0;
 			// 更新武器状态
 			HoldBagpipeSpear = Main.LocalPlayer.HeldItem.ModItem is BagpipeSpear;
 			HoldExusiaiVector = Main.LocalPlayer.HeldItem.ModItem is ExusiaiVector;
@@ -141,6 +162,7 @@ namespace ArknightsMod.Players
 			HoldChenSword_Item = Main.LocalPlayer.HeldItem.ModItem is ChenSword_Item;
 			HoldSilverAshWeapon = Main.LocalPlayer.HeldItem.ModItem is SilverAshWeapon;
 			HoldBeagleWeapon = Main.LocalPlayer.HeldItem.ModItem is BeagleWeapon;
+			HoldNoirShield = Main.LocalPlayer.HeldItem.ModItem is NoirShield;
 			HoldThornsWeapon = Main.LocalPlayer.HeldItem.ModItem is ThornsWeapon;
 			HoldShirayuki_Shuriken = Main.LocalPlayer.HeldItem.ModItem is Shirayuki_Shuriken;
 			HoldLava_Dagger = Main.LocalPlayer.HeldItem.ModItem is Lava_Dagger;
@@ -176,6 +198,9 @@ namespace ArknightsMod.Players
 				// 旧版武器支持
 				SetAllSkillsData();
 			}
+		}
+		public override void UpdateEquips(){
+			Player.statDefense += defenseBonus;
 		}
 
 		public void TryAutoCharge() {
@@ -405,6 +430,20 @@ namespace ArknightsMod.Players
 				HowManySkills = 1;
 				SkillLevel = new() { 7, 7, 7 };
 				ChargeTypeIsPerSecond = new() { false, true, false };
+				AutoTrigger = new() { true, false, false };
+				ShowSummonIconBySkills = new() { false, false, false };
+
+				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				MaxSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f };
+				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				SetSkillData();
+			}
+			else if (HoldNoirShield) {
+				IconName = "NoirShield";
+				HowManySkills = 0;
+				SkillLevel = new() { 0, 0, 0 };
+				ChargeTypeIsPerSecond = new() { false, false, false };
 				AutoTrigger = new() { true, false, false };
 				ShowSummonIconBySkills = new() { false, false, false };
 
