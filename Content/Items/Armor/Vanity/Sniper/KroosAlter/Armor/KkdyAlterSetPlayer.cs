@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Weapons;
+﻿using ArknightsMod.Content.Items.Weapons.Sniper.KroosAlter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
