@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Content.Projectiles.Caster.Durin;
 using ArknightsMod.Content.Tiles;
 using ArknightsMod.Content.Tiles.Infrastructure;
@@ -17,12 +17,13 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Durin
 
 		public override void SetDefaults() {
 			Item.damage = 24;
+			Item.damage = 24;
 			Item.DamageType = DamageClass.Magic;
 			Item.mana = 5;
 			Item.width = 14;
 			Item.height = 14;
-			Item.useTime = 40;
-			Item.useAnimation = 40;
+			Item.useTime = 48;
+			Item.useAnimation = 48;
 			Item.useStyle = ItemUseStyleID.Shoot;
 			Item.noMelee = true;
 			Item.channel = true; //Channel so that you can held the weapon [Important]

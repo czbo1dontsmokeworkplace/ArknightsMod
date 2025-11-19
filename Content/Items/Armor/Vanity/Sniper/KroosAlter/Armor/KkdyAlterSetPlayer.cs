@@ -1,27 +1,35 @@
-﻿using System;
+﻿using ArknightsMod.Content.Items.Weapons;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Terraria.ModLoader;
 using Terraria;
 using Terraria.ID;
+using Terraria.ModLoader;
+using Terraria.WorldBuilding;
 
 namespace ArknightsMod.Content.Items.Armor.Vanity.Sniper.KroosAlter.Armor
 {
 	internal class KkdyAlterSetPlayer: ArknightsArmorPlayer
 	{
 		public bool KkdyAlterSetActive;
-		public bool TalantActive= Main.rand.NextBool(5);
+		public bool TalantActive;
 		public override void ResetEffects() {
+			TalantActive = Main.rand.NextBool(5);
 			KkdyAlterSetActive = false;
 		}
 
 		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {
-
-			if (KkdyAlterSetActive) {
-				if (TalantActive) {
-					damage += 0.2f; // 武器基础伤害 +20%
+			if(KkdyAlterSetActive) {
+				if(item.type==ModContent.ItemType<KroosAlterCrossbow>()) {
+					damage *= 2f;
+				}
+				else if(item.DamageType==DamageClass.Ranged) {
+					damage *= 1.5f;
+				}
+				if (TalantActive && Player.itemAnimation > 0) {
+					damage *= 1.5f;
 				}
 			}
 		}

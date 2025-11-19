@@ -37,7 +37,11 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Beagle
 			};
 		}
 		public override void SetDefaults() {
+<<<<<<< HEAD:Content/Items/Weapons/Defender/Beagle/BeagleWeapon.cs
 			Item.damage = 25; // О©╫О©╫О©╫О©╫О©╫к╨О©╫
+=======
+			Item.damage = 18; // ╩Ы╢║ик╨╕
+>>>>>>> 5bad96a29f1f0280133f08b5d424ad4ce1de1e4e:Content/Items/Weapons/BeagleWeapon.cs
 			Item.knockBack = 7;
 			Item.crit = 2; // О©╫О©╫О©╫О©╫О©╫О©╫
 			Item.DamageType = DamageClass.Melee; // О©╫к╨О©╫О©╫О©╫О©╫О©╫

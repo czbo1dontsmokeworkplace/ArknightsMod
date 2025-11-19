@@ -29,9 +29,9 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 	{
         public override void SetDefaults()
 		{
-            Item.damage = 137;
-            Item.useAnimation = 30;
-            Item.useTime = 30;
+            Item.damage = 61;
+            Item.useAnimation = 39;
+            Item.useTime = 39;
             Item.width = 64;
             Item.height = 64;
             Item.scale = 1f;

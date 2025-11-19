@@ -1756,3 +1756,18 @@ SolidCheckeredBookcase: {
 	DisplayName: Solid Checkered Bookcase
 	Tooltip: ""
 }
+
+AnselBody: {
+	DisplayName: Ansel Body
+	Tooltip: ""
+}
+
+AnselHead: {
+	DisplayName: Ansel Head
+	Tooltip: ""
+}
+
+AnselLegs: {
+	DisplayName: Ansel Legs
+	Tooltip: ""
+}

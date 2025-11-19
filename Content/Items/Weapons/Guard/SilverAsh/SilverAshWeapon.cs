@@ -45,13 +45,13 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.SilverAsh
 		public override bool MeleePrefix() => true;
         public override void SetDefaults()
         {
-            Item.damage = 158;//攻击力
+            Item.damage = 71;//攻击力
             Item.DamageType = DamageClass.Melee;
             Item.width = 52;//丢出体积
             Item.height = 48;//丢出体积
             Item.scale = 1;//图片缩放
-            Item.useTime = 22;//使用一次时间 
-            Item.useAnimation = 22;//动画显示时间
+            Item.useTime = 39;//使用一次时间 
+            Item.useAnimation = 39;//动画显示时间
 			Item.knockBack = 2f;//击退
             Item.value = 200000;//大概是价格吧 
             Item.rare = ModContent.RarityType<ArknightsRarities>();//稀有度

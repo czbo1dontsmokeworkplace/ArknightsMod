@@ -11,7 +11,7 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.TexasAlter
 
         public override void SetDefaults()
 		{
-			Item.damage = 75;
+			Item.damage = 38;
             Item.DamageType = DamageClass.Melee;
             Item.width = 66;
 			Item.height = 70;

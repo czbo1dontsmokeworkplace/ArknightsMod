@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Tiles.Infrastructure;
+using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -23,12 +23,12 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Kroos
 		}
 
 		public override void SetDefaults() {
-			Item.damage = 30;
+			Item.damage = 15;
 			Item.DamageType = DamageClass.Ranged;
 			Item.width = 120;
 			Item.height = 60;
-			Item.useTime = 8;
-			Item.useAnimation = 8;
+			Item.useTime = 30;
+			Item.useAnimation = 30;
 			Item.reuseDelay = 10;
 			Item.consumeAmmoOnLastShotOnly = true;
 
@@ -51,8 +51,8 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Kroos
 			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
 			if (Main.myPlayer == player.whoAmI) {
 				if (player.altFunctionUse != 2) {
-					Item.useTime = 8;
-					Item.reuseDelay = 10;
+					Item.useTime = 30;
+					Item.reuseDelay = 8;
 
 					// S1
 					if (modPlayer.Skill == 0) {
@@ -60,7 +60,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Kroos
 							modPlayer.OffensiveRecovery();
 						}
 						else if (modPlayer.StockCount > 0) {
-							Item.useTime = 4;
+							Item.useTime = 15;
 							modPlayer.SkillActive = true;
 							modPlayer.SkillTimer = 0;
 							modPlayer.DelStockCount();
