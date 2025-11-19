@@ -19,5 +19,11 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Defender.Beagle.Armor
 				modifiers.FinalDamage *= 0.9f;
 			}
         }
-    }
+		public override void PostUpdateEquips() {
+			if (BeagleSetActive) {
+				Player.statDefense *= 1.5f;
+
+			}
+		}
+	}
 }

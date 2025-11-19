@@ -27,11 +27,11 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.KroosAlter
         {
             Item.width = 52;
             Item.height = 32;
-            Item.useTime = 15;
-            Item.useAnimation = 15;
+            Item.useTime = 30;
+            Item.useAnimation = 30;
             Item.reuseDelay = 15;
             Item.shootSpeed = 8f;
-            Item.damage = 82;
+            Item.damage = 41;
             Item.knockBack = 3f;
             Item.shoot = ModContent.ProjectileType<KroosAlterCrossbow_Hold>();
             Item.DamageType = DamageClass.Ranged;
@@ -101,10 +101,10 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.KroosAlter
 					player.aggro -= 1250;
 				}
 				if (modPlayer.Skill == 1 && modPlayer.SkillActive == true && Item.type == ModContent.ItemType<KroosAlterCrossbow>()) {
-					Item.useTime = 9;
+					Item.useTime = 15;
 				}
 				else if (modPlayer.Skill == 1 && !modPlayer.SkillActive == true && Item.type == ModContent.ItemType<KroosAlterCrossbow>()) {
-					Item.useTime = 15;
+					Item.useTime = 30;
 				}
 			}
 		}

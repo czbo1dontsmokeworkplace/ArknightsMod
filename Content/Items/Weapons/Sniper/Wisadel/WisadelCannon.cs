@@ -20,15 +20,15 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Wisadel
     {
         public override void SetDefaults()
         {
-            Item.damage = 237;
+            Item.damage = 69;
             Item.Size = new(90, 32);
             Item.knockBack = 15;
             Item.rare = ItemRarityID.Red;
             Item.DamageType = DamageClass.Ranged;
             Item.value = Item.sellPrice(300);
             Item.crit = 20;
-            Item.useTime = 120;
-            Item.useAnimation = 120;
+            Item.useTime = 63;
+            Item.useAnimation = 63;
             Item.UseSound = null;
             Item.useAmmo = AmmoID.Bullet;
             Item.shoot = ProjectileID.Bullet;
