@@ -24,7 +24,7 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.Shaw
             Item.DefaultToRangedWeapon(ModContent.ProjectileType<ShawWaterCannon_Projectile>(), AmmoID.Gel, singleShotTime: 30, shotVelocity: 6f, hasAutoReuse: true);
             Item.width = 44;
             Item.height = 28;
-            Item.damage = 25 * (int)1.8f;//
+            Item.damage = 53 * (int)1.8f;//
             Item.knockBack = 20f;
             Item.UseSound = SoundID.Item85;
             //Item.value = Item.buyPrice(gold: 1);

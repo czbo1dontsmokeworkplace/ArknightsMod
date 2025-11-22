@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Saki
     {
         public override void SetDefaults()
         {
-            Item.damage = 78;
+            Item.damage = 145;
             Item.DamageType = DamageClass.Melee;
             Item.width = 36;
             Item.height = 44;

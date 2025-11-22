@@ -23,7 +23,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Kroos
 		}
 
 		public override void SetDefaults() {
-			Item.damage = 15;
+			Item.damage = 19;
 			Item.DamageType = DamageClass.Ranged;
 			Item.width = 120;
 			Item.height = 60;

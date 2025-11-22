@@ -10,7 +10,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Surtr
 	{
 		public override void SetDefaults()
 		{
-			Item.damage = 160;
+			Item.damage = 134;
 			Item.DamageType = DamageClass.Melee;
 			Item.width = 64;
 			Item.height = 70;

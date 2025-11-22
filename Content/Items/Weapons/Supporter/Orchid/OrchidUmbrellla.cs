@@ -24,8 +24,8 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Orchid
         public override void SetDefaults()
         {
             Item.width = Item.height = 40;
-            Item.useAnimation = 30;
-            Item.useTime = 30;
+            Item.useAnimation = 57;
+            Item.useTime = 57;
             Item.useLimitPerAnimation = 1;
             Item.shootSpeed = 8;
             Item.mana = 1;
@@ -35,7 +35,7 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Orchid
 
             Item.UseSound = SoundID.Item1;
 
-            Item.SetWeaponValues(38, 0);//伤害，击退
+            Item.SetWeaponValues(24, 0);//伤害，击退
 
             Item.SetShopValues(ItemRarityColor.Green2, Item.sellPrice(gold: 1));
 

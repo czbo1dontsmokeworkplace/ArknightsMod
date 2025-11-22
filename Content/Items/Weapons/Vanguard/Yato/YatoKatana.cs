@@ -22,8 +22,8 @@ namespace ArknightsMod.Content.Items.Weapons.Vanguard.Yato
 			Item.damage = 15;
 			Item.knockBack = 4f;
 			Item.useStyle = ItemUseStyleID.Rapier; // Makes the player do the proper arm motion
-			Item.useAnimation = 12;
-			Item.useTime = 12;
+			Item.useAnimation = 33;
+			Item.useTime = 33;
 			Item.width = 40;
 			Item.height = 40;
 			Item.DamageType = DamageClass.MeleeNoSpeed;

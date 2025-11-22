@@ -14,12 +14,12 @@ namespace ArknightsMod.Content.Items.Weapons.Vanguard.Texas
 	{
 		public override void SetDefaults()
 		{
-			Item.damage = 32;
+			Item.damage = 72;
 			Item.DamageType = DamageClass.Melee;
 			Item.width = 40;
 			Item.height = 40;
-			Item.useTime = 18;
-			Item.useAnimation = 18;
+			Item.useTime = 33;
+			Item.useAnimation = 33;
 			Item.useStyle = 1;
 			Item.knockBack = 3;
 			Item.value = 10000;

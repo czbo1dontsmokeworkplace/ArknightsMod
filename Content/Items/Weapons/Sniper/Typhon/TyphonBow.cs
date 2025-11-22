@@ -19,7 +19,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
 		}
 		public override void SetDefaults()
 		{
-			Item.damage = 50;
+			Item.damage = 209;
 			Item.DamageType = DamageClass.Ranged;
 			Item.width = 40;
 			Item.height = 40;

@@ -30,9 +30,8 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.KroosAlter
             Item.height = 32;
             Item.useTime = 30;
             Item.useAnimation = 30;
-            Item.reuseDelay = 15;
             Item.shootSpeed = 8f;
-            Item.damage = 41;
+            Item.damage = 72;
             Item.knockBack = 3f;
             Item.shoot = ModContent.ProjectileType<KroosAlterCrossbow_Hold>();
             Item.DamageType = DamageClass.Ranged;

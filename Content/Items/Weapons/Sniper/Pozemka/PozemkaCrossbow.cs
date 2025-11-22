@@ -51,14 +51,13 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Pozemka
 		}
 
 		public override void SetDefaults() {
-			Item.damage = 88;
+			Item.damage = 175;
 			Item.DamageType = DamageClass.Ranged;
 			Item.width = 88;
 			Item.height = 44;
 			Item.scale = 0.7f;
 			Item.useTime = 48;
 			Item.useAnimation = 48;
-			Item.reuseDelay = 10;
 			Item.consumeAmmoOnLastShotOnly = true;
 
 			Item.useStyle = ItemUseStyleID.Shoot;

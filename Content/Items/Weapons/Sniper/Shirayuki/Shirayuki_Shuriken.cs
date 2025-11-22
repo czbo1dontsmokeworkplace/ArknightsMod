@@ -29,7 +29,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Shirayuki
 
 		public override void SetDefaults()
 		{
-			Item.damage = 50;
+			Item.damage = 74;
 			Item.knockBack = 1f;
 			Item.useAnimation = 84;
 			Item.useTime = 84;

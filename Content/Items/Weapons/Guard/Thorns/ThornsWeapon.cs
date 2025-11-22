@@ -84,7 +84,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Thorns
 		private int skill = 0;
 		public override void SetDefaults()
         {
-            Item.damage = 71;//攻击力
+            Item.damage = 142;//攻击力
             Item.DamageType = DamageClass.Melee;
             Item.width = 71;//丢出体积
             Item.height = 104;//丢出体积

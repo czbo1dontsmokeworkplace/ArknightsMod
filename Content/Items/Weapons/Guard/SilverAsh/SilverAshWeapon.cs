@@ -45,7 +45,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.SilverAsh
 		public override bool MeleePrefix() => true;
         public override void SetDefaults()
         {
-            Item.damage = 71;//攻击力
+            Item.damage = 142;//攻击力
             Item.DamageType = DamageClass.Melee;
             Item.width = 52;//丢出体积
             Item.height = 48;//丢出体积

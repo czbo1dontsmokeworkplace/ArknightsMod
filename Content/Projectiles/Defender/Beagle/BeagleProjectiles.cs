@@ -105,14 +105,14 @@ namespace ArknightsMod.Content.Projectiles.Defender.Beagle
         Item item => player.HeldItem;
         public override void SetDefaults()
         {
-            Projectile.width = 10; // ??
-            Projectile.height = 10; // ???
-            Projectile.friendly = true; // ???
-            Projectile.penetrate = -1; // ???
-            Projectile.tileCollide = false; // ????
-            Projectile.usesLocalNPCImmunity = true; // ?ş??
-            Projectile.ownerHitCheck = true; // ????????????
-            Projectile.DamageType = DamageClass.MeleeNoSpeed; // ????
+            Projectile.width = 10; // ?ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?ï¿½ï¿½ï¿½ï¿½ï¿½
+            Projectile.height = 10; // ?ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?ï¿½ï¿½?ï¿½
+            Projectile.friendly = true; // ?ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½
+            Projectile.penetrate = -1; // ?ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?ï¿½?
+            Projectile.tileCollide = false; // ?ï¿½ï¿½ï¿½?ï¿½ï¿½ï¿½ï¿½?ï¿½ï¿½?
+            Projectile.usesLocalNPCImmunity = true; // ?ï¿½ï¿½?ï¿½ï¿½ï¿½ï¿½ï¿½?
+            Projectile.ownerHitCheck = true; // ?ï¿½ï¿½?ï¿½ï¿½ï¿½ï¿½ï¿½?ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?ï¿½ï¿½ï¿½ï¿½ï¿½??ï¿½?ï¿½ï¿½ï¿½ï¿½ï¿½?ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½ï¿½?ï¿½?
+            Projectile.DamageType = DamageClass.MeleeNoSpeed; // ?ï¿½ï¿½ï¿½ï¿½?ï¿½ï¿½??ï¿½ï¿½ï¿½ï¿½
             Projectile.ignoreWater = true;
             Projectile.localNPCHitCooldown = 1;
         }
@@ -131,8 +131,8 @@ namespace ArknightsMod.Content.Projectiles.Defender.Beagle
         }
         public override void SetStaticDefaults()
         {
-            ProjectileID.Sets.TrailingMode[Type] = 2;//???2?¼????
-            ProjectileID.Sets.TrailCacheLength[Type] = 7;//?¼??????(???)
+            ProjectileID.Sets.TrailingMode[Type] = 2;//ï¿½ï¿½?ï¿½??2ï¿½ï¿½ï¿½?ï¿½ï¿½ï¿½?ï¿½ï¿½?ï¿½?ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?ï¿½ï¿½
+            ProjectileID.Sets.TrailCacheLength[Type] = 7;//ï¿½ï¿½?ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½??ï¿½ï¿½ï¿½ï¿½ï¿½?ï¿½?ï¿½ï¿½ï¿½ï¿½ï¿½?ï¿½ï¿½?(?ï¿½ï¿½ï¿½ï¿½ï¿½??ï¿½ï¿½ï¿½ï¿½)
         }
         Stack<NPC> RecordNPC = new Stack<NPC>();
         public override bool? CanHitNPC(NPC target)
@@ -233,14 +233,14 @@ namespace ArknightsMod.Content.Projectiles.Defender.Beagle
         public override void SetDefaults()
         {
             Projectile.hide = true;
-            Projectile.width = 10; // ??
-            Projectile.height = 10; // ???
-            Projectile.friendly = true; // ???
-            Projectile.penetrate = -1; // ???
-            Projectile.tileCollide = false; // ????
-            Projectile.usesLocalNPCImmunity = true; // ?ş??
-            Projectile.ownerHitCheck = true; // ????????????
-            Projectile.DamageType = DamageClass.MeleeNoSpeed; // ????
+            Projectile.width = 10; // ?ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?ï¿½ï¿½ï¿½ï¿½ï¿½
+            Projectile.height = 10; // ?ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?ï¿½ï¿½?ï¿½
+            Projectile.friendly = true; // ?ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½
+            Projectile.penetrate = -1; // ?ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?ï¿½?
+            Projectile.tileCollide = false; // ?ï¿½ï¿½ï¿½?ï¿½ï¿½ï¿½ï¿½?ï¿½ï¿½?
+            Projectile.usesLocalNPCImmunity = true; // ?ï¿½ï¿½?ï¿½ï¿½ï¿½ï¿½ï¿½?
+            Projectile.ownerHitCheck = true; // ?ï¿½ï¿½?ï¿½ï¿½ï¿½ï¿½ï¿½?ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?ï¿½ï¿½ï¿½ï¿½ï¿½??ï¿½?ï¿½ï¿½ï¿½ï¿½ï¿½?ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½ï¿½?ï¿½?
+            Projectile.DamageType = DamageClass.MeleeNoSpeed; // ?ï¿½ï¿½ï¿½ï¿½?ï¿½ï¿½??ï¿½ï¿½ï¿½ï¿½
             Projectile.ignoreWater = true;
         }
         public override bool ShouldUpdatePosition()

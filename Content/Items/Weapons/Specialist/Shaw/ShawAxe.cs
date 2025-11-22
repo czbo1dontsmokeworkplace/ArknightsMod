@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.Shaw
     {
         public override void SetDefaults()
         {
-            Item.width = 40;
+            Item.width = 53;
             Item.height = 40;
             Item.useTime = 36;
             Item.useAnimation = 36;

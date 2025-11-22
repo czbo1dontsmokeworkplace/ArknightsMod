@@ -28,13 +28,13 @@ namespace ArknightsMod.Content.Items.Weapons.Vanguard.Fang
 
             // Use Properties
             Item.useAnimation = 20;
-            Item.useTime = 32;
+            Item.useTime = 33;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.UseSound = SoundID.Item71;
             Item.autoReuse = true;
 
             // Weapon Properties
-            Item.damage = 31;
+            Item.damage = 20;
             Item.knockBack = 1f;
             Item.shootSpeed = 3f;
             Item.shoot = ModContent.ProjectileType<FangSpear_Stab>();

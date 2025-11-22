@@ -1,18 +1,27 @@
 using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
+using ArknightsMod.Content.Projectiles.Defender.NoirCorne;
+using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Tiles;
+using ArknightsMod.Content.Tiles.Infrastructure;
+using ArknightsMod.Players;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
-using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Color = Microsoft.Xna.Framework.Color;
 
 
 namespace ArknightsMod.Content.Items.Weapons.Defender.NoirCorne
-{
-    // TODO 没有技能的目前还有点问题，先用ModItem
-    public class NoirShield : UpgradeWeaponBase
+{    public class NoirShield : UpgradeWeaponBase
     {
 
         public override void AddRecipes()
@@ -40,10 +49,71 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.NoirCorne
             Item.DamageType = DamageClass.Melee;
             Item.width = 78;
             Item.height = 102;
-            Item.useTime = 20;
-            Item.useAnimation = 16;
+            Item.useTime = 36;
+            Item.useAnimation = 36;
             Item.autoReuse = true;
-            Item.useStyle = ItemUseStyleID.Thrust;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.noUseGraphic = true;
+            Item.noMelee = true;
+            // Item.shootSpeed = 1f;
+            // Item.shoot = ModContent.ProjectileType<NoirShield_Projectile>();
+        }
+
+        public override bool CanUseItem(Player player) {
+			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
+			if (Main.myPlayer == player.whoAmI) {
+				if (player.altFunctionUse == 2) {
+					if (!modPlayer.SummonMode) {
+						player.GetModPlayer<NoirDEFplayer>().hasNoirDEFplayer = true;
+						return false;
+					}
+				}
+				else {
+					if (!modPlayer.SummonMode) {
+                        if (player.ownedProjectileCounts[ModContent.ProjectileType<NoirShield_Projectile>()] > 0)
+                            return false;
+						Item.UseSound = NoSound;
+						SoundEngine.PlaySound(Item.UseSound.Value, player.Center);
+					}
+				}
+			}
+			return base.CanUseItem(player);
+		}
+
+        public class NoirDEFplayer : ModPlayer
+		{
+			public bool hasNoirDEFplayer = false;
+			public override void ResetEffects() {
+				if (hasNoirDEFplayer == true) {
+					Player.statDefense += 10;
+				}
+				if (Main.myPlayer != Player.whoAmI)
+					return; 
+				bool isHoldingTargetWeapon = Player.HeldItem.type == ModContent.ItemType<NoirShield>();
+				if (!isHoldingTargetWeapon) {
+					Player.GetModPlayer<NoirDEFplayer>().hasNoirDEFplayer = false;
+				}
+
+			}
+		}
+
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source,
+            Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+        {
+            if (player.altFunctionUse == 2) // 右键
+            {
+                Projectile.NewProjectile(source, player.Center, Vector2.Zero,
+                    ModContent.ProjectileType<NoirShield_Projectile>(),
+                    damage, knockback, player.whoAmI);
+            }
+            else // 左键
+            {
+                Projectile.NewProjectile(source, player.Center, Vector2.Zero,
+                    ModContent.ProjectileType<NoirShield_MainAtk>(),
+                    damage, knockback, player.whoAmI);
+            }
+
+            return false;
         }
         public override void HoldItem(Player player)
         {

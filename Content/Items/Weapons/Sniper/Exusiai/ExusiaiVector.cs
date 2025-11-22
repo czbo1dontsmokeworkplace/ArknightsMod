@@ -41,11 +41,10 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Exusiai
 		}
 		public override void SetDefaults()
         {
-            Item.width = 54;
+            Item.width = 108;
             Item.height = 28;
             Item.useTime = 30;
             Item.useAnimation = 30;
-            Item.reuseDelay = 10;
             Item.shootSpeed = 8f;
             Item.damage = 54;
             Item.knockBack = 5f;

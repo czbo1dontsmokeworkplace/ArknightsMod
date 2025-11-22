@@ -49,7 +49,7 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Lava
 		}
 		public override void SetDefaults()
 		{
-			Item.damage = 32;
+			Item.damage = 40;
 			Item.knockBack = 3f;
 			Item.useAnimation = 87;
 			Item.useTime = 87;
