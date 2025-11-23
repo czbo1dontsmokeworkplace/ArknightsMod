@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Terraria.ModLoader;
 
-namespace ArknightsMod.Content.Items.Armor.Vanity.Medic.Ansel
+namespace ArknightsMod.Content.Items.Armor.Vanity.Guard.Midnight
 {
     [AutoloadEquip(EquipType.Legs)]
     public class AnselLegs : ArknightsVanityLegs
