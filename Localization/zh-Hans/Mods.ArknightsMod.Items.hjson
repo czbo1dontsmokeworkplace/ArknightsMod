@@ -1895,3 +1895,288 @@ AnselLegs: {
 	// DisplayName: Ansel Legs
 	// Tooltip: ""
 }
+
+LavaBody: {
+	// DisplayName: Lava Body
+	// Tooltip: ""
+}
+
+LavaHead: {
+	// DisplayName: Lava Head
+	// Tooltip: ""
+}
+
+LavaLegs: {
+	// DisplayName: Lava Legs
+	// Tooltip: ""
+}
+
+StewardBody: {
+	// DisplayName: Steward Body
+	// Tooltip: ""
+}
+
+StewardHead: {
+	// DisplayName: Steward Head
+	// Tooltip: ""
+}
+
+StewardLegs: {
+	// DisplayName: Steward Legs
+	// Tooltip: ""
+}
+
+CardiganBody: {
+	// DisplayName: Cardigan Body
+	// Tooltip: ""
+}
+
+CardiganHead: {
+	// DisplayName: Cardigan Head
+	// Tooltip: ""
+}
+
+CardiganLegs: {
+	// DisplayName: Cardigan Legs
+	// Tooltip: ""
+}
+
+SpotBody: {
+	// DisplayName: Spot Body
+	// Tooltip: ""
+}
+
+SpotHead: {
+	// DisplayName: Spot Head
+	// Tooltip: ""
+}
+
+SpotLegs: {
+	// DisplayName: Spot Legs
+	// Tooltip: ""
+}
+
+MidnightBody: {
+	// DisplayName: Midnight Body
+	// Tooltip: ""
+}
+
+MidnightHead: {
+	// DisplayName: Midnight Head
+	// Tooltip: ""
+}
+
+MidnightLegs: {
+	// DisplayName: Midnight Legs
+	// Tooltip: ""
+}
+
+PopukarBody: {
+	// DisplayName: Popukar Body
+	// Tooltip: ""
+}
+
+PopukarHead: {
+	// DisplayName: Popukar Head
+	// Tooltip: ""
+}
+
+PopukarLegs: {
+	// DisplayName: Popukar Legs
+	// Tooltip: ""
+}
+
+HibiscusBody: {
+	// DisplayName: Hibiscus Body
+	// Tooltip: ""
+}
+
+HibiscusHead: {
+	// DisplayName: Hibiscus Head
+	// Tooltip: ""
+}
+
+HibiscusLegs: {
+	// DisplayName: Hibiscus Legs
+	// Tooltip: ""
+}
+
+AdnachielBody: {
+	// DisplayName: Adnachiel Body
+	// Tooltip: ""
+}
+
+AdnachielHead: {
+	// DisplayName: Adnachiel Head
+	// Tooltip: ""
+}
+
+AdnachielLegs: {
+	// DisplayName: Adnachiel Legs
+	// Tooltip: ""
+}
+
+CatapultBody: {
+	// DisplayName: Catapult Body
+	// Tooltip: ""
+}
+
+CatapultHead: {
+	// DisplayName: Catapult Head
+	// Tooltip: ""
+}
+
+CatapultLegs: {
+	// DisplayName: Catapult Legs
+	// Tooltip: ""
+}
+
+KroosBody: {
+	// DisplayName: Kroos Body
+	// Tooltip: ""
+}
+
+KroosHead: {
+	// DisplayName: Kroos Head
+	// Tooltip: ""
+}
+
+KroosLegs: {
+	// DisplayName: Kroos Legs
+	// Tooltip: ""
+}
+
+OrchidBody: {
+	// DisplayName: Orchid Body
+	// Tooltip: ""
+}
+
+OrchidHead: {
+	// DisplayName: Orchid Head
+	// Tooltip: ""
+}
+
+OrchidLegs: {
+	// DisplayName: Orchid Legs
+	// Tooltip: ""
+}
+
+FangBody: {
+	// DisplayName: Fang Body
+	// Tooltip: ""
+}
+
+FangHead: {
+	// DisplayName: Fang Head
+	// Tooltip: ""
+}
+
+FangLegs: {
+	// DisplayName: Fang Legs
+	// Tooltip: ""
+}
+
+PlumeBody: {
+	// DisplayName: Plume Body
+	// Tooltip: ""
+}
+
+PlumeHead: {
+	// DisplayName: Plume Head
+	// Tooltip: ""
+}
+
+PlumeLegs: {
+	// DisplayName: Plume Legs
+	// Tooltip: ""
+}
+
+VanillaBody: {
+	// DisplayName: Vanilla Body
+	// Tooltip: ""
+}
+
+VanillaHead: {
+	// DisplayName: Vanilla Head
+	// Tooltip: ""
+}
+
+VanillaLegs: {
+	// DisplayName: Vanilla Legs
+	// Tooltip: ""
+}
+
+AdnachielDefault: {
+	// DisplayName: Adnachiel Default
+	// Tooltip: ""
+}
+
+AnselDefault: {
+	// DisplayName: Ansel Default
+	// Tooltip: ""
+}
+
+CardiganDefault: {
+	// DisplayName: Cardigan Default
+	// Tooltip: ""
+}
+
+CatapultDefault: {
+	// DisplayName: Catapult Default
+	// Tooltip: ""
+}
+
+FangDefault: {
+	// DisplayName: Fang Default
+	// Tooltip: ""
+}
+
+HibiscusDefault: {
+	// DisplayName: Hibiscus Default
+	// Tooltip: ""
+}
+
+KroosDefault: {
+	// DisplayName: Kroos Default
+	// Tooltip: ""
+}
+
+LavaDefault: {
+	// DisplayName: Lava Default
+	// Tooltip: ""
+}
+
+MidnightDefault: {
+	// DisplayName: Midnight Default
+	// Tooltip: ""
+}
+
+OrchidDefault: {
+	// DisplayName: Orchid Default
+	// Tooltip: ""
+}
+
+PlumeDefault: {
+	// DisplayName: Plume Default
+	// Tooltip: ""
+}
+
+PopukarDefault: {
+	// DisplayName: Popukar Default
+	// Tooltip: ""
+}
+
+SpotDefault: {
+	// DisplayName: Spot Default
+	// Tooltip: ""
+}
+
+StewardDefault: {
+	// DisplayName: Steward Default
+	// Tooltip: ""
+}
+
+VanillaDefault: {
+	// DisplayName: Vanilla Default
+	// Tooltip: ""
+}

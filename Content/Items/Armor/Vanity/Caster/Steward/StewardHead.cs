@@ -2,7 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace ArknightsMod.Content.Items.Armor.Vanity.Caster.Amiya
+namespace ArknightsMod.Content.Items.Armor.Vanity.Caster.Steward
 {
 	[AutoloadEquip(EquipType.Head)]
 	public class StewardHead : ArknightsVanityHead

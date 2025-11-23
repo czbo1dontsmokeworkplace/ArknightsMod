@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="F:\ArknightsMod" />
+  <Import Project="..\tModLoader.targets" />
   <PropertyGroup>
     <AssemblyName>ArknightsMod</AssemblyName>
     <LangVersion>latest</LangVersion>

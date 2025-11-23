@@ -469,7 +469,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
-				.Add(new Item(ModContent.ItemType < Items.Consumables.VanityBags.CatapultDefault()) {
+				.Add(new Item(ModContent.ItemType < Items.Consumables.VanityBags.CatapultDefault>()) {
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
@@ -489,7 +489,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
-				.Add(new Item(ModContent.ItemType < Items.Consumables.VanityBags.MidnightDefault()) {
+				.Add(new Item(ModContent.ItemType < Items.Consumables.VanityBags.MidnightDefault>()) {
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
@@ -509,7 +509,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
-				.Add(new Item(ModContent.ItemType < Items.Consumables.VanityBags.StewardDefault()) {
+				.Add(new Item(ModContent.ItemType <Items.Consumables.VanityBags.StewardDefault>()) {
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})

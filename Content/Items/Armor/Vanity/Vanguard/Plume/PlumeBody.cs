@@ -5,7 +5,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace ArknightsMod.Content.Items.Armor.Vanity.Vanguard.Bagpipe
+namespace ArknightsMod.Content.Items.Armor.Vanity.Vanguard.Plume
 {
 	[AutoloadEquip(EquipType.Body)]
 	public class PlumeBody : ArknightsVanityBody

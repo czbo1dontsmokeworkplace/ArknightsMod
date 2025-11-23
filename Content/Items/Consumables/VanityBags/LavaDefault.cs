@@ -4,6 +4,7 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using ArknightsMod.Content.Items.Armor.Vanity.Caster.Lava;
+using ArknightsMod.Content.Items.Armor.Vanity.Caster.Amiya;
 
 namespace ArknightsMod.Content.Items.Consumables.VanityBags
 {

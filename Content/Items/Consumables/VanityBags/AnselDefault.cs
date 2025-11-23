@@ -4,6 +4,7 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using ArknightsMod.Content.Items.Armor.Vanity.Medic.Ansel;
+using ArknightsMod.Content.Items.Armor.Vanity.Guard.Midnight;
 
 namespace ArknightsMod.Content.Items.Consumables.VanityBags
 {
