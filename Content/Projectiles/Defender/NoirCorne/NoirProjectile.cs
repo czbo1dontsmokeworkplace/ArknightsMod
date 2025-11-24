@@ -19,7 +19,7 @@ namespace ArknightsMod.Content.Projectiles.Defender.NoirCorne
         public override void SetDefaults()
         {
             Projectile.hide = true;
-            Projectile.damage = 12;
+            Projectile.damage = 0;
             Projectile.width = 26;
             Projectile.height = 34;
             Projectile.friendly = true;
@@ -108,6 +108,7 @@ namespace ArknightsMod.Content.Projectiles.Defender.NoirCorne
             Projectile.timeLeft = 2;
         }
 
+
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D tex = TextureAssets.Projectile[Type].Value;
@@ -137,10 +138,10 @@ namespace ArknightsMod.Content.Projectiles.Defender.NoirCorne
 
             // 用一个前方矩形区域当作碰撞判定
             Rectangle hitbox = new Rectangle(
-                (int)(Projectile.Center.X +Projectile.spriteDirection*20 ),
-                (int)(Projectile.Center.Y),
-                26,
-                34
+                (int)(Projectile.Center.X +player.direction*20 - 13 ),
+                (int)(Projectile.Center.Y - 34),
+                52,
+                68
             );
 
             for (int i = 0; i < Main.maxNPCs; i++)
@@ -153,7 +154,7 @@ namespace ArknightsMod.Content.Projectiles.Defender.NoirCorne
                     {
                         NPC.HitInfo info = new();
                         bool crit = Main.rand.Next(100) < item.crit;
-                        info.Damage = (int)(Projectile.damage * (crit ? 2f : 1f) * Main.rand.NextFloat(0.95f, 1.051f));
+                        info.Damage = (int)(item.damage * (crit ? 2f : 1f) * Main.rand.NextFloat(0.95f, 1.051f));
                         info.Knockback = item.knockBack;
                         info.Crit = crit;
                         info.DamageType = item.DamageType;

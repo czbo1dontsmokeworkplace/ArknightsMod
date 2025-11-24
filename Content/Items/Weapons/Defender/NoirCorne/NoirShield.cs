@@ -43,8 +43,7 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.NoirCorne
         }
         public override void SetDefaults()
         {
-            // 弹幕投射物，原伤害归0，去NoirShield_Projectile改伤害
-            Item.damage = 0;
+            Item.damage = 12;
             Item.knockBack = 12;
             Item.crit = 2;
             Item.DamageType = DamageClass.Melee;
