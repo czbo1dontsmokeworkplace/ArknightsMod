@@ -29,9 +29,7 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Players
 {
 	public class WeaponPlayer : ModPlayer
-	{
-		public int defenseBonus = 0;
-		protected override bool CloneNewInstances => true;
+	{		protected override bool CloneNewInstances => true;
 		public SkillData CurrentSkill => SkillData[Skill];
 		public int SkillCount { get; private set; }
 		public readonly SkillData[] SkillData = new SkillData[3];
@@ -101,7 +99,8 @@ namespace ArknightsMod.Players
 			SkillData skill = CurrentSkill;
 
 			if (skill == null) {
-				Main.NewText($"[{GetType()}] 错误: 当前技能数据mp.CurrentSkill为null", Color.Red);
+				if(HowManySkills>0)
+					Main.NewText($"[{GetType()}] 错误: 当前技能数据mp.CurrentSkill为null", Color.Red);
 				return;
 			}
 
@@ -154,7 +153,6 @@ namespace ArknightsMod.Players
 		}
 
 		public override void ResetEffects() {
-			defenseBonus = 0;
 			// 更新武器状态
 			HoldBagpipeSpear = Main.LocalPlayer.HeldItem.ModItem is BagpipeSpear;
 			HoldExusiaiVector = Main.LocalPlayer.HeldItem.ModItem is ExusiaiVector;
@@ -199,10 +197,6 @@ namespace ArknightsMod.Players
 				SetAllSkillsData();
 			}
 		}
-		public override void UpdateEquips(){
-			Player.statDefense += defenseBonus;
-		}
-
 		public void TryAutoCharge() {
 			if (CurrentSkill?.ChargeType == SkillChargeType.Auto)
 				AutoCharge();

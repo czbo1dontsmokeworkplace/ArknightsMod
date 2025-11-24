@@ -43,7 +43,8 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.NoirCorne
         }
         public override void SetDefaults()
         {
-            Item.damage = 18;
+            // 弹幕投射物，原伤害归0，去NoirShield_Projectile改伤害
+            Item.damage = 0;
             Item.knockBack = 12;
             Item.crit = 2;
             Item.DamageType = DamageClass.Melee;
@@ -84,9 +85,6 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.NoirCorne
 		{
 			public bool hasNoirDEFplayer = false;
 			public override void ResetEffects() {
-				if (hasNoirDEFplayer == true) {
-					Player.statDefense += 10;
-				}
 				if (Main.myPlayer != Player.whoAmI)
 					return; 
 				bool isHoldingTargetWeapon = Player.HeldItem.type == ModContent.ItemType<NoirShield>();
@@ -95,32 +93,27 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.NoirCorne
 				}
 
 			}
+
+            public override void PostUpdate() {
+                var it = Player.HeldItem;
+                if (it.type == ModContent.ItemType<NoirShield>()) {
+                    if (Player.ownedProjectileCounts[ModContent.ProjectileType<NoirShield_Projectile>()] == 0) {
+                        Projectile.NewProjectile(Player.GetSource_FromThis(), Player.Center, Vector2.Zero, ModContent.ProjectileType<NoirShield_Projectile>(), it.damage, it.knockBack, Player.whoAmI);
+                    }
+                }
+
+                base.PostUpdate();
+            }
+
+            public override void UpdateEquips() {
+                var it = Player.HeldItem;
+                if (it.type == ModContent.ItemType<NoirShield>() ) {
+                    Player.statDefense += 5;
+                    if (Main.mouseRight) Player.statDefense += 10;
+
+                }
+                base.UpdateEquips();
+            }
 		}
-
-        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source,
-            Vector2 position, Vector2 velocity, int type, int damage, float knockback)
-        {
-            if (player.altFunctionUse == 2) // 右键
-            {
-                Projectile.NewProjectile(source, player.Center, Vector2.Zero,
-                    ModContent.ProjectileType<NoirShield_Projectile>(),
-                    damage, knockback, player.whoAmI);
-            }
-            else // 左键
-            {
-                Projectile.NewProjectile(source, player.Center, Vector2.Zero,
-                    ModContent.ProjectileType<NoirShield_MainAtk>(),
-                    damage, knockback, player.whoAmI);
-            }
-
-            return false;
-        }
-        public override void HoldItem(Player player)
-        {
-            if (Main.myPlayer == player.whoAmI)
-            {
-                player.GetModPlayer<WeaponPlayer>().defenseBonus = 5;
-            }
-        }
     }
 }

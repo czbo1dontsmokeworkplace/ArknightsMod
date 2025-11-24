@@ -114,7 +114,7 @@ namespace ArknightsMod.Content.Items.Weapons
 		}
 		public SkillData GetSkillData(int index) {
 			if (!skillDatas.TryGetValue(Name, out var datas)) {
-				Main.NewText(Name + " hasn't skill datas");
+				// Main.NewText(Name + " hasn't skill datas");
 				return null;
 			}
 			return datas[index];

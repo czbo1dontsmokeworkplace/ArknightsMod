@@ -14,11 +14,14 @@ namespace ArknightsMod.Content.Projectiles.Defender.NoirCorne
         Player player => Main.player[Projectile.owner];
         Item item => player.HeldItem;
 
+        int disableAttack = 0;
+
         public override void SetDefaults()
         {
             Projectile.hide = true;
-            Projectile.width = 10;
-            Projectile.height = 10;
+            Projectile.damage = 12;
+            Projectile.width = 26;
+            Projectile.height = 34;
             Projectile.friendly = true;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
@@ -35,16 +38,18 @@ namespace ArknightsMod.Content.Projectiles.Defender.NoirCorne
             List<int> overPlayers, List<int> overWiresUI)
         {
             overPlayers.Add(index);
+            base.DrawBehind(index, behindNPCsAndTiles, behindNPCs, behindProjectiles, overPlayers, overWiresUI);
+
         }
 
         public override void AI()
         {
-            // 如果玩家不合法或没有拿 NoirShield 则删除投射物
             if (!player.active || player.dead || item.type != ModContent.ItemType<NoirShield>())
             {
                 Projectile.Kill();
                 return;
             }
+            if (disableAttack>0) disableAttack--;
 
             if (Projectile.ai[1] <= 0)
             {
@@ -59,12 +64,11 @@ namespace ArknightsMod.Content.Projectiles.Defender.NoirCorne
 
                 Projectile.ai[0]++;
 
-                // 判断右键触发推盾
-                if (Main.mouseRight)
+                if ((Main.mouseRight || Main.mouseLeft )&& disableAttack==0)
                 {
                     player.direction = Main.MouseWorld.X > player.Center.X ? 1 : -1;
                     Projectile.ai[0] = 0;
-                    Projectile.ai[1] += 0.1f;
+                    Projectile.ai[1] += 0.07f;
                 }
 
                 player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Quarter, 0);
@@ -74,10 +78,19 @@ namespace ArknightsMod.Content.Projectiles.Defender.NoirCorne
                 player.itemAnimation = player.itemTime = 4;
 
                 // 如果还在按右键，推盾动画继续增强
-                if (Main.mouseRight)
-                    Projectile.ai[1] = MathHelper.Lerp(Projectile.ai[1], 1f, 0.07f);
+                if (Main.mouseRight && disableAttack==0 && Projectile.ai[1] < 0.5f)
+                    Projectile.ai[1] +=0.07f;
+                else if (Main.mouseLeft && disableAttack == 0 && Projectile.ai[1] < 0.5f)
+                {
+                    Projectile.ai[1] +=0.07f;
+                    if (Projectile.ai[1] > 0.5f)
+                    {   
+                        doNoirShieldDamage();
+                        disableAttack = 30;
+                    }
+                }
                 else
-                    Projectile.ai[1] -= 0.1f;
+                    Projectile.ai[1] -= 0.07f;
 
                 // 正前方的位移
                 Projectile.rotation = Projectile.rotation.AngleLerp(0, Projectile.ai[1]);
@@ -113,100 +126,44 @@ namespace ArknightsMod.Content.Projectiles.Defender.NoirCorne
 
             return false;
         }
-    }
 
-	public class NoirShield_MainAtk : ModProjectile
-{
-    Player player => Main.player[Projectile.owner];
-
-    public override void SetDefaults()
-    {
-        Projectile.hide = true;
-        Projectile.friendly = true;
-        Projectile.penetrate = -1;
-        Projectile.tileCollide = false;
-        Projectile.ownerHitCheck = true;
-        Projectile.DamageType = DamageClass.Melee;
-        Projectile.timeLeft = 2;
-    }
-
-    public override bool ShouldUpdatePosition() => false;
-
-    public override void AI()
-    {
-        // 结束条件
-        if (!player.active || player.dead || player.HeldItem.type != ModContent.ItemType<NoirShield>())
+        public bool doNoirShieldDamage()
         {
-            Projectile.Kill();
-            return;
-        }
+            
+            int damage = item.damage;
+            float knockback = item.knockBack;
+            int owner = Projectile.owner;
+            // bool doDamage = False;
 
-        // 左键按住 = 主攻击循环
-        bool attacking = Main.mouseLeft && player.channel;
+            // 用一个前方矩形区域当作碰撞判定
+            Rectangle hitbox = new Rectangle(
+                (int)(Projectile.Center.X +Projectile.spriteDirection*20 ),
+                (int)(Projectile.Center.Y),
+                26,
+                34
+            );
 
-        if (!attacking)
-        {
-            Projectile.ai[0] = 0;
-            Projectile.ai[1] = 0;
-            return;
-        }
-
-        float speed = 0.06f;
-
-        // ai[1] = 0 回撤  / 1 推刺
-        if (Projectile.ai[1] == 1)
-        {
-            Projectile.ai[0] += speed;
-            if (Projectile.ai[0] >= 1f)
+            for (int i = 0; i < Main.maxNPCs; i++)
             {
-                Projectile.ai[0] = 1f;
-                Projectile.ai[1] = 0;
+                NPC npc = Main.npc[i];
+
+                if (npc.active && !npc.friendly && !npc.dontTakeDamage)
+                {
+                    if (hitbox.Intersects(npc.Hitbox))
+                    {
+                        NPC.HitInfo info = new();
+                        bool crit = Main.rand.Next(100) < item.crit;
+                        info.Damage = (int)(Projectile.damage * (crit ? 2f : 1f) * Main.rand.NextFloat(0.95f, 1.051f));
+                        info.Knockback = item.knockBack;
+                        info.Crit = crit;
+                        info.DamageType = item.DamageType;
+                        npc.StrikeNPC(info);
+                        return true;
+                    }
+                }
             }
-        }
-        else
-        {
-            Projectile.ai[0] -= speed;
-            if (Projectile.ai[0] <= 0f)
-            {
-                Projectile.ai[0] = 0f;
-                Projectile.ai[1] = 1;
-            }
+            return false;
         }
 
-        float t = Projectile.ai[0];
-        int dir = player.direction;
-
-        Vector2 backPos = player.MountedCenter + new Vector2(-8 * dir, 10);
-        Vector2 frontPos = player.MountedCenter + new Vector2(20 * dir, -6);
-
-        Projectile.Center = Vector2.Lerp(backPos, frontPos, t);
-
-        Projectile.rotation = MathHelper.Lerp(0.3f * dir, 0, t);
-
-        if (t < 0.5f)
-            player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Quarter, 0);
-        else
-            player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, -MathHelper.PiOver2 * dir);
-
-        Projectile.timeLeft = 2;
     }
-
-    public override bool PreDraw(ref Color lightColor)
-    {
-        var tex = TextureAssets.Projectile[Type].Value;
-
-        Main.spriteBatch.Draw(tex,
-            Projectile.Center - Main.screenPosition,
-            null,
-            lightColor,
-            Projectile.rotation,
-            tex.Size() * 0.5f,
-            1f,
-            player.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally,
-            0);
-
-        return false;
-    }
-}
-
 }

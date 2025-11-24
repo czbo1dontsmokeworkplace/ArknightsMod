@@ -41,12 +41,12 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Exusiai
 		}
 		public override void SetDefaults()
         {
-            Item.width = 108;
+            Item.width = 54;
             Item.height = 28;
             Item.useTime = 30;
             Item.useAnimation = 30;
             Item.shootSpeed = 8f;
-            Item.damage = 54;
+            Item.damage = 108;
             Item.knockBack = 5f;
             Item.shoot = ModContent.ProjectileType<ExusiaiVector_Bullet>();
             Item.DamageType = DamageClass.Ranged;
