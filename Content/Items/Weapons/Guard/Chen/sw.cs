@@ -29,7 +29,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 	{
         public override void SetDefaults()
 		{
-            Item.damage = 122;
+            Item.damage = 61;
             Item.useAnimation = 39;
             Item.useTime = 39;
             Item.width = 64;
@@ -287,7 +287,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 
 			if (Sword_Style == ChenSword_Style.Skill_1) {
 				Projectile.timeLeft = 24;
-				Projectile.ai[0] = 77;
+				Projectile.ai[0] = 39;
 
 			}
 			if (Sword_Style == ChenSword_Style.Skill_2)
@@ -301,7 +301,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 
 			if (Sword_Style == ChenSword_Style.Skill_1) {
 				Projectile.timeLeft = 24;
-				Projectile.ai[0] = 77;
+				Projectile.ai[0] = 39;
 
 			}
 			if (Sword_Style == ChenSword_Style.Skill_2)
@@ -319,43 +319,45 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
         private void Swing_AI()
         {
             Projectile.ai[0]++;
-            if (Projectile.ai[0] >= 76)
+            if (Projectile.ai[0] >= 39)
             {
 				if (Sword_Style == 0)
 					Projectile.Kill();
-					player.heldProj = Projectile.whoAmI;
-                player.itemAnimation = player.itemTime = 6;
+				player.heldProj = Projectile.whoAmI;
+                player.itemAnimation = player.itemTime = 3;
                 Projectile.velocity = new Vector2(0, -2).RotatedBy(Projectile.rotation);
-                var time = Projectile.ai[0] - 76;
+                var time = Projectile.ai[0] - 39;
                 var extra_Ro = 2f;
                 //Dust.NewDustPerfect(Projectile.Center, 6).noGravity = true;
                 player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation - extra_Ro * player.direction + MathHelper.Pi);
-                if (time > 30)
+				if (time == 0) {
+					if (player.controlUseItem)
+						Projectile.timeLeft = 90;
+
+					if (Main.MouseWorld.X > player.Center.X)
+						player.direction = 1;
+					else
+						player.direction = -1;
+					Projectile.ai[1] = (Main.MouseWorld - player.Center).ToRotation() + MathHelper.PiOver2;
+				}
+				if (time > 15)
                 {
 
                     Projectile.Center = player.MountedCenter + new Vector2(-7 * player.direction, -15).RotatedBy(Projectile.rotation - extra_Ro * player.direction);
 
                 }
-                if (time == 0)
+                if (time < 15)
                 {
-                    if (player.controlUseItem) Projectile.timeLeft = 90;
-
-                    if (Main.MouseWorld.X > player.Center.X) player.direction = 1;
-                    else player.direction = -1;
-                    Projectile.ai[1] = (Main.MouseWorld - player.Center).ToRotation() + MathHelper.PiOver2;
-                }
-                if (time < 30)
-                {
-                    float ro = time / 30f * 0.2f;
+                    float ro = time / 15f * 0.2f;
                     Projectile.rotation = MathHelper.Lerp(Projectile.rotation, MathHelper.WrapAngle(Projectile.ai[1] + (4 + ro) * player.direction), time / 30f);
                     Projectile.Center = Vector2.Lerp(Projectile.Center, player.MountedCenter + new Vector2(-7 * player.direction, -15).RotatedBy(Projectile.rotation - extra_Ro * player.direction), time / 30f);
                 }
-                else if (time < 35)
+                else if (time < 17)
                 {
                     Projectile.rotation = MathHelper.Lerp(Projectile.rotation, MathHelper.WrapAngle(Projectile.ai[1] + (4 + 0.4f) * player.direction), 0.03f);
 
                 }
-                else if (time < 90)
+                else if (time < 45)
                 {
                     var step = Math.Clamp((time - 35f) * 0.04f, 0, 1);
                     Projectile.rotation = MathHelper.Lerp(Projectile.rotation, MathHelper.WrapAngle(Projectile.ai[1] + (4 + 0.4f) * player.direction) - (4.7f) * player.direction, step);
@@ -372,13 +374,13 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
         }
         private void Swing_Draw(SpriteBatch sb, GraphicsDevice gd)
         {
-            if (Projectile.ai[0] > 106)
+            if (Projectile.ai[0] > 54)
             {
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
                 {
                     List<Vertex> vertices = new List<Vertex>();
-                    var count = Math.Clamp(Projectile.ai[0] - 26, 1, Projectile.oldRot.Length - 7);
+                    var count = Math.Clamp(Projectile.ai[0] - 13, 1, Projectile.oldRot.Length - 7);
                     var Vertex_Num = 0.1f;
 
                     for (float i = 0; i < count; i++)
@@ -414,7 +416,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
                 //if(false)
                 {
                     List<Vertex> vertices = new List<Vertex>();
-                    var count = Math.Clamp(Projectile.ai[0] - 26, 1, Projectile.oldRot.Length - 5);
+                    var count = Math.Clamp(Projectile.ai[0] - 13, 1, Projectile.oldRot.Length - 5);
                     var Vertex_Num = 0.1f;
 
                     for (float i = 0; i < count; i++)
@@ -451,7 +453,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 
                 {
                     List<Vertex> vertices = new List<Vertex>();
-                    var count = Math.Clamp(Projectile.ai[0] - 26, 1, Projectile.oldRot.Length - 8);
+                    var count = Math.Clamp(Projectile.ai[0] - 13, 1, Projectile.oldRot.Length - 8);
                     var Vertex_Num = 0.1f;
 
                     for (float i = 0; i < count; i++)
@@ -497,7 +499,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
         }
         private bool Swing_Coll(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            if (Projectile.ai[0] > 107)
+            if (Projectile.ai[0] > 54)
             {
                 float point = 0f;
                 Vector2 startPoint = Projectile.Center;
@@ -631,7 +633,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
             {
                 Projectile.rotation = Projectile.rotation.AngleLerp((MathHelper.Pi + MathHelper.PiOver2 * 0.9f) * player.direction, 0.2f);
             }
-            if (Projectile.ai[0] > 30 && Projectile.ai[1] == 0)
+            if (Projectile.ai[0] > 15 && Projectile.ai[1] == 0)
             {
                 if (rand.NextBool(2) && player.controlUseItem)
                 {
@@ -646,7 +648,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
             {
                 Projectile.timeLeft = 10;
             }
-            else if (Projectile.ai[0] > 40)
+            else if (Projectile.ai[0] > 20)
             {
                 if (Projectile.ai[1] == 0)
                 {
@@ -793,8 +795,8 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 				Swing_AI();
 			}
 			if (Sword_Style == ChenSword_Style.Skill_1) {
-				if (Projectile.ai[0] < 76)
-					Projectile.ai[0] = 77;
+				if (Projectile.ai[0] < 38)
+					Projectile.ai[0] = 39;
 				Swing_AI();
 
 			}
@@ -863,7 +865,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 			};
 
 			if (modPlayer.Skill == 0) {
-				target.AddBuff(31, 90);
+				target.AddBuff(BuffID.Confused, 90);
 				SoundEngine.PlaySound(S1, player.position);
 				base.OnHitNPC(target, hit, damageDone);
 			}
@@ -965,9 +967,9 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
         #region 普攻
         private void Swing_AI()
         {
-            if (Projectile.ai[0] < 76)
+            if (Projectile.ai[0] < 38)
             {
-                if (Projectile.ai[0] > 12)
+                if (Projectile.ai[0] > 6)
                 player.heldProj = Projectile.whoAmI;
                 Projectile.Center = player.MountedCenter + new Vector2(5).RotatedBy(Projectile.rotation - MathHelper.PiOver2);
                 player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation + MathHelper.Pi);
@@ -984,15 +986,15 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
                 Projectile.rotation = Projectile.ai[1];
                 Swing_DrawScale = new Vector2(0);
             }
-            else if (Projectile.ai[0] <= 12)
+            else if (Projectile.ai[0] <= 6)
             {
-                Swing_DrawScale = new Vector2((Projectile.ai[0] - 6f) / 6f);
+                Swing_DrawScale = new Vector2((Projectile.ai[0]) / 6f);
             }
-            else if (Projectile.ai[0] < 26)
+            else if (Projectile.ai[0] < 13)
             {
                 Swing_DrawScale = new Vector2(1);
             }
-            else if (Projectile.ai[0] == 26)
+            else if (Projectile.ai[0] == 13)
             {
                 if (Main.MouseWorld.X > player.Center.X) player.direction = 1;
                 else player.direction = -1;
@@ -1000,13 +1002,13 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
                 Projectile.ai[1] = (Main.MouseWorld - player.Center).ToRotation() + MathHelper.PiOver2;
                 Projectile.rotation = Projectile.ai[1] - 2 * player.direction;
             }
-            else if (Projectile.ai[0] < 76)
+            else if (Projectile.ai[0] < 38)
             {
                 Projectile.rotation = MathHelper.Lerp(Projectile.rotation, Projectile.ai[1] + 2.3f * player.direction, 0.22f);
             }
             else 
             {
-                if (Projectile.ai[0] == 78)
+                if (Projectile.ai[0] == 39)
                 {
                     if (player.controlUseItem) Projectile.timeLeft = 94;
 
@@ -1020,13 +1022,13 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
         }
         private void Swing_Draw(SpriteBatch sb, GraphicsDevice gd)
         {
-            if (Projectile.ai[0] > 26 && Projectile.ai[0] < 76)
+            if (Projectile.ai[0] > 13 && Projectile.ai[0] < 38)
             {
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
                 {
                     List<Vertex> vertices = new List<Vertex>();
-                    var count = Math.Clamp(Projectile.ai[0] - 26, 1, Projectile.oldRot.Length - 7);
+                    var count = Math.Clamp(Projectile.ai[0] - 13, 1, Projectile.oldRot.Length - 7);
                     var Vertex_Num = 0.1f;
 
                     for (float i = 0; i < count; i++)
@@ -1062,7 +1064,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 
                 {
                     List<Vertex> vertices = new List<Vertex>();
-                    var count =  Math.Clamp(Projectile.ai[0] - 26, 1, Projectile.oldRot.Length - 5);
+                    var count =  Math.Clamp(Projectile.ai[0] - 13, 1, Projectile.oldRot.Length - 5);
                     var Vertex_Num = 0.1f;
 
                     for (float i = 0; i < count; i++)
@@ -1133,10 +1135,10 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 
             Projectile.KZ_QuicklyDraw_Proj(Swing_DrawScale);
             //第一段刺出去的效果
-            if (Projectile.ai[0] <= 12)
+            if (Projectile.ai[0] <= 6)
             {
                 var ex = LightCircle_1;
-                var time = (Projectile.ai[0] - 6f) / 6f;
+                var time = (Projectile.ai[0]) / 6f;
                 var scale = new Vector2(0.6f, 1 +  time);
                 if (time > 0)
                     scale = new Vector2(0.6f * (1f - time), 1);
@@ -1156,7 +1158,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
         }
         private bool Swing_Coll(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            if (Projectile.ai[0] < 72)
+            if (Projectile.ai[0] < 36)
             {
                 float point = 0f;
                 Vector2 startPoint = Projectile.Center;
@@ -1946,8 +1948,8 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 			}
 			if (Sword_Style == ChenSword_Style.Skill_1) {
 				Swing_AI();
-				if (Projectile.ai[0] < 76)
-					Projectile.ai[0] = 77;
+				if (Projectile.ai[0] < 38)
+					Projectile.ai[0] = 39;
 			}
 			if (Sword_Style == ChenSword_Style.Skill_2) {
 				Skill_2_AI();

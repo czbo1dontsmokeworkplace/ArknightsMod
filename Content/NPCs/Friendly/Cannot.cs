@@ -8,6 +8,7 @@ using ArknightsMod.Content.NPCs.Enemy.TillChapter7;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
@@ -24,14 +25,16 @@ namespace ArknightsMod.Content.NPCs.Friendly
 	[AutoloadHead]
 	public class Cannot : ModNPC
 	{
+		// The list of items in the traveler's shop. Saved with the world and set when the traveler spawns. Synced by the server to clients in multi player
+		public readonly static List<Item> shopItems = new();
+		// A static instance of the declarative shop, defining all the items which can be brought. Used to create a new inventory when the NPC spawns
+		public static CannotShop Shop;
 		public const string ShopName = "Shop";
 		public int TouchCount = 0;
 		// 消失计时器：记录NPC已存在的帧数（60帧=1秒）
 		private int despawnTimer = 0;
-		// 最大存在时间（例如：3000帧=50秒，可自行调整）
-		private const int MaxExistTime = 360;
 		// 最大距离：超过此距离则消失（例如：2000像素，约125个砖块）
-		private const float MaxDistanceFromPlayer = 1f;
+		private const float MaxDistanceFromPlayer = 2000f;
 		public bool isnpcexist = false;
 		public int summoncd = 0;
 
@@ -42,44 +45,36 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			NPCID.Sets.ExtraFramesCount[NPC.type] = 6;
 			NPCID.Sets.AttackFrameCount[NPC.type] = 1;
 			NPCID.Sets.DangerDetectRange[NPC.type] = 40;
+			NPCID.Sets.ActsLikeTownNPC[NPC.type] = true;
 			NPCID.Sets.AttackType[NPC.type] = 3;
 			NPCID.Sets.AttackTime[NPC.type] = 18;
 			NPCID.Sets.AttackAverageChance[NPC.type] = 10;
 			NPCID.Sets.HatOffsetY[NPC.type] = 4;
-
-			NPC.Happiness
-				.SetBiomeAffection<ForestBiome>(AffectionLevel.Like)
-				.SetBiomeAffection<SnowBiome>(AffectionLevel.Dislike)
-				.SetNPCAffection(NPCID.Mechanic, AffectionLevel.Love)
-				.SetNPCAffection(NPCID.Cyborg, AffectionLevel.Like)
-				.SetNPCAffection(NPCID.Merchant, AffectionLevel.Dislike)
-				.SetNPCAffection(NPCID.Angler, AffectionLevel.Hate)
-			;
+			
 		}
 
 		public override List<string> SetNPCNameList() {
 			return [Language.GetTextValue($"Mods.ArknightsMod.NPCs.{GetType().Name}.DisplayName")];
 		}
 		public override void SetDefaults() {
-			NPC.townNPC = true;
 			NPC.friendly = false;
 			NPC.dontTakeDamage = false;
+			NPC.dontTakeDamageFromHostiles= true;
 			NPC.width = 18;
 			NPC.height = 40;
 			NPC.aiStyle = 7;
 			NPC.damage = 0;
 			NPC.defense = 99;
 			NPC.lifeMax = 1000;
+			NPC.npcSlots = 7f;
 			NPC.HitSound = SoundID.NPCHit1;
 			NPC.DeathSound = SoundID.NPCDeath1;
 			NPC.knockBackResist = 0f;
 			AnimationType = NPCID.Guide;
-			NPC.dontTakeDamage = true;
-
 		}
 
 		
-		public override bool CanGoToStatue(bool toQueenStatue) => true;
+		public override bool CanGoToStatue(bool toQueenStatue) => false;
 
 		public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone) {
 			if (summoncd <= 0) {
@@ -111,7 +106,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			button2 = this.GetLocalizedValue("Buttons.Touch");
 
 		}
-
+		
 		public void summonElites() {
 			if (Eliteslist.Length == 0)
 				return;
@@ -140,27 +135,10 @@ namespace ArknightsMod.Content.NPCs.Friendly
 				selectedNPCType
 			);
 		}
+		public bool anyPlayerNearby = false;
 		public override void AI() {
 			if (summoncd > 0) {
 				summoncd--;
-			}
-
-			// 2. 距离消失：远离玩家后消失（可选，增强临时感）
-			Player player = Main.player[NPC.target];
-			if (player != null && player.active) {
-				float distance = Vector2.Distance(NPC.Center, player.Center);
-				if (distance >= MaxDistanceFromPlayer) {
-					despawnTimer++;
-					if (despawnTimer >= 1200) {
-						Despawn();
-						despawnTimer = 0;
-						return;
-					}
-				}
-				else {
-					despawnTimer = 0;
-					return;
-				}
 			}
 			//// 若玩家不存在（如死亡），直接消失
 			//else {
@@ -169,6 +147,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			//}
 			if (TouchCount >= 5 && !isnpcexist) {
 				DropLoot();
+				Main.NewText("坎诺特逃走了",Color.LightBlue);
 				TouchCount = 0;
 				return;
 			}
@@ -179,207 +158,26 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			NPC.netUpdate = true;
 		}
 		private void DropLoot() {
-			// 1. 生成 0-23 的随机数（24 个物品）
-			int randomIndex = Main.rand.Next(24);
+			// 随机选一个商品
+			Item selectedItem = shopItems[Main.rand.Next(shopItems.Count)];
 
-			// 2. 根据随机数选择物品
-			switch (randomIndex) {
-				case 0: // AbyssalWyrdmask
-					Item.NewItem(
-						NPC.GetSource_Loot(),
-						NPC.getRect(),
-						ModContent.ItemType<Items.Accessories.Rogue.AbyssalWyrdmask>(),
-						1
-					);
-					break;
-				case 1: // BrightWeeping
-					Item.NewItem(
-						NPC.GetSource_Loot(),
-						NPC.getRect(),
-						ModContent.ItemType<Items.Accessories.Rogue.BrightWeeping>(),
-						1
-					);
-					break;
-				case 2: // ChitinousRipper
-					Item.NewItem(
-						NPC.GetSource_Loot(),
-						NPC.getRect(),
-						ModContent.ItemType<Items.Accessories.Rogue.ChitinousRipper>(),
-						1
-					);
-					break;
-				case 3: // CoinOperatedToy
-					Item.NewItem(
-						NPC.GetSource_Loot(),
-						NPC.getRect(),
-						ModContent.ItemType<Items.Accessories.Rogue.CoinOperatedToy>(),
-						1
-					);
-					break;
-				case 4: // CommandersPortrait
-					Item.NewItem(
-						NPC.GetSource_Loot(),
-						NPC.getRect(),
-						ModContent.ItemType<Items.Accessories.Rogue.CommandersPortrait>(),
-						1
-					);
-					break;
-				case 5: // EmptyFeatheredBeast
-					Item.NewItem(
-						NPC.GetSource_Loot(),
-						NPC.getRect(),
-						ModContent.ItemType<Items.Accessories.Rogue.EmptyFeatheredBeast>(),
-						1
-					);
-					break;
-				case 6: // FatalBoltsDivineSpeed
-					Item.NewItem(
-						NPC.GetSource_Loot(),
-						NPC.getRect(),
-						ModContent.ItemType<Items.Accessories.Rogue.FatalBoltsDivineSpeed>(),
-						1
-					);
-					break;
-				case 7: // FirstAidMedicineKit
-					Item.NewItem(
-						NPC.GetSource_Loot(),
-						NPC.getRect(),
-						ModContent.ItemType<Items.Accessories.Rogue.FirstAidMedicineKit>(),
-						1
-					);
-					break;
-				case 8: // GoldBone
-					Item.NewItem(
-						NPC.GetSource_Loot(),
-						NPC.getRect(),
-						ModContent.ItemType<Items.Accessories.Rogue.GoldBone>(),
-						1
-					);
-					break;
-				case 9: // GoldenGinChalice
-					Item.NewItem(
-						NPC.GetSource_Loot(),
-						NPC.getRect(),
-						ModContent.ItemType<Items.Accessories.Rogue.GoldenGinChalice>(),
-						1
-					);
-					break;
-				case 10: // HotWaterKettle
-					Item.NewItem(
-						NPC.GetSource_Loot(),
-						NPC.getRect(),
-						ModContent.ItemType<Items.Accessories.Rogue.HotWaterKettle>(),
-						1
-					);
-					break;
-				case 11: // KingsArmor
-					Item.NewItem(
-						NPC.GetSource_Loot(),
-						NPC.getRect(),
-						ModContent.ItemType<Items.Accessories.Rogue.KingsArmor>(),
-						1
-					);
-					break;
-				case 12: // KingsCrown
-					Item.NewItem(
-						NPC.GetSource_Loot(),
-						NPC.getRect(),
-						ModContent.ItemType<Items.Accessories.Rogue.KingsCrown>(),
-						1
-					);
-					break;
-				case 13: // KingsStaff
-					Item.NewItem(
-						NPC.GetSource_Loot(),
-						NPC.getRect(),
-						ModContent.ItemType<Items.Accessories.Rogue.KingsStaff>(),
-						1
-					);
-					break;
-				case 14: // KnightlyCodexRenewed
-					Item.NewItem(
-						NPC.GetSource_Loot(),
-						NPC.getRect(),
-						ModContent.ItemType<Items.Accessories.Rogue.KnightlyCodexRenewed>(),
-						1
-					);
-					break;
-				case 15: // ManifestationPendant
-					Item.NewItem(
-						NPC.GetSource_Loot(),
-						NPC.getRect(),
-						ModContent.ItemType<Items.Accessories.Rogue.ManifestationPendant>(),
-						1
-					);
-					break;
-				case 16: // OldSteamArmor
-					Item.NewItem(
-						NPC.GetSource_Loot(),
-						NPC.getRect(),
-						ModContent.ItemType<Items.Accessories.Rogue.OldSteamArmor>(),
-						1
-					);
-					break;
-				case 17: // PerfumeForTheShow
-					Item.NewItem(
-						NPC.GetSource_Loot(),
-						NPC.getRect(),
-						ModContent.ItemType<Items.Accessories.Rogue.PerfumeForTheShow>(),
-						1
-					);
-					break;
-				case 18: // RosmontissEmbrace
-					Item.NewItem(
-						NPC.GetSource_Loot(),
-						NPC.getRect(),
-						ModContent.ItemType<Items.Accessories.Rogue.RosmontissEmbrace>(),
-						1
-					);
-					break;
-				case 19: // ScoutsScope
-					Item.NewItem(
-						NPC.GetSource_Loot(),
-						NPC.getRect(),
-						ModContent.ItemType<Items.Accessories.Rogue.ScoutsScope>(),
-						1
-					);
-					break;
-				case 20: // TheProfoundSilence
-					Item.NewItem(
-						NPC.GetSource_Loot(),
-						NPC.getRect(),
-						ModContent.ItemType<Items.Accessories.Rogue.TheProfoundSilence>(),
-						1
-					);
-					break;
-				case 21: // UnknownInstrument
-					Item.NewItem(
-						NPC.GetSource_Loot(),
-						NPC.getRect(),
-						ModContent.ItemType<Items.Accessories.Rogue.UnknownInstrument>(),
-						1
-					);
-					break;
-				case 22: // VanillaSauceSoda
-					Item.NewItem(
-						NPC.GetSource_Loot(),
-						NPC.getRect(),
-						ModContent.ItemType<Items.Accessories.Rogue.VanillaSauceSoda>(),
-						1
-					);
-					break;
-				case 23: // 未列出的物品（理论上不会触发，因为Main.rand.Next(24)范围是0-23）
-						 // 为完整性添加，实际不需要
-					Item.NewItem(
-						NPC.GetSource_Loot(),
-						NPC.getRect(),
-						ModContent.ItemType<Items.Accessories.Rogue.VanillaSauceSoda>(),
-						1
-					);
-					break;
+			// 克隆一份用于掉落
+			Item dropItem = selectedItem.Clone();
 
-					
-			}
+			// 设置数量为 1
+			dropItem.stack = 1;
+
+			// 掉落物品
+			Item.NewItem(
+				NPC.GetSource_Loot(),
+				NPC.getRect(),
+				dropItem.type,
+				dropItem.stack,
+				noGrabDelay: false,
+				prefixGiven: dropItem.prefix
+			);
+
+			// 掉落后消失
 			Despawn();
 		}
 
@@ -393,7 +191,6 @@ namespace ArknightsMod.Content.NPCs.Friendly
 				return;
 			}
 			else {
-				
 				bool isnpcexist = false;
 				for (int i = 0; i < Main.maxNPCs; i++) {
 					NPC SeekForNPCs = Main.npc[i];
@@ -418,11 +215,11 @@ namespace ArknightsMod.Content.NPCs.Friendly
 								break;
 							case 3:
 								summonElites();
-								Main.npcChatText = Language.GetTextValue("Mods.ArknightsMod.Dialogue.Cannot.Touch2");
+								Main.npcChatText = Language.GetTextValue("Mods.ArknightsMod.Dialogue.Cannot.Touch3");
 								break;
 							case 4:
 								summonElites();
-								Main.npcChatText = Language.GetTextValue("Mods.ArknightsMod.Dialogue.Cannot.Touch2");
+								Main.npcChatText = Language.GetTextValue("Mods.ArknightsMod.Dialogue.Cannot.Touch4");
 								break;
 							case 5:
 								summonElites();
@@ -433,23 +230,78 @@ namespace ArknightsMod.Content.NPCs.Friendly
 				}
 			
 		}
-		
-		public override void AddShops() {
-			var npcShop = new NPCShop(Type, ShopName);
-			foreach (var modItem in Mod.GetContent<ModItem>()) {
-				if (modItem.GetType().Namespace == "ArknightsMod.Content.Items.Accessories.Rogue") {
-					if (modItem.Type == ModContent.ItemType<Items.Accessories.Rogue.HotWaterKettle>())
-						continue;
-					Item item = new(modItem.Type) {
-						shopSpecialCurrency = ArknightsMod.OriginiumIngotCurrencyId
-					};
-					npcShop.Add(item);
-				}
-			}
 
-			npcShop.Register();
+		//骷髅王之前，对应价值为4的商品格
+		private int countBeforeSkeletron;
+		private int countBetweenSkeletronAndPlantera;
+		private int countBetweenPlanteraAndDukeFishron;
+		private int countFromFishronOnward;
+		public override void AddShops() {
+
+			Shop = new CannotShop(NPC.type);
+			Shop.Register();
+			//foreach (var modItem in Mod.GetContent<ModItem>()) {
+			//	if (modItem.GetType().Namespace == "ArknightsMod.Content.Items.Accessories.Rogue") {
+			//		if (modItem.Type == ModContent.ItemType<Items.Accessories.Rogue.HotWaterKettle>())
+			//			continue;
+			//		Item item = new(modItem.Type) {
+			//			shopSpecialCurrency = ArknightsMod.OriginiumIngotCurrencyId
+			//		};
+			//		npcShop.Add(item);
+			//	}
+			//}
+
+
 		}
-		
+		public override void OnSpawn(IEntitySource source) {
+			// ✅ 动态计算槽位（现在可以安全使用 NPC.downedXXX）
+			int countBeforeSkeletron = 1 +
+				(NPC.downedSlimeKing ? 1 : 0) +//史莱姆
+				(NPC.downedBoss1 ? 1 : 0) +//克眼
+				(NPC.downedBoss2 ? 1 : 0);//邪恶boss
+
+			int countBetweenSkeletronAndPlantera =
+				(NPC.downedBoss3 ? 1 : 0) +//骷髅王
+				(NPC.downedQueenBee ? 1 : 0) +//蜂后
+				(Main.hardMode ? 1 : 0) +//肉山
+				(NPC.downedMechBoss1 ? 1 : 0) +//机械1
+				(NPC.downedMechBoss2 ? 1 : 0) +//机械2
+				(NPC.downedMechBoss3 ? 1 : 0);//机械3
+
+			int countBetweenPlanteraAndDukeFishron =
+				(NPC.downedPlantBoss ? 1 : 0) +//世花
+				(NPC.downedGolemBoss ? 1 : 0);//石巨人
+
+			int countFromFishronOnward =
+				(NPC.downedFishron ? 1 : 0) +//猪鲨
+				(NPC.downedEmpressOfLight ? 1 : 0) +//光女
+				(NPC.downedAncientCultist ? 1 : 0) +//教徒
+				(NPC.downedMoonlord ? 1 : 0);//月总
+
+			// ✅ 创建临时 CannotShop（不注册到全局），仅用于生成商品
+			var tempShop = new CannotShop(NPC.type);
+			if (countBeforeSkeletron > 0)
+				tempShop.AddPoolFromNameSpace("Rogue.Rarity_l1", countBeforeSkeletron, "ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l1", Mod);
+			if (countBetweenSkeletronAndPlantera > 0)
+				tempShop.AddPoolFromNameSpace("Rogue.Rarity_l2", countBetweenSkeletronAndPlantera, "ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l2", Mod);
+			if (countBetweenPlanteraAndDukeFishron > 0)
+				tempShop.AddPoolFromNameSpace("Rogue.Rarity_l3", countBetweenPlanteraAndDukeFishron, "ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3", Mod);
+			if (countFromFishronOnward > 0)
+				tempShop.AddPoolFromNameSpace("Rogue.Rarity_l4", countFromFishronOnward, "ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4", Mod);
+
+			// ✅ 生成商品列表
+			shopItems.Clear();
+			shopItems.AddRange(tempShop.GenerateNewInventoryList());
+
+			// 同步到客户端（多人游戏）
+			if (Main.netMode == NetmodeID.Server) {
+				NetMessage.SendData(MessageID.WorldData);
+			}
+		}
+		public override bool CanChat() {
+			return true;
+		}
+
 		public override void TownNPCAttackStrength(ref int damage, ref float knockback) {
 			damage = 30;
 			knockback = 4f;
@@ -460,13 +312,126 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			randExtraCooldown = 30;
 		}
 	}
+	public class CannotShop : AbstractNPCShop
+	{
+		public new record Entry(Item Item, List<Condition> Conditions) : AbstractNPCShop.Entry
+		{
+			IEnumerable<Condition> AbstractNPCShop.Entry.Conditions => Conditions;
 
+			public bool Disabled { get; private set; }
+
+			public Entry Disable() {
+				Disabled = true;
+				return this;
+			}
+
+			public bool ConditionsMet() => Conditions.All(c => c.IsMet());
+		}
+
+		public record Pool(string Name, int Slots, List<Entry> Entries)
+		{
+			public Pool Add(Item item, params Condition[] conditions) {
+				Entries.Add(new Entry(item, conditions.ToList()));
+				return this;
+			}
+
+			public Pool Add<T>(params Condition[] conditions) where T : ModItem => Add(ModContent.ItemType<T>(), conditions);
+			public Pool Add(int item, params Condition[] conditions) => Add(ContentSamples.ItemsByType[item], conditions);
+
+			// Picks a number of items (up to Slots) from the entries list, provided conditions are met.
+			public IEnumerable<Item> PickItems() {
+				// This is not a fast way to pick items without replacement, but it's certainly easy. Be careful not to do this many many times per frame, or on huge lists of items.
+				var list = Entries.Where(e => !e.Disabled && e.ConditionsMet()).ToList();
+				for (int i = 0; i < Slots; i++) {
+					if (list.Count == 0)
+						break;
+
+					int k = Main.rand.Next(list.Count);
+					yield return list[k].Item;
+
+					// remove the entry from the list so it can't be selected again this pick
+					list.RemoveAt(k);
+				}
+			}
+		}
+
+		public List<Pool> Pools { get; } = new();
+
+		public CannotShop(int npcType) : base(npcType) { }
+
+		public override IEnumerable<Entry> ActiveEntries => Pools.SelectMany(p => p.Entries).Where(e => !e.Disabled);
+
+		public Pool AddPool(string name, int slots) {
+			var pool = new Pool(name, slots, new List<Entry>());
+			Pools.Add(pool);
+			return pool;
+		}
+		public Pool AddPoolFromNameSpace(string name, int slots, string fromNamespace, Mod mod) {
+			var pool = new Pool(name, slots, new List<Entry>());
+
+			var items = mod.GetContent<ModItem>()
+				.Where(item => item.GetType().Namespace == fromNamespace)
+				.ToList();
+
+			if (items.Count == 0) {
+				Main.NewText($"[CannotShop] 警告：命名空间 '{fromNamespace}' 中未找到任何 ModItem！", Color.OrangeRed);
+			}
+
+			foreach (var modItem in items) {
+				var shopItem = new Item(modItem.Type);
+				shopItem.shopSpecialCurrency = ArknightsMod.OriginiumIngotCurrencyId;
+				pool.Add(shopItem); // 调用 Add(Item, Condition[])
+			}
+
+			Pools.Add(pool);
+			return pool;
+		}
+
+		// Some methods to add a pool with a single item
+		public void Add(Item item, params Condition[] conditions) => AddPool(item.ModItem?.FullName ?? $"Terraria/{item.type}", slots: 1).Add(item, conditions);
+		public void Add<T>(params Condition[] conditions) where T : ModItem => Add(ModContent.ItemType<T>(), conditions);
+		public void Add(int item, params Condition[] conditions) => Add(ContentSamples.ItemsByType[item], conditions);
+
+		// Here is where we actually 'roll' the contents of the shop
+		public List<Item> GenerateNewInventoryList() {
+			var items = new List<Item>();
+			foreach (var pool in Pools) {
+				items.AddRange(pool.PickItems());
+			}
+			return items;
+		}
+
+		public override void FillShop(ICollection<Item> items, NPC npc) {
+			// use the items which were selected when the NPC spawned.
+			foreach (var item in Cannot.shopItems) {
+				// make sure to add a clone of the item, in case any ModifyActiveShop hooks adjust the item when the shop is opened
+				items.Add(item.Clone());
+			}
+		}
+
+		public override void FillShop(Item[] items, NPC npc, out bool overflow) {
+			overflow = false;
+			int i = 0;
+			// use the items which were selected when the NPC spawned.
+			foreach (var item in Cannot.shopItems) {
+
+				if (i == items.Length - 1) {
+					// leave the last slot empty for selling
+					overflow = true;
+					return;
+				}
+
+				// make sure to add a clone of the item, in case any ModifyActiveShop hooks adjust the item when the shop is opened
+				items[i++] = item.Clone();
+			}
+		}
+	}
 	public class CannotSpawn : ModSystem
 	{
 		private int spawnCooldown = 0;
 		private const int MinCooldown = 1800;
 		private const int MaxCooldown = 3600;
-		
+		bool hasBeatenFirstBoss = NPC.downedSlimeKing || NPC.downedBoss1 || NPC.downedBoss2 || NPC.downedBoss3 || NPC.downedQueenBee || Main.hardMode;
 		private void TrySpawnMerchant() {
 			Player player = Main.player[Main.myPlayer];
 			if (IsNPCAlreadySpawned()) {
@@ -474,10 +439,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			}
 			if (player == null || !player.active)
 				return;
-			if (NPC.downedBoss1 || NPC.downedBoss2 || NPC.downedBoss3 || NPC.downedQueenBee || Main.hardMode) {
-
-
-				
+			if (hasBeatenFirstBoss) {
 				// 允许在地表（Overworld）或洞穴（Cavern）生成
 
 				bool isInOverworld = player.ZoneOverworldHeight;

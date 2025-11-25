@@ -2056,3 +2056,173 @@ VanillaDefault: {
 	DisplayName: Vanilla Default
 	Tooltip: ""
 }
+
+ActiveDust: {
+	DisplayName: Active Dust
+	Tooltip: ""
+}
+
+CheapEdibleSalt: {
+	DisplayName: Cheap Edible Salt
+	Tooltip: ""
+}
+
+FightingManual: {
+	DisplayName: Fighting Manual
+	Tooltip: ""
+}
+
+File: {
+	DisplayName: File
+	Tooltip: ""
+}
+
+FurongNutritiousMeal: {
+	DisplayName: Furong Nutritious Meal
+	Tooltip: ""
+}
+
+HydraulicCylinder: {
+	DisplayName: Hydraulic Cylinder
+	Tooltip: ""
+}
+
+NamelessPoetryCollection: {
+	DisplayName: Nameless Poetry Collection
+	Tooltip: ""
+}
+
+AsmallroundShieldOfDifferEntiron: {
+	DisplayName: Asmallround Shield Of Differ Entiron
+	Tooltip: ""
+}
+
+CrackedRestraintStrap: {
+	DisplayName: Cracked Restraint Strap
+	Tooltip: ""
+}
+
+LiveRoses: {
+	DisplayName: Live Roses
+	Tooltip: ""
+}
+
+RustBlades: {
+	DisplayName: Rust Blades
+	Tooltip: ""
+}
+
+TheEmperorFavor: {
+	DisplayName: The Emperor Favor
+	Tooltip: ""
+}
+
+TheNightMurmurs: {
+	DisplayName: The Night Murmurs
+	Tooltip: ""
+}
+
+UnpleasantHemostaticAgent: {
+	DisplayName: Unpleasant Hemostatic Agent
+	Tooltip: ""
+}
+
+EmperorCollection: {
+	DisplayName: Emperor Collection
+	Tooltip: ""
+}
+
+FallenSovereignForm: {
+	DisplayName: Fallen Sovereign Form
+	Tooltip: ""
+}
+
+Feardriedfish: {
+	DisplayName: Feardriedfish
+	Tooltip: ""
+}
+
+FeatherBeastLiverPate: {
+	DisplayName: Feather Beast Liver Pate
+	Tooltip: ""
+}
+
+MonarchSidearm: {
+	DisplayName: Monarch Sidearm
+	Tooltip: ""
+}
+
+NobleSwords: {
+	DisplayName: Noble Swords
+	Tooltip: ""
+}
+
+PaleCorolla: {
+	DisplayName: Pale Corolla
+	Tooltip: ""
+}
+
+SilverDinnerFork: {
+	DisplayName: Silver Dinner Fork
+	Tooltip: ""
+}
+
+StandardAntiRiotEquipment: {
+	DisplayName: Standard Anti Riot Equipment
+	Tooltip: ""
+}
+
+SuspendedSilkPuppet: {
+	DisplayName: Suspended Silk Puppet
+	Tooltip: ""
+}
+
+TheLongWhipOfTheCoachman: {
+	DisplayName: The Long Whip Of The Coachman
+	Tooltip: ""
+}
+
+ChildlikePlaythings: {
+	DisplayName: Childlike Playthings
+	Tooltip: ""
+}
+
+DamagedRevolverNest: {
+	DisplayName: Damaged Revolver Nest
+	Tooltip: ""
+}
+
+DreamEssence: {
+	DisplayName: Dream Essence
+	Tooltip: ""
+}
+
+FearlessBlade: {
+	DisplayName: Fearless Blade
+	Tooltip: ""
+}
+
+OldPalmFan: {
+	DisplayName: Old Palm Fan
+	Tooltip: ""
+}
+
+RoundStoneAltar: {
+	DisplayName: Round Stone Altar
+	Tooltip: ""
+}
+
+ScatteredPoems: {
+	DisplayName: Scattered Poems
+	Tooltip: ""
+}
+
+TheAvenger: {
+	DisplayName: The Avenger
+	Tooltip: ""
+}
+
+TheTokenGodmother: {
+	DisplayName: The Token Godmother
+	Tooltip: ""
+}

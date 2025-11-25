@@ -29,7 +29,9 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Players
 {
 	public class WeaponPlayer : ModPlayer
-	{		protected override bool CloneNewInstances => true;
+	{
+		public int defenseBonus = 0;
+		protected override bool CloneNewInstances => true;
 		public SkillData CurrentSkill => SkillData[Skill];
 		public int SkillCount { get; private set; }
 		public readonly SkillData[] SkillData = new SkillData[3];
@@ -45,6 +47,10 @@ namespace ArknightsMod.Players
 		public int Skill;
 		public bool SummonMode;
 		public bool SkillInitialize = true;
+
+		// SP恢复加成系统
+		public float SPRegenMultiplier { get; set; } = 1f;
+		private float spRegenFraction;
 
 		// 位置信息
 		public float mousePositionX;
@@ -153,6 +159,9 @@ namespace ArknightsMod.Players
 		}
 
 		public override void ResetEffects() {
+
+			defenseBonus = 0;
+			SPRegenMultiplier = 1f; // 重置SP恢复倍率（修改后的）
 			// 更新武器状态
 			HoldBagpipeSpear = Main.LocalPlayer.HeldItem.ModItem is BagpipeSpear;
 			HoldExusiaiVector = Main.LocalPlayer.HeldItem.ModItem is ExusiaiVector;
