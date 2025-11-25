@@ -43,8 +43,8 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Exusiai
         {
             Item.width = 54;
             Item.height = 28;
-            Item.useTime = 30;
-            Item.useAnimation = 30;
+            Item.useTime = 15;
+            Item.useAnimation = 15;
             Item.shootSpeed = 8f;
             Item.damage = 108;
             Item.knockBack = 5f;
@@ -54,6 +54,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Exusiai
             Item.rare = ItemRarityID.Green;
 			Item.UseSound = ExusiaiVectorA;
 			Item.useAmmo = AmmoID.Bullet;
+			Item.reuseDelay = 15;
             Item.value = Item.sellPrice(0);
             Item.noMelee = true;
             Item.autoReuse = true;
@@ -90,8 +91,8 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Exusiai
 				}
 				else {
 					if (!modPlayer.SummonMode) {
-						Item.useAnimation = 30;
-						Item.useTime = 30;
+						Item.useAnimation = 15;
+						Item.useTime = 15;
 						// S1
 						if (modPlayer.Skill == 0) {
 							if (modPlayer.StockCount == 0) {
@@ -99,7 +100,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Exusiai
 								Item.UseSound = ExusiaiVectorA;
 							}
 							else if (modPlayer.StockCount > 0) {
-								Item.useTime =10;
+								Item.useTime =5;
 								modPlayer.SkillActive = true;
 								modPlayer.SkillTimer = 0;
 								modPlayer.DelStockCount();
@@ -108,7 +109,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Exusiai
 						}
 						// S2
 						if (modPlayer.Skill == 1 && modPlayer.SkillActive) {
-							Item.useTime = 8;
+							Item.useTime = 4;
 							Item.UseSound = ExusiaiVectorS;
 							SoundEngine.PlaySound(Item.UseSound.Value, player.Center);
 						}
@@ -117,8 +118,8 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Exusiai
 						}
 						// S3
 						if (modPlayer.Skill == 2 && modPlayer.SkillActive) {
-							Item.useAnimation = 10;
-							Item.useTime = 4;
+							Item.useAnimation = 8;
+							Item.useTime = 2;
 							Item.UseSound = ExusiaiVectorS;
 							SoundEngine.PlaySound(Item.UseSound.Value, player.Center);
 						}

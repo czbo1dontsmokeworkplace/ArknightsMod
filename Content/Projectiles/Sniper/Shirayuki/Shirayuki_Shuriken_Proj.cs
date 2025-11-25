@@ -163,9 +163,9 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Shirayuki
 
 			if (modPlayer.Skill == 1 && modPlayer.SkillActive)
 			{
-				Texture2D texture1 = ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Shirayuki_Shuriken_Effect1", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-				Texture2D texture2 = ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Shirayuki_Shuriken_Effect2", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-				Texture2D texture3 = ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Shirayuki_Shuriken_Effect3", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+				Texture2D texture1 = ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Sniper/Shirayuki/Shirayuki_Shuriken_Effect1", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+				Texture2D texture2 = ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Sniper/Shirayuki/Shirayuki_Shuriken_Effect2", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+				Texture2D texture3 = ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Sniper/Shirayuki/Shirayuki_Shuriken_Effect3", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 
 				Main.spriteBatch.End();
 				Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.AnisotropicClamp,

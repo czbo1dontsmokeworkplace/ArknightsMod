@@ -55,6 +55,8 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.NoirCorne
             Item.useStyle = ItemUseStyleID.Swing;
             Item.noUseGraphic = true;
             Item.noMelee = true;
+            Item.rare = ItemRarityID.White;
+			Item.value = Item.sellPrice(0, 0, 4, 0);
             // Item.shootSpeed = 1f;
             // Item.shoot = ModContent.ProjectileType<NoirShield_Projectile>();
         }
