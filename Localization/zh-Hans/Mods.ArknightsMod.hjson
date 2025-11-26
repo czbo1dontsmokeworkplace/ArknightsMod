@@ -7,6 +7,11 @@ Currencies: {
 	OriginiumIngotCurrency: 源石锭
 }
 
+ItemDropRuleCondition: {
+	CannotRunaway: 坎诺特逃跑时
+	CannotDead: 坎诺特被击败时
+}
+
 StatusMessage: {
 	IACT: {
 		Intro: 检测到未经许可擅自闯入禁区的实体，标记为打击目标.

@@ -7,6 +7,11 @@ Currencies: {
 	OriginiumIngotCurrency: Originium Ingot
 }
 
+ItemDropRuleCondition: {
+	CannotRunaway: When Cannot Runaway
+	CannotDead: When Cannot Dead
+}
+
 StatusMessage: {
 	IACT: {
 		Intro: 检测到未经许可擅自闯入禁区的实体，标记为打击目标.

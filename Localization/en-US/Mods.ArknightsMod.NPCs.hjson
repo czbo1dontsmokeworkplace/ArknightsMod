@@ -102,6 +102,11 @@ Cannot: {
 	}
 
 	Census.SpawnCondition: Conditions unknown
+
+	DeathMessage: {
+		Death: ""
+		Runaway: Cannot escaped.
+	}
 }
 
 LeporibeastShorthorn.DisplayName: Leporibeast Shorthorn
