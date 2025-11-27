@@ -72,7 +72,8 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		public override void SetDefaults() {
 			NPC.friendly = false;
 			NPC.dontTakeDamage = false;
-			NPC.dontTakeDamageFromHostiles= true;
+			NPC.chaseable = false;
+			NPC.dontTakeDamageFromHostiles = true;
 			NPC.width = 18;
 			NPC.height = 40;
 			NPC.aiStyle = NPCAIStyleID.Passive;
