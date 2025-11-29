@@ -18,17 +18,9 @@ namespace ArknightsMod.Content.Items.Material
 			Item.maxStack = 9999;
 			Item.value = Item.sellPrice(0, 0, 2, 50); 
 		}
-
-		// Please see Content/ExampleRecipes.cs for a detailed explanation of recipe creation.
-		//public override void AddRecipes() {
-		//	CreateRecipe()
-		//		.AddIngredient<Placeable.OrirockCube>(5)
-		//		.AddTile(TileID.WorkBenches)
-		//		.Register();
-		//}
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Placeable.OrirockCube>(2);
+			recipe.AddIngredient<OrirockCube>(2);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 			recipe = CreateRecipe();

@@ -51,7 +51,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
 
-			npcLoot.Add(ItemDropRule.Common(ItemType<Items.Placeable.OrirockCube>(), GetInstance<Dropconfig>().DropOriginiumSlugAlpha, 1, 3));
+			npcLoot.Add(ItemDropRule.Common(ItemType<Items.Material.OrirockCube>(), GetInstance<Dropconfig>().DropOriginiumSlugAlpha, 1, 3));
 
 		}
 

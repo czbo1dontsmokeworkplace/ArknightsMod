@@ -283,11 +283,11 @@ namespace ArknightsMod.Content.NPCs.Friendly
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
-				.Add(new Item(ModContent.ItemType<Items.Placeable.ManganeseOre>()) {
+				.Add(new Item(ModContent.ItemType<Items.Material.ManganeseOre>()) {
 					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
-				.Add(new Item(ModContent.ItemType<Items.Placeable.Grindstone>()) {
+				.Add(new Item(ModContent.ItemType<Items.Material.Grindstone>()) {
 					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})

@@ -972,6 +972,11 @@ RAMeatchip: {
 	Tooltip: ""
 }
 
+RAMeat: {
+	DisplayName: R A Meat
+	Tooltip: ""
+}
+
 UnionInvader: {
 	DisplayName: Union Invader
 	Tooltip: ""
@@ -2054,5 +2059,10 @@ StewardDefault: {
 
 VanillaDefault: {
 	DisplayName: Vanilla Default
+	Tooltip: ""
+}
+
+RALegmeat: {
+	DisplayName: R A Legmeat
 	Tooltip: ""
 }

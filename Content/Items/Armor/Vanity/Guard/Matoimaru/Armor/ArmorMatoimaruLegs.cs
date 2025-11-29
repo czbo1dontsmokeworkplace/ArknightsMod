@@ -18,8 +18,8 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Guard.Matoimaru.Armor
 			CreateRecipe()
 			.AddIngredient(ModContent.ItemType<MatoimaruLegs>(), 1)
 			.AddIngredient(ModContent.ItemType<Orundum>(), 40)
-			.AddIngredient(ModContent.ItemType<OrirockCube>(), 1)
-			.AddIngredient(ModContent.ItemType<Placeable.Grindstone>(), 1)
+			.AddIngredient(ModContent.ItemType<Material.OrirockCube>(), 1)
+			.AddIngredient(ModContent.ItemType<Material.Grindstone>(), 1)
 			.AddTile(ModContent.TileType<FactoryTile>())
 			.Register();
 		}

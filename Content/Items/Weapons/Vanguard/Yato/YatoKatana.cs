@@ -44,7 +44,7 @@ namespace ArknightsMod.Content.Items.Weapons.Vanguard.Yato
 
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Placeable.OrirockCube>(5); //Please check here: https://github.com/tModLoader/tModLoader/wiki/Intermediate-Recipes#recipegroups
+			recipe.AddIngredient<Material.OrirockCube>(5); //Please check here: https://github.com/tModLoader/tModLoader/wiki/Intermediate-Recipes#recipegroups
 			recipe.AddTile(TileID.WorkBenches);
 			recipe.Register();
 		}

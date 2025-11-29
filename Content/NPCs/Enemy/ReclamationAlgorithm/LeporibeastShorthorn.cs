@@ -1,4 +1,5 @@
-﻿using ArknightsMod.Content.Items.Placeable.Banners;
+﻿using ArknightsMod.Content.Items.Material.ReclamAlgor;
+using ArknightsMod.Content.Items.Placeable.Banners;
 using Humanizer;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -64,7 +65,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ReclamationAlgorithm
 
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
 
-			npcLoot.Add(ItemDropRule.Common(ItemType<Items.Material.RAmeat>(), ModContent.GetInstance<Dropconfig>().DropLS, 1, 2));
+			npcLoot.Add(ItemDropRule.Common(ItemType<RAMeat>(), ModContent.GetInstance<Dropconfig>().DropLS, 1, 2));
 
 		}
 
