@@ -11,7 +11,6 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static ArknightsMod.Content.Items.Accessories.Rogue.ScoutsScope;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace ArknightsMod.Content.Items.Weapons.Defender.Beagle

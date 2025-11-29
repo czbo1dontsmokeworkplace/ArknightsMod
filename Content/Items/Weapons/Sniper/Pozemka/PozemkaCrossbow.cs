@@ -12,7 +12,6 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static ArknightsMod.Content.Items.Accessories.Rogue.ScoutsScope;
 
 namespace ArknightsMod.Content.Items.Weapons.Sniper.Pozemka
 {

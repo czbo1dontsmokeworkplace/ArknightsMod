@@ -48,6 +48,10 @@ namespace ArknightsMod.Players
 		public bool SummonMode;
 		public bool SkillInitialize = true;
 
+		// SP恢复加成系统
+		public float SPRegenMultiplier { get; set; } = 1f;
+		private float spRegenFraction;
+
 		// 位置信息
 		public float mousePositionX;
 		public float mousePositionY;
@@ -101,7 +105,8 @@ namespace ArknightsMod.Players
 			SkillData skill = CurrentSkill;
 
 			if (skill == null) {
-				Main.NewText($"[{GetType()}] 错误: 当前技能数据mp.CurrentSkill为null", Color.Red);
+				if(HowManySkills>0)
+					Main.NewText($"[{GetType()}] 错误: 当前技能数据mp.CurrentSkill为null", Color.Red);
 				return;
 			}
 
@@ -154,7 +159,9 @@ namespace ArknightsMod.Players
 		}
 
 		public override void ResetEffects() {
+
 			defenseBonus = 0;
+			SPRegenMultiplier = 1f; // 重置SP恢复倍率（修改后的）
 			// 更新武器状态
 			HoldBagpipeSpear = Main.LocalPlayer.HeldItem.ModItem is BagpipeSpear;
 			HoldExusiaiVector = Main.LocalPlayer.HeldItem.ModItem is ExusiaiVector;
@@ -199,10 +206,6 @@ namespace ArknightsMod.Players
 				SetAllSkillsData();
 			}
 		}
-		public override void UpdateEquips(){
-			Player.statDefense += defenseBonus;
-		}
-
 		public void TryAutoCharge() {
 			if (CurrentSkill?.ChargeType == SkillChargeType.Auto)
 				AutoCharge();

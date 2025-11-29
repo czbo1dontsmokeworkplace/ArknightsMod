@@ -456,66 +456,6 @@ namespace ArknightsMod.Content.NPCs.Friendly
 				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.TexalterDefault>()) {
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.AdnachielDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.AnselDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.CardiganDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType < Items.Consumables.VanityBags.CatapultDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.FangDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.HibiscusDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.KroosDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.LavaDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType < Items.Consumables.VanityBags.MidnightDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.OrchidDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.PlumeDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.PopukarDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.SpotDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType <Items.Consumables.VanityBags.StewardDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<Items.Consumables.VanityBags.VanillaDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				});
 			npcShop.Register(); // Name of this shop tab
 		}

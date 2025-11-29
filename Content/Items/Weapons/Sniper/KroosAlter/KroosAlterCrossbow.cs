@@ -38,6 +38,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.KroosAlter
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.rare = ItemRarityID.Green;
             Item.useAmmo = AmmoID.Arrow;
+			Item.reuseDelay = 10;
             Item.value = Item.sellPrice(0);
             Item.noMelee = true;
             Item.autoReuse = true;
