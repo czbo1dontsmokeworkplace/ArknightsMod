@@ -1,11 +1,11 @@
 using ArknightsMod.Content.Projectiles.Vanguard.Yato;
 using ArknightsMod.Content.Tiles.Infrastructure;
+using Microsoft.Xna.Framework;
 
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-
 namespace ArknightsMod.Content.Items.Weapons.Vanguard.Yato
 {
 	public class YatoKatana : UpgradeWeaponBase
@@ -37,10 +37,9 @@ namespace ArknightsMod.Content.Items.Weapons.Vanguard.Yato
 			Item.rare = ItemRarityID.White;
 			Item.value = Item.sellPrice(0, 0, 3, 20);
 
-			Item.shoot = ModContent.ProjectileType<YatoKatana_Projectile>(); // The projectile is what makes a shortsword work
-			Item.shootSpeed = 2.3f; // This value bleeds into the behavior of the projectile as velocity, keep that in mind when tweaking values
-
-			Item.UseSound = SoundID.Item1;
+			// Item.shoot = ModContent.ProjectileType<YatoKatana_Projectile>();
+			// Item.shootSpeed = 0f;
+			// Item.UseSound = SoundID.Item1;
 		}
 
 		public override void AddRecipes()
@@ -60,11 +59,24 @@ namespace ArknightsMod.Content.Items.Weapons.Vanguard.Yato
 
 		public class YatoPlayer : ModPlayer
         {
+			public override void PostUpdate() {
+                var it = Player.HeldItem;
+                if (it.type == ModContent.ItemType<YatoKatana>() ) {
+                    if (Player.ownedProjectileCounts[ModContent.ProjectileType<YatoKatana_Projectile>()] == 0 && (Main.mouseLeft||Main.mouseRight)) {
+                        Projectile.NewProjectile(Player.GetSource_FromThis(), Player.Center, Vector2.Zero, ModContent.ProjectileType<YatoKatana_Projectile>(), it.damage, it.knockBack, Player.whoAmI);
+                    }
+					if (Player.ownedProjectileCounts[ModContent.ProjectileType<YatoKatanaSheath_Projectile>()] == 0 && (Main.mouseLeft||Main.mouseRight)) {
+                        Projectile.NewProjectile(Player.GetSource_FromThis(), Player.Center, Vector2.Zero, ModContent.ProjectileType<YatoKatanaSheath_Projectile>(), 0, 0, Player.whoAmI);
+                    }
+                }
+
+                base.PostUpdate();
+            }
             public override void UpdateEquips() {
 				var it = Player.HeldItem;
 				if (it.type == ModContent.ItemType<YatoKatana>() ) {
-					Player.moveSpeed += 0.1f;
-					if (Main.mouseRight) Player.moveSpeed += 0.15f;
+					Player.moveSpeed += 0.2f;
+					if (Main.mouseRight) Player.moveSpeed += 0.3f;
 
 				}
 				base.UpdateEquips();

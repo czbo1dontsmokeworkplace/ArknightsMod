@@ -1,7 +1,11 @@
 # Weapons
 YatoKatana: {
 	DisplayName: Yato's Katana
-	Tooltip: "'Yato has joined the team.'"
+	Tooltip: '''
+		holding this weapon provides 20% movespeed
+		rightclick to provide 30% extra defense
+		'Yato has joined the team.'
+		'''
 }
 
 NoirShield: {
@@ -9,6 +13,7 @@ NoirShield: {
 	Tooltip:
 		'''
 		holding this shield provides 5 defense
+		rightclick to provide 10 extra defense
 		No damage? Knockback is fine.
 		'''
 }

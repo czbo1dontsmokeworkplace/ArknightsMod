@@ -1,7 +1,12 @@
 # Weapons
 YatoKatana: {
 	DisplayName: 夜刀的剑
-	Tooltip: "'夜刀，入队。'"
+	Tooltip: 
+		'''
+		手持此剑使移速增加0.2
+		右键额外增加0.3
+		夜刀，入队。
+		'''
 }
 
 NoirShield: {
@@ -9,6 +14,7 @@ NoirShield: {
 	Tooltip:
 		'''
 		手持此盾使防御力加5
+		右键额外提供10防御
 		没伤害？击退就完事了
 		'''
 }

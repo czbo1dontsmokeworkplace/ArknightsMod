@@ -1,129 +1,308 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
 using Terraria;
-using Terraria.Enums;
 using Terraria.ModLoader;
+using Microsoft.Xna.Framework;
+using Terraria.GameContent;
+using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
+using ArknightsMod.Content.Items.Weapons.Vanguard.Yato;
+using Terraria.ID;
+
+
 
 namespace ArknightsMod.Content.Projectiles.Vanguard.Yato
 {
-	// Shortsword projectiles are handled in a special way with how they draw and damage things
-	// The "hitbox" itself is closer to the player, the sprite is centered on it
-	// However the interactions with the world will occur offset from this hitbox, closer to the sword's tip (CutTiles, Colliding)
-	// Values chosen mostly correspond to Iron Shortword
 	public class YatoKatana_Projectile : ModProjectile
 	{
-		public const int FadeInDuration = 3;
-		public const int FadeOutDuration = 2;
+		Player player => Main.player[Projectile.owner];
+		Item item => player.HeldItem;
+		int attackTime = 0;
 
-		public const int TotalDuration = 16;
-
-		// The "width" of the blade
-		public float CollisionWidth => 11f * Projectile.scale;
-
-		public int Timer {
-			get => (int)Projectile.ai[0];
-			set => Projectile.ai[0] = value;
+		public override void SetStaticDefaults() {
+			ProjectileID.Sets.TrailingMode[Type] = 2;
+			ProjectileID.Sets.TrailCacheLength[Type] = 15;
 		}
-
 		public override void SetDefaults() {
-			Projectile.Size = new Vector2(20); // This sets width and height to the same value (important when projectiles can rotate)
-			Projectile.aiStyle = -1; // Use our own AI to customize how it behaves, if you don't want that, keep this at ProjAIStyleID.ShortSword. You would still need to use the code in SetVisualOffsets() though, and add 'using Terraria.ID;'
+			Projectile.width = 38;
+			Projectile.height = 40;
+			Projectile.aiStyle = -1;
 			Projectile.friendly = true;
 			Projectile.penetrate = -1;
 			Projectile.tileCollide = false;
-			Projectile.scale = 1f;
 			Projectile.DamageType = DamageClass.Melee;
-			Projectile.ownerHitCheck = true; // Prevents hits through tiles. Most melee weapons that use projectiles have this
-			Projectile.extraUpdates = 1; // Update 1+extraUpdates times per tick
-			Projectile.timeLeft = 360; // This value does not matter since we manually kill it earlier, it just has to be higher than the duration we use in AI
-			Projectile.hide = true; // Important when used alongside player.heldProj. "Hidden" projectiles have special draw conditions
+			Projectile.timeLeft = 60;
+			Projectile.hide = false;
 		}
+		public override bool ShouldUpdatePosition() => false;
+		public override bool PreDraw(ref Color lightColor) {
+			Texture2D tex = TextureAssets.Projectile[Projectile.type].Value;
 
-		public override void SetStaticDefaults() {
-			// DisplayName.SetDefault("Yato's Katana");
-			// Tooltip.SetDefault("Yato has joined the team.");
-		}
+			// 左下角原点
+			Vector2 origin = new Vector2(0, tex.Height);
 
-		public override void AI() {
-			Player player = Main.player[Projectile.owner];
-
-			Timer += 1;
-			if (Timer >= TotalDuration) {
-				// Kill the projectile if it reaches it's intented lifetime
-				Projectile.Kill();
-				return;
-			}
-			else {
-				// Important so that the sprite draws "in" the player's hand and not fully infront or behind the player
-				player.heldProj = Projectile.whoAmI;
-			}
-
-			// Fade in and out
-			// GetLerpValue returns a value between 0f and 1f - if clamped is true - representing how far Timer got along the "distance" defined by the first two parameters
-			// The first call handles the fade in, the second one the fade out.
-			// Notice the second call's parameters are swapped, this means the result will be reverted
-			Projectile.Opacity = Utils.GetLerpValue(0f, FadeInDuration, Timer, clamped: true) * Utils.GetLerpValue(TotalDuration, TotalDuration - FadeOutDuration, Timer, clamped: true);
-
-			// Keep locked onto the player, but extend further based on the given velocity (Requires ShouldUpdatePosition returning false to work)
-			Vector2 playerCenter = player.RotatedRelativePoint(player.MountedCenter, reverseRotation: false, addGfxOffY: false);
-			Projectile.Center = playerCenter + Projectile.velocity * (Timer - 1f);
-
-			// Set spriteDirection based on moving left or right. Left -1, right 1
-			Projectile.spriteDirection = (Vector2.Dot(Projectile.velocity, Vector2.UnitX) >= 0f).ToDirectionInt();
-
-			// Point towards where it is moving, applied offset for top right of the sprite respecting spriteDirection
-			Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2 - MathHelper.PiOver4 * Projectile.spriteDirection;
-
-			// The code in this method is important to align the sprite with the hitbox how we want it to
-			SetVisualOffsets();
-		}
-
-		private void SetVisualOffsets() {
-			// 32 is the sprite size (here both width and height equal)
-			const int HalfSpriteWidth = 40 / 2;
-			const int HalfSpriteHeight = 40 / 2;
-
-			int HalfProjWidth = Projectile.width / 2;
-			int HalfProjHeight = Projectile.height / 2;
-
-			// Vanilla configuration for "hitbox in middle of sprite"
-			DrawOriginOffsetX = 0;
-			DrawOffsetX = -(HalfSpriteWidth - HalfProjWidth);
-			DrawOriginOffsetY = -(HalfSpriteHeight - HalfProjHeight);
-
-			// Vanilla configuration for "hitbox towards the end"
-			//if (Projectile.spriteDirection == 1) {
-			//	DrawOriginOffsetX = -(HalfProjWidth - HalfSpriteWidth);
-			//	DrawOffsetX = (int)-DrawOriginOffsetX * 2;
-			//	DrawOriginOffsetY = 0;
-			//}
-			//else {
-			//	DrawOriginOffsetX = (HalfProjWidth - HalfSpriteWidth);
-			//	DrawOffsetX = 0;
-			//	DrawOriginOffsetY = 0;
-			//}
-		}
-
-		public override bool ShouldUpdatePosition() {
-			// Update Projectile.Center manually
+			Main.EntitySpriteDraw(
+				tex,
+				Projectile.Center - Main.screenPosition,
+				null,
+				lightColor,
+				Projectile.rotation,
+				origin,
+				Projectile.scale,
+				SpriteEffects.None,
+				0
+			);
 			return false;
 		}
 
-		public override void CutTiles() {
-			// "cutting tiles" refers to breaking pots, grass, queen bee larva, etc.
-			DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
-			Vector2 start = Projectile.Center;
-			Vector2 end = start + Projectile.velocity.SafeNormalize(-Vector2.UnitY) * 10f;
-			Utils.PlotTileLine(start, end, CollisionWidth, DelegateMethods.CutTiles);
+		// 挥刀特效，目前特效位置不太对
+		// public override void PostDraw(Color lightColor)
+		// {
+		// 	var vertices1 = new List<VertexData>();
+
+		// 	float timeOffset = Main.GlobalTimeWrappedHourly % 1f;
+
+		// 	for (int i = 0; i < 15; i += 1)
+		// 	{
+		// 		if (Projectile.oldPos[i] != Vector2.Zero)
+		// 		{
+		// 			float uvX = i / 14f;
+		// 			float progress = i / 4f;
+
+		// 			float dynamicUvX = (uvX - timeOffset * 2) % 1f;
+
+		// 			var color = Color.Lerp(new Color(255, 237, 0), new Color(9, 161, 130), progress);
+
+		// 			// 透明度渐变
+		// 			float alphaFactor = 1f;
+		// 			if (i < 3)
+		// 			{
+		// 				alphaFactor = i / 2f;
+		// 			}
+		// 			else
+		// 			{
+		// 				alphaFactor = 1 - i / 15f;
+		// 			}
+		// 			color *= alphaFactor;
+
+		// 			vertices1.Add(new VertexData(
+		// 				Projectile.oldPos[i] + Projectile.Size.RotatedBy(Projectile.oldRot[i] - 1.83f)*0.7f - Main.screenPosition + new Vector2(64, -0).RotatedBy(Projectile.oldRot[i] - 0.8f),
+		// 				new Vector3(dynamicUvX, 0, 1),
+		// 				color
+		// 			));
+
+		// 			vertices1.Add(new VertexData(
+		// 				Projectile.oldPos[i] + Projectile.Size.RotatedBy(Projectile.oldRot[i] -1.83f)*0.7f - Main.screenPosition + new Vector2(64, 0).RotatedBy(Projectile.oldRot[i] - MathHelper.Pi -0.8f),
+		// 				new Vector3(dynamicUvX, 1, 1),
+		// 				color
+		// 			));
+		// 		}
+		// 	}
+
+		// 	for (int i = 0; i < 2; i++)
+		// 	{
+		// 		Main.spriteBatch.End();
+		// 		Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.AnisotropicWrap,
+		// 			DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+		// 		Main.graphics.GraphicsDevice.Textures[0] = TextureAssets.Extra[196].Value;
+		// 		if (vertices1.Count >= 5)
+		// 		{
+		// 			Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices1.ToArray(), 0, vertices1.Count - 2);
+		// 		}
+		// 		Main.spriteBatch.End();
+		// 		Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp,
+		// 			DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+		// 	}
+		// }
+		public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs,
+			List<int> behindProjectiles, List<int> overPlayers,
+			List<int> overWiresUI) {
+			overPlayers.Add(index);
+		}
+		public override void AI() {
+			if (!player.active || player.dead || item.type != ModContent.ItemType<YatoKatana>()) {
+				player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.None, 0);
+				Projectile.Kill();
+				return;
+			}
+			float t = Math.Clamp(Projectile.ai[0] / item.useTime, 0, 1);
+			Projectile.ai[0] += 1;
+			float rotation = 0f;
+			float startRotation = -1.95f;
+			float startRotation_opposite = (float)Math.PI / 9f;
+
+			if (t <= 0.05f) {
+				if (Main.mouseLeft) {
+					attackTime = item.useTime;
+					Projectile.friendly = true;
+				}
+				player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, player.direction *1.05f);
+				Projectile.rotation = player.direction == 1 ? startRotation : startRotation_opposite;
+			}
+			if (attackTime > 0) {
+				if (t <= 0.2f) {
+					// 取刀
+					Projectile.position = player.Center + new Vector2(player.direction == 1 ? 0 : -40, 10) + new Vector2(0, -10 - 10f * (t / 0.2f));
+					player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, player.direction * MathHelper.Lerp(-(float)Math.PI*7/18, -(float)Math.PI*10/18,t / 0.2f));
+					Projectile.rotation = (player.direction == 1 ? startRotation : startRotation_opposite) - player.direction * MathHelper.Lerp(0, 0.52f, t / 0.2f);
+				}
+				else if (t <= 0.5f) {
+					// 小小先快后慢一下
+					float u = (t - 0.2f) / 0.3f;
+					t = 0.2f + 0.3f * (1 - (1 - u) * (1 - u));
+					// 挥刀
+					// 这个函数是人写出来的呀，，好吧确实是给三个点让ai写的,由(0,-20)到(-50,-40)
+					Projectile.position = (player.direction == 1 ? player.Center : player.Center + new Vector2(-40, 0)) + new Vector2(
+						(24.2f - 50 * (t - 0.31f) * (t - 0.31f) / 0.025f) * player.direction,
+						(-11666.67f * (t - 0.4f) * (t - 0.4f) * (t - 0.4f) - 2833.33f * (t - 0.4f) * (t - 0.4f))
+					);
+					player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, player.direction * MathHelper.Lerp(-(float)Math.PI*10/18, (float)Math.PI * 11 / 18,(t-0.2f) / 0.3f));
+					Projectile.rotation = (player.direction == 1 ? startRotation : startRotation_opposite) + player.direction * MathHelper.Lerp(-0.52f, 6.28f, (t - 0.2f) / 0.3f);
+				}
+				else if (t <= 0.6f) {
+					// 停刀
+					Projectile.rotation = (player.direction == 1 ? startRotation : startRotation_opposite) + player.direction * 6.28f;
+					player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, player.direction * (float)Math.PI * 11 / 18);					
+					Projectile.position = player.Center + new Vector2(player.direction == 1 ? 0 : -40, 10) + new Vector2(
+						-50 * player.direction,
+						-50
+					);
+				}
+				else if (t <= 0.8f) {
+					// 收刀1
+					float nt = (t - 0.6f) / 0.2f;   // 0~1
+					nt = (MathF.Pow(10, nt) - 1) / 9f;
+					Projectile.rotation = (player.direction == 1 ? startRotation : startRotation_opposite) - player.direction * MathHelper.Lerp(-6.28f, -4f, nt);
+					Projectile.position = player.Center + new Vector2(player.direction == 1 ? 0 : -40, 10) + new Vector2((-70 * (0.8f - t) / 0.2f + 20) * player.direction, -2479f * (t - 0.73f) * (t - 0.73f) - 10f);
+					player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full,  player.direction * MathHelper.Lerp((float)Math.PI * 11 / 18,-(float)Math.PI/6, nt));					
+
+				}
+				else if (t <= 0.85f) {
+					// 收刀2
+					Projectile.rotation = (player.direction == 1 ? startRotation : startRotation_opposite) - player.direction * MathHelper.Lerp(-4f, 0.52f, (t - 0.8f) / 0.05f);
+					Projectile.position = player.Center + new Vector2(player.direction == 1 ? 0 : -40, 10) + new Vector2(20 * player.direction, -30);
+					player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full,  player.direction * MathHelper.Lerp(-(float)Math.PI/6,-(float)Math.PI*10/18, (t - 0.8f) / 0.05f));					
+
+				}
+				else {
+					// 入鞘
+					Projectile.rotation = (player.direction == 1 ? startRotation : startRotation_opposite) - player.direction * (float)Math.PI / 6f;
+					Projectile.position = player.Center + new Vector2(player.direction == 1 ? 0 : -40, 10) + new Vector2((20 * (1 - t) / 0.15f) * player.direction, -20 - 10 * (1 - t) / 0.15f);
+					player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.ThreeQuarters,  player.direction *-(float)Math.PI*10/18);					
+
+				}
+
+			}
+			else {
+
+				Projectile.rotation = player.direction == 1 ? startRotation : startRotation_opposite;
+				Projectile.position = player.Center +new Vector2(player.direction == 1 ? 0 : -40, 10) +new Vector2(0,-10);
+				if (Main.mouseLeft) {
+					attackTime = item.useTime;
+				}
+				//重新开始普攻流程
+				Projectile.ai[0] = 0;
+			}
+			if (t == 1) {
+				Projectile.ai[0] = 0;
+			}
+			if (Main.mouseLeft || Main.mouseRight) {
+				Projectile.timeLeft = item.useTime;
+			}
+
+
+			attackTime--;
+			if (attackTime<=0){
+				Projectile.friendly = false;
+			}
+
 		}
 
-		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {
-			// "Hit anything between the player and the tip of the sword"
-			// shootSpeed is 2.1f for reference, so this is basically plotting 12 pixels ahead from the center
-			// cf.shootSpeed Content/Items/Weapens -not *_Projectile.cs
-			Vector2 start = Projectile.Center;
-			Vector2 end = start + Projectile.velocity * 9f;
-			float collisionPoint = 0f; // Don't need that variable, but required as parameter
-			return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, CollisionWidth, ref collisionPoint);
+	}
+
+	public class YatoKatanaSheath_Projectile : ModProjectile
+	{
+		Player player => Main.player[Projectile.owner];
+		Item item => player.HeldItem;
+		int attackTime = 0;
+		public override void SetDefaults() {
+			Projectile.width = 38;
+			Projectile.height = 40;
+			Projectile.aiStyle = -1;
+			Projectile.friendly = true;
+			Projectile.penetrate = -1;
+			Projectile.tileCollide = false;
+			Projectile.DamageType = DamageClass.Melee;
+			Projectile.timeLeft = 60;
+			Projectile.hide = false;
 		}
+		public override bool ShouldUpdatePosition() => false;
+
+		public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs,
+			List<int> behindProjectiles, List<int> overPlayers,
+			List<int> overWiresUI) {
+			overPlayers.Add(index);
+		}
+		public override void AI() {
+			if (!player.active || player.dead || item.type != ModContent.ItemType<YatoKatana>()) {
+				player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.None, 0);
+				Projectile.Kill();
+				return;
+			}
+			float t = Math.Clamp(Projectile.ai[0] / item.useTime, 0, 1);
+			Projectile.ai[0] += 1;
+			float startRotation = (float)Math.PI * 5 / 12f;
+			float startRotation_opposite = (float)Math.PI * 13 / 12f;
+
+			if (t <= 0.05f) {
+				if (Main.mouseLeft) {
+					attackTime = item.useTime;
+				}
+				player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, -0.52f);
+				Projectile.rotation = (player.direction == 1 ? startRotation : startRotation_opposite);
+			}
+			if (attackTime > 0) {
+				if (t < 0.2f) {
+					Projectile.rotation = (player.direction == 1 ? startRotation : startRotation_opposite) - player.direction * MathHelper.Lerp(0, (float)Math.PI / 4f, (t) / 0.2f);
+					Projectile.position = player.Center + new Vector2(player.direction == 1 ? 0 : 30, player.direction == 1 ? 10 : 0) + new Vector2(-32, -20 + 8 * (t) / 0.2f);
+				}
+				else if (t < 0.5f) {
+					Projectile.rotation = (player.direction == 1 ? startRotation : startRotation_opposite) - player.direction * MathHelper.Lerp((float)Math.PI / 4f, -(float)Math.PI / 6f, (t - 0.2f) / 0.3f);
+					Projectile.position = player.Center + new Vector2(player.direction == 1 ? 0 : 30, player.direction == 1 ? 10 : 0) + new Vector2(-32, -12);
+				}
+				else if (t < 0.75f) {
+					Projectile.rotation = (player.direction == 1 ? startRotation : startRotation_opposite) + player.direction * (float)Math.PI / 6f;
+					Projectile.position = player.Center + new Vector2(player.direction == 1 ? 0 : 30, player.direction == 1 ? 10 : 0) + new Vector2(-32, -12);
+				}
+				else if (t < 0.85f) {
+					Projectile.rotation = (player.direction == 1 ? startRotation : startRotation_opposite) - player.direction * MathHelper.Lerp(-(float)Math.PI / 6f, (float)Math.PI / 6f, (t - 0.75f) / 0.1f);
+					Projectile.position = player.Center + new Vector2(player.direction == 1 ? 0 : 30, player.direction == 1 ? 10 : 0) + new Vector2(-32, -12);
+				}
+				else {
+					//pi/4也不对，pi/6也不对
+					Projectile.rotation = (player.direction == 1 ? startRotation : startRotation_opposite) - player.direction * (float)Math.PI / 5f;
+					Projectile.position = player.Center + new Vector2(player.direction == 1 ? 0 : 30, player.direction == 1 ? 10 : 0) + new Vector2(-32, -12);
+				}
+			}
+			else {
+				// 不是很理解为什么position.y要再减10才流畅一点。。
+				Projectile.rotation = (player.direction == 1 ? startRotation : startRotation_opposite);
+				Projectile.position = player.Center + new Vector2(player.direction == 1 ? 0 : 30, player.direction == 1 ? 10 : 0) + new Vector2(-32, -22);
+				if (Main.mouseLeft) {
+					attackTime = item.useTime;
+				}
+				//重新开始普攻流程
+				Projectile.ai[0] = 0;
+			}
+			if (t == 1) {
+				Projectile.ai[0] = 0;
+			}
+
+
+			if (Main.mouseLeft || Main.mouseRight) {
+				Projectile.timeLeft = item.useTime;
+			}
+			attackTime--;
+		}
+
 	}
 }

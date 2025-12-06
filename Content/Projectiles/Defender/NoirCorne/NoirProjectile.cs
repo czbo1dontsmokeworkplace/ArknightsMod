@@ -69,7 +69,7 @@ namespace ArknightsMod.Content.Projectiles.Defender.NoirCorne
                     player.direction = Main.MouseWorld.X > player.Center.X ? 1 : -1;
                     Projectile.ai[0] = 0;
                     Projectile.ai[1] += 0.07f;
-                }
+                }   
 
                 player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Quarter, 0);
             }
