@@ -1,18 +1,6 @@
-[h1]Hello, Doctor![/h1]
-[h1]-------------------------------------------------------------------[/h1]
-This is a fan-made Terraria mod for Doctors who want to play more Arknights while already playing Arknights.
-Perfect for farming or waiting through maintenance. Please enjoy to your heart’s content a fun and relaxing vacation in Terraria.
-[h1]-------------------------------------------------------------------[/h1]
-[h1]What is Arknights?[/h1]
-Arknights is a tower defense (TD) game for smartphones. (Developed by: Hypergryph / Published by: Yostar)
-If you’re a Doctor suffering from memory loss and can’t quite remember even after this explanation, please check below:
-[url=https://www.arknights.global]Official Arknights Website[/url]
-If you’re a Doctor who loves Arknights, you’ll surely enjoy this mod as well.
-[h1]-------------------------------------------------------------------[/h1]
-[h1]What can you do in this mod?[/h1]
-As a Doctor who awakens in the world of Terraria, you can fight against familiar-looking enemies while using weapons and gear inspired by various Operators.
-[h1]-------------------------------------------------------------------[/h1]
-[h1]Want to join the development team?[/h1]
+# Hello, Doctor!
+This Mod for Terraria is made for Arknights Doctor. I'm creating the Mod based on the idea of Arknights, adding my own interpretation.
+Have a good life of Arknights in Terraria, Doctor!
 
 Recruitment tags: [Programming] [Pixel Art] [English] [Chinese] [Terraria] [Lore] [Chatting]
 If you’re interested in [u]even one[/u] of these, please join our Discord below and come talk with us about it.

@@ -992,6 +992,11 @@ RAMeatchip: {
 		'''
 }
 
+RAMeat: {
+	// DisplayName: R A Meat
+	// Tooltip: ""
+}
+
 UnionInvader: {
 	DisplayName: 破损的整合运动旗帜
 	Tooltip: 白天使用以召唤整合运动的先锋部队

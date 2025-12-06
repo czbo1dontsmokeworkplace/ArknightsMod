@@ -58,10 +58,10 @@ namespace ArknightsMod.Content.Tiles.Furniture
 			if (player.IsWithinSnappngRangeToTile(i, j, PlayerSittingHelper.ChairSittingMaxDistance)) { // Avoid being able to trigger it from long range
 				player.GamepadEnableGrappleCooldown();
 				player.QuickSpawnItem(new EntitySource_TileBreak(i, j), ModContent.ItemType<Items.Orundum>(), 100);
-				player.QuickSpawnItem(new EntitySource_TileBreak(i, j), ModContent.ItemType<Items.Placeable.OrirockCube>(), 100);
-				player.QuickSpawnItem(new EntitySource_TileBreak(i, j), ModContent.ItemType<Items.Placeable.Grindstone>(), 100);
-				player.QuickSpawnItem(new EntitySource_TileBreak(i, j), ModContent.ItemType<Items.Placeable.ManganeseOre>(), 100);
-				player.QuickSpawnItem(new EntitySource_TileBreak(i, j), ModContent.ItemType<Items.Placeable.RMA7012>(), 100);
+				player.QuickSpawnItem(new EntitySource_TileBreak(i, j), ModContent.ItemType<Items.Material.OrirockCube>(), 100);
+				player.QuickSpawnItem(new EntitySource_TileBreak(i, j), ModContent.ItemType<Items.Material.Grindstone>(), 100);
+				player.QuickSpawnItem(new EntitySource_TileBreak(i, j), ModContent.ItemType<Items.Material.ManganeseOre>(), 100);
+				player.QuickSpawnItem(new EntitySource_TileBreak(i, j), ModContent.ItemType<Items.Material.RMA7012>(), 100);
 				player.QuickSpawnItem(new EntitySource_TileBreak(i, j), ModContent.ItemType<Items.Material.Device>(), 100);
 				player.QuickSpawnItem(new EntitySource_TileBreak(i, j), ModContent.ItemType<Items.Material.LoxicKohl>(), 100);
 				player.QuickSpawnItem(new EntitySource_TileBreak(i, j), ModContent.ItemType<Items.Material.Oriron>(), 100);

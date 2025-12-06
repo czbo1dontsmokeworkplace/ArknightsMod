@@ -18,7 +18,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Guard.Matoimaru.Armor
 			CreateRecipe()
 			.AddIngredient(ModContent.ItemType<MatoimaruBody>(), 1)
 			.AddIngredient(ModContent.ItemType<Orundum>(), 40)
-			.AddIngredient(ModContent.ItemType<Placeable.ManganeseOre>(), 1)
+			.AddIngredient(ModContent.ItemType<ManganeseOre>(), 1)
 			.AddIngredient(ModContent.ItemType<Device>(), 1)
 			.AddTile(ModContent.TileType<FactoryTile>())
 			.Register();

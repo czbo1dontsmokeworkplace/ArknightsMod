@@ -977,6 +977,11 @@ RAMeatchip: {
 	Tooltip: ""
 }
 
+RAMeat: {
+	DisplayName: R A Meat
+	Tooltip: ""
+}
+
 UnionInvader: {
 	DisplayName: Union Invader
 	Tooltip: ""
