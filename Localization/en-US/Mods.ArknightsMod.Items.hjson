@@ -22,6 +22,15 @@ DurinWand: {
 	DisplayName: Durin's wand
 	Tooltip: She looks quite sleepy.
 }
+_12FWand: {
+	DisplayName: 12F's wand
+	Tooltip: So, when can I get a skin.
+}
+
+RangersBow: {
+	DisplayName: Rangers' Bow
+	Tooltip: You like me that much, huh? Weird taste, I gotta say.
+}
 
 KroosCrossbow: {
 	DisplayName: Kroos' Crossbow

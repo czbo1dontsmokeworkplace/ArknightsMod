@@ -1,9 +1,9 @@
 # Weapons
 YatoKatana: {
-	DisplayName: 夜刀的剑
+	DisplayName: 夜刀的武士刀
 	Tooltip: 
 		'''
-		手持此剑使移速增加0.2
+		手持此刀使移速增加0.2
 		右键额外增加0.3
 		夜刀，入队。
 		'''
@@ -22,6 +22,16 @@ NoirShield: {
 DurinWand: {
 	DisplayName: 杜林的法杖
 	Tooltip: 她看起来十分困乏。
+}
+
+_12FWand: {
+	DisplayName: 12F的法杖
+	Tooltip: 终末地的我，再强大也不是海猫亲生的
+}
+
+RangersBow: {
+	DisplayName: 巡林者的弩
+	Tooltip: 没想到您居然好这口。
 }
 
 KroosCrossbow: {

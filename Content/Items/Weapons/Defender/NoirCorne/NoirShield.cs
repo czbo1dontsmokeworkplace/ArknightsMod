@@ -29,7 +29,7 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.NoirCorne
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.IronBar, 5);
             recipe.AddIngredient(ItemID.LeadBar, 5);
-            recipe.AddTile(ModContent.TileType<FactoryTile>());
+            recipe.AddTile(TileID.WorkBenches);
             recipe.Register();
         }
         private static SoundStyle NoSound;
