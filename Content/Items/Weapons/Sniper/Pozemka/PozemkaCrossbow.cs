@@ -137,7 +137,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Pozemka
 						else
 							return false;
 					}
-					else {
+					else {	
 						modPlayer.SummonMode = false;
 						return false;
 					}

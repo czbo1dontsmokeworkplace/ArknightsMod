@@ -101,6 +101,23 @@ Shirayuki_Shuriken: {
 	}
 }
 
+NianWeapon: {
+	1:{
+		Desc: Mods.ArknightsMod.Skills.NianWeapon.1.Desc
+		Label: Mods.ArknightsMod.Skills.NianWeapon.1.Label
+	}
+
+	2: {
+		Label: Mods.ArknightsMod.Skills.NianWeapon.2.Label
+		Desc: Mods.ArknightsMod.Skills.NianWeapon.2.Desc
+	}
+
+	3: {
+		Desc: Mods.ArknightsMod.Skills.NianWeapon.3.Desc
+		Label: Mods.ArknightsMod.Skills.NianWeapon.3.Label
+	}
+}
+
 ThornsWeapon: {
 	1: {
 		Desc: Mods.ArknightsMod.Skills.ThornsWeapon.1.Desc

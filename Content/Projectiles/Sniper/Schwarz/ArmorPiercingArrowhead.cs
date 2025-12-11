@@ -37,7 +37,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Schwarz
             AIType = ProjectileID.WoodenArrowFriendly; // Act exactly like default Bullet
         }
 
-        SoundStyle SchwarzHitSound = new SoundStyle("ArknightsMod/Content/Projectiles/Schwarz/SchwarzHitSound")
+        SoundStyle SchwarzHitSound = new SoundStyle("ArknightsMod/Content/Projectiles/Sniper/Schwarz/SchwarzHitSound")
         {
             Volume = 0.5f,
             MaxInstances = 0,

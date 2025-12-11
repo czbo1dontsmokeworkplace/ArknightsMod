@@ -51,7 +51,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Schwarz
         }
 
         // The sound that this item plays when used.
-        SoundStyle SchwarzAttackSound = new SoundStyle("ArknightsMod/Content/Projectiles/Schwarz/SchwarzAttackSound") with
+        SoundStyle SchwarzAttackSound = new SoundStyle("ArknightsMod/Content/Projectiles/Sniper/Schwarz/SchwarzAttackSound") with
         {
             Volume = 0.5f,
             PitchVariance = 0.3f,
@@ -59,7 +59,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Schwarz
             //SoundLimitBehavior = SoundLimitBehavior.ReplaceOldest
         };
 
-        SoundStyle SchwarzSkillSound = new SoundStyle("ArknightsMod/Content/Projectiles/Schwarz/SchwarzSkillSound") with
+        SoundStyle SchwarzSkillSound = new SoundStyle("ArknightsMod/Content/Projectiles/Sniper/Schwarz/SchwarzSkillSound") with
         {
             Volume = 0.5f,
             PitchVariance = 0.3f,

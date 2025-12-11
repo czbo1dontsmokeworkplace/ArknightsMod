@@ -28,7 +28,7 @@ namespace ArknightsMod.Content.Items.Weapons.Vanguard.Texas
             Item.autoReuse = true;
 		}
 
-        SoundStyle ArtsBladeSound = new SoundStyle("ArknightsMod/Content/Projectiles/Texas/ArtsBladeSound") with
+        SoundStyle ArtsBladeSound = new SoundStyle("ArknightsMod/Content/Projectiles/Vanguard/Texas/ArtsBladeSound") with
         {
             Volume = 0.5f,
             PitchVariance = 0.3f,

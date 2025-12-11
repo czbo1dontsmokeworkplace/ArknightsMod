@@ -150,9 +150,9 @@ namespace ArknightsMod.Content.Projectiles.Vanguard.Yato
 					float u = (t - 0.2f) / 0.3f;
 					t = 0.2f + 0.3f * (1 - (1 - u) * (1 - u));
 					// 挥刀
-					// 这个函数是人写出来的呀，，好吧确实是给三个点让ai写的,由(0,-20)到(-50,-40)
+					// 这个函数是人写出来的呀，，好吧确实是给三个点让ai写的,由(0,-20)到(-70,-40)
 					Projectile.position = (player.direction == 1 ? player.Center : player.Center + new Vector2(-40, 0)) + new Vector2(
-						(24.2f - 50 * (t - 0.31f) * (t - 0.31f) / 0.025f) * player.direction,
+						(1.25f - 30 * (t - 0.25f) * (t - 0.25f) / 0.06f) * player.direction,
 						(-11666.67f * (t - 0.4f) * (t - 0.4f) * (t - 0.4f) - 2833.33f * (t - 0.4f) * (t - 0.4f))
 					);
 					player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, player.direction * MathHelper.Lerp(-(float)Math.PI*10/18, (float)Math.PI * 11 / 18,(t-0.2f) / 0.3f));
@@ -163,7 +163,7 @@ namespace ArknightsMod.Content.Projectiles.Vanguard.Yato
 					Projectile.rotation = (player.direction == 1 ? startRotation : startRotation_opposite) + player.direction * 6.28f;
 					player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, player.direction * (float)Math.PI * 11 / 18);					
 					Projectile.position = player.Center + new Vector2(player.direction == 1 ? 0 : -40, 10) + new Vector2(
-						-50 * player.direction,
+						-30 * player.direction,
 						-50
 					);
 				}
@@ -172,21 +172,21 @@ namespace ArknightsMod.Content.Projectiles.Vanguard.Yato
 					float nt = (t - 0.6f) / 0.2f;   // 0~1
 					nt = (MathF.Pow(10, nt) - 1) / 9f;
 					Projectile.rotation = (player.direction == 1 ? startRotation : startRotation_opposite) - player.direction * MathHelper.Lerp(-6.28f, -4f, nt);
-					Projectile.position = player.Center + new Vector2(player.direction == 1 ? 0 : -40, 10) + new Vector2((-70 * (0.8f - t) / 0.2f + 20) * player.direction, -2479f * (t - 0.73f) * (t - 0.73f) - 10f);
+					Projectile.position = player.Center + new Vector2(player.direction == 1 ? 0 : -40, 10) + new Vector2((-40 * (0.8f - t) / 0.2f +10) * player.direction, -2479f * (t - 0.73f) * (t - 0.73f) - 10f);
 					player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full,  player.direction * MathHelper.Lerp((float)Math.PI * 11 / 18,-(float)Math.PI/6, nt));					
 
 				}
 				else if (t <= 0.85f) {
 					// 收刀2
 					Projectile.rotation = (player.direction == 1 ? startRotation : startRotation_opposite) - player.direction * MathHelper.Lerp(-4f, 0.52f, (t - 0.8f) / 0.05f);
-					Projectile.position = player.Center + new Vector2(player.direction == 1 ? 0 : -40, 10) + new Vector2(20 * player.direction, -30);
+					Projectile.position = player.Center + new Vector2(player.direction == 1 ? 0 : -40, 10) + new Vector2(10, -30);
 					player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full,  player.direction * MathHelper.Lerp(-(float)Math.PI/6,-(float)Math.PI*10/18, (t - 0.8f) / 0.05f));					
 
 				}
 				else {
 					// 入鞘
 					Projectile.rotation = (player.direction == 1 ? startRotation : startRotation_opposite) - player.direction * (float)Math.PI / 6f;
-					Projectile.position = player.Center + new Vector2(player.direction == 1 ? 0 : -40, 10) + new Vector2((20 * (1 - t) / 0.15f) * player.direction, -20 - 10 * (1 - t) / 0.15f);
+					Projectile.position = player.Center + new Vector2(player.direction == 1 ? 0 : -40, 10) + new Vector2((10 * (1 - t) / 0.15f) * player.direction, -20 - 10 * (1 - t) / 0.15f);
 					player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.ThreeQuarters,  player.direction *-(float)Math.PI*10/18);					
 
 				}
