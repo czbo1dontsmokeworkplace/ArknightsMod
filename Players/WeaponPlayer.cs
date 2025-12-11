@@ -105,8 +105,8 @@ namespace ArknightsMod.Players
 			SkillData skill = CurrentSkill;
 
 			if (skill == null) {
-				if(HowManySkills>0)
-					Main.NewText($"[{GetType()}] 错误: 当前技能数据mp.CurrentSkill为null", Color.Red);
+				// if(HowManySkills>0)
+				// 	Main.NewText($"[{GetType()}] 错误: 当前技能数据mp.CurrentSkill为null", Color.Red);
 				return;
 			}
 
@@ -564,17 +564,17 @@ namespace ArknightsMod.Players
 				AutoTrigger = new() { true, false, false };
 				ShowSummonIconBySkills = new() { true, true, true };
 
-				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-				InitialSPs2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 9 };
-				InitialSPs3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 23 };
-				MaxSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 20 };
-				MaxSPs2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 9 };
-				MaxSPs3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 35 };
+				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 10 };
+				InitialSPs2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 35 };
+				InitialSPs3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 70 };
+				MaxSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 30 };
+				MaxSPs2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 50 };
+				MaxSPs3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 85 };
 				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 30f };
-				SkillActiveTimeS2List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0.4f };
-				SkillActiveTimeS3List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 30f };
+				SkillActiveTimeS2List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 35f };
+				SkillActiveTimeS3List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 45f };
 				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
-				StockMaxS2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 };
+				StockMaxS2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
 				StockMaxS3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
 				SetSkillData();
 			}

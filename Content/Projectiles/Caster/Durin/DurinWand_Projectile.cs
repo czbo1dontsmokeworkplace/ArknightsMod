@@ -28,6 +28,24 @@ namespace ArknightsMod.Content.Projectiles.Caster.Durin
 		}
 
 		public override void AI() {
+			if (Main.rand.NextBool(3))
+			{
+				Dust dust = Dust.NewDustDirect(
+					Projectile.position,
+					Projectile.width,
+					Projectile.height,
+					DustID.WhiteTorch,   
+					Projectile.velocity.X * 0.2f,
+					Projectile.velocity.Y * 0.2f,
+					150,     
+					new Color(73, 255, 255),
+					3f  
+				);
+
+				dust.noGravity = true; 
+				dust.fadeIn = 1.6f;  
+				dust.velocity *= 0.5f; 
+			}
 			if (Projectile.ai[0] == 1f)
 			{
 				Vector2 toMouse = Main.MouseWorld - Projectile.Center;
@@ -35,7 +53,7 @@ namespace ArknightsMod.Content.Projectiles.Caster.Durin
 			}
 			Projectile.ai[0] += 1f;
 
-			if (Projectile.ai[0] >= 50f)
+			if (Projectile.ai[0] >= 30f)
 				Projectile.Kill();
 		}
 

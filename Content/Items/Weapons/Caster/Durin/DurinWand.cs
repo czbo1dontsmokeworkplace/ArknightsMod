@@ -34,7 +34,7 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Durin
 			Item.shootSpeed = 16f;
 			Item.autoReuse = true;
 
-			Item.UseSound = SoundID.Item69; 
+			Item.UseSound = SoundID.Item20; 
 		}
 
 		public override void AddRecipes() {
