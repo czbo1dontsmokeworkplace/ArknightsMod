@@ -84,6 +84,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			NPC.HitSound = SoundID.NPCHit1;
 			NPC.DeathSound = SoundID.NPCDeath1;
 			NPC.knockBackResist = 0f;
+			NPC.rarity = 1;
 			AnimationType = NPCID.OldMan;
 		}
 
@@ -434,7 +435,9 @@ namespace ArknightsMod.Content.NPCs.Friendly
 				if (npc.type == Type)
 					return base.SpawnChance(spawnInfo);
 			}
-			return 0.1f;
+			if (!spawnInfo.Invasion && !spawnInfo.Sky && (NPC.downedBoss1 || NPC.downedBoss2 || NPC.downedBoss3))
+				return 1f;
+			return base.SpawnChance(spawnInfo);
 		}
 	}
 
