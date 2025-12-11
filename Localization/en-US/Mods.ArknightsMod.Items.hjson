@@ -1,7 +1,8 @@
 # Weapons
 YatoKatana: {
 	DisplayName: Yato's Katana
-	Tooltip: '''
+	Tooltip:
+		'''
 		holding this weapon provides 20% movespeed
 		rightclick to provide 30% extra defense
 		'Yato has joined the team.'
@@ -22,6 +23,7 @@ DurinWand: {
 	DisplayName: Durin's wand
 	Tooltip: She looks quite sleepy.
 }
+
 _12FWand: {
 	DisplayName: 12F's wand
 	Tooltip: So, when can I get a skin.
@@ -2243,5 +2245,10 @@ TheAvenger: {
 
 TheTokenGodmother: {
 	DisplayName: The Token Godmother
+	Tooltip: ""
+}
+
+RALegmeat: {
+	DisplayName: R A Legmeat
 	Tooltip: ""
 }

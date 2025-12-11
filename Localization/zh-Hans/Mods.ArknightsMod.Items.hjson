@@ -1,7 +1,7 @@
 # Weapons
 YatoKatana: {
 	DisplayName: 夜刀的武士刀
-	Tooltip: 
+	Tooltip:
 		'''
 		手持此刀使移速增加0.2
 		右键额外增加0.3
@@ -1467,7 +1467,6 @@ ThornsWeapon: {
 	Tooltip: “看仔细，这才是伊比利亚的至高之术！”
 }
 
-
 RAmeat: {
 	DisplayName: 圆圆肉片
 	Tooltip: ""
@@ -2370,5 +2369,10 @@ TheAvenger: {
 
 TheTokenGodmother: {
 	// DisplayName: The Token Godmother
+	// Tooltip: ""
+}
+
+RALegmeat: {
+	// DisplayName: R A Legmeat
 	// Tooltip: ""
 }

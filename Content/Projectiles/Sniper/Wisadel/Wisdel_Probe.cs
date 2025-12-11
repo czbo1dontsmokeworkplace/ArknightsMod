@@ -490,7 +490,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Wisadel
 				// 弹幕
 				int p = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, (mouseWorld - Projectile.Center)
 						.SafeNormalize(default) * 16,
-					ModContent.ProjectileType<WisdelShotLarge>(), (int)(Projectile.damage * 2.2f), Projectile.knockBack,
+					ModContent.ProjectileType<WisdelShotLarge>(), (int)(Projectile.damage * 6.558f), Projectile.knockBack,
 					Projectile.owner);
 
 				var shot = Main.projectile[p].ModProjectile as WisdelShotLarge;

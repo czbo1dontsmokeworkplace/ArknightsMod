@@ -102,7 +102,7 @@ Shirayuki_Shuriken: {
 }
 
 NianWeapon: {
-	1:{
+	1: {
 		Desc: Mods.ArknightsMod.Skills.NianWeapon.1.Desc
 		Label: Mods.ArknightsMod.Skills.NianWeapon.1.Label
 	}
