@@ -27,8 +27,8 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Wisadel
             Item.DamageType = DamageClass.Ranged;
             Item.value = Item.sellPrice(300);
             Item.crit = 20;
-            Item.useTime = 63;
-            Item.useAnimation = 63;
+            Item.useTime = 30;
+            Item.useAnimation = 30;
             Item.UseSound = null;
             Item.useAmmo = AmmoID.Bullet;
             Item.shoot = ProjectileID.Bullet;

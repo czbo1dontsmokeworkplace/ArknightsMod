@@ -28,7 +28,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 		}
 
 		public override void UpdateAccessory(Player player, bool hideVisual) {
-
+			player.GetAttackSpeed(DamageClass.Ranged) += 5f;
 		}
 
 

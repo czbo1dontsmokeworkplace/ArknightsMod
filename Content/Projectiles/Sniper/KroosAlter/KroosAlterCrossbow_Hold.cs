@@ -5,213 +5,157 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles.Sniper.KroosAlter
 {
-    public class KroosAlterCrossbow_Hold : ModProjectile
+    public class KroosAlterCrossbow_Hold : HoldProjectile
     {
-        ref float Skill => ref Projectile.ai[2];
+		public override int BindingItemType() => ModContent.ItemType<KroosAlterCrossbow>();
+		public override float Speed() => 24f;
 
-        ref float counter => ref Projectile.localAI[0];
+		private int circleProj = ModContent.ProjectileType<KroostheKeenGlint_Crossbow_Circle1>();
+		private int effectProj = ModContent.ProjectileType<KroosAlterCrossbow_Effect>();
+		private int arrowProj = ModContent.ProjectileType<KroosAlterCrossbow_Arrow>();
 
-        public override void SetDefaults()
+		/// <summary>
+		/// 获取当前武器实例（缓存以避免重复转换）
+		/// </summary>
+		protected KroosAlterCrossbow Crossbow {
+			get {
+				if (_cachedCrossbow == null && player.HeldItem.ModItem is KroosAlterCrossbow cb)
+					_cachedCrossbow = cb;
+				return _cachedCrossbow;
+			}
+		}
+		private KroosAlterCrossbow _cachedCrossbow;
+
+		public override void InitializeProjectile()
         {
             Projectile.width = 60;
             Projectile.height = 28;
-            Projectile.penetrate = -1;
             Projectile.DamageType = DamageClass.Ranged;
-            Projectile.tileCollide = false;
-            Projectile.friendly = true;
-            Projectile.ignoreWater = true;
-            Projectile.coldDamage = true;
-            Projectile.hide = true;
+            Projectile.coldDamage = true; // 你确定要加这个？
         }
 
-        public override void AI()
+		public override void OnAI_Beginning() {
+			// 清除缓存
+			_cachedCrossbow = null;
+		}
+		public override void UpdateSkill_1(int baseUseTime, int baseReuseDelay) {
+			// 2倍攻速
+			int useTime = ApplyAttackSpeed(baseUseTime * 0.5f);
+
+			if (Timer < useTime) {
+				int interval = useTime / 2;
+				// 二连发
+				if (Timer % interval == 0) {
+
+					ShootBullet(player, MathHelper.ToRadians(2));
+					ShootEffect(player);
+					Projectile.NewProjectile(Projectile.GetSource_FromAI(),
+						Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.Zero) * 16,
+						Projectile.velocity.SafeNormalize(Vector2.Zero),
+						circleProj,
+						0, 0, player.whoAmI, 0, 0, CurrentSkill);
+
+					SoundStyle SkillSound = new SoundStyle("ArknightsMod/Sounds/p_atk_krossbow_h") with {
+						Volume = 0.5f
+					};
+					SoundEngine.PlaySound(SkillSound, Projectile.position);
+
+					ShootTimes++;
+
+					if (ShootTimes >= 4) {
+						Timer = useTime; // 进入useDelay阶段
+						ShootTimes = 0;
+					}
+				}
+			}
+			// 冷却阶段处理
+			else if (Timer >= useTime + baseReuseDelay) {
+				Timer = 0;
+			}
+		}
+		public override void UpdateSkill_2(int baseUseTime, int baseReuseDelay) {
+			// 2倍攻速
+			int useTime = ApplyAttackSpeed(baseUseTime * 0.5f);
+			// 从 ModItem 读取累计次数
+			int shotsPerInterval = Crossbow?.Skill2HitCounter < 32 ? 2 : 4;
+
+			if (Timer < useTime) {
+				int interval = Math.Max(1, useTime / shotsPerInterval);
+
+				if (Timer % interval == 0) {
+
+					// 射弹、特效、音效...
+					ShootBullet(player, MathHelper.ToRadians(2));
+					ShootEffect(player);
+					Projectile.NewProjectile(Projectile.GetSource_FromAI(),
+						Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.Zero) * 16,
+						Projectile.velocity.SafeNormalize(Vector2.Zero),
+						circleProj,
+						0, 0, player.whoAmI, 0, 0, CurrentSkill);
+
+					SoundStyle SkillSound = new("ArknightsMod/Sounds/p_atk_krossbow_n") { Volume = 0.5f };
+					SoundEngine.PlaySound(SkillSound, Projectile.position);
+
+					ShootTimes++;
+
+					// 关键：累计攻击次数 +1（存在 ModItem 中）
+					if (Crossbow != null)
+						Crossbow.Skill2HitCounter++;
+
+					if (ShootTimes >= 4) {
+						Timer = useTime;
+						ShootTimes = 0;
+					}
+				}
+			}
+			else if (Timer >= useTime + baseReuseDelay) {
+				Timer = 0;
+			}
+		}
+		public override void UpdateNormalAttack(int baseUseTime, int baseReuseDelay) {
+			//攻速不变
+			int useTime = ApplyAttackSpeed(baseUseTime);
+			if (Timer >= useTime + baseReuseDelay) {
+				ShootBullet(player, 0);
+				ShootEffect(player);
+
+				SoundStyle AttackSound = new SoundStyle("ArknightsMod/Sounds/p_atk_krossbow_d") with {
+					Volume = 0.5f
+				};
+				SoundEngine.PlaySound(AttackSound, Projectile.position);
+
+				Timer = 0;
+			}
+		}
+
+		private void ShootBullet(Player player, float rot)
         {
-			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
-            Player player = Main.player[Projectile.owner];
-
-            // 获取当前手持的 Kroos 弩（ModItem 实例）
-            KroosAlterCrossbow crossbow = null;
-            if (player.HeldItem.ModItem is KroosAlterCrossbow cb) {
-                crossbow = cb;
-            }
-
-            if (player.dead || !player.active || player.HeldItem.type != ModContent.ItemType<KroosAlterCrossbow>() || !player.channel) {
-                // ✅ 销毁前不清空计数器！保留进度
-                Projectile.Kill();
-                return;
-            }
-
-
-
-            if (player.channel)
-            {
-                Projectile.timeLeft = 2;
-
-                Projectile.ai[0]++;
-
-                #region 一技能
-                if (modPlayer.Skill == 0 && modPlayer.SkillActive)
-                {
-                    if (Projectile.ai[0] < player.HeldItem.useTime)
-                    {
-                        int interval = player.HeldItem.useTime / 2;
-
-                        if (Projectile.ai[0] % interval == 0)
-                        {
-                            //射弹
-                            ShootBullet(player, MathHelper.ToRadians(2));
-                            //爆炸粒子效果
-                            ShootEffect(player);
-                            //爆炸圆环效果
-                            Projectile.NewProjectile(Projectile.GetSource_FromAI(),
-                                Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.Zero) * 16,
-                                Projectile.velocity.SafeNormalize(Vector2.Zero),
-                                ModContent.ProjectileType<KroostheKeenGlint_Crossbow_Circle1>(),
-                                0,
-                                0,
-                                player.whoAmI,
-                                0,
-                                0,
-                                Skill
-                                );
-                            //音效
-                            SoundStyle SkillSound = new SoundStyle("ArknightsMod/Sounds/p_atk_krossbow_h") with
-                            {
-                                Volume = 0.5f
-                            };
-                            SoundEngine.PlaySound(SkillSound, Projectile.position);
-
-                            Projectile.ai[1]++;
-
-                            if (Projectile.ai[1] >= 4)
-                            {
-                                Projectile.ai[0] = player.HeldItem.useTime; // 进入useDelay阶段
-                                Projectile.ai[1] = 0;
-                            }
-                        }
-                    }
-                    // 冷却阶段处理
-                    else if (Projectile.ai[0] >= player.HeldItem.useTime + player.HeldItem.reuseDelay)
-                    {
-                        Projectile.ai[0] = 0;
-                    }
-                }
-                #endregion
-                #region 二技能
-                if (modPlayer.Skill == 1 && modPlayer.SkillActive)
-                {
-                    // ✅ 从 ModItem 读取累计次数
-                    int shotsPerInterval = crossbow?.Skill2HitCounter < 32 ? 2 : 4;
-
-                    if (Projectile.ai[0] < player.HeldItem.useTime)
-                    {
-                        int interval = Math.Max(1, player.HeldItem.useTime / shotsPerInterval);
-
-                        if (Projectile.ai[0] % interval == 0)
-                        {
-                            // 射弹、特效、音效...
-                            ShootBullet(player, MathHelper.ToRadians(2));
-                            ShootEffect(player);
-                            Projectile.NewProjectile(Projectile.GetSource_FromAI(),
-                                Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.Zero) * 16,
-                                Projectile.velocity.SafeNormalize(Vector2.Zero),
-                                ModContent.ProjectileType<KroostheKeenGlint_Crossbow_Circle1>(),
-                                0, 0, player.whoAmI, 0, 0, Skill
-                            );
-
-                            SoundStyle SkillSound = new("ArknightsMod/Sounds/p_atk_krossbow_n") { Volume = 0.5f };
-                            SoundEngine.PlaySound(SkillSound, Projectile.position);
-
-                            Projectile.ai[1]++;
-
-                            // ✅ 关键：累计攻击次数 +1（存在 ModItem 中）
-                            if (crossbow != null)
-                                crossbow.Skill2HitCounter++;
-
-                            if (Projectile.ai[1] >= 4)
-                            {
-                                Projectile.ai[0] = player.HeldItem.useTime;
-                                Projectile.ai[1] = 0;
-                            }
-                        }
-                    }
-                    else if (Projectile.ai[0] >= player.HeldItem.useTime + player.HeldItem.reuseDelay)
-                    {
-                        Projectile.ai[0] = 0;
-                    }
-                }
-                #endregion
-                #region 普攻
-                else
-                {
-                    if (Projectile.ai[0] >= player.HeldItem.useTime + player.HeldItem.reuseDelay)
-                    {
-                        ShootBullet(player, 0);
-                        ShootEffect(player);
-
-                        SoundStyle AttackSound = new SoundStyle("ArknightsMod/Sounds/p_atk_krossbow_d") with
-                        {
-                            Volume = 0.5f
-                        };
-                        SoundEngine.PlaySound(AttackSound, Projectile.position);
-
-                        Projectile.ai[0] = 0;
-                    }
-                }
-                #endregion
-            }
-            var vel = Vector2.Normalize(Main.MouseWorld - player.Center);
-            Projectile.velocity = vel * 24;
-            Projectile.position = player.RotatedRelativePoint(player.MountedCenter, true) - Projectile.Size / 2f;
-            Projectile.direction = Projectile.spriteDirection = Projectile.velocity.X > 0 ? 1 : -1;
-            Projectile.rotation = Projectile.velocity.ToRotation();
-            if (Projectile.spriteDirection == -1)
-                Projectile.rotation += MathHelper.Pi;
-            player.ChangeDir(Projectile.direction);
-            player.itemRotation = player.itemRotation = (float)Math.Atan2(Projectile.velocity.Y * Projectile.direction, Projectile.velocity.X * Projectile.direction);//修改玩家的手持弹幕的方向
-            player.heldProj = Projectile.whoAmI;
-            player.itemTime = 2;
-            player.itemAnimation = 2;
-        }
-
-        private void ShootBullet(Player player, float rot)
-        {
-			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
 			if (player.HasAmmo(player.inventory[player.selectedItem]))
             {
-
 				bool canUse = player.channel && player.HasAmmo(player.inventory[player.selectedItem]) && !player.noItems && !player.CCed;
-                int weaponAmmo;
-                float shootSpeed;
-                int weaponDamage;
-                float weaponKnockback;
+                
                 player.PickAmmo(player.inventory[player.selectedItem],
-                    out weaponAmmo,
-                    out shootSpeed,
-                    out weaponDamage,
-                    out weaponKnockback,
+                    out int weaponAmmo,
+                    out float shootSpeed,
+                    out int weaponDamage,
+                    out float weaponKnockback,
                     out weaponAmmo,
                     canUse
                     );
-				if (modPlayer.Skill == 0&&modPlayer.StockCount == 0) {
+
+				if (modPlayer.Skill == 0 && modPlayer.StockCount == 0) { 
 					modPlayer.OffensiveRecovery();
 				}
 				Projectile.NewProjectileDirect(player.GetSource_ItemUse_WithPotentialAmmo(player.inventory[player.selectedItem], weaponAmmo),
                     player.Center,
                     Projectile.velocity.RotatedByRandom(rot),
-                    ModContent.ProjectileType<KroosAlterCrossbow_Arrow>(),
-                    weaponDamage,
-                    weaponKnockback,
-                    player.whoAmI,
-                    0,
-                    0,
-                    Skill
-                    );
+					arrowProj, weaponDamage, weaponKnockback, player.whoAmI, 0, 0, CurrentSkill);
             }
         }
 
@@ -238,24 +182,14 @@ namespace ArknightsMod.Content.Projectiles.Sniper.KroosAlter
                     Projectile.NewProjectileDirect(
                         Projectile.GetSource_FromAI(),
                         Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.Zero) * 16,
-                        vel,
-                        ModContent.ProjectileType<KroosAlterCrossbow_Effect>(),
-                        0,
-                        0, 
-                        player.whoAmI,
-                        0,
-                        0,
-                        Skill
-                    );
+                        vel, effectProj, 0, 0, player.whoAmI, 0, 0, CurrentSkill);
                 }
             }
         }
 
-        public override bool? CanDamage() => false;
-
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
+            Texture2D tex = TextureAssets.Projectile[Type].Value;
             var origin = new Vector2(tex.Width / 2, tex.Height / 2);
             SpriteEffects effects = Projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
@@ -272,6 +206,5 @@ namespace ArknightsMod.Content.Projectiles.Sniper.KroosAlter
             );
             return false;
         }
-
     }
 }
