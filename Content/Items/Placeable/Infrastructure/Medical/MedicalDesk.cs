@@ -7,16 +7,11 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Placeable.Infrastructure.Medical
 {
-	public class MedicalDesk : ModItem
+	public class MedicalDesk : ArknightsInfraFurniture
 	{
-		public override void SetStaticDefaults()
-		{
-			Item.ResearchUnlockCount = 100;
-		}
-
 		public override void SetDefaults() {
 			Item.DefaultToPlaceableTile(ModContent.TileType<MedicalDeskTile>());
-			Item.value = Item.sellPrice(0, 0, 0, 30);
+			Item.value = Item.sellPrice(0, 0, 10, 0);
 		}
 	}
 }

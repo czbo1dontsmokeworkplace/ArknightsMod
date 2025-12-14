@@ -2376,3 +2376,53 @@ RALegmeat: {
 	// DisplayName: R A Legmeat
 	// Tooltip: ""
 }
+
+CarbonBrick: {
+	// DisplayName: Carbon Brick
+	// Tooltip: ""
+}
+
+DeckSupport: {
+	// DisplayName: Deck Support
+	// Tooltip: ""
+}
+
+DeckTrack: {
+	// DisplayName: Deck Track
+	// Tooltip: ""
+}
+
+OrangeContainer: {
+	// DisplayName: Orange Container
+	// Tooltip: ""
+}
+
+OrangeContainerLarge: {
+	// DisplayName: Orange Container Large
+	// Tooltip: ""
+}
+
+YellowRailing: {
+	// DisplayName: Yellow Railing
+	// Tooltip: ""
+}
+
+TrainingRoomSofa: {
+	// DisplayName: Training Room Sofa
+	// Tooltip: ""
+}
+
+WorkshopChair: {
+	// DisplayName: Workshop Chair
+	// Tooltip: ""
+}
+
+WorkshopComputer: {
+	// DisplayName: Workshop Computer
+	// Tooltip: ""
+}
+
+WorkshopTeleportStation: {
+	// DisplayName: Workshop Teleport Station
+	// Tooltip: ""
+}

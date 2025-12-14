@@ -14,11 +14,8 @@ using ArknightsMod.Content.Tiles.Infrastructure;
 
 namespace ArknightsMod.Content.Items.Placeable.Infrastructure.ControlCenter
 {
-    public class RhodesStatusScreen : ModItem
-    {
-		public override void SetStaticDefaults() {
-			Item.ResearchUnlockCount = 100;
-		}
+    public class RhodesStatusScreen : ArknightsInfraFurniture
+	{
 		public override void SetDefaults() {
 			Item.DefaultToPlaceableTile(ModContent.TileType<RhodesStatusScreenTile>());
 		}

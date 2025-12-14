@@ -6,13 +6,8 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Placeable.Infrastructure
 {
-	public class GlassCurtainItem : ModItem
+	public class GlassCurtainItem : ArknightsInfraBlock
 	{
-		public override void SetStaticDefaults()
-		{
-			Item.ResearchUnlockCount = 100;
-		}
-
 		public override void SetDefaults() {
 			Item.DefaultToPlaceableWall(ModContent.WallType<GlassCurtainWall>());
 			Item.value = Item.sellPrice(0, 0, 0, 30);

@@ -6,13 +6,8 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Placeable.Infrastructure
 {
-	public class ElectroplatingItem : ModItem
+	public class ElectroplatingItem : ArknightsInfraBlock
 	{
-		public override void SetStaticDefaults()
-		{
-			Item.ResearchUnlockCount = 100;
-		}
-
 		public override void SetDefaults() {
 			Item.DefaultToPlaceableTile(ModContent.TileType<ElectroplatingTile>());
 			Item.value = Item.sellPrice(0, 0, 0, 30);

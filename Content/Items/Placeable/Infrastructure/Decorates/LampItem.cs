@@ -7,13 +7,8 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Placeable.Infrastructure.Decorates
 {
-	public class LampItem : ModItem
+	public class LampItem : ArknightsInfraFurniture
 	{
-		public override void SetStaticDefaults()
-		{
-			Item.ResearchUnlockCount = 100;
-		}
-
 		public override void SetDefaults() {
 			Item.DefaultToPlaceableTile(ModContent.TileType<LampTile>());
 			Item.value = Item.sellPrice(0, 0, 0, 30);

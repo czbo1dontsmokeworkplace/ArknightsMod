@@ -7,13 +7,8 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Placeable.Infrastructure.Decorates
 {
-	public class CartonSmall : ModItem
+	public class CartonSmall : ArknightsInfraFurniture
 	{
-		public override void SetStaticDefaults()
-		{
-			Item.ResearchUnlockCount = 100;
-		}
-
 		public override void SetDefaults() {
 			Item.DefaultToPlaceableTile(ModContent.TileType<CartonSmallTile>());
 			Item.value = Item.sellPrice(0, 0, 0, 30);
