@@ -12,24 +12,24 @@ using Microsoft.Xna.Framework.Graphics;
 using ArknightsMod.Common;
 using Terraria.Enums;
 
-namespace ArknightsMod.Content.Tiles.Infrastructure.Workshop
+namespace ArknightsMod.Content.Tiles.Infrastructure.Deck
 {
-	public class WorkshopComputerTile : ModTile
+	public class SmallServerTile : ModTile
 	{
         public override void SetStaticDefaults()
         {
             Main.tileFrameImportant[Type] = true;
             Main.tileObsidianKill[Type] = true;
             
-			AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTorch);
-			AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTable);
 			DustType = DustID.Electric;
 			Main.tileLighted[Type] = true;
-			AddMapEntry(new Color(106, 106, 101));
+			AddMapEntry(new Color(94, 117, 143));
 
-			TileObjectData.newTile.CopyFrom(TileObjectData.Style3x3);
-			TileObjectData.newTile.Origin = new Point16(2, 2);
-
+			TileObjectData.newTile.CopyFrom(TileObjectData.Style5x4);
+			TileObjectData.newTile.Origin = new Point16(2, 5);
+			TileObjectData.newTile.Width = 5;
+			TileObjectData.newTile.Height = 6;
+			TileObjectData.newTile.CoordinateHeights = [16, 16, 16, 16, 16, 16];
 			TileObjectData.newTile.Direction = TileObjectDirection.PlaceRight;
 			TileObjectData.newTile.StyleWrapLimit = 2;
 			TileObjectData.newTile.StyleMultiplier = 2;
@@ -46,16 +46,6 @@ namespace ArknightsMod.Content.Tiles.Infrastructure.Workshop
 		public override void PostDraw(int i, int j, SpriteBatch spriteBatch)
 		{
 			TileDrawer.DrawTileGlowMask(spriteBatch, i, j, Texture, Type);
-		}
-		public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
-		{
-			Tile tile = Framing.GetTileSafely(i, j);
-			if (tile.TileFrameY < 1 * 18 && tile.TileFrameX < 2 * 18)
-			{
-				r = 0.38f;
-				g = 0.38f;
-				b = 0.38f;
-			}
 		}
 	}
 }

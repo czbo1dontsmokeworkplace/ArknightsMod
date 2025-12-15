@@ -2302,3 +2302,8 @@ WorkshopTeleportStation: {
 	DisplayName: Workshop Teleport Station
 	Tooltip: ""
 }
+
+SmallServer: {
+	DisplayName: Small Server
+	Tooltip: ""
+}

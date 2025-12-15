@@ -34,7 +34,7 @@ namespace ArknightsMod.Content.Tiles.Infrastructure.Deck
         }
         public override void NumDust(int i, int j, bool fail, ref int num)
         {
-            num = (fail ? 1 : 4);
+            num = (fail ? 1 : 3);
         }
     }
 }

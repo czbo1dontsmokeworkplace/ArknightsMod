@@ -8,6 +8,9 @@ using Terraria.ModLoader;
 using Terraria.Audio;
 using Terraria.ObjectData;
 using ArknightsMod.Content.Items.Placeable.Infrastructure;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Text;
+using Terraria.GameContent;
 
 namespace ArknightsMod.Content.Tiles.Infrastructure.Deck
 {
@@ -17,11 +20,10 @@ namespace ArknightsMod.Content.Tiles.Infrastructure.Deck
         {
             Main.tileFrameImportant[Type] = true;
             Main.tileObsidianKill[Type] = true;
-			TileObjectData.newTile.CopyFrom(TileObjectData.Style5x4);
-			TileObjectData.newTile.Origin = new Point16(2, 1);
-			TileObjectData.newTile.Width = 5;
-			TileObjectData.newTile.Height = 2;
-			TileObjectData.newTile.CoordinateHeights = [16, 16];
+			TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);
+			TileObjectData.newTile.Width = 1;
+			TileObjectData.newTile.Height = 1;
+			TileObjectData.newTile.CoordinateHeights = [16];
 			TileObjectData.addTile(Type);
             DustType = DustID.Copper;
 			LocalizedText name = CreateMapEntryName();
@@ -29,7 +31,33 @@ namespace ArknightsMod.Content.Tiles.Infrastructure.Deck
 		}
         public override void NumDust(int i, int j, bool fail, ref int num)
         {
-            num = (fail ? 1 : 4);
+            num = (fail ? 1 : 3);
         }
-    }
+		public override bool PreDrawPlacementPreview(int i, int j, SpriteBatch spriteBatch,
+			ref Rectangle frame, ref Vector2 position, ref Color color, bool validPlacement,
+			ref SpriteEffects spriteEffects) {
+			Texture2D texture = TextureAssets.Tile[Type].Value;
+
+			Vector2 zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
+
+			Main.EntitySpriteDraw(
+				texture,
+				new Vector2(i * 16 - (int)Main.screenPosition.X, (j - 1) * 16 - (int)Main.screenPosition.Y) + zero,
+				null,
+				Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0);
+			return false;
+		}
+		public override bool PreDraw(int i, int j, SpriteBatch spriteBatch) {
+			Texture2D texture = TextureAssets.Tile[Type].Value;
+
+			Vector2 zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
+
+			Main.EntitySpriteDraw(
+				texture,
+				new Vector2(i * 16 - (int)Main.screenPosition.X, (j - 1) * 16 - (int)Main.screenPosition.Y) + zero,
+				null,
+				Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0);
+			return false;
+		}
+	}
 }

@@ -37,7 +37,7 @@ namespace ArknightsMod.Content.Tiles.Infrastructure.TrainingRoom
         }
         public override void NumDust(int i, int j, bool fail, ref int num)
         {
-            num = (fail ? 1 : 4);
+            num = (fail ? 1 : 3);
         }
 		public override bool HasSmartInteract(int i, int j, SmartInteractScanSettings settings) {
 			return settings.player.IsWithinSnappngRangeToTile(i, j, PlayerSittingHelper.ChairSittingMaxDistance);
