@@ -46,7 +46,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Saki
 			for (int i = 0; i < 4; i++) {
 				float progress = (Projectile.timeLeft) / 20f;
 				progress = MathHelper.Clamp(progress, 0.2f, 1.5f);
-				Texture2D tex1 = ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Saki/Assets/ray_129").Value;
+				Texture2D tex1 = ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Guard/Saki/Assets/ray_129").Value;
 				Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 				Vector2 origin = new Vector2(0, tex1.Height / 4);
 				Vector2 scale = new Vector2(1f, progress) * 0.5f * Projectile.scale;
@@ -57,7 +57,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Saki
 				for (int i = 0; i < 4; i++) {
 					float progress = (Projectile.timeLeft+20) / 20f;
 					progress = MathHelper.Clamp(progress, 0.2f, 1.5f);
-					Texture2D tex1 = ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Saki/Assets/ray_129").Value;
+					Texture2D tex1 = ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Guard/Saki/Assets/ray_129").Value;
 					Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 					Vector2 origin = new Vector2(0, tex1.Height / 4);
 					Vector2 scale = new Vector2(1f, progress) * 0.3f * Projectile.scale;
