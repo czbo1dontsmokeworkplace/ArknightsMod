@@ -13,7 +13,6 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
-
 namespace ArknightsMod.Content.NPCs.Friendly
 {
 	[AutoloadHead]
@@ -63,6 +62,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			NPCID.Sets.AttackTime[Type] = NPCID.Sets.ExtraFramesCount[NPCID.OldMan];
 			NPCID.Sets.AttackAverageChance[Type] = NPCID.Sets.ExtraFramesCount[NPCID.OldMan];
 			NPCID.Sets.HatOffsetY[Type] = NPCID.Sets.ExtraFramesCount[NPCID.OldMan];
+			NPCID.Sets.NoTownNPCHappiness[Type] = true;
 		}
 
 		public override List<string> SetNPCNameList() {
@@ -70,6 +70,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		}
 
 		public override void SetDefaults() {
+			NPC.townNPC = true;
 			NPC.friendly = false;
 			NPC.dontTakeDamage = false;
 			NPC.chaseable = false;
@@ -300,7 +301,6 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		public void DoRunaway() {
 			Runaway = true;
 			var hit = new NPC.HitInfo() { InstantKill = true };
-			NPC.townNPC = true;
 			NPC.StrikeNPC(hit);
 			if (Main.netMode != NetmodeID.SinglePlayer)
 				NetMessage.SendStrikeNPC(NPC, hit);
@@ -430,14 +430,24 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			randExtraCooldown = 30;
 		}
 
+		public static int RespawnCooldown {
+			get => CannotSpawnHelper.RespawnCooldown;
+			set => CannotSpawnHelper.RespawnCooldown = value;
+		}
+
 		public override float SpawnChance(NPCSpawnInfo spawnInfo) {
 			foreach (var npc in Main.ActiveNPCs) {
 				if (npc.type == Type)
 					return base.SpawnChance(spawnInfo);
 			}
 			if (!spawnInfo.Invasion && !spawnInfo.Sky && (NPC.downedBoss1 || NPC.downedBoss2 || NPC.downedBoss3))
-				return 1f;
+				return 0.5f;
 			return base.SpawnChance(spawnInfo);
+		}
+
+		public override bool CheckDead() {
+			RespawnCooldown = 7200;
+			return base.CheckDead();
 		}
 	}
 
@@ -606,5 +616,15 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		public bool CanShowItemDropInUI() => true;
 
 		public string GetConditionDescription() => Language.GetTextValue("Mods.ArknightsMod.ItemDropRuleCondition.CannotDead");
+	}
+
+	internal class CannotSpawnHelper : ModSystem
+	{
+		public static int RespawnCooldown;
+
+		public override void PreUpdateNPCs() {
+			if (RespawnCooldown > 0)
+				RespawnCooldown--;
+		}
 	}
 }
