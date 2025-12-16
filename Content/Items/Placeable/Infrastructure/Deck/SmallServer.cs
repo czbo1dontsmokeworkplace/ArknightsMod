@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Placeable.Infrastructure.Deck
 {
-	public class SmallServer : ArknightsInfraBlock
+	public class SmallServer : ArknightsInfraFurniture
 	{
 		public override void SetDefaults() {
 			Item.DefaultToPlaceableTile(ModContent.TileType<SmallServerTile>());

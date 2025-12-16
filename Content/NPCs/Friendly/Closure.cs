@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ArknightsMod.Content.Items.Material;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent.Personalities;
 using Terraria.ID;
@@ -318,6 +319,9 @@ namespace ArknightsMod.Content.NPCs.Friendly
 				.Add(new Item(ModContent.ItemType<Items.Material.TransmutedSalt>()) {
 					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<CarbonBrick>()) {
+					shopCustomPrice = Item.buyPrice(0, 0, 10, 0),
 				})
 				.Add(new Item(ModContent.ItemType<Items.Placeable.Furniture.DareUsa>()) {
 					shopCustomPrice = 30,
