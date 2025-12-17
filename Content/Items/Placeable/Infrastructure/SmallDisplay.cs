@@ -6,10 +6,10 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Placeable.Infrastructure
 {
-	public class DisplayItem : ArknightsInfraFurniture
+	public class SmallDisplay : ArknightsInfraFurniture
 	{
 		public override void SetDefaults() {
-			Item.DefaultToPlaceableTile(ModContent.TileType<DisplayTile>());
+			Item.DefaultToPlaceableTile(ModContent.TileType<SmallDisplayTile>());
 			Item.value = Item.sellPrice(0, 0, 10, 0);
 		}
 	}

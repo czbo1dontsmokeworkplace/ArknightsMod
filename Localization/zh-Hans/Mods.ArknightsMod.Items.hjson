@@ -2431,3 +2431,8 @@ SmallServer: {
 	// DisplayName: Small Server
 	// Tooltip: ""
 }
+
+SmallDisplay: {
+	// DisplayName: Small Display
+	// Tooltip: ""
+}
