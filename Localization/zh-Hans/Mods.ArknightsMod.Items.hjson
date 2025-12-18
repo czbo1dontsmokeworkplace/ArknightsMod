@@ -2436,3 +2436,13 @@ SmallDisplay: {
 	// DisplayName: Small Display
 	// Tooltip: ""
 }
+
+_3DPrintingProcessingStation: {
+	DisplayName: 3D打印加工站
+	// Tooltip: ""
+}
+
+Drone: {
+	DisplayName: 妖怪无人机
+	// Tooltip: ""
+}

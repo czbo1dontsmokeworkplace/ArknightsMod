@@ -69,6 +69,7 @@ Closure: {
 		Shop2: 时装商店
 		Annihilation: 剿灭作战
 		Switch: 切换
+		Help: 帮助
 	}
 
 	// Census.SpawnCondition: Conditions unknown

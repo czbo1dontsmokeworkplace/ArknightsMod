@@ -2312,3 +2312,13 @@ SmallDisplay: {
 	DisplayName: Small Display
 	Tooltip: ""
 }
+
+_3DPrintingProcessingStation: {
+	DisplayName: 3D Printing Processing Station
+	Tooltip: ""
+}
+
+Drone: {
+	DisplayName: Drone
+	Tooltip: ""
+}
