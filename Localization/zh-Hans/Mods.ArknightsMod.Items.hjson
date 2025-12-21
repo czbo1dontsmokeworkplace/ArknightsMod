@@ -1027,10 +1027,6 @@ TacticalBattleRecord: {
 	// Tooltip: ""
 }
 
-Nianweapon: {
-	DisplayName: 年的剑
-	// Tooltip: ""
-}
 
 WMusicBox: {
 	DisplayName: 音乐盒(W)

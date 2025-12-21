@@ -10,13 +10,15 @@ using ArknightsMod.Players;
 using ArknightsMod.Content.Tiles;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using Terraria.Audio;
+using Microsoft.Xna.Framework;
 
 
+// 阻挡数+1，沉默和抵抗未实现
 
 namespace ArknightsMod.Content.Items.Weapons.Defender.Nian
 {
 
-	public class NianWeapon : UpgradeItemBase
+	public class NianWeapon : UpgradeWeaponBase
 	{
 		private static SoundStyle SkillActive1;
 		private static SoundStyle NoSound;
@@ -53,12 +55,6 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Nian
 			Item.noMelee = true;
 			Item.channel = true;
 			Item.crit = 21; 
-
-			// Projectile Properties
-			Item.shootSpeed = 3.3f; 
-			Item.shoot = ModContent.ProjectileType<NianSword_Projectile>(); 
-
-
 		}
 
 		public override bool AltFunctionUse(Player player) => true;
@@ -79,7 +75,7 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Nian
 			if (Main.myPlayer == player.whoAmI) {
 				if (player.altFunctionUse == 2) {
 					// S1
-					if (modPlayer.Skill == 0  && !modPlayer.SkillActive) {
+					if (modPlayer.Skill == 0 && modPlayer.StockCount > 0 && !modPlayer.SkillActive) {
 						modPlayer.SkillActive = true;
 						modPlayer.SkillTimer = 0;
 
@@ -87,20 +83,32 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Nian
 
 						Item.UseSound = new SoundStyle("ArknightsMod/Sounds/SkillActive1") {
 							Volume = 0.6f,
-							MaxInstances = 4, //This dicatates how many instances of a sound can be playing at the same time. The default is 1. Adjust this to allow overlapping sounds.
+							MaxInstances = 4, 
 						};
 						SoundEngine.PlaySound(Item.UseSound.Value, player.Center);
 					}
-					// S3
-					if (modPlayer.Skill == 2 && modPlayer.StockCount > 0 && !modPlayer.SkillActive) {
+					else if (modPlayer.Skill == 1 && modPlayer.StockCount > 0 && !modPlayer.SkillActive) {
 						modPlayer.SkillActive = true;
 						modPlayer.SkillTimer = 0;
 
 						modPlayer.DelStockCount();
 
-						Item.UseSound = new SoundStyle("ArknightsMod/Sounds/SkillActive2") {
+						Item.UseSound = new SoundStyle("ArknightsMod/Sounds/SkillActive1") {
+							Volume = 0.6f,
+							MaxInstances = 4,
+						};
+						SoundEngine.PlaySound(Item.UseSound.Value, player.Center);
+					}
+					// S3
+					else if (modPlayer.Skill == 2 && modPlayer.StockCount > 0 && !modPlayer.SkillActive) {
+						modPlayer.SkillActive = true;
+						modPlayer.SkillTimer = 0;
+
+						modPlayer.DelStockCount();
+
+						Item.UseSound = new SoundStyle("ArknightsMod/Sounds/SkillActive1") {
 							Volume = 0.4f,
-							MaxInstances = 4, //This dicatates how many instances of a sound can be playing at the same time. The default is 1. Adjust this to allow overlapping sounds.
+							MaxInstances = 4, 
 						};
 						SoundEngine.PlaySound(Item.UseSound.Value, player.Center);
 					}
@@ -109,61 +117,24 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Nian
 						return false;
 				}
 				else {
-					Item.useAnimation = 30;
-					Item.useTime = 30; // If you want to attack triple hit, useTime = useAnimation/3
-					Item.UseSound = new SoundStyle("ArknightsMod/Sounds/BagpipeSpearS0") {
-						Volume = 0.4f,
-						MaxInstances = 4, //This dicatates how many instances of a sound can be playing at the same time. The default is 1. Adjust this to allow overlapping sounds.
-					};
-
-					// S1
-					if (modPlayer.Skill == 0 && modPlayer.SkillActive) {
-						Item.useAnimation = 22;
-						Item.useTime = 22;
-						Item.UseSound = new SoundStyle("ArknightsMod/Sounds/BagpipeSpearS0") {
-							Volume = 0.4f,
-							MaxInstances = 4, //This dicatates how many instances of a sound can be playing at the same time. The default is 1. Adjust this to allow overlapping sounds.
-						};
-					}
-					// S2
-					if (modPlayer.Skill == 1 && modPlayer.StockCount > 0) {
-						Item.useTime = 15;
-						Item.UseSound = new SoundStyle("ArknightsMod/Sounds/BagpipeSpearS2") {
-							Volume = 0.4f,
-							MaxInstances = 4, //This dicatates how many instances of a sound can be playing at the same time. The default is 1. Adjust this to allow overlapping sounds.
-						};
-						modPlayer.SkillActive = true;
-						modPlayer.SkillTimer = 0;
-						modPlayer.DelStockCount();
-					}
-					// S3
-					if (modPlayer.Skill == 2 && modPlayer.SkillActive) {
-						Item.useAnimation = 48;
-						Item.useTime = 16;
-						Item.UseSound = new SoundStyle("ArknightsMod/Sounds/BagpipeSpearS3") {
-							Volume = 0.4f,
-							MaxInstances = 4, //This dicatates how many instances of a sound can be playing at the same time. The default is 1. Adjust this to allow overlapping sounds.
-						};
-					}
+					Item.UseSound = NoSound;
 				}
 			}
-			// Ensures no more than one spear can be thrown out, use this when using autoReuse
-			return player.ownedProjectileCounts[Item.shoot] < 1;
+			if (modPlayer.Skill == 1 && modPlayer.SkillActive)
+			{
+				return false; // 2技能期间禁止使用武器
+			}
+			return base.CanUseItem(player);
 		}
 
 		public override void ModifyWeaponDamage(Player player, ref StatModifier damage) {
 			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
 			if (Main.myPlayer == player.whoAmI) {
-				// S1
-				if (modPlayer.Skill == 0 && modPlayer.SkillActive) {
+				if (modPlayer.Skill == 0 && modPlayer.SkillActive == true) {
 					damage *= 1.45f;
+					Item.DamageType = DamageClass.Magic;
 				}
-				// S2
-				if (modPlayer.Skill == 1 && (modPlayer.StockCount > 0 || modPlayer.SkillActive == true)) {
-					damage *= 2f;
-				}
-				// S3
-				if (modPlayer.Skill == 2 && modPlayer.SkillActive) {
+				else if (modPlayer.Skill == 2 && modPlayer.SkillActive == true && Item.type == ModContent.ItemType<NianWeapon>()) {
 					damage *= 2.2f;
 				}
 			}
@@ -178,6 +149,51 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Nian
 			}
 			base.HoldItem(player);
 		}
+
+		public class Nianplayer : ModPlayer
+		{
+			public bool hasNianplayer = false;
+			public override void ResetEffects() {
+				if (Main.myPlayer != Player.whoAmI)
+					return; 
+				bool isHoldingTargetWeapon = Player.HeldItem.type == ModContent.ItemType<NianWeapon>();
+				if (!isHoldingTargetWeapon) {
+					Player.GetModPlayer<Nianplayer>().hasNianplayer = false;
+				}
+
+			}
+
+            public override void PostUpdate() {
+                var it = Player.HeldItem;
+                if (it.type == ModContent.ItemType<NianWeapon>() && Main.mouseLeft) {
+                    if (Player.ownedProjectileCounts[ModContent.ProjectileType<NianSword>()] == 0) {
+                        Projectile.NewProjectile(Player.GetSource_FromThis(), Player.Center, Vector2.Zero, ModContent.ProjectileType<NianSword>(), it.damage, it.knockBack, Player.whoAmI);
+                    }
+					if (Player.ownedProjectileCounts[ModContent.ProjectileType<NianShield>()] == 0) {
+                        Projectile.NewProjectile(Player.GetSource_FromThis(), Player.Center, Vector2.Zero, ModContent.ProjectileType<NianShield>(), it.damage, it.knockBack, Player.whoAmI);
+                    }
+                }
+
+                base.PostUpdate();
+            }
+
+            public override void UpdateEquips() {
+				var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
+				if (Main.myPlayer == Player.whoAmI) {
+					if (modPlayer.Skill == 0 && modPlayer.SkillActive == true) {
+						Player.statDefense *= 1.7f;
+					}
+					if (modPlayer.Skill == 1 && modPlayer.SkillActive == true && Player.HeldItem.type == ModContent.ItemType<NianWeapon>()) {
+						Player.statDefense *= 2.3f;
+					}
+					else if (modPlayer.Skill == 1 && !modPlayer.SkillActive == true && Player.HeldItem.type == ModContent.ItemType<NianWeapon>()) {
+						Player.statDefense *= 1.8f;
+					}
+				}
+				base.UpdateEquips();
+			}
+		}
+		
 
 
 	}

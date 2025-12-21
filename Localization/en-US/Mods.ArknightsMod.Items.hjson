@@ -1013,8 +1013,8 @@ TacticalBattleRecord: {
 	Tooltip: ""
 }
 
-Nianweapon: {
-	DisplayName: Nianweapon
+NianWeapon: {
+	DisplayName: NianWeapon
 	Tooltip: ""
 }
 
