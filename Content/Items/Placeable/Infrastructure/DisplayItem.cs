@@ -6,16 +6,11 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Placeable.Infrastructure
 {
-	public class DisplayItem : ModItem
+	public class DisplayItem : ArknightsInfraFurniture
 	{
-		public override void SetStaticDefaults()
-		{
-			Item.ResearchUnlockCount = 100;
-		}
-
 		public override void SetDefaults() {
 			Item.DefaultToPlaceableTile(ModContent.TileType<DisplayTile>());
-			Item.value = Item.sellPrice(0, 0, 0, 30);
+			Item.value = Item.sellPrice(0, 0, 10, 0);
 		}
 	}
 }

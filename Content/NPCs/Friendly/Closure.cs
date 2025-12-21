@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using ArknightsMod.Content.Items;
+using ArknightsMod.Content.Items.DisplayForUI;
+using ArknightsMod.Content.Items.Material;
+using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent.Personalities;
 using Terraria.ID;
@@ -76,6 +80,9 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		// Make this Town NPC teleport to the King and/or Queen statue when triggered. Return toKingStatue for only King Statues. Return !toKingStatue for only Queen Statues. Return true for both.
 		public override bool CanGoToStatue(bool toQueenStatue) => true;
 
+		public int HelpCount = -1;
+		public bool Helping;
+
 		public override string GetChat() {
 			WeightedRandom<string> chat = new();
 			chat.Add(Language.GetTextValue("Mods.ArknightsMod.Dialogue.Closure.Dialogue1"));
@@ -91,9 +98,10 @@ namespace ArknightsMod.Content.NPCs.Friendly
 
 		public override void SetChatButtons(ref string button, ref string button2) {
 			string Text = ButtonCount switch {
-				1 => this.GetLocalizedValue("Buttons.Shop2"),
-				2 => this.GetLocalizedValue("Buttons.Annihilation"),
-				_ => Language.GetTextValue("LegacyInterface.28"),
+				1 => Language.GetTextValue("LegacyInterface.28"),
+				2 => this.GetLocalizedValue("Buttons.Shop2"),
+				3 => this.GetLocalizedValue("Buttons.Annihilation"),
+				_ => this.GetLocalizedValue("Buttons.Help"),
 			};
 			button = Text;
 			button2 = this.GetLocalizedValue("Buttons.Switch");
@@ -101,12 +109,38 @@ namespace ArknightsMod.Content.NPCs.Friendly
 
 		public override void OnChatButtonClicked(bool firstButton, ref string shop) {
 			if (firstButton) {
+				if (Helping) {
+					HelpCount++;
+					HelpCount %= 5;
+				}
+				else
+					HelpCount = 0;
+				Helping = false;
 				switch (ButtonCount) {
 					case 0:
-					case 1:
-						shop = ShopName[ButtonCount];
+						var chat = Language.GetText($"Mods.ArknightsMod.Dialogue.Closure.Help{HelpCount + 1}");
+						switch (HelpCount) {
+							case 0:
+								chat = chat.WithFormatArgs($"[i:{ModContent.ItemType<_3DPrintingProcessingStation>()}]");
+								break;
+							case 1:
+								chat = chat.WithFormatArgs($"[i:{ModContent.ItemType<OrironShard>()}]");
+								break;
+							case 2:
+								chat = chat.WithFormatArgs($"[i:{ModContent.ItemType<Drone>()}]");
+								break;
+							case 4:
+								chat = chat.WithFormatArgs($"[i:{ModContent.ItemType<Orundum>()}]", $"[i:{ModContent.ItemType<OrirockCube>()}]", $"[i:{ModContent.ItemType<OriginiumShard>()}]");
+								break;
+						}
+						Main.npcChatText = chat.Value;
+						Helping = true;
 						break;
+					case 1:
 					case 2:
+						shop = ShopName[ButtonCount - 1];
+						break;
+					case 3:
 						AO();
 						break;
 				}
@@ -114,12 +148,12 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			}
 			else {
 				ButtonCount++;
-				ButtonCount %= 3;
+				ButtonCount %= 4;
 			}
 		}
 
 		public void AO() {
-			var System = Main.player[Main.myPlayer].GetModPlayer<AOSystem>();
+			var System = Main.LocalPlayer.GetModPlayer<AOSystem>();
 			// AOStatus: false=not have a quest, true=doing quest
 			// QuestType: 0:pre/unfin 1:pre/fin (2:HM/unfin 3:HM/fin)
 			if (System.QuestType == 1 && System.QuestNum != System.CountQuest) {
@@ -318,6 +352,9 @@ namespace ArknightsMod.Content.NPCs.Friendly
 				.Add(new Item(ModContent.ItemType<Items.Material.TransmutedSalt>()) {
 					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<CarbonBrick>()) {
+					shopCustomPrice = Item.buyPrice(0, 0, 10, 0),
 				})
 				.Add(new Item(ModContent.ItemType<Items.Placeable.Furniture.DareUsa>()) {
 					shopCustomPrice = 30,

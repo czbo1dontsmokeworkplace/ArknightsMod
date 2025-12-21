@@ -50,7 +50,6 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Wisadel
 		/// </summary>
 		public static SoundStyle Explode = new(ArknightsMod.PathProjectileExclusives + "Sniper/Wisadel/WisdelCannon/WisdelBoom");
 		#endregion
-
 		public override string Texture => ArknightsMod.noTexture;
 		public override void SetStaticDefaults() { }
         public override void SetDefaults()
@@ -61,6 +60,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Wisadel
             Projectile.hostile = false;
             Projectile.hide = false;
             Projectile.tileCollide = false;
+			Projectile.DamageType = DamageClass.Ranged;
         }
         public override bool? CanDamage() => false;
 
@@ -88,6 +88,17 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Wisadel
 		/// </summary>
 		public Vector2 Position;
 
+		internal Player player => Main.player[Projectile.owner];
+		public float AttackSpeed => player.GetTotalAttackSpeed(Projectile.DamageType);
+
+		/// <summary>
+		/// 应用攻速加成到时间值
+		/// </summary>
+		/// <param name="baseTime">基础时间</param>
+		/// <returns>应用攻速后的时间</returns>
+		protected int ApplyAttackSpeed(float baseTime) {
+			return Math.Max(1, (int)(baseTime / AttackSpeed));
+		}
 		public Vector2 GetAssembledPosition()
 		{
 			Vector2 pos = Style switch {
@@ -98,7 +109,15 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Wisadel
 			};
 			return pos;
 		}
+		/// <summary>
+		/// 三技能弹药数量，回来改成技能系统适配
+		/// </summary>
+		public static int MaxAmmoSkill3 = 6;
 
+		/// <summary>
+		/// 已经消耗弹药数
+		/// </summary>
+		public int AmmoConsumed = 0;
 		public override void OnSpawn(IEntitySource source)
 		{
 			// 重置所有状态，但是攻击冷却和攻击模式不重置，防止玩家刷新CD
@@ -215,7 +234,8 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Wisadel
 			Projectile.Center = new Vector2(MathHelper.Lerp(Projectile.Center.X, Position.X, posLerp),
 											MathHelper.Lerp(Projectile.Center.Y, Position.Y, posLerp));
 			// 缓动更新旋转
-			float rotLerp = Mode == 1 ? 1f : 0.1f;
+			float leftMouseLerp = player.controlUseItem ? Math.Min(1f, 0.12f * AttackSpeed) : 0.1f;
+			float rotLerp = Mode == 1 ? 1f : leftMouseLerp;
 			Projectile.rotation = MathHelper.Lerp(Projectile.rotation, Rotation, rotLerp);
 		}
 		/// <summary>
@@ -269,6 +289,10 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Wisadel
 			}
 		}
 		public void Mode3_CannonMode(Player player) {
+			if (AmmoConsumed >= MaxAmmoSkill3) {
+				AmmoConsumed = 0;
+				ModeSwitch(player);
+			}
 			// 左键状态
 			if (player.controlUseItem)
 			{
@@ -378,7 +402,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Wisadel
 			player.wisdel().channelTimer++;
 
 			// 最大蓄力时间
-			int channelTimeMax = (int)(player.HeldItem.useAnimation * player.GetWeaponAttackSpeed(player.HeldItem) / 3);
+			int channelTimeMax = ApplyAttackSpeed(player.HeldItem.useTime * 0.67f);
 
 			if (player.wisdel().channelTimer == (int)(channelTimeMax * 0.5f)) {
 				if (Main.netMode != NetmodeID.Server) {
@@ -427,7 +451,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Wisadel
 				var shot = Main.projectile[p].ModProjectile as WisdelShotNormal;
 				shot.aimPos = mouseWorld;
 				// 统一冷却
-				player.wisdel().coolDown = 30;
+				player.wisdel().coolDown = ApplyAttackSpeed(player.HeldItem.useTime);
 
 				// 切换下一个浮游炮发射
 				player.wisdel().currentUse++;
@@ -453,8 +477,8 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Wisadel
 		public void UpdateCannonShoot(Player player)
 		{
 			// 最大蓄力时间
-			int channelTimeMax = 22;
-			
+			int channelTimeMax = ApplyAttackSpeed(player.HeldItem.useTime * 0.7f);
+
 			// 当超过蓄力时间，并且冷却结束：发射
 			if (player.wisdel().channelTimer > channelTimeMax && player.wisdel().coolDown <= 0) {
 				Projectile.netUpdate = true;
@@ -504,10 +528,12 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Wisadel
 										 Projectile.knockBack, Projectile.owner,
 										 30, 10);
 
+				AmmoConsumed++;
+
 				UpdateCannonParticle(velocity);
 
 				// 统一冷却
-				player.wisdel().coolDown = 90;
+				player.wisdel().coolDown = ApplyAttackSpeed(player.HeldItem.useTime * 3f);
 			}
 		}
 

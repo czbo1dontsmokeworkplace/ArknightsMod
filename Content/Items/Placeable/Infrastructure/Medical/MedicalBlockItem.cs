@@ -7,13 +7,8 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Placeable.Infrastructure.Medical
 {
-	public class MedicalBlockItem : ModItem
+	public class MedicalBlockItem : ArknightsInfraBlock
 	{
-		public override void SetStaticDefaults()
-		{
-			Item.ResearchUnlockCount = 100;
-		}
-
 		public override void SetDefaults() {
 			Item.DefaultToPlaceableTile(ModContent.TileType<MedicalBlockTile>());
 			Item.value = Item.sellPrice(0, 0, 0, 30);

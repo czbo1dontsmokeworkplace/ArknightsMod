@@ -6,13 +6,8 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Placeable.Infrastructure
 {
-	public class VentilationDuctItem : ModItem
+	public class VentilationDuctItem : ArknightsInfraBlock
 	{
-		public override void SetStaticDefaults()
-		{
-			Item.ResearchUnlockCount = 100;
-		}
-
 		public override void SetDefaults() {
 			Item.DefaultToPlaceableTile(ModContent.TileType<VentilationDuctTile>());
 			Item.value = Item.sellPrice(0, 0, 0, 30);

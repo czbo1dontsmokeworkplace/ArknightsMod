@@ -100,21 +100,13 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.KroosAlter
 				if (modPlayer.Skill == 0 && modPlayer.SkillActive == true) {
 					damage *= 1.4f;
 					player.aggro -= 1250;
-					Item.useTime = 15;
-				}
-				if (modPlayer.Skill == 1 && modPlayer.SkillActive == true && Item.type == ModContent.ItemType<KroosAlterCrossbow>()) {
-					Item.useTime = 15;
-				}
-				else if (modPlayer.Skill == 1 && !modPlayer.SkillActive == true && Item.type == ModContent.ItemType<KroosAlterCrossbow>()) {
-					Item.useTime = 30;
 				}
 			}
 		}
 		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-
-            Projectile.NewProjectileDirect(source, position, velocity, ModContent.ProjectileType<KroosAlterCrossbow_Hold>(), damage, knockback, player.whoAmI);
-
+            Projectile.NewProjectileDirect(source, position, velocity,
+				ModContent.ProjectileType<KroosAlterCrossbow_Hold>(), damage, knockback, player.whoAmI);
             return false;
         }
 
@@ -132,7 +124,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.KroosAlter
 		public override void UpdateInventory(Player player) {
 			// 技能结束清零
 			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
-			if (modPlayer.SkillActive==false) {
+			if (modPlayer.SkillActive == false) {
 				Skill2HitCounter = 0;
 			}
 		}

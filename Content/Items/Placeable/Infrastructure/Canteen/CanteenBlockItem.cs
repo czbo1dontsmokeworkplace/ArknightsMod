@@ -8,13 +8,8 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Placeable.Infrastructure.Canteen
 {
-	public class CanteenBlockItem : ModItem
+	public class CanteenBlockItem : ArknightsInfraBlock
 	{
-		public override void SetStaticDefaults()
-		{
-			Item.ResearchUnlockCount = 100;
-		}
-
 		public override void SetDefaults() {
 			Item.DefaultToPlaceableTile(ModContent.TileType<CanteenBlockTile>());
 			Item.value = Item.sellPrice(0, 0, 0, 30);

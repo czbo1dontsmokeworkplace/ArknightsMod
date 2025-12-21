@@ -69,6 +69,7 @@ Closure: {
 		Shop2: Fashion Shop
 		Annihilation: Annihilation
 		Switch: Switch
+		Help: Help
 	}
 
 	Census.SpawnCondition: Conditions unknown

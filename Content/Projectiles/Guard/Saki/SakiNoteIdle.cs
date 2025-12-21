@@ -160,8 +160,8 @@ namespace ArknightsMod.Content.Projectiles.Guard.Saki
 		}
 		public override bool PreDraw(ref Color lightColor)
         {
-			Texture2D tex = ModContent.Request<Texture2D>($"ArknightsMod/Content/Projectiles/Saki/Note2").Value;
-			Texture2D glow = ModContent.Request<Texture2D>($"ArknightsMod/Content/Projectiles/Saki/Assets/ray_130").Value;
+			Texture2D tex = ModContent.Request<Texture2D>($"ArknightsMod/Content/Projectiles/Guard/Saki/Note2").Value;
+			Texture2D glow = ModContent.Request<Texture2D>($"ArknightsMod/Content/Projectiles/Guard/Saki/Assets/ray_130").Value;
 			Color color = new Color(54, 53, 143) * 2f;
 
 			Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, color * Projectile.Opacity,
@@ -202,7 +202,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Saki
 				_cachedPositionOffset = new Vector2(radius).RotatedByRandom(MathHelper.Pi);
 				_cachedScale = Main.rand.NextFloat(0.05f, 0.3f);
 			}
-			Texture2D star = ModContent.Request<Texture2D>($"ArknightsMod/Content/Projectiles/Saki/Assets/star_234_2").Value;
+			Texture2D star = ModContent.Request<Texture2D>($"ArknightsMod/Content/Projectiles/Guard/Saki/Assets/star_234_2").Value;
 			Vector2 position = center + _cachedPositionOffset;
 			Main.spriteBatch.End();
 			Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.Default,
