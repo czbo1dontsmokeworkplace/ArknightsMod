@@ -110,7 +110,6 @@ NianWeapon: {
 	2: {
 		Label: Copper Seal
 		Desc: Stops attacking; DEF +130%, Block +1, upon receiving an enemy attack, deals Arts damage to the attacker equal to 90% of Nian's ATK and silences them for 5 seconds. \n[c/00FF00:The original block-based counter damage and silence effects are disabled. Instead, every 0.5 seconds, enemies within a certain range take 50% source-less magic damage.]
-
 	}
 
 	3: {

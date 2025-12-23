@@ -1014,7 +1014,7 @@ TacticalBattleRecord: {
 }
 
 NianWeapon: {
-	DisplayName: NianWeapon
+	DisplayName: Nian Weapon
 	Tooltip: ""
 }
 
@@ -1330,11 +1330,6 @@ SchwarzBow: {
 
 PozyomkaBow: {
 	DisplayName: Pozyomka Bow
-	Tooltip: ""
-}
-
-NianWeapon: {
-	DisplayName: Nian Weapon
 	Tooltip: ""
 }
 
@@ -2320,5 +2315,25 @@ _3DPrintingProcessingStation: {
 
 Drone: {
 	DisplayName: Drone
+	Tooltip: ""
+}
+
+ProvenceBody: {
+	DisplayName: Provence Body
+	Tooltip: ""
+}
+
+ProvenceHead: {
+	DisplayName: Provence Head
+	Tooltip: ""
+}
+
+ProvenceLegs: {
+	DisplayName: Provence Legs
+	Tooltip: ""
+}
+
+ProvenceDefault: {
+	DisplayName: Provence Default
 	Tooltip: ""
 }

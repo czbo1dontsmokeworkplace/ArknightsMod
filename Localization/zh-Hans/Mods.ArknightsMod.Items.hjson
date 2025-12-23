@@ -1027,6 +1027,10 @@ TacticalBattleRecord: {
 	// Tooltip: ""
 }
 
+NianWeapon: {
+	DisplayName: 年的剑
+	Tooltip: ""
+}
 
 WMusicBox: {
 	DisplayName: 音乐盒(W)
@@ -1402,11 +1406,6 @@ SchwarzBow: {
 PozyomkaBow: {
 	// DisplayName: Pozyomka Bow
 	// Tooltip: ""
-}
-
-NianWeapon: {
-	DisplayName: 年的剑
-	Tooltip: ""
 }
 
 BeagleWeapon: {
@@ -2440,5 +2439,25 @@ _3DPrintingProcessingStation: {
 
 Drone: {
 	DisplayName: 妖怪无人机
+	// Tooltip: ""
+}
+
+ProvenceBody: {
+	// DisplayName: Provence Body
+	// Tooltip: ""
+}
+
+ProvenceHead: {
+	// DisplayName: Provence Head
+	// Tooltip: ""
+}
+
+ProvenceLegs: {
+	// DisplayName: Provence Legs
+	// Tooltip: ""
+}
+
+ProvenceDefault: {
+	// DisplayName: Provence Default
 	// Tooltip: ""
 }

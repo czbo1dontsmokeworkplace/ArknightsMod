@@ -89,6 +89,7 @@ KroostheKeenGlint_Crossbow_Circle1.DisplayName: Kroosthe Keen Glint_ Crossbow_ C
 KroostheKeenGlint_Crossbow_Circle2.DisplayName: Kroosthe Keen Glint_ Crossbow_ Circle2
 MostimaRingAndWingProj.DisplayName: Mostima Ring And Wing Proj
 NianSword_Projectile.DisplayName: Nian Sword_ Projectile
+NianSword.DisplayName: Nian Sword
 OrchidUmbrellla_Projectile.DisplayName: Orchid Umbrellla_ Projectile
 PozemkaCrossbow_Projectile.DisplayName: Pozemka Crossbow_ Projectile
 PozemkaCrossbow_Sentry.DisplayName: Pozemka Crossbow_ Sentry
@@ -150,3 +151,4 @@ NoirShield_MainAtk.DisplayName: Noir Shield_ Main Atk
 NoirShield_Projectile.DisplayName: Noir Shield_ Projectile
 _12F_Projectile.DisplayName: _12 F_ Projectile
 YatoKatanaSheath_Projectile.DisplayName: Yato Katana Sheath_ Projectile
+NianShield.DisplayName: Nian Shield
