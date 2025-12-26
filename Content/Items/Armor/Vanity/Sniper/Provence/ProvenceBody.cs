@@ -21,9 +21,9 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Sniper.Provence
 			protected override void Draw(ref PlayerDrawSet drawInfo) {
 
 				Texture2D texture = ModContent.Request<Texture2D>
-					("ArknightsMod/Content/Items/Armor/Vanity/Sniper/Provence/ProvenceBody_Tail").Value;
+					("ArknightsMod/Content/Items/Armor/Vanity/Sniper/Provence/ProvenceBody_tail").Value;
 
-				var offset = new Vector2(-16, 12);
+				var offset = new Vector2(-7, 12);
 
 				int drawX = (int)(drawInfo.drawPlayer.MountedCenter.X + offset.X * drawInfo.drawPlayer.direction - Main.screenPosition.X);
 				int drawY = (int)(drawInfo.drawPlayer.MountedCenter.Y + offset.Y - Main.screenPosition.Y);
@@ -35,9 +35,12 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Sniper.Provence
 					drawInfo.drawPlayer.bodyFrame.Y <= 16 * drawInfo.drawPlayer.bodyFrame.Height) {
 					offsetY = -2;
 				}
+				int bodyframe = drawInfo.drawPlayer.bodyFrame.Y / drawInfo.drawPlayer.bodyFrame.Height;
+				Rectangle sourceRect = new(0,bodyframe*(18+38)+33, texture.Width,18);
+				Vector2 origin=sourceRect.Size()/2;
 				drawInfo.DrawDataCache.Add(
 					new DrawData(texture, new Vector2(drawX, drawY + offsetY + drawInfo.drawPlayer.gfxOffY),
-					null, drawInfo.colorArmorBody, 0f, texture.Size() * 0.5f, 1f, drawInfo.drawPlayer.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0) {
+					sourceRect, drawInfo.colorArmorBody, 0f, origin, 1f, drawInfo.drawPlayer.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0) {
 						shader = dyeShader
 					});
 			}
