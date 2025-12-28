@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using ArknightsMod.Content.Items.Weapons.Defender.Nian;
 using Terraria.ID;
 using ArknightsMod.Players;
+using ArknightsMod.Common.VisualEffects;
 
 
 namespace ArknightsMod.Content.Projectiles.Defender.Nian
@@ -21,6 +22,7 @@ namespace ArknightsMod.Content.Projectiles.Defender.Nian
 		public override bool ShouldUpdatePosition() => false;
 
 		public override void SetDefaults() {
+			ProjectileID.Sets.TrailingMode[Type] = 2;
 			Projectile.width = 32;
 			Projectile.height = 118;
 			Projectile.aiStyle = -1;
@@ -31,6 +33,11 @@ namespace ArknightsMod.Content.Projectiles.Defender.Nian
 			Projectile.timeLeft = 45;
 			Projectile.hide = false;
 		}
+		public override void SetStaticDefaults()
+        {
+            ProjectileID.Sets.TrailCacheLength[Type] = 15;//拖尾长度
+            base.SetStaticDefaults();
+        }
 
 		public override bool PreDraw(ref Color lightColor) {
 			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
@@ -70,8 +77,38 @@ namespace ArknightsMod.Content.Projectiles.Defender.Nian
 				SpriteEffects.None,
 				0
 			);
+			// 断琴那copy的拖尾,不知道为什么oldrot有pi/2的差距
+			float rangeFix = 64 * Projectile.scale;
+			List<Vertex> vertices = new List<Vertex>();
+			for (int i = 0; i < ProjectileID.Sets.TrailCacheLength[Type]; i++)
+            {
+				Color coordColor = Main.hslToRgb(0.03f, 1f - i / 15f, 0.5f)*0.7f;
+                if (Projectile.oldPos[i] == Vector2.Zero) continue;
+                if (player.direction == 1)
+                {
+                    vertices.Add(new Vertex(Projectile.position + center_bias - Main.screenPosition + rangeFix * (Projectile.oldRot[i]+(float)Math.PI/2).ToRotationVector2() * 1.9f,
+                      new Vector3((float)i / ProjectileID.Sets.TrailCacheLength[Type], 1, 1),coordColor ));//上底
+                    vertices.Add(new Vertex(Projectile.position + center_bias - Main.screenPosition + rangeFix *(Projectile.oldRot[i]+(float)Math.PI/2).ToRotationVector2() * 0.25f, 
+                        new Vector3((float)i / ProjectileID.Sets.TrailCacheLength[Type],0,1),coordColor));//下底
+               
+                }
+                else
+                {
+                    vertices.Add(new Vertex(Projectile.position + center_bias - Main.screenPosition - rangeFix *(Projectile.oldRot[i]-(float)Math.PI/2).ToRotationVector2() * 1.9f,
+                                       new Vector3((float)i / ProjectileID.Sets.TrailCacheLength[Type], 1, 1), coordColor));//上底
+                    vertices.Add(new Vertex(Projectile.position + center_bias - Main.screenPosition - rangeFix *(Projectile.oldRot[i]-(float)Math.PI/2).ToRotationVector2() * 0.25f,
+                        new Vector3((float)i / ProjectileID.Sets.TrailCacheLength[Type], 0, 1), coordColor));//下底
 
-			return false;
+                }
+            }
+            SpriteBatch spriteBatch = Main.spriteBatch;
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.AnisotropicClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.graphics.GraphicsDevice.Textures[0] = ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Defender/Nian/SlashTex").Value;
+            Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices.ToArray(), 0, vertices.Count - 2);
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            return false;
 		}
 
 		public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs,
