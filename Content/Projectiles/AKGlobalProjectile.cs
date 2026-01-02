@@ -7,7 +7,6 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria;
-using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
 
 namespace ArknightsMod.Content.Projectiles
 {
@@ -15,10 +14,13 @@ namespace ArknightsMod.Content.Projectiles
 	{
 		public override void OnSpawn(Projectile projectile, IEntitySource source) {
 			// 检测是否在法术弹幕列表中
-			if (SpellDamageConfig.SpellProjectiles.Contains(projectile.type)) {
-				// 标记为法术伤害（不影响原伤害类型）
-				projectile.GetGlobalProjectile<SpellDamageMarker>().IsSpellDamage = true;
-			}
+			//if (SpellDamageConfig.SpellProjectiles.Contains(projectile.type)) {
+			//	// 标记为法术伤害（不影响原伤害类型）
+			//	projectile.GetGlobalProjectile<SpellDamageMarker>().IsSpellDamage = true;
+			//}
+			//或许可以改为检测伤害类型
+			//也可以在OnHitNPC中设置伤害类型，详见damageCategorySystem
+			// System Gameplay Damage
 		}
 	}
 	public class SpellDamageMarker : GlobalProjectile

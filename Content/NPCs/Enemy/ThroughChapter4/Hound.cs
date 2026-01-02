@@ -1,6 +1,6 @@
 ﻿using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Content.Items.Placeable.Banners;
-using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
+using ArknightsMod.Systems.Gameplay.Damage;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -41,6 +41,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4 //记得把BakaMod改�
 			Banner = NPC.type;
 			BannerItem = ItemType<HoundBanner>();
 			//BannerItem = ModContent.ItemType<旗帜>(); 此处是每击杀50个该NPC掉的旗帜
+
+			var genreNPC = NPC.GetGlobalNPC<DamageCategoryNPC>();
+			genreNPC.artsResistance = 0.25f;
 		}
 		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
 			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[]
@@ -170,14 +173,6 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4 //记得把BakaMod改�
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
 			//这里写掉落物 例子： npcLoot.Add(ItemDropRule.Common(ItemID.LunarBar, d, min, max)); 1/d几率掉落min~max个夜明锭
 		}
-		public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers) {
-			if (SpellDamageConfig.SpellProjectiles.Contains(projectile.type)) {
-				// 法术伤害无视护甲
-				modifiers.ScalingArmorPenetration += 1f;
-				// 0.95倍伤害减免
-				modifiers.FinalDamage *= 0.75f;
-
-			}
-		}
+		
 	}
 }

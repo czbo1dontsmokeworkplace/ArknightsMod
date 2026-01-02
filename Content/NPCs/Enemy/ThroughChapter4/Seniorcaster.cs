@@ -1,20 +1,20 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria.GameContent.Bestiary;
-using Terraria.GameContent.ItemDropRules;
-using Terraria.ModLoader.Utilities;
-using Terraria.Localization;
-using Terraria.DataStructures;
+﻿using ArknightsMod.Common.VisualEffects;
 using ArknightsMod.Content.Items;
-using System.Runtime.CompilerServices;
-using System;
+using ArknightsMod.Systems.Gameplay.Damage;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ArknightsMod.Common.VisualEffects;
+using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using Terraria;
 using Terraria.Audio;
-using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
+using Terraria.DataStructures;
+using Terraria.GameContent.Bestiary;
+using Terraria.GameContent.ItemDropRules;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
+using Terraria.ModLoader.Utilities;
 
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 {
@@ -40,6 +40,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			NPC.aiStyle = -1;
 			NPC.scale = 1f;
 			NPC.npcSlots = 3;
+
+			var genreNPC = NPC.GetGlobalNPC<DamageCategoryNPC>();
+			genreNPC.artsResistance = 0.5f;
 		}
 		private int AttackCD = 0;
 		private bool attack;
@@ -171,17 +174,13 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			}
 		}
 		public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers) {
-			if (SpellDamageConfig.SpellProjectiles.Contains(projectile.type)) {
-				// 法术伤害无视护甲
-				modifiers.ScalingArmorPenetration += 1f;
-				// 0.95倍伤害减免
-				modifiers.FinalDamage *= 0.5f;
+			
 
 				for (int i = 0; i < 3; i++) {
 					Dust.NewDust(NPC.position, NPC.width, NPC.height,
 						DustID.Shadowflame, 0, 0, 150, default, 0.7f);
 				}
-			}
+			
 		}
 	}
 

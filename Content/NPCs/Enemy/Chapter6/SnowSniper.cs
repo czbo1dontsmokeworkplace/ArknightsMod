@@ -1,5 +1,4 @@
 ﻿using ArknightsMod.Content.NPCs.Enemy.ThroughChapter4;
-using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;

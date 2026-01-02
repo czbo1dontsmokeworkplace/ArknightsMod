@@ -1,18 +1,17 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+﻿using ArknightsMod.Content.Items;
+using ArknightsMod.Systems.Gameplay.Damage;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
+using Terraria;
+using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.ItemDropRules;
-using Terraria.ModLoader.Utilities;
+using Terraria.ID;
 using Terraria.Localization;
-using Terraria.DataStructures;
-using ArknightsMod.Content.Items;
-using Microsoft.Xna.Framework;
-using System;
-using Terraria.Audio;
-
-using Microsoft.Xna.Framework.Graphics;
-using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
+using Terraria.ModLoader;
+using Terraria.ModLoader.Utilities;
 
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 {
@@ -40,6 +39,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			NPC.scale = 1f;
 			NPC.npcSlots = 2;
 			NPC.damage = 6;
+
+			var genreNPC = NPC.GetGlobalNPC<DamageCategoryNPC>();
+			genreNPC.artsResistance = 0.95f;
 		}
 		public int Framespeed = 7;
 		public bool walk = true;
@@ -206,17 +208,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			}
 		}
 		public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers) {
-			if (SpellDamageConfig.SpellProjectiles.Contains(projectile.type)) {
-				// 法术伤害无视护甲
-				modifiers.ScalingArmorPenetration += 1f;
-				// 0.95倍伤害减免
-				modifiers.FinalDamage *= 1f;
-
+			
 				for (int i = 0; i < 3; i++) {
 					Dust.NewDust(NPC.position, NPC.width, NPC.height,
 						DustID.MagicMirror, 0, 0, 150, Color.LightBlue, 0.7f);
 				}
-			}
+			
 		}
 	}
 

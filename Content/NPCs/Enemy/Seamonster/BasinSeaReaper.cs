@@ -15,7 +15,7 @@ using System;
 using Terraria.Audio;
 using ArknightsMod;
 using MonoMod.Core.Platforms;
-using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
+using ArknightsMod.Systems.Gameplay.Damage;
 
 
 
@@ -43,7 +43,10 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 				NPC.lifeMax = (int)(NPC.lifeMax * 0.8);
 				NPC.damage = (int)(NPC.damage * 0.8);
 			}
+			var genreNPC = NPC.GetGlobalNPC<DamageCategoryNPC>();
+			genreNPC.artsResistance = 0.25f;
 		}
+
 		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
 			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
 				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Ocean,
@@ -211,11 +214,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 			return true;
 		}
 		public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers) {
-			if (SpellDamageConfig.SpellProjectiles.Contains(projectile.type)) {
-				// 法术伤害无视护甲
-				modifiers.ScalingArmorPenetration += 1f;
-				// 0.95倍伤害减免
-				modifiers.FinalDamage *= 0.25f;
+			var genreNPC = NPC.GetGlobalNPC<DamageCategoryNPC>();
+			if ((genreNPC.DamageGenre & 0x02) != 0) {
 
 				for (int i = 0; i < 3; i++) {
 					Dust.NewDust(NPC.position, NPC.width, NPC.height,

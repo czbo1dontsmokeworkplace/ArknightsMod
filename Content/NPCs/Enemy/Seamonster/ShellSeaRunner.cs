@@ -1,17 +1,17 @@
-﻿using Terraria;
-using Terraria.Localization;
+﻿using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Systems.Gameplay.Damage;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System.Net.Http.Headers;
+using System.Security.Cryptography.X509Certificates;
+using Terraria;
 using Terraria.GameContent.Bestiary;
+using Terraria.GameContent.Biomes.Desert;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Utilities;
-using Microsoft.Xna.Framework;
-using ArknightsMod.Content.Items.Material;
-using Microsoft.Xna.Framework.Graphics;
-using System.Security.Cryptography.X509Certificates;
-using System.Net.Http.Headers;
-using Terraria.GameContent.Biomes.Desert;
-using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
 
 
 
@@ -77,8 +77,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
             
             NPC.friendly = false;
             NPC.noGravity = false;
-
-        }
+			var genreNPC = NPC.GetGlobalNPC<DamageCategoryNPC>();
+			genreNPC.artsResistance = 0.2f;
+		}
 		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
 			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
 				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Ocean,
@@ -176,15 +177,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 				dust.scale *= 1f + Main.rand.NextFloat(-0.03f, 0.03f);
 			}
 		}
-		public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers) {
-			if (SpellDamageConfig.SpellProjectiles.Contains(projectile.type)) {
-				// 法术伤害无视护甲
-				modifiers.ScalingArmorPenetration += 1f;
-				// 0.95倍伤害减免
-				modifiers.FinalDamage *= 0.8f;
-
-			}
-		}
+		
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             return SpawnCondition.OverworldDayRain.Chance * 0.8f;
