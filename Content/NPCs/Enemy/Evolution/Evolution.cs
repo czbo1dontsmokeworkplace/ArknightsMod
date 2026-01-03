@@ -1,4 +1,5 @@
-﻿using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
+﻿
+using ArknightsMod.Systems.Gameplay.Damage;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -78,7 +79,10 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution
 				NPC.width = 75;
 				NPC.height = 100;
 			}
-			
+
+			var genreNPC = NPC.GetGlobalNPC<DamageCategoryNPC>();
+			genreNPC.artsResistance = 0.25f;
+
 		}
 		public override void FindFrame(int frameHeight) {
 			framecounter++;
@@ -243,18 +247,18 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution
 
 		}
 		public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers) {
-			if (SpellDamageConfig.SpellProjectiles.Contains(projectile.type)) {
-				// 法术伤害无视护甲
-				modifiers.ScalingArmorPenetration += 1f;
-				// 法术抗性
-				modifiers.FinalDamage *= 1f - (SpellResist / 100);
-				if (SpellResist < 20) {
+
+			var genreNPC = NPC.GetGlobalNPC<DamageCategoryNPC>();
+			if ((genreNPC.DamageGenre & 0x02) != 0) {
+
+				
+				if (genreNPC.artsResistance < 20) {
 					for (int i = 0; i < 3; i++) {
 						Dust.NewDust(NPC.position, NPC.width, NPC.height,
 							DustID.MagicMirror, 0, 0, 150, Color.LightBlue, 0.7f);
 					}
 				}
-				if (SpellResist > 40) {
+				if (genreNPC.artsResistance > 40) {
 					for (int i = 0; i < 3; i++) {
 						Dust.NewDust(NPC.position, NPC.width, NPC.height,
 							DustID.Shadowflame, 0, 0, 150, Color.LightBlue, 0.7f);
@@ -262,15 +266,15 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution
 				}
 			}
 			if (Stage1 & (projectile.velocity.X >= NPC.velocity.X || projectile.position.X <= NPC.position.X)) {
-				modifiers.FinalDamage *= 0.2f;
+				genreNPC.artsResistance = 0.8f;
 				RightShield = 30;
 			}
 			if (Stage2 & (projectile.velocity.X <= NPC.velocity.X || projectile.position.X >= NPC.position.X)) {
-				modifiers.FinalDamage *= 0.2f;
+				genreNPC.artsResistance = 0.8f;
 				LeftShield = 30;
 			}
 			if (Stage3) {
-				modifiers.FinalDamage *= 0.01f;
+				genreNPC.artsResistance = 0.99f;
 				AllShield = 60;
 			}
 

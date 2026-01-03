@@ -1,5 +1,5 @@
 ﻿using ArknightsMod.Content.NPCs.Enemy.TillChapter7;
-using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
+using ArknightsMod.Systems.Gameplay.Damage;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -101,6 +101,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 			// 随机射程
 			Range = Main.rand.Next(285, 316);
+
+			var genreNPC = NPC.GetGlobalNPC<DamageCategoryNPC>();
+			genreNPC.artsResistance = 0.2f;
 		}
 
 		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
@@ -391,11 +394,10 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			// modifiers.SourceDamage *= 0.5f; // 例如减半伤害
 		}
 		public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers) {
-			if (SpellDamageConfig.SpellProjectiles.Contains(projectile.type)) {
-				// 法术伤害无视护甲
-				modifiers.ScalingArmorPenetration += 1f;
-				// 0.95倍伤害减免
-				modifiers.FinalDamage *= 0.5f;
+
+			var genreNPC = NPC.GetGlobalNPC<DamageCategoryNPC>();
+			if ((genreNPC.DamageGenre & 0x02) != 0) {
+				
 
 				for (int i = 0; i < 3; i++) {
 					Dust.NewDust(NPC.position, NPC.width, NPC.height,

@@ -1,4 +1,5 @@
-﻿using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
+﻿
+using ArknightsMod.Systems.Gameplay.Damage;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -121,6 +122,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.TillChapter7
 			NPC.value = 10000f;
 			NPC.HitSound = SoundID.NPCHit1;
 			//NPC.DeathSound = SoundID.NPCDeath7;
+
+			var genreNPC = NPC.GetGlobalNPC<DamageCategoryNPC>();
+			genreNPC.artsResistance = SpellResist / 100f;
 		}
 		public override void FindFrame(int frameHeight) {
 
@@ -161,6 +165,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.TillChapter7
 			return (player.position.Y + player.height) - (NPC.position.Y + NPC.height) > 30;
 		}
 		public override void AI() {
+
+			var genreNPC = NPC.GetGlobalNPC<DamageCategoryNPC>();
+			genreNPC.artsResistance = SpellResist / 100f;
 			//出场效果
 			if (fadeTimer > 0) {
 				fadeTimer--;
@@ -333,11 +340,10 @@ namespace ArknightsMod.Content.NPCs.Enemy.TillChapter7
 			}
 		}
 		public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers) {
-			if (SpellDamageConfig.SpellProjectiles.Contains(projectile.type)) {
+
+			var genreNPC = NPC.GetGlobalNPC<DamageCategoryNPC>();
+			if ((genreNPC.DamageGenre & 0x02) != 0) {
 				// 法术伤害无视护甲
-				modifiers.ScalingArmorPenetration += 1f;
-				// 法术抗性
-				modifiers.FinalDamage *= 1f - (SpellResist / 100);
 				if (SpellResist < 20) {
 					for (int i = 0; i < 3; i++) {
 						Dust.NewDust(NPC.position, NPC.width, NPC.height,

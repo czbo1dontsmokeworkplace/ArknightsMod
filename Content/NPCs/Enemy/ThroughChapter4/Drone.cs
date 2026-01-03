@@ -1,5 +1,4 @@
 ﻿using ArknightsMod.Content.Items.Material;
-using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
 using Humanizer;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

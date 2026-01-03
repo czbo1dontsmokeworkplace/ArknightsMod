@@ -103,18 +103,18 @@ Shirayuki_Shuriken: {
 
 NianWeapon: {
 	1: {
-		Desc: Mods.ArknightsMod.Skills.NianWeapon.1.Desc
-		Label: Mods.ArknightsMod.Skills.NianWeapon.1.Label
+		Desc: DEF +70%, ATK +45%, and normal attacks now deal Arts damage \n[c/00FF00:During the skill, Nian smashes the large shield in her hands toward enemies, dealing 100% magic damage.]
+		Label: Tin Burning
 	}
 
 	2: {
-		Label: Mods.ArknightsMod.Skills.NianWeapon.2.Label
-		Desc: Mods.ArknightsMod.Skills.NianWeapon.2.Desc
+		Label: Copper Seal
+		Desc: Stops attacking; DEF +130%, Block +1, upon receiving an enemy attack, deals Arts damage to the attacker equal to 90% of Nian's ATK and silences them for 5 seconds. \n[c/00FF00:The original block-based counter damage and silence effects are disabled. Instead, every 0.5 seconds, enemies within a certain range take 50% source-less magic damage.]
 	}
 
 	3: {
-		Desc: Mods.ArknightsMod.Skills.NianWeapon.3.Desc
-		Label: Mods.ArknightsMod.Skills.NianWeapon.3.Label
+		Desc: ATK +120%; Nearby allied Operators gain DEF +80%, Block +1 and status resistance.\n[c/00FF00:The original resistance and ally defense/block bonuses are disabled. The large shield now follows the mouse to attack, dealing 100% physical damage.]
+		Label: Iron Defense
 	}
 }
 

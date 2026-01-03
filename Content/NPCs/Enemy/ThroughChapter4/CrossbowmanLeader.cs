@@ -1,19 +1,19 @@
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria.GameContent.Bestiary;
-using Terraria.GameContent.ItemDropRules;
-using Terraria.ModLoader.Utilities;
-using Terraria.Localization;
-using System;
-using ArknightsMod.Content.Items;
 using ArknightsMod.Common.VisualEffects;
+using ArknightsMod.Content.Items;
+using ArknightsMod.Content.Projectiles;
+using ArknightsMod.Systems.Gameplay.Damage;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
+using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent.Bestiary;
+using Terraria.GameContent.ItemDropRules;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
+using Terraria.ModLoader.Utilities;
 using static Terraria.ModLoader.ModContent;
-using ArknightsMod.Content.Projectiles;
-using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
 
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 {
@@ -42,6 +42,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			NPC.DeathSound = SoundID.NPCDeath2;
 			NPC.value = 60f;
 			NPC.friendly = false;
+
+			var genreNPC = NPC.GetGlobalNPC<DamageCategoryNPC>();
+			genreNPC.artsResistance = 0.05f;
 		}
 
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
@@ -372,17 +375,13 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			}
 		}
 		public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers) {
-			if (SpellDamageConfig.SpellProjectiles.Contains(projectile.type)) {
-				// ∑® ı…À∫¶Œﬁ ”ª§º◊
-				modifiers.ScalingArmorPenetration += 1f;
-				// 0.95±∂…À∫¶ºı√‚
-				modifiers.FinalDamage *= 1f;
+			
 
 				for (int i = 0; i < 3; i++) {
 					Dust.NewDust(NPC.position, NPC.width, NPC.height,
 						DustID.MagicMirror, 0, 0, 150, Color.LightBlue, 0.7f);
 				}
-			}
+			
 		}
 	}
 }

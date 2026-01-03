@@ -1,5 +1,5 @@
 ﻿using ArknightsMod.Content.Items.Material;
-using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
+using ArknightsMod.Systems.Gameplay.Damage;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -36,6 +36,11 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 			Banner = NPC.type;
 			NPC.DeathSound = SoundID.NPCDeath5;
 			//BannerItem = ModContent.ItemType<旗帜>(); 此处是每击杀50个该NPC掉的旗帜
+
+			var genreNPC = NPC.GetGlobalNPC<DamageCategoryNPC>();
+			genreNPC.artsResistance = 0.25f;
+			//设置法抗为0.25
+
 		}
 		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
 			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[]
@@ -160,15 +165,15 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 			//尸块也要在这里写
 		}
 		
-		public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers) {
-			if (SpellDamageConfig.SpellProjectiles.Contains(projectile.type)) {
-				// 法术伤害无视护甲
-				modifiers.ScalingArmorPenetration += 1f;
-				// 0.95倍伤害减免
-				modifiers.FinalDamage *= 0.75f;
+		//public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers) {
+		//	if (SpellDamageConfig.SpellProjectiles.Contains(projectile.type)) {
+		//		// 法术伤害无视护甲
+		//		modifiers.ScalingArmorPenetration += 1f;
+		//		// 0.95倍伤害减免
+		//		modifiers.FinalDamage *= 0.75f;
 
-			}
-		}
+		//	}
+		//}
 		public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers) {
 			Player p = Main.player[NPC.target];
 			if (p.frozen == true) {

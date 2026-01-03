@@ -560,9 +560,9 @@ namespace ArknightsMod.Players
 				IconName = "NianWeapon";
 				HowManySkills = 3;
 				SkillLevel = new() { 10, 10, 10 };
-				ChargeTypeIsPerSecond = new() { false, true, true };
-				AutoTrigger = new() { true, false, false };
-				ShowSummonIconBySkills = new() { true, true, true };
+				ChargeTypeIsPerSecond = new() { true, true, true };
+				AutoTrigger = new() { false, false, false };
+				ShowSummonIconBySkills = new() { false, false, false };
 
 				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 10 };
 				InitialSPs2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 35 };

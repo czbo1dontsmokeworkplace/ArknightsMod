@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Security.Cryptography.X509Certificates;
 using ArknightsMod.Content.Items.Material;
-using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
+using ArknightsMod.Systems.Gameplay.Damage;
 
 
 
@@ -100,6 +100,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 				NPC.lifeMax = (int)(NPC.lifeMax * 0.8);
 				NPC.damage = (int)(NPC.damage * 0.8);
 			}
+			var genreNPC = NPC.GetGlobalNPC<DamageCategoryNPC>();
+			genreNPC.artsResistance = 0.1f;
 		}
         public override void AI()
         {
@@ -168,11 +170,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 			}
 		}
 		public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers) {
-			if (SpellDamageConfig.SpellProjectiles.Contains(projectile.type)) {
+			var genreNPC = NPC.GetGlobalNPC<DamageCategoryNPC>();
+			if ((genreNPC.DamageGenre & 0x02) != 0) {
 				// 法术伤害无视护甲
-				modifiers.ScalingArmorPenetration += 1f;
-				// 0.95倍伤害减免
-				modifiers.FinalDamage *= 0.9f;
 
 				for (int i = 0; i < 3; i++) {
 					Dust.NewDust(NPC.position, NPC.width, NPC.height,

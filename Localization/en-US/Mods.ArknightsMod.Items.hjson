@@ -1013,8 +1013,8 @@ TacticalBattleRecord: {
 	Tooltip: ""
 }
 
-Nianweapon: {
-	DisplayName: Nianweapon
+NianWeapon: {
+	DisplayName: Nian Weapon
 	Tooltip: ""
 }
 
@@ -1330,11 +1330,6 @@ SchwarzBow: {
 
 PozyomkaBow: {
 	DisplayName: Pozyomka Bow
-	Tooltip: ""
-}
-
-NianWeapon: {
-	DisplayName: Nian Weapon
 	Tooltip: ""
 }
 
@@ -2313,62 +2308,32 @@ SmallDisplay: {
 	Tooltip: ""
 }
 
-ClothesHanger: {
-	DisplayName: Clothes Hanger
+_3DPrintingProcessingStation: {
+	DisplayName: 3D Printing Processing Station
 	Tooltip: ""
 }
 
-ClothesHanger2: {
-	DisplayName: Clothes Hanger2
+Drone: {
+	DisplayName: Drone
 	Tooltip: ""
 }
 
-VulcanBody: {
-	DisplayName: Vulcan Body
+ProvenceBody: {
+	DisplayName: Provence Body
 	Tooltip: ""
 }
 
-VulcanHead: {
-	DisplayName: Vulcan Head
+ProvenceHead: {
+	DisplayName: Provence Head
 	Tooltip: ""
 }
 
-VulcanLegs: {
-	DisplayName: Vulcan Legs
+ProvenceLegs: {
+	DisplayName: Provence Legs
 	Tooltip: ""
 }
 
-EntelechiaBody: {
-	DisplayName: Entelechia Body
-	Tooltip: ""
-}
-
-EntelechiaHead: {
-	DisplayName: Entelechia Head
-	Tooltip: ""
-}
-
-EntelechiaLegs: {
-	DisplayName: Entelechia Legs
-	Tooltip: ""
-}
-
-EntelechiaDefault: {
-	DisplayName: Entelechia Default
-	Tooltip: ""
-}
-
-VulcanDefault: {
-	DisplayName: Vulcan Default
-	Tooltip: ""
-}
-
-WorkshopMachine: {
-	DisplayName: Workshop Machine
-	Tooltip: ""
-}
-
-WorkshopToolCabinet: {
-	DisplayName: Workshop Tool Cabinet
+ProvenceDefault: {
+	DisplayName: Provence Default
 	Tooltip: ""
 }

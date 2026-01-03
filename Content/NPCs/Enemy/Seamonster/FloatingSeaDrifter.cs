@@ -1,22 +1,21 @@
-﻿using Terraria;
-using Terraria.Localization;
+﻿using ArknightsMod.Common.VisualEffects;
+using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.NPCs.Enemy.ThroughChapter4;
+using ArknightsMod.Systems.Gameplay.Damage;
+using Humanizer;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Reflection.Metadata;
+using System.Security.Cryptography.X509Certificates;
+using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Utilities;
-using Microsoft.Xna.Framework;
-
-using Microsoft.Xna.Framework.Graphics;
-using System.Security.Cryptography.X509Certificates;
-using ArknightsMod.Content.Items.Material;
-using System;
-using ArknightsMod.Content.NPCs.Enemy.ThroughChapter4;
-using System.Reflection.Metadata;
-using Humanizer;
-using Terraria.Audio;
-using ArknightsMod.Common.VisualEffects;
-using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
 
 
 
@@ -80,6 +79,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 			if (Main.expertMode){
 				NPC.damage = 19;
 			}
+			var genreNPC = NPC.GetGlobalNPC<DamageCategoryNPC>();
+			genreNPC.artsResistance = 0.2f;
 		}
 		private bool inattack = false;
 		private float flytime;
@@ -188,15 +189,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 			}
 		}
 
-		public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers) {
-			if (SpellDamageConfig.SpellProjectiles.Contains(projectile.type)) {
-				// 法术伤害无视护甲
-				modifiers.ScalingArmorPenetration += 1f;
-				// 伤害减免
-				modifiers.FinalDamage *= 0.8f;
-
-			}
-		}
+		
 
 		
 		public override float SpawnChance(NPCSpawnInfo spawnInfo) {

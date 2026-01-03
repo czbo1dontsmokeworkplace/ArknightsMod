@@ -1027,9 +1027,9 @@ TacticalBattleRecord: {
 	// Tooltip: ""
 }
 
-Nianweapon: {
+NianWeapon: {
 	DisplayName: 年的剑
-	// Tooltip: ""
+	Tooltip: ""
 }
 
 WMusicBox: {
@@ -1406,11 +1406,6 @@ SchwarzBow: {
 PozyomkaBow: {
 	// DisplayName: Pozyomka Bow
 	// Tooltip: ""
-}
-
-NianWeapon: {
-	DisplayName: 年的剑
-	Tooltip: ""
 }
 
 BeagleWeapon: {
@@ -2437,62 +2432,32 @@ SmallDisplay: {
 	// Tooltip: ""
 }
 
-ClothesHanger: {
-	// DisplayName: Clothes Hanger
+_3DPrintingProcessingStation: {
+	DisplayName: 3D打印加工站
 	// Tooltip: ""
 }
 
-ClothesHanger2: {
-	// DisplayName: Clothes Hanger2
+Drone: {
+	DisplayName: 妖怪无人机
 	// Tooltip: ""
 }
 
-VulcanBody: {
-	// DisplayName: Vulcan Body
+ProvenceBody: {
+	// DisplayName: Provence Body
 	// Tooltip: ""
 }
 
-VulcanHead: {
-	// DisplayName: Vulcan Head
+ProvenceHead: {
+	// DisplayName: Provence Head
 	// Tooltip: ""
 }
 
-VulcanLegs: {
-	// DisplayName: Vulcan Legs
+ProvenceLegs: {
+	// DisplayName: Provence Legs
 	// Tooltip: ""
 }
 
-EntelechiaBody: {
-	// DisplayName: Entelechia Body
-	// Tooltip: ""
-}
-
-EntelechiaHead: {
-	// DisplayName: Entelechia Head
-	// Tooltip: ""
-}
-
-EntelechiaLegs: {
-	// DisplayName: Entelechia Legs
-	// Tooltip: ""
-}
-
-EntelechiaDefault: {
-	// DisplayName: Entelechia Default
-	// Tooltip: ""
-}
-
-VulcanDefault: {
-	// DisplayName: Vulcan Default
-	// Tooltip: ""
-}
-
-WorkshopMachine: {
-	// DisplayName: Workshop Machine
-	// Tooltip: ""
-}
-
-WorkshopToolCabinet: {
-	// DisplayName: Workshop Tool Cabinet
+ProvenceDefault: {
+	// DisplayName: Provence Default
 	// Tooltip: ""
 }

@@ -1,21 +1,21 @@
-﻿using Terraria;
-using Terraria.Localization;
+﻿using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Systems.Gameplay.Damage;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Mono.Cecil;
+using System;
+using System.Net.Http.Headers;
+using System.Reflection.Metadata;
+using System.Security.Cryptography.X509Certificates;
+using Terraria;
+using Terraria.GameContent;
 using Terraria.GameContent.Bestiary;
+using Terraria.GameContent.Biomes.Desert;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Utilities;
-using Microsoft.Xna.Framework;
-using ArknightsMod.Content.Items.Material;
-using Microsoft.Xna.Framework.Graphics;
-using System.Security.Cryptography.X509Certificates;
-using System.Net.Http.Headers;
-using Terraria.GameContent.Biomes.Desert;
-using System;
-using Mono.Cecil;
-using System.Reflection.Metadata;
-using Terraria.GameContent;
-using ArknightsMod.Systems.Gameplay.Enums.Damageclasses;
 
 namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 {
@@ -41,6 +41,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 				NPC.lifeMax = (int)(NPC.lifeMax * 0.8);
 				NPC.damage = (int)(NPC.damage * 0.8);
 			}
+
+			var genreNPC = NPC.GetGlobalNPC<DamageCategoryNPC>();
+			genreNPC.artsResistance = 0.2f;
 
 		}
 		private bool approach=true;
@@ -187,15 +190,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 			}
 
 		}
-		public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers) {
-			if (SpellDamageConfig.SpellProjectiles.Contains(projectile.type)) {
-				// 法术伤害无视护甲
-				modifiers.ScalingArmorPenetration += 1f;
-				// 0.95倍伤害减免
-				modifiers.FinalDamage *= 0.8f;
-
-			}
-		}
+		
 		public override void OnKill() {
 			int Gore1 = Mod.Find<ModGore>("PSP1").Type;
 			var entitySource = NPC.GetSource_Death();
