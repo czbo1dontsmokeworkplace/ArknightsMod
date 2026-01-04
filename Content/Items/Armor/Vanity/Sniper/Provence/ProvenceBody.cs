@@ -21,7 +21,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Sniper.Provence
 			protected override void Draw(ref PlayerDrawSet drawInfo) {
 
 				Texture2D texture = ModContent.Request<Texture2D>
-					("ArknightsMod/Content/Items/Armor/Vanity/Sniper/Provence/ProvenceBody_tail").Value;
+					("ArknightsMod/Content/Items/Armor/Vanity/Sniper/Provence/ProvenceBody_Tail").Value;
 
 				var offset = new Vector2(-7, 12);
 
