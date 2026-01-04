@@ -16,7 +16,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Guard.Melantha.Armor
 		public override void SetArmorDefaults() {
 			Item.defense = 0;
 		}
-		public override (float ratio, int value) LifeReplacement => (0.5f, 140);
+		public override int LifeBonus => 140;
 		public override void Load() {
 			if (Main.netMode == NetmodeID.Server)
 				return;

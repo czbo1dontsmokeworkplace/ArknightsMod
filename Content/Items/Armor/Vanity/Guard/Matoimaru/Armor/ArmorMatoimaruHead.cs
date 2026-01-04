@@ -19,7 +19,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Guard.Matoimaru.Armor
 			player.setBonus = "";
 			player.GetModPlayer<MatoimaruSetPlayer>().MatoimaruSetActive = true;
 		}
-		public override (float ratio, int value) LifeReplacement => (0.5f, 202);
+		public override int LifeBonus => 202;
 		public override void AddRecipes() {
 			CreateRecipe()
 			.AddIngredient(ModContent.ItemType<MatoimaruHead>(), 1)

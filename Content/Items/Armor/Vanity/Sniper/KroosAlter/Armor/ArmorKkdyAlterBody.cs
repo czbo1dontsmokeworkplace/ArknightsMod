@@ -20,7 +20,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Sniper.KroosAlter.Armor
 		public override void SetArmorDefaults() {
 			Item.defense = 23;
 		}
-		public override (float ratio, int value) LifeReplacement => (0.25f, 62);
+		public override int LifeBonus => 62;
 		public override void AddRecipes() {
 			CreateRecipe()
 				.AddIngredient(ModContent.ItemType<KkdyAlterBody>(), 1)

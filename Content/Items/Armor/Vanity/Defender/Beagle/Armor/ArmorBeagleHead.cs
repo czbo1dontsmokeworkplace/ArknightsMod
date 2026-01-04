@@ -10,7 +10,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Defender.Beagle.Armor
 	[AutoloadEquip(EquipType.Head)]
     public class ArmorBeagleHead : ArknightsArmorHead
     {
-		public override (float ratio, int value) LifeReplacement => (0.5f, 114);
+		public override int LifeBonus => 114;
 		public override void SetArmorDefaults()
 		{
 		}

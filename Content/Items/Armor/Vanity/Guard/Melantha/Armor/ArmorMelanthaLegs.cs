@@ -8,7 +8,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Guard.Melantha.Armor
 	public class ArmorMelanthaLegs : ArknightsArmorLegs
 	{
 		public override int Rarity => 3;
-		public override (float ratio, int value) LifeReplacement => (0.25f, 70);
+		public override int LifeBonus => 70;
 		public override void SetArmorDefaults() {
 			Item.defense = 4;
 		}

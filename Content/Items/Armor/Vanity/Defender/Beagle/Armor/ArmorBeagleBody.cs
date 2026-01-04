@@ -8,7 +8,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Defender.Beagle.Armor
 	[AutoloadEquip(EquipType.Body)]
 	public class ArmorBeagleBody : ArknightsArmorBody
     {
-		public override (float ratio, int value) LifeReplacement => (0.25f, 76);
+		public override int LifeBonus => 76;
 		public override void SetArmorDefaults()
 		{
 			Item.defense = 18;

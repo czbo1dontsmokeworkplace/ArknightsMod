@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Defender.Saria.Armor
 	[AutoloadEquip(EquipType.Legs)]
 	public class ArmorSariaLegs : ArknightsArmorLegs
 	{
-		public override (float ratio, int value) LifeReplacement => (0.25f, 158);
+		public override int LifeBonus => 158;
 		public override void SetArmorDefaults() {
 			Item.defense = 30;
 		}

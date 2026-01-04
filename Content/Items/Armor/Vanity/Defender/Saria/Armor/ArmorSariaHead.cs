@@ -16,7 +16,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Defender.Saria.Armor
 	[AutoloadEquip(EquipType.Head)]
 	public class ArmorSariaHead : ArknightsArmorHead
 	{
-		public override (float ratio, int value) LifeReplacement => (0.5f, 315);
+		public override int LifeBonus => 315;
 		public override void SetArmorDefaults() {
 			Item.defense = 0;
 		}
