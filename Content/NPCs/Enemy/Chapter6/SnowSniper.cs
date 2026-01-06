@@ -1,21 +1,8 @@
-﻿using ArknightsMod.Content.NPCs.Enemy.ThroughChapter4;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Terraria;
-using Terraria.Audio;
-using Terraria.DataStructures;
-using Terraria.GameContent.Bestiary;
-using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Utilities;
-using Terraria.WorldBuilding;
 
 namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 {

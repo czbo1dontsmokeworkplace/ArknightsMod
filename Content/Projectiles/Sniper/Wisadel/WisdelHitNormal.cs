@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using ArknightsMod.Common;
-using ArknightsMod.Common.Particle;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles.Sniper.Wisadel

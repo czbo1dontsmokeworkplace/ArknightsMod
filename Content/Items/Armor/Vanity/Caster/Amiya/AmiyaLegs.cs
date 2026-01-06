@@ -1,7 +1,4 @@
-﻿using Terraria;
-using Terraria.GameContent.Creative;
-using Terraria.ID;
-using Terraria.ModLoader;
+﻿using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Vanity.Caster.Amiya
 {

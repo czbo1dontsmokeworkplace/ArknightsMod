@@ -499,13 +499,13 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		public override IEnumerable<Entry> ActiveEntries => Pools.SelectMany(p => p.Entries).Where(e => !e.Disabled);
 
 		public Pool AddPool(string name, int slots) {
-			var pool = new Pool(name, slots, new List<Entry>());
+			var pool = new Pool(name, slots, []);
 			Pools.Add(pool);
 			return pool;
 		}
 
 		public Pool AddPoolFromNameSpace(string name, int slots, string fromNamespace, Mod mod) {
-			var pool = new Pool(name, slots, new List<Entry>());
+			var pool = new Pool(name, slots, []);
 
 			var items = mod.GetContent<ModItem>()
 				.Where(item => item.GetType().Namespace == fromNamespace)

@@ -1,10 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using ArknightsMod.Content.Items.Armor.Vanity.Defender.Beagle;
-using Microsoft.Xna.Framework.Input;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor

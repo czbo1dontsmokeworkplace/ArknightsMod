@@ -3,10 +3,6 @@ using ArknightsMod.Systems.Gameplay.Damage;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -14,7 +10,6 @@ using Terraria.GameContent.Bestiary;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using Terraria.WorldBuilding;
 
 namespace ArknightsMod.Content.NPCs.Enemy.TillChapter7
 {

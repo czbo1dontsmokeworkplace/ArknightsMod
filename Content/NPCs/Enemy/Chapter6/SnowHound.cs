@@ -1,20 +1,11 @@
-﻿using ArknightsMod.Content.Items.Material;
-using ArknightsMod.Systems.Gameplay.Damage;
+﻿using ArknightsMod.Systems.Gameplay.Damage;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Net.Http.Headers;
-using System.Security.Cryptography.X509Certificates;
 using Terraria;
-using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.Bestiary;
-using Terraria.GameContent.Biomes.Desert;
-using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Utilities;
 
 namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 {

@@ -1,7 +1,5 @@
 using ArknightsMod.Content.Tiles.Infrastructure;
 using Terraria;
-using Terraria.GameContent.ItemDropRules;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Material

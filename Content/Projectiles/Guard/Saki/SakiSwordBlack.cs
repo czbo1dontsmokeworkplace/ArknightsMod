@@ -7,9 +7,7 @@ using Terraria.GameContent;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
 using static Terraria.ModLoader.ModContent;
-using System.Collections.Generic;
 
 namespace ArknightsMod.Content.Projectiles.Guard.Saki
 {

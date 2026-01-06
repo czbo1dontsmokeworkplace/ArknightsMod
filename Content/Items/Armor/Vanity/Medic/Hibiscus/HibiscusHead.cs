@@ -1,6 +1,4 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+﻿using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Vanity.Medic.Hibiscus
 {

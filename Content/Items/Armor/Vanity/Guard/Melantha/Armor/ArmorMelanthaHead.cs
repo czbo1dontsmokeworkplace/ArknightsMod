@@ -1,9 +1,5 @@
-﻿using ArknightsMod.Content.Items.Armor.Vanity.Defender.Beagle.Armor;
-using ArknightsMod.Content.Tiles.Infrastructure;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using ArknightsMod.Content.Tiles.Infrastructure;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 

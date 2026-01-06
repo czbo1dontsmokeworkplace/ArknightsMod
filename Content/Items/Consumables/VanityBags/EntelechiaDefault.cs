@@ -8,12 +8,12 @@ namespace ArknightsMod.Content.Items.Consumables.VanityBags
 	{
 		protected override List<int> GetItems()
 		{
-			return new List<int>
-			{
+			return
+			[
 				ModContent.ItemType<EntelechiaHead>(),
 				ModContent.ItemType<EntelechiaBody>(),
 				ModContent.ItemType<EntelechiaLegs>()
-			};
+			];
 		}
 	}
 }

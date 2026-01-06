@@ -1,11 +1,6 @@
-﻿using ArknightsMod.Content.Items.Armor.Vanity.Sniper.KroosAlter.Armor;
-using ArknightsMod.Content.Items.Material;
+﻿using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Content.Tiles.Infrastructure;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.DataStructures;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Vanity.Sniper.KroosAlter.Armor

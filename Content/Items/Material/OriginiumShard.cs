@@ -1,6 +1,5 @@
 using ArknightsMod.Content.Tiles.Infrastructure;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Material
@@ -24,7 +23,7 @@ namespace ArknightsMod.Content.Items.Material
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 			recipe = CreateRecipe();
-			recipe.AddIngredient<Material.Device>();
+			recipe.AddIngredient<Device>();
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

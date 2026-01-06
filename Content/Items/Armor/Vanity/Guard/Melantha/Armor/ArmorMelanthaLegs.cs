@@ -1,5 +1,4 @@
 ﻿using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 using ArknightsMod.Content.Tiles.Infrastructure;
 namespace ArknightsMod.Content.Items.Armor.Vanity.Guard.Melantha.Armor

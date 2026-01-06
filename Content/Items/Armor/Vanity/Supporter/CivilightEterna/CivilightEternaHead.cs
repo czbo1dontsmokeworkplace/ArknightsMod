@@ -1,9 +1,7 @@
-﻿using ArknightsMod.Content.Items.Armor.Vanity.Supporter.Ling;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.DataStructures;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Vanity.Supporter.CivilightEterna

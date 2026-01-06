@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Terraria.ModLoader;
-using Terraria.ID;
-using Terraria;
-using Terraria.GameContent.Creative;
+﻿using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Vanity.Guard.Utage
 {

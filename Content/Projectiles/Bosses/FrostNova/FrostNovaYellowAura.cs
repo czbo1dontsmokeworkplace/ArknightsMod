@@ -1,12 +1,5 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
+﻿using Terraria;
 using Terraria.ModLoader;
-using ReLogic.Content;
-using System;
-using static Terraria.ModLoader.ModContent;
-using Terraria.ID;
-using ArknightsMod.Content.Items.Material;
 
 namespace ArknightsMod.Content.Projectiles.Bosses.FrostNova
 {

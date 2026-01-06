@@ -1,17 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using static Terraria.ModLoader.ModContent;
 using Terraria;
-using Terraria.DataStructures;
-using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.IO;
-using System.Linq;
-using Terraria.GameInput;
-using Terraria.Enums;
 
 namespace ArknightsMod.Common.VisualEffects
 {

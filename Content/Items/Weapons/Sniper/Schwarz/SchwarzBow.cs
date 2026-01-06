@@ -1,12 +1,10 @@
 using ArknightsMod.Content.Projectiles.Sniper.Schwarz;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static Mono.CompilerServices.SymbolWriter.CodeBlockEntry;
 
 namespace ArknightsMod.Content.Items.Weapons.Sniper.Schwarz
 {

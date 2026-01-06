@@ -1,12 +1,9 @@
 using ArknightsMod.Content.Projectiles.Guard.Saki;
 using Microsoft.Xna.Framework;
-using Mono.Cecil;
 using Terraria;
-using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static System.Net.Mime.MediaTypeNames;
 using static Terraria.ModLoader.ModContent;
 
 namespace ArknightsMod.Content.Items.Weapons.Guard.Saki

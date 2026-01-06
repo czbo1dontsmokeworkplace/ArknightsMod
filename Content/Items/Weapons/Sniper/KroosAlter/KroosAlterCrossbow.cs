@@ -1,16 +1,8 @@
 ﻿using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Content.Projectiles.Sniper.KroosAlter;
-using ArknightsMod.Content.Tiles;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;

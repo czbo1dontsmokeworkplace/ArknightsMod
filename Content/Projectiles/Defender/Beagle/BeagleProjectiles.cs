@@ -1,8 +1,6 @@
-using ArknightsMod.Content.Items;
 using ArknightsMod.Content.Items.Weapons.Defender.Beagle;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Mono.Cecil;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -10,7 +8,6 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ArknightsMod.Content.Projectiles.Defender.Beagle
 {

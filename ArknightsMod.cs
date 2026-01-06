@@ -1,4 +1,3 @@
-using ArknightsMod.Systems.Gameplay.Skill;
 using ArknightsMod.Content.Items;
 using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.NPCs.Friendly;
@@ -9,22 +8,10 @@ using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using ArknightsMod.Content.NPCs.Enemy.Seamonster;
-using Terraria.Audio;
-using Terraria.DataStructures;
-using System;
-using Microsoft.Xna.Framework;
-using Mono.Cecil;
-using ArknightsMod.Content.Projectiles;
-using ArknightsMod.Common.UI;
-using Terraria.UI;
-using System.Collections.Generic;
-using Terraria.GameContent.UI.Elements;
-using ArknightsMod.Content.Buffs;
-using Humanizer;
 using ReLogic.Content;
 using ArknightsMod.Assets.Effects;
-using ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTargeteer;
+using System.IO;
+using ArknightsMod.Systems;
 
 
 namespace ArknightsMod
@@ -62,8 +49,8 @@ namespace ArknightsMod
 			UpgradeItemBase.LoadLevelData(this);
 			UpgradeWeaponBase.LoadSkillData(this);
 			// Registers a new custom currency
-			OrundumCurrencyId = CustomCurrencyManager.RegisterCurrency(new Content.Currencies.OrundumCurrency(ModContent.ItemType<Content.Items.Orundum>(), 9999L, "Mods.ArknightsMod.Currencies.OrundumCurrency"));
-			OriginiumIngotCurrencyId = CustomCurrencyManager.RegisterCurrency(new Content.Currencies.OriginiumIngotCurrency(ModContent.ItemType<Content.Items.OriginiumIngot>(), 9999L));
+			OrundumCurrencyId = CustomCurrencyManager.RegisterCurrency(new Content.Currencies.OrundumCurrency(ModContent.ItemType<Orundum>(), 9999L, "Mods.ArknightsMod.Currencies.OrundumCurrency"));
+			OriginiumIngotCurrencyId = CustomCurrencyManager.RegisterCurrency(new Content.Currencies.OriginiumIngotCurrency(ModContent.ItemType<OriginiumIngot>(), 9999L));
 			//shader
 			if (Main.netMode != NetmodeID.Server) {
 				IACTSW = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/IACTSW", ReLogic.Content.AssetRequestMode.ImmediateLoad);
@@ -110,7 +97,7 @@ namespace ArknightsMod
 				Filters.Scene["LavaExplosionShaderEffect"] = new Filter(new ScreenShaderData(LavaExplosionShaderEffect, "LavaExplosionShaderEffect"), EffectPriority.VeryHigh);
 				Filters.Scene["LavaExplosionShaderEffect"].Load();
 			}
-			Filters.Scene["AshStorm"] = new Filter(new ScreenShaderData("FilterAsh").UseColor(1f, 0.8f, 0.5f),EffectPriority.High);
+			Filters.Scene["AshStorm"] = new Filter(new ScreenShaderData("FilterAsh").UseColor(1f, 0.8f, 0.5f), EffectPriority.High);
 
 			LoadClient();
 			SkyManager.Instance["ArknightsMod:UnionInvadeSky"] = new UnionInvadeSky();
@@ -132,6 +119,18 @@ namespace ArknightsMod
 				Logger.Error("ÃÏø’Œ∆¿Ìº”‘ÿ ß∞‹£°");
 		}
 
+		public override void HandlePacket(BinaryReader reader, int whoAmI) {
+			var id = reader.ReadInt16();
+			switch ((ArkMessageID)id) {
+				case ArkMessageID.UpdateClosureShopWhenStartDay:
+					ClosureShopSystem.ReadUpdateClosureShop(reader);
+					break;
+			}
+		}
+
+		public enum ArkMessageID : short {
+			UpdateClosureShopWhenStartDay,
+		}
 	}
 	//public class Ex : GlobalNPC
 	//{

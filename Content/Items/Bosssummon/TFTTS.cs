@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.GameContent.Creative;
-using Terraria.ModLoader.IO;
-using System.IO;
-using Terraria.GameContent.ItemDropRules;
 using ArknightsMod.Content.NPCs.Enemy.Seamonster;
 using Terraria.Audio;
 

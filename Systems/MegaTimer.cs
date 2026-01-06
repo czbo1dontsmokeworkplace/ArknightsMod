@@ -1,23 +1,15 @@
 using Terraria.ModLoader;
 using Terraria;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-using MonoMod;
 using MonoMod.RuntimeDetour;
-using MonoMod.RuntimeDetour.HookGen;
-using MonoMod.Utils;
-using MonoMod.Utils.Cil;
 using MonoMod.Cil;
 using Mono.Cecil.Cil;
 using System;
-using System.Numerics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.X86;
 using System.Runtime.Intrinsics;
-using Terraria.GameContent;
-using Mono.Cecil;
 
 namespace ArknightsMod.Systems
 {
@@ -75,7 +67,7 @@ namespace ArknightsMod.Systems
 			_freeNum = _capacity;
 			var updateTick = typeof(Main).GetMethod("Update",
 				BindingFlags.NonPublic | BindingFlags.Instance,
-				null, new Type[] { typeof(GameTime) }, null);
+				null, [typeof(GameTime)], null);
 			_updateTickHook = new ILHook(updateTick, UpdateILInjection);
 		}
 
@@ -271,7 +263,7 @@ namespace ArknightsMod.Systems
 			FieldInfo freePageField = typeof(MegaTimer).GetField("_freePage", BindingFlags.NonPublic | BindingFlags.Static);
 			FieldInfo freeNumField = typeof(MegaTimer).GetField("_freeNum", BindingFlags.NonPublic | BindingFlags.Static);
 			MethodInfo getZeroMethod = typeof(Vector128<int>).GetProperty("Zero").GetGetMethod();
-			MethodInfo opEqualityIntOnly = typeof(Vector128<int>).GetMethod("op_Equality", new[] { typeof(Vector128<int>), typeof(Vector128<int>) });
+			MethodInfo opEqualityIntOnly = typeof(Vector128<int>).GetMethod("op_Equality", [typeof(Vector128<int>), typeof(Vector128<int>)]);
 			MethodInfo loadTimerDataBatchMethod = typeof(MegaTimer).GetMethod("LoadTimerDataBatch", BindingFlags.NonPublic | BindingFlags.Static);
 			MethodInfo executeCallbackBatchMethod = typeof(MegaTimer).GetMethod("ExecuteCallbackBatch", BindingFlags.NonPublic | BindingFlags.Static);
 			MethodInfo batchRecycleTimersMethod = typeof(MegaTimer).GetMethod("BatchRecycleTimers", BindingFlags.NonPublic | BindingFlags.Static);
