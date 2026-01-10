@@ -1,27 +1,10 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Mono.Cecil;
-using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Threading.Channels;
 using Terraria;
-using Terraria.Audio;
 using Terraria.DataStructures;
-using Terraria.GameContent.Creative;
-using Terraria.Graphics;
-using Terraria.Graphics.Shaders;
-using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
-using Terraria.UI.Chat;
-using static System.Net.Mime.MediaTypeNames;
-using static Terraria.ModLoader.PlayerDrawLayer;
 using Color = Microsoft.Xna.Framework.Color;
-using System.Security.Policy;
 
 namespace ArknightsMod.Content.Projectiles
 {

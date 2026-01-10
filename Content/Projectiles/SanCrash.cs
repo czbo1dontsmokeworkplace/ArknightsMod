@@ -1,12 +1,6 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using Terraria;
-using Terraria.Audio;
-using Terraria.GameContent;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using ArknightsMod.Content.Dusts;
 
 namespace ArknightsMod.Content.Projectiles { 
 	public class SanCrash:ModProjectile

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Terraria.ID;
+﻿using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria;
 using Microsoft.Xna.Framework;
@@ -11,7 +6,6 @@ using Terraria.DataStructures;
 using Terraria.Audio;
 using ArknightsMod.Content.Projectiles.Sniper.Wisadel;
 using ArknightsMod.Content.Items.Material;
-using ArknightsMod.Content.Tiles;
 using ArknightsMod.Content.Tiles.Infrastructure;
 
 namespace ArknightsMod.Content.Items.Weapons.Sniper.Wisadel
@@ -57,8 +51,8 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Wisadel
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) => false;
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.CrystallineElectronicUnit>(3);
-			recipe.AddIngredient<Material.OptimizedDevice>(6);
+			recipe.AddIngredient<CrystallineElectronicUnit>(3);
+			recipe.AddIngredient<OptimizedDevice>(6);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

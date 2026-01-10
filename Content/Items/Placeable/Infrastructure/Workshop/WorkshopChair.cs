@@ -1,9 +1,5 @@
-﻿using ArknightsMod.Content.Tiles.Infrastructure;
-using ArknightsMod.Content.Tiles.Infrastructure.HROffice;
-using ArknightsMod.Content.Tiles.Infrastructure.TrainingRoom;
-using ArknightsMod.Content.Tiles.Infrastructure.Workshop;
+﻿using ArknightsMod.Content.Tiles.Infrastructure.Workshop;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Placeable.Infrastructure.Workshop

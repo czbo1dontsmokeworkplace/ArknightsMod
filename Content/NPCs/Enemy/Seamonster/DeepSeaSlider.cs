@@ -1,14 +1,10 @@
 ﻿using Terraria;
-using Terraria.Localization;
 using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Utilities;
 using Microsoft.Xna.Framework;
-
-using Microsoft.Xna.Framework.Graphics;
-using System.Security.Cryptography.X509Certificates;
 using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Systems.Gameplay.Damage;
 

@@ -1,11 +1,8 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.DataStructures;
-using Terraria.ID;
 using Terraria.ModLoader;
-using ArknightsMod.Content.Items.Armor.Vanity.Sniper.Wisadel;
 
 namespace ArknightsMod.Content.Items.Armor.Vanity.Sniper.Wisadel
 {

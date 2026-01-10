@@ -1,24 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent.UI.Elements;
 using Terraria.ModLoader;
 using Terraria.UI;
-using ArknightsMod.Players;
 using ArknightsMod.Systems.Gameplay.Elemental;
-using Terraria.GameContent;
-using Terraria.GameContent.Events;
-using Microsoft.Xna.Framework.Input;
-using Terraria.Audio;
-using Terraria.ID;
-using Terraria.GameInput;
-using log4net.Core;
-using ArknightsMod;
 
 
 

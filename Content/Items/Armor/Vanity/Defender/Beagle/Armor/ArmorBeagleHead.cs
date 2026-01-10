@@ -1,8 +1,5 @@
-using ArknightsMod.Content.Items.Armor.Vanity.Defender.Beagle.Armor;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using Terraria;
-using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Vanity.Defender.Beagle.Armor

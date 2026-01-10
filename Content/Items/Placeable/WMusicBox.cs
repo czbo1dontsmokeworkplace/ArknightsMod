@@ -1,4 +1,3 @@
-using ArknightsMod.Content.Items.Placeable;
 using ArknightsMod.Content.Tiles;
 using Terraria.ID;
 using Terraria.ModLoader;

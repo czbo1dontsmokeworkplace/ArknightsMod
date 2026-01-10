@@ -1,14 +1,8 @@
-using ArknightsMod.Content.Items.Placeable.Infrastructure.HROffice;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
-using Terraria.IO;
-using Terraria.Enums;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
-using Terraria.WorldBuilding;
 
 namespace ArknightsMod.Content.Tiles.Infrastructure
 {

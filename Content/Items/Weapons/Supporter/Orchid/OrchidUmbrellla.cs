@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Terraria.Enums;
+﻿using Terraria.Enums;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria;
 using ArknightsMod.Content.Projectiles.Supporter.Orchid;
 using ArknightsMod.Content.Items.Material;
-using ArknightsMod.Content.Tiles;
 using ArknightsMod.Content.Tiles.Infrastructure;
 
 namespace ArknightsMod.Content.Items.Weapons.Supporter.Orchid
@@ -44,7 +38,7 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Orchid
         }
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.Polyester>(2);
+			recipe.AddIngredient<Polyester>(2);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

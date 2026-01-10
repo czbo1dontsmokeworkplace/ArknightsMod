@@ -2,8 +2,6 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
-using Terraria.UI;
-using System.Collections.Generic;
 
 namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
 {

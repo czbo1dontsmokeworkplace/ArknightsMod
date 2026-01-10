@@ -148,7 +148,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 			Texture2D ringline = Request<Texture2D>("ArknightsMod/Content/NPCs/Enemy/RoaringFlare/ImperialArtilleyCoreTargeteer/AARL").Value;
 			Main.EntitySpriteDraw(ringdot, NPC.Center - Main.screenPosition + new Vector2(0, 3), new Rectangle(0, 0, ringdot.Width, ringdot.Height), Color.White, (float)(0 * NPC.rotation), new Vector2(ringdot.Width / 2, ringdot.Height / 2), 1f, SpriteEffects.None, 0);
 
-			List<Vertex> shadespin = new List<Vertex>();
+			List<Vertex> shadespin = [];
 			float FRota = 0 * (float)Math.PI * movetimer / 60;
 			float halftextwidth = 360;
 			float yscale = 1.333f;

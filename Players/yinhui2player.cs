@@ -1,20 +1,6 @@
-using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.DataStructures;
-using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.IO;
-using Terraria.UI.Chat;
 using ArknightsMod.Content.Items.Weapons.Guard.SilverAsh;
-using System.Security.Policy;
-using UtfUnknown.Core.Analyzers.Chinese;
-using Microsoft.Xna.Framework.Graphics;
-using System.Drawing;
-using Color = Microsoft.Xna.Framework.Color;
-using Rectangle = Microsoft.Xna.Framework.Rectangle;
-using rail;
-using Terraria.Audio;
-using System.Collections.Generic;
 
 namespace ArknightsMod.Players
 {

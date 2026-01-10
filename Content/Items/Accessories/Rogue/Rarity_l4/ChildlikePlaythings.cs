@@ -2,7 +2,6 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
-using Microsoft.Xna.Framework;
 using Terraria.DataStructures;
 
 namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4

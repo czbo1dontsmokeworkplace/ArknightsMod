@@ -1,13 +1,7 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.ItemDropRules;
-using Terraria.ModLoader.Utilities;
-using Terraria.Localization;
-using Terraria.DataStructures;
-using ArknightsMod.Content.Items;
-using System.Runtime.CompilerServices;
 using System;
 
 

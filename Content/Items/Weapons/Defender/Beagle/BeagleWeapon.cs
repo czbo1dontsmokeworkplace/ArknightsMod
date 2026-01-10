@@ -1,17 +1,9 @@
 using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Mono.Cecil;
-using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
-using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ArknightsMod.Content.Items.Weapons.Defender.Beagle
 {

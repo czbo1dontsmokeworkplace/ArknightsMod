@@ -8,12 +8,12 @@ namespace ArknightsMod.Content.Items.Consumables.VanityBags
 	{
 		protected override List<int> GetItems()
 		{
-			return new List<int>
-			{
+			return
+			[
 				ModContent.ItemType<VulcanHead>(),
 				ModContent.ItemType<VulcanBody>(),
 				ModContent.ItemType<VulcanLegs>()
-			};
+			];
 		}
 	}
 }

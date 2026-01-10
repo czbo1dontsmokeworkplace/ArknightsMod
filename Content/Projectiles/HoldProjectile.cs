@@ -1,11 +1,7 @@
-﻿using ArknightsMod.Content.Items.Weapons.Sniper.KroosAlter;
-using ArknightsMod.Players;
+﻿using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.Audio;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles

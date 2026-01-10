@@ -31,7 +31,7 @@ namespace ArknightsMod.Common.Particle
 
 		private static void DrawParticles()
 		{
-			if (!ParticleManager.activeParticles.Any<Particle>())
+			if (!ParticleManager.activeParticles.Any())
 			{
 				return;
 			}
@@ -40,7 +40,7 @@ namespace ArknightsMod.Common.Particle
 			group p by p.DrawBlendState)
 			{
 				RasterizerState screenCull = Main.Rasterizer;
-				Main.spriteBatch.Begin(0, blendGroup.First<Particle>().DrawBlendState, Main.DefaultSamplerState, DepthStencilState.None, screenCull, null, Main.GameViewMatrix.TransformationMatrix);
+				Main.spriteBatch.Begin(0, blendGroup.First().DrawBlendState, Main.DefaultSamplerState, DepthStencilState.None, screenCull, null, Main.GameViewMatrix.TransformationMatrix);
 				foreach (Particle particle in blendGroup)
 				{
 					particle.Draw();
@@ -66,7 +66,7 @@ namespace ArknightsMod.Common.Particle
         {
             int currentParticleID = 0;
             Dictionary<Type, int> dictionary = ParticleManager.particleIDLookup;
-            if (dictionary != null && dictionary.Any<KeyValuePair<Type, int>>())
+            if (dictionary != null && dictionary.Any())
             {
                 currentParticleID = ParticleManager.particleIDLookup.Values.Max() + 1;
             }
@@ -85,10 +85,10 @@ namespace ArknightsMod.Common.Particle
         }
 
 
-        internal static readonly List<Particle> activeParticles = new List<Particle>();
+        internal static readonly List<Particle> activeParticles = [];
 
-		internal static readonly Dictionary<Type, int> particleIDLookup = new Dictionary<Type, int>();
+		internal static readonly Dictionary<Type, int> particleIDLookup = [];
 
-		internal static readonly Dictionary<int, Texture2D> particleTextureLookup = new Dictionary<int, Texture2D>();
+		internal static readonly Dictionary<int, Texture2D> particleTextureLookup = [];
 	}
 }

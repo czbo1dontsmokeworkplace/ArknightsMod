@@ -1,5 +1,4 @@
 using Terraria;
-using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Vanity.Defender.Beagle.Armor
 {

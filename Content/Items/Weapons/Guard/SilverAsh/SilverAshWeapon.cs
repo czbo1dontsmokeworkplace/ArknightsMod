@@ -1,17 +1,11 @@
-﻿using ArknightsMod.Content.Buffs;
-using ArknightsMod.Content.Tiles.Infrastructure;
+﻿using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Content.Projectiles;
 using ArknightsMod.Players;
-using ArknightsMod.Systems.Gameplay.Skill;
 using Microsoft.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Mono.Cecil;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.IO;
 using System.Linq;
 
 using Terraria;
@@ -23,10 +17,7 @@ using Terraria.Graphics;
 using Terraria.ID;
 
 using Terraria.ModLoader;
-
-using static System.Net.Mime.MediaTypeNames;
 using static Terraria.Graphics.VertexStrip;
-using static Terraria.ModLoader.PlayerDrawLayer;
 using Color = Microsoft.Xna.Framework.Color;
 using ArknightsMod.Content.Rarities;
 

@@ -5,13 +5,9 @@ using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ModLoader.Utilities;
 using Terraria.Localization;
-using Terraria.DataStructures;
-using ArknightsMod.Content.Items;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria.Audio;
-
-using Microsoft.Xna.Framework.Graphics;
 
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 {

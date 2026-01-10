@@ -1,8 +1,5 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
-using Terraria.ID;
-using System.Collections.Generic;
-using System.Security.Principal;
 using Microsoft.Xna.Framework;
 using Terraria.DataStructures;
 using ArknightsMod.Content.Projectiles;

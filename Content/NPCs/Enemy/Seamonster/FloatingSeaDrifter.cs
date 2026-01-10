@@ -1,19 +1,14 @@
 ﻿using ArknightsMod.Common.VisualEffects;
 using ArknightsMod.Content.Items.Material;
-using ArknightsMod.Content.NPCs.Enemy.ThroughChapter4;
 using ArknightsMod.Systems.Gameplay.Damage;
-using Humanizer;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Reflection.Metadata;
-using System.Security.Cryptography.X509Certificates;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Utilities;
 

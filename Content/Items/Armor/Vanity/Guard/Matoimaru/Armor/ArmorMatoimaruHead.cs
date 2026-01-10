@@ -1,9 +1,5 @@
-﻿using ArknightsMod.Content.Items.Armor.Vanity.Defender.Beagle.Armor;
-using ArknightsMod.Content.Items.Armor.Vanity.Sniper.KroosAlter.Armor;
-using ArknightsMod.Content.Items.Placeable;
-using ArknightsMod.Content.Tiles.Infrastructure;
+﻿using ArknightsMod.Content.Tiles.Infrastructure;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Vanity.Guard.Matoimaru.Armor

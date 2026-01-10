@@ -25,6 +25,7 @@ StatusMessage: {
 		Complete: 来自帝国的轰炸无人机已被击毁...
 	}
 
+	UpdateClosureShop: Closure's Fashion Shop has been updated—go check it out!
 	AACT.Collapsed: "{0} Collapsed."
 	FN.AllFloorBanned: "{0}没有留意到自己已无立足之地。"
 	Pmp.GetTooClose: "{0}站在了喷发的活火山口上。"

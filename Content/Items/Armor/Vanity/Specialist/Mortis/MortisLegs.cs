@@ -1,7 +1,5 @@
 ﻿using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
-using ArknightsMod.Content.Items.Armor.Vanity;
 
 namespace ArknightsMod.Content.Items.Armor.Vanity.Specialist.Mortis
 {

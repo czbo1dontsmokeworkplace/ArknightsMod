@@ -1,10 +1,7 @@
-﻿using ArknightsMod.Content.Buffs;
-using ArknightsMod.Content.Items.Material;
+﻿using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Content.Projectiles.Sniper.Pozemka;
-using ArknightsMod.Content.Tiles;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
-using ArknightsMod.Systems.Gameplay.Skill;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -233,8 +230,8 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Pozemka
 
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.CrystallineElectronicUnit>(3);
-			recipe.AddIngredient<Material.OrirockConcentration>(9);
+			recipe.AddIngredient<CrystallineElectronicUnit>(3);
+			recipe.AddIngredient<OrirockConcentration>(9);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

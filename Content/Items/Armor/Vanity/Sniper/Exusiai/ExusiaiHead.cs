@@ -1,16 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Terraria.ModLoader;
-using Terraria.ID;
+﻿using Terraria.ModLoader;
 using Terraria;
-using Terraria.GameContent.Creative;
 using Microsoft.Xna.Framework;
-using ArknightsMod.Content.Items.Armor.Vanity.Sniper.Exusiai;
-using ArknightsMod.Content.Items.Armor.Vanity.Guard.Melantha;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.DataStructures;
 
