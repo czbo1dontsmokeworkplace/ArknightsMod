@@ -88,6 +88,8 @@ namespace ArknightsMod.Systems
 						Main.playerInventory = false;
 				}
 			}
+			else
+				RequestUpdateClosureShopWhenStartDay(mod);
 			if (!firstTime)
 				Main.NewText(Language.GetTextValue("Mods.ArknightsMod.StatusMessage.UpdateClosureShop"), Color.Yellow);
 		}
@@ -139,6 +141,20 @@ namespace ArknightsMod.Systems
 
 				OldCannotShopCount = cannotShopCount;
 			}
+			else
+				RequestUpdateCannotShop(mod);
+		}
+
+		public static void RequestUpdateClosureShopWhenStartDay(Mod mod) {
+			var packet = mod.GetPacket();
+			packet.Write((short)ArknightsMod.ArkMessageID.RequestUpdateClosureShopWhenStartDay);
+			packet.Send(255);
+		}
+
+		public static void RequestUpdateCannotShop(Mod mod) {
+			var packet = mod.GetPacket();
+			packet.Write((short)ArknightsMod.ArkMessageID.RequestUpdateCannotShop);
+			packet.Send(255);
 		}
 
 		public static void SendUpdateClosureShop(Mod mod) {

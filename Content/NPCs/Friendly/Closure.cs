@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent.Personalities;
 using Terraria.ID;
 using Terraria.Localization;
@@ -491,6 +492,10 @@ namespace ArknightsMod.Content.NPCs.Friendly
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				});
 			npcShop.Register(); // Name of this shop tab
+		}
+
+		public override void OnSpawn(IEntitySource source) {
+			NPCShopSystem.UpdateClosureShop(Mod, true);
 		}
 
 		public override void ModifyActiveShop(string shopName, Item[] items) {

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.Localization;
@@ -391,9 +392,12 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		}
 
 		public override void AddShops() {
-
 			Shop = new CannotShop();
 			Shop.Register();
+		}
+
+		public override void OnSpawn(IEntitySource source) {
+			NPCShopSystem.TryUpdateCannotShop(Mod);
 		}
 
 		public override void ModifyActiveShop(string shopName, Item[] items) {

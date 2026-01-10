@@ -128,6 +128,12 @@ namespace ArknightsMod
 				case ArkMessageID.UpdateCannotShop:
 					NPCShopSystem.ReadUpdateCannotShop(reader);
 					break;
+				case ArkMessageID.RequestUpdateClosureShopWhenStartDay:
+					NPCShopSystem.UpdateClosureShop(this);
+					break;
+				case ArkMessageID.RequestUpdateCannotShop:
+					NPCShopSystem.TryUpdateCannotShop(this);
+					break;
 				case ArkMessageID.SpawnReinforcements:
 					Cannot.ReadSpawnReinforcements(reader);
 					break;
@@ -136,7 +142,9 @@ namespace ArknightsMod
 
 		public enum ArkMessageID : short {
 			UpdateClosureShopWhenStartDay,
+			RequestUpdateClosureShopWhenStartDay,
 			UpdateCannotShop,
+			RequestUpdateCannotShop,
 			SpawnReinforcements,
 		}
 	}
