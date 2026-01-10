@@ -60,7 +60,9 @@ namespace ArknightsMod.Systems.Gameplay.Damage
 
         [ThreadStatic] private static NPC _currentNPC;
         [ThreadStatic] private static DamageClass _currentDamageClass;
-        public override void Load()
+
+        /* 暂时给钩子注释了
+         * public override void Load()
         {
             IL_NPC.GetIncomingStrikeModifiers += InjectDamageType;
             IL_NPC.HitModifiers.GetDamage += GetDamageInject;
@@ -72,6 +74,7 @@ namespace ArknightsMod.Systems.Gameplay.Damage
             IL_NPC.HitModifiers.GetDamage -= GetDamageInject;
             IL_NPC.HitModifiers.ToHitInfo -= InjectDamageTypeRestore;
         }
+		*/
         public DamageCategorySystem()
         {
             //缓存反射以加速游戏启动
