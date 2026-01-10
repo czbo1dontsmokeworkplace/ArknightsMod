@@ -120,16 +120,24 @@ namespace ArknightsMod
 		}
 
 		public override void HandlePacket(BinaryReader reader, int whoAmI) {
-			var id = reader.ReadInt16();
+			short id = reader.ReadInt16();
 			switch ((ArkMessageID)id) {
 				case ArkMessageID.UpdateClosureShopWhenStartDay:
-					ClosureShopSystem.ReadUpdateClosureShop(reader);
+					NPCShopSystem.ReadUpdateClosureShop(reader);
+					break;
+				case ArkMessageID.UpdateCannotShop:
+					NPCShopSystem.ReadUpdateCannotShop(reader);
+					break;
+				case ArkMessageID.SpawnReinforcements:
+					Cannot.ReadSpawnReinforcements(reader);
 					break;
 			}
 		}
 
 		public enum ArkMessageID : short {
 			UpdateClosureShopWhenStartDay,
+			UpdateCannotShop,
+			SpawnReinforcements,
 		}
 	}
 	//public class Ex : GlobalNPC

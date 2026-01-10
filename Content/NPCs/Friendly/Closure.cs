@@ -495,10 +495,10 @@ namespace ArknightsMod.Content.NPCs.Friendly
 
 		public override void ModifyActiveShop(string shopName, Item[] items) {
 			if (shopName == new NPCShop(Type, ShopName[1]).FullName) {
-				if (ClosureShopSystem.TodaysRotation.Count == 0)
-					ClosureShopSystem.UpdateClosureShop(Mod, true);
+				if (NPCShopSystem.ClosureTodaysRotation.Count == 0)
+					NPCShopSystem.UpdateClosureShop(Mod, true);
 				Array.Fill(items, null);
-				Item[] todayItems = [.. ClosureShopSystem.TodaysRotation.Select(i => new Item(i) {
+				Item[] todayItems = [.. NPCShopSystem.ClosureTodaysRotation.Select(i => new Item(i) {
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})];

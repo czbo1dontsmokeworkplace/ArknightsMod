@@ -44,9 +44,5 @@ namespace ArknightsMod.Systems.Gameplay.Elemental
 			}
 			elemData.ApplyHealingAll(1);
 		}
-
-
-
 	}
-	
 }

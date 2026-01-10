@@ -180,7 +180,7 @@ namespace ArknightsMod.Content.Events
 				}
 			}
 			else {
-				Filters.Scene["UnionInvadeFilter"].Deactivate();
+				Filters.Scene["UnionInvadeFilter"]?.Deactivate();
 			}
 		}
 		

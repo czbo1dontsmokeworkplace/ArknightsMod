@@ -2,12 +2,13 @@
 using ArknightsMod.Content.NPCs.Enemy.Chapter6;
 using ArknightsMod.Content.NPCs.Enemy.ThroughChapter4;
 using ArknightsMod.Content.NPCs.Enemy.TillChapter7;
+using ArknightsMod.Systems;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.Localization;
@@ -66,7 +67,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		}
 
 		public override List<string> SetNPCNameList() {
-			return [DisplayName.Value];
+			return [];
 		}
 
 		public override void SetDefaults() {
@@ -275,9 +276,35 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			}
 
 			if (canSpawn) {
-				int type = Main.rand.Next(Eliteslist);
-				NPC.NewNPC(NPC.GetSource_FromThis(), x * 16 + 8, y * 16, type, Target: target.whoAmI);
+				if (Main.netMode == NetmodeID.MultiplayerClient)
+					SendSpawnReinforcements(Mod, NPC.whoAmI, target.whoAmI, x, y);
+				else
+					SpawnReinforcements(NPC.whoAmI, target.whoAmI, x, y);
 			}
+		}
+
+		public static void SendSpawnReinforcements(Mod mod, int whoAmI, int target, int x, int y) {
+			var packet = mod.GetPacket();
+			packet.Write((short)ArknightsMod.ArkMessageID.SpawnReinforcements);
+			packet.Write(whoAmI);
+			packet.Write(target);
+			packet.Write(x);
+			packet.Write(y);
+			packet.Send(255);
+		}
+
+		public static void ReadSpawnReinforcements(BinaryReader reader) {
+			int whoAmI = reader.ReadInt32();
+			int target = reader.ReadInt32();
+			int x = reader.ReadInt32();
+			int y = reader.ReadInt32();
+			SpawnReinforcements(whoAmI, target, x, y);
+		}
+
+		public static void SpawnReinforcements(int whoAmI, int target, int x, int y) {
+			NPC npc = Main.npc[whoAmI];
+			int type = Main.rand.Next(Eliteslist);
+			NPC.NewNPC(npc.GetSource_FromThis(), x * 16 + 8, y * 16, type, Target: target);
 		}
 
 		public bool anyPlayerNearby = false;
@@ -361,58 +388,20 @@ namespace ArknightsMod.Content.NPCs.Friendly
 						Main.npcChatText = Language.GetTextValue($"Mods.ArknightsMod.Dialogue.Cannot.Touch{TouchCount}");
 				}
 			}
-
 		}
 
 		public override void AddShops() {
 
-			Shop = new CannotShop(NPC.type);
+			Shop = new CannotShop();
 			Shop.Register();
 		}
 
-		public override void OnSpawn(IEntitySource source) {
-			// ✅ 动态计算槽位（现在可以安全使用 NPC.downedXXX）
-			int countBeforeSkeletron = 1 +
-				(NPC.downedSlimeKing ? 1 : 0) +//史莱姆
-				(NPC.downedBoss1 ? 1 : 0) +//克眼
-				(NPC.downedBoss2 ? 1 : 0);//邪恶boss
-
-			int countBetweenSkeletronAndPlantera =
-				(NPC.downedBoss3 ? 1 : 0) +//骷髅王
-				(NPC.downedQueenBee ? 1 : 0) +//蜂后
-				(Main.hardMode ? 1 : 0) +//肉山
-				(NPC.downedMechBoss1 ? 1 : 0) +//机械1
-				(NPC.downedMechBoss2 ? 1 : 0) +//机械2
-				(NPC.downedMechBoss3 ? 1 : 0);//机械3
-
-			int countBetweenPlanteraAndDukeFishron =
-				(NPC.downedPlantBoss ? 1 : 0) +//世花
-				(NPC.downedGolemBoss ? 1 : 0);//石巨人
-
-			int countFromFishronOnward =
-				(NPC.downedFishron ? 1 : 0) +//猪鲨
-				(NPC.downedEmpressOfLight ? 1 : 0) +//光女
-				(NPC.downedAncientCultist ? 1 : 0) +//教徒
-				(NPC.downedMoonlord ? 1 : 0);//月总
-
-			// ✅ 创建临时 CannotShop（不注册到全局），仅用于生成商品
-			var tempShop = new CannotShop(NPC.type);
-			if (countBeforeSkeletron > 0)
-				tempShop.AddPoolFromNameSpace("Rogue.Rarity_l1", countBeforeSkeletron, "ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l1", Mod);
-			if (countBetweenSkeletronAndPlantera > 0)
-				tempShop.AddPoolFromNameSpace("Rogue.Rarity_l2", countBetweenSkeletronAndPlantera, "ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l2", Mod);
-			if (countBetweenPlanteraAndDukeFishron > 0)
-				tempShop.AddPoolFromNameSpace("Rogue.Rarity_l3", countBetweenPlanteraAndDukeFishron, "ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3", Mod);
-			if (countFromFishronOnward > 0)
-				tempShop.AddPoolFromNameSpace("Rogue.Rarity_l4", countFromFishronOnward, "ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4", Mod);
-
-			// ✅ 生成商品列表
-			shopItems.Clear();
-			shopItems.AddRange(tempShop.GenerateNewInventoryList());
-
-			// 同步到客户端（多人游戏）
-			if (Main.netMode == NetmodeID.Server) {
-				NetMessage.SendData(MessageID.WorldData);
+		public override void ModifyActiveShop(string shopName, Item[] items) {
+			NPCShopSystem.TryUpdateCannotShop(Mod);
+			Array.Fill(items, null);
+			Item[] shopItems = [.. NPCShopSystem.CannotShopItems.Select(i => new Item(i))];
+			for (int i = 0; i < items.Length && i < shopItems.Length; i++) {
+				items[i] = shopItems[i]?.Clone();
 			}
 		}
 
@@ -441,7 +430,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 					return base.SpawnChance(spawnInfo);
 			}
 			if (!spawnInfo.Invasion && !spawnInfo.Sky && (NPC.downedBoss1 || NPC.downedBoss2 || NPC.downedBoss3))
-				return 0.5f;
+				return 0.2f;
 			return base.SpawnChance(spawnInfo);
 		}
 
@@ -451,7 +440,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		}
 	}
 
-	public class CannotShop(int npcType) : AbstractNPCShop(npcType)
+	public class CannotShop() : AbstractNPCShop(ModContent.NPCType<Cannot>())
 	{
 		public new record Entry(Item Item, List<Condition> Conditions) : AbstractNPCShop.Entry
 		{
