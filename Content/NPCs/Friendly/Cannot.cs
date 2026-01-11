@@ -20,7 +20,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 	[AutoloadHead]
 	public class Cannot : ModNPC
 	{
-		// The list of items in the traveler's shop. Saved with the world and set when the traveler spawns. Synced by the server to clients in multi player
+		// 修改：保存完整的 Item 对象而不是只保存 type
 		public readonly static List<Item> shopItems = [];
 
 		// A static instance of the declarative shop, defining all the items which can be brought. Used to create a new inventory when the NPC spawns
@@ -135,37 +135,6 @@ namespace ArknightsMod.Content.NPCs.Friendly
 
 		}
 
-		#region 孩子们有不明白的不要嗯写记得去请教会的人，这里是闭门造车警示案例
-		//public void SummonElites() {
-		//	if (Eliteslist.Length == 0)
-		//		return;
-
-		//	// 随机选择一个精英类型
-		//	int randomIndex = Main.rand.Next(Eliteslist.Length);
-		//	int selectedNPCType = Eliteslist[randomIndex];
-
-		//	// 计算生成位置：在 Cannot 上方偏移（避免卡进地形）
-		//	int offsetX = Main.rand.NextBool()
-		//		? Main.screenWidth / 2 + Main.rand.Next(0, 160)
-		//		: -(Main.screenWidth / 2 + Main.rand.Next(0, 160));
-		//	int offsetY = -Main.rand.Next(120, 180); // 向上偏移
-
-		//	Vector2 spawnPosition = new Vector2(NPC.Center.X + offsetX, NPC.Center.Y + offsetY);
-
-		//	// 确保在有效范围内（可选）
-		//	//if (!WorldGen.InWorld((int)spawnPosition.X / 16, (int)spawnPosition.Y / 16))
-		//		//return;
-
-		//	// 生成 NPC
-		//	NPC.NewNPC(
-		//		NPC.GetSource_FromAI(), // 或 EntitySource_NaturalSpawn
-		//		(int)spawnPosition.X,
-		//		(int)spawnPosition.Y,
-		//		selectedNPCType
-		//	);
-		//}
-		#endregion
-
 		public void TrySpawnReinforcements(Player target) {
 			int x = 0;
 			int y = 0;
@@ -265,7 +234,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 							}
 						}
 
-						if (x >= minLeft && x <= minRight){
+						if (x >= minLeft && x <= minRight) {
 							canSpawn = false;
 							break;
 						}
@@ -337,36 +306,12 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		public override LocalizedText DeathMessage => Language.GetText("Mods.ArknightsMod.NPCs.Cannot.DeathMessage.Runaway");
 
 		public override bool ModifyDeathMessage(ref NetworkText customText, ref Color color) {
-			if (Runaway){
+			if (Runaway) {
 				color = Color.LightBlue;
 				return base.ModifyDeathMessage(ref customText, ref color);
 			}
 			return false;
 		}
-
-		//private void DropLoot() {
-		//	// 随机选一个商品
-		//	Item selectedItem = shopItems[Main.rand.Next(shopItems.Count)];
-
-		//	// 克隆一份用于掉落
-		//	Item dropItem = selectedItem.Clone();
-
-		//	// 设置数量为 1
-		//	dropItem.stack = 1;
-
-		//	// 掉落物品
-		//	Item.NewItem(
-		//		NPC.GetSource_Loot(),
-		//		NPC.getRect(),
-		//		dropItem.type,
-		//		dropItem.stack,
-		//		noGrabDelay: false,
-		//		prefixGiven: dropItem.prefix
-		//	);
-
-		//	// 掉落后消失
-		//	Despawn();
-		//}
 
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
 			npcLoot.Add(ItemDropRule.ByCondition(new CannotDead(), ModContent.ItemType<OriginiumIngot>(), 1, 2, 3));
@@ -403,7 +348,8 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		public override void ModifyActiveShop(string shopName, Item[] items) {
 			NPCShopSystem.TryUpdateCannotShop(Mod);
 			Array.Fill(items, null);
-			Item[] shopItems = [.. NPCShopSystem.CannotShopItems.Select(i => new Item(i))];
+			// 直接克隆完整的 Item 对象,保留 shopSpecialCurrency 等所有属性
+			Item[] shopItems = [.. NPCShopSystem.CannotShopItems.Select(i => i.Clone())];
 			for (int i = 0; i < items.Length && i < shopItems.Length; i++) {
 				items[i] = shopItems[i]?.Clone();
 			}

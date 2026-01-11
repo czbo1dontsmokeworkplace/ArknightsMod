@@ -14,7 +14,8 @@ namespace ArknightsMod.Systems
 	public class NPCShopSystem : ModSystem
 	{
 		public static List<int> ClosureTodaysRotation = [];
-		public static List<int> CannotShopItems = [];
+		// 修改：保存完整的 Item 对象而不是只保存 type
+		public static List<Item> CannotShopItems = [];
 		public static int OldCannotShopCount;
 
 		public static readonly List<int> SixStars = [
@@ -99,7 +100,9 @@ namespace ArknightsMod.Systems
 				int countBeforeSkeletron = 1 +
 					(NPC.downedSlimeKing ? 1 : 0) +//史莱姆
 					(NPC.downedBoss1 ? 1 : 0) +//克眼
-					(NPC.downedBoss2 ? 1 : 0);//邪恶boss
+					(NPC.downedBoss2 ? 1 : 0) +//邪恶boss
+					(NPC.downedDeerclops ? 1 : 0);//巨鹿
+
 
 				int countBetweenSkeletronAndPlantera =
 					(NPC.downedBoss3 ? 1 : 0) +//骷髅王
@@ -133,8 +136,9 @@ namespace ArknightsMod.Systems
 				if (countFromFishronOnward > 0)
 					tempShop.AddPoolFromNameSpace("Rogue.Rarity_l4", countFromFishronOnward, "ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4", mod);
 
+				// 保存完整的 Item 对象
 				CannotShopItems.Clear();
-				CannotShopItems.AddRange(tempShop.GenerateNewInventoryList().Select(i => i.type));
+				CannotShopItems.AddRange(tempShop.GenerateNewInventoryList());
 
 				if (Main.dedServ)
 					SendUpdateCannotShop(mod);
@@ -167,12 +171,14 @@ namespace ArknightsMod.Systems
 			packet.Send();
 		}
 
+		// 修改：同步自定义货币信息
 		public static void SendUpdateCannotShop(Mod mod) {
 			var packet = mod.GetPacket();
 			packet.Write((short)ArknightsMod.ArkMessageID.UpdateCannotShop);
 			packet.Write(CannotShopItems.Count);
 			for (int i = 0; i < CannotShopItems.Count; i++) {
-				packet.Write(CannotShopItems[i]);
+				packet.Write(CannotShopItems[i].type);
+				packet.Write(CannotShopItems[i].shopSpecialCurrency);
 			}
 			packet.Send();
 		}
@@ -190,12 +196,18 @@ namespace ArknightsMod.Systems
 			}
 		}
 
+		// 读取并恢复自定义货币信息
 		public static void ReadUpdateCannotShop(BinaryReader reader) {
 			CannotShopItems = [];
 			try {
 				int count = reader.ReadInt32();
 				for (int i = 0; i < count; i++) {
-					CannotShopItems.Add(reader.ReadInt32());
+					int type = reader.ReadInt32();
+					int currency = reader.ReadInt32();
+					var item = new Item(type) {
+						shopSpecialCurrency = currency
+					};
+					CannotShopItems.Add(item);
 				}
 			}
 			catch {
