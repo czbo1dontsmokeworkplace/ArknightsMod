@@ -22,7 +22,7 @@ namespace ArknightsMod.Content.Projectiles.Defender.NoirCorne
             Projectile.damage = 0;
             Projectile.width = 26;
             Projectile.height = 34;
-            Projectile.friendly = true;
+            Projectile.friendly = false;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.usesLocalNPCImmunity = true;
@@ -96,7 +96,7 @@ namespace ArknightsMod.Content.Projectiles.Defender.NoirCorne
                 Projectile.rotation = Projectile.rotation.AngleLerp(0, Projectile.ai[1]);
                 Projectile.Center = Vector2.Lerp(
                     Projectile.Center,
-                    player.MountedCenter + new Vector2(12 * player.direction, player.gfxOffY),
+                    player.MountedCenter + new Vector2(32 * player.direction, player.gfxOffY),
                     Projectile.ai[1]
                 );
 
@@ -135,13 +135,12 @@ namespace ArknightsMod.Content.Projectiles.Defender.NoirCorne
             float knockback = item.knockBack;
             int owner = Projectile.owner;
             // bool doDamage = False;
-
             // 用一个前方矩形区域当作碰撞判定
             Rectangle hitbox = new Rectangle(
                 (int)(Projectile.Center.X +player.direction*20 - 13 ),
                 (int)(Projectile.Center.Y - 34),
-                52,
-                68
+                26,
+                34
             );
 
             for (int i = 0; i < Main.maxNPCs; i++)

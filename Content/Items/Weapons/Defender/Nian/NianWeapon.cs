@@ -37,7 +37,6 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Nian
 			Item.value = Item.sellPrice(0, 40, 0, 0);
 			Item.consumable = false;
 
-			// Use Properties
 			Item.useStyle = ItemUseStyleID.Swing; 
 			Item.useAnimation = 45;
 			Item.useTime = 45;

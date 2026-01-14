@@ -175,3 +175,20 @@ ChenSword_Item: {
 		Desc: Mods.ArknightsMod.Skills.ChenSword_Item.3.Desc
 	}
 }
+
+SchwarzBow: {
+	1: {
+		Desc: The next attack deals 220% damage, 80% chance to deal 160% damage and inflict a defense reduction for the next hit
+		Label: Charged Shot
+	}
+
+	2: {
+		Desc: ATK +130%, 50% chance to deal 160% damage and inflict a defense reduction
+		Label: Sharp Eye
+	}
+
+	3: {
+		Label: Final Tactics
+		Desc: Attack Interval increases a bit, ATK +180%, 100% chance to deal 160% damage and inflict a defense reduction
+	}
+}
