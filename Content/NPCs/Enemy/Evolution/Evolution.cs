@@ -11,10 +11,12 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.NPCs.Enemy.Evolution
 {
 	public class Evolution: ModNPC {
+		//計時器方面的東西之後改到ai的第二位置 目前放置如下NPC.ai = [stage,stagetime]
+		//交給明天有空的我
+
+
 		//转阶段参数
-		private bool Stage1 = true;
-		private bool Stage2 = false;
-		private bool Stage3 = false;
+		private float Stage = 1;
 		private int Stage1Time = 0;
 		private int Stage2Time = 0;
 		private int Stage3Time = 0;
@@ -25,8 +27,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution
 		//数值参数
 		private int defense = 50;
 		private int SpellResist = 50; // 法术抗性(填明日方舟里的法抗）
-		private int Health = 5000;
-		private int AttackDamage1 = 70;//接触伤害
+		private int Health = 999999999;
+		private int AttackDamage1 = 0;//接触伤害
 		private int AttackDamage2 = 60;//射弹伤害
 		private int AttackDamage3 = 80;//真实伤害
 		//动画参数
@@ -42,6 +44,10 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution
 		private int LeftShield = 0;
 		private int RightShield = 0;
 		private int AllShield = 0;
+
+		private int roundDamge_S1 = 100; // 階段一的全圖攻擊傷害
+		private int roundDamge_S2 = 200; // 階段一的全圖攻擊傷害
+		private int roundDamge_S3 = 400; // 階段一的全圖攻擊傷害
 		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
 			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
 				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Surface,
@@ -55,67 +61,68 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution
 			};
 			NPCID.Sets.NPCBestiaryDrawOffset.Add(Type, value);
 		}
-		public override void SetDefaults() {
+			public override void SetDefaults() {
 			NPC.lifeMax = Health;
 			NPC.defense = defense;
 			NPC.damage = AttackDamage1;
 			NPC.scale = 2f;
 			NPC.boss = true;
 			NPC.knockBackResist = 0;
+			NPC.ai = [Stage];
 			Music = MusicLoader.GetMusicSlot("ArknightsMod/Sounds/Music/Evolution");
 			if (Main.expertMode || Main.masterMode) {
 				NPC.lifeMax = (int)(NPC.lifeMax * 0.75);
 				NPC.damage = (int)(NPC.damage * 0.75);
 			}
-			if (Stage1 || Stage2) {
+			if (NPC.ai[0]<3) {
 
 				NPC.width = 55;
 				NPC.height = 100;
 			}
-			if (Stage3) {
+			else {
 				NPC.width = 75;
 				NPC.height = 100;
 			}
-
 			var genreNPC = NPC.GetGlobalNPC<DamageCategoryNPC>();
 			genreNPC.artsResistance = 0.25f;
-
 		}
 		public override void FindFrame(int frameHeight) {
 			framecounter++;
 
-			if (Stage1) {
-				if (framecounter >= frameSpeed) {
-					NPC.frame.Y += frameHeight;
-					framecounter = 0;
-				}
-				if (NPC.frame.Y >= Stage1Frame * frameHeight) {
-					NPC.frame.Y = 0;
-				}
-			}
-			else if (Stage2) {
-				if (framecounter >= frameSpeed) {
-					NPC.frame.Y += frameHeight;
-					framecounter = 0;
-				}
-				if (NPC.frame.Y <= Stage1Frame * frameHeight) {
-					NPC.frame.Y = (Stage1Frame + 1) * frameHeight;
-				}
-				if (NPC.frame.Y >= Stage2Frame * frameHeight) {
-					NPC.frame.Y = (Change12Frame + 1) * frameHeight;
-				}
-			}
-			else if (Stage3) {
-				if (framecounter >= frameSpeed) {
-					NPC.frame.Y += frameHeight;
-					framecounter = 0;
-				}
-				if (NPC.frame.Y <= Stage2Frame * frameHeight) {
-					NPC.frame.Y = (Stage2Frame + 1) * frameHeight;
-				}
-				if (NPC.frame.Y >= Stage3Frame * frameHeight) {
-					NPC.frame.Y = (Change23Frame + 1) * frameHeight;
-				}
+			switch (NPC.ai[0]) {
+				case 1:
+					if (framecounter >= frameSpeed) {
+						NPC.frame.Y += frameHeight;
+						framecounter = 0;
+					}
+					if (NPC.frame.Y >= Stage1Frame * frameHeight) {
+						NPC.frame.Y = 0;
+					}
+					break;
+				case 2:
+					if (framecounter >= frameSpeed) {
+						NPC.frame.Y += frameHeight;
+						framecounter = 0;
+					}
+					if (NPC.frame.Y <= Stage1Frame * frameHeight) {
+						NPC.frame.Y = (Stage1Frame + 1) * frameHeight;
+					}
+					if (NPC.frame.Y >= Stage2Frame * frameHeight) {
+						NPC.frame.Y = (Change12Frame + 1) * frameHeight;
+					}
+					break;
+				case 3:
+					if (framecounter >= frameSpeed) {
+						NPC.frame.Y += frameHeight;
+						framecounter = 0;
+					}
+					if (NPC.frame.Y <= Stage2Frame * frameHeight) {
+						NPC.frame.Y = (Stage2Frame + 1) * frameHeight;
+					}
+					if (NPC.frame.Y >= Stage3Frame * frameHeight) {
+						NPC.frame.Y = (Change23Frame + 1) * frameHeight;
+					}
+					break;
 			}
 		}
 		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
@@ -165,7 +172,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution
 			if (LeftShield > 0) {
 				spriteBatch.Draw(
 				Shield,
-				NPC.Center - screenPos + new Vector2(-130, -130f), 
+				NPC.Center - screenPos + new Vector2(-130, -130f),
 				new Rectangle(0,0,Shield.Width, Shield.Height),
 				LeftShieldcolor,
 				0,
@@ -203,7 +210,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution
 			}
 			return false;
 		}
-		
+
 		public override void OnSpawn(IEntitySource source) {
 			fadeTimer = 60; // 持续60帧
 			NPC.color = Color.Black; // 初始为纯黑
@@ -221,22 +228,21 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution
 				AllShield--;
 			}
 			//控制转阶段
-			if (Stage1) {
+			//預計要改的地方先改參數讓ERROR消失
+			if (NPC.ai[0]==1) {
 				Stage1Time++;
 				if (NPC.life <= NPC.lifeMax * 0.6f || Stage1Time > Stage1MaxTime * 60) {
-					Stage1 = false;
-					Stage2 = true;
+					NPC.ai[0] = 2;
 				}
 
 			}
-			if (Stage2) {
+			if (NPC.ai[0]==2) {
 				Stage2Time++;
 				if (NPC.life <= NPC.lifeMax * 0.2f || Stage2Time > Stage2MaxTime * 60) {
-					Stage2 = false;
-					Stage3 = true;
+					NPC.ai[0] = 3;
 				}
 			}
-			if (Stage3) {
+			if (NPC.ai[0]==3) {
 				NPC.width = 170;
 				NPC.height = 200;
 			}
@@ -248,7 +254,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution
 			var genreNPC = NPC.GetGlobalNPC<DamageCategoryNPC>();
 			if ((genreNPC.DamageGenre & 0x02) != 0) {
 
-				
+
 				if (genreNPC.artsResistance < 20) {
 					for (int i = 0; i < 3; i++) {
 						Dust.NewDust(NPC.position, NPC.width, NPC.height,
@@ -262,36 +268,37 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution
 					}
 				}
 			}
-			if (Stage1 & (projectile.velocity.X >= NPC.velocity.X || projectile.position.X <= NPC.position.X)) {
+
+			if (NPC.ai[0]==1 && (projectile.velocity.X >= NPC.velocity.X || projectile.position.X <= NPC.position.X)) {
 				genreNPC.artsResistance = 0.8f;
 				RightShield = 30;
 			}
-			if (Stage2 & (projectile.velocity.X <= NPC.velocity.X || projectile.position.X >= NPC.position.X)) {
+			if (NPC.ai[0]==2 && (projectile.velocity.X <= NPC.velocity.X || projectile.position.X >= NPC.position.X)) {
 				genreNPC.artsResistance = 0.8f;
 				LeftShield = 30;
 			}
-			if (Stage3) {
+			if (NPC.ai[0]==3) {
 				genreNPC.artsResistance = 0.99f;
 				AllShield = 60;
 			}
 
 		}
 		public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers) {
-			if (Stage1 & player.position.X <= NPC.position.X) {
+			if (NPC.ai[0]==1 && player.position.X <= NPC.position.X) {
 				modifiers.FinalDamage *= 0.2f;
 				RightShield = 30;
 			}
-			if (Stage2 & player.position.X >= NPC.position.X) {
+			if (NPC.ai[0]==2 && player.position.X >= NPC.position.X) {
 				modifiers.FinalDamage *= 0.2f;
 				LeftShield = 30;
 			}
-			if (Stage3) {
+			if (NPC.ai[0]==3) {
 				modifiers.FinalDamage *= 0.01f;
 				AllShield= 60;
 			}
 		}
 	}
-		
+
 
 }
 
