@@ -8,6 +8,7 @@ using ArknightsMod.Content.Items.Weapons.Guard.Thorns;
 using ArknightsMod.Content.Items.Weapons.Defender.Beagle;
 using ArknightsMod.Content.Items.Weapons.Guard.SilverAsh;
 using ArknightsMod.Content.Items.Weapons.Sniper.Shirayuki;
+using ArknightsMod.Content.Items.Weapons.Sniper.Schwarz;
 using ArknightsMod.Content.Items.Weapons.Caster.Lava;
 using ArknightsMod.Content.Items.Weapons.Sniper.KroosAlter;
 using ArknightsMod.Content.Items.Weapons.Sniper.Pozemka;
@@ -73,6 +74,7 @@ namespace ArknightsMod.Players
 		public bool HoldPozemkaCrossbow = false;
 		public bool HoldNianWeapon = false;
 		public bool HoldNoirShield = false;
+		public bool HoldSchwarzBow = false;
 
 		private int oldHeld;
 		private int oldSkill;
@@ -176,7 +178,7 @@ namespace ArknightsMod.Players
 			HoldKroosAlterCrossbow = Main.LocalPlayer.HeldItem.ModItem is KroosAlterCrossbow;
 			HoldPozemkaCrossbow = Main.LocalPlayer.HeldItem.ModItem is PozemkaCrossbow;
 			HoldNianWeapon = Main.LocalPlayer.HeldItem.ModItem is NianWeapon;
-
+			HoldSchwarzBow = Main.LocalPlayer.HeldItem.ModItem is SchwarzBow;
 			// 基于武器的技能系统
 			Item item = Main.LocalPlayer.HeldItem;
 			if (item.ModItem is UpgradeWeaponBase ark) {
@@ -573,6 +575,29 @@ namespace ArknightsMod.Players
 				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 30f };
 				SkillActiveTimeS2List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 35f };
 				SkillActiveTimeS3List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 45f };
+				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+				StockMaxS2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+				StockMaxS3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+				SetSkillData();
+			}
+
+			else if (HoldSchwarzBow) {
+				IconName = "SchwarzBow";
+				HowManySkills = 3;
+				SkillLevel = new() { 10, 10, 10 };
+				ChargeTypeIsPerSecond = new() { false, true, true };
+				AutoTrigger = new() { true, false, false };
+				ShowSummonIconBySkills = new() { false, false, false };
+
+				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				InitialSPs2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 20 };
+				InitialSPs3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 12 };
+				MaxSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 };
+				MaxSPs2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 30 };
+				MaxSPs3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 25 };
+				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0.4f };
+				SkillActiveTimeS2List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 40f };
+				SkillActiveTimeS3List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 25f };
 				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
 				StockMaxS2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
 				StockMaxS3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
