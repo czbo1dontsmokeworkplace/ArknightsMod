@@ -1,6 +1,3 @@
-using Terraria;
-using Terraria.ModLoader;
-
 namespace ArknightsMod.Content.Items.Material
 {
 	public class LoxicKohl : ArknightsMaterial

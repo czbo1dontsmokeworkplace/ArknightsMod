@@ -1,20 +1,12 @@
-﻿using ArknightsMod.Common.VisualEffects;
-using ArknightsMod.Content.Items;
-using ArknightsMod.Systems.Gameplay.Damage;
+﻿using ArknightsMod.Systems.Gameplay.Damage;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.GameContent.Bestiary;
-using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Utilities;
 
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 {

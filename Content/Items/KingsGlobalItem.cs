@@ -1,13 +1,7 @@
 ﻿using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.GameContent;
-using Terraria.GameContent.Personalities;
 using Terraria.Localization;
 using System.Collections.Generic;
-using Terraria.DataStructures;
-using Terraria.GameContent.Bestiary;
-using Terraria.Utilities;
 
 namespace ArknightsMod.Common.Items
 {

@@ -1,11 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.GameContent.Bestiary;
-using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -235,7 +232,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		}
 
 		public override void AI() {
-			if (!Owner.active || Owner.type != ModContent.NPCType<NPCs.Enemy.ThroughChapter4.ShieldGuard>()) {
+			if (!Owner.active || Owner.type != ModContent.NPCType<ShieldGuard>()) {
 				Projectile.Kill();
 				return;
 			}

@@ -1,16 +1,10 @@
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.DataStructures;
-using Terraria.Audio;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using System.Collections.Generic;
 using ArknightsMod.Systems.Gameplay.Elemental;
 using ArknightsMod.Content.NPCs.Enemy.Seamonster;
 using ArknightsMod.Common.UI;
-using ArknightsMod.Players;
-using ArknightsMod.Content.Buffs;
-using System;
 
 
 //如果是元素损伤不如命名成ElementalDamage，Sanity是理智

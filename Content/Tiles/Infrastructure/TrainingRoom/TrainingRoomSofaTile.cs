@@ -1,14 +1,10 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Localization;
 using Terraria.ID;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
-using Terraria.Audio;
 using Terraria.ObjectData;
-using ArknightsMod.Content.Items.Placeable.Infrastructure;
-using ArknightsMod.Content.Items.Placeable.Infrastructure.Workshop;
 using Terraria.GameContent.ObjectInteractions;
 using Terraria.GameContent;
 using ArknightsMod.Content.Items.Placeable.Infrastructure.TrainingRoom;

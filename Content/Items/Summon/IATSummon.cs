@@ -3,9 +3,7 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static Terraria.ModLoader.ModContent;
-using Terraria.Localization;
 using ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTargeteer;
-using ArknightsMod.Content.Tiles;
 using ArknightsMod.Content.Tiles.Infrastructure;
 
 namespace ArknightsMod.Content.Items.Summon

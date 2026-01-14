@@ -1,32 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using Terraria;
-using Terraria.DataStructures;
-using Terraria.ID;
-using System.Windows;
-using System.IO;
-using SDL2;
-using System.Reflection;
-using System.Windows.Forms;
-using Terraria.ModLoader;
-using Terraria.Localization;
-using static Terraria.ModLoader.ModContent;
-using Terraria.Audio;
-using Terraria.ModLoader.IO;
-using ReLogic.Utilities;
-using Terraria.Graphics;
-using Terraria.Utilities;
-using Color = Microsoft.Xna.Framework.Color;
-using Rectangle = Microsoft.Xna.Framework.Rectangle;
-using Microsoft.Xna.Framework.Audio;
-using System.Text;
-using Terraria.Chat;
-using Terraria.GameContent;
-using static tModPorter.ProgressUpdate;
 
 namespace ArknightsMod.Common
 {

@@ -1,12 +1,7 @@
-using Terraria;
 using Terraria.ModLoader;
-using Terraria.UI;
-using Microsoft.Xna.Framework;
 using System.Runtime.CompilerServices;
-using ArknightsMod.Systems.Gameplay.Elemental;
 using System.Runtime.InteropServices;
 using System;
-using Terraria.DataStructures;
 
 namespace ArknightsMod.Systems.Gameplay.Elemental
 {

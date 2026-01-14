@@ -1,5 +1,4 @@
-﻿using ArknightsMod.Content.Buffs;
-using ArknightsMod.Content.Projectiles.Sniper.Exusiai;
+﻿using ArknightsMod.Content.Projectiles.Sniper.Exusiai;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;

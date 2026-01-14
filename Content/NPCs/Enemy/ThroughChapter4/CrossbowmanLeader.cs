@@ -1,9 +1,5 @@
-using ArknightsMod.Common.VisualEffects;
-using ArknightsMod.Content.Items;
-using ArknightsMod.Content.Projectiles;
 using ArknightsMod.Systems.Gameplay.Damage;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Audio;
@@ -13,7 +9,6 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Utilities;
-using static Terraria.ModLoader.ModContent;
 
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 {

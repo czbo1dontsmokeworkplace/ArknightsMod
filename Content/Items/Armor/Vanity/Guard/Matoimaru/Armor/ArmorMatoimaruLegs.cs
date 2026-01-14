@@ -1,8 +1,6 @@
 ﻿using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 using ArknightsMod.Content.Tiles.Infrastructure;
-using ArknightsMod.Content.Items.Placeable;
 
 namespace ArknightsMod.Content.Items.Armor.Vanity.Guard.Matoimaru.Armor
 {
@@ -13,7 +11,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Guard.Matoimaru.Armor
 		public override void SetArmorDefaults() {
 			Item.defense = 5;
 		}
-		public override (float ratio, int value) LifeReplacement => (0.25f, 101);
+		public override int LifeBonus => 101;
 		public override void AddRecipes() {
 			CreateRecipe()
 			.AddIngredient(ModContent.ItemType<MatoimaruLegs>(), 1)

@@ -1,8 +1,4 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-
-namespace ArknightsMod.Content.Items.Material
+﻿namespace ArknightsMod.Content.Items.Material
 {
 	public class DamagedDevice : ArknightsMaterial
 	{

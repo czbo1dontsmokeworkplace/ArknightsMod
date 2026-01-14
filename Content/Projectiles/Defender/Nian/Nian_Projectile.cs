@@ -79,7 +79,7 @@ namespace ArknightsMod.Content.Projectiles.Defender.Nian
 			);
 			// 断琴那copy的拖尾,不知道为什么oldrot有pi/2的差距
 			float rangeFix = 64 * Projectile.scale;
-			List<Vertex> vertices = new List<Vertex>();
+			List<Vertex> vertices = [];
 			for (int i = 0; i < ProjectileID.Sets.TrailCacheLength[Type]; i++)
             {
 				Color coordColor = Main.hslToRgb(0.03f, 1f - i / 15f, 0.5f)*0.7f;

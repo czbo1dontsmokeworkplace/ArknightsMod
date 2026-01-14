@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
 using Terraria;
 
@@ -14,7 +13,7 @@ namespace ArknightsMod.Common.VisualEffects
         public static void ProjectileDrawTailByConstWidth(Projectile Projectile, Texture2D Tail, Vector2 DrawOrigin, Color TailColor1, Color TailColor2, float Width, bool Lerp)
         {
             Vector2 drawOrigin = DrawOrigin;
-            List<CustomVertexInfo> bars = new List<CustomVertexInfo>();
+            List<CustomVertexInfo> bars = [];
             for (int i = 1; i < Projectile.oldPos.Length; ++i)
             {
                 if (Projectile.oldPos[i] == Vector2.Zero) break;
@@ -34,7 +33,7 @@ namespace ArknightsMod.Common.VisualEffects
                 bars.Add(new CustomVertexInfo(Projectile.oldPos[i] + normalDir * width + drawOrigin - Main.screenPosition + offset, color, new Vector3(factor, 1, w)));
                 bars.Add(new CustomVertexInfo(Projectile.oldPos[i] + normalDir * -width + drawOrigin - Main.screenPosition + offset, color, new Vector3(factor, 0, w)));
             }
-            List<CustomVertexInfo> Vx = new List<CustomVertexInfo>();
+            List<CustomVertexInfo> Vx = [];
             if (bars.Count > 2)
             {
                 Vx.Add(bars[0]);
@@ -60,7 +59,7 @@ namespace ArknightsMod.Common.VisualEffects
 		/// </summary>
 		public static void NPCDrawTailByConstWidth(NPC NPC, Texture2D Tail, Vector2 DrawOrigin, Color TailColor1, Color TailColor2, float Width, bool Lerp) {
 			Vector2 drawOrigin = DrawOrigin;
-			List<CustomVertexInfo> bars = new List<CustomVertexInfo>();
+			List<CustomVertexInfo> bars = [];
 			for (int i = 1; i < NPC.oldPos.Length; ++i) {
 				if (NPC.oldPos[i] == Vector2.Zero)
 					break;
@@ -79,7 +78,7 @@ namespace ArknightsMod.Common.VisualEffects
 				bars.Add(new CustomVertexInfo(NPC.oldPos[i] + normalDir * width + drawOrigin - Main.screenPosition + offset, color, new Vector3(factor, 1, w)));
 				bars.Add(new CustomVertexInfo(NPC.oldPos[i] + normalDir * -width + drawOrigin - Main.screenPosition + offset, color, new Vector3(factor, 0, w)));
 			}
-			List<CustomVertexInfo> Vx = new List<CustomVertexInfo>();
+			List<CustomVertexInfo> Vx = [];
 			if (bars.Count > 2) {
 				Vx.Add(bars[0]);
 				Vx.Add(bars[1]);

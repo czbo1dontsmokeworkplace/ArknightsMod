@@ -1,6 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor.Vanity.Guard.Oblivionis;
-using Terraria;
-using Terraria.ID;
+﻿using Terraria;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Vanity.Caster.Indigo

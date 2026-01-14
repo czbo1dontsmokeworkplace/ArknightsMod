@@ -1,6 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor.Vanity.Defender.Beagle.Armor;
-using ArknightsMod.Content.Items.Armor.Vanity.Sniper.Wisadel;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.DataStructures;

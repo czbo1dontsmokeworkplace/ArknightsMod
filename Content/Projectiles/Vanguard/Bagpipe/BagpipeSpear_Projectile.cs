@@ -1,9 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.Enums;
 using Terraria.ModLoader;
 using Terraria.ID;
-using System;
 
 namespace ArknightsMod.Content.Projectiles.Vanguard.Bagpipe
 {

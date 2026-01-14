@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using ArknightsMod.Common;
-using ArknightsMod.Common.Particle;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 

@@ -1,21 +1,16 @@
-﻿using ArknightsMod.Content.Items.Placeable.Infrastructure;
-using ArknightsMod.Content.Tiles.Infrastructure;
+﻿using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Mono.Cecil;
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
-using System.Runtime.Intrinsics.X86;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
-using Terraria.GameContent.RGB;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 { 
@@ -379,7 +374,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
                 {
-                    List<Vertex> vertices = new List<Vertex>();
+                    List<Vertex> vertices = [];
                     var count = Math.Clamp(Projectile.ai[0] - 13, 1, Projectile.oldRot.Length - 7);
                     var Vertex_Num = 0.1f;
 
@@ -415,7 +410,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
                 }
                 //if(false)
                 {
-                    List<Vertex> vertices = new List<Vertex>();
+                    List<Vertex> vertices = [];
                     var count = Math.Clamp(Projectile.ai[0] - 13, 1, Projectile.oldRot.Length - 5);
                     var Vertex_Num = 0.1f;
 
@@ -452,7 +447,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
                 // if (false)
 
                 {
-                    List<Vertex> vertices = new List<Vertex>();
+                    List<Vertex> vertices = [];
                     var count = Math.Clamp(Projectile.ai[0] - 13, 1, Projectile.oldRot.Length - 8);
                     var Vertex_Num = 0.1f;
 
@@ -1027,7 +1022,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
                 {
-                    List<Vertex> vertices = new List<Vertex>();
+                    List<Vertex> vertices = [];
                     var count = Math.Clamp(Projectile.ai[0] - 13, 1, Projectile.oldRot.Length - 7);
                     var Vertex_Num = 0.1f;
 
@@ -1063,7 +1058,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
                 }
 
                 {
-                    List<Vertex> vertices = new List<Vertex>();
+                    List<Vertex> vertices = [];
                     var count =  Math.Clamp(Projectile.ai[0] - 13, 1, Projectile.oldRot.Length - 5);
                     var Vertex_Num = 0.1f;
 
@@ -1098,7 +1093,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
                     }
                 }
                 {
-                    List<Vertex> vertices = new List<Vertex>();
+                    List<Vertex> vertices = [];
                     var Vertex_Num = 0.1f;
 
                     for (float j = 0.0f; j <= 1.1f; j += Vertex_Num)
@@ -1397,7 +1392,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
                 Projectile.ignoreWater = true;//无视液体
                 Projectile.timeLeft = 10;
             }
-            private List<Vector2> RecordPos = new List<Vector2>();
+            private List<Vector2> RecordPos = [];
             private Vector2 HeadPos = Vector2.Zero;
             private Vector2 OldHeadPos = Vector2.Zero;
             private Vector2 AttackPos = Vector2.Zero;
@@ -1515,7 +1510,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
                     Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
                 
-                    List<Vertex> vertices = new List<Vertex>();
+                    List<Vertex> vertices = [];
                     var i = 0f;
                     var count = RecordPos.Count + 1;
                     var OldPos = RecordPos[0];
@@ -1638,7 +1633,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 				var gd = Main.graphics.GraphicsDevice;
 				{
 
-					List<Vertex> vertices = new List<Vertex>();
+					List<Vertex> vertices = [];
 
 					if (Projectile.ai[0] != 0) {
 						sb.End();
@@ -1890,7 +1885,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
         private void Skill_3_Draw(GraphicsDevice gd)
         {
             TextureAssets.Projectile[Type] = sw_Proj_2_t2;
-                List<Vertex> vertices = new List<Vertex>();
+                List<Vertex> vertices = [];
                 var count = Projectile.oldRot.Length - 1;
                 //var Vertex_Num = 0.1f;
 

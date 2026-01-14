@@ -1,7 +1,3 @@
-using Terraria;
-using Terraria.ModLoader;
-using Terraria.UI;
-using Microsoft.Xna.Framework;
 using System.Runtime.CompilerServices;
 using ArknightsMod.Systems.Gameplay.Elemental;
 using ArknightsMod.Systems;

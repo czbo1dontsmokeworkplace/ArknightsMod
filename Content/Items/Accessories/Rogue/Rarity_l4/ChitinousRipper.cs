@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
@@ -121,8 +120,8 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
             float rangeSquared = range * range;
 
             // 选择攻击加成目标 (召唤物或玩家)
-            List<int> validMinions = new List<int>();
-            List<int> validPlayersForDamage = new List<int>();
+            List<int> validMinions = [];
+            List<int> validPlayersForDamage = [];
 
             // 检查玩家自己的召唤物
             for (int i = 0; i < Main.maxProjectiles; i++)
@@ -172,8 +171,8 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
             }
 
             // 选择生命加成目标
-            List<int> validNPCs = new List<int>();
-            List<int> validPlayersForLife = new List<int>();
+            List<int> validNPCs = [];
+            List<int> validPlayersForLife = [];
 
             // 检查友好NPC
             for (int i = 0; i < Main.maxNPCs; i++)

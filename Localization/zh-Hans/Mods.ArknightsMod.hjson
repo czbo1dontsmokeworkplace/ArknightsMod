@@ -25,6 +25,7 @@ StatusMessage: {
 		Complete: 来自帝国的轰炸无人机已被击毁...
 	}
 
+	UpdateClosureShop: 可露希尔时装商店已更新，快去看看吧
 	AACT.Collapsed: "{0}坍缩了。"
 	FN.AllFloorBanned: "{0}没有留意到自己已无立足之地。"
 	Pmp.GetTooClose: "{0}站在了喷发的活火山口上。"

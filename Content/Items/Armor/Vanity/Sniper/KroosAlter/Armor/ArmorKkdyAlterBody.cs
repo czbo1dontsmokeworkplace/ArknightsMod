@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Terraria.ModLoader;
-using Terraria.ID;
+﻿using Terraria.ModLoader;
 using Terraria;
-using Terraria.GameContent.Creative;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Content.Items.Material;
 
@@ -20,7 +12,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Sniper.KroosAlter.Armor
 		public override void SetArmorDefaults() {
 			Item.defense = 23;
 		}
-		public override (float ratio, int value) LifeReplacement => (0.25f, 62);
+		public override int LifeBonus => 62;
 		public override void AddRecipes() {
 			CreateRecipe()
 				.AddIngredient(ModContent.ItemType<KkdyAlterBody>(), 1)

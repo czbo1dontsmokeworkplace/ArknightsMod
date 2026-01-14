@@ -1,20 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
-using ArknightsMod.Content.NPCs;
 using ArknightsMod.Content.NPCs.Enemy.ThroughChapter4;
 using Microsoft.Xna.Framework.Graphics;
-using Terraria.GameContent.UI.Elements;
-using Terraria.GameContent;
-using Terraria.UI;
 using static EventProgressBar;
-using Humanizer;
 using Terraria.Graphics.Effects;
-using MonoMod.Cil;
 using Terraria.Graphics.Shaders;
 using ReLogic.Content;
 using ArknightsMod.Assets.Effects;
@@ -35,15 +28,15 @@ namespace ArknightsMod.Content.Events
 			Mod.Logger.Debug($"天空类标识符: {sky}"); // 检查ToString()输出
 		}
 
-		public static readonly List<int> EventMonsters = new List<int>()
-		{
+		public static readonly List<int> EventMonsters =
+		[
 			ModContent.NPCType<Soldier>(),         // 僵尸
 			ModContent.NPCType<Hound>(),
 			ModContent.NPCType<Crossbowman>(),
 			ModContent.NPCType<Seniorcaster>(),// 鹰身女妖
 			ModContent.NPCType<MortarGunner>(),
 			ModContent.NPCType<Drone>(),
-		};
+		];
 
 		public override void OnWorldLoad() {
 			EventActive = false;
@@ -187,7 +180,7 @@ namespace ArknightsMod.Content.Events
 				}
 			}
 			else {
-				Filters.Scene["UnionInvadeFilter"].Deactivate();
+				Filters.Scene["UnionInvadeFilter"]?.Deactivate();
 			}
 		}
 		

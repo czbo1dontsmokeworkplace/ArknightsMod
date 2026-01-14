@@ -8,14 +8,17 @@ namespace ArknightsMod.Content.Items.Armor.Vanity
 {
 	public abstract class ArknightsArmorLegs : ArknightsVanityLegs
 	{
-		public virtual (float ratio, int value) LifeReplacement => (0f, 0);
+		public virtual int LifeBonus => 0;
 		public sealed override void SafeSetDefaults() {
 			Item.vanity = false;
 			SetArmorDefaults();
 		}
 		public virtual void SetArmorDefaults() { }
-		public sealed override void UpdateEquip(Player player) {
-			player.GetModPlayer<ArknightsArmorPlayer>().LifeReplacement_Legs = LifeReplacement;
+		public sealed override void UpdateEquip(Player player)
+		{
+			player.GetModPlayer<ArknightsArmorPlayer>().LifeCrystalAndFruitEffectReduction = 0.5f;
+			player.statLifeMax2 += LifeBonus;
+
 			UpdateArmorEquip(player);
 		}
 		public virtual void UpdateArmorEquip(Player Player) {
@@ -32,8 +35,15 @@ namespace ArknightsMod.Content.Items.Armor.Vanity
 			}
 			if (index == -1)
 				index = tooltips.Count - 1;
-			tooltips.Insert(index + 1, new TooltipLine(Mod, "LifeReplacement", Language.GetTextValue("Mods.ArknightsMod.ArmorBonus.LifeReplacement",
-				LifeReplacement.ratio.ToString("P0"), LifeReplacement.value)));
+
+			var lifeBonusText = new TooltipLine(Mod, "LifeBonus",
+					Language.GetTextValue("Mods.ArknightsMod.ArmorBonus.LifeBonus", LifeBonus));
+			tooltips.Insert(index + 1, lifeBonusText);
+
+			var lifeReducText = new TooltipLine(Mod, "LifeReduction",
+					Language.GetTextValue("Mods.ArknightsMod.ArmorBonus.LifeItemsReduction", 0.5.ToString("P0")));
+			lifeReducText.OverrideColor = Colors.RarityTrash;
+			tooltips.Insert(index + 2, lifeReducText);
 
 			ModifyArmorTooltips(ref tooltips);
 		}

@@ -1,9 +1,5 @@
-﻿using ArknightsMod.Content.Items.Armor.Vanity.Defender.Beagle.Armor;
-using ArknightsMod.Content.Items.Armor.Vanity.Sniper.KroosAlter.Armor;
-using ArknightsMod.Content.Items.Placeable;
-using ArknightsMod.Content.Tiles.Infrastructure;
+﻿using ArknightsMod.Content.Tiles.Infrastructure;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Vanity.Guard.Matoimaru.Armor
@@ -19,7 +15,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Guard.Matoimaru.Armor
 			player.setBonus = "";
 			player.GetModPlayer<MatoimaruSetPlayer>().MatoimaruSetActive = true;
 		}
-		public override (float ratio, int value) LifeReplacement => (0.5f, 202);
+		public override int LifeBonus => 202;
 		public override void AddRecipes() {
 			CreateRecipe()
 			.AddIngredient(ModContent.ItemType<MatoimaruHead>(), 1)

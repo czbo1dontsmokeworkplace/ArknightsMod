@@ -2,9 +2,11 @@
 using ArknightsMod.Content.NPCs.Enemy.Chapter6;
 using ArknightsMod.Content.NPCs.Enemy.ThroughChapter4;
 using ArknightsMod.Content.NPCs.Enemy.TillChapter7;
+using ArknightsMod.Systems;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
@@ -18,7 +20,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 	[AutoloadHead]
 	public class Cannot : ModNPC
 	{
-		// The list of items in the traveler's shop. Saved with the world and set when the traveler spawns. Synced by the server to clients in multi player
+		// 修改：保存完整的 Item 对象而不是只保存 type
 		public readonly static List<Item> shopItems = [];
 
 		// A static instance of the declarative shop, defining all the items which can be brought. Used to create a new inventory when the NPC spawns
@@ -66,7 +68,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		}
 
 		public override List<string> SetNPCNameList() {
-			return [DisplayName.Value];
+			return [];
 		}
 
 		public override void SetDefaults() {
@@ -132,37 +134,6 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			button2 = this.GetLocalizedValue("Buttons.Touch");
 
 		}
-
-		#region 孩子们有不明白的不要嗯写记得去请教会的人，这里是闭门造车警示案例
-		//public void SummonElites() {
-		//	if (Eliteslist.Length == 0)
-		//		return;
-
-		//	// 随机选择一个精英类型
-		//	int randomIndex = Main.rand.Next(Eliteslist.Length);
-		//	int selectedNPCType = Eliteslist[randomIndex];
-
-		//	// 计算生成位置：在 Cannot 上方偏移（避免卡进地形）
-		//	int offsetX = Main.rand.NextBool()
-		//		? Main.screenWidth / 2 + Main.rand.Next(0, 160)
-		//		: -(Main.screenWidth / 2 + Main.rand.Next(0, 160));
-		//	int offsetY = -Main.rand.Next(120, 180); // 向上偏移
-
-		//	Vector2 spawnPosition = new Vector2(NPC.Center.X + offsetX, NPC.Center.Y + offsetY);
-
-		//	// 确保在有效范围内（可选）
-		//	//if (!WorldGen.InWorld((int)spawnPosition.X / 16, (int)spawnPosition.Y / 16))
-		//		//return;
-
-		//	// 生成 NPC
-		//	NPC.NewNPC(
-		//		NPC.GetSource_FromAI(), // 或 EntitySource_NaturalSpawn
-		//		(int)spawnPosition.X,
-		//		(int)spawnPosition.Y,
-		//		selectedNPCType
-		//	);
-		//}
-		#endregion
 
 		public void TrySpawnReinforcements(Player target) {
 			int x = 0;
@@ -263,7 +234,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 							}
 						}
 
-						if (x >= minLeft && x <= minRight){
+						if (x >= minLeft && x <= minRight) {
 							canSpawn = false;
 							break;
 						}
@@ -275,9 +246,35 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			}
 
 			if (canSpawn) {
-				int type = Main.rand.Next(Eliteslist);
-				NPC.NewNPC(NPC.GetSource_FromThis(), x * 16 + 8, y * 16, type, Target: target.whoAmI);
+				if (Main.netMode == NetmodeID.MultiplayerClient)
+					SendSpawnReinforcements(Mod, NPC.whoAmI, target.whoAmI, x, y);
+				else
+					SpawnReinforcements(NPC.whoAmI, target.whoAmI, x, y);
 			}
+		}
+
+		public static void SendSpawnReinforcements(Mod mod, int whoAmI, int target, int x, int y) {
+			var packet = mod.GetPacket();
+			packet.Write((short)ArknightsMod.ArkMessageID.SpawnReinforcements);
+			packet.Write(whoAmI);
+			packet.Write(target);
+			packet.Write(x);
+			packet.Write(y);
+			packet.Send(255);
+		}
+
+		public static void ReadSpawnReinforcements(BinaryReader reader) {
+			int whoAmI = reader.ReadInt32();
+			int target = reader.ReadInt32();
+			int x = reader.ReadInt32();
+			int y = reader.ReadInt32();
+			SpawnReinforcements(whoAmI, target, x, y);
+		}
+
+		public static void SpawnReinforcements(int whoAmI, int target, int x, int y) {
+			NPC npc = Main.npc[whoAmI];
+			int type = Main.rand.Next(Eliteslist);
+			NPC.NewNPC(npc.GetSource_FromThis(), x * 16 + 8, y * 16, type, Target: target);
 		}
 
 		public bool anyPlayerNearby = false;
@@ -309,36 +306,12 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		public override LocalizedText DeathMessage => Language.GetText("Mods.ArknightsMod.NPCs.Cannot.DeathMessage.Runaway");
 
 		public override bool ModifyDeathMessage(ref NetworkText customText, ref Color color) {
-			if (Runaway){
+			if (Runaway) {
 				color = Color.LightBlue;
 				return base.ModifyDeathMessage(ref customText, ref color);
 			}
 			return false;
 		}
-
-		//private void DropLoot() {
-		//	// 随机选一个商品
-		//	Item selectedItem = shopItems[Main.rand.Next(shopItems.Count)];
-
-		//	// 克隆一份用于掉落
-		//	Item dropItem = selectedItem.Clone();
-
-		//	// 设置数量为 1
-		//	dropItem.stack = 1;
-
-		//	// 掉落物品
-		//	Item.NewItem(
-		//		NPC.GetSource_Loot(),
-		//		NPC.getRect(),
-		//		dropItem.type,
-		//		dropItem.stack,
-		//		noGrabDelay: false,
-		//		prefixGiven: dropItem.prefix
-		//	);
-
-		//	// 掉落后消失
-		//	Despawn();
-		//}
 
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
 			npcLoot.Add(ItemDropRule.ByCondition(new CannotDead(), ModContent.ItemType<OriginiumIngot>(), 1, 2, 3));
@@ -361,58 +334,24 @@ namespace ArknightsMod.Content.NPCs.Friendly
 						Main.npcChatText = Language.GetTextValue($"Mods.ArknightsMod.Dialogue.Cannot.Touch{TouchCount}");
 				}
 			}
-
 		}
 
 		public override void AddShops() {
-
-			Shop = new CannotShop(NPC.type);
+			Shop = new CannotShop();
 			Shop.Register();
 		}
 
 		public override void OnSpawn(IEntitySource source) {
-			// ✅ 动态计算槽位（现在可以安全使用 NPC.downedXXX）
-			int countBeforeSkeletron = 1 +
-				(NPC.downedSlimeKing ? 1 : 0) +//史莱姆
-				(NPC.downedBoss1 ? 1 : 0) +//克眼
-				(NPC.downedBoss2 ? 1 : 0);//邪恶boss
+			NPCShopSystem.TryUpdateCannotShop(Mod);
+		}
 
-			int countBetweenSkeletronAndPlantera =
-				(NPC.downedBoss3 ? 1 : 0) +//骷髅王
-				(NPC.downedQueenBee ? 1 : 0) +//蜂后
-				(Main.hardMode ? 1 : 0) +//肉山
-				(NPC.downedMechBoss1 ? 1 : 0) +//机械1
-				(NPC.downedMechBoss2 ? 1 : 0) +//机械2
-				(NPC.downedMechBoss3 ? 1 : 0);//机械3
-
-			int countBetweenPlanteraAndDukeFishron =
-				(NPC.downedPlantBoss ? 1 : 0) +//世花
-				(NPC.downedGolemBoss ? 1 : 0);//石巨人
-
-			int countFromFishronOnward =
-				(NPC.downedFishron ? 1 : 0) +//猪鲨
-				(NPC.downedEmpressOfLight ? 1 : 0) +//光女
-				(NPC.downedAncientCultist ? 1 : 0) +//教徒
-				(NPC.downedMoonlord ? 1 : 0);//月总
-
-			// ✅ 创建临时 CannotShop（不注册到全局），仅用于生成商品
-			var tempShop = new CannotShop(NPC.type);
-			if (countBeforeSkeletron > 0)
-				tempShop.AddPoolFromNameSpace("Rogue.Rarity_l1", countBeforeSkeletron, "ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l1", Mod);
-			if (countBetweenSkeletronAndPlantera > 0)
-				tempShop.AddPoolFromNameSpace("Rogue.Rarity_l2", countBetweenSkeletronAndPlantera, "ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l2", Mod);
-			if (countBetweenPlanteraAndDukeFishron > 0)
-				tempShop.AddPoolFromNameSpace("Rogue.Rarity_l3", countBetweenPlanteraAndDukeFishron, "ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3", Mod);
-			if (countFromFishronOnward > 0)
-				tempShop.AddPoolFromNameSpace("Rogue.Rarity_l4", countFromFishronOnward, "ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4", Mod);
-
-			// ✅ 生成商品列表
-			shopItems.Clear();
-			shopItems.AddRange(tempShop.GenerateNewInventoryList());
-
-			// 同步到客户端（多人游戏）
-			if (Main.netMode == NetmodeID.Server) {
-				NetMessage.SendData(MessageID.WorldData);
+		public override void ModifyActiveShop(string shopName, Item[] items) {
+			NPCShopSystem.TryUpdateCannotShop(Mod);
+			Array.Fill(items, null);
+			// 直接克隆完整的 Item 对象,保留 shopSpecialCurrency 等所有属性
+			Item[] shopItems = [.. NPCShopSystem.CannotShopItems.Select(i => i.Clone())];
+			for (int i = 0; i < items.Length && i < shopItems.Length; i++) {
+				items[i] = shopItems[i]?.Clone();
 			}
 		}
 
@@ -441,7 +380,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 					return base.SpawnChance(spawnInfo);
 			}
 			if (!spawnInfo.Invasion && !spawnInfo.Sky && (NPC.downedBoss1 || NPC.downedBoss2 || NPC.downedBoss3))
-				return 0.5f;
+				return 0.2f;
 			return base.SpawnChance(spawnInfo);
 		}
 
@@ -451,7 +390,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		}
 	}
 
-	public class CannotShop(int npcType) : AbstractNPCShop(npcType)
+	public class CannotShop() : AbstractNPCShop(ModContent.NPCType<Cannot>())
 	{
 		public new record Entry(Item Item, List<Condition> Conditions) : AbstractNPCShop.Entry
 		{
@@ -499,13 +438,13 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		public override IEnumerable<Entry> ActiveEntries => Pools.SelectMany(p => p.Entries).Where(e => !e.Disabled);
 
 		public Pool AddPool(string name, int slots) {
-			var pool = new Pool(name, slots, new List<Entry>());
+			var pool = new Pool(name, slots, []);
 			Pools.Add(pool);
 			return pool;
 		}
 
 		public Pool AddPoolFromNameSpace(string name, int slots, string fromNamespace, Mod mod) {
-			var pool = new Pool(name, slots, new List<Entry>());
+			var pool = new Pool(name, slots, []);
 
 			var items = mod.GetContent<ModItem>()
 				.Where(item => item.GetType().Namespace == fromNamespace)

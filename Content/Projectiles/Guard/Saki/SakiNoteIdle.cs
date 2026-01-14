@@ -1,18 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ID;
-using Terraria.Utilities;
-using Terraria.DataStructures;
-using System.Security.Policy;
-using Terraria.GameContent;
-using static System.Net.Mime.MediaTypeNames;
-using Microsoft.Xna.Framework.Graphics.PackedVector;
-using ArknightsMod.Common.VisualEffects;
-using Humanizer;
 using ArknightsMod.Common;
 
 namespace ArknightsMod.Content.Projectiles.Guard.Saki

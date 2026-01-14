@@ -9,8 +9,6 @@ using static Terraria.ModLoader.ModContent;
 //using Microsoft.Xna.Framework.Graphics;
 //using System;
 //using System.IO;
-using Terraria.Localization;
-using System.Runtime.InteropServices;
 using ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTargeteer;
 //using Terraria.DataStructures;
 

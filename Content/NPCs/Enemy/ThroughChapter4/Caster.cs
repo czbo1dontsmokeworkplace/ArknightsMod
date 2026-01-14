@@ -1,5 +1,4 @@
-﻿using ArknightsMod.Content.NPCs.Enemy.TillChapter7;
-using ArknightsMod.Systems.Gameplay.Damage;
+﻿using ArknightsMod.Systems.Gameplay.Damage;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;

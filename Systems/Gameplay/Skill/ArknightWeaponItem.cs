@@ -1,5 +1,4 @@
 ﻿using ArknightsMod.Content.Items.Weapons;
-using Microsoft.Xna.Framework;
 using ArknightsMod.Players;
 using Terraria;
 using Terraria.ModLoader;

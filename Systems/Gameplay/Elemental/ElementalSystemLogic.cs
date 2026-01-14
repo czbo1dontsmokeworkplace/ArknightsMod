@@ -1,13 +1,5 @@
 using Terraria;
 using Terraria.ModLoader;
-using Terraria.UI;
-using Microsoft.Xna.Framework;
-using ArknightsMod.Systems.Gameplay.Elemental;
-using ArknightsMod.Content.Projectiles;
-using Mono.Cecil;
-using Terraria.Audio;
-using Terraria.DataStructures;
-using ArknightsMod.Players;
 
 namespace ArknightsMod.Systems.Gameplay.Elemental
 {
@@ -52,9 +44,5 @@ namespace ArknightsMod.Systems.Gameplay.Elemental
 			}
 			elemData.ApplyHealingAll(1);
 		}
-
-
-
 	}
-	
 }

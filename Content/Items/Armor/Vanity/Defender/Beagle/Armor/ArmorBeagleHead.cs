@@ -1,8 +1,5 @@
-using ArknightsMod.Content.Items.Armor.Vanity.Defender.Beagle.Armor;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using Terraria;
-using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Vanity.Defender.Beagle.Armor
@@ -10,7 +7,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Defender.Beagle.Armor
 	[AutoloadEquip(EquipType.Head)]
     public class ArmorBeagleHead : ArknightsArmorHead
     {
-		public override (float ratio, int value) LifeReplacement => (0.5f, 114);
+		public override int LifeBonus => 114;
 		public override void SetArmorDefaults()
 		{
 		}

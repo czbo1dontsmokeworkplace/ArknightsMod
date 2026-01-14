@@ -1,14 +1,5 @@
-﻿using ArknightsMod.Content.Items.Armor.Vanity.Supporter.Ling;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Terraria.ModLoader;
-using Terraria.ID;
+﻿using Terraria.ModLoader;
 using Terraria;
-using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Vanity.Specialist.Mizuki
 {

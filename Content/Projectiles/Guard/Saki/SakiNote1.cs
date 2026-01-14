@@ -5,14 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ID;
-using Terraria.Utilities;
 using Terraria.DataStructures;
-using System.Security.Policy;
-using Terraria.GameContent;
-using static System.Net.Mime.MediaTypeNames;
-using Microsoft.Xna.Framework.Graphics.PackedVector;
-using ArknightsMod.Common.VisualEffects;
-using Humanizer;
 using ArknightsMod.Common;
 
 namespace ArknightsMod.Content.Projectiles.Guard.Saki
@@ -202,7 +195,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Saki
 			int Direction = (int)Projectile.ai[0];
 			Vector2[] OldPos = oldpos;
 			float[] OldRot = oldrot;
-			List<VertexPositionColorTexture> bars = new List<VertexPositionColorTexture>();
+			List<VertexPositionColorTexture> bars = [];
 			for (int i = 1; i < OldPos.Length; ++i) {
 				if (OldPos[i] == Vector2.Zero)
 					continue;
@@ -216,7 +209,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Saki
 				var middleDistance = (OldPos[i] - OldPos[i - 1]).Length() / 2;
 				var controlPoint1 = OldPos[i] - vCur * middleDistance * 2;
 				var controlPoint2 = OldPos[i - 1] + vNext * middleDistance * 2;
-				List<Vector2> interp = new List<Vector2> { OldPos[i] - vCur };
+				List<Vector2> interp = [OldPos[i] - vCur];
 
 				for (float t = 0; t <= dist / 2; t += 0.05f) {
 					float it = t / dist;
@@ -250,7 +243,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Saki
 					bars.Add(new VertexPositionColorTexture((curPos + normalDir * width).ToVector3(), new Color(0, 0, 0), texCoord2));
 				}
 			}
-			List<VertexPositionColorTexture> triangleList = new List<VertexPositionColorTexture>();
+			List<VertexPositionColorTexture> triangleList = [];
 			if (bars.Count > 2) {
 
 				for (int i = 0; i < bars.Count - 2; i += 2) {

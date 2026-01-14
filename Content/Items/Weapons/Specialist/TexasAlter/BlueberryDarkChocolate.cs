@@ -1,4 +1,3 @@
-using System;
 using ArknightsMod.Content.Projectiles.Specialist.TexasAlter;
 using Terraria;
 using Terraria.Audio;

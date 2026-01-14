@@ -1,7 +1,4 @@
-using ArknightsMod.Content.Items.Armor.Vanity.Defender.Saria;
 using Terraria;
-using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Vanity.Defender.Beagle

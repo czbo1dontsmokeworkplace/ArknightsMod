@@ -2,36 +2,19 @@
 using ArknightsMod.Content.Rarities;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
-using ArknightsMod.Systems.Gameplay.Skill;
 using Microsoft.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Mono.Cecil;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Security.Policy;
-using System.Text.RegularExpressions;
-using System.Threading.Channels;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
-using Terraria.GameContent;
 using Terraria.Graphics;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
-using Terraria.ModLoader.IO;
-using Terraria.UI.Chat;
-using Terraria.Utilities;
-using static System.Net.Mime.MediaTypeNames;
 using static Terraria.Graphics.VertexStrip;
-using static Terraria.ModLoader.PlayerDrawLayer;
 using Color = Microsoft.Xna.Framework.Color;
 
 namespace ArknightsMod.Content.Items.Weapons.Guard.Thorns

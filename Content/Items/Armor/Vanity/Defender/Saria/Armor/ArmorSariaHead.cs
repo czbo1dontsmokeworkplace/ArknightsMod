@@ -1,14 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor.Vanity;
-using ArknightsMod.Content.Items.Armor.Vanity.Defender.Beagle.Armor;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Terraria;
-using Terraria.GameContent.Creative;
-using Terraria.ID;
+﻿using Terraria;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Vanity.Defender.Saria.Armor
@@ -16,7 +6,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Defender.Saria.Armor
 	[AutoloadEquip(EquipType.Head)]
 	public class ArmorSariaHead : ArknightsArmorHead
 	{
-		public override (float ratio, int value) LifeReplacement => (0.5f, 315);
+		public override int LifeBonus => 315;
 		public override void SetArmorDefaults() {
 			Item.defense = 0;
 		}

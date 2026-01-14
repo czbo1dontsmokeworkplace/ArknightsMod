@@ -21,10 +21,8 @@ using ArknightsMod.Content.Items.Weapons.Defender.NoirCorne;
 
 
 using ArknightsMod.Systems.Gameplay.Skill;
-using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Players
@@ -81,27 +79,27 @@ namespace ArknightsMod.Players
 
 		// 技能数据结构
 		public int HowManySkills = 0;
-		public List<int?> InitialSP = new() { null, null, null };
-		public List<int?> InitialSPs1List = new() { null, null, null, null, null, null, null, null, null, null };
-		public List<int?> InitialSPs2List = new() { null, null, null, null, null, null, null, null, null, null };
-		public List<int?> InitialSPs3List = new() { null, null, null, null, null, null, null, null, null, null };
-		public List<int?> MaxSP = new() { null, null, null };
-		public List<int?> MaxSPs1List = new() { null, null, null, null, null, null, null, null, null, null };
-		public List<int?> MaxSPs2List = new() { null, null, null, null, null, null, null, null, null, null };
-		public List<int?> MaxSPs3List = new() { null, null, null, null, null, null, null, null, null, null };
-		public List<float> SkillActiveTime = new() { 0, 0, 0 };
-		public List<float> SkillActiveTimeS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-		public List<float> SkillActiveTimeS2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-		public List<float> SkillActiveTimeS3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-		public List<int> SkillLevel = new() { 0, 0, 0 };
-		public List<int> StockMax = new() { 0, 0, 0 };
-		public List<int> StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-		public List<int> StockMaxS2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-		public List<int> StockMaxS3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-		public List<bool> AutoTrigger = new() { false, false, false };
-		public List<bool> ChargeTypeIsPerSecond = new() { false, false, false };
+		public List<int?> InitialSP = [null, null, null];
+		public List<int?> InitialSPs1List = [null, null, null, null, null, null, null, null, null, null];
+		public List<int?> InitialSPs2List = [null, null, null, null, null, null, null, null, null, null];
+		public List<int?> InitialSPs3List = [null, null, null, null, null, null, null, null, null, null];
+		public List<int?> MaxSP = [null, null, null];
+		public List<int?> MaxSPs1List = [null, null, null, null, null, null, null, null, null, null];
+		public List<int?> MaxSPs2List = [null, null, null, null, null, null, null, null, null, null];
+		public List<int?> MaxSPs3List = [null, null, null, null, null, null, null, null, null, null];
+		public List<float> SkillActiveTime = [0, 0, 0];
+		public List<float> SkillActiveTimeS1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+		public List<float> SkillActiveTimeS2List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+		public List<float> SkillActiveTimeS3List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+		public List<int> SkillLevel = [0, 0, 0];
+		public List<int> StockMax = [0, 0, 0];
+		public List<int> StockMaxS1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+		public List<int> StockMaxS2List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+		public List<int> StockMaxS3List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+		public List<bool> AutoTrigger = [false, false, false];
+		public List<bool> ChargeTypeIsPerSecond = [false, false, false];
 		public string IconName = "";
-		public List<bool> ShowSummonIconBySkills = new() { false, false, false };
+		public List<bool> ShowSummonIconBySkills = [false, false, false];
 
 		public void InitSkill() {
 			SkillData skill = CurrentSkill;
@@ -310,274 +308,274 @@ namespace ArknightsMod.Players
 
 		public void SetSkillData() {
 			if (HowManySkills < 1) {
-				InitialSPs1List = new() { null, null, null, null, null, null, null, null, null, null };
-				MaxSPs1List = new() { null, null, null, null, null, null, null, null, null, null };
+				InitialSPs1List = [null, null, null, null, null, null, null, null, null, null];
+				MaxSPs1List = [null, null, null, null, null, null, null, null, null, null];
 			}
 			if (HowManySkills < 2) {
-				InitialSPs2List = new() { null, null, null, null, null, null, null, null, null, null };
-				MaxSPs2List = new() { null, null, null, null, null, null, null, null, null, null };
+				InitialSPs2List = [null, null, null, null, null, null, null, null, null, null];
+				MaxSPs2List = [null, null, null, null, null, null, null, null, null, null];
 			}
 			if (HowManySkills < 3) {
-				InitialSPs3List = new() { null, null, null, null, null, null, null, null, null, null };
-				MaxSPs3List = new() { null, null, null, null, null, null, null, null, null, null };
+				InitialSPs3List = [null, null, null, null, null, null, null, null, null, null];
+				MaxSPs3List = [null, null, null, null, null, null, null, null, null, null];
 			}
 
-			InitialSP = new() {
+			InitialSP = [
 				InitialSPs1List[SkillLevel[0] - 1],
 				InitialSPs2List[SkillLevel[1] - 1],
 				InitialSPs3List[SkillLevel[2] - 1]
-			};
+			];
 
-			MaxSP = new() {
+			MaxSP = [
 				MaxSPs1List[SkillLevel[0] - 1],
 				MaxSPs2List[SkillLevel[1] - 1],
 				MaxSPs3List[SkillLevel[2] - 1]
-			};
+			];
 
-			SkillActiveTime = new() {
+			SkillActiveTime = [
 				SkillActiveTimeS1List[SkillLevel[0] - 1],
 				SkillActiveTimeS2List[SkillLevel[1] - 1],
 				SkillActiveTimeS3List[SkillLevel[2] - 1]
-			};
+			];
 
-			StockMax = new() {
+			StockMax = [
 				StockMaxS1List[SkillLevel[0] - 1],
 				StockMaxS2List[SkillLevel[1] - 1],
 				StockMaxS3List[SkillLevel[2] - 1]
-			};
+			];
 		}
 
 		public void SetAllSkillsData() {
 			if (HoldBagpipeSpear) {
 				IconName = "BagpipeSpear";
 				HowManySkills = 3;
-				SkillLevel = new() { 10, 10, 10 };
-				ChargeTypeIsPerSecond = new() { true, true, true };
-				AutoTrigger = new() { false, true, false };
-				ShowSummonIconBySkills = new() { false, false, false };
+				SkillLevel = [10, 10, 10];
+				ChargeTypeIsPerSecond = [true, true, true];
+				AutoTrigger = [false, true, false];
+				ShowSummonIconBySkills = [false, false, false];
 
-				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 15 };
-				InitialSPs2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-				InitialSPs3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 25 };
-				MaxSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 33 };
-				MaxSPs2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 4 };
-				MaxSPs3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 40 };
-				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 35f };
-				SkillActiveTimeS2List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0.5f };
-				SkillActiveTimeS3List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 20f };
-				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
-				StockMaxS2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 };
-				StockMaxS3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+				InitialSPs1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 15];
+				InitialSPs2List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+				InitialSPs3List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 25];
+				MaxSPs1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 33];
+				MaxSPs2List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 4];
+				MaxSPs3List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 40];
+				SkillActiveTimeS1List = [0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 35f];
+				SkillActiveTimeS2List = [0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0.5f];
+				SkillActiveTimeS3List = [0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 20f];
+				StockMaxS1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
+				StockMaxS2List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 3];
+				StockMaxS3List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
 				SetSkillData();
 			}
 			else if (HoldChenSword) {
 				IconName = "ChenSword";
 				HowManySkills = 2;
-				SkillLevel = new() { 10, 10, 10 };
-				ChargeTypeIsPerSecond = new() { false, false, false };
-				AutoTrigger = new() { true, false, false };
-				ShowSummonIconBySkills = new() { false, false, false };
+				SkillLevel = [10, 10, 10];
+				ChargeTypeIsPerSecond = [false, false, false];
+				AutoTrigger = [true, false, false];
+				ShowSummonIconBySkills = [false, false, false];
 
-				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-				InitialSPs2List = new() { 10, 10, 10, 10, 10, 10, 10, 13, 16, 20 };
-				MaxSPs1List = new() { 7, 7, 7, 6, 6, 6, 5, 5, 5, 4 };
-				MaxSPs2List = new() { 40, 40, 40, 38, 38, 38, 36, 34, 32, 30 };
-				SkillActiveTimeS1List = new() { 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f };
-				SkillActiveTimeS2List = new() { 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f };
-				StockMaxS1List = new() { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
-				StockMaxS2List = new() { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+				InitialSPs1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+				InitialSPs2List = [10, 10, 10, 10, 10, 10, 10, 13, 16, 20];
+				MaxSPs1List = [7, 7, 7, 6, 6, 6, 5, 5, 5, 4];
+				MaxSPs2List = [40, 40, 40, 38, 38, 38, 36, 34, 32, 30];
+				SkillActiveTimeS1List = [0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f];
+				SkillActiveTimeS2List = [1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f];
+				StockMaxS1List = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+				StockMaxS2List = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
 				SetSkillData();
 			}
 			else if (HoldKroosCrossbow) {
 				IconName = "KroosCrossbow";
 				HowManySkills = 1;
-				SkillLevel = new() { 7, 7, 7 };
-				ChargeTypeIsPerSecond = new() { false, true, false };
-				AutoTrigger = new() { true, false, false };
-				ShowSummonIconBySkills = new() { false, false, false };
+				SkillLevel = [7, 7, 7];
+				ChargeTypeIsPerSecond = [false, true, false];
+				AutoTrigger = [true, false, false];
+				ShowSummonIconBySkills = [false, false, false];
 
-				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-				MaxSPs1List = new() { 0, 0, 0, 0, 0, 0, 4, 0, 0, 0 };
-				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0.2f, 0f, 0f, 0f };
-				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 };
+				InitialSPs1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+				MaxSPs1List = [0, 0, 0, 0, 0, 0, 4, 0, 0, 0];
+				SkillActiveTimeS1List = [0f, 0f, 0f, 0f, 0f, 0f, 0.2f, 0f, 0f, 0f];
+				StockMaxS1List = [0, 0, 0, 0, 0, 0, 1, 0, 0, 0];
 				SetSkillData();
 			}
 			else if (HoldChenSword_Item) {
 				IconName = "ChenSword_Item";
 				HowManySkills = 1;
-				SkillLevel = new() { 10, 10, 10 };
-				ChargeTypeIsPerSecond = new() { false, true, false };
-				AutoTrigger = new() { true, false, false };
-				ShowSummonIconBySkills = new() { false, false, false };
+				SkillLevel = [10, 10, 10];
+				ChargeTypeIsPerSecond = [false, true, false];
+				AutoTrigger = [true, false, false];
+				ShowSummonIconBySkills = [false, false, false];
 
-				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-				MaxSPs1List = new() { 0, 0, 0, 0, 0, 0, 4, 0, 0, 0 };
-				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0.2f, 0f, 0f, 0f };
-				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 };
+				InitialSPs1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+				MaxSPs1List = [0, 0, 0, 0, 0, 0, 4, 0, 0, 0];
+				SkillActiveTimeS1List = [0f, 0f, 0f, 0f, 0f, 0f, 0.2f, 0f, 0f, 0f];
+				StockMaxS1List = [0, 0, 0, 0, 0, 0, 1, 0, 0, 0];
 				SetSkillData();
 			}
 			else if (HoldSilverAshWeapon) {
 				IconName = "SilverAshWeapon";
 				HowManySkills = 1;
-				SkillLevel = new() { 10,10,10 };
-				ChargeTypeIsPerSecond = new() { false, true, false };
-				AutoTrigger = new() { true, false, false };
-				ShowSummonIconBySkills = new() { false, false, false };
+				SkillLevel = [10,10,10];
+				ChargeTypeIsPerSecond = [false, true, false];
+				AutoTrigger = [true, false, false];
+				ShowSummonIconBySkills = [false, false, false];
 
-				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-				MaxSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f };
-				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				InitialSPs1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+				MaxSPs1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+				SkillActiveTimeS1List = [0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f];
+				StockMaxS1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 				SetSkillData();
 			}
 			else if (HoldBeagleWeapon) {
 				IconName = "BeagleWeapon";
 				HowManySkills = 1;
-				SkillLevel = new() { 7, 7, 7 };
-				ChargeTypeIsPerSecond = new() { false, true, false };
-				AutoTrigger = new() { true, false, false };
-				ShowSummonIconBySkills = new() { false, false, false };
+				SkillLevel = [7, 7, 7];
+				ChargeTypeIsPerSecond = [false, true, false];
+				AutoTrigger = [true, false, false];
+				ShowSummonIconBySkills = [false, false, false];
 
-				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-				MaxSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f };
-				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				InitialSPs1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+				MaxSPs1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+				SkillActiveTimeS1List = [0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f];
+				StockMaxS1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 				SetSkillData();
 			}
 			else if (HoldNoirShield) {
 				IconName = "NoirShield";
 				HowManySkills = 0;
-				SkillLevel = new() { 0, 0, 0 };
-				ChargeTypeIsPerSecond = new() { false, false, false };
-				AutoTrigger = new() { true, false, false };
-				ShowSummonIconBySkills = new() { false, false, false };
+				SkillLevel = [0, 0, 0];
+				ChargeTypeIsPerSecond = [false, false, false];
+				AutoTrigger = [true, false, false];
+				ShowSummonIconBySkills = [false, false, false];
 
-				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-				MaxSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f };
-				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				InitialSPs1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+				MaxSPs1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+				SkillActiveTimeS1List = [0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f];
+				StockMaxS1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 				SetSkillData();
 			}
 			else if (HoldThornsWeapon) {
 				IconName = "ThornsWeapon";
 				HowManySkills = 1;
-				SkillLevel = new() { 10, 10, 10 };
-				ChargeTypeIsPerSecond = new() { false, true, false };
-				AutoTrigger = new() { true, false, false };
-				ShowSummonIconBySkills = new() { false, false, false };
+				SkillLevel = [10, 10, 10];
+				ChargeTypeIsPerSecond = [false, true, false];
+				AutoTrigger = [true, false, false];
+				ShowSummonIconBySkills = [false, false, false];
 
-				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-				MaxSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f };
-				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				InitialSPs1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+				MaxSPs1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+				SkillActiveTimeS1List = [0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f];
+				StockMaxS1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 				SetSkillData();
 			}
 			else if (HoldShirayuki_Shuriken) {
 				IconName = "Shirayuki_Shuriken";
 				HowManySkills = 1;
-				SkillLevel = new() { 10, 10, 10 };
-				ChargeTypeIsPerSecond = new() { false, true, false };
-				AutoTrigger = new() { true, false, false };
-				ShowSummonIconBySkills = new() { false, false, false };
+				SkillLevel = [10, 10, 10];
+				ChargeTypeIsPerSecond = [false, true, false];
+				AutoTrigger = [true, false, false];
+				ShowSummonIconBySkills = [false, false, false];
 
-				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-				MaxSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f };
-				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				InitialSPs1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+				MaxSPs1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+				SkillActiveTimeS1List = [0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f];
+				StockMaxS1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 				SetSkillData();
 			}
 			else if (HoldLava_Dagger) {
 				IconName = "Lava_Dagger";
 				HowManySkills = 1;
-				SkillLevel = new() { 7, 7, 7 };
-				ChargeTypeIsPerSecond = new() { false, true, false };
-				AutoTrigger = new() { true, false, false };
-				ShowSummonIconBySkills = new() { false, false, false };
+				SkillLevel = [7, 7, 7];
+				ChargeTypeIsPerSecond = [false, true, false];
+				AutoTrigger = [true, false, false];
+				ShowSummonIconBySkills = [false, false, false];
 
-				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-				MaxSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f };
-				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				InitialSPs1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+				MaxSPs1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+				SkillActiveTimeS1List = [0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f];
+				StockMaxS1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 				SetSkillData();
 			}
 			else if (HoldKroosAlterCrossbow) {
 				IconName = "KroosAlterCrossbow";
 				HowManySkills = 1;
-				SkillLevel = new() { 10, 10, 10 };
-				ChargeTypeIsPerSecond = new() { false, true, false };
-				AutoTrigger = new() { true, false, false };
-				ShowSummonIconBySkills = new() { false, false, false };
+				SkillLevel = [10, 10, 10];
+				ChargeTypeIsPerSecond = [false, true, false];
+				AutoTrigger = [true, false, false];
+				ShowSummonIconBySkills = [false, false, false];
 
-				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-				MaxSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f };
-				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				InitialSPs1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+				MaxSPs1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+				SkillActiveTimeS1List = [0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f];
+				StockMaxS1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 				SetSkillData();
 			}
 			else if (HoldExusiaiVector) {
 				IconName = "ExusiaiVector";
 				HowManySkills = 3;
-				SkillLevel = new() { 10, 10, 10 };
-				ChargeTypeIsPerSecond = new() { false, true, false };
-				AutoTrigger = new() { true, false, false };
-				ShowSummonIconBySkills = new() { false, false, false };
+				SkillLevel = [10, 10, 10];
+				ChargeTypeIsPerSecond = [false, true, false];
+				AutoTrigger = [true, false, false];
+				ShowSummonIconBySkills = [false, false, false];
 
-				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-				InitialSPs2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 25 };
-				InitialSPs3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 20 };
-				MaxSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 4 };
-				MaxSPs2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 35 };
-				MaxSPs3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 30 };
-				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0.2f };
-				SkillActiveTimeS2List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 15f };
-				SkillActiveTimeS3List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 15f };
-				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
-				StockMaxS2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
-				StockMaxS3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+				InitialSPs1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+				InitialSPs2List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 25];
+				InitialSPs3List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 20];
+				MaxSPs1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 4];
+				MaxSPs2List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 35];
+				MaxSPs3List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 30];
+				SkillActiveTimeS1List = [0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0.2f];
+				SkillActiveTimeS2List = [0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 15f];
+				SkillActiveTimeS3List = [0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 15f];
+				StockMaxS1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
+				StockMaxS2List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
+				StockMaxS3List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
 				SetSkillData();
 			}
 			else if (HoldPozemkaCrossbow) {
 				IconName = "PozemkaCrossbow";
 				HowManySkills = 3;
-				SkillLevel = new() { 10, 10, 10 };
-				ChargeTypeIsPerSecond = new() { false, true, true };
-				AutoTrigger = new() { true, false, false };
-				ShowSummonIconBySkills = new() { true, true, true };
+				SkillLevel = [10, 10, 10];
+				ChargeTypeIsPerSecond = [false, true, true];
+				AutoTrigger = [true, false, false];
+				ShowSummonIconBySkills = [true, true, true];
 
-				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-				InitialSPs2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 9 };
-				InitialSPs3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 23 };
-				MaxSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 20 };
-				MaxSPs2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 9 };
-				MaxSPs3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 35 };
-				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 30f };
-				SkillActiveTimeS2List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0.4f };
-				SkillActiveTimeS3List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 30f };
-				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
-				StockMaxS2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 };
-				StockMaxS3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+				InitialSPs1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+				InitialSPs2List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 9];
+				InitialSPs3List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 23];
+				MaxSPs1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 20];
+				MaxSPs2List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 9];
+				MaxSPs3List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 35];
+				SkillActiveTimeS1List = [0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 30f];
+				SkillActiveTimeS2List = [0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0.4f];
+				SkillActiveTimeS3List = [0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 30f];
+				StockMaxS1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
+				StockMaxS2List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 2];
+				StockMaxS3List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
 				SetSkillData();
 			}
 			else if (HoldNianWeapon) {
 				IconName = "NianWeapon";
 				HowManySkills = 3;
-				SkillLevel = new() { 10, 10, 10 };
-				ChargeTypeIsPerSecond = new() { true, true, true };
-				AutoTrigger = new() { false, false, false };
-				ShowSummonIconBySkills = new() { false, false, false };
+				SkillLevel = [10, 10, 10];
+				ChargeTypeIsPerSecond = [true, true, true];
+				AutoTrigger = [false, false, false];
+				ShowSummonIconBySkills = [false, false, false];
 
-				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 10 };
-				InitialSPs2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 35 };
-				InitialSPs3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 70 };
-				MaxSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 30 };
-				MaxSPs2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 50 };
-				MaxSPs3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 85 };
-				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 30f };
-				SkillActiveTimeS2List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 35f };
-				SkillActiveTimeS3List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 45f };
-				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
-				StockMaxS2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
-				StockMaxS3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+				InitialSPs1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 10];
+				InitialSPs2List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 35];
+				InitialSPs3List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 70];
+				MaxSPs1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 30];
+				MaxSPs2List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 50];
+				MaxSPs3List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 85];
+				SkillActiveTimeS1List = [0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 30f];
+				SkillActiveTimeS2List = [0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 35f];
+				SkillActiveTimeS3List = [0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 45f];
+				StockMaxS1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
+				StockMaxS2List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
+				StockMaxS3List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
 				SetSkillData();
 			}
 

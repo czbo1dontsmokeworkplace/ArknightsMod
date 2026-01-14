@@ -2337,3 +2337,63 @@ ProvenceDefault: {
 	DisplayName: Provence Default
 	Tooltip: ""
 }
+
+VulcanBody: {
+	DisplayName: Vulcan Body
+	Tooltip: ""
+}
+
+VulcanHead: {
+	DisplayName: Vulcan Head
+	Tooltip: ""
+}
+
+VulcanLegs: {
+	DisplayName: Vulcan Legs
+	Tooltip: ""
+}
+
+EntelechiaBody: {
+	DisplayName: Entelechia Body
+	Tooltip: ""
+}
+
+EntelechiaHead: {
+	DisplayName: Entelechia Head
+	Tooltip: ""
+}
+
+EntelechiaLegs: {
+	DisplayName: Entelechia Legs
+	Tooltip: ""
+}
+
+EntelechiaDefault: {
+	DisplayName: Entelechia Default
+	Tooltip: ""
+}
+
+VulcanDefault: {
+	DisplayName: Vulcan Default
+	Tooltip: ""
+}
+
+ClothesHanger: {
+	DisplayName: Clothes Hanger
+	Tooltip: ""
+}
+
+ClothesHanger2: {
+	DisplayName: Clothes Hanger2
+	Tooltip: ""
+}
+
+WorkshopMachine: {
+	DisplayName: Workshop Machine
+	Tooltip: ""
+}
+
+WorkshopToolCabinet: {
+	DisplayName: Workshop Tool Cabinet
+	Tooltip: ""
+}
