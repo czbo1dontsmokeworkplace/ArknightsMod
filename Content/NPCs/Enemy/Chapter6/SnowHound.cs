@@ -24,7 +24,10 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 			NPC.knockBackResist = 0.8f; //击退抗性
 			NPC.value = Item.buyPrice(0, 0, 1, 0); //掉的钱
 			NPC.HitSound = SoundID.NPCHit1; //受击音效
-			Banner = NPC.type;
+
+			//會掉落旗幟但沒有寫旗幟ID
+//			Banner = NPC.type;
+
 			NPC.DeathSound = SoundID.NPCDeath5;
 			//BannerItem = ModContent.ItemType<旗帜>(); 此处是每击杀50个该NPC掉的旗帜
 
@@ -145,7 +148,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 			return true;
 
 		}
-		
+
 		public override void HitEffect(NPC.HitInfo hit) {
 			//此处写该NPC被击中时产生的效果
 			//例子：
@@ -155,7 +158,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 			//让该NPC被击中时冒血
 			//尸块也要在这里写
 		}
-		
+
 		//public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers) {
 		//	if (SpellDamageConfig.SpellProjectiles.Contains(projectile.type)) {
 		//		// 法术伤害无视护甲

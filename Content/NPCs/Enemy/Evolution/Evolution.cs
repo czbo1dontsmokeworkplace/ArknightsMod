@@ -7,6 +7,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent.Bestiary;
 using Terraria.ID;
 using Terraria.ModLoader;
+using ArknightsMod.Content.NPCs.Enemy.Evolution.Evoution_skill;
 
 namespace ArknightsMod.Content.NPCs.Enemy.Evolution
 {
@@ -45,9 +46,14 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution
 		private int RightShield = 0;
 		private int AllShield = 0;
 
+		// 範圍圈的攻擊
 		private int roundDamge_S1 = 100; // 階段一的全圖攻擊傷害
 		private int roundDamge_S2 = 200; // 階段一的全圖攻擊傷害
 		private int roundDamge_S3 = 400; // 階段一的全圖攻擊傷害
+		private const float Radius = 600f;// 像素
+		private const float Thickness = 24f;
+
+
 		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
 			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
 				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Surface,
@@ -72,30 +78,16 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution
 			// 也就是给NPC.ai这个字段本身赋值，而NPC.ai这个字段本身不应当被赋值
 			// #2 也不要在这个函数里面给NPC.ai[]赋值或判断，本函数仅作为新生成NPC初始化的一部分，
 			// 本函数结束后结束后NPC.ai[]会被NPC.NewNPC的参数float ai0/1/2/3 分别赋值
-			// NPC.ai = [Stage];
+			NPC.ai[0] = Stage;
 			Music = MusicLoader.GetMusicSlot("ArknightsMod/Sounds/Music/Evolution");
-			// 已移至ApplyDifficultyAndPlayerScaling()
-			//if (Main.expertMode || Main.masterMode) {
-			//	NPC.lifeMax = (int)(NPC.lifeMax * 0.75);
-			//	NPC.damage = (int)(NPC.damage * 0.75);
-			//}
-			// 同理#2
-			//if (NPC.ai[0] < 3) {
-			//	NPC.width = 55;
-			//	NPC.height = 100;
-			//}
-			//else {
-			//	NPC.width = 75;
-			//	NPC.height = 100;
-			//}
 			NPC.width = 55;
 			NPC.height = 100;
-			// 移自OnSpawn()
 			fadeTimer = 60; // 持续60帧
 			NPC.color = Color.Black; // 初始为纯黑
 			NPC.alpha = 240;
 			var genreNPC = NPC.GetGlobalNPC<DamageCategoryNPC>();
 			genreNPC.artsResistance = 0.25f;
+			NPC.value=100000;
 		}
 
 		public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment) {
