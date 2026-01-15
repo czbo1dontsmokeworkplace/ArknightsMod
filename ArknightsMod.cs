@@ -132,7 +132,8 @@ namespace ArknightsMod
 					NPCShopSystem.UpdateClosureShop(this);
 					break;
 				case ArkMessageID.RequestUpdateCannotShop:
-					NPCShopSystem.TryUpdateCannotShop(this);
+					bool forcedUpdate = reader.ReadBoolean();
+					NPCShopSystem.TryUpdateCannotShop(this, forcedUpdate);
 					break;
 				case ArkMessageID.SpawnReinforcements:
 					Cannot.ReadSpawnReinforcements(reader);

@@ -95,7 +95,7 @@ namespace ArknightsMod.Systems
 				Main.NewText(Language.GetTextValue("Mods.ArknightsMod.StatusMessage.UpdateClosureShop"), Color.Yellow);
 		}
 
-		public static void TryUpdateCannotShop(Mod mod) {
+		public static void TryUpdateCannotShop(Mod mod, bool forcedUpdate = false) {
 			if (Main.netMode != NetmodeID.MultiplayerClient) {
 				int countBeforeSkeletron = 1 +
 					(NPC.downedSlimeKing ? 1 : 0) +//史莱姆
@@ -123,7 +123,7 @@ namespace ArknightsMod.Systems
 					(NPC.downedMoonlord ? 1 : 0);//月总
 
 				int cannotShopCount = countBeforeSkeletron + countBetweenSkeletronAndPlantera + countBetweenPlanteraAndDukeFishron + countFromFishronOnward;
-				if (cannotShopCount == OldCannotShopCount)
+				if (!forcedUpdate && cannotShopCount == OldCannotShopCount)
 					return;
 
 				var tempShop = new CannotShop();
@@ -146,7 +146,7 @@ namespace ArknightsMod.Systems
 				OldCannotShopCount = cannotShopCount;
 			}
 			else
-				RequestUpdateCannotShop(mod);
+				RequestUpdateCannotShop(mod, forcedUpdate);
 		}
 
 		public static void RequestUpdateClosureShopWhenStartDay(Mod mod) {
@@ -155,9 +155,10 @@ namespace ArknightsMod.Systems
 			packet.Send(255);
 		}
 
-		public static void RequestUpdateCannotShop(Mod mod) {
+		public static void RequestUpdateCannotShop(Mod mod, bool forcedUpdate) {
 			var packet = mod.GetPacket();
 			packet.Write((short)ArknightsMod.ArkMessageID.RequestUpdateCannotShop);
+			packet.Write(forcedUpdate);
 			packet.Send(255);
 		}
 

@@ -27,7 +27,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution
 		//数值参数
 		private int defense = 50;
 		private int SpellResist = 50; // 法术抗性(填明日方舟里的法抗）
-		private int Health = 999999999;
+		private int Health = 5000;
 		private int AttackDamage1 = 0;//接触伤害
 		private int AttackDamage2 = 60;//射弹伤害
 		private int AttackDamage3 = 80;//真实伤害
@@ -61,31 +61,52 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution
 			};
 			NPCID.Sets.NPCBestiaryDrawOffset.Add(Type, value);
 		}
-			public override void SetDefaults() {
+		public override void SetDefaults() {
 			NPC.lifeMax = Health;
 			NPC.defense = defense;
 			NPC.damage = AttackDamage1;
 			NPC.scale = 2f;
 			NPC.boss = true;
 			NPC.knockBackResist = 0;
-			NPC.ai = [Stage];
+			// #1 这个写法相对与泰拉瑞亚/tml而言是错误的：它并不等价于NPC.ai[0] = Stage;，而是等价于NPC.ai = new float[1] {Stage};，
+			// 也就是给NPC.ai这个字段本身赋值，而NPC.ai这个字段本身不应当被赋值
+			// #2 也不要在这个函数里面给NPC.ai[]赋值或判断，本函数仅作为新生成NPC初始化的一部分，
+			// 本函数结束后结束后NPC.ai[]会被NPC.NewNPC的参数float ai0/1/2/3 分别赋值
+			// NPC.ai = [Stage];
 			Music = MusicLoader.GetMusicSlot("ArknightsMod/Sounds/Music/Evolution");
-			if (Main.expertMode || Main.masterMode) {
-				NPC.lifeMax = (int)(NPC.lifeMax * 0.75);
-				NPC.damage = (int)(NPC.damage * 0.75);
-			}
-			if (NPC.ai[0]<3) {
-
-				NPC.width = 55;
-				NPC.height = 100;
-			}
-			else {
-				NPC.width = 75;
-				NPC.height = 100;
-			}
+			// 已移至ApplyDifficultyAndPlayerScaling()
+			//if (Main.expertMode || Main.masterMode) {
+			//	NPC.lifeMax = (int)(NPC.lifeMax * 0.75);
+			//	NPC.damage = (int)(NPC.damage * 0.75);
+			//}
+			// 同理#2
+			//if (NPC.ai[0] < 3) {
+			//	NPC.width = 55;
+			//	NPC.height = 100;
+			//}
+			//else {
+			//	NPC.width = 75;
+			//	NPC.height = 100;
+			//}
+			NPC.width = 55;
+			NPC.height = 100;
+			// 移自OnSpawn()
+			fadeTimer = 60; // 持续60帧
+			NPC.color = Color.Black; // 初始为纯黑
+			NPC.alpha = 240;
 			var genreNPC = NPC.GetGlobalNPC<DamageCategoryNPC>();
 			genreNPC.artsResistance = 0.25f;
 		}
+
+		public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment) {
+			//if (Main.expertMode || Main.masterMode) {
+			//	NPC.lifeMax = (int)(NPC.lifeMax * 0.75);
+			//	NPC.damage = (int)(NPC.damage * 0.75);
+			//}
+			NPC.lifeMax = (int)(NPC.lifeMax * 0.75 * balance * bossAdjustment);
+			NPC.damage = (int)(NPC.damage * 0.75 * bossAdjustment);
+		}
+
 		public override void FindFrame(int frameHeight) {
 			framecounter++;
 
@@ -212,9 +233,11 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution
 		}
 
 		public override void OnSpawn(IEntitySource source) {
-			fadeTimer = 60; // 持续60帧
-			NPC.color = Color.Black; // 初始为纯黑
-			NPC.alpha = 240;
+			// 这几项可移动到SetDefaults()
+			//fadeTimer = 60; // 持续60帧
+			//NPC.color = Color.Black; // 初始为纯黑
+			//NPC.alpha = 240;
+			NPC.ai[0] = Stage;
 		}
 		public override void AI() {
 			//动画相关
@@ -298,7 +321,5 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution
 			}
 		}
 	}
-
-
 }
 

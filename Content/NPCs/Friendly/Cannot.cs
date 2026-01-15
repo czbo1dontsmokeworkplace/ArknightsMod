@@ -342,7 +342,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		}
 
 		public override void OnSpawn(IEntitySource source) {
-			NPCShopSystem.TryUpdateCannotShop(Mod);
+			NPCShopSystem.TryUpdateCannotShop(Mod, true);
 		}
 
 		public override void ModifyActiveShop(string shopName, Item[] items) {
