@@ -7,10 +7,7 @@ namespace ArknightsMod.Content.Items.Material
 	public class OrirockCube : ArknightsMaterial
 	{
 		public override int Rarity => 1;
-		public override void SafeSetDefaults()
-		{
-			Item.DefaultToPlaceableTile(ModContent.TileType<Tiles.OrirockCube>());
-		}
+		
 		public override void AddRecipes() {
 			CreateRecipe()
 				.AddIngredient<Orirock>(3)
