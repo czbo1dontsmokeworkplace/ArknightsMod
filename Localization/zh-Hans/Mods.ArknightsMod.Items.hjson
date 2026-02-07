@@ -2521,3 +2521,22 @@ WorkshopToolCabinet: {
 	// DisplayName: Workshop Tool Cabinet
 	// Tooltip: ""
 }
+
+CrabClaw: {
+	DisplayName: 蟹钳
+	Tooltip: 岩壳蟹的鲜味令人难以抵挡，这种生物比一些可食用沙虫鲜美数倍不止。
+}
+
+MincedCrabMeatOverRice: {
+	DisplayName: 蟹肉碎拌饭
+	Tooltip:
+		'''
+		热腾腾的杂粮中加入了岩壳蟹肉，吃起来朴素中略带鲜味。
+		好吃是好吃，但..究竞是谁第一个决定尝试食用岩壳蟹的呢？
+		'''
+}
+
+RiceGrain: {
+	DisplayName: 稻米
+	Tooltip: ""
+}

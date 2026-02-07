@@ -2397,3 +2397,18 @@ WorkshopToolCabinet: {
 	DisplayName: Workshop Tool Cabinet
 	Tooltip: ""
 }
+
+CrabClaw: {
+	DisplayName: Crab Claw
+	Tooltip: ""
+}
+
+MincedCrabMeatOverRice: {
+	DisplayName: Minced Crab Meat Over Rice
+	Tooltip: ""
+}
+
+RiceGrain: {
+	DisplayName: Rice Grain
+	Tooltip: ""
+}

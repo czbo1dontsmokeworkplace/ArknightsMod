@@ -6,6 +6,8 @@ using Microsoft.Xna.Framework.Graphics;
 using ArknightsMod.Common;
 using System;
 using Terraria.DataStructures;
+using Terraria.GameContent.ItemDropRules;
+using ArknightsMod.Content.Items.Foods;
 
 namespace ArknightsMod.Content.NPCs.Enemy.ReclamationAlgorithm.Cragpincer
 {
@@ -16,23 +18,29 @@ namespace ArknightsMod.Content.NPCs.Enemy.ReclamationAlgorithm.Cragpincer
 	{
 		private const string _tex = "ArknightsMod/Content/NPCs/Enemy/ReclamationAlgorithm/Cragpincer/Cragpincer";
 		public override string Texture => _tex + "_Common";
+		private int _danceCount = 0;
 		private int _time = 0;
 		private int _time2 = 0;
 		private int _fra = 0;
 		private Player _target = null;
 		private bool _hitting = false;
 		private int _hateTime = 0;
+		private string _danceName = "Common";
 		private enum State {
 			Common,
 			Enemy,
-			Hit
+			Hit,
+			/// <summary>
+			/// 跳↓舞↑
+			/// </summary>
+			Dance
 		}
 		private State _state;
 		public override void SetDefaults()
 		{
 			_state = State.Common;
 			NPC.width = 46;
-			NPC.height = 34;
+			NPC.height = 30;
 			NPC.damage = 40;
 			NPC.lifeMax = 150;
 			NPC.defense = 80;
@@ -77,8 +85,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.ReclamationAlgorithm.Cragpincer
 					}
 					else
 					{
-						if(_time2 > 180)
+						if(_time2 > 60 * 5)
 						{
+							_state = State.Dance;
 							_time2 = 0;
 							NPC.velocity = Vector2.Zero;
 							if(Main.rand.NextBool(3,5))
@@ -88,6 +97,10 @@ namespace ArknightsMod.Content.NPCs.Enemy.ReclamationAlgorithm.Cragpincer
 								{
 									NPC.velocity.X = 1.5f * (Main.rand.NextBool(1, 2) ? -1f : 1f);
 								}
+							}
+							else
+							{
+								NPC.velocity = Vector2.Zero;
 							}
 						}
 						else
@@ -135,6 +148,87 @@ namespace ArknightsMod.Content.NPCs.Enemy.ReclamationAlgorithm.Cragpincer
 						}
 						break;
 					}
+				case State.Dance:
+					{
+						switch (_danceName)
+						{
+							case "Common":
+								{
+									if (NPC.ai[2] < 5)
+									{
+										_fra = 0;
+										NPC.ai[2]++;
+									}
+									else
+									{
+										_fra = 0;
+										NPC.ai[2] = 0;
+										_danceName = "Walk";
+									}
+									break;
+								}
+							case "Hit":
+								{
+									if (NPC.ai[2] < 5)
+									{
+										NPC.ai[2]++;
+									}
+									else
+									{
+										if (_fra == 4)
+										{
+											if (_danceCount > 3)
+											{
+												_fra = 0;
+												NPC.ai[2] = 0;
+												_danceCount = 0;
+												_danceName = "Common";
+												_state = State.Common;
+												return;
+											}
+											else
+											{
+												_danceCount++;
+												_fra = 0;
+												NPC.ai[2] =0;
+												_danceName = "Common";
+											}
+										}
+										else
+										{
+											_fra++;
+											NPC.ai[2] = 0;
+										}
+									}
+									break;
+								}
+							case "Walk":
+								{
+									if (NPC.ai[2] < 5)
+									{
+										NPC.ai[2]++;
+									}
+									else
+									{
+										if (_fra == 3)
+										{
+											_fra = 0;
+											NPC.ai[2] = 0;
+											_danceName = "Hit";
+											return;
+										}
+										else
+										{
+											_fra++;
+											NPC.ai[2] = 0;
+										}
+									}
+									break;
+								}
+						}
+						NPC.velocity = Vector2.Zero;
+						break;
+					}
 			}
 
 			if (_state == State.Enemy || _state == State.Hit) {
@@ -162,11 +256,28 @@ namespace ArknightsMod.Content.NPCs.Enemy.ReclamationAlgorithm.Cragpincer
 		}
 		public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
 		{
+			_fra = 0;
 			_state = (_state == State.Hit ? State.Hit : State.Enemy);
 		}
 		public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
 		{
+			_fra = 0;
 			_state = (_state == State.Hit ? State.Hit : State.Enemy);
+		}
+		public override float SpawnChance(NPCSpawnInfo spawnInfo)
+		{
+			if(spawnInfo.Player.ZoneBeach)
+			{
+				return 0.5f;
+			}
+			else
+			{
+				return 0f;
+			}
+		}
+		public override void ModifyNPCLoot(NPCLoot npcLoot)
+		{
+			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrabClaw>(), 1, 2, 2));
 		}
 		private bool TryGetPlayer(out Player target)
 		{
@@ -221,7 +332,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.ReclamationAlgorithm.Cragpincer
 							_time = 0;
 							_fra++;
 						}
-						else {
+						else
+						{
 							_time++;
 						}
 						if (_fra > 4)
@@ -263,7 +375,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ReclamationAlgorithm.Cragpincer
 							if (_fra > 3) {
 								_fra = 0;
 							}
-							float rot = 0;
+							float rot;
 							if (_target != null) {
 								rot = (_target.Center - NPC.Center).ToRotation();
 							}
@@ -272,17 +384,43 @@ namespace ArknightsMod.Content.NPCs.Enemy.ReclamationAlgorithm.Cragpincer
 								rot = NPC.velocity.ToRotation();
 							}
 							Texture2D texture = ModContent.Request<Texture2D>(_tex + "_Walk_" + _fra).Value;
-							spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, null, Color.White, rot > -MathHelper.PiOver2 ? 0f : MathHelper.Pi, texture.GetTextureSize() / 2f, 1f, rot > (-MathHelper.PiOver2) ? SpriteEffects.None : SpriteEffects.FlipVertically, 0f);
+							spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, null, Color.White, rot > -MathHelper.PiOver2 ? 0f : MathHelper.Pi, texture.GetTextureSize() / 2f, 1f, NPC.velocity.X < 0f ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0f);
 							
 						}
 						else
 						{
-							Texture2D texture = ModContent.Request<Texture2D>(_tex + "_Walk_" + 0).Value;
+							Texture2D texture = ModContent.Request<Texture2D>(_tex + "_Common").Value;
 							
 							spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, null, Color.White, 0f, texture.GetTextureSize() / 2f, 1f, SpriteEffects.None, 0f);
 						}
+
 						break;
 				}
+				case State.Dance:
+					{
+						switch (_danceName)
+						{
+							case "Common":
+								{
+									Texture2D texture = ModContent.Request<Texture2D>(_tex + "_Common").Value;
+									spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, null, Color.White, 0f, texture.GetTextureSize() / 2f, 1f, SpriteEffects.None, 0f);
+									break;
+								}
+							case "Hit":
+								{
+									Texture2D texture = ModContent.Request<Texture2D>(_tex + "_Hit_" + _fra).Value;
+									spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, null, Color.White, 0f, texture.GetTextureSize() / 2f, 1f, SpriteEffects.None, 0f);
+									break;
+								}
+							case "Walk":
+								{
+									Texture2D texture = ModContent.Request<Texture2D>(_tex + "_Walk_" + _fra).Value;
+									spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, null, Color.White, 0f, texture.GetTextureSize() / 2f, 1f, SpriteEffects.None, 0f);
+									break;
+								}
+						}
+						break;
+					}
             }
 			return false;
 		}
