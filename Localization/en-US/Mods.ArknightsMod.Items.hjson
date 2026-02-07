@@ -2398,17 +2398,17 @@ WorkshopToolCabinet: {
 	Tooltip: ""
 }
 
-MlynarBody: {
-	DisplayName: Mlynar Body
+CrabClaw: {
+	DisplayName: Crab Claw
 	Tooltip: ""
 }
 
-MlynarHead: {
-	DisplayName: Mlynar Head
+MincedCrabMeatOverRice: {
+	DisplayName: Minced Crab Meat Over Rice
 	Tooltip: ""
 }
 
-MlynarLegs: {
-	DisplayName: Mlynar Legs
+RiceGrain: {
+	DisplayName: Rice Grain
 	Tooltip: ""
 }
