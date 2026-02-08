@@ -2412,3 +2412,33 @@ RiceGrain: {
 	DisplayName: Rice Grain
 	Tooltip: ""
 }
+
+YvonneBody: {
+	DisplayName: Yvonne Body
+	Tooltip: ""
+}
+
+YvonneHead: {
+	DisplayName: Yvonne Head
+	Tooltip: ""
+}
+
+YvonneLegs: {
+	DisplayName: Yvonne Legs
+	Tooltip: ""
+}
+
+MlynarBody: {
+	DisplayName: Mlynar Body
+	Tooltip: ""
+}
+
+MlynarHead: {
+	DisplayName: Mlynar Head
+	Tooltip: ""
+}
+
+MlynarLegs: {
+	DisplayName: Mlynar Legs
+	Tooltip: ""
+}
