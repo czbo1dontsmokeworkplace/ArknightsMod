@@ -192,3 +192,5 @@ SchwarzBow: {
 		Desc: Attack Interval increases a bit, ATK +180%, 100% chance to deal 160% damage and inflict a defense reduction
 	}
 }
+
+ChargeReady: Initial skill points have been restored
