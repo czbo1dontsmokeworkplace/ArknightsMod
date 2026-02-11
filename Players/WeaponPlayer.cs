@@ -188,7 +188,7 @@ namespace ArknightsMod.Players
 						break;
 					}
 				}
-				if (!hasNearbyEnemy && ++initChargeTimer >= 15 * 60) {
+				if (!hasNearbyEnemy && ++initChargeTimer >= GetRestoreTime()) {
 					initChargeTimer = 0;
 					chargeReady = true;
 				}
@@ -228,6 +228,11 @@ namespace ArknightsMod.Players
 				SetAllSkillsData();
 			}
 		}
+
+		private int GetRestoreTime() {
+			return 60 * 15;
+		}
+
 		public void TryAutoCharge() {
 			if (hasNearbyEnemy)
 				return;
