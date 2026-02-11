@@ -1,5 +1,7 @@
-﻿using ArknightsMod.Content.Projectiles.Vanguard.Bagpipe;
+﻿using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Projectiles.Vanguard.Bagpipe;
 using ArknightsMod.Content.Rarities;
+using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -27,17 +29,25 @@ namespace ArknightsMod.Content.Items.Weapons.Vanguard.Bagpipe
 		}
 		#endregion
 		public override bool MeleePrefix() => true;
+		public override void AddRecipes() {
+			CreateRecipe()
+				.AddIngredient(ItemID.JoustingLance, 1)
+				.AddIngredient<PolymerizationPreparation>(4)
+				.AddIngredient<OrirockConcentration>(9)
+				.AddTile(ModContent.TileType<FactoryTile>())
+				.Register();
+		}
 		public override void SetDefaults() {
-			Item.damage = 48;           // 攻击力
+			Item.damage = 118;           // 攻击力
 			Item.DamageType = DamageClass.Melee;
 			Item.width = 90;            // 丢出体积
 			Item.height = 96;           // 丢出体积
 			Item.scale = 1;             // 图片缩放
-			Item.useTime = 21;          // 使用一次时间 
-			Item.useAnimation = 21;     // 动画显示时间
+			Item.useTime = 30;          // 使用一次时间 
+			Item.useAnimation = 30;     // 动画显示时间
 			Item.knockBack = 2f;        // 击退
 			Item.value = 200000;        // 价格 
-			Item.rare = ModContent.RarityType<ArknightsRarities>();
+			Item.rare = ModContent.ProjectileType<BagpipeSpearProj2>();
 			Item.autoReuse = true;      // 是否可以连续使用
 			Item.noMelee = true;        // 贴图是否造成伤害
 			Item.shoot = 88;

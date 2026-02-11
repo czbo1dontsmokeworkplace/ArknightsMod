@@ -1055,8 +1055,9 @@ AACTSummon: {
 
 SpicyCandy: {
 	DisplayName: Spicy Candy
-	// Tooltip: ""
+	Tooltip: ""
 }
+
 ExusiaiVector: {
 	DisplayName: Exusiai Vector
 	Tooltip: ""
@@ -2439,5 +2440,15 @@ MlynarHead: {
 
 MlynarLegs: {
 	DisplayName: Mlynar Legs
+	Tooltip: ""
+}
+
+TheFirstToTalkSummon: {
+	DisplayName: The First To Talk Summon
+	Tooltip: ""
+}
+
+OblivionisSword: {
+	DisplayName: Oblivionis Sword
 	Tooltip: ""
 }
