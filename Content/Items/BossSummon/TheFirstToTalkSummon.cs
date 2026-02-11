@@ -4,9 +4,9 @@ using Terraria.ModLoader;
 using ArknightsMod.Content.NPCs.Enemy.Seamonster;
 using Terraria.Audio;
 
-namespace ArknightsMod.Content.Items.Bosssummon
+namespace ArknightsMod.Content.Items.BossSummon
 {
-	public class TFTTS : ModItem
+	public class TheFirstToTalkSummon : ModItem
 	{
 		public override void AddRecipes() {
 			
