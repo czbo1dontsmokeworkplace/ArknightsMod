@@ -15,6 +15,7 @@ using ArknightsMod.Content.Items.Weapons.Sniper.Schwarz;
 using ArknightsMod.Content.Items.Weapons.Sniper.Shirayuki;
 using ArknightsMod.Content.Items.Weapons.Vanguard.Bagpipe;
 using ArknightsMod.Systems.Gameplay.Skill;
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Localization;
@@ -102,7 +103,7 @@ namespace ArknightsMod.Players
 			chargeReady = true;
 		}
 
-		public void InitSkill() {
+		public void InitSkill(bool giveCharge) {
 			SkillData skill = CurrentSkill;
 
 			if (skill == null) {
@@ -115,16 +116,22 @@ namespace ArknightsMod.Players
 			Div = skill.ChargeType == SkillChargeType.Auto ? 60 : 1;
 			int initSP = data.InitSP;
 			int maxSP = data.MaxSP;
-
-			if (initSP == maxSP) {
-				SkillCharge = 0;
-				StockCount = 1;
-				SP = StockCount == data.MaxStack ? maxSP : 0;
+			if (giveCharge) {
+				if (initSP == maxSP) {
+					SkillCharge = 0;
+					StockCount = 1;
+					SP = StockCount == data.MaxStack ? maxSP : 0;
+				}
+				else {
+					SkillCharge = initSP * Div;
+					StockCount = 0;
+					SP = initSP;
+				}
 			}
 			else {
-				SkillCharge = initSP * Div;
+				SkillCharge = 0;
+				SP = 0;
 				StockCount = 0;
-				SP = initSP;
 			}
 
 			SkillChargeMax = maxSP * Div;
@@ -180,11 +187,14 @@ namespace ArknightsMod.Players
 			HoldSchwarzBow = Main.LocalPlayer.HeldItem.ModItem is SchwarzBow;
 			// 基于武器的技能系统
 			hasNearbyEnemy = false;
+			// 旧版武器支持
+			SetAllSkillsData();
 			Item item = Main.LocalPlayer.HeldItem;
 			if (item.ModItem is UpgradeWeaponBase ark) {
 				foreach (var npc in Main.ActiveNPCs) {
 					if (npc.CanBeChasedBy(Player) && npc.Distance(Player.MountedCenter) < 20 * 16) {
 						hasNearbyEnemy = true;
+						initChargeTimer = 0;
 						break;
 					}
 				}
@@ -194,15 +204,16 @@ namespace ArknightsMod.Players
 				}
 				if (chargeReady) {
 					chargeReady = false;
-					ark.deathCharge = [true, true, true];
-					CombatText.NewText(Player.Hitbox.Modified(0, -48, 0, 0), Microsoft.Xna.Framework.Color.Gold,
-						Language.GetTextValue("Mods.ArknightsMod.Skills.ChargeReady"), true);
+					ark.chargeReady = [true, true, true];
+					if (Main.myPlayer == Player.whoAmI)
+						CombatText.NewText(Player.Hitbox.Modified(0, -48, 0, 0), Microsoft.Xna.Framework.Color.Gold,
+							Language.GetTextValue("Mods.ArknightsMod.Skills.ChargeReady"), true);
 				}
 				int type = item.type;
 				if (type != oldHeld) {
-					oldHeld = type;
 					oldSkill = -1;
 					Skill = 0;
+					oldHeld = type;
 					SkillCount = 0;
 
 					for (int i = 0; i < 3; i++) {
@@ -216,16 +227,13 @@ namespace ArknightsMod.Players
 
 				if (oldSkill != Skill) {
 					oldSkill = Skill;
-					InitSkill();
+					InitSkill(ark.chargeReady[Skill]);
+					ark.chargeReady[Skill] = false;
 				}
-				if (ark.deathCharge[Skill]) {
-					SP = InitialSP[Skill] ?? 0;
-					ark.deathCharge[Skill] = false;
+				else if (ark.chargeReady[Skill] && StockCount == 0) {
+					ark.chargeReady[Skill] = false;
+					SkillCharge = Math.Max(SkillCharge, ark.GetSkillData(Skill).LevelData[SkillLevel[Skill] - 1].InitSP * Div);
 				}
-			}
-			else {
-				// 旧版武器支持
-				SetAllSkillsData();
 			}
 		}
 
@@ -234,7 +242,7 @@ namespace ArknightsMod.Players
 		}
 
 		public void TryAutoCharge() {
-			if (hasNearbyEnemy)
+			if (!hasNearbyEnemy)
 				return;
 			if (CurrentSkill?.ChargeType == SkillChargeType.Auto)
 				AutoCharge();
