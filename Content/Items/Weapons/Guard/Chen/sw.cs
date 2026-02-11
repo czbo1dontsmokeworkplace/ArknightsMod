@@ -49,12 +49,13 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 		static void CreatProj(ChenSword_Style st,Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
 
 
-			var p1 = Projectile.NewProjectileDirect(source, player.Center, Vector2.Zero, ModContent.ProjectileType<sw_Proj_1>(), damage, knockback, player.whoAmI).ModProjectile as sw_Proj_1;
+			var p1 = Projectile.NewProjectileDirect(source, player.Center, Vector2.Zero, ModContent.ProjectileType<sw_Proj_1>(), damage, knockback, player.whoAmI, 0, 0, (int)st).ModProjectile as sw_Proj_1;
 
 
-			var p2 = Projectile.NewProjectileDirect(source, player.Center, Vector2.Zero, ModContent.ProjectileType<sw_Proj_2>(), damage, knockback, player.whoAmI).ModProjectile as sw_Proj_2;
+			var p2 = Projectile.NewProjectileDirect(source, player.Center, Vector2.Zero, ModContent.ProjectileType<sw_Proj_2>(), damage, knockback, player.whoAmI, 0, 0, (int)st).ModProjectile as sw_Proj_2;
 			p1.Sword_Style = st;
 				p2.Sword_Style = st;
+
 		}
 		private ChenSword_Style testv = ChenSword_Style.Normal;
 		public override bool AltFunctionUse(Player player) => true;
@@ -117,8 +118,9 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 			///写在这 这是一个简单的四种方式轮流使用的样例
 			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
 
+			//CreatProj(ChenSword_Style.Normal, player, source, position, velocity, type, (int)(damage * 5), knockback);
 
-
+			
 			SoundStyle NS = new SoundStyle("ArknightsMod/Sounds/ChenSwordNoSkill") {
 				MaxInstances = 4
 			};
@@ -128,7 +130,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 			}
 			else if (modPlayer.Skill == 1 && modPlayer.SkillActive) {
 				CreatProj(ChenSword_Style.Skill_2, player, source, position, velocity, type, (int)(damage * 5), knockback);
-				CreatProj(ChenSword_Style.Skill_2, player, source, position, velocity, type, (int)(damage * 5), knockback);
+				//CreatProj(ChenSword_Style.Skill_2, player, source, position, velocity, type, (int)(damage * 5), knockback);
 
 				modPlayer.StockCount = 0;
 			}
@@ -143,6 +145,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 					CreatProj(ChenSword_Style.Normal, player, source, position, velocity, type, damage, knockback);
 				}
 			}
+			
 			return false;
 			//return base.Shoot(player, source, position, velocity, type, damage, knockback);
 		}
@@ -275,32 +278,22 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
             Projectile.penetrate = -1;//表示能穿透几次
             Projectile.ignoreWater = true;//无视液体
 										  //Swing_AI
-			if (Sword_Style == 0) {
-				Projectile.timeLeft = 76;
-				Projectile.ai[0] = 0;
-			}
-
-			if (Sword_Style == ChenSword_Style.Skill_1) {
-				Projectile.timeLeft = 24;
-				Projectile.ai[0] = 39;
-
-			}
-			if (Sword_Style == ChenSword_Style.Skill_2)
-				Projectile.timeLeft = 80;
-        }
+		}
 		public override void OnSpawn(IEntitySource source) {
-			if (Sword_Style == 0) {
+
+			if (Projectile.ai[2] == 0) {
 				Projectile.timeLeft = 76;
 				Projectile.ai[0] = 0;
 			}
 
-			if (Sword_Style == ChenSword_Style.Skill_1) {
-				Projectile.timeLeft = 24;
+			if (Projectile.ai[2] == (int)ChenSword_Style.Skill_1) {
+				Projectile.timeLeft = 71-19;
 				Projectile.ai[0] = 39;
 
 			}
-			if (Sword_Style == ChenSword_Style.Skill_2)
+			if (Projectile.ai[2] == (int)ChenSword_Style.Skill_2)
 				Projectile.timeLeft = 80;
+
 		}
 		public override void SetStaticDefaults()
         {
@@ -313,11 +306,13 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
         #region 普攻
         private void Swing_AI()
         {
+			//Main.NewText(Projectile.ai[0]);
             Projectile.ai[0]++;
             if (Projectile.ai[0] >= 39)
             {
 				if (Sword_Style == 0)
 					Projectile.Kill();
+
 				player.heldProj = Projectile.whoAmI;
                 player.itemAnimation = player.itemTime = 3;
                 Projectile.velocity = new Vector2(0, -2).RotatedBy(Projectile.rotation);
@@ -358,7 +353,10 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
                     Projectile.rotation = MathHelper.Lerp(Projectile.rotation, MathHelper.WrapAngle(Projectile.ai[1] + (4 + 0.4f) * player.direction) - (4.7f) * player.direction, step);
 
                 }
-                Swing_DrawScale = Vector2.Lerp(Swing_DrawScale, new Vector2(1), 0.1f);
+				if (time < 17)
+					Projectile.ai[0]++;
+
+				Swing_DrawScale = Vector2.Lerp(Swing_DrawScale, new Vector2(1), 0.1f);
             }
             else
             {
@@ -369,7 +367,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
         }
         private void Swing_Draw(SpriteBatch sb, GraphicsDevice gd)
         {
-            if (Projectile.ai[0] > 54)
+            if (Projectile.ai[0] > 72)
             {
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
@@ -494,7 +492,8 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
         }
         private bool Swing_Coll(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            if (Projectile.ai[0] > 54)
+			//Main.NewText(Projectile.ai[0]);
+            if (Projectile.ai[0] > 70)
             {
                 float point = 0f;
                 Vector2 startPoint = Projectile.Center;
@@ -536,6 +535,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 			}
             return false;
         }
+
         private class Skill_2_Release_Dust_1 : ModDust
         {
             public override void OnSpawn(Dust dust)
@@ -552,6 +552,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
             {
                 dust.fadeIn = MathHelper.Lerp(dust.fadeIn, 1, 0.3f);
 				dust.velocity *= .5f;
+				dust.rotation = dust.velocity.ToRotation();
 				dust.position += dust.velocity;
                 if (dust.alpha < 0) dust.active = false;
                 else dust.alpha -= 10;
@@ -585,12 +586,13 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 				plaCopy.skipAnimatingValuesInPlayerFrame = true;
 				plaCopy.PlayerFrame();
 				plaCopy.skipAnimatingValuesInPlayerFrame = false;
-
 				plaCopy.immuneAlpha = (int)(255 * (1.0f - fadeVal));
-
+				var rro = dust.rotation;
+				if (plaCopy.direction == -1)
+					rro -= MathHelper.Pi;
 				for (int j = 0; j < 3; j++) {
 
-					Main.PlayerRenderer.DrawPlayer(Main.Camera, plaCopy, dust.position - new Vector2(12, 11), plaCopy.direction * .1f, new Vector2(12, 21), 0, 1.3f);
+					Main.PlayerRenderer.DrawPlayer(Main.Camera, plaCopy, dust.position - new Vector2(12, 11), rro, new Vector2(12, 21), 0, 1.3f);
 					//sb.Draw(t, Projectile.oldPos[i] + Projectile.Size * 0.5f - Main.screenPosition, null, Color.White * a * aa, Projectile.rotation + MathHelper.Pi, t.Size() * 0.5f, 0.45f, eff, 0);
 				}
 
@@ -600,7 +602,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 						  dust.position - Main.screenPosition,
 								  null,
 								  Color.White * fadeVal * .8f,
-								  -plaCopy.direction * 2-MathHelper.PiOver4,
+								  -plaCopy.direction * 2-MathHelper.PiOver4 + rro,
 								  new Vector2(0, t.Height),
 								  .9f,
 								  0,
@@ -622,15 +624,16 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
             player.heldProj = Projectile.whoAmI;
             player.itemAnimation = player.itemTime = 3;
             Swing_DrawScale = new Vector2(1);
-            Projectile.velocity = new Vector2(player.direction, 0);
-            player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation + MathHelper.PiOver2 * player.direction);
+			var ro = Projectile.velocity.ToRotation();
+
+			player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation + MathHelper.PiOver2 * player.direction);
             //if (Projectile.ai[0] < 40)
             {
-                Projectile.rotation = Projectile.rotation.AngleLerp((MathHelper.Pi + MathHelper.PiOver2 * 0.9f) * player.direction, 0.2f);
-            }
-            if (Projectile.ai[0] > 15 && Projectile.ai[1] == 0)
+				Projectile.rotation = Projectile.rotation.AngleLerp((MathHelper.Pi + MathHelper.PiOver2 * 0.9f) * player.direction, 0.2f);
+			}
+			if (Projectile.ai[0] > 15 && Projectile.ai[1] == 0)
             {
-                if (rand.NextBool(2) && player.controlUseItem)
+                if (rand.NextBool(2) && Main.mouseRight)
                 {
                     var d = Dust.NewDustPerfect(Projectile.Center + new Vector2(player.direction * -15, 1), 222);
                     d.noGravity = true;
@@ -639,9 +642,16 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
                     d.scale = 0.2f;
                 }
             }
-            if (player.controlUseItem && Projectile.ai[1] == 0)
+			if (Projectile.ai[1] == 0) {
+				Projectile.velocity = (Main.MouseWorld - player.MountedCenter).SafeNormalize(Vector2.Zero);
+				if (Projectile.velocity.X > 0)
+					player.direction = 1;
+				else
+					player.direction = -1;
+			}
+			if (Main.mouseRight && Projectile.ai[1] == 0)
             {
-                Projectile.timeLeft = 10;
+				Projectile.timeLeft = 10;
             }
             else if (Projectile.ai[0] > 20)
             {
@@ -653,17 +663,18 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 					};
 					SoundEngine.PlaySound(S2, player.position);
 					Projectile.timeLeft = 35;
-                    Dust.NewDustPerfect(player.Center - Vector2.UnitX * player.direction * 40, ModContent.DustType<Skill_2_Release_Dust_1>(), Vector2.UnitX * player.direction * 50).rotation = player.direction;
+                    Dust.NewDustPerfect(player.Center - Projectile.velocity * 40, ModContent.DustType<Skill_2_Release_Dust_1>(), Projectile.velocity * 50);
 					
 					//222黄
                     //219红
                     //for (int ii = 0; ii < 3; ii++)
+					
                     {
                         for (int i = 0; i < 14; i++)
                         {
                             var d = Dust.NewDustPerfect(player.Center, 222);
                             d.noGravity = true;
-                            d.velocity = new Vector2(player.direction * 20, 0) * rand.NextFloat(0.4f, 1.5f);
+                            d.velocity = (new Vector2(20, 0) * rand.NextFloat(0.4f, 1.5f)).RotatedBy(ro);
                             d.scale = 0.8f;
 
 
@@ -672,20 +683,21 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
                         {
                             var d = Dust.NewDustPerfect(player.Center, 222);
                             d.noGravity = true;
-                            d.velocity = new Vector2(player.direction * 13, 0).RotatedByRandom(0.7) * rand.NextFloat(0.4f, 1.3f);
+                            d.velocity = (new Vector2(13, 0) * rand.NextFloat(0.4f, 1.3f)).RotatedBy(ro);
                             d.scale = 0.6f;
 
 
                         }
                         for (int i = -10; i <= 10; i++)
                         {
-                            var d = Dust.NewDustDirect(player.Center - new Vector2(0, 20), 0, 40, 219);
+                            var d = Dust.NewDustDirect(player.Center - new Vector2(0, 20).RotatedBy(ro), 0, 40, 219);
                             d.noGravity = true;
-                            d.velocity = new Vector2(player.direction * 23, 0) * rand.NextFloat(0.0f, 1.4f);
+                            d.velocity = (new Vector2(23, 0) * rand.NextFloat(0.0f, 1.4f)).RotatedBy(ro);
                             d.scale = 0.6f;
                         }
 
                     }
+					
                 }
                 if (Projectile.ai[1] == 6)
                 {
@@ -724,24 +736,25 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
                 val /= ControlVal;
                 var col = Color.Red * val;
                 col.A = 0;
-                sb.Draw(Skill_1_Release_Effect_1, Projectile.Center - Main.screenPosition, null, col, Projectile.rotation + MathHelper.PiOver2, Skill_1_Release_Effect_1.Size() / 2f, new Vector2(1, 0.5f), default, 0);
+				var ro = Projectile.velocity.ToRotation();
 
+				sb.Draw(Skill_1_Release_Effect_1, Projectile.Center - Main.screenPosition, null, col, ro + Projectile.rotation + MathHelper.PiOver2, Skill_1_Release_Effect_1.Size() / 2f, new Vector2(1, 0.5f), default, 0);
                 float Skill_1_Release_Effect_2_Scale = 2;
                 {
-                    sb.Draw(Skill_1_Release_Effect_2, Projectile.Center + new Vector2(300 * posx, 0) * player.direction - Main.screenPosition, null, col, player.direction == 1 ? 0 : MathHelper.Pi, Skill_1_Release_Effect_2.Size() / 2f, new Vector2(1.4f, 0.7f * invert_posx) * Skill_1_Release_Effect_2_Scale, default, 0);
-                    sb.Draw(Skill_1_Release_Effect_2, Projectile.Center + new Vector2(300 * posx, 0) * player.direction - Main.screenPosition, null, col, player.direction == 1 ? MathHelper.Pi : 0, Skill_1_Release_Effect_2.Size() / 2f, new Vector2(1, 0.7f * invert_posx) * Skill_1_Release_Effect_2_Scale, SpriteEffects.FlipHorizontally, 0);
+                    sb.Draw(Skill_1_Release_Effect_2, Projectile.Center + new Vector2(300 * posx, 0).RotatedBy(ro) - Main.screenPosition, null, col, ro /*+ player.direction == 1 ? 0 : MathHelper.Pi*/, Skill_1_Release_Effect_2.Size() / 2f, new Vector2(1.4f, 0.7f * invert_posx) * Skill_1_Release_Effect_2_Scale, default, 0);
+                    sb.Draw(Skill_1_Release_Effect_2, Projectile.Center + new Vector2(300 * posx, 0).RotatedBy(ro) - Main.screenPosition, null, col, ro/* + player.direction == 1 ? MathHelper.Pi : 0*/, Skill_1_Release_Effect_2.Size() / 2f, new Vector2(1, 0.7f * invert_posx) * Skill_1_Release_Effect_2_Scale, SpriteEffects.FlipVertically, 0);
 
                 }
-                sb.Draw(Skill_1_Release_Effect_1, Projectile.Center + new Vector2(100, 0) * player.direction - Main.screenPosition, null, col, 0, Skill_1_Release_Effect_1.Size() / 2f, new Vector2(2, 1f * invert_posx), default, 0);
+                sb.Draw(Skill_1_Release_Effect_1, Projectile.Center + new Vector2(100, 0).RotatedBy(ro) - Main.screenPosition, null, col, ro , Skill_1_Release_Effect_1.Size() / 2f, new Vector2(2, 1f * invert_posx), default, 0);
 
                 col = Color.White * val;
                 col.A = 0;
-                sb.Draw(Skill_1_Release_Effect_1, Projectile.Center - Main.screenPosition, null, col, Projectile.rotation + MathHelper.PiOver2, Skill_1_Release_Effect_1.Size() / 2f, new Vector2(1, 0.3f), default, 0);
-                sb.Draw(Skill_1_Release_Effect_1, Projectile.Center + new Vector2(100, 0) * player.direction - Main.screenPosition, null, col, 0, Skill_1_Release_Effect_1.Size() / 2f, new Vector2(2, 1f * invert_posx) * 0.95f, default, 0);
+                sb.Draw(Skill_1_Release_Effect_1, Projectile.Center - Main.screenPosition, null, col, ro + Projectile.rotation + MathHelper.PiOver2, Skill_1_Release_Effect_1.Size() / 2f, new Vector2(1, 0.3f), default, 0);
+                sb.Draw(Skill_1_Release_Effect_1, Projectile.Center + new Vector2(100, 0).RotatedBy(ro)  - Main.screenPosition, null, col, ro, Skill_1_Release_Effect_1.Size() / 2f, new Vector2(2, 1f * invert_posx) * 0.95f, default, 0);
 
                 {
-                    sb.Draw(Skill_1_Release_Effect_2, Projectile.Center + new Vector2(300 * posx, 0) * player.direction - Main.screenPosition, null, col, player.direction == 1 ? 0 : MathHelper.Pi, Skill_1_Release_Effect_2.Size() / 2f, new Vector2(1.4f, 0.7f * invert_posx) * 0.94f * Skill_1_Release_Effect_2_Scale, default, 0);
-                    sb.Draw(Skill_1_Release_Effect_2, Projectile.Center + new Vector2(300 * posx, 0) * player.direction - Main.screenPosition, null, col, player.direction == 1 ? MathHelper.Pi : 0, Skill_1_Release_Effect_2.Size() / 2f, new Vector2(1, 0.7f * invert_posx) * 0.94f * Skill_1_Release_Effect_2_Scale, SpriteEffects.FlipHorizontally, 0);
+                    sb.Draw(Skill_1_Release_Effect_2, Projectile.Center + new Vector2(300 * posx, 0).RotatedBy(ro)  - Main.screenPosition, null, col, ro/* + player.direction == 1 ? 0 : MathHelper.Pi*/, Skill_1_Release_Effect_2.Size() / 2f, new Vector2(1.4f, 0.7f * invert_posx) * 0.94f * Skill_1_Release_Effect_2_Scale, default, 0);
+                    sb.Draw(Skill_1_Release_Effect_2, Projectile.Center + new Vector2(300 * posx, 0).RotatedBy(ro) - Main.screenPosition, null, col, ro /*+ player.direction == 1 ? MathHelper.Pi : 0*/, Skill_1_Release_Effect_2.Size() / 2f, new Vector2(1, 0.7f * invert_posx) * 0.94f * Skill_1_Release_Effect_2_Scale, SpriteEffects.FlipVertically, 0);
 
                 }
 
@@ -755,7 +768,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
             Projectile.rotation = (-MathHelper.Pi + 0.9f) * player.direction;
             Projectile.Center = player.MountedCenter + new Vector2(21 * player.direction, -20);
 
-            if (!player.controlUseItem)
+            if (!Main.mouseRight)
                 Projectile.ai[0]++;
             if (Projectile.ai[0] == 0)
             {
@@ -790,15 +803,16 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 				Swing_AI();
 			}
 			if (Sword_Style == ChenSword_Style.Skill_1) {
-				if (Projectile.ai[0] < 38)
+				if (Projectile.ai[0] < 38) {
 					Projectile.ai[0] = 39;
+				}
 				Swing_AI();
 
 			}
 			if (Sword_Style == ChenSword_Style.Skill_2) {
 				Skill_2_AI();
 			}
-						if (Sword_Style == ChenSword_Style.Skill_3) {
+			if (Sword_Style == ChenSword_Style.Skill_3) {
 				Skill_3_AI();
 			}
             base.AI();
@@ -854,15 +868,19 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Target.Enqueue(target);
-			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
 			SoundStyle S1 = new SoundStyle("ArknightsMod/Sounds/ChenSwordSkill1") {
 				MaxInstances = 4
 			};
 
-			if (modPlayer.Skill == 0) {
+
+
+			if (Sword_Style == 0) {
 				target.AddBuff(BuffID.Confused, 90);
 				SoundEngine.PlaySound(S1, player.position);
 				base.OnHitNPC(target, hit, damageDone);
+			}
+			if(Sword_Style == ChenSword_Style.Skill_2) {
+				target.StrikeNPC(hit);
 			}
 			Dust.NewDustDirect(target.position, target.Hitbox.Width, target.Hitbox.Height, ModContent.DustType<OnHit_Dust_1>());
             base.OnHitNPC(target, hit, damageDone);
@@ -905,15 +923,19 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 		}
 		public override void OnSpawn(IEntitySource source) {
 
-			if (Sword_Style == 0) {
+			if (Projectile.ai[2] == 0) {
 				Projectile.timeLeft = 76;
 				Projectile.ai[0] = 0;
 			}
 
-			if (Sword_Style == ChenSword_Style.Skill_1) {
-				Projectile.timeLeft = 16;
+			if (Projectile.ai[2] == (int)ChenSword_Style.Skill_1) {
+				Projectile.timeLeft = 52;
 				Projectile.ai[0] = 77;
 
+			}
+
+			if (Projectile.ai[2] == (int)ChenSword_Style.Skill_3) {
+				Projectile.timeLeft -= 10;
 			}
 		}
         public override void SetStaticDefaults()
@@ -936,8 +958,6 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 			}
 			if (Sword_Style == ChenSword_Style.Skill_2) {
 				//return Skill_2_Coll(projHitbox, targetHitbox);
-			}
-			if (Sword_Style == ChenSword_Style.Skill_3) {
 			}
 
 			//return Swing_Coll(projHitbox, targetHitbox);
@@ -973,7 +993,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 			}
 			else if (Sword_Style == 0)
 				Projectile.Kill();
-
+			//Main.NewText(Projectile.ai[0]);
 			Projectile.velocity = new Vector2(0, -3).RotatedBy(Projectile.rotation);
             if (Projectile.ai[0] == 0)
             {
@@ -1386,6 +1406,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
                 Projectile.scale = 1f;
                 Projectile.DamageType = DamageClass.Melee;
                 Projectile.friendly = true; // 友方弹幕
+				Projectile.hostile = false;
                 Projectile.aiStyle = -1; // 不使用默认的 AI 样式，自定义弹幕行为
                 Projectile.tileCollide = false;//false就能让他穿墙
                 Projectile.penetrate = -1;//表示能穿透几次
@@ -1421,7 +1442,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
                             var player = Main.player[Projectile.owner];
                             if(player != null)
                             {
-                                if (!player.controlUseItem) 
+                                if (!Main.mouseRight) 
                                 {
                                     if (Projectile.ai[1] == 0 && p.ai[0] > 80)
                                     {
@@ -1584,8 +1605,10 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
                 Projectile.penetrate = -1;//表示能穿透几次
                 Projectile.ignoreWater = true;//无视液体
                 Projectile.timeLeft = 45;
-            }
-            public override void SetStaticDefaults()
+				Projectile.hostile = false;
+
+			}
+			public override void SetStaticDefaults()
             {
                 ProjectileID.Sets.TrailingMode[Type] = 2;
                 ProjectileID.Sets.TrailCacheLength[Type] = 10;
@@ -1729,6 +1752,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
         }
         private Vector2 AttackPos = Vector2.Zero;
 		private bool _playedSkill3Sound = false;
+		NPC Skill_3_Target = null;
 		private void Skill_3_AI()
         {
             var rand = Main.rand;
@@ -1746,18 +1770,13 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 
 			int dynamicDamage = (int)Math.Round(finalDamage * 3.2f);
 
-			if (!player.controlUseItem)
-            {
-                if (Projectile.localAI[0] == 0 && Projectile.ai[0] > 80)
-                {
-                        if (Vector2.Distance(Main.MouseWorld, player.MountedCenter) > 500)
-                            AttackPos = player.MountedCenter + new Vector2(500, 0).RotatedBy((Main.MouseWorld - player.MountedCenter).ToRotation());
-                        else AttackPos = Main.MouseWorld;
+			if (!Main.mouseRight) {
+				if (Projectile.localAI[0] == 0 && Projectile.ai[0] > 80) {
+					Projectile.timeLeft = 150;
 
-                        Projectile.timeLeft = 150;
-                    }
-                    Projectile.localAI[0]++;
-            }
+					Projectile.localAI[0]++;
+				}
+			}
             if (Projectile.localAI[0] != 0)
             {
                 if (Projectile.ai[0] > 80)
@@ -1771,7 +1790,31 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
                     ScrPla.CanBeDamaged = false;
                     if (Projectile.timeLeft % 12 == 0 && Projectile.ai[2] < 10)
                     {
-                        Projectile.ai[2]++;
+						//追加索敌
+						if (Skill_3_Target != null) {
+							if (!Skill_3_Target.active) {
+								var temPos = AttackPos;
+								float temDis = float.MaxValue;
+								bool MarkedNPC = false;
+								foreach (var n in Main.ActiveNPCs) {
+									if (n.CanBeChasedBy()) {
+										var length___ = (AttackPos - n.Center).Length();
+										if (length___ < 500)
+											if (temDis > length___) {
+												temPos = n.Center;
+												temDis = length___;
+												Skill_3_Target = n;
+												MarkedNPC = true;
+											}
+									}
+								}
+								if (MarkedNPC)
+									if (Vector2.Distance(temPos, player.MountedCenter) < 1000)
+										AttackPos = temPos;
+							}
+						}
+
+						Projectile.ai[2]++;
                         var AttackRo = rand.NextFloat(-0.9f, 0.9f);
                         var AttackDir = (rand.NextBool() ? 1 : -1);
                         var AttackStartPos = AttackPos + new Vector2(110 * AttackDir, 0).RotatedBy(AttackRo);
@@ -1813,7 +1856,31 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
                     //Main.NewText(Projectile.ai[2]);
                     if (Projectile.ai[2] == 10 && Projectile.timeLeft == 10)
                     {
-                        var AttackRo = 0f;
+						//追加索敌
+						if (Skill_3_Target != null) {
+							if (!Skill_3_Target.active) {
+								var temPos = AttackPos;
+								float temDis = float.MaxValue;
+								bool MarkedNPC = false;
+								foreach (var n in Main.ActiveNPCs) {
+									if (n.CanBeChasedBy()) {
+										var length___ = (AttackPos - n.Center).Length();
+										if (length___ < 500)
+											if (temDis > length___) {
+												temPos = n.Center;
+												temDis = length___;
+												Skill_3_Target = n;
+												MarkedNPC = true;
+											}
+									}
+								}
+								if (MarkedNPC)
+									if (Vector2.Distance(temPos, player.MountedCenter) < 1000)
+										AttackPos = temPos;
+							}
+						}
+
+						var AttackRo = 0f;
                         var AttackDir = player.MountedCenter.X < AttackPos.X ? 1 : -1;
                         var AttackStartPos = AttackPos + new Vector2(120 * AttackDir, 0).RotatedBy(AttackRo);
                         var AttackStartPos_Vel = new Vector2(-35 * AttackDir, 0).RotatedBy(AttackRo).RotatedByRandom(0.2);
@@ -1858,10 +1925,60 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
             }
             else
             {
-                if (Projectile.ai[0] == 0)
-                    Projectile.NewProjectile(player.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Dragon_Proj>(), 10, 1, player.whoAmI);
-                Projectile.timeLeft = 10;
-                Projectile.ai[0]++; if (player.MountedCenter.X < Main.MouseWorld.X)
+				//索敌
+				if (Main.mouseRight) {
+					var temPos = player.MountedCenter;
+					float temDis = float.MaxValue;
+					bool MarkedNPC = false;
+					foreach (var n in Main.ActiveNPCs) {
+						if (n.CanBeChasedBy()) {
+							var length___ = (Main.MouseWorld - n.Center).Length();
+							if (length___ < 150)
+								if (temDis > length___) {
+									temPos = n.Center;
+									temDis = length___;
+									Skill_3_Target = n;
+									MarkedNPC = true;
+								}
+						}
+					}
+					if (!MarkedNPC)
+						temPos = Main.MouseWorld;
+					if (Vector2.Distance(temPos, player.MountedCenter) > 500)
+						temPos = player.MountedCenter + new Vector2(500, 0).RotatedBy((temPos - player.MountedCenter).ToRotation());
+					AttackPos = Vector2.Lerp(AttackPos, temPos, 0.1f);
+
+					Projectile.timeLeft = 10;
+					//if (Main.timeForVisualEffects % 3 == 0)
+					{
+						var Floating_1 = 1f + (float)Math.Sin(Main.timeForVisualEffects * .04f) * .3f;
+						var Floating_2 = 1f + (float)Math.Sin(-Main.timeForVisualEffects * .03f + MathHelper.Pi) * .3f;
+
+						for (float i = 0; i < 3f; i++) {
+
+							{
+								var d = Dust.NewDustPerfect(AttackPos + Vector2.One.RotatedBy(i * MathHelper.TwoPi / 3f + Main.timeForVisualEffects * .01f) * 18 * Floating_1, 219);
+								d.velocity *= 0.1f;
+								d.noGravity = true;
+								d.scale *= 0.3f;
+							}
+							{
+								var d = Dust.NewDustPerfect(AttackPos + Vector2.One.RotatedBy(i * MathHelper.TwoPi / 3f + MathHelper.Pi / 3f - Main.timeForVisualEffects * .01f) * 11 * Floating_2, 222);
+								d.velocity *= 0.1f;
+								d.noGravity = true;
+								d.scale *= 0.3f;
+							}
+						}
+					}
+				}
+
+				if (Projectile.ai[0] == 0) {
+					Projectile.NewProjectile(player.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Dragon_Proj>(), 10, 1, player.whoAmI);
+					AttackPos = player.MountedCenter;
+				}
+				Projectile.timeLeft = 10;
+                Projectile.ai[0]++;
+				if (player.MountedCenter.X < Main.MouseWorld.X)
                 {
                     if (player.direction == -1)
                     {
