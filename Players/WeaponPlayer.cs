@@ -1,28 +1,23 @@
 ﻿using ArknightsMod.Common.UI;
 using ArknightsMod.Content.Items.Weapons;
-using ArknightsMod.Content.Items.Weapons.Vanguard.Bagpipe;
-using ArknightsMod.Content.Items.Weapons.Sniper.Exusiai;
-using ArknightsMod.Content.Items.Weapons.Sniper.Kroos;
-using ArknightsMod.Content.Items.Weapons.Guard.Chen;
-using ArknightsMod.Content.Items.Weapons.Guard.Thorns;
-using ArknightsMod.Content.Items.Weapons.Defender.Beagle;
-using ArknightsMod.Content.Items.Weapons.Guard.SilverAsh;
-using ArknightsMod.Content.Items.Weapons.Sniper.Shirayuki;
-using ArknightsMod.Content.Items.Weapons.Sniper.Schwarz;
 using ArknightsMod.Content.Items.Weapons.Caster.Lava;
-using ArknightsMod.Content.Items.Weapons.Sniper.KroosAlter;
-using ArknightsMod.Content.Items.Weapons.Sniper.Pozemka;
+using ArknightsMod.Content.Items.Weapons.Defender.Beagle;
 using ArknightsMod.Content.Items.Weapons.Defender.Nian;
 using ArknightsMod.Content.Items.Weapons.Defender.NoirCorne;
-
-
-
-
-
-
+using ArknightsMod.Content.Items.Weapons.Guard.Chen;
+using ArknightsMod.Content.Items.Weapons.Guard.SilverAsh;
+using ArknightsMod.Content.Items.Weapons.Guard.Thorns;
+using ArknightsMod.Content.Items.Weapons.Sniper.Exusiai;
+using ArknightsMod.Content.Items.Weapons.Sniper.Kroos;
+using ArknightsMod.Content.Items.Weapons.Sniper.KroosAlter;
+using ArknightsMod.Content.Items.Weapons.Sniper.Pozemka;
+using ArknightsMod.Content.Items.Weapons.Sniper.Schwarz;
+using ArknightsMod.Content.Items.Weapons.Sniper.Shirayuki;
+using ArknightsMod.Content.Items.Weapons.Vanguard.Bagpipe;
 using ArknightsMod.Systems.Gameplay.Skill;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Players
@@ -50,6 +45,9 @@ namespace ArknightsMod.Players
 		// SP恢复加成系统
 		public float SPRegenMultiplier { get; set; } = 1f;
 		private float spRegenFraction;
+		private bool chargeReady;
+		private bool hasNearbyEnemy;
+		private int initChargeTimer;
 
 		// 位置信息
 		public float mousePositionX;
@@ -100,6 +98,9 @@ namespace ArknightsMod.Players
 		public List<bool> ChargeTypeIsPerSecond = [false, false, false];
 		public string IconName = "";
 		public List<bool> ShowSummonIconBySkills = [false, false, false];
+		public override void UpdateDead() {
+			chargeReady = true;
+		}
 
 		public void InitSkill() {
 			SkillData skill = CurrentSkill;
@@ -162,7 +163,7 @@ namespace ArknightsMod.Players
 
 			defenseBonus = 0;
 			SPRegenMultiplier = 1f; // 重置SP恢复倍率（修改后的）
-			// 更新武器状态
+									// 更新武器状态
 			HoldBagpipeSpear = Main.LocalPlayer.HeldItem.ModItem is BagpipeSpear;
 			HoldExusiaiVector = Main.LocalPlayer.HeldItem.ModItem is ExusiaiVector;
 			HoldKroosCrossbow = Main.LocalPlayer.HeldItem.ModItem is KroosCrossbow;
@@ -178,8 +179,25 @@ namespace ArknightsMod.Players
 			HoldNianWeapon = Main.LocalPlayer.HeldItem.ModItem is NianWeapon;
 			HoldSchwarzBow = Main.LocalPlayer.HeldItem.ModItem is SchwarzBow;
 			// 基于武器的技能系统
+			hasNearbyEnemy = false;
 			Item item = Main.LocalPlayer.HeldItem;
 			if (item.ModItem is UpgradeWeaponBase ark) {
+				foreach (var npc in Main.ActiveNPCs) {
+					if (npc.CanBeChasedBy(Player) && npc.Distance(Player.MountedCenter) < 20 * 16) {
+						hasNearbyEnemy = true;
+						break;
+					}
+				}
+				if (!hasNearbyEnemy && ++initChargeTimer >= GetRestoreTime()) {
+					initChargeTimer = 0;
+					chargeReady = true;
+				}
+				if (chargeReady) {
+					chargeReady = false;
+					ark.deathCharge = [true, true, true];
+					CombatText.NewText(Player.Hitbox.Modified(0, -48, 0, 0), Microsoft.Xna.Framework.Color.Gold,
+						Language.GetTextValue("Mods.ArknightsMod.Skills.ChargeReady"), true);
+				}
 				int type = item.type;
 				if (type != oldHeld) {
 					oldHeld = type;
@@ -200,13 +218,24 @@ namespace ArknightsMod.Players
 					oldSkill = Skill;
 					InitSkill();
 				}
+				if (ark.deathCharge[Skill]) {
+					SP = InitialSP[Skill] ?? 0;
+					ark.deathCharge[Skill] = false;
+				}
 			}
 			else {
 				// 旧版武器支持
 				SetAllSkillsData();
 			}
 		}
+
+		private int GetRestoreTime() {
+			return 60 * 15;
+		}
+
 		public void TryAutoCharge() {
+			if (hasNearbyEnemy)
+				return;
 			if (CurrentSkill?.ChargeType == SkillChargeType.Auto)
 				AutoCharge();
 		}
@@ -417,7 +446,7 @@ namespace ArknightsMod.Players
 			else if (HoldSilverAshWeapon) {
 				IconName = "SilverAshWeapon";
 				HowManySkills = 1;
-				SkillLevel = [10,10,10];
+				SkillLevel = [10, 10, 10];
 				ChargeTypeIsPerSecond = [false, true, false];
 				AutoTrigger = [true, false, false];
 				ShowSummonIconBySkills = [false, false, false];

@@ -20,6 +20,7 @@ namespace ArknightsMod.Content.Items.Weapons
 		protected int[] skillLevel = new int[3];
 		protected int[][] weaponData = new int[3][];
 		protected readonly static Dictionary<string, SkillData[]> skillDatas = [];
+		public bool[] deathCharge = new bool[3];
 		public override void DrawUpgradePreview(SpriteBatch spriteBatch, Rectangle rectangle, BattleRecordCalculator battleRecordCalculator, ExperienceCalculator experienceCalculator) {
 			var pos = rectangle.Location.ToVector2();
 			pos.Y += 20f;
