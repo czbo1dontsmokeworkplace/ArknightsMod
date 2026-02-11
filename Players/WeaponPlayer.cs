@@ -205,7 +205,7 @@ namespace ArknightsMod.Players
 				if (chargeReady) {
 					chargeReady = false;
 					ark.chargeReady = [true, true, true];
-					if (Main.myPlayer == Player.whoAmI)
+					if (Player == Main.LocalPlayer)
 						CombatText.NewText(Player.Hitbox.Modified(0, -48, 0, 0), Microsoft.Xna.Framework.Color.Gold,
 							Language.GetTextValue("Mods.ArknightsMod.Skills.ChargeReady"), true);
 				}
