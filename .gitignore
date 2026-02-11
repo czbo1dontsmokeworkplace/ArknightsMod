@@ -4,3 +4,5 @@ obj/
 .DS_Store
 .disabled
 /Content/Items/源石锭
+/Music
+/.gitignore
