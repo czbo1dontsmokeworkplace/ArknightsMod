@@ -4,9 +4,9 @@ using Terraria;
 using static Terraria.ModLoader.ModContent;
 using ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova;
 
-namespace ArknightsMod.Content.Items.Summon
+namespace ArknightsMod.Content.Items.BossSummon
 {
-    public class Spicycandy : ModItem
+    public class SpicyCandy : ModItem
     {
         public override void SetStaticDefaults()
         {

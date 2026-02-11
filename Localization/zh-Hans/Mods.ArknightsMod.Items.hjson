@@ -989,6 +989,7 @@ RARicecrab: {
 		热腾腾的杂粮中加入了岩壳蟹肉，吃起来朴素中略带鲜味。
 		食用后4分钟内:
 		最大生命值+8%,防御力+8%
+		好吃是好吃，但..究竞是谁第一个决定尝试食用岩壳蟹的呢？
 		'''
 }
 
@@ -1067,7 +1068,7 @@ AACTSummon: {
 	Tooltip: 召唤邪魔炮火中枢先兆者
 }
 
-Spicycandy: {
+SpicyCandy: {
 	DisplayName: 辣味糖
 	// Tooltip: ""
 }
@@ -1136,7 +1137,7 @@ BrightWeeping: {
 	DisplayName: “璀璨悲泣”
 	Tooltip:
 		'''
-		造成的法术伤害+40%
+		所有敌方单位受到的法术和召唤伤害+40%
 		"他的血液仍在流淌，他从不曾真的自这里离开。"
 		'''
 }
@@ -1181,7 +1182,7 @@ GoldenGinChalice: {
 	DisplayName: 金酒之杯
 	Tooltip:
 		'''
-		每有5金币，攻击速度+7
+		每有5源石锭，攻击速度+7
 		"圣人、骑士、虔信之徒，无人不为之疯狂。老天啊，连杯子本身都是纯金的！"
 		'''
 }
@@ -1221,7 +1222,7 @@ KnightlyCodexRenewed: {
 	DisplayName: 骑士戒律·新编
 	Tooltip:
 		'''
-		每有5金币，攻击速度+5
+		每有5源石锭，攻击速度+5
 		"庄严宣誓那是过去的事儿了，现代骑士精神需要更加灵活的展现方式。在联络装置上输入你的编号，你便是名光荣的骑士。"
 		'''
 }
@@ -1230,7 +1231,7 @@ ManifestationPendant: {
 	DisplayName: 显圣吊坠
 	Tooltip:
 		'''
-		远程伤害+15%
+		远程类型武器的攻击力+15%
 		"信仰悬在你的心口上方十公分处，语言流入你的血液，子弹滑进你的弹仓。"
 		'''
 }
@@ -1259,7 +1260,6 @@ VanillaSauceSoda: {
 		'''
 		所有自然回复技能的技力恢复+0.2/秒
 		"玻利瓦尔本地的廉价饮料，拥有上百年历史，混合多种香料，特点是不好喝。"
-		！此物品未完成，仅补充文本！
 		'''
 }
 
@@ -1642,7 +1642,7 @@ VieuxVanguardsBlade: {
 	DisplayName: 老近卫军之锋
 	Tooltip:
 		'''
-		近战伤害+35%
+		近战类型武器的攻击力+35%
 		"高卢将见证老近卫军的牺牲，随后才迎来自己的覆灭。"
 		'''
 }
@@ -1651,7 +1651,7 @@ CoinOperatedToy: {
 	DisplayName: 投币玩具
 	Tooltip:
 		'''
-		每有5金币，攻击速度+3
+		每有5源石锭，攻击速度+3
 		"不知道为什么会有人喜欢这种造型，但整体的设计理念确实可圈可点
 		——只要投币，就连石像都会动起来，千真万确。"
 		'''
@@ -1898,227 +1898,227 @@ SolidCheckeredBookcase: {
 }
 
 AnselBody: {
-	// DisplayName: Ansel Body
+	DisplayName: 安赛尔的躯干
 	// Tooltip: ""
 }
 
 AnselHead: {
-	// DisplayName: Ansel Head
+	DisplayName: 安赛尔的头部
 	// Tooltip: ""
 }
 
 AnselLegs: {
-	// DisplayName: Ansel Legs
+	DisplayName: 安赛尔的腿部
 	// Tooltip: ""
 }
 
 LavaBody: {
-	// DisplayName: Lava Body
+	DisplayName: 炎熔的躯干
 	// Tooltip: ""
 }
 
 LavaHead: {
-	// DisplayName: Lava Head
+	DisplayName: 炎熔的头部
 	// Tooltip: ""
 }
 
 LavaLegs: {
-	// DisplayName: Lava Legs
+	DisplayName: 炎熔的腿部
 	// Tooltip: ""
 }
 
 StewardBody: {
-	// DisplayName: Steward Body
+	DisplayName: 史都华德的躯干
 	// Tooltip: ""
 }
 
 StewardHead: {
-	// DisplayName: Steward Head
+	DisplayName: 史都华德的头部
 	// Tooltip: ""
 }
 
 StewardLegs: {
-	// DisplayName: Steward Legs
+	DisplayName: 史都华德的腿部
 	// Tooltip: ""
 }
 
 CardiganBody: {
-	// DisplayName: Cardigan Body
+	DisplayName: 卡缇的躯干
 	// Tooltip: ""
 }
 
 CardiganHead: {
-	// DisplayName: Cardigan Head
+	DisplayName: 卡缇的头部
 	// Tooltip: ""
 }
 
 CardiganLegs: {
-	// DisplayName: Cardigan Legs
+	DisplayName: 卡缇的腿部
 	// Tooltip: ""
 }
 
 SpotBody: {
-	// DisplayName: Spot Body
+	DisplayName: 斑点的躯干
 	// Tooltip: ""
 }
 
 SpotHead: {
-	// DisplayName: Spot Head
+	DisplayName: 斑点的头部
 	// Tooltip: ""
 }
 
 SpotLegs: {
-	// DisplayName: Spot Legs
+	DisplayName: 斑点的腿部
 	// Tooltip: ""
 }
 
 MidnightBody: {
-	// DisplayName: Midnight Body
+	DisplayName: 月见夜的躯干
 	// Tooltip: ""
 }
 
 MidnightHead: {
-	// DisplayName: Midnight Head
+	DisplayName: 月见夜的头部
 	// Tooltip: ""
 }
 
 MidnightLegs: {
-	// DisplayName: Midnight Legs
+	DisplayName: 月见夜的腿部
 	// Tooltip: ""
 }
 
 PopukarBody: {
-	// DisplayName: Popukar Body
+	DisplayName: 泡普卡的躯干
 	// Tooltip: ""
 }
 
 PopukarHead: {
-	// DisplayName: Popukar Head
+	DisplayName: 泡普卡的头部
 	// Tooltip: ""
 }
 
 PopukarLegs: {
-	// DisplayName: Popukar Legs
+	DisplayName: 泡普卡的腿部
 	// Tooltip: ""
 }
 
 HibiscusBody: {
-	// DisplayName: Hibiscus Body
+	DisplayName: 芙蓉的躯干
 	// Tooltip: ""
 }
 
 HibiscusHead: {
-	// DisplayName: Hibiscus Head
+	DisplayName: 芙蓉的头部
 	// Tooltip: ""
 }
 
 HibiscusLegs: {
-	// DisplayName: Hibiscus Legs
+	DisplayName: 芙蓉的腿部
 	// Tooltip: ""
 }
 
 AdnachielBody: {
-	// DisplayName: Adnachiel Body
+	DisplayName: 安德切尔的躯干
 	// Tooltip: ""
 }
 
 AdnachielHead: {
-	// DisplayName: Adnachiel Head
+	DisplayName: 安德切尔的头部
 	// Tooltip: ""
 }
 
 AdnachielLegs: {
-	// DisplayName: Adnachiel Legs
+	DisplayName: 安德切尔的腿部
 	// Tooltip: ""
 }
 
 CatapultBody: {
-	// DisplayName: Catapult Body
+	DisplayName: 空爆的躯干
 	// Tooltip: ""
 }
 
 CatapultHead: {
-	// DisplayName: Catapult Head
+	DisplayName: 空爆的头部
 	// Tooltip: ""
 }
 
 CatapultLegs: {
-	// DisplayName: Catapult Legs
+	DisplayName: 空爆的腿部
 	// Tooltip: ""
 }
 
 KroosBody: {
-	// DisplayName: Kroos Body
+	DisplayName: 克洛斯的躯干
 	// Tooltip: ""
 }
 
 KroosHead: {
-	// DisplayName: Kroos Head
+	DisplayName: 克洛斯的头部
 	// Tooltip: ""
 }
 
 KroosLegs: {
-	// DisplayName: Kroos Legs
+	DisplayName: 克洛斯的腿部
 	// Tooltip: ""
 }
 
 OrchidBody: {
-	// DisplayName: Orchid Body
+	DisplayName: 梓兰的躯干
 	// Tooltip: ""
 }
 
 OrchidHead: {
-	// DisplayName: Orchid Head
+	DisplayName: 梓兰的头部
 	// Tooltip: ""
 }
 
 OrchidLegs: {
-	// DisplayName: Orchid Legs
+	DisplayName: 梓兰的腿部
 	// Tooltip: ""
 }
 
 FangBody: {
-	// DisplayName: Fang Body
+	DisplayName: 芬的躯干
 	// Tooltip: ""
 }
 
 FangHead: {
-	// DisplayName: Fang Head
+	DisplayName: 芬的头部
 	// Tooltip: ""
 }
 
 FangLegs: {
-	// DisplayName: Fang Legs
+	DisplayName: 芬的腿部
 	// Tooltip: ""
 }
 
 PlumeBody: {
-	// DisplayName: Plume Body
+	DisplayName: 翎羽的躯干
 	// Tooltip: ""
 }
 
 PlumeHead: {
-	// DisplayName: Plume Head
+	DisplayName: 翎羽的头部
 	// Tooltip: ""
 }
 
 PlumeLegs: {
-	// DisplayName: Plume Legs
+	DisplayName: 翎羽的腿部
 	// Tooltip: ""
 }
 
 VanillaBody: {
-	// DisplayName: Vanilla Body
+	DisplayName: 香草的躯干
 	// Tooltip: ""
 }
 
 VanillaHead: {
-	// DisplayName: Vanilla Head
+	DisplayName: 香草的头部
 	// Tooltip: ""
 }
 
 VanillaLegs: {
-	// DisplayName: Vanilla Legs
+	DisplayName: 香草的腿部
 	// Tooltip: ""
 }
 
@@ -2198,173 +2198,326 @@ VanillaDefault: {
 }
 
 ActiveDust: {
-	// DisplayName: Active Dust
-	// Tooltip: ""
+	DisplayName: 活性粉尘
+	Tooltip:
+		'''
+		所有敌方单位受到的法术和召唤伤害+10%
+		泰拉源石工业生产中的废弃物，很危险，请妥善处置。阿——嚏。
+		'''
 }
 
 CheapEdibleSalt: {
-	// DisplayName: Cheap Edible Salt
-	// Tooltip: ""
+	DisplayName: 便宜食用盐
+	Tooltip:
+		'''
+		所有敌方单位受到的近战和远程伤害+7%
+		伤口上撒盐。
+		'''
 }
 
 FightingManual: {
-	// DisplayName: Fighting Manual
-	// Tooltip: ""
+	DisplayName: 《打架手册》
+	Tooltip:
+		'''
+		近战类型武器的攻击力+7%
+		记载了大量乌萨斯人的战吼，非常有气势。
+		'''
 }
 
 File: {
-	// DisplayName: File
-	// Tooltip: ""
+	DisplayName: 锉刀
+	Tooltip:
+		'''
+		所有敌方单位的防御力-4%
+		偷偷把敌人的装备撬松。
+		'''
 }
 
 FurongNutritiousMeal: {
-	// DisplayName: Furong Nutritious Meal
-	// Tooltip: ""
+	DisplayName: 芙蓉的健康餐
+	Tooltip:
+		'''
+		所有敌方单位的攻击力-5%
+		身体健康但是心理不太健康，只吃这样的东西就没心思作战了。
+		'''
 }
 
 HydraulicCylinder: {
-	// DisplayName: Hydraulic Cylinder
-	// Tooltip: ""
+	DisplayName: 液压气瓶
+	Tooltip:
+		'''
+		远程类型武器的攻击力+7%
+		压缩了惰性气体的压力容器。一定要注意压力计的读数是否正常。
+		'''
 }
 
 NamelessPoetryCollection: {
-	// DisplayName: Nameless Poetry Collection
-	// Tooltip: ""
+	DisplayName: 无名诗集
+	Tooltip:
+		'''
+		所有敌方单位的生命-5%
+		“酒杯的碎屑在我皮肉里欢唱，鲜血自指缝间攀上脊索。
+		  饮下尖锐的晶莹光彩，脏腑随之璨烂流落。”
+		'''
 }
 
 AsmallroundShieldOfDifferEntiron: {
-	// DisplayName: Asmallround Shield Of Differ Entiron
-	// Tooltip: ""
+	DisplayName: 异铁小圆盾
+	Tooltip:
+		'''
+		防御力+15%
+		在异铁被广泛应用于现代工业领域前，这种材料时常被用来制造军用制式武器。
+		'''
 }
 
 CrackedRestraintStrap: {
-	// DisplayName: Cracked Restraint Strap
-	// Tooltip: ""
+	DisplayName: 开裂的束缚带
+	Tooltip:
+		'''
+		所有敌方单位的攻击力-7%
+		这根坚固的带子似乎绑过什么恐怖的东西......救命......
+		'''
 }
 
 LiveRoses: {
-	// DisplayName: Live Roses
-	// Tooltip: ""
+	DisplayName: 活玫瑰
+	Tooltip:
+		'''
+		受到的治疗回复效果+20%
+		生命恢复速度+20%
+		是你滋养她，还是她守护你？
+		'''
 }
 
 RustBlades: {
-	// DisplayName: Rust Blades
-	// Tooltip: ""
+	DisplayName: 锈蚀刀片
+	Tooltip:
+		'''
+		所有敌方单位受到的近战和远程伤害+15%
+		如果它割破了皮肤，你知道会发生什么。
+		'''
 }
 
 TheEmperorFavor: {
-	// DisplayName: The Emperor Favor
-	// Tooltip: ""
+	DisplayName: 皇帝的恩宠
+	Tooltip:
+		'''
+		近战类型武器的攻击力+15%
+		十分锋利的拆信刀。前任乌萨斯皇帝喜爱的日用品。大多数时候并不用来拆信。
+		'''
 }
 
 TheNightMurmurs: {
-	// DisplayName: The Night Murmurs
-	// Tooltip: ""
+	DisplayName: “黑夜呢喃”
+	Tooltip:
+		'''
+		所有敌方单位的生命-10%
+		一张黑色唱片。不。准。碰。它。
+		'''
 }
 
 UnpleasantHemostaticAgent: {
-	// DisplayName: Unpleasant Hemostatic Agent
-	// Tooltip: ""
+	DisplayName: 难闻的止血剂
+	Tooltip:
+		'''
+		最大生命值+20%
+		“这种源石虫的体液经过发酵处理之后可以用于止血”
+		                     ——《罗德岛野外生存指南》
+		'''
 }
 
 EmperorCollection: {
-	// DisplayName: Emperor Collection
-	// Tooltip: ""
+	DisplayName: 皇帝的收藏
+	Tooltip:
+		'''
+		所有敌方单位受到的法术和召唤伤害+30%
+		萨米人对他们的荒野尊崇无比，而现在这片荒野的碎片正静静躺在乌萨斯皇帝的私库中。
+		'''
 }
 
 FallenSovereignForm: {
-	// DisplayName: Fallen Sovereign Form
-	// Tooltip: ""
+	DisplayName: 王命凡形
+	Tooltip:
+		'''
+		防御+15，将70%的最大生命值转换为等量的“护盾”来承受伤害
+		护盾承受的伤害不受防御，伤害减免影响
+		生命值强制限制在最大生命值的30%
+		王各有命，形亦不同。
+		'''
 }
 
 Feardriedfish: {
-	// DisplayName: Feardriedfish
-	// Tooltip: ""
+	DisplayName: 恐鱼干
+	Tooltip:
+		'''
+		所有敌方单位的防御力-21%
+		当生存的欲望压过恐惧后，饥不择食的伊比利亚人会吞下这些“食物”
+		然后在某个平常的日子里成为恐鱼。
+		'''
 }
 
 FeatherBeastLiverPate: {
-	// DisplayName: Feather Beast Liver Pate
-	// Tooltip: ""
+	DisplayName: 羽兽肝酱
+	Tooltip:
+		'''
+		所有自然回复技能的技力恢复+0.35/秒
+		小瓶高档羽兽肝酱，颜色鲜艳，贵族特供。
+		'''
 }
 
 MonarchSidearm: {
-	// DisplayName: Monarch Sidearm
-	// Tooltip: ""
+	DisplayName: 国王的新枪
+	Tooltip:
+		'''
+		生命值低于30%时，所有武器以及工具的使用速度+50%
+		绝境下的美好祈愿能带给人希望，即使那并不是真相。
+		'''
 }
 
 NobleSwords: {
-	// DisplayName: Noble Swords
-	// Tooltip: ""
+	DisplayName: 贵族刺剑
+	Tooltip:
+		'''
+		近战类型武器的攻击力+25%
+		装饰性强的贵族刺剑。高卢贵族首先使用，作为军事武器还是太脆了。
+		'''
 }
 
 PaleCorolla: {
-	// DisplayName: Pale Corolla
-	// Tooltip: ""
+	DisplayName: 苍白花冠
+	Tooltip:
+		'''
+		受到的治疗回复效果+30%
+		生命恢复速度+30%
+		血魔仪式使用的花冠头纱，曾经鲜红的生命被吮吸殆尽，现在只余苍白。
+		'''
 }
 
 SilverDinnerFork: {
-	// DisplayName: Silver Dinner Fork
-	// Tooltip: ""
+	DisplayName: 银餐叉
+	Tooltip:
+		'''
+		远程类型武器的攻击力+25%
+		一把用来处理失败的演员，一把用来收拾蹩脚的剧作者，还有一把留给有需要的人。
+		厨师长不能容忍任何人在餐桌上出错。
+		'''
 }
 
 StandardAntiRiotEquipment: {
-	// DisplayName: Standard Anti Riot Equipment
-	// Tooltip: ""
+	DisplayName: 制式防暴用具
+	Tooltip:
+		'''
+		所有敌方单位受到的法术和召唤伤害+20%
+		乌萨斯军警的制式装备，自带施放间歇性致盲源石技艺的功能。
+		可惜关键时刻想得起来这一功能的军警寥寥无几。
+		'''
 }
 
 SuspendedSilkPuppet: {
-	// DisplayName: Suspended Silk Puppet
-	// Tooltip: ""
+	DisplayName: 悬丝傀儡
+	Tooltip:
+		'''
+		敌人受到[c/FF6A6A:着火了！]，[c/FF6A6A:中毒],[c/FF6A6A:诅咒狱火]等debuff时每秒受到70点无来源伤害
+		越是用力想要挣脱，丝线就缠得越紧。你真的认为自己仍在思考？
+		'''
 }
 
 TheLongWhipOfTheCoachman: {
-	// DisplayName: The Long Whip Of The Coachman
-	// Tooltip: ""
+	DisplayName: 赶车夫的长鞭
+	Tooltip:
+		'''
+		所有敌方单位受到的近战和远程伤害+25%
+		作为剧团的赶车人，他没有名字，没有过往。
+		唯有挥鞭驱赶驮兽，他的生命才有意义。
+		'''
 }
 
 ChildlikePlaythings: {
-	// DisplayName: Childlike Playthings
-	// Tooltip: ""
+	DisplayName: “童趣玩偶”
+	Tooltip:
+		'''
+		敌人受到[c/FF6A6A:着火了！]，[c/FF6A6A:中毒],[c/FF6A6A:诅咒狱火]等debuff时每秒受到100点无来源伤害
+		伊比利亚的孩童们将海岸边的奇物做成了简陋玩偶，听说只要抱着它，梦乡就会变得充实起来。
+		'''
 }
 
 DamagedRevolverNest: {
-	// DisplayName: Damaged Revolver Nest
-	// Tooltip: ""
+	DisplayName: 损坏的左轮弹巢
+	Tooltip:
+		'''
+		远程类型武器的攻击力+35%
+		她行过刀山火海也不曾有一刻向奸邪低头，她枪口火舌焦灼好似怒阳，她头顶光芒炽烈几胜白昼。
+		此处安葬着Outcast，我们的朋友。
+		'''
 }
 
 DreamEssence: {
-	// DisplayName: Dream Essence
-	// Tooltip: ""
+	DisplayName: 迷梦香精
+	Tooltip:
+		'''
+		所有自然回复技能的技力恢复+0.5/秒
+		据说女妖们制作的香氛只会送给心上之人
+		只需一滴，就能令人如痴如醉，而艺术家们的灵感与创意也随之而来。
+		'''
 }
 
 FearlessBlade: {
-	// DisplayName: Fearless Blade
-	// Tooltip: ""
+	DisplayName: 无惧之刃
+	Tooltip:
+		'''
+		玩家背包内稀有度最高的一把武器+50%伤害
+		玩家装备栏以及背包内稀有度最高的一件防具+50%防御
+		他站在城门前，为卡兹戴尔守住这处门户。
+		高卢火炮队、莱塔尼亚术师团、维多利亚骑士轮番上阵，想要突破这只有一名萨卡兹的防线。
+		可直到城门被轰碎，直到联军决定撤退，这位歌利亚剑士都没有后退一步。
+		'''
 }
 
 OldPalmFan: {
-	// DisplayName: Old Palm Fan
-	// Tooltip: ""
+	DisplayName: 老蒲扇
+	Tooltip:
+		'''
+		当前世界中，每存在一名城镇NPC，玩家的攻击力+3%
+		遇上连天阴雨，大炎的老天师便会向亲友抱怨自己膝盖受不得湿寒，然后，随手扇动他的蒲扇......
+		云开雾散，雨水退避，天气就此放晴。这一手，下回还得教教他那在大理寺当差的小徒弟。
+		'''
 }
 
 RoundStoneAltar: {
-	// DisplayName: Round Stone Altar
-	// Tooltip: ""
+	DisplayName: 圆石祭坛
+	Tooltip:
+		'''
+		结束事件以及打败boss有概率使玩家的攻击力和防御力永久+5%（最多叠加10层）
+		送上祭品，获得回馈。它是如此地便利，以至于人们都没有思考过，他们到底在向什么献祭。
+		'''
 }
 
 ScatteredPoems: {
-	// DisplayName: Scattered Poems
-	// Tooltip: ""
+	DisplayName: 散轶诗简
+	Tooltip:
+		'''
+		召唤伤害+30%，召唤栏+3
+		“酣然失千山，万物得其灵。”
+		'''
 }
 
 TheAvenger: {
-	// DisplayName: The Avenger
-	// Tooltip: ""
+	DisplayName: “复仇者”
+	Tooltip:
+		'''
+		所有敌方单位受到的近战和远程伤害+35%
+		在阿斯卡纶第一次为军事委员会完成任务后，由特雷西斯亲手赠送，特蕾西娅为她安装的第一把武器。
+		'''
 }
 
 TheTokenGodmother: {
-	// DisplayName: The Token Godmother
-	// Tooltip: ""
+	DisplayName: 教母的信物
+	Tooltip:
+		'''
+		所有敌方单位的攻击力-17%
+		骨质的桂冠，西西里夫人的信物。秩序的象征将铲平起伏的欲望，斗争不被允许。
+		无论真假，跪下。
+		'''
 }
 
 RALegmeat: {

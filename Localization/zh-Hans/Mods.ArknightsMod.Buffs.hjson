@@ -81,3 +81,8 @@ sjds2: {
 	// DisplayName: sjds2
 	// Description: Mods.ArknightsMod.Buffs.sjds2.Description
 }
+
+BagpipeDefenseBuff: {
+	// DisplayName: Bagpipe Defense Buff
+	// Description: Mods.ArknightsMod.Buffs.BagpipeDefenseBuff.Description
+}

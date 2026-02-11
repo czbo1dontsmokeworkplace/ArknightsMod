@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 using Terraria;
 using ArknightsMod.Content.Events;
 
-namespace ArknightsMod.Content.Items.Bosssummon
+namespace ArknightsMod.Content.Items.BossSummon
 {
 	public class UnionInvader : ModItem, ILocalizedModType
 	{

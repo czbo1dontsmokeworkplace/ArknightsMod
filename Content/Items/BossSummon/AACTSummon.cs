@@ -1,18 +1,18 @@
 ﻿//using ArknightsMod.Content.NPCs;
+//using Microsoft.Xna.Framework;
+//using Microsoft.Xna.Framework.Graphics;
+//using System;
+//using System.IO;
+using ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTargeteer;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 //using System.Collections.Generic;
 using Terraria.ModLoader;
 using static Terraria.ModLoader.ModContent;
-//using Microsoft.Xna.Framework;
-//using Microsoft.Xna.Framework.Graphics;
-//using System;
-//using System.IO;
-using ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTargeteer;
 //using Terraria.DataStructures;
 
-namespace ArknightsMod.Content.Items.Summon
+namespace ArknightsMod.Content.Items.BossSummon
 {
 	public class AACTSummon : ModItem
 	{

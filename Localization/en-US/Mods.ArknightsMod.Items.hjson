@@ -1053,11 +1053,10 @@ AACTSummon: {
 	Tooltip: ""
 }
 
-Spicycandy: {
-	DisplayName: Spicycandy
-	Tooltip: ""
+SpicyCandy: {
+	DisplayName: Spicy Candy
+	// Tooltip: ""
 }
-
 ExusiaiVector: {
 	DisplayName: Exusiai Vector
 	Tooltip: ""

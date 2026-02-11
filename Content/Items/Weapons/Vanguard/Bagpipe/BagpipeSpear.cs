@@ -1,237 +1,283 @@
-using ArknightsMod.Content.Projectiles.Vanguard.Bagpipe;
+﻿using ArknightsMod.Content.Projectiles.Vanguard.Bagpipe;
+using ArknightsMod.Content.Rarities;
+using ArknightsMod.Players;
+using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.GameContent.Creative;
-using Terraria.Audio;
-using ArknightsMod.Players;
-using ArknightsMod.Content.Tiles.Infrastructure;
 
 namespace ArknightsMod.Content.Items.Weapons.Vanguard.Bagpipe
 {
-	public class BagpipeSpear : ModItem
+	public class BagpipeSpear : UpgradeWeaponBase
 	{
-		public override void SetStaticDefaults() {
-			//ItemID.Sets.SkipsInitialUseSound[Item.type] = true; // This skips use animation-tied sound playback, so that we're able to make it be tied to use time instead in the UseItem() hook.
-			ItemID.Sets.Spears[Item.type] = true; // This allows the game to recognize our new item as a spear.
-			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
+		#region 音频加载
+		private static SoundStyle SkillActive1;
+		private static SoundStyle SkillActive2;
+		public override void Load() {
+			SkillActive1 = new SoundStyle("ArknightsMod/Sounds/SkillActive1") {
+				Volume = 0.4f,
+				MaxInstances = 4,
+			};
+			SkillActive2 = new SoundStyle("ArknightsMod/Sounds/SkillActive2") {
+				Volume = 1f,
+				MaxInstances = 4,
+			};
 		}
-
+		#endregion
+		public override bool MeleePrefix() => true;
 		public override void SetDefaults() {
-			// Common Properties
-			Item.rare = ItemRarityID.Yellow; // Assign this item a rarity level of Yellow
-			Item.value = Item.sellPrice(silver: 10); // The number and type of coins item can be sold for to an NPC
-			Item.consumable = false;
-
-			// Use Properties
-			Item.useStyle = ItemUseStyleID.Shoot; // How you use the item (swinging, holding out, etc.)
-			Item.useAnimation = 30; // The length of the item's use animation in ticks (60 ticks == 1 second.)
-			Item.useTime = 30; // The length of the item's use time in ticks (60 ticks == 1 second.) And if you want to attack triple hit, useTime = useAnimation/3
-			Item.autoReuse = false; // Allows the player to hold click to automatically use the item again. Most spears don't autoReuse, but it's possible when used in conjunction with CanUseItem()
-
-			// Weapon Properties
-			Item.damage = 117;
-			Item.knockBack = 2.5f;
-			Item.noUseGraphic = true; // When true, the item's sprite will not be visible while the item is in use. This is true because the spear projectile is what's shown so we do not want to show the spear sprite as well.
+			Item.damage = 48;           // 攻击力
 			Item.DamageType = DamageClass.Melee;
-			Item.noMelee = true; // Allows the item's animation to do damage. This is important because the spear is actually a projectile instead of an item. This prevents the melee hitbox of this item.
-			Item.channel = true; //Channel so that you can held the weapon [Important]
-			Item.crit = 21; // The percent chance at hitting an enemy with a crit, plus the default amount of 4.
-
-			// Projectile Properties
-			Item.shootSpeed = 3.3f; // The speed of the projectile measured in pixels per frame.
-			Item.shoot = ModContent.ProjectileType<BagpipeSpear_Projectile>(); // The projectile that is fired from this weapon
-
-			// The sound that this item plays when used. Need "using Terraria.Audio;"
-			//Item.UseSound = new SoundStyle("ArknightsMod/Sounds/BagpipeSpearS0") {
-			//	Volume = 0.2f,
-			//	MaxInstances = 4, //This dicatates how many instances of a sound can be playing at the same time. The default is 1. Adjust this to allow overlapping sounds.
-			//};
-
+			Item.width = 90;            // 丢出体积
+			Item.height = 96;           // 丢出体积
+			Item.scale = 1;             // 图片缩放
+			Item.useTime = 21;          // 使用一次时间 
+			Item.useAnimation = 21;     // 动画显示时间
+			Item.knockBack = 2f;        // 击退
+			Item.value = 200000;        // 价格 
+			Item.rare = ModContent.RarityType<ArknightsRarities>();
+			Item.autoReuse = true;      // 是否可以连续使用
+			Item.noMelee = true;        // 贴图是否造成伤害
+			Item.shoot = 88;
+			Item.crit = 4;              // 暴击概率
+			Item.shootSpeed = 9;        // 弹幕射速
+			Item.useTurn = false;
+			Item.noUseGraphic = true;
+			Item.useStyle = ItemUseStyleID.Rapier;
+			Item.channel = true;
 		}
 
-		public override bool AltFunctionUse(Player player) => true;
-
-		//public override bool ConsumeItem(Player player) => false;
-		//public override bool CanRightClick() => true;
-
-		//public override void RightClick(Player player) {
-		//	var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
-		//	if (Main.myPlayer == player.whoAmI) {
-		//		modPlayer.Skill++;
-		//		modPlayer.Skill = modPlayer.Skill % 3;
-
-		//		// S1
-		//		if (modPlayer.Skill == 0) {
-		//			modPlayer.SkillInitialize = true;
-		//		}
-
-		//		// S2
-		//		if (modPlayer.Skill == 1) {
-		//			modPlayer.SkillInitialize = true;
-		//		}
-
-		//		// S3
-		//		if (modPlayer.Skill == 2) {
-		//			modPlayer.SkillInitialize = true;
-		//		}
-		//	}
-		//}
-
-		public override bool CanUseItem(Player player) {
+		// 初动（初始化技能数值）
+		/*public void InitializeSkillStats() {
 			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
+			globalItem.PrimaryCharge = 15;
+			globalItem.PowerStrikeCharge = 0;
+			globalItem.UltimateCharge = 75;
+			globalItem.PrimaryChargeMax = 35;
+			globalItem.PowerStrikeChargeMax = 4;
+			globalItem.UltimateChargeMax = 90;
+			globalItem.Duration1 = 35;
+			globalItem.Duration2 = -1;
+			globalItem.Duration3 = 30;
+			//if (globalItem.UpgradeLevel == 1) Item.damage = 60;
+			if (globalItem.UpgradeLevel == 2) {
+				// Item.damage = 70;
+				globalItem.PowerStrikeStacks = 1;
+				globalItem.PrimaryCharge += 6;
+				globalItem.PowerStrikeCharge += 2;
+				globalItem.UltimateCharge += 6;
+			}
+		}*/
+
+		public override void HoldItemFrame(Player player) {
+			var modPlayer = player.GetModPlayer<WeaponPlayer>();
+
+			if (modPlayer.Skill == 2 && modPlayer.SkillActive)
+				player.AddBuff(ModContent.BuffType<BagpipeDefenseBuff>(), 5);
+		}
+		public override bool AltFunctionUse(Player player) => true;
+		public override bool CanUseItem(Player player) {
+			var modPlayer = player.GetModPlayer<WeaponPlayer>();
+
 			if (Main.myPlayer == player.whoAmI) {
+
+				if (modPlayer.Skill == 2 && modPlayer.SkillActive)
+					player.AddBuff(ModContent.BuffType<BagpipeDefenseBuff>(), 35);
+
 				if (player.altFunctionUse == 2) {
-					// S1
-					if (modPlayer.Skill == 0 && modPlayer.StockCount > 0 && !modPlayer.SkillActive) {
-						modPlayer.SkillActive = true;
-						modPlayer.SkillTimer = 0;
-
-						modPlayer.DelStockCount();
-
-						Item.UseSound = new SoundStyle("ArknightsMod/Sounds/SkillActive1") {
-							Volume = 0.6f,
-							MaxInstances = 4, //This dicatates how many instances of a sound can be playing at the same time. The default is 1. Adjust this to allow overlapping sounds.
-						};
-						SoundEngine.PlaySound(Item.UseSound.Value, player.Center);
+					if (!modPlayer.SummonMode) {
+						//s1
+						if (modPlayer.Skill == 0 && modPlayer.StockCount > 0 && !modPlayer.SkillActive) {
+							player.controlUseItem = false;
+							modPlayer.SkillActive = true;
+							modPlayer.SkillTimer = 0;
+							modPlayer.DelStockCount();
+							SoundEngine.PlaySound(SkillActive1, player.position);
+						}
+						//s3
+						else if (modPlayer.Skill == 2 && modPlayer.StockCount > 0 && !modPlayer.SkillActive) {
+							modPlayer.SkillActive = true;
+							modPlayer.SkillTimer = 0;
+							modPlayer.DelStockCount();
+							SoundEngine.PlaySound(SkillActive2, player.position);
+						}
+						else
+							return false;
 					}
-					// S3
-					if (modPlayer.Skill == 2 && modPlayer.StockCount > 0 && !modPlayer.SkillActive) {
-						modPlayer.SkillActive = true;
-						modPlayer.SkillTimer = 0;
-
-						modPlayer.DelStockCount();
-
-						Item.UseSound = new SoundStyle("ArknightsMod/Sounds/SkillActive2") {
-							Volume = 0.4f,
-							MaxInstances = 4, //This dicatates how many instances of a sound can be playing at the same time. The default is 1. Adjust this to allow overlapping sounds.
-						};
-						SoundEngine.PlaySound(Item.UseSound.Value, player.Center);
-					}
-
-					else
-						return false;
 				}
 				else {
-					Item.useAnimation = 30;
-					Item.useTime = 30; // If you want to attack triple hit, useTime = useAnimation/3
-					Item.UseSound = new SoundStyle("ArknightsMod/Sounds/BagpipeSpearS0") {
-						Volume = 0.4f,
-						MaxInstances = 4, //This dicatates how many instances of a sound can be playing at the same time. The default is 1. Adjust this to allow overlapping sounds.
-					};
-
-					// S1
-					if (modPlayer.Skill == 0 && modPlayer.SkillActive) {
-						Item.useAnimation = 22;
-						Item.useTime = 22;
-						Item.UseSound = new SoundStyle("ArknightsMod/Sounds/BagpipeSpearS0") {
-							Volume = 0.4f,
-							MaxInstances = 4, //This dicatates how many instances of a sound can be playing at the same time. The default is 1. Adjust this to allow overlapping sounds.
-						};
-					}
-					// S2
-					if (modPlayer.Skill == 1 && modPlayer.StockCount > 0) {
-						Item.useTime = 15;
-						Item.UseSound = new SoundStyle("ArknightsMod/Sounds/BagpipeSpearS2") {
-							Volume = 0.4f,
-							MaxInstances = 4, //This dicatates how many instances of a sound can be playing at the same time. The default is 1. Adjust this to allow overlapping sounds.
-						};
-						modPlayer.SkillActive = true;
-						modPlayer.SkillTimer = 0;
-						modPlayer.DelStockCount();
-					}
-					// S3
-					if (modPlayer.Skill == 2 && modPlayer.SkillActive) {
-						Item.useAnimation = 48;
-						Item.useTime = 16;
-						Item.UseSound = new SoundStyle("ArknightsMod/Sounds/BagpipeSpearS3") {
-							Volume = 0.4f,
-							MaxInstances = 4, //This dicatates how many instances of a sound can be playing at the same time. The default is 1. Adjust this to allow overlapping sounds.
-						};
+					if (!modPlayer.SummonMode) {
+						// S1
+						if (modPlayer.Skill == 0) {
+							if (modPlayer.StockCount == 0) {
+								modPlayer.OffensiveRecovery(); //自动回复
+							}
+						}
+						//S2
+						if (modPlayer.Skill == 1 && !modPlayer.SkillActive) {
+							if (modPlayer.StockCount == 0) {
+								modPlayer.OffensiveRecovery();
+							}
+							else if (modPlayer.StockCount > 0) //自动触发
+							{
+								modPlayer.SkillActive = true;
+								modPlayer.SkillTimer = 0;
+								modPlayer.DelStockCount();
+							}
+						}
+						//s3
+						if (modPlayer.Skill == 2 && !modPlayer.SkillActive) {
+							if (modPlayer.StockCount == 0) {
+								modPlayer.OffensiveRecovery();
+							}
+						}
 					}
 				}
 			}
-			// Ensures no more than one spear can be thrown out, use this when using autoReuse
-			return player.ownedProjectileCounts[Item.shoot] < 1;
+			return base.CanUseItem(player);
 		}
+		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
 
-		public override void ModifyWeaponDamage(Player player, ref StatModifier damage) {
-			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
-			if (Main.myPlayer == player.whoAmI) {
-				// S1
-				if (modPlayer.Skill == 0 && modPlayer.SkillActive) {
-					damage *= 1.45f;
-				}
-				// S2
-				if (modPlayer.Skill == 1 && (modPlayer.StockCount > 0 || modPlayer.SkillActive == true)) {
-					damage *= 2f;
-				}
-				// S3
-				if (modPlayer.Skill == 2 && modPlayer.SkillActive) {
-					damage *= 2.2f;
+			var modPlayer = player.GetModPlayer<WeaponPlayer>();
+			if (!modPlayer.SkillActive) {
+				NormalAttack(player, source, position, velocity, type, damage, knockback);
+			}
+			else {
+				switch (modPlayer.Skill) {
+					case 0:	// 1技能
+						Skill_1Attack(player, source, position, velocity, type, damage, knockback);
+						break;
+
+					case 1: //2技能
+						Skill_2Attack(player, source, position, velocity, type, damage, knockback);
+						break;
+
+					case 2: // 3技能
+						Skill_3Attack(player, source, position, velocity, type, damage, knockback);
+						break;
 				}
 			}
+			return false;
 		}
+		public void NormalAttack(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
 
-		public override void HoldItem(Player player) {
-			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
-			if (Main.myPlayer == player.whoAmI) {
-				//modPlayer.SetAllSkillsData(3, 7, 15, 35, 3, 0, 4, 3, 25, 40, 3, "BagpipeSpear");
-				if (!modPlayer.HoldBagpipeSpear) {
-					modPlayer.SkillInitialize = true;
-					modPlayer.Skill = 0;
-				}
+			var soundNormalAttack = new SoundStyle("ArknightsMod/Content/Items/Weapons/Vanguard/Bagpipe/BagpipeAttack1") {
+				MaxInstances = 4
+			};
+			SoundEngine.PlaySound(soundNormalAttack, player.position);
 
-				// S1
-				if (modPlayer.Skill == 0) {
-					//modPlayer.SetSkillData(15, 35, 60, 1, 35, false, false);
-					modPlayer.AutoCharge();
-					//modPlayer.SkillActiveTimer();
-				}
-
-				// S2
-				if (modPlayer.Skill == 1) {
-					//modPlayer.SetSkillData(0, 4, 60, 3, 0.5f, true, false);
-					//modPlayer.SkillActiveTimer();
-					modPlayer.AutoCharge();
-				}
-
-				// S3
-				if (modPlayer.Skill == 2) {
-					//modPlayer.SetSkillData(25, 40, 60, 1, 20, false, false);
-					modPlayer.AutoCharge();
-					//modPlayer.SkillActiveTimer();
-				}
-
-				modPlayer.HoldBagpipeSpear = true; // you have to write this line HERE!
+			if (Main.rand.Next(1, 101) > 28) // 天赋
+			{
+				Projectile.NewProjectile(source, position,
+					velocity, ModContent.ProjectileType<BagpipeSpearProj2>(), damage, knockback, Main.myPlayer, 0, 2, 0);
 			}
-			base.HoldItem(player);
+			else {
+				Projectile.NewProjectile(source, position,
+					velocity, ModContent.ProjectileType<BagpipeSpearProj2>(), (int)(damage * 1.3f), knockback, Main.myPlayer, 0, 2, 0);
+				Projectile.NewProjectile(source, position - new Vector2(0, -5),
+					velocity / 1.3f, ModContent.ProjectileType<BagpipeSpearProj3>(), (int)(damage * 1.3f), knockback, Main.myPlayer, 0, 1, 0);
+			}
 		}
+		public void Skill_1Attack(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
 
-		//public override bool? UseItem(Player player)
-		//{
-		//    // Because we're skipping sound playback on use animation start, we have to play it ourselves whenever the item is actually used.
-		//    if (!Main.dedServ && Item.UseSound.HasValue)
-		//    {
-		//        SoundEngine.PlaySound(Item.UseSound.Value, player.Center);
-		//    }
+			var soundNormalAttack = new SoundStyle("ArknightsMod/Content/Items/Weapons/Vanguard/Bagpipe/BagpipeAttack1") {
+				MaxInstances = 4
+			};
+			SoundEngine.PlaySound(soundNormalAttack, player.position);
+			player.itemTime =
+			player.itemAnimation = (int)(player.itemAnimation * (100f / 145f));
 
-		//    return null;
-		//}
-
-		public override void AddRecipes() {
-			CreateRecipe()
-				.AddIngredient<Material.PolymerizationPreparation>(4)
-				.AddIngredient<Material.OrirockConcentration>(9)
-				.AddTile(ModContent.TileType<FactoryTile>())
-				.Register();
+			if (Main.rand.Next(1, 101) > 28) // 天赋
+			{
+				Projectile.NewProjectile(source, position,
+					velocity * 1.45f, ModContent.ProjectileType<BagpipeSpearProj2>(), (int)(damage * 1.45f), knockback, Main.myPlayer, 0, 3, 4);
+			}
+			else {
+				Projectile.NewProjectile(source, position,
+					velocity * 1.45f, ModContent.ProjectileType<BagpipeSpearProj2>(), (int)(damage * 1.45f * 1.3f), knockback, Main.myPlayer, 0, 3, 4);
+				Projectile.NewProjectile(source, position - new Vector2(0, -5),
+					velocity / 1.3f, ModContent.ProjectileType<BagpipeSpearProj3>(), (int)(damage * 1.45f * 1.3f), knockback, Main.myPlayer, 0, 1, 0);
+			}
 		}
+		public void Skill_2Attack(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
 
-		//public override void AddRecipes() {
-		//	CreateRecipe()
-		//		.AddIngredient(ItemID.DirtBlock, 1)
-		//		.AddTile(TileID.WorkBenches)
-		//		.Register();
-		//}
+			var soundSkill2 = new SoundStyle("ArknightsMod/Content/Items/Weapons/Vanguard/Bagpipe/BagpipeAttack2") {
+				MaxInstances = 4
+			};
+			SoundEngine.PlaySound(soundSkill2, player.position);
+
+			if (Main.rand.Next(1, 101) > 28) // 天赋
+			{
+				Projectile.NewProjectile(source, position,
+					velocity, ModContent.ProjectileType<BagpipeSpearProj2>(), (int)(damage * 2f), knockback, Main.myPlayer, 0, 2, 0);
+			}
+			else {
+				Projectile.NewProjectile(source, position,
+					velocity, ModContent.ProjectileType<BagpipeSpearProj2>(), (int)(damage * 2f * 1.3f), knockback, Main.myPlayer, 0, 2, 0);
+				Projectile.NewProjectile(source, position - new Vector2(0, -5),
+					velocity / 1.3f, ModContent.ProjectileType<BagpipeSpearProj3>(), (int)(damage * 2f * 1.3f), knockback, Main.myPlayer, 0, 1, 0);
+			}
+
+			if (Main.rand.Next(1, 101) > 28) // 天赋
+			{
+				Projectile.NewProjectile(source, position - new Vector2(0, -5),
+					velocity / 1.3f, ModContent.ProjectileType<BagpipeSpearProj3>(), (int)(damage * 2f), knockback, Main.myPlayer, 0, 1, 0);
+			}
+			else {
+				Projectile.NewProjectile(source, position - new Vector2(0, -5),
+					velocity / 1.3f, ModContent.ProjectileType<BagpipeSpearProj3>(), (int)(damage * 2f * 1.3f), knockback, Main.myPlayer, 0, 1, 0);
+				Projectile.NewProjectile(source, position - new Vector2(0, -5),
+					velocity / 1.3f, ModContent.ProjectileType<BagpipeSpearProj3>(), (int)(damage * 2f * 1.3f), knockback, Main.myPlayer, 0, 1, 0);
+			}
+		}
+		public void Skill_3Attack(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
+
+			var soundSkill3 = new SoundStyle("ArknightsMod/Content/Items/Weapons/Vanguard/Bagpipe/BagpipeAttack3") {
+				MaxInstances = 4
+			};
+			SoundEngine.PlaySound(soundSkill3, player.position);
+			player.AddBuff(ModContent.BuffType<BagpipeDefenseBuff>(), 35);
+
+			player.itemTime =
+			player.itemAnimation = (int)(player.itemAnimation * 1.5f);
+
+			if (Main.rand.Next(1, 101) > 28) // 天赋
+			{
+				Projectile.NewProjectile(source, position,
+					velocity / 1.3f, ModContent.ProjectileType<BagpipeSpearProj2>(), (int)(damage * 2.2f), knockback, Main.myPlayer, 0, 10, 3);
+			}
+			else {
+				Projectile.NewProjectile(source, position,
+					velocity / 1.3f, ModContent.ProjectileType<BagpipeSpearProj2>(), (int)(damage * 2.2f * 1.3f), knockback, Main.myPlayer, 0, 10, 3);
+				Projectile.NewProjectile(source, position - new Vector2(0, -5),
+					velocity / 1.4f, ModContent.ProjectileType<BagpipeSpearProj3>(), (int)(damage * 2.2f * 1.3f), knockback, Main.myPlayer, 0, 1, 0);
+			}
+
+			if (Main.rand.Next(1, 101) > 28) // 天赋
+			{
+				Projectile.NewProjectile(source, position - new Vector2(0, -5),
+					velocity / 1.4f, ModContent.ProjectileType<BagpipeSpearProj3>(), (int)(damage * 2.2f), knockback, Main.myPlayer, 0, 1, 0);
+			}
+			else {
+				Projectile.NewProjectile(source, position - new Vector2(0, -5),
+					velocity / 1.4f, ModContent.ProjectileType<BagpipeSpearProj3>(), (int)(damage * 2.2f * 1.3f), knockback, Main.myPlayer, 0, 1, 0);
+				Projectile.NewProjectile(source, position - new Vector2(0, -5),
+					velocity / 1.4f, ModContent.ProjectileType<BagpipeSpearProj3>(), (int)(damage * 2.2f * 1.3f), knockback, Main.myPlayer, 0, 1, 0);
+			}
+
+			if (Main.rand.Next(1, 101) > 28) // 天赋
+			{
+				Projectile.NewProjectile(source, position - new Vector2(0, -5),
+					velocity / 1.3f, ModContent.ProjectileType<BagpipeSpearProj3>(), (int)(damage * 2.2f), knockback, Main.myPlayer, 0, 1, 0);
+			}
+			else {
+				Projectile.NewProjectile(source, position - new Vector2(0, -5),
+					velocity / 1.3f, ModContent.ProjectileType<BagpipeSpearProj3>(), (int)(damage * 2.2f * 1.3f), knockback, Main.myPlayer, 0, 1, 0);
+				Projectile.NewProjectile(source, position - new Vector2(0, -5),
+					velocity / 1.3f, ModContent.ProjectileType<BagpipeSpearProj3>(), (int)(damage * 2.2f * 1.3f), knockback, Main.myPlayer, 0, 1, 0);
+			}
+		}
 	}
 }
