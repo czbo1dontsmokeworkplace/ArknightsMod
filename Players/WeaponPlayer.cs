@@ -47,6 +47,7 @@ namespace ArknightsMod.Players
 		public float SPRegenMultiplier { get; set; } = 1f;
 		private float spRegenFraction;
 		private bool chargeReady;
+		private bool chargeOpen;
 		private bool hasNearbyEnemy;
 		private int initChargeTimer;
 
@@ -101,6 +102,7 @@ namespace ArknightsMod.Players
 		public List<bool> ShowSummonIconBySkills = [false, false, false];
 		public override void UpdateDead() {
 			chargeReady = true;
+			chargeOpen = true;
 		}
 
 		public void InitSkill(bool giveCharge) {
@@ -191,19 +193,22 @@ namespace ArknightsMod.Players
 			SetAllSkillsData();
 			Item item = Main.LocalPlayer.HeldItem;
 			if (item.ModItem is UpgradeWeaponBase ark) {
-				foreach (var npc in Main.ActiveNPCs) {
-					if (npc.CanBeChasedBy(Player) && npc.Distance(Player.MountedCenter) < 20 * 16) {
-						hasNearbyEnemy = true;
-						initChargeTimer = 0;
-						break;
+				if (chargeOpen) {
+					foreach (var npc in Main.ActiveNPCs) {
+						if (npc.CanBeChasedBy(Player) && npc.Distance(Player.MountedCenter) < 20 * 16) {
+							hasNearbyEnemy = true;
+							initChargeTimer = 0;
+							break;
+						}
 					}
-				}
-				if (!hasNearbyEnemy && ++initChargeTimer >= GetRestoreTime()) {
-					initChargeTimer = 0;
-					chargeReady = true;
+					if (!hasNearbyEnemy && ++initChargeTimer >= GetRestoreTime()) {
+						initChargeTimer = 0;
+						chargeReady = true;
+					}
 				}
 				if (chargeReady) {
 					chargeReady = false;
+					chargeOpen = false;
 					ark.chargeReady = [true, true, true];
 					if (Player == Main.LocalPlayer)
 						CombatText.NewText(Player.Hitbox.Modified(0, -48, 0, 0), Microsoft.Xna.Framework.Color.Gold,
@@ -242,7 +247,7 @@ namespace ArknightsMod.Players
 		}
 
 		public void TryAutoCharge() {
-			if (!hasNearbyEnemy)
+			if (chargeOpen && !hasNearbyEnemy)
 				return;
 			if (CurrentSkill?.ChargeType == SkillChargeType.Auto)
 				AutoCharge();
@@ -341,6 +346,7 @@ namespace ArknightsMod.Players
 					SP = 0;
 				StockCount -= 1;
 			}
+			chargeOpen = true;
 		}
 
 		public void SetSkillData() {
