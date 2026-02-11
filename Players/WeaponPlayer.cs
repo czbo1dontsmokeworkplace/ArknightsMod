@@ -205,8 +205,9 @@ namespace ArknightsMod.Players
 				if (chargeReady) {
 					chargeReady = false;
 					ark.chargeReady = [true, true, true];
-					CombatText.NewText(Player.Hitbox.Modified(0, -48, 0, 0), Microsoft.Xna.Framework.Color.Gold,
-						Language.GetTextValue("Mods.ArknightsMod.Skills.ChargeReady"), true);
+					if (Main.myPlayer == Player.whoAmI)
+						CombatText.NewText(Player.Hitbox.Modified(0, -48, 0, 0), Microsoft.Xna.Framework.Color.Gold,
+							Language.GetTextValue("Mods.ArknightsMod.Skills.ChargeReady"), true);
 				}
 				int type = item.type;
 				if (type != oldHeld) {
