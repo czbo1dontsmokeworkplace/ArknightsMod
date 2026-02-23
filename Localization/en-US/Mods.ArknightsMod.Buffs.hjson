@@ -82,3 +82,13 @@ BagpipeDefenseBuff: {
 	DisplayName: Bagpipe Defense Buff
 	Description: Mods.ArknightsMod.Buffs.BagpipeDefenseBuff.Description
 }
+
+SeasonedRationsBuff: {
+	Description: Mods.ArknightsMod.Buffs.SeasonedRationsBuff.Description
+	DisplayName: Seasoned Rations Buff
+}
+
+DehydratedSeasonedJerkyBuff: {
+	Description: Mods.ArknightsMod.Buffs.DehydratedSeasonedJerkyBuff.Description
+	DisplayName: Dehydrated Seasoned Jerky Buff
+}

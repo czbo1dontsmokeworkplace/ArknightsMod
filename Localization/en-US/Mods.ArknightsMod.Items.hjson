@@ -2507,3 +2507,18 @@ ComputerDesk: {
 	Tooltip: ""
 	DisplayName: Computer Desk
 }
+
+SeasonedRations: {
+	Tooltip: ""
+	DisplayName: Seasoned Rations
+}
+
+DehydratedSeasonedJerky: {
+	Tooltip: ""
+	DisplayName: Dehydrated Seasoned Jerky
+}
+
+PompeiiSummon: {
+	Tooltip: ""
+	DisplayName: Pompeii Summon
+}

@@ -7,7 +7,7 @@ using ArknightsMod.Common;
 using System;
 using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
-using ArknightsMod.Content.Items.Foods;
+using ArknightsMod.Content.Items.Material.ReclamAlgor;
 
 namespace ArknightsMod.Content.NPCs.Enemy.ReclamationAlgorithm.Cragpincer
 {

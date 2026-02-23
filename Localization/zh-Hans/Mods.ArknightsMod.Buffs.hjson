@@ -86,3 +86,13 @@ BagpipeDefenseBuff: {
 	// DisplayName: Bagpipe Defense Buff
 	// Description: Mods.ArknightsMod.Buffs.BagpipeDefenseBuff.Description
 }
+
+SeasonedRationsBuff: {
+	Description: 最大生命值+10%
+	DisplayName: 调味干粮
+}
+
+DehydratedSeasonedJerkyBuff: {
+	Description: 移动速度+8%，最大生命值+5%
+	DisplayName: 脱水增味肉干
+}

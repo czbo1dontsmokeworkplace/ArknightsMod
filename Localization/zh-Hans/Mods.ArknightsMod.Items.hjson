@@ -1173,7 +1173,7 @@ GoldBone: {
 	DisplayName: 镶金骨骰
 	Tooltip:
 		'''
-		所有敌方单位的最大生命值-15%
+		所有敌方单位的最大生命值-15%（对boss不生效）
 		"镶金的骨骰只有一面刻着代表生存的印记，至于其他十九面......"
 		'''
 }
@@ -1586,7 +1586,7 @@ TheProfoundSilence: {
 	DisplayName: 《大静谧》
 	Tooltip:
 		'''
-		所有敌方单位-20%最大生命值
+		所有敌方单位-20%最大生命值（对boss不生效）
 		"描绘伊比利亚史上最大灾难的画作，笔触毫无意义，色彩毫无意义，意象毫无意义。“阿戈尔知道，阿戈尔知道，阿戈尔知道。”"
 		'''
 }
@@ -2237,7 +2237,7 @@ FurongNutritiousMeal: {
 	DisplayName: 芙蓉的健康餐
 	Tooltip:
 		'''
-		所有敌方单位的攻击力-5%
+		所有敌方单位的攻击力-5%（对boss不生效）
 		身体健康但是心理不太健康，只吃这样的东西就没心思作战了。
 		'''
 }
@@ -2311,7 +2311,7 @@ TheNightMurmurs: {
 	DisplayName: “黑夜呢喃”
 	Tooltip:
 		'''
-		所有敌方单位的生命-10%
+		所有敌方单位的生命-10%（对boss不生效）
 		一张黑色唱片。不。准。碰。它。
 		'''
 }
@@ -2695,17 +2695,17 @@ RiceGrain: {
 }
 
 YvonneBody: {
-	// DisplayName: Yvonne Body
-	// Tooltip: ""
+	DisplayName: 伊冯的躯干
+	Tooltip: ""
 }
 
 YvonneHead: {
-	// DisplayName: Yvonne Head
+	DisplayName: 伊冯的头部
 	// Tooltip: ""
 }
 
 YvonneLegs: {
-	// DisplayName: Yvonne Legs
+	DisplayName: 伊冯的腿部
 	// Tooltip: ""
 }
 
@@ -2787,4 +2787,29 @@ FileRack: {
 ComputerDesk: {
 	// Tooltip: ""
 	// DisplayName: Computer Desk
+}
+
+SeasonedRations: {
+	Tooltip:
+		'''
+		最大生命值+10%
+		较朴素的速食食品，经过了调味，吃起来还挺适口。
+		据说未经调味的初版十分难以下咽，曾有人评价为不是“食用”，而是“服用”。
+		'''
+	DisplayName: 调味干粮
+}
+
+DehydratedSeasonedJerky: {
+	Tooltip:
+		'''
+		最大生命值+5%，移动速度+8%
+		将食材脱水处理，是人们保存食物最原始也最简单方便的方法。
+		虽然只是薄薄的几片，看起来很没有满足感，但实际上热量很高，完全可以轻松地吃饱。
+		'''
+	DisplayName: 脱水增味肉干
+}
+
+PompeiiSummon: {
+	Tooltip: 在任意群系召唤庞贝
+	DisplayName: 庞贝召唤器
 }
