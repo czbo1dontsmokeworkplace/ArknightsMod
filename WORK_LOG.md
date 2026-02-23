@@ -1,0 +1,160 @@
+# Work Log
+
+## 2026-02-22
+
+- 变更：创建 `WORK_LOG.md`，用于记录本仓库后续所有改动。
+- 原因：按需求保留工作留痕，便于审计与追踪。
+
+- 变更：新增会客室家具“办公椅（OfficeChair）”的物品与方块实现，支持右键切换两种外观。
+- 原因：按需求新增会客室家具，并保持与模组原有可放置物实现方式一致；办公椅默认使用 `OfficeChair_0.png`，右键切换到 `OfficeChair_1.png`。
+- 涉及文件：
+	- 新增：`Content\Items\Placeable\Infrastructure\ReceptionRoom\OfficeChair.cs`
+	- 新增：`Content\Tiles\Infrastructure\ReceptionRoom\OfficeChairTile.cs`
+	- 修改：`Localization\en-US\Mods.ArknightsMod.Items.hjson`（新增 `OfficeChair` 显示名）
+	- 修改：`Localization\zh-Hans\Mods.ArknightsMod.Items.hjson`（新增 `OfficeChair` 显示名）
+	- 修改：`Localization\en-US\Mods.ArknightsMod.hjson`（新增 `Tiles.OfficeChairTile.MapEntry`）
+	- 修改：`Localization\zh-Hans\Mods.ArknightsMod.hjson`（新增 `Tiles.OfficeChairTile.MapEntry`）
+
+- 变更：修正 `OfficeChairTile` 的编译兼容性。
+- 原因：避免因缺失命名空间或贴图请求参数导致编译失败；不影响功能逻辑。
+- 涉及文件：
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\OfficeChairTile.cs`（补充 `using Terraria.GameContent.ObjectInteractions;`，移除 `AssetRequestMode` 依赖）
+
+- 变更：修复会客室家具资源加载错误，并补齐会客室其余家具（保险箱、办公桌、电脑桌、办公躺椅、花瓶桌、垃圾桶、资料架）的物品/方块/本地化。
+- 原因：
+	- `OfficeChair` 物品默认会寻找 `OfficeChair.png`，但实际贴图为 `OfficeChair_0.png`，导致加载时 `MissingResourceException`。
+	- 会客室其余家具贴图已在 `Content\Items\Placeable\Infrastructure\ReceptionRoom` 目录下，需要对应的可放置物实现与中英文支持。
+- 说明：由于当前这些家具贴图为“单张 PNG”（非标准 Tile spritesheet），方块实现采用 `Style1x1` + `CoordinateWidth/CoordinateHeights` 直绘整张贴图的方式，确保可放置与显示正常。
+- 涉及文件：
+	- 修改：`Content\Items\Placeable\Infrastructure\ReceptionRoom\OfficeChair.cs`（显式指定物品贴图为 `OfficeChair_0`）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\OfficeChairTile.cs`（改为单张 PNG 直绘；右键切换 0/1 两种外观；MapEntry 使用 `CreateMapEntryName()`）
+	- 新增：`Content\Items\Placeable\Infrastructure\ReceptionRoom\SafeBox.cs`
+	- 新增：`Content\Tiles\Infrastructure\ReceptionRoom\SafeBoxTile.cs`
+	- 新增：`Content\Items\Placeable\Infrastructure\ReceptionRoom\OfficeDesk.cs`
+	- 新增：`Content\Tiles\Infrastructure\ReceptionRoom\OfficeDeskTile.cs`
+	- 新增：`Content\Items\Placeable\Infrastructure\ReceptionRoom\ComputerDesk.cs`
+	- 新增：`Content\Tiles\Infrastructure\ReceptionRoom\ComputerDeskTile.cs`
+	- 新增：`Content\Items\Placeable\Infrastructure\ReceptionRoom\OfficeRecliner.cs`
+	- 新增：`Content\Tiles\Infrastructure\ReceptionRoom\OfficeReclinerTile.cs`
+	- 新增：`Content\Items\Placeable\Infrastructure\ReceptionRoom\VaseTable.cs`
+	- 新增：`Content\Tiles\Infrastructure\ReceptionRoom\VaseTableTile.cs`
+	- 新增：`Content\Items\Placeable\Infrastructure\ReceptionRoom\TrashCan.cs`
+	- 新增：`Content\Tiles\Infrastructure\ReceptionRoom\TrashCanTile.cs`
+	- 新增：`Content\Items\Placeable\Infrastructure\ReceptionRoom\FileRack.cs`
+	- 新增：`Content\Tiles\Infrastructure\ReceptionRoom\FileRackTile.cs`
+	- 修改：`Localization\en-US\Mods.ArknightsMod.Items.hjson`（新增上述物品显示名）
+	- 修改：`Localization\zh-Hans\Mods.ArknightsMod.Items.hjson`（新增上述物品显示名）
+	- 修改：`Localization\en-US\Mods.ArknightsMod.hjson`（新增对应 `Tiles.*.MapEntry`）
+	- 修改：`Localization\zh-Hans\Mods.ArknightsMod.hjson`（新增对应 `Tiles.*.MapEntry`）
+
+- 变更：应用会客室家具的切片资源（`*_gap1.png`），并新增饮水机（WaterDispenser）。
+- 原因：你已将素材按“居中补齐、右侧扩展 0、底部扩展 0”的方式切片，切片资源命名为 `*_gap1.png`，需要在物品/方块贴图引用与 TileObjectData 参数中统一使用新资源；并补齐饮水机 `WaterDispenser_gap1.png` 对应实现。
+- 涉及文件：
+	- 修改：`Content\Items\Placeable\Infrastructure\ReceptionRoom\OfficeChair.cs`（物品图标切换为 `OfficeChair_0_gap1`）
+	- 修改：`Content\Items\Placeable\Infrastructure\ReceptionRoom\SafeBox.cs`（物品图标切换为 `SafeBox_gap1`）
+	- 修改：`Content\Items\Placeable\Infrastructure\ReceptionRoom\OfficeDesk.cs`（物品图标切换为 `OfficeDesk_gap1`）
+	- 修改：`Content\Items\Placeable\Infrastructure\ReceptionRoom\ComputerDesk.cs`（物品图标切换为 `ComputerDesk_gap1`）
+	- 修改：`Content\Items\Placeable\Infrastructure\ReceptionRoom\OfficeRecliner.cs`（物品图标切换为 `OfficeRecliner_gap1`）
+	- 修改：`Content\Items\Placeable\Infrastructure\ReceptionRoom\VaseTable.cs`（物品图标切换为 `VaseTable_gap1`）
+	- 修改：`Content\Items\Placeable\Infrastructure\ReceptionRoom\TrashCan.cs`（物品图标切换为 `TrashCan_gap1`）
+	- 修改：`Content\Items\Placeable\Infrastructure\ReceptionRoom\FileRack.cs`（物品图标切换为 `FileRack_gap1`）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\OfficeChairTile.cs`（贴图切换为 `OfficeChair_*_gap1`，并更新切片后尺寸）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\SafeBoxTile.cs`（贴图切换为 `SafeBox_gap1`，并更新切片后尺寸）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\OfficeDeskTile.cs`（贴图切换为 `OfficeDesk_gap1`，并更新切片后尺寸）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\ComputerDeskTile.cs`（贴图切换为 `ComputerDesk_gap1`，并更新切片后尺寸）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\OfficeReclinerTile.cs`（贴图切换为 `OfficeRecliner_gap1`，并更新切片后尺寸）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\VaseTableTile.cs`（贴图切换为 `VaseTable_gap1`，并更新切片后尺寸）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\TrashCanTile.cs`（贴图切换为 `TrashCan_gap1`，并更新切片后尺寸）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\FileRackTile.cs`（贴图切换为 `FileRack_gap1`，并更新切片后尺寸）
+	- 新增：`Content\Items\Placeable\Infrastructure\ReceptionRoom\WaterDispenser.cs`
+	- 新增：`Content\Tiles\Infrastructure\ReceptionRoom\WaterDispenserTile.cs`
+	- 修改：`Localization\en-US\Mods.ArknightsMod.Items.hjson`（新增 `WaterDispenser` 显示名）
+	- 修改：`Localization\zh-Hans\Mods.ArknightsMod.Items.hjson`（新增 `WaterDispenser` 显示名）
+	- 修改：`Localization\en-US\Mods.ArknightsMod.hjson`（新增 `Tiles.WaterDispenserTile.MapEntry`）
+	- 修改：`Localization\zh-Hans\Mods.ArknightsMod.hjson`（新增 `Tiles.WaterDispenserTile.MapEntry`）
+
+- 变更：追加 gap1 切片缝隙修复（CoordinatePadding=1 + 多格帧绘制），物品贴图恢复原图，办公椅多格切换同步修复。
+- 原因：追加 gap1 切片缝隙修复，物品贴图恢复原图，办公椅多格切换同步修复。
+- 备注：按你的要求，物品图标继续使用未 gap 的原图（`*.png`），`*_gap1.png` 仅用于 Tile 贴图。
+- 涉及文件：
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\OfficeDeskTile.cs`（改为多格帧绘制 + `CoordinatePadding=1`）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\ComputerDeskTile.cs`（改为多格帧绘制 + `CoordinatePadding=1`）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\OfficeReclinerTile.cs`（改为多格帧绘制 + `CoordinatePadding=1`）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\VaseTableTile.cs`（改为多格帧绘制 + `CoordinatePadding=1`）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\FileRackTile.cs`（改为多格帧绘制 + `CoordinatePadding=1`）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\WaterDispenserTile.cs`（改为多格帧绘制 + `CoordinatePadding=1`）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\SafeBoxTile.cs`（设置 `CoordinatePadding=1`）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\TrashCanTile.cs`（设置 `CoordinatePadding=1`）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\OfficeChairTile.cs`（改为多格帧绘制；修正右键切换时 1x2 多格同步）
+	- 修改：`Content\Items\Placeable\Infrastructure\ReceptionRoom\OfficeChair.cs`（物品图标回退 `OfficeChair_0`）
+	- 修改：`Content\Items\Placeable\Infrastructure\ReceptionRoom\SafeBox.cs`（物品图标回退 `SafeBox`）
+	- 修改：`Content\Items\Placeable\Infrastructure\ReceptionRoom\OfficeDesk.cs`（物品图标回退 `OfficeDesk`）
+	- 修改：`Content\Items\Placeable\Infrastructure\ReceptionRoom\ComputerDesk.cs`（物品图标回退 `ComputerDesk`）
+	- 修改：`Content\Items\Placeable\Infrastructure\ReceptionRoom\OfficeRecliner.cs`（物品图标回退 `OfficeRecliner`）
+	- 修改：`Content\Items\Placeable\Infrastructure\ReceptionRoom\VaseTable.cs`（物品图标回退 `VaseTable`）
+	- 修改：`Content\Items\Placeable\Infrastructure\ReceptionRoom\TrashCan.cs`（物品图标回退 `TrashCan`）
+	- 修改：`Content\Items\Placeable\Infrastructure\ReceptionRoom\FileRack.cs`（物品图标回退 `FileRack`）
+	- 修改：`Content\Items\Placeable\Infrastructure\ReceptionRoom\WaterDispenser.cs`（物品图标回退 `WaterDispenser`）
+
+- 变更：修复会客室 Tile 编译错误（`Point16` 未识别）。
+- 原因：部分 Tile 文件使用了 `new Point16(...)` 但缺少 `using Terraria.DataStructures;`，导致编译时报错 CS0246。
+- 涉及文件：
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\VaseTableTile.cs`（补充 `using Terraria.DataStructures;`）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\OfficeDeskTile.cs`（补充 `using Terraria.DataStructures;`）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\ComputerDeskTile.cs`（补充 `using Terraria.DataStructures;`）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\OfficeReclinerTile.cs`（补充 `using Terraria.DataStructures;`）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\FileRackTile.cs`（补充 `using Terraria.DataStructures;`）
+
+- 变更：适配会客室家具贴图“重新分片”后的尺寸变动（仍为 16x16 帧 + 1px 间隔）。
+- 原因：你重新分片后，各家具贴图的占格宽高可能变化；为避免每次手动调整 `TileObjectData.newTile.Width/Height/Origin/CoordinateHeights`，改为在 `SetStaticDefaults()` 中读取贴图尺寸并自动推导占格。
+- 涉及文件：
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\OfficeDeskTile.cs`（根据贴图尺寸自动推导 Width/Height/Origin/CoordinateHeights）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\ComputerDeskTile.cs`（同上）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\VaseTableTile.cs`（同上）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\OfficeReclinerTile.cs`（同上）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\FileRackTile.cs`（同上）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\SafeBoxTile.cs`（同上）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\TrashCanTile.cs`（同上）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\WaterDispenserTile.cs`（同上）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\OfficeChairTile.cs`（根据贴图高度自动推导椅子占格；变体切换与联网同步按高度自适配）
+
+- 变更：会客室新增家具支持根据玩家面朝方向自动水平翻转（左右放置）。
+- 原因：玩家面朝左/右放置时，希望同一套贴图自动左右镜像显示；通过 `TileObjectData` 的 `Direction`/`Alternate` 记录放置方向，并在 `PreDraw` 中对多格家具执行“交换列 + 水平翻转”的整件镜像绘制。
+- 涉及文件：
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\OfficeDeskTile.cs`（左右放置 + 镜像绘制）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\ComputerDeskTile.cs`（左右放置 + 镜像绘制）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\OfficeReclinerTile.cs`（左右放置 + 镜像绘制）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\VaseTableTile.cs`（左右放置 + 镜像绘制）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\FileRackTile.cs`（左右放置 + 镜像绘制）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\WaterDispenserTile.cs`（左右放置 + 镜像绘制）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\SafeBoxTile.cs`（左右放置 + 镜像绘制）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\TrashCanTile.cs`（左右放置 + 镜像绘制）
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\OfficeChairTile.cs`（左右放置 + 镜像绘制；兼容变体切换）
+
+- 变更：新增加工站墙壁物品（黄/粉）以及对应墙壁方块。
+- 原因：按需求新增两种加工站墙壁变体；墙壁放置贴图使用 Output 贴图，物品图标使用独立贴图，并沿用模组现有 `InfrastructureWall` + `DefaultToPlaceableWall` 的实现方式。
+- 涉及文件：
+	- 新增：`Content\Tiles\Infrastructure\Workshop\WorkshopWallYellow.cs`
+	- 新增：`Content\Tiles\Infrastructure\Workshop\WorkshopWallPink.cs`
+	- 新增：`Content\Items\Placeable\Infrastructure\Workshop\WorkshopWallYellowItem.cs`
+	- 新增：`Content\Items\Placeable\Infrastructure\Workshop\WorkshopWallPinkItem.cs`
+	- 修改：`Localization\zh-Hans\Mods.ArknightsMod.Items.hjson`（新增 `WorkshopWallYellowItem`/`WorkshopWallPinkItem` 显示名）
+	- 修改：`Localization\en-US\Mods.ArknightsMod.Items.hjson`（同上）
+
+- 变更：修复会客室家具“预放置预览（placement preview）”左右朝向不生效/朝左不显示的问题。
+- 原因：实测 `PreDrawPlacementPreview` 回调中 `spriteEffects` 始终为 `None`（即使是 PlaceLeft alternate），因此不能依赖 `spriteEffects.FlipHorizontally` 判断朝向；改为由 tML 传入的 `frame.X` 推导 `style`（`style = frame.X / styleStride`），再基于 `style==1` 判定需要镜像，并在对应 `styleStride` 段内做列交换。
+- 涉及文件：
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\OfficeDeskTile.cs`
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\ComputerDeskTile.cs`
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\OfficeReclinerTile.cs`
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\VaseTableTile.cs`
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\FileRackTile.cs`
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\SafeBoxTile.cs`
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\TrashCanTile.cs`
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\WaterDispenserTile.cs`
+	- 修改：`Content\Tiles\Infrastructure\ReceptionRoom\OfficeChairTile.cs`
+
+- 变更：修复模组加载阶段 `UpgradeWeaponBase.LoadSkillData` 越界异常（`IndexOutOfRangeException`）。
+- 原因：`Assets/LevelDatas/SkillDatas.csv` 存在空行/可能存在列数不足或索引异常的行，原实现直接 `Split(',')` 并访问 `info[x]`，以及未校验 `index` 范围，导致加载期越界并中断初始化；并且读取单个技能等级 CSV 时未处理 EOF/空行，存在 `content[0]` 越界风险。
+- 涉及文件：
+	- 修改：`Content\Items\Weapons\UpgradeWeaponBase.cs`（跳过空行、列数校验、索引范围校验、EOF/空行处理）

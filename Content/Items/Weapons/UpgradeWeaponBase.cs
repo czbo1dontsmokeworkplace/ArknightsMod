@@ -61,12 +61,24 @@ namespace ArknightsMod.Content.Items.Weapons
 			using (var sr = new StreamReader(mod.GetFileStream("Assets/LevelDatas/SkillDatas.csv"))) {
 				sr.ReadLine();
 				while (!sr.EndOfStream) {
-					string[] info = sr.ReadLine().Split(',');
+					string line = sr.ReadLine();
+					if (string.IsNullOrWhiteSpace(line))
+						continue;
+					string[] info = line.Split(',');
+					if (info.Length < 7) {
+						logger.Warn($"[LoadSkillData] Invalid SkillDatas.csv line (expected 7 cols): '{line}'");
+						continue;
+					}
 					string item = info[0];
+					if (string.IsNullOrWhiteSpace(item))
+						continue;
 					if (!skillDatas.TryGetValue(item, out var datas))
 						datas = skillDatas[item] = new SkillData[3];
 					try {
-						int index = int.Parse(info[1]);
+						if (!int.TryParse(info[1], out int index))
+							throw new FormatException($"Invalid skill index: '{info[1]}'");
+						if (index < 0 || index >= datas.Length)
+							throw new IndexOutOfRangeException($"Skill index {index} out of range for item '{item}'");
 						SkillData data = new() {
 							ChargeType = (SkillChargeType)int.Parse(info[3]),
 							AutoTrigger = int.Parse(info[4]) == 1,
@@ -91,10 +103,16 @@ namespace ArknightsMod.Content.Items.Weapons
 					sr.ReadLine();
 					try {
 						for (int i = 1; i <= 10; i++) {
+							if (sr.EndOfStream)
+								break;
 							string content = sr.ReadLine();
+							if (string.IsNullOrEmpty(content))
+								continue;
 							if (content[0] == ',')
 								continue;
 							string[] info = content.Split(",");
+							if (info.Length < 4)
+								continue;
 							data[i] = new() {
 								InitSP = int.Parse(info[0]),
 								MaxSP = int.Parse(info[1]),
