@@ -2452,3 +2452,58 @@ OblivionisSword: {
 	DisplayName: Oblivionis Sword
 	Tooltip: ""
 }
+
+WorkshopWallYellowItem: {
+	Tooltip: ""
+	DisplayName: Workshop Wall Yellow Item
+}
+
+WorkshopWallPinkItem: {
+	Tooltip: ""
+	DisplayName: Workshop Wall Pink Item
+}
+
+WaterDispenser: {
+	Tooltip: ""
+	DisplayName: Water Dispenser
+}
+
+VaseTable: {
+	Tooltip: ""
+	DisplayName: Vase Table
+}
+
+TrashCan: {
+	Tooltip: ""
+	DisplayName: Trash Can
+}
+
+SafeBox: {
+	Tooltip: ""
+	DisplayName: Safe Box
+}
+
+OfficeRecliner: {
+	Tooltip: ""
+	DisplayName: Office Recliner
+}
+
+OfficeDesk: {
+	Tooltip: ""
+	DisplayName: Office Desk
+}
+
+OfficeChair: {
+	Tooltip: ""
+	DisplayName: Office Chair
+}
+
+FileRack: {
+	Tooltip: ""
+	DisplayName: File Rack
+}
+
+ComputerDesk: {
+	Tooltip: ""
+	DisplayName: Computer Desk
+}
