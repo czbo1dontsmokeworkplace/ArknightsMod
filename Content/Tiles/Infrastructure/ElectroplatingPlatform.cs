@@ -23,11 +23,11 @@ namespace ArknightsMod.Content.Tiles.Infrastructure
 			AddToArray(ref TileID.Sets.RoomNeeds.CountsAsDoor);
 			AddMapEntry(new Color(200, 200, 200));
 
-			AdjTiles = [TileID.Platforms];
+			AdjTiles = new int[] { TileID.Platforms };
 
-			TileObjectData.newTile.CoordinateHeights = [16];
+			TileObjectData.newTile.CoordinateHeights = new int[] { 16 };
 			TileObjectData.newTile.CoordinateWidth = 16;
-			TileObjectData.newTile.CoordinatePadding = 2;
+			TileObjectData.newTile.CoordinatePadding = 1;
 			TileObjectData.newTile.StyleHorizontal = true;
 			TileObjectData.newTile.StyleMultiplier = 27;
 			TileObjectData.newTile.StyleWrapLimit = 27;
