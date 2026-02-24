@@ -4,6 +4,7 @@ using Terraria.ModLoader;
 using Terraria.DataStructures;
 using Microsoft.Xna.Framework;
 using ArknightsMod.Content.Buffs;
+using ArknightsMod.Content.Items.Material.ReclamAlgor;
 
 namespace ArknightsMod.Content.Items.Consumables
 {
@@ -57,6 +58,14 @@ namespace ArknightsMod.Content.Items.Consumables
 				}
 			}
 			player.AddBuff(ModContent.BuffType<RARicecrabBuff>(), 14400);
+		}
+
+		public override void AddRecipes() {
+			Recipe recipe = CreateRecipe();
+			recipe.AddIngredient<RiceGrain>(1);
+			recipe.AddIngredient<CrabClaw>(1);
+			recipe.AddTile(TileID.CookingPots);
+			recipe.Register();
 		}
 		
 		
