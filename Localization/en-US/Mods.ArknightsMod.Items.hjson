@@ -2522,3 +2522,8 @@ PompeiiSummon: {
 	Tooltip: ""
 	DisplayName: Pompeii Summon
 }
+
+PlanterClusterItem: {
+	DisplayName: Planter Cluster Item
+	Tooltip: ""
+}

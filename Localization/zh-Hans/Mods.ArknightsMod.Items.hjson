@@ -2813,3 +2813,8 @@ PompeiiSummon: {
 	Tooltip: 在任意群系召唤庞贝
 	DisplayName: 庞贝召唤器
 }
+
+PlanterClusterItem: {
+	DisplayName: 种植箱集群
+	// Tooltip: ""
+}

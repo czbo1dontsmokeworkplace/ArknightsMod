@@ -96,9 +96,6 @@ namespace ArknightsMod.Systems
 				return false;
 
 			player.noThrow = 2;
-			player.cursorItemIconEnabled = true;
-			player.cursorItemIconID = KindToItemType(inst.Kind);
-			player.cursorItemIconReversed = inst.Direction == -1;
 			return true;
 		}
 
@@ -423,9 +420,6 @@ namespace ArknightsMod.Systems
 				return;
 
 			player.noThrow = 2;
-			player.cursorItemIconEnabled = true;
-			player.cursorItemIconID = KindToItemType(inst.Kind);
-			player.cursorItemIconReversed = inst.Direction == -1;
 
 			if (Main.mouseRight && Main.mouseRightRelease)
 				TryRightClick(anchor.X, anchor.Y, player);
