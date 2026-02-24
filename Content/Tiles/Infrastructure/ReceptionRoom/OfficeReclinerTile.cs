@@ -132,7 +132,6 @@ namespace ArknightsMod.Content.Tiles.Infrastructure.ReceptionRoom
 			frame.X = (flip ? (ReclinerWidthTiles - 1 - localX) : localX) * step;
 			if (flip) {
 				spriteEffects |= SpriteEffects.FlipHorizontally;
-				position.X += 16;
 			}
 			return true;
 		}

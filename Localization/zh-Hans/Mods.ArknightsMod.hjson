@@ -62,13 +62,13 @@ Tiles: {
 	// OrangeContainerTile.MapEntry: Orange Container Tile
 	// YellowRailingTile.MapEntry: Yellow Railing Tile
 	// TrainingRoomSofaTile.MapEntry: Training Room Sofa Tile
-	// WaterDispenserTile.MapEntry: Water Dispenser Tile
-	// VaseTableTile.MapEntry: Vase Table Tile
-	// TrashCanTile.MapEntry: Trash Can Tile
-	// SafeBoxTile.MapEntry: Safe Box Tile
-	// OfficeReclinerTile.MapEntry: Office Recliner Tile
-	// OfficeDeskTile.MapEntry: Office Desk Tile
-	// OfficeChairTile.MapEntry: Office Chair Tile
-	// FileRackTile.MapEntry: File Rack Tile
-	// ComputerDeskTile.MapEntry: Computer Desk Tile
+	WaterDispenserTile.MapEntry: "{$Mods.ArknightsMod.Items.WaterDispenser.DisplayName}"
+	VaseTableTile.MapEntry: "{$Mods.ArknightsMod.Items.VaseTable.DisplayName}"
+	TrashCanTile.MapEntry: "{$Mods.ArknightsMod.Items.TrashCan.DisplayName}"
+	SafeBoxTile.MapEntry: "{$Mods.ArknightsMod.Items.SafeBox.DisplayName}"
+	OfficeReclinerTile.MapEntry: "{$Mods.ArknightsMod.Items.OfficeRecliner.DisplayName}"
+	OfficeDeskTile.MapEntry: "{$Mods.ArknightsMod.Items.OfficeDesk.DisplayName}"
+	OfficeChairTile.MapEntry: "{$Mods.ArknightsMod.Items.OfficeChair.DisplayName}"
+	FileRackTile.MapEntry: "{$Mods.ArknightsMod.Items.FileRack.DisplayName}"
+	ComputerDeskTile.MapEntry: "{$Mods.ArknightsMod.Items.ComputerDesk.DisplayName}"
 }
