@@ -9,6 +9,7 @@ using Terraria.GameContent.ObjectInteractions;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
+using ArknightsMod.Systems;
 
 namespace ArknightsMod.Content.Tiles.Infrastructure.ReceptionRoom
 {
@@ -55,6 +56,13 @@ namespace ArknightsMod.Content.Tiles.Infrastructure.ReceptionRoom
 			TileObjectData.newAlternate.Origin = new Point16(originX, ReclinerHeightTiles - 1);
 			TileObjectData.addAlternate(1);
 			TileObjectData.addTile(Type);
+		}
+
+		public override void PlaceInWorld(int i, int j, Item item)
+		{
+			if (Main.netMode == NetmodeID.MultiplayerClient)
+				return;
+			ReceptionRoomDecorSystem.ConvertPlacedTileToDecor(i, j, Type);
 		}
 
 		public override bool HasSmartInteract(int i, int j, SmartInteractScanSettings settings)

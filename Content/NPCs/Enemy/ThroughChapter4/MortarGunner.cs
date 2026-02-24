@@ -335,6 +335,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 		}
 	}
+
+#pragma warning disable CS8981
 	public class explode : ModProjectile {
 		public override void SetDefaults() {
 			Projectile.width = 100;

@@ -636,6 +636,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 			Gore.NewGore(entitySource, NPC.position, new Vector2(Main.rand.Next(-5, 4), Main.rand.Next(-5, 4)), Mod.Find<ModGore>("TFTTGore3").Type,2);
 		}
 	}
+
+#pragma warning disable CS8981
 		public class seashoot : ModProjectile
 		{
 
