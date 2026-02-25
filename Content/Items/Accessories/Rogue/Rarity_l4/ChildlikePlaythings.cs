@@ -13,8 +13,8 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
             Item.width = 28;
             Item.height = 36;
             Item.accessory = true;
-            Item.value = Item.sellPrice(16, 0, 0, 0);
-            Item.rare = ItemRarityID.Master;
+			Item.value = Item.sellPrice(0, 16, 0, 0);
+			Item.rare = ItemRarityID.Master;
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)

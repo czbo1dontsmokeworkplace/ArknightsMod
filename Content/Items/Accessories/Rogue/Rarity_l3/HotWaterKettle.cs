@@ -42,7 +42,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
 		public override void SetDefaults() {
 			Item.width = 30;
 			Item.height = 30;
-			Item.value = Item.sellPrice(12, 0, 0, 0);
+			Item.value = Item.sellPrice(0, 6, 0, 0);
 			Item.rare = ItemRarityID.Blue;
 			Item.accessory = true;
 		}

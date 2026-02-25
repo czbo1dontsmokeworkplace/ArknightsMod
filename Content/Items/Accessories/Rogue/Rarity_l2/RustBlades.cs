@@ -11,8 +11,8 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l2
         {
             Item.width = 28;
             Item.height = 32;
-            Item.value = Item.sellPrice(8, 0, 0, 0); // 8金币价值
-            Item.rare = 1; // 浅紫色稀有度
+			Item.value = Item.sellPrice(0, 3, 0, 0);
+			Item.rare = 1; // 浅紫色稀有度
             Item.accessory = true;
         }
 

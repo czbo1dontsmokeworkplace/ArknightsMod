@@ -7,6 +7,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.GameContent;
 using System.Collections.Generic;
+using System;
+using ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3;
 
 namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
 {
@@ -17,7 +19,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
 			Item.height = 32;
 			Item.accessory = true;
 			Item.rare = ItemRarityID.Purple;
-			Item.value = Item.sellPrice(12, 0, 0, 0);
+			Item.value = Item.sellPrice(0, 6, 0, 0);
 		}
 
 		public override void UpdateAccessory(Player player, bool hideVisual) {
@@ -93,11 +95,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
 		}
 
 		private void UpdateOriginalMaxLife() {
-			if (originalMaxLife == 0)
-				originalMaxLife = Player.statLifeMax2;
-
-			if (Player.statLifeMax2 > originalMaxLife)
-				originalMaxLife = Player.statLifeMax2;
+			originalMaxLife = Player.statLifeMax2;
 		}
 
 		private void HandleRevival() {
@@ -159,17 +157,40 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
 		}
 
 
-		private void ProcessDamage(int damage, ref Player.HurtModifiers modifiers) {
+		private void ProcessDamage(int damage, ref Player.HurtModifiers modifiers, Vector2 sourcePosition) {
 			if (!hasFallenSovereignShield || currentShield <= 0)
 				return;
 
+			int defense = Player.statDefense;
+
+			int damageAfterDefense = damage - defense;
+			if (damageAfterDefense < 0)
+				damageAfterDefense = 0;
+
+			float damageReduction = 1f - Player.endurance; 
+
+			Random random = new Random();
+
+			int randomInt = random.Next(95, 115);
+
+			float randomFactor = randomInt / 100f; 
+			int shieldDamageL = (int)(damageAfterDefense * damageReduction * 1.75f * randomFactor);
+			int randomIntL = random.Next(-1, 2);
+			int shieldDamage = (int)(shieldDamageL + randomIntL);
+
+			if (shieldDamage < 1 && damage > 0)
+				shieldDamage = 1;
+
 			float shieldBeforeHit = currentShield;
 
-			if (damage <= currentShield) {
-				currentShield -= damage;
+			if (shieldDamage <= currentShield) {
+				currentShield -= shieldDamage;
 				modifiers.SetMaxDamage(0);
-				CombatText.NewText(Player.getRect(), new Color(113, 133, 162), $"-{damage}", true);
+				CombatText.NewText(Player.getRect(), new Color(113, 133, 162), $"-{shieldDamage}", true);
 
+				
+				if (shieldDamage > 0)
+					SpawnShieldHitParticles(sourcePosition, shieldDamage);
 
 				if (Player.statLife < Player.statLifeMax2) {
 					Player.statLife += 1;
@@ -184,7 +205,10 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
 			}
 			else {
 				modifiers.SourceDamage.Flat -= (int)currentShield;
-				CombatText.NewText(Player.getRect(), new Color(113, 133, 162), $"-{currentShield}", true);
+				CombatText.NewText(Player.getRect(), new Color(113, 133, 162), $"-{(int)currentShield}", true);
+
+				
+				SpawnShieldHitParticles(sourcePosition, (int)currentShield);
 
 				currentShield = 0;
 				PlayShieldBreakSound();
@@ -192,12 +216,93 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
 			}
 		}
 
+		private void SpawnShieldHitParticles(Vector2 sourcePosition, int damage) {
+			if (!hasFallenSovereignShield)
+				return;
+
+			Vector2 direction = (sourcePosition - Player.Center).SafeNormalize(Vector2.Zero);
+
+
+			int baseParticleCount = Math.Clamp(damage / 2, 4, 7);
+
+
+			int mainParticleCount = baseParticleCount / 2; 
+			for (int i = 0; i < mainParticleCount; i++) {
+		
+				float angleOffset = Main.rand.NextFloat(-0.3f, 0.3f);
+				float speed = Main.rand.NextFloat(3f, 6f); 
+
+				Vector2 vel = direction.RotatedBy(angleOffset) * speed;
+
+				
+				Projectile.NewProjectile(
+					Player.GetSource_FromThis(),
+					Player.Center,
+					vel,
+					ModContent.ProjectileType<ShieldHitParticles>(),
+					0, 0, Player.whoAmI
+				);
+			}
+			int spreadParticleCount = baseParticleCount - mainParticleCount + Main.rand.Next(-1, 2); 
+			spreadParticleCount = Math.Max(2, spreadParticleCount); 
+
+			for (int i = 0; i < spreadParticleCount; i++) {
+
+				float angleOffset = Main.rand.NextFloat(-1.2f, 1.2f);
+				float speed = Main.rand.NextFloat(1.5f, 5f);
+				if (Main.rand.NextBool(3)) 
+				{
+		
+					angleOffset += MathHelper.Pi; 
+					speed *= 0.3f; 
+				}
+
+				Vector2 vel = direction.RotatedBy(angleOffset) * speed;
+
+				Projectile.NewProjectile(
+					Player.GetSource_FromThis(),
+					Player.Center + direction * Main.rand.NextFloat(-10f, 10f), 
+					vel,
+					ModContent.ProjectileType<ShieldHitParticles>(),
+					0, 0, Player.whoAmI
+				);
+			}
+
+
+			if (Main.rand.NextBool(3) && damage > 10) 
+			{
+				int extraParticles = Main.rand.Next(1, 4);
+				for (int i = 0; i < extraParticles; i++) {
+			
+					float randomAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+					float speed = Main.rand.NextFloat(1f, 3f);
+
+					Vector2 vel = Vector2.UnitX.RotatedBy(randomAngle) * speed;
+
+				
+					Vector2 posOffset = new Vector2(
+						Main.rand.NextFloat(-15f, 15f),
+						Main.rand.NextFloat(-15f, 15f)
+					);
+
+					Projectile.NewProjectile(
+						Player.GetSource_FromThis(),
+						Player.Center + posOffset,
+						vel,
+						ModContent.ProjectileType<ShieldHitParticles>(),
+						0, 0, Player.whoAmI
+					);
+				}
+			}
+		}
+
+		
 		public override void ModifyHitByProjectile(Projectile proj, ref Player.HurtModifiers modifiers) {
-			ProcessDamage(proj.damage, ref modifiers);
+			ProcessDamage(proj.damage, ref modifiers, proj.Center);
 		}
 
 		public override void ModifyHitByNPC(NPC npc, ref Player.HurtModifiers modifiers) {
-			ProcessDamage(npc.damage, ref modifiers);
+			ProcessDamage(npc.damage, ref modifiers, npc.Center);
 		}
 
 		private void ResetShield() {

@@ -2522,3 +2522,18 @@ PompeiiSummon: {
 	Tooltip: ""
 	DisplayName: Pompeii Summon
 }
+
+SarkazKingRegalRest: {
+	DisplayName: Sarkaz King Regal Rest
+	Tooltip: ""
+}
+
+SarkazKingTornBanner: {
+	DisplayName: Sarkaz King Torn Banner
+	Tooltip: ""
+}
+
+BlazeChainsaw: {
+	DisplayName: Blaze Chainsaw
+	Tooltip: ""
+}

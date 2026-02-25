@@ -12,8 +12,8 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l1
         {
             Item.width = 28;
             Item.height = 28;
-            Item.value = Item.sellPrice(4, 0, 0, 0);
-            Item.rare = ItemRarityID.Green;
+			Item.value = Item.sellPrice(0, 2, 0, 0);
+			Item.rare = ItemRarityID.Green;
             Item.accessory = true;
         }
 

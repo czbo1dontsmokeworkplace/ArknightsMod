@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 {
-	public class ScoutsScope : ModItem
+	public class BlazeChainsaw : ModItem
 	{
 		public override void SetDefaults() {
 			Item.width = 30;
@@ -16,27 +16,30 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 		}
 
 		public override void UpdateAccessory(Player player, bool hideVisual) {
-			player.GetModPlayer<ScoutsScopePlayer>().hasScopeAccessory = true;
+			player.GetModPlayer<BlazeChainsawPlayer>().hasChainsawAccessory = true;
 		}
 	}
 
-	public class ScoutsScopePlayer : ModPlayer
+	public class BlazeChainsawPlayer : ModPlayer
 	{
-		public bool hasScopeAccessory = false;
+		public bool hasChainsawAccessory = false;
 
 		public override void ResetEffects() {
-			hasScopeAccessory = false;
+			hasChainsawAccessory = false;
 		}
 
 		public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) {
-			if (!hasScopeAccessory)
+			if (!hasChainsawAccessory)
 				return;
+
 			float distance = Vector2.Distance(Player.Center, target.Center);
-			if (distance >= 800f) {
-				modifiers.FinalDamage *= 2f;
+
+			if (distance >= 650f)
 				return;
-			}
-			float multiplier = 1f + (distance / 800f);
+
+			float multiplier = distance <= 100f ? 2f :
+				1f + (1f - (distance - 100f) / 550f);
+
 			modifiers.FinalDamage *= multiplier;
 		}
 	}

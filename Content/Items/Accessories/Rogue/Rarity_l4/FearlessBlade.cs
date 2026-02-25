@@ -34,7 +34,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 
             if (!isEquipped)
             {
-                // 未穿戴时显示默认提示
+
                 string tt = Language.GetTextValue("Mods.sk.Default.None");
                 tooltips.Add(new TooltipLine(Mod, "NotEquipped", tt));
                 return;
@@ -61,8 +61,8 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
             Item.height = 28;
             Item.accessory = true;
             Item.rare = ItemRarityID.Master;
-            Item.value = Item.sellPrice(16, 0, 0, 0);
-        }
+			Item.value = Item.sellPrice(0, 16, 0, 0);
+		}
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
@@ -89,7 +89,9 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
         private bool weaponIsEquipped;
         private bool armorIsEquipped;
 
-        public override void ResetEffects()
+		private int findTimer = 0;
+		private const int FIND_INTERVAL = 30;
+		public override void ResetEffects()
         {
 
             if (!active)
@@ -167,62 +169,71 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
             armorIndex = -1;
         }
 
-        private void FindHighestRarityItems()
-        {
-            // 查找最高稀有度的武器
-            if (buffedWeapon == null)
-            {
-                var weapons = GetAllWeapons();
 
-                if (weapons.Count > 0)
-                {
-                    // 按稀有度排序
-                    var bestWeapon = weapons
-                        .OrderByDescending(item => GetAdjustedRarity(item))
-                        .ThenBy(item => GetItemIndex(item))
-                        .First();
 
-                    // 恢复之前可能修改的值
-                    if (buffedWeapon != null) buffedWeapon.damage = originalWeaponDamage;
+		private void FindHighestRarityItems() {
+			if (--findTimer > 0)
+				return;
+			findTimer = FIND_INTERVAL;
 
-                    buffedWeapon = bestWeapon;
-                    originalWeaponDamage = bestWeapon.damage;
-                    bestWeapon.damage = (int)(bestWeapon.damage * 1.5f);
+			// 每帧重新查找武器
+			var weapons = GetAllWeapons();
+			if (weapons.Count > 0) {
+				var bestWeapon = weapons
+					.OrderByDescending(item => GetAdjustedRarity(item))
+					.ThenBy(item => GetItemIndex(item))
+					.First();
 
-                    // 记录位置信息
-                    weaponIndex = GetItemIndex(bestWeapon);
-                    weaponIsEquipped = IsItemEquipped(bestWeapon);
-                }
-            }
+				// 如果最优物品变化了
+				if (buffedWeapon != bestWeapon) {
+					// 恢复旧物品
+					if (buffedWeapon != null)
+						buffedWeapon.damage = originalWeaponDamage;
 
-            // 查找最高稀有度的防具
-            if (buffedArmor == null)
-            {
-                var armors = GetAllArmors();
+					// 应用新物品
+					buffedWeapon = bestWeapon;
+					originalWeaponDamage = bestWeapon.damage;
+					bestWeapon.damage = (int)(bestWeapon.damage * 1.5f);
+					weaponIndex = GetItemIndex(bestWeapon);
+					weaponIsEquipped = IsItemEquipped(bestWeapon);
+				}
+			}
+			else if (buffedWeapon != null) {
+				// 没有武器了，恢复
+				buffedWeapon.damage = originalWeaponDamage;
+				buffedWeapon = null;
+			}
 
-                if (armors.Count > 0)
-                {
-                    // 按稀有度排序
-                    var bestArmor = armors
-                        .OrderByDescending(item => GetAdjustedRarity(item))
-                        .ThenBy(item => GetItemIndex(item))
-                        .First();
+			// 每帧重新查找防具
+			var armors = GetAllArmors();
+			if (armors.Count > 0) {
+				var bestArmor = armors
+					.OrderByDescending(item => GetAdjustedRarity(item))
+					.ThenBy(item => GetItemIndex(item))
+					.First();
 
-                    // 恢复之前可能修改的值
-                    if (buffedArmor != null) buffedArmor.defense = originalArmorDefense;
+				// 如果最优物品变化了
+				if (buffedArmor != bestArmor) {
+					// 恢复旧物品
+					if (buffedArmor != null)
+						buffedArmor.defense = originalArmorDefense;
 
-                    buffedArmor = bestArmor;
-                    originalArmorDefense = bestArmor.defense;
-                    bestArmor.defense = (int)(bestArmor.defense * 1.5f);
+					// 应用新物品
+					buffedArmor = bestArmor;
+					originalArmorDefense = bestArmor.defense;
+					bestArmor.defense = (int)(bestArmor.defense * 1.5f);
+					armorIndex = GetItemIndex(bestArmor);
+					armorIsEquipped = IsItemEquipped(bestArmor);
+				}
+			}
+			else if (buffedArmor != null) {
+				// 没有防具了，恢复
+				buffedArmor.defense = originalArmorDefense;
+				buffedArmor = null;
+			}
+		}
 
-                    // 记录位置信息
-                    armorIndex = GetItemIndex(bestArmor);
-                    armorIsEquipped = IsItemEquipped(bestArmor);
-                }
-            }
-        }
-
-        private bool IsItemEquipped(Item item)
+		private bool IsItemEquipped(Item item)
         {
             return Player.armor.Contains(item);
         }
