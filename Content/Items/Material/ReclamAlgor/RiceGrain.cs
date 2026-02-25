@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Items.Material.ReclamAlgor
 		{
 			Item.height = Item.width = 32;
 			Item.rare = ItemRarityID.Yellow;
-			Item.maxStack = 99999;
+			Item.maxStack = 9999;
 		}
 		public override bool CanUseItem(Player player) => false;
 	}

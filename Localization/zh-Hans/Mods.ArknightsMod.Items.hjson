@@ -2690,7 +2690,7 @@ MincedCrabMeatOverRice: {
 }
 
 RiceGrain: {
-	DisplayName: 稻米
+	DisplayName: 稻谷
 	Tooltip: ""
 }
 
@@ -2816,5 +2816,9 @@ PompeiiSummon: {
 
 PlanterClusterItem: {
 	DisplayName: 种植箱集群
-	// Tooltip: ""
+	Tooltip:
+		'''
+		放置后，每日产出一定数量的 [c/FFFF00:稻谷]
+		生命循环的舞台，泰拉文明的起点。
+		'''
 }
