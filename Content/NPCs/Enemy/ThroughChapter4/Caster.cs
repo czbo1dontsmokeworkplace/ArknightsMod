@@ -439,7 +439,6 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		}
 		public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers) {
 			target.GetModPlayer<Common.Players.ImmunePlayer>().ImmuneMultiplier = 0.6f; // 免疫倍数
-			modifiers.ArmorPenetration += 9999f;
 			if (Main.expertMode)
 				modifiers.FinalDamage *= 0.9f; // 专家模式伤害 ×1.5
 			if (Main.masterMode)

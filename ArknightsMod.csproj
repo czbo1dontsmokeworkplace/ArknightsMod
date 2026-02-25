@@ -11,4 +11,7 @@
   <ItemGroup>
     <None Include="C:\Users\86198\Documents\My Games\Terraria\tModLoader\ModSources\ArknightsMod\Assets\Effects\.editorconfig" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Common\UI\UIState\" />
+  </ItemGroup>
 </Project>

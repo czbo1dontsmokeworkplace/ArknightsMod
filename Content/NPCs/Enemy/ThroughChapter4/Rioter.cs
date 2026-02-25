@@ -15,75 +15,41 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;
 
-namespace ArknightsMod.Content.NPCs.Enemy.TillChapter7
+namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 {
-	public class InsaneZombieL : ModNPC
+	public class Rioter : ModNPC
 
 	{
 		private int fadeTimer;
 		private bool InMove;
-		private float maxspeed = 2.5f;
-		private int SpellResist = 30; // 法术抗性(填明日方舟里的法抗）
+		private float maxspeed = 2.2f;
+		private int JumpCD = 0; // 跳跃冷却时间
+		private int JumpCDMax = 120; // 跳跃冷却时间最大值
+		private int SpellResist = 0; // 法术抗性(填明日方舟里的法抗）
 
 		private bool Inattack;
-		private int attackCD = 0;
-		private int attackCDMax = 40; // 攻击冷却时间
-		private int AttackDamage = 88; // 攻击伤害
-		private int Attackrange = 50; // 攻击范围
+		private int attackCD = 5;
+		private int attackCDMax = 60; // 攻击冷却时间
+		private int AttackDamage = 13; // 攻击伤害
+		private int Attackrange = 40; // 攻击范围
 
 		private bool InDeath = false; // 死亡状态
 		private int fadeTime = 0; // 死亡淡出时间
-		private int fadeOutTimer = 15; // 用于控制淡出效果的计时器
+		private int fadeOutTimer = 30; // 用于控制淡出效果的计时器
 									   // 动画常量
-		private int frameNumber = 24;//一共多少帧
-		private int DefaultFrame = 0;//静止最后一帧是第几帧（-1）
-		private int MoveStartFrame = 1;//移动开始帧
-		private int MoveEndFrame = 6;//移动结束帧
-		private int AttackStartFrame = 7;//攻击开始帧
-		private int AttackEndFrame = 15;//攻击结束帧哦~
-		private int DeathStartFrame = 16;//死亡开始帧
-		private int DeathEndFrame = 23;//死亡结束帧
+		private int frameNumber = 17;//一共多少帧
+		private int DefaultFrame = 3;//静止最后一帧是第几帧（-1）
+		private int MoveStartFrame = 4;//移动开始帧
+		private int MoveEndFrame = 8;//移动结束帧
+		private int AttackStartFrame = 9;//攻击开始帧
+		private int AttackEndFrame = 12;//攻击结束帧哦~
+		private int DeathStartFrame = 13;//死亡开始帧
+		private int DeathEndFrame = 16;//死亡结束帧
 		private int FrameSpeed = 7;//帧速率
 		private int framecounter = 0;//帧计数器
 
 		//注：每个阶段的帧数为：结束帧-开始帧+1
-		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
-			Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
-			NPC.spriteDirection = -NPC.direction;
-			// 动态计算原点（水平居中，底部对齐碰撞箱）
-			Vector2 origin1 = new Vector2(NPC.frame.Width / 2f, NPC.frame.Height-36);
-			Vector2 origin2 = new Vector2(NPC.frame.Width / 2f, NPC.frame.Height-36);
 
-			if (NPC.spriteDirection > 0) {
-				spriteBatch.Draw(
-				texture,
-				NPC.Center - screenPos + new Vector2(0, 4f), // 整体下移4像素
-				NPC.frame,
-				drawColor,
-				NPC.rotation,
-				origin1,
-				NPC.scale,
-				NPC.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally,
-				0f
-				);
-
-			}
-			if (NPC.spriteDirection < 0) {
-				spriteBatch.Draw(
-				texture,
-				NPC.Center - screenPos + new Vector2(0, 4f), // 整体下移4像素
-				NPC.frame,
-				drawColor,
-				NPC.rotation,
-				origin2,
-				NPC.scale,
-				NPC.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally,
-				0f
-				);
-
-			}
-			return false;
-		}
 		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
 			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
 				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Times.NightTime,
@@ -91,18 +57,19 @@ namespace ArknightsMod.Content.NPCs.Enemy.TillChapter7
 				new FlavorTextBestiaryInfoElement(Language.GetTextValue("Mods.ArknightsMod.Bestiary.DoubleSword")),
 			});
 		}
+
 		public override void SetStaticDefaults() {
 			Main.npcFrameCount[NPC.type] = frameNumber;
 		}
 		public override void SetDefaults() {
-			NPC.width = 40;
-			NPC.height = 70;
-			NPC.lifeMax = 3000;
+			NPC.width = 20;
+			NPC.height = 40;
+			NPC.lifeMax = 170;
 			NPC.damage = AttackDamage / 2;
-			NPC.defense = 46;
-			NPC.knockBackResist = 0.5f;
+			NPC.defense = 10;
+			NPC.knockBackResist = 0.7f;
 			NPC.scale = 1f;
-			NPC.value = 1000f;
+			NPC.value = 200f;
 			NPC.HitSound = SoundID.NPCHit1;
 			//NPC.DeathSound = SoundID.NPCDeath7;
 		}
@@ -114,7 +81,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.TillChapter7
 				framecounter = 0;
 			}
 			if (InMove & NPC.velocity.X != 0) {
-				if (NPC.frame.Y < MoveStartFrame * frameHeight  || NPC.frame.Y > MoveEndFrame * frameHeight) {
+				if (NPC.frame.Y < MoveStartFrame * frameHeight || NPC.frame.Y > MoveEndFrame * frameHeight) {
 					NPC.frame.Y = MoveStartFrame * frameHeight;
 				}
 			}
@@ -134,6 +101,51 @@ namespace ArknightsMod.Content.NPCs.Enemy.TillChapter7
 				}
 			}
 		}
+		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
+			Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+			NPC.spriteDirection = -NPC.direction;
+			if (fadeTimer > 0) {
+				fadeTimer--;
+			}
+
+			Color drawcolor = Color.Lerp(new Color(0, 0, 0, 200), new Color(255, 255, 255, 255), 1f - fadeTimer / 60f - fadeTime / (float)fadeOutTimer);
+			
+			
+			// 动态计算原点（水平居中，底部对齐碰撞箱）
+			Vector2 origin1 = new Vector2(NPC.frame.Width  / 2f, NPC.frame.Height-26);
+			Vector2 origin2 = new Vector2(NPC.frame.Width / 2f, NPC.frame.Height-26);
+
+			if (NPC.spriteDirection > 0) {
+				spriteBatch.Draw(
+				texture,
+				NPC.Center - screenPos + new Vector2(0, 4f), // 整体下移4像素
+				NPC.frame,
+				drawcolor,
+				NPC.rotation,
+				origin1,
+				NPC.scale,
+				NPC.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally,
+				0f
+				);
+
+			}
+			if (NPC.spriteDirection < 0) {
+				spriteBatch.Draw(
+				texture,
+				NPC.Center - screenPos + new Vector2(0, 4f), // 整体下移4像素
+				NPC.frame,
+				drawcolor,
+				NPC.rotation,
+				origin2,
+				NPC.scale,
+				NPC.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally,
+				0f
+				);
+
+			}
+			return false;
+		}
+
 		public override void OnSpawn(IEntitySource source) {
 			fadeTimer = 60; // 持续60帧
 			NPC.color = Color.Black; // 初始为纯黑
@@ -149,42 +161,55 @@ namespace ArknightsMod.Content.NPCs.Enemy.TillChapter7
 			//索敌
 			NPC.TargetClosest(true);
 			Player p = Main.player[NPC.target];
-			if (p.dead) {
-					InMove = false;
-					Inattack = false;
-			}
-			if (!p.dead) {
-				if (InMove) {
-					if (NPC.position.X - p.position.X > Attackrange) {
-						if (NPC.velocity.X > -maxspeed) {
-							NPC.velocity.X -= 0.2f;
-						}
-					}
-					if (NPC.position.X - p.position.X < -Attackrange) {
-						if (NPC.velocity.X < maxspeed) {
-							NPC.velocity.X += 0.2f;
-						}
+			NPC.spriteDirection = -NPC.direction;
+
+
+			//速度系统
+			if (InMove) {
+				JumpCD++;
+				if (NPC.position.X - p.position.X > Attackrange) {
+					if (NPC.velocity.X > -maxspeed) {
+						NPC.velocity.X -= 0.2f;
 					}
 				}
+				if (NPC.position.X - p.position.X < -Attackrange) {
+					if (NPC.velocity.X < maxspeed) {
+						NPC.velocity.X += 0.2f;
+					}
+				}
+				if ((NPC.position.Y - p.position.Y > 50||NPC.collideX) && JumpCD >= JumpCDMax) {
+					JumpCD = 0; // 重置跳跃冷却
+					NPC.velocity.Y = -6f; // 向上跳跃
+				}
+
+			}
+			NPC.damage *= 0;//不造成碰撞伤害
+			//AI状态系统
+			attackCD++;
+			if (!Main.player[NPC.target].dead) {
+
 				if (!Inattack) {
 					InMove = true;
 				}
 				if (InMove) {
+					if (attackCD == 1) {
+						if (Main.rand.NextFloat(0, 1) >= 0.03) {
+							NPC.velocity.X = 0;
+							attackCD--;
+						}
+					}
 					if ((NPC.position.X - p.position.X < Attackrange && NPC.position.X - p.position.X > -Attackrange) && attackCD > attackCDMax) {
 						InMove = false;
 						Inattack = true;
 						attackCD = 0;
-					}
-					if (Main.time % 2 == 0 & NPC.life >= 3) {
-						NPC.life -= 1; // 每2帧扣1点生命值
 					}
 
 				}
 				if (Inattack) {
 					NPC.velocity.X = 0;
 					NPC.damage = 0;
-					if (attackCD == 28) {
-						Projectile.NewProjectile(NPC.GetSource_FromThis(), new Vector2(NPC.Center.X, NPC.Center.Y), new Vector2(0, 0), ModContent.ProjectileType<InsaneZombieLHit>(), AttackDamage / 2, 0.8f);
+					if (attackCD == 21) {
+						Projectile.NewProjectile(NPC.GetSource_FromThis(), new Vector2(NPC.Center.X, NPC.Center.Y), new Vector2(0, 0), ModContent.ProjectileType<LightShieldCut>(), AttackDamage / 2, 0.8f);
 					}
 					if (attackCD >= FrameSpeed * (AttackEndFrame - AttackStartFrame + 1)) {
 						InMove = true;
@@ -192,15 +217,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.TillChapter7
 						NPC.damage = AttackDamage / 2;// 恢复伤害
 						attackCD = 0; // 重置攻击冷却
 					}
-					if (Main.time % 2 == 0 & NPC.life >= 3) {
-						NPC.life -= 1; // 每2帧扣1点生命值,不致命
-					}
 				}
 			}
-
-			NPC.spriteDirection = -NPC.direction;
-			NPC.damage *= 0;
-			attackCD++;
 			if (InDeath) {
 				fadeTime++;
 
@@ -235,9 +253,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.TillChapter7
 
 					}
 				}
-				if (NPC.frame.Y >= DeathEndFrame * frameHeight) {
-					SoundStyle ghostSound = SoundID.NPCDeath2 with {
-						Pitch = -0.1f, // 范围[-1.0, 1.0]，-0.5表示降低八度
+				if (NPC.frame.Y > DeathEndFrame * frameHeight) {
+					SoundStyle ghostSound = SoundID.NPCDeath7 with {
+						Pitch = -0.4f, // 范围[-1.0, 1.0]，-0.5表示降低八度
 						Volume = 0.4f  // 可选调整音量
 					};
 					SoundEngine.PlaySound(ghostSound, NPC.Center);
@@ -245,7 +263,6 @@ namespace ArknightsMod.Content.NPCs.Enemy.TillChapter7
 					NPC.checkDead();// 消逝吧！
 				}
 			}
-			
 		}
 		public override bool CheckDead() {
 			if (InDeath & NPC.frame.Y >= DeathEndFrame * NPC.frame.Height) {
@@ -277,16 +294,17 @@ namespace ArknightsMod.Content.NPCs.Enemy.TillChapter7
 							DustID.Shadowflame, 0, 0, 150, Color.LightBlue, 0.7f);
 					}
 				}
+
 			}
 		}
 	}
-	public class InsaneZombieLHit : ModProjectile
+	public class RioterHit : ModProjectile
 	{
 		public override string Texture => "ArknightsMod/Content/NPCs/Enemy/ThroughChapter4/explode";
 
 		public override void SetDefaults() {
-			Projectile.width = 110;
-			Projectile.height = 60;
+			Projectile.width = 100;
+			Projectile.height = 40;
 			Projectile.friendly = false;
 			Projectile.hostile = true;
 			Projectile.penetrate = 9999;
@@ -301,11 +319,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.TillChapter7
 
 		}
 		public override void OnHitPlayer(Player target, Player.HurtInfo info) {
-			target.AddBuff(BuffID.Bleeding, 120); // 添加流血效果，持续30
-			target.immuneTime = 0;
 		}
 		public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers) {
-			target.GetModPlayer<Common.Players.ImmunePlayer>().ImmuneMultiplier = 0.6f; // 免疫倍数
+			target.GetModPlayer<Common.Players.ImmunePlayer>().ImmuneMultiplier = 1f; // 免疫倍数
 		}
 	}
 }

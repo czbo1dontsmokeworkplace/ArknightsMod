@@ -22,13 +22,13 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 	{
 		private int fadeTimer;
 		private bool InMove;
-		private float maxspeed = 1.8f;
+		private float maxspeed = 2f;
 		private int SpellResist = 0; // 法术抗性(填明日方舟里的法抗）
 
 		private bool Inattack;
 		private int attackCD = 0;
-		private int attackCDMax = 90; // 攻击冷却时间
-		private int AttackDamage = 25; // 攻击伤害
+		private int attackCDMax = 60; // 攻击冷却时间
+		private int AttackDamage = 13; // 攻击伤害
 		private int Attackrange = 40; // 攻击范围
 
 		private bool InDeath = false; // 死亡状态
@@ -60,9 +60,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		public override void SetDefaults() {
 			NPC.width = 20;
 			NPC.height = 40;
-			NPC.lifeMax = 188;
+			NPC.lifeMax = 250;
 			NPC.damage = AttackDamage / 2;
-			NPC.defense = 40;
+			NPC.defense = 80;
 			NPC.knockBackResist = 0.4f;
 			NPC.scale = 2f;
 			NPC.value = 200f;
@@ -129,7 +129,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 					}
 				}
 			}
-
+			NPC.damage *= 0;
 			//AI状态系统
 			attackCD++;
 			if (!Main.player[NPC.target].dead) {

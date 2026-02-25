@@ -208,7 +208,6 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 			if (SpellDamageConfig.SpellProjectiles.Contains(projectile.type)) {
 				// 法术伤害无视护甲
 				modifiers.ScalingArmorPenetration += 1f;
-				// 0.95倍伤害减免
 				modifiers.FinalDamage *= 0.25f;
 
 				for (int i = 0; i < 3; i++) {

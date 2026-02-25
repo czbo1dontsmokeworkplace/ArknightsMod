@@ -556,6 +556,11 @@ Mods: {
 				DisplayName: Union Invader
 				Tooltip: ""
 			}
+
+			ContractSlime: {
+				DisplayName: Contract Slime
+				Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -682,6 +687,9 @@ Mods: {
 			tumor1.DisplayName: tumor1
 			tumor2.DisplayName: tumor2
 			Evolution.DisplayName: Evolution
+			Rioter.DisplayName: Rioter
+			SpiderMom.DisplayName: Spider Mom
+			Crownslayer.DisplayName: Crownslayer
 		}
 
 		# Friendly
@@ -804,6 +812,9 @@ Mods: {
 			LightShieldCut.DisplayName: Light Shield Cut
 			InsaneZombieLHit.DisplayName: Insane Zombie L Hit
 			CasterShoot.DisplayName: Caster Shoot
+			RioterHit.DisplayName: Rioter Hit
+			Bloodyborn.DisplayName: Bloodyborn
+			TransparentSlash.DisplayName: Transparent Slash
 		}
 
 		ButtonName.button2: Annihilation operation

@@ -8,6 +8,7 @@ using Terraria;
 using Terraria.ID;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using ArknightsMod.Content.NPCs.Enemy.ThroughChapter4;
 
 namespace ArknightsMod.Common.Damageclasses
 {
@@ -85,13 +86,19 @@ namespace ArknightsMod.Common.Damageclasses
 			ProjectileID.MiniRetinaLaser,//小激光眼的激光
 			ProjectileID.ImpFireball,
 
-			
+			//模组怪物弹幕
+			ModContent.ProjectileType<CasterShoot>(),
 
 
 
 
 		};
+		public static Dictionary<int, int> SpellDefense { get; } = new() {
+			{ItemID.HallowedHeadgear,12},
+			{ItemID.HallowedPlateMail,10 }// 例如：神圣头盔提供12点法术防御
 
+
+		};
 		// 添加带自动标记的注册方法
 		public static void RegisterSpellWeapon(int itemId, bool addTooltip = true) {
 			SpellWeapons.Add(itemId);
@@ -116,12 +123,28 @@ namespace ArknightsMod.Common.Damageclasses
 	{
 		public override void ModifyTooltips(Item item, List<TooltipLine> tooltips) {
 			// 检查是否是发射法术弹幕的武器
-			if (item.shoot > 0 && SpellDamageConfig.SpellProjectiles.Contains(item.shoot)) {
+			if (item.shoot !=0 && SpellDamageConfig.SpellProjectiles.Contains(item.shoot)) {
 				// 添加自定义工具提示行
-				tooltips.Add(new TooltipLine(Mod, "SpellDamageNote", "弹幕造成法术伤害") {
-					OverrideColor = Color.Blue // 可选：设置颜色
-				});
+				AddSpellDamageTooltip(item, tooltips);
 			}
+			if(SpellDamageConfig.SpellDefense.ContainsKey(item.type)) {
+				// 添加法术防御提示
+				AddSpellDefenseTooltip(item, tooltips);
+			}
+		}
+		private void AddSpellDefenseTooltip(Item item, List<TooltipLine> tooltips) {
+			// 查找或创建合适的插入位置
+			int insertIndex = tooltips.FindLastIndex(t => t.Name.StartsWith("Tooltip")) + 1;
+			if (insertIndex <= 0)
+				insertIndex = tooltips.Count;
+			// 获取法术防御值
+			int defenseValue = SpellDamageConfig.SpellDefense.TryGetValue(item.type, out int value) ? value : 0;
+			// 创建统一格式的提示
+			var defenseLine = new TooltipLine(Mod, "SpellDefense",
+				$"◇ 法术抗性：{defenseValue}");
+			// 设置绿色文本并插入
+			defenseLine.OverrideColor = Color.Blue;
+			tooltips.Insert(insertIndex, defenseLine);
 		}
 		private void AddSpellDamageTooltip(Item item, List<TooltipLine> tooltips) {
 			// 查找或创建合适的插入位置
@@ -134,7 +157,7 @@ namespace ArknightsMod.Common.Damageclasses
 				GetSpellDamageText(item));
 
 			// 设置绿色文本并插入
-			spellLine.OverrideColor = new (100, 255, 100);
+			spellLine.OverrideColor = Color.Blue;
 			tooltips.Insert(insertIndex, spellLine);
 		}
 
@@ -148,6 +171,7 @@ namespace ArknightsMod.Common.Damageclasses
 				return "◇ 弹幕造成法术伤害";
 			else
 				return "◇ 攻击附带法术伤害";
+			
 		}
 	}
 }

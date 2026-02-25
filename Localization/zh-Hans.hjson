@@ -570,6 +570,11 @@ Mods: {
 				DisplayName: 破损的整合运动旗帜
 				Tooltip: 白天使用以召唤整合运动的先锋部队
 			}
+
+			ContractSlime: {
+				DisplayName: 史莱姆合约
+				Tooltip: 使用以打开合约面板
+			}
 		}
 
 		Buffs: {
@@ -682,20 +687,23 @@ Mods: {
 			Oneiros.DisplayName: 虚幻
 			Hound.DisplayName: 猎狗
 			Drone.DisplayName: 妖怪
-			// ShieldGuard.DisplayName: Shield Guard
-			// HoundPro.DisplayName: Hound Pro
-			// SoldierLeader.DisplayName: Soldier Leader
-			// CrossbowmanLeader.DisplayName: Crossbowman Leader
-			// NourishedPiercer.DisplayName: Nourished Piercer
-			// Caster.DisplayName: Caster
-			// DoubleSword.DisplayName: Double Sword
-			// DroneII.DisplayName: Drone I I
-			// LightShield.DisplayName: Light Shield
-			// InsaneZombieL.DisplayName: Insane Zombie L
+			ShieldGuard.DisplayName: 重装防御者
+			HoundPro.DisplayName: 猎犬Pro
+			SoldierLeader.DisplayName: 士兵组长
+			CrossbowmanLeader.DisplayName: 弩手组长
+			NourishedPiercer.DisplayName: 富营养的穿刺者
+			Caster.DisplayName: 术师
+			DoubleSword.DisplayName: 双持剑士
+			DroneII.DisplayName: 妖怪MKII
+			LightShield.DisplayName: 轻甲卫兵
+			InsaneZombieL.DisplayName: 狂暴宿主组长
 			// Level11.DisplayName: Level11
 			// tumor1.DisplayName: tumor1
 			// tumor2.DisplayName: tumor2
 			// Evolution.DisplayName: Evolution
+			// Rioter.DisplayName: Rioter
+			// SpiderMom.DisplayName: Spider Mom
+			// Crownslayer.DisplayName: Crownslayer
 		}
 
 		# Friendly
@@ -816,8 +824,11 @@ Mods: {
 			// ShieldGuardShield.DisplayName: Shield Guard Shield
 			// DoubleCut.DisplayName: Double Cut
 			// LightShieldCut.DisplayName: Light Shield Cut
-			// InsaneZombieLHit.DisplayName: Insane Zombie L Hit
+			InsaneZombieLHit.DisplayName: 狂暴宿主组长
 			// CasterShoot.DisplayName: Caster Shoot
+			// RioterHit.DisplayName: Rioter Hit
+			// Bloodyborn.DisplayName: Bloodyborn
+			// TransparentSlash.DisplayName: Transparent Slash
 		}
 
 		ButtonName.button2: 剿灭作战

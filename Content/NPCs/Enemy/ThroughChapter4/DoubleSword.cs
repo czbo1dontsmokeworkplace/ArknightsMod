@@ -27,8 +27,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 		private bool Inattack;
 		private int attackCD = 0;
-		private int attackCDMax = 60; // 攻击冷却时间
-		private int AttackDamage = 28; // 攻击伤害
+		private int attackCDMax = 36; // 攻击冷却时间
+		private int AttackDamage = 18; // 攻击伤害
 		private int Attackrange = 45; // 攻击范围
 
 		private bool InDeath = false; // 死亡状态
@@ -60,9 +60,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		public override void SetDefaults() {
 			NPC.width = 20;
 			NPC.height = 40;
-			NPC.lifeMax = 150;
+			NPC.lifeMax = 200;
 			NPC.damage = AttackDamage/2;
-			NPC.defense = 10;
+			NPC.defense = 20;
 			NPC.knockBackResist = 0.5f;
 			NPC.scale = 2f;
 			NPC.value = 200f;
@@ -129,7 +129,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 					}
 				}
 			}
-
+			NPC.damage *= 0;
+			
 			//AI状态系统
 			attackCD++;
 			if (!Main.player[NPC.target].dead) {

@@ -22,6 +22,8 @@ using Humanizer;
 using ReLogic.Content;
 using ArknightsMod.Assets.Effects;
 
+
+
 namespace ArknightsMod
 {
 	public class ArknightsMod : Mod
@@ -46,6 +48,7 @@ namespace ArknightsMod
 		   new ScreenShaderData("FilterAsh").UseColor(1f, 0.8f, 0.5f),
 		   EffectPriority.High
 	   );
+			
 
 			LoadClient();
 			SkyManager.Instance["ArknightsMod:UnionInvadeSky"] = new UnionInvadeSky();
@@ -53,6 +56,7 @@ namespace ArknightsMod
 
 
 		}
+		
 		public static Texture2D UnionInvadeSkyTexture { get; private set; }
 
 		private void LoadClient() {

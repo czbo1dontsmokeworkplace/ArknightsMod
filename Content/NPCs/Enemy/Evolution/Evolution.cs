@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Common.Damageclasses;
+﻿//using ArknightsMod.Common.Damageclasses;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -43,6 +43,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution
 		private int LeftShield = 0;
 		private int RightShield = 0;
 		private int AllShield = 0;
+		private int Pictime = 0; //动画计时器
 
 		public override void SetStaticDefaults() {
 			Main.npcFrameCount[Type] = frameNumber;
@@ -58,7 +59,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution
 			NPC.scale = 2f;
 			NPC.boss = true;
 			NPC.knockBackResist = 0;
-			Music = MusicLoader.GetMusicSlot("ArknightsMod/Music/Evolution");
+			NPC.noGravity = true;
+			//Music = MusicLoader.GetMusicSlot("ArknightsMod/Music/Evolution");
 			if (Main.expertMode || Main.masterMode) {
 				NPC.lifeMax = (int)(NPC.lifeMax * 0.75);
 				NPC.damage = (int)(NPC.damage * 0.75);
@@ -74,7 +76,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution
 			}
 			
 		}
-		public override void FindFrame(int frameHeight) {
+		/*public override void FindFrame(int frameHeight) {
 			framecounter++;
 
 			if (Stage1) {
@@ -110,11 +112,35 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution
 					NPC.frame.Y = (Change23Frame + 1) * frameHeight;
 				}
 			}
-		}
+		}*/
+		public void TentickleDraw(Texture2D Texture,Color Drawcolor,Vector2 Originpos,Rectangle rectangle, int radius,Vector2 RadianRange,Vector2 ScaleRange,float Time,float Layer) {
+			SpriteBatch spriteBatch = Main.spriteBatch;
+			Vector2 screenPos = Main.screenPosition;
+			Vector2 origin = new Vector2(rectangle.Width / 2, rectangle.Height / 20);//如果还不对改后面Height的除数，除数越大绘制原点越接近触手根部（从上往下
+
+			float angle = MathHelper.Lerp(RadianRange.X, RadianRange.Y,Math.Abs((Pictime % (2 * Time))-Time) / Time); // 根据时间插值计算角度
+
+			Vector2 position = new Vector2(Originpos.X + radius * (float)Math.Cos(angle+1.57f), Originpos.Y + radius * (float)Math.Sin(angle+1.57f));
+
+			float Scale = MathHelper.Lerp(ScaleRange.X, ScaleRange.Y, Math.Abs((Pictime % (2 * Time)) - Time) / Time); // 根据时间插值计算缩放
+
+			spriteBatch.Draw(
+				Texture,
+				position,
+				rectangle,
+				Drawcolor,
+				angle,
+				origin,
+				Scale,
+				NPC.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally,
+				Layer);
+		} 
 		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
 			Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
-			Texture2D Shield =ModContent.Request<Texture2D>("ArknightsMod/Common/VisualEffects/EvolutionShield").Value;
-			Texture2D AllShieldText = ModContent.Request<Texture2D>("ArknightsMod/Common/VisualEffects/Evolutionshield3").Value;
+            //Texture2D Phase1T = ModContent.Request<Texture2D>("ArknightsMod/Common/VisualEffects/EvolutionPhase1").Value;
+            Texture2D Phase1T = ModContent.Request<Texture2D>("ArknightsMod/Content/NPCs/Enemy/Evolution/EvolutionPhase1").Value;
+            //Texture2D Shield =ModContent.Request<Texture2D>("ArknightsMod/Common/VisualEffects/EvolutionShield").Value;
+			//Texture2D AllShieldText = ModContent.Request<Texture2D>("ArknightsMod/Common/VisualEffects/Evolutionshield3").Value;
 			NPC.spriteDirection = NPC.direction;
 			if (fadeTimer > 0) {
 				fadeTimer--;
@@ -127,61 +153,29 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution
 			Vector2 origin1 = new Vector2(110, 110);
 			Vector2 origin2 = new Vector2(85, 110);
 
-			if (NPC.spriteDirection > 0) {
-				spriteBatch.Draw(
-				texture,
-				NPC.Center - screenPos + new Vector2(0, 4f), // 整体下移4像素
-				NPC.frame,
-				drawcolor,
-				NPC.rotation,
-				origin1,
-				NPC.scale,
-				NPC.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally,
-				0f
-				);
+			Vector2 PosFix = new Vector2(326, 234);//绘制位置修正
+			Vector2 DirFix = new Vector2(Dir(0, 27), 0);//反转错位修正
+			Vector2 AllFix = DirFix + PosFix;//总修正
 
-			}
-			if (NPC.spriteDirection < 0) {
-				spriteBatch.Draw(
-				texture,
-				NPC.Center - screenPos + new Vector2(0, 4f), // 整体下移4像素
-				NPC.frame,
-				drawcolor,
-				NPC.rotation,
-				origin2,
-				NPC.scale,
-				NPC.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally,
-				0f
-				);
+            if (Stage1) {//第一阶段
+                TentickleDraw(Phase1T, drawcolor, 
+					NPC.Center - screenPos + AllFix + new Vector2(Dir(0, -62), 0), 
+					new Rectangle(177, 5, 56, 80), 
+					100, new Vector2(-1, 1), new Vector2(1.8f, 2.2f), 60, 0);//触手一号
+                TentickleDraw(Phase1T, drawcolor,
+                    NPC.Center - screenPos + AllFix + new Vector2(Dir(0, -62), 0),
+                    new Rectangle(177, 5, 56, 80),
+                    30, new Vector2(-1.4f, 1.4f), new Vector2(1.8f, 2.2f), 120, 0);//触手二号
 
-			}
-			if (LeftShield > 0) {
-				spriteBatch.Draw(
-				Shield,
-				NPC.Center - screenPos + new Vector2(-130, -130f), 
-				new Rectangle(0,0,Shield.Width, Shield.Height),
-				LeftShieldcolor,
-				0,
-				new Vector2(0, 0),
-				1f,
-				0f,
-				0f
-				);
-			}
-			if (RightShield > 0) {
-				spriteBatch.Draw(
-				Shield,
-				NPC.Center - screenPos + new Vector2(-130, -130f),
-				new Rectangle(0, 0, Shield.Width, Shield.Height),
-				LeftShieldcolor,
-				0,
-				new Vector2(0, 0),
-				1f,
-				SpriteEffects.FlipHorizontally,
-				0
-				);
-			}
-			if (AllShield > 0) {
+
+                spriteBatch.Draw(Phase1T, NPC.Center - screenPos + DirFix + new Vector2(200, -4), new Rectangle(99, 5, 80, 84), drawcolor, NPC.rotation, new Vector2(151, 43), 2f,//黑色的脑壳
+					NPC.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0);
+                spriteBatch.Draw(Phase1T, NPC.Center - screenPos + DirFix + new Vector2(Dir(0, 3), 0), new Rectangle(5, 5, 81, 84), drawcolor, NPC.rotation, new Vector2(52, 43), 2f,//头顶的白布
+                    NPC.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0);
+
+                //TentickleDraw(Phase1T, drawcolor, NPC.Center - screenPos + PosFix + new Vector2(), new Rectangle(5, 5, 81, 84), 0, new Vector2(0, 0), new Vector2(1.8f, 2.2f), 120, 0);//头顶的白布
+            }
+			/*if (AllShield > 0) {
 					spriteBatch.Draw(
 					AllShieldText,
 					NPC.Center - screenPos + new Vector2(-130, -130f),
@@ -193,8 +187,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution
 					0,
 					0
 					);
-			}
+			}*/
 			return false;
+		}
+		public int Dir(int Num1, int Num2)//反转判定
+		{
+			return (NPC.spriteDirection == 1 ? Num1 : Num2);
 		}
 		
 		public override void OnSpawn(IEntitySource source) {
@@ -204,6 +202,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution
 		}
 		public override void AI() {
 			//动画相关
+			Pictime++;
 			if (LeftShield >= 0) {
 				LeftShield--;
 			}
@@ -236,7 +235,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution
 			NPC.TargetClosest(true);
 
 		}
-		public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers) {
+		/*public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers) {
 			if (SpellDamageConfig.SpellProjectiles.Contains(projectile.type)) {
 				// 法术伤害无视护甲
 				modifiers.ScalingArmorPenetration += 1f;
@@ -268,7 +267,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution
 				AllShield = 60;
 			}
 
-		}
+		}*/
 		public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers) {
 			if (Stage1 & player.position.X <= NPC.position.X) {
 				modifiers.FinalDamage *= 0.2f;
