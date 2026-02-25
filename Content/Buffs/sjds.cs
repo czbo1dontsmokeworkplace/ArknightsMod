@@ -3,6 +3,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
+#pragma warning disable CS8981
+
 namespace ArknightsMod.Content.Buffs
 {
 	public class sjds : ModBuff

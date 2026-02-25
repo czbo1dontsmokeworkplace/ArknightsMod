@@ -2524,16 +2524,21 @@ PompeiiSummon: {
 }
 
 SarkazKingRegalRest: {
-	DisplayName: Sarkaz King Regal Rest
+	DisplayName: SarkazKingRegalRest
 	Tooltip: ""
 }
 
 SarkazKingTornBanner: {
-	DisplayName: Sarkaz King Torn Banner
+	DisplayName: SarkazKingTornBanner:
 	Tooltip: ""
 }
 
 BlazeChainsaw: {
-	DisplayName: Blaze Chainsaw
+	DisplayName: BlazeChainsaw:
+	Tooltip: ""
+}
+
+PlanterClusterItem: {
+	DisplayName: Planter Cluster Item
 	Tooltip: ""
 }

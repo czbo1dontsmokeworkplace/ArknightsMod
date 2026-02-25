@@ -8,6 +8,7 @@ using Terraria.Enums;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
+using ArknightsMod.Systems;
 
 namespace ArknightsMod.Content.Tiles.Infrastructure.ReceptionRoom
 {
@@ -52,6 +53,13 @@ namespace ArknightsMod.Content.Tiles.Infrastructure.ReceptionRoom
 			TileObjectData.addTile(Type);
 		}
 
+		public override void PlaceInWorld(int i, int j, Item item)
+		{
+			if (Main.netMode == NetmodeID.MultiplayerClient)
+				return;
+			ReceptionRoomDecorSystem.ConvertPlacedTileToDecor(i, j, Type);
+		}
+
 		public override bool PreDrawPlacementPreview(int i, int j, SpriteBatch spriteBatch, ref Rectangle frame, ref Vector2 position, ref Color color, bool validPlacement, ref SpriteEffects spriteEffects)
 		{
 			const int step = 16 + 1;
@@ -62,7 +70,6 @@ namespace ArknightsMod.Content.Tiles.Infrastructure.ReceptionRoom
 			frame.X = (flip ? (BoxWidthTiles - 1 - localX) : localX) * step;
 			if (flip) {
 				spriteEffects |= SpriteEffects.FlipHorizontally;
-				position.X += 16;
 			}
 			return true;
 		}
