@@ -1004,8 +1004,12 @@ RAMeatchip: {
 }
 
 RAMeat: {
-	// DisplayName: R A Meat
-	// Tooltip: ""
+	DisplayName: 圆圆肉片
+	Tooltip:
+		'''
+		狩猎野兽时有机会获得的食材。
+		圆圆的肉片鲜美细嫩，可以很好地与多种食材搭配。
+		'''
 }
 
 UnionInvader: {
@@ -1815,17 +1819,17 @@ LightTube: {
 }
 
 MizukiBody: {
-	// DisplayName: Mizuki Body
+	DisplayName: 水月的躯干
 	// Tooltip: ""
 }
 
 MizukiHead: {
-	// DisplayName: Mizuki Head
+	DisplayName: 水月的头部
 	// Tooltip: ""
 }
 
 MizukiLegs: {
-	// DisplayName: Mizuki Legs
+	DisplayName: 水月的腿部
 	// Tooltip: ""
 }
 
@@ -2523,12 +2527,12 @@ TheTokenGodmother: {
 }
 
 RALegmeat: {
-	// DisplayName: R A Legmeat
+	DisplayName: Tooltip:
 	// Tooltip: ""
 }
 
 CarbonBrick: {
-	// DisplayName: Carbon Brick
+	DisplayName: 碳素
 	// Tooltip: ""
 }
 
@@ -2598,17 +2602,17 @@ Drone: {
 }
 
 ProvenceBody: {
-	// DisplayName: Provence Body
+	DisplayName: 普罗旺斯的躯干
 	// Tooltip: ""
 }
 
 ProvenceHead: {
-	// DisplayName: Provence Head
+	DisplayName: 普罗旺斯头部
 	// Tooltip: ""
 }
 
 ProvenceLegs: {
-	// DisplayName: Provence Legs
+	DisplayName: 普罗旺斯的腿部
 	// Tooltip: ""
 }
 
@@ -2618,32 +2622,32 @@ ProvenceDefault: {
 }
 
 VulcanBody: {
-	// DisplayName: Vulcan Body
+	DisplayName: 火神的躯干
 	// Tooltip: ""
 }
 
 VulcanHead: {
-	// DisplayName: Vulcan Head
+	DisplayName: 火神的头部
 	// Tooltip: ""
 }
 
 VulcanLegs: {
-	// DisplayName: Vulcan Legs
+	DisplayName: 火神的腿部
 	// Tooltip: ""
 }
 
 EntelechiaBody: {
-	// DisplayName: Entelechia Body
+	DisplayName: 隐德来希的躯干
 	// Tooltip: ""
 }
 
 EntelechiaHead: {
-	// DisplayName: Entelechia Head
+	DisplayName: 隐德来希的头部
 	// Tooltip: ""
 }
 
 EntelechiaLegs: {
-	// DisplayName: Entelechia Legs
+	DisplayName: 隐德来希的腿部
 	// Tooltip: ""
 }
 
@@ -2658,12 +2662,12 @@ VulcanDefault: {
 }
 
 ClothesHanger: {
-	// DisplayName: Clothes Hanger
+	DisplayName: 衣架（样式一）
 	// Tooltip: ""
 }
 
 ClothesHanger2: {
-	// DisplayName: Clothes Hanger2
+	DisplayName: 衣架（样式二）
 	// Tooltip: ""
 }
 
@@ -2692,7 +2696,7 @@ MincedCrabMeatOverRice: {
 }
 
 RiceGrain: {
-	DisplayName: 稻米
+	DisplayName: 稻谷
 	Tooltip: ""
 }
 
@@ -2712,22 +2716,22 @@ YvonneLegs: {
 }
 
 MlynarBody: {
-	// DisplayName: Mlynar Body
+	DisplayName: 玛恩纳的躯干
 	// Tooltip: ""
 }
 
 MlynarHead: {
-	// DisplayName: Mlynar Head
+	DisplayName: 玛恩纳的头部
 	// Tooltip: ""
 }
 
 MlynarLegs: {
-	// DisplayName: Mlynar Legs
+	DisplayName: 玛恩纳的腿部
 	// Tooltip: ""
 }
 
 TheFirstToTalkSummon: {
-	// DisplayName: The First To Talk Summon
+	DisplayName: 真言者召唤物
 	// Tooltip: ""
 }
 
