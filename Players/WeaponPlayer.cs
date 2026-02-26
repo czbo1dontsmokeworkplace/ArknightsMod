@@ -104,7 +104,21 @@ namespace ArknightsMod.Players
 			chargeReady = true;
 			chargeOpen = true;
 		}
-
+		//======================================================================
+		//新添入的，用于更新
+		public override void PostUpdate() {
+			if (!Player.dead && HowManySkills > 0) {
+				
+				if (CurrentSkill?.ChargeType == SkillChargeType.Auto) {
+					AccessoriesAutoCharge();
+				}
+				else if (CurrentSkill == null && ChargeTypeIsPerSecond[Skill]) {
+					
+					AccessoriesAutoCharge();
+				}
+			}
+		}
+		//=======================================================================
 		public void InitSkill(bool giveCharge) {
 			SkillData skill = CurrentSkill;
 
@@ -172,7 +186,11 @@ namespace ArknightsMod.Players
 
 			defenseBonus = 0;
 			SPRegenMultiplier = 1f; // 重置SP恢复倍率（修改后的）
-									// 更新武器状态
+			AccessoriesChargeFraction = 0f; // 新添加，用于重置技力藏的加成
+			if (Main.netMode == Terraria.ID.NetmodeID.SinglePlayer) {
+				Main.NewText($"ResetEffects: SPRegenMultiplier = {SPRegenMultiplier}");
+			}
+			// 更新武器状态
 			HoldBagpipeSpear = Main.LocalPlayer.HeldItem.ModItem is BagpipeSpear;
 			HoldExusiaiVector = Main.LocalPlayer.HeldItem.ModItem is ExusiaiVector;
 			HoldKroosCrossbow = Main.LocalPlayer.HeldItem.ModItem is KroosCrossbow;
@@ -281,7 +299,73 @@ namespace ArknightsMod.Players
 				}
 			}
 		}
+		//============================================================================
+		private float AccessoriesChargeFraction;
+		public void AccessoriesAutoCharge() {
+			
+			if (chargeOpen && !hasNearbyEnemy)
+				return;
 
+		
+
+			if (CurrentSkill != null) {
+				SkillLevelData data = CurrentSkill.CurrentLevelData;
+				if (!SkillActive && StockCount < data.MaxStack) {
+					
+					float extraCharge = SPRegenMultiplier - 1f;
+					AccessoriesChargeFraction += extraCharge;
+
+					
+					while (AccessoriesChargeFraction >= 1f) {
+						AccessoriesChargeFraction -= 1f;
+
+						
+						SkillCharge++;
+						if (SkillCharge % 60 == 0) {
+							SP++;
+						}
+
+						
+						if (SkillCharge >= SkillChargeMax) {
+							SkillCharge = 0;
+							StockCount++;
+							SP = StockCount == data.MaxStack ? data.MaxSP : 0;
+
+							if (StockCount >= data.MaxStack) {
+								break;
+							}
+						}
+					}
+				}
+			}
+			else {
+				// 旧版武器支持
+				if (!SkillActive && StockCount < StockMax[Skill]) {
+					float extraCharge = SPRegenMultiplier - 1f;
+					AccessoriesChargeFraction += extraCharge;
+
+					while (AccessoriesChargeFraction >= 1f) {
+						AccessoriesChargeFraction -= 1f;
+
+						SkillCharge++;
+						if (SkillCharge % 60 == 0) {
+							SP++;
+						}
+
+						if (SkillCharge >= SkillChargeMax) {
+							SkillCharge = 0;
+							StockCount++;
+							SP = StockCount == StockMax[Skill] ? (int)MaxSP[Skill] : 0;
+
+							if (StockCount >= StockMax[Skill]) {
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+		//===============================================================================
 		public void OffensiveRecovery() {
 			if (CurrentSkill != null) {
 				SkillLevelData data = CurrentSkill.CurrentLevelData;

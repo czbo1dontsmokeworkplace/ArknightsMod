@@ -12,12 +12,13 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
             Item.height = 30;
             Item.accessory = true;
 			Item.value = Item.sellPrice(0, 16, 0, 0);
-			Item.rare = ItemRarityID.Master; 
-        }
+			Item.rare = ItemRarityID.Master;
+		}
 
-        public override void UpdateAccessory(Player player, bool hideVisual)
-        {
-           player.GetModPlayer<WeaponPlayer>().SPRegenMultiplier += 0.5f;
-        }
-    }
+		public override void UpdateAccessory(Player player, bool hideVisual) {
+			player.GetModPlayer<WeaponPlayer>().SPRegenMultiplier += 1.5f;
+			
+		}
+
+	}
 }

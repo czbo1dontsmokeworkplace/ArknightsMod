@@ -56,7 +56,7 @@ namespace ArknightsMod.Content.Projectiles.Vanguard.Bagpipe
 			// float jd = player.direction == 1 ? 3.14f * 1.25f : 3.14f * .75f;
 			int gg = player.direction == 1 ? 0 : 1;
 			//int gg = player.direction == 1 ? 1 : 0;
-			Texture2D 贴图1 = ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Vanguard/Bagpipe/BagpipeProj2").Value;
+			Texture2D 贴图1 = ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Vanguard/Bagpipe/BagpipeProj3").Value;
 			float jd1 = player.direction == 1 ? 3.14f * .125f : 3.14f * 1.825f;
 			if (!player.controlUseItem && player.HeldItem.type == ModContent.ItemType<BagpipeSpear>() || Projectile.ai[0] > 0)
 				Main.spriteBatch.Draw(贴图1, Projectile.Center - Main.screenPosition + new Vector2(-10 * player.direction, -20)

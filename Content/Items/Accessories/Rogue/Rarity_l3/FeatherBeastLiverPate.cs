@@ -17,7 +17,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-           player.GetModPlayer<WeaponPlayer>().SPRegenMultiplier += 0.35f;
+           player.GetModPlayer<WeaponPlayer>().SPRegenMultiplier += 1.35f;
         }
     }
 }

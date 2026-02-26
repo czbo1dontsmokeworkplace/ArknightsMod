@@ -28,6 +28,7 @@ namespace ArknightsMod.Content.Items.Weapons.Vanguard.Bagpipe
 			};
 		}
 		#endregion
+
 		public override bool MeleePrefix() => true;
 		public override void AddRecipes() {
 			CreateRecipe()
@@ -47,7 +48,7 @@ namespace ArknightsMod.Content.Items.Weapons.Vanguard.Bagpipe
 			Item.useAnimation = 30;     // 动画显示时间
 			Item.knockBack = 2f;        // 击退
 			Item.value = 200000;        // 价格 
-			Item.rare = ModContent.ProjectileType<BagpipeSpearProj2>();
+			Item.rare = 11;
 			Item.autoReuse = true;      // 是否可以连续使用
 			Item.noMelee = true;        // 贴图是否造成伤害
 			Item.shoot = 88;
