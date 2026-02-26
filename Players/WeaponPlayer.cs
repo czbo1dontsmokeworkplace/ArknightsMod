@@ -187,9 +187,7 @@ namespace ArknightsMod.Players
 			defenseBonus = 0;
 			SPRegenMultiplier = 1f; // 重置SP恢复倍率（修改后的）
 			AccessoriesChargeFraction = 0f; // 新添加，用于重置技力藏的加成
-			if (Main.netMode == Terraria.ID.NetmodeID.SinglePlayer) {
-				Main.NewText($"ResetEffects: SPRegenMultiplier = {SPRegenMultiplier}");
-			}
+			
 			// 更新武器状态
 			HoldBagpipeSpear = Main.LocalPlayer.HeldItem.ModItem is BagpipeSpear;
 			HoldExusiaiVector = Main.LocalPlayer.HeldItem.ModItem is ExusiaiVector;
