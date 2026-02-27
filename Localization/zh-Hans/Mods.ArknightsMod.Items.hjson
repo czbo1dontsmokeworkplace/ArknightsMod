@@ -1814,7 +1814,7 @@ LampItem: {
 }
 
 LightTube: {
-	// DisplayName: Light Tube
+	 DisplayName: 灯管
 	// Tooltip: ""
 }
 
@@ -1834,23 +1834,23 @@ MizukiLegs: {
 }
 
 ArmorSariaBody: {
-	// DisplayName: Armor Saria Body
+	DisplayName: 装甲塞雷亚的躯干
 	// Tooltip: ""
 }
 
 ArmorSariaHead: {
-	// DisplayName: Armor Saria Head
+	DisplayName: 装甲塞雷亚的头部
 	// Tooltip: ""
 }
 
 ArmorSariaLegs: {
-	// DisplayName: Armor Saria Legs
+	DisplayName:装甲塞雷亚的腿部
 	// Tooltip: ""
 }
 
 MizukiDefault: {
-	// DisplayName: Mizuki Default
-	// Tooltip: ""
+	DisplayName:水月的服饰（常规）
+	Tooltip: 右键点击可打开
 }
 
 ChenSword_Item: {
@@ -2129,78 +2129,78 @@ VanillaLegs: {
 }
 
 AdnachielDefault: {
-	// DisplayName: Adnachiel Default
-	// Tooltip: ""
+	DisplayName: 安德切尔的服饰（常规）
+	Tooltip: 右键点击可打开
 }
 
 AnselDefault: {
-	// DisplayName: Ansel Default
-	// Tooltip: ""
+	DisplayName: 安赛尔的服饰（常规）
+	Tooltip: 右键点击可打开
 }
 
 CardiganDefault: {
-	// DisplayName: Cardigan Default
-	// Tooltip: ""
+	DisplayName: 卡缇的服饰（常规）
+	Tooltip: 右键点击可打开
 }
 
 CatapultDefault: {
-	// DisplayName: Catapult Default
-	// Tooltip: ""
+	DisplayName:空爆的服饰（常规）
+	Tooltip: 右键点击可打开
 }
 
 FangDefault: {
-	// DisplayName: Fang Default
-	// Tooltip: ""
+	DisplayName: 芬的服饰（常规）
+	Tooltip: 右键点击可打开
 }
 
 HibiscusDefault: {
-	// DisplayName: Hibiscus Default
-	// Tooltip: ""
+	DisplayName: 芙蓉的服饰（常规）
+	Tooltip: 右键点击可打开
 }
 
 KroosDefault: {
-	// DisplayName: Kroos Default
-	// Tooltip: ""
+	DisplayName:克洛斯的服饰（常规）
+	Tooltip: 右键点击可打开
 }
 
 LavaDefault: {
-	// DisplayName: Lava Default
-	// Tooltip: ""
+	DisplayName: 炎熔的服饰（常规）
+	Tooltip: 右键点击可打开
 }
 
 MidnightDefault: {
-	// DisplayName: Midnight Default
-	// Tooltip: ""
+	DisplayName: 夜见月的服饰（常规）
+	Tooltip: 右键点击可打开
 }
 
 OrchidDefault: {
-	// DisplayName: Orchid Default
-	// Tooltip: ""
+	DisplayName: 梓兰的服饰（常规）
+	Tooltip: 右键点击可打开
 }
 
 PlumeDefault: {
-	// DisplayName: Plume Default
-	// Tooltip: ""
+	DisplayName: 翎羽的服饰（常规）
+	Tooltip: 右键点击可打开
 }
 
 PopukarDefault: {
-	// DisplayName: Popukar Default
-	// Tooltip: ""
+	DisplayName: 泡普卡的服饰（常规）
+	Tooltip: 右键点击可打开
 }
 
 SpotDefault: {
-	// DisplayName: Spot Default
-	// Tooltip: ""
+	DisplayName: 斑点的服饰（常规）
+	Tooltip: 右键点击可打开
 }
 
 StewardDefault: {
-	// DisplayName: Steward Default
-	// Tooltip: ""
+	DisplayName: 史都华德的服饰（常规）
+	Tooltip: 右键点击可打开
 }
 
 VanillaDefault: {
-	// DisplayName: Vanilla Default
-	// Tooltip: ""
+	DisplayName: 香草的服饰（常规）
+	Tooltip: 右键点击可打开
 }
 
 ActiveDust: {
@@ -2423,7 +2423,7 @@ SuspendedSilkPuppet: {
 	DisplayName: 悬丝傀儡
 	Tooltip:
 		'''
-		敌人受到[c/FF6A6A:着火了！]，[c/FF6A6A:中毒],[c/FF6A6A:诅咒狱火]等debuff时每秒受到70点无来源伤害
+		敌人受到[c/FF6A6A:着火了！],[c/FF6A6A:中毒],[c/FF6A6A:诅咒狱火]等debuff时每秒受到70点无来源伤害
 		越是用力想要挣脱，丝线就缠得越紧。你真的认为自己仍在思考？
 		'''
 }
@@ -2442,7 +2442,7 @@ ChildlikePlaythings: {
 	DisplayName: “童趣玩偶”
 	Tooltip:
 		'''
-		敌人受到[c/FF6A6A:着火了！]，[c/FF6A6A:中毒],[c/FF6A6A:诅咒狱火]等debuff时每秒受到100点无来源伤害
+		敌人受到[c/FF6A6A:着火了！],[c/FF6A6A:中毒],[c/FF6A6A:诅咒狱火]等debuff时每秒受到100点无来源伤害
 		伊比利亚的孩童们将海岸边的奇物做成了简陋玩偶，听说只要抱着它，梦乡就会变得充实起来。
 		'''
 }
@@ -2617,8 +2617,8 @@ ProvenceLegs: {
 }
 
 ProvenceDefault: {
-	// DisplayName: Provence Default
-	// Tooltip: ""
+	DisplayName: 普罗旺斯的服饰（常规）
+	Tooltip: 右键点击可打开
 }
 
 VulcanBody: {
@@ -2652,13 +2652,13 @@ EntelechiaLegs: {
 }
 
 EntelechiaDefault: {
-	// DisplayName: Entelechia Default
-	// Tooltip: ""
+	DisplayName: 隐德来希的服饰（常规）
+	Tooltip: 右键点击可打开
 }
 
 VulcanDefault: {
-	// DisplayName: Vulcan Default
-	// Tooltip: ""
+	DisplayName: 火神的服饰（常规）
+	Tooltip: 右键点击可打开
 }
 
 ClothesHanger: {
@@ -2824,7 +2824,7 @@ SarkazKingRegalRest: {
 	DisplayName: 魔王的床榻
 	Tooltip:
 		'''
-		生命值达到上限时，防御力+20%，伤害减免增加20%
+		当前生命值大于85%时，防御力+20%，伤害减免增加20%
 		身居此位者，安睡即为永眠。
 		'''
 }
@@ -2833,7 +2833,7 @@ SarkazKingTornBanner: {
 	DisplayName: 魔王的旗帜
 	Tooltip:
 		'''
-		生命值达到上限时，攻击速度+30%
+		当前生命值大于85%时，攻击速度+30%
 		身居此位者，抗争便会陨落。
 		'''
 }
@@ -2857,31 +2857,37 @@ PlanterClusterItem: {
 }
 
 KingOfSarkazVessel: {
-	// DisplayName: King Of Sarkaz Vessel
-	// Tooltip: ""
+	DisplayName:魔王的冠冕
+	Tooltip:
+		'''
+		当前最大生命值提升40%，装备3个及以上的魔王收藏品则改为+120%最大生命值
+		当前生命值大于85%时，加快你的生命恢复速率，这个效果在你越接近满血越明显
+		同样的，装备3个及以上的魔王收藏品则该效果翻倍
+		身居此位者，兴盛仅是泡影。
+		'''
 }
 
 BlackShipBridgeWallItem: {
-	// DisplayName: Black Ship Bridge Wall Item
+	DisplayName: 黑舰桥墙壁
 	// Tooltip: ""
 }
 
 CorridorTileItem: {
-	// DisplayName: Corridor Tile Item
+	DisplayName: 走廊板块
 	// Tooltip: ""
 }
 
 CorridorWallItem: {
-	// DisplayName: Corridor Wall Item
+	DisplayName: 走廊墙壁
 	// Tooltip: ""
 }
 
 LineCorridorWallItem: {
-	// DisplayName: Line Corridor Wall Item
+	DisplayName: 线路走廊墙壁
 	// Tooltip: ""
 }
 
 LineCorridorWallWithRailingItem: {
-	// DisplayName: Line Corridor Wall With Railing Item
+	DisplayName: 带栏的线路走廊墙壁
 	// Tooltip: ""
 }
