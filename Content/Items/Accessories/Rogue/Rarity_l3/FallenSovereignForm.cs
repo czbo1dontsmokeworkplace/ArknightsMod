@@ -9,7 +9,7 @@ using Terraria.GameContent;
 using System.Collections.Generic;
 using System;
 using ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3;
-
+using ArknightsMod.Common.Items;
 namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
 {
 	public class FallenSovereignForm : ModItem
@@ -20,6 +20,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
 			Item.accessory = true;
 			Item.rare = ItemRarityID.Purple;
 			Item.value = Item.sellPrice(0, 6, 0, 0);
+			Item.GetGlobalItem<SarkazKingGlobalItem>().isSarkazKing = true;
 		}
 
 		public override void UpdateAccessory(Player player, bool hideVisual) {

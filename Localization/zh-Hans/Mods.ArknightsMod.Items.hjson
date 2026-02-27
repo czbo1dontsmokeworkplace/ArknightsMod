@@ -2855,3 +2855,8 @@ PlanterClusterItem: {
 		生命循环的舞台，泰拉文明的起点。
 		'''
 }
+
+KingOfSarkazVessel: {
+	// DisplayName: King Of Sarkaz Vessel
+	// Tooltip: ""
+}

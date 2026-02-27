@@ -211,7 +211,7 @@ namespace ArknightsMod.Players
 			if (item.ModItem is UpgradeWeaponBase ark) {
 				if (chargeOpen) {
 					foreach (var npc in Main.ActiveNPCs) {
-						if (npc.CanBeChasedBy(Player) && npc.Distance(Player.MountedCenter) < 20 * 16) {
+						if (npc.CanBeChasedBy(Player) && npc.Distance(Player.MountedCenter) < 35 * 16) {
 							hasNearbyEnemy = true;
 							initChargeTimer = 0;
 							break;

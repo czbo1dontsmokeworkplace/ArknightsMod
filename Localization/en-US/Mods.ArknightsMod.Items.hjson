@@ -2542,3 +2542,8 @@ PlanterClusterItem: {
 	DisplayName: Planter Cluster Item
 	Tooltip: ""
 }
+
+KingOfSarkazVessel: {
+	DisplayName: King Of Sarkaz Vessel
+	Tooltip: ""
+}
