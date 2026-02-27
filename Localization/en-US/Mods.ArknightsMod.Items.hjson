@@ -2547,3 +2547,28 @@ KingOfSarkazVessel: {
 	DisplayName: King Of Sarkaz Vessel
 	Tooltip: ""
 }
+
+BlackShipBridgeWallItem: {
+	DisplayName: Black Ship Bridge Wall Item
+	Tooltip: ""
+}
+
+CorridorTileItem: {
+	DisplayName: Corridor Tile Item
+	Tooltip: ""
+}
+
+CorridorWallItem: {
+	DisplayName: Corridor Wall Item
+	Tooltip: ""
+}
+
+LineCorridorWallItem: {
+	DisplayName: Line Corridor Wall Item
+	Tooltip: ""
+}
+
+LineCorridorWallWithRailingItem: {
+	DisplayName: Line Corridor Wall With Railing Item
+	Tooltip: ""
+}
