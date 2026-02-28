@@ -14,8 +14,8 @@ namespace ArknightsMod.Content.Tiles.Infrastructure.ReceptionRoom
 {
 	public class VaseTableTile : ModTile
 	{
-		private static int TableWidthTiles = 3;
-		private static int TableHeightTiles = 2;
+		private static int TableWidthTiles = 5;
+		private static int TableHeightTiles = 3;
 
 		public override string Texture => "ArknightsMod/Content/Items/Placeable/Infrastructure/ReceptionRoom/VaseTable_gap1";
 
@@ -27,11 +27,6 @@ namespace ArknightsMod.Content.Tiles.Infrastructure.ReceptionRoom
 			DustType = DustID.Iron;
 			AddMapEntry(new Color(106, 106, 101), CreateMapEntryName());
 
-			if (!Main.dedServ) {
-				Texture2D tex = ModContent.Request<Texture2D>(Texture, AssetRequestMode.ImmediateLoad).Value;
-				TableWidthTiles = Math.Max(1, (tex.Width + 1) / 17);
-				TableHeightTiles = Math.Max(1, (tex.Height + 1) / 17);
-			}
 			int[] heights = new int[TableHeightTiles];
 			for (int k = 0; k < TableHeightTiles; k++)
 				heights[k] = 16;

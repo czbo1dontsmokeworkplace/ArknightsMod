@@ -14,8 +14,8 @@ namespace ArknightsMod.Content.Tiles.Infrastructure.ReceptionRoom
 {
 	public class FileRackTile : ModTile
 	{
-		private static int RackWidthTiles = 9;
-		private static int RackHeightTiles = 4;
+		private static int RackWidthTiles = 17;
+		private static int RackHeightTiles = 8;
 
 		public override string Texture => "ArknightsMod/Content/Items/Placeable/Infrastructure/ReceptionRoom/FileRack_gap1";
 
@@ -27,11 +27,6 @@ namespace ArknightsMod.Content.Tiles.Infrastructure.ReceptionRoom
 			DustType = DustID.Iron;
 			AddMapEntry(new Color(106, 106, 101), CreateMapEntryName());
 
-			if (!Main.dedServ) {
-				Texture2D tex = ModContent.Request<Texture2D>(Texture, AssetRequestMode.ImmediateLoad).Value;
-				RackWidthTiles = Math.Max(1, (tex.Width + 1) / 17);
-				RackHeightTiles = Math.Max(1, (tex.Height + 1) / 17);
-			}
 			int[] heights = new int[RackHeightTiles];
 			for (int k = 0; k < RackHeightTiles; k++)
 				heights[k] = 16;

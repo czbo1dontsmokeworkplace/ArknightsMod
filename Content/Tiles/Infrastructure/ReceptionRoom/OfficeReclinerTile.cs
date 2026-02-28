@@ -15,8 +15,8 @@ namespace ArknightsMod.Content.Tiles.Infrastructure.ReceptionRoom
 {
 	public class OfficeReclinerTile : ModTile
 	{
-		private static int ReclinerWidthTiles = 2;
-		private static int ReclinerHeightTiles = 2;
+		private static int ReclinerWidthTiles = 3;
+		private static int ReclinerHeightTiles = 3;
 		private const int SittingMaxDistance = 40;
 
 		public override string Texture => "ArknightsMod/Content/Items/Placeable/Infrastructure/ReceptionRoom/OfficeRecliner_gap1";
@@ -32,11 +32,6 @@ namespace ArknightsMod.Content.Tiles.Infrastructure.ReceptionRoom
 			DustType = DustID.Iron;
 			AddMapEntry(new Color(106, 106, 101), CreateMapEntryName());
 
-			if (!Main.dedServ) {
-				Texture2D tex = ModContent.Request<Texture2D>(Texture, AssetRequestMode.ImmediateLoad).Value;
-				ReclinerWidthTiles = Math.Max(1, (tex.Width + 1) / 17);
-				ReclinerHeightTiles = Math.Max(1, (tex.Height + 1) / 17);
-			}
 			int[] heights = new int[ReclinerHeightTiles];
 			for (int k = 0; k < ReclinerHeightTiles; k++)
 				heights[k] = 16;

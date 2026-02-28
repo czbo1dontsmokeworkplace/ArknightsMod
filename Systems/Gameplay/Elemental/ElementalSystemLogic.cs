@@ -23,7 +23,7 @@ namespace ArknightsMod.Systems.Gameplay.Elemental
 					return;
 				Main.npc[playerWhoAmI].AddBuff(31, 90);
 				Main.npc[playerWhoAmI].AddBuff(23, 240);
-				//Player.Hurt(PlayerDeathReason.ByCustomReason("¾«Éñ±ÀÀ£"), 200, 1, false, false, 0, true, 1000, 1000, 0);
+				//Player.Hurt(PlayerDeathReason.ByCustomReason("ç²¾ç¥å´©æºƒ"), 200, 1, false, false, 0, true, 1000, 1000, 0);
 				
 				//SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/Madness") with { Volume = 1f, Pitch = 0f }, Player.Center);
 				
@@ -33,12 +33,12 @@ namespace ArknightsMod.Systems.Gameplay.Elemental
 		}
 		// apply npcs & enemies burst buff
 
-		public static void RegenerateElemental(int WhoAmI) //ºóĞøÒÆ¶¯µ½elementallogic Íê³É
+		public static void RegenerateElemental(int WhoAmI) //åç»­ç§»åŠ¨åˆ°elementallogic å®Œæˆ
 		{
 			//can use bm1
 			ElementalData elemData = elementalRecords[WhoAmI].elementalData;
 			byte mask = elemData.Status;
-			//²»ÄÜÖÎÁÆÂúÑª»òÔªËØ±¬·¢ÖĞµÄµ¥Î»
+			//ä¸èƒ½æ²»ç–—æ»¡è¡€æˆ–å…ƒç´ çˆ†å‘ä¸­çš„å•ä½
 			if ((mask & 0x20) == 0 && (mask & 0x20) != 0 && (mask & 0x20) != 0) {
 				return;
 			}

@@ -14,8 +14,8 @@ namespace ArknightsMod.Content.Tiles.Infrastructure.ReceptionRoom
 {
 	public class SafeBoxTile : ModTile
 	{
-		private static int BoxWidthTiles = 1;
-		private static int BoxHeightTiles = 1;
+		private static int BoxWidthTiles = 2;
+		private static int BoxHeightTiles = 2;
 
 		public override string Texture => "ArknightsMod/Content/Items/Placeable/Infrastructure/ReceptionRoom/SafeBox_gap1";
 
@@ -27,11 +27,6 @@ namespace ArknightsMod.Content.Tiles.Infrastructure.ReceptionRoom
 			DustType = DustID.Iron;
 			AddMapEntry(new Color(106, 106, 101), CreateMapEntryName());
 
-			if (!Main.dedServ) {
-				Texture2D tex = ModContent.Request<Texture2D>(Texture, AssetRequestMode.ImmediateLoad).Value;
-				BoxWidthTiles = Math.Max(1, (tex.Width + 1) / 17);
-				BoxHeightTiles = Math.Max(1, (tex.Height + 1) / 17);
-			}
 			int[] heights = new int[BoxHeightTiles];
 			for (int k = 0; k < BoxHeightTiles; k++)
 				heights[k] = 16;

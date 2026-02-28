@@ -14,8 +14,8 @@ namespace ArknightsMod.Content.Tiles.Infrastructure.ReceptionRoom
 {
 	public class ComputerDeskTile : ModTile
 	{
-		private static int DeskWidthTiles = 3;
-		private static int DeskHeightTiles = 2;
+		private static int DeskWidthTiles = 5;
+		private static int DeskHeightTiles = 4;
 
 		public override string Texture => "ArknightsMod/Content/Items/Placeable/Infrastructure/ReceptionRoom/ComputerDesk_gap1";
 
@@ -27,11 +27,6 @@ namespace ArknightsMod.Content.Tiles.Infrastructure.ReceptionRoom
 			DustType = DustID.Iron;
 			AddMapEntry(new Color(106, 106, 101), CreateMapEntryName());
 
-			if (!Main.dedServ) {
-				Texture2D tex = ModContent.Request<Texture2D>(Texture, AssetRequestMode.ImmediateLoad).Value;
-				DeskWidthTiles = Math.Max(1, (tex.Width + 1) / 17);
-				DeskHeightTiles = Math.Max(1, (tex.Height + 1) / 17);
-			}
 			int[] heights = new int[DeskHeightTiles];
 			for (int k = 0; k < DeskHeightTiles; k++)
 				heights[k] = 16;

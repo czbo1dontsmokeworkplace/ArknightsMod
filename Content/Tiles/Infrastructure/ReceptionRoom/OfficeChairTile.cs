@@ -18,8 +18,8 @@ namespace ArknightsMod.Content.Tiles.Infrastructure.ReceptionRoom
 	public class OfficeChairTile : ModTile
 	{
 		private static int VariantFrameYOffset = 34;
-		private static int ChairWidthTiles = 1;
-		private static int ChairHeightTiles = 2;
+		private static int ChairWidthTiles = 2;
+		private static int ChairHeightTiles = 3;
 		private const int SittingMaxDistance = 40;
 
 		public override string Texture => "ArknightsMod/Content/Items/Placeable/Infrastructure/ReceptionRoom/OfficeChair_0_gap1";
@@ -35,12 +35,7 @@ namespace ArknightsMod.Content.Tiles.Infrastructure.ReceptionRoom
 			DustType = DustID.Iron;
 			AddMapEntry(new Color(106, 106, 101), CreateMapEntryName());
 
-			if (!Main.dedServ) {
-				Texture2D tex = ModContent.Request<Texture2D>(Texture, AssetRequestMode.ImmediateLoad).Value;
-				ChairWidthTiles = Math.Max(1, (tex.Width + 1) / 17);
-				ChairHeightTiles = Math.Max(1, (tex.Height + 1) / 17);
-				VariantFrameYOffset = ChairHeightTiles * 17;
-			}
+			VariantFrameYOffset = ChairHeightTiles * 17;
 
 			TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);
 			TileObjectData.newTile.Width = ChairWidthTiles;
