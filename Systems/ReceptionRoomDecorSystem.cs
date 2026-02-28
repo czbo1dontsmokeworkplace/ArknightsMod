@@ -161,6 +161,9 @@ namespace ArknightsMod.Systems
 
 			DecorInstance inst = te.Instances[te.Instances.Count - 1];
 			te.Instances.RemoveAt(te.Instances.Count - 1);
+			ModContent.GetInstance<global::ArknightsMod.ArknightsMod>().Logger.Info(
+				$"[ReceptionRoomDecor] RemoveTopMost anchor=({anchor.X},{anchor.Y}) removed kind={inst.Kind} topLeft=({inst.TopLeft.X},{inst.TopLeft.Y}) remaining={te.Instances.Count}"
+			);
 
 			int itemType = KindToItemType(inst.Kind);
 			if (itemType > 0 && Main.netMode != NetmodeID.MultiplayerClient) {
@@ -177,6 +180,17 @@ namespace ArknightsMod.Systems
 					t.HasTile = false;
 				if (Main.netMode != NetmodeID.SinglePlayer)
 					NetMessage.SendTileSquare(-1, anchor.X, anchor.Y, 1);
+				return true;
+			}
+
+			// Refresh all remaining instances' covered areas so client tile state stays correct.
+			if (Main.netMode != NetmodeID.SinglePlayer) {
+				te.SendSync();
+				for (int k = 0; k < te.Instances.Count; k++) {
+					DecorInstance remain = te.Instances[k];
+					Point16 s2 = GetSize(remain.Kind);
+					NetMessage.SendTileSquare(-1, remain.TopLeft.X, remain.TopLeft.Y, s2.X, s2.Y);
+				}
 				return true;
 			}
 
@@ -309,6 +323,9 @@ namespace ArknightsMod.Systems
 		internal static void DrawAllDecorDuringSpriteBatch(SpriteBatch sb, Vector2 screenPos)
 		{
 			DrawAllDecor(sb, screenPos);
+			#if DEBUG
+			DrawDebugInstanceRects(sb);
+			#endif
 		}
 
 		private static void DrawInstance(SpriteBatch sb, DecorInstance inst, Vector2 screenPos)
@@ -428,6 +445,12 @@ namespace ArknightsMod.Systems
 			if (!TryMapTileType(tileType, out DecorKind kind))
 				return false;
 
+			// If the player is placing on top of an existing instance of the same kind,
+			// stack it into that existing anchor TE to avoid overwriting/clearing anchors.
+			Point16 anchorPos;
+			if (!TryFindSameKindAtTile(i, j, tileType, out anchorPos, out _))
+				anchorPos = new Point16(i, j);
+
 			if (!Main.dedServ) {
 				TileObjectData d = TileObjectData.GetTileData(tileType, 0, 0);
 				string dataText = d == null
@@ -439,7 +462,6 @@ namespace ArknightsMod.Systems
 				);
 			}
 
-			Point16 anchorPos = new Point16(i, j);
 			Point16 topLeft = GetTopLeftByFrame(i, j, kind);
 			Tile origin = Framing.GetTileSafely(topLeft.X, topLeft.Y);
 
@@ -452,6 +474,11 @@ namespace ArknightsMod.Systems
 				Direction = direction,
 				Variant = variant,
 			};
+			if (!Main.dedServ) {
+				ModContent.GetInstance<global::ArknightsMod.ArknightsMod>().Logger.Info(
+					$"[ReceptionRoomDecor] AddInstance kind={kind} placeAt=({i},{j}) anchor=({anchorPos.X},{anchorPos.Y}) topLeft=({topLeft.X},{topLeft.Y}) dir={direction} variant={variant}"
+				);
+			}
 			if (!Main.dedServ) {
 				ModContent.GetInstance<global::ArknightsMod.ArknightsMod>().Logger.Info(
 					$"[ReceptionRoomDecor] instance kind={kind} anchor=({anchorPos.X},{anchorPos.Y}) topLeft=({topLeft.X},{topLeft.Y}) dir={direction} variant={variant} size=({GetSize(kind).X},{GetSize(kind).Y})"
@@ -506,14 +533,36 @@ namespace ArknightsMod.Systems
 			Point16 s = GetSize(kind);
 			int skipX = anchorPos.X - topLeft.X;
 			int skipY = anchorPos.Y - topLeft.Y;
+			int anchorType = ModContent.TileType<ReceptionRoomDecorAnchorTile>();
 			for (int x = 0; x < s.X; x++)
 				for (int y = 0; y < s.Y; y++) {
 					if (x == skipX && y == skipY)
 						continue;
 					Tile t = Framing.GetTileSafely(topLeft.X + x, topLeft.Y + y);
+					if (t.HasTile && t.TileType == anchorType)
+						continue;
 					if (t.HasTile)
 						t.HasTile = false;
 				}
+		}
+
+		private static void DrawDebugInstanceRects(SpriteBatch spriteBatch)
+		{
+			Texture2D px = Terraria.GameContent.TextureAssets.MagicPixel.Value;
+			foreach (var te in ReceptionRoomDecorAnchorTE.EnumerateAll()) {
+				for (int k = 0; k < te.Instances.Count; k++) {
+					DecorInstance inst = te.Instances[k];
+					Point16 s = GetSize(inst.Kind);
+					Rectangle worldRect = new Rectangle(inst.TopLeft.X * 16, inst.TopLeft.Y * 16, s.X * 16, s.Y * 16);
+					Rectangle screen = new Rectangle(worldRect.X - (int)Main.screenPosition.X, worldRect.Y - (int)Main.screenPosition.Y, worldRect.Width, worldRect.Height);
+					Color c = k % 3 == 0 ? new Color(255, 64, 64, 120) : k % 3 == 1 ? new Color(64, 255, 64, 120) : new Color(64, 128, 255, 120);
+					int t = 2;
+					spriteBatch.Draw(px, new Rectangle(screen.X, screen.Y, screen.Width, t), c);
+					spriteBatch.Draw(px, new Rectangle(screen.X, screen.Y + screen.Height - t, screen.Width, t), c);
+					spriteBatch.Draw(px, new Rectangle(screen.X, screen.Y, t, screen.Height), c);
+					spriteBatch.Draw(px, new Rectangle(screen.X + screen.Width - t, screen.Y, t, screen.Height), c);
+				}
+			}
 		}
 
 		private static (sbyte direction, byte variant) ExtractState(DecorKind kind, Tile origin)
