@@ -27,9 +27,11 @@ namespace ArknightsMod.Content.Tiles.Infrastructure.ReceptionRoom
 			DustType = DustID.Iron;
 			AddMapEntry(new Color(106, 106, 101), CreateMapEntryName());
 
-			Texture2D tex = ModContent.Request<Texture2D>(Texture, AssetRequestMode.ImmediateLoad).Value;
-			CanWidthTiles = Math.Max(1, (tex.Width + 1) / 17);
-			CanHeightTiles = Math.Max(1, (tex.Height + 1) / 17);
+			if (!Main.dedServ) {
+				Texture2D tex = ModContent.Request<Texture2D>(Texture, AssetRequestMode.ImmediateLoad).Value;
+				CanWidthTiles = Math.Max(1, (tex.Width + 1) / 17);
+				CanHeightTiles = Math.Max(1, (tex.Height + 1) / 17);
+			}
 			int[] heights = new int[CanHeightTiles];
 			for (int k = 0; k < CanHeightTiles; k++)
 				heights[k] = 16;

@@ -35,10 +35,12 @@ namespace ArknightsMod.Content.Tiles.Infrastructure.ReceptionRoom
 			DustType = DustID.Iron;
 			AddMapEntry(new Color(106, 106, 101), CreateMapEntryName());
 
-			Texture2D tex = ModContent.Request<Texture2D>(Texture, AssetRequestMode.ImmediateLoad).Value;
-			ChairWidthTiles = Math.Max(1, (tex.Width + 1) / 17);
-			ChairHeightTiles = Math.Max(1, (tex.Height + 1) / 17);
-			VariantFrameYOffset = ChairHeightTiles * 17;
+			if (!Main.dedServ) {
+				Texture2D tex = ModContent.Request<Texture2D>(Texture, AssetRequestMode.ImmediateLoad).Value;
+				ChairWidthTiles = Math.Max(1, (tex.Width + 1) / 17);
+				ChairHeightTiles = Math.Max(1, (tex.Height + 1) / 17);
+				VariantFrameYOffset = ChairHeightTiles * 17;
+			}
 
 			TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);
 			TileObjectData.newTile.Width = ChairWidthTiles;

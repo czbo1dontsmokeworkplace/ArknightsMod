@@ -1814,7 +1814,7 @@ LampItem: {
 }
 
 LightTube: {
-	 DisplayName: 灯管
+	DisplayName: 灯管
 	// Tooltip: ""
 }
 
@@ -1844,12 +1844,12 @@ ArmorSariaHead: {
 }
 
 ArmorSariaLegs: {
-	DisplayName:装甲塞雷亚的腿部
+	DisplayName: 装甲塞雷亚的腿部
 	// Tooltip: ""
 }
 
 MizukiDefault: {
-	DisplayName:水月的服饰（常规）
+	DisplayName: 水月的服饰（常规）
 	Tooltip: 右键点击可打开
 }
 
@@ -2144,7 +2144,7 @@ CardiganDefault: {
 }
 
 CatapultDefault: {
-	DisplayName:空爆的服饰（常规）
+	DisplayName: 空爆的服饰（常规）
 	Tooltip: 右键点击可打开
 }
 
@@ -2159,7 +2159,7 @@ HibiscusDefault: {
 }
 
 KroosDefault: {
-	DisplayName:克洛斯的服饰（常规）
+	DisplayName: 克洛斯的服饰（常规）
 	Tooltip: 右键点击可打开
 }
 
@@ -2857,7 +2857,7 @@ PlanterClusterItem: {
 }
 
 KingOfSarkazVessel: {
-	DisplayName:魔王的冠冕
+	DisplayName: 魔王的冠冕
 	Tooltip:
 		'''
 		当前最大生命值提升40%，装备3个及以上的魔王收藏品则改为+120%最大生命值
