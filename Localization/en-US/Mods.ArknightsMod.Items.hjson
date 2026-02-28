@@ -2572,3 +2572,23 @@ LineCorridorWallWithRailingItem: {
 	DisplayName: Line Corridor Wall With Railing Item
 	Tooltip: ""
 }
+
+LastRiteBody: {
+	DisplayName: Last Rite Body
+	Tooltip: ""
+}
+
+LastRiteHead: {
+	DisplayName: Last Rite Head
+	Tooltip: ""
+}
+
+LastRiteLegs: {
+	DisplayName: Last Rite Legs
+	Tooltip: ""
+}
+
+LastRiteVanityBag: {
+	DisplayName: Last Rite Vanity Bag
+	Tooltip: ""
+}

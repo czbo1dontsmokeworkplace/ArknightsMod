@@ -1,7 +1,7 @@
 ﻿using Terraria.ModLoader;
 using Terraria;
 
-namespace ArknightsMod.Content.Items.Armor.Vanity.Endfield.Yvonne
+namespace ArknightsMod.Content.Items.Armor.Vanity.Endfield.Striker.Yvonne
 {
 	[AutoloadEquip(EquipType.Body)]
 	public class YvonneBody : ArknightsVanityBody

@@ -17,8 +17,8 @@ namespace ArknightsMod.Content.Items.Armor.Vanity
 			Item.ResearchUnlockCount = 1;
 			if (Main.netMode == NetmodeID.Server)
 				return;
-			ArmorIDs.Head.Sets.DrawHead[Item.headSlot] = false;
 			SafeSetStaticDefaults();
+			ArmorIDs.Head.Sets.DrawHead[Item.headSlot] = false;
 		}
 		public sealed override void SetDefaults()
 		{
