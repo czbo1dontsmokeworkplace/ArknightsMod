@@ -570,7 +570,7 @@ namespace ArknightsMod.Players
 			else if (HoldNoirShield) {
 				IconName = "NoirShield";
 				HowManySkills = 0;
-				SkillLevel = [0, 0, 0];
+				SkillLevel = [7, 7, 7];
 				ChargeTypeIsPerSecond = [false, false, false];
 				AutoTrigger = [true, false, false];
 				ShowSummonIconBySkills = [false, false, false];
