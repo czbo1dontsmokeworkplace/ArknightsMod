@@ -11,6 +11,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using Terraria.ObjectData;
 
 namespace ArknightsMod.Systems
 {
@@ -113,6 +114,34 @@ namespace ArknightsMod.Systems
 					if (rect.Contains(mouseWorld.ToPoint())) {
 						anchor = a;
 						index = k;
+						inst = d;
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+
+		public static bool TryFindSameKindAtTile(int i, int j, int tileType, out Point16 anchor, out DecorInstance inst)
+		{
+			anchor = default;
+			inst = default;
+			if (Main.dedServ)
+				return false;
+			if (!TryMapTileType(tileType, out DecorKind kind))
+				return false;
+
+			Point worldTile = new Point(i, j);
+			foreach (var te in ReceptionRoomDecorAnchorTE.EnumerateAll()) {
+				Point16 a = te.Position;
+				for (int k = te.Instances.Count - 1; k >= 0; k--) {
+					DecorInstance d = te.Instances[k];
+					if (d.Kind != kind)
+						continue;
+					Point16 s = GetSize(d.Kind);
+					Rectangle rect = new Rectangle(d.TopLeft.X, d.TopLeft.Y, s.X, s.Y);
+					if (rect.Contains(worldTile)) {
+						anchor = a;
 						inst = d;
 						return true;
 					}
@@ -331,6 +360,20 @@ namespace ArknightsMod.Systems
 
 		private static Point16 GetSize(DecorKind kind)
 		{
+			if (Main.dedServ) {
+				return kind switch {
+					DecorKind.ComputerDesk => new Point16(5, 4),
+					DecorKind.FileRack => new Point16(17, 8),
+					DecorKind.OfficeChair => new Point16(2, 3),
+					DecorKind.OfficeDesk => new Point16(4, 5),
+					DecorKind.OfficeRecliner => new Point16(3, 3),
+					DecorKind.SafeBox => new Point16(2, 2),
+					DecorKind.TrashCan => new Point16(2, 2),
+					DecorKind.VaseTable => new Point16(5, 3),
+					DecorKind.WaterDispenser => new Point16(5, 7),
+					_ => new Point16(1, 1),
+				};
+			}
 			if (SizeCache.TryGetValue(kind, out Point16 s))
 				return s;
 			Asset<Texture2D> asset = ModContent.Request<Texture2D>(GapTexture[kind], AssetRequestMode.ImmediateLoad);
@@ -385,6 +428,17 @@ namespace ArknightsMod.Systems
 			if (!TryMapTileType(tileType, out DecorKind kind))
 				return false;
 
+			if (!Main.dedServ) {
+				TileObjectData d = TileObjectData.GetTileData(tileType, 0, 0);
+				string dataText = d == null
+					? "TileObjectData=null"
+					: $"W={d.Width} H={d.Height} Origin=({d.Origin.X},{d.Origin.Y}) AnchorTop={d.AnchorTop.type} AnchorBottom={d.AnchorBottom.type} AnchorLeft={d.AnchorLeft.type} AnchorRight={d.AnchorRight.type} UsesCustomCanPlace={d.UsesCustomCanPlace}";
+				Tile placed = Framing.GetTileSafely(i, j);
+				ModContent.GetInstance<global::ArknightsMod.ArknightsMod>().Logger.Info(
+					$"[ReceptionRoomDecor] ConvertPlacedTileToDecor at ({i},{j}) tileType={tileType} kind={kind} frame=({placed.TileFrameX},{placed.TileFrameY}) {dataText}"
+				);
+			}
+
 			Point16 anchorPos = new Point16(i, j);
 			Point16 topLeft = GetTopLeftByFrame(i, j, kind);
 			Tile origin = Framing.GetTileSafely(topLeft.X, topLeft.Y);
@@ -398,6 +452,11 @@ namespace ArknightsMod.Systems
 				Direction = direction,
 				Variant = variant,
 			};
+			if (!Main.dedServ) {
+				ModContent.GetInstance<global::ArknightsMod.ArknightsMod>().Logger.Info(
+					$"[ReceptionRoomDecor] instance kind={kind} anchor=({anchorPos.X},{anchorPos.Y}) topLeft=({topLeft.X},{topLeft.Y}) dir={direction} variant={variant} size=({GetSize(kind).X},{GetSize(kind).Y})"
+				);
+			}
 			te.Instances.Add(inst);
 			ClearObjectTiles(topLeft, kind, anchorPos);
 			if (Main.netMode != NetmodeID.SinglePlayer) {

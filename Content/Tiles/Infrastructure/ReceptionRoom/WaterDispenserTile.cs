@@ -62,6 +62,30 @@ namespace ArknightsMod.Content.Tiles.Infrastructure.ReceptionRoom
 			ReceptionRoomDecorSystem.ConvertPlacedTileToDecor(i, j, Type);
 		}
 
+		public override bool CanPlace(int i, int j)
+		{
+			bool result = base.CanPlace(i, j);
+			if (!result && ReceptionRoomDecorSystem.TryFindSameKindAtTile(i, j, Type, out Point16 anchor, out ReceptionRoomDecorSystem.DecorInstance inst)) {
+				if (!Main.dedServ) {
+					ModContent.GetInstance<global::ArknightsMod.ArknightsMod>().Logger.Info(
+						$"[ReceptionRoomDecor] CanPlace overlap allowed {Name} at ({i},{j}) overlapAnchor=({anchor.X},{anchor.Y}) overlapTopLeft=({inst.TopLeft.X},{inst.TopLeft.Y})"
+					);
+				}
+				return true;
+			}
+			if (!Main.dedServ) {
+				Item held = Main.LocalPlayer?.HeldItem;
+				TileObjectData d = TileObjectData.GetTileData(Type, 0, 0);
+				string dataText = d == null
+					? "TileObjectData=null"
+					: $"W={d.Width} H={d.Height} Origin=({d.Origin.X},{d.Origin.Y}) AnchorTop={d.AnchorTop.type} AnchorBottom={d.AnchorBottom.type} AnchorLeft={d.AnchorLeft.type} AnchorRight={d.AnchorRight.type} UsesCustomCanPlace={d.UsesCustomCanPlace}";
+				ModContent.GetInstance<global::ArknightsMod.ArknightsMod>().Logger.Info(
+					$"[ReceptionRoomDecor] CanPlace {Name} at ({i},{j}) => {result} heldType={held?.type ?? -1} createTile={held?.createTile ?? -1} placeStyle={held?.placeStyle ?? -1} {dataText}"
+				);
+			}
+			return result;
+		}
+
 		public override bool HasSmartInteract(int i, int j, SmartInteractScanSettings settings)
 		{
 			return true;

@@ -2752,47 +2752,47 @@ WorkshopWallPinkItem: {
 
 WaterDispenser: {
 	// Tooltip: ""
-	// DisplayName: Water Dispenser
+	DisplayName: 咖啡机
 }
 
 VaseTable: {
 	// Tooltip: ""
-	// DisplayName: Vase Table
+	DisplayName: 花瓶桌
 }
 
 TrashCan: {
 	// Tooltip: ""
-	// DisplayName: Trash Can
+	DisplayName: 垃圾桶
 }
 
 SafeBox: {
 	// Tooltip: ""
-	// DisplayName: Safe Box
+	DisplayName: 保险箱
 }
 
 OfficeRecliner: {
 	// Tooltip: ""
-	// DisplayName: Office Recliner
+	DisplayName: 办公躺椅
 }
 
 OfficeDesk: {
 	// Tooltip: ""
-	// DisplayName: Office Desk
+	DisplayName: 办公桌
 }
 
 OfficeChair: {
 	// Tooltip: ""
-	// DisplayName: Office Chair
+	DisplayName: 办公椅
 }
 
 FileRack: {
 	// Tooltip: ""
-	// DisplayName: File Rack
+	DisplayName: 文件架
 }
 
 ComputerDesk: {
 	// Tooltip: ""
-	// DisplayName: Computer Desk
+	DisplayName: 电脑桌
 }
 
 SeasonedRations: {
@@ -2890,4 +2890,24 @@ LineCorridorWallItem: {
 LineCorridorWallWithRailingItem: {
 	DisplayName: 带栏的线路走廊墙壁
 	// Tooltip: ""
+}
+
+LastRiteBody: {
+	DisplayName: 别礼的上衣
+	// Tooltip: ""
+}
+
+LastRiteHead: {
+	DisplayName: 别礼的头套
+	// Tooltip: ""
+}
+
+LastRiteLegs: {
+	DisplayName: 别礼的下装
+	// Tooltip: ""
+}
+
+LastRiteVanityBag: {
+	DisplayName: 别礼的服饰
+	Tooltip: 右键点击可打开
 }

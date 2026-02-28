@@ -16,8 +16,8 @@ namespace ArknightsMod.Content.Items.Armor.Vanity
 			Item.ResearchUnlockCount = 1;
 			if (Main.netMode == NetmodeID.Server)
 				return;
-			ArmorIDs.Legs.Sets.HidesBottomSkin[Item.legSlot] = true;
 			SafeSetStaticDefaults();
+			ArmorIDs.Legs.Sets.HidesBottomSkin[Item.legSlot] = true;
 		}
 
 		public sealed override void SetDefaults() {
