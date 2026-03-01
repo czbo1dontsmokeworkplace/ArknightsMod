@@ -3,7 +3,6 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
-using ArknightsMod.Common;
 
 namespace ArknightsMod.Content.Items.Armor.Vanity.Sniper.Provence
 {
@@ -24,8 +23,28 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Sniper.Provence
 				Texture2D texture = ModContent.Request<Texture2D>
 					("ArknightsMod/Content/Items/Armor/Vanity/Sniper/Provence/ProvenceBody_Tail").Value;
 
-				var offset = new Vector2(-7, 12);
-				PlayerLayerHelper.AddPlayerDrawLayer(ref drawInfo, texture, 1, offset);
+				var offset =new Vector2(-7, 12);
+
+				int drawX = (int)(drawInfo.drawPlayer.MountedCenter.X + offset.X * drawInfo.drawPlayer.direction - Main.screenPosition.X);
+				int drawY = (int)(drawInfo.drawPlayer.MountedCenter.Y + (int)drawInfo.drawPlayer.gravDir * offset.Y - Main.screenPosition.Y);
+				int dyeShader = drawInfo.drawPlayer.dye?[0].dye ?? 0;
+				float offsetY = 0;
+				if (drawInfo.drawPlayer.bodyFrame.Y >= 7 * drawInfo.drawPlayer.bodyFrame.Height &&
+					drawInfo.drawPlayer.bodyFrame.Y <= 9 * drawInfo.drawPlayer.bodyFrame.Height ||
+					drawInfo.drawPlayer.bodyFrame.Y >= 14 * drawInfo.drawPlayer.bodyFrame.Height &&
+					drawInfo.drawPlayer.bodyFrame.Y <= 16 * drawInfo.drawPlayer.bodyFrame.Height) {
+					offsetY = -2;
+				}
+				int bodyframe = drawInfo.drawPlayer.bodyFrame.Y / drawInfo.drawPlayer.bodyFrame.Height;
+				Rectangle sourceRect = new(0,bodyframe*(18+38)+33, texture.Width,18);
+				Vector2 origin=sourceRect.Size()/2;
+				float h_pi = MathHelper.Pi / 2;
+				float r = h_pi-h_pi*drawInfo.drawPlayer.gravDir;
+				drawInfo.DrawDataCache.Add(
+					new DrawData(texture, new Vector2(drawX, drawY + offsetY + drawInfo.drawPlayer.gfxOffY),
+					sourceRect, drawInfo.colorArmorBody,r, origin, 1f, drawInfo.drawPlayer.gravDir * drawInfo.drawPlayer.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0) {
+						shader = dyeShader
+					});
 			}
 		}
 	}
