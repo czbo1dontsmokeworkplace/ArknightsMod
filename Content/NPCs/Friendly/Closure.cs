@@ -1,6 +1,7 @@
 ﻿using ArknightsMod.Content.Items;
 using ArknightsMod.Content.Items.Consumables.VanityBags;
 using ArknightsMod.Content.Items.DisplayForUI;
+using ArknightsMod.Content.Items.Gacha;
 using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Systems;
 using System;
@@ -503,12 +504,18 @@ namespace ArknightsMod.Content.NPCs.Friendly
 				if (NPCShopSystem.ClosureTodaysRotation.Count == 0)
 					NPCShopSystem.UpdateClosureShop(Mod, true);
 				Array.Fill(items, null);
+
+				items[0] = new Item(ModContent.ItemType<DoctorArchiveBag>()) {
+					shopCustomPrice = 100,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				};
+
 				Item[] todayItems = [.. NPCShopSystem.ClosureTodaysRotation.Select(i => new Item(i) {
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})];
-				for (int i =0; i < items.Length && i < todayItems.Length; i++) {
-					items[i] = todayItems[i]?.Clone();
+				for (int i = 1; i < items.Length && (i - 1) < todayItems.Length; i++) {
+					items[i] = todayItems[i - 1]?.Clone();
 				}
 			}
 		}

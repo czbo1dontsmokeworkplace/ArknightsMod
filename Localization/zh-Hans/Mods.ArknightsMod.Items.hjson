@@ -2911,3 +2911,18 @@ LastRiteVanityBag: {
 	DisplayName: 别礼的服饰
 	Tooltip: 右键点击可打开
 }
+
+DoctorArchiveBag: {
+	DisplayName: 博士的档案袋
+	Tooltip:
+		'''
+		{$CommonItemTooltip.RightClickToOpen}
+		Shift+右键进行十连抽
+		十连必出[c/FFFF00:5星]及以上
+		出率：
+		[c/0000FF:3星] 40%
+		[c/FFFFFF:4星] 40%
+		[c/FFFF00:5星] 16%
+		[c/FF0000:6星] 4%
+		'''
+}

@@ -2592,3 +2592,8 @@ LastRiteVanityBag: {
 	DisplayName: Last Rite Vanity Bag
 	Tooltip: ""
 }
+
+DoctorArchiveBag: {
+	DisplayName: Doctor Archive Bag
+	Tooltip: ""
+}
