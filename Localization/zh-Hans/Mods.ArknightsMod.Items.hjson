@@ -828,7 +828,7 @@ AnniversaryWheel: {
 		'''
 		这个轮盘是准备给懒人刷取材料用的。
 		右击转动轮盘，通过公平的抽奖获取素材。
-		??? “绝对没有暗箱操作”
+		[c/FF66FF:右键获得100个所有种类的基础素材]
 		'''
 }
 
@@ -1048,7 +1048,7 @@ MostimaRingAndWing: {
 }
 
 RosmontisBackpack: {
-	// DisplayName: Rosmontis Backpack
+	DisplayName: 迷迭香的背包
 	// Tooltip: ""
 }
 
@@ -1799,17 +1799,17 @@ ArmorKkdyAlterLegs: {
 }
 
 RhodesStatusScreen: {
-	// DisplayName: Rhodes Status Screen
+	DisplayName: 基建中枢信息屏幕
 	// Tooltip: ""
 }
 
 ChandelierItem: {
-	// DisplayName: Chandelier Item
+	DisplayName: 小吊灯
 	// Tooltip: ""
 }
 
 LampItem: {
-	// DisplayName: Lamp Item
+	DisplayName: 小路灯
 	// Tooltip: ""
 }
 
@@ -1864,42 +1864,42 @@ OriginiumIngot: {
 }
 
 SolidColorLowSofa: {
-	// DisplayName: Solid Color Low Sofa
+	DisplayName: 纯白矮沙发
 	// Tooltip: ""
 }
 
 ClearBlackTV: {
-	// DisplayName: Clear Black T V
+	DisplayName: 清晰黑色电视
 	// Tooltip: ""
 }
 
 GrayFiberRug: {
-	// DisplayName: Gray Fiber Rug
+	DisplayName: 灰色纤维地毯
 	// Tooltip: ""
 }
 
 MatteBlackFloorTile: {
-	// DisplayName: Matte Black Floor Tile
+	DisplayName: 磨砂黑地砖
 	// Tooltip: ""
 }
 
 MinimalBlackClock: {
-	// DisplayName: Minimal Black Clock
+	DisplayName: 黑色简约时钟
 	// Tooltip: ""
 }
 
 PorcelainBed: {
-	// DisplayName: Porcelain Bed
+	DisplayName: 瓷色大床
 	// Tooltip: ""
 }
 
 PorcelainNightstand: {
-	// DisplayName: Porcelain Nightstand
+	DisplayName: 瓷色床头柜
 	// Tooltip: ""
 }
 
 SolidCheckeredBookcase: {
-	// DisplayName: Solid Checkered Bookcase
+	DisplayName: 纯色棋盘式书柜
 	// Tooltip: ""
 }
 
@@ -2527,8 +2527,8 @@ TheTokenGodmother: {
 }
 
 RALegmeat: {
-	DisplayName: Tooltip:
-	// Tooltip: ""
+	DisplayName: 带骨腿肉
+	Tooltip: 紧实的腿肉连带着坚硬的骨头，自带一股草木香味。
 }
 
 CarbonBrick: {
@@ -2537,57 +2537,57 @@ CarbonBrick: {
 }
 
 DeckSupport: {
-	// DisplayName: Deck Support
+	DisplayName: 甲板支架
 	// Tooltip: ""
 }
 
 DeckTrack: {
-	// DisplayName: Deck Track
+	DisplayName: 甲板跑道
 	// Tooltip: ""
 }
 
 OrangeContainer: {
-	// DisplayName: Orange Container
+	DisplayName: 橙色集装箱
 	// Tooltip: ""
 }
 
 OrangeContainerLarge: {
-	// DisplayName: Orange Container Large
+	DisplayName: 大橙色集装箱
 	// Tooltip: ""
 }
 
 YellowRailing: {
-	// DisplayName: Yellow Railing
+	DisplayName: 黄色栏杆
 	// Tooltip: ""
 }
 
 TrainingRoomSofa: {
-	// DisplayName: Training Room Sofa
+	DisplayName: 训练室沙发
 	// Tooltip: ""
 }
 
 WorkshopChair: {
-	// DisplayName: Workshop Chair
+	DisplayName: 加工站椅
 	// Tooltip: ""
 }
 
 WorkshopComputer: {
-	// DisplayName: Workshop Computer
+	DisplayName: 加工站台式电脑
 	// Tooltip: ""
 }
 
 WorkshopTeleportStation: {
-	// DisplayName: Workshop Teleport Station
+	DisplayName: 加工站传送站
 	// Tooltip: ""
 }
 
 SmallServer: {
-	// DisplayName: Small Server
+	DisplayName: 小型服务器
 	// Tooltip: ""
 }
 
 SmallDisplay: {
-	// DisplayName: Small Display
+	DisplayName: 小型显示屏
 	// Tooltip: ""
 }
 
@@ -2672,12 +2672,12 @@ ClothesHanger2: {
 }
 
 WorkshopMachine: {
-	// DisplayName: Workshop Machine
+	DisplayName: 加工站机器
 	// Tooltip: ""
 }
 
 WorkshopToolCabinet: {
-	// DisplayName: Workshop Tool Cabinet
+	DisplayName: 加工站工具柜
 	// Tooltip: ""
 }
 
@@ -2736,18 +2736,18 @@ TheFirstToTalkSummon: {
 }
 
 OblivionisSword: {
-	// DisplayName: Oblivionis Sword
+	DisplayName: 旋律之主双剑
 	// Tooltip: ""
 }
 
 WorkshopWallYellowItem: {
 	// Tooltip: ""
-	// DisplayName: Workshop Wall Yellow Item
+	DisplayName: 加工站黄色墙
 }
 
 WorkshopWallPinkItem: {
 	// Tooltip: ""
-	// DisplayName: Workshop Wall Pink Item
+	DisplayName: 加工站粉色墙
 }
 
 WaterDispenser: {
