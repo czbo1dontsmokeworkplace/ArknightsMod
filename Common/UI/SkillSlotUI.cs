@@ -54,12 +54,27 @@ namespace ArknightsMod.Common.UI
 				var font = FontAssets.MouseText.Value;
 				const float maxWidth = 300f;
 				string tips = skillData.Label.Value + "\n" + skillData.Desc.Value;
-				Point size = ChatManager.GetStringSize(font, tips, Vector2.One, maxWidth).ToPoint();
-				Rectangle area = new(20, 220, size.X + 30, size.Y + 20);
+				string[] lines = tips.Replace("\r", string.Empty).Split('\n');
+				int width = 0;
+				int height = 0;
+				for (int i = 0; i < lines.Length; i++) {
+					string line = lines[i];
+					Point lineSize = ChatManager.GetStringSize(font, string.IsNullOrEmpty(line) ? " " : line, Vector2.One, maxWidth).ToPoint();
+					if (lineSize.X > width)
+						width = lineSize.X;
+					height += lineSize.Y;
+				}
+				Rectangle area = new(20, 220, width + 30, height + 20);
 				sb.Draw(hoverBG, area, Color.White);
-				var snippets = ChatManager.ParseMessage(tips, Color.White).ToArray();
-				ChatManager.DrawColorCodedString(sb, font, snippets,
-					new Vector2(30, 230), Color.White, 0f, Vector2.Zero, Vector2.One, out _, maxWidth);
+				Vector2 drawPos = new(30, 230);
+				for (int i = 0; i < lines.Length; i++) {
+					string line = lines[i];
+					var snippets = ChatManager.ParseMessage(line, Color.White).ToArray();
+					ChatManager.DrawColorCodedString(sb, font, snippets,
+						drawPos, Color.White, 0f, Vector2.Zero, Vector2.One, out _, maxWidth);
+					Point lineSize = ChatManager.GetStringSize(font, string.IsNullOrEmpty(line) ? " " : line, Vector2.One, maxWidth).ToPoint();
+					drawPos.Y += lineSize.Y;
+				}
 			}
 		}
 
