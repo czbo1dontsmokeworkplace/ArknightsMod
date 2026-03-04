@@ -1,17 +1,31 @@
 BagpipeSpear: {
 	1: {
-		// Label: Mods.ArknightsMod.Skills.BagpipeSpear.1.Label
-		// Desc: Mods.ArknightsMod.Skills.BagpipeSpear.1.Desc
+		Label: 迅捷打击·γ型
+		Desc:
+			'''
+			攻击力[c/3791db:+45%]
+			攻击速度[c/3791db:+45]
+			'''
 	}
 
 	2: {
-		// Label: Mods.ArknightsMod.Skills.BagpipeSpear.2.Label
-		// Desc: Mods.ArknightsMod.Skills.BagpipeSpear.2.Desc
+		Label: 高效冲击
+		Desc:
+			'''
+			下一次的攻击力提升至[c/3791db:200%]且额外攻击一次
+			[c/eda128:可充能3次]
+			'''
 	}
 
 	3: {
-		// Label: Mods.ArknightsMod.Skills.BagpipeSpear.3.Label
-		// Desc: Mods.ArknightsMod.Skills.BagpipeSpear.3.Desc
+		Label: 闭膛连发
+		Desc:
+			'''
+			攻击间隔[c/f6643b:增大(+70%)]
+			阻挡数[c/3791db:+1]
+			攻击力和防御力[c/3791db:+120%]
+			攻击变为[c/3791db:三连击]
+			'''
 	}
 }
 
@@ -115,17 +129,37 @@ Shirayuki_Shuriken: {
 
 NianWeapon: {
 	1: {
-		Desc: 防御力+70%，攻击力+45%，普通攻击造成法术伤害\n[c/00FF00:技能期间年将手中大盾砸向敌人，造成100%的法术伤害]
+		Desc:
+			'''
+			防御力[c/3791db:+70%]
+			攻击力[c/3791db:+45%]
+			普通攻击造成[c/3791db:法术]伤害
+			[c/AAA8AA:技能期间年将手中大盾砸向敌人，造成100%的法术伤害]
+			'''
 		Label: 锡灼
 	}
 
 	2: {
 		Label: 铜印
-		Desc: 停止攻击；防御力+130%，阻挡数+1，每次受到攻击时对目标造成相当于年攻击力90%的法术伤害并使其失去特殊能力5秒\n[c/00FF00:实际阻挡反伤沉默不生效，改为每0.5秒对一定范围内敌人造成50%的无来源法术伤害]
+		Desc:
+			'''
+			[c/F67653:停止攻击]
+			防御力[c/3791db:+130%]
+			阻挡数[c/3791db:+1]
+			每次受击时对目标造成攻击力[c/3791db:90%]的法术伤害并使其失去特殊能力[c/3791db:5]秒
+			[c/AAA8AA:实际阻挡反伤沉默不生效，改为每0.5秒对一定范围内敌人造成50%的无来源法术伤害]
+			'''
 	}
 
 	3: {
-		Desc: 攻击力+120%；周围其他友方干员的防御力+80%，阻挡数+1，并获得抵抗\n[c/00FF00:实际抵抗阻挡队友加防不生效，大盾跟随着鼠标进攻造成100%的物理伤害]
+		Desc:
+			'''
+			攻击力[c/3791db:+120%]
+			周围其他友方干员的防御力[c/3791db:+80%]
+			阻挡数[c/3791db:+1]
+			并获得抵抗
+			[c/AAA8AA:实际抵抗阻挡队友加防不生效，大盾跟随着鼠标进攻造成100%的物理伤害]
+			'''
 		Label: 铁御
 	}
 }

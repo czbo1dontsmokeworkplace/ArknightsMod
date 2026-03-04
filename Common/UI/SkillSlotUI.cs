@@ -52,7 +52,7 @@ namespace ArknightsMod.Common.UI
 				if (skillData == null)
 					return;
 				var font = FontAssets.MouseText.Value;
-				const float maxWidth = 300f;
+				const float maxWidth = 800f;
 				string tips = skillData.Label.Value + "\n" + skillData.Desc.Value;
 				string[] lines = tips.Replace("\r", string.Empty).Split('\n');
 				int width = 0;
