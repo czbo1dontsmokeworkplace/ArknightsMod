@@ -3,6 +3,7 @@ using ArknightsMod.Systems.Gameplay.Skill;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
+using System.Linq;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
@@ -51,13 +52,14 @@ namespace ArknightsMod.Common.UI
 				if (skillData == null)
 					return;
 				var font = FontAssets.MouseText.Value;
-				string tips = skillData.Label.Value + "\n" +
-					font.CreateWrappedText(skillData.Desc.Value, 300);
-				Point size = ChatManager.GetStringSize(font, tips, Vector2.One).ToPoint();
+				const float maxWidth = 300f;
+				string tips = skillData.Label.Value + "\n" + skillData.Desc.Value;
+				Point size = ChatManager.GetStringSize(font, tips, Vector2.One, maxWidth).ToPoint();
 				Rectangle area = new(20, 220, size.X + 30, size.Y + 20);
 				sb.Draw(hoverBG, area, Color.White);
-				ChatManager.DrawColorCodedString(sb, font, tips,
-					new Vector2(30, 230), Color.White, 0, Vector2.Zero, Vector2.One);
+				var snippets = ChatManager.ParseMessage(tips, Color.White).ToArray();
+				ChatManager.DrawColorCodedString(sb, font, snippets,
+					new Vector2(30, 230), Color.White, 0f, Vector2.Zero, Vector2.One, out _, maxWidth);
 			}
 		}
 
