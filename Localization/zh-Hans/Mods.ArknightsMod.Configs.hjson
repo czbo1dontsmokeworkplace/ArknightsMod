@@ -2,68 +2,68 @@ MusicConfig: {
 	DisplayName: 音乐配置文件
 
 	EnableArknightsSpaceDaytime: {
-		Label: 启用明日方舟太空白天音乐
-		Tooltip: 使用音乐：特里蒙的天空
+		Label: 播放明日方舟太空白天音乐
+		Tooltip: 播放音乐：特里蒙的天空
 	}
 
 	EnableArknightsSpaceNighttimeLow: {
-		Label: 启用明日方舟太空夜晚音乐
-		Tooltip: 使用音乐：群星见我
+		Label: 播放明日方舟太空夜晚音乐
+		Tooltip: 播放音乐：群星见我
 	}
 
 	EnableArknightsSpaceNighttimeHigh: {
-		Label: 启用明日方舟太空夜晚隐藏音乐
-		Tooltip: 使用音乐：Ad Astra
+		Label: 播放明日方舟太空夜晚隐藏音乐
+		Tooltip: 播放音乐：Ad Astra
 	}
 
 	EnableArknightsForestDaytime: {
-		Label: 启用明日方舟森林白天音乐
-		Tooltip: 使用音乐：生命流
+		Label: 播放明日方舟森林白天音乐
+		Tooltip: 播放音乐：生命流
 	}
 
 	EnableArknightsForestNighttime: {
-		Label: 启用明日方舟森林夜晚音乐
-		Tooltip: 使用音乐：如我所见主界面曲
+		Label: 播放明日方舟森林夜晚音乐
+		Tooltip: 播放音乐：如我所见主界面曲
 	}
 
 	EnableArknightsOceanDaytime: {
-		Label: 启用明日方舟海洋白天音乐
-		Tooltip: 使用音乐：Ready?
+		Label: 播放明日方舟海洋白天音乐
+		Tooltip: 播放音乐：Ready?
 	}
 
 	EnableArknightsOceanNighttime: {
-		Label: 启用明日方舟海洋夜晚音乐
-		Tooltip: 使用音乐：海愿
+		Label: 播放明日方舟海洋夜晚音乐
+		Tooltip: 播放音乐：海愿
 	}
 
 	EnableArknightsHallowedOceanDaytime: {
-		Label: 启用明日方舟神圣海洋白天音乐
-		Tooltip: 使用音乐：生路主界面曲
+		Label: 播放明日方舟神圣海洋白天音乐
+		Tooltip: 播放音乐：生路主界面曲
 	}
 
 	EnableArknightsHallowedOceanNighttime: {
-		Label: 启用明日方舟神圣海洋夜晚音乐
-		Tooltip: 使用音乐：倒置树影
+		Label: 播放明日方舟神圣海洋夜晚音乐
+		Tooltip: 播放音乐：倒置树影
 	}
 
 	EnableArknightsCorruptedOceanDaytime: {
-		Label: 启用明日方舟腐化海洋白天音乐
-		Tooltip: 使用音乐：暗潮
+		Label: 播放明日方舟腐化海洋白天音乐
+		Tooltip: 播放音乐：暗潮
 	}
 
 	EnableArknightsCorruptedOceanNighttime: {
-		Label: 启用明日方舟腐化海洋夜晚音乐
-		Tooltip: 使用音乐：蔓延
+		Label: 播放明日方舟腐化海洋夜晚音乐
+		Tooltip: 播放音乐：蔓延
 	}
 
 	EnableArknightsCrimsonOceanDaytime: {
-		Label: 启用明日方舟猩红海洋白天音乐
-		Tooltip: 使用音乐：共振
+		Label: 播放明日方舟猩红海洋白天音乐
+		Tooltip: 播放音乐：共振
 	}
 
 	EnableArknightsCrimsonOceanNighttime: {
-		Label: 启用明日方舟猩红海洋夜晚音乐
-		Tooltip: 使用音乐：礁石不朽
+		Label: 播放明日方舟猩红海洋夜晚音乐
+		Tooltip: 播放音乐：礁石不朽
 	}
 }
 

@@ -1,30 +1,44 @@
 AcidOgSlugDebuff: {
 	DisplayName: 分泌物腐蚀
-	Description: 击中目标后使其防御力减少2。
+	Description: 击中目标后使其防御力减少2
 }
 
 BagpipeSpearS1: {
-	DisplayName: 迅捷打击·Gamma型
-	Description: 攻击力+45%，攻击速度+45
+	DisplayName: 迅捷打击·γ型
+	Description: 
+	'''
+	攻击力[c/3791db:+45%]
+	攻击速度[c/3791db:+45]
+	'''
 }
 
 BagpipeSpearS2: {
 	DisplayName: 高效冲击
 	Description:
 		'''
-		下一次的攻击力提升至200%，且额外攻击一次
-		可充能3次
+		下一次的攻击力提升至[c/3791db:200%]且额外攻击一次
+		[c/eda128:可充能3次]
 		'''
 }
 
 BagpipeSpearS3: {
 	DisplayName: 闭膛连发
-	Description: 攻击间隔增大，阻挡数+1，攻击力和防御力+120%，攻击变为三连击
+	Description:
+		'''
+		攻击间隔[c/f6643b:增大(+70%)]
+		阻挡数[c/3791db:+1]
+		攻击力和防御力[c/3791db:+120%]
+		攻击变为[c/3791db:三连击]
+		'''
 }
 
 ChenSwordS3: {
 	DisplayName: 赤霄·绝影
-	Description: 向周围寻找最近的敌方目标，对其发动10次连续斩击，每次造成相当于攻击力320%的物理伤害，(并在最后一击时使目标晕眩4秒)
+	Description: 
+	'''
+	对目标发动[c/3791db:10]次连续斩击，每次造成相当于攻击力[c/3791db:320%]的物理伤害
+	(并在最后一击时使目标晕眩4秒)
+	'''
 }
 
 ExusiaiRingAndWingBuff: {
@@ -34,7 +48,7 @@ ExusiaiRingAndWingBuff: {
 
 KroosCrossbowS1: {
 	DisplayName: 二连射·自动
-	Description: 下次攻击时连续射击2次，每次射击造成相当于攻击力140%的物理伤害
+	Description: 下次攻击时连续射击[c/3791db:2]次，每次射击造成相当于攻击力[c/3791db:140%]的物理伤害
 }
 
 MostimaRingAndWingBuff: {
@@ -44,12 +58,20 @@ MostimaRingAndWingBuff: {
 
 RAMeatchipBuff: {
 	DisplayName: 脆肉薯条转醇
-	Description: 攻击力+15%,攻击速度+15%
+	Description: 
+	'''
+	攻击力[c/3791db:+15%]
+	攻击速度[c/3791db:+15%]
+	'''
 }
 
 RARicecrabBuff: {
 	DisplayName: 蟹肉碎拌饭
-	Description: 防御+8%,生命上限+8%
+	Description: 
+	'''
+	防御[c/3791db:+8%]
+	生命上限[c/3791db:+8%]
+	'''
 }
 
 StunDebuff: {
@@ -88,11 +110,15 @@ BagpipeDefenseBuff: {
 }
 
 SeasonedRationsBuff: {
-	Description: 最大生命值+10%
+	Description: 最大生命值[c/3791db:+10%]
 	DisplayName: 调味干粮
 }
 
 DehydratedSeasonedJerkyBuff: {
-	Description: 移动速度+8%，最大生命值+5%
+	Description: 
+	'''
+	移动速度[c/3791db:+8%]
+	最大生命值[c/3791db:+5%]
+	'''
 	DisplayName: 脱水增味肉干
 }
