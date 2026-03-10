@@ -2711,8 +2711,33 @@ YvonneHead: {
 }
 
 YvonneLegs: {
-	DisplayName: 伊冯的腿部
+	DisplayName: 伊冯的下装
 	// Tooltip: ""
+}
+
+EndministratorHead: {
+	DisplayName: 管理员的头部
+	// Tooltip: ""
+}
+
+EndministratorBody: {
+	DisplayName: 管理员的衣物
+	// Tooltip: ""
+}
+
+EndministratorLegs: {
+	DisplayName: 管理员的下装
+	// Tooltip: ""
+}
+
+EndministratorMask: {
+	DisplayName: 管理员的面具
+	// Tooltip: ""
+}
+
+EndministratorVanityBag: {
+	DisplayName: 管理员的时装
+	Tooltip: 右键点击可打开
 }
 
 MlynarBody: {

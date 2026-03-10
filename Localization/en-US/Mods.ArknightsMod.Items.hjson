@@ -2428,6 +2428,31 @@ YvonneLegs: {
 	Tooltip: ""
 }
 
+EndministratorHead: {
+	DisplayName: Endministrator Head
+	Tooltip: ""
+}
+
+EndministratorBody: {
+	DisplayName: Endministrator Body
+	Tooltip: ""
+}
+
+EndministratorLegs: {
+	DisplayName: Endministrator Legs
+	Tooltip: ""
+}
+
+EndministratorMask: {
+	DisplayName: Endministrator Mask
+	Tooltip: ""
+}
+
+EndministratorVanityBag: {
+	DisplayName: Endministrator Vanity Bag
+	Tooltip: ""
+}
+
 MlynarBody: {
 	DisplayName: Mlynar Body
 	Tooltip: ""
