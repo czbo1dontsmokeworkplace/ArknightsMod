@@ -1,4 +1,3 @@
-# 2026/3/10 17:39---鱼忆 截至此时间 将StatusMessage中BOSS文本末的半角句号删去
 DamageClasses.SpellDamage.DisplayName: 法术伤害
 UI.UpgradeUI.Upgrade: 提升等级
 UpgradeWeapon.LevelPreview.Damage: 伤害

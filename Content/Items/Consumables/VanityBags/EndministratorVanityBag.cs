@@ -8,7 +8,7 @@ namespace ArknightsMod.Content.Items.Consumables.VanityBags
 {
 	public class EndministratorVanityBag : ArknightsVanityBag
 	{
-		public override string Texture => "ArknightsMod/Content/Items/Armor/Vanity/Endfield/Guard/Endministrator/Endmin_Female_GIFFullArmor";
+		public override string Texture => "ArknightsMod/Content/Items/Armor/Vanity/Endfield/Guard/Endministrator/Endmin_Female_Item";
 
 		public override void SetStaticDefaults()
 		{

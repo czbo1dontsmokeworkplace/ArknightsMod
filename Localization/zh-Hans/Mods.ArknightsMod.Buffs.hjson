@@ -5,11 +5,11 @@ AcidOgSlugDebuff: {
 
 BagpipeSpearS1: {
 	DisplayName: 迅捷打击·γ型
-	Description: 
-	'''
-	攻击力[c/3791db:+45%]
-	攻击速度[c/3791db:+45]
-	'''
+	Description:
+		'''
+		攻击力[c/3791db:+45%]
+		攻击速度[c/3791db:+45]
+		'''
 }
 
 BagpipeSpearS2: {
@@ -34,11 +34,11 @@ BagpipeSpearS3: {
 
 ChenSwordS3: {
 	DisplayName: 赤霄·绝影
-	Description: 
-	'''
-	对目标发动[c/3791db:10]次连续斩击，每次造成相当于攻击力[c/3791db:320%]的物理伤害
-	(并在最后一击时使目标晕眩4秒)
-	'''
+	Description:
+		'''
+		对目标发动[c/3791db:10]次连续斩击，每次造成相当于攻击力[c/3791db:320%]的物理伤害
+		(并在最后一击时使目标晕眩4秒)
+		'''
 }
 
 ExusiaiRingAndWingBuff: {
@@ -58,20 +58,20 @@ MostimaRingAndWingBuff: {
 
 RAMeatchipBuff: {
 	DisplayName: 脆肉薯条转醇
-	Description: 
-	'''
-	攻击力[c/3791db:+15%]
-	攻击速度[c/3791db:+15%]
-	'''
+	Description:
+		'''
+		攻击力[c/3791db:+15%]
+		攻击速度[c/3791db:+15%]
+		'''
 }
 
 RARicecrabBuff: {
 	DisplayName: 蟹肉碎拌饭
-	Description: 
-	'''
-	防御[c/3791db:+8%]
-	生命上限[c/3791db:+8%]
-	'''
+	Description:
+		'''
+		防御[c/3791db:+8%]
+		生命上限[c/3791db:+8%]
+		'''
 }
 
 StunDebuff: {
@@ -115,10 +115,10 @@ SeasonedRationsBuff: {
 }
 
 DehydratedSeasonedJerkyBuff: {
-	Description: 
-	'''
-	移动速度[c/3791db:+8%]
-	最大生命值[c/3791db:+5%]
-	'''
+	Description:
+		'''
+		移动速度[c/3791db:+8%]
+		最大生命值[c/3791db:+5%]
+		'''
 	DisplayName: 脱水增味肉干
 }
