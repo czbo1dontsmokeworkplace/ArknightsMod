@@ -156,7 +156,7 @@ namespace ArknightsMod.Content.Items.Gacha
 				if (!Mod.TryFind<ModItem>(itemKey, out var modItem))
 					continue;
 
-				player.QuickSpawnItem(source, modItem.Type, 1);
+				GiveToInventoryOrDrop(player, source, modItem.Type, 1);
 			}
 		}
 
@@ -181,8 +181,7 @@ namespace ArknightsMod.Content.Items.Gacha
 				if (!Mod.TryFind<ModItem>(key, out var modItem))
 					continue;
 
-				Item spawned = player.QuickSpawnItemDirect(source, modItem.Type, 1);
-				spawned.rare = GetRarityForStars(set.Stars);
+				GiveToInventoryOrDrop(player, source, modItem.Type, 1, GetRarityForStars(set.Stars));
 				return true;
 			}
 
@@ -198,6 +197,58 @@ namespace ArknightsMod.Content.Items.Gacha
 				4 => ItemRarityID.Orange,
 				_ => ItemRarityID.Green,
 			};
+		}
+
+		private static void GiveToInventoryOrDrop(Player player, IEntitySource source, int itemType, int stack, int? overrideRarity = null)
+		{
+			if (stack <= 0)
+				return;
+
+			Item item = new(itemType, stack);
+			if (overrideRarity.HasValue)
+				item.rare = overrideRarity.Value;
+
+			int remaining = item.stack;
+
+			for (int i = 0; i < player.inventory.Length; i++)
+			{
+				if (remaining <= 0)
+					break;
+
+				Item inv = player.inventory[i];
+				if (inv is null || inv.IsAir)
+					continue;
+				if (inv.type != itemType)
+					continue;
+				if (inv.stack >= inv.maxStack)
+					continue;
+
+				int move = Math.Min(remaining, inv.maxStack - inv.stack);
+				inv.stack += move;
+				remaining -= move;
+			}
+
+			for (int i = 0; i < player.inventory.Length; i++)
+			{
+				if (remaining <= 0)
+					break;
+
+				Item inv = player.inventory[i];
+				if (inv is not null && !inv.IsAir)
+					continue;
+
+				int give = Math.Min(remaining, item.maxStack);
+				Item newItem = new(itemType, give);
+				if (overrideRarity.HasValue)
+					newItem.rare = overrideRarity.Value;
+				player.inventory[i] = newItem;
+				remaining -= give;
+			}
+
+			if (remaining > 0)
+			{
+				Item.NewItem(source, player.getRect(), itemType, remaining);
+			}
 		}
 	}
 }
