@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework.Input;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -147,6 +148,9 @@ namespace ArknightsMod.Content.Items.Gacha
 		{
 			var source = player.GetSource_OpenItem(Type);
 
+			if (TryGiveVanityBag(player, source, set))
+				return;
+
 			foreach (string itemKey in set.ItemKeys)
 			{
 				int itemType;
@@ -161,6 +165,38 @@ namespace ArknightsMod.Content.Items.Gacha
 
 				player.QuickSpawnItem(source, itemType, 1);
 			}
+		}
+
+		private bool TryGiveVanityBag(Player player, IEntitySource source, DoctorArchiveGachaData.VanitySet set)
+		{
+			string[] candidateKeys =
+			[
+				$"{set.SetKey}VanityBag",
+				$"{set.SetKey}Default",
+			];
+
+			foreach (string key in candidateKeys)
+			{
+				if (!Mod.TryFind(key, out ModItem modItem))
+					continue;
+
+				Item spawned = player.QuickSpawnItemDirect(source, modItem.Type, 1);
+				spawned.rare = GetRarityForStars(set.Stars);
+				return true;
+			}
+
+			return false;
+		}
+
+		private static int GetRarityForStars(int stars)
+		{
+			return stars switch
+			{
+				6 => ItemRarityID.Red,
+				5 => ItemRarityID.Pink,
+				4 => ItemRarityID.Orange,
+				_ => ItemRarityID.Green,
+			};
 		}
 	}
 }
