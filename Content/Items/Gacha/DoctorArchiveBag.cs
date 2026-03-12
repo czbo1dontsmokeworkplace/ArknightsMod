@@ -62,7 +62,7 @@ namespace ArknightsMod.Content.Items.Gacha
 			if (shift)
 				return Item.stack >= 10;
 
-			return Item.stack == 1;
+			return true;
 		}
 
 		public override void RightClick(Player player)
@@ -73,15 +73,22 @@ namespace ArknightsMod.Content.Items.Gacha
 			bool shift = IsShiftDown();
 			int pulls = shift ? 10 : 1;
 
-			if (pulls == 10 && Item.stack < 10)
+			// Note: For CanRightClick() items, tModLoader will automatically consume 1 item
+			// from the stack before calling RightClick(). So at this point, Item.stack is
+			// already (originalStack - 1).
+			int originalStack = Item.stack + 1;
+			if (originalStack < pulls)
 				return;
 
-			if (Item.stack < pulls)
-				return;
-
-			Item.stack -= pulls;
-			if (Item.stack <= 0)
-				Item.TurnToAir();
+			int extraToConsume = pulls - 1;
+			if (extraToConsume > 0)
+			{
+				if (Item.stack < extraToConsume)
+					return;
+				Item.stack -= extraToConsume;
+				if (Item.stack <= 0)
+					Item.TurnToAir();
+			}
 
 			DoPulls(player, pulls);
 		}
