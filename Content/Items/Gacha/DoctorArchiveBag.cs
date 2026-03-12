@@ -153,31 +153,32 @@ namespace ArknightsMod.Content.Items.Gacha
 
 			foreach (string itemKey in set.ItemKeys)
 			{
-				int itemType;
-				try
-				{
-					itemType = Mod.Find<ModItem>(itemKey).Type;
-				}
-				catch
-				{
+				if (!Mod.TryFind<ModItem>(itemKey, out var modItem))
 					continue;
-				}
 
-				player.QuickSpawnItem(source, itemType, 1);
+				player.QuickSpawnItem(source, modItem.Type, 1);
 			}
 		}
 
 		private bool TryGiveVanityBag(Player player, IEntitySource source, DoctorArchiveGachaData.VanitySet set)
 		{
-			string[] candidateKeys =
-			[
-				$"{set.SetKey}VanityBag",
-				$"{set.SetKey}Default",
-			];
+			string[] candidateKeys = set.SetKey == "Wisadel"
+				?
+				[
+					$"{set.SetKey}VanityBag",
+					$"{set.SetKey}Default",
+					"WisdelVanityBag",
+					"WisdelDefault",
+				]
+				:
+				[
+					$"{set.SetKey}VanityBag",
+					$"{set.SetKey}Default",
+				];
 
 			foreach (string key in candidateKeys)
 			{
-				if (!Mod.TryFind(key, out ModItem modItem))
+				if (!Mod.TryFind<ModItem>(key, out var modItem))
 					continue;
 
 				Item spawned = player.QuickSpawnItemDirect(source, modItem.Type, 1);

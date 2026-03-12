@@ -2622,3 +2622,18 @@ DoctorArchiveBag: {
 	DisplayName: Doctor Archive Bag
 	Tooltip: ""
 }
+
+YvonneVanityBag: {
+	DisplayName: Yvonne Vanity Bag
+	Tooltip: ""
+}
+
+TexasVanityBag: {
+	Tooltip: ""
+	DisplayName: Texas Vanity Bag
+}
+
+MlynarVanityBag: {
+	Tooltip: ""
+	DisplayName: Mlynar Vanity Bag
+}
