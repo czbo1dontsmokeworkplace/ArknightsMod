@@ -2966,3 +2966,18 @@ MlynarVanityBag: {
 	Tooltip: 右键点击可打开
 	DisplayName: 玛恩纳的服饰
 }
+
+ExusiaiAlterBody: {
+	// DisplayName: Exusiai Alter Body
+	// Tooltip: ""
+}
+
+ExusiaiAlterHead: {
+	// DisplayName: Exusiai Alter Head
+	// Tooltip: ""
+}
+
+ExusiaiAlterLegs: {
+	// DisplayName: Exusiai Alter Legs
+	// Tooltip: ""
+}
