@@ -2637,3 +2637,8 @@ MlynarVanityBag: {
 	Tooltip: ""
 	DisplayName: Mlynar Vanity Bag
 }
+
+EnterRhodesIsland: {
+	Tooltip: ""
+	DisplayName: Enter Rhodes Island
+}

@@ -1,0 +1,10 @@
+RhodesIsland: {
+	Name: Rhodes Island
+
+	GenProgress: {
+		1: Starting
+		2: Clearing ground
+		3: Waiting for Rhodes Island to arrive
+		4: Ending
+	}
+}

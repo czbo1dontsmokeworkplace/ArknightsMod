@@ -6,3 +6,5 @@ hideCode = true
 hideResources = true
 buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*, .git\*
 unsafe = true
+modReferences = SubworldLibrary
+dllReferences = StructureHelper

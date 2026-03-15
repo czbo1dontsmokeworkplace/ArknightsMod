@@ -2966,3 +2966,8 @@ MlynarVanityBag: {
 	Tooltip: 右键点击可打开
 	DisplayName: 玛恩纳的服饰
 }
+
+EnterRhodesIsland: {
+	// Tooltip: ""
+	// DisplayName: Enter Rhodes Island
+}
