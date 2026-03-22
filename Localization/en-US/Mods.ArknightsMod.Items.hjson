@@ -2652,3 +2652,8 @@ ExusiaiAlterLegs: {
 	DisplayName: Exusiai Alter Legs
 	Tooltip: ""
 }
+
+Haze_Magicbook: {
+	DisplayName: Haze_ Magicbook
+	Tooltip: ""
+}
