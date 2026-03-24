@@ -2991,3 +2991,13 @@ ExusiaiAlterDefault: {
 	DisplayName: 新约能天使的服饰（常规）
 	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 }
+
+电梯: {
+	// DisplayName: 电梯
+	// Tooltip: ""
+}
+
+电梯交互按钮: {
+	// DisplayName: 电梯交互按钮
+	// Tooltip: ""
+}

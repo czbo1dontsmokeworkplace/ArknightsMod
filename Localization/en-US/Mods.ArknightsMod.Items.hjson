@@ -2662,3 +2662,13 @@ ExusiaiAlterDefault: {
 	DisplayName: Exusiai The New Covenant's costume (default)
 	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 }
+
+电梯: {
+	DisplayName: 电梯
+	Tooltip: ""
+}
+
+电梯交互按钮: {
+	DisplayName: 电梯交互按钮
+	Tooltip: ""
+}
