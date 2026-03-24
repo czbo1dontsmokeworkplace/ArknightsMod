@@ -2639,21 +2639,26 @@ MlynarVanityBag: {
 }
 
 ExusiaiAlterBody: {
-	DisplayName: Exusiai Alter Body
+	DisplayName: Exusiai The New Covenant's outfit (Body)
 	Tooltip: ""
 }
 
 ExusiaiAlterHead: {
-	DisplayName: Exusiai Alter Head
+	DisplayName: Exusiai The New Covenant's outfit (Head)
 	Tooltip: ""
 }
 
 ExusiaiAlterLegs: {
-	DisplayName: Exusiai Alter Legs
+	DisplayName: Exusiai The New Covenant's outfit (Legs)
 	Tooltip: ""
 }
 
 Haze_Magicbook: {
 	DisplayName: Haze_ Magicbook
 	Tooltip: ""
+}
+
+ExusiaiAlterDefault: {
+	DisplayName: Exusiai The New Covenant's costume (default)
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 }

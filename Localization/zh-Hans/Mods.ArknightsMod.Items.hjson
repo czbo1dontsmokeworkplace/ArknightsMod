@@ -2968,21 +2968,26 @@ MlynarVanityBag: {
 }
 
 ExusiaiAlterBody: {
-	// DisplayName: Exusiai Alter Body
+	DisplayName: 新约能天使的上衣
 	// Tooltip: ""
 }
 
 ExusiaiAlterHead: {
-	// DisplayName: Exusiai Alter Head
+	DisplayName: 新约能天使的头套
 	// Tooltip: ""
 }
 
 ExusiaiAlterLegs: {
-	// DisplayName: Exusiai Alter Legs
+	DisplayName: 新约能天使的下装
 	// Tooltip: ""
 }
 
 Haze_Magicbook: {
-	// DisplayName: Haze_ Magicbook
+	DisplayName: 夜烟的魔法书
 	// Tooltip: ""
+}
+
+ExusiaiAlterDefault: {
+	DisplayName: 新约能天使的服饰（常规）
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 }
