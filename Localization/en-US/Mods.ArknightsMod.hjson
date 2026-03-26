@@ -38,6 +38,12 @@ WorldGen: {
 	RMA7012PassMessage: "{$Mods.ArknightsMod.Items.RMA7012.DisplayName}"
 }
 
+ProtocolSpace: {
+	Name: Protocol Space
+	ExitConfirm: Press again to confirm exiting protocol space.
+	ExitLocked: You can't leave yet. Finish the objective first.
+}
+
 Tiles: {
 	BannerTile.MapEntry: Banner
 	AnniversaryWheel.MapEntry: "{$Mods.ArknightsMod.Items.AnniversaryWheel.DisplayName}"
@@ -71,4 +77,6 @@ Tiles: {
 	OfficeChairTile.MapEntry: Office Chair Tile
 	FileRackTile.MapEntry: File Rack Tile
 	ComputerDeskTile.MapEntry: Computer Desk Tile
+	ProtocolSpacePortalTile.MapEntry: Protocol Space Portal
+	ProtocolSpaceExitPortalTile.MapEntry: Protocol Space Exit Portal
 }

@@ -72,6 +72,17 @@ PozemkaCrossbow: {
 	Tooltip: "'只要在地上生活，就一定会有拿起武器的那一天，我知道'"
 }
 
+# Instanced Space
+InstancedSchematicWrench: {
+	DisplayName: 蓝图扳手
+	Tooltip: 左键选择起点，右键导出区域蓝图。
+}
+
+ProtocolSpacePortal: {
+	DisplayName: 危境再现传送门
+	Tooltip: 进入测试协议空间挑战。
+}
+
 # Accessories
 ExusiaiWings: {
 	DisplayName: 能天使的翅膀

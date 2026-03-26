@@ -72,6 +72,17 @@ PozemkaCrossbow: {
 	Tooltip: "'To live on the surface inevitably means to raise a weapon at some point. So I'm well aware.'"
 }
 
+# Instanced Space
+InstancedSchematicWrench: {
+	DisplayName: Schematic Wrench
+	Tooltip: Left-click set first point, right-click export schematic area.
+}
+
+ProtocolSpacePortal: {
+	DisplayName: Protocol Space Portal
+	Tooltip: Enter the protocol space challenge.
+}
+
 # Accessories
 ExusiaiWings: {
 	DisplayName: Exusiai's wings

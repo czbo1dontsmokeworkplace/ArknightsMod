@@ -142,6 +142,13 @@ namespace ArknightsMod
 					if (Main.netMode == NetmodeID.Server)
 						WaterDispenserTile.TryGiveCoffee(Main.player[whoAmI]);
 					break;
+				case ArkMessageID.ProtocolSpaceRequestStart:
+				case ArkMessageID.ProtocolSpaceRequestExitInteract:
+				case ArkMessageID.ProtocolSpaceRequestExitCountdown:
+				case ArkMessageID.ProtocolSpaceSyncState:
+				case ArkMessageID.ProtocolSpaceExitCountdown:
+					global::ArknightsMod.Systems.InstancedSpace.ProtocolSpaceEventSystem.ReceivePacket(reader, whoAmI, (ArkMessageID)id);
+					break;
 			}
 		}
 
@@ -152,6 +159,11 @@ namespace ArknightsMod
 			RequestUpdateCannotShop,
 			SpawnReinforcements,
 			CoffeeMachineRequest,
+			ProtocolSpaceRequestStart,
+			ProtocolSpaceRequestExitInteract,
+			ProtocolSpaceRequestExitCountdown,
+			ProtocolSpaceSyncState,
+			ProtocolSpaceExitCountdown,
 		}
 	}
 	//public class Ex : GlobalNPC
