@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Common.VisualEffects;
+using ArknightsMod.Common.VisualEffects;
 using ArknightsMod.Content.BossBars;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -40,6 +40,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
         private const int FrameSpeed = 5;
         private int _frameResetFlag;
 		private float escapetimer;
+		private int _slugEggCooldown = 120; // 庞贝喷出炽焰源石虫卵的冷却计时
 		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
 			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
 				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Surface,
@@ -69,6 +70,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
             NPC.aiStyle = -1;
 			NPC.BossBar = ModContent.GetInstance<NoBossBar>();
 			Music = MusicLoader.GetMusicSlot(Mod, "Sounds/Music/PmpBoss");
+		}
+
+		public override void OnSpawn(IEntitySource source)
+		{
+			_slugEggCooldown = Main.rand.Next(60, 121);
+			SelectNextAttackState();
 		}
 
 		//NPC专家模式|大师模式血量倍率（普通模式血量*倍率*2|血量*倍率*3）
@@ -184,6 +191,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 			}
 			#endregion
 
+			if (_slugEggCooldown > 0) _slugEggCooldown--;
 			ExecuteStateMachine(player);
             UpdateAnimation();
 
@@ -279,30 +287,67 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 
 		private void Mode1Crawl(Player player)
         {
-			float timecount = Main.masterMode ? 3 : Main.expertMode ? 4.5f : 6; //爬行时间
-			float ax = 0.1f;
-			float vx = Main.masterMode ? 3.4f : Main.expertMode ? 3.0f : 2.6f; //最大速度
-			int direction = (Main.player[NPC.target].Center.X > NPC.Center.X).ToDirectionInt();
+			float timecount = Main.masterMode ? 3f : Main.expertMode ? 4f : 5f;
+			float ax = 0.06f;
+			float vx = Main.masterMode ? 2.0f : Main.expertMode ? 1.8f : 1.5f;
+			int direction = (player.Center.X > NPC.Center.X).ToDirectionInt();
 			NPC.direction = direction;
-			Vector2 velDiff = NPC.velocity - player.velocity;
-			int haltDirectionX = velDiff.X > 0 ? 1 : -1;
-			float haltPointX = NPC.Center.X + haltDirectionX * (velDiff.X * velDiff.X) / (2 * ax);
 
-			if (player.Center.X > haltPointX) {
-				NPC.velocity.X += ax;
+			float dx = player.Center.X - NPC.Center.X;
+			if (Math.Abs(dx) > 72f)
+			{
+				NPC.velocity.X += direction * ax;
 			}
-			else {
-				NPC.velocity.X -= ax;
+			else
+			{
+				NPC.velocity.X *= 0.92f;
 			}
-			NPC.velocity.X = Math.Min(vx, Math.Max(-vx, NPC.velocity.X));
+			NPC.velocity.X = Math.Clamp(NPC.velocity.X, -vx, vx);
+
+			ShootSlugEggs();
 
 			if (++_modeTimer >= 60 * timecount)
             {
-                _currentState = AIState.Mode2ShootFireballs;
-                _modeTimer = 0;
-                _frameResetFlag = 2; 
+				SelectNextAttackState(AIState.Mode1Crawl);
             }
         }
+
+		private void ShootSlugEggs()
+		{
+			if (Main.netMode == NetmodeID.MultiplayerClient) return;
+			if (_slugEggCooldown > 0) return;
+
+			// 蓄力阶段：停下来等待40帧后发射
+			const int chargeTime = 20;
+			// 用 _slugEggCooldown 的负数区间表示蓄力计时（-chargeTime ~ 0）
+			// 进入蓄力：_slugEggCooldown == 0 时设为 -chargeTime
+			if (_slugEggCooldown == 0)
+			{
+				_slugEggCooldown = -chargeTime;
+				return;
+			}
+
+			// 蓄力中：强制停止移动
+			if (_slugEggCooldown < 0)
+			{
+				NPC.velocity.X *= 0.85f;
+				_slugEggCooldown++;
+				if (_slugEggCooldown < 0) return; // 还在蓄力中
+				// 蓄力结束，发射
+			}
+
+			// 发射两枚虫卵
+			Vector2 spawnPos1 = NPC.Center + new Vector2(55f * NPC.direction, -35f);
+			Vector2 vel1 = new Vector2(MathF.Cos(MathHelper.ToRadians(105f)) * -NPC.direction * 2.5f, -MathF.Sin(MathHelper.ToRadians(105f)) * 7f);
+			Projectile.NewProjectile(NPC.GetSource_FromAI(), spawnPos1, vel1, ModContent.ProjectileType<PmpSlugEgg>(), 0, 0f, Main.myPlayer);
+
+			Vector2 spawnPos2 = NPC.Center + new Vector2(-25f * NPC.direction, -70f);
+			Vector2 vel2 = new Vector2(MathF.Cos(MathHelper.ToRadians(51f)) * -NPC.direction * 2.5f, -MathF.Sin(MathHelper.ToRadians(51f)) * 7f);
+			Projectile.NewProjectile(NPC.GetSource_FromAI(), spawnPos2, vel2, ModContent.ProjectileType<PmpSlugEgg>(), 0, 0f, Main.myPlayer);
+
+			// 重置随机CD
+			_slugEggCooldown = Main.rand.Next(120, 241);
+		}
 
         private void Mode2ShootFireballs(Player player)
         {
@@ -334,9 +379,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 
             if (++_modeTimer >= modetimermax)
             {
-                _currentState = AIState.Mode3Idle;
-                _modeTimer = 0;
-                _frameResetFlag = 2;
+				SelectNextAttackState(AIState.Mode2ShootFireballs);
             }
         }
 
@@ -392,9 +435,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 
             if (_fireRainCounter >= 3 && _modeTimer > 180)
             {
-                _currentState = AIState.Mode5Idle;
-                _modeTimer = 0;
-                _frameResetFlag = 2;
+				SelectNextAttackState(AIState.Mode4RainFire);
             }
             else _modeTimer++;
         }
@@ -422,6 +463,38 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
             }
         }
 
+		private void SelectNextAttackState(AIState? previousState = null)
+		{
+			int roll = Main.rand.Next(10);
+			AIState nextState = roll switch
+			{
+				<= 4 => AIState.Mode1Crawl,
+				<= 7 => AIState.Mode2ShootFireballs,
+				_ => AIState.Mode3Idle,
+			};
+
+			if (previousState.HasValue && nextState == previousState.Value)
+			{
+				nextState = nextState switch
+				{
+					AIState.Mode1Crawl => Main.rand.NextBool() ? AIState.Mode2ShootFireballs : AIState.Mode3Idle,
+					AIState.Mode2ShootFireballs => Main.rand.NextBool(3) ? AIState.Mode1Crawl : AIState.Mode3Idle,
+					AIState.Mode3Idle => Main.rand.NextBool(3) ? AIState.Mode1Crawl : AIState.Mode2ShootFireballs,
+					_ => AIState.Mode1Crawl,
+				};
+			}
+
+			_currentState = nextState;
+			_modeTimer = 0;
+			_fireRainCounter = 0;
+			_frameResetFlag = 2;
+
+			if (_currentState == AIState.Mode1Crawl && _slugEggCooldown <= 0)
+			{
+				_slugEggCooldown = Main.rand.Next(45, 91);
+			}
+		}
+
         private void InitTailKill()
         {
             _hasEnteredTailKill = true;
@@ -432,6 +505,21 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
             NPC.dontTakeDamage = true;
             NPC.velocity = Vector2.Zero;
             _frameResetFlag = 2;
+
+			// 死亡尾杀时清除场上所有庞贝火焰弹幕，避免死后继续发射
+			if (Main.netMode != NetmodeID.MultiplayerClient)
+			{
+				for (int i = 0; i < Main.maxProjectiles; i++)
+				{
+					Projectile p = Main.projectile[i];
+					if (p.active && p.hostile && (
+						p.type == ModContent.ProjectileType<PmpFireBall>() ||
+						p.type == ModContent.ProjectileType<PmpSlugEgg>()))
+					{
+						p.Kill();
+					}
+				}
+			}
         }
 
         private void HandleTailKillRise()
