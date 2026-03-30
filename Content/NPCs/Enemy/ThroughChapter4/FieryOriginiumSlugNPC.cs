@@ -90,7 +90,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		public override void AI()
 		{
 			if (_nextAttackCooldown <= 0)
-				_nextAttackCooldown = Main.rand.Next(45, 181);
+				_nextAttackCooldown = Main.rand.Next(20, 61);
 
 			if (NPC.target < 0 || NPC.target == 255 || Main.player[NPC.target].dead || !Main.player[NPC.target].active)
 				NPC.TargetClosest();
@@ -158,7 +158,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			{
 				NPC.ai[3] = 0;
 				_state = ActionState.Walk;
-				_nextAttackCooldown = Main.rand.Next(45, 181);
+				_nextAttackCooldown = Main.rand.Next(20, 61);
 				NPC.netUpdate = true;
 			}
 		}

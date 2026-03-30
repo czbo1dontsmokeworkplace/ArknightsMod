@@ -23,6 +23,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
             Mode3Idle,
             Mode4RainFire,
             Mode5Idle,
+            ModeJumpToPlayer,
             TailKillRise,
             TailKillSpin,
             TailKillDeath
@@ -41,6 +42,11 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
         private int _frameResetFlag;
 		private float escapetimer;
 		private int _slugEggCooldown = 120; // 庞贝喷出炽焰源石虫卵的冷却计时
+		private int _heightMismatchTimer;
+		private bool _isTeleportJumping;
+		private int  _jumpTimer;
+		private int  _stg2BurstCount;
+		private int  _stg2BurstTimer;
 		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
 			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
 				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Surface,
@@ -192,6 +198,23 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 			#endregion
 
 			if (_slugEggCooldown > 0) _slugEggCooldown--;
+
+			// 高度差检测：与玩家不在同一层超过8秒则触发穿墙跳跃
+			if (!_hasEnteredTailKill && _currentState != AIState.ModeJumpToPlayer)
+			{
+				if (Math.Abs(player.Center.Y - NPC.Center.Y) > 180f)
+					_heightMismatchTimer++;
+				else
+					_heightMismatchTimer = Math.Max(0, _heightMismatchTimer - 2);
+				if (_heightMismatchTimer >= 480)
+				{
+					_heightMismatchTimer = 0;
+					_currentState = AIState.ModeJumpToPlayer;
+					_modeTimer = 0;
+					_frameResetFlag = 2;
+				}
+			}
+
 			ExecuteStateMachine(player);
             UpdateAnimation();
 
@@ -201,6 +224,31 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 				Projectile.NewProjectile(null, NPC.Center, Vector2.Zero, ProjectileType<PMPSTG2Effect>(), 0, 0f, -1, 1800, -0.5f);
 				Projectile.NewProjectile(null, NPC.Center, Vector2.Zero, ProjectileType<PMPSTG2Effect>(), 0, 0f, -1, 1800, -1);
 				ispmpstg2 = true;
+				_stg2BurstCount = 5; // 立即触发5连快速喷卵
+				_stg2BurstTimer = 0;
+			}
+
+			// 5连快速喷卵（每12帧一次）
+			if (_stg2BurstCount > 0)
+			{
+				_stg2BurstTimer++;
+				if (_stg2BurstTimer % 12 == 0)
+				{
+					if (Main.netMode != NetmodeID.MultiplayerClient)
+					{
+						Player burstTarget = Main.player[NPC.target];
+						float dyB = burstTarget.Center.Y - NPC.Center.Y;
+						float hScaleB = Math.Clamp(1f - dyB / 600f, 0.5f, 2.0f);
+						float vScaleB = dyB < 0f ? Math.Clamp(1f + (-dyB) / 400f, 1f, 2.2f) : 0.8f;
+						Vector2 bp1 = NPC.Center + new Vector2(55f * NPC.direction, -35f);
+						Vector2 bv1 = new Vector2(MathF.Cos(MathHelper.ToRadians(105f)) * -NPC.direction * 2.5f * hScaleB, -MathF.Sin(MathHelper.ToRadians(105f)) * 7f * vScaleB);
+						Projectile.NewProjectile(NPC.GetSource_FromAI(), bp1, bv1, ModContent.ProjectileType<PmpSlugEgg>(), 0, 0f, Main.myPlayer);
+						Vector2 bp2 = NPC.Center + new Vector2(-25f * NPC.direction, -70f);
+						Vector2 bv2 = new Vector2(MathF.Cos(MathHelper.ToRadians(51f)) * -NPC.direction * 2.5f * hScaleB, -MathF.Sin(MathHelper.ToRadians(51f)) * 7f * vScaleB);
+						Projectile.NewProjectile(NPC.GetSource_FromAI(), bp2, bv2, ModContent.ProjectileType<PmpSlugEgg>(), 0, 0f, Main.myPlayer);
+					}
+					_stg2BurstCount--;
+				}
 			}
 
 		}
@@ -214,6 +262,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
                 case AIState.Mode3Idle: Mode3Idle(); break;
                 case AIState.Mode4RainFire: Mode4RainFire(player); break;
                 case AIState.Mode5Idle: Mode5Idle(); break;
+                case AIState.ModeJumpToPlayer: ModeJumpToPlayer(player); break;
                 case AIState.TailKillRise: HandleTailKillRise(); break;
                 case AIState.TailKillSpin: HandleTailKillSpin(player); break;
                 case AIState.TailKillDeath: HandleTailKillDeath(); break;
@@ -256,6 +305,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
                 AIState.Mode3Idle => 19,
                 AIState.Mode4RainFire => 8,
                 AIState.Mode5Idle => 19,
+                AIState.ModeJumpToPlayer => 1,
                 AIState.TailKillRise => 1,
                 AIState.TailKillSpin => 1,
                 AIState.TailKillDeath => 11,
@@ -272,6 +322,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
                 AIState.Mode3Idle => 25,
                 AIState.Mode4RainFire => 11,
                 AIState.Mode5Idle => 25,
+                AIState.ModeJumpToPlayer => 10,
                 AIState.TailKillRise => 10,
                 AIState.TailKillSpin => 11,
                 AIState.TailKillDeath => 17,
@@ -336,13 +387,18 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 				// 蓄力结束，发射
 			}
 
-			// 发射两枚虫卵
+			// 根据与玩家高度差动态调整虫卵落点
+			Player eggTarget = Main.player[NPC.target];
+			float dyToPlayer = eggTarget.Center.Y - NPC.Center.Y;
+			float hScale = Math.Clamp(1f - dyToPlayer / 600f, 0.5f, 2.0f);
+			float vScale = dyToPlayer < 0f ? Math.Clamp(1f + (-dyToPlayer) / 400f, 1f, 2.2f) : 0.8f;
+
 			Vector2 spawnPos1 = NPC.Center + new Vector2(55f * NPC.direction, -35f);
-			Vector2 vel1 = new Vector2(MathF.Cos(MathHelper.ToRadians(105f)) * -NPC.direction * 2.5f, -MathF.Sin(MathHelper.ToRadians(105f)) * 7f);
+			Vector2 vel1 = new Vector2(MathF.Cos(MathHelper.ToRadians(105f)) * -NPC.direction * 2.5f * hScale, -MathF.Sin(MathHelper.ToRadians(105f)) * 7f * vScale);
 			Projectile.NewProjectile(NPC.GetSource_FromAI(), spawnPos1, vel1, ModContent.ProjectileType<PmpSlugEgg>(), 0, 0f, Main.myPlayer);
 
 			Vector2 spawnPos2 = NPC.Center + new Vector2(-25f * NPC.direction, -70f);
-			Vector2 vel2 = new Vector2(MathF.Cos(MathHelper.ToRadians(51f)) * -NPC.direction * 2.5f, -MathF.Sin(MathHelper.ToRadians(51f)) * 7f);
+			Vector2 vel2 = new Vector2(MathF.Cos(MathHelper.ToRadians(51f)) * -NPC.direction * 2.5f * hScale, -MathF.Sin(MathHelper.ToRadians(51f)) * 7f * vScale);
 			Projectile.NewProjectile(NPC.GetSource_FromAI(), spawnPos2, vel2, ModContent.ProjectileType<PmpSlugEgg>(), 0, 0f, Main.myPlayer);
 
 			// 重置随机CD
@@ -457,21 +513,113 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 
 			if (++_modeTimer >= 60 * timecount)
             {
-                _currentState = AIState.Mode1Crawl;
-                _modeTimer = 0;
-                _frameResetFlag = 2;
+				SelectNextAttackState(AIState.Mode5Idle);
             }
         }
 
+
+		private void ModeJumpToPlayer(Player player)
+		{
+			_modeTimer++;
+
+			// t==10: 先释放 PmpExplode 范围技
+			if (_modeTimer == 10)
+			{
+				for (int i = 0; i < 80; i++) {
+					Dust dust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.Torch);
+					dust.velocity = Main.rand.NextVector2Circular(18f, 18f);
+					dust.scale = 2.2f;
+					dust.noGravity = true;
+				}
+				SoundEngine.PlaySound(SoundID.Item14, NPC.Center);
+				if (Main.netMode != NetmodeID.MultiplayerClient)
+					Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero,
+						ModContent.ProjectileType<PmpExplode>(), 50, 0, Main.myPlayer, 0);
+			}
+
+			// t==40: 开始穿墙跳向玩家层
+			if (_modeTimer == 40)
+			{
+				NPC.noTileCollide = true;
+				_isTeleportJumping = true;
+				_jumpTimer = 0;
+			}
+
+			if (_isTeleportJumping)
+			{
+				_jumpTimer++;
+				// 目标位置：玩家正下方，留出 NPC 身高 + 16px 间距
+				float targetY = player.Bottom.Y - NPC.height - 16f;
+				float dx = player.Center.X - NPC.Center.X;
+				float dy = targetY - NPC.Center.Y;
+				// 平滑插值向目标移动
+								// 平滑插值向目标移动
+				NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, dx * 0.08f, 0.15f);
+				NPC.velocity.Y = MathHelper.Lerp(NPC.velocity.Y, dy * 0.08f, 0.15f);
+
+				// 穿墙路径产生火焰粒子效果（视觉）
+				for (int i = 0; i < 4; i++) {
+					Dust fd = Dust.NewDustDirect(NPC.position + Main.rand.NextVector2Circular(NPC.width/2f, NPC.height/2f),
+						8, 8, DustID.FlameBurst);
+					fd.velocity = Main.rand.NextVector2Circular(3f, 3f);
+					fd.scale = Main.rand.NextFloat(1.2f, 2.0f);
+					fd.noGravity = true;
+				}
+				for (int i = 0; i < 2; i++) {
+					Dust td = Dust.NewDustDirect(NPC.position + Main.rand.NextVector2Circular(NPC.width/2f, NPC.height/2f),
+						8, 8, DustID.Torch);
+					td.velocity = NPC.velocity * 0.5f + Main.rand.NextVector2Circular(1.5f, 1.5f);
+					td.scale = 1.5f;
+					td.noGravity = true;
+				}
+				// 每5帧在路径上生成一个造成灼伤的敌对弹幕
+				if (_jumpTimer % 5 == 0 && Main.netMode != NetmodeID.MultiplayerClient) {
+					Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center,
+						Vector2.Zero, ModContent.ProjectileType<PmpTrailFlame>(),
+						15, 0f, Main.myPlayer);
+				}
+
+				// 到达目标层或超时则结束跳跃
+				if ((Math.Abs(dy) < 24f && Math.Abs(dx) < 200f) || _jumpTimer >= 90)
+				{
+					NPC.velocity = Vector2.Zero;
+					NPC.noTileCollide = false;
+					_isTeleportJumping = false;
+					_heightMismatchTimer = 0;
+					SelectNextAttackState();
+				}
+			}
+		}
 		private void SelectNextAttackState(AIState? previousState = null)
 		{
+			bool lowHp = (float)NPC.life / NPC.lifeMax <= 0.5f;
+			Player selTarget = Main.player[NPC.target];
+			bool sameLevel = Math.Abs(selTarget.Center.Y - NPC.Center.Y) < 180f;
 			int roll = Main.rand.Next(10);
-			AIState nextState = roll switch
+			// 同层时：优先爬行追近+攻击，权重根据血量调整
+			// 不同层时：降低爬行权重，更多释放远程技能等待穿墙
+			AIState nextState;
+			if (sameLevel)
 			{
-				<= 4 => AIState.Mode1Crawl,
-				<= 7 => AIState.Mode2ShootFireballs,
-				_ => AIState.Mode3Idle,
-			};
+				nextState = (lowHp ? roll switch {
+					<= 8 => AIState.Mode1Crawl,
+					<= 9 => AIState.Mode2ShootFireballs,
+					_ => AIState.Mode3Idle,
+				} : roll switch {
+					<= 6 => AIState.Mode1Crawl,
+					<= 8 => AIState.Mode2ShootFireballs,
+					_ => AIState.Mode3Idle,
+				});
+			}
+			else
+			{
+				// 不同层：减少爬行，多放技能（天女散花能打不同层的玩家）
+				nextState = roll switch {
+					<= 2 => AIState.Mode1Crawl,
+					<= 6 => AIState.Mode2ShootFireballs,
+					_ => AIState.Mode3Idle,
+				};
+			}
 
 			if (previousState.HasValue && nextState == previousState.Value)
 			{
