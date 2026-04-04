@@ -3012,3 +3012,8 @@ ExusiaiAlterDefault: {
 	// DisplayName: 电梯交互按钮
 	// Tooltip: ""
 }
+
+FireworksHand: {
+	// DisplayName: Fireworks Hand
+	// Tooltip: ""
+}
