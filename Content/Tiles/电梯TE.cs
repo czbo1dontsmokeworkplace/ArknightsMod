@@ -1339,12 +1339,16 @@ namespace ArknightsMod.Content.Tiles
 					if (!t.HasTile || t.TileType != buttonType)
 						continue;
 
-					// 1x2 按钮：以底部格的 y 作为该层候选 y。
-					int bottomY = y;
-					if (t.TileFrameY % 36 == 0 && y + 1 <= maxY)
-						bottomY = y + 1;
+					if (!TileObjectData.IsTopLeft(x, y))
+						continue;
 
-					AddUniqueFloor(outFloors, bottomY);
+					TileObjectData data = TileObjectData.GetTileData(t);
+					if (data == null)
+						continue;
+
+					int bottomY = y + data.Height - 1;
+					if (bottomY <= maxY)
+						AddUniqueFloor(outFloors, bottomY);
 				}
 			}
 		}

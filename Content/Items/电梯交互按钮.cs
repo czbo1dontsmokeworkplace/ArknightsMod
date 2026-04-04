@@ -6,12 +6,12 @@ namespace ArknightsMod.Content.Items
 {
 	public class 电梯交互按钮 : ModItem
 	{
-		public override string Texture => "ArknightsMod/Content/Images/Elevator/电梯交互按钮";
+		public override string Texture => "ArknightsMod/Content/Images/Elevator/电梯按钮";
 
 		public override void SetDefaults()
 		{
-			Item.width = 16;
-			Item.height = 32;
+			Item.width = 32;
+			Item.height = 48;
 			Item.maxStack = 99;
 
 			Item.useStyle = ItemUseStyleID.Swing;

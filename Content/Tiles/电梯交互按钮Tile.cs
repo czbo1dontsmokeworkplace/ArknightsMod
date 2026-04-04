@@ -13,28 +13,32 @@ namespace ArknightsMod.Content.Tiles
 	public class 电梯交互按钮Tile : ModTile
 	{
 		private const bool ElevatorButtonTextEnabled = false;
-		public override string Texture => "ArknightsMod/Content/Images/Elevator/电梯交互按钮_gap1";
+		public override string Texture => "ArknightsMod/Content/Images/Elevator/电梯按钮_gap1";
+		public override string HighlightTexture => "ArknightsMod/Content/Images/Elevator/电梯按钮_hover_gap1";
 		private static readonly SoundStyle PressButtonSound = new SoundStyle("ArknightsMod/Content/Sounds/电梯_按下按钮");
 
 		public override void SetStaticDefaults()
 		{
+			TileID.Sets.HasOutlines[Type] = true;
 			Main.tileFrameImportant[Type] = true;
 			Main.tileNoAttach[Type] = false;
 			Main.tileLavaDeath[Type] = false;
 			Main.tileSolid[Type] = false;
 			Main.tileSolidTop[Type] = false;
 
-			TileObjectData.newTile.CopyFrom(TileObjectData.Style1x2);
-			TileObjectData.newTile.Width = 1;
-			TileObjectData.newTile.Height = 2;
+			// 贴图 电梯按钮_gap1：33×50 = 横向 2×(16+1)−1、纵向 3×(16+1)−1（分片间 1px，无末尾冗余缝）
+			TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);
+			TileObjectData.newTile.Width = 2;
+			TileObjectData.newTile.Height = 3;
 			TileObjectData.newTile.CoordinateWidth = 16;
-			TileObjectData.newTile.CoordinateHeights = new int[] { 16, 16 };
+			TileObjectData.newTile.CoordinateHeights = new int[] { 16, 16, 16 };
 			TileObjectData.newTile.CoordinatePadding = 1;
-			TileObjectData.newTile.Origin = new Point16(0, 1);
+			TileObjectData.newTile.CoordinatePaddingFix = new Point16(-1, -1);
+			TileObjectData.newTile.Origin = new Point16(0, TileObjectData.newTile.Height - 1);
 			TileObjectData.newTile.AnchorTop = AnchorData.Empty;
 			TileObjectData.newTile.AnchorLeft = AnchorData.Empty;
 			TileObjectData.newTile.AnchorRight = AnchorData.Empty;
-			TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop | AnchorType.SolidSide, 1, 0);
+			TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
 			TileObjectData.addTile(Type);
 
 			AddMapEntry(new Color(120, 190, 220), Language.GetText("Mods.ArknightsMod.Tiles.电梯交互按钮Tile.MapEntry"));
