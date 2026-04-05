@@ -131,7 +131,7 @@ namespace ArknightsMod.Content.Projectiles.Vanguard.Yato
 			float startRotation_opposite = (float)Math.PI / 9f;
 
 			if (t <= 0.05f) {
-				if (Main.mouseLeft) {
+				if (player.controlUseItem) {
 					attackTime = item.useTime;
 					Projectile.friendly = true;
 				}
@@ -196,7 +196,7 @@ namespace ArknightsMod.Content.Projectiles.Vanguard.Yato
 
 				Projectile.rotation = player.direction == 1 ? startRotation : startRotation_opposite;
 				Projectile.position = player.Center +new Vector2(player.direction == 1 ? 0 : -40, 10) +new Vector2(0,-10);
-				if (Main.mouseLeft) {
+				if (player.controlUseItem) {
 					attackTime = item.useTime;
 				}
 				//重新开始普攻流程
@@ -205,7 +205,7 @@ namespace ArknightsMod.Content.Projectiles.Vanguard.Yato
 			if (t == 1) {
 				Projectile.ai[0] = 0;
 			}
-			if (Main.mouseLeft || Main.mouseRight) {
+			if (player.controlUseItem || player.controlUseTile) {
 				Projectile.timeLeft = item.useTime;
 			}
 
@@ -254,7 +254,7 @@ namespace ArknightsMod.Content.Projectiles.Vanguard.Yato
 			float startRotation_opposite = (float)Math.PI * 13 / 12f;
 
 			if (t <= 0.05f) {
-				if (Main.mouseLeft) {
+				if (player.controlUseItem) {
 					attackTime = item.useTime;
 				}
 				player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, -0.52f);
@@ -287,7 +287,7 @@ namespace ArknightsMod.Content.Projectiles.Vanguard.Yato
 				// 不是很理解为什么position.y要再减10才流畅一点。。
 				Projectile.rotation = (player.direction == 1 ? startRotation : startRotation_opposite);
 				Projectile.position = player.Center + new Vector2(player.direction == 1 ? 0 : 30, player.direction == 1 ? 10 : 0) + new Vector2(-32, -22);
-				if (Main.mouseLeft) {
+				if (player.controlUseItem) {
 					attackTime = item.useTime;
 				}
 				//重新开始普攻流程
@@ -298,7 +298,7 @@ namespace ArknightsMod.Content.Projectiles.Vanguard.Yato
 			}
 
 
-			if (Main.mouseLeft || Main.mouseRight) {
+			if (player.controlUseItem || player.controlUseTile) {
 				Projectile.timeLeft = item.useTime;
 			}
 			attackTime--;

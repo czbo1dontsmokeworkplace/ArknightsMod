@@ -62,10 +62,10 @@ namespace ArknightsMod.Content.Items.Weapons.Vanguard.Yato
 			public override void PostUpdate() {
                 var it = Player.HeldItem;
                 if (it.type == ModContent.ItemType<YatoKatana>() ) {
-                    if (Player.ownedProjectileCounts[ModContent.ProjectileType<YatoKatana_Projectile>()] == 0 && (Main.mouseLeft||Main.mouseRight)) {
+                    if (Player.ownedProjectileCounts[ModContent.ProjectileType<YatoKatana_Projectile>()] == 0 && (Player.controlUseItem||Player.controlUseTile)) {
                         Projectile.NewProjectile(Player.GetSource_FromThis(), Player.Center, Vector2.Zero, ModContent.ProjectileType<YatoKatana_Projectile>(), it.damage, it.knockBack, Player.whoAmI);
                     }
-					if (Player.ownedProjectileCounts[ModContent.ProjectileType<YatoKatanaSheath_Projectile>()] == 0 && (Main.mouseLeft||Main.mouseRight)) {
+					if (Player.ownedProjectileCounts[ModContent.ProjectileType<YatoKatanaSheath_Projectile>()] == 0 && (Player.controlUseItem||Player.controlUseTile)) {
                         Projectile.NewProjectile(Player.GetSource_FromThis(), Player.Center, Vector2.Zero, ModContent.ProjectileType<YatoKatanaSheath_Projectile>(), 0, 0, Player.whoAmI);
                     }
                 }
@@ -76,7 +76,7 @@ namespace ArknightsMod.Content.Items.Weapons.Vanguard.Yato
 				var it = Player.HeldItem;
 				if (it.type == ModContent.ItemType<YatoKatana>() ) {
 					Player.moveSpeed += 0.2f;
-					if (Main.mouseRight) Player.moveSpeed += 0.3f;
+					if (Player.controlUseTile) Player.moveSpeed += 0.3f;
 
 				}
 				base.UpdateEquips();

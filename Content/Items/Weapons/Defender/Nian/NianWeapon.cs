@@ -160,7 +160,7 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Nian
 
             public override void PostUpdate() {
                 var it = Player.HeldItem;
-                if (it.type == ModContent.ItemType<NianWeapon>() && Main.mouseLeft) {
+                if (it.type == ModContent.ItemType<NianWeapon>() && Player.controlUseItem) {
                     if (Player.ownedProjectileCounts[ModContent.ProjectileType<NianSword>()] == 0) {
                         Projectile.NewProjectile(Player.GetSource_FromThis(), Player.Center, Vector2.Zero, ModContent.ProjectileType<NianSword>(), it.damage, it.knockBack, Player.whoAmI);
                     }

@@ -226,7 +226,7 @@ namespace ArknightsMod.Content.Projectiles.Defender.Nian
 
 			}
 
-			if (Main.mouseLeft) {
+			if (player.controlUseItem) {
 				Projectile.timeLeft = item.useTime;
 			}
 		}
@@ -459,7 +459,7 @@ namespace ArknightsMod.Content.Projectiles.Defender.Nian
 
 			Projectile.ai[0] += 1;
 
-			if (Main.mouseLeft) {
+			if (player.controlUseItem) {
 				Projectile.timeLeft = item.useTime;
 			}
 		}

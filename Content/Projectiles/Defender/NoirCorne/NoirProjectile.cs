@@ -64,7 +64,7 @@ namespace ArknightsMod.Content.Projectiles.Defender.NoirCorne
 
                 Projectile.ai[0]++;
 
-                if ((Main.mouseRight || Main.mouseLeft )&& disableAttack==0)
+                if ((player.controlUseTile || player.controlUseItem )&& disableAttack==0)
                 {
                     player.direction = Main.MouseWorld.X > player.Center.X ? 1 : -1;
                     Projectile.ai[0] = 0;
@@ -78,19 +78,24 @@ namespace ArknightsMod.Content.Projectiles.Defender.NoirCorne
                 player.itemAnimation = player.itemTime = 4;
 
                 // 如果还在按右键，推盾动画继续增强
-                if (Main.mouseRight && disableAttack==0 && Projectile.ai[1] < 0.5f)
-                    Projectile.ai[1] +=0.07f;
-                else if (Main.mouseLeft && disableAttack == 0 && Projectile.ai[1] < 0.5f)
+                if (player.controlUseTile && disableAttack == 0 && Projectile.ai[1] < 0.5f)
                 {
-                    Projectile.ai[1] +=0.07f;
+                    Projectile.ai[1] += 0.07f;
+                }
+                else if (player.controlUseItem && disableAttack == 0 && Projectile.ai[1] < 0.5f)
+                {
+                    Projectile.ai[1] += 0.07f;
+
                     if (Projectile.ai[1] > 0.5f)
-                    {   
+                    {
                         doNoirShieldDamage();
                         disableAttack = 30;
                     }
                 }
                 else
+                {
                     Projectile.ai[1] -= 0.07f;
+                }
 
                 // 正前方的位移
                 Projectile.rotation = Projectile.rotation.AngleLerp(0, Projectile.ai[1]);
@@ -137,9 +142,9 @@ namespace ArknightsMod.Content.Projectiles.Defender.NoirCorne
             // bool doDamage = False;
             // 用一个前方矩形区域当作碰撞判定
             Rectangle hitbox = new Rectangle(
-                (int)(Projectile.Center.X +player.direction*20 - 13 ),
+                (int)(Projectile.Center.X - 20 ),
                 (int)(Projectile.Center.Y - 34),
-                26,
+                40,
                 34
             );
 

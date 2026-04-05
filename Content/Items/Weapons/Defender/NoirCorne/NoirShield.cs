@@ -97,7 +97,7 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.NoirCorne
                 var it = Player.HeldItem;
                 if (it.type == ModContent.ItemType<NoirShield>() ) {
                     Player.statDefense += 5;
-                    if (Main.mouseRight) Player.statDefense += 10;
+                    if (Player.controlUseTile) Player.statDefense += 10;
 
                 }
                 base.UpdateEquips();
