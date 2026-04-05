@@ -260,7 +260,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			target.immuneTime = 0;
 		}
 		public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers) {
-			target.GetModPlayer<Players.ImmunePlayer>().ImmuneMultiplier = 0.6f; // 免疫倍数
+			target.GetModPlayer<global::ArknightsMod.Players.ImmunePlayer>().ImmuneMultiplier = 0.6f; // 免疫倍数
 		}
 	}
 }

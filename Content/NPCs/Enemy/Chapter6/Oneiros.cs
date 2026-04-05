@@ -273,7 +273,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 		}
 
 		[Obsolete]
-		public override void Kill(int timeLeft) {
+		public override void OnKill(int timeLeft) {
 			// 确保爆炸只执行一次
 			if (Projectile.active) {
 				Explode();

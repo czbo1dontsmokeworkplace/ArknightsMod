@@ -20,6 +20,7 @@ namespace ArknightsMod.Content.Items.Gacha
 			new VanitySet("CivilightEterna", 6, ["CivilightEternaHead", "CivilightEternaBody", "CivilightEternaLegs"]),
 			new VanitySet("Entelechia", 6, ["EntelechiaHead", "EntelechiaBody", "EntelechiaLegs"]),
 			new VanitySet("Exusiai", 6, ["ExusiaiHead", "ExusiaiBody", "ExusiaiLegs"]),
+			new VanitySet("ExusiaiAlter", 6, ["ExusiaiAlterHead", "ExusiaiAlterBody", "ExusiaiAlterLegs"]),
 			new VanitySet("Endministrator", 6, ["EndministratorVanityBag"]),
 			new VanitySet("Fang", 3, ["FangHead", "FangBody", "FangLegs"]),
 			new VanitySet("Fartooth", 5, ["FartoothHead", "FartoothBody", "FartoothLegs"]),

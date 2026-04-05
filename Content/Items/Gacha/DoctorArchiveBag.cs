@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework.Input;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -62,7 +63,7 @@ namespace ArknightsMod.Content.Items.Gacha
 			if (shift)
 				return Item.stack >= 10;
 
-			return Item.stack == 1;
+			return true;
 		}
 
 		public override void RightClick(Player player)
@@ -73,15 +74,22 @@ namespace ArknightsMod.Content.Items.Gacha
 			bool shift = IsShiftDown();
 			int pulls = shift ? 10 : 1;
 
-			if (pulls == 10 && Item.stack < 10)
+			// Note: For CanRightClick() items, tModLoader will automatically consume 1 item
+			// from the stack before calling RightClick(). So at this point, Item.stack is
+			// already (originalStack - 1).
+			int originalStack = Item.stack + 1;
+			if (originalStack < pulls)
 				return;
 
-			if (Item.stack < pulls)
-				return;
-
-			Item.stack -= pulls;
-			if (Item.stack <= 0)
-				Item.TurnToAir();
+			int extraToConsume = pulls - 1;
+			if (extraToConsume > 0)
+			{
+				if (Item.stack < extraToConsume)
+					return;
+				Item.stack -= extraToConsume;
+				if (Item.stack <= 0)
+					Item.TurnToAir();
+			}
 
 			DoPulls(player, pulls);
 		}
@@ -140,19 +148,106 @@ namespace ArknightsMod.Content.Items.Gacha
 		{
 			var source = player.GetSource_OpenItem(Type);
 
+			if (TryGiveVanityBag(player, source, set))
+				return;
+
 			foreach (string itemKey in set.ItemKeys)
 			{
-				int itemType;
-				try
-				{
-					itemType = Mod.Find<ModItem>(itemKey).Type;
-				}
-				catch
-				{
+				if (!Mod.TryFind<ModItem>(itemKey, out var modItem))
 					continue;
-				}
 
-				player.QuickSpawnItem(source, itemType, 1);
+				GiveToInventoryOrDrop(player, source, modItem.Type, 1);
+			}
+		}
+
+		private bool TryGiveVanityBag(Player player, IEntitySource source, DoctorArchiveGachaData.VanitySet set)
+		{
+			string[] candidateKeys = set.SetKey == "Wisadel"
+				?
+				[
+					$"{set.SetKey}VanityBag",
+					$"{set.SetKey}Default",
+					"WisdelVanityBag",
+					"WisdelDefault",
+				]
+				:
+				[
+					$"{set.SetKey}VanityBag",
+					$"{set.SetKey}Default",
+				];
+
+			foreach (string key in candidateKeys)
+			{
+				if (!Mod.TryFind<ModItem>(key, out var modItem))
+					continue;
+
+				GiveToInventoryOrDrop(player, source, modItem.Type, 1, GetRarityForStars(set.Stars));
+				return true;
+			}
+
+			return false;
+		}
+
+		private static int GetRarityForStars(int stars)
+		{
+			return stars switch
+			{
+				6 => ItemRarityID.Red,
+				5 => ItemRarityID.Pink,
+				4 => ItemRarityID.Orange,
+				_ => ItemRarityID.Green,
+			};
+		}
+
+		private static void GiveToInventoryOrDrop(Player player, IEntitySource source, int itemType, int stack, int? overrideRarity = null)
+		{
+			if (stack <= 0)
+				return;
+
+			Item item = new(itemType, stack);
+			if (overrideRarity.HasValue)
+				item.rare = overrideRarity.Value;
+
+			int remaining = item.stack;
+
+			for (int i = 0; i < player.inventory.Length; i++)
+			{
+				if (remaining <= 0)
+					break;
+
+				Item inv = player.inventory[i];
+				if (inv is null || inv.IsAir)
+					continue;
+				if (inv.type != itemType)
+					continue;
+				if (inv.stack >= inv.maxStack)
+					continue;
+
+				int move = Math.Min(remaining, inv.maxStack - inv.stack);
+				inv.stack += move;
+				remaining -= move;
+			}
+
+			for (int i = 0; i < player.inventory.Length; i++)
+			{
+				if (remaining <= 0)
+					break;
+
+				Item inv = player.inventory[i];
+				if (inv is not null && !inv.IsAir)
+					continue;
+
+				int give = Math.Min(remaining, item.maxStack);
+				Item newItem = new(itemType, give);
+				if (overrideRarity.HasValue)
+					newItem.rare = overrideRarity.Value;
+				player.inventory[i] = newItem;
+				remaining -= give;
+			}
+
+			if (remaining > 0)
+			{
+				Item.NewItem(source, player.getRect(), itemType, remaining);
 			}
 		}
 	}

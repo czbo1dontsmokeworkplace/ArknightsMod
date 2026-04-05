@@ -72,6 +72,17 @@ PozemkaCrossbow: {
 	Tooltip: "'To live on the surface inevitably means to raise a weapon at some point. So I'm well aware.'"
 }
 
+# Instanced Space
+InstancedSchematicWrench: {
+	DisplayName: Schematic Wrench
+	Tooltip: Left-click set first point, right-click export schematic area.
+}
+
+ProtocolSpacePortal: {
+	DisplayName: Protocol Space Portal
+	Tooltip: Enter the protocol space challenge.
+}
+
 # Accessories
 ExusiaiWings: {
 	DisplayName: Exusiai's wings
@@ -2620,5 +2631,60 @@ LastRiteVanityBag: {
 
 DoctorArchiveBag: {
 	DisplayName: Doctor Archive Bag
+	Tooltip: ""
+}
+
+YvonneVanityBag: {
+	DisplayName: Yvonne Vanity Bag
+	Tooltip: ""
+}
+
+TexasVanityBag: {
+	Tooltip: ""
+	DisplayName: Texas Vanity Bag
+}
+
+MlynarVanityBag: {
+	Tooltip: ""
+	DisplayName: Mlynar Vanity Bag
+}
+
+ExusiaiAlterBody: {
+	DisplayName: Exusiai The New Covenant's outfit (Body)
+	Tooltip: ""
+}
+
+ExusiaiAlterHead: {
+	DisplayName: Exusiai The New Covenant's outfit (Head)
+	Tooltip: ""
+}
+
+ExusiaiAlterLegs: {
+	DisplayName: Exusiai The New Covenant's outfit (Legs)
+	Tooltip: ""
+}
+
+Haze_Magicbook: {
+	DisplayName: Haze_ Magicbook
+	Tooltip: ""
+}
+
+ExusiaiAlterDefault: {
+	DisplayName: Exusiai The New Covenant's costume (default)
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+电梯: {
+	DisplayName: 电梯
+	Tooltip: ""
+}
+
+电梯交互按钮: {
+	DisplayName: 电梯交互按钮
+	Tooltip: ""
+}
+
+FireworksHand: {
+	DisplayName: Fireworks Hand
 	Tooltip: ""
 }
