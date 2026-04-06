@@ -2688,3 +2688,8 @@ FireworksHand: {
 	DisplayName: Fireworks Hand
 	Tooltip: ""
 }
+
+Dedication: {
+	DisplayName: Dedication
+	Tooltip: ""
+}
