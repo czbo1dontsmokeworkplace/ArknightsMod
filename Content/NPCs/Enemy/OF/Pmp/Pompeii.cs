@@ -6,6 +6,7 @@ using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.GameContent.Bestiary;
 using Terraria.ID;
 using Terraria.Localization;
@@ -45,8 +46,20 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 		private int _heightMismatchTimer;
 		private bool _isTeleportJumping;
 		private int  _jumpTimer;
-		private int  _stg2BurstCount;
-		private int  _stg2BurstTimer;
+		private bool _jumpPrepCompleted;
+		private Vector2 _jumpTargetPos;
+		private float _jumpGravity;
+		private Vector2 _jumpTrailLastPos;
+		private int _stg2BurstCount;
+		private int _stg2BurstTimer;
+		private bool _platformLockActive;
+		private float _platformLockBottomY;
+		private const int JumpLandingSearchWidthTiles = 24;
+		private const int JumpLandingClearanceTiles = 12;
+		private const int JumpLandingDropToleranceTiles = 3;
+		private const int JumpLandingRiseToleranceTiles = 30;
+		private const float PlatformLockReleasePlayerBelow = 72f;
+		private const float PlatformLockSnapTolerance = 28f;
 		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
 			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
 				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Surface,
@@ -58,6 +71,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
             Main.npcFrameCount[Type] = 53;
             NPCID.Sets.BossBestiaryPriority.Add(Type);
             NPCID.Sets.ShouldBeCountedAsBoss[Type] = true;
+			NPCID.Sets.TrailCacheLength[Type] = 10;
+			NPCID.Sets.TrailingMode[Type] = 0;
         }
 
         public override void SetDefaults()
@@ -81,6 +96,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 		public override void OnSpawn(IEntitySource source)
 		{
 			_slugEggCooldown = Main.rand.Next(60, 121);
+			escapetimer = 0f;
 			SelectNextAttackState();
 		}
 
@@ -138,6 +154,24 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 
 		//自制血条
 		public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
+			if (_isTeleportJumping)
+			{
+				Texture2D npcTex = TextureAssets.Npc[Type].Value;
+				Rectangle frame = NPC.frame;
+				Vector2 origin = frame.Size() / 2f;
+				SpriteEffects fx = NPC.direction < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+
+				for (int i = NPC.oldPos.Length - 1; i >= 1; i--)
+				{
+					if (NPC.oldPos[i] == Vector2.Zero)
+						continue;
+
+					float opacity = (NPC.oldPos.Length - i) / (float)NPC.oldPos.Length * 0.35f;
+					Vector2 drawPos = NPC.oldPos[i] + NPC.Size / 2f - Main.screenPosition + new Vector2(0f, NPC.gfxOffY);
+					Main.EntitySpriteDraw(npcTex, drawPos, frame, new Color(255, 120, 80) * opacity, NPC.rotation, origin, NPC.scale, fx, 0);
+				}
+			}
+
 			//发光图层
 			Texture2D PmpGlow = ModContent.Request<Texture2D>("ArknightsMod/Content/NPCs/Enemy/OF/Pmp/Pompeii_glow").Value;
 			Main.EntitySpriteDraw(PmpGlow, NPC.Center - Main.screenPosition + new Vector2(0, 3) + new Vector2(0, (_currentFrame * PmpGlow.Height / 53 / 2)).RotatedBy(NPC.rotation), new Rectangle(0, (int)(_currentFrame * PmpGlow.Height / 53f), PmpGlow.Width, PmpGlow.Height / 53), Color.White, NPC.rotation, new Vector2(PmpGlow.Width / 2, (_currentFrame + 1) * (PmpGlow.Height / 53) / 2), 1f, NPC.direction < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0);
@@ -177,7 +211,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
             Player player = Main.player[NPC.target];
 			Lighting.AddLight(NPC.Center, 10);
 			#region 玩家死亡后消失
-			if (!player.active || player.dead || (player.Center - NPC.Center).Length() > Main.screenWidth) {
+			float loseInterestDistance = Math.Max(Main.screenWidth * 1.8f, 2200f);
+			if (!player.active || player.dead || Vector2.Distance(player.Center, NPC.Center) > loseInterestDistance) {
 				NPC.TargetClosest(false);
 				player = Main.player[NPC.target];
 				escapetimer++;
@@ -198,6 +233,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 			#endregion
 
 			if (_slugEggCooldown > 0) _slugEggCooldown--;
+			UpdatePlatformLock(player);
 
 			// 高度差检测：与玩家不在同一层超过8秒则触发穿墙跳跃
 			if (!_hasEnteredTailKill && _currentState != AIState.ModeJumpToPlayer)
@@ -237,14 +273,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 					if (Main.netMode != NetmodeID.MultiplayerClient)
 					{
 						Player burstTarget = Main.player[NPC.target];
-						float dyB = burstTarget.Center.Y - NPC.Center.Y;
-						float hScaleB = Math.Clamp(1f - dyB / 600f, 0.5f, 2.0f);
-						float vScaleB = dyB < 0f ? Math.Clamp(1f + (-dyB) / 400f, 1f, 2.2f) : 0.8f;
+						Vector2 burstTargetPoint = GetSlugEggTargetPoint(burstTarget);
 						Vector2 bp1 = NPC.Center + new Vector2(55f * NPC.direction, -35f);
-						Vector2 bv1 = new Vector2(MathF.Cos(MathHelper.ToRadians(105f)) * -NPC.direction * 2.5f * hScaleB, -MathF.Sin(MathHelper.ToRadians(105f)) * 7f * vScaleB);
+						Vector2 bv1 = SolveSlugEggLaunchVelocity(bp1, burstTargetPoint, false);
 						Projectile.NewProjectile(NPC.GetSource_FromAI(), bp1, bv1, ModContent.ProjectileType<PmpSlugEgg>(), 0, 0f, Main.myPlayer);
 						Vector2 bp2 = NPC.Center + new Vector2(-25f * NPC.direction, -70f);
-						Vector2 bv2 = new Vector2(MathF.Cos(MathHelper.ToRadians(51f)) * -NPC.direction * 2.5f * hScaleB, -MathF.Sin(MathHelper.ToRadians(51f)) * 7f * vScaleB);
+						Vector2 bv2 = SolveSlugEggLaunchVelocity(bp2, burstTargetPoint + new Vector2(Main.rand.NextFloat(-20f, 20f), Main.rand.NextFloat(-12f, 12f)), true);
 						Projectile.NewProjectile(NPC.GetSource_FromAI(), bp2, bv2, ModContent.ProjectileType<PmpSlugEgg>(), 0, 0f, Main.myPlayer);
 					}
 					_stg2BurstCount--;
@@ -387,22 +421,248 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 				// 蓄力结束，发射
 			}
 
-			// 根据与玩家高度差动态调整虫卵落点
+			// 根据玩家所在平台层高度动态调整虫卵落点
 			Player eggTarget = Main.player[NPC.target];
-			float dyToPlayer = eggTarget.Center.Y - NPC.Center.Y;
-			float hScale = Math.Clamp(1f - dyToPlayer / 600f, 0.5f, 2.0f);
-			float vScale = dyToPlayer < 0f ? Math.Clamp(1f + (-dyToPlayer) / 400f, 1f, 2.2f) : 0.8f;
-
+			Vector2 targetPoint = GetSlugEggTargetPoint(eggTarget);
 			Vector2 spawnPos1 = NPC.Center + new Vector2(55f * NPC.direction, -35f);
-			Vector2 vel1 = new Vector2(MathF.Cos(MathHelper.ToRadians(105f)) * -NPC.direction * 2.5f * hScale, -MathF.Sin(MathHelper.ToRadians(105f)) * 7f * vScale);
-			Projectile.NewProjectile(NPC.GetSource_FromAI(), spawnPos1, vel1, ModContent.ProjectileType<PmpSlugEgg>(), 0, 0f, Main.myPlayer);
-
 			Vector2 spawnPos2 = NPC.Center + new Vector2(-25f * NPC.direction, -70f);
-			Vector2 vel2 = new Vector2(MathF.Cos(MathHelper.ToRadians(51f)) * -NPC.direction * 2.5f * hScale, -MathF.Sin(MathHelper.ToRadians(51f)) * 7f * vScale);
+			Vector2 vel1 = SolveSlugEggLaunchVelocity(spawnPos1, targetPoint, false);
+			Vector2 vel2 = SolveSlugEggLaunchVelocity(spawnPos2, targetPoint + new Vector2(Main.rand.NextFloat(-20f, 20f), Main.rand.NextFloat(-12f, 12f)), true);
+			Projectile.NewProjectile(NPC.GetSource_FromAI(), spawnPos1, vel1, ModContent.ProjectileType<PmpSlugEgg>(), 0, 0f, Main.myPlayer);
 			Projectile.NewProjectile(NPC.GetSource_FromAI(), spawnPos2, vel2, ModContent.ProjectileType<PmpSlugEgg>(), 0, 0f, Main.myPlayer);
 
 			// 重置随机CD
 			_slugEggCooldown = Main.rand.Next(120, 241);
+		}
+
+		private void UpdatePlatformLock(Player player)
+		{
+			if (!_platformLockActive || _hasEnteredTailKill || _currentState == AIState.ModeJumpToPlayer || _isTeleportJumping)
+				return;
+
+			// 玩家下层后立即解锁并触发一次位置跳跃，让庞贝主动跟下去。
+			if (player.Bottom.Y > _platformLockBottomY + PlatformLockReleasePlayerBelow)
+			{
+				_platformLockActive = false;
+				_heightMismatchTimer = 0;
+				_currentState = AIState.ModeJumpToPlayer;
+				_modeTimer = 0;
+				_frameResetFlag = 2;
+				return;
+			}
+
+			NPC.noTileCollide = false;
+			float deltaBottom = _platformLockBottomY - NPC.Bottom.Y;
+			if (Math.Abs(deltaBottom) <= PlatformLockSnapTolerance)
+			{
+				NPC.position.Y += deltaBottom;
+				if (NPC.velocity.Y > 0f)
+					NPC.velocity.Y = 0f;
+			}
+		}
+
+		private static float GetPlayerPlatformHeight(Player player)
+		{
+			int centerTileX = (int)(player.Center.X / 16f);
+			int sampleStartY = (int)(player.Bottom.Y / 16f);
+			int maxScanTiles = 14; // 约224像素，优先捕捉玩家脚下最近平台层
+
+			for (int y = sampleStartY; y <= sampleStartY + maxScanTiles; y++)
+			{
+				for (int x = centerTileX - 2; x <= centerTileX + 2; x++)
+				{
+					if (!WorldGen.InWorld(x, y))
+						continue;
+
+					Tile tile = Main.tile[x, y];
+					if (tile == null || !tile.HasTile)
+						continue;
+
+					bool isSolidTop = Main.tileSolidTop[tile.TileType] || TileID.Sets.Platforms[tile.TileType];
+					bool isSolidBlock = Main.tileSolid[tile.TileType] && !Main.tileSolidTop[tile.TileType];
+					if (isSolidTop || isSolidBlock)
+					{
+						return y * 16f;
+					}
+				}
+			}
+
+			return player.Bottom.Y;
+		}
+
+		private static Vector2 GetSlugEggTargetPoint(Player player)
+		{
+			float platformY = GetPlayerPlatformHeight(player);
+			float targetX = player.Center.X + player.velocity.X * 12f;
+			float targetY = platformY - 4f;
+			return new Vector2(targetX, targetY);
+		}
+
+		private Vector2 SolveSlugEggLaunchVelocity(Vector2 spawnPos, Vector2 targetPoint, bool higherArc)
+		{
+			float dx = targetPoint.X - spawnPos.X;
+			float dy = targetPoint.Y - spawnPos.Y;
+			float gravity = 0.22f;
+			float preferredTime = higherArc ? 50f : 42f;
+			preferredTime += MathHelper.Clamp(Math.Abs(dy) * 0.045f, 0f, higherArc ? 12f : 8f);
+			float travelTime = MathHelper.Clamp(preferredTime, higherArc ? 38f : 30f, higherArc ? 68f : 56f);
+			float vx = dx / travelTime;
+			vx = Math.Clamp(vx, -8.2f, 8.2f);
+			travelTime = Math.Max(Math.Abs(dx) / Math.Max(1.25f, Math.Abs(vx)), higherArc ? 36f : 28f);
+			travelTime = Math.Min(travelTime, higherArc ? 70f : 58f);
+			float vy = (dy - 0.5f * gravity * travelTime * travelTime) / travelTime;
+			vy -= higherArc ? 1.35f : 0.9f;
+			vy = Math.Clamp(vy, -16.8f, -6.2f);
+			return new Vector2(vx, vy);
+		}
+
+		private Vector2 FindSafeJumpLandingPosition(Player player, out bool foundSafeLanding)
+		{
+			float playerPlatformY = GetPlayerPlatformHeight(player);
+			float preferredX = player.Center.X + player.velocity.X * 18f;
+			float preferredY = playerPlatformY - NPC.height - 8f;
+			Vector2 fallbackTarget = new Vector2(preferredX, preferredY);
+			int centerTileX = (int)(preferredX / 16f);
+			int centerTileY = (int)(playerPlatformY / 16f);
+			int npcCenterTileY = (int)(NPC.Bottom.Y / 16f);
+
+			Vector2 bestCandidate = fallbackTarget;
+			float bestScore = float.MaxValue;
+
+			for (int offset = 0; offset <= JumpLandingSearchWidthTiles; offset++)
+			{
+				for (int side = -1; side <= 1; side += 2)
+				{
+					if (offset == 0 && side == 1)
+						continue;
+
+					int tileX = centerTileX + offset * side;
+					if (!WorldGen.InWorld(tileX, centerTileY, 20))
+						continue;
+
+					if (!TryFindLandingSurface(tileX, centerTileY, out int surfaceY))
+						continue;
+
+					if (surfaceY > centerTileY + JumpLandingDropToleranceTiles)
+						continue;
+					if (surfaceY < centerTileY - JumpLandingRiseToleranceTiles)
+						continue;
+
+					if (!HasStandingRoom(tileX, surfaceY))
+						continue;
+
+					Vector2 candidate = GetLandingWorldPosition(tileX, surfaceY);
+					if (candidate.Y > player.Bottom.Y + 16f)
+						continue;
+
+					float levelDeltaToPlayer = centerTileY - surfaceY;
+					float climbFromNpc = npcCenterTileY - surfaceY;
+					float playerHeightPenalty = Math.Abs(levelDeltaToPlayer) * 26f;
+					float horizontalPenalty = Math.Abs(tileX - centerTileX) * 14f;
+					float lowPlatformPenalty = surfaceY > centerTileY ? 220f + Math.Abs(surfaceY - centerTileY) * 120f : 0f;
+					float climbBonus = climbFromNpc > 0f ? 260f + climbFromNpc * 18f : 0f;
+					float towardPlayerBonus = Math.Max(0f, 120f - Math.Abs(candidate.X + NPC.width / 2f - player.Center.X) * 0.25f);
+					float score = playerHeightPenalty + horizontalPenalty + lowPlatformPenalty - climbBonus - towardPlayerBonus;
+					if (score < bestScore)
+					{
+						bestScore = score;
+						bestCandidate = candidate;
+					}
+				}
+			}
+
+			foundSafeLanding = bestScore < float.MaxValue;
+			return foundSafeLanding ? bestCandidate : fallbackTarget;
+		}
+
+		private bool TryFindLandingSurface(int tileX, int centerTileY, out int surfaceY)
+		{
+			for (int y = centerTileY - JumpLandingRiseToleranceTiles; y <= centerTileY + JumpLandingDropToleranceTiles; y++)
+			{
+				if (!WorldGen.InWorld(tileX, y, 10))
+					continue;
+
+				Tile tile = Framing.GetTileSafely(tileX, y);
+				if (!tile.HasTile)
+					continue;
+
+				bool isSurface = Main.tileSolidTop[tile.TileType] || TileID.Sets.Platforms[tile.TileType] || (Main.tileSolid[tile.TileType] && !Main.tileSolidTop[tile.TileType]);
+				if (!isSurface)
+					continue;
+
+				surfaceY = y;
+				return true;
+			}
+
+			surfaceY = 0;
+			return false;
+		}
+
+		private bool HasStandingRoom(int tileX, int surfaceY)
+		{
+			// 站立检测按实体宽度（每16像素1格）估算，并只保留少量余量，避免把可落脚平台误判为不可用。
+			int halfWidthTiles = Math.Max(2, (int)Math.Ceiling(NPC.width / 16f * 0.5f) - 1);
+			int left = tileX - halfWidthTiles;
+			int right = tileX + halfWidthTiles;
+			int solidSupportCount = 0;
+			int topSupportCount = 0;
+			for (int x = left; x <= right; x++)
+			{
+				Tile support = Framing.GetTileSafely(x, surfaceY);
+				if (!support.HasTile)
+					continue;
+
+				bool isSolidTop = Main.tileSolidTop[support.TileType] || TileID.Sets.Platforms[support.TileType];
+				bool isSolidBlock = Main.tileSolid[support.TileType] && !Main.tileSolidTop[support.TileType];
+				if (isSolidBlock)
+					solidSupportCount++;
+				else if (isSolidTop)
+					topSupportCount++;
+			}
+
+			int neededWidth = right - left + 1;
+			bool hasEnoughSupport = solidSupportCount >= Math.Max(2, neededWidth / 2) || (solidSupportCount + topSupportCount) >= Math.Max(4, neededWidth - 1);
+			if (!hasEnoughSupport)
+				return false;
+
+			int topY = surfaceY - JumpLandingClearanceTiles;
+			for (int x = left; x <= right; x++)
+			{
+				for (int y = topY; y < surfaceY; y++)
+				{
+					if (!WorldGen.InWorld(x, y, 10))
+						return false;
+
+					Tile tile = Framing.GetTileSafely(x, y);
+					if (tile.HasTile && Main.tileSolid[tile.TileType] && !Main.tileSolidTop[tile.TileType])
+						return false;
+				}
+			}
+
+			return true;
+		}
+
+		private Vector2 GetLandingWorldPosition(int tileX, int surfaceY)
+		{
+			float x = tileX * 16f + 8f - NPC.width / 2f;
+			float y = surfaceY * 16f - NPC.height - 4f;
+			return new Vector2(x, y);
+		}
+
+		private bool HasClearJumpArc(Vector2 start, Vector2 end)
+		{
+			Vector2 delta = end - start;
+			float distance = delta.Length();
+			int steps = Math.Max(8, (int)(distance / 24f));
+			for (int i = 1; i <= steps; i++)
+			{
+				float t = i / (float)steps;
+				Vector2 sample = Vector2.Lerp(start, end, t);
+				if (Collision.SolidCollision(sample - new Vector2(NPC.width / 2f, NPC.height / 2f), NPC.width, NPC.height))
+					return false;
+			}
+
+			return true;
 		}
 
         private void Mode2ShootFireballs(Player player)
@@ -522,71 +782,199 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 		{
 			_modeTimer++;
 
-			// t==10: 先释放 PmpExplode 范围技
-			if (_modeTimer == 10)
+			if (_modeTimer == 1)
 			{
-				for (int i = 0; i < 80; i++) {
-					Dust dust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.Torch);
-					dust.velocity = Main.rand.NextVector2Circular(18f, 18f);
-					dust.scale = 2.2f;
-					dust.noGravity = true;
-				}
-				SoundEngine.PlaySound(SoundID.Item14, NPC.Center);
-				if (Main.netMode != NetmodeID.MultiplayerClient)
-					Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero,
-						ModContent.ProjectileType<PmpExplode>(), 50, 0, Main.myPlayer, 0);
+				_jumpPrepCompleted = false;
+				_isTeleportJumping = false;
+				NPC.noTileCollide = false;
 			}
 
-			// t==40: 开始穿墙跳向玩家层
-			if (_modeTimer == 40)
+			if (!_jumpPrepCompleted)
 			{
-				NPC.noTileCollide = true;
-				_isTeleportJumping = true;
-				_jumpTimer = 0;
+				// 冲刺前摇：原地蓄力并持续喷发火焰粒子
+				NPC.velocity *= 0.8f;
+				for (int i = 0; i < 6; i++)
+				{
+					Dust prep = Dust.NewDustDirect(NPC.position + Main.rand.NextVector2Circular(NPC.width / 2f, NPC.height / 2f), 8, 8, DustID.Torch);
+					prep.velocity = Main.rand.NextVector2Circular(2.8f, 2.8f);
+					prep.scale = Main.rand.NextFloat(1.2f, 1.9f);
+					prep.noGravity = true;
+				}
+
+				// 必须先触发原地方位火焰爆发，再允许开始冲刺
+				if (_modeTimer == 15)
+				{
+					for (int i = 0; i < 96; i++)
+					{
+						float angle = MathHelper.TwoPi * i / 96f;
+						Vector2 burstVel = angle.ToRotationVector2() * Main.rand.NextFloat(4.5f, 9.5f);
+						Dust burst = Dust.NewDustDirect(NPC.Center, 2, 2, i % 3 == 0 ? DustID.FlameBurst : DustID.Torch, burstVel.X, burstVel.Y, 80, default, Main.rand.NextFloat(1.2f, 2.3f));
+						burst.noGravity = true;
+					}
+					SoundEngine.PlaySound(SoundID.Item14, NPC.Center);
+					if (Main.netMode != NetmodeID.MultiplayerClient)
+					{
+						Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<PmpExplode>(), 50, 0, Main.myPlayer, 0);
+					}
+					_jumpPrepCompleted = true;
+				}
+
+				return;
+			}
+
+			// 爆发后短暂停顿，再起跳冲刺
+			if (!_isTeleportJumping && _modeTimer >= 32)
+			{
+				BeginParabolicJump(player);
 			}
 
 			if (_isTeleportJumping)
 			{
 				_jumpTimer++;
-				// 目标位置：玩家正下方，留出 NPC 身高 + 16px 间距
-				float targetY = player.Bottom.Y - NPC.height - 16f;
-				float dx = player.Center.X - NPC.Center.X;
-				float dy = targetY - NPC.Center.Y;
-				// 平滑插值向目标移动
-								// 平滑插值向目标移动
-				NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, dx * 0.08f, 0.15f);
-				NPC.velocity.Y = MathHelper.Lerp(NPC.velocity.Y, dy * 0.08f, 0.15f);
+				NPC.velocity.Y += _jumpGravity;
+				NPC.velocity.X *= 0.994f; // 轻微减速，给玩家闪避窗口
 
-				// 穿墙路径产生火焰粒子效果（视觉）
-				for (int i = 0; i < 4; i++) {
-					Dust fd = Dust.NewDustDirect(NPC.position + Main.rand.NextVector2Circular(NPC.width/2f, NPC.height/2f),
-						8, 8, DustID.FlameBurst);
-					fd.velocity = Main.rand.NextVector2Circular(3f, 3f);
-					fd.scale = Main.rand.NextFloat(1.2f, 2.0f);
-					fd.noGravity = true;
-				}
-				for (int i = 0; i < 2; i++) {
-					Dust td = Dust.NewDustDirect(NPC.position + Main.rand.NextVector2Circular(NPC.width/2f, NPC.height/2f),
-						8, 8, DustID.Torch);
-					td.velocity = NPC.velocity * 0.5f + Main.rand.NextVector2Circular(1.5f, 1.5f);
-					td.scale = 1.5f;
-					td.noGravity = true;
-				}
-				// 每5帧在路径上生成一个造成灼伤的敌对弹幕
-				if (_jumpTimer % 5 == 0 && Main.netMode != NetmodeID.MultiplayerClient) {
-					Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center,
-						Vector2.Zero, ModContent.ProjectileType<PmpTrailFlame>(),
-						15, 0f, Main.myPlayer);
-				}
-
-				// 到达目标层或超时则结束跳跃
-				if ((Math.Abs(dy) < 24f && Math.Abs(dx) < 200f) || _jumpTimer >= 90)
+				if (NPC.noTileCollide && _jumpTimer > 8)
 				{
+					// 进入下落且接近目标层时尽快恢复碰撞，避免整段跳跃都穿墙导致错过平台。
+					float targetBottomY = _jumpTargetPos.Y + NPC.height;
+					bool descending = NPC.velocity.Y > 0.55f;
+					bool nearTargetLevel = NPC.Bottom.Y >= targetBottomY - 22f;
+					bool hasSupportBelow = Collision.SolidCollision(NPC.position + new Vector2(0f, 8f), NPC.width, NPC.height);
+					bool timeoutForceRecover = _jumpTimer >= 50;
+					if ((descending && nearTargetLevel) || hasSupportBelow || timeoutForceRecover)
+					{
+						NPC.noTileCollide = false;
+					}
+				}
+
+				SpawnJumpTrailDust(_jumpTrailLastPos, NPC.Center);
+				_jumpTrailLastPos = NPC.Center;
+
+				float dxToTarget = _jumpTargetPos.X - NPC.position.X;
+				float dyToTarget = _jumpTargetPos.Y - NPC.position.Y;
+				bool closeEnoughToLand = Math.Abs(dxToTarget) < 28f && Math.Abs(dyToTarget) < 18f;
+				bool touchingGround = Collision.SolidCollision(NPC.position + new Vector2(0f, 8f), NPC.width, NPC.height);
+				bool passedTargetHeight = NPC.position.Y >= _jumpTargetPos.Y - 4f;
+				bool hasDugIntoGround = touchingGround && NPC.velocity.Y >= 0f;
+				if ((_jumpTimer > 30 && closeEnoughToLand && touchingGround) || (_jumpTimer > 36 && passedTargetHeight && hasDugIntoGround) || _jumpTimer >= 140)
+				{
+					if (touchingGround || hasDugIntoGround)
+					{
+						for (int i = 0; i < 18 && Collision.SolidCollision(NPC.position, NPC.width, NPC.height); i++)
+						{
+							NPC.position.Y -= 3f;
+						}
+					}
+
+					TriggerJumpLandingExplosion();
 					NPC.velocity = Vector2.Zero;
 					NPC.noTileCollide = false;
+					StabilizeLandingAfterJump();
+					_platformLockActive = true;
+					_platformLockBottomY = NPC.Bottom.Y;
 					_isTeleportJumping = false;
+					_jumpPrepCompleted = false;
 					_heightMismatchTimer = 0;
 					SelectNextAttackState();
+				}
+			}
+		}
+
+		private void BeginParabolicJump(Player player)
+		{
+			_platformLockActive = false;
+			Vector2 desiredTarget = FindSafeJumpLandingPosition(player, out bool foundSafeLanding);
+			float horizontalDistance = Math.Abs(desiredTarget.X - NPC.Center.X);
+			float maxPhaseDistance = 72f;
+			NPC.noTileCollide = !foundSafeLanding || horizontalDistance > maxPhaseDistance || !HasClearJumpArc(NPC.Center, desiredTarget);
+			_isTeleportJumping = true;
+			_jumpTimer = 0;
+			_jumpTrailLastPos = NPC.Center;
+			_jumpTargetPos = desiredTarget;
+
+			int travelTime = Main.masterMode ? 72 : Main.expertMode ? 80 : 92;
+			float targetTopY = _jumpTargetPos.Y + NPC.height * 0.5f;
+			float climbHeight = Math.Max(0f, NPC.Center.Y - targetTopY);
+			float arcLift = MathHelper.Clamp(170f + horizontalDistance * 0.15f + climbHeight * 0.55f, 170f, 340f);
+			float apexY = Math.Min(NPC.Center.Y, targetTopY) - arcLift;
+			_jumpGravity = MathHelper.Clamp(2f * ((NPC.Center.Y - apexY) + (targetTopY - apexY)) / (travelTime * travelTime), 0.18f, 0.30f);
+
+			float dx = _jumpTargetPos.X - NPC.Center.X;
+			float vx = Math.Clamp(dx / travelTime, -7.2f, 7.2f);
+			float vy = (targetTopY - NPC.Center.Y - 0.5f * _jumpGravity * travelTime * travelTime) / travelTime;
+			float minVy = -MathF.Sqrt(Math.Max(0.01f, 2f * _jumpGravity * Math.Max(36f, NPC.Center.Y - apexY)));
+			vy = Math.Clamp(vy, minVy, -5.8f);
+
+			NPC.velocity = new Vector2(vx, vy);
+			SoundEngine.PlaySound(SoundID.Item74, NPC.Center);
+		}
+
+		private void TriggerJumpLandingExplosion()
+		{
+			for (int i = 0; i < 80; i++)
+			{
+				float angle = MathHelper.TwoPi * i / 80f;
+				Vector2 vel = angle.ToRotationVector2() * Main.rand.NextFloat(3.5f, 8.5f);
+				Dust ring = Dust.NewDustDirect(NPC.Center, 2, 2, i % 4 == 0 ? DustID.FlameBurst : DustID.Torch, vel.X, vel.Y, 80, default, Main.rand.NextFloat(1.1f, 2.1f));
+				ring.noGravity = true;
+			}
+			SoundEngine.PlaySound(SoundID.Item14, NPC.Center);
+
+			if (Main.netMode != NetmodeID.MultiplayerClient)
+			{
+				Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<PmpExplode>(), 50, 0f, Main.myPlayer, 0);
+			}
+		}
+
+		private void StabilizeLandingAfterJump()
+		{
+			for (int i = 0; i < 12 && Collision.SolidCollision(NPC.position, NPC.width, NPC.height); i++)
+			{
+				NPC.position.Y -= 2f;
+			}
+
+			bool onSolidGround = Collision.SolidCollision(NPC.position + new Vector2(0f, 8f), NPC.width, NPC.height);
+			if (!onSolidGround)
+			{
+				for (int i = 0; i < 8 && !Collision.SolidCollision(NPC.position + new Vector2(0f, 8f), NPC.width, NPC.height); i++)
+				{
+					NPC.position.Y += 1f;
+				}
+			}
+
+			int footTileX = (int)(NPC.Center.X / 16f);
+			int footTileY = (int)(NPC.Bottom.Y / 16f);
+			if (!Collision.SolidCollision(NPC.position + new Vector2(0f, 8f), NPC.width, NPC.height) && TryFindLandingSurface(footTileX, footTileY, out int surfaceY))
+			{
+				Tile support = Framing.GetTileSafely(footTileX, surfaceY);
+				if (support.HasTile && (Main.tileSolidTop[support.TileType] || TileID.Sets.Platforms[support.TileType]))
+				{
+					NPC.position.Y = surfaceY * 16f - NPC.height - 2f;
+				}
+			}
+
+			NPC.velocity = Vector2.Zero;
+		}
+
+		private void SpawnJumpTrailDust(Vector2 from, Vector2 to)
+		{
+			float dist = Vector2.Distance(from, to);
+			int steps = Math.Max(2, (int)(dist / 12f));
+			for (int s = 0; s <= steps; s++)
+			{
+				Vector2 p = Vector2.Lerp(from, to, s / (float)steps);
+				Dust flame = Dust.NewDustDirect(p, 2, 2, DustID.FlameBurst);
+				flame.velocity = Main.rand.NextVector2Circular(1.4f, 1.4f) - NPC.velocity * 0.12f;
+				flame.scale = Main.rand.NextFloat(1.0f, 1.7f);
+				flame.noGravity = true;
+
+				if (Main.rand.NextBool(2))
+				{
+					Dust ember = Dust.NewDustDirect(p, 2, 2, DustID.Torch);
+					ember.velocity = Main.rand.NextVector2Circular(1.8f, 1.8f) - NPC.velocity * 0.08f;
+					ember.scale = Main.rand.NextFloat(0.9f, 1.4f);
+					ember.noGravity = true;
 				}
 			}
 		}
@@ -645,6 +1033,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 
         private void InitTailKill()
         {
+			_platformLockActive = false;
             _hasEnteredTailKill = true;
             _currentState = AIState.TailKillRise;
             _tailKillDuration = 0;

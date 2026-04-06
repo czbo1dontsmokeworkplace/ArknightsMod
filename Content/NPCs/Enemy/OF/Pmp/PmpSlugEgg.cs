@@ -81,6 +81,13 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 			return true;
 		}
 
+		public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac)
+		{
+			// 允许虫卵稳定落在平台类方块上，而不是穿过平台继续下坠
+			fallThrough = false;
+			return true;
+		}
+
 		public override bool PreDraw(ref Color lightColor)
 		{
 			var spriteBatch = Main.spriteBatch;
