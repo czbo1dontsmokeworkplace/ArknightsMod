@@ -6,6 +6,9 @@
 // Blizzard.DisplayName: Blizzard
 // BlizzardStorm.DisplayName: Blizzard Storm
 // BlizzardStormStarter.DisplayName: Blizzard Storm Starter
+IceAltarShockwave.DisplayName: 冰晶祭坛冲击波
+IceAltarSummonWisp.DisplayName: 冰晶祭坛召唤风絮
+IceAltarTwinLineRing.DisplayName: 冰晶祭坛双线环
 // FNBanFloor.DisplayName: F N Ban Floor
 // FNIceDust.DisplayName: F N Ice Dust
 // FNIceRingChoice.DisplayName: F N Ice Ring Choice
@@ -178,3 +181,4 @@ FierySlugFireballProjectile.DisplayName: 炽焰源石虫火球射弹
 // BlackExplosion.DisplayName: Black Explosion
 // ProjLightCore.DisplayName: Proj Light Core
 // DedicationTrackingProj.DisplayName: Dedication Tracking Proj
+// IceAltarInboundWisp.DisplayName: Ice Altar Inbound Wisp

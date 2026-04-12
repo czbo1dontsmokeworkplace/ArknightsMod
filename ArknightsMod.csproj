@@ -14,6 +14,7 @@
     <Optimize>True</Optimize>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Content\NPCs\Enemy\Chapter6\FrostNova\Aerosol\Aerosol04.jpg" />
     <None Remove="Content\Items\BattleRecords\DrillBattleRecord.png" />
     <None Remove="Content\Items\BattleRecords\FrontlineBattleRecord.png" />
     <None Remove="Content\Items\BattleRecords\StrategicBattleRecord.png" />

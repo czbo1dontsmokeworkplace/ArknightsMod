@@ -6,6 +6,9 @@ BlackIceProjectile.DisplayName: Black Ice Projectile
 Blizzard.DisplayName: Blizzard
 BlizzardStorm.DisplayName: Blizzard Storm
 BlizzardStormStarter.DisplayName: Blizzard Storm Starter
+IceAltarShockwave.DisplayName: Ice Altar Shockwave
+IceAltarSummonWisp.DisplayName: Ice Altar Summon Wisp
+IceAltarTwinLineRing.DisplayName: Ice Altar Twin Line Ring
 FNBanFloor.DisplayName: F N Ban Floor
 FNIceDust.DisplayName: F N Ice Dust
 FNIceRingChoice.DisplayName: F N Ice Ring Choice
@@ -178,3 +181,4 @@ BlackExplosionParticle.DisplayName: Black Explosion Particle
 BlackExplosion.DisplayName: Black Explosion
 ProjLightCore.DisplayName: Proj Light Core
 DedicationTrackingProj.DisplayName: Dedication Tracking Proj
+IceAltarInboundWisp.DisplayName: Ice Altar Inbound Wisp

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using ReLogic.Content;
 using Terraria;
@@ -182,6 +182,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		int summonCD = 0;
 		bool isnpcdefeated;
 		int isallnpcdefeated = 0;
+		private int iceAltarSpawnCooldown;
 		int[] subNPCType = new int[6] { ModContent.NPCType<SnowCaster>(), ModContent.NPCType<SnowSoldier>(), ModContent.NPCType<Oneiros>(), ModContent.NPCType<IceCleaver>(),ModContent.NPCType<SnowSniper>(),ModContent.NPCType<SnowHound>() };
 		int SummonTypeChoice=0;
 
@@ -643,6 +644,23 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 				else {
 					FNOnSkill = false;
 					FNSkillFrameInitialized = false;
+				}
+			}
+			#endregion
+			#region 冰晶祭坛（仅二阶段：雪怪全灭且重生计时满足后周期召唤；风絮前兆 + 场上最多 5 座）
+			bool iceAltarSpawnAllowed = FNStage == 2f && isallnpcdefeated == 2 && ReBirthTimer >= 300;
+			if (iceAltarSpawnAllowed) {
+				if (Main.netMode != NetmodeID.MultiplayerClient) {
+					const int iceAltarSpawnInterval = 900;
+					iceAltarSpawnCooldown++;
+					if (iceAltarSpawnCooldown >= iceAltarSpawnInterval) {
+						iceAltarSpawnCooldown = 0;
+						if (IceCrystalAltar.CountActiveAltars() < IceCrystalAltar.MaxConcurrentAltars) {
+							float spawnX = player.Center.X + Main.rand.NextFloat(-420f, 420f);
+							float spawnY = player.Center.Y + Main.rand.NextFloat(-100f, 100f);
+							Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero, ProjectileType<IceAltarSummonWisp>(), 0, 0f, -1, spawnX, spawnY);
+						}
+					}
 				}
 			}
 			#endregion
