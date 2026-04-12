@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items;
+using ArknightsMod.Content.Items;
 using ArknightsMod.Content.Items.Consumables.VanityBags;
 using ArknightsMod.Content.Items.DisplayForUI;
 using ArknightsMod.Content.Items.Gacha;
@@ -71,6 +71,11 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		}
 
 		public override bool CanTownNPCSpawn(int numTownNPCs) {
+			for (int i = 0; i < Main.maxNPCs; i++) {
+				if (Main.npc[i].active && Main.npc[i].type == Type) {
+					return false;
+				}
+			}
 			foreach (Player player in Main.player) {
 				if (!player.active) {
 					continue;
