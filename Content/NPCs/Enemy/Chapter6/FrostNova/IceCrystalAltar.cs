@@ -659,10 +659,13 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		public override string Texture => ArknightsMod.noTexture;
 
 		private const int AnnulusPoints = 96;
-		/// <summary>冰冻、伤害与雪花范围（较旧版略缩小）；气雾贴图<strong>中心</strong>相对锚点的偏移亦不得超出此距离。</summary>
+		/// <summary>冲击波作用范围；气雾贴图<strong>中心</strong>相对锚点的偏移亦不得超出此距离。</summary>
 		private const float ShockwaveMaxRadius = 210f;
 		private const float ShockwaveStartRadius = 40f;
-		private const float FreezeChance = 0.5f;
+		/// <summary>首次命中附加寒冷时长；寒冷本身不限制行动，作为下一次命中转冻结的前置。</summary>
+		private const int ChilledOnFirstHitTicks = 180;
+		/// <summary>玩家已处于寒冷时，再次被冲击波命中则冻结的时长。</summary>
+		private const int FrozenOnChilledHitTicks = 60;
 		/// <summary>由祭坛生成时经 ai[0]/ai[1] 写入，每发冲击波不同。</summary>
 		private int _warningDurationTicks = 14;
 		private int _blastDurationTicks = 12;
@@ -679,8 +682,6 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		private const int FrostBlastDustForceCullGraceTicks = 5;
 		/// <summary>喷发「伤害已结算」后额外保留的纯视觉刻数（圆环/气雾渐隐、扩张减速），略加长便于尾段多帧低不透明度渐隐。</summary>
 		private const int BlastVisualExtraTicks = 72;
-		/// <summary>喷发瞬间对范围内玩家的基础伤害（随难度略增）。</summary>
-		private static int BlastHitDamage => Main.masterMode ? 16 : Main.expertMode ? 12 : 9;
 		/// <summary>弹幕仅有 ai[0..2]。预警阶段 ai[0] 为收缩半径；进入喷发时改为 &gt;= 本哨兵（与最大半径 300 不冲突）。</summary>
 		private const float PhaseBlastAi0Marker = 5000f;
 
@@ -956,25 +957,22 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		private void ApplyBlastHit() {
 			if (Main.netMode == NetmodeID.MultiplayerClient)
 				return;
-			int dur = Main.masterMode ? 60 : Main.expertMode ? 60 : 90;
-			int dmg = BlastHitDamage;
 			for (int p = 0; p < Main.maxPlayers; p++) {
 				Player plr = Main.player[p];
 				if (!plr.active || plr.dead || plr.ghost)
 					continue;
 				if (Vector2.Distance(plr.Center, Anchor) > ShockwaveMaxRadius)
 					continue;
-				if (dmg > 0) {
-					int dir = plr.Center.X >= Anchor.X ? 1 : -1;
-					plr.Hurt(PlayerDeathReason.ByProjectile(Projectile.owner, Projectile.whoAmI), dmg, dir);
-				}
+				plr.buffImmune[BuffID.Chilled] = false;
 				plr.buffImmune[BuffID.Frozen] = false;
 				if (plr.HasBuff(BuffID.Frozen))
 					continue;
-				if (Main.rand.NextFloat() >= FreezeChance)
+				if (plr.HasBuff(BuffID.Chilled)) {
+					plr.AddBuff(BuffID.Frozen, FrozenOnChilledHitTicks);
+					SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/Frozen") with { Volume = 0.85f, Pitch = Main.rand.NextFloat(-0.08f, 0.08f) }, plr.Center);
 					continue;
-				plr.AddBuff(BuffID.Frozen, dur);
-				SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/Frozen") with { Volume = 0.85f, Pitch = Main.rand.NextFloat(-0.08f, 0.08f) }, plr.Center);
+				}
+				plr.AddBuff(BuffID.Chilled, ChilledOnFirstHitTicks);
 			}
 		}
 
