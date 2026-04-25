@@ -2693,3 +2693,18 @@ Dedication: {
 	DisplayName: Dedication
 	Tooltip: ""
 }
+
+NianBody: {
+	DisplayName: Nian Body
+	Tooltip: ""
+}
+
+NianHead: {
+	DisplayName: Nian Head
+	Tooltip: ""
+}
+
+NianLegs: {
+	DisplayName: Nian Legs
+	Tooltip: ""
+}

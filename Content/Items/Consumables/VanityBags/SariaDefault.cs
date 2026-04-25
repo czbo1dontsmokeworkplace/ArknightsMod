@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ArknightsMod.Content.Items.Armor.Vanity.Defender.Saria;
+using System.Collections.Generic;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Consumables.VanityBags
@@ -8,9 +9,9 @@ namespace ArknightsMod.Content.Items.Consumables.VanityBags
 		protected override List<int> GetItems() {
 			return
 			[
-			ModContent.ItemType<Armor.Vanity.Defender.Saria.SariaHead>(),
-			ModContent.ItemType<Armor.Vanity.Defender.Saria.SariaBody>(),
-			ModContent.ItemType<Armor.Vanity.Defender.Saria.SariaLegs>()
+			ModContent.ItemType<SariaHead>(),
+			ModContent.ItemType<SariaBody>(),
+			ModContent.ItemType<SariaLegs>()
 		];
 		}
 	}
