@@ -58,7 +58,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 		private const int JumpLandingClearanceTiles = 12;
 		private const int JumpLandingDropToleranceTiles = 3;
 		private const int JumpLandingRiseToleranceTiles = 30;
+		private const int HeightMismatchJumpTriggerFrames = 300;
 		private const float PlatformLockReleasePlayerBelow = 72f;
+		private const float PlatformLockReleasePlayerAbove = 120f;
 		private const float PlatformLockSnapTolerance = 28f;
 		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
 			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
@@ -235,19 +237,22 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 			if (_slugEggCooldown > 0) _slugEggCooldown--;
 			UpdatePlatformLock(player);
 
-			// 高度差检测：与玩家不在同一层超过8秒则触发穿墙跳跃
+			// 高度差检测：与玩家长期不在同层时触发追跳（平台锁期间加速计时，作为兜底）
 			if (!_hasEnteredTailKill && _currentState != AIState.ModeJumpToPlayer)
 			{
-				if (Math.Abs(player.Center.Y - NPC.Center.Y) > 180f)
-					_heightMismatchTimer++;
+				float heightDiff = Math.Abs(player.Center.Y - NPC.Center.Y);
+				if (heightDiff > 180f)
+					_heightMismatchTimer += _platformLockActive ? 2 : 1;
 				else
 					_heightMismatchTimer = Math.Max(0, _heightMismatchTimer - 2);
-				if (_heightMismatchTimer >= 480)
+				if (_heightMismatchTimer >= HeightMismatchJumpTriggerFrames)
 				{
 					_heightMismatchTimer = 0;
+					_platformLockActive = false;
 					_currentState = AIState.ModeJumpToPlayer;
 					_modeTimer = 0;
 					_frameResetFlag = 2;
+					NPC.netUpdate = true;
 				}
 			}
 
@@ -285,6 +290,33 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 				}
 			}
 
+		}
+
+		public override void SendExtraAI(System.IO.BinaryWriter writer)
+		{
+			writer.Write((byte)_currentState);
+			writer.Write(_platformLockActive);
+			writer.Write(_platformLockBottomY);
+			writer.Write(_isTeleportJumping);
+			writer.Write(_hasEnteredTailKill);
+			writer.Write(_jumpTargetPos.X);
+			writer.Write(_jumpTargetPos.Y);
+			writer.Write(_jumpGravity);
+			writer.Write(_heightMismatchTimer);
+			writer.Write(ispmpstg2);
+		}
+
+		public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+		{
+			_currentState = (AIState)reader.ReadByte();
+			_platformLockActive = reader.ReadBoolean();
+			_platformLockBottomY = reader.ReadSingle();
+			_isTeleportJumping = reader.ReadBoolean();
+			_hasEnteredTailKill = reader.ReadBoolean();
+			_jumpTargetPos = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+			_jumpGravity = reader.ReadSingle();
+			_heightMismatchTimer = reader.ReadInt32();
+			ispmpstg2 = reader.ReadBoolean();
 		}
 
         private void ExecuteStateMachine(Player player)
@@ -437,17 +469,26 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 
 		private void UpdatePlatformLock(Player player)
 		{
-			if (!_platformLockActive || _hasEnteredTailKill || _currentState == AIState.ModeJumpToPlayer || _isTeleportJumping)
+			if (!_platformLockActive || _hasEnteredTailKill)
 				return;
 
-			// 玩家下层后立即解锁并触发一次位置跳跃，让庞贝主动跟下去。
-			if (player.Bottom.Y > _platformLockBottomY + PlatformLockReleasePlayerBelow)
+			// 跳跃状态交出控制权，避免平台锁覆盖跳跃期 noTileCollide / 速度设置。
+			if (_currentState == AIState.ModeJumpToPlayer || _isTeleportJumping)
+			{
+				_platformLockActive = false;
+				return;
+			}
+
+			bool playerAbove = player.Bottom.Y < _platformLockBottomY - PlatformLockReleasePlayerAbove;
+			bool playerBelow = player.Bottom.Y > _platformLockBottomY + PlatformLockReleasePlayerBelow;
+			if (playerAbove || playerBelow)
 			{
 				_platformLockActive = false;
 				_heightMismatchTimer = 0;
 				_currentState = AIState.ModeJumpToPlayer;
 				_modeTimer = 0;
 				_frameResetFlag = 2;
+				NPC.netUpdate = true;
 				return;
 			}
 
@@ -651,13 +692,17 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 
 		private bool HasClearJumpArc(Vector2 start, Vector2 end)
 		{
-			Vector2 delta = end - start;
-			float distance = delta.Length();
-			int steps = Math.Max(8, (int)(distance / 24f));
+			float dx = end.X - start.X;
+			float apexY = Math.Min(start.Y, end.Y) - 160f;
+			int steps = Math.Max(10, (int)(Math.Abs(dx) / 20f));
 			for (int i = 1; i <= steps; i++)
 			{
 				float t = i / (float)steps;
-				Vector2 sample = Vector2.Lerp(start, end, t);
+				float sampleX = MathHelper.Lerp(start.X, end.X, t);
+				float lerpY = MathHelper.Lerp(start.Y, end.Y, t);
+				float arcOffset = 4f * t * (1f - t) * (lerpY - apexY);
+				float sampleY = lerpY - arcOffset;
+				Vector2 sample = new Vector2(sampleX, sampleY);
 				if (Collision.SolidCollision(sample - new Vector2(NPC.width / 2f, NPC.height / 2f), NPC.width, NPC.height))
 					return false;
 			}
@@ -787,6 +832,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 				_jumpPrepCompleted = false;
 				_isTeleportJumping = false;
 				NPC.noTileCollide = false;
+				_platformLockActive = false;
+				NPC.netUpdate = true;
 			}
 
 			if (!_jumpPrepCompleted)
@@ -876,6 +923,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 					_isTeleportJumping = false;
 					_jumpPrepCompleted = false;
 					_heightMismatchTimer = 0;
+					NPC.netUpdate = true;
 					SelectNextAttackState();
 				}
 			}
@@ -908,6 +956,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 
 			NPC.velocity = new Vector2(vx, vy);
 			SoundEngine.PlaySound(SoundID.Item74, NPC.Center);
+			NPC.netUpdate = true;
 		}
 
 		private void TriggerJumpLandingExplosion()
@@ -1024,6 +1073,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 			_modeTimer = 0;
 			_fireRainCounter = 0;
 			_frameResetFlag = 2;
+			NPC.netUpdate = true;
 
 			if (_currentState == AIState.Mode1Crawl && _slugEggCooldown <= 0)
 			{
