@@ -2708,3 +2708,18 @@ NianLegs: {
 	DisplayName: Nian Legs
 	Tooltip: ""
 }
+
+UlpianusBody: {
+	DisplayName: Ulpianus Body
+	Tooltip: ""
+}
+
+UlpianusHead: {
+	DisplayName: Ulpianus Head
+	Tooltip: ""
+}
+
+UlpianusLegs: {
+	DisplayName: Ulpianus Legs
+	Tooltip: ""
+}
