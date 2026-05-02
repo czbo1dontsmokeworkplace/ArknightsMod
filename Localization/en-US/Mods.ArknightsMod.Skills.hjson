@@ -193,4 +193,36 @@ SchwarzBow: {
 	}
 }
 
+TyphonBow: {
+	1: {
+		Label: Quickshot
+		Desc:
+			'''
+			ATK +45%, ASPD +45%
+			While active, defeating an enemy grants +5% ATK and ASPD (up to 30 stacks) and refunds 3 seconds of skill duration
+			'''
+	}
+
+	2: {
+		Label: Twin-Mind Arrows
+		Desc:
+			'''
+			Each attack fires 2 homing arrows that prioritize two different targets
+			On hit, 40% chance to confuse the target for 1 second
+			After the second activation, duration becomes infinite
+			'''
+	}
+
+	3: {
+		Label: Storm of Arrows
+		Desc:
+			'''
+			Rain a barrage of arrows on the marked target; each arrow has weak homing
+			On hit, the arrow stays embedded in the enemy for 3.5 seconds
+			Each arrow embedded in the target increases subsequent hit damage by 7%
+			Once 10 or more arrows are embedded, fires an additional 100%-ATK arrow from the wielder
+			'''
+	}
+}
+
 ChargeReady: Initial skill points have been restored

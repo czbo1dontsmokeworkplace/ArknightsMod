@@ -13,6 +13,7 @@ using ArknightsMod.Content.Items.Weapons.Sniper.KroosAlter;
 using ArknightsMod.Content.Items.Weapons.Sniper.Pozemka;
 using ArknightsMod.Content.Items.Weapons.Sniper.Schwarz;
 using ArknightsMod.Content.Items.Weapons.Sniper.Shirayuki;
+using ArknightsMod.Content.Items.Weapons.Sniper.Typhon;
 using ArknightsMod.Content.Items.Weapons.Vanguard.Bagpipe;
 using ArknightsMod.Systems.Gameplay.Skill;
 using System;
@@ -73,6 +74,7 @@ namespace ArknightsMod.Players
 		public bool HoldNianWeapon = false;
 		public bool HoldNoirShield = false;
 		public bool HoldSchwarzBow = false;
+		public bool HoldTyphonBow = false;
 
 		private int oldHeld;
 		private int oldSkill;
@@ -108,12 +110,10 @@ namespace ArknightsMod.Players
 		//新添入的，用于更新
 		public override void PostUpdate() {
 			if (!Player.dead && HowManySkills > 0) {
-				
 				if (CurrentSkill?.ChargeType == SkillChargeType.Auto) {
 					AccessoriesAutoCharge();
 				}
 				else if (CurrentSkill == null && ChargeTypeIsPerSecond[Skill]) {
-					
 					AccessoriesAutoCharge();
 				}
 			}
@@ -203,6 +203,7 @@ namespace ArknightsMod.Players
 			HoldPozemkaCrossbow = Main.LocalPlayer.HeldItem.ModItem is PozemkaCrossbow;
 			HoldNianWeapon = Main.LocalPlayer.HeldItem.ModItem is NianWeapon;
 			HoldSchwarzBow = Main.LocalPlayer.HeldItem.ModItem is SchwarzBow;
+			HoldTyphonBow  = Main.LocalPlayer.HeldItem.ModItem is TyphonBow;
 			// 基于武器的技能系统
 			hasNearbyEnemy = false;
 			// 旧版武器支持
@@ -417,6 +418,7 @@ namespace ArknightsMod.Players
 					SkillActive = false;
 			}
 		}
+
 
 		public void DelStockCount() {
 			if (CurrentSkill != null) {
@@ -704,6 +706,31 @@ namespace ArknightsMod.Players
 				SetSkillData();
 			}
 
+			else if (HoldTyphonBow) {
+				IconName = "TyphonBow";
+				HowManySkills = 3;
+				SkillLevel = new() { 10, 10, 10 };
+				ChargeTypeIsPerSecond = new() { true, true, true };
+				AutoTrigger = new() { false, false, false };
+				ShowSummonIconBySkills = new() { false, false, false };
+
+				// S1: 攻击充能，满栈触发；激活窗口内 +45% 攻击力 / 速度
+				// S2: 时间充能，激活后 15 秒内攻击发射两支带眩晕的箭；第二次激活变为无限持续
+				// S3: 时间充能，激活后攻击改为对标记目标降下箭雨
+				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 15 };
+				InitialSPs2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 42 };
+				InitialSPs3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 25 };
+				MaxSPs1List     = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 35 };
+				MaxSPs2List     = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 50 };
+				MaxSPs3List     = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 40 };
+				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 35f };
+				SkillActiveTimeS2List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 20f };
+				SkillActiveTimeS3List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 30f };
+				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+				StockMaxS2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+				StockMaxS3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+				SetSkillData();
+			}
 			else if (HoldSchwarzBow) {
 				IconName = "SchwarzBow";
 				HowManySkills = 3;
