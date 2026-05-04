@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -28,21 +29,18 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Sniper.Typhon
 			HeadEquipSlot = Item.headSlot;
 		}
 
-		/// <summary>
-		/// 仅在行走躯体动画的第几行（0-based）绘制补图。
-		/// 对应长条从上往下数第 7、8、9、14、15、16 帧 → 行号 6–8、13–15。
-		/// </summary>
 		private static readonly int[] OverflowOnlyOnBodyRows = { 6, 7, 8, 13, 14, 15 };
 
-		/// <summary>
-		/// 在「当前头饰帧矩形顶边中点」基础上的微调（像素）。
-		/// X 乘朝向，Y 乘重力方向；若补图整体偏下，可把 Y 调成负数（例如 -2）往上移。
-		/// </summary>
+		private const int PlayerArmorSheetRowHeight = 56;
+
+		private const float VelocityBranchEpsilon = 0.0001f;
+
 		private static readonly Vector2 OverflowMaterialTopNudge = Vector2.Zero;
+
+		private const float OverflowDrawDownPx = 0f;
 
 		internal class TyphonHeadOverflowLayer : PlayerDrawLayer
 		{
-			/// <summary>紧跟原版头部层之后，补图与 <c>TyphonHead_Head</c> 同一套 headPosition/headVect 对齐。</summary>
 			public override Position GetDefaultPosition() =>
 				new AfterParent(PlayerDrawLayers.Head);
 
@@ -62,15 +60,27 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Sniper.Typhon
 			public override bool GetDefaultVisibility(PlayerDrawSet drawInfo)
 			{
 				Player plr = drawInfo.drawPlayer;
-				return !plr.dead && IsWearingTyphonHead(plr);
+				return !plr.dead && IsWearingTyphonHead(plr) && ShouldDrawOverflow(plr);
 			}
 
-			private static bool ShouldDrawForBodyFrame(Player p)
+			private static bool MatchesVanillaWalkBodyLegSync(Player p)
 			{
-				int bh = p.bodyFrame.Height;
-				if (bh <= 0)
+				if (Math.Abs(p.velocity.Y) > VelocityBranchEpsilon)
 					return false;
-				int row = p.bodyFrame.Y / bh;
+				if (Math.Abs(p.velocity.X) <= VelocityBranchEpsilon)
+					return false;
+				if (p.legs == 140)
+					return true;
+				return p.bodyFrame.Y == p.legFrame.Y;
+			}
+
+			private static bool ShouldDrawOverflow(Player p)
+			{
+				if (!MatchesVanillaWalkBodyLegSync(p))
+					return false;
+				if (p.bodyFrame.Height != PlayerArmorSheetRowHeight)
+					return false;
+				int row = p.bodyFrame.Y / PlayerArmorSheetRowHeight;
 				foreach (int r in OverflowOnlyOnBodyRows) {
 					if (row == r)
 						return true;
@@ -82,7 +92,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Sniper.Typhon
 			protected override void Draw(ref PlayerDrawSet drawInfo)
 			{
 				Player p = drawInfo.drawPlayer;
-				if (!ShouldDrawForBodyFrame(p))
+				if (!ShouldDrawOverflow(p))
 					return;
 
 				Texture2D extra = ModContent.Request<Texture2D>(
@@ -90,11 +100,6 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Sniper.Typhon
 				if (extra.Width <= 0 || extra.Height <= 0)
 					return;
 
-				// 与 vanilla DrawPlayer_21_Head（默认头盔分支）完全一致：
-				// 基准不是 Position-screen，而是 body 与实体宽度对齐后的整数坐标，再 + helmetOffset + headPosition + headVect；
-				// headPosition 不得再乘 direction（朝向由 playerEffect 翻转处理）。
-				// 头盔 DrawData 的 position 为旋转锚点 headVect2，source 为 bodyFrame3，故顶边中点：
-				// topCenter = helmetDrawPos + (-headVect2.X + bodyFrame3.Width/2, -headVect2.Y)。
 				Rectangle bodyFrame3 = p.bodyFrame;
 				Vector2 headVect2 = drawInfo.headVect;
 				if (p.gravDir == 1f)
@@ -116,6 +121,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Sniper.Typhon
 				Vector2 topCenter = helmetDrawPos + new Vector2(
 					-headVect2.X + bodyFrame3.Width * 0.5f + OverflowMaterialTopNudge.X * p.direction,
 					-headVect2.Y + OverflowMaterialTopNudge.Y * p.gravDir);
+				topCenter.Y += OverflowDrawDownPx * p.gravDir;
 
 				Vector2 origin = new(extra.Width * 0.5f, extra.Height);
 
