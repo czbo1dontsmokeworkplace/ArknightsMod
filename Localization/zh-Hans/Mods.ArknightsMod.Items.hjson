@@ -1439,6 +1439,26 @@ TyphonBow: {
 	Tooltip: “从我家里出去！”
 }
 
+TyphonDefault: {
+	DisplayName: 提丰的时装
+	Tooltip: 右键打开以获取头饰、上衣与下装
+}
+
+TyphonHead: {
+	DisplayName: 提丰的头饰
+	// Tooltip: ""
+}
+
+TyphonBody: {
+	DisplayName: 提丰的上衣
+	// Tooltip: ""
+}
+
+TyphonLegs: {
+	DisplayName: 提丰的下装
+	// Tooltip: ""
+}
+
 TexasBody: {
 	DisplayName: 德克萨斯的上衣
 	// Tooltip: ""

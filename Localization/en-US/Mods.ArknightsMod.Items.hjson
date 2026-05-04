@@ -1354,6 +1354,26 @@ TyphonBow: {
 	Tooltip: ""
 }
 
+TyphonDefault: {
+	DisplayName: Typhon Costume Bag
+	Tooltip: Right click to obtain Typhon's head, body, and leg vanity pieces
+}
+
+TyphonHead: {
+	DisplayName: Typhon Head
+	Tooltip: ""
+}
+
+TyphonBody: {
+	DisplayName: Typhon Body
+	Tooltip: ""
+}
+
+TyphonLegs: {
+	DisplayName: Typhon Legs
+	Tooltip: ""
+}
+
 TexasBody: {
 	DisplayName: Texas Body
 	Tooltip: ""
