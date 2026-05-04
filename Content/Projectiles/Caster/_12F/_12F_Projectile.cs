@@ -109,6 +109,7 @@ namespace ArknightsMod.Content.Projectiles.Caster._12F
 		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 			{
 			StartExplosion();
+
 		}
 
 		public override void OnHitPlayer(Player target, Player.HurtInfo info)
