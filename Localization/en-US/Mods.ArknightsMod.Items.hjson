@@ -2748,3 +2748,18 @@ UlpianusLegs: {
 	DisplayName: Ulpianus Legs
 	Tooltip: ""
 }
+
+ArmorUtageBody: {
+	DisplayName: Armor Utage Body
+	Tooltip: ""
+}
+
+ArmorUtageHead: {
+	DisplayName: Armor Utage Head
+	Tooltip: ""
+}
+
+ArmorUtageLegs: {
+	DisplayName: Armor Utage Legs
+	Tooltip: ""
+}
