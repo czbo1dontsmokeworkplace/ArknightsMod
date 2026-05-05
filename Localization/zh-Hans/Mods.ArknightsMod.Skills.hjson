@@ -346,30 +346,6 @@ TyphonBow: {
 
 ChargeReady: 初始技力已恢复
 
-LinVisionWeapon: {
-	1: {
-		// Desc: Mods.ArknightsMod.Skills.LinVisionWeapon.1.Desc
-		// Label: Mods.ArknightsMod.Skills.LinVisionWeapon.1.Label
-	}
-
-	2: {
-		// Label: Mods.ArknightsMod.Skills.LinVisionWeapon.2.Label
-		// Desc: Mods.ArknightsMod.Skills.LinVisionWeapon.2.Desc
-	}
-}
-
-Valarqvin: {
-	2: {
-		// Desc: Mods.ArknightsMod.Skills.Valarqvin.2.Desc
-		// Label: Mods.ArknightsMod.Skills.Valarqvin.2.Label
-	}
-
-	1: {
-		// Desc: Mods.ArknightsMod.Skills.Valarqvin.1.Desc
-		// Label: Mods.ArknightsMod.Skills.Valarqvin.1.Label
-	}
-}
-
 ValarqvinWeapon: {
 	2: {
 		// Desc: Mods.ArknightsMod.Skills.ValarqvinWeapon.2.Desc

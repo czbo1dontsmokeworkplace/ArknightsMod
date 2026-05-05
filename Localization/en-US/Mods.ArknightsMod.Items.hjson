@@ -2749,15 +2749,6 @@ UlpianusLegs: {
 	Tooltip: ""
 }
 
-<<<<<<< HEAD
-LinVisionWeapon: {
-	DisplayName: Lin Vision Weapon
-	Tooltip: ""
-}
-
-ValarqvinWeapon: {
-	DisplayName: Valarqvin Weapon
-=======
 ArmorUtageBody: {
 	DisplayName: Armor Utage Body
 	Tooltip: ""
@@ -2770,6 +2761,10 @@ ArmorUtageHead: {
 
 ArmorUtageLegs: {
 	DisplayName: Armor Utage Legs
->>>>>>> 1935307e331c581a4c61f544694f35e226c54c82
 	Tooltip: ""
+}
+
+ValarqvinWeapon: {
+	Tooltip: ""
+	DisplayName: Valarqvin Weapon
 }

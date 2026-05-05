@@ -188,10 +188,5 @@ FierySlugFireballProjectile.DisplayName: 炽焰源石虫火球射弹
 // BurnFireSpawner.DisplayName: Burn Fire Spawner
 // PalsyLightning.DisplayName: Palsy Lightning
 // PalsyLightningSpawner.DisplayName: Palsy Lightning Spawner
-<<<<<<< HEAD
-// LinVisionProj.DisplayName: Lin Vision Proj
-// LinVisionProj_2.DisplayName: Lin Vision Proj_2
-// ValarqvinProj.DisplayName: Valarqvin Proj
 // ValarqvinProj_2.DisplayName: Valarqvin Proj_2
-=======
->>>>>>> 1935307e331c581a4c61f544694f35e226c54c82
+// ValarqvinProj.DisplayName: Valarqvin Proj
