@@ -1504,6 +1504,11 @@ PipeItem: {
 	Tooltip: ""
 }
 
+PipeWallItem: {
+	DisplayName: Pipe Wall
+	Tooltip: ""
+}
+
 VentilationDuctItem: {
 	DisplayName: Ventilation Duct Item
 	Tooltip: ""

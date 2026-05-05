@@ -1,4 +1,3 @@
-using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -29,16 +28,6 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Sniper.Typhon
 			HeadEquipSlot = Item.headSlot;
 		}
 
-		private static readonly int[] OverflowOnlyOnBodyRows = { 6, 7, 8, 13, 14, 15 };
-
-		private const int PlayerArmorSheetRowHeight = 56;
-
-		private const float VelocityBranchEpsilon = 0.0001f;
-
-		private static readonly Vector2 OverflowMaterialTopNudge = Vector2.Zero;
-
-		private const float OverflowDrawDownPx = 0f;
-
 		internal class TyphonHeadOverflowLayer : PlayerDrawLayer
 		{
 			public override Position GetDefaultPosition() =>
@@ -60,39 +49,14 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Sniper.Typhon
 			public override bool GetDefaultVisibility(PlayerDrawSet drawInfo)
 			{
 				Player plr = drawInfo.drawPlayer;
-				return !plr.dead && IsWearingTyphonHead(plr) && ShouldDrawOverflow(plr);
-			}
-
-			private static bool MatchesVanillaWalkBodyLegSync(Player p)
-			{
-				if (Math.Abs(p.velocity.Y) > VelocityBranchEpsilon)
-					return false;
-				if (Math.Abs(p.velocity.X) <= VelocityBranchEpsilon)
-					return false;
-				if (p.legs == 140)
-					return true;
-				return p.bodyFrame.Y == p.legFrame.Y;
-			}
-
-			private static bool ShouldDrawOverflow(Player p)
-			{
-				if (!MatchesVanillaWalkBodyLegSync(p))
-					return false;
-				if (p.bodyFrame.Height != PlayerArmorSheetRowHeight)
-					return false;
-				int row = p.bodyFrame.Y / PlayerArmorSheetRowHeight;
-				foreach (int r in OverflowOnlyOnBodyRows) {
-					if (row == r)
-						return true;
-				}
-
-				return false;
+				return !plr.dead && IsWearingTyphonHead(plr)
+					&& TyphonVanityAnim.BodyFrameMatchesHornsLongStrip(plr);
 			}
 
 			protected override void Draw(ref PlayerDrawSet drawInfo)
 			{
 				Player p = drawInfo.drawPlayer;
-				if (!ShouldDrawOverflow(p))
+				if (!IsWearingTyphonHead(p) || !TyphonVanityAnim.BodyFrameMatchesHornsLongStrip(p))
 					return;
 
 				Texture2D extra = ModContent.Request<Texture2D>(
@@ -119,9 +83,8 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Sniper.Typhon
 				Vector2 helmetDrawPos = drawInfo.helmetOffset + basePos + p.headPosition + drawInfo.headVect;
 
 				Vector2 topCenter = helmetDrawPos + new Vector2(
-					-headVect2.X + bodyFrame3.Width * 0.5f + OverflowMaterialTopNudge.X * p.direction,
-					-headVect2.Y + OverflowMaterialTopNudge.Y * p.gravDir);
-				topCenter.Y += OverflowDrawDownPx * p.gravDir;
+					-headVect2.X + bodyFrame3.Width * 0.5f,
+					-headVect2.Y);
 
 				Vector2 origin = new(extra.Width * 0.5f, extra.Height);
 

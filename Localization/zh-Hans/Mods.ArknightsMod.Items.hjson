@@ -1589,6 +1589,11 @@ PipeItem: {
 	// Tooltip: ""
 }
 
+PipeWallItem: {
+	DisplayName: 管道墙
+	// Tooltip: ""
+}
+
 VentilationDuctItem: {
 	DisplayName: 通风管
 	// Tooltip: ""
