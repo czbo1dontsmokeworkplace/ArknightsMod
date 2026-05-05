@@ -1504,6 +1504,11 @@ PipeItem: {
 	Tooltip: ""
 }
 
+PipeWallItem: {
+	DisplayName: Pipe Wall
+	Tooltip: ""
+}
+
 VentilationDuctItem: {
 	DisplayName: Ventilation Duct Item
 	Tooltip: ""
@@ -2744,6 +2749,7 @@ UlpianusLegs: {
 	Tooltip: ""
 }
 
+<<<<<<< HEAD
 LinVisionWeapon: {
 	DisplayName: Lin Vision Weapon
 	Tooltip: ""
@@ -2751,5 +2757,19 @@ LinVisionWeapon: {
 
 ValarqvinWeapon: {
 	DisplayName: Valarqvin Weapon
+=======
+ArmorUtageBody: {
+	DisplayName: Armor Utage Body
+	Tooltip: ""
+}
+
+ArmorUtageHead: {
+	DisplayName: Armor Utage Head
+	Tooltip: ""
+}
+
+ArmorUtageLegs: {
+	DisplayName: Armor Utage Legs
+>>>>>>> 1935307e331c581a4c61f544694f35e226c54c82
 	Tooltip: ""
 }

@@ -33,22 +33,16 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			NPCID.Sets.AttackType[NPC.type] = 3;
 			NPCID.Sets.AttackTime[NPC.type] = 18;
 			NPCID.Sets.AttackAverageChance[NPC.type] = 10;
-			NPCID.Sets.HatOffsetY[NPC.type] = 4; // For when a party is active, the party hat spawns at a Y offset.
-												 // NPCID.Sets.ShimmerTownTransform[NPC.type] = true; // This set says that the Town NPC has a Shimmered form. Otherwise, the Town NPC will become transparent when touching Shimmer like other enemies.
+			NPCID.Sets.HatOffsetY[NPC.type] = 4;
 
-
-
-			// Set Example Person's biome and neighbor preferences with the NPCHappiness hook. You can add happiness text and remarks with localization (See an example in ExampleMod/Localization/en-US.lang).
-			// NOTE: The following code uses chaining - a style that works due to the fact that the SetXAffection methods return the same NPCHappiness instance they're called on.
 			NPC.Happiness
-				.SetBiomeAffection<ForestBiome>(AffectionLevel.Like) // Example Person prefers the forest.
-				.SetBiomeAffection<SnowBiome>(AffectionLevel.Dislike) // Example Person dislikes the snow.
-																	  // .SetBiomeAffection<ExampleSurfaceBiome>(AffectionLevel.Love) // Example Person likes the Example Surface Biome
-				.SetNPCAffection(NPCID.Mechanic, AffectionLevel.Love) // Loves living near the dryad.
-				.SetNPCAffection(NPCID.Cyborg, AffectionLevel.Like) // Likes living near the guide.
-				.SetNPCAffection(NPCID.Merchant, AffectionLevel.Dislike) // Dislikes living near the merchant.
-				.SetNPCAffection(NPCID.Angler, AffectionLevel.Hate) // Hates living near the demolitionist.
-			; // < Mind the semicolon!
+				.SetBiomeAffection<ForestBiome>(AffectionLevel.Like)
+				.SetBiomeAffection<SnowBiome>(AffectionLevel.Dislike)
+				.SetNPCAffection(NPCID.Mechanic, AffectionLevel.Love)
+				.SetNPCAffection(NPCID.Cyborg, AffectionLevel.Like)
+				.SetNPCAffection(NPCID.Merchant, AffectionLevel.Dislike)
+				.SetNPCAffection(NPCID.Angler, AffectionLevel.Hate)
+			;
 		}
 
 		public override List<string> SetNPCNameList() {
@@ -76,18 +70,15 @@ namespace ArknightsMod.Content.NPCs.Friendly
 					return false;
 				}
 			}
-			foreach (Player player in Main.player) {
-				if (!player.active) {
-					continue;
-				}
-				if (player.statDefense > 0) {
-					return true;
-				}
+			if (ClosureWorldSpawnSystem.ClosureTownUnlocked) {
+				return true;
+			}
+			foreach (Player _ in Main.ActivePlayers) {
+				return true;
 			}
 			return false;
 		}
 
-		// Make this Town NPC teleport to the King and/or Queen statue when triggered. Return toKingStatue for only King Statues. Return !toKingStatue for only Queen Statues. Return true for both.
 		public override bool CanGoToStatue(bool toQueenStatue) => true;
 
 		public int HelpCount = -1;
@@ -164,8 +155,6 @@ namespace ArknightsMod.Content.NPCs.Friendly
 
 		public void AO() {
 			var System = Main.LocalPlayer.GetModPlayer<AOSystem>();
-			// AOStatus: false=not have a quest, true=doing quest
-			// QuestType: 0:pre/unfin 1:pre/fin (2:HM/unfin 3:HM/fin)
 			if (System.QuestType == 1 && System.QuestNum != System.CountQuest) {
 				System.QuestType = 0;
 			}
@@ -180,7 +169,6 @@ namespace ArknightsMod.Content.NPCs.Friendly
 					Main.npcChatText = System.GetCurrentQuest().ToString();
 					Main.npcChatCornerItem = System.GetCurrentQuest().QuestItem;
 					System.AOStatus = true;
-					//Main.npcChatText = Language.GetTextValue("Mods.ArknightsMod.Dialogue.Closure.AOFin");
 				}
 			}
 			else {
@@ -297,7 +285,6 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			}
 		}
 
-		// Not completely finished, but below is what the NPC will sell
 		public override void AddShops() {
 			var npcShop = new NPCShop(Type, ShopName[0])
 				.Add(new Item(ModContent.ItemType<Polyketon>()) {
@@ -497,10 +484,18 @@ namespace ArknightsMod.Content.NPCs.Friendly
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				});
-			npcShop.Register(); // Name of this shop tab
+			npcShop.Register();
 		}
 
 		public override void OnSpawn(IEntitySource source) {
+			if (source is EntitySource_WorldGen || source is EntitySource_SpawnNPC) {
+				if (!ClosureWorldSpawnSystem.ClosureTownUnlocked) {
+					ClosureWorldSpawnSystem.ClosureTownUnlocked = true;
+					if (Main.netMode == NetmodeID.Server) {
+						NetMessage.SendData(MessageID.WorldData);
+					}
+				}
+			}
 			NPCShopSystem.UpdateClosureShop(Mod, true);
 		}
 
