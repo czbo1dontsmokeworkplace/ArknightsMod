@@ -184,3 +184,7 @@ DedicationTrackingProj.DisplayName: Dedication Tracking Proj
 IceAltarInboundWisp.DisplayName: Ice Altar Inbound Wisp
 TrailShard.DisplayName: Trail Shard
 TyphonS2Arrow.DisplayName: Typhon S2 Arrow
+BurnFireParticle.DisplayName: Burn Fire Particle
+BurnFireSpawner.DisplayName: Burn Fire Spawner
+PalsyLightning.DisplayName: Palsy Lightning
+PalsyLightningSpawner.DisplayName: Palsy Lightning Spawner
