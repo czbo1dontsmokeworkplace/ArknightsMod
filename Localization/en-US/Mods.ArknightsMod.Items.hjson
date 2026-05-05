@@ -2743,3 +2743,13 @@ UlpianusLegs: {
 	DisplayName: Ulpianus Legs
 	Tooltip: ""
 }
+
+LinVisionWeapon: {
+	DisplayName: Lin Vision Weapon
+	Tooltip: ""
+}
+
+ValarqvinWeapon: {
+	DisplayName: Valarqvin Weapon
+	Tooltip: ""
+}
