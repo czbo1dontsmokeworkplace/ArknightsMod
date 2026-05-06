@@ -7,11 +7,6 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
 {
-    /// <summary>
-    /// 提丰 S2 用箭矢：保留初速度方向飞行，并随时间向目标 NPC 逐渐偏转（追踪），
-    /// 命中目标时 40% 概率眩晕（BuffID.Confused）1 秒。
-    /// 目标 NPC 索引以 (whoAmI + 1) 形式存放在 Projectile.ai[0]，0 表示未指定（自动取最近）。
-    /// </summary>
     public class TyphonS2Arrow : ModProjectile
     {
         private const float HomingTurnRate  = 0.15f;
@@ -39,7 +34,6 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
 
         public override void AI()
         {
-            // 自定义位置更新（aiStyle=-1 时 vanilla 不再做这步）
             Projectile.position += Projectile.velocity;
             Projectile.rotation  = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
 

@@ -14,7 +14,8 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
 {
     public class TyphonBow : UpgradeWeaponBase
     {
-        private const int BaseUseTime = 60;
+        private const int BaseUseTime    = 72;
+        private const int S3ExtraUseTime = 93;   // 1.55s × 60
 
         private static SoundStyle SkillActiveSound;
 
@@ -59,20 +60,69 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
 
         public override bool AltFunctionUse(Player player) => true;
 
+        public override void HoldItem(Player player)
+        {
+            if (player.whoAmI != Main.myPlayer) return;
+            var modPlayer = player.GetModPlayer<WeaponPlayer>();
+            if (modPlayer.Skill == 2 && modPlayer.SkillActive)
+            {
+                // 保证只有一个瞄准框存在（reticle 自身在 S3 失效时会自杀）
+                int reticleType = ModContent.ProjectileType<TyphonAimReticle>();
+                bool found = false;
+                for (int i = 0; i < Main.maxProjectiles; i++)
+                {
+                    Projectile p = Main.projectile[i];
+                    if (p.active && p.owner == player.whoAmI && p.type == reticleType)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    Projectile.NewProjectile(
+                        player.GetSource_FromThis(),
+                        player.Center, Vector2.Zero,
+                        reticleType, 0, 0f, player.whoAmI);
+                }
+            }
+        }
+
         public override void UseStyle(Player player, Rectangle heldItemFrame)
         {
-            // 每次攻击动画期间，让武器以基础瞄准角为基准额外旋转一圈（2π）
-            // itemAnimation 从 itemAnimationMax 倒数到 0 → t 从 0 增到 1
             if (player.itemAnimationMax <= 0 || player.itemAnimation <= 0) return;
+
+            var modPlayer = player.GetModPlayer<WeaponPlayer>();
             float t = (float)player.itemAnimation / player.itemAnimationMax;
-            if (t > 0.5f)
+
+            // S3 激活：抬弓 → 保持 45° 仰角 → 放弓
+            if (modPlayer.Skill == 2 && modPlayer.SkillActive)
             {
-                // 前半段（射出后 0~0.5s）：转一圈
-                // spinProgress：0 = 刚射出，1 = 转完一圈
-                float spinProgress = (1f - t) / 0.5f;  // 等价于 2*(1-t)
-                float spin = spinProgress * MathHelper.TwoPi * player.direction * -1;
-                player.itemRotation = spin;
+                if (t > 0.7f)
+                {
+                    float p = (1f - t) / 0.3f;
+                    player.itemRotation = p * MathHelper.PiOver4 * player.direction * -1;
+                }
+                else if (t < 0.2f)
+                {
+                    float p = t / 0.2f;
+                    player.itemRotation = p * MathHelper.PiOver4 * player.direction * -1;
+                }
+                return;
             }
+
+            // S2 激活：动画前半段转弓一圈
+            if (modPlayer.Skill == 1 && modPlayer.SkillActive)
+            {
+                if (t > 0.5f)
+                {
+                    float p = (1f - t) / 0.5f;
+                    player.itemRotation = p * MathHelper.TwoPi * player.direction * -1;
+                }
+                return;
+            }
+
+            // 默认 / S1 / 其他：不修改 itemRotation，让 vanilla 弓动作接管
         }
 
         public override bool CanUseItem(Player player)
@@ -139,6 +189,13 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
                 Item.useTime = (int)Math.Max(1, BaseUseTime / speedMult);
                 Item.useAnimation = Item.useTime;
             }
+            // S3 激活期间额外加长 1.55s 攻击间隔（前摇 + 抬弓 + 落雨节奏匹配）
+            else if (modPlayer.Skill == 2 && modPlayer.SkillActive)
+            {
+                Item.useTime      = BaseUseTime + S3ExtraUseTime;
+                Item.useAnimation = Item.useTime;
+                Item.UseSound     = null;     // 抑制开始音，由 TyphonStar.OnKill 在 0.8 时点播放
+            }
 
             return base.CanUseItem(player);
         }
@@ -172,16 +229,16 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
             // 重算无浮动伤害：复刻 vanilla 全部 StatModifier 流程，但跳过 Main.DamageVar 的 ±15% 随机
             int cleanDamage = ComputeFixedDamage(player);
 
-            // S3：发射 TyphonArrow 标记箭，到时点引发箭雨
+            // S3：先生成 TyphonStar 前摇视觉，星消失后由其 OnKill 发射 S3 标记箭
             if (modPlayer.Skill == 2 && modPlayer.SkillActive)
             {
                 if (player.whoAmI == Main.myPlayer)
                 {
                     Projectile.NewProjectile(
-                        source, position, velocity * 2,
-                        ModContent.ProjectileType<TyphonArrow>(),
+                        source, position, Vector2.Zero,
+                        ModContent.ProjectileType<TyphonStar>(),
                         cleanDamage, knockback, player.whoAmI,
-                        Main.MouseWorld.X, Main.MouseWorld.Y, 1f /* ai[2]=1 → S3 标记 */);
+                        Main.MouseWorld.X, Main.MouseWorld.Y, 0f);
                 }
                 return false;
             }
@@ -214,9 +271,17 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
                 return false;
             }
 
-            // 默认（无技能激活）：单发 TyphonArrow（普通带重力箭矢）
+            // 默认（无技能激活）：抛物线发射 TyphonArrow，朝鼠标方向有上倾角，重力下经过鼠标
+            //   T 与水平距离成正比，最少 30 帧；vy 由解 pos(T)=target 反推得到，一般为负（向上）
+            Vector2 target = Main.MouseWorld;
+            float dx = target.X - position.X;
+            float dy = target.Y - position.Y;
+            float T  = MathHelper.Clamp(Math.Abs(dx) / 12f, 30f, 100f);
+            const float g = 0.15f;
+            Vector2 parabolicVel = new Vector2(dx / T, (dy - 0.5f * g * T * T) / T);
+
             Projectile.NewProjectile(
-                source, position, velocity,
+                source, position, parabolicVel,
                 ModContent.ProjectileType<TyphonArrow>(),
                 cleanDamage, knockback, player.whoAmI,
                 0f, 0f, 0f);
