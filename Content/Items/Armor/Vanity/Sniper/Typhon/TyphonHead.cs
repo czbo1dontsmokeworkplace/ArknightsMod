@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Vanity.Sniper.Typhon
@@ -9,8 +10,6 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Sniper.Typhon
 	[AutoloadEquip(EquipType.Head)]
 	public class TyphonHead : ArknightsVanityHead
 	{
-		public override int Rarity => 6;
-
 		internal static int HeadEquipSlot = -1;
 
 		public override void Load()
@@ -26,6 +25,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanity.Sniper.Typhon
 		public override void SafeSetDefaults()
 		{
 			HeadEquipSlot = Item.headSlot;
+			Item.rare = ItemRarityID.Red;
 		}
 
 		internal class TyphonHeadOverflowLayer : PlayerDrawLayer

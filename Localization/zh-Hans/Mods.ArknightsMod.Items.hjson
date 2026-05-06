@@ -1440,7 +1440,7 @@ TyphonBow: {
 }
 
 TyphonDefault: {
-	DisplayName: 提丰的时装
+	DisplayName: 提丰的服饰
 	Tooltip: 右键打开以获取头饰、上衣与下装
 }
 
@@ -3003,6 +3003,16 @@ MlynarVanityBag: {
 	DisplayName: 玛恩纳的服饰
 }
 
+UlpianusVanityBag: {
+	Tooltip: 右键点击可打开
+	DisplayName: 乌尔比安的服饰
+}
+
+NianVanityBag: {
+	Tooltip: 右键点击可打开
+	DisplayName: 年的服饰
+}
+
 ExusiaiAlterBody: {
 	DisplayName: 新约能天使的上衣
 	// Tooltip: ""
@@ -3058,32 +3068,32 @@ Dedication: {
 }
 
 NianBody: {
-	// DisplayName: Nian Body
+	DisplayName: 年的上衣
 	// Tooltip: ""
 }
 
 NianHead: {
-	// DisplayName: Nian Head
+	DisplayName: 年的头饰
 	// Tooltip: ""
 }
 
 NianLegs: {
-	// DisplayName: Nian Legs
+	DisplayName: 年的下装
 	// Tooltip: ""
 }
 
 UlpianusBody: {
-	// DisplayName: Ulpianus Body
+	DisplayName: 乌尔比安的上衣
 	// Tooltip: ""
 }
 
 UlpianusHead: {
-	// DisplayName: Ulpianus Head
+	DisplayName: 乌尔比安的头饰
 	// Tooltip: ""
 }
 
 UlpianusLegs: {
-	// DisplayName: Ulpianus Legs
+	DisplayName: 乌尔比安的下装
 	// Tooltip: ""
 }
 

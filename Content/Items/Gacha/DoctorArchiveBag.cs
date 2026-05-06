@@ -74,9 +74,6 @@ namespace ArknightsMod.Content.Items.Gacha
 			bool shift = IsShiftDown();
 			int pulls = shift ? 10 : 1;
 
-			// Note: For CanRightClick() items, tModLoader will automatically consume 1 item
-			// from the stack before calling RightClick(). So at this point, Item.stack is
-			// already (originalStack - 1).
 			int originalStack = Item.stack + 1;
 			if (originalStack < pulls)
 				return;

@@ -1355,7 +1355,7 @@ TyphonBow: {
 }
 
 TyphonDefault: {
-	DisplayName: Typhon Costume Bag
+	DisplayName: Typhon's Outfit
 	Tooltip: Right click to obtain Typhon's head, body, and leg vanity pieces
 }
 
@@ -2672,6 +2672,16 @@ TexasVanityBag: {
 MlynarVanityBag: {
 	Tooltip: ""
 	DisplayName: Mlynar Vanity Bag
+}
+
+UlpianusVanityBag: {
+	Tooltip: ""
+	DisplayName: Ulpianus Vanity Bag
+}
+
+NianVanityBag: {
+	Tooltip: ""
+	DisplayName: Nian Vanity Bag
 }
 
 ExusiaiAlterBody: {
