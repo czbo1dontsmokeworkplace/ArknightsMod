@@ -1,18 +1,42 @@
 using System.Collections.Generic;
+using System.IO;
 using ArknightsMod.Content.NPCs.Friendly;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.IO;
 using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
 using Terraria.WorldBuilding;
 
 namespace ArknightsMod.Systems
 {
-	/// <summary>
-	/// 新世界生成时在出生点附近放置城镇 NPC「可露希尔」，思路与 Magic Storage 的 Automaton 生成一致。
-	/// </summary>
 	public sealed class ClosureWorldSpawnSystem : ModSystem
 	{
+		public static bool ClosureTownUnlocked;
+
+		public override void ClearWorld() {
+			ClosureTownUnlocked = false;
+		}
+
+		public override void SaveWorldData(TagCompound tag) {
+			if (ClosureTownUnlocked) {
+				tag["ArknightsMod.ClosureTownUnlocked"] = true;
+			}
+		}
+
+		public override void LoadWorldData(TagCompound tag) {
+			ClosureTownUnlocked = tag.ContainsKey("ArknightsMod.ClosureTownUnlocked");
+			ClosureTownUnlocked |= NPC.AnyNPCs(ModContent.NPCType<Closure>());
+		}
+
+		public override void NetSend(BinaryWriter writer) {
+			writer.Write(ClosureTownUnlocked);
+		}
+
+		public override void NetReceive(BinaryReader reader) {
+			ClosureTownUnlocked = reader.ReadBoolean();
+		}
+
 		public override void ModifyWorldGenTasks(List<GenPass> tasks, ref double totalWeight)
 		{
 			int index = tasks.FindIndex(static pass => pass.Name == "Guide");

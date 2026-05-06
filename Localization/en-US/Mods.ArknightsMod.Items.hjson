@@ -1354,6 +1354,26 @@ TyphonBow: {
 	Tooltip: ""
 }
 
+TyphonDefault: {
+	DisplayName: Typhon's Outfit
+	Tooltip: Right click to obtain Typhon's head, body, and leg vanity pieces
+}
+
+TyphonHead: {
+	DisplayName: Typhon Head
+	Tooltip: ""
+}
+
+TyphonBody: {
+	DisplayName: Typhon Body
+	Tooltip: ""
+}
+
+TyphonLegs: {
+	DisplayName: Typhon Legs
+	Tooltip: ""
+}
+
 TexasBody: {
 	DisplayName: Texas Body
 	Tooltip: ""
@@ -1481,6 +1501,11 @@ MedicalWallItem: {
 
 PipeItem: {
 	DisplayName: Pipe Item
+	Tooltip: ""
+}
+
+PipeWallItem: {
+	DisplayName: Pipe Wall
 	Tooltip: ""
 }
 
@@ -2649,6 +2674,16 @@ MlynarVanityBag: {
 	DisplayName: Mlynar Vanity Bag
 }
 
+UlpianusVanityBag: {
+	Tooltip: ""
+	DisplayName: Ulpianus Vanity Bag
+}
+
+NianVanityBag: {
+	Tooltip: ""
+	DisplayName: Nian Vanity Bag
+}
+
 ExusiaiAlterBody: {
 	DisplayName: Exusiai The New Covenant's outfit (Body)
 	Tooltip: ""
@@ -2722,4 +2757,24 @@ UlpianusHead: {
 UlpianusLegs: {
 	DisplayName: Ulpianus Legs
 	Tooltip: ""
+}
+
+ArmorUtageBody: {
+	DisplayName: Armor Utage Body
+	Tooltip: ""
+}
+
+ArmorUtageHead: {
+	DisplayName: Armor Utage Head
+	Tooltip: ""
+}
+
+ArmorUtageLegs: {
+	DisplayName: Armor Utage Legs
+	Tooltip: ""
+}
+
+ValarqvinWeapon: {
+	Tooltip: ""
+	DisplayName: Valarqvin Weapon
 }

@@ -226,3 +226,15 @@ TyphonBow: {
 }
 
 ChargeReady: Initial skill points have been restored
+
+ValarqvinWeapon: {
+	2: {
+		Desc: Mods.ArknightsMod.Skills.ValarqvinWeapon.2.Desc
+		Label: Mods.ArknightsMod.Skills.ValarqvinWeapon.2.Label
+	}
+
+	1: {
+		Desc: Mods.ArknightsMod.Skills.ValarqvinWeapon.1.Desc
+		Label: Mods.ArknightsMod.Skills.ValarqvinWeapon.1.Label
+	}
+}

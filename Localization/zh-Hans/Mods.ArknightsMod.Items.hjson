@@ -1439,6 +1439,26 @@ TyphonBow: {
 	Tooltip: “从我家里出去！”
 }
 
+TyphonDefault: {
+	DisplayName: 提丰的服饰
+	Tooltip: 右键打开以获取头饰、上衣与下装
+}
+
+TyphonHead: {
+	DisplayName: 提丰的头饰
+	// Tooltip: ""
+}
+
+TyphonBody: {
+	DisplayName: 提丰的上衣
+	// Tooltip: ""
+}
+
+TyphonLegs: {
+	DisplayName: 提丰的下装
+	// Tooltip: ""
+}
+
 TexasBody: {
 	DisplayName: 德克萨斯的上衣
 	// Tooltip: ""
@@ -1566,6 +1586,11 @@ MedicalWallItem: {
 
 PipeItem: {
 	DisplayName: 管道
+	// Tooltip: ""
+}
+
+PipeWallItem: {
+	DisplayName: 管道墙
 	// Tooltip: ""
 }
 
@@ -2978,6 +3003,16 @@ MlynarVanityBag: {
 	DisplayName: 玛恩纳的服饰
 }
 
+UlpianusVanityBag: {
+	Tooltip: 右键点击可打开
+	DisplayName: 乌尔比安的服饰
+}
+
+NianVanityBag: {
+	Tooltip: 右键点击可打开
+	DisplayName: 年的服饰
+}
+
 ExusiaiAlterBody: {
 	DisplayName: 新约能天使的上衣
 	// Tooltip: ""
@@ -3029,36 +3064,55 @@ Dedication: {
 		'''
 		当你使用远程武器击中敌人时，或是受到治疗时（未实现），对周围的敌人施加150点单次法术伤害
 		自远古以来，这一部族笃信自己掌握着有关萨米的真相：原本万物各有声音，直到“祂”代替万物言语。
-		当前饰品为【半成品】，特效有待修改，该饰品尚未重绘
 		'''
 }
 
 NianBody: {
-	// DisplayName: Nian Body
+	DisplayName: 年的上衣
 	// Tooltip: ""
 }
 
 NianHead: {
-	// DisplayName: Nian Head
+	DisplayName: 年的头饰
 	// Tooltip: ""
 }
 
 NianLegs: {
-	// DisplayName: Nian Legs
+	DisplayName: 年的下装
 	// Tooltip: ""
 }
 
 UlpianusBody: {
-	// DisplayName: Ulpianus Body
+	DisplayName: 乌尔比安的上衣
 	// Tooltip: ""
 }
 
 UlpianusHead: {
-	// DisplayName: Ulpianus Head
+	DisplayName: 乌尔比安的头饰
 	// Tooltip: ""
 }
 
 UlpianusLegs: {
-	// DisplayName: Ulpianus Legs
+	DisplayName: 乌尔比安的下装
 	// Tooltip: ""
+}
+
+ArmorUtageBody: {
+	// DisplayName: Armor Utage Body
+	// Tooltip: ""
+}
+
+ArmorUtageHead: {
+	// DisplayName: Armor Utage Head
+	// Tooltip: ""
+}
+
+ArmorUtageLegs: {
+	// DisplayName: Armor Utage Legs
+	// Tooltip: ""
+}
+
+ValarqvinWeapon: {
+	// Tooltip: ""
+	// DisplayName: Valarqvin Weapon
 }

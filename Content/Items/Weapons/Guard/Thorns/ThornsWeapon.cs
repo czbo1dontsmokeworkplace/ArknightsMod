@@ -246,7 +246,8 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Thorns
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(ModContent.BuffType<sjds>(), 180);
-        }
+		
+		}
         public override void SetDefaults()
         {
             //Projectile.damageclass
@@ -485,8 +486,9 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Thorns
                 Dust s = Dust.NewDustDirect(target.Center, 0, 0, 1, 0f, 0f, 0, new Color(255, 200, 20, 200), 1.7f + Projectile.ai[0] / 2f);
                 s.velocity = -(Projectile.velocity + new Vector2(Main.rand.Next(-5, 6), Main.rand.Next(-5, 6))).SafeNormalize(Vector2.Zero) * (2f + Main.rand.Next(3));
                 s.noGravity = true;
-                //  s.velocity = (-Projectile.velocity / 2f + new Vector2(Main.rand.Next(-5, 6), Main.rand.Next(-5, 6)) / 2f)/2f;
-            }
+				//  s.velocity = (-Projectile.velocity / 2f + new Vector2(Main.rand.Next(-5, 6), Main.rand.Next(-5, 6)) / 2f)/2f;
+	
+			}
         }
         public override void OnSpawn(IEntitySource source)
         {
