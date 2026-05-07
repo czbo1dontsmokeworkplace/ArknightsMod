@@ -1,6 +1,4 @@
 using Microsoft.Xna.Framework;
-using ArknightsMod.Content.ElementalImpairment.Effect;
-using ArknightsMod.Content.ElementalImpairment;
 using Terraria;
 
 namespace ArknightsMod.Content.ElementalImpairment.Effect

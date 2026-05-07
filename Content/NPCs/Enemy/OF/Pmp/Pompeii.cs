@@ -1,5 +1,6 @@
 using ArknightsMod.Common.VisualEffects;
 using ArknightsMod.Content.BossBars;
+using ArknightsMod.Content.Items.Material;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -8,6 +9,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.Bestiary;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -58,6 +60,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 		private const int JumpLandingClearanceTiles = 12;
 		private const int JumpLandingDropToleranceTiles = 3;
 		private const int JumpLandingRiseToleranceTiles = 30;
+		private const int LootOrirockCubeCount = 20;
+		private const int LootPolyesterCount = 5;
 		private const int HeightMismatchJumpTriggerFrames = 300;
 		private const float PlatformLockReleasePlayerBelow = 72f;
 		private const float PlatformLockReleasePlayerAbove = 120f;
@@ -1189,6 +1193,11 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 				NPC.life = 0;
                 NPC.checkDead();
             }
+		}
+
+		public override void ModifyNPCLoot(NPCLoot npcLoot) {
+			npcLoot.Add(ItemDropRule.Common(ItemType<OrirockCube>(), 1, LootOrirockCubeCount, LootOrirockCubeCount));
+			npcLoot.Add(ItemDropRule.Common(ItemType<Polyester>(), 1, LootPolyesterCount, LootPolyesterCount));
 		}
     }
 
