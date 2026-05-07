@@ -3126,3 +3126,18 @@ ValarqvinWeapon: {
 	// Tooltip: ""
 	// DisplayName: Valarqvin Weapon
 }
+
+ArmorExusiaiLegs: {
+	// Tooltip: ""
+	// DisplayName: Armor Exusiai Legs
+}
+
+ArmorExusiaiHead: {
+	// Tooltip: ""
+	// DisplayName: Armor Exusiai Head
+}
+
+ArmorExusiaiBody: {
+	// Tooltip: ""
+	// DisplayName: Armor Exusiai Body
+}
