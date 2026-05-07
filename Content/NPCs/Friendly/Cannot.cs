@@ -1,4 +1,5 @@
-﻿using ArknightsMod.Content.Items;
+using ArknightsMod.Content.Items;
+using ArknightsMod.Content.Players;
 using ArknightsMod.Content.NPCs.Enemy.Chapter6;
 using ArknightsMod.Content.NPCs.Enemy.ThroughChapter4;
 using ArknightsMod.Content.NPCs.Enemy.TillChapter7;
@@ -111,11 +112,15 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		public override bool? CanBeHitByItem(Player player, Item item) {
 			if (Isnpcexist)
 				return false;
+			if (!player.GetModPlayer<CannotAggroPlayer>().CanDamageCannotForCurrentLife())
+				return false;
 			return base.CanBeHitByItem(player, item);
 		}
 
 		public override bool? CanBeHitByProjectile(Projectile projectile) {
 			if (Isnpcexist)
+				return false;
+			if (!projectile.TryGetOwner(out Player owner) || !owner.GetModPlayer<CannotAggroPlayer>().CanDamageCannotForCurrentLife())
 				return false;
 			return base.CanBeHitByProjectile(projectile);
 		}
@@ -260,7 +265,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			packet.Write(target);
 			packet.Write(x);
 			packet.Write(y);
-			packet.Send(255);
+			packet.Send();
 		}
 
 		public static void ReadSpawnReinforcements(BinaryReader reader) {
@@ -329,6 +334,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 				}
 				else {
 					TouchCount++;
+					Main.LocalPlayer.GetModPlayer<CannotAggroPlayer>().AcknowledgeCannotTouchGoodsDialogue();
 					TrySpawnReinforcements(Main.LocalPlayer);
 					if (TouchCount < 5)
 						Main.npcChatText = Language.GetTextValue($"Mods.ArknightsMod.Dialogue.Cannot.Touch{TouchCount}");
@@ -386,6 +392,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 
 		public override bool CheckDead() {
 			RespawnCooldown = 7200;
+			ModContent.GetInstance<CannotLifeGateSystem>().OnCannotDied();
 			return base.CheckDead();
 		}
 	}
