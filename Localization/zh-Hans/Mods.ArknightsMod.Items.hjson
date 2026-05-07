@@ -1589,8 +1589,18 @@ PipeItem: {
 	// Tooltip: ""
 }
 
-PipeWallItem: {
-	DisplayName: 管道墙
+PipeWallCopperItem: {
+	DisplayName: 管道墙（变体二）
+	// Tooltip: ""
+}
+
+PipeWallInsulatedItem: {
+	DisplayName: 管道墙（变体三）
+	// Tooltip: ""
+}
+
+PipeWallSteelItem: {
+	DisplayName: 管道墙（变体一）
 	// Tooltip: ""
 }
 

@@ -6,13 +6,15 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Tiles.Infrastructure.Pipe
 {
-	public class PipeWall : InfrastructureWall
+	public class PipeWallInsulated : InfrastructureWall
 	{
+		public override string Texture => "ArknightsMod/Content/Tiles/Infrastructure/Pipe/PipeWall3";
+
 		public override void SetDefaults()
 		{
-			DustType = DustID.Iron;
-			AddMapEntry(Color.DarkGray);
-			RegisterItemDrop(ModContent.ItemType<PipeWallItem>());
+			DustType = DustID.Silver;
+			AddMapEntry(new Color(140, 145, 155));
+			RegisterItemDrop(ModContent.ItemType<PipeWallInsulatedItem>());
 		}
 	}
 }
