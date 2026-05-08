@@ -95,19 +95,27 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
             var modPlayer = player.GetModPlayer<WeaponPlayer>();
             float t = (float)player.itemAnimation / player.itemAnimationMax;
 
-            // S3 激活：抬弓 → 保持 45° 仰角 → 放弓
+            // S3 激活：抬弓(15%) → 持平蓄力(25%) → 放弓(11%) → 后摇(49%)
             if (modPlayer.Skill == 2 && modPlayer.SkillActive)
             {
-                if (t > 0.7f)
+                if (t > 0.85f)
                 {
-                    float p = (1f - t) / 0.3f;
+                    // 抬弓：0° → 45°
+                    float p = (1f - t) / 0.15f;
                     player.itemRotation = p * MathHelper.PiOver4 * player.direction * -1;
                 }
-                else if (t < 0.2f)
+                else if (t > 0.60f)
                 {
-                    float p = t / 0.2f;
+                    // 蓄力：保持 45°
+                    player.itemRotation = MathHelper.PiOver4 * player.direction * -1;
+                }
+                else if (t > 0.49f)
+                {
+                    // 放弓：45° → 0°
+                    float p = (t - 0.49f) / 0.11f;
                     player.itemRotation = p * MathHelper.PiOver4 * player.direction * -1;
                 }
+                // 后摇(t ≤ 0.49)：不修改旋转，让 vanilla 接管
                 return;
             }
 
@@ -276,7 +284,8 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
             Vector2 target = Main.MouseWorld;
             float dx = target.X - position.X;
             float dy = target.Y - position.Y;
-            float T  = MathHelper.Clamp(Math.Abs(dx) / 12f, 30f, 100f);
+            float T  = MathHelper.Clamp(Math.Abs(dx) / 12f, 10f, 100f);
+            T = Math.Abs(dx) / 12f;
             const float g = 0.15f;
             Vector2 parabolicVel = new Vector2(dx / T, (dy - 0.5f * g * T * T) / T);
 

@@ -17,7 +17,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
     /// </summary>
     public class TyphonStar : ModProjectile
     {
-        // 总存在时长 = 抬弓 0.3 + 持星 0.5 = 0.8 × useAnimation
+        // 总存在时长 = 抬弓 0.15 + 蓄力 0.25 + 放弓 0.11 = 0.51 × useAnimation
         // 前 DelayTicks 帧（抬弓阶段）不渲染、不计 fade；之后才显示并计算 lifeT
         private int DelayTicks;
         private int TotalTicks;
@@ -115,9 +115,9 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
             if (interval <= 0)
                 interval = owner.HeldItem.useAnimation;
 
-            // 与 TyphonBow.UseStyle 对齐：抬弓占前 30%，持星占中间 50%，最后 20% 放弓
-            DelayTicks    = (int)(interval * 0.3f);
-            TotalTicks    = Math.Max(8, (int)(interval * 0.8f));
+            // 与 TyphonBow.UseStyle 对齐：抬弓 15%、蓄力 25%、放弓 11%，后摇 49%
+            DelayTicks    = (int)(interval * 0.15f);
+            TotalTicks    = Math.Max(8, (int)(interval * 0.51f));
             StarLifeTicks = Math.Max(1, TotalTicks - DelayTicks);
 
             Projectile.timeLeft = TotalTicks;
