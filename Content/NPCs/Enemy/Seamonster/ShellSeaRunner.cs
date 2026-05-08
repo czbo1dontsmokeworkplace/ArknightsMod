@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Systems.Gameplay.Damage;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -175,7 +175,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 		
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
-            return SpawnCondition.OverworldDayRain.Chance * 0.8f;
+            return SeabornSpawnHelper.OceanSeabornChance(spawnInfo, 0.8f);
         }
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {

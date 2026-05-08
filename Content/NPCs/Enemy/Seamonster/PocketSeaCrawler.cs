@@ -1,4 +1,4 @@
-﻿using Terraria;
+using Terraria;
 using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -168,7 +168,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 			NPC.direction = direction;
 		}
 		public override float SpawnChance(NPCSpawnInfo spawnInfo) {
-			return SpawnCondition.OverworldDayRain.Chance * 0.6f;
+			return SeabornSpawnHelper.PocketSeaCrawlerChance(spawnInfo, 0.6f);
 		}
 		public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo) {
 			
