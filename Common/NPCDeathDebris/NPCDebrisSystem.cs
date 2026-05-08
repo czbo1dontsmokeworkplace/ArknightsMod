@@ -1,3 +1,4 @@
+using ArknightsMod.Content.NPCs.Enemy.OF.Pmp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -12,13 +13,24 @@ namespace ArknightsMod.Common.NPCDeathDebris
     {
         public override void OnKill(NPC npc)
         {
-            if (npc.ModNPC == null || npc.ModNPC.Mod != Mod)
+            if (npc.ModNPC is Pompeii)
                 return;
 
+            TrySpawnDynamicDebris(npc, npc.boss, 0);
+        }
+
+        /// <summary>
+        /// 从 NPC 当前贴图中指定帧行裁切碎块并抛出。单机/客户端可见侧调用（与 OnKill 逻辑一致）。
+        /// </summary>
+        /// <param name="frameRowIndex">竖条精灵表中第几帧（从 0 计）。庞贝尾杀驻场结束时应传当前动画帧。</param>
+        public static void TrySpawnDynamicDebris(NPC npc, bool isBoss, int frameRowIndex)
+        {
             if (Main.dedServ)
                 return;
 
-            bool isBoss = npc.boss;
+            if (npc.ModNPC == null || npc.ModNPC.Mod?.Name != "ArknightsMod")
+                return;
+
             int minPieces = isBoss ? 3 : 1;
             int maxPieces = isBoss ? 5 : 3;
             int pieceCount = Main.rand.Next(minPieces, maxPieces + 1);
@@ -38,14 +50,18 @@ namespace ArknightsMod.Common.NPCDeathDebris
                 return;
 
             int frameCount = Main.npcFrameCount[npc.type];
+            if (frameCount < 1)
+                frameCount = 1;
+
             int frameHeight = frameCount > 1 ? texture.Height / frameCount : texture.Height;
+            frameRowIndex = Math.Clamp(frameRowIndex, 0, frameCount - 1);
 
             int texW = texture.Width;
             int texH = frameHeight;
             Color[] framePixels = new Color[texW * texH];
             try
             {
-                texture.GetData(0, new Rectangle(0, 0, texW, texH), framePixels, 0, texW * texH);
+                texture.GetData(0, new Rectangle(0, frameRowIndex * frameHeight, texW, texH), framePixels, 0, texW * texH);
             }
             catch
             {
@@ -63,7 +79,6 @@ namespace ArknightsMod.Common.NPCDeathDebris
 
             for (int i = 0; i < pieceCount; i++)
             {
-                // 碎块 <= 2 块时强制取大块（60%~100%），>= 3 块时允许小碎块（20%~70%）
                 int pieceW, pieceH;
                 if (pieceCount <= 2)
                 {
@@ -102,12 +117,14 @@ namespace ArknightsMod.Common.NPCDeathDebris
                 pieceTexture.SetData(piecePixels);
 
                 float angle = Main.rand.NextFloat(MathHelper.TwoPi);
-                float speed = Main.rand.NextFloat(1.5f, 5.5f);
-                Vector2 vel = new Vector2((float)Math.Cos(angle) * speed, (float)Math.Sin(angle) * speed - 2f);
+                float speed = Main.rand.NextFloat(2.4f, 6.8f);
+                Vector2 vel = new Vector2((float)Math.Cos(angle) * speed, (float)Math.Sin(angle) * speed - Main.rand.NextFloat(1.8f, 3.2f));
+
+                Vector2 spawnPos = npc.Center + Main.rand.NextVector2Circular(npc.width * 0.14f, npc.height * 0.14f);
 
                 int projIndex = Projectile.NewProjectile(
                     npc.GetSource_Death(),
-                    npc.Center,
+                    spawnPos,
                     vel,
                     ModContent.ProjectileType<NPCDebrisProjectile>(),
                     0, 0f, Main.myPlayer
@@ -117,7 +134,10 @@ namespace ArknightsMod.Common.NPCDeathDebris
                 {
                     var proj = Main.projectile[projIndex];
                     if (proj.ModProjectile is NPCDebrisProjectile debrisProj)
+                    {
                         debrisProj.SetDebrisTexture(pieceTexture);
+                        debrisProj.SetGroundRollEligible(Main.rand.NextFloat() < 0.42f);
+                    }
                 }
             }
         }

@@ -23,9 +23,30 @@ namespace ArknightsMod.Common.NPCDeathDebris
         /// <summary>是否已初始化旋转速度</summary>
         private bool _initialized;
 
+        /// <summary>生成时记录的完整初速度（用于前几帧缓入，形成轻微向外爆开感）</summary>
+        private Vector2 _burstFullVelocity;
+
+        /// <summary>-1 未采样；-1 之后为已渡过爆发帧计数</summary>
+        private int _burstPhase = -1;
+
+        private const int BurstEaseFrames = 10;
+
+        private float _drawScale = 1f;
+
+        /// <summary>是否允许落地后滚动一小段（概率由生成侧决定）</summary>
+        private bool _groundRollEligible;
+
+        /// <summary>落地后沿地面滑动剩余帧数（类似原版碎块）</summary>
+        private int _groundSlideTicks;
+
         public void SetDebrisTexture(Texture2D texture)
         {
             _debrisTexture = texture;
+        }
+
+        public void SetGroundRollEligible(bool eligible)
+        {
+            _groundRollEligible = eligible;
         }
 
         public override void SetDefaults()
@@ -51,6 +72,39 @@ namespace ArknightsMod.Common.NPCDeathDebris
                 _initialized = true;
             }
 
+            if (_burstPhase == -1)
+            {
+                _burstFullVelocity = Projectile.velocity;
+                _burstPhase = 0;
+            }
+
+            if (_burstPhase < BurstEaseFrames)
+            {
+                float t = (_burstPhase + 1) / (float)BurstEaseFrames;
+                float ease = 1f - (float)Math.Pow(1f - t, 3);
+                Projectile.velocity = _burstFullVelocity * ease;
+                Projectile.rotation += _rotationSpeed * (0.35f + 0.65f * ease);
+                _drawScale = MathHelper.Lerp(0.42f, 1f, ease);
+                _burstPhase++;
+                if (_burstPhase >= BurstEaseFrames)
+                    Projectile.velocity = _burstFullVelocity;
+                return;
+            }
+
+            _drawScale = 1f;
+
+            if (_groundSlideTicks > 0)
+            {
+                Projectile.velocity.Y += 0.14f;
+                Projectile.velocity.X *= 0.988f;
+                Projectile.rotation += Projectile.velocity.X * 0.048f;
+                _rotationSpeed *= 0.99f;
+                _groundSlideTicks--;
+                if (_groundSlideTicks <= 0 || Math.Abs(Projectile.velocity.X) < 0.07f)
+                    _groundSlideTicks = 0;
+                return;
+            }
+
             // 重力
             Projectile.velocity.Y += 0.35f;
             // 空气阻力
@@ -68,6 +122,17 @@ namespace ArknightsMod.Common.NPCDeathDebris
 
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
+            // 落地（下落撞地）：生成时已标记的碎块获得短暂地面滑动（概率在生成侧决定）
+            if (_groundRollEligible && _groundSlideTicks <= 0 && oldVelocity.Y > 0.55f)
+            {
+                _groundRollEligible = false;
+                _groundSlideTicks = Main.rand.Next(22, 48);
+                Projectile.velocity.X = Projectile.velocity.X * 0.58f + Main.rand.NextFloat(-2.6f, 2.6f);
+                Projectile.velocity.Y = -Math.Abs(oldVelocity.Y) * 0.12f;
+                _rotationSpeed *= 1.35f;
+                return false;
+            }
+
             // 落地后弹跳，减少速度
             if (Math.Abs(Projectile.velocity.Y) > Math.Abs(oldVelocity.Y))
                 Projectile.velocity.Y = -oldVelocity.Y * 0.3f;
@@ -97,7 +162,7 @@ namespace ArknightsMod.Common.NPCDeathDebris
                 drawColor,
                 Projectile.rotation,
                 origin,
-                Projectile.scale,
+                Projectile.scale * _drawScale,
                 SpriteEffects.None,
                 0f
             );

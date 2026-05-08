@@ -21,6 +21,11 @@ namespace ArknightsMod.Content.NPCs
         private float _rotationSpeed;
         private float _scaleVal = 1f;
 
+        private Vector2 _burstFullVelocity;
+        private int _burstPhase = -1;
+        private const int BurstEaseFrames = 10;
+        private float _spawnScaleAnim = 1f;
+
         public void InitDebris(string originalTexturePath, DebrisInfo info, int frameH)
         {
             if (_initialized || info == null)
@@ -44,6 +49,9 @@ namespace ArknightsMod.Content.NPCs
             Projectile.width = info.Width;
             Projectile.height = info.Height;
 
+            _burstFullVelocity = Projectile.velocity;
+            _burstPhase = 0;
+
             _initialized = true;
         }
 
@@ -66,6 +74,21 @@ namespace ArknightsMod.Content.NPCs
         {
             if (!_initialized)
                 return;
+
+            if (_burstPhase >= 0 && _burstPhase < BurstEaseFrames)
+            {
+                float t = (_burstPhase + 1) / (float)BurstEaseFrames;
+                float ease = 1f - (float)Math.Pow(1f - t, 3);
+                Projectile.velocity = _burstFullVelocity * ease;
+                Projectile.rotation += _rotationSpeed * (0.35f + 0.65f * ease);
+                _spawnScaleAnim = MathHelper.Lerp(0.42f, 1f, ease);
+                _burstPhase++;
+                if (_burstPhase >= BurstEaseFrames)
+                    Projectile.velocity = _burstFullVelocity;
+                return;
+            }
+
+            _spawnScaleAnim = 1f;
 
             Projectile.rotation += _rotationSpeed;
 
@@ -114,7 +137,7 @@ namespace ArknightsMod.Content.NPCs
                 drawColor,
                 Projectile.rotation,
                 origin,
-                _scaleVal,
+                _scaleVal * _spawnScaleAnim,
                 SpriteEffects.None,
                 0f
             );
