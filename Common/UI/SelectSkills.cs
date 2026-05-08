@@ -4,6 +4,7 @@ using ArknightsMod.Systems.Gameplay.Skill;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent.UI.Elements;
@@ -21,7 +22,13 @@ namespace ArknightsMod.Common.UI
 		private UIText skillLevel;
 		private UIElement expandedPanel;
 		private UIElement collapsedPanel;
+		private UIImage areaImage;
+		private UIElement closeTabRef;
 		private bool _isOpen = true;
+
+		// 与 vanilla buff 栏布局匹配：每行 11 个，行间距 50，第一行起点 y=76，图标 32×32
+		private const int BaseTop = 136;
+		private int _currentTop = BaseTop;
 
 		internal SelectSkills() => _ins = this;
 
@@ -31,12 +38,13 @@ namespace ArknightsMod.Common.UI
 			expandedPanel.Width.Set(0, 1f);
 			expandedPanel.Height.Set(0, 1f);
 
-			UIImage area = new(ModContent.Request<Texture2D>("ArknightsMod/Common/UI/SkillBase", AssetRequestMode.ImmediateLoad));
-			area.Left.Set(20, 0f);
-			area.Top.Set(136, 0f);
-			area.Width.Set(300, 0f);
-			area.Height.Set(100, 0f);
-			expandedPanel.Append(area);
+			areaImage = new UIImage(ModContent.Request<Texture2D>("ArknightsMod/Common/UI/SkillBase", AssetRequestMode.ImmediateLoad));
+			areaImage.Left.Set(20, 0f);
+			areaImage.Top.Set(BaseTop, 0f);
+			areaImage.Width.Set(300, 0f);
+			areaImage.Height.Set(100, 0f);
+			expandedPanel.Append(areaImage);
+			UIImage area = areaImage;
 
 			skillLevel = new UIText("0", 1f);
 			skillLevel.Left.Set(262, 0f);
@@ -63,18 +71,44 @@ namespace ArknightsMod.Common.UI
 			s3.OnLeftClick += (_, _) => ChangeSkill(2);
 			area.Append(s3);
 
-			UIElement closeTab = MakeTab("ArknightsMod/Common/UI/CloseBar_1", "ArknightsMod/Common/UI/CloseBar_2");
-			closeTab.Left.Set(300, 0f);
-			closeTab.Top.Set(136, 0f);
-			closeTab.OnLeftClick += (_, _) => SetOpen(false);
-			expandedPanel.Append(closeTab);
+			closeTabRef = MakeTab("ArknightsMod/Common/UI/CloseBar_1", "ArknightsMod/Common/UI/CloseBar_2");
+			closeTabRef.Left.Set(300, 0f);
+			closeTabRef.Top.Set(BaseTop, 0f);
+			closeTabRef.OnLeftClick += (_, _) => SetOpen(false);
+			expandedPanel.Append(closeTabRef);
 
 			collapsedPanel = MakeTab("ArknightsMod/Common/UI/CloseBar_1", "ArknightsMod/Common/UI/CloseBar_3");
 			collapsedPanel.Left.Set(20, 0f);
-			collapsedPanel.Top.Set(136, 0f);
+			collapsedPanel.Top.Set(BaseTop, 0f);
 			collapsedPanel.OnLeftClick += (_, _) => SetOpen(true);
 
 			Append(expandedPanel);
+		}
+
+		public override void Update(GameTime gameTime)
+		{
+			base.Update(gameTime);
+			int needed = ComputeBarTop();
+			if (needed == _currentTop) return;
+			_currentTop = needed;
+			areaImage.Top.Set(needed, 0f);
+			closeTabRef.Top.Set(needed, 0f);
+			collapsedPanel.Top.Set(needed, 0f);
+			if (summon != null) summon.Top.Set(needed + 14, 0f); // 原来 150 - 136 = 14 的偏移
+			Recalculate();
+		}
+
+		// 根据玩家当前激活 buff 数量算出技能条应当下移到的 y。
+		// 11 个以内（一行内）维持 BaseTop；多于 11 时移到 buff 最后一行下方留 4px 间距。
+		private static int ComputeBarTop()
+		{
+			Player p = Main.LocalPlayer;
+			if (p == null) return 80;
+			int buffCount = 0;
+			for (int i = 0; i < Player.MaxBuffs; i++)
+				if (p.buffType[i] > 0) buffCount++;
+			int rows = (buffCount + 10) / 11;
+			return  76 + rows * 50 + 4;
 		}
 
 		// 把两张叠放图包进一个容器，点击事件由容器统一处理。
