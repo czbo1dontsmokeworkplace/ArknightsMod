@@ -98,22 +98,22 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
             // S3 激活：抬弓(15%) → 持平蓄力(25%) → 放弓(11%) → 后摇(49%)
             if (modPlayer.Skill == 2 && modPlayer.SkillActive)
             {
-                if (t > 0.85f)
+                if (t > 0.95f)
                 {
                     // 抬弓：0° → 45°
-                    float p = (1f - t) / 0.15f;
-                    player.itemRotation = p * MathHelper.PiOver4 * player.direction * -1;
+                    float p = (1f - t) / 0.05f;
+                    player.itemRotation = p * MathHelper.PiOver2 * player.direction * -1 + MathHelper.PiOver4 * player.direction;
                 }
-                else if (t > 0.60f)
+                else if (t > 0.55f)
                 {
                     // 蓄力：保持 45°
                     player.itemRotation = MathHelper.PiOver4 * player.direction * -1;
                 }
-                else if (t > 0.49f)
+                else if (t > 0.5f)
                 {
                     // 放弓：45° → 0°
-                    float p = (t - 0.49f) / 0.11f;
-                    player.itemRotation = p * MathHelper.PiOver4 * player.direction * -1;
+                    float p = (t - 0.5f) / 0.05f;
+                    player.itemRotation = p * MathHelper.PiOver2 * player.direction * -1 + MathHelper.PiOver4 * player.direction;
                 }
                 // 后摇(t ≤ 0.49)：不修改旋转，让 vanilla 接管
                 return;
@@ -147,10 +147,8 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
 
             if (player.altFunctionUse == 2)
             {
-                // 右键 → 三技能均为手动激活
                 if (modPlayer.Skill == 0 && modPlayer.StockCount > 0 && !modPlayer.SkillActive)
                 {
-                    // S1 激活
                     modPlayer.SkillActive = true;
                     modPlayer.SkillTimer = 0;
                     modPlayer.DelStockCount();
@@ -190,19 +188,17 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
                 return false;
             }
 
-            // 左键攻击：S1 激活期间应用 +45% 攻速 + 每层 +5%
             if (modPlayer.Skill == 0 && modPlayer.SkillActive)
             {
                 float speedMult = 1.45f + 0.05f * player.GetModPlayer<TyphonState>().S1Stacks;
                 Item.useTime = (int)Math.Max(1, BaseUseTime / speedMult);
                 Item.useAnimation = Item.useTime;
             }
-            // S3 激活期间额外加长 1.55s 攻击间隔（前摇 + 抬弓 + 落雨节奏匹配）
             else if (modPlayer.Skill == 2 && modPlayer.SkillActive)
             {
                 Item.useTime      = BaseUseTime + S3ExtraUseTime;
                 Item.useAnimation = Item.useTime;
-                Item.UseSound     = null;     // 抑制开始音，由 TyphonStar.OnKill 在 0.8 时点播放
+                Item.UseSound     = null;
             }
 
             return base.CanUseItem(player);
@@ -224,7 +220,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
             var modPlayer = player.GetModPlayer<WeaponPlayer>();
             if (modPlayer.Skill == 2 && modPlayer.SkillActive)
             {
-                // S3：把方向纠正为指向鼠标上方（保留原始的拋物逻辑）
+                // S3：把方向纠正为指向鼠标上方
                 velocity = velocity.RotatedBy(-velocity.ToRotation())
                                    .RotatedBy((Main.MouseWorld + new Vector2(0, -1000) - position).ToRotation());
             }
@@ -233,11 +229,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             var modPlayer = player.GetModPlayer<WeaponPlayer>();
-
-            // 重算无浮动伤害：复刻 vanilla 全部 StatModifier 流程，但跳过 Main.DamageVar 的 ±15% 随机
             int cleanDamage = ComputeFixedDamage(player);
-
-            // S3：先生成 TyphonStar 前摇视觉，星消失后由其 OnKill 发射 S3 标记箭
             if (modPlayer.Skill == 2 && modPlayer.SkillActive)
             {
                 if (player.whoAmI == Main.myPlayer)
@@ -280,7 +272,6 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
             }
 
             // 默认（无技能激活）：抛物线发射 TyphonArrow，朝鼠标方向有上倾角，重力下经过鼠标
-            //   T 与水平距离成正比，最少 30 帧；vy 由解 pos(T)=target 反推得到，一般为负（向上）
             Vector2 target = Main.MouseWorld;
             float dx = target.X - position.X;
             float dy = target.Y - position.Y;
@@ -299,9 +290,6 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
 
         private int ComputeFixedDamage(Player player)
         {
-            // 复刻 vanilla 伤害流程但去掉变量浮动：
-            //   先取玩家对该伤害类的 StatModifier，再让 ModifyWeaponDamage 加 buff，
-            //   最后乘到 Item.damage 上四舍五入；不调用 Main.DamageVar，所以无 ±15% 抖动。
             StatModifier mod = player.GetDamage(Item.DamageType);
             ModifyWeaponDamage(player, ref mod);
             return (int)Math.Round(mod.ApplyTo(Item.damage));
@@ -346,7 +334,6 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
         ///   - S1 击杀叠加层数
         ///   - S2 激活次数（第二次起持续时间无限）
         ///   - S2 第一次激活期间的命中计数（结束后返还为 SP，上限 30）
-        /// 不污染 WeaponPlayer。
         /// </summary>
         public class TyphonState : ModPlayer
         {
@@ -378,7 +365,6 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
                 bool nowActive = Player.HeldItem.ModItem is TyphonBow
                     && wp.Skill == 1 && wp.SkillActive && S2ActivationCount == 1;
 
-                // 第一次 S2 active 下降沿 → 把命中数兑换为 SP
                 if (_wasFirstS2Active && !nowActive && S2FirstHits > 0 && wp.CurrentSkill != null)
                 {
                     int gain = Math.Min(S2FirstHits, 30);
@@ -388,7 +374,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
                 }
                 _wasFirstS2Active = nowActive;
 
-                // 切换到非提丰武器时复位 ActivationCount（替代旧的 WeaponPlayer 切武器复位）
+                // 切换到非提丰武器时复位 ActivationCount
                 if (Player.HeldItem.ModItem is not TyphonBow)
                 {
                     S2ActivationCount = 0;
