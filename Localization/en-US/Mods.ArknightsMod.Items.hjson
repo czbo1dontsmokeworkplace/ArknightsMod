@@ -1504,8 +1504,18 @@ PipeItem: {
 	Tooltip: ""
 }
 
-PipeWallItem: {
-	DisplayName: Pipe Wall
+PipeWallCopperItem: {
+	DisplayName: Pipe Wall (Variant 2)
+	Tooltip: ""
+}
+
+PipeWallInsulatedItem: {
+	DisplayName: Pipe Wall (Variant 3)
+	Tooltip: ""
+}
+
+PipeWallSteelItem: {
+	DisplayName: Pipe Wall (Variant 1)
 	Tooltip: ""
 }
 
@@ -2777,4 +2787,19 @@ ArmorUtageLegs: {
 ValarqvinWeapon: {
 	Tooltip: ""
 	DisplayName: Valarqvin Weapon
+}
+
+ArmorExusiaiLegs: {
+	Tooltip: ""
+	DisplayName: Armor Exusiai Legs
+}
+
+ArmorExusiaiHead: {
+	Tooltip: ""
+	DisplayName: Armor Exusiai Head
+}
+
+ArmorExusiaiBody: {
+	Tooltip: ""
+	DisplayName: Armor Exusiai Body
 }

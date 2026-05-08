@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.GameContent.UI;
 using Terraria.Localization;
@@ -19,7 +19,9 @@ namespace ArknightsMod.Content.Currencies
 
 		public override void GetItemExpectedPrice(Item item, out long calcForSelling, out long calcForBuying) {
 			calcForSelling = 0;
-			calcForBuying = item.value / 5 / 1000000;
+			calcForBuying = item.value / 50000;
+			if (calcForBuying == 0 && item.value > 0)
+				calcForBuying = 1;
 		}
 	}
 }

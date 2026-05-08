@@ -1,6 +1,7 @@
 using ArknightsMod.Content.Items;
 using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.NPCs.Friendly;
+using ArknightsMod.Content.Players;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent.UI;
@@ -138,6 +139,15 @@ namespace ArknightsMod
 				case ArkMessageID.SpawnReinforcements:
 					Cannot.ReadSpawnReinforcements(reader);
 					break;
+				case ArkMessageID.CannotAggroAck:
+					CannotAggroPlayer.ServerApplyAck(whoAmI);
+					break;
+				case ArkMessageID.CannotLifeTokenSync:
+					if (Main.netMode == NetmodeID.MultiplayerClient) {
+						int token = reader.ReadInt32();
+						ModContent.GetInstance<CannotLifeGateSystem>().ApplyNetworkLifeToken(token);
+					}
+					break;
 				case ArkMessageID.CoffeeMachineRequest:
 					if (Main.netMode == NetmodeID.Server)
 						WaterDispenserTile.TryGiveCoffee(Main.player[whoAmI]);
@@ -158,6 +168,8 @@ namespace ArknightsMod
 			UpdateCannotShop,
 			RequestUpdateCannotShop,
 			SpawnReinforcements,
+			CannotAggroAck,
+			CannotLifeTokenSync,
 			CoffeeMachineRequest,
 			ProtocolSpaceRequestStart,
 			ProtocolSpaceRequestExitInteract,

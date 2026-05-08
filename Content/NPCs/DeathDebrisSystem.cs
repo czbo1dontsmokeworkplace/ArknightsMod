@@ -60,11 +60,11 @@ namespace ArknightsMod.Content.NPCs
                     continue;
 
                 Vector2 spawnPos = npc.Center + Main.rand.NextVector2Circular(
-                    npc.width * 0.3f, npc.height * 0.3f);
+                    npc.width * 0.22f, npc.height * 0.22f);
 
-                Vector2 vel = new Vector2(
-                    Main.rand.NextFloat(-4.5f, 4.5f),
-                    Main.rand.NextFloat(-6.5f, -1.5f));
+                float burstAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                float burstSpeed = Main.rand.NextFloat(2.2f, 6.2f);
+                Vector2 vel = new Vector2((float)Math.Cos(burstAngle) * burstSpeed, (float)Math.Sin(burstAngle) * burstSpeed - Main.rand.NextFloat(1.6f, 3.4f));
 
                 int projIndex = Projectile.NewProjectile(
                     npc.GetSource_Death(),

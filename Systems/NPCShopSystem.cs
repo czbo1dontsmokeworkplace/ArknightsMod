@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Consumables.VanityBags;
+using ArknightsMod.Content.Items.Consumables.VanityBags;
 using ArknightsMod.Content.NPCs.Friendly;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
