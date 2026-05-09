@@ -1,5 +1,6 @@
 ﻿using ArknightsMod.Common.UI.BattleRecord;
 using ArknightsMod.Common.UI.BattleRecord.Calculators;
+using ArknightsMod.Content.Items.Weapons.Defender.Beagle;
 using ArknightsMod.Systems.Gameplay.Skill;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -27,7 +28,6 @@ namespace ArknightsMod.Content.Items.Weapons
 			var previewLevel = Level + experienceCalculator.UpgradeLevelPreview;
 			int nowDamage = GetDamage(Level);
 			int previewDamage = GetDamage(previewLevel);
-
 			var font = FontAssets.MouseText.Value;
 			string text = Language.GetTextValue("Mods.ArknightsMod.UpgradeWeapon.LevelPreview.Damage");
 			Vector2 textSize = font.MeasureString(text);

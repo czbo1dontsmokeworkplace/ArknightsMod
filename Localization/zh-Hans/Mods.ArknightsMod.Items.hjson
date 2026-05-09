@@ -3116,3 +3116,8 @@ ValarqvinWeapon: {
 	// Tooltip: ""
 	// DisplayName: Valarqvin Weapon
 }
+
+DN_Weapon: {
+	// DisplayName: D N_ Weapon
+	// Tooltip: ""
+}
