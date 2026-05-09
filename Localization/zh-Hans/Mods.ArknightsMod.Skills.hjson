@@ -344,6 +344,24 @@ TyphonBow: {
 	}
 }
 
+HazeMagicBook: {
+	1: {
+		Label: 攻击力强化·β型
+		Desc:
+			'''
+			攻击力[c/3791db:+80%]
+			'''
+	}
+
+	2: {
+		Label: 赤色之瞳
+		Desc:
+			'''
+			生命上限[c/f6643b:-75%]，攻击力[c/3791db:+60%]，攻击速度[c/3791db:+60%]
+			'''
+	}
+}
+
 ChargeReady: 初始技力已恢复
 
 ValarqvinWeapon: {

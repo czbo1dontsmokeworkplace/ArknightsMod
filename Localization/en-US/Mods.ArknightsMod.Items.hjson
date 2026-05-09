@@ -2709,7 +2709,7 @@ ExusiaiAlterLegs: {
 	Tooltip: ""
 }
 
-Haze_Magicbook: {
+HazeMagicBook: {
 	DisplayName: Haze_ Magicbook
 	Tooltip: ""
 }
