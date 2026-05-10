@@ -70,7 +70,7 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
             if (flashes.Count == 0) return;
 
             sb.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp,
-                     DepthStencilState.None, RasterizerState.CullNone, null, Main.Transform);
+                     DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             for (int i = flashes.Count - 1; i >= 0; i--)
             {
