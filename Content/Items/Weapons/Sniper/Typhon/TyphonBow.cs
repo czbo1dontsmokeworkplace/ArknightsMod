@@ -3,7 +3,6 @@ using ArknightsMod.Content.Projectiles.Sniper.Typhon;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 using System;
 using Terraria;
 using Terraria.Audio;
@@ -18,8 +17,6 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
         private const float DebugS3IdleBowTiltRadians = -1f;
 
         public const float S3IdleBowTiltRadians = DebugS3IdleBowTiltRadians;
-
-        private const bool DebugInstantSkillCharge = true;
 
         private const int BaseUseTime    = 72;
         private const int S3ExtraUseTime = 93;
@@ -368,21 +365,6 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
                     S2FirstHits = 0;
                 }
                 _wasFirstS2Active = nowActive;
-
-                if (DebugInstantSkillCharge
-                    && Player.whoAmI == Main.myPlayer
-                    && Player.HeldItem.ModItem is TyphonBow
-                    && Main.keyState.IsKeyDown(Keys.F)
-                    && !Main.oldKeyState.IsKeyDown(Keys.F))
-                {
-                    if (!wp.SkillActive && wp.CurrentSkill != null)
-                    {
-                        var data = wp.CurrentSkill.CurrentLevelData;
-                        wp.SkillCharge = 0;
-                        wp.StockCount = data.MaxStack;
-                        wp.SP = data.MaxSP;
-                    }
-                }
 
                 if (Player.HeldItem.ModItem is not TyphonBow)
                 {

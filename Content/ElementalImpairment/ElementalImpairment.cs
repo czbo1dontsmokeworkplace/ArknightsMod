@@ -240,14 +240,14 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 			if (!anyVisible)
 				return;
 
-			Vector2 iconPos = npc.Center - Main.screenPosition;
-			Vector2 ringCenter = npc.Center - Main.screenPosition;
+			Vector2 iconPos = Vector2.Transform(npc.Center - Main.screenPosition, Main.GameViewMatrix.TransformationMatrix);
+			Vector2 ringCenter = Vector2.Transform(npc.Center - Main.screenPosition, Main.GameViewMatrix.TransformationMatrix);
 			iconPos.Y += npc.height * 0.5f + 20f;
-			ringCenter.Y += npc.height * 0.5f + 5f;
+			ringCenter.Y += (npc.height * 0.5f + 5f) * Main.GameViewMatrix.Zoom.Y;
 
 			spriteBatch.End();
 			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearClamp,
-				DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+				DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Matrix.Identity);
 
 			// ֻ����δ�����Ƶ�����ͼ��
 			foreach (var aff in Container.Afflictions) {
@@ -348,7 +348,7 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 						Projection = Matrix.Identity
 					};
 				}
-				cachedEffect.World = Main.GameViewMatrix.TransformationMatrix;
+				cachedEffect.World = Matrix.Identity;
 				cachedEffect.View = Matrix.Identity;
 				cachedEffect.Projection = Matrix.CreateOrthographicOffCenter(0f, Main.screenWidth, Main.screenHeight, 0f, -1f, 1f);
 
