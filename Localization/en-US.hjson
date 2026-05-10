@@ -815,6 +815,13 @@ Mods: {
 			RioterHit.DisplayName: Rioter Hit
 			Bloodyborn.DisplayName: Bloodyborn
 			TransparentSlash.DisplayName: Transparent Slash
+			GravityDagger.DisplayName: Gravity Dagger
+			RedMagicBlade.DisplayName: Red Magic Blade
+			StallDagger.DisplayName: Stall Dagger
+			DelayDagger.DisplayName: Delay Dagger
+			GroundDagger.DisplayName: Ground Dagger
+			StaticPredictLine.DisplayName: Static Predict Line
+			DaggerPredictLine.DisplayName: Dagger Predict Line
 		}
 
 		ButtonName.button2: Annihilation operation
