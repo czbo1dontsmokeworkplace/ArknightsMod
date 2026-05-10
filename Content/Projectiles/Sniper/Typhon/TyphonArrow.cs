@@ -1,4 +1,4 @@
-using ArknightsMod.Content.Buffs;
+﻿using ArknightsMod.Content.Buffs;
 using ArknightsMod.Content.Items.Weapons.Sniper.Typhon;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -39,6 +39,8 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
         private const int S3RainSpawnIntervalTicks = 24;
 
         private const int S3RainHitCrossFlashDurationTicks = 42;
+
+        private const float S3LockedRainMinSpeed = 18f;
 
         private const float S3RainHitCrossBaseGeomScale = 0.84f;
 
@@ -116,7 +118,8 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
                         new Vector2(Projectile.ai[0], Projectile.ai[1]),
                         Projectile.velocity.Length(),
                         Projectile.damage,
-                        Projectile.knockBack);
+                        Projectile.knockBack,
+                        (int)Projectile.localAI[0]);
                 }
                 return false;
             }
@@ -147,7 +150,21 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
                     float spd = Projectile.velocity.Length();
                     if (spd < 4f)
                         spd = Math.Max(SkillTrailSpawnSpeed, 8f);
-                    Projectile.velocity = new Vector2(0f, Math.Abs(spd));
+
+                    if (TryGetLockedRainTarget((int)Projectile.localAI[0], out NPC lockedRainTarget))
+                    {
+                        spd = Math.Max(spd, S3LockedRainMinSpeed);
+                        Vector2 toTarget = lockedRainTarget.Center - Projectile.Center;
+                        if (toTarget.LengthSquared() > 16f)
+                            Projectile.velocity = toTarget.SafeNormalize(Vector2.UnitY) * spd;
+                        else
+                            Projectile.velocity = new Vector2(0f, Math.Abs(spd));
+                    }
+                    else
+                    {
+                        Projectile.velocity = new Vector2(0f, Math.Abs(spd));
+                    }
+
                     Projectile.position += Projectile.velocity;
                     Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
@@ -567,18 +584,24 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
             if (!Vanity || Main.myPlayer != Projectile.owner)
                 return;
             SpawnS3RainArrow(
-                Projectile.GetSource_Death(),
-                Projectile.owner,
-                new Vector2(Projectile.ai[0], Projectile.ai[1]),
-                Projectile.velocity.Length(),
-                Projectile.damage,
-                Projectile.knockBack);
+                        Projectile.GetSource_Death(),
+                        Projectile.owner,
+                        new Vector2(Projectile.ai[0], Projectile.ai[1]),
+                        Projectile.velocity.Length(),
+                        Projectile.damage,
+                        Projectile.knockBack,
+                        (int)Projectile.localAI[0]);
         }
 
-        private static void SpawnS3RainArrow(IEntitySource source, int ownerWho, Vector2 markerReticleAi01, float refSpeed, int damage, float knockback)
+        private static void SpawnS3RainArrow(IEntitySource source, int ownerWho, Vector2 markerReticleAi01, float refSpeed, int damage, float knockback, int lockedNpcWhoPlusOne = 0)
         {
-            Vector2 zoneCenter = TyphonAimReticle.GetCurrentPos(ownerWho) ?? markerReticleAi01;
-            NPC columnNpc = FindS3RainColumnTarget(ownerWho, zoneCenter, TyphonAimReticle.ReticleAreaRadius);
+            bool hasLockedNpc = TryGetLockedRainTarget(lockedNpcWhoPlusOne, out NPC lockedNpc);
+            Vector2 zoneCenter = lockedNpcWhoPlusOne > 0
+                ? hasLockedNpc ? lockedNpc.Center : markerReticleAi01
+                : TyphonAimReticle.GetCurrentPos(ownerWho) ?? markerReticleAi01;
+            NPC columnNpc = hasLockedNpc
+                ? lockedNpc
+                : FindS3RainColumnTarget(ownerWho, zoneCenter, TyphonAimReticle.ReticleAreaRadius);
 
             float yDrop = 1000f;
             Vector2 spawnPos;
@@ -590,7 +613,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
             float spd = Math.Max(refSpeed, 4f) * Main.rand.NextFloat(0.95f, 1.05f) * 0.5f;
             Vector2 vel = new Vector2(0f, Math.Abs(spd));
 
-            Projectile.NewProjectile(
+            int projIdx = Projectile.NewProjectile(
                 source,
                 spawnPos,
                 vel,
@@ -601,6 +624,27 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
                 markerReticleAi01.X,
                 markerReticleAi01.Y,
                 AiS3RainColumn);
+
+            if (lockedNpcWhoPlusOne > 0 && projIdx >= 0 && projIdx < Main.maxProjectiles)
+            {
+                Main.projectile[projIdx].localAI[0] = lockedNpcWhoPlusOne;
+                Main.projectile[projIdx].netUpdate = true;
+            }
+        }
+
+        private static bool TryGetLockedRainTarget(int lockedNpcWhoPlusOne, out NPC npc)
+        {
+            npc = null;
+            int idx = lockedNpcWhoPlusOne - 1;
+            if (idx < 0 || idx >= Main.maxNPCs)
+                return false;
+
+            NPC candidate = Main.npc[idx];
+            if (!candidate.active || candidate.friendly || candidate.life <= 0 || candidate.dontTakeDamage)
+                return false;
+
+            npc = candidate;
+            return true;
         }
 
         private static NPC FindS3RainColumnTarget(int ownerWho, Vector2 zoneCenter, float radius)
@@ -783,3 +827,5 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
         }
     }
 }
+
+

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
@@ -130,6 +130,17 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
             TotalTicks    = Math.Max(8, (int)(interval * StarLifetimeFractionOfSwing));
             StarLifeTicks = Math.Max(1, TotalTicks - DelayTicks);
 
+            if (TyphonAimReticle.TryGetSnappedChaseNpc(owner.whoAmI, out NPC snappedTarget))
+            {
+                Projectile.localAI[0] = snappedTarget.whoAmI + 1f;
+                Projectile.ai[0] = snappedTarget.Center.X;
+                Projectile.ai[1] = snappedTarget.Center.Y;
+            }
+            else
+            {
+                Projectile.localAI[0] = 0f;
+            }
+
             Projectile.timeLeft = TotalTicks;
             TyphonStarChargeEffects.ResetChargeSmokeRingQueue(ref _smokeRingCount, ref _smokeRingSpawnAccumulatorSeconds);
         }
@@ -139,8 +150,27 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
         public override void OnKill(int timeLeft)
         {
             Player owner = Main.player[Projectile.owner];
-            Vector2 target = TyphonAimReticle.GetCurrentPos(owner.whoAmI)
-                             ?? new Vector2(Projectile.ai[0], Projectile.ai[1]);
+            NPC lockedTarget = null;
+            int lockedNpcWhoPlusOne = (int)Projectile.localAI[0];
+            Vector2 target = new Vector2(Projectile.ai[0], Projectile.ai[1]);
+            if (lockedNpcWhoPlusOne > 0)
+            {
+                int idx = lockedNpcWhoPlusOne - 1;
+                if (idx >= 0 && idx < Main.maxNPCs)
+                {
+                    NPC snappedTarget = Main.npc[idx];
+                    if (snappedTarget.active && !snappedTarget.friendly && snappedTarget.life > 0 && !snappedTarget.dontTakeDamage)
+                    {
+                        lockedTarget = snappedTarget;
+                        target = snappedTarget.Center;
+                    }
+                }
+            }
+            else
+            {
+                target = TyphonAimReticle.GetCurrentPos(owner.whoAmI) ?? target;
+            }
+
             Vector2 aimDir = Vector2.UnitX.RotatedBy(Projectile.ai[2]);
 
             if (!Main.dedServ)
@@ -171,7 +201,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
 
             Vector2 dir = aimDir;
             Vector2 vel = dir * 16f;
-            Projectile.NewProjectile(
+            int rainArrowIdx = Projectile.NewProjectile(
                 owner.GetSource_FromThis(),
                 owner.Center,
                 vel,
@@ -180,6 +210,14 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
                 Projectile.knockBack,
                 Projectile.owner,
                 target.X, target.Y, 1f);
+
+            if (lockedTarget != null && rainArrowIdx >= 0 && rainArrowIdx < Main.maxProjectiles)
+            {
+                Main.projectile[rainArrowIdx].localAI[0] = lockedTarget.whoAmI + 1f;
+                Main.projectile[rainArrowIdx].netUpdate = true;
+            }
         }
     }
 }
+
+
