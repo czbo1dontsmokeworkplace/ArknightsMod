@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Common.UI;
+using ArknightsMod.Common.UI;
 using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.Items.Weapons.Caster.Lava;
 using ArknightsMod.Content.Items.Weapons.Defender.Beagle;
@@ -118,6 +118,13 @@ namespace ArknightsMod.Players
 				else if (CurrentSkill == null && ChargeTypeIsPerSecond[Skill]) {
 					AccessoriesAutoCharge();
 				}
+			}
+
+			// 提丰 S3：技能持续期间挥弓动画结束后，原版仍会对 Shoot 武器套用「朝向鼠标」的持弓旋转，
+			// 与自定义蓄力角衔接时会像收起后又扭向瞄准方向；非挥弓帧保持略向下的收起角（与 TyphonBow UseStyle 末段一致）。
+			if (!Player.dead && Skill == 2 && SkillActive && Player.itemAnimation <= 0
+			    && Player.HeldItem.ModItem is TyphonBow) {
+				Player.itemRotation = TyphonBow.GetS3SkillIdleItemRotation(Player);
 			}
 		}
 		//=======================================================================
