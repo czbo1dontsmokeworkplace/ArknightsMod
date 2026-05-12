@@ -1,5 +1,6 @@
 using ArknightsMod.Content.Items.Weapons.Defender.Beagle;
 using ArknightsMod.Content.Items.Weapons.Defender.Durnar;
+using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -15,6 +16,7 @@ namespace ArknightsMod.Content.Projectiles.Defender.Durnar
     public enum ProjMode {Move,Attack,Defender}
     public class DNProj_Player : ModPlayer
     {
+	    public bool ShieldAttackMode = false;
 		public override void PostUpdate()
         {
             var it = Player.HeldItem;
@@ -28,13 +30,18 @@ namespace ArknightsMod.Content.Projectiles.Defender.Durnar
                         ,it.damage,it.knockBack);
             }
         }
+
 		public override void UpdateEquips()
         {
             var it = Player.HeldItem;
+            var modPlayer = Player.GetModPlayer<WeaponPlayer>();
             if(it.type == ModContent.ItemType<DN_Weapon>()&&Main.mouseRight)
             {
                 Player.statDefense *= 1.5f;
             }
+
+            if (ShieldAttackMode && !modPlayer.SkillActive)
+	            ShieldAttackMode = false;
         }
     }
 }

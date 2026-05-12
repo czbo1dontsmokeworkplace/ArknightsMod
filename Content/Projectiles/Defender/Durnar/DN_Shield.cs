@@ -1,8 +1,10 @@
 using ArknightsMod.Common.VisualEffects;
 using ArknightsMod.Content.Items.Weapons.Defender.Beagle;
 using ArknightsMod.Content.Items.Weapons.Defender.Durnar;
+using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -29,11 +31,12 @@ namespace ArknightsMod.Content.Projectiles.Defender.Durnar
             Projectile.ownerHitCheck = true; // ?��?�����?���������?�����??�?�����?�?��?����?�?
             Projectile.DamageType = DamageClass.MeleeNoSpeed; // ?����?��??����
             Projectile.ignoreWater = true;
-            Projectile.localNPCHitCooldown = 1;
+            Projectile.localNPCHitCooldown = (int)attackMaxTime+1;
         }
         private ProjMode projMode = ProjMode.Move;
 		public override void AI()
         {
+	        Projectile.damage = item.damage;
             if (player.dead || !player.active || item.type != ModContent.ItemType<DN_Weapon>()) Projectile.Kill();
             Projectile.timeLeft = 2;
             switch(projMode)
@@ -44,9 +47,20 @@ namespace ArknightsMod.Content.Projectiles.Defender.Durnar
                 case ProjMode.Defender:
                 Defender();
                 break;
+                case ProjMode.Attack:
+                Attack();
+                break;
             }
         }
-		public override bool? CanDamage() => false;
+
+        public override bool? CanDamage()
+        {
+	        if (projMode == ProjMode.Attack)
+		        return true;
+	        return false;
+        }
+
+        private float attackRad;
 		public override bool PreDraw(ref Color lightColor)
         {
             SpriteBatch sb = Main.spriteBatch;
@@ -61,6 +75,7 @@ namespace ArknightsMod.Content.Projectiles.Defender.Durnar
         }
         private float walkPhase;
         private float armOffsetDeg;
+        private bool press = false;
         public void Move() {
             float vx = Math.Abs(player.velocity.X);
             bool isAirborne = Math.Abs(player.velocity.Y) > 0.01f;
@@ -88,11 +103,81 @@ namespace ArknightsMod.Content.Projectiles.Defender.Durnar
                 {
                     projMode = ProjMode.Defender;
                 }
+                var modPlayer = player.GetModPlayer<DNProj_Player>();
+                if (modPlayer.ShieldAttackMode &&PlayerInput.MouseInfo.LeftButton == ButtonState.Pressed && !press) {
+	                press = true;
+	                attackRad = MathF.Atan2((Main.MouseWorld - player.MountedCenter).Y,(Main.MouseWorld - player.MountedCenter).X);
+					projMode = ProjMode.Attack;
+					player.direction = (Main.MouseWorld - player.MountedCenter).X >=0? 1:-1;
+					attackTime = 0;
+                }
             }
+        }
+
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) {
+	        var modPlayer = player.GetModPlayer<WeaponPlayer>();
+	        if (modPlayer.SkillActive)
+		        modifiers.SourceDamage *= 1.8f;
+        }
+
+        public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers) {
+	        var modPlayer = player.GetModPlayer<WeaponPlayer>();
+	        if (modPlayer.SkillActive)
+		        modifiers.SourceDamage *= 1.8f;
+        }
+
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {
+	        float point = 0;
+	        if (projMode == ProjMode.Attack) {
+		        bool hit = Collision.CheckAABBvLineCollision(
+			        targetHitbox.TopLeft(),
+			        targetHitbox.Size(),
+			        player.MountedCenter,
+			        player.MountedCenter+new Vector2(TexHeight,0).RotatedBy(Projectile.rotation),
+			        TexWidth,
+			        ref point);
+		        return hit;
+	        }
+	        return false;
+        }
+
+        private Vector2 AttackLength = new Vector2(20, 0);
+        private float attackTime;
+        private float attackMaxTime = 17;
+        public void Attack() {
+	        float progress = attackTime / attackMaxTime;
+	        attackTime++;
+	        Projectile.rotation = attackRad - MathHelper.Pi/2 + MathHelper.Pi/2 * player.direction;
+	        if (progress < 0.2)
+	        {
+		        player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.None, Projectile.rotation);
+		        Projectile.Center =
+			        player.GetFrontHandPosition(Player.CompositeArmStretchAmount.None, Projectile.rotation);
+	        }
+	        else if (progress < 0.3) {
+		        player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Quarter, Projectile.rotation);
+		        Projectile.Center =
+			        player.GetFrontHandPosition(Player.CompositeArmStretchAmount.Quarter, Projectile.rotation);
+	        }
+	        else if (progress < 0.5) {
+		        player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.ThreeQuarters, Projectile.rotation);
+		        Projectile.Center =
+			        player.GetFrontHandPosition(Player.CompositeArmStretchAmount.ThreeQuarters, Projectile.rotation);
+	        }
+	        else if (progress <= 1) {
+		        player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation);
+		        Projectile.Center =
+			        player.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, Projectile.rotation);
+	        }
+	        else {
+
+		        projMode = ProjMode.Move;
+		        press = false;
+	        }
+	        Projectile.Center += AttackLength.RotatedBy(attackRad) ;
         }
         public void Defender()
         {
-            player.itemTime = player.itemAnimation = Projectile.timeLeft = 2;
             if(Main.myPlayer == player.whoAmI)
             {
                 if(!Main.mouseRight)

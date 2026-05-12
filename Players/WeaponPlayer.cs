@@ -109,6 +109,7 @@ namespace ArknightsMod.Players
 		//======================================================================
 		//新添入的，用于更新
 		public override void PostUpdate() {
+			UnderAttack = false;
 			if (!Player.dead && HowManySkills > 0) {
 				if (CurrentSkill?.ChargeType == SkillChargeType.Auto) {
 					AccessoriesAutoCharge();
@@ -187,7 +188,7 @@ namespace ArknightsMod.Players
 			defenseBonus = 0;
 			SPRegenMultiplier = 1f; // 重置SP恢复倍率（修改后的）
 			AccessoriesChargeFraction = 0f; // 新添加，用于重置技力藏的加成
-			
+
 			// 更新武器状态
 			HoldBagpipeSpear = Main.LocalPlayer.HeldItem.ModItem is BagpipeSpear;
 			HoldExusiaiVector = Main.LocalPlayer.HeldItem.ModItem is ExusiaiVector;
@@ -269,7 +270,48 @@ namespace ArknightsMod.Players
 			if (CurrentSkill?.ChargeType == SkillChargeType.Auto)
 				AutoCharge();
 		}
+		/// <summary>
+		/// 玩家受击
+		/// </summary>
+		public bool UnderAttack = false;
 
+		public override void PreUpdate()
+		{
+			if (Player.lifeRegen < 0)
+				UnderAttack = true;
+		}
+
+		public void TryHurtCharge()
+		{
+			if (CurrentSkill?.ChargeType == SkillChargeType.Hurt)
+				HurtCharge();
+		}
+
+		/// <summary>
+		/// 受击回复技力
+		/// </summary>
+		public void HurtCharge()
+		{
+			if (CurrentSkill != null)
+			{
+				SkillLevelData data = CurrentSkill.CurrentLevelData;
+				if (!SkillActive && StockCount < data.MaxStack)
+				{
+					SP++;
+					SkillCharge++;
+					if (SkillCharge == SkillChargeMax)
+					{
+						SkillCharge=0;
+						SP = ++StockCount == data.MaxStack ? data.MaxSP : 0;
+					}
+				}
+			}
+		}
+		public override void OnHurt(Player.HurtInfo info)
+		{
+			UnderAttack = true;
+			TryHurtCharge();
+		}
 		public void AutoCharge() {
 			if (CurrentSkill != null) {
 				SkillLevelData data = CurrentSkill.CurrentLevelData;
@@ -301,30 +343,30 @@ namespace ArknightsMod.Players
 		//============================================================================
 		private float AccessoriesChargeFraction;
 		public void AccessoriesAutoCharge() {
-			
+
 			if (chargeOpen && !hasNearbyEnemy)
 				return;
 
-		
+
 
 			if (CurrentSkill != null) {
 				SkillLevelData data = CurrentSkill.CurrentLevelData;
 				if (!SkillActive && StockCount < data.MaxStack) {
-					
+
 					float extraCharge = SPRegenMultiplier - 1f;
 					AccessoriesChargeFraction += extraCharge;
 
-					
+
 					while (AccessoriesChargeFraction >= 1f) {
 						AccessoriesChargeFraction -= 1f;
 
-						
+
 						SkillCharge++;
 						if (SkillCharge % 60 == 0) {
 							SP++;
 						}
 
-						
+
 						if (SkillCharge >= SkillChargeMax) {
 							SkillCharge = 0;
 							StockCount++;

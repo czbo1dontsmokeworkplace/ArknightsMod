@@ -1,6 +1,7 @@
 using ArknightsMod.Content.Items.Armor.Vanity.Defender.Beagle.Armor;
 using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Content.Projectiles.Defender.Beagle;
+using ArknightsMod.Content.Projectiles.Defender.Durnar;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
 using Terraria;
@@ -12,7 +13,7 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Durnar
 {
     public class DN_Weapon : UpgradeWeaponBase
     {
-        public override void AddRecipes() 
+        public override void AddRecipes()
 		{
 			CreateRecipe()
 				.AddIngredient(ModContent.ItemType<OrirockCluster>(), 19)
@@ -22,19 +23,20 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Durnar
 		}
 		private static SoundStyle SkillActive3;
 		private static SoundStyle NoSound;
-		public override void Load() 
+		public override void Load()
 		{
-			SkillActive3 = new SoundStyle("ArknightsMod/Sounds/SkillActive3") 
+			SkillActive3 = new SoundStyle("ArknightsMod/Sounds/SkillActive3")
 			{
 				Volume = 0.4f,
 				MaxInstances = 4,
 			};
-			NoSound = new SoundStyle("ArknightsMod/Sounds/NoSound") 
+			NoSound = new SoundStyle("ArknightsMod/Sounds/NoSound")
 			{
 				Volume = 0f,
 				MaxInstances = 4,
 			};
 		}
+
 		public override void SetDefaults()
 		{
 			Item.damage = 23; // �����˺�
@@ -51,74 +53,48 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Durnar
 			Item.useStyle = ItemUseStyleID.HiddenAnimation;
 		}
         public override bool AltFunctionUse(Player player) => true;
-		public override bool CanUseItem(Player player) 
+		public override bool CanUseItem(Player player)
 		{
 			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
-			if (Main.myPlayer == player.whoAmI) 
+			if (Main.myPlayer == player.whoAmI)
 			{
-				if (player.altFunctionUse == 2) 
+				if (player.altFunctionUse == 2)
 				{
-					if (!modPlayer.SummonMode) 
+					if (!modPlayer.SummonMode&&modPlayer.StockCount > 0 )
 					{
 						// S1
-						if (modPlayer.Skill == 0 && modPlayer.StockCount > 0 && !modPlayer.SkillActive) 
+						if (modPlayer.Skill == 0 && !modPlayer.SkillActive)
 						{
 							modPlayer.SkillActive = true;
 							modPlayer.SkillTimer = 0;
 
 							modPlayer.DelStockCount();
-							player.GetModPlayer<DN_player>().hasDNplayer = true;
-							Item.UseSound = SkillActive3;
-							SoundEngine.PlaySound(Item.UseSound.Value, player.Center);
+
+							SoundEngine.PlaySound(SkillActive3, player.Center);
 						}
-						else
-							player.GetModPlayer<DN_player>().hasDNplayer = false;
+						else if(modPlayer.Skill == 1 && !modPlayer.SkillActive)
+						{
+							modPlayer.SkillActive = true;
+							modPlayer.SkillTimer = 0;
+							var DN_player = player.GetModPlayer<DNProj_Player>();
+							DN_player.ShieldAttackMode = true;
+							modPlayer.DelStockCount();
+
+							SoundEngine.PlaySound(SkillActive3, player.Center);
+						}
 						return false;
-					}
-				}
-				else 
-				{
-					if (!modPlayer.SummonMode) 
-					{
-						Item.UseSound = NoSound;
-						SoundEngine.PlaySound(Item.UseSound.Value, player.Center);
-						// S1
-						if (modPlayer.Skill == 0 && modPlayer.SkillActive) {}
-						else if (modPlayer.Skill == 0 && !modPlayer.SkillActive) {}
 					}
 				}
 			}
 			return base.CanUseItem(player);
 		}
-		public override void HoldItem(Player player)
+
+		public override void HoldItem(Player player) => base.HoldItem(player);
+		public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
 		{
 			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
-			if (Main.myPlayer == player.whoAmI) {
-				if (modPlayer.Skill == 0 && !modPlayer.SkillActive) {
-					player.GetModPlayer<DN_player>().hasDNplayer = false;
-				}
-				if (modPlayer.Skill == 0 && modPlayer.SkillActive && Item.type == ModContent.ItemType<DN_Weapon>()) {
-					player.GetModPlayer<DN_player>().hasDNplayer = true;
-				}
-			}
+			if(modPlayer.SkillActive)
+				damage *= 1.8f;
 		}
-		public class DN_player : ModPlayer
-		{
-			public bool hasDNplayer = false;
-			public override void ResetEffects() 
-			{
-				//����2��������Ч��
-				if (hasDNplayer == true) {
-					Player.statDefense *= 1.5f;
-				}
-				if (Main.myPlayer != Player.whoAmI)
-					return;  // ֻ�����������
-				bool isHoldingTargetWeapon = Player.HeldItem.type == ModContent.ItemType<DN_Weapon>();
-				if (!isHoldingTargetWeapon) {
-					Player.GetModPlayer<DN_player>().hasDNplayer = false;
-				}
-			}
-		}
-    
     }
 }

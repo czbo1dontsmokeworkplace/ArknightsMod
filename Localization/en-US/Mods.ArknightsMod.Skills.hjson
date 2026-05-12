@@ -238,3 +238,15 @@ ValarqvinWeapon: {
 		Label: Mods.ArknightsMod.Skills.ValarqvinWeapon.1.Label
 	}
 }
+
+DN_Weapon: {
+	1: {
+		Label: Mods.ArknightsMod.Skills.DN_Weapon.1.Label
+		Desc: Mods.ArknightsMod.Skills.DN_Weapon.1.Desc
+	}
+
+	2: {
+		Label: Mods.ArknightsMod.Skills.DN_Weapon.2.Label
+		Desc: Mods.ArknightsMod.Skills.DN_Weapon.2.Desc
+	}
+}

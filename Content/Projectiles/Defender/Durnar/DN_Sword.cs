@@ -1,6 +1,7 @@
 using ArknightsMod.Common.VisualEffects;
 using ArknightsMod.Content.Items.Weapons.Defender.Beagle;
 using ArknightsMod.Content.Items.Weapons.Defender.Durnar;
+using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -58,10 +59,10 @@ namespace ArknightsMod.Content.Projectiles.Defender.Durnar
         }
         private int attackTime = 0;
         private int attackMaxTime = 30;
-		public override bool PreDraw(ref Color lightColor) 
+		public override bool PreDraw(ref Color lightColor)
         {
             SpriteBatch sb = Main.spriteBatch;
-            
+
             sb.End();
             sb.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
                 SamplerState.AnisotropicClamp, DepthStencilState.None,
@@ -83,7 +84,7 @@ namespace ArknightsMod.Content.Projectiles.Defender.Durnar
         private float armOffsetDeg;
         private bool press = false;
         private float MouseRad;
-        public void Move() 
+        public void Move()
         {
             float vx = Math.Abs(player.velocity.X);
             bool isAirborne = Math.Abs(player.velocity.Y) > 0.01f;
@@ -111,7 +112,8 @@ namespace ArknightsMod.Content.Projectiles.Defender.Durnar
             Projectile.Center = Vector2.Lerp(GetSwordBaseWorld(moveSwordRot), moveTip, 0.5f);
             if(Main.myPlayer == player.whoAmI)
             {
-                if(!Main.mouseRight&&PlayerInput.MouseInfo.LeftButton == ButtonState.Pressed&&!press)
+	            var modPlayer = player.GetModPlayer<DNProj_Player>();
+                if(!modPlayer.ShieldAttackMode&&!Main.mouseRight&&PlayerInput.MouseInfo.LeftButton == ButtonState.Pressed&&!press)
                 {
                     press = true;
                     MouseRad = MathF.Atan2((Main.MouseWorld - player.MountedCenter).Y,(Main.MouseWorld - player.MountedCenter).X);
@@ -120,7 +122,7 @@ namespace ArknightsMod.Content.Projectiles.Defender.Durnar
                     attackTime = 0;
                 }
             }
-        } 
+        }
         private Vector2 SwordEnd;
         private Vector2 GetSwordBaseWorld(float swordRotation) => handPos - DrawSetoff.RotatedBy(swordRotation);
         private Vector2 GetSwordTipWorld(float swordRotation) => GetSwordBaseWorld(swordRotation) + new Vector2(Length, 0f).RotatedBy(swordRotation);
@@ -168,6 +170,18 @@ namespace ArknightsMod.Content.Projectiles.Defender.Durnar
             oldPos[0] = pos;
             oldRot[0] = rot;
         }
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) {
+	        var modPlayer = player.GetModPlayer<WeaponPlayer>();
+	        if (modPlayer.SkillActive)
+		        modifiers.SourceDamage *= 1.8f;
+        }
+
+        public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers) {
+	        var modPlayer = player.GetModPlayer<WeaponPlayer>();
+	        if (modPlayer.SkillActive)
+		        modifiers.SourceDamage *= 1.8f;
+        }
+
 		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float point = 0f;
