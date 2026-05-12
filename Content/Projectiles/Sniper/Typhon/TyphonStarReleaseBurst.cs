@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -24,8 +24,8 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
 
         private const float FlatRingBasisTiltRadians = 0.52f;
 
-        private readonly TyphonStarChargeEffects.ChargeSmokeRingInstance[] _ringSnap =
-            new TyphonStarChargeEffects.ChargeSmokeRingInstance[TyphonStarChargeEffects.SmokeRingMaxConcurrent];
+        private readonly TyphonS3StarChargeEffects.ChargeSmokeRingInstance[] _ringSnap =
+            new TyphonS3StarChargeEffects.ChargeSmokeRingInstance[TyphonS3StarChargeEffects.SmokeRingMaxConcurrent];
 
         private int _ringSnapCount;
         private float _fireAngle;
@@ -74,7 +74,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
             }
         }
 
-        internal void ApplySmokeRingSnapshot(TyphonStarChargeEffects.ChargeSmokeRingInstance[] src, int count)
+        internal void ApplySmokeRingSnapshot(TyphonS3StarChargeEffects.ChargeSmokeRingInstance[] src, int count)
         {
             _ringSnapCount = Math.Min(Math.Max(count, 0), _ringSnap.Length);
             if (src == null || _ringSnapCount <= 0)
@@ -120,7 +120,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
                     : MathHelper.SmoothStep(0f, 1f, elapsed / (float)(ShrinkEndExclusive - 1));
                 float geom = MathHelper.Lerp(1f, 0.12f, shrinkT);
 
-                TyphonStarChargeEffects.DrawChargePhase(
+                TyphonS3StarChargeEffects.DrawChargePhase(
                     centerScreen,
                     1f,
                     1f,
@@ -335,3 +335,4 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
         }
     }
 }
+

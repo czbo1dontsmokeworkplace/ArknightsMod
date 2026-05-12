@@ -1,4 +1,3 @@
-// ElementalAffliction.cs (�޸Ĳ���)
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -33,7 +32,7 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 		public int CooldownTimer;
 		public AfflictionState State { get; private set; } = AfflictionState.Idle;
 
-		// ��������Ǵ������Ƿ������������ƣ�����ʾ�������Ч����
+		// 标记当前异常是否被其他异常压制；被压制时不显示图标和特效。
 		public bool IsSuppressed { get; set; }
 
 		public virtual void ApplyDefenseReduction(NPC npc, int amount) {
@@ -123,7 +122,7 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 	{
 		public NPC Owner { get; }
 		public List<ElementalAffliction> Afflictions = new();
-		private int globalCooldownTimer = 0; // ȫ����ȴ��ʱ��
+		private int globalCooldownTimer = 0; // 全局冷却计时器
 
 		public AfflictionContainer(NPC owner) => Owner = owner;
 
@@ -153,18 +152,18 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 		private void UpdateSuppression() {
 			var dominant = GetDominantAffliction();
 			foreach (var aff in Afflictions) {
-				// ��ȴ�����е����˲�������
+				// 冷却或爆发中的异常不参与压制判断。
 				if (aff.State == AfflictionState.Cooldown || aff.State == AfflictionState.Burst) {
 					aff.IsSuppressed = false;
 					continue;
 				}
-				// �������ˣ������ǵ�ǰ������������
+				// 其余异常里，只有当前累计值最高的那个不被压制。
 				aff.IsSuppressed = (aff != dominant && dominant != null && dominant.CurrentValue > 0);
 			}
 		}
 
 		public void AddAfflictionValue<T>(int amount) where T : ElementalAffliction, new() {
-			// ȫ����ȴ�У���ȫ�޷�ʩ���κ�����
+			// 全局冷却期间，不能施加任何新的异常值。
 			if (globalCooldownTimer > 0)
 				return;
 
@@ -177,17 +176,17 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 			if (Owner == null || !Owner.active)
 				return;
 
-			// ÿ�����һ��ȫ����ȴ��ʱ���ɸ�����Ҫ��������Ƶ�ʣ��˴����� PostAI ÿ֡һ�Σ�
+			// 每帧减少一次全局冷却计时器；这里依赖 PostAI 每帧调用一次。
 			if (globalCooldownTimer > 0)
 				globalCooldownTimer--;
 
 			UpdateSuppression();
 
-			// ���������������ˣ������ƵĻ�ֱ�ӷ��� UpdateResult.None��
+			// 更新所有异常；如果没有触发爆发，就直接返回 UpdateResult.None。
 			foreach (var aff in Afflictions) {
 				var result = aff.Update();
 				if (result == UpdateResult.Burst) {
-					// �����Ӿ�Ч����Ӧ���˺�
+					// 播放视觉效果并应用爆发伤害。
 					string mainTex = aff.BurstFlashMainMask;
 					string featherTex = aff.BurstFlashFeatherMask;
 					Vector2 flashPos = aff.GetFlashPosition(Owner);
@@ -196,17 +195,17 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 					aff.ApplyBurstDamage(Owner);
 					BurstFlashEffect.Play(Owner, flashPos, mainTex, featherTex, mainCol, featherCol);
 
-					// ����ȫ����ȴ����ֹ��һ��ʱ����ʩ���κ�����
+					// 进入全局冷却，防止短时间内连续触发多个异常爆发。
 					globalCooldownTimer = aff.CooldownTicks;
 
-					// ��������������˵Ļ���ֵ��������Ϊ Idle����������ȴ��
+					// 其余异常清空累计值并重置为 Idle，等待重新积累。
 					foreach (var otherAff in Afflictions) {
 						if (otherAff != aff)
-							otherAff.ClearAccumulation(); // ClearAccumulation ���ѽ� State ��Ϊ Idle
+							otherAff.ClearAccumulation(); // ClearAccumulation 会顺带把 State 设为 Idle
 					}
 
 					UpdateSuppression();
-					break; // һ��ֻ����һ������
+					break; // 一次只处理一个爆发。
 				}
 			}
 		}
@@ -233,7 +232,7 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 				npc.Center.Y < Main.screenPosition.Y - 100 || npc.Center.Y > Main.screenPosition.Y + Main.screenHeight + 100)
 				return;
 
-			// ֻ��ʾδ�����Ƶ�����
+			// 只显示未被压制的异常。
 			bool anyVisible = false;
 			foreach (var aff in Container.Afflictions)
 				if (!aff.IsSuppressed && aff.State != AfflictionState.Idle) { anyVisible = true; break; }
@@ -249,7 +248,7 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearClamp,
 				DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Matrix.Identity);
 
-			// ֻ����δ�����Ƶ�����ͼ��
+			// 只绘制未被压制的异常图标。
 			foreach (var aff in Container.Afflictions) {
 				if (aff.IsSuppressed || aff.State == AfflictionState.Idle)
 					continue;
@@ -265,7 +264,7 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 			}
 			spriteBatch.End();
 
-			// ֻ����δ�����Ƶ����˻�
+			// 只绘制未被压制的异常环。
 			foreach (var aff in Container.Afflictions) {
 				if (aff.IsSuppressed || aff.State == AfflictionState.Idle)
 					continue;

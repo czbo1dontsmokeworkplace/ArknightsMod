@@ -1504,6 +1504,11 @@ PipeItem: {
 	Tooltip: ""
 }
 
+PipeBlueLightItem: {
+	DisplayName: Pipe Blue Light Block
+	Tooltip: ""
+}
+
 PipeWallCopperItem: {
 	DisplayName: Pipe Wall (Variant 2)
 	Tooltip: ""

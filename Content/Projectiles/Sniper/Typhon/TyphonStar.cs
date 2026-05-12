@@ -18,14 +18,14 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
         private int StarLifeTicks;
         private const float ForwardOffset = 60f;
 
-        private readonly TyphonStarChargeEffects.ChargeSmokeRingInstance[] _smokeRings =
-            new TyphonStarChargeEffects.ChargeSmokeRingInstance[TyphonStarChargeEffects.SmokeRingMaxConcurrent];
+        private readonly TyphonS3StarChargeEffects.ChargeSmokeRingInstance[] _smokeRings =
+            new TyphonS3StarChargeEffects.ChargeSmokeRingInstance[TyphonS3StarChargeEffects.SmokeRingMaxConcurrent];
         private int _smokeRingCount;
         private float _smokeRingSpawnAccumulatorSeconds;
 
-        public const float CrossArmCenterThicknessMul = TyphonStarChargeEffects.CrossArmCenterThicknessMul;
+        public const float CrossArmCenterThicknessMul = TyphonS3StarChargeEffects.CrossArmCenterThicknessMul;
 
-        public const float CrossChargeSizePulseMin = TyphonStarChargeEffects.CrossChargeSizePulseMin;
+        public const float CrossChargeSizePulseMin = TyphonS3StarChargeEffects.CrossChargeSizePulseMin;
 
         public const float StarLifetimeFractionOfSwing = 0.64f;
 
@@ -36,8 +36,8 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
 
         public override void Load()
         {
-            TyphonStarChargeEffects.LoadSmokeTextures();
-            TyphonStarChargeEffects.LoadChargeCrossTexture();
+            TyphonS3StarChargeEffects.LoadSmokeTextures();
+            TyphonS3StarChargeEffects.LoadChargeCrossTexture();
         }
 
         public override void SetDefaults()
@@ -71,12 +71,12 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
             int elapsed = TotalTicks - Projectile.timeLeft;
             if (elapsed < DelayTicks)
             {
-                TyphonStarChargeEffects.ResetChargeSmokeRingQueue(ref _smokeRingCount, ref _smokeRingSpawnAccumulatorSeconds);
+                TyphonS3StarChargeEffects.ResetChargeSmokeRingQueue(ref _smokeRingCount, ref _smokeRingSpawnAccumulatorSeconds);
             }
             else
             {
                 int visibleElapsed = elapsed - DelayTicks;
-                TyphonStarChargeEffects.TickChargeSmokeRingQueue(
+                TyphonS3StarChargeEffects.TickChargeSmokeRingQueue(
                     visibleElapsed,
                     Projectile.identity,
                     Projectile.owner,
@@ -84,7 +84,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
                     ref _smokeRingCount,
                     ref _smokeRingSpawnAccumulatorSeconds);
 
-                TyphonStarChargeEffects.SpawnChargeGatherDust(Projectile.Center, Projectile.identity, visibleElapsed);
+                TyphonS3StarChargeEffects.SpawnChargeGatherDust(Projectile.Center, Projectile.identity, visibleElapsed);
             }
         }
 
@@ -105,7 +105,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
             Vector2 center = Projectile.Center - Main.screenPosition;
             var src = new Rectangle(0, 0, 1, 1);
 
-            TyphonStarChargeEffects.DrawChargePhase(
+            TyphonS3StarChargeEffects.DrawChargePhase(
                 center,
                 chargeRatio,
                 pulseT,
@@ -142,7 +142,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
             }
 
             Projectile.timeLeft = TotalTicks;
-            TyphonStarChargeEffects.ResetChargeSmokeRingQueue(ref _smokeRingCount, ref _smokeRingSpawnAccumulatorSeconds);
+            TyphonS3StarChargeEffects.ResetChargeSmokeRingQueue(ref _smokeRingCount, ref _smokeRingSpawnAccumulatorSeconds);
         }
 
         public static float PackSmokeRingAi() => 0f;
@@ -219,5 +219,6 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
         }
     }
 }
+
 
 

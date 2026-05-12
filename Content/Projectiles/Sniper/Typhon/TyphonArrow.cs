@@ -397,10 +397,10 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
                         Projectile.owner,
                         Math.Max(0, StuckNpcIndex),
                         Projectile.identity);
-                    TyphonStarChargeEffects.DrawS3LockedHitHexStarFlash(screen, burstScale, opacity, hexRot);
+                    TyphonS3StarChargeEffects.DrawS3LockedHitHexStarFlash(screen, burstScale, opacity, hexRot);
                 }
                 else
-                    TyphonStarChargeEffects.DrawChargeCrossStarOnly(screen, burstScale, opacity);
+                    TyphonS3StarChargeEffects.DrawChargeCrossStarOnly(screen, burstScale, opacity);
             }
 
             return true;
@@ -417,7 +417,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
             float opacity = MathHelper.Clamp(_normalAttackMuzzleCrossTicks / dur, 0.15f, 1f);
             Vector2 scr = _normalAttackMuzzleCrossWorld - Main.screenPosition;
             float geom = TyphonBow.NormalAttackMuzzleCrossGeometryScale * TyphonBow.NormalAttackMuzzleVisualScale;
-            TyphonStarChargeEffects.DrawNormalAttackMuzzleCrossOnly(scr, geom, opacity, _normalAttackMuzzleCrossRot);
+            TyphonS3StarChargeEffects.DrawNormalAttackMuzzleCrossOnly(scr, geom, opacity, _normalAttackMuzzleCrossRot);
         }
 
         private bool ShouldDrawSkillTrailVisual()
@@ -567,7 +567,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
                     _normalAttackMuzzleCrossRot = aimAngle;
                     _normalAttackMuzzleCrossTicks = TyphonBow.NormalAttackMuzzleCrossDurationTicks;
 
-                    TyphonStarChargeEffects.SpawnTyphonBowNormalMuzzleFlash(
+                    TyphonS3StarChargeEffects.SpawnTyphonBowNormalMuzzleFlash(
                         flashPos,
                         aimAngle,
                         TyphonBow.NormalAttackMuzzleVisualScale);
@@ -827,5 +827,6 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
         }
     }
 }
+
 
 

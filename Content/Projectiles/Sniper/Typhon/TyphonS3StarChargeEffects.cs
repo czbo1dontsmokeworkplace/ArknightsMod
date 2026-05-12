@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -9,8 +9,8 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
 {
-    // S3 蓄力/十字星/烟雾环等绘制，参数集中在这，别跟 TyphonStar.AI 搅在一起改
-    internal static class TyphonStarChargeEffects
+    // S3 蓄力、十字星、烟雾环等绘制参数集中在这里，别和 TyphonStar.AI 混在一起改
+    internal static class TyphonS3StarChargeEffects
     {
         public const float SmokeRingSpawnIntervalSeconds = 0.15f;
 
@@ -1529,3 +1529,4 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
         }
     }
 }
+
