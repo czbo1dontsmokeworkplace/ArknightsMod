@@ -6,8 +6,12 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Tiles.Infrastructure.Pipe
 {
-	public class PipeBlueLightTile : InfrastructureTile
+	public class PipeBlueLightPipeTile : InfrastructureTile
 	{
+		public override bool IsLoadingEnabled(Mod mod) => false;
+
+		public override string Texture => "ArknightsMod/Content/Tiles/Infrastructure/Pipe/PipeBlueLightTile";
+
 		public override void SetDefaults()
 		{
 			DustType = DustID.Stone;

@@ -77,7 +77,7 @@ Tiles: {
 	OfficeChairTile.MapEntry: "{$Mods.ArknightsMod.Items.OfficeChair.DisplayName}"
 	FileRackTile.MapEntry: "{$Mods.ArknightsMod.Items.FileRack.DisplayName}"
 	ComputerDeskTile.MapEntry: "{$Mods.ArknightsMod.Items.ComputerDesk.DisplayName}"
-	PipeBlueLightTile.MapEntry: "{$Mods.ArknightsMod.Items.PipeBlueLightItem.DisplayName}"
+	PipeBlueLightPipeTile.MapEntry: "{$Mods.ArknightsMod.Items.PipeBlueLightItem.DisplayName}"
 	ProtocolSpacePortalTile.MapEntry: 危境再现传送门
 	ProtocolSpaceExitPortalTile.MapEntry: 测试协议空间出口
 }

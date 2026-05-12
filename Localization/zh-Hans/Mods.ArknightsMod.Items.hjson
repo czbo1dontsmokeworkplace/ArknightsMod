@@ -3148,6 +3148,6 @@ ArmorExusiaiBody: {
 }
 
 PipeBlueLightBlock: {
-	// DisplayName: Pipe Blue Light Block
+	DisplayName: 管道蓝灯块
 	// Tooltip: ""
 }
