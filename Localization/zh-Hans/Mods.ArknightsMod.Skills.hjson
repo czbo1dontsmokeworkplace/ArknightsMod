@@ -358,14 +358,14 @@ ValarqvinWeapon: {
 	}
 }
 
-DN_Weapon: {
-	1: {
-		// Label: Mods.ArknightsMod.Skills.DN_Weapon.1.Label
-		// Desc: Mods.ArknightsMod.Skills.DN_Weapon.1.Desc
+HazeMagicBook: {
+	2: {
+		Desc: 生命上限[c/f6643b:-75%]，攻击力[c/3791db:+60%]，攻击速度[c/3791db:+60%]
+		Label: 赤色之瞳
 	}
 
-	2: {
-		// Label: Mods.ArknightsMod.Skills.DN_Weapon.2.Label
-		// Desc: Mods.ArknightsMod.Skills.DN_Weapon.2.Desc
+	1: {
+		Desc: 攻击力[c/3791db:+80%]
+		Label: 攻击力强化·β型
 	}
 }

@@ -21,6 +21,7 @@ namespace ArknightsMod.Content.Items.Weapons.Caster._12F
 
 		public override void SetDefaults() {
 			Item.damage = 30;
+			Item.mana = 8;
 			Item.knockBack = 4f;
 			Item.useStyle = ItemUseStyleID.Swing; 
 			Item.useAnimation = 87;

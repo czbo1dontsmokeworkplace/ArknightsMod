@@ -100,7 +100,7 @@ Cannot: {
 
 	Buttons: {
 		Shop: Shop
-		Touch: TouchGoods
+		Touch: Test-touch the goods
 	}
 
 	Census.SpawnCondition: Conditions unknown

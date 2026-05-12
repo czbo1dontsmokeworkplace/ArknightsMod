@@ -8,14 +8,10 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
 {
-    /// <summary>
-    /// 提丰 S3 持续视觉：在鼠标附近 500px 内自动锁定最近敌人，并在该 NPC 上播放瞄准框动画。
-    /// 由 TyphonBow.HoldItem 在 S3 active 时确保每个玩家有且仅有一个 reticle。
-    /// </summary>
     public class TyphonAimReticle : ModProjectile
     {
-        public const float MouseSearchRadius = 500f;   // 鼠标半径内寻找敌人
-        public const float ReticleAreaRadius = 120f;   // 瞄准框"区域内"半径，用于下落箭随机挑目标
+        public const float MouseSearchRadius = 500f;
+        public const float ReticleAreaRadius = 120f;
         private const int  FrameCount        = 8;
 
         public override string Texture => "ArknightsMod/Content/Items/Weapons/Sniper/Typhon/skill3_aim";
@@ -63,10 +59,9 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
             else
             {
                 Projectile.Center = Main.MouseWorld;
-                Projectile.alpha  = 140; // 找不到目标时半透明跟随鼠标
+                Projectile.alpha  = 140;
             }
 
-            // 帧动画：每 5 帧推进一帧
             if (++Projectile.frameCounter >= 5)
             {
                 Projectile.frameCounter = 0;
@@ -91,13 +86,83 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
         public static Vector2? GetCurrentPos(int playerWho)
         {
             int reticleType = ModContent.ProjectileType<TyphonAimReticle>();
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            foreach (Projectile p in Main.ActiveProjectiles)
             {
-                Projectile p = Main.projectile[i];
-                if (p.active && p.owner == playerWho && p.type == reticleType)
+                if (p.owner == playerWho && p.type == reticleType)
                     return p.Center;
             }
+
             return null;
+        }
+
+        public static bool TryGetSnappedChaseNpc(int ownerWho, out NPC npc)
+        {
+            npc = null;
+            if (ownerWho < 0 || ownerWho >= Main.maxPlayers)
+                return false;
+            Player plr = Main.player[ownerWho];
+            if (!plr.active)
+                return false;
+
+            int reticleType = ModContent.ProjectileType<TyphonAimReticle>();
+            foreach (Projectile p in Main.ActiveProjectiles)
+            {
+                if (p.owner != ownerWho || p.type != reticleType)
+                    continue;
+
+                if (p.alpha > 100)
+                    return false;
+
+                Vector2 c = p.Center;
+                const float pickSlop = 96f;
+                float pickSlopSq = pickSlop * pickSlop;
+
+                NPC best = null;
+                float bestD = pickSlopSq;
+                foreach (NPC n in Main.ActiveNPCs)
+                {
+                    if (!n.CanBeChasedBy(plr) || n.friendly || n.life <= 0 || n.dontTakeDamage)
+                        continue;
+                    if (n.Hitbox.Contains(c.ToPoint()))
+                    {
+                        npc = n;
+                        return true;
+                    }
+                    float d = Vector2.DistanceSquared(n.Center, c);
+                    if (d < bestD)
+                    {
+                        bestD = d;
+                        best = n;
+                    }
+                }
+
+                npc = best;
+                return npc != null;
+            }
+
+            return false;
+        }
+
+        public static bool TryGetLockedColumnRainAnchor(int ownerWho, out Vector2 anchorWorld)
+        {
+            anchorWorld = default;
+            if (ownerWho < 0 || ownerWho >= Main.maxPlayers || !Main.player[ownerWho].active)
+                return false;
+
+            int reticleType = ModContent.ProjectileType<TyphonAimReticle>();
+            foreach (Projectile p in Main.ActiveProjectiles)
+            {
+                if (p.owner != ownerWho || p.type != reticleType)
+                    continue;
+
+                if (p.alpha > 100)
+                    return false;
+
+                anchorWorld = p.Center;
+                return true;
+            }
+
+            return false;
         }
 
         private static NPC FindNearestEnemy(Vector2 origin, float range)

@@ -35,5 +35,7 @@ namespace ArknightsMod.Common
 			else if (trackTile.IsHalfBlock)
 				spriteBatch.Draw(glowmask, drawPosition + new Vector2(0f, 8f), new Rectangle(xFrameOffset, yFrameOffset, 18, 8), drawColor, 0.0f, Vector2.Zero, 1f, SpriteEffects.None, 0.0f);
 		}
+
+
     }
 }

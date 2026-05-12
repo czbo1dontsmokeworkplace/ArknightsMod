@@ -6,7 +6,6 @@ using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Systems;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.Personalities;
@@ -24,6 +23,8 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		public static string[] ShopName => ["Shop", "Shop2"];
 
 		public static int ButtonCount;
+
+		private static string closureShop2FullName;
 
 		public override void SetStaticDefaults() {
 			Main.npcFrameCount[NPC.type] = 22;
@@ -500,23 +501,25 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		}
 
 		public override void ModifyActiveShop(string shopName, Item[] items) {
-			if (shopName == new NPCShop(Type, ShopName[1]).FullName) {
-				if (NPCShopSystem.ClosureTodaysRotation.Count == 0)
-					NPCShopSystem.UpdateClosureShop(Mod, true);
-				Array.Fill(items, null);
+			closureShop2FullName ??= NPCShopDatabase.GetShopName(ModContent.NPCType<Closure>(), ShopName[1]);
+			if (shopName != closureShop2FullName)
+				return;
 
-				items[0] = new Item(ModContent.ItemType<DoctorArchiveBag>()) {
-					shopCustomPrice = 100,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				};
+			if (NPCShopSystem.ClosureTodaysRotation.Count == 0)
+				NPCShopSystem.UpdateClosureShop(Mod, true);
+			Array.Fill(items, null);
 
-				Item[] todayItems = [.. NPCShopSystem.ClosureTodaysRotation.Select(i => new Item(i) {
+			items[0] = new Item(ModContent.ItemType<DoctorArchiveBag>()) {
+				shopCustomPrice = 100,
+				shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+			};
+
+			var rotation = NPCShopSystem.ClosureTodaysRotation;
+			for (int j = 0; j < rotation.Count && j + 1 < items.Length; j++) {
+				items[j + 1] = new Item(rotation[j]) {
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})];
-				for (int i = 1; i < items.Length && (i - 1) < todayItems.Length; i++) {
-					items[i] = todayItems[i - 1]?.Clone();
-				}
+				};
 			}
 		}
 

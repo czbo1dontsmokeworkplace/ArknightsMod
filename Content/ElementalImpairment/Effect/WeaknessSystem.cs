@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.ElementalImpairment.Effect
 {
-	//ÐéÈõÐ§¹û£¬Ä¿Ç°ÊÇ¸úÌØÐ§°ó¶¨ÔÚÒ»Æð£¬µ½Ê±ºò»á×ö²ð·Ö
+	//ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½ï¿½ï¿½Ä¿Ç°ï¿½Ç¸ï¿½ï¿½ï¿½Ð§ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ð£¬µï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     public class WeaknessData
     {
         public float RemainingTime;
@@ -40,7 +40,7 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 
 
         public static void ApplyWeakness(NPC npc, float durationSeconds,
-            float damagePerSecond = 800f, float strength = 0.5f,
+            float damagePerSecond = 160f, float strength = 0.5f,
             Color? mistColor = null, string mistTexture = "ArknightsMod/Content/ElementalImpairment/Effect/MistMask")
         {
             if (npc == null || !npc.active) return;
@@ -240,10 +240,14 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
                     {
                         TextureEnabled = true,
                         VertexColorEnabled = true,
-                        View = Matrix.CreateLookAt(Vector3.Zero, Vector3.Forward, Vector3.Up),
-                        Projection = Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1)
+                        View = Matrix.Identity,
+                        Projection = Matrix.Identity
                     };
                 }
+
+                basicEffect.World = Main.GameViewMatrix.TransformationMatrix;
+                basicEffect.View = Matrix.Identity;
+                basicEffect.Projection = Matrix.CreateOrthographicOffCenter(0f, Main.screenWidth, Main.screenHeight, 0f, -1f, 1f);
 
                 foreach (var particle in data.Particles)
                 {

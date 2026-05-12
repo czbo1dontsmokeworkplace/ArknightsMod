@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Common.VisualEffects;
+using ArknightsMod.Common.VisualEffects;
 using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Systems.Gameplay.Damage;
 using Microsoft.Xna.Framework;
@@ -188,7 +188,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 
 		
 		public override float SpawnChance(NPCSpawnInfo spawnInfo) {
-			return SpawnCondition.OverworldDayRain.Chance * 0.8f;
+			return SeabornSpawnHelper.OceanSeabornChance(spawnInfo, 0.8f);
 		}
 		public override void OnKill() {
 			int Gore1 = Mod.Find<ModGore>("FloatingSeaDrifter1").Type;

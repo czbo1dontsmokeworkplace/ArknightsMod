@@ -1,12 +1,12 @@
-﻿using ArknightsMod.Content.Items.Weapons;
+using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Players;
 using ArknightsMod.Systems.Gameplay.Skill;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
+using System;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.Audio;
 using Terraria.GameContent.UI.Elements;
 using Terraria.ModLoader;
 using Terraria.UI;
@@ -15,23 +15,36 @@ namespace ArknightsMod.Common.UI
 {
 	internal class SelectSkills : UIState
 	{
-		private static SelectSkills ins;
+		private static SelectSkills _ins;
 
-		// For this bar we'll be using a frame texture and then a gradient inside bar, as it's one of the more simpler approaches while still looking decent.
-		// Once this is all set up make sure to go and do the required stuff for most UI's in the ModSystem class.
-		private readonly static SoundStyle click = new("ArknightsMod/Sounds/UIButton");
 		private SkillSlotUI s1, s2, s3;
 		private SummonSkillSlot summon;
 		private UIText skillLevel;
-		internal SelectSkills() => ins = this;
+		private UIElement expandedPanel;
+		private UIElement collapsedPanel;
+		private UIImage areaImage;
+		private UIElement closeTabRef;
+		private bool _isOpen = true;
 
-		public override void OnInitialize() {
-			UIImage area = new(ModContent.Request<Texture2D>("ArknightsMod/Common/UI/SkillBase", AssetRequestMode.ImmediateLoad));
-			area.Left.Set(20, 0f);
-			area.Top.Set(136, 0f);
-			area.Width.Set(300, 0f);
-			area.Height.Set(100, 0f);
-			Append(area);
+		// 与 vanilla buff 栏布局匹配：每行 11 个，行间距 50，第一行起点 y=76，图标 32×32
+		private const int BaseTop = 136;
+		private int _currentTop = BaseTop;
+
+		internal SelectSkills() => _ins = this;
+
+		public override void OnInitialize()
+		{
+			expandedPanel = new UIElement();
+			expandedPanel.Width.Set(0, 1f);
+			expandedPanel.Height.Set(0, 1f);
+
+			areaImage = new UIImage(ModContent.Request<Texture2D>("ArknightsMod/Common/UI/SkillBase", AssetRequestMode.ImmediateLoad));
+			areaImage.Left.Set(20, 0f);
+			areaImage.Top.Set(BaseTop, 0f);
+			areaImage.Width.Set(300, 0f);
+			areaImage.Height.Set(100, 0f);
+			expandedPanel.Append(areaImage);
+			UIImage area = areaImage;
 
 			skillLevel = new UIText("0", 1f);
 			skillLevel.Left.Set(262, 0f);
@@ -40,160 +53,191 @@ namespace ArknightsMod.Common.UI
 			skillLevel.Height.Set(20, 0f);
 			area.Append(skillLevel);
 
-			s1 = new();
-			s1.Left.Set(2, 0f);
-			s1.Top.Set(-8, 0f);
-			s1.Width.Set(64, 0f);
-			s1.Height.Set(64, 0f);
+			s1 = new SkillSlotUI();
+			s1.Left.Set(2, 0f);   s1.Top.Set(-8, 0f);
+			s1.Width.Set(64, 0f); s1.Height.Set(64, 0f);
 			s1.OnLeftClick += (_, _) => ChangeSkill(0);
 			area.Append(s1);
 
-			s2 = new();
-			s2.Left.Set(72, 0f);
-			s2.Top.Set(-8, 0f);
-			s2.Width.Set(64, 0f);
-			s2.Height.Set(64, 0f);
+			s2 = new SkillSlotUI();
+			s2.Left.Set(72, 0f);  s2.Top.Set(-8, 0f);
+			s2.Width.Set(64, 0f); s2.Height.Set(64, 0f);
 			s2.OnLeftClick += (_, _) => ChangeSkill(1);
 			area.Append(s2);
 
-			s3 = new();
-			s3.Left.Set(142, 0f);
-			s3.Top.Set(-8, 0f);
-			s3.Width.Set(64, 0f);
-			s3.Height.Set(64, 0f);
+			s3 = new SkillSlotUI();
+			s3.Left.Set(142, 0f); s3.Top.Set(-8, 0f);
+			s3.Width.Set(64, 0f); s3.Height.Set(64, 0f);
 			s3.OnLeftClick += (_, _) => ChangeSkill(2);
 			area.Append(s3);
+
+			closeTabRef = MakeTab("ArknightsMod/Common/UI/CloseBar_1", "ArknightsMod/Common/UI/CloseBar_2");
+			closeTabRef.Left.Set(300, 0f);
+			closeTabRef.Top.Set(BaseTop, 0f);
+			closeTabRef.OnLeftClick += (_, _) => SetOpen(false);
+			expandedPanel.Append(closeTabRef);
+
+			collapsedPanel = MakeTab("ArknightsMod/Common/UI/CloseBar_1", "ArknightsMod/Common/UI/CloseBar_3");
+			collapsedPanel.Left.Set(20, 0f);
+			collapsedPanel.Top.Set(BaseTop, 0f);
+			collapsedPanel.OnLeftClick += (_, _) => SetOpen(true);
+
+			Append(expandedPanel);
 		}
-		private static void ChangeSkill(int index, bool force = false) {
+
+		public override void Update(GameTime gameTime)
+		{
+			base.Update(gameTime);
+			int needed = ComputeBarTop();
+			if (needed == _currentTop) return;
+			_currentTop = needed;
+			areaImage.Top.Set(needed, 0f);
+			closeTabRef.Top.Set(needed, 0f);
+			collapsedPanel.Top.Set(needed, 0f);
+			if (summon != null) summon.Top.Set(needed + 14, 0f); // 原来 150 - 136 = 14 的偏移
+			Recalculate();
+		}
+
+		// 根据玩家当前激活 buff 数量算出技能条应当下移到的 y。
+		// 11 个以内（一行内）维持 BaseTop；多于 11 时移到 buff 最后一行下方留 4px 间距。
+		private static int ComputeBarTop()
+		{
 			Player p = Main.LocalPlayer;
-			if (p.HeldItem.ModItem is not UpgradeWeaponBase)
-				return;
+			if (p == null) return 80;
+			int buffCount = 0;
+			for (int i = 0; i < Player.MaxBuffs; i++)
+				if (p.buffType[i] > 0) buffCount++;
+			int rows = (buffCount + 10) / 11;
+			return  76 + rows * 50 + 4;
+		}
+
+		// 把两张叠放图包进一个容器，点击事件由容器统一处理。
+		private static UIElement MakeTab(string bgPath, string fgPath)
+		{
+			UIElement tab = new HoverBlockingElement();
+			tab.Width.Set(20, 0f);
+			tab.Height.Set(100, 0f);
+
+			UIImage bg = new(ModContent.Request<Texture2D>(bgPath, AssetRequestMode.ImmediateLoad));
+			bg.Width.Set(20, 0f); bg.Height.Set(100, 0f);
+			tab.Append(bg);
+
+			UIImage fg = new(ModContent.Request<Texture2D>(fgPath, AssetRequestMode.ImmediateLoad));
+			fg.Width.Set(20, 0f); fg.Height.Set(100, 0f);
+			tab.Append(fg);
+
+			return tab;
+		}
+
+		private class HoverBlockingElement : UIElement
+		{
+			public override void Update(GameTime gameTime)
+			{
+				base.Update(gameTime);
+				if (IsMouseHovering)
+					Main.LocalPlayer.mouseInterface = true;
+			}
+		}
+
+		private void SetOpen(bool open)
+		{
+			if (_isOpen == open) return;
+			_isOpen = open;
+			if (open)
+			{
+				Append(expandedPanel);
+				collapsedPanel.Remove();
+			}
+			else
+			{
+				expandedPanel.Remove();
+				Append(collapsedPanel);
+			}
+			Recalculate();
+		}
+
+		private static void ChangeSkill(int index, bool force = false)
+		{
+			Player p = Main.LocalPlayer;
+			if (p.HeldItem.ModItem is not UpgradeWeaponBase) return;
 			var mp = p.GetModPlayer<WeaponPlayer>();
-			if (!force && (mp.SkillCount <= index || mp.Skill == index))
-				return;
+			if (!force && (mp.SkillCount <= index || mp.Skill == index)) return;
+
 			mp.Skill = index;
 			SkillData data = mp.CurrentSkill;
+			if (data == null) return;
 
-			if (data == null) {
-				/*var stackTrace = new StackTrace();
-				var frame = stackTrace.GetFrame(1);
-				var method = frame.GetMethod();
-				var callingClass = method.DeclaringType.Name;
-				Main.NewText($"[{callingClass}] 错误: 当前技能数据mp.CurrentSkill为null", Color.Red);*/
+			_ins.skillLevel.SetText((data.ForceReplaceLevel ?? data.Level).ToString());
+
+			if (!data.SummonSkill)
+			{
+				if (_ins.summon != null) _ins.summon.usable = false;
 				return;
 			}
-
-			// 添加 null 检查防止 NullReferenceException
-			if (ins?.skillLevel != null) {
-				ins.skillLevel.SetText((data.ForceReplaceLevel ?? data.Level).ToString());
-			}
-			else {
-				// 详细的错误提示
-				string errorMsg = "UI元素初始化失败: ";
-				if (ins == null)
-					errorMsg += "技能UI实例(ins)为null，请确保UI已正确初始化";
-				else
-					errorMsg += "技能等级文本框(skillLevel)为null，请检查UI元素绑定";
-
-				// 输出错误信息（根据你的框架选择合适的方式）
-				Main.NewText(errorMsg, Color.Red);
-				// 或者使用日志系统
-				// YourMod.Instance.Logger.Error(errorMsg);
-
-				// 调试用异常抛出（正式版可注释掉）
-				// throw new InvalidOperationException(errorMsg);
-			}
-
-			//SoundEngine.PlaySound(click);
-			SummonSkillSlot summon = ins?.summon; // 这里也添加了null检查
-			if (!data.SummonSkill) {
-				if (summon == null)
-					return;
-				summon.usable = false;
-				return;
-			}
-
-			// 确保ins不为null再调用ActiveSummonUI
-			ins?.ActiveSummonUI(data.SummonIcon.Value);
+			_ins.ActiveSummonUI(data.SummonIcon.Value);
 		}
-		public static void ChangeSkillSlot(UpgradeWeaponBase ark) {
-			ins.s1.SetSkill(ark.GetSkillData(0));
-			ins.s2.SetSkill(ark.GetSkillData(1));
-			ins.s3.SetSkill(ark.GetSkillData(2));
+
+		public static void ChangeSkillSlot(UpgradeWeaponBase ark)
+		{
+			_ins.s1.SetSkill(ark.GetSkillData(0));
+			_ins.s2.SetSkill(ark.GetSkillData(1));
+			_ins.s3.SetSkill(ark.GetSkillData(2));
 			ChangeSkill(0, true);
 		}
-		private void ActiveSummonUI(Texture2D icon) {
-			if (summon == null) {
-				summon = new(icon);
+
+		private void ActiveSummonUI(Texture2D icon)
+		{
+			if (summon == null)
+			{
+				summon = new SummonSkillSlot(icon);
 				summon.Left.Set(330, 0f);
 				summon.Top.Set(150, 0f);
-				Append(summon);
+				expandedPanel.Append(summon);
 				Recalculate();
 			}
 			else
+			{
 				summon.SetImage(icon);
+			}
 			summon.usable = true;
 		}
 	}
 
 	internal class SelectSkillsSystem : ModSystem
 	{
-		private UserInterface SelectSkillsUserInterface;
-
+		private UserInterface _ui;
 		internal SelectSkills SelectSkillsUI;
-		private bool Visiable;
 
-		public void ShowMyUI() {
-			if (Visiable)
-				return;
-			Visiable = true;
-			SelectSkillsUserInterface?.SetState(SelectSkillsUI);
+		public override void Load()
+		{
+			if (Main.dedServ) return;
+			SelectSkillsUI = new SelectSkills();
+			_ui = new UserInterface();
+			_ui.SetState(SelectSkillsUI);
 		}
 
-		public void HideMyUI() {
-			if (!Visiable)
-				return;
-			Visiable = false;
-			SelectSkillsUserInterface?.SetState(null);
+		public override void UpdateUI(GameTime gameTime)
+		{
+			_ui?.Update(gameTime);
+			bool shouldShow = !Main.playerInventory && Main.LocalPlayer.HeldItem.ModItem is UpgradeWeaponBase;
+			bool isShown = _ui?.CurrentState != null;
+			if (shouldShow && !isShown)
+				_ui?.SetState(SelectSkillsUI);
+			else if (!shouldShow && isShown)
+				_ui?.SetState(null);
 		}
 
-		public override void Load() {
-			// All code below runs only if we're not loading on a server
-			if (!Main.dedServ) {
-				SelectSkillsUI = new();
-				SelectSkillsUserInterface = new();
-				SelectSkillsUserInterface.SetState(SelectSkillsUI);
-				Visiable = true;
-			}
-		}
-
-		public override void UpdateUI(GameTime gameTime) {
-			SelectSkillsUserInterface?.Update(gameTime);
-			if (Main.playerInventory) {
-				HideMyUI();
-			}
-			else {
-				if (Main.LocalPlayer.HeldItem.ModItem is UpgradeWeaponBase) {
-					ShowMyUI();
-				}
-				else {
-					HideMyUI();
-				}
-			}
-		}
-
-		public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers) {
-			int resourceBarIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Resource Bars")) + 1;
-			if (resourceBarIndex != -1) {
-				layers.Insert(resourceBarIndex, new LegacyGameInterfaceLayer(
-					"ArknightsMod: Skill Select",
-					delegate {
-						SelectSkillsUserInterface.Draw(Main.spriteBatch, new GameTime());
-						return true;
-					},
-					InterfaceScaleType.UI)
-				);
-			}
+		public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
+		{
+			int idx = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Resource Bars")) + 1;
+			if (idx < 1) return;
+			layers.Insert(idx, new LegacyGameInterfaceLayer(
+				"ArknightsMod: Skill Select",
+				delegate {
+					_ui?.Draw(Main.spriteBatch, new GameTime());
+					return true;
+				},
+				InterfaceScaleType.UI));
 		}
 	}
 }

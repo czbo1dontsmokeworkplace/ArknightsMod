@@ -77,6 +77,7 @@ Tiles: {
 	OfficeChairTile.MapEntry: Office Chair Tile
 	FileRackTile.MapEntry: File Rack Tile
 	ComputerDeskTile.MapEntry: Computer Desk Tile
+	PipeBlueLightPipeTile.MapEntry: "{$Mods.ArknightsMod.Items.PipeBlueLightItem.DisplayName}"
 	ProtocolSpacePortalTile.MapEntry: Protocol Space Portal
 	ProtocolSpaceExitPortalTile.MapEntry: Protocol Space Exit Portal
 }
