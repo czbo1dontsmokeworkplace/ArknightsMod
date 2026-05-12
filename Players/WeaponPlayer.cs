@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Common.UI;
+using ArknightsMod.Common.UI;
 using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.Items.Weapons.Caster.Lava;
 using ArknightsMod.Content.Items.Weapons.Defender.Beagle;
@@ -15,6 +15,7 @@ using ArknightsMod.Content.Items.Weapons.Sniper.Schwarz;
 using ArknightsMod.Content.Items.Weapons.Sniper.Shirayuki;
 using ArknightsMod.Content.Items.Weapons.Sniper.Typhon;
 using ArknightsMod.Content.Items.Weapons.Vanguard.Bagpipe;
+using ArknightsMod.Content.Items.Weapons.Caster.Haze;
 using ArknightsMod.Systems.Gameplay.Skill;
 using System;
 using System.Collections.Generic;
@@ -75,6 +76,7 @@ namespace ArknightsMod.Players
 		public bool HoldNoirShield = false;
 		public bool HoldSchwarzBow = false;
 		public bool HoldTyphonBow = false;
+		public bool HoldHazeMagicBook = false;
 
 		private int oldHeld;
 		private int oldSkill;
@@ -116,6 +118,13 @@ namespace ArknightsMod.Players
 				else if (CurrentSkill == null && ChargeTypeIsPerSecond[Skill]) {
 					AccessoriesAutoCharge();
 				}
+			}
+
+			// 提丰 S3：技能持续期间挥弓动画结束后，原版仍会对 Shoot 武器套用「朝向鼠标」的持弓旋转，
+			// 与自定义蓄力角衔接时会像收起后又扭向瞄准方向；非挥弓帧保持略向下的收起角（与 TyphonBow UseStyle 末段一致）。
+			if (!Player.dead && Skill == 2 && SkillActive && Player.itemAnimation <= 0
+			    && Player.HeldItem.ModItem is TyphonBow) {
+				Player.itemRotation = TyphonBow.GetS3SkillIdleItemRotation(Player);
 			}
 		}
 		//=======================================================================
@@ -204,6 +213,7 @@ namespace ArknightsMod.Players
 			HoldNianWeapon = Main.LocalPlayer.HeldItem.ModItem is NianWeapon;
 			HoldSchwarzBow = Main.LocalPlayer.HeldItem.ModItem is SchwarzBow;
 			HoldTyphonBow  = Main.LocalPlayer.HeldItem.ModItem is TyphonBow;
+			HoldHazeMagicBook  = Main.LocalPlayer.HeldItem.ModItem is HazeMagicBook;
 			// 基于武器的技能系统
 			hasNearbyEnemy = false;
 			// 旧版武器支持
@@ -713,10 +723,6 @@ namespace ArknightsMod.Players
 				ChargeTypeIsPerSecond = new() { true, true, true };
 				AutoTrigger = new() { false, false, false };
 				ShowSummonIconBySkills = new() { false, false, false };
-
-				// S1: 攻击充能，满栈触发；激活窗口内 +45% 攻击力 / 速度
-				// S2: 时间充能，激活后 15 秒内攻击发射两支带眩晕的箭；第二次激活变为无限持续
-				// S3: 时间充能，激活后攻击改为对标记目标降下箭雨
 				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 15 };
 				InitialSPs2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 42 };
 				InitialSPs3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 25 };
@@ -748,6 +754,28 @@ namespace ArknightsMod.Players
 				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0.4f };
 				SkillActiveTimeS2List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 40f };
 				SkillActiveTimeS3List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 25f };
+				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+				StockMaxS2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+				StockMaxS3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+				SetSkillData();
+			}
+
+			else if (HoldHazeMagicBook) {
+				IconName = "HazeMagicBook";
+				HowManySkills = 2;
+				SkillLevel = new() { 10, 10, 10 };
+				ChargeTypeIsPerSecond = new() { true, true, true };
+				AutoTrigger = new() { false, false, false };
+				ShowSummonIconBySkills = new() { false, false, false };
+				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 15 };//夜烟这里的所有技能数据我都瞎填的
+				InitialSPs2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 42 };
+				InitialSPs3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 25 };
+				MaxSPs1List     = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 35 };
+				MaxSPs2List     = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 50 };
+				MaxSPs3List     = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 40 };
+				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 35f };
+				SkillActiveTimeS2List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 20f };
+				SkillActiveTimeS3List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 30f };
 				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
 				StockMaxS2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
 				StockMaxS3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };

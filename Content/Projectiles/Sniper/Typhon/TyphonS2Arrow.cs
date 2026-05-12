@@ -1,3 +1,4 @@
+using ArknightsMod.Content.Buffs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -16,7 +17,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = TrailLength;
-            ProjectileID.Sets.TrailingMode[Projectile.type]     = 2; // 每 update 记录一次位置
+            ProjectileID.Sets.TrailingMode[Projectile.type]     = 2;
         }
 
         public override void SetDefaults()
@@ -37,7 +38,6 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
             Projectile.position += Projectile.velocity;
             Projectile.rotation  = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
-            // localAI[0] 累计帧数，用作"出膛延迟"
             Projectile.localAI[0] += 1f;
 
             NPC target = ResolveTarget();
@@ -62,7 +62,6 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
                     return pinned;
             }
 
-            // 指定目标失效：取最近的敌人
             NPC best = null;
             float bestDistSq = HomingRange * HomingRange;
             foreach (NPC npc in Main.ActiveNPCs)
@@ -80,12 +79,14 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
 
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            // 配合 TyphonBow.Shoot 的 ComputeFixedDamage 实现"无伤害浮动 + 无暴击"
             modifiers.DisableCrit();
         }
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
+            if (Projectile.owner >= 0 && Projectile.owner < Main.maxPlayers)
+                TyphonSkillArrowStun.TryApply(target, Main.player[Projectile.owner], Projectile);
+
             if (Main.myPlayer != Projectile.owner) return;
             if (Main.rand.NextFloat() < 0.4f)
             {
@@ -95,9 +96,6 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
 
         public override bool PreDraw(ref Color lightColor)
         {
-            // 紫色流光拖尾：用 MagicPixel 在连续 oldPos 之间画双层线段
-            //   外层：暖紫色光晕（柔和、宽）
-            //   内层：亮紫白线芯（清晰、窄）
             int count = 0;
             for (int i = 0; i < Projectile.oldPos.Length; i++)
             {
@@ -120,12 +118,11 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
                 if (length < 0.5f) continue;
                 float rot = delta.ToRotation();
 
-                float t         = (float)i / (count - 1);          // 0=头, 1=尾
+                float t         = (float)i / (count - 1);
                 float head      = 1f - t;
-                float alpha     = head * head;                     // 平方淡出，"流光"质感
-                float thickness = MathHelper.Lerp(8f, 2f, t);      // 头宽尾窄
+                float alpha     = head * head;
+                float thickness = MathHelper.Lerp(8f, 2f, t);
 
-                // 外层：紫色光晕
                 Main.spriteBatch.Draw(
                     pixel, a, pixelRect,
                     new Color(150, 80, 230) * (alpha * 0.55f),
@@ -133,7 +130,6 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
                     new Vector2(length, thickness * 1.6f),
                     SpriteEffects.None, 0f);
 
-                // 内层：亮紫白线芯
                 Main.spriteBatch.Draw(
                     pixel, a, pixelRect,
                     new Color(230, 180, 255) * (alpha * 0.9f),
@@ -142,7 +138,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
                     SpriteEffects.None, 0f);
             }
 
-            return true; // 仍画 vanilla 箭矢贴图（覆盖在拖尾头部）
+            return true;
         }
 
         public override Color? GetAlpha(Color lightColor)

@@ -1,3 +1,4 @@
+using ArknightsMod.Common.NPCDeathDebris;
 using ArknightsMod.Common.VisualEffects;
 using ArknightsMod.Content.BossBars;
 using ArknightsMod.Content.Items.Material;
@@ -36,6 +37,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
         private int _modeTimer;
         private int _explosionCooldown;
         private int _tailKillDuration;
+        private bool _tailKillDebrisSpawned;
         private bool _hasEnteredTailKill;
         private Vector2 _tailKillStartPos;
         private int _fireRainCounter;
@@ -103,6 +105,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 		{
 			_slugEggCooldown = Main.rand.Next(60, 121);
 			escapetimer = 0f;
+			_tailKillDebrisSpawned = false;
 			SelectNextAttackState();
 		}
 
@@ -1190,6 +1193,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 
             if (_tailKillDuration >= 75)
             {
+				if (!_tailKillDebrisSpawned)
+				{
+					_tailKillDebrisSpawned = true;
+					int frameRow = Math.Clamp(_currentFrame, 0, Main.npcFrameCount[Type] - 1);
+					NPCDebrisSystem.TrySpawnDynamicDebris(NPC, isBoss: true, frameRowIndex: frameRow);
+				}
 				NPC.life = 0;
                 NPC.checkDead();
             }

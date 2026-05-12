@@ -34,8 +34,8 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 {
 	public class BurnImpairment : ElementalAffliction
     {
-        public override int MaxValue => 1000;
-        public override int BurstDamage => 7000;
+        public override int MaxValue => 200;
+        public override int BurstDamage => 1400;
         public override int CooldownTicks => 600;
         public override Color BurstDamageColor => Color.Red;
         public override Color IconColor => new Color(108, 16, 16); 
@@ -53,8 +53,8 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
     }
     public class NervousImpairment : ElementalAffliction
     {
-        public override int MaxValue => 1000;
-        public override int BurstDamage => 6000;
+        public override int MaxValue => 200;
+        public override int BurstDamage => 1200;
         public override int CooldownTicks => 600;
         public override Color BurstDamageColor => new Color(7, 35, 23);
         public override Color IconColor => new Color(7, 35, 23);
@@ -69,7 +69,7 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
     }
     public class NecrosisImpairment : ElementalAffliction
     {
-        public override int MaxValue => 1000;
+        public override int MaxValue => 200;
         public override int BurstDamage => 0;
         public override int CooldownTicks => 900;
         public override Color BurstDamageColor => new Color(0, 0, 0, 0);
@@ -87,8 +87,8 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
     }
     public class CorrosionImpairment : ElementalAffliction
     {
-        public override int MaxValue => 1000;
-        public override int BurstDamage => 5000;
+        public override int MaxValue => 200;
+        public override int BurstDamage => 1000;
         public override int CooldownTicks => 480;
         public override Color BurstDamageColor => new Color(99, 74, 100);
 

@@ -23,6 +23,11 @@ ChenSwordS3: {
 	Description: Mods.ArknightsMod.Buffs.ChenSwordS3.Description
 }
 
+TyphonSkillArrowStunBuff: {
+	DisplayName: Typhon Skill Arrow Stun
+	Description: Unable to act
+}
+
 ExusiaiRingAndWingBuff: {
 	DisplayName: Exusiai Ring And Wing Buff
 	Description: Mods.ArknightsMod.Buffs.ExusiaiRingAndWingBuff.Description
