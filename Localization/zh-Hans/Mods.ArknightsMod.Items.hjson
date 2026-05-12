@@ -3141,3 +3141,8 @@ ArmorExusiaiBody: {
 	// Tooltip: ""
 	// DisplayName: Armor Exusiai Body
 }
+
+PipeBlueLightBlock: {
+	// DisplayName: Pipe Blue Light Block
+	// Tooltip: ""
+}
