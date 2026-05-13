@@ -1,11 +1,12 @@
 ﻿using ArknightsMod.Content.Buffs;
 using ArknightsMod.Content.Items.Weapons.Sniper.Typhon;
 using Microsoft.Xna.Framework;
+using System;
+using System.Diagnostics.CodeAnalysis;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System;
 
 namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
 {
@@ -151,7 +152,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
                     if (spd < 4f)
                         spd = Math.Max(SkillTrailSpawnSpeed, 8f);
 
-                    if (TryGetLockedRainTarget((int)Projectile.localAI[0], out NPC lockedRainTarget))
+                    if (TryGetLockedRainTarget((int)Projectile.localAI[0], out NPC? lockedRainTarget))
                     {
                         spd = Math.Max(spd, S3LockedRainMinSpeed);
                         Vector2 toTarget = lockedRainTarget.Center - Projectile.Center;
@@ -198,11 +199,11 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
                 if (Projectile.localAI[0] == 0f)
                 {
                     Vector2 reticleCenter = new Vector2(Projectile.ai[0], Projectile.ai[1]);
-                    NPC pick = PickRandomEnemyInArea(reticleCenter, TyphonAimReticle.ReticleAreaRadius);
+                    NPC? pick = PickRandomEnemyInArea(reticleCenter, TyphonAimReticle.ReticleAreaRadius);
                     Projectile.localAI[0] = pick != null ? pick.whoAmI + 1f : -1f;
                 }
 
-                NPC tgt = null;
+                NPC? tgt = null;
                 if (Projectile.localAI[0] > 0f)
                 {
                     int idx = (int)Projectile.localAI[0] - 1;
@@ -464,7 +465,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
             Stuck         = true;
             StuckNpcIndex = target.whoAmI;
             StuckOffset   = Projectile.Center - target.Center;
-            bool snappedOnTarget = TyphonAimReticle.TryGetSnappedChaseNpc(Projectile.owner, out NPC chase)
+            bool snappedOnTarget = TyphonAimReticle.TryGetSnappedChaseNpc(Projectile.owner, out NPC? chase)
                 && chase == target;
             _s3RainHitLockedHexStar = IsS3RainColumnMode() || snappedOnTarget;
 
@@ -595,11 +596,21 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
 
         private static void SpawnS3RainArrow(IEntitySource source, int ownerWho, Vector2 markerReticleAi01, float refSpeed, int damage, float knockback, int lockedNpcWhoPlusOne = 0)
         {
-            bool hasLockedNpc = TryGetLockedRainTarget(lockedNpcWhoPlusOne, out NPC lockedNpc);
-            Vector2 zoneCenter = lockedNpcWhoPlusOne > 0
-                ? hasLockedNpc ? lockedNpc.Center : markerReticleAi01
-                : TyphonAimReticle.GetCurrentPos(ownerWho) ?? markerReticleAi01;
-            NPC columnNpc = hasLockedNpc
+            bool hasLockedNpc = TryGetLockedRainTarget(lockedNpcWhoPlusOne, out NPC? lockedNpc);
+            Vector2 zoneCenter;
+            if (lockedNpcWhoPlusOne > 0)
+            {
+                if (hasLockedNpc && lockedNpc != null)
+                    zoneCenter = lockedNpc.Center;
+                else
+                    zoneCenter = markerReticleAi01;
+            }
+            else
+            {
+                zoneCenter = TyphonAimReticle.GetCurrentPos(ownerWho) ?? markerReticleAi01;
+            }
+
+            NPC? columnNpc = hasLockedNpc && lockedNpc != null
                 ? lockedNpc
                 : FindS3RainColumnTarget(ownerWho, zoneCenter, TyphonAimReticle.ReticleAreaRadius);
 
@@ -632,7 +643,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
             }
         }
 
-        private static bool TryGetLockedRainTarget(int lockedNpcWhoPlusOne, out NPC npc)
+        private static bool TryGetLockedRainTarget(int lockedNpcWhoPlusOne, [NotNullWhen(true)] out NPC? npc)
         {
             npc = null;
             int idx = lockedNpcWhoPlusOne - 1;
@@ -647,13 +658,13 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
             return true;
         }
 
-        private static NPC FindS3RainColumnTarget(int ownerWho, Vector2 zoneCenter, float radius)
+        private static NPC? FindS3RainColumnTarget(int ownerWho, Vector2 zoneCenter, float radius)
         {
             if (ownerWho < 0 || ownerWho >= Main.maxPlayers || !Main.player[ownerWho].active)
                 return null;
             Player plr = Main.player[ownerWho];
             float r2 = radius * radius;
-            NPC best = null;
+            NPC? best = null;
             float bestD = r2;
             foreach (NPC npc in Main.ActiveNPCs)
             {
@@ -749,10 +760,10 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
             }
         }
 
-        private NPC FindNearestEnemy(float range)
+        private NPC? FindNearestEnemy(float range)
         {
             int reticleType = ModContent.ProjectileType<TyphonAimReticle>();
-            NPC best = null;
+            NPC? best = null;
             float bestDistSq = range * range;
             foreach (Projectile p in Main.ActiveProjectiles)
             {
@@ -789,7 +800,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
             }
         }
 
-        private static NPC PickRandomEnemyInArea(Vector2 center, float radius)
+        private static NPC? PickRandomEnemyInArea(Vector2 center, float radius)
         {
             float r2 = radius * radius;
             int count = 0;
