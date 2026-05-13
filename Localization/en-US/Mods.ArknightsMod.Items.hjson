@@ -2778,3 +2778,48 @@ ValarqvinWeapon: {
 	Tooltip: ""
 	DisplayName: Valarqvin Weapon
 }
+
+ArmorExusiaiBody: {
+	DisplayName: Armor Exusiai Body
+	Tooltip: ""
+}
+
+ArmorExusiaiHead: {
+	DisplayName: Armor Exusiai Head
+	Tooltip: ""
+}
+
+ArmorExusiaiLegs: {
+	DisplayName: Armor Exusiai Legs
+	Tooltip: ""
+}
+
+PipeWallCopperItem: {
+	DisplayName: Pipe Wall Copper Item
+	Tooltip: ""
+}
+
+PipeWallInsulatedItem: {
+	DisplayName: Pipe Wall Insulated Item
+	Tooltip: ""
+}
+
+PipeWallSteelItem: {
+	DisplayName: Pipe Wall Steel Item
+	Tooltip: ""
+}
+
+PipeBlueLightBlock: {
+	DisplayName: Pipe Blue Light Block
+	Tooltip: ""
+}
+
+HazeMagicBook: {
+	DisplayName: Haze Magic Book
+	Tooltip: ""
+}
+
+DN_Weapon: {
+	DisplayName: D N_ Weapon
+	Tooltip: ""
+}

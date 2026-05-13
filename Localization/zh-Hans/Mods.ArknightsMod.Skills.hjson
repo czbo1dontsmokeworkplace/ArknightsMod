@@ -369,3 +369,15 @@ HazeMagicBook: {
 		Label: 攻击力强化·β型
 	}
 }
+
+DN_Weapon: {
+	1: {
+		// Label: Mods.ArknightsMod.Skills.DN_Weapon.1.Label
+		// Desc: Mods.ArknightsMod.Skills.DN_Weapon.1.Desc
+	}
+
+	2: {
+		// Label: Mods.ArknightsMod.Skills.DN_Weapon.2.Label
+		// Desc: Mods.ArknightsMod.Skills.DN_Weapon.2.Desc
+	}
+}
