@@ -4,6 +4,7 @@ using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -256,7 +257,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
             if (modPlayer.Skill == 1 && modPlayer.SkillActive)
             {
                 int s2Type = ModContent.ProjectileType<TyphonS2Arrow>();
-                FindTwoTargets(player, position, out NPC t1, out NPC t2);
+                FindTwoTargets(player, position, out NPC? t1, out NPC? t2);
 
                 Vector2 v1 = velocity.RotatedBy(MathHelper.ToRadians(-5));
                 Vector2 v2 = velocity.RotatedBy(MathHelper.ToRadians(5));
@@ -301,7 +302,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
             return (int)Math.Round(mod.ApplyTo(Item.damage));
         }
 
-        private static void FindTwoTargets(Player player, Vector2 origin, out NPC t1, out NPC t2)
+        private static void FindTwoTargets(Player player, Vector2 origin, out NPC? t1, out NPC? t2)
         {
             t1 = null;
             t2 = null;

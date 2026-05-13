@@ -51,7 +51,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
             Projectile.velocity = newDir * speed;
         }
 
-        private NPC ResolveTarget()
+        private NPC? ResolveTarget()
         {
             // ai[0] 中存的是 whoAmI+1；为 0 表示发射时未找到目标
             int idx = (int)Projectile.ai[0] - 1;
@@ -62,7 +62,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
                     return pinned;
             }
 
-            NPC best = null;
+            NPC? best = null;
             float bestDistSq = HomingRange * HomingRange;
             foreach (NPC npc in Main.ActiveNPCs)
             {

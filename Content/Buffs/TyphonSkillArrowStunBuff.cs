@@ -43,7 +43,7 @@ namespace ArknightsMod.Content.Buffs
 
 		public static void TryApply(NPC target, Player owner, Projectile proj)
 		{
-			if (target == null || !target.active || owner == null || !owner.active)
+			if (!target.active || !owner.active)
 				return;
 			if (!owner.GetModPlayer<WeaponPlayer>().SkillActive)
 				return;

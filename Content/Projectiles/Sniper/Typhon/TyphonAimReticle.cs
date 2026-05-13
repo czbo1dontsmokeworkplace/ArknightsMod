@@ -2,6 +2,7 @@ using ArknightsMod.Content.Items.Weapons.Sniper.Typhon;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Diagnostics.CodeAnalysis;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ModLoader;
@@ -50,7 +51,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
                 return;
             }
 
-            NPC target = FindNearestEnemy(Main.MouseWorld, MouseSearchRadius);
+            NPC? target = FindNearestEnemy(Main.MouseWorld, MouseSearchRadius);
             if (target != null)
             {
                 Projectile.Center = target.Center;
@@ -95,7 +96,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
             return null;
         }
 
-        public static bool TryGetSnappedChaseNpc(int ownerWho, out NPC npc)
+        public static bool TryGetSnappedChaseNpc(int ownerWho, [NotNullWhen(true)] out NPC? npc)
         {
             npc = null;
             if (ownerWho < 0 || ownerWho >= Main.maxPlayers)
@@ -117,7 +118,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
                 const float pickSlop = 96f;
                 float pickSlopSq = pickSlop * pickSlop;
 
-                NPC best = null;
+                NPC? best = null;
                 float bestD = pickSlopSq;
                 foreach (NPC n in Main.ActiveNPCs)
                 {
@@ -165,9 +166,9 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
             return false;
         }
 
-        private static NPC FindNearestEnemy(Vector2 origin, float range)
+        private static NPC? FindNearestEnemy(Vector2 origin, float range)
         {
-            NPC best = null;
+            NPC? best = null;
             float bestDistSq = range * range;
             foreach (NPC npc in Main.ActiveNPCs)
             {
