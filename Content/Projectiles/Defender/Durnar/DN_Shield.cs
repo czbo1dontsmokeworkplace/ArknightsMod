@@ -22,8 +22,8 @@ namespace ArknightsMod.Content.Projectiles.Defender.Durnar
         private float Length {get => MathF.Sqrt(MathF.Pow(ShieldTex.Width,2) + MathF.Pow(ShieldTex.Width,2));}
         public override void SetDefaults()
         {
-            Projectile.width = 10; // ?�������?�����
-            Projectile.height = 10; // ?�������?��?�
+            Projectile.width =  30; // ?�������?�����
+            Projectile.height = 36; // ?�������?��?�
             Projectile.friendly = true; // ?������?��?���
             Projectile.penetrate = -1; // ?�������?�?
             Projectile.tileCollide = false; // ?���?����?��?
@@ -87,7 +87,7 @@ namespace ArknightsMod.Content.Projectiles.Defender.Durnar
             else if (vx > 0.1f) {
                 walkPhase += 0.12f + vx * 0.04f;
                 float progress = (MathF.Sin(walkPhase) + 1f) * 0.5f;
-                targetOffsetDeg = MathHelper.Lerp(-10f, 25f, progress);
+                targetOffsetDeg = MathHelper.Lerp(-20f, 50f, progress);
             }
             else {
                 walkPhase = 0f;
@@ -110,6 +110,7 @@ namespace ArknightsMod.Content.Projectiles.Defender.Durnar
 					projMode = ProjMode.Attack;
 					player.direction = (Main.MouseWorld - player.MountedCenter).X >=0? 1:-1;
 					attackTime = 0;
+					CDTime = CDTimeMax;
                 }
             }
         }
@@ -126,55 +127,44 @@ namespace ArknightsMod.Content.Projectiles.Defender.Durnar
 		        modifiers.SourceDamage *= 1.8f;
         }
 
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {
-	        float point = 0;
-	        if (projMode == ProjMode.Attack) {
-		        bool hit = Collision.CheckAABBvLineCollision(
-			        targetHitbox.TopLeft(),
-			        targetHitbox.Size(),
-			        player.MountedCenter,
-			        player.MountedCenter+new Vector2(TexHeight,0).RotatedBy(Projectile.rotation),
-			        TexWidth,
-			        ref point);
-		        return hit;
-	        }
-	        return false;
-        }
-
-        private Vector2 AttackLength = new Vector2(20, 0);
+        private Vector2 AttackLength = new Vector2(10, 0);
         private float attackTime;
-        private float attackMaxTime = 17;
+        private float attackMaxTime = 30;
+
+        private float CDTime;
+
+        private float CDTimeMax=10;
         public void Attack() {
 	        float progress = attackTime / attackMaxTime;
-	        attackTime++;
+	        float prog2 =1;
 	        Projectile.rotation = attackRad - MathHelper.Pi/2 + MathHelper.Pi/2 * player.direction;
-	        if (progress < 0.2)
+	        float mineRad = Projectile.rotation - MathHelper.Pi;
+	        float accelProgress = progress * progress;
+	        float Length = MathHelper.Lerp(-10, 20, accelProgress);
+	        if(progress<=1f)
+		        attackTime++;
+	        else{
+		        CDTime--;
+		        prog2 = CDTime/CDTimeMax;
+		        Length = MathHelper.Lerp(0, Length, prog2);
+		        player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.None,Projectile.rotation);
+		        Projectile.Center = player.GetFrontHandPosition(Player.CompositeArmStretchAmount.None,Projectile.rotation);
+	        }
+	        if (progress < 0.4) {
+		        player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.None,mineRad);
+		        Projectile.Center = player.GetFrontHandPosition(Player.CompositeArmStretchAmount.None, mineRad);
+	        }
+	        else if(progress <=1f){
+		        player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.None,Projectile.rotation);
+		        Projectile.Center = player.GetFrontHandPosition(Player.CompositeArmStretchAmount.None,Projectile.rotation);
+	        }
+	        if(prog2<0)
 	        {
-		        player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.None, Projectile.rotation);
-		        Projectile.Center =
-			        player.GetFrontHandPosition(Player.CompositeArmStretchAmount.None, Projectile.rotation);
-	        }
-	        else if (progress < 0.3) {
-		        player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Quarter, Projectile.rotation);
-		        Projectile.Center =
-			        player.GetFrontHandPosition(Player.CompositeArmStretchAmount.Quarter, Projectile.rotation);
-	        }
-	        else if (progress < 0.5) {
-		        player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.ThreeQuarters, Projectile.rotation);
-		        Projectile.Center =
-			        player.GetFrontHandPosition(Player.CompositeArmStretchAmount.ThreeQuarters, Projectile.rotation);
-	        }
-	        else if (progress <= 1) {
-		        player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation);
-		        Projectile.Center =
-			        player.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, Projectile.rotation);
-	        }
-	        else {
-
-		        projMode = ProjMode.Move;
 		        press = false;
+		        projMode = ProjMode.Move;
 	        }
-	        Projectile.Center += AttackLength.RotatedBy(attackRad) ;
+	        Vector2 fix = new Vector2(1, 0).RotatedBy(attackRad);
+	        Projectile.Center += fix * Length;
         }
         public void Defender()
         {
@@ -193,13 +183,6 @@ namespace ArknightsMod.Content.Projectiles.Defender.Durnar
         }
         private float TexWidth{get => ShieldTex.Width;}
         private float TexHeight{get => ShieldTex.Height;}
-        // public Rectangle ShieldRect(Vector2 pos)
-        // {
-        //     int x = (int)(pos.X - TexWidth/2f);
-        //     int y = (int)(pos.Y - TexHeight/2f);
-        //     Rectangle rect = new Rectangle(x,y,(int)TexWidth,(int)TexHeight);
-        //     return rect;
-        // }
         public void Draw_Shield(SpriteBatch sb)
         {
             SpriteEffects spriteEffects = player.direction == 1? SpriteEffects.None  : SpriteEffects.FlipHorizontally;
