@@ -40,8 +40,8 @@ WorldGen: {
 
 ProtocolSpace: {
 	Name: 测试协议空间
-	ExitConfirm: 再次交互以确认离开测试协议空间。
-	ExitLocked: 当前不可离开，请先完成目标。
+	ExitConfirm: 再次交互以确认离开测试协议空间
+	ExitLocked: 当前不可离开，请先完成目标
 }
 
 Tiles: {

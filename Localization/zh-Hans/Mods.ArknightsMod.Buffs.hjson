@@ -75,7 +75,7 @@ RARicecrabBuff: {
 	Description:
 		'''
 		防御[c/3791db:+8%]
-		生命上限[c/3791db:+8%]
+		最大生命值[c/3791db:+8%]
 		'''
 }
 
