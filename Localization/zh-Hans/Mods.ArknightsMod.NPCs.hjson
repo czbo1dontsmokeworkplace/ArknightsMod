@@ -45,6 +45,8 @@ ShieldGuard.DisplayName: 重装防御者
 Soldier.DisplayName: 士兵
 SoldierLeader.DisplayName: 士兵组长
 InsaneZombieL.DisplayName: 狂暴宿主组长
+Rioter.DisplayName: 暴徒
+Crownslayer.DisplayName: 弑君者
 
 Closure: {
 	DisplayName: 可露希尔

@@ -192,6 +192,16 @@ ValarqvinProj_2.DisplayName: Valarqvin Proj_2
 ValarqvinProj.DisplayName: Valarqvin Proj
 DN_Shield.DisplayName: D N_ Shield
 DN_Sword.DisplayName: D N_ Sword
+GravityDagger.DisplayName: Gravity Dagger
+RedMagicBlade.DisplayName: Red Magic Blade
+StaticPredictLine.DisplayName: Static Predict Line
+DaggerPredictLine.DisplayName: Dagger Predict Line
 TyphonAimReticle.DisplayName: Typhon Aim Reticle
 TyphonStar.DisplayName: Typhon Star
+DelayDagger.DisplayName: Delay Dagger
+GroundDagger.DisplayName: Ground Dagger
+StallDagger.DisplayName: Stall Dagger
+TransparentSlash.DisplayName: Transparent Slash
 TyphonStarReleaseBurst.DisplayName: Typhon Star Release Burst
+BarrageDagger.DisplayName: Barrage Dagger
+CrownslayerSmokeEmitter.DisplayName: Crownslayer Smoke Emitter

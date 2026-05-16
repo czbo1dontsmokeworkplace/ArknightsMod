@@ -45,6 +45,8 @@ ShieldGuard.DisplayName: Shield Guard
 Soldier.DisplayName: Soldier
 SoldierLeader.DisplayName: Soldier Leader
 InsaneZombieL.DisplayName: Insane Zombie L
+Rioter.DisplayName: Rioter
+Crownslayer.DisplayName: Crownslayer
 
 Closure: {
 	DisplayName: Closure

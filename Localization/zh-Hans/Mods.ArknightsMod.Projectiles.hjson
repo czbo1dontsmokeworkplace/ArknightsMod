@@ -192,6 +192,16 @@ FierySlugFireballProjectile.DisplayName: 炽焰源石虫火球射弹
 // ValarqvinProj.DisplayName: Valarqvin Proj
 // DN_Shield.DisplayName: D N_ Shield
 // DN_Sword.DisplayName: D N_ Sword
+GravityDagger.DisplayName: 重力匕首
+RedMagicBlade.DisplayName: 红魔刃
+StaticPredictLine.DisplayName: 静态预警线
+DaggerPredictLine.DisplayName: 匕首预警线
 // TyphonAimReticle.DisplayName: Typhon Aim Reticle
 // TyphonStar.DisplayName: Typhon Star
+DelayDagger.DisplayName: 延时匕首
+GroundDagger.DisplayName: 地刺匕首
+StallDagger.DisplayName: 滞空匕首
+TransparentSlash.DisplayName: 透明斩击
 // TyphonStarReleaseBurst.DisplayName: Typhon Star Release Burst
+// BarrageDagger.DisplayName: Barrage Dagger
+// CrownslayerSmokeEmitter.DisplayName: Crownslayer Smoke Emitter
