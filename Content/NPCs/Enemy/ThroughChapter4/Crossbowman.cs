@@ -46,8 +46,13 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 		}
 
+<<<<<<< Updated upstream
 		public override float SpawnChance(NPCSpawnInfo spawnInfo) {
 			return SpawnCondition.OverworldNightMonster.Chance * 0.1f;
+=======
+		public override float SpawnChance(NPC.Spawner spawner) {
+			return SpawnCondition.OverworldNightMonster.Chance * 0.03f;
+>>>>>>> Stashed changes
 		}
 
 		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
@@ -354,7 +359,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		//	return true;
 		//}
 
-		public override void PostDraw(Color lightColor) {
+		public override void PostDraw(Player player, Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */ {
 			Texture2D lightsTexture = ModContent.Request<Texture2D>("ArknightsMod/Content/NPCs/Enemy/ThroughChapter4/CrossbowmanBolt").Value;
 			Main.EntitySpriteDraw(lightsTexture, Projectile.Center - Main.screenPosition, new Rectangle(0, 0, lightsTexture.Width, lightsTexture.Height), Color.White, Projectile.rotation, new Vector2(lightsTexture.Width / 2, lightsTexture.Height / 2), 1f, SpriteEffects.None, 0);
 		}

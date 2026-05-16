@@ -41,6 +41,7 @@ namespace ArknightsMod.Content.Tiles
 		public static LocalizedText GrindPassMessage { get; private set; }
 
 		public override void SetStaticDefaults() {
+<<<<<<< Updated upstream:Content/Tiles/Grind.cs
 			GrindPassMessage = Language.GetOrRegister(Mod.GetLocalizationKey($"WorldGen.{nameof(GrindPassMessage)}"));
 		}
 
@@ -50,6 +51,17 @@ namespace ArknightsMod.Content.Tiles
 
 			// Most vanilla ores are generated in a step called "Shinies", so for maximum compatibility, we will also do this.
 			// First, we find out which step "Shinies" is.
+=======
+			GrindstonePassMessage = Language.GetOrRegister(Mod.GetLocalizationKey($"WorldGen.{nameof(GrindstonePassMessage)}"));
+		}
+
+		// World generation is explained more in https://github.com/tModLoader/tModLoader/wiki/World-Generation
+		public override void ModifyWorldGenTasks(List<GenPass> tasks) {
+			// Because world generation is like layering several images on top of each other, we need to do some steps between the original world generation steps.
+
+			// Most vanilla ores are generated in a step called "Shinies", so for maximum compatibility, we will also do this.
+			// First, we find out which step "Shinies" is.
+>>>>>>> Stashed changes:Content/Tiles/Grindstone.cs
 			int ShiniesIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Shinies"));
 
 			if (ShiniesIndex != -1) {

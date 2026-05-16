@@ -51,8 +51,13 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 		}
 
+<<<<<<< Updated upstream
 		public override float SpawnChance(NPCSpawnInfo spawnInfo) {
 			return SpawnCondition.OverworldNightMonster.Chance * 1f; // Spawn with 1/5th the chance of a regular zombie.
+=======
+		public override float SpawnChance(NPC.Spawner spawner) {
+			return SpawnCondition.OverworldNightMonster.Chance * 0.2f; // Spawn with 1/5th the chance of a regular zombie.
+>>>>>>> Stashed changes
 		}
 
 		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {

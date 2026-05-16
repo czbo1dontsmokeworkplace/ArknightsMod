@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Projectiles
 		public override void SetStaticDefaults() {
 			Main.projFrames[Projectile.type] = 8;
 			ProjectileID.Sets.CultistIsResistantTo[Projectile.type] = true;
-			ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
+			ProjectileID.Sets.MinionTargetingFeature[Projectile.type] = true;
 		}
 
 		public override void SetDefaults() {

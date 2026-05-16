@@ -1780,8 +1780,13 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		private float timer2;
 		//private float randstop;
 
+<<<<<<< Updated upstream
 		public override void PostDraw(Color lightColor) {
 			Texture2D Colline = ModContent.Request<Texture2D>("ArknightsMod/Content/NPCs/Enemy/RoaringFlare/ImperialArtilleyCoreTargeteer/CollapsedLine").Value;
+=======
+		public override void PostDraw(Player player, Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */ {
+			Texture2D Colline = Request<Texture2D>("ArknightsMod/Content/NPCs/Enemy/RoaringFlare/ImperialArtilleyCoreTargeteer/CollapsedLine").Value;
+>>>>>>> Stashed changes
 			Main.EntitySpriteDraw(Colline, Projectile.Center - Main.screenPosition + new Vector2(0, 32 * Projectile.scale).RotatedBy(Projectile.rotation), new Rectangle(0, 0, Colline.Width, Colline.Height), Color.White, (Projectile.ai[0] - 1) * MathHelper.PiOver2, new Vector2(Colline.Width / 2, Colline.Height / 2), Projectile.scale, SpriteEffects.None, 0);
 		}
 
@@ -2436,8 +2441,13 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 			}
 		}
 
+<<<<<<< Updated upstream
 		public override bool PreDraw(ref Color lightColor) {
 			Texture2D trailtexture = ModContent.Request<Texture2D>("ArknightsMod/Common/VisualEffects/LineTrail").Value;
+=======
+		public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */ {
+			Texture2D trailtexture = Request<Texture2D>("ArknightsMod/Common/VisualEffects/LineTrail").Value;
+>>>>>>> Stashed changes
 			TrailMaker.ProjectileDrawTailByConstWidth(Projectile, trailtexture, Vector2.Zero, new Color(r, g, 240), new Color(0, 0, 0), 25f * Math.Min(timer / 600, 1), true);
 			return true;
 		}

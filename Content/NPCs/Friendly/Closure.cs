@@ -22,13 +22,11 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			NPCID.Sets.AttackType[NPC.type] = 3;
 			NPCID.Sets.AttackTime[NPC.type] = 18;
 			NPCID.Sets.AttackAverageChance[NPC.type] = 10;
-			NPCID.Sets.HatOffsetY[NPC.type] = 4; // For when a party is active, the party hat spawns at a Y offset.
-												 // NPCID.Sets.ShimmerTownTransform[NPC.type] = true; // This set says that the Town NPC has a Shimmered form. Otherwise, the Town NPC will become transparent when touching Shimmer like other enemies.
+			NPCID.Sets.HatOffsetY[NPC.type] = 4; 
+			NPCID.Sets.NPCPortraits.Add(Type, NPCID.Sets.PrioritizedPortrait()
+				.With(NPCID.Sets.ShimmeredPortraitCondition, NPCID.Sets.BasicPortrait($"{Texture}_Portrait"))
+				.Default(NPCID.Sets.BasicPortrait($"{Texture}_Portrait")));
 
-
-
-			// Set Example Person's biome and neighbor preferences with the NPCHappiness hook. You can add happiness text and remarks with localization (See an example in ExampleMod/Localization/en-US.lang).
-			// NOTE: The following code uses chaining - a style that works due to the fact that the SetXAffection methods return the same NPCHappiness instance they're called on.
 			NPC.Happiness
 				.SetBiomeAffection<ForestBiome>(AffectionLevel.Like) // Example Person prefers the forest.
 				.SetBiomeAffection<SnowBiome>(AffectionLevel.Dislike) // Example Person dislikes the snow.
@@ -180,14 +178,18 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			}
 
 			public bool CheckQuest() {
-				try {
+				try
+				{
 					var quest = Quests[QuestNum];
-					foreach (var item in Player.inventory) {
-						if (item.type == quest.QuestItem) {
-							if (Player.CountItem(quest.QuestItem, quest.ItemAmount) >= quest.ItemAmount) {
+					foreach (var item in Player.inventory)
+					{
+						if (item.type == quest.QuestItem)
+						{
+							if (Player.CountItem(quest.QuestItem, quest.ItemAmount) >= quest.ItemAmount)
+							{
 								item.stack -= quest.ItemAmount;
 								if (item.stack <= 0)
-									item.SetDefaults();
+									item.TurnToAir();
 								return true;
 							}
 						}

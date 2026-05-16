@@ -66,7 +66,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.GT
 
 		}
 
-		public override float SpawnChance(NPCSpawnInfo spawnInfo) {
+		public override float SpawnChance(NPC.Spawner spawner) {
 			return SpawnCondition.Underground.Chance * 0.4f;
 			// return SpawnCondition.OverworldNightMonster.Chance * 1f; // Spawn with 1/5th the chance of a regular zombie.
 		}

@@ -2304,8 +2304,13 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 			//Dust dust = Terraria.Dust.NewDustPerfect(Projectile.Center + new Vector2(0, -10), 204, new Vector2(0f, 0f), 0, new Color(255, 255, 255), 2.5f);
 		}
 
+<<<<<<< Updated upstream
 		public override bool PreDraw(ref Color lightColor) {
 			Texture2D trailtexture = ModContent.Request<Texture2D>("ArknightsMod/Common/VisualEffects/FlameTrail").Value;
+=======
+		public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */ {
+			Texture2D trailtexture = Request<Texture2D>("ArknightsMod/Common/VisualEffects/FlameTrail").Value;
+>>>>>>> Stashed changes
 			TrailMaker.ProjectileDrawTailByConstWidth(Projectile, trailtexture, new Vector2(12, -12), new Color(255, 80, 0), new Color(235, 100, 0), 15f, true);
 			return true;
 		}
@@ -2350,8 +2355,13 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 			//Dust dust = Terraria.Dust.NewDustPerfect(Projectile.Center + new Vector2(0, -10), 204, new Vector2(0f, 0f), 0, new Color(255, 255, 255), 2.5f);
 		}
 
+<<<<<<< Updated upstream
 		public override bool PreDraw(ref Color lightColor) {
 			Texture2D trailtexture = ModContent.Request<Texture2D>("ArknightsMod/Common/VisualEffects/FlameTrail").Value;
+=======
+		public override bool PreDraw(Player player, ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */ {
+			Texture2D trailtexture = Request<Texture2D>("ArknightsMod/Common/VisualEffects/FlameTrail").Value;
+>>>>>>> Stashed changes
 			TrailMaker.ProjectileDrawTailByConstWidth(Projectile, trailtexture, new Vector2(12, -12), new Color(255, 60, 0), new Color(220, 20, 0), 15f, true);
 			return true;
 		}
@@ -2380,7 +2390,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 			NPC.friendly = false;
 		}
 
-		public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Player.ZoneSnow && spawnInfo.Player.ZoneOverworldHeight && NPC.downedPlantBoss == true && Main.raining && !Main.dayTime && !NPC.AnyNPCs(NPCType<IATIntro>()) && !NPC.AnyNPCs(NPCType<IAT>()) && !NPC.AnyNPCs(NPCType<IACTIntro>()) && !NPC.AnyNPCs(NPCType<IACT>()) ? 0.01f : 0f;
+		public override float SpawnChance(NPC.Spawner spawner) => spawner.Player.ZoneSnow && spawner.Player.ZoneOverworldHeight && NPC.downedPlantBoss == true && Main.raining && !Main.dayTime && !NPC.AnyNPCs(NPCType<IATIntro>()) && !NPC.AnyNPCs(NPCType<IAT>()) && !NPC.AnyNPCs(NPCType<IACTIntro>()) && !NPC.AnyNPCs(NPCType<IACT>()) ? 0.01f : 0f;
 		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
 			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
 				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Snow,

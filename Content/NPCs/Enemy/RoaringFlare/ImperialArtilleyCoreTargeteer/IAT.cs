@@ -849,7 +849,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 			NPC.friendly = false;
 		}
 
-		public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Player.ZoneSnow && spawnInfo.Player.ZoneOverworldHeight && Main.raining && !Main.dayTime && !NPC.AnyNPCs(NPCType<IATIntro>()) && !NPC.AnyNPCs(NPCType<IAT>()) && !NPC.AnyNPCs(NPCType<IACTIntro>()) && !NPC.AnyNPCs(NPCType<IACT>()) ? 0.05f : 0f;
+		public override float SpawnChance(NPC.Spawner spawner) => spawner.Player.ZoneSnow && spawner.Player.ZoneOverworldHeight && Main.raining && !Main.dayTime && !NPC.AnyNPCs(NPCType<IATIntro>()) && !NPC.AnyNPCs(NPCType<IAT>()) && !NPC.AnyNPCs(NPCType<IACTIntro>()) && !NPC.AnyNPCs(NPCType<IACT>()) ? 0.05f : 0f;
 		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
 			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
 				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Snow,
