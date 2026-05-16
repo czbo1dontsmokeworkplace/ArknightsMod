@@ -1,14 +1,14 @@
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
-using Terraria.Audio;
+using Terraria.ID;
+using Terraria.ModLoader;
 using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.ItemDropRules;
-using Terraria.ID;
-using Terraria.Localization;
-using Terraria.ModLoader;
 using Terraria.ModLoader.Utilities;
+using Terraria.Localization;
+using System;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Terraria.Audio;
 
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 {
@@ -46,8 +46,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 		}
 
-		public override float SpawnChance(NPCSpawnInfo spawnInfo) {
-			return SpawnCondition.OverworldNightMonster.Chance * 0.1f;
+		public override float SpawnChance(NPC.Spawner spawner) {
+			return SpawnCondition.OverworldNightMonster.Chance * 0.03f;
 		}
 
 		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
@@ -68,8 +68,11 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			if (Projectile.hostile == true) {
 				return false;
 			}
+			else if (Projectile.friendly == true) {
+				return null;
+			}
 			else {
-				return Projectile.friendly == true ? null : false;
+				return false;
 			}
 		}
 
@@ -112,7 +115,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			Player Player = Main.player[NPC.target];
 			diffX = Player.Center.X - NPC.Center.X;
 			diffY = Player.Center.Y - NPC.Center.Y;
-			ax = 0.3f;
+			ax = 0.2f;
 			distance = (float)Math.Sqrt(Math.Pow(diffX / 16, 2) + Math.Pow(diffY / 16, 2));//到玩家的距离（格数）
 			if (Main.masterMode) {
 				atkloop = 90;
@@ -120,7 +123,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				escrange = 15;
 				jumpspeed = 6f;
 				escapetime = 300;
-				vx = 3f;
+				vx = 1.5f;
 			}
 			else if (Main.expertMode) {
 				atkloop = 120;
@@ -128,7 +131,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				escrange = 10;
 				jumpspeed = 5f;
 				escapetime = 240;
-				vx = 2.5f;
+				vx = 1.2f;
 			}
 			else {
 				atkloop = 180;
@@ -136,7 +139,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				escrange = 10;
 				jumpspeed = 4f;
 				escapetime = 180;
-				vx = 2f;
+				vx = 1.0f;
 			}
 			//玩家死亡
 			if (!Player.active || Player.dead) {
@@ -146,7 +149,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 					return;
 				}
 			}
-
+			
 			//模式选择
 			if (distance >= atkrange) {//攻击范围之外
 				Walk();
@@ -162,7 +165,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 					//attacktimer = 0;
 				}
 			}
-			else if (distance >= escrange) {//中间范围，只攻击不移动
+			else if(distance >= escrange) {//中间范围，只攻击不移动
 				timer++;
 				NPC.velocity.X = float.Lerp(NPC.velocity.X, 0, 0.1f);
 				if (timer >= atkloop) {
@@ -289,8 +292,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				isstuck = false;
 				if (attacktimer == 50) {
 					directionchoose = Player.Center.X - NPC.Center.X >= 0 ? 1 : -1;
-					angle = (float)Math.Atan((Player.Center.Y - NPC.Center.Y) / (Player.Center.X - NPC.Center.X));
-					Projectile.NewProjectile(newSource, NPC.Center, new Vector2(directionchoose * 8f, 0).RotatedBy(angle), ModContent.ProjectileType<CrossbowmanBolt>(), 12, 0.8f, 0, 0);
+					angle = (float)Math.Atan((Player.Center.Y - NPC.Center.Y)/(Player.Center.X - NPC.Center.X));
+					Projectile.NewProjectile(newSource, NPC.Center, new Vector2(directionchoose * 8f,0).RotatedBy(angle), ModContent.ProjectileType<CrossbowmanBolt>(), 12, 0.8f, 0, 0);
 					SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/Crossbow") with { Volume = 1f, Pitch = 0f }, NPC.Center);
 				}
 			}
@@ -307,7 +310,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			frameHeight = 56;
 			if (iswalk == true || isescape == true) {
 				walkframe++;
-				framecount = walkframe / 20;
+				framecount = (int)(walkframe / 20);
 				if (framecount > 13) {
 					walkframe = 0;
 				}
@@ -318,7 +321,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			}
 			if (isatk == true) {
 				atkframe++;
-				framecount = atkframe / 10 + 15;
+				framecount = (int)(atkframe / 10) + 15;
 				NPC.frame.Y = framecount * frameHeight;
 				if (framecount > 18) {
 					NPC.frame.Y = 15 * frameHeight;
@@ -354,7 +357,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		//	return true;
 		//}
 
-		public override void PostDraw(Color lightColor) {
+		public override void PostDraw(Player player, Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */ {
 			Texture2D lightsTexture = ModContent.Request<Texture2D>("ArknightsMod/Content/NPCs/Enemy/ThroughChapter4/CrossbowmanBolt").Value;
 			Main.EntitySpriteDraw(lightsTexture, Projectile.Center - Main.screenPosition, new Rectangle(0, 0, lightsTexture.Width, lightsTexture.Height), Color.White, Projectile.rotation, new Vector2(lightsTexture.Width / 2, lightsTexture.Height / 2), 1f, SpriteEffects.None, 0);
 		}
@@ -363,7 +366,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			Projectile.velocity = Vector2.Lerp(Projectile.velocity, 0.833f * Projectile.velocity, 0.01f);
 			Projectile.rotation = Projectile.velocity.ToRotation();
 			Dust dust;
-			Vector2 position = Projectile.Center + new Vector2(0, 3);
+			Vector2 position = Projectile.Center + new Vector2(0,3);
 			dust = Terraria.Dust.NewDustPerfect(position, 279, new Vector2(0f, 0f), 0, new Color(255, 255, 255), 1f);
 		}
 	}

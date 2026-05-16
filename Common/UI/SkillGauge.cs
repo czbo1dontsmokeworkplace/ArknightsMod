@@ -1,6 +1,6 @@
-﻿using ArknightsMod.Common.Items;
-using ArknightsMod.Common.Players;
-using ArknightsMod.Content.Items.Weapons;
+﻿using ArknightsMod.Content.Items.Weapons;
+using ArknightsMod.Players;
+using ArknightsMod.Systems.Gameplay.Skill;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -79,19 +79,37 @@ namespace ArknightsMod.Common.UI
 			var mp = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
 			Texture2D pixel = TextureAssets.MagicPixel.Value;
 			SkillData skill = mp.CurrentSkill;
+
+			//null reference check
+			if (skill == null) {
+				//Main.NewText($"[{GetType()}] 错误: 当前技能数据mp.CurrentSkill为null", Color.Red);
+				return;
+			}
+
 			SkillLevelData data = skill.CurrentLevelData;
+
 			float activeTime = data.ActiveTime * 60;
 			int maxStock = data.MaxStack;
 			int stock = mp.StockCount;
-			// Calculate quotient
-			float quotient1 = (float)mp.SkillCharge / mp.SkillChargeMax; // Creating a quotient that represents the difference of your currentResource vs your maximumResource, resulting in a float of 0-1f.
-			quotient1 = Utils.Clamp(quotient1, 0f, 1f); // Clamping it to 0-1f so it doesn't go over that.
-			float quotient2 = mp.SkillTimer / activeTime; // Creating a quotient that represents the difference of your currentResource vs your maximumResource, resulting in a float of 0-1f.
-			quotient2 = Utils.Clamp(quotient2, 0f, 1f); // Clamping it to 0-1f so it doesn't go over that.
 
+			//确保数值有效
+			if (activeTime <= 0)
+				activeTime = 1f;
+			if (maxStock <= 0)
+				maxStock = 1;
 
+			//Calculate quotient
+			float quotient1 = (float)mp.SkillCharge / mp.SkillChargeMax;
+			quotient1 = Utils.Clamp(quotient1, 0f, 1f);
+			float quotient2 = mp.SkillTimer / activeTime;
+			quotient2 = Utils.Clamp(quotient2, 0f, 1f);
 
-			// Here we get the screen dimensions of the barFrame element, then tweak the resulting rectangle to arrive at a rectangle within the barFrame texture that we will draw the gradient. These values were measured in a drawing program.
+			//检查UI元素是否初始化
+			if (barFrame == null) {
+				Main.NewText("错误: 技能UI的barFrame元素未初始化", Color.Red);
+				return;
+			}
+
 			Rectangle hitbox = barFrame.GetInnerDimensions().ToRectangle();
 			hitbox.X += 2;
 			hitbox.Width -= 2;
@@ -100,12 +118,12 @@ namespace ArknightsMod.Common.UI
 
 			var aboveHead = new Rectangle(Main.screenWidth / 2 - 12, Main.screenHeight / 2 - 65, 22, 22);
 
-			// Now, using this hitbox, we draw a gradient by drawing vertical lines while slowly interpolating between the 2 colors.
 			int left = hitbox.Left;
 			int right = hitbox.Right;
 			int steps1 = (int)((right - left) * quotient1);
 			int steps2 = (int)((right - left) * quotient2);
 
+			//绘制技能条背景和填充
 			sb.Draw(pixel, new Rectangle(left, hitbox.Y, 116, hitbox.Height), gradientB);
 			for (int i = 0; i < steps1; i += 1) {
 				sb.Draw(pixel, new Rectangle(left + i, hitbox.Y, 1, hitbox.Height), gradientA);
@@ -121,16 +139,18 @@ namespace ArknightsMod.Common.UI
 				}
 			}
 
+			//检查贴图资源是否存在
 			if (maxStock > 1 && stock > 0) {
-				sb.Draw(stockIcon[stock - 1], aboveHead, Color.White);
+				if (stockIcon != null && stockIcon.Length >= stock && stockIcon[stock - 1] != null) {
+					sb.Draw(stockIcon[stock - 1], aboveHead, Color.White);
+				}
 			}
 			else if (maxStock == 1 && !skill.AutoTrigger) {
-				if (stock == 1) {
+				if (stock == 1 && skillCanUse != null) {
 					sb.Draw(skillCanUse, aboveHead, Color.White);
 				}
 			}
 		}
-
 		//public override void Update(GameTime gameTime) {
 		//	if (Main.LocalPlayer.HeldItem.ModItem is not KroosCrossbow)
 		//		return;

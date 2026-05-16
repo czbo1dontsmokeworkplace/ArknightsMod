@@ -1,3 +1,4 @@
+using ArknightsMod.Content.Items.Material;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;
@@ -45,7 +46,7 @@ namespace ArknightsMod.Content.Tiles
 			OrirockCubePassMessage = Language.GetOrRegister(Mod.GetLocalizationKey($"WorldGen.{nameof(OrirockCubePassMessage)}"));
 		}
 
-		public override void ModifyWorldGenTasks(List<GenPass> tasks, ref double totalWeight) {
+		public override void ModifyWorldGenTasks(List<GenPass> tasks) {
 			// Because world generation is like layering several images ontop of each other, we need to do some steps between the original world generation steps.
 
 			// The first step is an Ore. Most vanilla ores are generated in a step called "Shinies", so for maximum compatibility, we will also do this.

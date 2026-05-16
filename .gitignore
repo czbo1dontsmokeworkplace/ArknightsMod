@@ -2,5 +2,7 @@ bin/
 obj/
 .vs
 .DS_Store
-Sounds/
-Music/
+.disabled
+/Content/Items/源石锭
+/Music
+/.gitignore

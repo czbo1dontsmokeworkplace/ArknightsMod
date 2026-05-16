@@ -1,0 +1,15 @@
+﻿using Terraria;
+using Terraria.ModLoader;
+
+namespace ArknightsMod.Content.Items.Armor.Vanity.Supporter.CivilightEterna
+{
+	[AutoloadEquip(EquipType.Body)]
+	public class CivilightEternaBody:ArknightsVanityBody
+	{
+		public override int Rarity => 6;
+		public override void Load() {
+		}
+		public override void UpdateEquip(Player player) {
+		}
+	}
+}

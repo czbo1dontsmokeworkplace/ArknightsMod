@@ -1,0 +1,3187 @@
+# Weapons
+YatoKatana: {
+	DisplayName: 夜刀的武士刀
+	Tooltip:
+		'''
+		手持武器时：
+		移速[c/3791db:+0.2]
+		按住右键额外[c/3791db:+0.3]
+		夜刀，入队
+		'''
+}
+
+NoirShield: {
+	DisplayName: 黑角的盾
+	Tooltip:
+		'''
+		手持武器时：
+		防御力[c/3791db:+5]
+		按住右键额外[c/3791db:+10]
+		没伤害？击退就完事了
+		'''
+}
+
+DurinWand: {
+	DisplayName: 杜林的法杖
+	Tooltip: 她看起来十分困乏
+}
+
+_12FWand: {
+	DisplayName: 12F的法杖
+	Tooltip: 终末地的我，再强大也不是海猫亲生的
+}
+
+RangersBow: {
+	DisplayName: 巡林者的弩
+	Tooltip: 没想到您居然好这口
+}
+
+KroosCrossbow: {
+	DisplayName: 克洛丝的弩
+	Tooltip: "'在~这~里~哦'"
+}
+
+Shinginzan: {
+	DisplayName: 真银斩
+	Tooltip:
+		'''
+		[c/FF00000:(未完成的物品)]
+		'银灰，你的盟友，前来助力'
+		'''
+}
+
+BagpipeSpear: {
+	DisplayName: 破城矛
+	Tooltip:
+		'''
+		左键点击物品栏下方技能图标以切换技能
+		'我和我的破城矛，来自维多利亚！'
+		'''
+}
+
+ChenSword: {
+	DisplayName: 赤霄
+	Tooltip: 无论什么时候，陈总是会站在队伍的前端
+}
+
+ThornsSword: {
+	DisplayName: 棘刺的剑
+	Tooltip: "'看仔细，这才是伊比利亚的至高之术！'"
+}
+
+PozemkaCrossbow: {
+	DisplayName: 鸿雪的弩
+	Tooltip: "'只要在地上生活，就一定会有拿起武器的那一天，我知道'"
+}
+
+# Instanced Space
+InstancedSchematicWrench: {
+	DisplayName: 蓝图扳手
+	Tooltip: 左键选择起点，右键导出区域蓝图。
+}
+
+ProtocolSpacePortal: {
+	DisplayName: 危境再现传送门
+	Tooltip: 进入测试协议空间挑战。
+}
+
+# Accessories
+ExusiaiWings: {
+	DisplayName: 能天使的翅膀
+	Tooltip: "'苹果派！'"
+}
+
+DoctorHood: {
+	# Armor/Vanity
+	DisplayName: 明日方舟博士的兜帽
+	// Tooltip: ""
+}
+
+DoctorJacket: {
+	DisplayName: 明日方舟博士的夹克
+	// Tooltip: ""
+}
+
+DoctorPants: {
+	DisplayName: 明日方舟博士的裤子
+	// Tooltip: ""
+}
+
+AmiyaBody: {
+	DisplayName: 阿米娅的上衣
+	// Tooltip: ""
+}
+
+AmiyaHead: {
+	DisplayName: 阿米娅的头套
+	// Tooltip: ""
+}
+
+AmiyaLegs: {
+	DisplayName: 阿米娅的下装
+	// Tooltip: ""
+}
+
+MelanthaBody: {
+	DisplayName: 玫兰莎的上衣
+	// Tooltip: ""
+}
+
+MelanthaHead: {
+	DisplayName: 玫兰莎的头套
+	// Tooltip: ""
+}
+
+MelanthaLegs: {
+	DisplayName: 玫兰莎的下装
+	// Tooltip: ""
+}
+
+MatoimaruBody: {
+	DisplayName: 缠丸的上衣
+	// Tooltip: ""
+}
+
+MatoimaruHead: {
+	DisplayName: 缠丸的头套
+	// Tooltip: ""
+}
+
+MatoimaruLegs: {
+	DisplayName: 缠丸的下装
+	// Tooltip: ""
+}
+
+IndigoBody: {
+	DisplayName: 深靛的上衣
+	// Tooltip: ""
+}
+
+IndigoHead: {
+	DisplayName: 深靛的头套
+	// Tooltip: ""
+}
+
+IndigoLegs: {
+	DisplayName: 深靛的下装
+	// Tooltip: ""
+}
+
+ChenHead: {
+	DisplayName: 陈的头套
+	// Tooltip: ""
+}
+
+ChenBody: {
+	DisplayName: 陈的上衣
+	// Tooltip: ""
+}
+
+ChenLegs: {
+	DisplayName: 陈的下装
+	// Tooltip: ""
+}
+
+MudrockBody: {
+	DisplayName: 泥岩的上衣
+	Tooltip: 右键以切换样式
+}
+
+MudrockChestplate: {
+	DisplayName: 泥岩的胸甲
+	Tooltip: 右键以切换样式
+}
+
+MudrockGreaves: {
+	DisplayName: 泥岩的下装
+	Tooltip: ""
+}
+
+MudrockHead: {
+	DisplayName: 泥岩的头套
+	Tooltip: 右键以切换样式
+}
+
+MudrockHelmet: {
+	DisplayName: 泥岩的头盔
+	Tooltip: 右键以切换样式
+}
+
+WBody: {
+	DisplayName: W的上衣
+	// Tooltip: ""
+}
+
+WHead: {
+	DisplayName: W的头套
+	// Tooltip: ""
+}
+
+WLegs: {
+	DisplayName: W的下装
+	// Tooltip: ""
+}
+
+TexalterBody: {
+	DisplayName: 缄默德克萨斯的上衣
+	// Tooltip: ""
+}
+
+TexalterHead: {
+	DisplayName: 缄默德克萨斯的头套
+	// Tooltip: ""
+}
+
+TexalterLegs: {
+	DisplayName: 缄默德克萨斯的下装
+	// Tooltip: ""
+}
+
+# Consumables
+StartBag: {
+	DisplayName: 明日方舟博士的衣服
+	Tooltip:
+		'''
+		{$CommonItemTooltip.RightClickToOpen}
+		所有干员的装备由罗德岛发放，当然，你的也是
+		'''
+}
+
+AmiyaDefault: {
+	DisplayName: 阿米娅的服饰（常规）
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+MelanthaDefault: {
+	DisplayName: 玫兰莎的服饰（常规）
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+MatoimaruDefault: {
+	DisplayName: 缠丸的服饰（常规）
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+IndigoDefault: {
+	DisplayName: 深靛的服饰（常规）
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+ChenDefault: {
+	DisplayName: 陈的服饰（常规）
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+MudrockDefault: {
+	DisplayName: 泥岩的服饰（常规）
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+WDefault: {
+	DisplayName: W的服饰（常规）
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+TexalterDefault: {
+	DisplayName: 缄默德克萨斯的服饰（常规）
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+BeagleDefault: {
+	DisplayName: 米格鲁的服饰（常规）
+	Tooltip: ""
+}
+
+CivilightEternaDefault: {
+	DisplayName: 魔王的服饰（常规）
+	Tooltip: ""
+}
+
+ExusiaiDefault: {
+	DisplayName: 能天使的服饰（常规）
+	Tooltip: ""
+}
+
+DorothyDefault: {
+	DisplayName: 多萝西的服饰（常规）
+	Tooltip: ""
+}
+
+FartoothDefault: {
+	DisplayName: 远牙的服饰（常规）
+	Tooltip: ""
+}
+
+HazeDefault: {
+	DisplayName: 夜烟的服饰（常规）
+	Tooltip: ""
+}
+
+KaltsitDefault: {
+	DisplayName: 凯尔西的服饰（常规）
+	Tooltip: ""
+}
+
+KroosAlterDefault: {
+	DisplayName: 寒芒克洛丝的服饰（常规）
+	Tooltip: ""
+}
+
+LaPlumaDefault: {
+	DisplayName: 羽毛笔的服饰（常规）
+	Tooltip: ""
+}
+
+LingDefault: {
+	DisplayName: 令的服饰（常规）
+	Tooltip: ""
+}
+
+ManticoreDefault: {
+	DisplayName: 狮蝎的服饰（常规）
+	Tooltip: ""
+}
+
+MostimaDefault: {
+	DisplayName: 莫斯提马的服饰（常规）
+	Tooltip: ""
+}
+
+MelaniteDefault: {
+	DisplayName: 玫拉的服饰（常规）
+	Tooltip: ""
+}
+
+RosmontisDefault: {
+	DisplayName: 迷迭香的服饰（常规）
+	Tooltip: ""
+}
+
+SariaDefault: {
+	DisplayName: 塞雷娅的服饰（常规）
+	Tooltip: ""
+}
+
+SkadiDefault: {
+	DisplayName: 斯卡蒂的服饰（常规）
+	Tooltip: ""
+}
+
+SurtrDefault: {
+	DisplayName: 史尔特尔的服饰（常规）
+	Tooltip: ""
+}
+
+WarfarinDefault: {
+	DisplayName: 华法琳的服饰（常规）
+	Tooltip: ""
+}
+
+UtageDefault: {
+	DisplayName: 宴的服饰（常规）
+	Tooltip: ""
+}
+
+LapplandDefault: {
+	DisplayName: 拉普兰德的服饰（常规）
+	Tooltip: ""
+}
+
+BeagleBody: {
+	DisplayName: 米格鲁的上衣
+	Tooltip: ""
+}
+
+BeagleHead: {
+	DisplayName: 米格鲁的头饰
+	Tooltip: ""
+}
+
+BeagleLegs: {
+	DisplayName: 米格鲁的裤子
+	Tooltip: ""
+}
+
+CivilightEternaBody: {
+	DisplayName: 魔王的上衣
+	Tooltip: ""
+}
+
+CivilightEternaHead: {
+	DisplayName: 魔王的头饰
+	Tooltip: ""
+}
+
+CivilightEternaLegs: {
+	DisplayName: 魔王的裤子
+	Tooltip: ""
+}
+
+ExusiaiBody: {
+	DisplayName: 能天使的上衣
+	// Tooltip: ""
+}
+
+ExusiaiHead: {
+	DisplayName: 能天使的头套
+	// Tooltip: ""
+}
+
+ExusiaiLegs: {
+	DisplayName: 能天使的下装
+	// Tooltip: ""
+}
+
+DorothyBody: {
+	DisplayName: 多萝西的上衣
+	// Tooltip: ""
+}
+
+DorothyHead: {
+	DisplayName: 多萝西的头套
+	// Tooltip: ""
+}
+
+DorothyLegs: {
+	DisplayName: 多萝西的下装
+	// Tooltip: ""
+}
+
+FartoothBody: {
+	DisplayName: 远牙的上衣
+	// Tooltip: ""
+}
+
+FartoothHead: {
+	DisplayName: 远牙的头套
+	// Tooltip: ""
+}
+
+FartoothLegs: {
+	DisplayName: 远牙的下装
+	// Tooltip: ""
+}
+
+HazeBody: {
+	DisplayName: 夜烟的上衣
+	// Tooltip: ""
+}
+
+HazeHead: {
+	DisplayName: 夜烟的头套
+	// Tooltip: ""
+}
+
+HazeLegs: {
+	DisplayName: 夜烟的下装
+	// Tooltip: ""
+}
+
+KaltsitBody: {
+	DisplayName: 凯尔希的上衣
+	// Tooltip: ""
+}
+
+KaltsitHead: {
+	DisplayName: 凯尔希的头套
+	// Tooltip: ""
+}
+
+KaltsitLegs: {
+	DisplayName: 凯尔希的下装
+	// Tooltip: ""
+}
+
+KroosAlterBody: {
+	DisplayName: 寒芒克洛丝的上衣
+	// Tooltip: ""
+}
+
+KroosAlterHead: {
+	DisplayName: 寒芒克洛丝的头套
+	// Tooltip: ""
+}
+
+KroosAlterLegs: {
+	DisplayName: 寒芒克洛丝的下装
+	// Tooltip: ""
+}
+
+LaPlumaBody: {
+	DisplayName: 羽毛笔的上衣
+	// Tooltip: ""
+}
+
+LaPlumaHead: {
+	DisplayName: 羽毛笔的头套
+	// Tooltip: ""
+}
+
+LaPlumaLegs: {
+	DisplayName: 羽毛笔的下装
+	// Tooltip: ""
+}
+
+LingBody: {
+	DisplayName: 令的上衣
+	// Tooltip: ""
+}
+
+LingHead: {
+	DisplayName: 令的头套
+	// Tooltip: ""
+}
+
+LingLegs: {
+	DisplayName: 令的下装
+	// Tooltip: ""
+}
+
+ManticoreBody: {
+	DisplayName: 狮蝎的上衣
+	// Tooltip: ""
+}
+
+ManticoreHead: {
+	DisplayName: 狮蝎的头套
+	// Tooltip: ""
+}
+
+ManticoreLegs: {
+	DisplayName: 狮蝎的下装
+	// Tooltip: ""
+}
+
+MostimaBody: {
+	DisplayName: 莫斯提马的上衣
+	// Tooltip: ""
+}
+
+MostimaHead: {
+	DisplayName: 莫斯提马的头套
+	// Tooltip: ""
+}
+
+MostimaLegs: {
+	DisplayName: 莫斯提马的下装
+	// Tooltip: ""
+}
+
+MelaniteBody: {
+	DisplayName: 玫拉的上衣
+	// Tooltip: ""
+}
+
+MelaniteHead: {
+	DisplayName: 玫拉的头套
+	// Tooltip: ""
+}
+
+MelaniteLegs: {
+	DisplayName: 玫拉的下装
+	// Tooltip: ""
+}
+
+RosmontisBody: {
+	DisplayName: 迷迭香的上衣
+	// Tooltip: ""
+}
+
+RosmontisHead: {
+	DisplayName: 迷迭香的头套
+	// Tooltip: ""
+}
+
+RosmontisLegs: {
+	DisplayName: 迷迭香的下装
+	// Tooltip: ""
+}
+
+SariaBody: {
+	DisplayName: 赛雷娅的上衣
+	// Tooltip: ""
+}
+
+SariaHead: {
+	DisplayName: 赛雷娅的头套
+	// Tooltip: ""
+}
+
+SariaLegs: {
+	DisplayName: 赛雷娅的下装
+	// Tooltip: ""
+}
+
+SkadiBody: {
+	DisplayName: 斯卡蒂的上衣
+	// Tooltip: ""
+}
+
+SkadiHead: {
+	DisplayName: 斯卡蒂的头套
+	// Tooltip: ""
+}
+
+SkadiLegs: {
+	DisplayName: 斯卡蒂的下装
+	// Tooltip: ""
+}
+
+SurtrBody: {
+	DisplayName: 史尔特尔的上衣
+	// Tooltip: ""
+}
+
+SurtrHead: {
+	DisplayName: 史尔特尔的头套
+	// Tooltip: ""
+}
+
+SurtrLegs: {
+	DisplayName: 史尔特尔的下装
+	// Tooltip: ""
+}
+
+WarfarinBody: {
+	DisplayName: 华法琳的上衣
+	// Tooltip: ""
+}
+
+WarfarinHead: {
+	DisplayName: 华法琳的头套
+	// Tooltip: ""
+}
+
+WarfarinLegs: {
+	DisplayName: 华法琳的下装
+	// Tooltip: ""
+}
+
+UtageBody: {
+	DisplayName: 宴的上衣
+	// Tooltip: ""
+}
+
+UtageHead: {
+	DisplayName: 宴的头套
+	// Tooltip: ""
+}
+
+UtageLegs: {
+	DisplayName: 宴的下装
+	// Tooltip: ""
+}
+
+LapplandBody: {
+	DisplayName: 拉普兰德的上衣
+	// Tooltip: ""
+}
+
+LapplandHead: {
+	DisplayName: 拉普兰德的头套
+	// Tooltip: ""
+}
+
+LapplandLegs: {
+	DisplayName: 拉普兰德的下装
+	// Tooltip: ""
+}
+
+OrirockCluster: {
+	DisplayName: 固源岩组
+	Tooltip: 从地表开采出的岩石固块组
+}
+
+OrirockConcentration: {
+	DisplayName: 提纯源岩
+	Tooltip: 从地表开采出的岩石固块组提纯出的物质
+}
+
+Polyketon: {
+	DisplayName: 酮凝集
+	Tooltip: 少量的工业用有机化合物
+}
+
+Aketon: {
+	DisplayName: 酮凝集组
+	Tooltip: 中等量的工业用有机化合物
+}
+
+KetonColloid: {
+	DisplayName: 酮阵列
+	Tooltip: 大量的工业用有机化合物
+}
+
+ManganeseTrihydrate: {
+	DisplayName: 三水锰矿
+	Tooltip: 用于提炼冶炼用的金属矿物
+}
+
+GrindstonePentahydrate: {
+	DisplayName: 五水研磨石
+	Tooltip: 用于精加工武器零件的高级研磨石
+}
+
+RMA7024: {
+	DisplayName: RMA70-24
+	Tooltip: 一种十分敏感且有优秀传导效果的矿物
+}
+
+LoxicKohl: {
+	DisplayName: 扭转醇
+	Tooltip: 片状有机化合物
+}
+
+WhiteHorseKohl: {
+	DisplayName: 白马醇
+	Tooltip: 扭转醇精加工后的产物
+}
+
+Device: {
+	DisplayName: 装置
+	Tooltip: 一套相对完整的装置
+}
+
+IntegratedDevice: {
+	DisplayName: 全新装置
+	Tooltip: 一套全新装配而成的装置
+}
+
+OptimizedDevice: {
+	DisplayName: 改量装置
+	Tooltip: 经过大量私自改造的装置
+}
+
+Oriron: {
+	DisplayName: 异铁
+	Tooltip: 罕见的工业材料
+}
+
+OrironCluster: {
+	DisplayName: 异铁组
+	Tooltip: 珍贵的工业材料
+}
+
+OrironBlock: {
+	DisplayName: 异铁块
+	Tooltip: 价值高昂的工业材料
+}
+
+Sugar: {
+	DisplayName: 糖
+	Tooltip: 机械化制作的少量糖块
+}
+
+SugarPack: {
+	DisplayName: 糖组
+	Tooltip: 机械化制作的中等量糖块
+}
+
+SugarLump: {
+	DisplayName: 糖聚块
+	Tooltip: 机械化制作的大量糖块
+}
+
+Polyester: {
+	DisplayName: 聚酸酯
+	Tooltip: 工业制造所需的零散聚酸酯
+}
+
+PolyesterPack: {
+	DisplayName: 聚酸酯组
+	Tooltip: 工业制造所需的一组聚酸酯
+}
+
+PolyesterLump: {
+	DisplayName: 聚酸酯块
+	Tooltip: 工业制造所需的成块聚酸酯
+}
+
+CoagulatingGel: {
+	DisplayName: 凝胶
+	Tooltip: 一种高强度的可塑性材料
+}
+
+PolymerizedGel: {
+	DisplayName: 聚合凝胶
+	Tooltip: 一种具备极高强度的可塑性材料
+}
+
+# Placeable
+OrirockCube: {
+	DisplayName: 固源岩
+	Tooltip: 从地表开采出的岩石固块
+}
+
+ManganeseOre: {
+	DisplayName: 轻锰矿
+	Tooltip: 用于提炼冶炼用的金属矿物
+}
+
+Grindstone: {
+	DisplayName: 研磨石
+	Tooltip: 用于加工武器零件的研磨石
+}
+
+RMA7012: {
+	DisplayName: RMA70-12
+	Tooltip: 一种敏感且有良好传导效果的矿物
+}
+
+DareUsa: {
+	# Furniture
+	DisplayName: 懒人沙发兔
+	# Furniture
+	Tooltip: 很大很大的兔兔，很软，很可爱，很舒服
+}
+
+AnniversaryWheel: {
+	DisplayName: 周年庆典转盘
+	Tooltip:
+		'''
+		这个轮盘是准备给懒人刷取材料用的
+		右击转动轮盘，通过公平的抽奖获取素材
+		[c/FF66FF:右键获得100个所有种类的基础素材]
+		'''
+}
+
+Orundum: {
+	DisplayName: 合成玉
+	Tooltip: 常用于招募干员
+}
+
+IncandescentAlloy: {
+	DisplayName: 炽合金
+	Tooltip: 电子工业用特殊高熔点合金
+}
+
+IncandescentAlloyBlock: {
+	DisplayName: 炽合金块
+	Tooltip: 产量稀少的电子工业用特殊高熔点合金
+}
+
+CrystallineComponent: {
+	DisplayName: 晶体元件
+	Tooltip: 可以制作与合成更高级的源石电子元件
+}
+
+CompoundCuttingFluid: {
+	DisplayName: 化合切削液
+	Tooltip: 一种金属加工时必备的工业试剂
+}
+
+CrystallineCircuit: {
+	DisplayName: 晶体电路
+	Tooltip: 重要的源石工业材料，是制作源石晶体单元的基础元件
+}
+
+PolymerizationPreparation: {
+	DisplayName: 聚合剂
+	Tooltip: 复杂的液态工业产物
+}
+
+TransmutedSaltAgglomerate: {
+	DisplayName: 转质盐聚块
+	Tooltip: 经过精炼处理的化合物结晶块
+}
+
+SemiSyntheticSolvent: {
+	DisplayName: 半自然溶剂
+	Tooltip: 一种物理性能优异，耐酸碱性良好的活性溶剂
+}
+
+CrystallineElectronicUnit: {
+	DisplayName: 晶体电子单元
+	Tooltip: 昂贵的源石工业产品
+}
+
+RefinedSolvent: {
+	DisplayName: 精炼溶剂
+	Tooltip: 经特殊工艺制作而成特殊涂料
+}
+
+D32Steel: {
+	DisplayName: D32钢
+	Tooltip: 自然界中不应存在的人造金属材料，呈固态
+}
+
+NucleicCrystalSinter: {
+	DisplayName: 烧结核凝晶
+	Tooltip: 对工艺要求极高的现代科技产物
+}
+
+CuttingFluidSolution: {
+	DisplayName: 切削原液
+	Tooltip: 由多种活性溶剂配置而成的原液
+}
+
+BipolarNanoflake: {
+	DisplayName: 双极纳米片
+	Tooltip: 现代工业的创造力结晶
+}
+
+TransmutedSalt: {
+	DisplayName: 转质盐组
+	Tooltip: 经过粗炼处理的化合物结晶
+}
+
+#Summon
+IACTSummon: {
+	DisplayName: 奇怪的信号发射器
+	Tooltip:
+		'''
+		似乎只要按下这个按钮，这个玩意就会发出[c/FF0000:奇怪]的信号
+		召唤[c/FF0000:遗落的军用打击系统]
+		[c/FF0000:只能在晚上使用]
+		'''
+}
+
+IATSummon: {
+	DisplayName: 奇怪的信号发射器·低配版
+	Tooltip:
+		'''
+		似乎只要按下这个按钮，这个玩意就会发出[c/FF0000:奇怪]的信号
+		召唤[c/FF0000:遗落的军用打击系统]
+		[c/FF0000:只能在晚上使用]
+		'''
+}
+
+OriginiumSlugBanner: {
+	DisplayName: 源石虫旗
+	// Tooltip: ""
+}
+
+OriginiumSlugAlphaBanner: {
+	DisplayName: 源石虫Alpha旗
+	// Tooltip: ""
+}
+
+OriginiumSlugBetaBanner: {
+	DisplayName: 源石虫Beta旗
+	// Tooltip: ""
+}
+
+AcidOgSlugBanner: {
+	DisplayName: 酸液源石虫旗
+	// Tooltip: ""
+}
+
+CorruptedRecord: {
+	DisplayName: 腐蚀的伊比利亚唱片
+	Tooltip: 收下它的冲动，源于一种不知名的渴求
+}
+
+DrillBattleRecord: {
+	DisplayName: 基础作战记录
+	// Tooltip: ""
+}
+
+TFTTS: {
+	DisplayName: 深海邀请函
+	Tooltip:
+		'''
+		用恐鱼血水书写的邀请函，邀请一位美丽得体的海洋访客
+		使用后不消耗
+		'''
+}
+
+RAWater: {
+	DisplayName: 清水
+	Tooltip: 净化后可以作为饮用水直接饮用，也能在设施建设中发挥作用
+}
+
+RAlegmeat: {
+	DisplayName: 带骨腿肉
+	Tooltip: 紧实的腿肉连带着坚硬的骨头，自带一股草木香味
+}
+
+RARicecrab: {
+	DisplayName: 蟹肉碎拌饭
+	Tooltip:
+		'''
+		热腾腾的杂粮中加入了岩壳蟹肉，吃起来朴素中略带鲜味
+		好吃是好吃，但..究竞是谁第一个决定尝试食用岩壳蟹的呢？
+		最大生命值[c/3791db:+8%]
+		防御力[c/3791db:+8%]
+		'''
+}
+
+RAMeatchip: {
+	DisplayName: 脆肉薯条转醇
+	Tooltip:
+		'''
+		选取荒地上随处可见的肉作为原料，和粗细不一的薯条一起在锅中煎炸而成
+		攻击力[c/3791db:+15%]
+		攻击速度[c/3791db:+15%]
+		'''
+}
+
+RAMeat: {
+	DisplayName: 圆圆肉片
+	Tooltip:
+		'''
+		狩猎野兽时有机会获得的食材
+		圆圆的肉片鲜美细嫩，可以很好地与多种食材搭配
+		'''
+}
+
+UnionInvader: {
+	DisplayName: 破损的整合运动旗帜
+	Tooltip: 白天使用以召唤整合运动的先锋部队
+}
+
+FrontlineBattleRecord: {
+	DisplayName: 初级作战记录
+	// Tooltip: ""
+}
+
+StrategicBattleRecord: {
+	DisplayName: 中级作战记录
+	// Tooltip: ""
+}
+
+TacticalBattleRecord: {
+	DisplayName: 高级作战记录
+	// Tooltip: ""
+}
+
+NianWeapon: {
+	DisplayName: 年的剑
+	Tooltip: ""
+}
+
+WMusicBox: {
+	DisplayName: 音乐盒(W)
+	Tooltip: 原曲为：Renegade
+}
+
+MostimaRingAndWing: {
+	DisplayName: 莫斯提马的光环与翅膀
+	// Tooltip: ""
+}
+
+RosmontisBackpack: {
+	DisplayName: 迷迭香的背包
+	// Tooltip: ""
+}
+
+KkdyAlterBody: {
+	DisplayName: 寒芒克洛丝的上衣
+	// Tooltip: ""
+}
+
+KkdyAlterHead: {
+	DisplayName: 寒芒克洛丝的头套
+	// Tooltip: ""
+}
+
+KkdyAlterLegs: {
+	DisplayName: 寒芒克洛丝的下装
+	// Tooltip: ""
+}
+
+AACTSummon: {
+	DisplayName: 信号发射器
+	Tooltip: 召唤邪魔炮火中枢先兆者
+}
+
+SpicyCandy: {
+	DisplayName: 辣味糖
+	// Tooltip: ""
+}
+
+ExusiaiVector: {
+	DisplayName: 能天使的维克托
+	Tooltip: “愿我的弹雨能熄灭你们的苦痛”
+}
+
+ExusiaiVector_Ammo: {
+	DisplayName: 维克托子弹
+	// Tooltip: ""
+}
+
+FangSpear: {
+	DisplayName: 芬的长枪
+	Tooltip: '''"刺穿"'''
+}
+
+KroosAlterCrossbow: {
+	DisplayName: 寒芒克洛丝的弩
+	Tooltip: '''"嘘，别再出声了哦"'''
+}
+
+OrchidUmbrellla: {
+	DisplayName: 梓兰的伞
+	Tooltip: '''"预备行动组A6的组长，梓兰，前来报到"'''
+}
+
+ShawAxe: {
+	DisplayName: 阿消的斧子
+	Tooltip: '''"根据消防守则，你这是违禁行为！"'''
+}
+
+ShawWaterCannon: {
+	DisplayName: 阿消的水炮
+	// Tooltip: ""
+}
+
+OblivionisBody: {
+	DisplayName: 旋律之主上衣
+	// Tooltip: ""
+}
+
+OblivionisHead: {
+	DisplayName: 旋律之主头套
+	// Tooltip: ""
+}
+
+OblivionisLegs: {
+	DisplayName: 旋律之主下装
+	// Tooltip: ""
+}
+
+SakiSword: {
+	DisplayName: 丰川祥子的剑
+	Tooltip: '''"这座黄昏的乐园，由我君临"'''
+}
+
+WisadelCannon: {
+	DisplayName: 维什戴尔的祖宗发射器
+	Tooltip: '''"把我派到这里，就是你费劲想出来的万全计划？"'''
+}
+
+BrightWeeping: {
+	DisplayName: “璀璨悲泣”
+	Tooltip:
+		'''
+		所有敌方单位受到的法术和召唤伤害[c/3791db:+40%]
+		"他的血液仍在流淌，他从不曾真的自这里离开"
+		'''
+}
+
+ChitinousRipper: {
+	DisplayName: 几丁质刺刃
+	Tooltip:
+		'''
+		（半成品）
+		[c/f6643b:Boss]战期间触发以下效果：
+		使附近随机一名[c/FFD700:玩家]、[c/FFD700:召唤物]、[c/FFD700:城镇NPC] 攻击力[c/3791db:+100%]
+		附近随机一名[c/FFD700:玩家]、[c/FFD700:城镇NPC] 生命值[c/3791db:+100%]
+		"一种更有效的外骨骼生长方案能够撕裂猎物，抵御打击，也可以化作同胞的美食"
+		'''
+}
+
+EmptyFeatheredBeast: {
+	DisplayName: 空羽兽
+	Tooltip:
+		'''
+		召唤暴击率[c/3791db:+5%]
+		召唤伤害[c/3791db:+30%]
+		鞭子伤害[c/3791db:+60%]
+		"肉体早已消逝，灵魂于壳中永驻枝叶间的不融生灵，带着冰凌于林中展翅"
+		'''
+}
+
+FirstAidMedicineKit: {
+	DisplayName: 急救药箱
+	Tooltip:
+		'''
+		最大生命值[c/3791db:+35%]
+		“…抗生素与乙醇添加物，请在专业人士指导下使用...”---雷姆必拓安全生产指南
+		'''
+}
+
+GoldBone: {
+	DisplayName: 镶金骨骰
+	Tooltip:
+		'''
+		所有敌方单位的最大生命值[c/3791db:-15%]（对[c/f6643b:Boss]无效）
+		"镶金的骨骰只有一面刻着代表生存的印记，至于其他十九面..."
+		'''
+}
+
+GoldenGinChalice: {
+	DisplayName: 金酒之杯
+	Tooltip:
+		'''
+		每有5源石锭，攻击速度[c/3791db:+7%]
+		"圣人、骑士、虔信之徒，无人不为之疯狂老天啊，连杯子本身都是纯金的！"
+		'''
+}
+
+KingsArmor: {
+	DisplayName: 国王的铠甲
+	Tooltip:
+		'''
+		将最大生命值的[c/3791db:30%]转换为防御力
+		每10点生命值转换为1防御力
+		增加3点基础防御力，击败肉山、机械三王、世纪之花、拜月教徒、月球领主均可增加基础防御力
+		击败[c/f6643b:Boss]最高可获得[c/3791db:20]基础防御力
+		"王宫的大门前、广场上，曾摆放着那么多金色的展柜，四方珍品尽供欣赏而现在，仅仅是回想那个场面就会让人受伤"
+		'''
+}
+
+KingsCrown: {
+	DisplayName: 诸王的冠冕
+	Tooltip:
+		'''
+		生命值低于30%时，[c/3791db:+50%]伤害
+		装备3个及以上的国王收藏品则改为[c/3791db:+150%]伤害
+		"无名的诸王啊，纵使王国毁灭，仍愿您护佑伊比利亚"
+		'''
+}
+
+KingsStaff: {
+	DisplayName: 国王的延伸
+	Tooltip:
+		'''
+		生命值低于30%时：
+		[c/3791db:+1.5%]最大生命值的生命回复
+		[c/3791db:+10]魔力回复
+		"成长，认清现实，用坚韧与笃定武装自己，用包容与慈恩武装朋友"
+		'''
+}
+
+KnightlyCodexRenewed: {
+	DisplayName: 骑士戒律·新编
+	Tooltip:
+		'''
+		每有5源石锭，攻击速度[c/3791db:+5%]
+		"庄严宣誓那是过去的事儿了，现代骑士精神需要更加灵活的展现方式在联络装置上输入你的编号，你便是名光荣的骑士"
+		'''
+}
+
+ManifestationPendant: {
+	DisplayName: 显圣吊坠
+	Tooltip:
+		'''
+		远程武器攻击力[c/3791db:+15%]
+		"信仰悬在你的心口上方十公分处，语言流入你的血液，子弹滑进你的弹仓"
+		'''
+}
+
+PerfumeForTheShow: {
+	DisplayName: 演出用香水
+	Tooltip:
+		'''
+		每秒回复[c/3791db:1%]最大生命值
+		"剧团演员们上台前会喷一些在身上，这种稳定且芬芳的香气能为演员持续舒缓压力，至少，表面上，看上去是这样的"
+		'''
+}
+
+AbyssalWyrdmask: {
+	DisplayName: 奇渊面具
+	Tooltip:
+		'''
+		敌方单位与敌方射弹造成的伤害减少[c/3791db:12%]
+		"不属于所知的任何一个文化的古怪面具，会让人丧失战意...并不自觉地陷入长久的沉思"
+		'''
+}
+
+VanillaSauceSoda: {
+	DisplayName: 香草沙士汽水
+	Tooltip:
+		'''
+		所有自然回复技能的技力恢复[c/3791db:+0.2]/秒
+		"玻利瓦尔本地的廉价饮料，拥有上百年历史，混合多种香料，特点是不好喝"
+		'''
+}
+
+FiammettaBody: {
+	DisplayName: 菲亚梅塔的上衣
+	// Tooltip: ""
+}
+
+FiammettaHead: {
+	DisplayName: 菲亚梅塔的头套
+	// Tooltip: ""
+}
+
+FiammettaLegs: {
+	DisplayName: 菲亚梅塔的下装
+	// Tooltip: ""
+}
+
+WisadelBody: {
+	DisplayName: 维什戴尔的上衣
+	// Tooltip: ""
+}
+
+WisadelHead: {
+	DisplayName: 维什戴尔的头套
+	// Tooltip: ""
+}
+
+WisadelLegs: {
+	DisplayName: 维什戴尔的下装
+	// Tooltip: ""
+}
+
+MortisBody: {
+	DisplayName: 若叶睦的上衣
+	// Tooltip: ""
+}
+
+MortisHead: {
+	DisplayName: 若叶睦的头套
+	// Tooltip: ""
+}
+
+MortisLegs: {
+	DisplayName: 若叶睦的下装
+	// Tooltip: ""
+}
+
+RaidianBody: {
+	DisplayName: 电弧的上衣
+	// Tooltip: ""
+}
+
+RaidianHead: {
+	DisplayName: 电弧的头套
+	// Tooltip: ""
+}
+
+RaidianLegs: {
+	DisplayName: 电弧的下装
+	// Tooltip: ""
+}
+
+BagpipeBody: {
+	DisplayName: 风笛的上衣
+	// Tooltip: ""
+}
+
+BagpipeHead: {
+	DisplayName: 风笛的头套
+	// Tooltip: ""
+}
+
+BagpipeLegs: {
+	DisplayName: 风笛的下装
+	// Tooltip: ""
+}
+
+BagpipeDefault: {
+	DisplayName: 风笛的服饰（常规）
+	Tooltip: 右键点击可打开
+}
+
+FiammettaDefault: {
+	DisplayName: 菲亚梅塔的服饰（常规）
+	Tooltip: 右键点击可打开
+}
+
+MortisDefault: {
+	DisplayName: 若叶睦的服饰（常规）
+	Tooltip: 右键点击可打开
+}
+
+OblivionisDefault: {
+	DisplayName: 旋律之主套装
+	Tooltip: 右键点击可打开
+}
+
+RaidianDefault: {
+	DisplayName: 电弧的服饰（常规）
+	Tooltip: 右键点击可打开
+}
+
+WisdelDefault: {
+	DisplayName: 维什戴尔的服饰（常规）
+	Tooltip: 右键点击可打开
+}
+
+ArtsBlade: {
+	DisplayName: 德克萨斯的剑
+	Tooltip: “我们的工作是搬运生命和死亡”
+}
+
+Blueberry: {
+	DisplayName: 蓝莓
+	// Tooltip: ""
+}
+
+BlueberryDarkChocolate: {
+	DisplayName: 缄默德克萨斯的蓝莓与黑巧
+	Tooltip: “遗言转述？我不受理”
+}
+
+DarkChocolate: {
+	DisplayName: 黑巧
+	// Tooltip: ""
+}
+
+sw: {
+	DisplayName: 赤霄
+	// Tooltip: ""
+}
+
+PozyBow: {
+	// DisplayName: Pozy Bow
+	// Tooltip: ""
+}
+
+SchwarzBow: {
+	DisplayName: 黑的弩
+	Tooltip: “小姐有仁慈之心，我没有”
+}
+
+PozyomkaBow: {
+	// DisplayName: Pozyomka Bow
+	// Tooltip: ""
+}
+
+BeagleWeapon: {
+	DisplayName: 米格鲁的剑盾
+	Tooltip:
+		'''
+		按住右键使用盾牌进行格挡，格挡时防御力增加1.5倍
+		“保护大家是我的使命！不管有什么困难，这个信念都不会动摇！”
+		'''
+}
+
+TyphonBow: {
+	DisplayName: 提丰的弓
+	Tooltip: “从我家里出去！”
+}
+
+TyphonDefault: {
+	DisplayName: 提丰的服饰
+	Tooltip: 右键打开以获取头饰、上衣与下装
+}
+
+TyphonHead: {
+	DisplayName: 提丰的头饰
+	// Tooltip: ""
+}
+
+TyphonBody: {
+	DisplayName: 提丰的上衣
+	// Tooltip: ""
+}
+
+TyphonLegs: {
+	DisplayName: 提丰的下装
+	// Tooltip: ""
+}
+
+TexasBody: {
+	DisplayName: 德克萨斯的上衣
+	// Tooltip: ""
+}
+
+TexasHead: {
+	DisplayName: 德克萨斯的头套
+	// Tooltip: ""
+}
+
+TexasLegs: {
+	DisplayName: 德克萨斯的下装
+	// Tooltip: ""
+}
+
+FactoryItem: {
+	DisplayName: 加工站
+	Tooltip: 用于特殊合成
+}
+
+AdnachielCrossbow: {
+	DisplayName: 安德切尔的弩
+	Tooltip: “锁定！”
+}
+
+Lava_Dagger: {
+	DisplayName: 炎熔的匕首
+	Tooltip: “那些家伙的灵魂，注定要被我收割”
+}
+
+Shirayuki_Shuriken: {
+	DisplayName: 白雪的手里剑
+	Tooltip: “无人生还，大胜”
+}
+
+ThornsWeapon: {
+	DisplayName: 棘刺的剑
+	Tooltip: “看仔细，这才是伊比利亚的至高之术！”
+}
+
+RAmeat: {
+	DisplayName: 圆圆肉片
+	Tooltip: ""
+}
+
+BlackBridgeStructure: {
+	DisplayName: 黑舰桥块
+	// Tooltip: ""
+}
+
+BridgeStructure: {
+	DisplayName: 舰桥块
+	// Tooltip: ""
+}
+
+BridgeStructureWallItem: {
+	DisplayName: 舰桥墙壁
+	// Tooltip: ""
+}
+
+CanteenBlockItem: {
+	DisplayName: 食堂地板
+	// Tooltip: ""
+}
+
+CanteenWallItem: {
+	DisplayName: 食堂墙壁
+	// Tooltip: ""
+}
+
+RhodesHugeScreen: {
+	DisplayName: 基建中枢屏幕_地形
+	// Tooltip: ""
+}
+
+RhodesScreen: {
+	DisplayName: 基建中枢屏幕_运行
+	// Tooltip: ""
+}
+
+RhodesScreenRed: {
+	DisplayName: 基建中枢屏幕_报错
+	// Tooltip: ""
+}
+
+ElectroplatingItem: {
+	DisplayName: 电镀箱块
+	// Tooltip: ""
+}
+
+ElectroplatingPlatformItem: {
+	DisplayName: 电镀平台
+	// Tooltip: ""
+}
+
+GlassCurtainItem: {
+	DisplayName: 半透明玻璃幕墙
+	// Tooltip: ""
+}
+
+OfficeBlockItem: {
+	DisplayName: 办公室地板块
+	// Tooltip: ""
+}
+
+OfficeWallItem: {
+	DisplayName: 办公室墙壁
+	// Tooltip: ""
+}
+
+MedicalBlockItem: {
+	DisplayName: 医疗部地板块
+	// Tooltip: ""
+}
+
+MedicalDesk: {
+	DisplayName: 医疗部办公桌
+	// Tooltip: ""
+}
+
+MedicalWallItem: {
+	DisplayName: 医疗部墙壁
+	// Tooltip: ""
+}
+
+PipeItem: {
+	DisplayName: 管道
+	// Tooltip: ""
+}
+
+PipeWallItem: {
+	DisplayName: 管道墙
+	// Tooltip: ""
+}
+
+VentilationDuctItem: {
+	DisplayName: 通风管
+	// Tooltip: ""
+}
+
+DisplayItem: {
+	DisplayName: 显示屏
+	// Tooltip: ""
+}
+
+CartonLarge: {
+	DisplayName: 大纸箱
+	// Tooltip: ""
+}
+
+CartonMiddle: {
+	DisplayName: 纸箱
+	// Tooltip: ""
+}
+
+CartonPile: {
+	DisplayName: 大量纸箱
+	// Tooltip: ""
+}
+
+CartonSmall: {
+	DisplayName: 小纸箱
+	// Tooltip: ""
+}
+
+TheProfoundSilence: {
+	DisplayName: 《大静谧》
+	Tooltip:
+		'''
+		所有敌方单位[c/3791db:-20%]最大生命值（对[c/f6643b:Boss]无效）
+		“描绘伊比利亚史上最大灾难的画作，笔触毫无意义，色彩毫无意义，意象毫无意义 ‘阿戈尔知道，阿戈尔知道，阿戈尔知道’ ”
+		'''
+}
+
+HotWaterKettle: {
+	DisplayName: 热水壶
+	Tooltip:
+		'''
+		最大生命值[c/3791db:+20]
+		每10秒随机获得一个增益，持续5秒
+		"罗德岛办公室里的同款热水壶，有人经常大半夜用热水壶煮速食面吃，这种生活习惯不是很健康..."
+		'''
+}
+
+RosmontissEmbrace: {
+	DisplayName: 迷迭香之拥
+	Tooltip:
+		'''
+		所有敌方单位的防御力[c/3791db:-30%]（对[c/f6643b:Boss]无效）
+		"谁来审判？"
+		'''
+}
+
+OldSteamArmor: {
+	DisplayName: 古旧的蒸汽甲胄
+	Tooltip:
+		'''
+		防御力[c/3791db:+35%]
+		"哪怕是这种旧型号的蒸汽甲胄，也仿佛承载着维多利亚君主们照耀着半片大地的荣耀辉光"
+		'''
+}
+
+UnknownInstrument: {
+	DisplayName: 未知仪器
+	Tooltip:
+		'''
+		最大生命值[c/3791db:+50%]
+		"不要问就当为了你自己好"
+		'''
+}
+
+ScoutsScope: {
+	DisplayName: Scout的狙击镜
+	Tooltip:
+		'''
+		所有敌方单位受到玩家伤害时，距离伤害来源越远受到的伤害越高（最高100%）
+		“锁定目标、维持精度、扣下扳机、摧毁敌人抵抗的意志，这一切都是为了那个更远大的未来”
+		“Scout已经没有机会看到了，或许你可以帮忙见证”
+		'''
+}
+
+VieuxVanguardsBlade: {
+	DisplayName: 老近卫军之锋
+	Tooltip:
+		'''
+		近战武器攻击力[c/3791db:+35%]
+		"高卢将见证老近卫军的牺牲，随后才迎来自己的覆灭"
+		'''
+}
+
+CoinOperatedToy: {
+	DisplayName: 投币玩具
+	Tooltip:
+		'''
+		每有5源石锭，攻击速度[c/3791db:+3%]
+		"不知道为什么会有人喜欢这种造型，但整体的设计理念确实可圈可点"
+		"——只要投币，就连石像都会动起来，千真万确"
+		'''
+}
+
+FatalBoltsDivineSpeed: {
+	DisplayName: 残弩-神速
+	Tooltip:
+		'''
+		远程攻速[c/3791db:+70]
+		"据说古维多利亚的传奇弓手可以让箭矢几乎连成一线"
+		'''
+}
+
+CommandersPortrait: {
+	DisplayName: 统帅肖像
+	Tooltip:
+		'''
+		伤害[c/3791db:+10%]
+		最大生命值[c/3791db:+10%]
+		如果附近有[c/f6643b:Boss]存在：
+		额外[c/3791db:+20%]伤害
+		额外[c/3791db:+20%]最大生命值
+		"画像中描绘了一位杰出之人，她让互相猜疑的君王握手言和，让语言不通的士兵并肩站立...
+		如果她还活着，泰拉一统似乎也并非天方夜谭"
+		'''
+}
+
+Orirock: {
+	DisplayName: 源岩
+	Tooltip: 从地表开采出的岩石
+}
+
+SugarSubstitute: {
+	DisplayName: 代糖
+	Tooltip: 机械化制作的廉价天然糖替代产物
+}
+
+Diketon: {
+	DisplayName: 双酮
+	Tooltip: 极少量的工业用有机化合物
+}
+
+OrironShard: {
+	DisplayName: 异铁碎片
+	Tooltip: 普普通通的工业材料
+}
+
+Ester: {
+	DisplayName: 酯原料
+	Tooltip: 工业制造所需的酯原料
+}
+
+OriginiumShard: {
+	Tooltip: 从污染区域中收集到的源石碎片，用以制作合成玉
+	DisplayName: 源石碎片
+}
+
+HoundBanner: {
+	DisplayName: 猎狗旗
+	// Tooltip: ""
+}
+
+HoundproBanner: {
+	DisplayName: 猎狗pro旗
+	Tooltip: ""
+}
+
+SurtrLaevatain: {
+	DisplayName: 史尔特尔的莱万汀
+	Tooltip: 未完成的武器
+}
+
+SilverAshWeapon: {
+	DisplayName: 银灰的手杖
+	Tooltip: “银灰，你的盟友，前来助力你不会让我失望的，对吗”
+}
+
+DamagedDevice: {
+	DisplayName: 破损装置
+	Tooltip: 一些残破的装置
+}
+
+ArmorBeagleLegs: {
+	Tooltip: ""
+	DisplayName: 米格鲁的腿部
+}
+
+ArmorBeagleHead: {
+	Tooltip: 套装效果：受到的伤害减少[c/3791db:10%]
+	DisplayName: 米格鲁的头部
+}
+
+ArmorBeagleBody: {
+	Tooltip: ""
+	DisplayName: 米格鲁的躯干
+}
+
+ArmorMelanthaBody: {
+	DisplayName: 玫兰莎的躯干
+	Tooltip: ""
+}
+
+ArmorMelanthaHead: {
+	DisplayName: 玫兰莎的头部
+	Tooltip: 套装效果：攻击力[c/3791db:+4%]
+}
+
+ArmorMelanthaLegs: {
+	DisplayName: 玫兰莎的腿部
+	Tooltip: ""
+}
+
+ArmorMatoimaruBody: {
+	DisplayName: 缠丸的躯干
+	Tooltip: ""
+}
+
+ArmorMatoimaruHead: {
+	DisplayName: 缠丸的头部
+	Tooltip: 套装效果：防御力[c/f6643b:-20%]，生命值[c/3791db:+20%]
+}
+
+ArmorMatoimaruLegs: {
+	DisplayName: 缠丸的腿部
+	Tooltip: ""
+}
+
+ArmorKkdyAlterBody: {
+	DisplayName: 寒芒克洛丝的躯干
+	Tooltip: ""
+}
+
+ArmorKkdyAlterHead: {
+	DisplayName: 寒芒克洛丝的头部
+	Tooltip: 套装效果：攻击时，20%几率使当次攻击的攻击力提升至[c/3791db:150%]，并使敌人迷惑0.2秒
+}
+
+ArmorKkdyAlterLegs: {
+	DisplayName: 寒芒克洛丝的腿部
+	Tooltip: ""
+}
+
+RhodesStatusScreen: {
+	DisplayName: 基建中枢信息屏幕
+	// Tooltip: ""
+}
+
+ChandelierItem: {
+	DisplayName: 小吊灯
+	// Tooltip: ""
+}
+
+LampItem: {
+	DisplayName: 小路灯
+	// Tooltip: ""
+}
+
+LightTube: {
+	DisplayName: 灯管
+	// Tooltip: ""
+}
+
+MizukiBody: {
+	DisplayName: 水月的躯干
+	// Tooltip: ""
+}
+
+MizukiHead: {
+	DisplayName: 水月的头部
+	// Tooltip: ""
+}
+
+MizukiLegs: {
+	DisplayName: 水月的腿部
+	// Tooltip: ""
+}
+
+ArmorSariaBody: {
+	DisplayName: 装甲塞雷亚的躯干
+	// Tooltip: ""
+}
+
+ArmorSariaHead: {
+	DisplayName: 装甲塞雷亚的头部
+	// Tooltip: ""
+}
+
+ArmorSariaLegs: {
+	DisplayName: 装甲塞雷亚的腿部
+	// Tooltip: ""
+}
+
+MizukiDefault: {
+	DisplayName: 水月的服饰（常规）
+	Tooltip: 右键点击可打开
+}
+
+ChenSword_Item: {
+	DisplayName: 陈的赤霄
+	// Tooltip: ""
+}
+
+OriginiumIngot: {
+	DisplayName: 源石锭
+	// Tooltip: ""
+}
+
+SolidColorLowSofa: {
+	DisplayName: 纯白矮沙发
+	// Tooltip: ""
+}
+
+ClearBlackTV: {
+	DisplayName: 清晰黑色电视
+	// Tooltip: ""
+}
+
+GrayFiberRug: {
+	DisplayName: 灰色纤维地毯
+	// Tooltip: ""
+}
+
+MatteBlackFloorTile: {
+	DisplayName: 磨砂黑地砖
+	// Tooltip: ""
+}
+
+MinimalBlackClock: {
+	DisplayName: 黑色简约时钟
+	// Tooltip: ""
+}
+
+PorcelainBed: {
+	DisplayName: 瓷色大床
+	// Tooltip: ""
+}
+
+PorcelainNightstand: {
+	DisplayName: 瓷色床头柜
+	// Tooltip: ""
+}
+
+SolidCheckeredBookcase: {
+	DisplayName: 纯色棋盘式书柜
+	// Tooltip: ""
+}
+
+AnselBody: {
+	DisplayName: 安赛尔的躯干
+	// Tooltip: ""
+}
+
+AnselHead: {
+	DisplayName: 安赛尔的头部
+	// Tooltip: ""
+}
+
+AnselLegs: {
+	DisplayName: 安赛尔的腿部
+	// Tooltip: ""
+}
+
+LavaBody: {
+	DisplayName: 炎熔的躯干
+	// Tooltip: ""
+}
+
+LavaHead: {
+	DisplayName: 炎熔的头部
+	// Tooltip: ""
+}
+
+LavaLegs: {
+	DisplayName: 炎熔的腿部
+	// Tooltip: ""
+}
+
+StewardBody: {
+	DisplayName: 史都华德的躯干
+	// Tooltip: ""
+}
+
+StewardHead: {
+	DisplayName: 史都华德的头部
+	// Tooltip: ""
+}
+
+StewardLegs: {
+	DisplayName: 史都华德的腿部
+	// Tooltip: ""
+}
+
+CardiganBody: {
+	DisplayName: 卡缇的躯干
+	// Tooltip: ""
+}
+
+CardiganHead: {
+	DisplayName: 卡缇的头部
+	// Tooltip: ""
+}
+
+CardiganLegs: {
+	DisplayName: 卡缇的腿部
+	// Tooltip: ""
+}
+
+SpotBody: {
+	DisplayName: 斑点的躯干
+	// Tooltip: ""
+}
+
+SpotHead: {
+	DisplayName: 斑点的头部
+	// Tooltip: ""
+}
+
+SpotLegs: {
+	DisplayName: 斑点的腿部
+	// Tooltip: ""
+}
+
+MidnightBody: {
+	DisplayName: 月见夜的躯干
+	// Tooltip: ""
+}
+
+MidnightHead: {
+	DisplayName: 月见夜的头部
+	// Tooltip: ""
+}
+
+MidnightLegs: {
+	DisplayName: 月见夜的腿部
+	// Tooltip: ""
+}
+
+PopukarBody: {
+	DisplayName: 泡普卡的躯干
+	// Tooltip: ""
+}
+
+PopukarHead: {
+	DisplayName: 泡普卡的头部
+	// Tooltip: ""
+}
+
+PopukarLegs: {
+	DisplayName: 泡普卡的腿部
+	// Tooltip: ""
+}
+
+HibiscusBody: {
+	DisplayName: 芙蓉的躯干
+	// Tooltip: ""
+}
+
+HibiscusHead: {
+	DisplayName: 芙蓉的头部
+	// Tooltip: ""
+}
+
+HibiscusLegs: {
+	DisplayName: 芙蓉的腿部
+	// Tooltip: ""
+}
+
+AdnachielBody: {
+	DisplayName: 安德切尔的躯干
+	// Tooltip: ""
+}
+
+AdnachielHead: {
+	DisplayName: 安德切尔的头部
+	// Tooltip: ""
+}
+
+AdnachielLegs: {
+	DisplayName: 安德切尔的腿部
+	// Tooltip: ""
+}
+
+CatapultBody: {
+	DisplayName: 空爆的躯干
+	// Tooltip: ""
+}
+
+CatapultHead: {
+	DisplayName: 空爆的头部
+	// Tooltip: ""
+}
+
+CatapultLegs: {
+	DisplayName: 空爆的腿部
+	// Tooltip: ""
+}
+
+KroosBody: {
+	DisplayName: 克洛斯的躯干
+	// Tooltip: ""
+}
+
+KroosHead: {
+	DisplayName: 克洛斯的头部
+	// Tooltip: ""
+}
+
+KroosLegs: {
+	DisplayName: 克洛斯的腿部
+	// Tooltip: ""
+}
+
+OrchidBody: {
+	DisplayName: 梓兰的躯干
+	// Tooltip: ""
+}
+
+OrchidHead: {
+	DisplayName: 梓兰的头部
+	// Tooltip: ""
+}
+
+OrchidLegs: {
+	DisplayName: 梓兰的腿部
+	// Tooltip: ""
+}
+
+FangBody: {
+	DisplayName: 芬的躯干
+	// Tooltip: ""
+}
+
+FangHead: {
+	DisplayName: 芬的头部
+	// Tooltip: ""
+}
+
+FangLegs: {
+	DisplayName: 芬的腿部
+	// Tooltip: ""
+}
+
+PlumeBody: {
+	DisplayName: 翎羽的躯干
+	// Tooltip: ""
+}
+
+PlumeHead: {
+	DisplayName: 翎羽的头部
+	// Tooltip: ""
+}
+
+PlumeLegs: {
+	DisplayName: 翎羽的腿部
+	// Tooltip: ""
+}
+
+VanillaBody: {
+	DisplayName: 香草的躯干
+	// Tooltip: ""
+}
+
+VanillaHead: {
+	DisplayName: 香草的头部
+	// Tooltip: ""
+}
+
+VanillaLegs: {
+	DisplayName: 香草的腿部
+	// Tooltip: ""
+}
+
+AdnachielDefault: {
+	DisplayName: 安德切尔的服饰（常规）
+	Tooltip: 右键点击可打开
+}
+
+AnselDefault: {
+	DisplayName: 安赛尔的服饰（常规）
+	Tooltip: 右键点击可打开
+}
+
+CardiganDefault: {
+	DisplayName: 卡缇的服饰（常规）
+	Tooltip: 右键点击可打开
+}
+
+CatapultDefault: {
+	DisplayName: 空爆的服饰（常规）
+	Tooltip: 右键点击可打开
+}
+
+FangDefault: {
+	DisplayName: 芬的服饰（常规）
+	Tooltip: 右键点击可打开
+}
+
+HibiscusDefault: {
+	DisplayName: 芙蓉的服饰（常规）
+	Tooltip: 右键点击可打开
+}
+
+KroosDefault: {
+	DisplayName: 克洛斯的服饰（常规）
+	Tooltip: 右键点击可打开
+}
+
+LavaDefault: {
+	DisplayName: 炎熔的服饰（常规）
+	Tooltip: 右键点击可打开
+}
+
+MidnightDefault: {
+	DisplayName: 夜见月的服饰（常规）
+	Tooltip: 右键点击可打开
+}
+
+OrchidDefault: {
+	DisplayName: 梓兰的服饰（常规）
+	Tooltip: 右键点击可打开
+}
+
+PlumeDefault: {
+	DisplayName: 翎羽的服饰（常规）
+	Tooltip: 右键点击可打开
+}
+
+PopukarDefault: {
+	DisplayName: 泡普卡的服饰（常规）
+	Tooltip: 右键点击可打开
+}
+
+SpotDefault: {
+	DisplayName: 斑点的服饰（常规）
+	Tooltip: 右键点击可打开
+}
+
+StewardDefault: {
+	DisplayName: 史都华德的服饰（常规）
+	Tooltip: 右键点击可打开
+}
+
+VanillaDefault: {
+	DisplayName: 香草的服饰（常规）
+	Tooltip: 右键点击可打开
+}
+
+ActiveDust: {
+	DisplayName: 活性粉尘
+	Tooltip:
+		'''
+		所有敌方单位受到的法术和召唤伤害[c/3791db:+10%]
+		泰拉源石工业生产中的废弃物，很危险，请妥善处置阿——嚏
+		'''
+}
+
+CheapEdibleSalt: {
+	DisplayName: 便宜食用盐
+	Tooltip:
+		'''
+		所有敌方单位受到的近战和远程伤害[c/3791db:+7%]
+		伤口上撒盐
+		'''
+}
+
+FightingManual: {
+	DisplayName: 《打架手册》
+	Tooltip:
+		'''
+		近战武器攻击力[c/3791db:+7%]
+		记载了大量乌萨斯人的战吼，非常有气势
+		'''
+}
+
+File: {
+	DisplayName: 锉刀
+	Tooltip:
+		'''
+		所有敌方单位的防御力[c/3791db:-4%]（对[c/f6643b:Boss]无效）
+		偷偷把敌人的装备撬松
+		'''
+}
+
+FurongNutritiousMeal: {
+	DisplayName: 芙蓉的健康餐
+	Tooltip:
+		'''
+		所有敌方单位的攻击力[c/3791db:-5%]（对[c/f6643b:Boss]无效）
+		身体健康但是心理不太健康，只吃这样的东西就没心思作战了
+		'''
+}
+
+HydraulicCylinder: {
+	DisplayName: 液压气瓶
+	Tooltip:
+		'''
+		远程武器攻击力[c/3791db:+7%]
+		压缩了惰性气体的压力容器一定要注意压力计的读数是否正常
+		'''
+}
+
+NamelessPoetryCollection: {
+	DisplayName: 无名诗集
+	Tooltip:
+		'''
+		所有敌方单位的生命[c/3791db:-5%]
+		“酒杯的碎屑在我皮肉里欢唱，鲜血自指缝间攀上脊索
+		  饮下尖锐的晶莹光彩，脏腑随之璨烂流落”
+		'''
+}
+
+AsmallroundShieldOfDifferEntiron: {
+	DisplayName: 异铁小圆盾
+	Tooltip:
+		'''
+		防御力[c/3791db:+15%]
+		在异铁被广泛应用于现代工业领域前，这种材料时常被用来制造军用制式武器
+		'''
+}
+
+CrackedRestraintStrap: {
+	DisplayName: 开裂的束缚带
+	Tooltip:
+		'''
+		所有敌方单位的攻击力[c/3791db:-7%]
+		这根坚固的带子似乎绑过什么恐怖的东西...救命...
+		'''
+}
+
+LiveRoses: {
+	DisplayName: 活玫瑰
+	Tooltip:
+		'''
+		受到的治疗回复效果[c/3791db:+20%]
+		生命恢复速度[c/3791db:+20%]
+		是你滋养她，还是她守护你？
+		'''
+}
+
+RustBlades: {
+	DisplayName: 锈蚀刀片
+	Tooltip:
+		'''
+		所有敌方单位受到的近战和远程伤害[c/3791db:+15%]
+		如果它割破了皮肤，你知道会发生什么
+		'''
+}
+
+TheEmperorFavor: {
+	DisplayName: 皇帝的恩宠
+	Tooltip:
+		'''
+		近战武器攻击力[c/3791db:+15%]
+		十分锋利的拆信刀前任乌萨斯皇帝喜爱的日用品大多数时候并不用来拆信
+		'''
+}
+
+TheNightMurmurs: {
+	DisplayName: “黑夜呢喃”
+	Tooltip:
+		'''
+		所有敌方单位的生命[c/3791db:-10%]（对[c/f6643b:Boss]无效）
+		一张黑色唱片。不。准。碰。它。
+		'''
+}
+
+UnpleasantHemostaticAgent: {
+	DisplayName: 难闻的止血剂
+	Tooltip:
+		'''
+		最大生命值[c/3791db:20%]
+		“这种源石虫的体液经过发酵处理之后可以用于止血”
+		                     ——《罗德岛野外生存指南》
+		'''
+}
+
+EmperorCollection: {
+	DisplayName: 皇帝的收藏
+	Tooltip:
+		'''
+		所有敌方单位受到的法术和召唤伤害[c/3791db:+30%]
+		萨米人对他们的荒野尊崇无比，而现在这片荒野的碎片正静静躺在乌萨斯皇帝的私库中
+		'''
+}
+
+FallenSovereignForm: {
+	DisplayName: 王命凡形
+	Tooltip:
+		'''
+		防御力[c/3791db:+15]
+		将[c/3791db:70%]的最大生命值转换为等量的“护盾”来承受伤害
+		护盾存在时，承受的伤害会受到一定比例易伤加成
+		生命值[c/f6643b:强制限制]在最大生命值的[c/f6643b:30%]
+		王各有命，形亦不同
+		'''
+}
+
+Feardriedfish: {
+	DisplayName: 恐鱼干
+	Tooltip:
+		'''
+		所有敌方单位的防御力[c/3791db:-21%]
+		当生存的欲望压过恐惧后，饥不择食的伊比利亚人会吞下这些“食物”
+		然后在某个平常的日子里成为恐鱼
+		'''
+}
+
+FeatherBeastLiverPate: {
+	DisplayName: 羽兽肝酱
+	Tooltip:
+		'''
+		所有自然回复技能的技力恢复[c/3791db:+0.35]/秒
+		小瓶高档羽兽肝酱，颜色鲜艳，贵族特供
+		'''
+}
+
+MonarchSidearm: {
+	DisplayName: 国王的新枪
+	Tooltip:
+		'''
+		生命值低于[c/f6643b:30%]时，所有武器以及工具的使用速度[c/3791db:+50%]
+		绝境下的美好祈愿能带给人希望，即使那并不是真相
+		'''
+}
+
+NobleSwords: {
+	DisplayName: 贵族刺剑
+	Tooltip:
+		'''
+		近战武器攻击力[c/3791db:+25%]
+		装饰性强的贵族刺剑高卢贵族首先使用，作为军事武器还是太脆了
+		'''
+}
+
+PaleCorolla: {
+	DisplayName: 苍白花冠
+	Tooltip:
+		'''
+		受到的治疗回复效果[c/3791db:+30%]
+		生命恢复速度[c/3791db:+30%]
+		血魔仪式使用的花冠头纱，曾经鲜红的生命被吮吸殆尽，现在只余苍白
+		'''
+}
+
+SilverDinnerFork: {
+	DisplayName: 银餐叉
+	Tooltip:
+		'''
+		远程武器攻击力[c/3791db:+25%]
+		一把用来处理失败的演员，一把用来收拾蹩脚的剧作者，还有一把留给有需要的人
+		厨师长不能容忍任何人在餐桌上出错
+		'''
+}
+
+StandardAntiRiotEquipment: {
+	DisplayName: 制式防暴用具
+	Tooltip:
+		'''
+		所有敌方单位受到的法术和召唤伤害[c/3791db:+20%]
+		乌萨斯军警的制式装备，自带施放间歇性致盲源石技艺的功能
+		可惜关键时刻想得起来这一功能的军警寥寥无几
+		'''
+}
+
+SuspendedSilkPuppet: {
+	DisplayName: 悬丝傀儡
+	Tooltip:
+		'''
+		当敌人带有以下任意一种debuff时，每秒受到70点无来源伤害：
+		[c/FF6A6A:诅咒狱火]
+		[c/FF6A6A:着火了！]
+		[c/FF6A6A:中毒]
+		越是用力想要挣脱，丝线就缠得越紧，你真的认为自己仍在思考？
+		'''
+}
+
+TheLongWhipOfTheCoachman: {
+	DisplayName: 赶车夫的长鞭
+	Tooltip:
+		'''
+		所有敌方单位受到的近战和远程伤害[c/3791db:+25%]
+		作为剧团的赶车人，他没有名字，没有过往
+		唯有挥鞭驱赶驮兽，他的生命才有意义
+		'''
+}
+
+ChildlikePlaythings: {
+	DisplayName: “童趣玩偶”
+	Tooltip:
+		'''
+		当敌人带有以下任意一种debuff时，每秒受到100点无来源伤害：
+		[c/FF6A6A:着火了！]
+		[c/FF6A6A:中毒]
+		[c/FF6A6A:诅咒狱火]
+		伊比利亚的孩童们将海岸边的奇物做成了简陋玩偶，听说只要抱着它，梦乡就会变得充实起来
+		'''
+}
+
+DamagedRevolverNest: {
+	DisplayName: 损坏的左轮弹巢
+	Tooltip:
+		'''
+		远程武器攻击力[c/3791db:+35%]
+		她行过刀山火海也不曾有一刻向奸邪低头，她枪口火舌焦灼好似怒阳，她头顶光芒炽烈几胜白昼
+		此处安葬着Outcast，我们的朋友
+		'''
+}
+
+DreamEssence: {
+	DisplayName: 迷梦香精
+	Tooltip:
+		'''
+		所有自然回复技能的技力恢复[c/3791db:+0.5]/秒
+		据说女妖们制作的香氛只会送给心上之人
+		只需一滴，就能令人如痴如醉，而艺术家们的灵感与创意也随之而来
+		'''
+}
+
+FearlessBlade: {
+	DisplayName: 无惧之刃
+	Tooltip:
+		'''
+		背包内稀有度最高的武器[c/3791db:+50%]伤害
+		装备栏以及背包内稀有度最高的一件防具[c/3791db:+50%]防御
+		他站在城门前，为卡兹戴尔守住这处门户
+		高卢火炮队、莱塔尼亚术师团、维多利亚骑士轮番上阵，想要突破这只有一名萨卡兹的防线
+		可直到城门被轰碎，直到联军决定撤退，这位歌利亚剑士都没有后退一步
+		'''
+}
+
+OldPalmFan: {
+	DisplayName: 老蒲扇
+	Tooltip:
+		'''
+		当前世界中，每存在一名城镇NPC，玩家的攻击力[c/3791db:+3%]
+		遇上连天阴雨，大炎的老天师便会向亲友抱怨自己膝盖受不得湿寒，然后，随手扇动他的蒲扇...
+		云开雾散，雨水退避，天气就此放晴这一手，下回还得教教他那在大理寺当差的小徒弟
+		'''
+}
+
+RoundStoneAltar: {
+	DisplayName: 圆石祭坛
+	Tooltip:
+		'''
+		结束事件以及打败[c/f6643b:Boss]有概率使玩家的攻击力和防御力永久[c/3791db:+5%]（最多加[c/3791db:50%]）
+		送上祭品，获得回馈它是如此地便利，以至于人们都没有思考过，他们到底在向什么献祭
+		'''
+}
+
+ScatteredPoems: {
+	DisplayName: 散轶诗简
+	Tooltip:
+		'''
+		召唤伤害[c/3791db:+30%]
+		召唤栏[c/3791db:+3]
+		“酣然失千山，万物得其灵”
+		'''
+}
+
+TheAvenger: {
+	DisplayName: “复仇者”
+	Tooltip:
+		'''
+		所有敌方单位受到的近战和远程伤害[c/3791db:+35%]
+		在阿斯卡纶第一次为军事委员会完成任务后，由特雷西斯亲手赠送，特蕾西娅为她安装的第一把武器
+		'''
+}
+
+TheTokenGodmother: {
+	DisplayName: 教母的信物
+	Tooltip:
+		'''
+		所有敌方单位的攻击力[c/3791db:-17%]
+		骨质的桂冠，西西里夫人的信物秩序的象征将铲平起伏的欲望，斗争不被允许
+		无论真假，跪下
+		'''
+}
+
+RALegmeat: {
+	DisplayName: 带骨腿肉
+	Tooltip: 紧实的腿肉连带着坚硬的骨头，自带一股草木香味
+}
+
+CarbonBrick: {
+	DisplayName: 碳素
+	// Tooltip: ""
+}
+
+DeckSupport: {
+	DisplayName: 甲板支架
+	// Tooltip: ""
+}
+
+DeckTrack: {
+	DisplayName: 甲板跑道
+	// Tooltip: ""
+}
+
+OrangeContainer: {
+	DisplayName: 橙色集装箱
+	// Tooltip: ""
+}
+
+OrangeContainerLarge: {
+	DisplayName: 大橙色集装箱
+	// Tooltip: ""
+}
+
+YellowRailing: {
+	DisplayName: 黄色栏杆
+	// Tooltip: ""
+}
+
+TrainingRoomSofa: {
+	DisplayName: 训练室沙发
+	// Tooltip: ""
+}
+
+WorkshopChair: {
+	DisplayName: 加工站椅
+	// Tooltip: ""
+}
+
+WorkshopComputer: {
+	DisplayName: 加工站台式电脑
+	// Tooltip: ""
+}
+
+WorkshopTeleportStation: {
+	DisplayName: 加工站传送站
+	// Tooltip: ""
+}
+
+SmallServer: {
+	DisplayName: 小型服务器
+	// Tooltip: ""
+}
+
+SmallDisplay: {
+	DisplayName: 小型显示屏
+	// Tooltip: ""
+}
+
+_3DPrintingProcessingStation: {
+	DisplayName: 3D打印加工站
+	// Tooltip: ""
+}
+
+Drone: {
+	DisplayName: 妖怪无人机
+	// Tooltip: ""
+}
+
+ProvenceBody: {
+	DisplayName: 普罗旺斯的躯干
+	// Tooltip: ""
+}
+
+ProvenceHead: {
+	DisplayName: 普罗旺斯头部
+	// Tooltip: ""
+}
+
+ProvenceLegs: {
+	DisplayName: 普罗旺斯的腿部
+	// Tooltip: ""
+}
+
+ProvenceDefault: {
+	DisplayName: 普罗旺斯的服饰（常规）
+	Tooltip: 右键点击可打开
+}
+
+VulcanBody: {
+	DisplayName: 火神的躯干
+	// Tooltip: ""
+}
+
+VulcanHead: {
+	DisplayName: 火神的头部
+	// Tooltip: ""
+}
+
+VulcanLegs: {
+	DisplayName: 火神的腿部
+	// Tooltip: ""
+}
+
+EntelechiaBody: {
+	DisplayName: 隐德来希的躯干
+	// Tooltip: ""
+}
+
+EntelechiaHead: {
+	DisplayName: 隐德来希的头部
+	// Tooltip: ""
+}
+
+EntelechiaLegs: {
+	DisplayName: 隐德来希的腿部
+	// Tooltip: ""
+}
+
+EntelechiaDefault: {
+	DisplayName: 隐德来希的服饰（常规）
+	Tooltip: 右键点击可打开
+}
+
+VulcanDefault: {
+	DisplayName: 火神的服饰（常规）
+	Tooltip: 右键点击可打开
+}
+
+ClothesHanger: {
+	DisplayName: 衣架（样式一）
+	// Tooltip: ""
+}
+
+ClothesHanger2: {
+	DisplayName: 衣架（样式二）
+	// Tooltip: ""
+}
+
+WorkshopMachine: {
+	DisplayName: 加工站机器
+	// Tooltip: ""
+}
+
+WorkshopToolCabinet: {
+	DisplayName: 加工站工具柜
+	// Tooltip: ""
+}
+
+CrabClaw: {
+	DisplayName: 蟹钳
+	Tooltip: 岩壳蟹的鲜味令人难以抵挡，这种生物比一些可食用沙虫鲜美数倍不止
+}
+
+MincedCrabMeatOverRice: {
+	DisplayName: 蟹肉碎拌饭
+	Tooltip:
+		'''
+		热腾腾的杂粮中加入了岩壳蟹肉，吃起来朴素中略带鲜味
+		好吃是好吃，但...究竞是谁第一个决定尝试食用岩壳蟹的呢？
+		'''
+}
+
+RiceGrain: {
+	DisplayName: 稻谷
+	Tooltip: ""
+}
+
+YvonneBody: {
+	DisplayName: 伊冯的躯干
+	Tooltip: ""
+}
+
+YvonneHead: {
+	DisplayName: 伊冯的头部
+	// Tooltip: ""
+}
+
+YvonneLegs: {
+	DisplayName: 伊冯的下装
+	// Tooltip: ""
+}
+
+EndministratorHead: {
+	DisplayName: 管理员的头部
+	// Tooltip: ""
+}
+
+EndministratorBody: {
+	DisplayName: 管理员的衣物
+	// Tooltip: ""
+}
+
+EndministratorLegs: {
+	DisplayName: 管理员的下装
+	// Tooltip: ""
+}
+
+EndministratorMask: {
+	DisplayName: 管理员的面具
+	// Tooltip: ""
+}
+
+EndministratorVanityBag: {
+	DisplayName: 管理员的时装
+	Tooltip: 右键点击可打开
+}
+
+MlynarBody: {
+	DisplayName: 玛恩纳的躯干
+	// Tooltip: ""
+}
+
+MlynarHead: {
+	DisplayName: 玛恩纳的头部
+	// Tooltip: ""
+}
+
+MlynarLegs: {
+	DisplayName: 玛恩纳的腿部
+	// Tooltip: ""
+}
+
+TheFirstToTalkSummon: {
+	DisplayName: 真言者召唤物
+	// Tooltip: ""
+}
+
+OblivionisSword: {
+	DisplayName: 旋律之主双剑
+	// Tooltip: ""
+}
+
+WorkshopWallYellowItem: {
+	// Tooltip: ""
+	DisplayName: 加工站黄色墙
+}
+
+WorkshopWallPinkItem: {
+	// Tooltip: ""
+	DisplayName: 加工站粉色墙
+}
+
+WaterDispenser: {
+	// Tooltip: ""
+	DisplayName: 咖啡机
+}
+
+VaseTable: {
+	// Tooltip: ""
+	DisplayName: 花瓶桌
+}
+
+TrashCan: {
+	// Tooltip: ""
+	DisplayName: 垃圾桶
+}
+
+SafeBox: {
+	// Tooltip: ""
+	DisplayName: 保险箱
+}
+
+OfficeRecliner: {
+	// Tooltip: ""
+	DisplayName: 办公躺椅
+}
+
+OfficeDesk: {
+	// Tooltip: ""
+	DisplayName: 办公桌
+}
+
+OfficeChair: {
+	// Tooltip: ""
+	DisplayName: 办公椅
+}
+
+FileRack: {
+	// Tooltip: ""
+	DisplayName: 文件架
+}
+
+ComputerDesk: {
+	// Tooltip: ""
+	DisplayName: 电脑桌
+}
+
+SeasonedRations: {
+	Tooltip:
+		'''
+		最大生命值[c/3791db:+10%]
+		较朴素的速食食品，经过了调味，吃起来还挺适口
+		据说未经调味的初版十分难以下咽，曾有人评价为不是“食用”，而是“服用”
+		'''
+	DisplayName: 调味干粮
+}
+
+DehydratedSeasonedJerky: {
+	Tooltip:
+		'''
+		最大生命值[c/3791db:+5%]
+		移动速度[c/3791db:+8%]
+		将食材脱水处理，是人们保存食物最原始也最简单方便的方法
+		虽然只是薄薄的几片，看起来很没有满足感，但实际上热量很高，完全可以轻松地吃饱
+		'''
+	DisplayName: 脱水增味肉干
+}
+
+PompeiiSummon: {
+	Tooltip: 在任意群系召唤庞贝
+	DisplayName: 庞贝召唤器
+}
+
+SarkazKingRegalRest: {
+	DisplayName: 魔王的床榻
+	Tooltip:
+		'''
+		当前生命值大于[c/3791db:85%]时：
+		防御力[c/3791db:+20%]
+		伤害减免[c/3791db:+20%]
+		身居此位者，安睡即为永眠
+		'''
+}
+
+SarkazKingTornBanner: {
+	DisplayName: 魔王的旗帜
+	Tooltip:
+		'''
+		当前生命值大于[c/3791db:85%]时：
+		攻击速度[c/3791db:+30%]
+		身居此位者，抗争便会陨落
+		'''
+}
+
+BlazeChainsaw: {
+	DisplayName: Blaze的电锯
+	Tooltip:
+		'''
+		所有敌方单位受到玩家伤害时，距离伤害来源越近受到的伤害越高（最高[c/3791db:100%]）
+		她将自己与敌人一同拖入地狱，用炽热来鉴定彼此的决心她从未失败
+		'''
+}
+
+PlanterClusterItem: {
+	DisplayName: 种植箱集群
+	Tooltip:
+		'''
+		放置后，每日产出一定数量的[c/FFFF00:稻谷]
+		生命循环的舞台，泰拉文明的起点
+		'''
+}
+
+KingOfSarkazVessel: {
+	DisplayName: 魔王的冠冕
+	Tooltip:
+		'''
+		当前最大生命值[c/3791db:+40%]
+		装备3个及以上的魔王收藏品则改为[c/3791db:+120%]
+		当前生命值大于[c/3791db:85%]时：
+		加快你的生命恢复速率，这个效果在你越接近满血越明显
+		同样的，装备3个及以上的魔王收藏品则该效果翻倍
+		身居此位者，兴盛仅是泡影
+		'''
+}
+
+BlackShipBridgeWallItem: {
+	DisplayName: 黑舰桥墙壁
+	// Tooltip: ""
+}
+
+CorridorTileItem: {
+	DisplayName: 走廊板块
+	// Tooltip: ""
+}
+
+CorridorWallItem: {
+	DisplayName: 走廊墙壁
+	// Tooltip: ""
+}
+
+LineCorridorWallItem: {
+	DisplayName: 线路走廊墙壁
+	// Tooltip: ""
+}
+
+LineCorridorWallWithRailingItem: {
+	DisplayName: 带栏的线路走廊墙壁
+	// Tooltip: ""
+}
+
+LastRiteBody: {
+	DisplayName: 别礼的上衣
+	// Tooltip: ""
+}
+
+LastRiteHead: {
+	DisplayName: 别礼的头套
+	// Tooltip: ""
+}
+
+LastRiteLegs: {
+	DisplayName: 别礼的下装
+	// Tooltip: ""
+}
+
+LastRiteVanityBag: {
+	DisplayName: 别礼的服饰
+	Tooltip: 右键点击可打开
+}
+
+DoctorArchiveBag: {
+	DisplayName: 博士的档案袋
+	Tooltip:
+		'''
+		{$CommonItemTooltip.RightClickToOpen}
+		Shift+右键进行十连抽
+		十连必出[c/FFFF00:5星]及以上
+		出率：
+		[c/0000FF:3星] 40%
+		[c/FFFFFF:4星] 40%
+		[c/FFFF00:5星] 16%
+		[c/FF0000:6星] 4%
+		'''
+}
+
+YvonneVanityBag: {
+	DisplayName: 伊冯的服饰
+	Tooltip: 右键点击可打开
+}
+
+TexasVanityBag: {
+	Tooltip: 右键点击可打开
+	DisplayName: 德克萨斯的服饰
+}
+
+MlynarVanityBag: {
+	Tooltip: 右键点击可打开
+	DisplayName: 玛恩纳的服饰
+}
+
+UlpianusVanityBag: {
+	Tooltip: 右键点击可打开
+	DisplayName: 乌尔比安的服饰
+}
+
+NianVanityBag: {
+	Tooltip: 右键点击可打开
+	DisplayName: 年的服饰
+}
+
+ExusiaiAlterBody: {
+	DisplayName: 新约能天使的上衣
+	// Tooltip: ""
+}
+
+ExusiaiAlterHead: {
+	DisplayName: 新约能天使的头套
+	// Tooltip: ""
+}
+
+ExusiaiAlterLegs: {
+	DisplayName: 新约能天使的下装
+	// Tooltip: ""
+}
+
+Haze_Magicbook: {
+	DisplayName: 夜烟的魔法书
+	// Tooltip: ""
+}
+
+ExusiaiAlterDefault: {
+	DisplayName: 新约能天使的服饰（常规）
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+电梯: {
+	DisplayName: 电梯
+	// Tooltip: ""
+}
+
+电梯交互按钮: {
+	DisplayName: 电梯交互按钮
+	// Tooltip: ""
+}
+
+FireworksHand: {
+	DisplayName: 烟花之手
+	Tooltip:
+		'''
+		使用远程武器时，有[c/3791db:25%]的概率额外发射一枚子弹
+		子弹造成[c/3791db:200%]的单体远程伤害
+		砰砰啪啪，意外之喜。
+		'''
+}
+
+Dedication: {
+	DisplayName: “奉献”
+	Tooltip:
+		'''
+		当你使用远程武器击中敌人时，或是受到治疗时（未实现），对周围的敌人施加150点单次法术伤害
+		自远古以来，这一部族笃信自己掌握着有关萨米的真相：原本万物各有声音，直到“祂”代替万物言语。
+		'''
+}
+
+NianBody: {
+	DisplayName: 年的上衣
+	// Tooltip: ""
+}
+
+NianHead: {
+	DisplayName: 年的头饰
+	// Tooltip: ""
+}
+
+NianLegs: {
+	DisplayName: 年的下装
+	// Tooltip: ""
+}
+
+UlpianusBody: {
+	DisplayName: 乌尔比安的上衣
+	// Tooltip: ""
+}
+
+UlpianusHead: {
+	DisplayName: 乌尔比安的头饰
+	// Tooltip: ""
+}
+
+UlpianusLegs: {
+	DisplayName: 乌尔比安的下装
+	// Tooltip: ""
+}
+
+ArmorUtageBody: {
+	// DisplayName: Armor Utage Body
+	// Tooltip: ""
+}
+
+ArmorUtageHead: {
+	// DisplayName: Armor Utage Head
+	// Tooltip: ""
+}
+
+ArmorUtageLegs: {
+	// DisplayName: Armor Utage Legs
+	// Tooltip: ""
+}
+
+ValarqvinWeapon: {
+	// Tooltip: ""
+	// DisplayName: Valarqvin Weapon
+}
+
+ArmorExusiaiBody: {
+	// DisplayName: Armor Exusiai Body
+	// Tooltip: ""
+}
+
+ArmorExusiaiHead: {
+	// DisplayName: Armor Exusiai Head
+	// Tooltip: ""
+}
+
+ArmorExusiaiLegs: {
+	// DisplayName: Armor Exusiai Legs
+	// Tooltip: ""
+}
+
+PipeWallCopperItem: {
+	// DisplayName: Pipe Wall Copper Item
+	// Tooltip: ""
+}
+
+PipeWallInsulatedItem: {
+	// DisplayName: Pipe Wall Insulated Item
+	// Tooltip: ""
+}
+
+PipeWallSteelItem: {
+	// DisplayName: Pipe Wall Steel Item
+	// Tooltip: ""
+}
+
+PipeBlueLightBlock: {
+	// DisplayName: Pipe Blue Light Block
+	// Tooltip: ""
+}
+
+HazeMagicBook: {
+	// DisplayName: Haze Magic Book
+	// Tooltip: ""
+}
+
+DN_Weapon: {
+	// DisplayName: D N_ Weapon
+	// Tooltip: ""
+}

@@ -1,0 +1,264 @@
+BagpipeSpear: {
+	1: {
+		Label: Mods.ArknightsMod.Skills.BagpipeSpear.1.Label
+		Desc: Mods.ArknightsMod.Skills.BagpipeSpear.1.Desc
+	}
+
+	2: {
+		Label: Mods.ArknightsMod.Skills.BagpipeSpear.2.Label
+		Desc: Mods.ArknightsMod.Skills.BagpipeSpear.2.Desc
+	}
+
+	3: {
+		Label: Mods.ArknightsMod.Skills.BagpipeSpear.3.Label
+		Desc: Mods.ArknightsMod.Skills.BagpipeSpear.3.Desc
+	}
+}
+
+ChenSword: {
+	1: {
+		Label: Mods.ArknightsMod.Skills.ChenSword.1.Label
+		Desc: Mods.ArknightsMod.Skills.ChenSword.1.Desc
+	}
+}
+
+KroosCrossbow: {
+	1: {
+		Label: Mods.ArknightsMod.Skills.KroosCrossbow.1.Label
+		Desc: Mods.ArknightsMod.Skills.KroosCrossbow.1.Desc
+	}
+}
+
+PozemkaCrossbow: {
+	1: {
+		Label: Mods.ArknightsMod.Skills.PozemkaCrossbow.1.Label
+		Desc: Mods.ArknightsMod.Skills.PozemkaCrossbow.1.Desc
+	}
+
+	2: {
+		Label: Mods.ArknightsMod.Skills.PozemkaCrossbow.2.Label
+		Desc: Mods.ArknightsMod.Skills.PozemkaCrossbow.2.Desc
+	}
+
+	3: {
+		Label: Mods.ArknightsMod.Skills.PozemkaCrossbow.3.Label
+		Desc: Mods.ArknightsMod.Skills.PozemkaCrossbow.3.Desc
+	}
+}
+
+AdnachielCrossbow: {
+	1: {
+		Label: Mods.ArknightsMod.Skills.AdnachielCrossbow.1.Label
+		Desc: Mods.ArknightsMod.Skills.AdnachielCrossbow.1.Desc
+	}
+}
+
+ExusiaiVector: {
+	1: {
+		Desc: Mods.ArknightsMod.Skills.ExusiaiVector.1.Desc
+		Label: Mods.ArknightsMod.Skills.ExusiaiVector.1.Label
+	}
+
+	2: {
+		Desc: Mods.ArknightsMod.Skills.ExusiaiVector.2.Desc
+		Label: Mods.ArknightsMod.Skills.ExusiaiVector.2.Label
+	}
+
+	3: {
+		Desc: Mods.ArknightsMod.Skills.ExusiaiVector.3.Desc
+		Label: Mods.ArknightsMod.Skills.ExusiaiVector.3.Label
+	}
+}
+
+KroosAlterCrossbow: {
+	1: {
+		Desc: Mods.ArknightsMod.Skills.KroosAlterCrossbow.1.Desc
+		Label: Mods.ArknightsMod.Skills.KroosAlterCrossbow.1.Label
+	}
+
+	2: {
+		Label: Mods.ArknightsMod.Skills.KroosAlterCrossbow.2.Label
+		Desc: Mods.ArknightsMod.Skills.KroosAlterCrossbow.2.Desc
+	}
+}
+
+Lava_Dagger: {
+	1: {
+		Desc: Mods.ArknightsMod.Skills.Lava_Dagger.1.Desc
+		Label: Mods.ArknightsMod.Skills.Lava_Dagger.1.Label
+	}
+}
+
+Shirayuki_Shuriken: {
+	1: {
+		Desc: Mods.ArknightsMod.Skills.Shirayuki_Shuriken.1.Desc
+		Label: Mods.ArknightsMod.Skills.Shirayuki_Shuriken.1.Label
+	}
+
+	2: {
+		Desc: Mods.ArknightsMod.Skills.Shirayuki_Shuriken.2.Desc
+		Label: Mods.ArknightsMod.Skills.Shirayuki_Shuriken.2.Label
+	}
+}
+
+NianWeapon: {
+	1: {
+		Desc: DEF +70%, ATK +45%, and normal attacks now deal Arts damage \n[c/00FF00:During the skill, Nian smashes the large shield in her hands toward enemies, dealing 100% magic damage.]
+		Label: Tin Burning
+	}
+
+	2: {
+		Label: Copper Seal
+		Desc: Stops attacking; DEF +130%, Block +1, upon receiving an enemy attack, deals Arts damage to the attacker equal to 90% of Nian's ATK and silences them for 5 seconds. \n[c/00FF00:The original block-based counter damage and silence effects are disabled. Instead, every 0.5 seconds, enemies within a certain range take 50% source-less magic damage.]
+	}
+
+	3: {
+		Desc: ATK +120%; Nearby allied Operators gain DEF +80%, Block +1 and status resistance.\n[c/00FF00:The original resistance and ally defense/block bonuses are disabled. The large shield now follows the mouse to attack, dealing 100% physical damage.]
+		Label: Iron Defense
+	}
+}
+
+ThornsWeapon: {
+	1: {
+		Desc: Mods.ArknightsMod.Skills.ThornsWeapon.1.Desc
+		Label: Mods.ArknightsMod.Skills.ThornsWeapon.1.Label
+	}
+
+	2: {
+		Label: Mods.ArknightsMod.Skills.ThornsWeapon.2.Label
+		Desc: Mods.ArknightsMod.Skills.ThornsWeapon.2.Desc
+	}
+
+	3: {
+		Desc: Mods.ArknightsMod.Skills.ThornsWeapon.3.Desc
+		Label: Mods.ArknightsMod.Skills.ThornsWeapon.3.Label
+	}
+}
+
+BeagleWeapon: {
+	1: {
+		Desc: Mods.ArknightsMod.Skills.BeagleWeapon.1.Desc
+		Label: Mods.ArknightsMod.Skills.BeagleWeapon.1.Label
+	}
+}
+
+SilverAshWeapon: {
+	1: {
+		Desc: Mods.ArknightsMod.Skills.SilverAshWeapon.1.Desc
+		Label: Mods.ArknightsMod.Skills.SilverAshWeapon.1.Label
+	}
+
+	2: {
+		Label: Mods.ArknightsMod.Skills.SilverAshWeapon.2.Label
+		Desc: Mods.ArknightsMod.Skills.SilverAshWeapon.2.Desc
+	}
+
+	3: {
+		Desc: Mods.ArknightsMod.Skills.SilverAshWeapon.3.Desc
+		Label: Mods.ArknightsMod.Skills.SilverAshWeapon.3.Label
+	}
+}
+
+ChenSword_Item: {
+	1: {
+		Desc: Mods.ArknightsMod.Skills.ChenSword_Item.1.Desc
+		Label: Mods.ArknightsMod.Skills.ChenSword_Item.1.Label
+	}
+
+	2: {
+		Desc: Mods.ArknightsMod.Skills.ChenSword_Item.2.Desc
+		Label: Mods.ArknightsMod.Skills.ChenSword_Item.2.Label
+	}
+
+	3: {
+		Label: Mods.ArknightsMod.Skills.ChenSword_Item.3.Label
+		Desc: Mods.ArknightsMod.Skills.ChenSword_Item.3.Desc
+	}
+}
+
+SchwarzBow: {
+	1: {
+		Desc: The next attack deals 220% damage, 80% chance to deal 160% damage and inflict a defense reduction for the next hit
+		Label: Charged Shot
+	}
+
+	2: {
+		Desc: ATK +130%, 50% chance to deal 160% damage and inflict a defense reduction
+		Label: Sharp Eye
+	}
+
+	3: {
+		Label: Final Tactics
+		Desc: Attack Interval increases a bit, ATK +180%, 100% chance to deal 160% damage and inflict a defense reduction
+	}
+}
+
+TyphonBow: {
+	1: {
+		Label: Quickshot
+		Desc:
+			'''
+			ATK +45%, ASPD +45%
+			While active, defeating an enemy grants +5% ATK and ASPD (up to 30 stacks) and refunds 3 seconds of skill duration
+			'''
+	}
+
+	2: {
+		Label: Twin-Mind Arrows
+		Desc:
+			'''
+			Each attack fires 2 homing arrows that prioritize two different targets
+			On hit, 40% chance to confuse the target for 1 second
+			After the second activation, duration becomes infinite
+			'''
+	}
+
+	3: {
+		Label: Storm of Arrows
+		Desc:
+			'''
+			Rain a barrage of arrows on the marked target; each arrow has weak homing
+			On hit, the arrow stays embedded in the enemy for 3.5 seconds
+			Each arrow embedded in the target increases subsequent hit damage by 7%
+			Once 10 or more arrows are embedded, fires an additional 100%-ATK arrow from the wielder
+			'''
+	}
+}
+
+ChargeReady: Initial skill points have been restored
+
+ValarqvinWeapon: {
+	2: {
+		Desc: Mods.ArknightsMod.Skills.ValarqvinWeapon.2.Desc
+		Label: Mods.ArknightsMod.Skills.ValarqvinWeapon.2.Label
+	}
+
+	1: {
+		Desc: Mods.ArknightsMod.Skills.ValarqvinWeapon.1.Desc
+		Label: Mods.ArknightsMod.Skills.ValarqvinWeapon.1.Label
+	}
+}
+
+HazeMagicBook: {
+	2: {
+		Desc: 生命上限[c/f6643b:-75%]，攻击力[c/3791db:+60%]，攻击速度[c/3791db:+60%]
+		Label: 赤色之瞳
+	}
+
+	1: {
+		Desc: 攻击力[c/3791db:+80%]
+		Label: 攻击力强化·β型
+	}
+}
+
+DN_Weapon: {
+	1: {
+		Label: Mods.ArknightsMod.Skills.DN_Weapon.1.Label
+		Desc: Mods.ArknightsMod.Skills.DN_Weapon.1.Desc
+	}
+
+	2: {
+		Label: Mods.ArknightsMod.Skills.DN_Weapon.2.Label
+		Desc: Mods.ArknightsMod.Skills.DN_Weapon.2.Desc
+	}
+}

@@ -2,35 +2,34 @@
 This Mod for Terraria is made for Arknights Doctor. I'm creating the Mod based on the idea of Arknights, adding my own interpretation.
 Have a good life of Arknights in Terraria, Doctor!
 
-## What is Arknights?
-Arknights is a mobile tower defense (TD) game developed by Hypergryph. I think you Terraria lovers will love it!
+Recruitment tags: [Programming] [Pixel Art] [English] [Chinese] [Terraria] [Lore] [Chatting]
+If you’re interested in [u]even one[/u] of these, please join our Discord below and come talk with us about it.
+🐰：[i]“Doctor, you still have a lot of unfinished work, so you can’t rest yet.”[/i]
+Indeed, there’s plenty of work to do in Terraria too. We look forward to your participation, Doctors!
+[h1]-------------------------------------------------------------------[/h1]
+[h1]Disclaimer[/h1]
 
-## What can you do with the Mod?
-You can play it as Arknights Doctor, and can use many items associated with many Operators.
+- [b][u][i]The reuse of this mod’s code or image data is strictly prohibited.[/i][/u][/b]
 
-## Latest Update
-- Added Loxic Kohl and White Horse Kohl
-- Added Devices of all rarity
-- Added Oriron of all rarity
-- Modified recipes of some materials
-- Added Piledriver Spear
-- Added Thorns' Sword
-- Added Yato's Katana
-- Modified CN localization
-The weapons don't have ability of skills, but will be added in the future.
+- This mod is created in accordance with the [url=https://www.arknights.global/fankit/guidelines]TERMS AND CONDITIONS OF RE-CREATION[/url].
 
-## Contributing
-Recruitment tag: [Pixel Artist] [Spriter] [EN-CN translator] [JP-CN translator] [Programmer] [Terrarian] [Feedback] [Doctor]
-As long as you are interested in one of them, please contact our Discord (below) and tell us about it.
-🐰"There's still lots of work that needs to be done, Doctor. We can't afford to have you resting."
-There is a lot of work to be done in Terraria. We look forward to meet you.
+- We cannot claim responsibility for any losses caused by the use of this mod. (Therefore, we highly recommend making a [url=https://github.com/tModLoader/tModLoader/wiki/Basic-tModLoader-Usage-Guide#world-and-player-backups]backup[/url] of your game data.)
 
-## Disclaimer
-- Please note that this mod are released under the [TERMS AND CONDITIONS OF RE-CREATION](https://www.arknights.global/fankit/guidelines).
-- I do not take any responsibility or liability for any damage or loss caused through this mod. (So, you should back up the game data periodically.)
-- You are NOT allowed to use or to reproduce the code and the images of this mod.
-- If you have any questions regarding the use of this mod, please contact our Discord (below).
+- If you have any questions regarding the use of this mod, feel free to contact us via the Discord below.
+[h1]-------------------------------------------------------------------[/h1]
+[h1]Contact[/h1]
 
-## Contact
-Discord (Lurker OK) : https://discord.gg/XKM2jeS9hY
-Arknights Mod thread: https://forums.terraria.org/index.php?threads/arknights-mod.117651/ (in Terraria Forums)
+[url=https://discord.gg/XKM2jeS9hY]Discord (lurkers are welcome!)[/url]
+
+[url=https://forums.terraria.org/index.php?threads/arknights-mod.117651/] This mod’s thread on the official Terraria forum[/url]
+[h1]-------------------------------------------------------------------[/h1]
+[h1]⚠【Under Development】⚠:[/h1]
+
+Some parts of the game’s content are being considered for release in a format similar to [url=https://terrariamods.wiki.gg/wiki/The_Story_of_Red_Cloud]The Story of Red Cloud[/url].
+
+A construction map of the Rhodes Island Main Ship is also in progress. Just like the original, it aims to be a place where you can interact with Operators.
+[h1]-------------------------------------------------------------------[/h1]
+[h1]Note: Please check the changelog for the latest updates.[/h1]
+[h1]-------------------------------------------------------------------[/h1]
+Keywords: Arknights, アークナイツ, 明日方舟, Terraria, テラリア, 泰拉瑞亚, Mod, 模组
+[h1]-------------------------------------------------------------------[/h1]

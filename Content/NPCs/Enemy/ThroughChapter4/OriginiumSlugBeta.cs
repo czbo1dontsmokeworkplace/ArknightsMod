@@ -18,7 +18,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		private int direction;
 
 		public override bool IsLoadingEnabled(Mod mod) {
-			return ModContent.GetInstance<MonsterConfig>().EnableOriginiumSlugBeta;
+			return GetInstance<MonsterConfig>().EnableOriginiumSlugBeta;
 		}
 		public override void SetStaticDefaults() {
 			Main.npcFrameCount[Type] = 5;
@@ -51,11 +51,11 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
 
-			npcLoot.Add(ItemDropRule.Common(ItemType<Items.Material.IntegratedDevice>(), ModContent.GetInstance<Dropconfig>().DropOriginiumSlugBeta, 1, 3));
+			npcLoot.Add(ItemDropRule.Common(ItemType<Items.Material.IntegratedDevice>(), GetInstance<Dropconfig>().DropOriginiumSlugBeta, 1, 3));
 
 		}
 
-		public override float SpawnChance(NPCSpawnInfo spawnInfo) {
+		public override float SpawnChance(NPC.Spawner spawner) {
 			return SpawnCondition.Underground.Chance * 0.5f; // Spawn with 1/5th the chance of a regular enemies.
 															 // return SpawnCondition.OverworldNightMonster.Chance * 1f; // Spawn with 1/5th the chance of a regular zombie.
 		}

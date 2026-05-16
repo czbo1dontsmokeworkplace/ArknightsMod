@@ -1,5 +1,13 @@
-﻿using System.Collections.Generic;
+using ArknightsMod.Content.Items;
+using ArknightsMod.Content.Items.Consumables.VanityBags;
+using ArknightsMod.Content.Items.DisplayForUI;
+using ArknightsMod.Content.Items.Gacha;
+using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Systems;
+using System;
+using System.Collections.Generic;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent.Personalities;
 using Terraria.ID;
 using Terraria.Localization;
@@ -12,7 +20,11 @@ namespace ArknightsMod.Content.NPCs.Friendly
 	[AutoloadHead]
 	public class Closure : ModNPC
 	{
-		public const string ShopName = "Shop";
+		public static string[] ShopName => ["Shop", "Shop2"];
+
+		public static int ButtonCount;
+
+		private static string closureShop2FullName;
 
 		public override void SetStaticDefaults() {
 			Main.npcFrameCount[NPC.type] = 22;
@@ -22,26 +34,24 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			NPCID.Sets.AttackType[NPC.type] = 3;
 			NPCID.Sets.AttackTime[NPC.type] = 18;
 			NPCID.Sets.AttackAverageChance[NPC.type] = 10;
-			NPCID.Sets.HatOffsetY[NPC.type] = 4; // For when a party is active, the party hat spawns at a Y offset.
-												 // NPCID.Sets.ShimmerTownTransform[NPC.type] = true; // This set says that the Town NPC has a Shimmered form. Otherwise, the Town NPC will become transparent when touching Shimmer like other enemies.
+			NPCID.Sets.HatOffsetY[NPC.type] = 4;
 
+			NPCID.Sets.NPCPortraits.Add(Type, NPCID.Sets.PrioritizedPortrait()
+				.With(NPCID.Sets.ShimmeredPortraitCondition, NPCID.Sets.BasicPortrait($"{Texture}_Portrait"))
+				.Default(NPCID.Sets.BasicPortrait($"{Texture}_Portrait")));
 
-
-			// Set Example Person's biome and neighbor preferences with the NPCHappiness hook. You can add happiness text and remarks with localization (See an example in ExampleMod/Localization/en-US.lang).
-			// NOTE: The following code uses chaining - a style that works due to the fact that the SetXAffection methods return the same NPCHappiness instance they're called on.
 			NPC.Happiness
-				.SetBiomeAffection<ForestBiome>(AffectionLevel.Like) // Example Person prefers the forest.
-				.SetBiomeAffection<SnowBiome>(AffectionLevel.Dislike) // Example Person dislikes the snow.
-																	  // .SetBiomeAffection<ExampleSurfaceBiome>(AffectionLevel.Love) // Example Person likes the Example Surface Biome
-				.SetNPCAffection(NPCID.Mechanic, AffectionLevel.Love) // Loves living near the dryad.
-				.SetNPCAffection(NPCID.Cyborg, AffectionLevel.Like) // Likes living near the guide.
-				.SetNPCAffection(NPCID.Merchant, AffectionLevel.Dislike) // Dislikes living near the merchant.
-				.SetNPCAffection(NPCID.Angler, AffectionLevel.Hate) // Hates living near the demolitionist.
-			; // < Mind the semicolon!
+				.SetBiomeAffection<ForestBiome>(AffectionLevel.Like)
+				.SetBiomeAffection<SnowBiome>(AffectionLevel.Dislike)
+				.SetNPCAffection(NPCID.Mechanic, AffectionLevel.Love)
+				.SetNPCAffection(NPCID.Cyborg, AffectionLevel.Like)
+				.SetNPCAffection(NPCID.Merchant, AffectionLevel.Dislike)
+				.SetNPCAffection(NPCID.Angler, AffectionLevel.Hate)
+			;
 		}
 
 		public override List<string> SetNPCNameList() {
-			return new List<string> { Language.GetTextValue("Mods.ArknightsMod.NameList.Closure") };
+			return [Language.GetTextValue($"Mods.ArknightsMod.NPCs.{GetType().Name}.DisplayName")];
 		}
 
 		public override void SetDefaults() {
@@ -49,7 +59,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			NPC.friendly = true;
 			NPC.width = 18;
 			NPC.height = 40;
-			NPC.aiStyle = 7;
+			NPC.aiStyle = NPCAIStyleID.Passive;
 			NPC.damage = 90;
 			NPC.defense = 15;
 			NPC.lifeMax = 1000;
@@ -60,19 +70,24 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		}
 
 		public override bool CanTownNPCSpawn(int numTownNPCs) {
-			foreach (Player player in Main.player) {
-				if (!player.active) {
-					continue;
+			for (int i = 0; i < Main.maxNPCs; i++) {
+				if (Main.npc[i].active && Main.npc[i].type == Type) {
+					return false;
 				}
-				if (player.statDefense > 0) {
-					return true;
-				}
+			}
+			if (ClosureWorldSpawnSystem.ClosureTownUnlocked) {
+				return true;
+			}
+			foreach (Player _ in Main.ActivePlayers) {
+				return true;
 			}
 			return false;
 		}
 
-		// Make this Town NPC teleport to the King and/or Queen statue when triggered. Return toKingStatue for only King Statues. Return !toKingStatue for only Queen Statues. Return true for both.
 		public override bool CanGoToStatue(bool toQueenStatue) => true;
+
+		public int HelpCount = -1;
+		public bool Helping;
 
 		public override string GetChat() {
 			WeightedRandom<string> chat = new();
@@ -84,31 +99,67 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			chat.Add(Language.GetTextValue("Mods.ArknightsMod.Dialogue.Closure.Dialogue6"));
 			chat.Add(Language.GetTextValue("Mods.ArknightsMod.Dialogue.Closure.Dialogue7"));
 			chat.Add(Language.GetTextValue("Mods.ArknightsMod.Dialogue.Closure.Dialogue8"));
-			//if (LanternNight.LanternsUp)
-			//{
-			//    chat.Add("You have done well, indeed you have. You've a strong arm, strong faith, and most importantly, a strong heart.", 1.5);
-			//}
 			return chat;
 		}
+
 		public override void SetChatButtons(ref string button, ref string button2) {
-			button = Language.GetTextValue("LegacyInterface.28");
-			button2 = Language.GetTextValue("Mods.ArknightsMod.ButtonName.button2");
+			string Text = ButtonCount switch {
+				1 => Language.GetTextValue("LegacyInterface.28"),
+				2 => this.GetLocalizedValue("Buttons.Shop2"),
+				3 => this.GetLocalizedValue("Buttons.Annihilation"),
+				_ => this.GetLocalizedValue("Buttons.Help"),
+			};
+			button = Text;
+			button2 = this.GetLocalizedValue("Buttons.Switch");
 		}
 
 		public override void OnChatButtonClicked(bool firstButton, ref string shop) {
 			if (firstButton) {
-				shop = ShopName;
+				if (Helping) {
+					HelpCount++;
+					HelpCount %= 5;
+				}
+				else
+					HelpCount = 0;
+				Helping = false;
+				switch (ButtonCount) {
+					case 0:
+						var chat = Language.GetText($"Mods.ArknightsMod.Dialogue.Closure.Help{HelpCount + 1}");
+						switch (HelpCount) {
+							case 0:
+								chat = chat.WithFormatArgs($"[i:{ModContent.ItemType<_3DPrintingProcessingStation>()}]");
+								break;
+							case 1:
+								chat = chat.WithFormatArgs($"[i:{ModContent.ItemType<OrironShard>()}]");
+								break;
+							case 2:
+								chat = chat.WithFormatArgs($"[i:{ModContent.ItemType<Drone>()}]");
+								break;
+							case 4:
+								chat = chat.WithFormatArgs($"[i:{ModContent.ItemType<Orundum>()}]", $"[i:{ModContent.ItemType<OrirockCube>()}]", $"[i:{ModContent.ItemType<OriginiumShard>()}]");
+								break;
+						}
+						Main.npcChatText = chat.Value;
+						Helping = true;
+						break;
+					case 1:
+					case 2:
+						shop = ShopName[ButtonCount - 1];
+						break;
+					case 3:
+						AO();
+						break;
+				}
 				return;
 			}
 			else {
-				AO();
+				ButtonCount++;
+				ButtonCount %= 4;
 			}
 		}
 
 		public void AO() {
-			var System = Main.player[Main.myPlayer].GetModPlayer<AOSystem>();
-			// AOStatus: false=not have a quest, true=doing quest
-			// QuestType: 0:pre/unfin 1:pre/fin (2:HM/unfin 3:HM/fin)
+			var System = Main.LocalPlayer.GetModPlayer<AOSystem>();
 			if (System.QuestType == 1 && System.QuestNum != System.CountQuest) {
 				System.QuestType = 0;
 			}
@@ -123,7 +174,6 @@ namespace ArknightsMod.Content.NPCs.Friendly
 					Main.npcChatText = System.GetCurrentQuest().ToString();
 					Main.npcChatCornerItem = System.GetCurrentQuest().QuestItem;
 					System.AOStatus = true;
-					//Main.npcChatText = Language.GetTextValue("Mods.ArknightsMod.Dialogue.Closure.AOFin");
 				}
 			}
 			else {
@@ -146,7 +196,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 
 		public class AOSystem : ModPlayer
 		{
-			public static List<Quest> Quests = new();
+			public static List<Quest> Quests = [];
 			public int QuestNum = 0;
 			public int CountQuest;
 			public bool AOStatus = false;
@@ -175,19 +225,23 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			}
 
 			public int Current {
-				get { return QuestNum; }
-				set { QuestNum = value; }
+				get => QuestNum;
+				set => QuestNum = value;
 			}
 
 			public bool CheckQuest() {
-				try {
+				try
+				{
 					var quest = Quests[QuestNum];
-					foreach (var item in Player.inventory) {
-						if (item.type == quest.QuestItem) {
-							if (Player.CountItem(quest.QuestItem, quest.ItemAmount) >= quest.ItemAmount) {
+					foreach (var item in Player.inventory)
+					{
+						if (item.type == quest.QuestItem)
+						{
+							if (Player.CountItem(quest.QuestItem, quest.ItemAmount) >= quest.ItemAmount)
+							{
 								item.stack -= quest.ItemAmount;
 								if (item.stack <= 0)
-									item.SetDefaults();
+									item.TurnToAir();
 								return true;
 							}
 						}
@@ -198,7 +252,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			}
 
 			public void SpawnReward(NPC npc) {
-				int reward = Item.NewItem(npc.GetSource_Loot(), Player.getRect(), ModContent.ItemType<Items.Orundum>(), 50);
+				int reward = Item.NewItem(npc.GetSource_Loot(), Player.getRect(), ModContent.ItemType<Orundum>(), 50);
 				if (Main.netMode == NetmodeID.MultiplayerClient && reward >= 0)
 					NetMessage.SendData(MessageID.SyncItem, -1, -1, null, reward, 0f, 0f, 0f, 0);
 				return;
@@ -223,20 +277,13 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			}
 		}
 
-		public class Quest
+		public class Quest(string questMessage, int itemID, int itemAmount, string thxMessage = null)
 		{
-			public string QuestMessage;
-			public int ItemAmount;
-			public int QuestItem;
-			public string ThxMessage;
+			public string QuestMessage = questMessage;
+			public int ItemAmount = itemAmount;
+			public int QuestItem = itemID;
+			public string ThxMessage = thxMessage;
 			public double Weight;
-
-			public Quest(string questMessage, int itemID, int itemAmount, string thxMessage = null) {
-				QuestMessage = questMessage;
-				QuestItem = itemID;
-				ItemAmount = itemAmount;
-				ThxMessage = thxMessage;
-			}
 
 			public override string ToString() {
 				return Language.GetTextValue(QuestMessage, Main.LocalPlayer.name);
@@ -247,94 +294,241 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			}
 		}
 
-		// Not completely finished, but below is what the NPC will sell
 		public override void AddShops() {
-			var npcShop = new NPCShop(Type, ShopName)
-				.Add(new Item(ModContent.ItemType<Items.Material.Polyketon>()) {
-					shopCustomPrice = 1,
+			var npcShop = new NPCShop(Type, ShopName[0])
+				.Add(new Item(ModContent.ItemType<Polyketon>()) {
+					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
-				.Add(new Item(ModContent.ItemType<Items.Material.Oriron>()) {
-					shopCustomPrice = 1,
+				.Add(new Item(ModContent.ItemType<Oriron>()) {
+					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
-				.Add(new Item(ModContent.ItemType<Items.Material.Sugar>()) {
-					shopCustomPrice = 1,
+				.Add(new Item(ModContent.ItemType<Sugar>()) {
+					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
-				.Add(new Item(ModContent.ItemType<Items.Material.Device>()) {
-					shopCustomPrice = 1,
+				.Add(new Item(ModContent.ItemType<Device>()) {
+					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
-				.Add(new Item(ModContent.ItemType<Items.Material.Polyester>()) {
-					shopCustomPrice = 1,
+				.Add(new Item(ModContent.ItemType<Polyester>()) {
+					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
-				.Add(new Item(ModContent.ItemType<Items.Material.LoxicKohl>()) {
-					shopCustomPrice = 1,
+				.Add(new Item(ModContent.ItemType<ManganeseOre>()) {
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
-				.Add(new Item(ModContent.ItemType<Items.Material.CoagulatingGel>()) {
-					shopCustomPrice = 1,
+				.Add(new Item(ModContent.ItemType<Grindstone>()) {
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
-				.Add(new Item(ModContent.ItemType<Items.Material.IncandescentAlloy>()) {
-					shopCustomPrice = 1,
+				.Add(new Item(ModContent.ItemType<LoxicKohl>()) {
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
-				.Add(new Item(ModContent.ItemType<Items.Material.CrystallineComponent>()) {
-					shopCustomPrice = 1,
+				.Add(new Item(ModContent.ItemType<CoagulatingGel>()) {
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
-				.Add(new Item(ModContent.ItemType<Items.Material.CompoundCF>()) {
-					shopCustomPrice = 1,
+				.Add(new Item(ModContent.ItemType<IncandescentAlloy>()) {
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
-				.Add(new Item(ModContent.ItemType<Items.Material.SSS>()) {
-					shopCustomPrice = 1,
+				.Add(new Item(ModContent.ItemType<CrystallineComponent>()) {
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
-				.Add(new Item(ModContent.ItemType<Items.Material.TransmutedSalt>()) {
-					shopCustomPrice = 1,
+				.Add(new Item(ModContent.ItemType<CompoundCuttingFluid>()) {
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<SemiSyntheticSolvent>()) {
+					shopCustomPrice = 30,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<TransmutedSalt>()) {
+					shopCustomPrice = 30,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<CarbonBrick>()) {
+					shopCustomPrice = Item.buyPrice(0, 0, 10, 0),
 				})
 				.Add(new Item(ModContent.ItemType<Items.Placeable.Furniture.DareUsa>()) {
-					shopCustomPrice = 1,
+					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<Items.Consumables.AmiyaDefault>()) {
+				});
+			npcShop.Register();
+			npcShop = new NPCShop(Type, ShopName[1])
+				.Add(new Item(ModContent.ItemType<AmiyaDefault>()) {
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
-				.Add(new Item(ModContent.ItemType<Items.Consumables.MelanthaDefault>()) {
+				.Add(new Item(ModContent.ItemType<MelanthaDefault>()) {
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
-				.Add(new Item(ModContent.ItemType<Items.Consumables.MatoimaruDefault>()) {
+				.Add(new Item(ModContent.ItemType<MatoimaruDefault>()) {
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
-				.Add(new Item(ModContent.ItemType<Items.Consumables.IndigoDefault>()) {
+				.Add(new Item(ModContent.ItemType<IndigoDefault>()) {
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
-				.Add(new Item(ModContent.ItemType<Items.Consumables.ChenDefault>()) {
+				.Add(new Item(ModContent.ItemType<ChenDefault>()) {
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
-				.Add(new Item(ModContent.ItemType<Items.Consumables.WDefault>()) {
+				.Add(new Item(ModContent.ItemType<WDefault>()) {
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
-				.Add(new Item(ModContent.ItemType<Items.Consumables.MudrockDefault>()) {
+				.Add(new Item(ModContent.ItemType<MudrockDefault>()) {
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				})
-				.Add(new Item(ModContent.ItemType<Items.Consumables.TexalterDefault>()) {
+				.Add(new Item(ModContent.ItemType<OblivionisDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<RaidianDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<WisdelDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<BagpipeDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<FiammettaDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<BeagleDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<CivilightEternaDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<DorothyDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<ExusiaiDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<FartoothDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<HazeDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<KaltsitDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<KroosAlterDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<LaPlumaDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<LingDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<ManticoreDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<MelaniteDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<MostimaDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<RosmontisDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<SariaDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<SkadiDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<SurtrDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<UtageDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<WarfarinDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<LapplandDefault>()) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				})
+				.Add(new Item(ModContent.ItemType<TexalterDefault>()) {
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				});
-			npcShop.Register(); // Name of this shop tab
+			npcShop.Register();
+		}
+
+		public override void OnSpawn(IEntitySource source) {
+			if (source is EntitySource_WorldGen || source is EntitySource_SpawnNPC) {
+				if (!ClosureWorldSpawnSystem.ClosureTownUnlocked) {
+					ClosureWorldSpawnSystem.ClosureTownUnlocked = true;
+					if (Main.netMode == NetmodeID.Server) {
+						NetMessage.SendData(MessageID.WorldData);
+					}
+				}
+			}
+			NPCShopSystem.UpdateClosureShop(Mod, true);
+		}
+
+		public override void ModifyActiveShop(string shopName, Item[] items) {
+			closureShop2FullName ??= NPCShopDatabase.GetShopName(ModContent.NPCType<Closure>(), ShopName[1]);
+			if (shopName != closureShop2FullName)
+				return;
+
+			if (NPCShopSystem.ClosureTodaysRotation.Count == 0)
+				NPCShopSystem.UpdateClosureShop(Mod, true);
+			Array.Fill(items, null);
+
+			items[0] = new Item(ModContent.ItemType<DoctorArchiveBag>()) {
+				shopCustomPrice = 100,
+				shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+			};
+
+			var rotation = NPCShopSystem.ClosureTodaysRotation;
+			for (int j = 0; j < rotation.Count && j + 1 < items.Length; j++) {
+				items[j + 1] = new Item(rotation[j]) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				};
+			}
 		}
 
 		public override void TownNPCAttackStrength(ref int damage, ref float knockback) {
@@ -346,6 +540,5 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			cooldown = 30;
 			randExtraCooldown = 30;
 		}
-
 	}
 }

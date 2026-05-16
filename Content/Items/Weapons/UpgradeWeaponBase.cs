@@ -1,6 +1,7 @@
-﻿using ArknightsMod.Common.Items;
-using ArknightsMod.Common.UI.BattleRecord;
+﻿using ArknightsMod.Common.UI.BattleRecord;
 using ArknightsMod.Common.UI.BattleRecord.Calculators;
+using ArknightsMod.Content.Items.Weapons.Defender.Beagle;
+using ArknightsMod.Systems.Gameplay.Skill;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
@@ -20,13 +21,13 @@ namespace ArknightsMod.Content.Items.Weapons
 		protected int[] skillLevel = new int[3];
 		protected int[][] weaponData = new int[3][];
 		protected readonly static Dictionary<string, SkillData[]> skillDatas = [];
+		public bool[] chargeReady = new bool[3];
 		public override void DrawUpgradePreview(SpriteBatch spriteBatch, Rectangle rectangle, BattleRecordCalculator battleRecordCalculator, ExperienceCalculator experienceCalculator) {
 			var pos = rectangle.Location.ToVector2();
 			pos.Y += 20f;
 			var previewLevel = Level + experienceCalculator.UpgradeLevelPreview;
 			int nowDamage = GetDamage(Level);
 			int previewDamage = GetDamage(previewLevel);
-
 			var font = FontAssets.MouseText.Value;
 			string text = Language.GetTextValue("Mods.ArknightsMod.UpgradeWeapon.LevelPreview.Damage");
 			Vector2 textSize = font.MeasureString(text);
@@ -60,12 +61,24 @@ namespace ArknightsMod.Content.Items.Weapons
 			using (var sr = new StreamReader(mod.GetFileStream("Assets/LevelDatas/SkillDatas.csv"))) {
 				sr.ReadLine();
 				while (!sr.EndOfStream) {
-					string[] info = sr.ReadLine().Split(',');
+					string line = sr.ReadLine();
+					if (string.IsNullOrWhiteSpace(line))
+						continue;
+					string[] info = line.Split(',');
+					if (info.Length < 7) {
+						logger.Warn($"[LoadSkillData] Invalid SkillDatas.csv line (expected 7 cols): '{line}'");
+						continue;
+					}
 					string item = info[0];
+					if (string.IsNullOrWhiteSpace(item))
+						continue;
 					if (!skillDatas.TryGetValue(item, out var datas))
 						datas = skillDatas[item] = new SkillData[3];
 					try {
-						int index = int.Parse(info[1]);
+						if (!int.TryParse(info[1], out int index))
+							throw new FormatException($"Invalid skill index: '{info[1]}'");
+						if (index < 0 || index >= datas.Length)
+							throw new IndexOutOfRangeException($"Skill index {index} out of range for item '{item}'");
 						SkillData data = new() {
 							ChargeType = (SkillChargeType)int.Parse(info[3]),
 							AutoTrigger = int.Parse(info[4]) == 1,
@@ -90,10 +103,16 @@ namespace ArknightsMod.Content.Items.Weapons
 					sr.ReadLine();
 					try {
 						for (int i = 1; i <= 10; i++) {
+							if (sr.EndOfStream)
+								break;
 							string content = sr.ReadLine();
+							if (string.IsNullOrEmpty(content))
+								continue;
 							if (content[0] == ',')
 								continue;
 							string[] info = content.Split(",");
+							if (info.Length < 4)
+								continue;
 							data[i] = new() {
 								InitSP = int.Parse(info[0]),
 								MaxSP = int.Parse(info[1]),
@@ -114,7 +133,7 @@ namespace ArknightsMod.Content.Items.Weapons
 		}
 		public SkillData GetSkillData(int index) {
 			if (!skillDatas.TryGetValue(Name, out var datas)) {
-				Main.NewText(Name + " hasn't skill datas");
+				// Main.NewText(Name + " hasn't skill datas");
 				return null;
 			}
 			return datas[index];

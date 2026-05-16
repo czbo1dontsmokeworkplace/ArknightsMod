@@ -1,7 +1,7 @@
-using ArknightsMod.Common.Items;
 using ArknightsMod.Content.Items;
 using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.NPCs.Friendly;
+using ArknightsMod.Content.Players;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent.UI;
@@ -9,75 +9,188 @@ using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using ReLogic.Content;
+using ArknightsMod.Assets.Effects;
+using System.IO;
+using ArknightsMod.Systems;
+using ArknightsMod.Content.Tiles.Infrastructure.ReceptionRoom;
 
 namespace ArknightsMod
 {
 	public class ArknightsMod : Mod
 	{
 		public static int OrundumCurrencyId;
+		public static int OriginiumIngotCurrencyId;
 		internal Closure.AOSystem CurrentAO;
-		public const string noTexture = "ArknightsMod/Assets/null";//¿Õ²ÄÖÊ
-		public static Effect IACTSW;//³å»÷²¨Á°äôĞ§¹ûshader£¨ÈçIACT£©
-		public static Effect AACTTP;//ËõĞ¡Ğ§¹ûshader£¨AACT´«ËÍ£©
-		public static Effect AACTOC;//±äÉ«Ğ§¹ûshader£¨AACT£©
-		public static Effect AACTOC2;//·´É«Ğ§¹ûshader£¨AACT×ª½×¶Î£©
-		public static Effect LightRing;//¹â»·shader£¨AACT¶ş½×¶Î£©
-		public static Effect CollapsedExplosionPart1;//Ì®Ëõ±¬Õ¨Ğ§¹û£¨ÄÚºË£©£¨AACT¶ş½×¶Î£©
-		public static Effect CollapsedExplosionPart2;//Ì®Ëõ±¬Õ¨Ğ§¹û£¨Ãè±ß£©£¨AACT¶ş½×¶Î£©
-		public static Effect AACTSTG3RBFence;//ºìÀ¶¹âÕ¤Ğ§¹û£¨AACTÈı½×¶Î£©
-		public static Effect AACTSTG3RBNoise;//ºìÀ¶ÔëÉùĞ§¹û£¨AACTÈı½×¶Î£©
-		public static Effect FNTwistedRing;//ËªĞÇÏŞÖÆãĞ£¨Å¤Çú»·Ğ§¹û£©
+		/// <summary>
+		/// ç©ºæè´¨
+		/// </summary>
+		/// 
+		public const string noTexture = "ArknightsMod/Assets/null";
+
+		/// <summary>
+		/// éŸ³æ•ˆç›®å½•
+		/// </summary>
+		public const string PathSoundCommon = "ArknightsMod/Assets/Sound/";
+		public const string PathProjectileExclusives = "ArknightsMod/Content/Projectiles/";
+		public static Asset<Effect> IACTSW;//å†²å‡»æ³¢æ¶Ÿæ¼ªæ•ˆæœshaderï¼ˆå¦‚IACTï¼‰
+		public static Asset<Effect> AACTTP;//ç¼©å°æ•ˆæœshaderï¼ˆAACTä¼ é€ï¼‰
+		public static Asset<Effect> AACTOC;//å˜è‰²æ•ˆæœshaderï¼ˆAACTï¼‰
+		public static Asset<Effect> AACTOC2;//åè‰²æ•ˆæœshaderï¼ˆAACTè½¬é˜¶æ®µï¼‰
+		public static Asset<Effect> LightRing;//å…‰ç¯shaderï¼ˆAACTäºŒé˜¶æ®µï¼‰
+		public static Asset<Effect> CollapsedExplosionPart1;//åç¼©çˆ†ç‚¸æ•ˆæœï¼ˆå†…æ ¸ï¼‰ï¼ˆAACTäºŒé˜¶æ®µï¼‰
+		public static Asset<Effect> CollapsedExplosionPart2;//åç¼©çˆ†ç‚¸æ•ˆæœï¼ˆæè¾¹ï¼‰ï¼ˆAACTäºŒé˜¶æ®µï¼‰
+		public static Asset<Effect> AACTSTG3RBFence;//çº¢è“å…‰æ …æ•ˆæœï¼ˆAACTä¸‰é˜¶æ®µï¼‰
+		public static Asset<Effect> AACTSTG3RBNoise;//çº¢è“å™ªå£°æ•ˆæœï¼ˆAACTä¸‰é˜¶æ®µï¼‰
+		public static Asset<Effect> FNTwistedRing;//éœœæ˜Ÿé™åˆ¶é˜ˆï¼ˆæ‰­æ›²ç¯æ•ˆæœï¼‰
+		public static Asset<Effect> LavaExplosionShaderEffect;//ç‚ç†”çš„çˆ†ç‚¸æ•ˆæœ
+		public const string AssetPath = "ArknightsMod/Sound/";
 
 		public override void Load() {
 			UpgradeItemBase.LoadLevelData(this);
 			UpgradeWeaponBase.LoadSkillData(this);
 			// Registers a new custom currency
-			OrundumCurrencyId = CustomCurrencyManager.RegisterCurrency(new Content.Currencies.OrundumCurrency(ModContent.ItemType<Content.Items.Orundum>(), 9999L, "Mods.ArknightsMod.Currencies.OrundumCurrency"));
+			OrundumCurrencyId = CustomCurrencyManager.RegisterCurrency(new Content.Currencies.OrundumCurrency(ModContent.ItemType<Orundum>(), 9999L, "Mods.ArknightsMod.Currencies.OrundumCurrency"));
+			OriginiumIngotCurrencyId = CustomCurrencyManager.RegisterCurrency(new Content.Currencies.OriginiumIngotCurrency(ModContent.ItemType<OriginiumIngot>(), 9999L));
 			//shader
 			if (Main.netMode != NetmodeID.Server) {
-				IACTSW = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/IACTSW", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-				Filters.Scene["IACTSW"] = new Filter(new ScreenShaderData(new Ref<Effect>(IACTSW), "IACTSW"), EffectPriority.VeryHigh);
+				IACTSW = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/IACTSW", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+				Filters.Scene["IACTSW"] = new Filter(new ScreenShaderData(IACTSW, "IACTSW"), EffectPriority.VeryHigh);
 				Filters.Scene["IACTSW"].Load();
 
-				AACTTP = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/AACTTP", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-				Filters.Scene["AACTTP"] = new Filter(new ScreenShaderData(new Ref<Effect>(AACTTP), "AACTTP"), EffectPriority.VeryHigh);
+				AACTTP = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/AACTTP", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+				Filters.Scene["AACTTP"] = new Filter(new ScreenShaderData(AACTTP, "AACTTP"), EffectPriority.VeryHigh);
 				Filters.Scene["AACTTP"].Load();
 
-				AACTOC = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/AACTOC", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-				Filters.Scene["AACTOC"] = new Filter(new ScreenShaderData(new Ref<Effect>(AACTOC), "AACTOC"), EffectPriority.VeryHigh);
+				AACTOC = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/AACTOC", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+				Filters.Scene["AACTOC"] = new Filter(new ScreenShaderData(AACTOC, "AACTOC"), EffectPriority.VeryHigh);
 				Filters.Scene["AACTOC"].Load();
 
-				AACTOC2 = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/AACTOC2", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-				Filters.Scene["AACTOC2"] = new Filter(new ScreenShaderData(new Ref<Effect>(AACTOC2), "AACTOC2"), EffectPriority.VeryHigh);
+				AACTOC2 = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/AACTOC2", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+				Filters.Scene["AACTOC2"] = new Filter(new ScreenShaderData(AACTOC2, "AACTOC2"), EffectPriority.VeryHigh);
 				Filters.Scene["AACTOC2"].Load();
 
-				LightRing = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/LightRing", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-				Filters.Scene["LightRing"] = new Filter(new ScreenShaderData(new Ref<Effect>(LightRing), "LightRing"), EffectPriority.VeryHigh);
+				LightRing = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/LightRing", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+				Filters.Scene["LightRing"] = new Filter(new ScreenShaderData(LightRing, "LightRing"), EffectPriority.VeryHigh);
 				Filters.Scene["LightRing"].Load();
 
-				CollapsedExplosionPart1 = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/CollapsedExplosionPart1", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-				Filters.Scene["CollapsedExplosionPart1"] = new Filter(new ScreenShaderData(new Ref<Effect>(CollapsedExplosionPart1), "CollapsedExplosionPart1"), EffectPriority.VeryHigh);
+				CollapsedExplosionPart1 = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/CollapsedExplosionPart1", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+				Filters.Scene["CollapsedExplosionPart1"] = new Filter(new ScreenShaderData(CollapsedExplosionPart1, "CollapsedExplosionPart1"), EffectPriority.VeryHigh);
 				Filters.Scene["CollapsedExplosionPart1"].Load();
 
-				CollapsedExplosionPart2 = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/CollapsedExplosionPart2", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-				Filters.Scene["CollapsedExplosionPart2"] = new Filter(new ScreenShaderData(new Ref<Effect>(CollapsedExplosionPart2), "CollapsedExplosionPart2"), EffectPriority.VeryHigh);
+				CollapsedExplosionPart2 = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/CollapsedExplosionPart2", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+				Filters.Scene["CollapsedExplosionPart2"] = new Filter(new ScreenShaderData(CollapsedExplosionPart2, "CollapsedExplosionPart2"), EffectPriority.VeryHigh);
 				Filters.Scene["CollapsedExplosionPart2"].Load();
 
-				AACTSTG3RBFence = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/AACTSTG3RBFence", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-				Filters.Scene["AACTSTG3RBFence"] = new Filter(new ScreenShaderData(new Ref<Effect>(AACTSTG3RBFence), "AACTSTG3RBFence"), EffectPriority.VeryHigh);
+				AACTSTG3RBFence = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/AACTSTG3RBFence", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+				Filters.Scene["AACTSTG3RBFence"] = new Filter(new ScreenShaderData(AACTSTG3RBFence, "AACTSTG3RBFence"), EffectPriority.VeryHigh);
 				Filters.Scene["AACTSTG3RBFence"].Load();
 
-				AACTSTG3RBNoise = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/AACTSTG3RBNoise", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-				Filters.Scene["AACTSTG3RBNoise"] = new Filter(new ScreenShaderData(new Ref<Effect>(AACTSTG3RBNoise), "AACTSTG3RBNoise"), EffectPriority.VeryHigh);
+				AACTSTG3RBNoise = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/AACTSTG3RBNoise", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+				Filters.Scene["AACTSTG3RBNoise"] = new Filter(new ScreenShaderData(AACTSTG3RBNoise, "AACTSTG3RBNoise"), EffectPriority.VeryHigh);
 				Filters.Scene["AACTSTG3RBNoise"].Load();
 
-				/*FNTwistedRing = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/FNTwistedRing", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-				Filters.Scene["FNTwistedRing"] = new Filter(new ScreenShaderData(new Ref<Effect>(FNTwistedRing), "FNTwistedRing"), EffectPriority.VeryHigh);
-				Filters.Scene["FNTwistedRing"].Load();*/
+				FNTwistedRing = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/FNTwistedRing", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+				Filters.Scene["FNTwistedRing"] = new Filter(new ScreenShaderData(FNTwistedRing, "FNTwistedRing"), EffectPriority.VeryHigh);
+				Filters.Scene["FNTwistedRing"].Load();
+
+				LavaExplosionShaderEffect = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/LavaExplosionShaderEffect", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+				Filters.Scene["LavaExplosionShaderEffect"] = new Filter(new ScreenShaderData(LavaExplosionShaderEffect, "LavaExplosionShaderEffect"), EffectPriority.VeryHigh);
+				Filters.Scene["LavaExplosionShaderEffect"].Load();
 			}
+			Filters.Scene["AshStorm"] = new Filter(new ScreenShaderData("FilterAsh").UseColor(1f, 0.8f, 0.5f), EffectPriority.High);
+
+			LoadClient();
+			SkyManager.Instance["ArknightsMod:UnionInvadeSky"] = new UnionInvadeSky();
 
 			MusicLoader.AddMusic(this, "Assets/OriginalMusic/AACTintro");
 			MusicLoader.AddMusic(this, "Assets/OriginalMusic/AACTloop");
 		}
+		public static Texture2D UnionInvadeSkyTexture { get; private set; }
+
+		private void LoadClient() {
+			// å¼ºåˆ¶ç«‹å³åŠ è½½å¤©ç©ºçº¹ç†ï¼ˆä»¿ç…§ç¾å„ï¼‰
+			UnionInvadeSkyTexture = ModContent.Request<Texture2D>(
+				"ArknightsMod/Content/Events/UnionInvadeSky",
+				AssetRequestMode.ImmediateLoad
+			).Value;
+
+			// è°ƒè¯•éªŒè¯
+			if (UnionInvadeSkyTexture == null || UnionInvadeSkyTexture.IsDisposed)
+				Logger.Error("å¤©ç©ºçº¹ç†åŠ è½½å¤±è´¥ï¼");
+		}
+
+		public override void HandlePacket(BinaryReader reader, int whoAmI) {
+			short id = reader.ReadInt16();
+			switch ((ArkMessageID)id) {
+				case ArkMessageID.UpdateClosureShopWhenStartDay:
+					NPCShopSystem.ReadUpdateClosureShop(reader);
+					break;
+				case ArkMessageID.UpdateCannotShop:
+					NPCShopSystem.ReadUpdateCannotShop(reader);
+					break;
+				case ArkMessageID.RequestUpdateClosureShopWhenStartDay:
+					NPCShopSystem.UpdateClosureShop(this);
+					break;
+				case ArkMessageID.RequestUpdateCannotShop:
+					bool forcedUpdate = reader.ReadBoolean();
+					NPCShopSystem.TryUpdateCannotShop(this, forcedUpdate);
+					break;
+				case ArkMessageID.SpawnReinforcements:
+					Cannot.ReadSpawnReinforcements(reader);
+					break;
+				case ArkMessageID.CannotAggroAck:
+					CannotAggroPlayer.ServerApplyAck(whoAmI);
+					break;
+				case ArkMessageID.CannotLifeTokenSync:
+					if (Main.netMode == NetmodeID.MultiplayerClient) {
+						int token = reader.ReadInt32();
+						ModContent.GetInstance<CannotLifeGateSystem>().ApplyNetworkLifeToken(token);
+					}
+					break;
+				case ArkMessageID.CoffeeMachineRequest:
+					if (Main.netMode == NetmodeID.Server)
+						WaterDispenserTile.TryGiveCoffee(Main.player[whoAmI]);
+					break;
+				case ArkMessageID.ProtocolSpaceRequestStart:
+				case ArkMessageID.ProtocolSpaceRequestExitInteract:
+				case ArkMessageID.ProtocolSpaceRequestExitCountdown:
+				case ArkMessageID.ProtocolSpaceSyncState:
+				case ArkMessageID.ProtocolSpaceExitCountdown:
+					global::ArknightsMod.Systems.InstancedSpace.ProtocolSpaceEventSystem.ReceivePacket(reader, whoAmI, (ArkMessageID)id);
+					break;
+			}
+		}
+
+		public enum ArkMessageID : short {
+			UpdateClosureShopWhenStartDay,
+			RequestUpdateClosureShopWhenStartDay,
+			UpdateCannotShop,
+			RequestUpdateCannotShop,
+			SpawnReinforcements,
+			CannotAggroAck,
+			CannotLifeTokenSync,
+			CoffeeMachineRequest,
+			ProtocolSpaceRequestStart,
+			ProtocolSpaceRequestExitInteract,
+			ProtocolSpaceRequestExitCountdown,
+			ProtocolSpaceSyncState,
+			ProtocolSpaceExitCountdown,
+		}
 	}
+	//public class Ex : GlobalNPC
+	//{
+	//public override void SetDefaults(NPC entity) {
+	//if (entity.ModNPC is not null && entity.ModNPC.Mod == Mod) {
+	//entity.lifeMax = (int)(entity.lifeMax * 1.2f);
+	//entity.life = entity.lifeMax;
+	//entity.damage = (int)(entity.damage * 1.2f);
+	//}
+	//}
+	//}
+	
+	
+	
+
+
 }
