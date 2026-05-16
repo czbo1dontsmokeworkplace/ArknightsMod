@@ -18,11 +18,18 @@ namespace ArknightsMod.Content.Projectiles.Defender.Durnar
     {
         Player player => Main.player[Projectile.owner];
         Item item => player.HeldItem;
-        private Texture2D ShieldTex {get => TextureAssets.Projectile[ModContent.ProjectileType<DN_Shield>()].Value;}
+
+        private Texture2D ShieldTex {
+	        get {
+		        if(projMode ==  ProjMode.Attack)
+			        return ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Defender/Durnar/DN_Shield_Attack").Value;
+				return TextureAssets.Projectile[ModContent.ProjectileType<DN_Shield>()].Value;;
+	        }
+        }
         private float Length {get => MathF.Sqrt(MathF.Pow(ShieldTex.Width,2) + MathF.Pow(ShieldTex.Width,2));}
         public override void SetDefaults()
         {
-            Projectile.width =  30; // ?�������?�����
+            Projectile.width =  60; // ?�������?�����
             Projectile.height = 36; // ?�������?��?�
             Projectile.friendly = true; // ?������?��?���
             Projectile.penetrate = -1; // ?�������?�?
@@ -127,9 +134,8 @@ namespace ArknightsMod.Content.Projectiles.Defender.Durnar
 		        modifiers.SourceDamage *= 1.8f;
         }
 
-        private Vector2 AttackLength = new Vector2(10, 0);
         private float attackTime;
-        private float attackMaxTime = 30;
+        private float attackMaxTime = 20;
 
         private float CDTime;
 
@@ -140,7 +146,7 @@ namespace ArknightsMod.Content.Projectiles.Defender.Durnar
 	        Projectile.rotation = attackRad - MathHelper.Pi/2 + MathHelper.Pi/2 * player.direction;
 	        float mineRad = Projectile.rotation - MathHelper.Pi;
 	        float accelProgress = progress * progress;
-	        float Length = MathHelper.Lerp(-10, 20, accelProgress);
+	        float Length = MathHelper.Lerp(-20, 30, accelProgress);
 	        if(progress<=1f)
 		        attackTime++;
 	        else{
@@ -179,14 +185,37 @@ namespace ArknightsMod.Content.Projectiles.Defender.Durnar
             float rotation = MathF.Atan2((Main.MouseWorld - player.MountedCenter).Y,(Main.MouseWorld - player.MountedCenter).X);
             Projectile.rotation = rotation - MathHelper.Pi/2 + MathHelper.Pi/2 * player.direction;
             player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation);
-            Projectile.Center = player.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, Projectile.rotation) + new Vector2(8,0).RotatedBy(Projectile.rotation) * player.direction;
+            Projectile.Center = player.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, Projectile.rotation) + new Vector2(20,0).RotatedBy(Projectile.rotation) * player.direction;
         }
-        private float TexWidth{get => ShieldTex.Width;}
-        private float TexHeight{get => ShieldTex.Height;}
+
+        private float TexWidth { get =>ShieldTex.Width; }
+
+		private float TexHeight { get =>ShieldTex.Height; }
         public void Draw_Shield(SpriteBatch sb)
         {
-            SpriteEffects spriteEffects = player.direction == 1? SpriteEffects.None  : SpriteEffects.FlipHorizontally;
-            sb.Draw(ShieldTex,Projectile.Center - Main.screenPosition,null,Color.White,Projectile.rotation,new Vector2(TexWidth/2,TexHeight/2),1f,spriteEffects,1);
+			Vector2 Center =  Projectile.Center - Main.screenPosition;
+			Vector2 halfWidth = new Vector2(TexWidth / 2, 0).RotatedBy(Projectile.rotation);
+			Vector2 halfHeight = new Vector2(0,TexHeight / 2).RotatedBy(Projectile.rotation);
+			if (projMode == ProjMode.Defender)
+				halfWidth *= 0.8f;
+			Vector2[] pos = [
+				Center + halfHeight + halfWidth * player.direction,// 右上角
+				Center + halfHeight - halfWidth * player.direction,// 左上角
+				Center - halfHeight - halfWidth * player.direction,// 左下角
+				Center - halfHeight + halfWidth * player.direction// 右下角
+			];
+			List<Vertex> vertices = new List<Vertex>(6);
+			for(int i =0;i<6;i++)
+				vertices.Add(default);
+			{
+				vertices[0] = new Vertex(pos[1],new Vector3(0,1,1), Color.White);
+				vertices[1] = vertices[5] = new Vertex(pos[0],new Vector3(1,1,1), Color.White);
+				vertices[2] = vertices[4] = new Vertex(pos[2],new Vector3(0,0,1), Color.White);
+				vertices[3] = new Vertex(pos[3],new Vector3(1,0,1), Color.White);
+			}
+			Main.graphics.GraphicsDevice.Textures[0] = ShieldTex;
+			if (vertices.Count > 4)
+				Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices.ToArray(), 0, vertices.Count / 3);
         }
 		public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
         {
