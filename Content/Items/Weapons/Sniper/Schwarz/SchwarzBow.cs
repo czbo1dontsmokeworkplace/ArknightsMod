@@ -1,14 +1,15 @@
+using ArknightsMod.Content.Items.Material.T4;
+using ArknightsMod.Content.Items.Material.T5;
 using ArknightsMod.Content.Projectiles.Sniper.Schwarz;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using System;
-using Terraria.DataStructures;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-
 using static Mono.CompilerServices.SymbolWriter.CodeBlockEntry;
 
 namespace ArknightsMod.Content.Items.Weapons.Sniper.Schwarz
@@ -24,8 +25,8 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Schwarz
 
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.D32Steel>(4);
-			recipe.AddIngredient<Material.OrironBlock>(5);
+			recipe.AddIngredient<D32Steel>(4);
+			recipe.AddIngredient<OrironBlock>(5);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

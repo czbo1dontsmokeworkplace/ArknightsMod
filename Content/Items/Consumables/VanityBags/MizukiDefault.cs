@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Consumables.VanityBags
@@ -9,9 +9,9 @@ namespace ArknightsMod.Content.Items.Consumables.VanityBags
 		protected override List<int> GetItems() {
 			return
 			[
-			ModContent.ItemType<Armor.Vanity.Specialist.Mizuki.MizukiHead>(),
-			ModContent.ItemType<Armor.Vanity.Specialist.Mizuki.MizukiBody>(),
-			ModContent.ItemType<Armor.Vanity.Specialist.Mizuki.MizukiLegs>()
+			ModContent.ItemType<Armor.Specialist.Mizuki.MizukiHead>(),
+			ModContent.ItemType<Armor.Specialist.Mizuki.MizukiBody>(),
+			ModContent.ItemType<Armor.Specialist.Mizuki.MizukiLegs>()
 			];
 		}
 	}

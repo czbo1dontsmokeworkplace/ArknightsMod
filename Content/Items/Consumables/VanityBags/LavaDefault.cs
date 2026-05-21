@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Terraria.ModLoader;
-using ArknightsMod.Content.Items.Armor.Vanity.Caster.Lava;
+using ArknightsMod.Content.Items.Armor.Caster.Lava;
 
 namespace ArknightsMod.Content.Items.Consumables.VanityBags
 {

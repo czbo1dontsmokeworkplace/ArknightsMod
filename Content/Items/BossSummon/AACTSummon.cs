@@ -3,6 +3,7 @@
 //using Microsoft.Xna.Framework.Graphics;
 //using System;
 //using System.IO;
+using ArknightsMod.Content.Items.Material.T4;
 using ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTargeteer;
 using Terraria;
 using Terraria.Audio;
@@ -58,9 +59,9 @@ namespace ArknightsMod.Content.Items.BossSummon
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<Content.Items.Material.IncandescentAlloyBlock>(), 5);
-			recipe.AddIngredient(ModContent.ItemType<Content.Items.Material.CrystallineCircuit>(), 5);
-			recipe.AddIngredient(ModContent.ItemType<Content.Items.Material.OptimizedDevice>(), 5);
+            recipe.AddIngredient(ItemType<IncandescentAlloyBlock>(), 5);
+			recipe.AddIngredient(ItemType<CrystallineCircuit>(), 5);
+			recipe.AddIngredient(ItemType<OptimizedDevice>(), 5);
 			recipe.AddTile(TileID.MythrilAnvil);
             recipe.Register();
         }

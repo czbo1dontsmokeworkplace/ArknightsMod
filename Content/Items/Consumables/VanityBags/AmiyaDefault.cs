@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Terraria.ModLoader;
-using ArknightsMod.Content.Items.Armor.Vanity.Caster.Amiya;
+using ArknightsMod.Content.Items.Armor.Caster.Amiya;
 
 namespace ArknightsMod.Content.Items.Consumables.VanityBags
 {

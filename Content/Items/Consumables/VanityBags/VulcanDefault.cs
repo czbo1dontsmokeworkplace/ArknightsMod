@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor.Vanity.Defender.Vulcan;
+using ArknightsMod.Content.Items.Armor.Defender.Vulcan;
 using System.Collections.Generic;
 using Terraria.ModLoader;
 

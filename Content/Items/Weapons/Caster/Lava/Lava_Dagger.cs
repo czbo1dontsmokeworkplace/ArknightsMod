@@ -1,4 +1,5 @@
-﻿using ArknightsMod.Content.Projectiles.Caster.Lava;
+﻿using ArknightsMod.Content.Items.Material.T2;
+using ArknightsMod.Content.Projectiles.Caster.Lava;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
@@ -16,7 +17,7 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Lava
 	{
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.Oriron>(2);
+			recipe.AddIngredient<Oriron>(2);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

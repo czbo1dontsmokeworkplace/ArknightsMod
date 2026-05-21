@@ -1,10 +1,11 @@
-﻿using Terraria;
+﻿using ArknightsMod.Content.Items.Material.T3;
+using ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTargeteer;
+using ArknightsMod.Content.Tiles.Infrastructure;
+using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static Terraria.ModLoader.ModContent;
-using ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTargeteer;
-using ArknightsMod.Content.Tiles.Infrastructure;
 
 namespace ArknightsMod.Content.Items.BossSummon
 {
@@ -51,10 +52,10 @@ namespace ArknightsMod.Content.Items.BossSummon
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-			recipe.AddIngredient(ModContent.ItemType<Content.Items.Material.IncandescentAlloy>(), 3);
-			recipe.AddIngredient(ModContent.ItemType<Content.Items.Material.CrystallineComponent>(), 3);
-			recipe.AddIngredient(ModContent.ItemType<Content.Items.Material.IntegratedDevice>(), 3);
-			recipe.AddTile(ModContent.TileType<FactoryTile>());
+			recipe.AddIngredient(ItemType<IncandescentAlloy>(), 3);
+			recipe.AddIngredient(ItemType<CrystallineComponent>(), 3);
+			recipe.AddIngredient(ItemType<IntegratedDevice>(), 3);
+			recipe.AddTile(TileType<FactoryTile>());
             recipe.Register();
         }
 	}

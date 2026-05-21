@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Consumables.VanityBags
@@ -8,9 +8,9 @@ namespace ArknightsMod.Content.Items.Consumables.VanityBags
 		protected override List<int> GetItems() {
 			return
 			[
-			ModContent.ItemType<Armor.Vanity.Medic.Kaltsit.KaltsitHead>(),
-			ModContent.ItemType<Armor.Vanity.Medic.Kaltsit.KaltsitBody>(),
-			ModContent.ItemType<Armor.Vanity.Medic.Kaltsit.KaltsitLegs>()
+			ModContent.ItemType<Armor.Medic.Kaltsit.KaltsitHead>(),
+			ModContent.ItemType<Armor.Medic.Kaltsit.KaltsitBody>(),
+			ModContent.ItemType<Armor.Medic.Kaltsit.KaltsitLegs>()
 		];
 		}
 	}

@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Terraria.ModLoader;
-using ArknightsMod.Content.Items.Armor.Vanity.Vanguard.Fang;
+using ArknightsMod.Content.Items.Armor.Vanguard.Fang;
 
 namespace ArknightsMod.Content.Items.Consumables.VanityBags
 {

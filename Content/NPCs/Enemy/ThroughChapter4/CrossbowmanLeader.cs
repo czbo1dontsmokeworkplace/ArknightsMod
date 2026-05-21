@@ -1,3 +1,4 @@
+using ArknightsMod.Content.Items.Material.T2;
 using ArknightsMod.Systems.Gameplay.Damage;
 using Microsoft.Xna.Framework;
 using System;
@@ -44,8 +45,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
 
-			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Material.Device>(), 8, 1, 1));
-			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Material.Polyketon>(), 8, 1, 1));
+			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Device>(), 8, 1, 1));
+			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Polyketon>(), 8, 1, 1));
 
 		}
 

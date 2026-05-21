@@ -1,11 +1,12 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria.GameContent.ItemDropRules;
-using Terraria.DataStructures;
-using System;
+﻿using ArknightsMod.Content.Items.Material.T2;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
+using Terraria;
+using Terraria.DataStructures;
+using Terraria.GameContent.ItemDropRules;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 
 namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
@@ -185,8 +186,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 		}
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
 
-			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Material.Device>(), 8, 1, 1));
-			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Material.Polyketon>(), 8, 1, 1));
+			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Device>(), 8, 1, 1));
+			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Polyketon>(), 8, 1, 1));
 
 		}
 	}

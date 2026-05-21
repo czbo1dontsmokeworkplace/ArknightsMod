@@ -1,4 +1,6 @@
-﻿using ArknightsMod.Content.Projectiles.Sniper.Exusiai;
+﻿using ArknightsMod.Content.Items.Material.T4;
+using ArknightsMod.Content.Items.Material.T5;
+using ArknightsMod.Content.Projectiles.Sniper.Exusiai;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
@@ -16,8 +18,8 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Exusiai
 	{
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.PolymerizationPreparation>(4);
-			recipe.AddIngredient<Material.SugarLump>(5);
+			recipe.AddIngredient<PolymerizationPreparation>(4);
+			recipe.AddIngredient<SugarLump>(5);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

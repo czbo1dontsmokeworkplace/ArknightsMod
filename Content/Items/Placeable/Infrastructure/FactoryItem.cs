@@ -1,4 +1,4 @@
-using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Items.Material.T1;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using Terraria;
 using Terraria.ID;

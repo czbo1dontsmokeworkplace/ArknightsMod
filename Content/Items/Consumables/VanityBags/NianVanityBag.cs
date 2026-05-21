@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using ArknightsMod.Content.Items.Armor.Vanity.Defender.Nian;
+using ArknightsMod.Content.Items.Armor.Defender.Nian;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -7,7 +7,7 @@ namespace ArknightsMod.Content.Items.Consumables.VanityBags
 {
 	public class NianVanityBag : ArknightsVanityBag
 	{
-		public override string Texture => "ArknightsMod/Content/Items/Armor/Vanity/Defender/Nian/NianVanityBag";
+		public override string Texture => "ArknightsMod/Content/Items/Armor/Defender/Nian/NianVanityBag";
 
 		public override void SetDefaults()
 		{

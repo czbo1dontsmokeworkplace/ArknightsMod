@@ -12,9 +12,9 @@ using static Terraria.ModLoader.ModContent;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ArknightsMod.Content.BossBars;
-using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Common.VisualEffects;
 using Terraria.DataStructures;
+using ArknightsMod.Content.Items.Material.T4;
 
 namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 {

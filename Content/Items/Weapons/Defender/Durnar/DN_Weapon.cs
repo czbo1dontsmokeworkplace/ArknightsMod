@@ -1,5 +1,5 @@
-using ArknightsMod.Content.Items.Armor.Vanity.Defender.Beagle.Armor;
-using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Items.Armor.Defender.Beagle.Armor;
+using ArknightsMod.Content.Items.Material.T3;
 using ArknightsMod.Content.Projectiles.Defender.Beagle;
 using ArknightsMod.Content.Projectiles.Defender.Durnar;
 using ArknightsMod.Content.Tiles.Infrastructure;
@@ -39,15 +39,15 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Durnar
 
 		public override void SetDefaults()
 		{
-			Item.damage = 23; // �����˺�
+			Item.damage = 23; // 锟斤拷锟斤拷锟剿猴拷
 			Item.knockBack = 7;
-			Item.crit = 2; // ������
-			Item.DamageType = DamageClass.Melee; // �˺�����
-			Item.width = 48; // ��Ʒ����
-			Item.height = 60; // ��Ʒ�߶�
-			Item.useTime = 25; // ʹ��ʱ��
-			Item.useAnimation = 25; // ʹ�ö���ʱ��
-			Item.autoReuse = true; // �Զ�ʹ��
+			Item.crit = 2; // 锟斤拷锟斤拷锟斤拷
+			Item.DamageType = DamageClass.Melee; // 锟剿猴拷锟斤拷锟斤拷
+			Item.width = 48; // 锟斤拷品锟斤拷锟斤拷
+			Item.height = 60; // 锟斤拷品锟竭讹拷
+			Item.useTime = 25; // 使锟斤拷时锟斤拷
+			Item.useAnimation = 25; // 使锟矫讹拷锟斤拷时锟斤拷
+			Item.autoReuse = true; // 锟皆讹拷使锟斤拷
 			Item.noUseGraphic = true;
 			Item.noMelee = true;
 			Item.useStyle = ItemUseStyleID.HiddenAnimation;

@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor.Vanity.Sniper.Fiammetta;
+using ArknightsMod.Content.Items.Armor.Sniper.Fiammetta;
 using System.Collections.Generic;
 using Terraria.ModLoader;
 

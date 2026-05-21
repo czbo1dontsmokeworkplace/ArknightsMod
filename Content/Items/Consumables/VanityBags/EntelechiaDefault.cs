@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor.Vanity.Guard.Entelechia;
+using ArknightsMod.Content.Items.Armor.Guard.Entelechia;
 using System.Collections.Generic;
 using Terraria.ModLoader;
 

@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor.Vanity.Defender.Mudrock;
+using ArknightsMod.Content.Items.Armor.Defender.Mudrock;
 using System.Collections.Generic;
 using Terraria.ModLoader;
 

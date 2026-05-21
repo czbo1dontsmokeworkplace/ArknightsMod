@@ -3185,3 +3185,13 @@ DN_Weapon: {
 	// DisplayName: D N_ Weapon
 	// Tooltip: ""
 }
+
+Elevator: {
+	// DisplayName: Elevator
+	// Tooltip: ""
+}
+
+ElevatorButton: {
+	// DisplayName: Elevator Button
+	// Tooltip: ""
+}

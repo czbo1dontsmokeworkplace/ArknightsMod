@@ -1,4 +1,5 @@
-﻿using ArknightsMod.Content.Projectiles.Vanguard.Fang;
+﻿using ArknightsMod.Content.Items.Material.T2;
+using ArknightsMod.Content.Projectiles.Vanguard.Fang;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using Terraria;
 using Terraria.Audio;
@@ -54,7 +55,7 @@ namespace ArknightsMod.Content.Items.Weapons.Vanguard.Fang
         }
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.Polyester>(2);
+			recipe.AddIngredient<Polyester>(2);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Terraria.ModLoader;
 namespace ArknightsMod.Content.Items.Consumables.VanityBags
 {
@@ -7,9 +7,9 @@ namespace ArknightsMod.Content.Items.Consumables.VanityBags
 		protected override List<int> GetItems() {
 			return
 			[
-				ModContent.ItemType<Armor.Vanity.Sniper.KroosAlter.KkdyAlterHead>(),
-			ModContent.ItemType<Armor.Vanity.Sniper.KroosAlter.KkdyAlterBody>(),
-			ModContent.ItemType<Armor.Vanity.Sniper.KroosAlter.KkdyAlterLegs>()
+				ModContent.ItemType<Armor.Sniper.KroosAlter.KkdyAlterHead>(),
+			ModContent.ItemType<Armor.Sniper.KroosAlter.KkdyAlterBody>(),
+			ModContent.ItemType<Armor.Sniper.KroosAlter.KkdyAlterLegs>()
 			];
 		}
 	}

@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor.Vanity.Specialist.Mortis;
+using ArknightsMod.Content.Items.Armor.Specialist.Mortis;
 using System.Collections.Generic;
 using Terraria.ModLoader;
 

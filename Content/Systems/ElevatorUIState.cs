@@ -106,7 +106,7 @@ namespace ArknightsMod.Content.Systems
 			_modeButton.Top.Set(ModeTopPx, 0f);
 			_modeButton.OnLeftClick += (_, __) =>
 			{
-				if (TryGetTargetElevator(out 电梯TE te))
+				if (TryGetTargetElevator(out TEElevator te))
 				{
 					te.CycleFloorDetectMode();
 					te.ScanFloors();
@@ -195,7 +195,7 @@ namespace ArknightsMod.Content.Systems
 		{
 			if (_floorBottomYs.Count == 0)
 				return false;
-			if (!TryGetTargetElevator(out 电梯TE te))
+			if (!TryGetTargetElevator(out TEElevator te))
 				return false;
 			int bottomY = _floorBottomYs[_selectedFloorIndex];
 			te.TargetFloorBottomY = bottomY;
@@ -215,8 +215,8 @@ namespace ArknightsMod.Content.Systems
 
 		private void RefreshModeButtonText()
 		{
-			if (TryGetTargetElevator(out 电梯TE te))
-				_modeButton.SetText($"检测: {电梯TE.GetFloorDetectModeLabel(te.FloorMode)}");
+			if (TryGetTargetElevator(out TEElevator te))
+				_modeButton.SetText($"检测: {TEElevator.GetFloorDetectModeLabel(te.FloorMode)}");
 			else
 				_modeButton.SetText("检测: 井隙+按钮");
 		}
@@ -257,7 +257,7 @@ namespace ArknightsMod.Content.Systems
 
 		private void RefreshDebugText()
 		{
-			if (TryGetTargetElevator(out 电梯TE te))
+			if (TryGetTargetElevator(out TEElevator te))
 			{
 				te.ScanFloors();
 				if (te.DebugLastLeftWallX < 0 || te.DebugLastRightWallX < 0)
@@ -307,7 +307,7 @@ namespace ArknightsMod.Content.Systems
 			_floorList?.Clear();
 			_floorBottomYs.Clear();
 
-			if (!TryGetTargetElevator(out 电梯TE te))
+			if (!TryGetTargetElevator(out TEElevator te))
 			{
 				_floorList.Add(new UITextPanel<string>("未找到电梯"));
 				return;
@@ -344,11 +344,11 @@ namespace ArknightsMod.Content.Systems
 			}
 		}
 
-		private bool TryGetTargetElevator(out 电梯TE te)
+		private bool TryGetTargetElevator(out TEElevator te)
 		{
 			te = null;
-			int id = ModContent.GetInstance<电梯TE>().Find(_targetX, _targetY);
-			if (id >= 0 && TileEntity.ByID.TryGetValue(id, out TileEntity entity) && entity is 电梯TE direct)
+			int id = ModContent.GetInstance<TEElevator>().Find(_targetX, _targetY);
+			if (id >= 0 && TileEntity.ByID.TryGetValue(id, out TileEntity entity) && entity is TEElevator direct)
 			{
 				te = direct;
 				return true;
@@ -357,7 +357,7 @@ namespace ArknightsMod.Content.Systems
 			// 兜底：移动中的电梯/成帧更新时，TE 坐标可能与 UI 缓存 topLeft 短暂不一致。
 			float worldX = (_targetX + 2f) * 16f;
 			float worldY = (_targetY + 3.5f) * 16f;
-			if (电梯TE.TryFindNearbyElevatorByWorld(worldX, worldY, maxDistanceTiles: 12, out 电梯TE nearTe, out _, out _))
+			if (TEElevator.TryFindNearbyElevatorByWorld(worldX, worldY, maxDistanceTiles: 12, out TEElevator nearTe, out _, out _))
 			{
 				te = nearTe;
 				return true;

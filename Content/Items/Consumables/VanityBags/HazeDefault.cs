@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Consumables.VanityBags
@@ -8,9 +8,9 @@ namespace ArknightsMod.Content.Items.Consumables.VanityBags
 		protected override List<int> GetItems() {
 			return
 			[
-				ModContent.ItemType<Armor.Vanity.Caster.Haze.HazeHead>(),
-			ModContent.ItemType<Armor.Vanity.Caster.Haze.HazeBody>(),
-			ModContent.ItemType<Armor.Vanity.Caster.Haze.HazeLegs>()
+				ModContent.ItemType<Armor.Caster.Haze.HazeHead>(),
+			ModContent.ItemType<Armor.Caster.Haze.HazeBody>(),
+			ModContent.ItemType<Armor.Caster.Haze.HazeLegs>()
 			];
 		}
 	}

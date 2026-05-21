@@ -1,8 +1,10 @@
-﻿using Terraria;
+﻿using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Items.Material.T3;
+using ArknightsMod.Content.NPCs.Enemy.Seamonster;
+using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using ArknightsMod.Content.NPCs.Enemy.Seamonster;
-using Terraria.Audio;
 
 namespace ArknightsMod.Content.Items.BossSummon
 {
@@ -11,8 +13,8 @@ namespace ArknightsMod.Content.Items.BossSummon
 		public override void AddRecipes() {
 			
 			CreateRecipe()
-				.AddIngredient<Material.CoagulatingGel>(4)
-				.AddIngredient<Material.CorruptedRecord>(20)
+				.AddIngredient<CoagulatingGel>(4)
+				.AddIngredient<CorruptedRecord>(20)
 				.Register();
 		}
 

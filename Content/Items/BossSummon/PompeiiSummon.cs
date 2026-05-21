@@ -1,11 +1,12 @@
-using System;
-using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+using ArknightsMod.Content.Items.Material.T2;
 using ArknightsMod.Content.NPCs.Enemy.OF.Pmp;
+using Microsoft.Xna.Framework;
+using System;
+using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.BossSummon
 {
@@ -14,9 +15,9 @@ namespace ArknightsMod.Content.Items.BossSummon
 		public override void AddRecipes() {
 			
 			CreateRecipe()
-				.AddIngredient<Material.OrirockCube>(1)
-				.AddIngredient(22, 5)
-                .AddIngredient(173,1)
+				.AddIngredient<OrirockCube>(1)
+				.AddIngredient(ItemID.IronBar, 5)
+                .AddIngredient(ItemID.Obsidian, 1)
 				.Register();
 		}
 

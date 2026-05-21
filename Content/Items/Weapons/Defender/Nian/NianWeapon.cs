@@ -1,12 +1,14 @@
+using ArknightsMod.Content.Items.Material.T4;
+using ArknightsMod.Content.Items.Material.T5;
 using ArknightsMod.Content.Projectiles.Defender.Nian;
+using ArknightsMod.Content.Tiles.Infrastructure;
+using ArknightsMod.Players;
+using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.GameContent.Creative;
-using Terraria.Audio;
-using ArknightsMod.Players;
-using ArknightsMod.Content.Tiles.Infrastructure;
-using Microsoft.Xna.Framework;
 
 
 // 阻挡数+1，沉默和抵抗未实现
@@ -26,8 +28,8 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Nian
 
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.PolymerizationPreparation>(4);
-			recipe.AddIngredient<Material.IncandescentAlloyBlock>(7);
+			recipe.AddIngredient<PolymerizationPreparation>(4);
+			recipe.AddIngredient<IncandescentAlloyBlock>(7);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

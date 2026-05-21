@@ -10,6 +10,7 @@ using ArknightsMod.Content.Items.Material;
 using System;
 using Terraria.Audio;
 using ArknightsMod.Systems.Gameplay.Damage;
+using ArknightsMod.Content.Items.Material.T3;
 
 
 

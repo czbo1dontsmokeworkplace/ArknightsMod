@@ -7,6 +7,7 @@ using Terraria.ModLoader.Utilities;
 using Microsoft.Xna.Framework;
 using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Systems.Gameplay.Damage;
+using ArknightsMod.Content.Items.Material.T3;
 
 
 

@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor.Vanity.Sniper.Wisadel;
+using ArknightsMod.Content.Items.Armor.Sniper.Wisadel;
 using System.Collections.Generic;
 using Terraria.ModLoader;
 

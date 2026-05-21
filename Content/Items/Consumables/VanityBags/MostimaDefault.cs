@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Consumables.VanityBags
@@ -8,9 +8,9 @@ namespace ArknightsMod.Content.Items.Consumables.VanityBags
 		protected override List<int> GetItems() {
 			return
 			[
-				ModContent.ItemType<Armor.Vanity.Caster.Mostima.MostimaHead>(),
-			ModContent.ItemType<Armor.Vanity.Caster.Mostima.MostimaBody>(),
-			ModContent.ItemType<Armor.Vanity.Caster.Mostima.MostimaLegs>()
+				ModContent.ItemType<Armor.Caster.Mostima.MostimaHead>(),
+			ModContent.ItemType<Armor.Caster.Mostima.MostimaBody>(),
+			ModContent.ItemType<Armor.Caster.Mostima.MostimaLegs>()
 			];
 		}
 	}

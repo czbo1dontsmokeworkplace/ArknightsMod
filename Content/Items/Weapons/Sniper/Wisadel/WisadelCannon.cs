@@ -5,8 +5,9 @@ using Microsoft.Xna.Framework;
 using Terraria.DataStructures;
 using Terraria.Audio;
 using ArknightsMod.Content.Projectiles.Sniper.Wisadel;
-using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Content.Tiles.Infrastructure;
+using ArknightsMod.Content.Items.Material.T4;
+using ArknightsMod.Content.Items.Material.T5;
 
 namespace ArknightsMod.Content.Items.Weapons.Sniper.Wisadel
 {

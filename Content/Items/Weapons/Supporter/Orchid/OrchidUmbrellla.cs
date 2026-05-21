@@ -3,8 +3,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria;
 using ArknightsMod.Content.Projectiles.Supporter.Orchid;
-using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Content.Tiles.Infrastructure;
+using ArknightsMod.Content.Items.Material.T2;
 
 namespace ArknightsMod.Content.Items.Weapons.Supporter.Orchid
 {

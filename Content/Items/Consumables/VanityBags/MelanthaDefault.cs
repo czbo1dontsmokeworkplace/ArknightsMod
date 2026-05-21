@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor.Vanity.Guard.Melantha;
+using ArknightsMod.Content.Items.Armor.Guard.Melantha;
 using System.Collections.Generic;
 using Terraria.ModLoader;
 

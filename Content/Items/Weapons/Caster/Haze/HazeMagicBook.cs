@@ -1,5 +1,4 @@
 ﻿using ArknightsMod.Content.Projectiles.Caster.Haze;
-using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
 
@@ -9,6 +8,8 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
+using ArknightsMod.Content.Items.Material.T3;
+using ArknightsMod.Content.Items.Material.T4;
 
 
 namespace ArknightsMod.Content.Items.Weapons.Caster.Haze

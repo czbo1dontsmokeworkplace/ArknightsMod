@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor.Vanity.Sniper.W;
+using ArknightsMod.Content.Items.Armor.Sniper.W;
 using System.Collections.Generic;
 using Terraria.ModLoader;
 

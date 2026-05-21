@@ -40,7 +40,7 @@ namespace ArknightsMod.Content.Systems
 					_state.ScrollSelection(wheelSteps);
 
 				// 玩家在电梯内时，禁用滚轮修改快捷物品栏.
-				if (player != null && wheelSteps != 0 && 电梯TE.TryFindNearbyElevatorForPlayer(player, out _, out _, out _))
+				if (player != null && wheelSteps != 0 && TEElevator.TryFindNearbyElevatorForPlayer(player, out _, out _, out _))
 					player.selectedItemState.Select(selectedBeforeWheel);
 
 				bool confirmPressed = Main.keyState.IsKeyDown(Keys.F) && !Main.oldKeyState.IsKeyDown(Keys.F);
@@ -62,7 +62,7 @@ namespace ArknightsMod.Content.Systems
 				return;
 			}
 
-			if (电梯TE.TryFindNearbyElevatorForPlayer(player, out 电梯TE te, out int topLeftX, out int topLeftY))
+			if (TEElevator.TryFindNearbyElevatorForPlayer(player, out TEElevator te, out int topLeftX, out int topLeftY))
 			{
 				// 仅当玩家“进入电梯轿厢”后才显示楼层按钮，而不是靠近就显示。
 				if (IsPlayerInsideElevatorCabin(player, te))
@@ -84,7 +84,7 @@ namespace ArknightsMod.Content.Systems
 			}
 		}
 
-		private static bool IsPlayerInsideElevatorCabin(Player player, 电梯TE te)
+		private static bool IsPlayerInsideElevatorCabin(Player player, TEElevator te)
 		{
 			if (player == null || te == null)
 				return false;

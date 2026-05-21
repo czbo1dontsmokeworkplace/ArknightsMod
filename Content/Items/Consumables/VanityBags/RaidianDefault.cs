@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor.Vanity.Supporter.Radian;
+using ArknightsMod.Content.Items.Armor.Supporter.Radian;
 using System.Collections.Generic;
 using Terraria.ModLoader;
 

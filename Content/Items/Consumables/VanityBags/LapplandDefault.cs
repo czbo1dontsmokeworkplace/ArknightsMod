@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor.Vanity.Guard.Lappland;
+using ArknightsMod.Content.Items.Armor.Guard.Lappland;
 using System.Collections.Generic;
 using Terraria.ModLoader;
 

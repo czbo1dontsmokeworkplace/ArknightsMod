@@ -1,5 +1,6 @@
 ﻿using ArknightsMod.Common.VisualEffects;
 using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Items.Material.T3;
 using ArknightsMod.Systems.Gameplay.Damage;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

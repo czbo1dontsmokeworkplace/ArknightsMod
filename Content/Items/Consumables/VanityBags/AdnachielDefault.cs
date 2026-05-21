@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Terraria.ModLoader;
-using ArknightsMod.Content.Items.Armor.Vanity.Sniper.Adnachiel;
+using ArknightsMod.Content.Items.Armor.Sniper.Adnachiel;
 
 namespace ArknightsMod.Content.Items.Consumables.VanityBags
 {

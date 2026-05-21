@@ -9,14 +9,13 @@ namespace ArknightsMod.Players
 		public bool yinhui2=false;
 		public override void ResetEffects()
         {
-			//����2��������Ч��
-			if (yinhui2 == true)
+			if (yinhui2)
             {
 				Player.statDefense *= 2f;
 				Player.lifeRegen += (int)(Player.statLifeMax2 * 0.12f);
 			}
 			if (Main.myPlayer != Player.whoAmI)
-				return;  // ֻ�����������
+				return;
 			bool isHoldingTargetWeapon = Player.HeldItem.type == ModContent.ItemType<SilverAshWeapon>();
 			if (!isHoldingTargetWeapon) {
 				Player.GetModPlayer<yinhui2player>().yinhui2 = false;

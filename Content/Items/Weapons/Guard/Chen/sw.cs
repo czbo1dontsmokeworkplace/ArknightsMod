@@ -1,4 +1,6 @@
-﻿using ArknightsMod.Content.Tiles.Infrastructure;
+﻿using ArknightsMod.Content.Items.Material.T4;
+using ArknightsMod.Content.Items.Material.T5;
+using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -152,8 +154,8 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.PolymerizationPreparation>(4);
-			recipe.AddIngredient<Material.WhiteHorseKohl>(6);
+			recipe.AddIngredient<PolymerizationPreparation>(4);
+			recipe.AddIngredient<WhiteHorseKohl>(6);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

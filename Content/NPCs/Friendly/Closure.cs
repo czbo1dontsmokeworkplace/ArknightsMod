@@ -1,8 +1,10 @@
-using ArknightsMod.Content.Items;
 using ArknightsMod.Content.Items.Consumables.VanityBags;
 using ArknightsMod.Content.Items.DisplayForUI;
 using ArknightsMod.Content.Items.Gacha;
 using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Items.Material.T1;
+using ArknightsMod.Content.Items.Material.T2;
+using ArknightsMod.Content.Items.Material.T3;
 using ArknightsMod.Systems;
 using System;
 using System.Collections.Generic;

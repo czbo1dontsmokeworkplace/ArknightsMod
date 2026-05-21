@@ -1,4 +1,5 @@
-﻿using ArknightsMod.Content.Projectiles.Sniper.Shirayuki;
+﻿using ArknightsMod.Content.Items.Material.T2;
+using ArknightsMod.Content.Projectiles.Sniper.Shirayuki;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
@@ -109,7 +110,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Shirayuki
 		}
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.OrirockCube>(4);
+			recipe.AddIngredient<OrirockCube>(4);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

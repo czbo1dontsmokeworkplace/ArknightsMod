@@ -1,4 +1,5 @@
-using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Items.Material.T4;
+using ArknightsMod.Content.Items.Material.T5;
 using ArknightsMod.Content.Projectiles.Sniper.Typhon;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;

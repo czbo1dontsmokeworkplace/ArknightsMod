@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Terraria.ModLoader;
-using ArknightsMod.Content.Items.Armor.Vanity.Supporter.Orchid;
+using ArknightsMod.Content.Items.Armor.Supporter.Orchid;
 
 namespace ArknightsMod.Content.Items.Consumables.VanityBags
 {

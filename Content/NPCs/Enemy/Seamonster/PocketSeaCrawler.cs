@@ -11,6 +11,7 @@ using ArknightsMod.Content.Items.Material;
 using System;
 using Terraria.Audio;
 using ArknightsMod.Common.VisualEffects;
+using ArknightsMod.Content.Items.Material.T3;
 
 
 

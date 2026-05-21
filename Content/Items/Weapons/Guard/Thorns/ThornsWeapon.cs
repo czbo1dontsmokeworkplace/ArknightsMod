@@ -1,4 +1,6 @@
 ﻿using ArknightsMod.Content.Buffs;
+using ArknightsMod.Content.Items.Material.T4;
+using ArknightsMod.Content.Items.Material.T5;
 using ArknightsMod.Content.Rarities;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
@@ -23,8 +25,8 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Thorns
 	{
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.PolymerizationPreparation>(4);
-			recipe.AddIngredient<Material.OrironBlock>(6);
+			recipe.AddIngredient<PolymerizationPreparation>(4);
+			recipe.AddIngredient<OrironBlock>(6);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

@@ -1,5 +1,8 @@
-﻿using ArknightsMod.Content.Tiles.Infrastructure;
+﻿using ArknightsMod.Content.Items.Material.T4;
+using ArknightsMod.Content.Items.Material.T5;
 using ArknightsMod.Content.Projectiles;
+using ArknightsMod.Content.Rarities;
+using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
 using Microsoft.CodeAnalysis;
 using Microsoft.Xna.Framework;
@@ -7,19 +10,14 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
-
 using Terraria.Graphics;
-
 using Terraria.ID;
-
 using Terraria.ModLoader;
 using static Terraria.Graphics.VertexStrip;
 using Color = Microsoft.Xna.Framework.Color;
-using ArknightsMod.Content.Rarities;
 
 
 namespace ArknightsMod.Content.Items.Weapons.Guard.SilverAsh
@@ -28,8 +26,8 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.SilverAsh
 	{
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.D32Steel>(4);
-			recipe.AddIngredient<Material.WhiteHorseKohl>(6);
+			recipe.AddIngredient<D32Steel>(4);
+			recipe.AddIngredient<WhiteHorseKohl>(6);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

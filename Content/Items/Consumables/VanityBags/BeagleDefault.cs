@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Terraria.ModLoader;
 
 
@@ -9,9 +9,9 @@ namespace ArknightsMod.Content.Items.Consumables.VanityBags
 		protected override List<int> GetItems() {
 			return
 			[
-			ModContent.ItemType<Armor.Vanity.Defender.Beagle.BeagleHead>(),
-			ModContent.ItemType<Armor.Vanity.Defender.Beagle.BeagleBody>(),
-			ModContent.ItemType<Armor.Vanity.Defender.Beagle.BeagleLegs>()
+			ModContent.ItemType<Armor.Defender.Beagle.BeagleHead>(),
+			ModContent.ItemType<Armor.Defender.Beagle.BeagleBody>(),
+			ModContent.ItemType<Armor.Defender.Beagle.BeagleLegs>()
 		];
 		}
 	}

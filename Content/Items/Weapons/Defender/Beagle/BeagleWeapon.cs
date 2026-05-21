@@ -1,3 +1,4 @@
+using ArknightsMod.Content.Items.Material.T2;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
 using Terraria;
@@ -11,7 +12,7 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Beagle
 	{
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.OrirockCube>(4);
+			recipe.AddIngredient<OrirockCube>(4);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

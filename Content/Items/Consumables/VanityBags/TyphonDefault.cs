@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using Terraria.ID;
 using Terraria.ModLoader;
-using ArknightsMod.Content.Items.Armor.Vanity.Sniper.Typhon;
+using ArknightsMod.Content.Items.Armor.Sniper.Typhon;
 
 namespace ArknightsMod.Content.Items.Consumables.VanityBags
 {
 	public class TyphonDefault : ArknightsVanityBag
 	{
 		public override string Texture =>
-			"ArknightsMod/Content/Items/Armor/Vanity/Sniper/Typhon/TyphonDefault";
+			"ArknightsMod/Content/Items/Armor/Sniper/Typhon/TyphonDefault";
 
 		public override void SetDefaults()
 		{

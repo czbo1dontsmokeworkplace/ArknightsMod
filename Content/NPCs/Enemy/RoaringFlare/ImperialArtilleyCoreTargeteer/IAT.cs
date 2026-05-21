@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Material;
+﻿using ArknightsMod.Content.Items.Material.T3;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;

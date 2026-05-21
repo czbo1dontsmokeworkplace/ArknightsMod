@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor.Vanity.Specialist.TexasAlter;
+using ArknightsMod.Content.Items.Armor.Specialist.TexasAlter;
 using System.Collections.Generic;
 using Terraria.ModLoader;
 

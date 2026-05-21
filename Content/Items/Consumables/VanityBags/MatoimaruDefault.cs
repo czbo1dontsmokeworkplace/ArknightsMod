@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor.Vanity.Guard.Matoimaru;
+using ArknightsMod.Content.Items.Armor.Guard.Matoimaru;
 using System.Collections.Generic;
 using Terraria.ModLoader;
 

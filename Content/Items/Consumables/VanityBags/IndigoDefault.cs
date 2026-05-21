@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor.Vanity.Caster.Indigo;
+using ArknightsMod.Content.Items.Armor.Caster.Indigo;
 using System.Collections.Generic;
 using Terraria.ModLoader;
 

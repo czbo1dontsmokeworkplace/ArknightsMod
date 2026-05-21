@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Terraria.ModLoader;
-using ArknightsMod.Content.Items.Armor.Vanity.Medic.Hibiscus;
+using ArknightsMod.Content.Items.Armor.Medic.Hibiscus;
 
 namespace ArknightsMod.Content.Items.Consumables.VanityBags
 {

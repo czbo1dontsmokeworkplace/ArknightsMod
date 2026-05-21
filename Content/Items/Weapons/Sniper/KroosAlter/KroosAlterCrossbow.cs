@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Material;
+﻿using ArknightsMod.Content.Items.Material.T3;
 using ArknightsMod.Content.Projectiles.Sniper.KroosAlter;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;

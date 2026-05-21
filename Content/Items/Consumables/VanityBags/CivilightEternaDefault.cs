@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Consumables.VanityBags
@@ -8,9 +8,9 @@ namespace ArknightsMod.Content.Items.Consumables.VanityBags
 		protected override List<int> GetItems() {
 			return
 			[
-				ModContent.ItemType<Armor.Vanity.Supporter.CivilightEterna.CivilightEternaHead>(),
-			ModContent.ItemType<Armor.Vanity.Supporter.CivilightEterna.CivilightEternaBody>(),
-			ModContent.ItemType<Armor.Vanity.Supporter.CivilightEterna.CivilightEternaLegs>()
+				ModContent.ItemType<Armor.Supporter.CivilightEterna.CivilightEternaHead>(),
+			ModContent.ItemType<Armor.Supporter.CivilightEterna.CivilightEternaBody>(),
+			ModContent.ItemType<Armor.Supporter.CivilightEterna.CivilightEternaLegs>()
 			];
 		}
 	}

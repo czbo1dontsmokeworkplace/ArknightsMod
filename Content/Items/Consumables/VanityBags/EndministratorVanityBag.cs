@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using ArknightsMod.Content.Items.Armor.Vanity.Endfield.Guard.Endministrator;
+using ArknightsMod.Content.Items.Armor.Endfield.Guard.Endministrator;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -8,7 +8,7 @@ namespace ArknightsMod.Content.Items.Consumables.VanityBags
 {
 	public class EndministratorVanityBag : ArknightsVanityBag
 	{
-		public override string Texture => "ArknightsMod/Content/Items/Armor/Vanity/Endfield/Guard/Endministrator/Endmin_Female_Item";
+		public override string Texture => "ArknightsMod/Content/Items/Armor/Endfield/Guard/Endministrator/Endmin_Female_Item";
 
 		public override void SetStaticDefaults()
 		{

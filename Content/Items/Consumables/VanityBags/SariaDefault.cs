@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor.Vanity.Defender.Saria;
+using ArknightsMod.Content.Items.Armor.Defender.Saria;
 using System.Collections.Generic;
 using Terraria.ModLoader;
 

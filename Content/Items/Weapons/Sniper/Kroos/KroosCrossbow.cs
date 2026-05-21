@@ -1,3 +1,4 @@
+using ArknightsMod.Content.Items.Material.T2;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
@@ -92,7 +93,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Kroos
 
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.Sugar>(2);
+			recipe.AddIngredient<Sugar>(2);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

@@ -63,6 +63,8 @@ namespace ArknightsMod.Content.Items.Armor
 				}
 				Player.statLifeMax2 -= (crystalReductionFinal + fruitReductionFinal);
 			}
+			/*Main.NewText($"stat2: {Player.statLifeMax2}");
+			Main.NewText($"stat1: {Player.statLifeMax}");*/
 		}
 		#region (已弃用) 盔甲生命值比例替换系统
 		/*public (float ratio, int value) LifeReplacement_Head = (0f, 0);

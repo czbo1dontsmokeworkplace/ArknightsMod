@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Terraria.ModLoader;
-using ArknightsMod.Content.Items.Armor.Vanity.Medic.Ansel;
+using ArknightsMod.Content.Items.Armor.Medic.Ansel;
 
 namespace ArknightsMod.Content.Items.Consumables.VanityBags
 {

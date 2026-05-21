@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Terraria.ModLoader;
-using ArknightsMod.Content.Items.Armor.Vanity.Guard.Popukar;
+using ArknightsMod.Content.Items.Armor.Guard.Popukar;
 
 namespace ArknightsMod.Content.Items.Consumables.VanityBags
 {

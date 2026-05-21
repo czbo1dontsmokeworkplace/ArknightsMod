@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Terraria.ModLoader;
-using ArknightsMod.Content.Items.Armor.Vanity.Sniper.Catapult;
+using ArknightsMod.Content.Items.Armor.Sniper.Catapult;
 
 namespace ArknightsMod.Content.Items.Consumables.VanityBags
 {

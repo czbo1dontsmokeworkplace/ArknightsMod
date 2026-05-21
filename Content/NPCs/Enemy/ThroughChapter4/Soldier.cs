@@ -1,13 +1,14 @@
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria.GameContent.Bestiary;
-using Terraria.GameContent.ItemDropRules;
-using Terraria.ModLoader.Utilities;
-using Terraria.Localization;
+using ArknightsMod.Content.Items.Material.T1;
 using Microsoft.Xna.Framework;
 using System;
+using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent.Bestiary;
+using Terraria.GameContent.ItemDropRules;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
+using Terraria.ModLoader.Utilities;
 
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 {
@@ -174,8 +175,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
 
 
-			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Material.DamagedDevice>(), 8, 1, 1));
-			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Material.Diketon>(), 8, 1, 1));
+			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DamagedDevice>(), 8, 1, 1));
+			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Diketon>(), 8, 1, 1));
 
 
 		}

@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor.Vanity.Guard.Chen;
+using ArknightsMod.Content.Items.Armor.Guard.Chen;
 using System.Collections.Generic;
 using Terraria.ModLoader;
 

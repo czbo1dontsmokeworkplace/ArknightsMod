@@ -1,4 +1,5 @@
 ﻿using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Items.Material.T3;
 using ArknightsMod.Systems.Gameplay.Damage;
 using Microsoft.Xna.Framework;
 using Terraria;

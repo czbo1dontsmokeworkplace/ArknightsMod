@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor.Vanity.Sniper.Provence;
+using ArknightsMod.Content.Items.Armor.Sniper.Provence;
 using System.Collections.Generic;
 using Terraria.ModLoader;
 namespace ArknightsMod.Content.Items.Consumables.VanityBags

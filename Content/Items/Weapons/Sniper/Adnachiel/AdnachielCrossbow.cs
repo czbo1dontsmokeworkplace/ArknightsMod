@@ -1,4 +1,5 @@
-﻿using ArknightsMod.Content.Projectiles.Sniper.Adnachiel;
+﻿using ArknightsMod.Content.Items.Material.T2;
+using ArknightsMod.Content.Projectiles.Sniper.Adnachiel;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
@@ -104,7 +105,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Adnachiel
 
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.Polyester>(2);
+			recipe.AddIngredient<Polyester>(2);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

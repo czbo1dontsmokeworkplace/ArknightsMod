@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Terraria.ModLoader;
-using ArknightsMod.Content.Items.Armor.Vanity.Guard.Midnight;
+using ArknightsMod.Content.Items.Armor.Guard.Midnight;
 
 namespace ArknightsMod.Content.Items.Consumables.VanityBags
 {

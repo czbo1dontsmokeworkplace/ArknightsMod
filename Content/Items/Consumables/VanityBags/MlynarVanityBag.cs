@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using ArknightsMod.Content.Items.Armor.Vanity.Guard.Mlynar;
+using ArknightsMod.Content.Items.Armor.Guard.Mlynar;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -7,7 +7,7 @@ namespace ArknightsMod.Content.Items.Consumables.VanityBags
 {
 	public class MlynarVanityBag : ArknightsVanityBag
 	{
-		public override string Texture => "ArknightsMod/Content/Items/Armor/Vanity/Guard/Mlynar/Mlynar";
+		public override string Texture => "ArknightsMod/Content/Items/Armor/Guard/Mlynar/Mlynar";
 
 		public override void SetDefaults()
 		{

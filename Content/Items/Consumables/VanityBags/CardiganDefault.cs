@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Terraria.ModLoader;
-using ArknightsMod.Content.Items.Armor.Vanity.Defender.Cardigan;
+using ArknightsMod.Content.Items.Armor.Defender.Cardigan;
 
 namespace ArknightsMod.Content.Items.Consumables.VanityBags
 {
