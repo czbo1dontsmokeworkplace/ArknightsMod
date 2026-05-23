@@ -72,7 +72,10 @@ namespace ArknightsMod.Content.Items.Armor
 		public sealed override void UpdateEquip(Player player) {
 
 			UpdateVanityEquip(player);
-			if (Item.neoarmor().hasUpgraded) {
+			if (Item.neoarmor().hasUpgraded)
+			{
+				player.GetModPlayer<ArknightsArmorPlayer>().LifeCrystalAndFruitEffectReduction = 0.5f;
+				player.statLifeMax2 += ArmorLifeBonus;
 				UpdateArmorEquip(player);
 			}
 		}

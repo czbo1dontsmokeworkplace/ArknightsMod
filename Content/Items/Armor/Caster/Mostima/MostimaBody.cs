@@ -1,16 +1,42 @@
-using Terraria.ModLoader;
-using Terraria;
+using ArknightsMod.Common;
+using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Items.Material.T1;
+using ArknightsMod.Content.Items.Material.T2;
+using ArknightsMod.Content.Items.Material.T3;
+using ArknightsMod.Content.Items.Material.T4;
+using ArknightsMod.Content.Items.Material.T5;
+using ArknightsMod.Content.Tiles.Infrastructure;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Terraria;
 using Terraria.DataStructures;
-using ArknightsMod.Common;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Caster.Mostima
 {
-    [AutoloadEquip(EquipType.Body)]
-    public class MostimaBody : NeoArmorBody
-    {
+	[AutoloadEquip(EquipType.Body)]
+	public class MostimaBody : NeoArmorBody
+	{
 		public override int Rarity => 6;
+		public override int ArmorLifeBonus => 92;
+
+		public override void SetArmorDefaults() {
+			Item.defense = 10;
+		}
+		
+		public override void AddRecipes() {
+			CreateRecipe()
+			.AddIngredient<MostimaBody>(1)
+			.AddIngredient<Orundum>(60)
+			.AddIngredient<OrirockConcentration>(4)
+			.AddIngredient<Grindstone>(7)
+			.AddTile(ModContent.TileType<FactoryTile>())
+			.AddCondition(NeoArmorUtils.NeedVanity)
+			.DisableDecraft()
+			.Register();
+		}
+
 		internal class MostimaWingLayer : PlayerDrawLayer
 		{
 			public override Position GetDefaultPosition() => new BeforeParent(PlayerDrawLayers.Wings);
@@ -27,5 +53,5 @@ namespace ArknightsMod.Content.Items.Armor.Caster.Mostima
 				PlayerLayerHelper.AddPlayerDrawLayer(ref drawInfo, texture, 1, offset);
 			}
 		}
-	} 
+	}
 }
