@@ -3,6 +3,7 @@ using System.Reflection;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ModLoader;
+using Terraria.UI;
 
 namespace ArknightsMod.Content.Items.Armor
 {
@@ -35,6 +36,8 @@ namespace ArknightsMod.Content.Items.Armor
 				return;
 			}
 
+			int oldFocus = Main.focusRecipe;
+
 			for (int i = Main.numAvailableRecipes - 1; i >= 0; i--) {
 				Recipe r = Main.recipe[Main.availableRecipe[i]];
 
@@ -52,20 +55,26 @@ namespace ArknightsMod.Content.Items.Armor
 				if (requiredNeoArmorTypes.Count == 0)
 					continue;
 
-				// 使用与合成时完全相同的物品来源（背包 + 所有可用箱子）
 				bool hasUnupgraded = HasUnupgradedNeoArmor(requiredNeoArmorTypes);
 
 				if (!hasUnupgraded) {
-					// 移除当前配方
+					if (i < Main.focusRecipe)
+						Main.focusRecipe--;
+
 					for (int j = i; j < Main.numAvailableRecipes - 1; j++)
 						Main.availableRecipe[j] = Main.availableRecipe[j + 1];
 					Main.numAvailableRecipes--;
-
-					if (Main.focusRecipe >= Main.numAvailableRecipes)
-						Main.focusRecipe = Main.numAvailableRecipes - 1;
-					if (Main.focusRecipe < 0)
-						Main.focusRecipe = 0;
 				}
+			}
+
+			if (Main.focusRecipe >= Main.numAvailableRecipes)
+				Main.focusRecipe = Main.numAvailableRecipes - 1;
+			if (Main.focusRecipe < 0)
+				Main.focusRecipe = 0;
+
+			// 用原版方法维护Y偏移，保留平滑动画和音效
+			if (Main.focusRecipe != oldFocus) {
+				Main.craftingUI.VisuallyRepositionRecipes(oldFocus);
 			}
 		}
 

@@ -1,9 +1,14 @@
-using Microsoft.Xna.Framework.Graphics;
+using ArknightsMod.Common;
+using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Items.Material.T4;
+using ArknightsMod.Content.Items.Material.T5;
+using ArknightsMod.Content.Tiles.Infrastructure;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.ID;
 using Terraria.ModLoader;
-using ArknightsMod.Common;
 
 namespace ArknightsMod.Content.Items.Armor.Sniper.Wisadel
 {
@@ -11,10 +16,29 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Wisadel
 	public class WisadelBody : NeoArmorBody
 	{
 		public override int Rarity => 6;
+		public override int ArmorLifeBonus => 94;
+
 		public override void SetStaticDefaultsNoServer()
 		{ 
 			Item.hasVanityEffects = true;
 		}
+
+		public override void SetArmorDefaults() {
+			Item.defense = 20;
+		}
+		
+		public override void AddRecipes() {
+			CreateRecipe()
+			.AddIngredient<WisadelBody>(1)
+			.AddIngredient<Orundum>(60)
+			.AddIngredient<CrystallineElectronicUnit>(6)
+			.AddIngredient<TransmutedSaltAgglomerate>(4)
+			.AddTile(ModContent.TileType<FactoryTile>())
+			.AddCondition(NeoArmorUtils.NeedVanity)
+			.DisableDecraft()
+			.Register();
+		}
+
 		internal class WisadelWingLayer : PlayerDrawLayer
 		{
 			public override Position GetDefaultPosition() => new BeforeParent(PlayerDrawLayers.Wings);
@@ -33,4 +57,3 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Wisadel
 		}
 	}
 }
-

@@ -1,15 +1,38 @@
+using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Items.Material.T3;
+using ArknightsMod.Content.Items.Material.T4;
+using ArknightsMod.Content.Tiles.Infrastructure;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.ID;
 using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
 
 namespace ArknightsMod.Content.Items.Armor.Sniper.Provence
 {
 	[AutoloadEquip(EquipType.Body)]
-	internal class ProvenceBody:NeoArmorBody
+	public class ProvenceBody : NeoArmorBody
 	{
 		public override int Rarity => 5;
+		public override int ArmorLifeBonus => 84;
+
+		public override void SetArmorDefaults() {
+			Item.defense = 16;
+		}
+		
+		public override void AddRecipes() {
+			CreateRecipe()
+			.AddIngredient<ProvenceBody>(1)
+			.AddIngredient<Orundum>(50)
+			.AddIngredient<ManganeseTrihydrate>(3)
+			.AddIngredient<IntegratedDevice>(2)
+			.AddTile(ModContent.TileType<FactoryTile>())
+			.AddCondition(NeoArmorUtils.NeedVanity)
+			.DisableDecraft()
+			.Register();
+		}
+
 		internal class ProvenceBodyLayer : PlayerDrawLayer
 		{
 			public override Position GetDefaultPosition() => new BeforeParent(PlayerDrawLayers.BackAcc);

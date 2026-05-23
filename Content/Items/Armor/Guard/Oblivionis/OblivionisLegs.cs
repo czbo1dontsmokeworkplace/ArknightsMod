@@ -1,5 +1,13 @@
-using Terraria.ModLoader;
 using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+using ArknightsMod.Content.Tiles.Infrastructure;
+using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Items.Material.T1;
+using ArknightsMod.Content.Items.Material.T2;
+using ArknightsMod.Content.Items.Material.T3;
+using ArknightsMod.Content.Items.Material.T4;
+using ArknightsMod.Content.Items.Material.T5;
 
 namespace ArknightsMod.Content.Items.Armor.Guard.Oblivionis
 {
@@ -7,9 +15,22 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Oblivionis
 	public class OblivionisLegs : NeoArmorLegs
 	{
 		public override int Rarity => 6;
-		public override int Value => 560000;
-		public override void Load() {
+		public override int ArmorLifeBonus => 103;
+		
+		public override void SetArmorDefaults() {
+			Item.defense = 10;
+		}
+
+		public override void AddRecipes() {
+			CreateRecipe()
+			.AddIngredient<OblivionisLegs>(1)
+			.AddIngredient<Orundum>(60)
+			.AddIngredient<NucleicCrystalSinter>(6)
+			.AddIngredient<PolymerizedGel>(2)
+			.AddTile(ModContent.TileType<FactoryTile>())
+			.AddCondition(NeoArmorUtils.NeedVanity)
+			.DisableDecraft()
+			.Register();
 		}
 	}
-
 }

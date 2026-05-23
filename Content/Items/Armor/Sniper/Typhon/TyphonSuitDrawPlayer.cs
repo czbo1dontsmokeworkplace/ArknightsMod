@@ -17,7 +17,7 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Typhon
 			if (!IsTyphonBodyEquipped(p))
 				return;
 
-			Texture2D bodyArmorTex = TextureAssets.ArmorBody[p.body].Value;
+			/*Texture2D bodyArmorTex = TextureAssets.ArmorBody[p.body].Value;
 			var cache = drawInfo.DrawDataCache;
 			for (int i = 0; i < cache.Count; i++) {
 				DrawData d = cache[i];
@@ -27,7 +27,7 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Typhon
 				pos.Y -= p.gravDir;
 				d.position = pos;
 				cache[i] = d;
-			}
+			}*/
 		}
 
 		private static bool IsTyphonBodyEquipped(Player p)

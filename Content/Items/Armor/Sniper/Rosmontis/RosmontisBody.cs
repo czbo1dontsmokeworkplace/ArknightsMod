@@ -1,16 +1,39 @@
-using Terraria.ModLoader;
-using Terraria;
+using ArknightsMod.Common;
+using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Items.Material.T4;
+using ArknightsMod.Content.Items.Material.T5;
+using ArknightsMod.Content.Tiles.Infrastructure;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Terraria;
 using Terraria.DataStructures;
-using ArknightsMod.Common;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Sniper.Rosmontis
 {
-    [AutoloadEquip(EquipType.Body)]
-    public class RosmontisBody : NeoArmorBody
-    {
+	[AutoloadEquip(EquipType.Body)]
+	public class RosmontisBody : NeoArmorBody
+	{
 		public override int Rarity => 6;
+		public override int ArmorLifeBonus => 97;
+
+		public override void SetArmorDefaults() {
+			Item.defense = 18;
+		}
+		
+		public override void AddRecipes() {
+			CreateRecipe()
+			.AddIngredient<RosmontisBody>(1)
+			.AddIngredient<Orundum>(60)
+			.AddIngredient<BipolarNanoflake>(6)
+			.AddIngredient<OptimizedDevice>(4)
+			.AddTile(ModContent.TileType<FactoryTile>())
+			.AddCondition(NeoArmorUtils.NeedVanity)
+			.DisableDecraft()
+			.Register();
+		}
+
 		internal class RosmontisBackLayer : PlayerDrawLayer
 		{
 			public override Position GetDefaultPosition() => new BeforeParent(PlayerDrawLayers.Wings);
@@ -27,5 +50,5 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Rosmontis
 				PlayerLayerHelper.AddPlayerDrawLayer(ref drawInfo, texture, 1, offset);
 			}
 		}
-	} 
+	}
 }

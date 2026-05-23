@@ -1,14 +1,36 @@
-using Terraria.ModLoader;
+using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Items.Material.T4;
+using ArknightsMod.Content.Items.Material.T5;
+using ArknightsMod.Content.Tiles.Infrastructure;
 using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Sniper.Rosmontis
 {
-    [AutoloadEquip(EquipType.Legs)]
-    public class RosmontisLegs : NeoArmorLegs
-    {
+	[AutoloadEquip(EquipType.Legs)]
+	public class RosmontisLegs : NeoArmorLegs
+	{
 		public override int Rarity => 6;
-		public override void Load()
-        {
-        }
-    } 
+		public override int ArmorLifeBonus => 97;
+		
+		public override void Load() {
+		}
+
+		public override void SetArmorDefaults() {
+			Item.defense = 6;
+		}
+
+		public override void AddRecipes() {
+			CreateRecipe()
+			.AddIngredient<RosmontisLegs>(1)
+			.AddIngredient<Orundum>(60)
+			.AddIngredient<CrystallineElectronicUnit>(6)
+			.AddIngredient<GrindstonePentahydrate>(4)
+			.AddTile(ModContent.TileType<FactoryTile>())
+			.AddCondition(NeoArmorUtils.NeedVanity)
+			.DisableDecraft()
+			.Register();
+		}
+	}
 }
