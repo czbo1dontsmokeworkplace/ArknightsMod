@@ -61,7 +61,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ReclamationAlgorithm
 
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
 
-			npcLoot.Add(ItemDropRule.Common(ItemType<RAMeat>(), ModContent.GetInstance<Dropconfig>().DropLS, 1, 2));
+			npcLoot.Add(ItemDropRule.Common(ItemType<MeatItem>(), ModContent.GetInstance<Dropconfig>().DropLS, 1, 2));
 
 		}
 

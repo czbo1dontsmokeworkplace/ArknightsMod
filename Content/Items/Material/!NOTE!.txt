@@ -1,0 +1,6 @@
+注意：T1-T5文件夹仅放置用来合成的关键材料！
+
+Note: T1–T5 folders are only for storing the key materials used for synthesis!
+
+为保证代码规范，请使用英文类名。
+To ensure code standardization, please use English class names.

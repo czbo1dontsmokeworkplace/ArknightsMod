@@ -1,6 +1,6 @@
 ﻿using Terraria.ModLoader;
 
-namespace ArknightsMod.Content.Items.Armor
+namespace ArknightsMod.Content.Items.Armor.Doctor
 {
 	[AutoloadEquip(EquipType.Head)]
 	public class DoctorHood : ArknightsVanityHead

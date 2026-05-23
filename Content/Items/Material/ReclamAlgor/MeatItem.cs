@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Material.ReclamAlgor
 {
-	public class RAMeat : ModItem
+	public class MeatItem : ModItem
 	{
 		public override void SetStaticDefaults() {
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1000;

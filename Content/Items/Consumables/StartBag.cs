@@ -1,4 +1,4 @@
-using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor.Doctor;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;

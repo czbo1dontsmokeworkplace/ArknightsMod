@@ -2833,3 +2833,48 @@ ElevatorButton: {
 	DisplayName: Elevator Button
 	Tooltip: ""
 }
+
+ArmorSkadiBody: {
+	DisplayName: Armor Skadi Body
+	Tooltip: ""
+}
+
+ArmorSkadiHead: {
+	DisplayName: Armor Skadi Head
+	Tooltip: ""
+}
+
+ArmorSkadiLegs: {
+	DisplayName: Armor Skadi Legs
+	Tooltip: ""
+}
+
+ArmorKaltsitBody: {
+	DisplayName: Armor Kaltsit Body
+	Tooltip: ""
+}
+
+ArmorKaltsitHead: {
+	DisplayName: Armor Kaltsit Head
+	Tooltip: ""
+}
+
+ArmorKaltsitLegs: {
+	DisplayName: Armor Kaltsit Legs
+	Tooltip: ""
+}
+
+Legmeat: {
+	DisplayName: Legmeat
+	Tooltip: ""
+}
+
+MeatItem: {
+	DisplayName: Meat Item
+	Tooltip: ""
+}
+
+WaterItem: {
+	DisplayName: Water Item
+	Tooltip: ""
+}

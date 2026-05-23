@@ -38,8 +38,8 @@ namespace ArknightsMod.Content.Items.Consumables
 
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Content.Items.Material.ReclamAlgor.RALegmeat>(1);
-			recipe.AddIngredient<Content.Items.Material.ReclamAlgor.RAMeat>(2);
+			recipe.AddIngredient<Content.Items.Material.ReclamAlgor.Legmeat>(1);
+			recipe.AddIngredient<Content.Items.Material.ReclamAlgor.MeatItem>(2);
 			recipe.AddTile(TileID.WorkBenches);
 			recipe.Register();
 		}

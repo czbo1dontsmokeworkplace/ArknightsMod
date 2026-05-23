@@ -1,11 +1,11 @@
 ﻿using Terraria;
-using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.GameContent.Creative;
 
 namespace ArknightsMod.Content.Items.Material.ReclamAlgor
 {
-	public class RALegmeat : ModItem
+	public class WaterItem : ModItem
 	{
 		public override void SetStaticDefaults() {
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1000;
