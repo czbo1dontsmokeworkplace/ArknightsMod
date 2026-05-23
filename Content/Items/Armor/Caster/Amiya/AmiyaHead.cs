@@ -39,7 +39,7 @@ namespace ArknightsMod.Content.Items.Armor.Caster.Amiya
 			CreateRecipe()
 			.AddIngredient<AmiyaHead>(1)
 			.AddIngredient<Orundum>(50)
-			.AddIngredient<Oriron>(4)
+			.AddIngredient<OrirockConcentration>(10)
 			.AddIngredient<LoxicKohl>(10)
 			.AddTile(ModContent.TileType<FactoryTile>())
 			.AddCondition(NeoArmorUtils.NeedVanity)

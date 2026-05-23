@@ -1,0 +1,10 @@
+{
+    "先锋": "Vanguard",
+    "近卫": "Guard",
+    "狙击": "Sniper",
+    "术师": "Caster",
+    "医疗": "Medic",
+    "重装": "Defender",
+    "辅助": "Supporter",
+    "特种": "Specialist"
+}

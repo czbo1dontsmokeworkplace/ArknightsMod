@@ -44,7 +44,7 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Saria
 			CreateRecipe()
 			.AddIngredient<SariaHead>(1)
 			.AddIngredient<Orundum>(60)
-			.AddIngredient<BipolarNanoflake>(4)
+			.AddIngredient<BipolarNanoflake>(6)
 			.AddIngredient<ManganeseTrihydrate>(5)
 			.AddTile(ModContent.TileType<FactoryTile>())
 			.AddCondition(NeoArmorUtils.NeedVanity)

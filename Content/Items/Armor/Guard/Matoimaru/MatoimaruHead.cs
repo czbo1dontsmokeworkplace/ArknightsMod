@@ -40,6 +40,8 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Matoimaru
 			CreateRecipe()
 			.AddIngredient<MatoimaruHead>(1)
 			.AddIngredient<Orundum>(40)
+			.AddIngredient<Device>(1)
+			.AddIngredient<SugarPack>(10)
 			.AddTile(ModContent.TileType<FactoryTile>())
 			.AddCondition(NeoArmorUtils.NeedVanity)
 			.DisableDecraft()

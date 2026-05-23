@@ -25,6 +25,8 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Matoimaru
 			CreateRecipe()
 			.AddIngredient<MatoimaruBody>(1)
 			.AddIngredient<Orundum>(40)
+			.AddIngredient<Polyester>(3)
+			.AddIngredient<ManganeseOre>(2)
 			.AddTile(ModContent.TileType<FactoryTile>())
 			.AddCondition(NeoArmorUtils.NeedVanity)
 			.DisableDecraft()

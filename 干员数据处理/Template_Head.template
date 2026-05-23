@@ -1,21 +1,21 @@
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Content.Items.Material.T1;
 using ArknightsMod.Content.Items.Material.T2;
 using ArknightsMod.Content.Items.Material.T3;
 using ArknightsMod.Content.Items.Material.T4;
 using ArknightsMod.Content.Items.Material.T5;
-using ArknightsMod.Content.Tiles.Infrastructure;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 
-namespace ArknightsMod.Content.Items.Armor.Sniper.KroosAlter
+namespace ArknightsMod.Content.Items.Armor.{class}.{name_en}
 {
 	[AutoloadEquip(EquipType.Head)]
-	public class KkdyAlterHead : NeoArmorHead
+	public class {name_en}Head : NeoArmorHead
 	{
-		public override int Rarity => 5;
-		public override int ArmorLifeBonus => 152;
+		public override int Rarity => {rarity};
+		public override int ArmorLifeBonus => {head_life};
 		
 		public override void Load() {
 			if (Main.netMode == NetmodeID.Server)
@@ -23,25 +23,24 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.KroosAlter
 		}
 
 		public override void SetArmorDefaults() {
-			Item.defense = 0;
+			Item.defense = {head_defense};
 		}
 		
 		public override bool IsArmorSet(Item head, Item body, Item legs) {
-			return body.type == ModContent.ItemType<KkdyAlterBody>() && body.neoarmor().hasUpgraded &&
-				legs.type == ModContent.ItemType<KkdyAlterLegs>() && legs.neoarmor().hasUpgraded;
+			return body.type == ModContent.ItemType<{name_en}Body>() && body.neoarmor().hasUpgraded &&
+				legs.type == ModContent.ItemType<{name_en}Legs>() && legs.neoarmor().hasUpgraded;
 		}
 
 		public override void UpdateArmorSet(Player player) {
-			player.GetModPlayer<KkdyAlterSetPlayer>().KkdyAlterSetActive = true;
 			player.setBonus = "";
 		}
 
 		public override void AddRecipes() {
 			CreateRecipe()
-			.AddIngredient<KkdyAlterHead>(1)
-			.AddIngredient<Orundum>(50)
-			.AddIngredient<CrystallineCircuit>(7)
-			.AddIngredient<OrironCluster>(10)
+			.AddIngredient<{name_en}Head>(1)
+			.AddIngredient<Orundum>({rarity*10})
+
+			.AddIngredient<{head_materials.item}>({head_materials.amount})
 			.AddTile(ModContent.TileType<FactoryTile>())
 			.AddCondition(NeoArmorUtils.NeedVanity)
 			.DisableDecraft()

@@ -25,8 +25,8 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Entelechia
 			CreateRecipe()
 			.AddIngredient<EntelechiaBody>(1)
 			.AddIngredient<Orundum>(60)
-			//.AddIngredient<环烃预制体>(4) 未知材料！
-			.AddIngredient<CompoundCuttingFluid>(4)
+			.AddIngredient<PolymerizationPreparation>(6)
+			.AddIngredient<RMA7024>(6)
 			.AddTile(ModContent.TileType<FactoryTile>())
 			.AddCondition(NeoArmorUtils.NeedVanity)
 			.DisableDecraft()
