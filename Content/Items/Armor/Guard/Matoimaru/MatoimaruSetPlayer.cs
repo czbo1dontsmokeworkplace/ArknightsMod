@@ -1,9 +1,9 @@
 using Terraria;
 using Terraria.ModLoader;
 
-namespace ArknightsMod.Content.Items.Armor.Guard.Matoimaru.Armor
+namespace ArknightsMod.Content.Items.Armor.Guard.Matoimaru
 {
-	internal class MatoimaruSetPlayer:ArknightsArmorPlayer
+	internal class MatoimaruSetPlayer : ArknightsArmorPlayer
 	{
 		public bool MatoimaruSetActive;
 		public override void ResetEffects() {
@@ -11,16 +11,16 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Matoimaru.Armor
 		}
 		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {
 			if (MatoimaruSetActive) {
-				if(item.DamageType==DamageClass.Melee) {
+				if (item.DamageType == DamageClass.Melee) {
 					damage *= 1.5f;
 				}
 			}
 		}
 		public override void PostUpdateEquips() {
 			if (MatoimaruSetActive) {
-				Player.statLifeMax2 += (int)(Player.statLifeMax2*0.2f);
+				Player.statLifeMax2 += (int)(Player.statLifeMax2 * 0.2f);
 				Player.statDefense *= 0.8f;
-				
+
 			}
 		}
 	}

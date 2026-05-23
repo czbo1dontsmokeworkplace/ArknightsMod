@@ -8,7 +8,7 @@ using ArknightsMod.Common;
 namespace ArknightsMod.Content.Items.Armor.Specialist.ExusiaiAlter
 {
     [AutoloadEquip(EquipType.Body)]
-    public class ExusiaiAlterBody : ArknightsVanityBody
+    public class ExusiaiAlterBody : NeoArmorBody
     {
 		public override int Rarity => 6;
 		internal class ExusiaiAlterWingLayer : PlayerDrawLayer

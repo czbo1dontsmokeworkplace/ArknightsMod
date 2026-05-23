@@ -4,12 +4,9 @@ using Terraria;
 namespace ArknightsMod.Content.Items.Armor.Endfield.Striker.Yvonne
 {
 	[AutoloadEquip(EquipType.Legs)]
-	public class YvonneLegs : ArknightsVanityLegs
+	public class YvonneLegs : NeoArmorLegs
 	{
 		public override int Rarity => 6;
 		public override int Value => 560000;
-		public override void UpdateEquip(Player player) {
-
-		}
 	}
 }

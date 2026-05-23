@@ -8,10 +8,10 @@ using ArknightsMod.Common;
 namespace ArknightsMod.Content.Items.Armor.Sniper.Wisadel
 {
 	[AutoloadEquip(EquipType.Body)]
-	public class WisadelBody : ArknightsVanityBody
+	public class WisadelBody : NeoArmorBody
 	{
 		public override int Rarity => 6;
-		public override void SafeSetDefaults()
+		public override void SetStaticDefaultsNoServer()
 		{ 
 			Item.hasVanityEffects = true;
 		}

@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.Items.Armor.Sniper.Provence
 {
 	[AutoloadEquip(EquipType.Head)]
-	internal class ProvenceHead:ArknightsVanityHead
+	internal class ProvenceHead:NeoArmorHead
 	{
 		public override int Rarity => 5;
 		public override bool IsArmorSet(Item head, Item body, Item legs) {

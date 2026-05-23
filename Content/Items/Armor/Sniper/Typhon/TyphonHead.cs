@@ -8,8 +8,9 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.Items.Armor.Sniper.Typhon
 {
 	[AutoloadEquip(EquipType.Head)]
-	public class TyphonHead : ArknightsVanityHead
+	public class TyphonHead : NeoArmorHead
 	{
+		public override int Rarity => 6;
 		internal static int HeadEquipSlot = -1;
 
 		public override void Load()
@@ -17,12 +18,12 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Typhon
 			HeadEquipSlot = Item.headSlot;
 		}
 
-		public override void SafeSetStaticDefaults()
+		public override void SetStaticDefaultsNoServer()
 		{
 			HeadEquipSlot = Item.headSlot;
 		}
 
-		public override void SafeSetDefaults()
+		public override void SetVanityDefaults()
 		{
 			HeadEquipSlot = Item.headSlot;
 			Item.rare = ItemRarityID.Red;

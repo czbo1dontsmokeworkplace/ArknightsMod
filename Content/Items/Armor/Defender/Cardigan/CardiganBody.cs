@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.Items.Armor.Defender.Cardigan
 {
     [AutoloadEquip(EquipType.Body)]
-    public class CardiganBody : ArknightsVanityBody
+    public class CardiganBody : NeoArmorBody
     {
         public override int Rarity => 3;
     }

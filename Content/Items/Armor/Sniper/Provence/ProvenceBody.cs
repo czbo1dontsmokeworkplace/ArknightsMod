@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 namespace ArknightsMod.Content.Items.Armor.Sniper.Provence
 {
 	[AutoloadEquip(EquipType.Body)]
-	internal class ProvenceBody:ArknightsVanityBody
+	internal class ProvenceBody:NeoArmorBody
 	{
 		public override int Rarity => 5;
 		internal class ProvenceBodyLayer : PlayerDrawLayer

@@ -8,7 +8,7 @@ using ArknightsMod.Common;
 namespace ArknightsMod.Content.Items.Armor.Sniper.Rosmontis
 {
     [AutoloadEquip(EquipType.Body)]
-    public class RosmontisBody : ArknightsVanityBody
+    public class RosmontisBody : NeoArmorBody
     {
 		public override int Rarity => 6;
 		internal class RosmontisBackLayer : PlayerDrawLayer

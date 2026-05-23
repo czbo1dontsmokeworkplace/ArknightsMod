@@ -1,7 +1,7 @@
 using Terraria;
 using Terraria.ModLoader;
 
-namespace ArknightsMod.Content.Items.Armor.Defender.Saria.Armor
+namespace ArknightsMod.Content.Items.Armor.Defender.Saria
 {
 	internal class SariaSetPlayer : ModPlayer
 	{

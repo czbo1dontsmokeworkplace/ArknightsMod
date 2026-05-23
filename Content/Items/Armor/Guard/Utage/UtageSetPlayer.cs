@@ -1,11 +1,11 @@
-using System.Security.Policy;
+using System;
 using Terraria;
 using Terraria.ModLoader;
-using System;
 
-namespace ArknightsMod.Content.Items.Armor.Guard.Utage.Armor
+namespace ArknightsMod.Content.Items.Armor.Guard.Utage
 {
-	internal class UtageSetPlayer : ArknightsArmorPlayer {
+	internal class UtageSetPlayer : ArknightsArmorPlayer
+	{
 		int healamount = 10;
 		float MaxExtraSpeed = 75f;
 		public bool UtageSetActive;
@@ -28,6 +28,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Utage.Armor
 			}
 			return result;
 		}
+
 		#region 禁疗效果
 		// 禁止自然回血
 		public override void NaturalLifeRegen(ref float regen) {
@@ -63,13 +64,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Utage.Armor
 			return true;
 		}
 		#endregion
-		//public override void OnHitAnything(float x, float y, Entity victim) {
-		//	if (UtageSetActive) {
-		//		int realHeal = Math.Min(healamount, Player.statLifeMax2 - Player.statLife);
 
-		//		Player.Heal(10);
-		//	}
-		//}
 		#region 攻击回血
 		public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone) {
 			if (!item.DamageType.CountsAsClass(DamageClass.Melee))
@@ -105,11 +100,10 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Utage.Armor
 		#endregion
 		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {
 			if (item.DamageType == DamageClass.Melee) {
-				damage*= 1.5f;
+				damage *= 1.5f;
 			}
 			//后面是专属武器加成
 			//else if{ }
 		}
-
 	}
 }

@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Endfield.Guard.Endministrator
 {
-	public class EndministratorHead : ArknightsVanityHead
+	public class EndministratorHead : NeoArmorHead
 	{
 		public override string Texture => "ArknightsMod/Content/Items/Armor/Endfield/Guard/Endministrator/Endmin_Female_Head_Item";
 		public override int Rarity => 6;
@@ -18,7 +18,7 @@ namespace ArknightsMod.Content.Items.Armor.Endfield.Guard.Endministrator
 			EquipLoader.AddEquipTexture(Mod, "ArknightsMod/Content/Items/Armor/Endfield/Guard/Endministrator/Endmin_Female_Head", EquipType.Head, this, Name);
 		}
 
-		public override void SafeSetStaticDefaults()
+		public override void SetStaticDefaultsNoServer()
 		{
 			if (Main.netMode == NetmodeID.Server)
 				return;
@@ -26,7 +26,7 @@ namespace ArknightsMod.Content.Items.Armor.Endfield.Guard.Endministrator
 			Item.headSlot = EquipLoader.GetEquipSlot(Mod, Name, EquipType.Head);
 		}
 
-		public override void SafeSetDefaults()
+		public override void SetVanityDefaults()
 		{
 			if (Main.netMode == NetmodeID.Server)
 				return;

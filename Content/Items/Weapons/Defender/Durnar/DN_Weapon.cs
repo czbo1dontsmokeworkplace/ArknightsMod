@@ -1,6 +1,4 @@
-using ArknightsMod.Content.Items.Armor.Defender.Beagle.Armor;
 using ArknightsMod.Content.Items.Material.T3;
-using ArknightsMod.Content.Projectiles.Defender.Beagle;
 using ArknightsMod.Content.Projectiles.Defender.Durnar;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;

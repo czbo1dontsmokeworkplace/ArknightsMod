@@ -8,7 +8,7 @@ using ArknightsMod.Common;
 namespace ArknightsMod.Content.Items.Armor.Caster.Mostima
 {
     [AutoloadEquip(EquipType.Head)]
-    public class MostimaHead : ArknightsVanityHead
+    public class MostimaHead : NeoArmorHead
     {
 		public override int Rarity => 6;
 		public override bool IsArmorSet(Item head, Item body, Item legs)

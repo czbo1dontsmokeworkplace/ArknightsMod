@@ -8,7 +8,7 @@ using ArknightsMod.Common;
 namespace ArknightsMod.Content.Items.Armor.Vanguard.Bagpipe
 {
 	[AutoloadEquip(EquipType.Head)]
-	public class BagpipeHead : ArknightsVanityHead
+	public class BagpipeHead : NeoArmorHead
 	{
 		public override int Rarity => 6;
 		internal class BagpipeHeadLayer : PlayerDrawLayer

@@ -1,31 +1,36 @@
-using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
 using Terraria;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria.DataStructures;
-using ArknightsMod.Common;
+using Terraria.ID;
+using Terraria.ModLoader;
+using ArknightsMod.Content.Tiles.Infrastructure;
+using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Items.Material.T1;
+using ArknightsMod.Content.Items.Material.T2;
+using ArknightsMod.Content.Items.Material.T3;
+using ArknightsMod.Content.Items.Material.T4;
+using ArknightsMod.Content.Items.Material.T5;
 
 namespace ArknightsMod.Content.Items.Armor.Sniper.Exusiai
 {
-    [AutoloadEquip(EquipType.Body)]
-    public class ExusiaiBody : ArknightsVanityBody
-    {
+	[AutoloadEquip(EquipType.Body)]
+	public class ExusiaiBody : NeoArmorBody
+	{
 		public override int Rarity => 6;
-		internal class ExusiaiWingLayer : PlayerDrawLayer
-		{
-			public override Position GetDefaultPosition() => new BeforeParent(PlayerDrawLayers.Wings);
-			public override bool GetDefaultVisibility(PlayerDrawSet drawInfo) {
-				Item body = new(ModContent.ItemType<ExusiaiBody>());
-				return drawInfo.drawPlayer.body == body.bodySlot && !drawInfo.drawPlayer.dead;
-			}
+		public override int ArmorLifeBonus => 84;
 
-			protected override void Draw(ref PlayerDrawSet drawInfo) {
-
-				Texture2D texture = ModContent.Request<Texture2D>("ArknightsMod/Content/Items/Armor/Sniper/Exusiai/ExusiaiBody_Wing").Value;
-
-				var offset = new Vector2(1, -3) + new Vector2(-2, 8);
-				PlayerLayerHelper.AddPlayerDrawLayer(ref drawInfo, texture, 1, offset);
-			}
+		public override void SetArmorDefaults() {
+			Item.defense = 12;
 		}
-	} 
+		
+		public override void AddRecipes() {
+			CreateRecipe()
+			.AddIngredient<ExusiaiBody>(1)
+			.AddIngredient<Orundum>(60)
+			.AddIngredient<OptimizedDevice>(3)
+			.AddIngredient<OrironCluster>(4)
+			.AddTile(ModContent.TileType<FactoryTile>())
+			.AddCondition(NeoArmorUtils.NeedVanity)
+			.DisableDecraft()
+			.Register();
+		}
+	}
 }

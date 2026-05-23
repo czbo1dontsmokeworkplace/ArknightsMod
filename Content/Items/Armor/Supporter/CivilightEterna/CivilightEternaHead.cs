@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.Items.Armor.Supporter.CivilightEterna
 {
 	[AutoloadEquip(EquipType.Head)]
-	public class CivilightEternaHead: ArknightsVanityHead
+	public class CivilightEternaHead: NeoArmorHead
 	{
 		public override int Rarity => 6;
 

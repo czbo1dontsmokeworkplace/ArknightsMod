@@ -4,11 +4,8 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.Items.Armor.Sniper.Typhon
 {
 	[AutoloadEquip(EquipType.Legs)]
-	public class TyphonLegs : ArknightsVanityLegs
+	public class TyphonLegs : NeoArmorLegs
 	{
-		public override void SafeSetDefaults()
-		{
-			Item.rare = ItemRarityID.Red;
-		}
+		public override int Rarity => 6;
 	}
 }

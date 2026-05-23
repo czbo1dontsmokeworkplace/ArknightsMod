@@ -2,7 +2,7 @@ using ArknightsMod.Content.Items.Weapons.Sniper.Exusiai;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace ArknightsMod.Content.Items.Armor.Sniper.Exusiai.Armor
+namespace ArknightsMod.Content.Items.Armor.Sniper.Exusiai
 {
 	public class ExusiaiSetPlayer : ArknightsArmorPlayer
 	{

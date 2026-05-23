@@ -4,12 +4,10 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.Items.Armor.Specialist.Dorothy
 {
 	[AutoloadEquip(EquipType.Body)]
-	public class DorothyBody : ArknightsVanityBody
+	public class DorothyBody : NeoArmorBody
 	{
 		public override int Rarity => 6;
 		public override void Load() {
-		}
-		public override void UpdateEquip(Player player) {
 		}
 	}
 }

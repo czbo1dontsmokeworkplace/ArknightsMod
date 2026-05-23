@@ -8,7 +8,7 @@ using ArknightsMod.Common;
 namespace ArknightsMod.Content.Items.Armor.Caster.Mostima
 {
     [AutoloadEquip(EquipType.Body)]
-    public class MostimaBody : ArknightsVanityBody
+    public class MostimaBody : NeoArmorBody
     {
 		public override int Rarity => 6;
 		internal class MostimaWingLayer : PlayerDrawLayer

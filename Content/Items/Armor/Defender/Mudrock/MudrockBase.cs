@@ -8,12 +8,12 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.Items.Armor.Defender.Mudrock
 {
 	[AutoloadEquip(EquipType.Head)]
-	internal class MudrockHelmet : ArknightsVanityHead {
+	internal class MudrockHelmet : NeoArmorHead {
 		public override int Rarity => 6;
 	}
 
 	[AutoloadEquip(EquipType.Body)]
-	internal class MudrockChestplate : ArknightsVanityBody
+	internal class MudrockChestplate : NeoArmorBody
 	{
 		public override int Rarity => 6;
 		internal class MudrockChestplate_EX : PlayerDrawLayer

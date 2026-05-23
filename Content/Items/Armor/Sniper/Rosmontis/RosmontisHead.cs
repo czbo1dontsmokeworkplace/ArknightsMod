@@ -4,13 +4,10 @@ using Terraria;
 namespace ArknightsMod.Content.Items.Armor.Sniper.Rosmontis
 {
     [AutoloadEquip(EquipType.Head)]
-    public class RosmontisHead : ArknightsVanityHead
+    public class RosmontisHead : NeoArmorHead
     {
 		public override int Rarity => 6;
 		public override void Load()
-        {
-        }
-        public override void UpdateEquip(Player player)
         {
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)

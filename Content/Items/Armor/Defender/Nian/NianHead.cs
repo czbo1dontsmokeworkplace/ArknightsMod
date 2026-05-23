@@ -4,7 +4,7 @@ using Terraria;
 namespace ArknightsMod.Content.Items.Armor.Defender.Nian
 {
 	[AutoloadEquip(EquipType.Head)]
-	public class NianHead : ArknightsVanityHead
+	public class NianHead : NeoArmorHead
 	{
 		public override int Rarity => 6;
 		public override int Value => 560000;

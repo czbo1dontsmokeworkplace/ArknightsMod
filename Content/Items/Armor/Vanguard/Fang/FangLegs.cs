@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.Items.Armor.Vanguard.Fang
 {
     [AutoloadEquip(EquipType.Legs)]
-    public class FangLegs : ArknightsVanityLegs
+    public class FangLegs : NeoArmorLegs
     {
         public override int Rarity => 3;
     }

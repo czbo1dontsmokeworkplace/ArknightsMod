@@ -4,14 +4,11 @@ using Terraria;
 namespace ArknightsMod.Content.Items.Armor.Medic.Warfarin
 {
     [AutoloadEquip(EquipType.Body)]
-    public class WarfarinBody : ArknightsVanityBody
+    public class WarfarinBody : NeoArmorBody
     {
 		public override int Rarity => 5;
 		public override void Load()
         {
 		}
-        public override void UpdateEquip(Player player)
-        {
-        }
     } 
 }

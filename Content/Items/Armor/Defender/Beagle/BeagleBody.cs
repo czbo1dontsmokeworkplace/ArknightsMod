@@ -1,18 +1,33 @@
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
+using ArknightsMod.Content.Tiles.Infrastructure;
+using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Items.Material.T1;
+using ArknightsMod.Content.Items.Material.T2;
+using ArknightsMod.Content.Items.Material.T3;
+using ArknightsMod.Content.Items.Material.T4;
+using ArknightsMod.Content.Items.Material.T5;
 
 namespace ArknightsMod.Content.Items.Armor.Defender.Beagle
 {
 	[AutoloadEquip(EquipType.Body)]
-	public class BeagleBody : ArknightsVanityBody
+	public class BeagleBody : NeoArmorBody
 	{
-		public override int Rarity =>3;
-		public override int Value => 560000;
-		public override void Load() {
-
+		public override int Rarity => 3;
+		public override int ArmorLifeBonus => 102;
+		public override void SetArmorDefaults() {
+			Item.defense = 37;
 		}
-		public override void UpdateEquip(Player player)
-		{
+		public override void AddRecipes() {
+			CreateRecipe()
+			.AddIngredient<BeagleBody>(1)
+			.AddIngredient<Orundum>(30)
+			.AddIngredient<OrirockCube>(3)
+			.AddTile(ModContent.TileType<FactoryTile>())
+			.AddCondition(NeoArmorUtils.NeedVanity)
+			.DisableDecraft()
+			.Register();
 		}
-    }
+	}
 }

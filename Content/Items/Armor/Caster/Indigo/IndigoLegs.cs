@@ -4,12 +4,8 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.Items.Armor.Caster.Indigo
 {
 	[AutoloadEquip(EquipType.Legs)]
-	public class IndigoLegs : ArknightsVanityLegs
+	public class IndigoLegs : NeoArmorLegs
 	{
 		public override int Rarity => 4;
-
-		public override void UpdateEquip(Player player)
-		{
-		}
 	}
 }

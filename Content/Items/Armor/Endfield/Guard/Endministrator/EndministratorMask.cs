@@ -34,7 +34,7 @@ namespace ArknightsMod.Content.Items.Armor.Endfield.Guard.Endministrator
 		{
 			Item.width = 28;
 			Item.height = 28;
-			Item.rare = ArknightsVanityHead.GetRarity(Rarity);
+			Item.rare = NeoArmorHead.GetRarity(Rarity);
 			Item.value = Value;
 			Item.accessory = true;
 			Item.vanity = true;

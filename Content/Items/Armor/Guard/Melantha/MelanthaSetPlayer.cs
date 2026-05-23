@@ -1,7 +1,7 @@
 using Terraria;
 using Terraria.ModLoader;
 
-namespace ArknightsMod.Content.Items.Armor.Guard.Melantha.Armor
+namespace ArknightsMod.Content.Items.Armor.Guard.Melantha
 {
 	internal class MelanthaSetPlayer : ArknightsArmorPlayer
 	{

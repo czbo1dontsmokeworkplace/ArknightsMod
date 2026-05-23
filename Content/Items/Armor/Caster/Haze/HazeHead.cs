@@ -4,7 +4,7 @@ using Terraria;
 namespace ArknightsMod.Content.Items.Armor.Caster.Haze
 {
     [AutoloadEquip(EquipType.Head)]
-    public class HazeHead : ArknightsVanityHead
+    public class HazeHead : NeoArmorHead
     {
 		public override int Rarity => 4;
 		public override bool IsArmorSet(Item head, Item body, Item legs)

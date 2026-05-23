@@ -4,13 +4,10 @@ using Terraria;
 namespace ArknightsMod.Content.Items.Armor.Medic.Kaltsit
 {
     [AutoloadEquip(EquipType.Legs)]
-    public class KaltsitLegs : ArknightsVanityLegs
+    public class KaltsitLegs : NeoArmorLegs
     {
 		public override int Rarity => 6;
 		public override void Load()
-        {
-        }
-        public override void UpdateEquip(Player player)
         {
         }
     } 

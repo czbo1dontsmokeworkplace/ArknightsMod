@@ -8,7 +8,7 @@ using ArknightsMod.Common;
 namespace ArknightsMod.Content.Items.Armor.Guard.Lappland
 {
 	[AutoloadEquip(EquipType.Head)]
-	internal class LapplandHead:ArknightsVanityHead
+	internal class LapplandHead:NeoArmorHead
 	{
 		public override int Rarity => 5;
 		internal class LapplandHeadLayer : PlayerDrawLayer

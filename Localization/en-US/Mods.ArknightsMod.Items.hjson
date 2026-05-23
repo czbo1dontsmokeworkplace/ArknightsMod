@@ -2878,3 +2878,8 @@ WaterItem: {
 	DisplayName: Water Item
 	Tooltip: ""
 }
+
+ArmorOblivionisHead: {
+	DisplayName: Armor Oblivionis Head
+	Tooltip: ""
+}

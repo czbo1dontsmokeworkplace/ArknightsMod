@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace ArknightsMod.Content.Items.Armor.Sniper.KroosAlter.Armor
+namespace ArknightsMod.Content.Items.Armor.Sniper.KroosAlter
 {
 	internal class KkdyAlterSetPlayer: ArknightsArmorPlayer
 	{

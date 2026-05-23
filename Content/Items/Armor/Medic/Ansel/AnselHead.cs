@@ -8,7 +8,7 @@ using ArknightsMod.Common;
 namespace ArknightsMod.Content.Items.Armor.Medic.Ansel
 {
     [AutoloadEquip(EquipType.Head)]
-    public class AnselHead : ArknightsVanityHead
+    public class AnselHead : NeoArmorHead
     {
         public override int Rarity => 3;
         internal class AnselHeadLayer : PlayerDrawLayer

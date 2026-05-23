@@ -4,11 +4,8 @@ using Terraria;
 namespace ArknightsMod.Content.Items.Armor.Sniper.Melanite
 {
     [AutoloadEquip(EquipType.Legs)]
-    public class MelaniteLegs : ArknightsVanityLegs
+    public class MelaniteLegs : NeoArmorLegs
 	{
 		public override int Rarity => 5;
-		public override void UpdateEquip(Player player)
-        {
-        }
     } 
 }

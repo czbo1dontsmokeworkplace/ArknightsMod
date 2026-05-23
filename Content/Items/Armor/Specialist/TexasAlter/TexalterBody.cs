@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.Items.Armor.Specialist.TexasAlter
 {
 	[AutoloadEquip(EquipType.Body)]
-	public class TexalterBody : ArknightsVanityBody
+	public class TexalterBody : NeoArmorBody
 	{
 		public override int Rarity => 6;
 		public override void Load() {
@@ -14,7 +14,7 @@ namespace ArknightsMod.Content.Items.Armor.Specialist.TexasAlter
 
 			EquipLoader.AddEquipTexture(Mod, $"{Texture}_{EquipType.Back}", EquipType.Back, this);
 		}
-		public override void SafeSetStaticDefaults()
+		public override void SetStaticDefaultsNoServer()
 		{
 			if (Main.netMode == NetmodeID.Server)
 				return;

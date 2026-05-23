@@ -3,12 +3,10 @@ using Terraria;
 namespace ArknightsMod.Content.Items.Armor.Sniper.Fiammetta
 {
 	[AutoloadEquip(EquipType.Head)]
-	public class FiammettaHead : ArknightsVanityHead
+	public class FiammettaHead : NeoArmorHead
 	{
 		public override int Rarity => 6;
 		public override void Load() {
-		}
-		public override void UpdateEquip(Player player) {
 		}
 		public override bool IsArmorSet(Item head, Item body, Item legs)
 		{
