@@ -9,24 +9,24 @@ using ArknightsMod.Content.Items.Material.T3;
 using ArknightsMod.Content.Items.Material.T4;
 using ArknightsMod.Content.Items.Material.T5;
 
-namespace ArknightsMod.Content.Items.Armor.{class}.{name_en}
+namespace ArknightsMod.Content.Items.Armor.Supporter.Deepcolor
 {
-	[AutoloadEquip(EquipType.Body)]
-	public class {name_en}Body : NeoArmorBody
+	[AutoloadEquip(EquipType.Legs)]
+	public class DeepcolorLegs : NeoArmorLegs
 	{
-		public override int Rarity => {rarity};
-		public override int ArmorLifeBonus => {body_life};
-
-		public override void SetArmorDefaults() {
-			Item.defense = {body_defense};
-		}
+		public override int Rarity => 4;
+		public override int ArmorLifeBonus => 52;
 		
+		public override void SetArmorDefaults() {
+			Item.defense = 3;
+		}
+
 		public override void AddRecipes() {
 			CreateRecipe()
-			.AddIngredient<{name_en}Body>(1)
-			.AddIngredient<Orundum>({rarity*10})
-
-			.AddIngredient<{body_materials.item}>({body_materials.amount})
+			.AddIngredient<DeepcolorLegs>(1)
+			.AddIngredient<Orundum>(40)
+			.AddIngredient<Oriron>(2)
+			.AddIngredient<Aketon>(3)
 			.AddTile(ModContent.TileType<FactoryTile>())
 			.AddCondition(NeoArmorUtils.NeedVanity)
 			.DisableDecraft()

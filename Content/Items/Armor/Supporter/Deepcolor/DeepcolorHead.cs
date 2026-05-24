@@ -9,13 +9,13 @@ using ArknightsMod.Content.Items.Material.T3;
 using ArknightsMod.Content.Items.Material.T4;
 using ArknightsMod.Content.Items.Material.T5;
 
-namespace ArknightsMod.Content.Items.Armor.{class}.{name_en}
+namespace ArknightsMod.Content.Items.Armor.Supporter.Deepcolor
 {
 	[AutoloadEquip(EquipType.Head)]
-	public class {name_en}Head : NeoArmorHead
+	public class DeepcolorHead : NeoArmorHead
 	{
-		public override int Rarity => {rarity};
-		public override int ArmorLifeBonus => {head_life};
+		public override int Rarity => 4;
+		public override int ArmorLifeBonus => 105;
 		
 		public override void Load() {
 			if (Main.netMode == NetmodeID.Server)
@@ -23,12 +23,12 @@ namespace ArknightsMod.Content.Items.Armor.{class}.{name_en}
 		}
 
 		public override void SetArmorDefaults() {
-			Item.defense = {head_defense};
+			Item.defense = 0;
 		}
 		
 		public override bool IsArmorSet(Item head, Item body, Item legs) {
-			return body.type == ModContent.ItemType<{name_en}Body>() && body.neoarmor().hasUpgraded &&
-				legs.type == ModContent.ItemType<{name_en}Legs>() && legs.neoarmor().hasUpgraded;
+			return body.type == ModContent.ItemType<DeepcolorBody>() && body.neoarmor().hasUpgraded &&
+				legs.type == ModContent.ItemType<DeepcolorLegs>() && legs.neoarmor().hasUpgraded;
 		}
 
 		public override void UpdateArmorSet(Player player) {
@@ -37,10 +37,10 @@ namespace ArknightsMod.Content.Items.Armor.{class}.{name_en}
 
 		public override void AddRecipes() {
 			CreateRecipe()
-			.AddIngredient<{name_en}Head>(1)
-			.AddIngredient<Orundum>({rarity*10})
-
-			.AddIngredient<{head_materials.item}>({head_materials.amount})
+			.AddIngredient<DeepcolorHead>(1)
+			.AddIngredient<Orundum>(40)
+			.AddIngredient<Device>(1)
+			.AddIngredient<ManganeseOre>(9)
 			.AddTile(ModContent.TileType<FactoryTile>())
 			.AddCondition(NeoArmorUtils.NeedVanity)
 			.DisableDecraft()
