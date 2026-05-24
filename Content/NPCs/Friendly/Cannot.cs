@@ -11,7 +11,9 @@ using System.IO;
 using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
+using Terraria.GameContent.UI;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -134,10 +136,9 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			return Language.GetTextValue($"Mods.ArknightsMod.Dialogue.Cannot.Dialogue{rand}");
 		}
 
-		public override void SetChatButtons(ref string button, ref string button2) {
-			button = this.GetLocalizedValue("Buttons.Shop");
-			button2 = this.GetLocalizedValue("Buttons.Touch");
-
+		public override void RegisterChatButtons(NPCInteractionList interactions) {
+			interactions.Append(NPCInteractions.Shop());
+			interactions.Append(new TouchButton());
 		}
 
 		public void TrySpawnReinforcements(Player target) {
@@ -308,6 +309,25 @@ namespace ArknightsMod.Content.NPCs.Friendly
 				NetMessage.SendStrikeNPC(NPC, hit);
 		}
 
+		public class TouchButton : NPCInteraction {
+			public override string GetText() => Language.GetTextValue("Mods.ArknightsMod.NPCs.Cannot.Buttons.Touch");
+			public override bool Condition() => true;
+			public override void Interact() {
+				if (TalkNPC.ModNPC is Cannot cannot) {
+					if (Isnpcexist) {
+						Main.npcChatText = Language.GetTextValue("Mods.ArknightsMod.Dialogue.Cannot.Touchcd");
+					}
+					else {
+						cannot.TouchCount++;
+						Main.LocalPlayer.GetModPlayer<CannotAggroPlayer>().AcknowledgeCannotTouchGoodsDialogue();
+						cannot.TrySpawnReinforcements(Main.LocalPlayer);
+						if (cannot.TouchCount < 5)
+							Main.npcChatText = Language.GetTextValue($"Mods.ArknightsMod.Dialogue.Cannot.Touch{cannot.TouchCount}");
+					}
+				}
+			}
+		}
+
 		public override LocalizedText DeathMessage => Language.GetText("Mods.ArknightsMod.NPCs.Cannot.DeathMessage.Runaway");
 
 		public override bool ModifyDeathMessage(ref NetworkText customText, ref Color color) {
@@ -321,25 +341,6 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
 			npcLoot.Add(ItemDropRule.ByCondition(new CannotDead(), ModContent.ItemType<OriginiumIngot>(), 1, 2, 3));
 			npcLoot.Add(new Cannot_DorpCollection());
-		}
-
-		public override void OnChatButtonClicked(bool firstButton, ref string shop) {
-			if (firstButton) {
-				shop = ShopName;
-				return;
-			}
-			else {
-				if (Isnpcexist) {
-					Main.npcChatText = Language.GetTextValue("Mods.ArknightsMod.Dialogue.Cannot.Touchcd");
-				}
-				else {
-					TouchCount++;
-					Main.LocalPlayer.GetModPlayer<CannotAggroPlayer>().AcknowledgeCannotTouchGoodsDialogue();
-					TrySpawnReinforcements(Main.LocalPlayer);
-					if (TouchCount < 5)
-						Main.npcChatText = Language.GetTextValue($"Mods.ArknightsMod.Dialogue.Cannot.Touch{TouchCount}");
-				}
-			}
 		}
 
 		public override void AddShops() {

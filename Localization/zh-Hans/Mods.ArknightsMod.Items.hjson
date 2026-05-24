@@ -3245,3 +3245,18 @@ ArmorOblivionisHead: {
 	// DisplayName: Armor Oblivionis Head
 	// Tooltip: ""
 }
+
+DeepcolorBody: {
+	// DisplayName: Deepcolor Body
+	// Tooltip: ""
+}
+
+DeepcolorHead: {
+	// DisplayName: Deepcolor Head
+	// Tooltip: ""
+}
+
+DeepcolorLegs: {
+	// DisplayName: Deepcolor Legs
+	// Tooltip: ""
+}
