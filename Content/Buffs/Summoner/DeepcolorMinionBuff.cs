@@ -1,4 +1,4 @@
-using ArknightsMod.Content.Projectiles.Summoner;
+using ArknightsMod.Content.Projectiles.Supporter.Deepcolor;
 using Terraria;
 using Terraria.ModLoader;
 

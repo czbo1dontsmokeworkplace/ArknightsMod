@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using ArknightsMod.Common.GlobalProjectiles;
 using ArknightsMod.Content.Buffs.Summoner;
-using ArknightsMod.Content.Items.Weapons.Summoner;
+using ArknightsMod.Content.Items.Weapons.Supporter.Deepcolor;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -12,7 +12,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace ArknightsMod.Content.Projectiles.Summoner
+namespace ArknightsMod.Content.Projectiles.Supporter.Deepcolor
 {
 	// 塔防式固定召唤物
 	public class DeepcolorMinion : ModProjectile
@@ -35,7 +35,6 @@ namespace ArknightsMod.Content.Projectiles.Summoner
 		private const int AttackDrawExtendRight = 12;
 		private const int AttackDrawCullingPadding = 192;
 
-		public override string Texture => $"{nameof(ArknightsMod)}/Content/Items/Weapons/Summoner/DeepcolorMinion";
 		private ref float IdleAnimTimer => ref Projectile.ai[0];
 		private ref float AttackAnimTimer => ref Projectile.ai[1];
 		private ref float AttackCooldownTimer => ref Projectile.ai[2];

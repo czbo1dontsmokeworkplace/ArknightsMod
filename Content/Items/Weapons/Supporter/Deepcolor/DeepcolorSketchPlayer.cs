@@ -1,7 +1,7 @@
 using Terraria;
 using Terraria.ModLoader;
 
-namespace ArknightsMod.Content.Items.Weapons.Summoner
+namespace ArknightsMod.Content.Items.Weapons.Supporter.Deepcolor
 {
 	public class DeepcolorSketchPlayer : ModPlayer
 	{

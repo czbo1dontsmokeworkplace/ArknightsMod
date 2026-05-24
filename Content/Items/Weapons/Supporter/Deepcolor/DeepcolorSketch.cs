@@ -1,6 +1,5 @@
 using ArknightsMod.Content.Buffs.Summoner;
-using ArknightsMod.Content.Items.Weapons;
-using ArknightsMod.Content.Projectiles.Summoner;
+using ArknightsMod.Content.Projectiles.Supporter.Deepcolor;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -9,7 +8,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace ArknightsMod.Content.Items.Weapons.Summoner
+namespace ArknightsMod.Content.Items.Weapons.Supporter.Deepcolor
 {
 	public class DeepcolorSketch : UpgradeWeaponBase
 	{

@@ -1,5 +1,3 @@
-using ArknightsMod.Content.Items.Weapons.Summoner;
-using ArknightsMod.Content.Projectiles.Summoner;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -12,6 +10,8 @@ using Terraria.ModLoader;
 using Terraria.DataStructures;
 using Terraria.ModLoader.IO;
 using Terraria.UI.Chat;
+using ArknightsMod.Content.Items.Weapons.Supporter.Deepcolor;
+using ArknightsMod.Content.Projectiles.Supporter.Deepcolor;
 
 namespace ArknightsMod.Common.GlobalProjectiles
 {
