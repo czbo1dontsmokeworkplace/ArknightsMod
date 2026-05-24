@@ -1410,10 +1410,10 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		public override void AI() {
 			var newSource = Projectile.GetSource_FromThis();
 			timer++;
+			// Missle 弹幕贴图缺失，暂时停用召唤
 			if (missled != true) {
 				randomx = Main.rand.NextFloat(-300, 300);
-
-				Projectile.NewProjectile(newSource, Projectile.Center.X + randomx, Projectile.Center.Y - 1800, -randomx / 60, 0, ProjectileType<Missle>(), 15, 0f, 0, 0);
+				// Projectile.NewProjectile(newSource, Projectile.Center.X + randomx, Projectile.Center.Y - 1800, -randomx / 60, 0, ProjectileType<Missle>(), 15, 0f, 0, 0);
 				missled = true;
 			}
 
@@ -1492,7 +1492,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 			if (missled != true) {
 				randomx = Main.rand.NextFloat(-300, 300);
 
-				Projectile.NewProjectile(newSource, Projectile.Center.X + randomx, Projectile.Center.Y - 1800, -randomx / 60, 0, ProjectileType<MisslePro>(), 20, 0f, 0, 0);
+				// Projectile.NewProjectile(newSource, Projectile.Center.X + randomx, Projectile.Center.Y - 1800, -randomx / 60, 0, ProjectileType<MisslePro>(), 20, 0f, 0, 0);
 				missled = true;
 			}
 
@@ -2265,6 +2265,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		}
 	}
 
+	[Autoload(false)] // 贴图缺失，且已停用生成；恢复时删除此特性并补全 Missle.png
 	public class Missle : ModProjectile
 	{
 		public override void SetStaticDefaults() {
@@ -2311,6 +2312,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		}
 	}
 
+	[Autoload(false)] // 贴图缺失，且已停用生成；恢复时删除此特性并补全 MisslePro.png
 	public class MisslePro : ModProjectile
 	{
 		public override void SetStaticDefaults() {

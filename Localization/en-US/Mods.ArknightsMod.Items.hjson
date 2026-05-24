@@ -24,6 +24,11 @@ DurinWand: {
 	Tooltip: She looks quite sleepy.
 }
 
+DeepcolorSketch: {
+	DisplayName: Deepcolor's Sketch
+	Tooltip: Summons tentacles to fight for you.
+}
+
 _12FWand: {
 	DisplayName: 12F's wand
 	Tooltip: So, when can I get a skin.

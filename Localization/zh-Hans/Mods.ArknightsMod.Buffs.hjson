@@ -1,3 +1,8 @@
+DeepcolorMinionBuff: {
+	DisplayName: 触手
+	Description: 触手正在为你作战
+}
+
 AcidOgSlugDebuff: {
 	DisplayName: 分泌物腐蚀
 	Description: 击中目标后使其防御力减少2

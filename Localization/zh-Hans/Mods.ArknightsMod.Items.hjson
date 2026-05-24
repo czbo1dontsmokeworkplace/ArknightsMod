@@ -26,6 +26,11 @@ DurinWand: {
 	Tooltip: 她看起来十分困乏
 }
 
+DeepcolorSketch: {
+	DisplayName: 深海色的速写
+	Tooltip: 召唤触手协助作战
+}
+
 _12FWand: {
 	DisplayName: 12F的法杖
 	Tooltip: 终末地的我，再强大也不是海猫亲生的
