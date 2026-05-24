@@ -1,6 +1,6 @@
-using ArknightsMod.Content.Buffs.Summoner;
+using ArknightsMod.Content.Buffs.Supporter.Deepcolor;
 using ArknightsMod.Content.Items.Weapons;
-using ArknightsMod.Content.Projectiles.Summoner;
+using ArknightsMod.Content.Projectiles.Supporter.Deepcolor;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -9,7 +9,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace ArknightsMod.Content.Items.Weapons.Summoner
+namespace ArknightsMod.Content.Items.Weapons.Supporter.Deepcolor
 {
 	public class DeepcolorSketch : UpgradeWeaponBase
 	{
@@ -24,7 +24,7 @@ namespace ArknightsMod.Content.Items.Weapons.Summoner
 
 		public override void SetDefaults() {
 			Item.maxStack = 1;
-			Item.damage = 14;
+			Item.damage = 46;
 			Item.DamageType = DamageClass.Summon;
 			Item.mana = 10;
 			Item.width = 32;
@@ -47,19 +47,21 @@ namespace ArknightsMod.Content.Items.Weapons.Summoner
 		public override bool AltFunctionUse(Player player) => true;
 
 		public override bool CanUseItem(Player player) {
-			if (Main.myPlayer != player.whoAmI)
-				return base.CanUseItem(player);
-
-			var modPlayer = player.GetModPlayer<WeaponPlayer>();
 			if (player.altFunctionUse == 2) {
-				if (modPlayer.StockCount > 0 && !modPlayer.SkillActive) {
-					modPlayer.SkillActive = true;
-					modPlayer.SkillTimer = 0;
-					modPlayer.DelStockCount();
-					SoundEngine.PlaySound(SkillActiveSound, player.Center);
+				if (Main.myPlayer == player.whoAmI) {
+					var modPlayer = player.GetModPlayer<WeaponPlayer>();
+					if (modPlayer.StockCount > 0 && !modPlayer.SkillActive) {
+						modPlayer.SkillActive = true;
+						modPlayer.SkillTimer = 0;
+						modPlayer.DelStockCount();
+						SoundEngine.PlaySound(SkillActiveSound, player.Center);
+					}
 				}
 				return false;
 			}
+
+			if (!player.GetModPlayer<DeepcolorSketchPlayer>().CanRedeploy)
+				return false;
 
 			return base.CanUseItem(player);
 		}
@@ -71,6 +73,7 @@ namespace ArknightsMod.Content.Items.Weapons.Summoner
 			player.AddBuff(Item.buffType, 2);
 			Vector2 spawnPos = DeepcolorMinion.FindGroundSpawnPosition(Main.MouseWorld, DeepcolorMinion.FrameWidth, DeepcolorMinion.FrameHeight);
 			Projectile.NewProjectile(source, spawnPos, Vector2.Zero, type, damage, knockback, player.whoAmI);
+			player.GetModPlayer<DeepcolorSketchPlayer>().StartRedeployCooldown();
 			return false;
 		}
 	}

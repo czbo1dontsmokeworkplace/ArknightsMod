@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using ArknightsMod.Common.GlobalProjectiles;
-using ArknightsMod.Content.Buffs.Summoner;
-using ArknightsMod.Content.Items.Weapons.Summoner;
+using ArknightsMod.Content.Buffs.Supporter.Deepcolor;
+using ArknightsMod.Content.Items.Weapons.Supporter.Deepcolor;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -12,7 +12,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace ArknightsMod.Content.Projectiles.Summoner
+namespace ArknightsMod.Content.Projectiles.Supporter.Deepcolor
 {
 	// 塔防式固定召唤物
 	public class DeepcolorMinion : ModProjectile
@@ -21,6 +21,8 @@ namespace ArknightsMod.Content.Projectiles.Summoner
 		public const int FrameWidth = 40;
 		public const int FrameHeight = 40;
 		public const int GroundOverlapPixels = 2;
+		// 仅补偿贴图帧底透明边，0 = 脚底对齐方块顶面
+		public const int VisualFootSinkPixels = 0;
 		public const int TotalFrameCount = 21;
 		public const int AttackFrameStart = 0;
 		public const int AttackFrameCount = 11;
@@ -35,7 +37,6 @@ namespace ArknightsMod.Content.Projectiles.Summoner
 		private const int AttackDrawExtendRight = 12;
 		private const int AttackDrawCullingPadding = 192;
 
-		public override string Texture => $"{nameof(ArknightsMod)}/Content/Items/Weapons/Summoner/DeepcolorMinion";
 		private ref float IdleAnimTimer => ref Projectile.ai[0];
 		private ref float AttackAnimTimer => ref Projectile.ai[1];
 		private ref float AttackCooldownTimer => ref Projectile.ai[2];
@@ -78,6 +79,7 @@ namespace ArknightsMod.Content.Projectiles.Summoner
 			life.life = life.lifeMax;
 			life.defense = DeepcolorMinionLifeGlobalProj.DefaultDefense;
 			life.drawHealthBar = true;
+			Projectile.Relocate().BeginStable(Projectile);
 		}
 
 		public static int CountActiveForPlayer(Player player) {
@@ -129,6 +131,9 @@ namespace ArknightsMod.Content.Projectiles.Summoner
 		public override bool? CanCutTiles() => false;
 
 		public override bool MinionContactDamage() {
+			if (Projectile.Relocate().IsTransitioning)
+				return false;
+
 			if (!IsAttacking || !HasTargetInAttackRange())
 				return false;
 
@@ -152,7 +157,18 @@ namespace ArknightsMod.Content.Projectiles.Summoner
 			}
 
 			Projectile.velocity = Vector2.Zero;
-			SnapToGround();
+			var relocate = Projectile.Relocate();
+
+			if (!relocate.IsTransitioning)
+				SnapToGround();
+
+			DeepcolorMinionRelocate.UpdateRelocate(Projectile, owner, IsAttacking);
+
+			if (relocate.IsTransitioning) {
+				if (!IsAttacking)
+					UpdateIdleAnimation();
+				return;
+			}
 
 			bool targetInRange = TryGetClosestTarget(owner, out Vector2 targetCenter);
 
@@ -269,17 +285,73 @@ namespace ArknightsMod.Content.Projectiles.Summoner
 
 		private static bool IsAttackFrame(int frame) => frame >= AttackFrameStart && frame < AttackFrameStart + AttackFrameCount;
 
-		public float VisualFootWorldY => Projectile.Bottom.Y + GroundOverlapPixels;
+		public float VisualFootWorldY => Projectile.Bottom.Y + VisualFootSinkPixels;
+
+		public static float GetGroundSurfaceY(float worldX, float searchFromWorldY) {
+			int tileX = (int)(worldX / 16f);
+			int startTileY = (int)((searchFromWorldY + 4f) / 16f);
+			tileX = Utils.Clamp(tileX, 1, Main.maxTilesX - 2);
+			startTileY = Utils.Clamp(startTileY, 1, Main.maxTilesY - 2);
+
+			for (int tileY = startTileY; tileY < Main.maxTilesY; tileY++) {
+				if (!WorldGen.SolidTile(tileX, tileY))
+					continue;
+				return tileY * 16f;
+			}
+
+			return searchFromWorldY;
+		}
+
+		public static bool TryGetStandTile(float worldX, float groundSurfaceY, out int tileX, out int tileY, out Tile tile) {
+			tileX = (int)(worldX / 16f);
+			tileY = (int)(groundSurfaceY / 16f);
+			tile = default;
+
+			if (!WorldGen.InWorld(tileX, tileY, 2))
+				return false;
+
+			tile = Main.tile[tileX, tileY];
+			if (tile.HasTile)
+				return true;
+
+			tileY++;
+			if (!WorldGen.InWorld(tileX, tileY, 2))
+				return false;
+
+			tile = Main.tile[tileX, tileY];
+			return tile.HasTile;
+		}
+
+		public static void SpawnTransitionDustSurface(float worldX, float groundSurfaceY) {
+			if (Main.netMode == NetmodeID.Server)
+				return;
+
+			if (!TryGetStandTile(worldX, groundSurfaceY, out int tileX, out int tileY, out Tile tile))
+				return;
+
+			int amount = WorldGen.KillTile_GetTileDustAmount(fail: true, tile, tileX, tileY);
+			amount = Math.Clamp(amount, 2, 5);
+
+			for (int i = 0; i < amount; i++)
+				WorldGen.KillTile_MakeTileDust(tileX, tileY, tile);
+		}
+
+		public static void SpawnGroundTileDust(float worldX, float groundSurfaceY) {
+			SpawnTransitionDustSurface(worldX, groundSurfaceY);
+		}
 
 		public override bool PreDraw(Player player, ref Color lightColor) {
+			var relocate = Projectile.Relocate();
 			Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
 			Rectangle source = new(0, Projectile.frame * FrameHeight, FrameWidth, FrameHeight);
 			SpriteEffects effects = SpriteEffects.None;
-			float footY = VisualFootWorldY + Projectile.gfxOffY;
+			float relocateOffset = relocate.RelocateVisualOffsetY;
+			float footY = VisualFootWorldY + relocateOffset + Projectile.gfxOffY;
 			Vector2 origin;
 			Vector2 drawPos;
 			Player owner = Main.player[Projectile.owner];
 			float drawScale = DeepcolorSketchSkills.VisualTrapActive(owner) ? DeepcolorSketchSkills.VisualTrapDrawScale : 1f;
+			float maskGroundY = relocate.AnchorGroundY;
 
 			// 攻击贴图向右伸出：用脚底左锚点绘制，避免中心锚点裁切右侧；向左攻击仍水平翻转
 			if (IsAttacking) {
@@ -302,8 +374,44 @@ namespace ArknightsMod.Content.Projectiles.Summoner
 				drawPos = new Vector2(Projectile.Center.X, footY) - Main.screenPosition;
 			}
 
+			if (relocate.IsTransitioning) {
+				if (!ApplyGroundMaskCrop(ref source, ref origin, ref drawPos, footY, maskGroundY, drawScale))
+					return false;
+			}
+
 			Main.EntitySpriteDraw(texture, drawPos, source, lightColor, Projectile.rotation, origin, drawScale, effects, 0);
 			return false;
+		}
+
+		// 整体平移 + 固定地面线裁切底部：没入时先消失根部，而非压缩贴图
+		private static bool ApplyGroundMaskCrop(
+			ref Rectangle source,
+			ref Vector2 origin,
+			ref Vector2 drawPos,
+			float footWorldY,
+			float maskGroundY,
+			float drawScale) {
+			float fullDrawHeight = source.Height * drawScale;
+			float hiddenBelowGround = Math.Max(0f, footWorldY - maskGroundY);
+
+			if (hiddenBelowGround <= 0.5f)
+				return true;
+
+			float visibleWorldHeight = fullDrawHeight - hiddenBelowGround;
+			if (visibleWorldHeight <= 0.5f)
+				return false;
+
+			int visibleSrcHeight = Math.Max(1, (int)MathF.Ceiling(visibleWorldHeight / drawScale));
+			visibleSrcHeight = Math.Min(visibleSrcHeight, source.Height);
+
+			// 保留帧顶部，裁掉没入地下的部分
+			source.Height = visibleSrcHeight;
+			origin.Y = visibleSrcHeight;
+
+			float visibleFootY = footWorldY - hiddenBelowGround;
+			drawPos.Y += visibleFootY - footWorldY;
+
+			return true;
 		}
 
 		private void SnapToGround() {

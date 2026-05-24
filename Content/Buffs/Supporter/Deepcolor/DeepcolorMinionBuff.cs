@@ -1,8 +1,8 @@
-using ArknightsMod.Content.Projectiles.Summoner;
+using ArknightsMod.Content.Projectiles.Supporter.Deepcolor;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace ArknightsMod.Content.Buffs.Summoner
+namespace ArknightsMod.Content.Buffs.Supporter.Deepcolor
 {
 	public class DeepcolorMinionBuff : ModBuff
 	{

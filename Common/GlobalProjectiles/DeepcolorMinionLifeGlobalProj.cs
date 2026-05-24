@@ -1,5 +1,5 @@
-using ArknightsMod.Content.Items.Weapons.Summoner;
-using ArknightsMod.Content.Projectiles.Summoner;
+using ArknightsMod.Content.Items.Weapons.Supporter.Deepcolor;
+using ArknightsMod.Content.Projectiles.Supporter.Deepcolor;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -18,7 +18,7 @@ namespace ArknightsMod.Common.GlobalProjectiles
 	// 为触手添加生命值和防御
 	public class DeepcolorMinionLifeGlobalProj : GlobalProjectile
 	{
-		public const int DefaultLifeMax = 100;
+		public const int DefaultLifeMax = 191;
 		public const int DefaultDefense = 10;
 		// 触手受伤间隔
 		public const int ReceiveDamageCooldownMax = 45;
@@ -47,6 +47,9 @@ namespace ArknightsMod.Common.GlobalProjectiles
 			if (!useLife || projectile.type != ModContent.ProjectileType<DeepcolorMinion>())
 				return;
 
+			if (projectile.Relocate().IsTransitioning)
+				return;
+
 			if (life < 0)
 				life = lifeMax;
 
@@ -66,21 +69,30 @@ namespace ArknightsMod.Common.GlobalProjectiles
 				dealContactCooldown--;
 
 			foreach (NPC npc in Main.ActiveNPCs) {
-				if (!npc.friendly && !npc.dontTakeDamage && projectile.Hitbox.Intersects(npc.Hitbox) && receiveCooldown <= 0) {
-					TakeDamage(projectile, npc.damage);
-					receiveCooldown = hitCooldown;
-					break;
-				}
+				if (!npc.active || npc.friendly || npc.dontTakeDamage)
+					continue;
+				if (!npc.CanBeChasedBy(owner))
+					continue;
+				if (!projectile.Hitbox.Intersects(npc.Hitbox) || receiveCooldown > 0)
+					continue;
+
+				TakeDamage(projectile, npc.damage);
+				receiveCooldown = hitCooldown;
+				break;
 			}
 
 			foreach (Projectile other in Main.ActiveProjectiles) {
-				if (other.whoAmI == projectile.whoAmI)
+				if (other.whoAmI == projectile.whoAmI || !other.active)
 					continue;
-				if ((other.hostile || !other.friendly) && projectile.Hitbox.Intersects(other.Hitbox) && receiveCooldown <= 0) {
-					TakeDamage(projectile, other.damage);
-					receiveCooldown = hitCooldown;
-					break;
-				}
+				// 仅敌对弹幕可伤触手；排除主人自己的特效/辅助弹幕（常设 friendly=false）
+				if (!other.hostile || other.owner == projectile.owner)
+					continue;
+				if (!projectile.Hitbox.Intersects(other.Hitbox) || receiveCooldown > 0)
+					continue;
+
+				TakeDamage(projectile, other.damage);
+				receiveCooldown = hitCooldown;
+				break;
 			}
 
 			if (life <= 0) {
@@ -126,6 +138,9 @@ namespace ArknightsMod.Common.GlobalProjectiles
 
 		public override void PostDraw(Projectile projectile, Player player, Color lightColor) {
 			if (!useLife || !drawHealthBar || projectile.type != ModContent.ProjectileType<DeepcolorMinion>())
+				return;
+
+			if (projectile.Relocate().IsTransitioning)
 				return;
 
 			if (Main.netMode == NetmodeID.Server)

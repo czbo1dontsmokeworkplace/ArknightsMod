@@ -1,11 +1,11 @@
 using System;
-using ArknightsMod.Content.Projectiles.Summoner;
+using ArknightsMod.Content.Projectiles.Supporter.Deepcolor;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace ArknightsMod.Content.Items.Weapons.Summoner
+namespace ArknightsMod.Content.Items.Weapons.Supporter.Deepcolor
 {
 	public static class DeepcolorSketchSkills
 	{
