@@ -738,10 +738,10 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		public override void AI() {
 			var newSource = Projectile.GetSource_FromThis();
 			timer++;
+			// Missle 弹幕贴图缺失，暂时停用召唤
 			if (missled != true) {
 				randomx = Main.rand.NextFloat(-300, 300);
-
-				Projectile.NewProjectile(newSource, Projectile.Center.X + randomx, Projectile.Center.Y - 1800, -randomx / 60, 0, ProjectileType<Missle>(), 10, 0f, 0, 0);
+				// Projectile.NewProjectile(newSource, Projectile.Center.X + randomx, Projectile.Center.Y - 1800, -randomx / 60, 0, ProjectileType<Missle>(), 10, 0f, 0, 0);
 				missled = true;
 			}
 
