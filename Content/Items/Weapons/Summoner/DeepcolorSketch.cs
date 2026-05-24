@@ -1,15 +1,27 @@
 using ArknightsMod.Content.Buffs.Summoner;
+using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.Projectiles.Summoner;
+using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Weapons.Summoner
 {
-	public class DeepcolorSketch : ModItem
+	public class DeepcolorSketch : UpgradeWeaponBase
 	{
+		private static SoundStyle SkillActiveSound;
+
+		public override void Load() {
+			SkillActiveSound = new SoundStyle("ArknightsMod/Sounds/SkillActive1") {
+				Volume = 0.4f,
+				MaxInstances = 4,
+			};
+		}
+
 		public override void SetDefaults() {
 			Item.maxStack = 1;
 			Item.damage = 14;
@@ -32,8 +44,27 @@ namespace ArknightsMod.Content.Items.Weapons.Summoner
 			Item.buffType = ModContent.BuffType<DeepcolorMinionBuff>();
 		}
 
+		public override bool AltFunctionUse(Player player) => true;
+
+		public override bool CanUseItem(Player player) {
+			if (Main.myPlayer != player.whoAmI)
+				return base.CanUseItem(player);
+
+			var modPlayer = player.GetModPlayer<WeaponPlayer>();
+			if (player.altFunctionUse == 2) {
+				if (modPlayer.StockCount > 0 && !modPlayer.SkillActive) {
+					modPlayer.SkillActive = true;
+					modPlayer.SkillTimer = 0;
+					modPlayer.DelStockCount();
+					SoundEngine.PlaySound(SkillActiveSound, player.Center);
+				}
+				return false;
+			}
+
+			return base.CanUseItem(player);
+		}
+
 		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
-			// 已满 4 只时，在新点击位置召唤并替换最早的一只
 			if (DeepcolorMinion.CountActiveForPlayer(player) >= DeepcolorMinion.MaxTentacles)
 				DeepcolorMinion.TryDespawnOldestForPlayer(player);
 

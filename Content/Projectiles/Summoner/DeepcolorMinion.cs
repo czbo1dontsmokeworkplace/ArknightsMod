@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using ArknightsMod.Common.GlobalProjectiles;
 using ArknightsMod.Content.Buffs.Summoner;
+using ArknightsMod.Content.Items.Weapons.Summoner;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -19,7 +20,6 @@ namespace ArknightsMod.Content.Projectiles.Summoner
 		public const int MaxTentacles = 4;
 		public const int FrameWidth = 40;
 		public const int FrameHeight = 40;
-		// 贴图底边相对地面顶面向下压入的像素
 		public const int GroundOverlapPixels = 2;
 		public const int TotalFrameCount = 21;
 		public const int AttackFrameStart = 0;
@@ -29,18 +29,13 @@ namespace ArknightsMod.Content.Projectiles.Summoner
 
 		private const int AttackTicksPerFrame = 3;
 		private const int IdleTicksPerFrame = 6;
-		// 左右各约 2.5 格
-		private const float AttackRangeHorizontalPx = 40f;
-		// 向上约 3 格；不索敌下方
-		private const float AttackRangeUpPx = 48f;
+		// 半圆弧索敌基础半径；二技能再 +4 格
+		public const float BaseAttackRangeRadiusPx = 48f;
 		private const int AttackCooldownMax = 45;
-		// 攻击帧向右伸出时的额外绘制边距
 		private const int AttackDrawExtendRight = 12;
-		private const int AttackDrawCullingPadding = 128;
+		private const int AttackDrawCullingPadding = 192;
 
 		public override string Texture => $"{nameof(ArknightsMod)}/Content/Items/Weapons/Summoner/DeepcolorMinion";
-
-		// Projectile.ai 仅 3 格（maxAI=3），不可使用 ai[3]
 		private ref float IdleAnimTimer => ref Projectile.ai[0];
 		private ref float AttackAnimTimer => ref Projectile.ai[1];
 		private ref float AttackCooldownTimer => ref Projectile.ai[2];
@@ -137,7 +132,16 @@ namespace ArknightsMod.Content.Projectiles.Summoner
 			if (!IsAttacking || !HasTargetInAttackRange())
 				return false;
 
+			if (!Projectile.CanDealContactDamage())
+				return false;
+
 			return Projectile.frame is >= AttackFrameStart + 4 and <= AttackFrameStart + 7;
+		}
+
+		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
+			Projectile.SetDealContactCooldown();
+			// 与召唤主共用免疫槽，避免贴脸时同帧多次结算
+			target.immune[Projectile.owner] = DeepcolorMinionLifeGlobalProj.DealContactDamageCooldownMax;
 		}
 
 		public override void AI() {
@@ -173,24 +177,19 @@ namespace ArknightsMod.Content.Projectiles.Summoner
 			return owner.HasBuff<DeepcolorMinionBuff>();
 		}
 
-		// 仅左、右与上方短距索敌，不攻击下方目标
+		// 左—上—右半圆弧内索敌，不攻击正下方
 		public bool IsInAttackRange(NPC npc) {
 			if (!npc.CanBeChasedBy(Projectile))
 				return false;
 
-			float dx = npc.Center.X - Projectile.Center.X;
-			float dy = npc.Center.Y - Projectile.Center.Y;
+			Player owner = Main.player[Projectile.owner];
+			return DeepcolorSketchSkills.IsInAttackRangeAt(Projectile, npc.Center, owner);
+		}
 
-			if (dy > 2f)
-				return false;
-
-			if (Math.Abs(dx) > AttackRangeHorizontalPx)
-				return false;
-
-			if (-dy > AttackRangeUpPx)
-				return false;
-
-			return true;
+		public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) {
+			Player owner = Main.player[Projectile.owner];
+			if (DeepcolorSketchSkills.ShadowTentacleActive(owner))
+				modifiers.SourceDamage.Base *= DeepcolorSketchSkills.ShadowTentacleDamageMult;
 		}
 
 		private bool HasTargetInAttackRange() {
@@ -279,6 +278,8 @@ namespace ArknightsMod.Content.Projectiles.Summoner
 			float footY = VisualFootWorldY + Projectile.gfxOffY;
 			Vector2 origin;
 			Vector2 drawPos;
+			Player owner = Main.player[Projectile.owner];
+			float drawScale = DeepcolorSketchSkills.VisualTrapActive(owner) ? DeepcolorSketchSkills.VisualTrapDrawScale : 1f;
 
 			// 攻击贴图向右伸出：用脚底左锚点绘制，避免中心锚点裁切右侧；向左攻击仍水平翻转
 			if (IsAttacking) {
@@ -301,7 +302,7 @@ namespace ArknightsMod.Content.Projectiles.Summoner
 				drawPos = new Vector2(Projectile.Center.X, footY) - Main.screenPosition;
 			}
 
-			Main.EntitySpriteDraw(texture, drawPos, source, lightColor, Projectile.rotation, origin, 1f, effects, 0);
+			Main.EntitySpriteDraw(texture, drawPos, source, lightColor, Projectile.rotation, origin, drawScale, effects, 0);
 			return false;
 		}
 

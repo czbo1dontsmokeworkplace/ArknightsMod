@@ -406,3 +406,23 @@ DN_Weapon: {
 		// Desc: Mods.ArknightsMod.Skills.DN_Weapon.2.Desc
 	}
 }
+
+DeepcolorSketch: {
+	1: {
+		Label: 光影之触
+		Desc:
+			'''
+			所有触手攻击力和防御力[c/3791db:+6%]
+			每秒恢复[c/3791db:7]点生命
+			'''
+	}
+
+	2: {
+		Label: 视觉陷阱
+		Desc:
+			'''
+			触手的攻击范围扩大
+			攻击范围内的友方单位获得[c/3791db:50%]概率的闪避
+			'''
+	}
+}

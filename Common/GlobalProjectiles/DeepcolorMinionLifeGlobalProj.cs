@@ -1,3 +1,4 @@
+using ArknightsMod.Content.Items.Weapons.Summoner;
 using ArknightsMod.Content.Projectiles.Summoner;
 using Microsoft.Xna.Framework;
 using System;
@@ -19,6 +20,10 @@ namespace ArknightsMod.Common.GlobalProjectiles
 	{
 		public const int DefaultLifeMax = 100;
 		public const int DefaultDefense = 10;
+		// 触手受伤间隔
+		public const int ReceiveDamageCooldownMax = 45;
+		// 触手对敌人碰撞伤害间隔
+		public const int DealContactDamageCooldownMax = 30;
 
 		public override bool InstancePerEntity => true;
 
@@ -28,13 +33,15 @@ namespace ArknightsMod.Common.GlobalProjectiles
 		public int lifeMax = DefaultLifeMax;
 		public int defense = DefaultDefense;
 		public float damageReduction = 1f;
-		public int hitCooldown = 30;
+		public int hitCooldown = ReceiveDamageCooldownMax;
 		// 召唤顺序，用于满员时替换最早的一只触手
 		public int spawnOrder;
 
 		private static readonly Dictionary<int, int> NextSpawnOrderByPlayer = new();
 
-		private int cooldown;
+		private int receiveCooldown;
+		private int dealContactCooldown;
+		private int regenTimer;
 
 		public override void PostAI(Projectile projectile) {
 			if (!useLife || projectile.type != ModContent.ProjectileType<DeepcolorMinion>())
@@ -43,13 +50,25 @@ namespace ArknightsMod.Common.GlobalProjectiles
 			if (life < 0)
 				life = lifeMax;
 
-			if (cooldown > 0)
-				cooldown--;
+			Player owner = Main.player[projectile.owner];
+			defense = DeepcolorSketchSkills.ShadowTentacleActive(owner)
+				? (int)(DefaultDefense * DeepcolorSketchSkills.ShadowTentacleDefenseMult)
+				: DefaultDefense;
+
+			if (DeepcolorSketchSkills.ShadowTentacleActive(owner) && ++regenTimer >= 60) {
+				regenTimer = 0;
+				life = Math.Min(life + DeepcolorSketchSkills.ShadowTentacleRegenPerSecond, lifeMax);
+			}
+
+			if (receiveCooldown > 0)
+				receiveCooldown--;
+			if (dealContactCooldown > 0)
+				dealContactCooldown--;
 
 			foreach (NPC npc in Main.ActiveNPCs) {
-				if (!npc.friendly && !npc.dontTakeDamage && projectile.Hitbox.Intersects(npc.Hitbox) && cooldown <= 0) {
+				if (!npc.friendly && !npc.dontTakeDamage && projectile.Hitbox.Intersects(npc.Hitbox) && receiveCooldown <= 0) {
 					TakeDamage(projectile, npc.damage);
-					cooldown = hitCooldown;
+					receiveCooldown = hitCooldown;
 					break;
 				}
 			}
@@ -57,9 +76,9 @@ namespace ArknightsMod.Common.GlobalProjectiles
 			foreach (Projectile other in Main.ActiveProjectiles) {
 				if (other.whoAmI == projectile.whoAmI)
 					continue;
-				if ((other.hostile || !other.friendly) && projectile.Hitbox.Intersects(other.Hitbox) && cooldown <= 0) {
+				if ((other.hostile || !other.friendly) && projectile.Hitbox.Intersects(other.Hitbox) && receiveCooldown <= 0) {
 					TakeDamage(projectile, other.damage);
-					cooldown = hitCooldown;
+					receiveCooldown = hitCooldown;
 					break;
 				}
 			}
@@ -68,6 +87,12 @@ namespace ArknightsMod.Common.GlobalProjectiles
 				DeepcolorMinion.SpawnDeathParticles(projectile);
 				projectile.Kill();
 			}
+		}
+
+		public bool CanDealContactDamage() => dealContactCooldown <= 0;
+
+		public void StartDealContactCooldown() {
+			dealContactCooldown = DealContactDamageCooldownMax;
 		}
 
 		public void TakeDamage(Projectile projectile, int damage) {
@@ -151,7 +176,8 @@ namespace ArknightsMod.Common.GlobalProjectiles
 			binaryWriter.Write(defense);
 			binaryWriter.Write(damageReduction);
 			binaryWriter.Write(hitCooldown);
-			binaryWriter.Write(cooldown);
+			binaryWriter.Write(receiveCooldown);
+			binaryWriter.Write(dealContactCooldown);
 			binaryWriter.Write(spawnOrder);
 		}
 
@@ -165,7 +191,8 @@ namespace ArknightsMod.Common.GlobalProjectiles
 			defense = binaryReader.ReadInt32();
 			damageReduction = binaryReader.ReadSingle();
 			hitCooldown = binaryReader.ReadInt32();
-			cooldown = binaryReader.ReadInt32();
+			receiveCooldown = binaryReader.ReadInt32();
+			dealContactCooldown = binaryReader.ReadInt32();
 			spawnOrder = binaryReader.ReadInt32();
 		}
 	}
@@ -174,5 +201,14 @@ namespace ArknightsMod.Common.GlobalProjectiles
 	{
 		public static DeepcolorMinionLifeGlobalProj MinionLife(this Projectile projectile)
 			=> projectile.GetGlobalProjectile<DeepcolorMinionLifeGlobalProj>();
+
+		public static bool CanDealContactDamage(this Projectile projectile) {
+			var life = projectile.MinionLife();
+			return life.useLife && life.CanDealContactDamage();
+		}
+
+		public static void SetDealContactCooldown(this Projectile projectile) {
+			projectile.MinionLife().StartDealContactCooldown();
+		}
 	}
 }

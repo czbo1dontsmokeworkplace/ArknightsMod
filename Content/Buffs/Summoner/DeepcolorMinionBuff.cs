@@ -6,9 +6,6 @@ namespace ArknightsMod.Content.Buffs.Summoner
 {
 	public class DeepcolorMinionBuff : ModBuff
 	{
-		// 暂用武器图标，避免缺少 Buff 贴图导致模组无法编译成功
-		public override string Texture => $"{nameof(ArknightsMod)}/Content/Items/Weapons/Summoner/DeepcolorSketch";
-
 		public override void SetStaticDefaults() {
 			Main.buffNoSave[Type] = true;
 			Main.buffNoTimeDisplay[Type] = true;
