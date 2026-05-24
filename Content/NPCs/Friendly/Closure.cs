@@ -12,7 +12,6 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.Personalities;
-using Terraria.GameContent.UI;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -25,6 +24,8 @@ namespace ArknightsMod.Content.NPCs.Friendly
 	public class Closure : ModNPC
 	{
 		public static string[] ShopName => ["Shop", "Shop2"];
+
+		public static int ButtonCount;
 
 		private static string closureShop2FullName;
 
@@ -105,10 +106,90 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		}
 
 		public override void RegisterChatButtons(NPCInteractionList interactions) {
-			interactions.InsertBefore(NPCInteractions.Shop(), NPCInteractionDatabase.HousingButton);
-			interactions.InsertBefore(NPCInteractions.Shop(ShopName[1], "Mods.ArknightsMod.NPCs.Closure.Buttons.Shop2"), NPCInteractionDatabase.HousingButton);
-			interactions.InsertBefore(new HelpButton(), NPCInteractionDatabase.HousingButton);
-			interactions.InsertBefore(new AnnihilationButton(), NPCInteractionDatabase.HousingButton);
+			interactions.InsertBefore(new ClosureSwitchButton(), NPCInteractionDatabase.CloseButton);
+			interactions.InsertBefore(new ClosureHelpButton(), NPCInteractionDatabase.CloseButton);
+			interactions.InsertBefore(new ClosureShop1Button(), NPCInteractionDatabase.CloseButton);
+			interactions.InsertBefore(new ClosureShop2Button(), NPCInteractionDatabase.CloseButton);
+			interactions.InsertBefore(new ClosureAnnihilationButton(), NPCInteractionDatabase.CloseButton);
+		}
+
+		sealed class ClosureSwitchButton : NPCInteraction
+		{
+			public override string GetText() => Language.GetTextValue("Mods.ArknightsMod.NPCs.Closure.Buttons.Switch");
+
+			public override bool Condition() => true;
+
+			public override void Interact() {
+				ButtonCount++;
+				ButtonCount %= 4;
+			}
+		}
+
+		sealed class ClosureHelpButton : NPCInteraction
+		{
+			public override string GetText() => Language.GetTextValue("Mods.ArknightsMod.NPCs.Closure.Buttons.Help");
+
+			public override bool Condition() => ButtonCount == 0;
+
+			public override void Interact() {
+				if (TalkNPC?.ModNPC is not Closure closure)
+					return;
+
+				if (closure.Helping) {
+					closure.HelpCount++;
+					closure.HelpCount %= 5;
+				}
+				else {
+					closure.HelpCount = 0;
+				}
+
+				closure.Helping = false;
+
+				var chat = Language.GetText($"Mods.ArknightsMod.Dialogue.Closure.Help{closure.HelpCount + 1}");
+				switch (closure.HelpCount) {
+					case 0:
+						chat = chat.WithFormatArgs($"[i:{ModContent.ItemType<_3DPrintingProcessingStation>()}]");
+						break;
+					case 1:
+						chat = chat.WithFormatArgs($"[i:{ModContent.ItemType<OrironShard>()}]");
+						break;
+					case 2:
+						chat = chat.WithFormatArgs($"[i:{ModContent.ItemType<Drone>()}]");
+						break;
+					case 4:
+						chat = chat.WithFormatArgs($"[i:{ModContent.ItemType<Orundum>()}]", $"[i:{ModContent.ItemType<OrirockCube>()}]", $"[i:{ModContent.ItemType<OriginiumShard>()}]");
+						break;
+				}
+
+				Main.npcChatText = chat.Value;
+				closure.Helping = true;
+			}
+		}
+
+		sealed class ClosureShop1Button : NPCInteractions.Actions.OpenShop
+		{
+			public ClosureShop1Button() : base(ShopName[0], "LegacyInterface.28") { }
+
+			public override bool Condition() => ButtonCount == 1;
+		}
+
+		sealed class ClosureShop2Button : NPCInteractions.Actions.OpenShop
+		{
+			public ClosureShop2Button() : base(ShopName[1], "Mods.ArknightsMod.NPCs.Closure.Buttons.Shop2") { }
+
+			public override bool Condition() => ButtonCount == 2;
+		}
+
+		sealed class ClosureAnnihilationButton : NPCInteraction
+		{
+			public override string GetText() => Language.GetTextValue("Mods.ArknightsMod.NPCs.Closure.Buttons.Annihilation");
+
+			public override bool Condition() => ButtonCount == 3;
+
+			public override void Interact() {
+				if (TalkNPC?.ModNPC is Closure closure)
+					closure.AO();
+			}
 		}
 
 		public void AO() {
@@ -244,49 +325,6 @@ namespace ArknightsMod.Content.NPCs.Friendly
 
 			public string THX() {
 				return Language.GetTextValue(ThxMessage);
-			}
-		}
-
-		public class HelpButton : NPCInteraction {
-			public override string GetText() => Language.GetTextValue("Mods.ArknightsMod.NPCs.Closure.Buttons.Help");
-			public override bool Condition() => true;
-			public override void Interact() {
-				if (TalkNPC.ModNPC is Closure closure) {
-					if (closure.Helping) {
-						closure.HelpCount++;
-						closure.HelpCount %= 5;
-					}
-					else
-						closure.HelpCount = 0;
-					closure.Helping = false;
-					var chat = Language.GetText($"Mods.ArknightsMod.Dialogue.Closure.Help{closure.HelpCount + 1}");
-					switch (closure.HelpCount) {
-						case 0:
-							chat = chat.WithFormatArgs($"[i:{ModContent.ItemType<_3DPrintingProcessingStation>()}]");
-							break;
-						case 1:
-							chat = chat.WithFormatArgs($"[i:{ModContent.ItemType<OrironShard>()}]");
-							break;
-						case 2:
-							chat = chat.WithFormatArgs($"[i:{ModContent.ItemType<Drone>()}]");
-							break;
-						case 4:
-							chat = chat.WithFormatArgs($"[i:{ModContent.ItemType<Orundum>()}]", $"[i:{ModContent.ItemType<OrirockCube>()}]", $"[i:{ModContent.ItemType<OriginiumShard>()}]");
-							break;
-					}
-					Main.npcChatText = chat.Value;
-					closure.Helping = true;
-				}
-			}
-		}
-
-		public class AnnihilationButton : NPCInteraction {
-			public override string GetText() => Language.GetTextValue("Mods.ArknightsMod.NPCs.Closure.Buttons.Annihilation");
-			public override bool Condition() => true;
-			public override void Interact() {
-				if (TalkNPC.ModNPC is Closure closure) {
-					closure.AO();
-				}
 			}
 		}
 

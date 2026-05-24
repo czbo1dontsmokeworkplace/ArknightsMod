@@ -68,6 +68,10 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			NPCID.Sets.AttackAverageChance[Type] = NPCID.Sets.ExtraFramesCount[NPCID.OldMan];
 			NPCID.Sets.HatOffsetY[Type] = NPCID.Sets.ExtraFramesCount[NPCID.OldMan];
 			NPCID.Sets.NoTownNPCHappiness[Type] = true;
+
+			NPCID.Sets.NPCPortraits.Add(Type, NPCID.Sets.PrioritizedPortrait()
+				.With(NPCID.Sets.ShimmeredPortraitCondition, NPCID.Sets.BasicPortrait($"{Texture}_Portrait"))
+				.Default(NPCID.Sets.BasicPortrait($"{Texture}_Portrait")));
 		}
 
 		public override List<string> SetNPCNameList() {
@@ -137,8 +141,8 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		}
 
 		public override void RegisterChatButtons(NPCInteractionList interactions) {
-			interactions.Append(NPCInteractions.Shop());
-			interactions.Append(new TouchButton());
+			interactions.InsertBefore(NPCInteractions.Shop(), NPCInteractionDatabase.CloseButton);
+			interactions.InsertBefore(new TouchButton(), NPCInteractionDatabase.CloseButton);
 		}
 
 		public void TrySpawnReinforcements(Player target) {
