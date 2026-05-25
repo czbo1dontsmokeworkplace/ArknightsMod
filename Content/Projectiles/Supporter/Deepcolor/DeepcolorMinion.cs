@@ -31,9 +31,10 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Deepcolor
 
 		private const int AttackTicksPerFrame = 3;
 		private const int IdleTicksPerFrame = 6;
-		// 半圆弧索敌基础半径；二技能再 +4 格
-		public const float BaseAttackRangeRadiusPx = 48f;
+		// 半圆弧索敌基础半径（4 格）；二技能再 +5 格
+		public const float BaseAttackRangeRadiusPx = 64f;
 		private const int AttackCooldownMax = 45;
+		private const int AttackHitFrameStart = AttackFrameStart + 4;
 		private const int AttackDrawExtendRight = 12;
 		private const int AttackDrawCullingPadding = 192;
 
@@ -41,6 +42,7 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Deepcolor
 		private ref float AttackAnimTimer => ref Projectile.ai[1];
 		private ref float AttackCooldownTimer => ref Projectile.ai[2];
 		private bool IsAttacking => AttackAnimTimer > 0f;
+		private bool dealtAttackHitThisSwing;
 
 		public override void SetStaticDefaults() {
 			Main.projFrames[Type] = TotalFrameCount;
@@ -130,18 +132,7 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Deepcolor
 
 		public override bool? CanCutTiles() => false;
 
-		public override bool MinionContactDamage() {
-			if (Projectile.Relocate().IsTransitioning)
-				return false;
-
-			if (!IsAttacking || !HasTargetInAttackRange())
-				return false;
-
-			if (!Projectile.CanDealContactDamage())
-				return false;
-
-			return Projectile.frame is >= AttackFrameStart + 4 and <= AttackFrameStart + 7;
-		}
+		public override bool MinionContactDamage() => false;
 
 		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
 			Projectile.SetDealContactCooldown();
@@ -208,24 +199,6 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Deepcolor
 				modifiers.SourceDamage.Base *= DeepcolorSketchSkills.ShadowTentacleDamageMult;
 		}
 
-		private bool HasTargetInAttackRange() {
-			Player owner = Main.player[Projectile.owner];
-
-			if (owner.HasMinionAttackTargetNPC && owner.MinionAttackTargetNPC >= 0 && owner.MinionAttackTargetNPC < Main.maxNPCs) {
-				NPC npc = Main.npc[owner.MinionAttackTargetNPC];
-				if (npc.active && IsInAttackRange(npc))
-					return true;
-			}
-
-			for (int i = 0; i < Main.maxNPCs; i++) {
-				NPC npc = Main.npc[i];
-				if (npc.active && IsInAttackRange(npc))
-					return true;
-			}
-
-			return false;
-		}
-
 		private bool TryGetClosestTarget(Player owner, out Vector2 targetCenter) {
 			targetCenter = Projectile.Center;
 			bool found = false;
@@ -255,6 +228,7 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Deepcolor
 		private void StartAttack() {
 			AttackAnimTimer = 1f;
 			Projectile.frame = AttackFrameStart;
+			dealtAttackHitThisSwing = false;
 		}
 
 		private void UpdateAttackAnimation() {
@@ -263,11 +237,48 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Deepcolor
 				return;
 
 			Projectile.frame++;
+			if (!dealtAttackHitThisSwing && Projectile.frame == AttackHitFrameStart)
+				StrikeTargetsInRange();
+
 			if (Projectile.frame >= AttackFrameStart + AttackFrameCount) {
 				AttackAnimTimer = 0f;
 				AttackCooldownTimer = AttackCooldownMax;
 				Projectile.frame = IdleFrameStart + ((int)IdleAnimTimer / IdleTicksPerFrame) % IdleFrameCount;
 			}
+		}
+
+		private void StrikeTargetsInRange() {
+			if (Main.netMode == NetmodeID.MultiplayerClient)
+				return;
+			if (!Projectile.CanDealContactDamage())
+				return;
+
+			Player owner = Main.player[Projectile.owner];
+			bool hitAny = false;
+
+			for (int i = 0; i < Main.maxNPCs; i++) {
+				NPC npc = Main.npc[i];
+				if (!npc.active || !npc.CanBeChasedBy(Projectile) || !IsInAttackRange(npc))
+					continue;
+				if (npc.immune[Projectile.owner] > 0)
+					continue;
+
+				NPC.HitModifiers modifiers = new NPC.HitModifiers {
+					DamageType = Projectile.DamageType,
+				};
+				ModifyHitNPC(npc, ref modifiers);
+
+				bool crit = Main.rand.Next(100) < owner.GetTotalCritChance(Projectile.DamageType);
+				NPC.HitInfo hit = modifiers.ToHitInfo(Projectile.damage, crit, Projectile.knockBack, damageVariation: true);
+				hit.HitDirection = npc.Center.X >= Projectile.Center.X ? 1 : -1;
+
+				npc.StrikeNPC(hit);
+				OnHitNPC(npc, hit, hit.Damage);
+				hitAny = true;
+			}
+
+			if (hitAny)
+				Projectile.SetDealContactCooldown();
 		}
 
 		private void UpdateIdleAnimation() {

@@ -13,7 +13,7 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Deepcolor
 		public const float ShadowTentacleDefenseMult = 1.06f;
 		public const int ShadowTentacleRegenPerSecond = 7;
 		// 二技能额外攻击半径（格）
-		public const float VisualTrapRangeBonusTiles = 4f;
+		public const float VisualTrapRangeBonusTiles = 5f;
 		public const float VisualTrapDodgeChance = 0.5f;
 		public const float VisualTrapDrawScale = 1.5f;
 
