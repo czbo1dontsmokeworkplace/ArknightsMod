@@ -138,5 +138,8 @@ namespace ArknightsMod.Content.Items.Weapons
 			}
 			return datas[index];
 		}
+
+		/// <summary>覆盖默认「右键开启技能」说明；为 null 时不追加。</summary>
+		public virtual string GetSkillActivateKeyHint() => null;
 	}
 }

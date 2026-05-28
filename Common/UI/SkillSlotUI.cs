@@ -1,4 +1,5 @@
-﻿using ArknightsMod.Players;
+﻿using ArknightsMod.Content.Items.Weapons;
+using ArknightsMod.Players;
 using ArknightsMod.Systems.Gameplay.Skill;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -54,6 +55,11 @@ namespace ArknightsMod.Common.UI
 				var font = FontAssets.MouseText.Value;
 				const float maxWidth = 800f;
 				string tips = skillData.Label.Value + "\n" + skillData.Desc.Value;
+				if (Main.LocalPlayer.HeldItem.ModItem is UpgradeWeaponBase ark) {
+					string activateKey = ark.GetSkillActivateKeyHint();
+					if (!string.IsNullOrEmpty(activateKey))
+						tips += "\n" + activateKey;
+				}
 				string[] lines = tips.Replace("\r", string.Empty).Split('\n');
 				int width = 0;
 				int height = 0;

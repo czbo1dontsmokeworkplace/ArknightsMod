@@ -13,7 +13,7 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Deepcolor
 		public const float ShadowTentacleDefenseMult = 1.06f;
 		public const int ShadowTentacleRegenPerSecond = 7;
 		// 二技能额外攻击半径（格）
-		public const float VisualTrapRangeBonusTiles = 4f;
+		public const float VisualTrapRangeBonusTiles = 5f;
 		public const float VisualTrapDodgeChance = 0.5f;
 		public const float VisualTrapDrawScale = 1.5f;
 
@@ -37,7 +37,7 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Deepcolor
 			return radius;
 		}
 
-		// 以触手中心为圆心、向左经上方到右的半圆弧（不索敌正下方）
+		// 以触手中心为圆心：左→上→右半圆弧；脚底以下不索；正右及同平台略偏下可索
 		public static bool IsInAttackRangeAt(Projectile tentacle, Vector2 targetCenter, Player owner) {
 			Vector2 offset = targetCenter - tentacle.Center;
 			float dist = offset.Length();
@@ -46,15 +46,20 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Deepcolor
 			if (dist > radius)
 				return false;
 
-			if (dist <= 4f)
-				return offset.Y <= 2f;
-
-			// 不攻击脚下及下方
-			if (offset.Y > 2f)
+			if (targetCenter.Y > tentacle.Bottom.Y + 8f)
 				return false;
 
-			float angle = (float)Math.Atan2(offset.Y, offset.X);
-			return angle <= 0f && angle >= -(float)Math.PI;
+			if (dist <= 4f)
+				return true;
+
+			float angle = MathF.Atan2(offset.Y, offset.X);
+			// 上半弧：angle∈(-π,0]；正左：angle≈π
+			if (angle <= 0f)
+				return true;
+			if (angle >= MathF.PI - 0.35f)
+				return true;
+			// 右前方：怪物中心常略低于触手中心，原先 angle∈(0,π) 会漏掉正右
+			return offset.X > 0f && angle <= 0.85f;
 		}
 
 		public static bool IsOwnerInAnyTentacleAttackRange(Player owner) {
