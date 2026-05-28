@@ -5,6 +5,9 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Material.T2
 {
+	/// <summary>
+	/// 聚酸酯，稀有度：绿
+	/// </summary>
 	public class Polyester : ArknightsMaterial
 	{
 		public override int Rarity => 1;

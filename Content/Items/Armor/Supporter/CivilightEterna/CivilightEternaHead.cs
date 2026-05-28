@@ -1,5 +1,6 @@
 using ArknightsMod.Common;
 using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Items.Material.T4;
 using ArknightsMod.Content.Items.Material.T5;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using Microsoft.Xna.Framework;
@@ -40,7 +41,7 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.CivilightEterna
 			.AddIngredient<CivilightEternaHead>(1)
 			.AddIngredient<Orundum>(60)
 			.AddIngredient<NucleicCrystalSinter>(6)
-			//.AddIngredient<固化纤维板>(4) 材料不存在！
+			.AddIngredient<SolidifiedFiberBoard>(4)
 			.AddTile(ModContent.TileType<FactoryTile>())
 			.AddCondition(NeoArmorUtils.NeedVanity)
 			.DisableDecraft()

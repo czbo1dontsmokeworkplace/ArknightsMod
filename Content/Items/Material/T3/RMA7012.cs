@@ -4,6 +4,9 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Material.T3
 {
+	/// <summary>
+	/// RMA70-12，稀有度：蓝
+	/// </summary>
 	public class RMA7012 : ArknightsMaterial
 	{
 		public override int Rarity => 2;

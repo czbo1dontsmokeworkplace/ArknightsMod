@@ -4,6 +4,9 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Material.T3
 {
+	/// <summary>
+	/// 研磨石，稀有度：蓝
+	/// </summary>
 	public class Grindstone : ArknightsMaterial
 	{
 		public override int Rarity => 2;

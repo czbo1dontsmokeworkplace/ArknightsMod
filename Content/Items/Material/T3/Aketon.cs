@@ -5,6 +5,9 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Material.T3
 {
+	/// <summary>
+	/// 酮凝集组，稀有度：蓝
+	/// </summary>
 	public class Aketon : ArknightsMaterial
 	{
 		public override int Rarity => 2;

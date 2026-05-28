@@ -5,6 +5,9 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Material.T4
 {
+	/// <summary>
+	/// 提纯源岩，稀有度：粉
+	/// </summary>
 	public class OrirockConcentration : ArknightsMaterial
 	{
 		public override int Rarity => 3;

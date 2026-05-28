@@ -323,7 +323,7 @@ HazeDefault: {
 }
 
 KaltsitDefault: {
-	DisplayName: 凯尔西的服饰（常规）
+	DisplayName: 凯尔希的服饰（常规）
 	Tooltip: ""
 }
 
@@ -2210,7 +2210,7 @@ HibiscusDefault: {
 }
 
 KroosDefault: {
-	DisplayName: 克洛斯的服饰（常规）
+	DisplayName: 克洛丝的服饰（常规）
 	Tooltip: 右键点击可打开
 }
 
@@ -2220,7 +2220,7 @@ LavaDefault: {
 }
 
 MidnightDefault: {
-	DisplayName: 夜见月的服饰（常规）
+	DisplayName: 月见夜的服饰（常规）
 	Tooltip: 右键点击可打开
 }
 
@@ -3263,5 +3263,110 @@ DeepcolorHead: {
 
 DeepcolorLegs: {
 	// DisplayName: Deepcolor Legs
+	// Tooltip: ""
+}
+
+AggregateCyclicene: {
+	DisplayName: 环烃聚质
+	Tooltip: 一种耐热性、耐化学性俱优的工业材料
+}
+
+CoagulativeNodule: {
+	DisplayName: 类凝结核
+	Tooltip: 在实验室中人工合成的微粒，拥有良好的吸附性能
+}
+
+FuscousFiber: {
+	DisplayName: 褐素纤维
+	Tooltip: 具备高强度与高模量的特种纤维束
+}
+
+ChiralRefractor: {
+	DisplayName: 手性屈光体
+	Tooltip: 具备良好光学性能和物理性能的特种光学材料
+}
+
+CyclicenePrefab: {
+	DisplayName: 环烃预制体
+	Tooltip: 由多种优良材料预加工而成的工业用材
+}
+
+SolidifiedFiberBoard: {
+	DisplayName: 固化纤维板
+	Tooltip: 经过塑形固化处理的特种纤维板
+}
+
+RephasicEnantiomer: {
+	DisplayName: 重相位对映体
+	Tooltip: 光功能材料领域最尖端技术的产物
+}
+
+NianDefault: {
+	// DisplayName: Nian Default
+	// Tooltip: ""
+}
+
+DoctorStartBag: {
+	// DisplayName: Doctor Start Bag
+	// Tooltip: ""
+}
+
+EndminFemaleBody: {
+	// DisplayName: Endmin Female Body
+	// Tooltip: ""
+}
+
+EndminFemaleDefault: {
+	// DisplayName: Endmin Female Default
+	// Tooltip: ""
+}
+
+EndminFemaleHead: {
+	// DisplayName: Endmin Female Head
+	// Tooltip: ""
+}
+
+EndminFemaleLegs: {
+	// DisplayName: Endmin Female Legs
+	// Tooltip: ""
+}
+
+EndminMask: {
+	// DisplayName: Endmin Mask
+	// Tooltip: ""
+}
+
+LastRiteDefault: {
+	// DisplayName: Last Rite Default
+	// Tooltip: ""
+}
+
+YvonneDefault: {
+	// DisplayName: Yvonne Default
+	// Tooltip: ""
+}
+
+MlynarDefault: {
+	// DisplayName: Mlynar Default
+	// Tooltip: ""
+}
+
+UlpianusDefault: {
+	// DisplayName: Ulpianus Default
+	// Tooltip: ""
+}
+
+DeepcolorDefault: {
+	// DisplayName: Deepcolor Default
+	// Tooltip: ""
+}
+
+TexasDefault: {
+	// DisplayName: Texas Default
+	// Tooltip: ""
+}
+
+WisadelDefault: {
+	// DisplayName: Wisadel Default
 	// Tooltip: ""
 }

@@ -5,6 +5,9 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Material.T5
 {
+	/// <summary>
+	/// 晶体电子单元，稀有度：金
+	/// </summary>
 	public class CrystallineElectronicUnit : ArknightsMaterial
 	{
 		public override int Rarity => 4;

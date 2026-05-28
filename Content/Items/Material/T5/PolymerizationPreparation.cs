@@ -5,6 +5,9 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Material.T5
 {
+	/// <summary>
+	/// 聚合剂，稀有度：金
+	/// </summary>
 	public class PolymerizationPreparation : ArknightsMaterial
 	{
 		public override int Rarity => 4;

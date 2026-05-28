@@ -16,12 +16,6 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.Deepcolor
 	{
 		public override int Rarity => 4;
 		public override int ArmorLifeBonus => 105;
-		
-		public override void Load() {
-			if (Main.netMode == NetmodeID.Server)
-				return;
-		}
-
 		public override void SetArmorDefaults() {
 			Item.defense = 0;
 		}

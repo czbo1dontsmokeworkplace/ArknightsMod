@@ -5,6 +5,9 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Material.T5
 {
+	/// <summary>
+	/// 烧结核凝晶，稀有度：金
+	/// </summary>
 	public class NucleicCrystalSinter : ArknightsMaterial
 	{
 		public override int Rarity => 4;

@@ -1,4 +1,5 @@
 using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Items.Material.T4;
 using ArknightsMod.Content.Items.Material.T5;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using Terraria;
@@ -25,7 +26,7 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.CivilightEterna
 			.AddIngredient<CivilightEternaBody>(1)
 			.AddIngredient<Orundum>(60)
 			.AddIngredient<BipolarNanoflake>(6)
-			// .AddIngredient<环烃预制体>(5) 材料不存在！
+			.AddIngredient<CyclicenePrefab>(5)
 			.AddTile(ModContent.TileType<FactoryTile>())
 			.AddCondition(NeoArmorUtils.NeedVanity)
 			.DisableDecraft()

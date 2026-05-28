@@ -1,4 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using ArknightsMod.Content.Items.Armor.Doctor;
+using ArknightsMod.Content.Items.Consumables;
+using ArknightsMod.Content.Items.Placeable.Furniture;
+using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
@@ -23,13 +26,13 @@ namespace ArknightsMod.Players
 			return mediumCoreDeath
 				?
 				[
-					new Item(ModContent.ItemType<Content.Items.Consumables.StartBag>()),
-					new Item(ModContent.ItemType<Content.Items.Placeable.Furniture.AnniversaryWheel>())
+					new Item(ModContent.ItemType<DoctorStartBag>()),
+					new Item(ModContent.ItemType<AnniversaryWheel>())
 				]
 				:
 				[
-					new Item(ModContent.ItemType<Content.Items.Consumables.StartBag>()),
-					new Item(ModContent.ItemType<Content.Items.Placeable.Furniture.AnniversaryWheel>())
+					new Item(ModContent.ItemType<DoctorStartBag>()),
+					new Item(ModContent.ItemType<AnniversaryWheel>())
 				];
 		}
 

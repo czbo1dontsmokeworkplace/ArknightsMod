@@ -5,6 +5,9 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Material.T3
 {
+	/// <summary>
+	/// 异铁组，稀有度：蓝
+	/// </summary>
 	public class OrironCluster : ArknightsMaterial
 	{
 		public override int Rarity => 2;

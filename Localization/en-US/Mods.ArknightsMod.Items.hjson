@@ -2903,3 +2903,108 @@ DeepcolorLegs: {
 	DisplayName: Deepcolor Legs
 	Tooltip: ""
 }
+
+AggregateCyclicene: {
+	DisplayName: Aggregate Cyclicene
+	Tooltip: A superlatively heat- and chemical-resistant industrial material.
+}
+
+CoagulativeNodule: {
+	DisplayName: Coagulative Nodule
+	Tooltip: A lab-made synthetic particle, boasting powerful adsorption properties.
+}
+
+FuscousFiber: {
+	DisplayName: Fuscous Fiber
+	Tooltip: A specialized fiber bundle, possessing high tensile strength and elastic modulus.
+}
+
+ChiralRefractor: {
+	DisplayName: Chiral Refractor
+	Tooltip: A specialized material that displays useful optical qualities and other physical traits.
+}
+
+CyclicenePrefab: {
+	DisplayName: Cyclicene Prefab
+	Tooltip: A prefabricated industrial intermediate composed of multiple first-rate materials.
+}
+
+SolidifiedFiberBoard: {
+	DisplayName: Solidified Fiber Board
+	Tooltip: A specialized fiber board, solidified in a mold.
+}
+
+RephasicEnantiomer: {
+	DisplayName: Rephasic Enantiomer
+	Tooltip: A product of cutting-edge research on luminescent materials.
+}
+
+NianDefault: {
+	DisplayName: Nian Default
+	Tooltip: ""
+}
+
+DoctorStartBag: {
+	DisplayName: Doctor Start Bag
+	Tooltip: ""
+}
+
+EndminFemaleBody: {
+	DisplayName: Endmin Female Body
+	Tooltip: ""
+}
+
+EndminFemaleDefault: {
+	DisplayName: Endmin Female Default
+	Tooltip: ""
+}
+
+EndminFemaleHead: {
+	DisplayName: Endmin Female Head
+	Tooltip: ""
+}
+
+EndminFemaleLegs: {
+	DisplayName: Endmin Female Legs
+	Tooltip: ""
+}
+
+EndminMask: {
+	DisplayName: Endmin Mask
+	Tooltip: ""
+}
+
+LastRiteDefault: {
+	DisplayName: Last Rite Default
+	Tooltip: ""
+}
+
+YvonneDefault: {
+	DisplayName: Yvonne Default
+	Tooltip: ""
+}
+
+MlynarDefault: {
+	DisplayName: Mlynar Default
+	Tooltip: ""
+}
+
+UlpianusDefault: {
+	DisplayName: Ulpianus Default
+	Tooltip: ""
+}
+
+DeepcolorDefault: {
+	DisplayName: Deepcolor Default
+	Tooltip: ""
+}
+
+TexasDefault: {
+	DisplayName: Texas Default
+	Tooltip: ""
+}
+
+WisadelDefault: {
+	DisplayName: Wisadel Default
+	Tooltip: ""
+}

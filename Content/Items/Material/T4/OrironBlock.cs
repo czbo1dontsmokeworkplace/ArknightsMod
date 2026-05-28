@@ -5,6 +5,9 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Material.T4
 {
+	/// <summary>
+	/// 异铁块，稀有度：粉
+	/// </summary>
 	public class OrironBlock : ArknightsMaterial
 	{
 		public override int Rarity => 3;

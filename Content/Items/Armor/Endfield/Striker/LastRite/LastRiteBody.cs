@@ -4,35 +4,10 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Endfield.Striker.LastRite
 {
+	[AutoloadEquip(EquipType.Body)]
 	public class LastRiteBody : NeoArmorBody
 	{
-		public override string Texture => "ArknightsMod/Content/Items/Armor/Endfield/Striker/LastRite/LastRite_Body_Item";
 		public override int Rarity => 6;
 		public override int Value => 15000;
-
-		public override void Load()
-		{
-			if (Main.netMode == NetmodeID.Server)
-				return;
-			EquipLoader.AddEquipTexture(Mod, "ArknightsMod/Content/Items/Armor/Endfield/Striker/LastRite/LastRite_Body1.4", EquipType.Body, this, Name);
-		}
-
-		public override void SetStaticDefaultsNoServer()
-		{
-			if (Main.netMode == NetmodeID.Server)
-				return;
-			Item.bodySlot = EquipLoader.GetEquipSlot(Mod, Name, EquipType.Body);
-			Mod.Logger.Info($"[LastRiteEquip] {Name} SafeSetStaticDefaults bodySlot={Item.bodySlot}");
-		}
-
-		public override void SetVanityDefaults()
-		{
-			if (Main.netMode == NetmodeID.Server)
-				return;
-			if (Item.bodySlot < 0) {
-				Item.bodySlot = EquipLoader.GetEquipSlot(Mod, Name, EquipType.Body);
-				Mod.Logger.Info($"[LastRiteEquip] {Name} SafeSetDefaults bodySlot={Item.bodySlot}");
-			}
-		}
 	}
 }

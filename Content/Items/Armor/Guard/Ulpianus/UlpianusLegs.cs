@@ -26,7 +26,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Ulpianus
 			.AddIngredient<UlpianusLegs>(1)
 			.AddIngredient<Orundum>(60)
 			.AddIngredient<D32Steel>(6)
-			//.AddIngredient<固化纤维板>(6) 材料不存在！
+			.AddIngredient<SolidifiedFiberBoard>(6)
 			.AddTile(ModContent.TileType<FactoryTile>())
 			.AddCondition(NeoArmorUtils.NeedVanity)
 			.DisableDecraft()

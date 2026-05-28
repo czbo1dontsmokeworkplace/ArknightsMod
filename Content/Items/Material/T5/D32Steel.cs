@@ -5,6 +5,9 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Material.T5
 {
+	/// <summary>
+	/// D32钢，稀有度：金
+	/// </summary>
 	public class D32Steel : ArknightsMaterial
 	{
 		public override int Rarity => 4;

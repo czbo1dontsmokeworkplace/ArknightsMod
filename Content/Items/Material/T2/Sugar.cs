@@ -5,6 +5,9 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Material.T2
 {
+	/// <summary>
+	/// 糖，稀有度：绿
+	/// </summary>
 	public class Sugar : ArknightsMaterial
 	{
 		public override int Rarity => 1;

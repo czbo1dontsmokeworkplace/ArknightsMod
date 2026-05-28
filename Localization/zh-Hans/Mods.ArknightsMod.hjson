@@ -84,4 +84,5 @@ Tiles: {
 	// ManganeseOreTile.MapEntry: Manganese Ore Tile
 	// OrirockCubeTile.MapEntry: Orirock Cube Tile
 	// RMA7012Tile.MapEntry: R M A7012 Tile
+	// AnniversaryWheelTile.MapEntry: Anniversary Wheel Tile
 }

@@ -39,7 +39,7 @@ namespace ArknightsMod.Content.Items.Armor.Specialist.Mortis
 			CreateRecipe()
 			.AddIngredient<MortisHead>(1)
 			.AddIngredient<Orundum>(50)
-			//.AddIngredient<环烃预制体>(8) // 材料不存在！
+			.AddIngredient<CyclicenePrefab>(8)
 			.AddIngredient<PolyesterPack>(13)
 			.AddTile(ModContent.TileType<FactoryTile>())
 			.AddCondition(NeoArmorUtils.NeedVanity)

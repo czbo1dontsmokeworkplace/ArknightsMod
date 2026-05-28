@@ -5,6 +5,9 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Material.T4
 {
+	/// <summary>
+	/// 炽合金块，稀有度：粉
+	/// </summary>
 	public class IncandescentAlloyBlock : ArknightsMaterial
 	{
 		public override int Rarity => 3;

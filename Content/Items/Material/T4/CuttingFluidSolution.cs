@@ -5,6 +5,9 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Material.T4
 {
+	/// <summary>
+	/// 切削原液，稀有度：粉
+	/// </summary>
 	public class CuttingFluidSolution : ArknightsMaterial
 	{
 		public override int Rarity => 3;

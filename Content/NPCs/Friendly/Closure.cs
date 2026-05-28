@@ -1,4 +1,5 @@
-using ArknightsMod.Content.Items.Consumables.VanityBags;
+using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor.Doctor;
 using ArknightsMod.Content.Items.DisplayForUI;
 using ArknightsMod.Content.Items.Gacha;
 using ArknightsMod.Content.Items.Material;
@@ -394,139 +395,14 @@ namespace ArknightsMod.Content.NPCs.Friendly
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				});
 			npcShop.Register();
-			npcShop = new NPCShop(Type, ShopName[1])
-				.Add(new Item(ModContent.ItemType<AmiyaDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<MelanthaDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<MatoimaruDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<IndigoDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<ChenDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<WDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<MudrockDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<OblivionisDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<RaidianDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<WisdelDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<BagpipeDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<FiammettaDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<BeagleDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<CivilightEternaDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<DorothyDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<ExusiaiDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<FartoothDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<HazeDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<KaltsitDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<KroosAlterDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<LaPlumaDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<LingDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<ManticoreDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<MelaniteDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<MostimaDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<RosmontisDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<SariaDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<SkadiDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<SurtrDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<UtageDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<WarfarinDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<LapplandDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<TexalterDefault>()) {
+			npcShop = new NPCShop(Type, ShopName[1]);
+			foreach (var bag in ModContent.GetContent<ArknightsVanityBag>()) {
+				if (bag.Type == ModContent.ItemType<DoctorStartBag>()) continue;
+				npcShop.Add(new Item(bag.Type) {
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				});
+			}
 			npcShop.Register();
 		}
 

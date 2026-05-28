@@ -5,6 +5,9 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Material.T4
 {
+	/// <summary>
+	/// 精炼溶剂，稀有度：粉
+	/// </summary>
 	public class RefinedSolvent : ArknightsMaterial
 	{
 		public override int Rarity => 3;
