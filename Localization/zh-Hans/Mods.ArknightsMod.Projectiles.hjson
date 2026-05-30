@@ -182,6 +182,9 @@ FierySlugFireballProjectile.DisplayName: 炽焰源石虫火球射弹
 // BlackExplosion.DisplayName: Black Explosion
 // ProjLightCore.DisplayName: Proj Light Core
 // DedicationTrackingProj.DisplayName: Dedication Tracking Proj
+GravityDagger.DisplayName: 重力匕首
+TransparentSlash.DisplayName: 透明斩击
+SwordSlashEffect.DisplayName: 刀光
 // IceAltarInboundWisp.DisplayName: Ice Altar Inbound Wisp
 // TrailShard.DisplayName: Trail Shard
 // TyphonS2Arrow.DisplayName: Typhon S2 Arrow
@@ -205,3 +208,12 @@ FierySlugFireballProjectile.DisplayName: 炽焰源石虫火球射弹
 // ThornsCounter.DisplayName: Thorns Counter
 // ThornsS3Slash.DisplayName: Thorns S3 Slash
 // ThornsSlash.DisplayName: Thorns Slash
+// BarrageDagger.DisplayName: Barrage Dagger
+// DaggerPredictLine.DisplayName: Dagger Predict Line
+// DelayDagger.DisplayName: Delay Dagger
+// GroundDagger.DisplayName: Ground Dagger
+// RedMagicBlade.DisplayName: Red Magic Blade
+// StallDagger.DisplayName: Stall Dagger
+// StaticPredictLine.DisplayName: Static Predict Line
+// DeepcolorSketchLogoAttack.DisplayName: Deepcolor Sketch Logo Attack
+// DeepcolorSketchLogoStrike.DisplayName: Deepcolor Sketch Logo Strike
