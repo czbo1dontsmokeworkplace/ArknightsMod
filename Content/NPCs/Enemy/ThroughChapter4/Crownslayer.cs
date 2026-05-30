@@ -19,27 +19,18 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		// 记录已经触发过的阶段：0=未触发, 1=75%, 2=40%, 3=10%
 		public int PhaseLevel = 0;
 		private Vector2 phaseOffset; // 用于记录相对于玩家的偏移点位
-		// Skill_1 冲刺：开场锁定的二次贝塞尔（避免分段折线拖尾）
-		private Vector2 skill1DashP0;
-		private Vector2 skill1DashP1;
-		private Vector2 skill1DashP2;
-		internal bool suppressNextSkill1DashAfterSkill3;
-
-		internal bool ShouldSuppressSkill1DashTrailEffects =>
-			suppressNextSkill1DashAfterSkill3
-			&& CurrentAIState == AIState.Skill_1
-			&& StateTimer >= 24 + 30 + 60
-			&& StateTimer < 24 + 30 + 60 + 36;
-
 									 // 记录当前召唤的小怪 ID 列表，用于判断是否全部消灭
 		private System.Collections.Generic.List<int> MinionWhoAmIs = new System.Collections.Generic.List<int>();
 		public float grayScaleIntensity = 0f;
 
-		// Skill_3 三飞刀时间轴（ExecuteSkill3 内阶段切换）
-		internal const int Skill3_Phase2End = 114 + 36;
-		internal const int Skill3_SecondDashFrames = 34;
-		internal const int Skill3_SecondHoverFrames = 36;
-		internal const int Skill3_Phase3End = Skill3_Phase2End + Skill3_SecondDashFrames + Skill3_SecondHoverFrames;
+		// Skill_3 三飞刀时间轴（ExecuteSkill3）
+		internal const int Skill3_VanishEnd = 12;
+		internal const int Skill3_FirstAppearEnd = 48;
+		internal const int Skill3_FirstRetreatEnd = 90;
+		internal const int Skill3_DashEnd = 124;
+		internal const int Skill3_SecondHoverEnd = 160;
+		internal const int Skill3_End = 196;
+		private const float Skill3CornerOffset = 220f;
 
 		public override void SetStaticDefaults() {
 			Main.npcFrameCount[Type] = 56;
@@ -71,11 +62,11 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 			// 只更新二阶段特效强度，不在这里改写 NPC.alpha，避免把本体画成半透明。
 			if (healthPercent <= 0.5f) {
-				float target = 0.4f + (0.5f - healthPercent) * 0.8f;
-				grayScaleIntensity = MathHelper.Lerp(grayScaleIntensity, target, 0.05f);
+				float fogTarget = 0.4f + (0.5f - healthPercent) * 0.8f;
+				grayScaleIntensity = MathHelper.Lerp(grayScaleIntensity, fogTarget, 0.028f);
 			}
 			else {
-				grayScaleIntensity = MathHelper.Lerp(grayScaleIntensity, 0f, 0.05f);
+				grayScaleIntensity = MathHelper.Lerp(grayScaleIntensity, 0f, 0.06f);
 			}
 
 			CrownslayerTrailEffects.DrawBossDashAfterimages(spriteBatch, NPC, drawColor, CurrentAnimation, CurrentAIState);
@@ -170,13 +161,15 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		public enum AIState
 		{
 			Idle,           // 常态（等待/冷却中）
-			Skill_1,        // 技能1
-			Skill_2,        // 技能2
+			Skill_1,        // 一阶段横向斩击
+			Skill_2,        // 投掷飞刀（无贴近冲刺）
 			Skill_3,        // 技能3
 			Skill_4,        // 技能4
 			Skill_5,        // 技能5
 			Skill_6,
 			Skill_7,
+			Skill_8,        // 斩击
+			Skill_9,        // 突刺
 			Recover,
 			Summoning
 
@@ -202,10 +195,11 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 			// 仅计算强度，不直接修改颜色
 			if (healthPercent <= 0.5f) {
-				grayScaleIntensity = MathHelper.Lerp(grayScaleIntensity, (0.5f - healthPercent) * 2f, 0.05f);
+				float fogTarget = 0.4f + (0.5f - healthPercent) * 0.8f;
+				grayScaleIntensity = MathHelper.Lerp(grayScaleIntensity, fogTarget, 0.028f);
 			}
 			else {
-				grayScaleIntensity = MathHelper.Lerp(grayScaleIntensity, 0f, 0.05f);
+				grayScaleIntensity = MathHelper.Lerp(grayScaleIntensity, 0f, 0.06f);
 			}
 			if (grayScaleIntensity > 0.1f && NPC.alpha < 200) { // 隐身时不产生粒子
 				if (Main.rand.NextBool(2)) {
@@ -242,26 +236,10 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				(healthPercent <= 0.40f && PhaseLevel == 1) ||
 				(healthPercent <= 0.10f && PhaseLevel == 2)) {
 				PhaseLevel++;
-				suppressNextSkill1DashAfterSkill3 = false;
 				CurrentAIState = AIState.Summoning;
 				StateTimer = 0; // 重置计时器
 				NPC.netUpdate = true;
 			}
-			if (CurrentAIState == AIState.Idle) {
-				HandleIdle(target, distanceToTarget);
-			}
-			if (CurrentAIState != AIState.Idle && CurrentAIState != AIState.Skill_2 && CurrentAIState != AIState.Skill_3 && CurrentAIState != AIState.Skill_5 && CurrentAIState != AIState.Skill_6 && CurrentAIState != AIState.Skill_7) {
-				NPC.noGravity = true;
-				NPC.noTileCollide = true;
-			}
-			// 注意：如果是 Recover 状态，也应该受重力和碰撞影响
-			else if (CurrentAIState == AIState.Recover) {
-				NPC.noGravity = false;
-				NPC.noTileCollide = false;
-			}
-
-
-
 			// 3. 状态机逻辑
 			switch (CurrentAIState) {
 				case AIState.Idle:
@@ -288,6 +266,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				case AIState.Skill_7:
 					ExecuteSkill7(target);
 					break;
+				case AIState.Skill_8:
+					ExecuteSkill8(target);
+					break;
+				case AIState.Skill_9:
+					ExecuteSkill9(target);
+					break;
 				case AIState.Recover:
 					ExecuteRecover();
 					break;
@@ -299,7 +283,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			EmitPhaseOneSmokeDecor();
 		}
 
-		/// <summary>一阶段：瞬移/现身、路径位移与冲刺上的烟雾修饰（仅客户端）。</summary>
+		// 一阶段：瞬移/现身、路径位移与冲刺上的烟雾修饰（仅客户端）。
 		private void EmitPhaseOneSmokeDecor() {
 			if (Main.dedServ)
 				return;
@@ -334,18 +318,20 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		}
 
 		private void TryEmitPhaseOneSmokeSkillPunctuation() {
-			if (CurrentAIState == AIState.Skill_1 && StateTimer == 55)
-				EmitPhaseOneSmokeBurst(NPC.Center, 14, 2.4f);
+			if (CurrentAIState == AIState.Skill_1 && (StateTimer == 16 || StateTimer == 30))
+				EmitPhaseOneSmokeBurst(NPC.Center, StateTimer == 16 ? 16 : 14, StateTimer == 16 ? 2.6f : 2.4f);
 
-			if (CurrentAIState == AIState.Skill_2 && StateTimer == 84)
-				EmitPhaseOneSmokeBurst(NPC.Center, 16, 2.6f);
+			if (CurrentAIState == AIState.Skill_2 && StateTimer == 48)
+				EmitPhaseOneSmokeBurst(NPC.Center, 12, 2.2f);
 
 			if (CurrentAIState == AIState.Skill_3) {
-				if (StateTimer == 114)
+				if (StateTimer == Skill3_VanishEnd)
 					EmitPhaseOneSmokeBurst(NPC.Center, 18, 2.8f);
-				if (StateTimer == 114 + 24)
+				if (StateTimer == 20)
 					EmitPhaseOneSmokeBurst(NPC.Center, 12, 2.2f);
-				if (StateTimer == Skill3_Phase2End + Skill3_SecondDashFrames + 24)
+				if (StateTimer == Skill3_DashEnd - 34)
+					EmitPhaseOneSmokeBurst(NPC.Center, 14, 2.4f);
+				if (StateTimer == Skill3_DashEnd + 8)
 					EmitPhaseOneSmokeBurst(NPC.Center, 12, 2.2f);
 			}
 
@@ -355,9 +341,6 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 		private void TryEmitPhaseOneSmokeAlongPathAndVelocity() {
 			if (NPC.alpha > 220)
-				return;
-
-			if (ShouldSuppressSkill1DashTrailEffects)
 				return;
 
 			float v2 = NPC.velocity.LengthSquared();
@@ -383,35 +366,22 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				return;
 			}
 
-			if (CurrentAIState == AIState.Skill_1 && StateTimer > 55 && StateTimer < 24 + 30 + 60) {
-				if (!Main.rand.NextBool(2))
+			if (CurrentAIState == AIState.Skill_3 && StateTimer >= Skill3_FirstRetreatEnd && StateTimer < Skill3_DashEnd && NPC.alpha < 200) {
+				if (!Main.rand.NextBool(3))
 					return;
 
-				Player target = Main.player[NPC.target];
-				if (!target.active || target.dead)
-					return;
-
-				Vector2 drift = (target.Center - NPC.Center).SafeNormalize(Vector2.Zero);
-				if (drift.LengthSquared() < 0.0001f)
-					return;
-
-				SpawnPhaseOneTrailSmoke(NPC.Center + Main.rand.NextVector2Circular(10f, 18f), drift * Main.rand.NextFloat(0.25f, 0.75f) + Main.rand.NextVector2Circular(0.2f, 0.35f), Main.rand.NextFloat(0.7f, 1.1f));
+				SpawnPhaseOneTrailSmoke(NPC.Center + Main.rand.NextVector2Circular(10f, 16f), Main.rand.NextVector2Circular(0.2f, 0.45f), Main.rand.NextFloat(0.7f, 1.05f));
 				return;
 			}
 
-			if (CurrentAIState == AIState.Skill_3 && StateTimer >= 114 && StateTimer < Skill3_Phase2End && NPC.alpha < 200) {
-				if (!Main.rand.NextBool(5))
+			if (CurrentAIState == AIState.Skill_3
+				&& ((StateTimer >= Skill3_FirstRetreatEnd - 36 && StateTimer < Skill3_FirstRetreatEnd)
+					|| (StateTimer >= Skill3_SecondHoverEnd && StateTimer < Skill3_End))
+				&& NPC.alpha < 200) {
+				if (!Main.rand.NextBool(4))
 					return;
 
 				SpawnPhaseOneTrailSmoke(NPC.Center + Main.rand.NextVector2Circular(12f, 20f), Main.rand.NextVector2Circular(0.25f, 0.55f), Main.rand.NextFloat(0.65f, 0.95f));
-				return;
-			}
-
-			if (CurrentAIState == AIState.Skill_3 && StateTimer >= Skill3_Phase2End + Skill3_SecondDashFrames && StateTimer < Skill3_Phase3End && NPC.alpha < 200) {
-				if (!Main.rand.NextBool(6))
-					return;
-
-				SpawnPhaseOneTrailSmoke(NPC.Center + Main.rand.NextVector2Circular(10f, 16f), Main.rand.NextVector2Circular(0.2f, 0.45f), Main.rand.NextFloat(0.6f, 0.9f));
 			}
 		}
 
@@ -437,9 +407,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			// 更新动画状态为走路或待机
 			// CurrentState = NPCState.Walk; (对应你之前的动画代码)
 			// --- 基础属性重置 ---
-			NPC.noGravity = false;      // 常态受重力影响
-			NPC.noTileCollide = false;   // 常态受物块碰撞影响
-			NPC.damage = NPC.defDamage; // 恢复默认伤害
+			SetPhysics(true, true);
+			NPC.damage = NPC.defDamage;
 										// --- 1. 卡墙检查与修正 ---
 
 			if (Collision.SolidCollision(NPC.position, NPC.width, NPC.height)) {
@@ -502,24 +471,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				NPC.position.Y += 1f; // 轻轻沉入平台使其通过
 			}
 
-			// --- 3. 挥刀攻击逻辑 (距离 < 2格, 即约 32 像素) ---
-			// 使用 NPC.localAI[0] 作为攻击内部冷却
-			if (distance < 32f) {
-				NPC.velocity.X = 0; // 靠近时停止水平移动
-				if (NPC.localAI[0] <= 0) {
-					// 播放攻击动画
-					CurrentAnimation = NPCState.Attack1;
-
-					// 生成透明穿透弹幕 (假设弹幕ID为 mProjectileType)
-					// 这里的弹幕在你的 Projectile 类里应设置：projectile.penetrate = -1; projectile.alpha = 255;
-					Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<TransparentSlash>(), damage / 2, 0, Main.myPlayer);
-
-					NPC.localAI[0] = 90; // 1.5秒冷却
-				}
-			}
-			else {
-				CurrentAnimation = NPCState.Walk; // 没攻击时走路
-			}
+			if (distance >= 32f)
+				CurrentAnimation = NPCState.Walk;
 
 			if (NPC.localAI[0] > 0)
 				NPC.localAI[0]--;
@@ -532,52 +485,16 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			StateTimer--;
 
 			if (StateTimer <= 0) {
-				var availableSkills = new System.Collections.Generic.List<AIState>();
-
-				float distanceInTiles = distance / 16f; // 将像素距离转换为格数
+				float distanceInTiles = distance / 16f;
 				float healthPercent = (float)NPC.life / NPC.lifeMax;
-				bool isPlayerFacingNPC = (target.direction == 1 && target.Center.X < NPC.Center.X) || (target.direction == -1 && target.Center.X > NPC.Center.X);
+				var weightedSkills = BuildWeightedSkillPool(distanceInTiles, healthPercent, respectLastSkill: true);
 
-				// 2. 条件判定逻辑
-
-				// 技能1：远距离（15格开外），允许连续发动
-				if (distanceInTiles > 15f) {
-					availableSkills.Add(AIState.Skill_1);
+				if (!TryChooseWeightedSkill(weightedSkills, out AIState chosen)) {
+					weightedSkills = BuildWeightedSkillPool(distanceInTiles, healthPercent, respectLastSkill: false);
+					TryChooseWeightedSkill(weightedSkills, out chosen);
 				}
 
-				// 技能2：15格内 + 非连续
-				if (distanceInTiles <= 15f && LastSkill != AIState.Skill_2) {
-					availableSkills.Add(AIState.Skill_2);
-				}
-
-				// 技能3：血量 > 50% + 非连续
-				if (healthPercent > 0.5f && LastSkill != AIState.Skill_3) {
-					availableSkills.Add(AIState.Skill_3);
-				}
-
-				// 技能4：血量 < 50% + 独立冷却20s + 非连续
-				if (healthPercent <= 0.5f && FogSkillCooldown <= 0 && LastSkill != AIState.Skill_4) {
-					availableSkills.Add(AIState.Skill_4);
-				}
-
-				// 技能5：血量 < 50% + 非连续
-				if (healthPercent <= 0.5f && LastSkill != AIState.Skill_5) {
-					availableSkills.Add(AIState.Skill_5);
-				}
-
-				// 技能6：血量 < 50%  + 独立冷却10 s+ 非连续
-				if (healthPercent <= 0.5f && ExSkillCooldown <= 0 && LastSkill != AIState.Skill_6) {
-					availableSkills.Add(AIState.Skill_6);
-				}
-				// 技能6：血量 < 50%  + 独立冷却20 s+ 非连续
-				if (healthPercent <= 0.5f && UtSkillCooldown <= 0 && LastSkill != AIState.Skill_7) {
-					availableSkills.Add(AIState.Skill_7);
-				}
-				// 3. 随机选择并触发
-				if (availableSkills.Count > 0) {
-					AIState chosen = availableSkills[Main.rand.Next(availableSkills.Count)];
-
-					// 如果选中了技能4，重置其独立冷却 (20秒 * 60帧)
+				if (weightedSkills.Count > 0 && chosen != AIState.Idle) {
 					if (chosen == AIState.Skill_4)
 						FogSkillCooldown = 20 * 60;
 					if (chosen == AIState.Skill_6)
@@ -585,36 +502,141 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 					if (chosen == AIState.Skill_7)
 						UtSkillCooldown = 20 * 60;
 
-					if (suppressNextSkill1DashAfterSkill3 && chosen != AIState.Skill_1)
-						suppressNextSkill1DashAfterSkill3 = false;
-
 					CurrentAIState = chosen;
-					LastSkill = chosen; // 记录本次技能
-					StateTimer = 0;     // 重置计时器供技能内部使用
+					LastSkill = chosen;
+					StateTimer = 0;
 				}
 				else {
-					// 如果没有任何技能满足条件，保持 Idle 并延长一点等待时间防止死循环
-					StateTimer = 30;
+					StateTimer = healthPercent > 0.5f ? 12 : 24;
 				}
 			}
+		}
+
+		private System.Collections.Generic.List<(AIState skill, int weight)> BuildWeightedSkillPool(
+			float distanceInTiles, float healthPercent, bool respectLastSkill)
+		{
+			var pool = new System.Collections.Generic.List<(AIState skill, int weight)>();
+			bool skip(AIState skill) => respectLastSkill && LastSkill == skill;
+
+			if (healthPercent > 0.5f) {
+				if (distanceInTiles <= 10f && !skip(AIState.Skill_8))
+					pool.Add((AIState.Skill_8, 48));
+
+				if (distanceInTiles <= 14f && !skip(AIState.Skill_9))
+					pool.Add((AIState.Skill_9, 44));
+
+				if (distanceInTiles >= 3f && distanceInTiles <= 22f && !skip(AIState.Skill_1))
+					pool.Add((AIState.Skill_1, 40));
+
+				if (distanceInTiles <= 18f && !skip(AIState.Skill_2))
+					pool.Add((AIState.Skill_2, 26));
+
+				if (!skip(AIState.Skill_3))
+					pool.Add((AIState.Skill_3, 20));
+			}
+			else {
+				if (distanceInTiles <= 8f && !skip(AIState.Skill_8))
+					pool.Add((AIState.Skill_8, 32));
+
+				if (distanceInTiles <= 12f && !skip(AIState.Skill_9))
+					pool.Add((AIState.Skill_9, 28));
+
+				if (FogSkillCooldown <= 0 && !skip(AIState.Skill_4))
+					pool.Add((AIState.Skill_4, 22));
+
+				if (!skip(AIState.Skill_5))
+					pool.Add((AIState.Skill_5, 34));
+
+				if (ExSkillCooldown <= 0 && !skip(AIState.Skill_6))
+					pool.Add((AIState.Skill_6, 28));
+
+				if (UtSkillCooldown <= 0 && !skip(AIState.Skill_7))
+					pool.Add((AIState.Skill_7, 18));
+			}
+
+			return pool;
 		}
 		public override void PostAI() {
 			if (NPC.ai[2] > 0) {
 				NPC.ai[2] -= 1f; // 逐渐衰减
 			}
 		}
+		private static bool TryChooseWeightedSkill(System.Collections.Generic.List<(AIState skill, int weight)> pool, out AIState chosen)
+		{
+			chosen = AIState.Idle;
+			if (pool == null || pool.Count == 0)
+				return false;
+
+			int totalWeight = 0;
+			foreach (var entry in pool)
+				totalWeight += entry.weight;
+
+			if (totalWeight <= 0)
+				return false;
+
+			int roll = Main.rand.Next(totalWeight);
+			int acc = 0;
+			chosen = pool[0].skill;
+			foreach (var entry in pool) {
+				acc += entry.weight;
+				if (roll < acc) {
+					chosen = entry.skill;
+					return true;
+				}
+			}
+
+			return true;
+		}
+
+		private void SetPhysics(bool useGravity, bool collideWithTiles) {
+			NPC.noGravity = !useGravity;
+			NPC.noTileCollide = !collideWithTiles;
+		}
+
+		private void FaceTargetHorizontal(Player target) {
+			NPC.spriteDirection = (target.Center.X > NPC.Center.X) ? -1 : 1;
+		}
+
+		private float GetSkill3RetreatDirX(Player target, bool secondRetreat) {
+			float retreatDirX = Math.Sign(NPC.Center.X - target.Center.X);
+			if (retreatDirX == 0)
+				retreatDirX = secondRetreat ? target.direction : -target.direction;
+			return retreatDirX;
+		}
+
+		private void BeginSkill3Retreat(Player target, bool secondRetreat) {
+			float retreatDirX = GetSkill3RetreatDirX(target, secondRetreat);
+			NPC.velocity = new Vector2(retreatDirX * 11f, -5f);
+			SetPhysics(false, false);
+			NPC.dontTakeDamage = false;
+			NPC.damage = NPC.defDamage;
+		}
+
+		private void UpdateSkill3RetreatMotion(Player target) {
+			NPC.velocity.Y += 0.28f;
+			NPC.velocity.X *= 0.92f;
+			FaceTargetHorizontal(target);
+			CurrentAnimation = NPCState.Dodge;
+		}
+
 		private void ResetToIdle() {
 			CurrentAIState = AIState.Idle;
 			CurrentAnimation = NPCState.Walk;
 			NPC.alpha = 0;
 			NPC.dontTakeDamage = false;
-			NPC.noGravity = false;
-			NPC.noTileCollide = false;
+			SetPhysics(true, true);
 
-			// 4. 根据血量计算下一次技能的冷却时间 (60帧 = 1秒)
 			float lifeRatio = (float)NPC.life / NPC.lifeMax;
-			float minTime = MathHelper.Lerp(0.5f, 1.5f, lifeRatio); // 血少时0.5s，血多时1.5s
-			float maxTime = MathHelper.Lerp(1.5f, 2.5f, lifeRatio); // 血少时1.5s，血多时2.5s
+			float minTime;
+			float maxTime;
+			if (lifeRatio > 0.5f) {
+				minTime = 0.2f;
+				maxTime = 0.65f;
+			}
+			else {
+				minTime = MathHelper.Lerp(0.45f, 1.2f, lifeRatio * 2f);
+				maxTime = MathHelper.Lerp(1.2f, 2.0f, lifeRatio * 2f);
+			}
 
 			StateTimer = Main.rand.NextFloat(minTime, maxTime) * 60f;
 		}
@@ -641,7 +663,62 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			return currentPos; // 实在没找到就原地不动（理论上极少发生）
 		}
 
-		/// <summary>冲刺时背后少量向后飘散的粒子（客户端）。</summary>
+		// 冲刺时背后少量向后飘散的粒子（客户端）。
+		private Vector2 GetBladeSlashSpawnOffset() => new Vector2(NPC.spriteDirection * -28f, -8f);
+
+		private void SpawnCrownslayerSwordSlash(bool thrust, float rotation, Vector2? offset = null) {
+			if (Main.netMode == NetmodeID.MultiplayerClient)
+				return;
+
+			Vector2 pos = NPC.Center;
+			if (offset.HasValue)
+				pos += offset.Value;
+
+			int projIndex = Projectile.NewProjectile(
+				NPC.GetSource_FromAI(),
+				pos,
+				Vector2.Zero,
+				ModContent.ProjectileType<SwordSlashEffect>(),
+				0, 0f, Main.myPlayer,
+				thrust ? 1f : 0f,
+				NPC.spriteDirection);
+
+			if (projIndex < 0 || projIndex >= Main.maxProjectiles)
+				return;
+
+			Projectile slash = Main.projectile[projIndex];
+			slash.rotation = rotation;
+			slash.ai[2] = NPC.whoAmI;
+			slash.localAI[1] = NPC.whoAmI;
+			slash.netUpdate = true;
+		}
+
+		private static float GetSlashRotationToward(Player target, NPC npc) {
+			Vector2 toTarget = target.Center - npc.Center;
+			if (toTarget.LengthSquared() < 1f)
+				toTarget = new Vector2(-npc.spriteDirection, 0f);
+			// 贴图正方向为 +X（右），直接指向玩家
+			return toTarget.ToRotation();
+		}
+
+		private void SpawnCrownslayerSwordSlashAtBlade(bool thrust, float rotation) {
+			SpawnCrownslayerSwordSlash(thrust, rotation, GetBladeSlashSpawnOffset());
+		}
+
+		private void EmitThrustBurstParticles() {
+			if (Main.dedServ)
+				return;
+
+			for (int i = 0; i < 16; i++) {
+				float angle = MathHelper.TwoPi * i / 16f;
+				Vector2 vel = angle.ToRotationVector2() * Main.rand.NextFloat(2f, 5f);
+				Dust d = Dust.NewDustPerfect(NPC.Center, DustID.GemRuby, vel, 0,
+					Color.Lerp(new Color(255, 60, 20), new Color(255, 200, 80), Main.rand.NextFloat()),
+					Main.rand.NextFloat(0.6f, 1.1f));
+				d.noGravity = true;
+			}
+		}
+
 		private void EmitDashAccentParticles(float intensity) {
 			if (Main.dedServ)
 				return;
@@ -665,289 +742,197 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 		// --- 技能槽位 ---
 
+		// 一阶段横向斩击：蓄力 → 侧闪 → 出刀横穿。
 		private void ExecuteSkill1(Player target) {
 			StateTimer++;
+			FaceTargetHorizontal(target);
+			NPC.dontTakeDamage = false;
+			NPC.damage = NPC.defDamage;
 
-			if (StateTimer < 24) {
-				CurrentAnimation = NPCState.JumpOut;
-				NPC.velocity *= 0.9f;
-			}
-			else if (StateTimer < 24 + 30) {
-				CurrentAnimation = NPCState.Blank;
-				NPC.dontTakeDamage = true;
-				NPC.velocity = Vector2.Zero;
-			}
-			else if (StateTimer < 24 + 30 + 60) {
-				if (StateTimer == 55) {
-					Vector2 teleportPos = target.Center + new Vector2(target.direction * 160f, -16f);
-					NPC.Center = teleportPos;
-					NPC.netUpdate = true;
-				}
-
-				CurrentAnimation = NPCState.Lurk;
-				NPC.dontTakeDamage = false;
-				NPC.velocity = (target.Center - NPC.Center) * 0.01f;
-			}
-			else if (StateTimer < 24 + 30 + 60 + 36) {
-				const float dashDuration = 36f;
-				float dashTime = StateTimer - (24 + 30 + 60);
-				float dashProgress = MathHelper.Clamp(dashTime / dashDuration, 0f, 1f);
-				// 沿曲线 ease：中间略快、首尾略慢，视觉上仍是一条光滑贝塞尔
-				float u = dashProgress * dashProgress * (3f - 2f * dashProgress);
-
-				if (StateTimer == 24 + 30 + 60) {
-					skill1DashP0 = NPC.Center;
-					skill1DashP2 = target.Center;
-					Vector2 chord = skill1DashP2 - skill1DashP0;
-					float chordLen = chord.Length();
-					if (chordLen < 10f) {
-						Vector2 fallback = new Vector2(-target.direction * 140f, -40f);
-						skill1DashP2 = skill1DashP0 + fallback;
-						chord = skill1DashP2 - skill1DashP0;
-						chordLen = chord.Length();
-					}
-
-					Vector2 perp = chordLen > 0.001f
-						? new Vector2(-chord.Y, chord.X) / chordLen
-						: Vector2.UnitY;
-					Vector2 mid = (skill1DashP0 + skill1DashP2) * 0.5f;
-					Vector2 fromPlayer = skill1DashP0 - target.Center;
-					float crossZ = chord.X * fromPlayer.Y - chord.Y * fromPlayer.X;
-					float bulgeSign = crossZ == 0f ? Math.Sign(target.direction) : Math.Sign(crossZ);
-					float bulge = MathHelper.Clamp(chordLen * 0.34f, 56f, 176f);
-					skill1DashP1 = mid + perp * bulge * bulgeSign;
-					NPC.netUpdate = true;
-				}
-
-				Vector2 pos = QuadraticBezier(skill1DashP0, skill1DashP1, skill1DashP2, u);
-				Vector2 tangent = QuadraticBezierTangent(skill1DashP0, skill1DashP1, skill1DashP2, u);
-				NPC.Center = pos;
-				if (tangent.LengthSquared() > 0.0001f) {
-					float speed = MathHelper.Lerp(20.5f, 11f, dashProgress);
-					NPC.velocity = tangent.SafeNormalize(Vector2.UnitX * -NPC.spriteDirection) * speed;
-					NPC.spriteDirection = NPC.velocity.X >= 0f ? -1 : 1;
-				}
-
+			if (StateTimer < 16) {
+				SetPhysics(true, true);
 				CurrentAnimation = NPCState.Attack2;
-				NPC.noGravity = true;
-				NPC.noTileCollide = true;
+				NPC.velocity.X *= 0.82f;
+			}
+			else if (StateTimer == 16) {
+				SetPhysics(true, true);
+				float flankSide = Math.Sign(target.Center.X - NPC.Center.X);
+				if (flankSide == 0f)
+					flankSide = -target.direction;
+
+				NPC.Center = target.Center + new Vector2(-flankSide * 180f, -4f);
+				NPC.velocity = Vector2.Zero;
+				FaceTargetHorizontal(target);
+				CurrentAnimation = NPCState.Lurk;
 				NPC.netUpdate = true;
-				if (!ShouldSuppressSkill1DashTrailEffects)
-					EmitDashAccentParticles(0.45f);
+
+				for (int i = 0; i < 12; i++)
+					Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Smoke, 0f, 0f, 100, default, 1.2f);
+			}
+			else if (StateTimer < 30) {
+				SetPhysics(true, true);
+				CurrentAnimation = NPCState.Attack2;
+				NPC.velocity *= 0.90f;
+			}
+			else if (StateTimer == 30) {
+				Vector2 slashDir = target.Center - NPC.Center;
+				slashDir.Y *= 0.15f;
+				if (slashDir.LengthSquared() < 1f)
+					slashDir = new Vector2(-NPC.spriteDirection, 0f);
+				slashDir.Normalize();
+
+				float slashRot = GetSlashRotationToward(target, NPC);
+
+				NPC.velocity = slashDir * 26f;
+				CurrentAnimation = NPCState.Attack2;
+				SetPhysics(false, false);
+				SpawnCrownslayerSwordSlashAtBlade(thrust: false, rotation: slashRot);
+				Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero,
+					ModContent.ProjectileType<TransparentSlash>(), damage, 3f, Main.myPlayer);
+				SoundEngine.PlaySound(SoundID.Item1, NPC.Center);
+				NPC.netUpdate = true;
+			}
+			else if (StateTimer < 50) {
+				SetPhysics(false, false);
+				CurrentAnimation = NPCState.Attack2;
+				NPC.velocity.X *= 0.90f;
+				NPC.velocity.Y *= 0.45f;
+				NPC.spriteDirection = NPC.velocity.X >= 0f ? -1 : 1;
+
+				if (StateTimer == 38) {
+					Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero,
+						ModContent.ProjectileType<TransparentSlash>(), damage / 2, 2f, Main.myPlayer);
+				}
+
+				if (NPC.velocity.LengthSquared() > 36f)
+					EmitDashAccentParticles(0.35f);
 			}
 			else {
-				suppressNextSkill1DashAfterSkill3 = false;
+				NPC.velocity *= 0.8f;
 				ResetToIdle();
 			}
 		}
 
-		private static Vector2 QuadraticBezier(Vector2 p0, Vector2 p1, Vector2 p2, float t) {
-			float omt = 1f - t;
-			return omt * omt * p0 + 2f * omt * t * p1 + t * t * p2;
-		}
-
-		private static Vector2 QuadraticBezierTangent(Vector2 p0, Vector2 p1, Vector2 p2, float t) {
-			float omt = 1f - t;
-			return 2f * omt * (p1 - p0) + 2f * t * (p2 - p1);
-		}
-
+		// 投掷三柄重力飞刀；已移除旧的闪现贴近与下落突刺段。
 		private void ExecuteSkill2(Player target) {
 			StateTimer++;
+			FaceTargetHorizontal(target);
+			SetPhysics(true, true);
+			NPC.dontTakeDamage = false;
 
-			// --- 第一阶段：预警与投掷 (0.5s) ---
-			if (StateTimer < 60) {
+			if (StateTimer < 48) {
 				CurrentAnimation = NPCState.Attack2;
-				NPC.velocity *= 0.8f;
+				NPC.velocity.X *= 0.85f;
 			}
-			else if (StateTimer == 60) {
-				// 发射弹幕
-				Vector2 baseVel = Vector2.Normalize(target.Center - NPC.Center) * 16f;
+			else if (StateTimer == 48) {
+				Vector2 toTarget = target.Center - NPC.Center;
+				if (toTarget.LengthSquared() < 1f)
+					toTarget = new Vector2(-NPC.spriteDirection, 0f);
+				Vector2 baseVel = Vector2.Normalize(toTarget) * 16f;
 				for (int i = -1; i <= 1; i++) {
 					Vector2 shotVel = baseVel.RotatedBy(MathHelper.ToRadians(i * 25f));
 					Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, shotVel,
 						ModContent.ProjectileType<GravityDagger>(), (int)(damage * 0.4f), 2f, Main.myPlayer);
 				}
+
+				SoundEngine.PlaySound(SoundID.Item71, NPC.Center);
 			}
-			// --- 第二阶段：JumpOut 消失动作 (30帧) ---
-			else if (StateTimer < 84) {
-				CurrentAnimation = NPCState.JumpOut;
-				if (StateTimer == 73) {
-					NPC.velocity = new Vector2(target.direction * 5f, -10f);
-				}
-			}
-			// --- 第三阶段：关键修改！出现在玩家身后高处并【潜伏】 (0.5s) ---
-			else if (StateTimer < 84 + 30) {
-				if (StateTimer == 84) {
-					// 闪现到玩家背后上方
-					NPC.Center = target.Center + new Vector2(target.direction * -160f, -160f);
-					NPC.velocity = Vector2.Zero;
-					CurrentAnimation = NPCState.Lurk;
-
-					// 闪现特效：在旧位置和新位置都产生烟尘
-					for (int i = 0; i < 20; i++) {
-						Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Smoke, 0, 0, 100, default, 1.5f);
-					}
-					NPC.netUpdate = true;
-				}
-
-				// --- 使用潜伏动画 ---
-
-
-				// 锁定方向：即使在身后也要盯着玩家看
-				NPC.spriteDirection = (target.Center.X > NPC.Center.X) ? -1 : 1;
-
-				NPC.noTileCollide = true; // 悬浮期保持虚化
-				NPC.velocity *= 0f;       // 彻底静止在空中
-			}
-			// --- 第四阶段：下落突刺 ---
-			else if (StateTimer < 134 + 60) {
-				if (StateTimer == 134) {
-					CurrentAnimation = NPCState.JumpIn;
-					NPC.noTileCollide = false; // 突刺开始，恢复碰撞
-					NPC.noGravity = false;
-					Vector2 targetPos = target.Center + new Vector2(0, 40f);
-
-					// 计算向量
-					Vector2 dashVel = targetPos - NPC.Center;
-					dashVel.Normalize();
-					NPC.velocity = dashVel * 19f;
-					NPC.netUpdate = true;
-				}
-				if (StateTimer == 148) {
-					NPC.velocity.X = 0;
-					CurrentAnimation = NPCState.Lurk;
-				}
+			else if (StateTimer < 80) {
+				CurrentAnimation = NPCState.Attack2;
+				NPC.velocity *= 0.9f;
 			}
 			else {
 				ResetToIdle();
 			}
-
 		}
 
 		private void ExecuteSkill3(Player target) {
 			StateTimer++;
-			if (CurrentAnimation == NPCState.JumpOut || CurrentAnimation == NPCState.Blank || NPC.alpha > 150) {
+			SetPhysics(false, false);
+
+			// 世界坐标：右上方 → 左上方（不依赖玩家朝向 direction）
+			Vector2 upperRight = target.Center + new Vector2(Skill3CornerOffset, -Skill3CornerOffset);
+			Vector2 upperLeft = target.Center + new Vector2(-Skill3CornerOffset, -Skill3CornerOffset);
+
+			if (StateTimer < Skill3_VanishEnd) {
+				CurrentAnimation = NPCState.JumpOut;
+				NPC.velocity *= 0.85f;
+				NPC.alpha = (int)MathHelper.Lerp(0, 255, StateTimer / (float)Skill3_VanishEnd);
 				NPC.dontTakeDamage = true;
 				NPC.damage = 0;
 			}
-			else {
-				// 在 Attack2 悬浮阶段或 TeleportDown 下砸阶段恢复受击和伤害
+			else if (StateTimer < Skill3_FirstAppearEnd) {
+				if (StateTimer == Skill3_VanishEnd) {
+					NPC.Center = upperRight;
+					NPC.alpha = 0;
+					NPC.velocity = Vector2.Zero;
+					NPC.dontTakeDamage = false;
+					NPC.damage = NPC.defDamage;
+					NPC.netUpdate = true;
+				}
+
+				CurrentAnimation = NPCState.Attack2;
+				NPC.velocity = Vector2.Zero;
+				FaceTargetHorizontal(target);
+
+				if (StateTimer == 20)
+					ShootDaggers(target);
+			}
+			else if (StateTimer < Skill3_FirstRetreatEnd) {
+				if (StateTimer == Skill3_FirstAppearEnd)
+					BeginSkill3Retreat(target, secondRetreat: false);
+
+				UpdateSkill3RetreatMotion(target);
+			}
+			else if (StateTimer < Skill3_DashEnd) {
+				if (StateTimer == Skill3_FirstRetreatEnd) {
+					NPC.dontTakeDamage = true;
+					NPC.damage = 0;
+					Vector2 toGoal = upperLeft - NPC.Center;
+					float dist = toGoal.Length();
+					Vector2 dashDir = toGoal.SafeNormalize(Vector2.UnitX * -NPC.spriteDirection);
+					NPC.velocity = dashDir * MathHelper.Clamp(dist * 0.6f, 18f, 26f);
+					CurrentAnimation = NPCState.Attack2;
+					NPC.netUpdate = true;
+				}
+
+				NPC.velocity *= 0.90f;
+				NPC.spriteDirection = NPC.velocity.X >= 0f ? -1 : 1;
+				EmitDashAccentParticles(0.5f);
+			}
+			else if (StateTimer < Skill3_SecondHoverEnd) {
+				if (StateTimer == Skill3_DashEnd) {
+					NPC.Center = upperLeft;
+					NPC.velocity = Vector2.Zero;
+					NPC.alpha = 0;
+					NPC.netUpdate = true;
+				}
+
 				NPC.dontTakeDamage = false;
 				NPC.damage = NPC.defDamage;
-			}
-			// --- 阶段 1：原地蓄力一秒 (0-60帧) + JumpOut (60-84帧) ---
-			if (StateTimer < 60) {
-				NPC.noGravity = true;
-				NPC.noTileCollide = true;
-				CurrentAnimation = NPCState.Lurk;
 				NPC.velocity *= 0.8f;
-			}
-			else if (StateTimer < 84) {
-				CurrentAnimation = NPCState.JumpOut;
-				if (StateTimer == 60) {
-					// 在消失这一刻，固定好第一跳的相对位置：玩家朝向侧的斜上（右上/左上随玩家面向）
-					phaseOffset = new Vector2(target.direction * 240f, -240f);
-				}
-			}
-			// --- 阶段 2：第一次相位突袭 (84 + 30延迟 + 36悬浮) ---
-			else if (StateTimer < Skill3_Phase2End) {
-				// 消失 0.5秒 (30帧)
-				if (StateTimer < 114) {
-					CurrentAnimation = NPCState.Blank;
-					NPC.alpha = 255;
-					NPC.Center = target.Center + phaseOffset; // 持续跟随玩家中心，直到 114 帧出现
-				}
-				else {
-					// 悬浮阶段 (36帧)
-					NPC.alpha = 0;
-					CurrentAnimation = NPCState.Attack2;
-					NPC.velocity = Vector2.Zero; // 悬浮不移动
+				CurrentAnimation = NPCState.Attack2;
+				FaceTargetHorizontal(target);
 
-					if (StateTimer == 114 + 24) { // 第24帧发射飞刀
-						ShootDaggers(target);
-						// 另一侧斜上：相对玩家的“左上/右上”对侧
-						phaseOffset = new Vector2(-target.direction * 240f, -240f);
-					}
-				}
+				if (StateTimer == Skill3_DashEnd + 8)
+					ShootDaggers(target);
 			}
-			// --- 阶段 3：第二次相位突袭 — 全程可见冲刺到对侧斜上，再短暂悬停投掷 ---
-			else if (StateTimer < Skill3_Phase3End) {
-				int subTimer = (int)StateTimer - Skill3_Phase2End;
-				Vector2 dashGoal = target.Center + phaseOffset;
-				if (subTimer < Skill3_SecondDashFrames) {
-					CurrentAnimation = NPCState.Attack2;
-					NPC.alpha = 0;
-					NPC.noGravity = true;
-					NPC.noTileCollide = true;
-					Vector2 toGoal = dashGoal - NPC.Center;
-					float dashT = MathHelper.Clamp(subTimer / (float)Skill3_SecondDashFrames, 0f, 1f);
-					float smoothT = dashT * dashT * (3f - 2f * dashT);
-					Vector2 desiredDir = toGoal.SafeNormalize(Vector2.UnitX * -NPC.spriteDirection);
-					Vector2 tangent = new Vector2(-desiredDir.Y, desiredDir.X) * (1f - smoothT) * 5f;
-					float speed = MathHelper.Lerp(21f, 11.5f, smoothT);
-					Vector2 desiredVel = desiredDir * speed + tangent;
-					NPC.velocity = Vector2.Lerp(NPC.velocity, desiredVel, MathHelper.Lerp(0.2f, 0.3f, smoothT));
-					NPC.spriteDirection = NPC.velocity.X >= 0f ? -1 : 1;
-					EmitDashAccentParticles(0.38f);
-					float brakeRadius = 40f;
-					if (toGoal.LengthSquared() < brakeRadius * brakeRadius) {
-						float settle = MathHelper.Clamp(1f - (float)Math.Sqrt(toGoal.LengthSquared()) / brakeRadius, 0f, 1f);
-						NPC.velocity = Vector2.Lerp(NPC.velocity, desiredVel * 0.35f, 0.45f * settle);
-					}
-				}
-				else if (subTimer < Skill3_SecondDashFrames + Skill3_SecondHoverFrames) {
-					NPC.alpha = 0;
-					NPC.noGravity = true;
-					NPC.noTileCollide = true;
-					CurrentAnimation = NPCState.Attack2;
-					Vector2 toGoal = dashGoal - NPC.Center;
-					float settleT = (subTimer - Skill3_SecondDashFrames) / (float)Skill3_SecondHoverFrames;
-					float settleEase = settleT * settleT * (3f - 2f * settleT);
-					NPC.velocity *= MathHelper.Lerp(0.78f, 0.5f, settleEase);
-					NPC.Center = Vector2.Lerp(NPC.Center, dashGoal, MathHelper.Lerp(0.12f, 0.28f, settleEase));
-					if (subTimer == Skill3_SecondDashFrames + 24) {
-						ShootDaggers(target);
-					}
-				}
+			else if (StateTimer < Skill3_End) {
+				if (StateTimer == Skill3_SecondHoverEnd)
+					BeginSkill3Retreat(target, secondRetreat: true);
+
+				UpdateSkill3RetreatMotion(target);
 			}
-			// --- 阶段 4：正上方下砸 ---
 			else {
-				int finalTimer = (int)StateTimer - Skill3_Phase3End;
-				if (finalTimer < 15) { // 快速瞬移到上方准备
-					NPC.alpha = 255;
-					NPC.Center = target.Center + new Vector2(0, -288f); // 18格高
-					NPC.noTileCollide = true;
-				}
-				else if (finalTimer < 39) { // 下落开始
-					if (finalTimer == 15) {
-						NPC.alpha = 0;
-						NPC.velocity = Vector2.Zero; // 瞬移后先急停
-						NPC.noTileCollide = false; // 恢复碰撞
-						CurrentAnimation = NPCState.TeleportDown;
-					}
-					if (finalTimer == 21) {
-						NPC.velocity = new Vector2(0, 20f); // 垂直急速下坠
-					}
-
-
-					// 落地判定
-					if (NPC.velocity.Y == 0 && finalTimer > 20) {
-						suppressNextSkill1DashAfterSkill3 = true;
-						ResetToIdle();
-					}
-				}
-				else {
-					suppressNextSkill1DashAfterSkill3 = true;
-					ResetToIdle();
-				}
+				ResetToIdle();
 			}
-
 		}
 
 		private void ExecuteSkill4(Player target) {
+			StateTimer++;
 			CurrentAnimation = NPCState.TeleportDown;
 			NPC.velocity.X *= 0.5f;
-			StateTimer++;
+			SetPhysics(true, true);
 
 			// 动画中段：释放中心静止的法术匕首
 			if (StateTimer == 24) {
@@ -1307,7 +1292,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 						int count = 5 + (int)(10 * (1 - (float)StateTimer / 960));
 						float spacing = 270f - count * 6;
 						float angleDeg = Main.rand.NextFloat(30f, 150f);
-						float speed = 34f;
+						float speed = 52f;
 						float spawnDist = 820f;
 
 						float radian = MathHelper.ToRadians(angleDeg);
@@ -1357,11 +1342,107 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			}
 		}
 
+		// 独立斩击：Attack2 挥刀 + 精灵图帧 2~5 刀光。
+		private void ExecuteSkill8(Player target) {
+			StateTimer++;
+			FaceTargetHorizontal(target);
+			SetPhysics(true, true);
+
+			if (StateTimer < 18) {
+				CurrentAnimation = NPCState.Attack2;
+				NPC.velocity.X *= 0.72f;
+
+				if (StateTimer == 8) {
+					Vector2 nudge = target.Center - NPC.Center;
+					nudge.Y = 0f;
+					if (nudge.LengthSquared() > 1f) {
+						nudge.Normalize();
+						NPC.position += nudge * 10f;
+					}
+				}
+			}
+			else if (StateTimer == 18) {
+				CurrentAnimation = NPCState.Attack2;
+				float slashRot = GetSlashRotationToward(target, NPC);
+				Vector2 push = target.Center - NPC.Center;
+				push.Y *= 0.15f;
+				if (push.LengthSquared() < 1f)
+					push = new Vector2(-NPC.spriteDirection, 0f);
+				push.Normalize();
+				NPC.velocity = push * 14f;
+
+				SpawnCrownslayerSwordSlashAtBlade(thrust: false, rotation: slashRot);
+				Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero,
+					ModContent.ProjectileType<TransparentSlash>(), damage, 0f, Main.myPlayer);
+				SoundEngine.PlaySound(SoundID.Item1, NPC.Center);
+			}
+			else if (StateTimer < 36) {
+				CurrentAnimation = NPCState.Attack2;
+				NPC.velocity *= 0.86f;
+			}
+			else {
+				ResetToIdle();
+			}
+		}
+
+		// 独立突刺：JumpIn 冲刺 + 精灵图帧 7~10 刀光。
+		private void ExecuteSkill9(Player target) {
+			StateTimer++;
+			FaceTargetHorizontal(target);
+
+			if (StateTimer < 18) {
+				SetPhysics(true, true);
+				CurrentAnimation = NPCState.Attack2;
+				NPC.velocity *= 0.70f;
+
+				if (StateTimer == 14 && !Main.dedServ) {
+					for (int i = 0; i < 8; i++) {
+						Dust d = Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(12f, 18f),
+							DustID.GemRuby, Main.rand.NextVector2Circular(0.6f, 0.6f), 0,
+							new Color(255, 80, 40), Main.rand.NextFloat(0.5f, 0.9f));
+						d.noGravity = true;
+					}
+				}
+			}
+			else if (StateTimer < 22) {
+				SetPhysics(true, true);
+				CurrentAnimation = NPCState.JumpIn;
+				NPC.velocity *= 0.55f;
+			}
+			else if (StateTimer == 22) {
+				SetPhysics(false, false);
+				CurrentAnimation = NPCState.JumpIn;
+				Vector2 dashVel = target.Center - NPC.Center;
+				if (dashVel.LengthSquared() < 1f)
+					dashVel = new Vector2(-NPC.spriteDirection, 0f);
+				dashVel.Normalize();
+				dashVel *= 24f;
+				NPC.velocity = dashVel;
+
+				EmitThrustBurstParticles();
+				SpawnCrownslayerSwordSlashAtBlade(thrust: true, rotation: dashVel.ToRotation());
+				Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero,
+					ModContent.ProjectileType<TransparentSlash>(), damage, 2f, Main.myPlayer);
+				SoundEngine.PlaySound(SoundID.Item71, NPC.Center);
+			}
+			else if (StateTimer < 44) {
+				SetPhysics(false, false);
+				CurrentAnimation = NPCState.JumpIn;
+				NPC.velocity *= 0.89f;
+
+				if (NPC.velocity.LengthSquared() > 64f)
+					EmitDashAccentParticles(0.45f);
+			}
+			else {
+				ResetToIdle();
+			}
+		}
+
 		private void ExecuteRecover() {
+			StateTimer--;
+			SetPhysics(true, true);
 			NPC.velocity *= 0.8f; // 保持原地不动或微弱减速
 			CurrentAnimation = NPCState.Dodge; // 播放 Dodge 动画
-
-			StateTimer--;
 			if (StateTimer <= 0) {
 				// 18单位时间结束后，回到 Idle，动画会自动由 HandleIdle 切回 Walk
 				CurrentAIState = AIState.Idle;
@@ -1369,6 +1450,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			}
 		}
 		private void ExecuteSummoning(Player target) {
+			StateTimer++;
+			SetPhysics(false, false);
 			NPC.dontTakeDamage = true;
 			NPC.velocity *= 0.95f;
 
@@ -1390,7 +1473,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 					int count = 5 + (int)(6 * (1 - (float)NPC.life / NPC.lifeMax));
 					float spacing = 240f - count * 6;  // 你的原始公式
 					float angleDeg = Main.rand.NextFloat(0f, 180f); // 你的原始随机范围
-					float speed = 13f; // 你的原始速度
+					float speed = 52f;
 					float spawnDist = 1300f; // 你的原始距离
 
 					// 弧度和方向
@@ -1491,8 +1574,6 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 					NPC.netUpdate = true;
 				}
 			}
-
-			StateTimer++;
 		}
 		private void ShootDaggers(Player target) {
 			Vector2 baseVel = Vector2.Normalize(target.Center - NPC.Center) * 16f;
@@ -1763,18 +1844,29 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 	public class TransparentSlash : ModProjectile
 	{
 		public override void SetDefaults() {
-			Projectile.width = 64;
+			Projectile.width = 96;
 			Projectile.height = 64;
 			Projectile.friendly = false;
-			Projectile.hostile = true;     // 敌对弹幕
-			Projectile.tileCollide = false; // 穿墙
-			Projectile.penetrate = -1;     // 无限穿透
-			Projectile.alpha = 255;        // 全透明
-			Projectile.timeLeft = 2;       // 关键：只存在极短时间，产生一次判定即消失
+			Projectile.hostile = true;
+			Projectile.tileCollide = false;
+			Projectile.penetrate = -1;
+			Projectile.alpha = 255;
+			Projectile.timeLeft = 2;
 		}
 
 		public override void AI() {
-			Projectile.velocity = Vector2.Zero; // 停在原地
+			Projectile.velocity = Vector2.Zero;
+		}
+
+		public override void OnHitPlayer(Player target, Player.HurtInfo info) {
+			if (Main.dedServ)
+				return;
+
+			for (int i = 0; i < 8; i++) {
+				Dust d = Dust.NewDustPerfect(Projectile.Center, DustID.GemRuby,
+					Main.rand.NextVector2Circular(4f, 4f), 0, Color.Red, 1f);
+				d.noGravity = true;
+			}
 		}
 	}
 	public class GravityDagger : ModProjectile
@@ -1847,21 +1939,20 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 		public override void SetStaticDefaults() {
 			ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
-			ProjectileID.Sets.TrailCacheLength[Projectile.type] = 20; // 加长残影
+			ProjectileID.Sets.TrailCacheLength[Projectile.type] = 20;
 		}
 
 		public override void SetDefaults() {
 			Projectile.width = 45;
 			Projectile.height = 45;
 			Projectile.hostile = true;
-			Projectile.tileCollide = false; // 不碰撞物块
+			Projectile.tileCollide = false;
 			Projectile.penetrate = -1;
-			Projectile.timeLeft = 660; // 10秒准备 + 1秒发射时间
+			Projectile.timeLeft = 480;
 			Projectile.alpha = 255;
 		}
 
-		private bool isLaunching = false;
-		private Vector2 launchVelocity;
+		private bool IsLaunching => Projectile.localAI[1] > 0.5f;
 
 		public override void AI() {
 			Player target = Main.player[(int)Projectile.ai[0]];
@@ -1870,202 +1961,93 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				return;
 			}
 
-			// --- 1. 矩阵边界与喷发逻辑 ---
+			Projectile.alpha = Math.Max(0, Projectile.alpha - 8);
 
-			// 矩阵参数
-			const float rangeX = 400f;
-			const float rangeY = 400f;
+			if (!IsLaunching) {
+				Projectile.velocity = Vector2.Zero;
 
-			if (!isLaunching) {
-				// A. 边界墙效果（让矩形边界清晰）
-				// 每帧在矩形的四个边随机生成少量静止粒子，勾勒出轮廓
-				for (int i = 0; i < 4; i++) {
-					Vector2 edgePos;
-					if (Main.rand.NextBool()) { // 左右边
-						edgePos = Projectile.Center + new Vector2(Main.rand.NextBool() ? -rangeX : rangeX, Main.rand.NextFloat(-rangeY, rangeY));
+				if (Projectile.timeLeft > 60) {
+					if (Projectile.localAI[0] == 0f) {
+						Projectile.rotation = (target.Center - Projectile.Center).ToRotation();
+						Projectile.localAI[0] = 1f;
 					}
-					else { // 上下边
-						edgePos = Projectile.Center + new Vector2(Main.rand.NextFloat(-rangeX, rangeX), Main.rand.NextBool() ? -rangeY : rangeY);
+
+				}
+				else {
+					float chargeT = 1f - Projectile.timeLeft / 60f;
+					float targetRot = (target.Center - Projectile.Center).ToRotation();
+
+					// 蓄力最后 1s：预警线跟随玩家，发射前锁定朝向
+					if (Projectile.timeLeft == 1)
+						Projectile.rotation = targetRot;
+					else
+						Projectile.rotation = Projectile.rotation.AngleLerp(targetRot, 0.22f + chargeT * 0.45f);
+
+					if (Projectile.timeLeft > 1)
+						Projectile.Center += Main.rand.NextVector2Circular(
+							1.5f + chargeT * 3f, 1.5f + chargeT * 3f);
+
+					for (int i = 0; i < (int)(chargeT * 3f) + 1; i++) {
+						Vector2 gp = Projectile.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(80f, 180f);
+						Dust d = Dust.NewDustPerfect(gp, DustID.GemRuby,
+							(Projectile.Center - gp) * 0.12f, 0, Color.Red, 1.0f);
+						d.noGravity = true;
 					}
-					Dust d = Dust.NewDustPerfect(edgePos, DustID.Smoke, Vector2.Zero, 150, Color.Red, 1.2f);
+				}
+
+				if (Projectile.timeLeft == 1) {
+					Projectile.localAI[1] = 1f;
+					Projectile.rotation = (target.Center - Projectile.Center).ToRotation();
+					Projectile.velocity = Projectile.rotation.ToRotationVector2() * 48f;
+					Projectile.timeLeft = 140;
+					SoundEngine.PlaySound(SoundID.Item71, Projectile.Center);
+				}
+			}
+			else {
+				Projectile.rotation = Projectile.velocity.ToRotation();
+				if (Main.rand.NextBool(3)) {
+					Dust d = Dust.NewDustPerfect(Projectile.Center, DustID.GemRuby,
+						-Projectile.velocity * 0.15f, 0, Color.Red, 0.9f);
 					d.noGravity = true;
-				}
-
-				// B. 从碰撞箱边缘向外喷发（中心留空）
-				for (int j = 0; j < 12; j++) {
-					float spreadAngle = Main.rand.NextFloat(MathHelper.TwoPi);
-					Vector2 spawnDir = spreadAngle.ToRotationVector2();
-
-					// --- 提示实现的数学逻辑 ---
-					// 为了让粒子形成的轮廓是方形而非圆形，我们需要计算在该角度下到矩形边界的角度修正系数
-					// 修正系数公式：1 / max(|cos(theta)|, |sin(theta)|)
-					// 当 theta 为 45 度时，修正值约为 1.414
-					float cos = Math.Abs((float)Math.Cos(spreadAngle));
-					float sin = Math.Abs((float)Math.Sin(spreadAngle));
-					float rectModifier = 1f / Math.Max(cos, sin);
-
-					// 基础速度控制，确保粒子在消失前能到达边界
-					// 400 像素距离 / 60 帧生命值 ≈ 6.6f 基础速度
-					float baseSpeed = 28f;
-					Vector2 vel = spawnDir * baseSpeed * rectModifier * Main.rand.NextFloat(0.5f, 1.7f);
-
-					// 在碰撞箱外圈生成
-					Vector2 spawnPos = Projectile.Center + spawnDir * 45f;
-
-					int type = Main.rand.NextBool() ? DustID.Smoke : DustID.Cloud;
-					Color c = Color.Lerp(Color.Red, Color.White, Main.rand.NextFloat(0.1f, 0.4f));
-
-					Dust d = Dust.NewDustPerfect(spawnPos, type, vel, 100, c, Main.rand.NextFloat(2.5f, 3.8f));
-					d.noGravity = true;
-
-					// 阻力微调：让粒子在到达边界时平滑减速停下，形成清晰的“烟雾墙”
-					d.velocity *= 0.97f;
-					d.fadeIn = 0.5f;
-				}
-				for (int k = 0; k < 5; k++) {
-					// 在 800x800 范围内随机选点
-					Vector2 randomInnerPos = Projectile.Center + new Vector2(
-						Main.rand.NextFloat(-rangeX, rangeX),
-						Main.rand.NextFloat(-rangeY, rangeY)
-					);
-
-					// 内部烟雾：速度极慢或静止，主要为了遮挡视线
-					Dust innerD = Dust.NewDustPerfect(randomInnerPos, DustID.Smoke, Vector2.Zero, 150, Color.Red * 0.5f, 3.5f);
-					innerD.noGravity = true;
-					innerD.velocity = Main.rand.NextVector2Circular(1f, 1f); // 极其轻微的漂浮感
-				}
-
-				// 矩阵减益判定（保持不变）
-				Rectangle smokeRect = new Rectangle((int)Projectile.Center.X - (int)rangeX, (int)Projectile.Center.Y - (int)rangeY, (int)rangeX * 2, (int)rangeY * 2);
-				if (target.getRect().Intersects(smokeRect)) {
-					target.AddBuff(BuffID.BrokenArmor, 2);
-				}
-
-				// --- 2. 旋转与发射逻辑 (修正 45 度贴图) ---
-				float textureRotationOffset = 0f;
-
-				if (!isLaunching) {
-					Projectile.alpha = Math.Max(0, Projectile.alpha - 10);
-					Vector2 aimDir = (target.Center - Projectile.Center).SafeNormalize(Vector2.UnitY);
-
-
-					if (!isLaunching) {
-						Projectile.alpha = Math.Max(0, Projectile.alpha - 10);
-
-						// 计算目标角度
-						float targetRotation = aimDir.ToRotation() + textureRotationOffset;
-
-						// --- 核心修复：分阶段逻辑 ---
-						if (Projectile.timeLeft <= 30) {
-							// A. 最后0.5秒：蓄力与剧烈锁定
-							Projectile.rotation = Projectile.rotation.AngleLerp(targetRotation, 0.45f);
-
-							// 蓄力震动：让匕首颤抖
-							Projectile.Center += Main.rand.NextVector2Circular(2.5f, 2.5f);
-
-							// 能量汇聚粒子：向中心倒流
-							for (int i = 0; i < 2; i++) {
-								Vector2 gatherPos = Projectile.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(100f, 160f);
-								Vector2 gatherVel = (Projectile.Center - gatherPos) * 0.15f;
-								Dust d = Dust.NewDustPerfect(gatherPos, DustID.GemRuby, gatherVel, 0, Color.Red, 1.2f);
-								d.noGravity = true;
-							}
-						}
-						else {
-							// B. 前9.5秒：普通瞄准，始终对准玩家
-							// 使用 Lerp 平滑一点，或者直接赋值 Projectile.rotation = targetRotation;
-							Projectile.rotation = Projectile.rotation.AngleLerp(targetRotation, 0.15f);
-						}
-
-						// --- 3. 发射瞬间 (砰！) ---
-						if (Projectile.timeLeft == 1) {
-							isLaunching = true;
-							Projectile.velocity = (target.Center - Projectile.Center).SafeNormalize(Vector2.UnitY) * 42f;
-							SoundEngine.PlaySound(SoundID.Item71, Projectile.Center);
-							Projectile.timeLeft = 150;
-
-							// 爆发大范围红色烟雾
-							for (int i = 0; i < 60; i++) {
-								Vector2 burstSpeed = Main.rand.NextVector2Unit() * Main.rand.NextFloat(8f, 20f);
-								Dust d = Dust.NewDustPerfect(Projectile.Center, DustID.Smoke, burstSpeed, 50, Color.Red, 3.8f);
-								d.noGravity = true;
-								d.fadeIn = 1.5f;
-							}
-						}
-					}
-					else {
-						// 飞行中维持方向
-						Projectile.rotation = Projectile.velocity.ToRotation() + textureRotationOffset;
-					}
 				}
 			}
 		}
 
 		public override bool PreDraw(ref Color lightColor) {
-			Texture2D texture = Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Value;
-			Vector2 drawOrigin = texture.Size() / 2f;
-			if (!isLaunching && Projectile.timeLeft <= 120) {
-				Player target = Main.player[(int)Projectile.ai[0]];
-				if (target.active && !target.dead) {
+			Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
+			Vector2 origin = tex.Size() / 2f;
 
-					float currentScale = Projectile.scale * 1.6f;
-					Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
+			if (!IsLaunching && Projectile.timeLeft <= 60) {
+				float progress = 1f - Projectile.timeLeft / 60f;
+				float pulse = 0.4f + 0.6f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 28f);
+				float lineAlpha = (progress * 0.5f + pulse * 0.3f) * 0.65f;
 
-					float offsetX = tex.Width - 2f;
-					float offsetY = tex.Height * 0.5f;
+				Texture2D lineTex = TextureAssets.MagicPixel.Value;
+				Vector2 beamStart = Projectile.Center - Main.screenPosition;
 
-					Vector2 scaledOrigin = new Vector2(offsetX * currentScale, offsetY * currentScale);
-
-					Vector2 visualCenter = tex.Size() / 2f * currentScale;
-
-					Vector2 beamStart = Projectile.Center + (scaledOrigin - visualCenter).RotatedBy(Projectile.rotation);
-
-					float beamRotation = Projectile.rotation;
-
-					// 3. 视觉效果：随时间推移颜色变实，并剧烈闪烁
-					float progress = 1f - (Projectile.timeLeft / 120f);
-					float pulse = 0.4f + 0.6f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 25f);
-					float alpha = (progress * 0.4f + pulse * 0.4f) * 0.6f; // 稍微调低总透明度，防止20像素太挡视线
-
-					Texture2D lineTex = TextureAssets.MagicPixel.Value;
-
-					// 4. 绘制 20 像素宽的主射线
-					Main.EntitySpriteDraw(
-						lineTex,
-						beamStart - Main.screenPosition,
-						new Rectangle(0, 0, 1, 1),
-						Color.Red * alpha,
-						beamRotation,
-						new Vector2(0f, 0.5f), // 确保这20像素是以发射点为中心上下展开的
-						new Vector2(4000f, 20f), // 20像素宽
-						SpriteEffects.None,
-						0
-					);
-
-					// 5. 绘制中心亮线（让 20 像素宽的粗线看起来有层次感，而不是一坨色块）
-					Main.EntitySpriteDraw(
-						lineTex,
-						beamStart - Main.screenPosition,
-						new Rectangle(0, 0, 1, 1),
-						Color.White * alpha * 0.4f,
-						beamRotation,
-						new Vector2(0f, 0.5f),
-						new Vector2(4000f, 4f), // 内部 4 像素宽的白芯
-						SpriteEffects.None,
-						0
-					);
-				}
+				Main.EntitySpriteDraw(lineTex, beamStart, new Rectangle(0, 0, 1, 1),
+					Color.Red * lineAlpha, Projectile.rotation,
+					new Vector2(0f, 0.5f), new Vector2(4000f, 18f), SpriteEffects.None, 0);
+				Main.EntitySpriteDraw(lineTex, beamStart, new Rectangle(0, 0, 1, 1),
+					Color.White * lineAlpha * 0.4f, Projectile.rotation,
+					new Vector2(0f, 0.5f), new Vector2(4000f, 4f), SpriteEffects.None, 0);
 			}
-			// 1. 绘制极长的赤红色残影
+
 			for (int k = 0; k < Projectile.oldPos.Length; k++) {
-				Vector2 drawPos = Projectile.oldPos[k] - Main.screenPosition + drawOrigin + new Vector2(0f, Projectile.gfxOffY);
+				if (Projectile.oldPos[k] == Vector2.Zero)
+					continue;
+				Vector2 drawPos = Projectile.oldPos[k] - Main.screenPosition + origin
+					+ new Vector2(0f, Projectile.gfxOffY);
 				float factor = (float)(Projectile.oldPos.Length - k) / Projectile.oldPos.Length;
-				Color trailColor = new Color(255, 0, k == 0 ? 0 : 0, 0) * factor * (isLaunching ? 1f : 0.4f);
-				Main.EntitySpriteDraw(texture, drawPos, null, trailColor, Projectile.rotation, drawOrigin, Projectile.scale * 1.6f, SpriteEffects.None, 0);
+				Color trailColor = new Color(255, 0, 0, 0) * factor * (IsLaunching ? 0.9f : 0.3f);
+				Main.EntitySpriteDraw(tex, drawPos, null, trailColor,
+					Projectile.rotation, origin, Projectile.scale * 1.6f, SpriteEffects.None, 0);
 			}
 
-			// 2. 本体
-			Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, new Color(255, 30, 30, 200) * Projectile.Opacity, Projectile.rotation, drawOrigin, Projectile.scale * 1.6f, SpriteEffects.None, 0);
+			Main.EntitySpriteDraw(tex,
+				Projectile.Center - Main.screenPosition, null,
+				new Color(255, 30, 30, 200) * Projectile.Opacity,
+				Projectile.rotation, origin, Projectile.scale * 1.6f, SpriteEffects.None, 0);
 
 			return false;
 		}
@@ -2131,7 +2113,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 	{
 		private const int TelegraphTicks = 48;
 		private const int AfterShotTicks = 12;
-		private const float BarrageSpeed = 34f;
+		private const float BarrageSpeed = 52f;
 
 		public override string Texture => "Terraria/Images/MagicPixel"; // 无需额外贴图
 
