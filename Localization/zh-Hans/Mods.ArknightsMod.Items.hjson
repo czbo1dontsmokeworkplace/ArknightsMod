@@ -3074,12 +3074,12 @@ ExusiaiAlterDefault: {
 }
 
 电梯: {
-	DisplayName: 电梯
+	// DisplayName: 电梯
 	// Tooltip: ""
 }
 
 电梯交互按钮: {
-	DisplayName: 电梯交互按钮
+	// DisplayName: 电梯交互按钮
 	// Tooltip: ""
 }
 
@@ -3198,12 +3198,12 @@ DN_Weapon: {
 }
 
 Elevator: {
-	// DisplayName: Elevator
+	DisplayName: 电梯
 	// Tooltip: ""
 }
 
 ElevatorButton: {
-	// DisplayName: Elevator Button
+	DisplayName: 电梯交互按钮
 	// Tooltip: ""
 }
 

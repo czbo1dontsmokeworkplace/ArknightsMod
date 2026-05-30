@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using ArknightsMod.Content.Tiles.Infrastructure.Elevators;
+using ArknightsMod;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
@@ -98,8 +99,6 @@ namespace ArknightsMod.Content.Tiles
 		private readonly Dictionary<int, float> _riderOffsetY = new Dictionary<int, float>();
 		private int _postArriveLockTicks = 0;
 		private readonly Dictionary<Point16, PlatformSnapshot> _suppressedPlatforms = new Dictionary<Point16, PlatformSnapshot>();
-		private static int _lastDebugChatTick = -999999;
-		private static string _lastDebugChatMsg = "";
 
 		// 电梯运行相关音效状态（每次开始搬运时重置）。
 		// 由于不同 tModLoader 版本对“停止/追踪声音句柄”的支持不同，这里用 tick 延迟近似 runStart 播放完毕后再启动持续音效。
@@ -121,16 +120,57 @@ namespace ArknightsMod.Content.Tiles
 
 		public override int Hook_AfterPlacement(int i, int j, int type, int style, int direction, int alternate)
 		{
+			Point16 topLeft = TileObjectData.TopLeft(i, j);
 			if (Main.netMode == NetmodeID.MultiplayerClient)
 			{
-				NetMessage.SendTileSquare(Main.myPlayer, i, j, 3);
-				NetMessage.SendData(MessageID.TileEntityPlacement, -1, -1, null, i, j, Type, 0f, 0, 0, 0);
+				NetMessage.SendTileSquare(Main.myPlayer, topLeft.X, topLeft.Y, 3);
+				NetMessage.SendData(MessageID.TileEntityPlacement, -1, -1, null, topLeft.X, topLeft.Y, Type, 0f, 0, 0, 0);
 				return -1;
 			}
 
-			int id = Place(i, j);
+			int id = Place(topLeft.X, topLeft.Y);
 			((TEElevator)ByID[id]).ScanFloors();
 			return id;
+		}
+
+		// 客户端 UI / 按钮选层后请求移动；单机与主机直接写 TE，纯客户端走 ModPacket。
+		public static void RequestMoveToFloor(int teId, int floorBottomY)
+		{
+			if (floorBottomY < 0 || teId < 0)
+				return;
+
+			if (Main.netMode == NetmodeID.MultiplayerClient)
+			{
+				ModPacket packet = ModContent.GetInstance<ArknightsMod>().GetPacket();
+				packet.Write((short)ArknightsMod.ArkMessageID.ElevatorRequestFloor);
+				packet.Write(teId);
+				packet.Write(floorBottomY);
+				packet.Send();
+				return;
+			}
+
+			ApplyMoveRequest(teId, floorBottomY);
+		}
+
+		internal static void ApplyMoveRequest(int teId, int floorBottomY)
+		{
+			if (floorBottomY < 0 || teId < 0)
+				return;
+			if (!TileEntity.ByID.TryGetValue(teId, out TileEntity entity) || entity is not TEElevator te)
+				return;
+
+			te.RebindPositionIfMisaligned();
+			if (te.IsAlreadyAtFloorBottomY(floorBottomY))
+				return;
+
+			te.TargetFloorBottomY = floorBottomY;
+			te.SyncToClientsIfServer();
+		}
+
+		private void SyncToClientsIfServer()
+		{
+			if (Main.netMode == NetmodeID.Server)
+				NetMessage.SendData(MessageID.TileEntitySharing, -1, -1, null, ID);
 		}
 
 		public override bool IsTileValidForEntity(int x, int y)
@@ -241,6 +281,11 @@ namespace ArknightsMod.Content.Tiles
 		public override void NetSend(BinaryWriter writer)
 		{
 			writer.Write((byte)FloorMode);
+			writer.Write(TargetFloorBottomY);
+			writer.Write(_moving);
+			writer.Write(_moveDir);
+			writer.Write(_pixelCarry);
+			writer.Write(_desiredTopY);
 		}
 
 		public override void NetReceive(BinaryReader reader)
@@ -249,6 +294,11 @@ namespace ArknightsMod.Content.Tiles
 			if (modeValue > 2)
 				modeValue = (byte)FloorDetectMode.ButtonOnly;
 			FloorMode = (FloorDetectMode)modeValue;
+			TargetFloorBottomY = reader.ReadInt32();
+			_moving = reader.ReadBoolean();
+			_moveDir = reader.ReadInt32();
+			_pixelCarry = reader.ReadSingle();
+			_desiredTopY = reader.ReadInt32();
 		}
 
 		public bool IsPointInsideShaft(float worldX, float worldY)
@@ -293,8 +343,162 @@ namespace ArknightsMod.Content.Tiles
 			int floorBottomY = FindNearestFloorBottomY(player.Bottom.Y);
 			if (floorBottomY < 0)
 				return false;
-			TargetFloorBottomY = floorBottomY;
+			RequestMoveToFloor(ID, floorBottomY);
 			return true;
+		}
+
+		public static bool IsPlayerInsideCabin(Player player, TEElevator te)
+		{
+			if (player == null || te == null || !player.active)
+				return false;
+
+			float yOffset = te.IsMoving ? te.VisualPixelOffset : 0f;
+			Rectangle elevatorRect = new Rectangle(
+				te.Position.X * 16,
+				(int)(te.Position.Y * 16 + yOffset),
+				ElevatorWidth * 16,
+				7 * 16);
+			Rectangle hitbox = player.Hitbox;
+			hitbox.Inflate(2, 2);
+			if (hitbox.Intersects(elevatorRect))
+				return true;
+
+			return IsPlayerOnElevatorTiles(player, te);
+		}
+
+		public static bool IsPlayerOnElevatorTiles(Player player, TEElevator te)
+		{
+			if (player == null || te == null)
+				return false;
+
+			ushort elevatorType = (ushort)ModContent.TileType<ElevatorTile>();
+			Rectangle hitbox = player.Hitbox;
+			hitbox.Inflate(2, 2);
+			int minTileX = hitbox.Left / 16;
+			int maxTileX = (hitbox.Right - 1) / 16;
+			int minTileY = hitbox.Top / 16;
+			int maxTileY = (hitbox.Bottom - 1) / 16;
+
+			for (int tx = minTileX; tx <= maxTileX; tx++)
+			{
+				for (int ty = minTileY; ty <= maxTileY; ty++)
+				{
+					if (!TryResolveElevatorTopLeftAt(tx, ty, elevatorType, out Point16 topLeft))
+						continue;
+					if (topLeft.X == te.Position.X && topLeft.Y == te.Position.Y)
+						return true;
+				}
+			}
+
+			return false;
+		}
+
+		public static bool TryFindElevatorFromOccupiedTiles(Player player, out TEElevator result, out int topLeftX, out int topLeftY)
+		{
+			result = null;
+			topLeftX = -1;
+			topLeftY = -1;
+			if (player == null || !player.active)
+				return false;
+
+			ushort elevatorType = (ushort)ModContent.TileType<ElevatorTile>();
+			Rectangle hitbox = player.Hitbox;
+			hitbox.Inflate(2, 2);
+			int minTileX = hitbox.Left / 16;
+			int maxTileX = (hitbox.Right - 1) / 16;
+			int minTileY = hitbox.Top / 16;
+			int maxTileY = (hitbox.Bottom - 1) / 16;
+
+			TEElevator best = null;
+			int bestTopX = -1;
+			int bestTopY = -1;
+			float bestDistSq = float.MaxValue;
+
+			for (int tx = minTileX; tx <= maxTileX; tx++)
+			{
+				for (int ty = minTileY; ty <= maxTileY; ty++)
+				{
+					if (!TryResolveElevatorTopLeftAt(tx, ty, elevatorType, out Point16 topLeft))
+						continue;
+
+					int id = ModContent.GetInstance<TEElevator>().Find(topLeft.X, topLeft.Y);
+					if (id < 0 || !TileEntity.ByID.TryGetValue(id, out TileEntity entity) || entity is not TEElevator te)
+						continue;
+
+					Vector2 center = new Vector2((te.Position.X + ElevatorWidth * 0.5f) * 16f, (te.Position.Y + 3.5f) * 16f);
+					float distSq = Vector2.DistanceSquared(player.Center, center);
+					if (distSq >= bestDistSq)
+						continue;
+
+					bestDistSq = distSq;
+					best = te;
+					bestTopX = topLeft.X;
+					bestTopY = topLeft.Y;
+				}
+			}
+
+			if (best == null)
+				return false;
+
+			result = best;
+			topLeftX = bestTopX;
+			topLeftY = bestTopY;
+			return true;
+		}
+
+		public static bool IsPlayerInElevatorRange(Player player, TEElevator te, int maxDistanceTiles = 16)
+		{
+			if (player == null || te == null || !player.active)
+				return false;
+			if (IsPlayerInsideCabin(player, te))
+				return true;
+
+			Vector2 center = new Vector2((te.Position.X + ElevatorWidth * 0.5f) * 16f, (te.Position.Y + 3.5f) * 16f);
+			if (Vector2.Distance(player.Center, center) <= maxDistanceTiles * 16f)
+				return true;
+
+			te.ScanFloors();
+			return te.IsPointInsideShaft(player.Center.X, player.Bottom.Y);
+		}
+
+		public static bool TryFindElevatorForPlayer(Player player, out TEElevator result, out int topLeftX, out int topLeftY)
+		{
+			if (TryFindElevatorFromOccupiedTiles(player, out result, out topLeftX, out topLeftY))
+				return true;
+
+			result = null;
+			topLeftX = -1;
+			topLeftY = -1;
+			if (player == null || !player.active)
+				return false;
+
+			TEElevator bestCabin = null;
+			float bestCabinDistSq = float.MaxValue;
+			foreach (var kv in ByID)
+			{
+				if (kv.Value is not TEElevator te)
+					continue;
+				if (!IsPlayerInsideCabin(player, te))
+					continue;
+
+				Vector2 center = new Vector2((te.Position.X + ElevatorWidth * 0.5f) * 16f, (te.Position.Y + 3.5f) * 16f);
+				float distSq = Vector2.DistanceSquared(player.Center, center);
+				if (distSq >= bestCabinDistSq)
+					continue;
+
+				bestCabinDistSq = distSq;
+				bestCabin = te;
+			}
+
+			if (bestCabin != null)
+			{
+				result = bestCabin;
+				topLeftX = bestCabin.Position.X;
+				topLeftY = bestCabin.Position.Y;
+				return true;
+			}
+
+			return TryFindNearbyElevatorForPlayer(player, out result, out topLeftX, out topLeftY);
 		}
 
 		public static bool TryFindNearbyElevatorForPlayer(Player player, out TEElevator result, out int topLeftX, out int topLeftY)
@@ -368,11 +572,31 @@ namespace ArknightsMod.Content.Tiles
 			return result != null;
 		}
 
+		private int _lastSimulationGameUpdateCount = -1;
+
+		public int GetStandingSurfaceBottomY() => Position.Y + 6;
+
+		public bool IsAlreadyAtFloorBottomY(int floorBottomY, int toleranceTiles = 1)
+			=> Math.Abs(GetStandingSurfaceBottomY() - floorBottomY) <= toleranceTiles;
+
 		public override void Update()
+		{
+			ProcessSimulation();
+		}
+
+		internal void ProcessSimulation()
 		{
 			if (Main.netMode == NetmodeID.MultiplayerClient)
 				return;
+			if (_lastSimulationGameUpdateCount == (int)Main.GameUpdateCount)
+				return;
+			_lastSimulationGameUpdateCount = (int)Main.GameUpdateCount;
 
+			SimulateMovementTick();
+		}
+
+		private void SimulateMovementTick()
+		{
 			// 到站后的短暂“落地缓冲”：保持乘客锁定几帧，避免成帧/碰撞同步导致掉落。
 			if (!_moving && _postArriveLockTicks > 0)
 			{
@@ -386,16 +610,23 @@ namespace ArknightsMod.Content.Tiles
 			{
 				if (TargetFloorBottomY < 0)
 					return;
+
+				RebindPositionIfMisaligned();
 				_desiredTopY = TargetFloorBottomY - 6;
-				if (_desiredTopY == Position.Y)
+				if (IsAlreadyAtFloorBottomY(TargetFloorBottomY))
 				{
 					DebugLog($"[Elevator] Target is current floor. pos=({Position.X},{Position.Y}) bottomY={TargetFloorBottomY}");
 					TargetFloorBottomY = -1;
 					return;
 				}
 
+				if (!IsElevatorBodyAt(Position.X, Position.Y))
+				{
+					TargetFloorBottomY = -1;
+					return;
+				}
+
 				_moveDir = _desiredTopY > Position.Y ? 1 : -1;
-				EnsureTopLeft();
 				// 缓存 style 的基准 frame，移动渲染时即便局部 tile 临时缺失也能稳定裁切。
 				try
 				{
@@ -422,6 +653,7 @@ namespace ArknightsMod.Content.Tiles
 				_postArriveLockTicks = 0;
 				_lastMoveFailReason = "";
 				DebugLog($"[Elevator] StartMove pos=({Position.X},{Position.Y}) targetTopY={_desiredTopY} targetBottomY={TargetFloorBottomY} dir={_moveDir}");
+				SyncToClientsIfServer();
 			}
 
 			if (_moveDir == 0)
@@ -470,6 +702,7 @@ namespace ArknightsMod.Content.Tiles
 					TargetFloorBottomY = -1;
 					_postArriveLockTicks = 12;
 					DebugLog($"[Elevator] Arrived pos=({Position.X},{Position.Y}) desiredTopY={_desiredTopY}");
+					SyncToClientsIfServer();
 					break;
 				}
 
@@ -481,6 +714,7 @@ namespace ArknightsMod.Content.Tiles
 					_moving = false;
 					_moveDir = 0;
 					TargetFloorBottomY = -1;
+					SyncToClientsIfServer();
 					break;
 				}
 				DebugLog($"[Elevator] StepMove pos=({Position.X},{Position.Y}) dy={dyTiles} desiredTopY={_desiredTopY}", chatThrottleTicks: 10);
@@ -558,36 +792,110 @@ namespace ArknightsMod.Content.Tiles
 
 		private void EnsureTopLeft()
 		{
+			if (TryResolveElevatorTopLeft(Position.X, Position.Y, out Point16 newPos))
+				ApplyTePosition(newPos);
+		}
+
+		private void RebindPositionIfMisaligned()
+		{
+			EnsureTopLeft();
+			if (IsElevatorBodyAt(Position.X, Position.Y))
+				return;
+
 			ushort elevatorType = (ushort)ModContent.TileType<ElevatorTile>();
-			int startX = Position.X;
-			int startY = Position.Y;
-			for (int x = startX - 3; x <= startX + 3; x++)
+			int centerX = Position.X;
+			int centerY = Position.Y;
+			for (int radius = 1; radius <= 32; radius++)
 			{
-				for (int y = startY - 6; y <= startY + 6; y++)
+				for (int x = centerX - radius; x <= centerX + radius; x++)
 				{
-					if (x < 0 || x >= Main.maxTilesX || y < 0 || y >= Main.maxTilesY)
-						continue;
-					Tile t = Framing.GetTileSafely(x, y);
-					if (!t.HasTile || t.TileType != elevatorType)
-						continue;
-					if (t.TileFrameX == 0 && t.TileFrameY == 0)
+					for (int y = centerY - radius; y <= centerY + radius; y++)
 					{
-						Point16 oldPos = Position;
-						Point16 newPos = new Point16(x, y);
-						if (oldPos != newPos)
-						{
-							lock (EntityCreationLock)
-							{
-								ByPosition.Remove(oldPos);
-								Position = newPos;
-								ByPosition[newPos] = this;
-							}
-							DebugLog($"[Elevator] EnsureTopLeft movedTE old=({oldPos.X},{oldPos.Y}) new=({newPos.X},{newPos.Y})");
-						}
+						if (!TryResolveElevatorTopLeftAt(x, y, elevatorType, out Point16 topLeft))
+							continue;
+						if (!IsElevatorBodyAt(topLeft.X, topLeft.Y))
+							continue;
+						ApplyTePosition(topLeft);
+						DebugLog($"[Elevator] RebindPositionIfMisaligned new=({topLeft.X},{topLeft.Y})");
 						return;
 					}
 				}
 			}
+		}
+
+		private void ApplyTePosition(Point16 newPos)
+		{
+			Point16 oldPos = Position;
+			if (oldPos == newPos)
+				return;
+
+			lock (EntityCreationLock)
+			{
+				ByPosition.Remove(oldPos);
+				Position = newPos;
+				ByPosition[newPos] = this;
+			}
+			DebugLog($"[Elevator] ApplyTePosition old=({oldPos.X},{oldPos.Y}) new=({newPos.X},{newPos.Y})");
+		}
+
+		private static bool IsElevatorBodyAt(int topLeftX, int topLeftY)
+		{
+			ushort elevatorType = (ushort)ModContent.TileType<ElevatorTile>();
+			for (int x = 0; x < ElevatorWidth; x++)
+			{
+				for (int y = 0; y < 7; y++)
+				{
+					int tx = topLeftX + x;
+					int ty = topLeftY + y;
+					if (tx < 0 || tx >= Main.maxTilesX || ty < 0 || ty >= Main.maxTilesY)
+						return false;
+					Tile t = Framing.GetTileSafely(tx, ty);
+					if (!t.HasTile || t.TileType != elevatorType)
+						return false;
+				}
+			}
+			return true;
+		}
+
+		private static bool TryResolveElevatorTopLeft(int startX, int startY, out Point16 topLeft)
+		{
+			topLeft = Point16.NegativeOne;
+			ushort elevatorType = (ushort)ModContent.TileType<ElevatorTile>();
+
+			if (TryResolveElevatorTopLeftAt(startX, startY, elevatorType, out topLeft))
+				return true;
+
+			for (int x = startX - 3; x <= startX + 3; x++)
+			{
+				for (int y = startY - 6; y <= startY + 6; y++)
+				{
+					if (TryResolveElevatorTopLeftAt(x, y, elevatorType, out topLeft))
+						return true;
+				}
+			}
+
+			return false;
+		}
+
+		private static bool TryResolveElevatorTopLeftAt(int x, int y, ushort elevatorType, out Point16 topLeft)
+		{
+			topLeft = Point16.NegativeOne;
+			if (x < 0 || x >= Main.maxTilesX || y < 0 || y >= Main.maxTilesY)
+				return false;
+			Tile t = Framing.GetTileSafely(x, y);
+			if (!t.HasTile || t.TileType != elevatorType)
+				return false;
+
+			(int topLeftX, int topLeftY) = ElevatorTile.GetBestTopLeftForRender(x, y);
+			if (topLeftX < 0 || topLeftY < 0 || topLeftX >= Main.maxTilesX || topLeftY >= Main.maxTilesY)
+				return false;
+
+			Tile tlTile = Framing.GetTileSafely(topLeftX, topLeftY);
+			if (!tlTile.HasTile || tlTile.TileType != elevatorType)
+				return false;
+
+			topLeft = new Point16(topLeftX, topLeftY);
+			return true;
 		}
 
 		private Vector2 ElevatorSoundPosition()
@@ -682,6 +990,7 @@ namespace ArknightsMod.Content.Tiles
 		private bool TryMoveMultiTileVertical(int dyTiles, out string failReason)
 		{
 			failReason = "";
+			RebindPositionIfMisaligned();
 			const int width = 4;
 			const int height = 7;
 			int oldX = Position.X;

@@ -80,6 +80,8 @@ Tiles: {
 	PipeBlueLightPipeTile.MapEntry: "{$Mods.ArknightsMod.Items.PipeBlueLightItem.DisplayName}"
 	ProtocolSpacePortalTile.MapEntry: 危境再现传送门
 	ProtocolSpaceExitPortalTile.MapEntry: 测试协议空间出口
+	ElevatorTile.MapEntry: "{$Mods.ArknightsMod.Items.Elevator.DisplayName}"
+	ElevatorButtonTile.MapEntry: "{$Mods.ArknightsMod.Items.ElevatorButton.DisplayName}"
 	// GrindstoneTile.MapEntry: Grindstone Tile
 	// ManganeseOreTile.MapEntry: Manganese Ore Tile
 	// OrirockCubeTile.MapEntry: Orirock Cube Tile
