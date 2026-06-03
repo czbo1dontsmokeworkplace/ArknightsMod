@@ -1,4 +1,6 @@
-﻿using ArknightsMod.Content.Items.Placeable.Banners;
+﻿using ArknightsMod.Content.Items.Material.T1;
+using ArknightsMod.Content.Items.Placeable.Banners;
+using Terraria.GameContent.ItemDropRules;
 using ArknightsMod.Systems.Gameplay.Damage;
 using Microsoft.Xna.Framework;
 using System;
@@ -163,7 +165,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4 //记得把BakaMod改�
 			//尸块也要在这里写
 		}
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
-			//这里写掉落物 例子： npcLoot.Add(ItemDropRule.Common(ItemID.LunarBar, d, min, max)); 1/d几率掉落min~max个夜明锭
+			npcLoot.Add(ItemDropRule.Common(ItemType<SugarSubstitute>(), 4, 1, 3));
 		}
 		
 	}

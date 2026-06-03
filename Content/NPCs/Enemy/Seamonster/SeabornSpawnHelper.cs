@@ -24,7 +24,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 		{
 			if (!NPC.downedBoss3)
 				return 0f;
-			return OceanSeabornChance(spawnInfo, scale);
+			float chance = SpawnCondition.OceanMonster.Chance * scale;
+			if (chance <= 0f)
+				return 0f;
+			if (Main.raining)
+				chance *= RainMultiplier;
+			return chance;
 		}
 	}
 }

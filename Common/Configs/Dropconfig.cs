@@ -14,7 +14,7 @@ public class Dropconfig : ModConfig
 	[Range(1, 100)]
 	public int DropLS;
 
-	[DefaultValue(7)]
+	[DefaultValue(4)]
 	[Range(1, 100)]
 	public int DropOriginiumSlugAlpha;
 

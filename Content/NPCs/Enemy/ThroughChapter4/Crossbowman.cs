@@ -1,4 +1,4 @@
-using ArknightsMod.Content.Items.Material.T2;
+using ArknightsMod.Content.Items.Material.T1;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -28,7 +28,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			NPC.lifeMax = 45;
 			NPC.damage = 0;
 			NPC.defense = 5;
-			NPC.knockBackResist = 0.5f;//击退抗性，0f为最高，1f为最低
+			NPC.knockBackResist = 0.5f;//????????0f?????1f????
 			NPC.width = 32;
 			NPC.height = 56;
 			NPC.aiStyle = 0;
@@ -42,8 +42,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
 
-			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Device>(), 8, 1, 1));
-			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Polyketon>(), 8, 1, 1));
+			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DamagedDevice>(), 8, 1, 1));
+			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Diketon>(), 8, 1, 1));
 
 		}
 
@@ -59,12 +59,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			});
 		}
 
-		public override bool? CanBeHitByItem(Player player, Item item)//无敌帧
+		public override bool? CanBeHitByItem(Player player, Item item)//????
 		{
 			return null;
 		}
 
-		public override bool? CanBeHitByProjectile(Projectile Projectile)//不被敌方弹幕和无来源弹幕攻击&闪避
+		public override bool? CanBeHitByProjectile(Projectile Projectile)//?????з??????????????????&????
 		{
 			if (Projectile.hostile == true) {
 				return false;
@@ -117,7 +117,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			diffX = Player.Center.X - NPC.Center.X;
 			diffY = Player.Center.Y - NPC.Center.Y;
 			ax = 0.2f;
-			distance = (float)Math.Sqrt(Math.Pow(diffX / 16, 2) + Math.Pow(diffY / 16, 2));//到玩家的距离（格数）
+			distance = (float)Math.Sqrt(Math.Pow(diffX / 16, 2) + Math.Pow(diffY / 16, 2));//???????????????
 			if (Main.masterMode) {
 				atkloop = 90;
 				atkrange = 30;
@@ -142,7 +142,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				escapetime = 180;
 				vx = 1.0f;
 			}
-			//玩家死亡
+			//???????
 			if (!Player.active || Player.dead) {
 				NPC.TargetClosest(false);
 				if (Player.dead) {
@@ -151,11 +151,11 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				}
 			}
 			
-			//模式选择
-			if (distance >= atkrange) {//攻击范围之外
+			//?????
+			if (distance >= atkrange) {//??????Χ???
 				Walk();
 			}
-			else if (distance >= escrange + 2) {//逃跑范围之外
+			else if (distance >= escrange + 2) {//?????Χ???
 				timer++;
 				if (timer >= atkloop) {
 					Attack();
@@ -166,7 +166,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 					//attacktimer = 0;
 				}
 			}
-			else if(distance >= escrange) {//中间范围，只攻击不移动
+			else if(distance >= escrange) {//?м?Χ????????????
 				timer++;
 				NPC.velocity.X = float.Lerp(NPC.velocity.X, 0, 0.1f);
 				if (timer >= atkloop) {
@@ -177,7 +177,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 					//attacktimer = 0;
 				}
 			}
-			else {//逃跑范围之内
+			else {//?????Χ???
 				timer++;
 				if (timer >= atkloop) {
 					Attack();
@@ -190,7 +190,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			}
 		}
 
-		private void Walk() {//靠近，如果横向速度为0时纵向速度也为0，尝试跳跃，跳跃数次后反方向逃走
+		private void Walk() {//?????????????????0??????????0?????????????????κ????????
 			Player Player = Main.player[NPC.target];
 			iswalk = true;
 			isatk = false;
@@ -240,7 +240,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			}
 		}
 
-		private void Escape() {//往远离玩家方向走，可选择攻击或不攻击
+		private void Escape() {//?????????????????????????
 			escapetimer++;
 			isescape = true;
 			iswalk = false;
