@@ -86,8 +86,8 @@ RARicecrabBuff: {
 }
 
 StunDebuff: {
-	// DisplayName: Stun Debuff
-	// Description: Mods.ArknightsMod.Buffs.StunDebuff.Description
+	DisplayName: 眩晕
+	Description: 无法行动
 }
 
 Tumor1: {
@@ -132,4 +132,73 @@ DehydratedSeasonedJerkyBuff: {
 		最大生命值[c/3791db:+5%]
 		'''
 	DisplayName: 脱水增味肉干
+}
+
+FearlessDebuff: {
+	DisplayName: 无畏者
+	Description:
+		'''
+		每层提供生命再生[c/3791db:+1.5/秒]（可叠加）
+		近战命中可叠加层数，持续4秒
+		'''
+}
+
+EntelechiaBleedDebuff: {
+	DisplayName: 隐德来希流血
+	Description: 每秒受到40点法术伤害
+}
+
+HazeMagicFragileDebuff: {
+	DisplayName: 法术脆弱
+	Description: 受到的魔法伤害提升25%（法术抗性-20%）
+}
+
+IndigoBindDebuff: {
+	DisplayName: 深靛束缚
+	Description: 无法移动
+}
+
+MostimaSlowDebuff: {
+	DisplayName: 莫斯提马减速
+	Description: 移动速度降低15%
+}
+
+NianShieldBuff: {
+	DisplayName: 年护盾
+	Description: 可抵挡一次高额伤害
+}
+
+SpotHealDodgeBuff: {
+	DisplayName: 斑点治疗闪避
+	Description: 物理闪避+17%
+}
+
+CivilightEternaHealBoostBuff: {
+	DisplayName: 魔王微尘
+	Description: 受到魔王的治疗效果提升至150%
+}
+
+LapplandSilenceDebuff: {
+	DisplayName: 拉普兰德沉默
+	Description: 特殊能力被沉默
+}
+
+WarfarinAllyRegenBuff: {
+	DisplayName: 华法琳再生
+	Description: 生命再生大幅提升
+}
+
+TyphonHelmetSlowDebuff: {
+	DisplayName: 提丰减速
+	Description: 移动速度降低80%
+}
+
+OrchidSlowDebuff: {
+	DisplayName: 梓兰减速
+	Description: 移动速度降低80%
+}
+
+CivilightEternaHealBoostBuff: {
+	DisplayName: 魔王治疗强化
+	Description: 受到来自魔王的治疗效果提升至150%
 }

@@ -141,6 +141,21 @@ MelanthaHead: {
 	Tooltip: ""
 }
 
+MelanthaHelmet: {
+	DisplayName: Melantha's Helmet
+	Tooltip: ""
+}
+
+MelanthaChestplate: {
+	DisplayName: Melantha's Chestplate
+	Tooltip: ""
+}
+
+MelanthaGreaves: {
+	DisplayName: Melantha's Greaves
+	Tooltip: ""
+}
+
 MelanthaLegs: {
 	DisplayName: Melantha's outfit (Legs)
 	Tooltip: ""
@@ -223,6 +238,21 @@ WBody: {
 
 WHead: {
 	DisplayName: W's outfit (Head)
+	Tooltip: ""
+}
+
+WHelmet: {
+	DisplayName: W's Helmet
+	Tooltip: ""
+}
+
+WChestplate: {
+	DisplayName: W's Chestplate
+	Tooltip: ""
+}
+
+WGreaves: {
+	DisplayName: W's Greaves
 	Tooltip: ""
 }
 
@@ -673,6 +703,21 @@ UtageBody: {
 
 UtageHead: {
 	DisplayName: Utage Head
+	Tooltip: ""
+}
+
+UtageHelmet: {
+	DisplayName: Utage's Helmet
+	Tooltip: ""
+}
+
+UtageChestplate: {
+	DisplayName: Utage's Chestplate
+	Tooltip: ""
+}
+
+UtageGreaves: {
+	DisplayName: Utage's Greaves
 	Tooltip: ""
 }
 
@@ -3011,6 +3056,807 @@ TexasDefault: {
 }
 
 WisadelDefault: {
-	DisplayName: Wisadel Default
+	DisplayName: Wisadel's Outfit
 	Tooltip: ""
 }
+
+HazeHelmet: {
+	DisplayName: Haze's Helmet
+	Tooltip: ""
+}
+
+HazeChestplate: {
+	DisplayName: Haze's Chestplate
+	Tooltip: ""
+}
+
+HazeGreaves: {
+	DisplayName: Haze's Greaves
+	Tooltip: ""
+}
+
+SariaHelmet: {
+	DisplayName: Saria's Helmet
+	Tooltip: ""
+}
+
+SariaChestplate: {
+	DisplayName: Saria's Chestplate
+	Tooltip: ""
+}
+
+SariaGreaves: {
+	DisplayName: Saria's Greaves
+	Tooltip: ""
+}
+
+KkdyAlterHelmet: {
+	DisplayName: Kroos the Keen Glazer's Helmet
+	Tooltip: ""
+}
+
+KkdyAlterChestplate: {
+	DisplayName: Kroos the Keen Glazer's Chestplate
+	Tooltip: ""
+}
+
+KkdyAlterGreaves: {
+	DisplayName: Kroos the Keen Glazer's Greaves
+	Tooltip: ""
+}
+
+MatoimaruHelmet: {
+	DisplayName: Matoimaru's Helmet
+	Tooltip: ""
+}
+
+MatoimaruChestplate: {
+	DisplayName: Matoimaru's Chestplate
+	Tooltip: ""
+}
+
+MatoimaruGreaves: {
+	DisplayName: Matoimaru's Greaves
+	Tooltip: ""
+}
+
+BeagleHelmet: {
+	DisplayName: Beagle's Helmet
+	Tooltip: ""
+}
+
+BeagleChestplate: {
+	DisplayName: Beagle's Chestplate
+	Tooltip: ""
+}
+
+BeagleGreaves: {
+	DisplayName: Beagle's Greaves
+	Tooltip: ""
+}
+
+ExusiaiHelmet: {
+	DisplayName: Exusiai's Helmet
+	Tooltip: ""
+}
+
+ExusiaiChestplate: {
+	DisplayName: Exusiai's Chestplate
+	Tooltip: ""
+}
+
+ExusiaiGreaves: {
+	DisplayName: Exusiai's Greaves
+	Tooltip: ""
+}
+
+MostimaHelmet: {
+	DisplayName: Mostima's Helmet
+	Tooltip: ""
+}
+
+MostimaChestplate: {
+	DisplayName: Mostima's Chestplate
+	Tooltip: ""
+}
+
+MostimaGreaves: {
+	DisplayName: Mostima's Greaves
+	Tooltip: ""
+}
+
+SkadiHelmet: {
+	DisplayName: Skadi's Helmet
+	Tooltip: ""
+}
+
+SkadiChestplate: {
+	DisplayName: Skadi's Chestplate
+	Tooltip: ""
+}
+
+SkadiGreaves: {
+	DisplayName: Skadi's Greaves
+	Tooltip: ""
+}
+
+EntelechiaHelmet: {
+	DisplayName: Entelechia's Helmet
+	Tooltip: ""
+}
+
+EntelechiaChestplate: {
+	DisplayName: Entelechia's Chestplate
+	Tooltip: ""
+}
+
+EntelechiaGreaves: {
+	DisplayName: Entelechia's Greaves
+	Tooltip: ""
+}
+
+AmiyaHelmet: {
+	DisplayName: Amiya's Helmet
+	Tooltip: ""
+}
+
+AmiyaChestplate: {
+	DisplayName: Amiya's Chestplate
+	Tooltip: ""
+}
+
+AmiyaGreaves: {
+	DisplayName: Amiya's Greaves
+	Tooltip: ""
+}
+
+IndigoHelmet: {
+	DisplayName: Indigo's Helmet
+	Tooltip: ""
+}
+
+IndigoChestplate: {
+	DisplayName: Indigo's Chestplate
+	Tooltip: ""
+}
+
+IndigoGreaves: {
+	DisplayName: Indigo's Greaves
+	Tooltip: ""
+}
+
+LavaHelmet: {
+	DisplayName: Lava's Helmet
+	Tooltip: ""
+}
+
+LavaChestplate: {
+	DisplayName: Lava's Chestplate
+	Tooltip: ""
+}
+
+LavaGreaves: {
+	DisplayName: Lava's Greaves
+	Tooltip: ""
+}
+
+StewardHelmet: {
+	DisplayName: Steward's Helmet
+	Tooltip: ""
+}
+
+StewardChestplate: {
+	DisplayName: Steward's Chestplate
+	Tooltip: ""
+}
+
+StewardGreaves: {
+	DisplayName: Steward's Greaves
+	Tooltip: ""
+}
+
+CardiganHelmet: {
+	DisplayName: Cardigan's Helmet
+	Tooltip: ""
+}
+
+CardiganChestplate: {
+	DisplayName: Cardigan's Chestplate
+	Tooltip: ""
+}
+
+CardiganGreaves: {
+	DisplayName: Cardigan's Greaves
+	Tooltip: ""
+}
+
+NianHelmet: {
+	DisplayName: Nian's Helmet
+	Tooltip: ""
+}
+
+NianChestplate: {
+	DisplayName: Nian's Chestplate
+	Tooltip: ""
+}
+
+NianGreaves: {
+	DisplayName: Nian's Greaves
+	Tooltip: ""
+}
+
+SpotHelmet: {
+	DisplayName: Spot's Helmet
+	Tooltip: ""
+}
+
+SpotChestplate: {
+	DisplayName: Spot's Chestplate
+	Tooltip: ""
+}
+
+SpotGreaves: {
+	DisplayName: Spot's Greaves
+	Tooltip: ""
+}
+
+VulcanHelmet: {
+	DisplayName: Vulcan's Helmet
+	Tooltip: ""
+}
+
+VulcanChestplate: {
+	DisplayName: Vulcan's Chestplate
+	Tooltip: ""
+}
+
+VulcanGreaves: {
+	DisplayName: Vulcan's Greaves
+	Tooltip: ""
+}
+
+ChenHelmet: {
+	DisplayName: Chen's Helmet
+	Tooltip: ""
+}
+
+ChenChestplate: {
+	DisplayName: Chen's Chestplate
+	Tooltip: ""
+}
+
+ChenGreaves: {
+	DisplayName: Chen's Greaves
+	Tooltip: ""
+}
+
+LaPlumaHelmet: {
+	DisplayName: La Pluma's Helmet
+	Tooltip: ""
+}
+
+LaPlumaChestplate: {
+	DisplayName: La Pluma's Chestplate
+	Tooltip: ""
+}
+
+LaPlumaGreaves: {
+	DisplayName: La Pluma's Greaves
+	Tooltip: ""
+}
+
+LapplandHelmet: {
+	DisplayName: Lappland's Helmet
+	Tooltip: ""
+}
+
+LapplandChestplate: {
+	DisplayName: Lappland's Chestplate
+	Tooltip: ""
+}
+
+LapplandGreaves: {
+	DisplayName: Lappland's Greaves
+	Tooltip: ""
+}
+
+MidnightHelmet: {
+	DisplayName: Midnight's Helmet
+	Tooltip: ""
+}
+
+MidnightChestplate: {
+	DisplayName: Midnight's Chestplate
+	Tooltip: ""
+}
+
+MidnightGreaves: {
+	DisplayName: Midnight's Greaves
+	Tooltip: ""
+}
+
+PopukarHelmet: {
+	DisplayName: Popukar's Helmet
+	Tooltip: ""
+}
+
+PopukarChestplate: {
+	DisplayName: Popukar's Chestplate
+	Tooltip: ""
+}
+
+PopukarGreaves: {
+	DisplayName: Popukar's Greaves
+	Tooltip: ""
+}
+
+SurtrHelmet: {
+	DisplayName: Surtr's Helmet
+	Tooltip: ""
+}
+
+SurtrChestplate: {
+	DisplayName: Surtr's Chestplate
+	Tooltip: ""
+}
+
+SurtrGreaves: {
+	DisplayName: Surtr's Greaves
+	Tooltip: ""
+}
+
+AnselHelmet: {
+	DisplayName: Ansel's Helmet
+	Tooltip: ""
+}
+
+AnselChestplate: {
+	DisplayName: Ansel's Chestplate
+	Tooltip: ""
+}
+
+AnselGreaves: {
+	DisplayName: Ansel's Greaves
+	Tooltip: ""
+}
+
+HibiscusHelmet: {
+	DisplayName: Hibiscus's Helmet
+	Tooltip: ""
+}
+
+HibiscusChestplate: {
+	DisplayName: Hibiscus's Chestplate
+	Tooltip: ""
+}
+
+HibiscusGreaves: {
+	DisplayName: Hibiscus's Greaves
+	Tooltip: ""
+}
+
+WarfarinHelmet: {
+	DisplayName: Warfarin's Helmet
+	Tooltip: ""
+}
+
+WarfarinChestplate: {
+	DisplayName: Warfarin's Chestplate
+	Tooltip: ""
+}
+
+WarfarinGreaves: {
+	DisplayName: Warfarin's Greaves
+	Tooltip: ""
+}
+
+AdnachielHelmet: {
+	DisplayName: Adnachiel's Helmet
+	Tooltip: ""
+}
+
+AdnachielChestplate: {
+	DisplayName: Adnachiel's Chestplate
+	Tooltip: ""
+}
+
+AdnachielGreaves: {
+	DisplayName: Adnachiel's Greaves
+	Tooltip: ""
+}
+
+CatapultHelmet: {
+	DisplayName: Catapult's Helmet
+	Tooltip: ""
+}
+
+CatapultChestplate: {
+	DisplayName: Catapult's Chestplate
+	Tooltip: ""
+}
+
+CatapultGreaves: {
+	DisplayName: Catapult's Greaves
+	Tooltip: ""
+}
+
+FartoothHelmet: {
+	DisplayName: Fartooth's Helmet
+	Tooltip: ""
+}
+
+FartoothChestplate: {
+	DisplayName: Fartooth's Chestplate
+	Tooltip: ""
+}
+
+FartoothGreaves: {
+	DisplayName: Fartooth's Greaves
+	Tooltip: ""
+}
+
+FiammettaHelmet: {
+	DisplayName: Fiammetta's Helmet
+	Tooltip: ""
+}
+
+FiammettaChestplate: {
+	DisplayName: Fiammetta's Chestplate
+	Tooltip: ""
+}
+
+FiammettaGreaves: {
+	DisplayName: Fiammetta's Greaves
+	Tooltip: ""
+}
+
+KroosHelmet: {
+	DisplayName: Kroos's Helmet
+	Tooltip: ""
+}
+
+KroosChestplate: {
+	DisplayName: Kroos's Chestplate
+	Tooltip: ""
+}
+
+KroosGreaves: {
+	DisplayName: Kroos's Greaves
+	Tooltip: ""
+}
+
+MelaniteHelmet: {
+	DisplayName: Melanite's Helmet
+	Tooltip: ""
+}
+
+MelaniteChestplate: {
+	DisplayName: Melanite's Chestplate
+	Tooltip: ""
+}
+
+MelaniteGreaves: {
+	DisplayName: Melanite's Greaves
+	Tooltip: ""
+}
+
+ProvenceHelmet: {
+	DisplayName: Provence's Helmet
+	Tooltip: ""
+}
+
+ProvenceChestplate: {
+	DisplayName: Provence's Chestplate
+	Tooltip: ""
+}
+
+ProvenceGreaves: {
+	DisplayName: Provence's Greaves
+	Tooltip: ""
+}
+
+TyphonHelmet: {
+	DisplayName: Typhon's Helmet
+	Tooltip: ""
+}
+
+TyphonChestplate: {
+	DisplayName: Typhon's Chestplate
+	Tooltip: ""
+}
+
+TyphonGreaves: {
+	DisplayName: Typhon's Greaves
+	Tooltip: ""
+}
+
+ManticoreHelmet: {
+	DisplayName: Manticore's Helmet
+	Tooltip: ""
+}
+
+ManticoreChestplate: {
+	DisplayName: Manticore's Chestplate
+	Tooltip: ""
+}
+
+ManticoreGreaves: {
+	DisplayName: Manticore's Greaves
+	Tooltip: ""
+}
+
+MizukiHelmet: {
+	DisplayName: Mizuki's Helmet
+	Tooltip: ""
+}
+
+MizukiChestplate: {
+	DisplayName: Mizuki's Chestplate
+	Tooltip: ""
+}
+
+MizukiGreaves: {
+	DisplayName: Mizuki's Greaves
+	Tooltip: ""
+}
+
+TexalterHelmet: {
+	DisplayName: Silent Texas's Helmet
+	Tooltip: ""
+}
+
+TexalterChestplate: {
+	DisplayName: Silent Texas's Chestplate
+	Tooltip: ""
+}
+
+TexalterGreaves: {
+	DisplayName: Silent Texas's Greaves
+	Tooltip: ""
+}
+
+OrchidHelmet: {
+	DisplayName: Orchid's Helmet
+	Tooltip: ""
+}
+
+OrchidChestplate: {
+	DisplayName: Orchid's Chestplate
+	Tooltip: ""
+}
+
+OrchidGreaves: {
+	DisplayName: Orchid's Greaves
+	Tooltip: ""
+}
+
+RaidianHelmet: {
+	DisplayName: Raidian's Helmet
+	Tooltip: ""
+}
+
+RaidianChestplate: {
+	DisplayName: Raidian's Chestplate
+	Tooltip: ""
+}
+
+RaidianGreaves: {
+	DisplayName: Raidian's Greaves
+	Tooltip: ""
+}
+
+FangHelmet: {
+	DisplayName: Fang's Helmet
+	Tooltip: ""
+}
+
+FangChestplate: {
+	DisplayName: Fang's Chestplate
+	Tooltip: ""
+}
+
+FangGreaves: {
+	DisplayName: Fang's Greaves
+	Tooltip: ""
+}
+
+PlumeHelmet: {
+	DisplayName: Plume's Helmet
+	Tooltip: ""
+}
+
+PlumeChestplate: {
+	DisplayName: Plume's Chestplate
+	Tooltip: ""
+}
+
+PlumeGreaves: {
+	DisplayName: Plume's Greaves
+	Tooltip: ""
+}
+
+TexasHelmet: {
+	DisplayName: Texas's Helmet
+	Tooltip: ""
+}
+
+TexasChestplate: {
+	DisplayName: Texas's Chestplate
+	Tooltip: ""
+}
+
+TexasGreaves: {
+	DisplayName: Texas's Greaves
+	Tooltip: ""
+}
+
+VanillaHelmet: {
+	DisplayName: Vanilla's Helmet
+	Tooltip: ""
+}
+
+VanillaChestplate: {
+	DisplayName: Vanilla's Chestplate
+	Tooltip: ""
+}
+
+VanillaGreaves: {
+	DisplayName: Vanilla's Greaves
+	Tooltip: ""
+}
+
+MudrockHelmet: {
+	DisplayName: Mudrock's Helmet
+	Tooltip: ""
+}
+
+MudrockChestplate: {
+	DisplayName: Mudrock's Chestplate
+	Tooltip: ""
+}
+
+MudrockGreaves: {
+	DisplayName: Mudrock's Greaves
+	Tooltip: ""
+}
+
+MudrockLegs: {
+	DisplayName: Mudrock's Legs
+	Tooltip: ""
+}
+
+MlynarHelmet: {
+	DisplayName: Mlynar's Helmet
+	Tooltip: ""
+}
+
+MlynarChestplate: {
+	DisplayName: Mlynar's Chestplate
+	Tooltip: ""
+}
+
+MlynarGreaves: {
+	DisplayName: Mlynar's Greaves
+	Tooltip: ""
+}
+
+OblivionisHelmet: {
+	DisplayName: Oblivionis's Helmet
+	Tooltip: ""
+}
+
+OblivionisChestplate: {
+	DisplayName: Oblivionis's Chestplate
+	Tooltip: ""
+}
+
+OblivionisGreaves: {
+	DisplayName: Oblivionis's Greaves
+	Tooltip: ""
+}
+
+UlpianusHelmet: {
+	DisplayName: Ulpianus's Helmet
+	Tooltip: ""
+}
+
+UlpianusChestplate: {
+	DisplayName: Ulpianus's Chestplate
+	Tooltip: ""
+}
+
+UlpianusGreaves: {
+	DisplayName: Ulpianus's Greaves
+	Tooltip: ""
+}
+
+RosmontisHelmet: {
+	DisplayName: Rosmontis's Helmet
+	Tooltip: ""
+}
+
+RosmontisChestplate: {
+	DisplayName: Rosmontis's Chestplate
+	Tooltip: ""
+}
+
+RosmontisGreaves: {
+	DisplayName: Rosmontis's Greaves
+	Tooltip: ""
+}
+
+DorothyHelmet: {
+	DisplayName: Dorothy's Helmet
+	Tooltip: ""
+}
+
+DorothyChestplate: {
+	DisplayName: Dorothy's Chestplate
+	Tooltip: ""
+}
+
+DorothyGreaves: {
+	DisplayName: Dorothy's Greaves
+	Tooltip: ""
+}
+
+ExusiaiAlterHelmet: {
+	DisplayName: Exusiai the New Covenant's Helmet
+	Tooltip: ""
+}
+
+ExusiaiAlterChestplate: {
+	DisplayName: Exusiai the New Covenant's Chestplate
+	Tooltip: ""
+}
+
+ExusiaiAlterGreaves: {
+	DisplayName: Exusiai the New Covenant's Greaves
+	Tooltip: ""
+}
+
+CivilightEternaHelmet: {
+	DisplayName: Civilight Eterna's Helmet
+	Tooltip: ""
+}
+
+CivilightEternaChestplate: {
+	DisplayName: Civilight Eterna's Chestplate
+	Tooltip: ""
+}
+
+CivilightEternaGreaves: {
+	DisplayName: Civilight Eterna's Greaves
+	Tooltip: ""
+}
+
+LingHelmet: {
+	DisplayName: Ling's Helmet
+	Tooltip: ""
+}
+
+LingChestplate: {
+	DisplayName: Ling's Chestplate
+	Tooltip: ""
+}
+
+LingGreaves: {
+	DisplayName: Ling's Greaves
+	Tooltip: ""
+}
+
+BagpipeHelmet: {
+	DisplayName: Bagpipe's Helmet
+	Tooltip: ""
+}
+
+BagpipeChestplate: {
+	DisplayName: Bagpipe's Chestplate
+	Tooltip: ""
+}
+
+BagpipeGreaves: {
+	DisplayName: Bagpipe's Greaves
+	Tooltip: ""
+}
+

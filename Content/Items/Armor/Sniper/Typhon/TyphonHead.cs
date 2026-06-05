@@ -39,14 +39,6 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Typhon
 			Item.defense = 0;
 		}
 		
-		public override bool IsArmorSet(Item head, Item body, Item legs) {
-			return body.type == ModContent.ItemType<TyphonBody>() && body.neoarmor().hasUpgraded &&
-				legs.type == ModContent.ItemType<TyphonLegs>() && legs.neoarmor().hasUpgraded;
-		}
-
-		public override void UpdateArmorSet(Player player) {
-			player.setBonus = "";
-		}
 
 		public override void AddRecipes() {
 			CreateRecipe()

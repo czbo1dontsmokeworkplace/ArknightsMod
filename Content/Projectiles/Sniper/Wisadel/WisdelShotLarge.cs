@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using ArknightsMod.Common.Particle;
+using ArknightsMod.Content.Buffs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -94,6 +95,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Wisadel
 		public bool hasCollide;
 		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
 			Player player = Main.player[Projectile.owner];
+			OperatorStunNPC.TryApplyFromWisadel(target);
 			HitEffect(target.Center);
 			Explode(player, target);
 			hasHit = true;
@@ -127,6 +129,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Wisadel
 					info.Crit = crit;
 					info.DamageType = Projectile.DamageType;
 					npc.StrikeNPC(info);
+					OperatorStunNPC.TryApplyFromWisadel(npc);
 					HitEffect(npc.Center);
 				}
 			}

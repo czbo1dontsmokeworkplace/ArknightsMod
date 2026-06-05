@@ -27,15 +27,7 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Exusiai
 			Item.defense = 0;
 		}
 
-		public override bool IsArmorSet(Item head, Item body, Item legs) {
-			return body.type == ModContent.ItemType<ExusiaiBody>() && body.neoarmor().hasUpgraded &&
-				legs.type == ModContent.ItemType<ExusiaiLegs>() && legs.neoarmor().hasUpgraded;
-		}
 
-		public override void UpdateArmorSet(Player player) {
-			player.setBonus = "No party no life";
-			player.GetModPlayer<ExusiaiSetPlayer>().ExusiaiSetActive = true;
-		}
 
 		public override void UpdateVanityEquip(Player player) {
 			Lighting.AddLight(player.Center, new Vector3(1f, 1f, 1f));

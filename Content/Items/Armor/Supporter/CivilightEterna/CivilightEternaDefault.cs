@@ -9,9 +9,9 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.CivilightEterna
 		protected override List<int> GetItems() {
 			return
 			[
-				ModContent.ItemType<CivilightEternaHead>(),
-				ModContent.ItemType<CivilightEternaBody>(),
-				ModContent.ItemType<CivilightEternaLegs>()
+				ModContent.ItemType<CivilightEternaHelmet>(),
+				ModContent.ItemType<CivilightEternaChestplate>(),
+				ModContent.ItemType<CivilightEternaGreaves>()
 			];
 		}
 	}

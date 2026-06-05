@@ -12,9 +12,9 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Mlynar
 		{
 			return
 			[
-				ModContent.ItemType<MlynarHead>(),
-				ModContent.ItemType<MlynarBody>(),
-				ModContent.ItemType<MlynarLegs>(),
+				ModContent.ItemType<MlynarHelmet>(),
+				ModContent.ItemType<MlynarChestplate>(),
+				ModContent.ItemType<MlynarGreaves>(),
 			];
 		}
 	}

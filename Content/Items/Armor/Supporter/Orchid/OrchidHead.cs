@@ -26,14 +26,7 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.Orchid
 			Item.defense = 0;
 		}
 		
-		public override bool IsArmorSet(Item head, Item body, Item legs) {
-			return body.type == ModContent.ItemType<OrchidBody>() && body.neoarmor().hasUpgraded &&
-				legs.type == ModContent.ItemType<OrchidLegs>() && legs.neoarmor().hasUpgraded;
-		}
 
-		public override void UpdateArmorSet(Player player) {
-			player.setBonus = "";
-		}
 
 		public override void AddRecipes() {
 			CreateRecipe()

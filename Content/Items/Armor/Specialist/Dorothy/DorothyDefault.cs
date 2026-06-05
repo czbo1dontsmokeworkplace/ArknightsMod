@@ -10,9 +10,9 @@ namespace ArknightsMod.Content.Items.Armor.Specialist.Dorothy
 		protected override List<int> GetItems() {
 			return
 			[
-				ModContent.ItemType<DorothyHead>(),
-				ModContent.ItemType<DorothyBody>(),
-				ModContent.ItemType<DorothyLegs>()
+				ModContent.ItemType<DorothyHelmet>(),
+				ModContent.ItemType<DorothyChestplate>(),
+				ModContent.ItemType<DorothyGreaves>()
 			];
 		}
 	}

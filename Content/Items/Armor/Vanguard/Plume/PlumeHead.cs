@@ -26,14 +26,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanguard.Plume
 			Item.defense = 0;
 		}
 		
-		public override bool IsArmorSet(Item head, Item body, Item legs) {
-			return body.type == ModContent.ItemType<PlumeBody>() && body.neoarmor().hasUpgraded &&
-				legs.type == ModContent.ItemType<PlumeLegs>() && legs.neoarmor().hasUpgraded;
-		}
 
-		public override void UpdateArmorSet(Player player) {
-			player.setBonus = "";
-		}
 
 		public override void AddRecipes() {
 			CreateRecipe()

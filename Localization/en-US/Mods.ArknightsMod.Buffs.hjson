@@ -59,8 +59,8 @@ RARicecrabBuff: {
 }
 
 StunDebuff: {
-	DisplayName: Stun Debuff
-	Description: Mods.ArknightsMod.Buffs.StunDebuff.Description
+	DisplayName: Stun
+	Description: Unable to act
 }
 
 Tumor1: {
@@ -101,4 +101,73 @@ SeasonedRationsBuff: {
 DehydratedSeasonedJerkyBuff: {
 	Description: Mods.ArknightsMod.Buffs.DehydratedSeasonedJerkyBuff.Description
 	DisplayName: Dehydrated Seasoned Jerky Buff
+}
+
+FearlessDebuff: {
+	DisplayName: Fearless
+	Description:
+		'''
+		Each stack: [c/3791db:+1.5 HP/s] regen (stacks)
+		Melee hits add stacks for 4s
+		'''
+}
+
+EntelechiaBleedDebuff: {
+	DisplayName: Entelechia Bleed
+	Description: 40 magic damage per second
+}
+
+HazeMagicFragileDebuff: {
+	DisplayName: Magic Fragility
+	Description: Magic damage taken +25% (-20% magic resist)
+}
+
+IndigoBindDebuff: {
+	DisplayName: Indigo Bind
+	Description: Cannot move
+}
+
+MostimaSlowDebuff: {
+	DisplayName: Mostima Slow
+	Description: Movement speed -15%
+}
+
+NianShieldBuff: {
+	DisplayName: Nian Shield
+	Description: Blocks one heavy hit
+}
+
+SpotHealDodgeBuff: {
+	DisplayName: Spot Heal Dodge
+	Description: +17% physical dodge
+}
+
+CivilightEternaHealBoostBuff: {
+	DisplayName: Civilight Dust
+	Description: Healing received from Civilight Eterna +50%
+}
+
+LapplandSilenceDebuff: {
+	DisplayName: Lappland Silence
+	Description: Special abilities silenced
+}
+
+WarfarinAllyRegenBuff: {
+	DisplayName: Warfarin Regen
+	Description: Greatly increased life regen
+}
+
+TyphonHelmetSlowDebuff: {
+	DisplayName: Typhon Slow
+	Description: 80% reduced move speed
+}
+
+OrchidSlowDebuff: {
+	DisplayName: Orchid Slow Debuff
+	Description: Mods.ArknightsMod.Buffs.OrchidSlowDebuff.Description
+}
+
+CivilightEternaHealBoostBuff: {
+	DisplayName: Civilight Eterna Heal Boost
+	Description: Healing received from Civilight Eterna increased to 150%
 }

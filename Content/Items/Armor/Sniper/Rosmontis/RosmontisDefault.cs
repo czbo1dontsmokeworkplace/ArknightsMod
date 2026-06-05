@@ -10,9 +10,9 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Rosmontis
 		protected override List<int> GetItems() {
 			return
 			[
-				ModContent.ItemType<RosmontisHead>(),
-				ModContent.ItemType<RosmontisBody>(),
-				ModContent.ItemType<RosmontisLegs>()
+				ModContent.ItemType<RosmontisHelmet>(),
+				ModContent.ItemType<RosmontisChestplate>(),
+				ModContent.ItemType<RosmontisGreaves>()
 			];
 		}
 	}

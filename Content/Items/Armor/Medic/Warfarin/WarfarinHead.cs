@@ -26,14 +26,6 @@ namespace ArknightsMod.Content.Items.Armor.Medic.Warfarin
 			Item.defense = 0;
 		}
 		
-		public override bool IsArmorSet(Item head, Item body, Item legs) {
-			return body.type == ModContent.ItemType<WarfarinBody>() && body.neoarmor().hasUpgraded &&
-				legs.type == ModContent.ItemType<WarfarinLegs>() && legs.neoarmor().hasUpgraded;
-		}
-
-		public override void UpdateArmorSet(Player player) {
-			player.setBonus = "";
-		}
 
 		public override void AddRecipes() {
 			CreateRecipe()

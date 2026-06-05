@@ -1,11 +1,15 @@
-using Terraria;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Defender.Mudrock
 {
-	[AutoloadEquip(EquipType.Legs)]
-	internal class MudrockGreaves : NeoArmorLegs
+	public class MudrockGreaves : MudrockSetLegsPiece
 	{
 		public override int Rarity => 6;
+		protected override string VanityItemName => nameof(MudrockLegs);
+		protected override int VanityItemType => ModContent.ItemType<MudrockLegs>();
+
+		protected override void SetSetDefaults() {
+			Item.defense = 0;
+		}
 	}
 }

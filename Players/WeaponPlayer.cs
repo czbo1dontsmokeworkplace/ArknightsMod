@@ -1,4 +1,5 @@
 using ArknightsMod.Common.UI;
+using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.Items.Weapons.Caster.Lava;
 using ArknightsMod.Content.Items.Weapons.Defender.Beagle;
@@ -483,6 +484,7 @@ namespace ArknightsMod.Players
 				StockCount -= 1;
 			}
 			chargeOpen = true;
+			OperatorAmmoConsumeHelper.NotifyAmmoConsumed(Player);
 		}
 
 		public void SetSkillData() {

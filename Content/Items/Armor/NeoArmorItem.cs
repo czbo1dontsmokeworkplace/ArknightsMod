@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.Enums;
 using Terraria.ID;
@@ -48,7 +49,7 @@ namespace ArknightsMod.Content.Items.Armor
 				SetBaseArmorDefaults();
 
 			Item.neoarmor().isNeoArmor = true;
-        }
+		}
 
 		public void SetBaseArmorDefaults() {
 
@@ -98,15 +99,12 @@ namespace ArknightsMod.Content.Items.Armor
 				if (index == -1)
 					index = tooltips.Count - 1;
 
-				var lifeBonusText = new TooltipLine(Mod, "LifeBonus",
-					Language.GetTextValue("Mods.ArknightsMod.NeoArmor.LifeBonus", ArmorLifeBonus));
-				tooltips.Insert(index + 1, lifeBonusText);
+				string lifeBonus = Language.GetTextValue("Mods.ArknightsMod.NeoArmor.LifeBonus", ArmorLifeBonus);
+				OperatorOutfitTooltipLayout.InsertWrappedLines(Mod, tooltips, index + 1, lifeBonus, "LifeBonus");
 
-				var lifeReducText = new TooltipLine(Mod, "LifeReduction",
-					Language.GetTextValue("Mods.ArknightsMod.NeoArmor.LifeItemsReduction", 0.5.ToString("P0"))) {
-					Color = Colors.RarityTrash
-				};
-				tooltips.Insert(index + 2, lifeReducText);
+				string lifeReduc = Language.GetTextValue("Mods.ArknightsMod.NeoArmor.LifeItemsReduction", 0.5.ToString("P0"));
+				int reducInsert = index + 1 + OperatorOutfitTooltipLayout.WrapLines(lifeBonus).Count();
+				OperatorOutfitTooltipLayout.InsertWrappedLines(Mod, tooltips, reducInsert, lifeReduc, "LifeReduction", Colors.RarityTrash);
 
 				int indexName = tooltips.FindIndex(t => t.Name == "ItemName");
 				if (indexName != -1) {
@@ -161,7 +159,9 @@ namespace ArknightsMod.Content.Items.Armor
 
 		/// <summary>修改时装状态下的额外提示文本</summary>
 		/// <param name="tooltips">当前工具提示列表，可直接修改</param>
-		public virtual void ModifyVanityTooltips(List<TooltipLine> tooltips) { }
+		public virtual void ModifyVanityTooltips(List<TooltipLine> tooltips) {
+			OperatorOutfitTooltipLayout.ApplyWrappedVanityLine(Mod, tooltips, "Mods.ArknightsMod.NeoArmor.VanityHint");
+		}
 
 		/// <summary>物品在世界中作为掉落物时的更新逻辑</summary>
 		/// <param name="item">世界物品实例</param>

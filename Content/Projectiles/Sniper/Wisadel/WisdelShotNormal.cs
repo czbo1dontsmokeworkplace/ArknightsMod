@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using ArknightsMod.Common.Particle;
+using ArknightsMod.Content.Buffs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -109,6 +110,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Wisadel
 						info.Crit = crit;
 						info.DamageType = Projectile.DamageType;
 						npc.StrikeNPC(info);
+						OperatorStunNPC.TryApplyFromWisadel(npc);
 					}
 				}
 			}
@@ -172,6 +174,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Wisadel
         {
             Player player = Main.player[Projectile.owner];
 			HitEffect();
+			OperatorStunNPC.TryApplyFromWisadel(target);
 			Aftershock(Projectile, Main.player[Projectile.owner], Projectile.damage, target);
 			hasHit = true;
         }

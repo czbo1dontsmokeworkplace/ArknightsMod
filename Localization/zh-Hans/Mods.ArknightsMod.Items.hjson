@@ -143,6 +143,21 @@ MelanthaHead: {
 	// Tooltip: ""
 }
 
+MelanthaHelmet: {
+	DisplayName: 玫兰莎的头盔
+	// Tooltip: ""
+}
+
+MelanthaChestplate: {
+	DisplayName: 玫兰莎的胸甲
+	// Tooltip: ""
+}
+
+MelanthaGreaves: {
+	DisplayName: 玫兰莎的腿甲
+	// Tooltip: ""
+}
+
 MelanthaLegs: {
 	DisplayName: 玫兰莎的下装
 	// Tooltip: ""
@@ -225,6 +240,21 @@ WBody: {
 
 WHead: {
 	DisplayName: W的头套
+	// Tooltip: ""
+}
+
+WHelmet: {
+	DisplayName: W的头盔
+	// Tooltip: ""
+}
+
+WChestplate: {
+	DisplayName: W的胸甲
+	// Tooltip: ""
+}
+
+WGreaves: {
+	DisplayName: W的腿甲
 	// Tooltip: ""
 }
 
@@ -609,17 +639,17 @@ RosmontisLegs: {
 }
 
 SariaBody: {
-	DisplayName: 赛雷娅的上衣
+	DisplayName: 塞雷娅的上衣
 	// Tooltip: ""
 }
 
 SariaHead: {
-	DisplayName: 赛雷娅的头套
+	DisplayName: 塞雷娅的头套
 	// Tooltip: ""
 }
 
 SariaLegs: {
-	DisplayName: 赛雷娅的下装
+	DisplayName: 塞雷娅的下装
 	// Tooltip: ""
 }
 
@@ -675,6 +705,21 @@ UtageBody: {
 
 UtageHead: {
 	DisplayName: 宴的头套
+	// Tooltip: ""
+}
+
+UtageHelmet: {
+	DisplayName: 宴的头盔
+	// Tooltip: ""
+}
+
+UtageChestplate: {
+	DisplayName: 宴的胸甲
+	// Tooltip: ""
+}
+
+UtageGreaves: {
+	DisplayName: 宴的腿甲
 	// Tooltip: ""
 }
 
@@ -1891,17 +1936,17 @@ MizukiLegs: {
 }
 
 ArmorSariaBody: {
-	DisplayName: 装甲塞雷亚的躯干
+	DisplayName: 装甲塞雷娅的躯干
 	// Tooltip: ""
 }
 
 ArmorSariaHead: {
-	DisplayName: 装甲塞雷亚的头部
+	DisplayName: 装甲塞雷娅的头部
 	// Tooltip: ""
 }
 
 ArmorSariaLegs: {
-	DisplayName: 装甲塞雷亚的腿部
+	DisplayName: 装甲塞雷娅的腿部
 	// Tooltip: ""
 }
 
@@ -3373,6 +3418,776 @@ TexasDefault: {
 }
 
 WisadelDefault: {
-	// DisplayName: Wisadel Default
+	DisplayName: 维什戴尔的时装
 	// Tooltip: ""
 }
+
+HazeHelmet: {
+	DisplayName: 夜烟的头盔
+	// Tooltip: ""
+}
+
+HazeChestplate: {
+	DisplayName: 夜烟的胸甲
+	// Tooltip: ""
+}
+
+HazeGreaves: {
+	DisplayName: 夜烟的腿甲
+	// Tooltip: ""
+}
+
+SariaHelmet: {
+	DisplayName: 塞雷娅的头盔
+	// Tooltip: ""
+}
+
+SariaChestplate: {
+	DisplayName: 塞雷娅的胸甲
+	// Tooltip: ""
+}
+
+SariaGreaves: {
+	DisplayName: 塞雷娅的腿甲
+	// Tooltip: ""
+}
+
+KkdyAlterHelmet: {
+	DisplayName: 寒芒克洛丝的头盔
+	// Tooltip: ""
+}
+
+KkdyAlterChestplate: {
+	DisplayName: 寒芒克洛丝的胸甲
+	// Tooltip: ""
+}
+
+KkdyAlterGreaves: {
+	DisplayName: 寒芒克洛丝的腿甲
+	// Tooltip: ""
+}
+
+MatoimaruHelmet: {
+	DisplayName: 缠丸的头盔
+	// Tooltip: ""
+}
+
+MatoimaruChestplate: {
+	DisplayName: 缠丸的胸甲
+	// Tooltip: ""
+}
+
+MatoimaruGreaves: {
+	DisplayName: 缠丸的腿甲
+	// Tooltip: ""
+}
+
+BeagleHelmet: {
+	DisplayName: 米格鲁的头盔
+	// Tooltip: ""
+}
+
+BeagleChestplate: {
+	DisplayName: 米格鲁的胸甲
+	// Tooltip: ""
+}
+
+BeagleGreaves: {
+	DisplayName: 米格鲁的腿甲
+	// Tooltip: ""
+}
+
+ExusiaiHelmet: {
+	DisplayName: 能天使的头盔
+	// Tooltip: ""
+}
+
+ExusiaiChestplate: {
+	DisplayName: 能天使的胸甲
+	// Tooltip: ""
+}
+
+ExusiaiGreaves: {
+	DisplayName: 能天使的腿甲
+	// Tooltip: ""
+}
+
+MostimaHelmet: {
+	DisplayName: 莫斯提马的头盔
+	// Tooltip: ""
+}
+
+MostimaChestplate: {
+	DisplayName: 莫斯提马的胸甲
+	// Tooltip: ""
+}
+
+MostimaGreaves: {
+	DisplayName: 莫斯提马的腿甲
+	// Tooltip: ""
+}
+
+SkadiHelmet: {
+	DisplayName: 斯卡蒂的头盔
+	// Tooltip: ""
+}
+
+SkadiChestplate: {
+	DisplayName: 斯卡蒂的胸甲
+	// Tooltip: ""
+}
+
+SkadiGreaves: {
+	DisplayName: 斯卡蒂的腿甲
+	// Tooltip: ""
+}
+
+EntelechiaHelmet: {
+	DisplayName: 隐德来希的头盔
+	// Tooltip: ""
+}
+
+EntelechiaChestplate: {
+	DisplayName: 隐德来希的胸甲
+	// Tooltip: ""
+}
+
+EntelechiaGreaves: {
+	DisplayName: 隐德来希的腿甲
+	// Tooltip: ""
+}
+
+AmiyaHelmet: {
+	DisplayName: 阿米娅的头盔
+	// Tooltip: ""
+}
+
+AmiyaChestplate: {
+	DisplayName: 阿米娅的胸甲
+	// Tooltip: ""
+}
+
+AmiyaGreaves: {
+	DisplayName: 阿米娅的腿甲
+	// Tooltip: ""
+}
+
+IndigoHelmet: {
+	DisplayName: 深靛的头盔
+	// Tooltip: ""
+}
+
+IndigoChestplate: {
+	DisplayName: 深靛的胸甲
+	// Tooltip: ""
+}
+
+IndigoGreaves: {
+	DisplayName: 深靛的腿甲
+	// Tooltip: ""
+}
+
+LavaHelmet: {
+	DisplayName: 炎熔的头盔
+	// Tooltip: ""
+}
+
+LavaChestplate: {
+	DisplayName: 炎熔的胸甲
+	// Tooltip: ""
+}
+
+LavaGreaves: {
+	DisplayName: 炎熔的腿甲
+	// Tooltip: ""
+}
+
+StewardHelmet: {
+	DisplayName: 史都华德的头盔
+	// Tooltip: ""
+}
+
+StewardChestplate: {
+	DisplayName: 史都华德的胸甲
+	// Tooltip: ""
+}
+
+StewardGreaves: {
+	DisplayName: 史都华德的腿甲
+	// Tooltip: ""
+}
+
+CardiganHelmet: {
+	DisplayName: 卡缇的头盔
+	// Tooltip: ""
+}
+
+CardiganChestplate: {
+	DisplayName: 卡缇的胸甲
+	// Tooltip: ""
+}
+
+CardiganGreaves: {
+	DisplayName: 卡缇的腿甲
+	// Tooltip: ""
+}
+
+NianHelmet: {
+	DisplayName: 年的头盔
+	// Tooltip: ""
+}
+
+NianChestplate: {
+	DisplayName: 年的胸甲
+	// Tooltip: ""
+}
+
+NianGreaves: {
+	DisplayName: 年的腿甲
+	// Tooltip: ""
+}
+
+SpotHelmet: {
+	DisplayName: 斑点的头盔
+	// Tooltip: ""
+}
+
+SpotChestplate: {
+	DisplayName: 斑点的胸甲
+	// Tooltip: ""
+}
+
+SpotGreaves: {
+	DisplayName: 斑点的腿甲
+	// Tooltip: ""
+}
+
+VulcanHelmet: {
+	DisplayName: 火神的头盔
+	// Tooltip: ""
+}
+
+VulcanChestplate: {
+	DisplayName: 火神的胸甲
+	// Tooltip: ""
+}
+
+VulcanGreaves: {
+	DisplayName: 火神的腿甲
+	// Tooltip: ""
+}
+
+ChenHelmet: {
+	DisplayName: 陈的头盔
+	// Tooltip: ""
+}
+
+ChenChestplate: {
+	DisplayName: 陈的胸甲
+	// Tooltip: ""
+}
+
+ChenGreaves: {
+	DisplayName: 陈的腿甲
+	// Tooltip: ""
+}
+
+LaPlumaHelmet: {
+	DisplayName: 羽毛笔的头盔
+	// Tooltip: ""
+}
+
+LaPlumaChestplate: {
+	DisplayName: 羽毛笔的胸甲
+	// Tooltip: ""
+}
+
+LaPlumaGreaves: {
+	DisplayName: 羽毛笔的腿甲
+	// Tooltip: ""
+}
+
+LapplandHelmet: {
+	DisplayName: 拉普兰德的头盔
+	// Tooltip: ""
+}
+
+LapplandChestplate: {
+	DisplayName: 拉普兰德的胸甲
+	// Tooltip: ""
+}
+
+LapplandGreaves: {
+	DisplayName: 拉普兰德的腿甲
+	// Tooltip: ""
+}
+
+MidnightHelmet: {
+	DisplayName: 月见夜的头盔
+	// Tooltip: ""
+}
+
+MidnightChestplate: {
+	DisplayName: 月见夜的胸甲
+	// Tooltip: ""
+}
+
+MidnightGreaves: {
+	DisplayName: 月见夜的腿甲
+	// Tooltip: ""
+}
+
+PopukarHelmet: {
+	DisplayName: 泡普卡的头盔
+	// Tooltip: ""
+}
+
+PopukarChestplate: {
+	DisplayName: 泡普卡的胸甲
+	// Tooltip: ""
+}
+
+PopukarGreaves: {
+	DisplayName: 泡普卡的腿甲
+	// Tooltip: ""
+}
+
+SurtrHelmet: {
+	DisplayName: 史尔特尔的头盔
+	// Tooltip: ""
+}
+
+SurtrChestplate: {
+	DisplayName: 史尔特尔的胸甲
+	// Tooltip: ""
+}
+
+SurtrGreaves: {
+	DisplayName: 史尔特尔的腿甲
+	// Tooltip: ""
+}
+
+AnselHelmet: {
+	DisplayName: 安赛尔的头盔
+	// Tooltip: ""
+}
+
+AnselChestplate: {
+	DisplayName: 安赛尔的胸甲
+	// Tooltip: ""
+}
+
+AnselGreaves: {
+	DisplayName: 安赛尔的腿甲
+	// Tooltip: ""
+}
+
+HibiscusHelmet: {
+	DisplayName: 芙蓉的头盔
+	// Tooltip: ""
+}
+
+HibiscusChestplate: {
+	DisplayName: 芙蓉的胸甲
+	// Tooltip: ""
+}
+
+HibiscusGreaves: {
+	DisplayName: 芙蓉的腿甲
+	// Tooltip: ""
+}
+
+WarfarinHelmet: {
+	DisplayName: 华法琳的头盔
+	// Tooltip: ""
+}
+
+WarfarinChestplate: {
+	DisplayName: 华法琳的胸甲
+	// Tooltip: ""
+}
+
+WarfarinGreaves: {
+	DisplayName: 华法琳的腿甲
+	// Tooltip: ""
+}
+
+AdnachielHelmet: {
+	DisplayName: 安德切尔的头盔
+	// Tooltip: ""
+}
+
+AdnachielChestplate: {
+	DisplayName: 安德切尔的胸甲
+	// Tooltip: ""
+}
+
+AdnachielGreaves: {
+	DisplayName: 安德切尔的腿甲
+	// Tooltip: ""
+}
+
+CatapultHelmet: {
+	DisplayName: 空爆的头盔
+	// Tooltip: ""
+}
+
+CatapultChestplate: {
+	DisplayName: 空爆的胸甲
+	// Tooltip: ""
+}
+
+CatapultGreaves: {
+	DisplayName: 空爆的腿甲
+	// Tooltip: ""
+}
+
+FartoothHelmet: {
+	DisplayName: 远牙的头盔
+	// Tooltip: ""
+}
+
+FartoothChestplate: {
+	DisplayName: 远牙的胸甲
+	// Tooltip: ""
+}
+
+FartoothGreaves: {
+	DisplayName: 远牙的腿甲
+	// Tooltip: ""
+}
+
+FiammettaHelmet: {
+	DisplayName: 菲亚梅塔的头盔
+	// Tooltip: ""
+}
+
+FiammettaChestplate: {
+	DisplayName: 菲亚梅塔的胸甲
+	// Tooltip: ""
+}
+
+FiammettaGreaves: {
+	DisplayName: 菲亚梅塔的腿甲
+	// Tooltip: ""
+}
+
+KroosHelmet: {
+	DisplayName: 克洛斯的头盔
+	// Tooltip: ""
+}
+
+KroosChestplate: {
+	DisplayName: 克洛斯的胸甲
+	// Tooltip: ""
+}
+
+KroosGreaves: {
+	DisplayName: 克洛斯的腿甲
+	// Tooltip: ""
+}
+
+MelaniteHelmet: {
+	DisplayName: 玫拉的头盔
+	// Tooltip: ""
+}
+
+MelaniteChestplate: {
+	DisplayName: 玫拉的胸甲
+	// Tooltip: ""
+}
+
+MelaniteGreaves: {
+	DisplayName: 玫拉的腿甲
+	// Tooltip: ""
+}
+
+ProvenceHelmet: {
+	DisplayName: 普罗旺斯的头盔
+	// Tooltip: ""
+}
+
+ProvenceChestplate: {
+	DisplayName: 普罗旺斯的胸甲
+	// Tooltip: ""
+}
+
+ProvenceGreaves: {
+	DisplayName: 普罗旺斯的腿甲
+	// Tooltip: ""
+}
+
+TyphonHelmet: {
+	DisplayName: 提丰的头盔
+	// Tooltip: ""
+}
+
+TyphonChestplate: {
+	DisplayName: 提丰的胸甲
+	// Tooltip: ""
+}
+
+TyphonGreaves: {
+	DisplayName: 提丰的腿甲
+	// Tooltip: ""
+}
+
+ManticoreHelmet: {
+	DisplayName: 狮蝎的头盔
+	// Tooltip: ""
+}
+
+ManticoreChestplate: {
+	DisplayName: 狮蝎的胸甲
+	// Tooltip: ""
+}
+
+ManticoreGreaves: {
+	DisplayName: 狮蝎的腿甲
+	// Tooltip: ""
+}
+
+MizukiHelmet: {
+	DisplayName: 水月的头盔
+	// Tooltip: ""
+}
+
+MizukiChestplate: {
+	DisplayName: 水月的胸甲
+	// Tooltip: ""
+}
+
+MizukiGreaves: {
+	DisplayName: 水月的腿甲
+	// Tooltip: ""
+}
+
+TexalterHelmet: {
+	DisplayName: 缄默德克萨斯的头盔
+	// Tooltip: ""
+}
+
+TexalterChestplate: {
+	DisplayName: 缄默德克萨斯的胸甲
+	// Tooltip: ""
+}
+
+TexalterGreaves: {
+	DisplayName: 缄默德克萨斯的腿甲
+	// Tooltip: ""
+}
+
+OrchidHelmet: {
+	DisplayName: 梓兰的头盔
+	// Tooltip: ""
+}
+
+OrchidChestplate: {
+	DisplayName: 梓兰的胸甲
+	// Tooltip: ""
+}
+
+OrchidGreaves: {
+	DisplayName: 梓兰的腿甲
+	// Tooltip: ""
+}
+
+RaidianHelmet: {
+	DisplayName: 电弧的头盔
+	// Tooltip: ""
+}
+
+RaidianChestplate: {
+	DisplayName: 电弧的胸甲
+	// Tooltip: ""
+}
+
+RaidianGreaves: {
+	DisplayName: 电弧的腿甲
+	// Tooltip: ""
+}
+
+FangHelmet: {
+	DisplayName: 芬的头盔
+	// Tooltip: ""
+}
+
+FangChestplate: {
+	DisplayName: 芬的胸甲
+	// Tooltip: ""
+}
+
+FangGreaves: {
+	DisplayName: 芬的腿甲
+	// Tooltip: ""
+}
+
+PlumeHelmet: {
+	DisplayName: 翎羽的头盔
+	// Tooltip: ""
+}
+
+PlumeChestplate: {
+	DisplayName: 翎羽的胸甲
+	// Tooltip: ""
+}
+
+PlumeGreaves: {
+	DisplayName: 翎羽的腿甲
+	// Tooltip: ""
+}
+
+TexasHelmet: {
+	DisplayName: 德克萨斯的头盔
+	// Tooltip: ""
+}
+
+TexasChestplate: {
+	DisplayName: 德克萨斯的胸甲
+	// Tooltip: ""
+}
+
+TexasGreaves: {
+	DisplayName: 德克萨斯的腿甲
+	// Tooltip: ""
+}
+
+VanillaHelmet: {
+	DisplayName: 香草的头盔
+	// Tooltip: ""
+}
+
+VanillaChestplate: {
+	DisplayName: 香草的胸甲
+	// Tooltip: ""
+}
+
+VanillaGreaves: {
+	DisplayName: 香草的腿甲
+	// Tooltip: ""
+}
+
+MudrockHelmet: {
+	DisplayName: 泥岩的头盔
+}
+
+MudrockChestplate: {
+	DisplayName: 泥岩的胸甲
+}
+
+MudrockGreaves: {
+	DisplayName: 泥岩的腿甲
+}
+
+MudrockLegs: {
+	DisplayName: 泥岩的腿甲
+}
+
+MlynarHelmet: {
+	DisplayName: 玛恩纳的头盔
+}
+
+MlynarChestplate: {
+	DisplayName: 玛恩纳的胸甲
+}
+
+MlynarGreaves: {
+	DisplayName: 玛恩纳的腿甲
+}
+
+OblivionisHelmet: {
+	DisplayName: 丰川祥子的头盔
+}
+
+OblivionisChestplate: {
+	DisplayName: 丰川祥子的胸甲
+}
+
+OblivionisGreaves: {
+	DisplayName: 丰川祥子的腿甲
+}
+
+UlpianusHelmet: {
+	DisplayName: 乌尔比安的头盔
+}
+
+UlpianusChestplate: {
+	DisplayName: 乌尔比安的胸甲
+}
+
+UlpianusGreaves: {
+	DisplayName: 乌尔比安的腿甲
+}
+
+RosmontisHelmet: {
+	DisplayName: 迷迭香的头盔
+}
+
+RosmontisChestplate: {
+	DisplayName: 迷迭香的胸甲
+}
+
+RosmontisGreaves: {
+	DisplayName: 迷迭香的腿甲
+}
+
+DorothyHelmet: {
+	DisplayName: 多萝西的头盔
+}
+
+DorothyChestplate: {
+	DisplayName: 多萝西的胸甲
+}
+
+DorothyGreaves: {
+	DisplayName: 多萝西的腿甲
+}
+
+ExusiaiAlterHelmet: {
+	DisplayName: 新约能天使的头盔
+}
+
+ExusiaiAlterChestplate: {
+	DisplayName: 新约能天使的胸甲
+}
+
+ExusiaiAlterGreaves: {
+	DisplayName: 新约能天使的腿甲
+}
+
+CivilightEternaHelmet: {
+	DisplayName: 魔王的头盔
+}
+
+CivilightEternaChestplate: {
+	DisplayName: 魔王的胸甲
+}
+
+CivilightEternaGreaves: {
+	DisplayName: 魔王的腿甲
+}
+
+LingHelmet: {
+	DisplayName: 令的头盔
+}
+
+LingChestplate: {
+	DisplayName: 令的胸甲
+}
+
+LingGreaves: {
+	DisplayName: 令的腿甲
+}
+
+BagpipeHelmet: {
+	DisplayName: 风笛的头盔
+}
+
+BagpipeChestplate: {
+	DisplayName: 风笛的胸甲
+}
+
+BagpipeGreaves: {
+	DisplayName: 风笛的腿甲
+}
+

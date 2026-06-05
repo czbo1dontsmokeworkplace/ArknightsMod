@@ -27,14 +27,6 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Lappland
 			Item.defense = 0;
 		}
 		
-		public override bool IsArmorSet(Item head, Item body, Item legs) {
-			return body.type == ModContent.ItemType<LapplandBody>() && body.neoarmor().hasUpgraded &&
-				legs.type == ModContent.ItemType<LapplandLegs>() && legs.neoarmor().hasUpgraded;
-		}
-
-		public override void UpdateArmorSet(Player player) {
-			player.setBonus = "";
-		}
 
 		public override void AddRecipes() {
 			CreateRecipe()
