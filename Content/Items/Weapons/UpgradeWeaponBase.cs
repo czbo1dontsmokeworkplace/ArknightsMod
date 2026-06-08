@@ -80,10 +80,11 @@ namespace ArknightsMod.Content.Items.Weapons
 						if (index < 0 || index >= datas.Length)
 							throw new IndexOutOfRangeException($"Skill index {index} out of range for item '{item}'");
 						SkillData data = new() {
-							ChargeType = (SkillChargeType)int.Parse(info[3]),
-							AutoTrigger = int.Parse(info[4]) == 1,
+							ChargeType       = (SkillChargeType)int.Parse(info[3]),
+							AutoTrigger      = int.Parse(info[4]) == 1,
 							AutoUpdateActive = int.Parse(info[5]) == 1,
-							SummonSkill = int.Parse(info[6]) == 1,
+							SummonSkill      = int.Parse(info[6]) == 1,
+							SuppressReadyPulse = info.Length >= 8 && info[7].Trim() == "1",
 						};
 						string name = info[2];
 						data.BindKey(item, index, name);

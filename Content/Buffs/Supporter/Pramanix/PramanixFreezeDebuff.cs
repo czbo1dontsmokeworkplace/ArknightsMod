@@ -15,7 +15,8 @@ namespace ArknightsMod.Content.Buffs.Supporter.Pramanix
 		}
 
 		public override void Update(NPC npc, ref int buffIndex) {
-			npc.velocity = Vector2.Zero;
+			if (!Content.Items.Weapons.Supporter.Pramanix.PramanixColdAttachment.HasKnockbackGrace(npc))
+				npc.velocity = Vector2.Zero;
 		}
 	}
 }

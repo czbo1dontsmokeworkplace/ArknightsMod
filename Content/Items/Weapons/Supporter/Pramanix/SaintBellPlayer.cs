@@ -20,6 +20,13 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Pramanix
 		public const int SkillVolleyCooldown = 60;
 		public const float Skill2ShockwaveMaxRadius = 280f;
 
+		public const float Skill1DamageMult      = 5.2f;
+		public const int   Skill1ColdTicks       = 210; // 3.5秒
+		public const float Skill1KnockbackForce    = 52f;
+		public const float Skill1KnockbackVertical = 10f;
+		public const float Skill1BossKnockbackMin  = 5f;
+		public const float Skill1SnowSpreadTiles = 5f;  // 积雪扩散距离（格）
+
 		public const int Skill3LureDuration = 600;
 		public const float Skill3LureOrbitRadius = 148f;
 		public const float Skill3LureMinDistance = 132f;
@@ -85,6 +92,7 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Pramanix
 				FrostDomainLogic.TickDomain(Player, this);
 			}
 
+			PramanixColdAttachment.TickPending();
 			PramanixColdAttachment.CleanupInactive();
 			UpdateEmblemAfterglow();
 			TryDebugFillSkillCharge();
@@ -233,6 +241,64 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Pramanix
 			int tier = Math.Max(FrostTier, 2);
 			float tierScale = 0.88f + (tier - 2) * 0.06f;
 			return Skill2ShockwaveMaxRadius * tierScale;
+		}
+
+		public void ActivateSkill1() {
+			if (Player.whoAmI != Main.myPlayer)
+				return;
+
+			var wp = Player.GetModPlayer<WeaponPlayer>();
+			wp.DelStockCount();
+			wp.SkillTimer  = 0;
+			wp.SkillActive = false;
+
+			SpawnSkill1Snowflakes();
+			SpawnSkill1GroundSnow();
+		}
+
+		private void SpawnSkill1Snowflakes() {
+			if (Player.whoAmI != Main.myPlayer)
+				return;
+
+			var source   = Player.GetSource_ItemUse(Player.HeldItem);
+			int projType = ModContent.ProjectileType<PramanixSkill1Snowflake>();
+
+			// 6片雪花，垂直分布形成"风墙"外观
+			float[] yOffsets = [-88f, -60f, -35f, -12f, 12f, 32f];
+			float baseSpeed  = 15f;
+
+			for (int i = 0; i < 6; i++) {
+				float yOff   = yOffsets[i] + Main.rand.NextFloat(-5f, 5f);
+				float xOff   = Main.rand.NextFloat(-13f, 13f);
+				Vector2 pos  = Player.Center + new Vector2(Player.direction * xOff, yOff);
+				float speedX = baseSpeed + Main.rand.NextFloat(-0.9f, 0.9f);
+				float speedY = Main.rand.NextFloat(-0.45f, 0.45f);
+				Vector2 vel  = new(Player.direction * speedX, speedY);
+				Projectile.NewProjectile(source, pos, vel, projType, 0, 0f, Player.whoAmI);
+			}
+		}
+
+		// 积雪向前方地面扩散（最多5格）的视觉效果
+		private void SpawnSkill1GroundSnow() {
+			if (Player.whoAmI != Main.myPlayer || Main.netMode == NetmodeID.Server)
+				return;
+
+			Vector2 feet = Player.Bottom;
+			int dir      = Player.direction;
+			float maxX   = Skill1SnowSpreadTiles * 16f;
+
+			for (int i = 0; i < 22; i++) {
+				float t    = i / 21f;
+				float xOff = t * maxX * dir + Main.rand.NextFloat(-7f, 7f);
+				float yOff = Main.rand.NextFloat(0f, 6f);
+				Vector2 pos = feet + new Vector2(xOff, yOff);
+
+				Dust d = Dust.NewDustPerfect(pos, DustID.Snow,
+					new Vector2(dir * Main.rand.NextFloat(0.4f, 2f), Main.rand.NextFloat(-1f, -0.2f)),
+					115, new Color(215, 238, 255), 0.65f + Main.rand.NextFloat(0.45f));
+				d.noGravity = false;
+				d.fadeIn    = 0.3f;
+			}
 		}
 
 		public void ActivateSkill2() {

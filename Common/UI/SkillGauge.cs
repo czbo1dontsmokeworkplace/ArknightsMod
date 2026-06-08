@@ -128,7 +128,7 @@ namespace ArknightsMod.Common.UI
 
 			if (maxStock > 1 && stock > 0) {
 				if (stockIcon != null && stockIcon.Length >= stock && stockIcon[stock - 1] != null) {
-					if (stock == maxStock)
+					if (stock == maxStock && !skill.SuppressReadyPulse)
 						DrawChargeReadyPulse(sb, aboveHead);
 					sb.Draw(stockIcon[stock - 1], aboveHead, Color.White);
 				}

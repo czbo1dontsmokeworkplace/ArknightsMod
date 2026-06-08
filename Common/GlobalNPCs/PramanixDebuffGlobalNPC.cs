@@ -10,7 +10,9 @@ namespace ArknightsMod.Common.GlobalNPCs
 	public class PramanixDebuffGlobalNPC : GlobalNPC
 	{
 		public override void AI(NPC npc) {
-			if (npc.HasBuff(ModContent.BuffType<PramanixSlowDebuff>()) && !npc.boss)
+			if (npc.HasBuff(ModContent.BuffType<PramanixSlowDebuff>())
+			    && !npc.boss
+			    && !Content.Items.Weapons.Supporter.Pramanix.PramanixColdAttachment.HasKnockbackGrace(npc))
 				npc.velocity *= 0.65f;
 		}
 

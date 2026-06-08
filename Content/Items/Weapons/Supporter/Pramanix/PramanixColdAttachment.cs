@@ -11,10 +11,15 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Pramanix
 	{
 		private static readonly Dictionary<int, int> Stacks = new();
 		private static readonly Dictionary<int, int> Skill2HitCounts = new();
+		private static readonly Dictionary<int, int> PendingFreezes = new();
+		private static readonly Dictionary<int, int> KnockbackGraceTicks = new();
 
 		public const int ChilledAttachTicks = 6;
 		public const int DomainFreezeThreshold = 8;
 		public const int Skill2FreezeInterval = 3;
+		// 一技能击退生效后再冰冻、再叠减速
+		public const int Skill1KnockbackGraceTicks = 40;
+		public const int Skill1FreezeDelayTicks = 40;
 
 		public static void ApplyDomain(NPC npc, Player player) {
 			if (Main.netMode == NetmodeID.MultiplayerClient)
@@ -56,10 +61,85 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Pramanix
 			TryFreeze(npc);
 		}
 
+		// 一技能：叠层与 Chilled 立即生效，冰冻延后以免打断击退
+		public static void ApplySkill1Hit(NPC npc, int chilledSeconds = 3) {
+			if (Main.netMode == NetmodeID.MultiplayerClient)
+				return;
+			if (!CanAffect(npc))
+				return;
+
+			AddStack(npc, 3);
+			ApplyChilled(npc, chilledSeconds * 60);
+			ScheduleFreeze(npc, Skill1FreezeDelayTicks);
+		}
+
+		public static void GrantKnockbackGrace(NPC npc, int ticks = Skill1KnockbackGraceTicks) {
+			int id = npc.whoAmI;
+			KnockbackGraceTicks.TryGetValue(id, out int current);
+			KnockbackGraceTicks[id] = System.Math.Max(current, ticks);
+		}
+
+		public static bool HasKnockbackGrace(NPC npc) =>
+			KnockbackGraceTicks.TryGetValue(npc.whoAmI, out int ticks) && ticks > 0;
+
+		public static void TickPending() {
+			if (Main.netMode == NetmodeID.MultiplayerClient)
+				return;
+
+			TickGraceTimers();
+			TickScheduledFreezes();
+		}
+
+		private static void ScheduleFreeze(NPC npc, int delayTicks, int freezeTicks = 120) {
+			if (npc.boss)
+				return;
+
+			int id = npc.whoAmI;
+			PendingFreezes.TryGetValue(id, out int current);
+			PendingFreezes[id] = System.Math.Max(current, delayTicks);
+		}
+
+		private static void TickGraceTimers() {
+			var remove = new List<int>();
+			foreach (var (id, ticks) in KnockbackGraceTicks) {
+				if (id < 0 || id >= Main.maxNPCs || !Main.npc[id].active) {
+					remove.Add(id);
+					continue;
+				}
+				if (ticks <= 1)
+					remove.Add(id);
+				else
+					KnockbackGraceTicks[id] = ticks - 1;
+			}
+			foreach (int id in remove)
+				KnockbackGraceTicks.Remove(id);
+		}
+
+		private static void TickScheduledFreezes() {
+			var remove = new List<int>();
+			foreach (var (id, delay) in PendingFreezes) {
+				if (id < 0 || id >= Main.maxNPCs || !Main.npc[id].active) {
+					remove.Add(id);
+					continue;
+				}
+				if (delay <= 1) {
+					TryFreeze(Main.npc[id]);
+					remove.Add(id);
+				}
+				else {
+					PendingFreezes[id] = delay - 1;
+				}
+			}
+			foreach (int id in remove)
+				PendingFreezes.Remove(id);
+		}
+
 		public static void Clear(NPC npc) {
 			int id = npc.whoAmI;
 			Stacks.Remove(id);
 			Skill2HitCounts.Remove(id);
+			PendingFreezes.Remove(id);
+			KnockbackGraceTicks.Remove(id);
 		}
 
 		private static bool CanAffect(NPC npc) =>
@@ -109,6 +189,8 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Pramanix
 			foreach (int id in remove) {
 				Stacks.Remove(id);
 				Skill2HitCounts.Remove(id);
+				PendingFreezes.Remove(id);
+				KnockbackGraceTicks.Remove(id);
 			}
 		}
 	}

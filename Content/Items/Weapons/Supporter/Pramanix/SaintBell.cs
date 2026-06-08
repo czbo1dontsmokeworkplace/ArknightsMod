@@ -109,13 +109,12 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Pramanix
 					return false;
 				}
 
+				// 一技能（wp.Skill == 0）
 				if (wp.StockCount <= 0 || wp.SkillActive)
 					return false;
 
-				wp.DelStockCount();
-				wp.SkillTimer = 0;
 				SoundEngine.PlaySound(SkillActiveSound, player.Center);
-				wp.SkillActive = false;
+				sb.ActivateSkill1();
 				return false;
 			}
 

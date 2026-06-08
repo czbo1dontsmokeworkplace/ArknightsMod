@@ -26,21 +26,20 @@ namespace ArknightsMod.Content.Systems
 
 		private static void SpawnDomainDust(Player player, SaintBellPlayer state) {
 			int tier = state.FrostTier;
-			// 一级寒域粒子密度为基准；二、三级仅增加生成次数。
-			int spawnPasses = tier switch {
-				1 => 1,
-				2 => 2,
-				3 => 3,
-				_ => 0,
+
+			// 各级粒子颜色：一级浅蓝，二级中蓝，三级鲜艳深蓝
+			Color tierColor = tier switch {
+				1 => new Color(200, 230, 255),
+				2 => new Color(140, 200, 255),
+				3 => new Color(80, 160, 255),
+				_ => new Color(200, 230, 255),
 			};
-			if (state.Skill3Active)
-				spawnPasses += 2;
 
 			int skipChance = tier switch {
-				1 => 4,
-				2 => 3,
-				3 => 2,
-				_ => 4,
+				1 => 3,
+				2 => 2,
+				3 => 1,
+				_ => 3,
 			};
 			if (state.Skill3Active)
 				skipChance = Math.Max(1, skipChance - 1);
@@ -48,18 +47,37 @@ namespace ArknightsMod.Content.Systems
 			if (Main.rand.NextBool(skipChance))
 				return;
 
+			int spawnPasses = tier + (state.Skill3Active ? 2 : 0);
 			float radius = FrostDomainLogic.GetRadius(tier, state.Skill3Active);
 
 			for (int pass = 0; pass < spawnPasses; pass++) {
-				float ring = radius * Main.rand.NextFloat(0.55f, 0.95f);
-				Vector2 pos = player.Center + Main.rand.NextVector2CircularEdge(ring, ring);
-				Dust d = Dust.NewDustPerfect(pos, DustID.Ice, Main.rand.NextVector2Circular(0.5f, 0.5f), 140, new Color(180, 220, 255), 1f);
-				d.noGravity = true;
-				d.fadeIn = 0.6f;
+				// 外缘边界粒子（给玩家清晰的范围感知）
+				if (Main.rand.NextBool(2)) {
+					float edgeAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+					float edgeDist = radius * Main.rand.NextFloat(0.90f, 1.02f);
+					Vector2 edgePos = player.Center + edgeAngle.ToRotationVector2() * edgeDist;
+					float edgeScale = tier switch { 1 => 0.9f, 2 => 1.1f, 3 => 1.35f, _ => 0.9f };
+					Dust edge = Dust.NewDustPerfect(edgePos, DustID.Ice,
+						Main.rand.NextVector2Circular(0.4f, 0.4f), 80, tierColor, edgeScale);
+					edge.noGravity = true;
+					edge.fadeIn = 0.4f;
+				}
 
-				if (Main.rand.NextBool(3)) {
-					Vector2 inner = player.Center + Main.rand.NextVector2Circular(radius * 0.5f, radius * 0.5f);
-					Dust snow = Dust.NewDustPerfect(inner, DustID.Snow, Main.rand.NextVector2Circular(0.3f, 0.3f), 100, Color.White, 0.85f);
+				// 域内漂浮粒子
+				float ring = radius * Main.rand.NextFloat(0.25f, 0.88f);
+				Vector2 pos = player.Center + Main.rand.NextVector2CircularEdge(ring, ring);
+				float scale = tier switch { 1 => 0.75f, 2 => 0.90f, 3 => 1.05f, _ => 0.75f };
+				Dust d = Dust.NewDustPerfect(pos, DustID.Ice,
+					Main.rand.NextVector2Circular(0.4f, 0.4f), 130, tierColor, scale);
+				d.noGravity = true;
+				d.fadeIn = 0.55f;
+
+				// 雪花/白点散布（高层级更多）
+				if (Main.rand.NextBool(tier == 3 ? 2 : 3)) {
+					Vector2 inner = player.Center + Main.rand.NextVector2Circular(radius * 0.6f, radius * 0.6f);
+					Color snowColor = Color.Lerp(Color.White, tierColor, 0.35f);
+					Dust snow = Dust.NewDustPerfect(inner, DustID.Snow,
+						Main.rand.NextVector2Circular(0.3f, 0.3f), 90, snowColor, 0.8f + tier * 0.1f);
 					snow.noGravity = true;
 				}
 			}

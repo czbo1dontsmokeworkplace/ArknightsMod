@@ -38,39 +38,28 @@ namespace ArknightsMod.Systems.Gameplay.Skill
 		public SkillKey Key { get; private set; }
 		public int Level = 1;
 
-		/// <summary>
-		/// 这是一个临时的字段，后续等级系统做完了就可以删了
-		/// <br/>This is a temporary field and can be deleted after the level system is completed
-		/// </summary>
+		// 临时字段，等级系统完成后可删除
 		public int? ForceReplaceLevel;
 
-		/// <summary>
-		/// 充能类型
-		/// </summary>
+		// 充能类型
 		public SkillChargeType ChargeType;
 
-		/// <summary>
-		/// 自动触发技能
-		/// </summary>
+		// 自动触发技能
 		public bool AutoTrigger;
 
-		/// <summary>
-		/// 自动扣除技能活跃时间
-		/// </summary>
+		// 自动扣除技能活跃时间
 		public bool AutoUpdateActive;
 
-		/// <summary>
-		/// 是否附加召唤模式
-		/// <br/>Whether have extra summon skill
-		/// </summary>
+		// 是否附加召唤模式
 		public bool SummonSkill;
 
 
 
 		public bool IsPermanent;
-		/// <summary>
-		/// 等级数据
-		/// </summary>
+
+		// 技力满时不显示向周围扩散的正棱形黄色脉冲动画
+		public bool SuppressReadyPulse;
+		// 等级数据
 		public SkillLevelData[] LevelData;
 
 		public Asset<Texture2D> Icon { get; private set; }
@@ -92,12 +81,7 @@ namespace ArknightsMod.Systems.Gameplay.Skill
 			LevelData = new SkillLevelData[10];
 		}
 
-		/// <summary>
-		/// 此处使用直接等级而不是索引
-		/// <br/>Here use the level instead of index
-		/// </summary>
-		/// <param name="level"></param>
-		/// <returns></returns>
+		// 此处使用直接等级而不是索引
 		public SkillLevelData this[int level] {
 			get => LevelData[level - 1];
 			set => LevelData[level - 1] = value;
