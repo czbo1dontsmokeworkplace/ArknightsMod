@@ -282,3 +282,29 @@ DeepcolorSketch: {
 			'''
 	}
 }
+
+SaintBell: {
+	1: {
+		Label: Belltone Snowsquall
+		Desc:
+			'''
+			(Coming soon)
+			2 charges, costs [c/3791db:12] SP
+			'''
+	}
+
+	2: {
+		Label: Frost Tide Over Peaks
+		Desc:
+			'''
+			While active, left-click releases a shockwave for [c/3791db:380%] magic damage
+			Heavy chill buildup; every 3 hits guarantees freeze
+			Lasts until toggled off, costs [c/3791db:45] SP
+			'''
+	}
+
+	3: {
+		Label: Mountains Bow
+		Desc: Expands attack range, immediately lures all enemies in range to reachable ground near you for [c/3791db:10] seconds, frost accumulation speed increased, ATK [c/3791db:+100%], ASPD [c/3791db:+13%], attacks ignore [c/3791db:10] Arts Resistance, each attack deals Arts damage equal to [c/3791db:260%] ATK
+	}
+}

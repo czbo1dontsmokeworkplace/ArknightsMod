@@ -11,6 +11,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using ReLogic.Content;
 using ArknightsMod.Assets.Effects;
+using System;
 using System.IO;
 using ArknightsMod.Systems;
 using ArknightsMod.Content.Tiles.Infrastructure.ReceptionRoom;
@@ -45,6 +46,7 @@ namespace ArknightsMod
 		public static Asset<Effect> AACTSTG3RBNoise;//红蓝噪声效果（AACT三阶段）
 		public static Asset<Effect> FNTwistedRing;//霜星限制阈（扭曲环效果）
 		public static Asset<Effect> LavaExplosionShaderEffect;//炎熔的爆炸效果
+		public static Asset<Effect> PramanixPixelTrail;
 		public const string AssetPath = "ArknightsMod/Sound/";
 
 		public override void Load() {
@@ -98,6 +100,24 @@ namespace ArknightsMod
 				LavaExplosionShaderEffect = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/LavaExplosionShaderEffect", ReLogic.Content.AssetRequestMode.ImmediateLoad);
 				Filters.Scene["LavaExplosionShaderEffect"] = new Filter(new ScreenShaderData(LavaExplosionShaderEffect, "LavaExplosionShaderEffect"), EffectPriority.VeryHigh);
 				Filters.Scene["LavaExplosionShaderEffect"].Load();
+
+				const string pixelTrailPath = "ArknightsMod/Assets/Effects/PixelTrail";
+				try {
+					if (!ModContent.HasAsset(pixelTrailPath)) {
+						Logger.Warn($"未找到着色器资源 {pixelTrailPath}（请确认 Assets/Effects/PixelTrail.fx 已参与构建）。初雪雪花拖尾已禁用。");
+						PramanixPixelTrail = null;
+					}
+					else if (!ModContent.RequestIfExists<Effect>(pixelTrailPath, out Asset<Effect> pixelTrailFx, AssetRequestMode.ImmediateLoad)) {
+						PramanixPixelTrail = null;
+					}
+					else {
+						PramanixPixelTrail = pixelTrailFx;
+					}
+				}
+				catch (Exception ex) {
+					Logger.Error($"加载 PixelTrail 失败。初雪雪花拖尾将不可用。{ex.Message}");
+					PramanixPixelTrail = null;
+				}
 			}
 			Filters.Scene["AshStorm"] = new Filter(new ScreenShaderData("FilterAsh").UseColor(1f, 0.8f, 0.5f), EffectPriority.High);
 

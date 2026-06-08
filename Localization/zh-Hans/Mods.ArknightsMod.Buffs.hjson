@@ -174,8 +174,8 @@ SpotHealDodgeBuff: {
 }
 
 CivilightEternaHealBoostBuff: {
-	DisplayName: 魔王微尘
-	Description: 受到魔王的治疗效果提升至150%
+	DisplayName: 魔王治疗强化
+	Description: 受到来自魔王的治疗效果提升至150%
 }
 
 LapplandSilenceDebuff: {
@@ -198,7 +198,12 @@ OrchidSlowDebuff: {
 	Description: 移动速度降低80%
 }
 
-CivilightEternaHealBoostBuff: {
-	DisplayName: 魔王治疗强化
-	Description: 受到来自魔王的治疗效果提升至150%
+PramanixSlowDebuff: {
+	Description: 移动速度降低
+	DisplayName: 寒域减速
+}
+
+PramanixFreezeDebuff: {
+	Description: 无法行动
+	DisplayName: 寒域冻结
 }

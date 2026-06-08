@@ -132,10 +132,12 @@ namespace ArknightsMod.Content.Items.Weapons
 			}
 		}
 		public SkillData GetSkillData(int index) {
-			if (!skillDatas.TryGetValue(Name, out var datas)) {
-				// Main.NewText(Name + " hasn't skill datas");
+			return GetSkillDataForItem(Name, index);
+		}
+
+		public static SkillData GetSkillDataForItem(string itemName, int index) {
+			if (!skillDatas.TryGetValue(itemName, out var datas))
 				return null;
-			}
 			return datas[index];
 		}
 

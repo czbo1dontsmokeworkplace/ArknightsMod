@@ -43,3 +43,6 @@ DN_Weapon,0,1,1,0,1,0
 DN_Weapon,1,2,3,0,1,0
 DeepcolorSketch,0,1,1,0,1,0
 DeepcolorSketch,1,2,1,0,1,0
+SaintBell,0,1,1,0,0,0
+SaintBell,1,2,1,0,0,0
+SaintBell,2,3,1,0,1,0

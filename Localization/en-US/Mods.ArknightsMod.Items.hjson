@@ -35,6 +35,11 @@ DeepcolorSketch: {
 	SkillActivateKey: "[c/AAA8AA:Down (S) + Right Click] to activate skill"
 }
 
+SaintBell: {
+	DisplayName: Saint's Bell
+	Tooltip: ""
+}
+
 _12FWand: {
 	DisplayName: 12F's wand
 	Tooltip: So, when can I get a skin.
@@ -213,7 +218,7 @@ MudrockBody: {
 
 MudrockChestplate: {
 	DisplayName: Mudrock's Chestplate
-	Tooltip: Right-Click to change outfits
+	Tooltip: ""
 }
 
 MudrockGreaves: {
@@ -228,7 +233,7 @@ MudrockHead: {
 
 MudrockHelmet: {
 	DisplayName: Mudrock's Helmet
-	Tooltip: Right-Click to change outfits
+	Tooltip: ""
 }
 
 WBody: {
@@ -3705,21 +3710,6 @@ VanillaGreaves: {
 	Tooltip: ""
 }
 
-MudrockHelmet: {
-	DisplayName: Mudrock's Helmet
-	Tooltip: ""
-}
-
-MudrockChestplate: {
-	DisplayName: Mudrock's Chestplate
-	Tooltip: ""
-}
-
-MudrockGreaves: {
-	DisplayName: Mudrock's Greaves
-	Tooltip: ""
-}
-
 MudrockLegs: {
 	DisplayName: Mudrock's Legs
 	Tooltip: ""
@@ -3859,4 +3849,3 @@ BagpipeGreaves: {
 	DisplayName: Bagpipe's Greaves
 	Tooltip: ""
 }
-

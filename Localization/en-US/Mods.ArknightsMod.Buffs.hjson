@@ -143,8 +143,8 @@ SpotHealDodgeBuff: {
 }
 
 CivilightEternaHealBoostBuff: {
-	DisplayName: Civilight Dust
-	Description: Healing received from Civilight Eterna +50%
+	DisplayName: Civilight Eterna Heal Boost
+	Description: Healing received from Civilight Eterna increased to 150%
 }
 
 LapplandSilenceDebuff: {
@@ -167,7 +167,12 @@ OrchidSlowDebuff: {
 	Description: Mods.ArknightsMod.Buffs.OrchidSlowDebuff.Description
 }
 
-CivilightEternaHealBoostBuff: {
-	DisplayName: Civilight Eterna Heal Boost
-	Description: Healing received from Civilight Eterna increased to 150%
+PramanixSlowDebuff: {
+	Description: Mods.ArknightsMod.Buffs.PramanixSlowDebuff.Description
+	DisplayName: Pramanix Slow Debuff
+}
+
+PramanixFreezeDebuff: {
+	Description: Cannot move
+	DisplayName: Pramanix Freeze
 }

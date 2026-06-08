@@ -26,7 +26,6 @@ namespace ArknightsMod.Common.UI
 		private UIElement closeTabRef;
 		private bool _isOpen = true;
 
-		// 与 vanilla buff 栏布局匹配：每行 11 个，行间距 50，第一行起点 y=76，图标 32×32
 		private const int BaseTop = 136;
 		private int _currentTop = BaseTop;
 
@@ -94,12 +93,10 @@ namespace ArknightsMod.Common.UI
 			areaImage.Top.Set(needed, 0f);
 			closeTabRef.Top.Set(needed, 0f);
 			collapsedPanel.Top.Set(needed, 0f);
-			if (summon != null) summon.Top.Set(needed + 14, 0f); // 原来 150 - 136 = 14 的偏移
+			if (summon != null) summon.Top.Set(needed + 14, 0f);
 			Recalculate();
 		}
 
-		// 根据玩家当前激活 buff 数量算出技能条应当下移到的 y。
-		// 11 个以内（一行内）维持 BaseTop；多于 11 时移到 buff 最后一行下方留 4px 间距。
 		private static int ComputeBarTop()
 		{
 			Player p = Main.LocalPlayer;
@@ -108,10 +105,9 @@ namespace ArknightsMod.Common.UI
 			for (int i = 0; i < Player.MaxBuffs; i++)
 				if (p.buffType[i] > 0) buffCount++;
 			int rows = (buffCount + 10) / 11;
-			return  76 + rows * 50 + 4;
+			return 76 + rows * 50 + 4;
 		}
 
-		// 把两张叠放图包进一个容器，点击事件由容器统一处理。
 		private static UIElement MakeTab(string bgPath, string fgPath)
 		{
 			UIElement tab = new HoverBlockingElement();

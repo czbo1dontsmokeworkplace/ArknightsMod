@@ -37,6 +37,11 @@ DeepcolorSketch: {
 	SkillActivateKey: "[c/AAA8AA:下（S）+右键]开启技能"
 }
 
+SaintBell: {
+	DisplayName: 圣女的铃铛
+	// Tooltip: ""
+}
+
 _12FWand: {
 	DisplayName: 12F的法杖
 	Tooltip: 终末地的我，再强大也不是海猫亲生的
@@ -215,12 +220,12 @@ MudrockBody: {
 
 MudrockChestplate: {
 	DisplayName: 泥岩的胸甲
-	Tooltip: 右键以切换样式
+	// Tooltip: ""
 }
 
 MudrockGreaves: {
-	DisplayName: 泥岩的下装
-	Tooltip: ""
+	DisplayName: 泥岩的腿甲
+	// Tooltip: ""
 }
 
 MudrockHead: {
@@ -230,7 +235,7 @@ MudrockHead: {
 
 MudrockHelmet: {
 	DisplayName: 泥岩的头盔
-	Tooltip: 右键以切换样式
+	// Tooltip: ""
 }
 
 WBody: {
@@ -4067,127 +4072,142 @@ VanillaGreaves: {
 	// Tooltip: ""
 }
 
-MudrockHelmet: {
-	DisplayName: 泥岩的头盔
-}
-
-MudrockChestplate: {
-	DisplayName: 泥岩的胸甲
-}
-
-MudrockGreaves: {
-	DisplayName: 泥岩的腿甲
-}
-
 MudrockLegs: {
 	DisplayName: 泥岩的腿甲
+	// Tooltip: ""
 }
 
 MlynarHelmet: {
 	DisplayName: 玛恩纳的头盔
+	// Tooltip: ""
 }
 
 MlynarChestplate: {
 	DisplayName: 玛恩纳的胸甲
+	// Tooltip: ""
 }
 
 MlynarGreaves: {
 	DisplayName: 玛恩纳的腿甲
+	// Tooltip: ""
 }
 
 OblivionisHelmet: {
 	DisplayName: 丰川祥子的头盔
+	// Tooltip: ""
 }
 
 OblivionisChestplate: {
 	DisplayName: 丰川祥子的胸甲
+	// Tooltip: ""
 }
 
 OblivionisGreaves: {
 	DisplayName: 丰川祥子的腿甲
+	// Tooltip: ""
 }
 
 UlpianusHelmet: {
 	DisplayName: 乌尔比安的头盔
+	// Tooltip: ""
 }
 
 UlpianusChestplate: {
 	DisplayName: 乌尔比安的胸甲
+	// Tooltip: ""
 }
 
 UlpianusGreaves: {
 	DisplayName: 乌尔比安的腿甲
+	// Tooltip: ""
 }
 
 RosmontisHelmet: {
 	DisplayName: 迷迭香的头盔
+	// Tooltip: ""
 }
 
 RosmontisChestplate: {
 	DisplayName: 迷迭香的胸甲
+	// Tooltip: ""
 }
 
 RosmontisGreaves: {
 	DisplayName: 迷迭香的腿甲
+	// Tooltip: ""
 }
 
 DorothyHelmet: {
 	DisplayName: 多萝西的头盔
+	// Tooltip: ""
 }
 
 DorothyChestplate: {
 	DisplayName: 多萝西的胸甲
+	// Tooltip: ""
 }
 
 DorothyGreaves: {
 	DisplayName: 多萝西的腿甲
+	// Tooltip: ""
 }
 
 ExusiaiAlterHelmet: {
 	DisplayName: 新约能天使的头盔
+	// Tooltip: ""
 }
 
 ExusiaiAlterChestplate: {
 	DisplayName: 新约能天使的胸甲
+	// Tooltip: ""
 }
 
 ExusiaiAlterGreaves: {
 	DisplayName: 新约能天使的腿甲
+	// Tooltip: ""
 }
 
 CivilightEternaHelmet: {
 	DisplayName: 魔王的头盔
+	// Tooltip: ""
 }
 
 CivilightEternaChestplate: {
 	DisplayName: 魔王的胸甲
+	// Tooltip: ""
 }
 
 CivilightEternaGreaves: {
 	DisplayName: 魔王的腿甲
+	// Tooltip: ""
 }
 
 LingHelmet: {
 	DisplayName: 令的头盔
+	// Tooltip: ""
 }
 
 LingChestplate: {
 	DisplayName: 令的胸甲
+	// Tooltip: ""
 }
 
 LingGreaves: {
 	DisplayName: 令的腿甲
+	// Tooltip: ""
 }
 
 BagpipeHelmet: {
 	DisplayName: 风笛的头盔
+	// Tooltip: ""
 }
 
 BagpipeChestplate: {
 	DisplayName: 风笛的胸甲
+	// Tooltip: ""
 }
 
 BagpipeGreaves: {
 	DisplayName: 风笛的腿甲
+	// Tooltip: ""
 }
-

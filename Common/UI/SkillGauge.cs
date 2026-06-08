@@ -15,8 +15,6 @@ namespace ArknightsMod.Common.UI
 {
 	internal class SkillGauge : UIState
 	{
-		// For this bar we'll be using a frame texture and then a gradient inside bar, as it's one of the more simpler approaches while still looking decent.
-		// Once this is all set up make sure to go and do the required stuff for most UI's in the ModSystem class.
 		private UIText text;
 
 		private UIElement area;
@@ -38,46 +36,39 @@ namespace ArknightsMod.Common.UI
 			ModContent.Request<Texture2D>("ArknightsMod/Common/UI/Skill", AssetRequestMode.ImmediateLoad).Value;
 
 		public override void OnInitialize() {
-			// Create a UIElement for all the elements to sit on top of, this simplifies the numbers as nested elements can be positioned relative to the top left corner of this element.
-			// UIElement is invisible and has no padding.
 			area = new UIElement();
-			//area.Left.Set(-area.Width.Pixels - 790, 1f); // Place the resource bar to the left of the hearts.
-			area.Top.Set(70, 0f); // Placing it just a bit below the top of the screen.
-			area.Width.Set(139, 0f); // We will be placing the following 2 UIElements within this 182x60 area.
+			area.Top.Set(70, 0f);
+			area.Width.Set(139, 0f);
 			area.Height.Set(20, 0f);
 			area.VAlign = 0.5f;
 			area.HAlign = 0.5f;
 
-			barFrame = new UIImage(ModContent.Request<Texture2D>("ArknightsMod/Common/UI/SkillGaugeFrame")); // Frame of our resource bar
+			barFrame = new UIImage(ModContent.Request<Texture2D>("ArknightsMod/Common/UI/SkillGaugeFrame"));
 			barFrame.Left.Set(10, 0f);
 			barFrame.Top.Set(0, 0f);
 			barFrame.Width.Set(118, 0f);
 			barFrame.Height.Set(12, 0f);
 
-			text = new UIText("0/0", 0.8f); // text to show stat
+			text = new UIText("0/0", 0.8f);
 			text.Width.Set(118, 0f);
 			text.Height.Set(12, 0f);
 			text.Top.Set(100, 0f);
 			text.Left.Set(0, 0f);
 
-			gradientA = new Color(181, 191, 100); // A light green
-			gradientB = new Color(127, 114, 96); // A gray
-
+			gradientA = new Color(181, 191, 100);
+			gradientB = new Color(127, 114, 96);
 			skillColor = new Color(255, 197, 0);
 
-			//area.Append(text);
 			area.Append(barFrame);
 			Append(area);
 		}
 
 		public override void Draw(SpriteBatch spriteBatch) {
-			// This prevents drawing unless we are using an ExampleCustomResourceWeapon
 			if (Main.LocalPlayer.HeldItem.ModItem is not UpgradeWeaponBase)
 				return;
 			base.Draw(spriteBatch);
 		}
 
-		// Here we draw our UI
 		protected override void DrawSelf(SpriteBatch sb) {
 			base.DrawSelf(sb);
 
@@ -85,11 +76,8 @@ namespace ArknightsMod.Common.UI
 			Texture2D pixel = TextureAssets.MagicPixel.Value;
 			SkillData skill = mp.CurrentSkill;
 
-			//null reference check
-			if (skill == null) {
-				//Main.NewText($"[{GetType()}] 错误: 当前技能数据mp.CurrentSkill为null", Color.Red);
+			if (skill == null)
 				return;
-			}
 
 			SkillLevelData data = skill.CurrentLevelData;
 
@@ -97,23 +85,18 @@ namespace ArknightsMod.Common.UI
 			int maxStock = data.MaxStack;
 			int stock = mp.StockCount;
 
-			//确保数值有效
 			if (activeTime <= 0)
 				activeTime = 1f;
 			if (maxStock <= 0)
 				maxStock = 1;
 
-			//Calculate quotient
-			float quotient1 = (float)mp.SkillCharge / mp.SkillChargeMax;
+			float quotient1 = mp.SkillChargeMax > 0 ? (float)mp.SkillCharge / mp.SkillChargeMax : 0f;
 			quotient1 = Utils.Clamp(quotient1, 0f, 1f);
 			float quotient2 = mp.SkillTimer / activeTime;
 			quotient2 = Utils.Clamp(quotient2, 0f, 1f);
 
-			//检查UI元素是否初始化
-			if (barFrame == null) {
-				Main.NewText("错误: 技能UI的barFrame元素未初始化", Color.Red);
+			if (barFrame == null)
 				return;
-			}
 
 			Rectangle hitbox = barFrame.GetInnerDimensions().ToRectangle();
 			hitbox.X += 2;
@@ -128,7 +111,6 @@ namespace ArknightsMod.Common.UI
 			int steps1 = (int)((right - left) * quotient1);
 			int steps2 = (int)((right - left) * quotient2);
 
-			//绘制技能条背景和填充
 			sb.Draw(pixel, new Rectangle(left, hitbox.Y, 116, hitbox.Height), gradientB);
 			for (int i = 0; i < steps1; i += 1) {
 				sb.Draw(pixel, new Rectangle(left + i, hitbox.Y, 1, hitbox.Height), gradientA);
@@ -144,7 +126,6 @@ namespace ArknightsMod.Common.UI
 				}
 			}
 
-			//检查贴图资源是否存在
 			if (maxStock > 1 && stock > 0) {
 				if (stockIcon != null && stockIcon.Length >= stock && stockIcon[stock - 1] != null) {
 					if (stock == maxStock)
@@ -153,7 +134,7 @@ namespace ArknightsMod.Common.UI
 				}
 			}
 			else if (maxStock == 1 && !skill.AutoTrigger) {
-				if (stock == 1 && skillCanUse != null) {
+				if (stock == 1 && skillCanUse != null && !mp.SkillActive) {
 					DrawChargeReadyPulse(sb, aboveHead);
 					sb.Draw(skillCanUse, aboveHead, Color.White);
 				}
@@ -187,15 +168,6 @@ namespace ArknightsMod.Common.UI
 				SpriteEffects.None,
 				0f);
 		}
-		//public override void Update(GameTime gameTime) {
-		//	if (Main.LocalPlayer.HeldItem.ModItem is not KroosCrossbow)
-		//		return;
-
-		//	var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
-		//	// Setting the text per tick to update and show our resource values.
-		//	text.SetText($"SP: {modPlayer.SP} / {modPlayer.MaxSP}");
-		//	base.Update(gameTime);
-		//}
 	}
 
 	internal class SkillGaugeSystem : ModSystem
@@ -205,7 +177,6 @@ namespace ArknightsMod.Common.UI
 		internal SkillGauge SkillGauge;
 
 		public override void Load() {
-			// All code below runs only if we're not loading on a server
 			if (!Main.dedServ) {
 				SkillGauge = new();
 				SkillGaugeUserInterface = new();

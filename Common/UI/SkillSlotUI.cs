@@ -23,6 +23,7 @@ namespace ArknightsMod.Common.UI
 		private readonly MasteryLevelUI ml;
 		private readonly UIText initSP, maxSP;
 		private readonly UIImage icon;
+
 		public SkillSlotUI() : base(noSkill) {
 			icon = new(noSkill);
 			Append(icon);
@@ -45,6 +46,7 @@ namespace ArknightsMod.Common.UI
 			maxSP.Top.Set(56, 0);
 			Append(maxSP);
 		}
+
 		protected override void DrawSelf(SpriteBatch sb) {
 			base.DrawSelf(sb);
 
@@ -92,8 +94,8 @@ namespace ArknightsMod.Common.UI
 				sb.Draw(selector, GetDimensions().ToRectangle().TopRight() - Vector2.UnitX * 20, Color.White);
 			}
 		}
-		public void SetSkill(SkillData value) {
 
+		public void SetSkill(SkillData value) {
 			skillData = value;
 			if (value == null)
 				return;
@@ -104,6 +106,7 @@ namespace ArknightsMod.Common.UI
 			maxSP.SetText(data.MaxSP.ToString());
 			icon.SetImage(skillData.Icon.Value);
 		}
+
 		public SkillData GetSkill() => skillData;
 	}
 }

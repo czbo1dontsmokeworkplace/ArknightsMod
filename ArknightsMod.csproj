@@ -33,6 +33,7 @@
     <None Remove="Assets\Effects\CollapesdExplosion.fx" />
     <None Remove="Assets\Effects\CollapsedExplosionPart2.fx" />
     <None Remove="Assets\Effects\FNTwistedRing.fx" />
+    <None Remove="Assets\Effects\PixelTrail.fx" />
     <None Remove="Common\VisualEffects\ArknightsModVertexTrailDrawType.cs.disabled" />
   </ItemGroup>
   <ItemGroup>
