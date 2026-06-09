@@ -17,11 +17,6 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Beagle
 		public override int Value => 560000;
 		public override int ArmorLifeBonus => 115;
 
-		public override void SetArmorDefaults()
-		{
-			Item.defense = 0;
-		}
-
 		public override void AddRecipes() {
 			CreateRecipe()
 			.AddIngredient<BeagleHead>(1)

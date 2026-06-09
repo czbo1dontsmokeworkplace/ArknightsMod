@@ -6,9 +6,6 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.W
 	{
 		public override int Rarity => 6;
 
-		public override void SetSetDefaults() {
-			Item.defense = 0;
-		}
 		protected override string VanityItemName => nameof(WHead);
 		protected override int VanityItemType => ModContent.ItemType<WHead>();
 
