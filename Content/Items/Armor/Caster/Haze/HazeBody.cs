@@ -15,10 +15,10 @@ namespace ArknightsMod.Content.Items.Armor.Caster.Haze
 	public class HazeBody : NeoArmorBody
 	{
 		public override int Rarity => 4;
-		public override int ArmorLifeBonus => 71;
+		public override int ArmorLifeBonus => 44;
 
 		public override void SetArmorDefaults() {
-			Item.defense = 8;
+			Item.defense = 5;
 		}
 		
 		public override void AddRecipes() {

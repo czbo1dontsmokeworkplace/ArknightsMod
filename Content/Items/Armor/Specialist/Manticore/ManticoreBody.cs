@@ -18,7 +18,7 @@ namespace ArknightsMod.Content.Items.Armor.Specialist.Manticore
 		public override int ArmorLifeBonus => 82;
 
 		public override void SetArmorDefaults() {
-			Item.defense = 26;
+			Item.defense = 28;
 		}
 		
 		public override void AddRecipes() {

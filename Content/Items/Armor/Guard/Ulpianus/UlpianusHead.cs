@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Ulpianus
 	public class UlpianusHead : NeoArmorHead
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 602;
+		public override int ArmorLifeBonus => 652;
 		
 		public override void Load() {
 			if (Main.netMode == NetmodeID.Server)

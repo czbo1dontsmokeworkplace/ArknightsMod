@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Caster.Mostima
 		protected override int VanityItemType => ModContent.ItemType<MostimaBody>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 10;
 		}
 	}
 }

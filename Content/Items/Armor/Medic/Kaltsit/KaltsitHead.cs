@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Items.Armor.Medic.Kaltsit
 	public class KaltsitHead : NeoArmorHead
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 164;
+		public override int ArmorLifeBonus => 204;
 		
 		public override void Load() {
 			if (Main.netMode == NetmodeID.Server)

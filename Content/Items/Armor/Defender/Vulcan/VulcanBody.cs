@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Vulcan
 	public class VulcanBody : NeoArmorBody
 	{
 		public override int Rarity => 5;
-		public override int ArmorLifeBonus => 184;
+		public override int ArmorLifeBonus => 205;
 
 		public override void SetArmorDefaults() {
 			Item.defense = 44;

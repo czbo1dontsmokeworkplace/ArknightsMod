@@ -15,10 +15,10 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Vulcan
 	public class VulcanLegs : NeoArmorLegs
 	{
 		public override int Rarity => 5;
-		public override int ArmorLifeBonus => 184;
+		public override int ArmorLifeBonus => 205;
 		
 		public override void SetArmorDefaults() {
-			Item.defense = 14;
+			Item.defense = 15;
 		}
 
 		public override void AddRecipes() {

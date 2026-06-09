@@ -10,7 +10,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Utage
 		protected override int VanityItemType => ModContent.ItemType<UtageLegs>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 8;
+			Item.defense = 5;
 		}
 
 		protected override void AppendActiveSetTooltips(List<TooltipLine> tooltips) {

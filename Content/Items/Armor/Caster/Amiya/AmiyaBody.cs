@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Items.Armor.Caster.Amiya
 	public class AmiyaBody : NeoArmorBody
 	{
 		public override int Rarity => 5;
-		public override int ArmorLifeBonus => 74;
+		public override int ArmorLifeBonus => 83;
 
 		public override void SetArmorDefaults() {
 			Item.defense = 9;

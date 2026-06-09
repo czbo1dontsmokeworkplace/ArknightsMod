@@ -12,10 +12,10 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Wisadel
 	public class WisadelLegs : NeoArmorLegs
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 94;
+		public override int ArmorLifeBonus => 95;
 		
 		public override void SetArmorDefaults() {
-			Item.defense = 6;
+			Item.defense = 7;
 		}
 
 		public override void AddRecipes() {

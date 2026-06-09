@@ -16,7 +16,7 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Wisadel
 	public class WisadelBody : NeoArmorBody
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 94;
+		public override int ArmorLifeBonus => 95;
 
 		public override void SetStaticDefaultsNoServer()
 		{ 

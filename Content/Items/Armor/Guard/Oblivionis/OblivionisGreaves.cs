@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Oblivionis
 		protected override int VanityItemType => ModContent.ItemType<OblivionisLegs>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 11;
 		}
 	}
 }

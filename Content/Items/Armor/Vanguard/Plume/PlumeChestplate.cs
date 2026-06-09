@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanguard.Plume
 		protected override int VanityItemType => ModContent.ItemType<PlumeBody>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 21;
 		}
 	}
 }

@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Exusiai
 		protected override int VanityItemType => ModContent.ItemType<ExusiaiBody>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 12;
 		}
 	}
 }

@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Melanite
 		protected override int VanityItemType => ModContent.ItemType<MelaniteLegs>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 5;
 		}
 	}
 }

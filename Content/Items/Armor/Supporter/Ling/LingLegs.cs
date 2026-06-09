@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.Ling
 	public class LingLegs : NeoArmorLegs
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 54;
+		public override int ArmorLifeBonus => 72;
 		
 		public override void SetArmorDefaults() {
 			Item.defense = 4;

@@ -15,10 +15,10 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Mlynar
 	public class MlynarLegs : NeoArmorLegs
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 195;
+		public override int ArmorLifeBonus => 213;
 		
 		public override void SetArmorDefaults() {
-			Item.defense = 12;
+			Item.defense = 13;
 		}
 
 		public override void AddRecipes() {

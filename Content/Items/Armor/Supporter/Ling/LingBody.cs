@@ -15,10 +15,10 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.Ling
 	public class LingBody : NeoArmorBody
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 54;
+		public override int ArmorLifeBonus => 72;
 
 		public override void SetArmorDefaults() {
-			Item.defense = 10;
+			Item.defense = 11;
 		}
 		
 		public override void AddRecipes() {

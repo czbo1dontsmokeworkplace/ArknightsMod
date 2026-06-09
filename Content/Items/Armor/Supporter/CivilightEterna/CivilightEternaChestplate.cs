@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.CivilightEterna
 		protected override int VanityItemType => ModContent.ItemType<CivilightEternaBody>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 18;
 		}
 	}
 }

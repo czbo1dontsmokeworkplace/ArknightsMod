@@ -18,7 +18,7 @@ namespace ArknightsMod.Content.Items.Armor.Caster.Lava
 		public override int ArmorLifeBonus => 57;
 		
 		public override void SetArmorDefaults() {
-			Item.defense = 2;
+			Item.defense = 3;
 		}
 
 		public override void AddRecipes() {

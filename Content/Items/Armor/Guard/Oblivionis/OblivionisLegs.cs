@@ -15,10 +15,10 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Oblivionis
 	public class OblivionisLegs : NeoArmorLegs
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 103;
+		public override int ArmorLifeBonus => 118;
 		
 		public override void SetArmorDefaults() {
-			Item.defense = 10;
+			Item.defense = 11;
 		}
 
 		public override void AddRecipes() {

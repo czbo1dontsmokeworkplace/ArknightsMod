@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanguard.Bagpipe
 		protected override int VanityItemType => ModContent.ItemType<BagpipeLegs>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 10;
 		}
 	}
 }

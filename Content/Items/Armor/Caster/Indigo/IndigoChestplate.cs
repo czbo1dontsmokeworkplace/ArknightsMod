@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Caster.Indigo
 		protected override int VanityItemType => ModContent.ItemType<IndigoBody>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 9;
 		}
 	}
 }

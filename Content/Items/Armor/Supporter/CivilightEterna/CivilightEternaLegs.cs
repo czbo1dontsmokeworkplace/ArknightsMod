@@ -12,7 +12,7 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.CivilightEterna
 	public class CivilightEternaLegs : NeoArmorLegs
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 82;
+		public override int ArmorLifeBonus => 97;
 		
 		public override void Load() {
 		}

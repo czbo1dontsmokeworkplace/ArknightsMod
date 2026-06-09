@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Catapult
 		protected override int VanityItemType => ModContent.ItemType<CatapultLegs>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 2;
 		}
 	}
 }

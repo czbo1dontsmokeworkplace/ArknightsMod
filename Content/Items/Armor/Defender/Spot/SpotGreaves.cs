@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Spot
 		protected override int VanityItemType => ModContent.ItemType<SpotLegs>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 12;
 		}
 	}
 }

@@ -18,7 +18,7 @@ namespace ArknightsMod.Content.Items.Armor.Medic.Warfarin
 		public override int ArmorLifeBonus => 76;
 
 		public override void SetArmorDefaults() {
-			Item.defense = 9;
+			Item.defense = 10;
 		}
 		
 		public override void AddRecipes() {

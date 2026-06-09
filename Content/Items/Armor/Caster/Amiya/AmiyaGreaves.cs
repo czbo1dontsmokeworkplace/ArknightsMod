@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Caster.Amiya
 		protected override int VanityItemType => ModContent.ItemType<AmiyaLegs>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 3;
 		}
 	}
 }

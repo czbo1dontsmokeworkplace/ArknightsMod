@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Oblivionis
 	public class OblivionisHead : NeoArmorHead
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 206;
+		public override int ArmorLifeBonus => 236;
 		
 		public override void Load() {
 			if (Main.netMode == NetmodeID.Server)

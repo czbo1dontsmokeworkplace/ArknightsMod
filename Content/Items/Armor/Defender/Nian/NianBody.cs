@@ -15,10 +15,10 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Nian
 	public class NianBody : NeoArmorBody
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 185;
+		public override int ArmorLifeBonus => 205;
 
 		public override void SetArmorDefaults() {
-			Item.defense = 55;
+			Item.defense = 60;
 		}
 		
 		public override void AddRecipes() {

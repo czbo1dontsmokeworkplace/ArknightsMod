@@ -15,10 +15,10 @@ namespace ArknightsMod.Content.Items.Armor.Medic.Kaltsit
 	public class KaltsitBody : NeoArmorBody
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 82;
+		public override int ArmorLifeBonus => 102;
 
 		public override void SetArmorDefaults() {
-			Item.defense = 16;
+			Item.defense = 20;
 		}
 		
 		public override void AddRecipes() {

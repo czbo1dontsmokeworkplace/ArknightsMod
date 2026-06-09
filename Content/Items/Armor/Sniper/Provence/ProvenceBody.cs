@@ -18,7 +18,7 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Provence
 		public override int ArmorLifeBonus => 84;
 
 		public override void SetArmorDefaults() {
-			Item.defense = 16;
+			Item.defense = 17;
 		}
 		
 		public override void AddRecipes() {

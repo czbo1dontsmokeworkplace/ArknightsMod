@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Specialist.TexasAlter
 		protected override int VanityItemType => ModContent.ItemType<TexalterLegs>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 8;
 		}
 	}
 }

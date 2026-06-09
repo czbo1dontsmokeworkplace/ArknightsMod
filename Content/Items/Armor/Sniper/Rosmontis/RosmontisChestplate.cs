@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Rosmontis
 		protected override int VanityItemType => ModContent.ItemType<RosmontisBody>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 21;
 		}
 	}
 }

@@ -15,9 +15,9 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Beagle
 	public class BeagleLegs : NeoArmorLegs
 	{
 		public override int Rarity => 3;
-		public override int ArmorLifeBonus => 102;
+		public override int ArmorLifeBonus => 57;
 		public override void SetArmorDefaults() {
-			Item.defense = 12;
+			Item.defense = 6;
 		}
 
 		public override void AddRecipes() {

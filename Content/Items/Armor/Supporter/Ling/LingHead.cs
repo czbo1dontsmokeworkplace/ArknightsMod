@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.Ling
 	public class LingHead : NeoArmorHead
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 108;
+		public override int ArmorLifeBonus => 143;
 		
 		public override void Load() {
 			if (Main.netMode == NetmodeID.Server)

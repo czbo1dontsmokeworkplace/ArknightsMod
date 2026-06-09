@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Midnight
 		protected override int VanityItemType => ModContent.ItemType<MidnightBody>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 21;
 		}
 	}
 }

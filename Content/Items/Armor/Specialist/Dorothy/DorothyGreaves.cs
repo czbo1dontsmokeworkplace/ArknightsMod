@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Specialist.Dorothy
 		protected override int VanityItemType => ModContent.ItemType<DorothyLegs>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 4;
 		}
 	}
 }

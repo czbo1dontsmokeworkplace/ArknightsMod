@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanguard.Fang
 	public class FangHead : NeoArmorHead
 	{
 		public override int Rarity => 3;
-		public override int ArmorLifeBonus => 132;
+		public override int ArmorLifeBonus => 133;
 		
 		public override void Load() {
 			if (Main.netMode == NetmodeID.Server)

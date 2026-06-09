@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Mlynar
 		protected override int VanityItemType => ModContent.ItemType<MlynarBody>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 38;
 		}
 	}
 }

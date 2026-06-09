@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanguard.Fang
 		protected override int VanityItemType => ModContent.ItemType<FangLegs>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 8;
 		}
 	}
 }

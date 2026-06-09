@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Items.Armor.Caster.Haze
 	public class HazeHead : NeoArmorHead
 	{
 		public override int Rarity => 4;
-		public override int ArmorLifeBonus => 142;
+		public override int ArmorLifeBonus => 89;
 		
 		public override void Load() {
 			if (Main.netMode == NetmodeID.Server)

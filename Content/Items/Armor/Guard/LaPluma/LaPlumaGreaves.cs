@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.LaPluma
 		protected override int VanityItemType => ModContent.ItemType<LaPlumaLegs>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 11;
 		}
 	}
 }

@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Vulcan
 	public class VulcanHead : NeoArmorHead
 	{
 		public override int Rarity => 5;
-		public override int ArmorLifeBonus => 369;
+		public override int ArmorLifeBonus => 409;
 		
 		public override void Load() {
 			if (Main.netMode == NetmodeID.Server)

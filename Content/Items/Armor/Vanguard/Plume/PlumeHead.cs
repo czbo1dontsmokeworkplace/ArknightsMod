@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanguard.Plume
 	public class PlumeHead : NeoArmorHead
 	{
 		public override int Rarity => 3;
-		public override int ArmorLifeBonus => 122;
+		public override int ArmorLifeBonus => 123;
 		
 		public override void Load() {
 			if (Main.netMode == NetmodeID.Server)

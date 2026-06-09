@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Saria
 		protected override int VanityItemType => ModContent.ItemType<SariaLegs>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 15;
 		}
 	}
 }

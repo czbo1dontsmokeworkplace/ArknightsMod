@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.LaPluma
 	public class LaPlumaLegs : NeoArmorLegs
 	{
 		public override int Rarity => 5;
-		public override int ArmorLifeBonus => 112;
+		public override int ArmorLifeBonus => 113;
 		
 		public override void SetArmorDefaults() {
 			Item.defense = 11;

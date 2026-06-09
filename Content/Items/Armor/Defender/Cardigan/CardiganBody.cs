@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Cardigan
 	public class CardiganBody : NeoArmorBody
 	{
 		public override int Rarity => 3;
-		public override int ArmorLifeBonus => 106;
+		public override int ArmorLifeBonus => 122;
 
 		public override void SetArmorDefaults() {
 			Item.defense = 36;

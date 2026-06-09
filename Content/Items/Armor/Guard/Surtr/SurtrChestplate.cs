@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Surtr
 		protected override int VanityItemType => ModContent.ItemType<SurtrBody>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 31;
 		}
 	}
 }

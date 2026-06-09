@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Melantha
 		protected override int VanityItemType => ModContent.ItemType<MelanthaLegs>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 4;
+			Item.defense = 2;
 		}
 	}
 }

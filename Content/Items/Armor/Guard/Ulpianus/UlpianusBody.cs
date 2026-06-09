@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Ulpianus
 	public class UlpianusBody : NeoArmorBody
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 301;
+		public override int ArmorLifeBonus => 326;
 
 		public override void SetArmorDefaults() {
 			Item.defense = 0;

@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Medic.Ansel
 		protected override int VanityItemType => ModContent.ItemType<AnselBody>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 8;
 		}
 	}
 }

@@ -7,5 +7,10 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Mudrock
 	internal class MudrockHead : NeoArmorHead
 	{
 		public override int Rarity => 6;
+		public override int ArmorLifeBonus => 443;
+
+		public override void SetArmorDefaults() {
+			Item.defense = 0;
+		}
 	}
 }

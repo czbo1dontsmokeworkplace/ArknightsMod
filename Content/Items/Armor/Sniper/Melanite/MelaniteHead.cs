@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Melanite
 	public class MelaniteHead : NeoArmorHead
 	{
 		public override int Rarity => 5;
-		public override int ArmorLifeBonus => 166;
+		public override int ArmorLifeBonus => 167;
 		
 		public override void Load() {
 			if (Main.netMode == NetmodeID.Server)

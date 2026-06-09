@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Items.Armor.Caster.Amiya
 	public class AmiyaHead : NeoArmorHead
 	{
 		public override int Rarity => 5;
-		public override int ArmorLifeBonus => 148;
+		public override int ArmorLifeBonus => 166;
 		
 		public override void Load() {
 			if (Main.netMode == NetmodeID.Server)

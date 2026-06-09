@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Cardigan
 	public class CardiganHead : NeoArmorHead
 	{
 		public override int Rarity => 3;
-		public override int ArmorLifeBonus => 213;
+		public override int ArmorLifeBonus => 243;
 		
 		public override void Load() {
 			if (Main.netMode == NetmodeID.Server)

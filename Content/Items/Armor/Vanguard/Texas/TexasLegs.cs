@@ -18,7 +18,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanguard.Texas
 		public override int ArmorLifeBonus => 98;
 		
 		public override void SetArmorDefaults() {
-			Item.defense = 8;
+			Item.defense = 9;
 		}
 
 		public override void AddRecipes() {

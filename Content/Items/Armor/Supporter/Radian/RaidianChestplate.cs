@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.Radian
 		protected override int VanityItemType => ModContent.ItemType<RaidianBody>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 12;
 		}
 	}
 }

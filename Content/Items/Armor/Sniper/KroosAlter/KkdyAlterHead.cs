@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.KroosAlter
 	public class KkdyAlterHead : NeoArmorHead
 	{
 		public override int Rarity => 5;
-		public override int ArmorLifeBonus => 152;
+		public override int ArmorLifeBonus => 125;
 		
 		public override void Load() {
 			if (Main.netMode == NetmodeID.Server)

@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Skadi
 	public class SkadiHead : NeoArmorHead
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 386;
+		public override int ArmorLifeBonus => 387;
 		
 		public override void Load() {
 			if (Main.netMode == NetmodeID.Server)

@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Items.Armor.Specialist.ExusiaiAlter
 	public class ExusiaiAlterHead : NeoArmorHead
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 215;
+		public override int ArmorLifeBonus => 235;
 
 		public override void UpdateVanityEquip(Player player) {
 			Lighting.AddLight(player.Center, new Vector3(1f, 1f, 1f));

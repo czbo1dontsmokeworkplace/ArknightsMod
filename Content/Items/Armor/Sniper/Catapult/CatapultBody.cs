@@ -18,7 +18,7 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Catapult
 		public override int ArmorLifeBonus => 58;
 
 		public override void SetArmorDefaults() {
-			Item.defense = 6;
+			Item.defense = 7;
 		}
 		
 		public override void AddRecipes() {

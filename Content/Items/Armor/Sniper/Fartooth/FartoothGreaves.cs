@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Fartooth
 		protected override int VanityItemType => ModContent.ItemType<FartoothLegs>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 4;
 		}
 	}
 }

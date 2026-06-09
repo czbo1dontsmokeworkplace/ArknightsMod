@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanguard.Vanilla
 		protected override int VanityItemType => ModContent.ItemType<VanillaLegs>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 6;
 		}
 	}
 }

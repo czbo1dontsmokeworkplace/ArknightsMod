@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Caster.Haze
 		protected override int VanityItemType => ModContent.ItemType<HazeBody>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 5;
 		}
 	}
 }

@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.KroosAlter
 	public class KkdyAlterLegs : NeoArmorLegs
 	{
 		public override int Rarity => 5;
-		public override int ArmorLifeBonus => 76;
+		public override int ArmorLifeBonus => 62;
 		
 		public override void SetArmorDefaults() {
 			Item.defense = 4;

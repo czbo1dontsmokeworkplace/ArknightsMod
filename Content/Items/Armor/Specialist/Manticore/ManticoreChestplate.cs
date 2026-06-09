@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Specialist.Manticore
 		protected override int VanityItemType => ModContent.ItemType<ManticoreBody>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 28;
 		}
 	}
 }

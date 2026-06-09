@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Popukar
 		protected override int VanityItemType => ModContent.ItemType<PopukarLegs>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 6;
 		}
 	}
 }

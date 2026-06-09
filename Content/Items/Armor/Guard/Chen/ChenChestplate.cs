@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Chen
 		protected override int VanityItemType => ModContent.ItemType<ChenBody>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 30;
 		}
 	}
 }

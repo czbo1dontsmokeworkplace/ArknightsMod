@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Matoimaru
 		protected override int VanityItemType => ModContent.ItemType<MatoimaruBody>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 8;
 		}
 	}
 }

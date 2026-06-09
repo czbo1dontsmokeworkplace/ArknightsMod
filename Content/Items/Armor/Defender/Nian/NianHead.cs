@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Nian
 	public class NianHead : NeoArmorHead
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 370;
+		public override int ArmorLifeBonus => 410;
 		
 		public override void Load() {
 			if (Main.netMode == NetmodeID.Server)

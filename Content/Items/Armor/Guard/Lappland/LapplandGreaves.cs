@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Lappland
 		protected override int VanityItemType => ModContent.ItemType<LapplandLegs>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 9;
 		}
 	}
 }

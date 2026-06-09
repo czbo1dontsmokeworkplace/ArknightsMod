@@ -8,6 +8,11 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Utage
 	public class UtageHead : NeoArmorHead
 	{
 		public override int Rarity => 4;
+		public override int ArmorLifeBonus => 197;
+
+		public override void SetArmorDefaults() {
+			Item.defense = 0;
+		}
 
 		public override void Load() {
 			if (Main.netMode == NetmodeID.Server)

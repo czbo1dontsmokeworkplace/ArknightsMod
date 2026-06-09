@@ -15,10 +15,10 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.KroosAlter
 	public class KkdyAlterBody : NeoArmorBody
 	{
 		public override int Rarity => 5;
-		public override int ArmorLifeBonus => 76;
+		public override int ArmorLifeBonus => 62;
 
 		public override void SetArmorDefaults() {
-			Item.defense = 14;
+			Item.defense = 11;
 		}
 		
 		public override void AddRecipes() {

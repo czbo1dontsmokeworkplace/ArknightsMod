@@ -12,6 +12,11 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Melantha
 	public class MelanthaHead : NeoArmorHead
 	{
 		public override int Rarity => 3;
+		public override int ArmorLifeBonus => 140;
+
+		public override void SetArmorDefaults() {
+			Item.defense = 0;
+		}
 
 		public override void Load() {
 			if (Main.netMode == NetmodeID.Server)

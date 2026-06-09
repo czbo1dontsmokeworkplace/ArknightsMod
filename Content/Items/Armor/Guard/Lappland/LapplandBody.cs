@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Lappland
 		public override int ArmorLifeBonus => 118;
 
 		public override void SetArmorDefaults() {
-			Item.defense = 27;
+			Item.defense = 28;
 		}
 		
 		public override void AddRecipes() {

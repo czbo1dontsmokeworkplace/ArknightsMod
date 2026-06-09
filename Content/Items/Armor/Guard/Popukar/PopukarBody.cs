@@ -18,7 +18,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Popukar
 		public override int ArmorLifeBonus => 93;
 
 		public override void SetArmorDefaults() {
-			Item.defense = 18;
+			Item.defense = 19;
 		}
 		
 		public override void AddRecipes() {

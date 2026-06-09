@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Mlynar
 	public class MlynarBody : NeoArmorBody
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 195;
+		public override int ArmorLifeBonus => 213;
 
 		public override void SetArmorDefaults() {
 			Item.defense = 38;

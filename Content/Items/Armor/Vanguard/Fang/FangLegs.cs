@@ -18,7 +18,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanguard.Fang
 		public override int ArmorLifeBonus => 66;
 		
 		public override void SetArmorDefaults() {
-			Item.defense = 6;
+			Item.defense = 8;
 		}
 
 		public override void AddRecipes() {

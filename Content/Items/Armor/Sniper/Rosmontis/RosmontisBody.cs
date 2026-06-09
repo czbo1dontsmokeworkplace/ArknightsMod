@@ -19,7 +19,7 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Rosmontis
 		public override int ArmorLifeBonus => 97;
 
 		public override void SetArmorDefaults() {
-			Item.defense = 18;
+			Item.defense = 21;
 		}
 		
 		public override void AddRecipes() {

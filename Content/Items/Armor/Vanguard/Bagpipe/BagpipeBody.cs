@@ -18,7 +18,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanguard.Bagpipe
 		public override int ArmorLifeBonus => 124;
 
 		public override void SetArmorDefaults() {
-			Item.defense = 28;
+			Item.defense = 29;
 		}
 		
 		public override void AddRecipes() {

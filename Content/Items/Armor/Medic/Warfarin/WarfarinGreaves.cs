@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Medic.Warfarin
 		protected override int VanityItemType => ModContent.ItemType<WarfarinLegs>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 3;
 		}
 	}
 }

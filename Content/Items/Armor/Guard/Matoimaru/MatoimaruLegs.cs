@@ -15,10 +15,10 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Matoimaru
 	public class MatoimaruLegs : NeoArmorLegs
 	{
 		public override int Rarity => 4;
-		public override int ArmorLifeBonus => 182;
+		public override int ArmorLifeBonus => 101;
 		
 		public override void SetArmorDefaults() {
-			Item.defense = 4;
+			Item.defense = 3;
 		}
 
 		public override void AddRecipes() {

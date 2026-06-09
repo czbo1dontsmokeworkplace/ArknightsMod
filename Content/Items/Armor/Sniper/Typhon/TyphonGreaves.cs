@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Typhon
 		protected override int VanityItemType => ModContent.ItemType<TyphonLegs>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 3;
 		}
 	}
 }

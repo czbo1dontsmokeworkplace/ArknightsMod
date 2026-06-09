@@ -12,7 +12,7 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Rosmontis
 	public class RosmontisHead : NeoArmorHead
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 194;
+		public override int ArmorLifeBonus => 195;
 		
 		public override void Load() {
 		}

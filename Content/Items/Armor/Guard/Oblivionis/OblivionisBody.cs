@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Oblivionis
 	public class OblivionisBody : NeoArmorBody
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 103;
+		public override int ArmorLifeBonus => 118;
 
 		public override void SetArmorDefaults() {
 			Item.defense = 32;

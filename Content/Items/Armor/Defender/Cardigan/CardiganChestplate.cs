@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Cardigan
 		protected override int VanityItemType => ModContent.ItemType<CardiganBody>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 36;
 		}
 	}
 }

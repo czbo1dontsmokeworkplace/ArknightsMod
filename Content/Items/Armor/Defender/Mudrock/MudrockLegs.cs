@@ -7,6 +7,11 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Mudrock
 	internal class MudrockLegs : NeoArmorLegs
 	{
 		public override int Rarity => 6;
+		public override int ArmorLifeBonus => 222;
+
+		public override void SetArmorDefaults() {
+			Item.defense = 17;
+		}
 
 		public override string Texture => "ArknightsMod/Content/Items/Armor/Defender/Mudrock/MudrockGreaves";
 	}

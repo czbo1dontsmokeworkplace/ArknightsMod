@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Matoimaru
 	public class MatoimaruHead : NeoArmorHead
 	{
 		public override int Rarity => 4;
-		public override int ArmorLifeBonus => 364;
+		public override int ArmorLifeBonus => 202;
 		
 		public override void Load() {
 			if (Main.netMode == NetmodeID.Server)

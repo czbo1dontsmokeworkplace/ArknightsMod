@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.Ling
 		protected override int VanityItemType => ModContent.ItemType<LingBody>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 11;
 		}
 	}
 }

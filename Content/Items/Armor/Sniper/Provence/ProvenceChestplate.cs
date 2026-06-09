@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Provence
 		protected override int VanityItemType => ModContent.ItemType<ProvenceBody>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 17;
 		}
 	}
 }

@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Nian
 		protected override int VanityItemType => ModContent.ItemType<NianLegs>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 20;
 		}
 	}
 }

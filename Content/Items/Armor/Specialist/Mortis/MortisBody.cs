@@ -15,10 +15,10 @@ namespace ArknightsMod.Content.Items.Armor.Specialist.Mortis
 	public class MortisBody : NeoArmorBody
 	{
 		public override int Rarity => 5;
-		public override int ArmorLifeBonus => 110;
+		public override int ArmorLifeBonus => 111;
 
 		public override void SetArmorDefaults() {
-			Item.defense = 21;
+			Item.defense = 25;
 		}
 		
 		public override void AddRecipes() {

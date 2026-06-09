@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Mudrock
 		protected override int VanityItemType => ModContent.ItemType<MudrockLegs>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 17;
 		}
 	}
 }

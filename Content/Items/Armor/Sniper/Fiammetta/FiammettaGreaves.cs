@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Fiammetta
 		protected override int VanityItemType => ModContent.ItemType<FiammettaLegs>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 4;
 		}
 	}
 }

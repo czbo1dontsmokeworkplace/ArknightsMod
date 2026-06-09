@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Caster.Lava
 		protected override int VanityItemType => ModContent.ItemType<LavaLegs>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 3;
 		}
 	}
 }

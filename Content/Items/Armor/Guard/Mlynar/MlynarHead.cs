@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Mlynar
 	public class MlynarHead : NeoArmorHead
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 390;
+		public override int ArmorLifeBonus => 427;
 		
 		public override void Load() {
 			if (Main.netMode == NetmodeID.Server)

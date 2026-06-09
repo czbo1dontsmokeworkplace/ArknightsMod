@@ -14,7 +14,7 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Mudrock
 		protected override int VanityItemType => ModContent.ItemType<MudrockBody>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 50;
 		}
 	}
 

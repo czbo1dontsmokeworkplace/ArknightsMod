@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Fiammetta
 	public class FiammettaHead : NeoArmorHead
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 192;
+		public override int ArmorLifeBonus => 193;
 		
 		public override void Load() {
 			if (Main.netMode == NetmodeID.Server)

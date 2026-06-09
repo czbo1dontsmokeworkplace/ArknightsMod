@@ -8,5 +8,10 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.W
 	public class WHead : NeoArmorHead
 	{
 		public override int Rarity => 6;
+		public override int ArmorLifeBonus => 161;
+
+		public override void SetArmorDefaults() {
+			Item.defense = 0;
+		}
 	}
 }

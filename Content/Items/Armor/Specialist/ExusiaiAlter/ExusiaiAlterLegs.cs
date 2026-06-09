@@ -12,7 +12,7 @@ namespace ArknightsMod.Content.Items.Armor.Specialist.ExusiaiAlter
 	public class ExusiaiAlterLegs : NeoArmorLegs
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 108;
+		public override int ArmorLifeBonus => 118;
 
 		public override void Load() {
 		}

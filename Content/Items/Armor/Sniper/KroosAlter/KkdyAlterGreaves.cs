@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.KroosAlter
 		protected override int VanityItemType => ModContent.ItemType<KkdyAlterLegs>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 4;
 		}
 	}
 }

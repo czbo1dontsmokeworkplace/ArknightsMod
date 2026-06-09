@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Medic.Hibiscus
 		protected override int VanityItemType => ModContent.ItemType<HibiscusBody>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 8;
 		}
 	}
 }

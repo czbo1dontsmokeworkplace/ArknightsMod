@@ -16,7 +16,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanguard.Bagpipe
 	public class BagpipeHead : NeoArmorHead
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 248;
+		public override int ArmorLifeBonus => 249;
 		
 		public override void Load() {
 			if (Main.netMode == NetmodeID.Server)

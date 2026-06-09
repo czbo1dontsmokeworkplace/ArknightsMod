@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Beagle
 		protected override int VanityItemType => ModContent.ItemType<BeagleLegs>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 6;
 		}
 	}
 }

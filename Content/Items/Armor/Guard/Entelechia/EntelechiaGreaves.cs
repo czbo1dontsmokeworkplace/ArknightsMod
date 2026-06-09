@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Entelechia
 		protected override int VanityItemType => ModContent.ItemType<EntelechiaLegs>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 11;
 		}
 	}
 }

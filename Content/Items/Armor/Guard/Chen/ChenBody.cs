@@ -18,7 +18,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Chen
 		public override int ArmorLifeBonus => 144;
 
 		public override void SetArmorDefaults() {
-			Item.defense = 26;
+			Item.defense = 30;
 		}
 		
 		public override void AddRecipes() {

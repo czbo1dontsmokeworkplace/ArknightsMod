@@ -10,8 +10,12 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Beagle
     public class BeagleHead : NeoArmorHead
     {
 		public override int Rarity => 3;
+
+		public override void SetArmorDefaults() {
+			Item.defense = 0;
+		}
 		public override int Value => 560000;
-		public override int ArmorLifeBonus => 114;
+		public override int ArmorLifeBonus => 115;
 
 		public override void SetArmorDefaults()
 		{

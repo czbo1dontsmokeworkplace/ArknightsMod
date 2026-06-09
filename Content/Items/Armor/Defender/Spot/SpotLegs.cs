@@ -18,7 +18,7 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Spot
 		public override int ArmorLifeBonus => 92;
 		
 		public override void SetArmorDefaults() {
-			Item.defense = 11;
+			Item.defense = 12;
 		}
 
 		public override void AddRecipes() {

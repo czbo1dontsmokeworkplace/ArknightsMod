@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Vulcan
 		protected override int VanityItemType => ModContent.ItemType<VulcanBody>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 44;
 		}
 	}
 }

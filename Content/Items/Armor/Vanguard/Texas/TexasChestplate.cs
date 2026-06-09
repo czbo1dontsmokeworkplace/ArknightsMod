@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanguard.Texas
 		protected override int VanityItemType => ModContent.ItemType<TexasBody>();
 
 		protected override void SetSetDefaults() {
-			Item.defense = 0;
+			Item.defense = 26;
 		}
 	}
 }
