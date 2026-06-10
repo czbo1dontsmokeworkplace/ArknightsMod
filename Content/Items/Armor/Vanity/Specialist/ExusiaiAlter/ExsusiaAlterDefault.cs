@@ -6,6 +6,8 @@ namespace ArknightsMod.Content.Items.Consumables.VanityBags
 {
 	public class ExusiaiAlterDefault : ArknightsVanityBag
 	{
+		public override int Rarity => 6;
+
 		public override string Texture => "ArknightsMod/Content/Items/Armor/Vanity/Specialist/ExusiaiAlter/ExsusiaAlterDefault";
 
 		protected override List<int> GetItems() {

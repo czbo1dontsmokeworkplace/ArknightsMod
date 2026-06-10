@@ -1914,7 +1914,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			}
 		}
 
-		public override bool PreDraw(Player player, ref Color lightColor) {
+		public override bool PreDraw(ref Color lightColor) {
 			// 只在准备阶段绘制判定线
 			if (Projectile.ai[1] < 60) {
 				float progress = Projectile.ai[1] / 60f;
@@ -2021,7 +2021,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			Projectile.localAI[0] += 0.35f + Projectile.velocity.Length() * 0.015f;
 		}
 
-		public override bool PreDraw(Player player, ref Color lightColor) {
+		public override bool PreDraw(ref Color lightColor) {
 			return CrownslayerTrailEffects.DrawGravityDaggerTrail(Projectile);
 		}
 
@@ -2125,7 +2125,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			}
 		}
 
-		public override bool PreDraw(Player player, ref Color lightColor) {
+		public override bool PreDraw(ref Color lightColor) {
 			Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
 			Vector2 origin = tex.Size() / 2f;
 
@@ -2196,7 +2196,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			}
 		}
 
-		public override bool PreDraw(Player player, ref Color lightColor) {
+		public override bool PreDraw(ref Color lightColor) {
 			Texture2D lineTex = TextureAssets.MagicPixel.Value;
 			float beamRotation = Projectile.ai[1];
 			Vector2 drawPos = Projectile.Center - Main.screenPosition;
@@ -2254,7 +2254,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			}
 		}
 
-		public override bool PreDraw(Player player, ref Color lightColor) {
+		public override bool PreDraw(ref Color lightColor) {
 			return CrownslayerTrailEffects.DrawGravityDaggerTrail(Projectile);
 		}
 
