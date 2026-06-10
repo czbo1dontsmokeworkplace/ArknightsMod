@@ -143,3 +143,63 @@ PramanixFreezeDebuff: {
 	Description: 无法行动
 	DisplayName: 寒域冻结
 }
+
+CivilightEternaHealBoostBuff: {
+	// DisplayName: Civilight Eterna Heal Boost Buff
+	// Description: Mods.ArknightsMod.Buffs.CivilightEternaHealBoostBuff.Description
+}
+
+EntelechiaBleedDebuff: {
+	// DisplayName: Entelechia Bleed Debuff
+	// Description: Mods.ArknightsMod.Buffs.EntelechiaBleedDebuff.Description
+}
+
+HazeMagicFragileDebuff: {
+	// DisplayName: Haze Magic Fragile Debuff
+	// Description: Mods.ArknightsMod.Buffs.HazeMagicFragileDebuff.Description
+}
+
+IndigoBindDebuff: {
+	// DisplayName: Indigo Bind Debuff
+	// Description: Mods.ArknightsMod.Buffs.IndigoBindDebuff.Description
+}
+
+LapplandSilenceDebuff: {
+	// DisplayName: Lappland Silence Debuff
+	// Description: Mods.ArknightsMod.Buffs.LapplandSilenceDebuff.Description
+}
+
+MostimaSlowDebuff: {
+	// DisplayName: Mostima Slow Debuff
+	// Description: Mods.ArknightsMod.Buffs.MostimaSlowDebuff.Description
+}
+
+NianShieldBuff: {
+	// DisplayName: Nian Shield Buff
+	// Description: Mods.ArknightsMod.Buffs.NianShieldBuff.Description
+}
+
+OrchidSlowDebuff: {
+	// DisplayName: Orchid Slow Debuff
+	// Description: Mods.ArknightsMod.Buffs.OrchidSlowDebuff.Description
+}
+
+SpotHealDodgeBuff: {
+	// DisplayName: Spot Heal Dodge Buff
+	// Description: Mods.ArknightsMod.Buffs.SpotHealDodgeBuff.Description
+}
+
+TyphonHelmetSlowDebuff: {
+	// DisplayName: Typhon Helmet Slow Debuff
+	// Description: Mods.ArknightsMod.Buffs.TyphonHelmetSlowDebuff.Description
+}
+
+WarfarinAllyRegenBuff: {
+	// DisplayName: Warfarin Ally Regen Buff
+	// Description: Mods.ArknightsMod.Buffs.WarfarinAllyRegenBuff.Description
+}
+
+FearlessDebuff: {
+	// DisplayName: Fearless Debuff
+	// Description: Mods.ArknightsMod.Buffs.FearlessDebuff.Description
+}

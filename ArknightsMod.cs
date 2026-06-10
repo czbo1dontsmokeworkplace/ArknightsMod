@@ -11,9 +11,11 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using ReLogic.Content;
 using ArknightsMod.Assets.Effects;
+using System;
 using System.IO;
 using ArknightsMod.Systems;
 using ArknightsMod.Content.Tiles.Infrastructure.ReceptionRoom;
+using ArknightsMod.Content.Items.Material;
 
 namespace ArknightsMod
 {
@@ -152,6 +154,13 @@ namespace ArknightsMod
 					if (Main.netMode == NetmodeID.Server)
 						WaterDispenserTile.TryGiveCoffee(Main.player[whoAmI]);
 					break;
+				case ArkMessageID.ElevatorRequestFloor:
+					if (Main.netMode != NetmodeID.MultiplayerClient) {
+						int teId = reader.ReadInt32();
+						int floorBottomY = reader.ReadInt32();
+						global::ArknightsMod.Content.Tiles.TEElevator.ApplyMoveRequest(teId, floorBottomY);
+					}
+					break;
 				case ArkMessageID.ProtocolSpaceRequestStart:
 				case ArkMessageID.ProtocolSpaceRequestExitInteract:
 				case ArkMessageID.ProtocolSpaceRequestExitCountdown:
@@ -171,6 +180,7 @@ namespace ArknightsMod
 			CannotAggroAck,
 			CannotLifeTokenSync,
 			CoffeeMachineRequest,
+			ElevatorRequestFloor,
 			ProtocolSpaceRequestStart,
 			ProtocolSpaceRequestExitInteract,
 			ProtocolSpaceRequestExitCountdown,

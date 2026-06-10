@@ -1,0 +1,31 @@
+﻿using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+using ArknightsMod.Content.Tiles.Infrastructure;
+using ArknightsMod.Content.Items.Material;
+
+namespace ArknightsMod.Content.Items.Armor.Supporter.Ling
+{
+	[AutoloadEquip(EquipType.Body)]
+	public class LingBody : NeoArmorBody
+	{
+		public override int Rarity => 6;
+		public override int ArmorLifeBonus => 72;
+
+		public override void SetArmorDefaults() {
+			Item.defense = 11;
+		}
+		
+		public override void AddRecipes() {
+			CreateRecipe()
+			.AddIngredient<LingBody>(1)
+			.AddIngredient<Orundum>(60)
+			.AddIngredient<CrystallineElectronicUnit>(6)
+			.AddIngredient<OrirockConcentration>(4)
+			.AddTile(ModContent.TileType<FactoryTile>())
+			.AddCondition(NeoArmorUtils.NeedVanity)
+			.DisableDecraft()
+			.Register();
+		}
+	}
+}

@@ -1,3 +1,4 @@
+using ArknightsMod.Content.Items.Armor.Caster.Amiya;
 using ArknightsMod.Content.Items.Consumables.VanityBags;
 using ArknightsMod.Content.NPCs.Friendly;
 using Microsoft.Xna.Framework;

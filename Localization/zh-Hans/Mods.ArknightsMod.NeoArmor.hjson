@@ -1,0 +1,6 @@
+NeedVanity: 需要未升级的时装
+Upgraded: （套装）
+VanityHint: 在基建工厂升级后可作为套装盔甲装备，并激活套装效果
+// LifeReplacement: 将{0}的生命值替换为固定值{1}
+// LifeBonus: 最大生命值 +{0}
+// LifeItemsReduction: 生命果/生命水晶增加的生命上限 -{0} (仅生效一次)

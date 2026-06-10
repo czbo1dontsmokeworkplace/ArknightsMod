@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using ArknightsMod.Content.Items.Armor.Vanity.Endfield.Striker.Yvonne;
+using ArknightsMod.Content.Items.Armor.Endfield.Striker.Yvonne;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -7,7 +7,7 @@ namespace ArknightsMod.Content.Items.Consumables.VanityBags
 {
 	public class YvonneVanityBag : ArknightsVanityBag
 	{
-		public override string Texture => "ArknightsMod/Content/Items/Armor/Vanity/Endfield/Striker/Yvonne/Yvonne";
+		public override string Texture => "ArknightsMod/Content/Items/Armor/Endfield/Striker/Yvonne/YvonneDefault";
 
 		public override void SetDefaults()
 		{

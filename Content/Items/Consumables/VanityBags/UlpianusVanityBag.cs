@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using ArknightsMod.Content.Items.Armor.Vanity.Guard.Ulpianus;
+using ArknightsMod.Content.Items.Armor.Guard.Ulpianus;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -7,7 +7,7 @@ namespace ArknightsMod.Content.Items.Consumables.VanityBags
 {
 	public class UlpianusVanityBag : ArknightsVanityBag
 	{
-		public override string Texture => "ArknightsMod/Content/Items/Armor/Vanity/Guard/Ulpianus/UlpianusVanityBag";
+		public override string Texture => "ArknightsMod/Content/Items/Armor/Guard/Ulpianus/UlpianusDefault";
 
 		public override void SetDefaults()
 		{

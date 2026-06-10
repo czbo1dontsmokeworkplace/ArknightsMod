@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.UI.Elements;
 using Terraria.GameInput;
@@ -14,6 +15,7 @@ namespace ArknightsMod.Content.Systems
 	internal class ElevatorUIState : UIState
 	{
 		private const bool ElevatorUiTextEnabled = false;
+		private static readonly SoundStyle ElevatorPressSound = new SoundStyle("ArknightsMod/Content/Sounds/电梯_按下按钮");
 		// 楼层按钮列（右下角，无背景）
 		private UIPanel _floorPanel;
 		private UIList _floorList;
@@ -30,6 +32,7 @@ namespace ArknightsMod.Content.Systems
 
 		private int _targetX;
 		private int _targetY;
+		private int _targetTeId = -1;
 		private readonly List<int> _floorBottomYs = new List<int>();
 		private int _selectedFloorIndex;
 
@@ -42,20 +45,44 @@ namespace ArknightsMod.Content.Systems
 		private const int FloorMarginRightPx = 260;
 		private const int FloorMarginBottomPx = 70;
 
-		private const int SettingsPanelWidthPx = 340;
-		private const int SettingsPanelHeightPx = 220;
-		private const int ModeTopPx = 18;
-		private const int SettingsPanelYOffsetPx = 18;
-		private const int DebugCollapsedTopPx = 66;
+		private const int SettingsPanelWidthPx = 360;
+		private const int SettingsPanelHeightPx = 300;
+		private const int SettingsPanelPaddingPx = 10;
+		private const int TitleTopPx = 6;
+		private const int CloseButtonSizePx = 28;
+		private const int ModeButtonTopPx = 38;
+		private const int ModeButtonHeightPx = 32;
+		private const int SectionGapPx = 10;
+		private const int DebugPanelTopPx = ModeButtonTopPx + ModeButtonHeightPx + SectionGapPx;
 		private const int DebugCollapsedHeightPx = 28;
-		private const int DebugExpandedHeightPx = 102;
-		private const float DebugLineHeightPx = 16f;
+		private const int DebugExpandedHeightPx = 168;
+		private const int SettingsPanelYOffsetPx = 18;
+		private const float DebugLineHeightPx = 18f;
 		private const float DebugScrollStepPx = 20f;
 
 		public int TargetX => _targetX;
 		public int TargetY => _targetY;
 		public bool IsSettingsVisible => _settingsVisible;
+		public bool ShouldKeepSettingsOpen(Player player)
+		{
+			if (!_settingsVisible || player == null || !player.active)
+				return false;
+
+			if (TryGetTargetElevator(out TEElevator te))
+				return TEElevator.IsPlayerInElevatorRange(player, te);
+
+			return TEElevator.TryFindNearbyElevatorByWorld(
+				(_targetX + 2f) * 16f,
+				(_targetY + 3.5f) * 16f,
+				maxDistanceTiles: 16,
+				out TEElevator nearTe,
+				out _,
+				out _) && TEElevator.IsPlayerInElevatorRange(player, nearTe);
+		}
+
 		public bool IsMouseOverFloorPanel => _floorPanel != null && _floorPanel.ContainsPoint(Main.MouseScreen);
+		public bool IsMouseOverSettingsPanel =>
+			_settingsVisible && _settingsPanel != null && _settingsPanel.ContainsPoint(Main.MouseScreen);
 
 		public override void OnInitialize()
 		{
@@ -79,34 +106,40 @@ namespace ArknightsMod.Content.Systems
 
 			// 屏幕中心设置窗口
 			_settingsPanel = new UIPanel();
-			_settingsPanel.SetPadding(10);
+			_settingsPanel.SetPadding(SettingsPanelPaddingPx);
 			_settingsPanel.Width.Set(SettingsPanelWidthPx, 0f);
 			_settingsPanel.Height.Set(SettingsPanelHeightPx, 0f);
 			_settingsPanel.Left.Set(-SettingsPanelWidthPx / 2f, 0.5f);
 			_settingsPanel.Top.Set(-2000f, 0.5f); // 默认隐藏
 			Append(_settingsPanel);
 
-			_title = new UIText("电梯设置");
-			_title.Top.Set(0f, 0f);
+			_title = new UIText("电梯设置", 1f, large: false);
+			_title.HAlign = 0.5f;
+			_title.Width.Set(-(CloseButtonSizePx + 12f), 1f);
+			_title.Top.Set(TitleTopPx, 0f);
 			_settingsPanel.Append(_title);
 
 			_closeButton = new UITextPanel<string>("X");
-			_closeButton.Width.Set(30f, 0f);
-			_closeButton.Height.Set(26f, 0f);
-			_closeButton.Left.Set(278f, 0f);
-			_closeButton.Top.Set(ModeTopPx, 0f);
+			_closeButton.Width.Set(CloseButtonSizePx, 0f);
+			_closeButton.Height.Set(CloseButtonSizePx, 0f);
+			_closeButton.HAlign = 0f;
+			_closeButton.VAlign = 0f;
+			float settingsInnerWidth = SettingsPanelWidthPx - SettingsPanelPaddingPx * 2f;
+			_closeButton.Left.Set(settingsInnerWidth - CloseButtonSizePx, 0f);
+			_closeButton.Top.Set(TitleTopPx, 0f);
 			_closeButton.OnLeftClick += (_, __) => HideSettings();
-			_settingsPanel.Append(_closeButton);
-
 			_modeButton = new UITextPanel<string>("");
-			// 向左缩短，给右侧留出关闭按钮位置
-			_modeButton.Width.Set(268f, 0f);
-			_modeButton.Height.Set(26f, 0f);
+			_modeButton.Width.Set(0f, 1f);
+			_modeButton.Height.Set(ModeButtonHeightPx, 0f);
+			_modeButton.HAlign = 0f;
+			_modeButton.VAlign = 0f;
 			_modeButton.Left.Set(0f, 0f);
-			_modeButton.Top.Set(ModeTopPx, 0f);
+			_modeButton.Top.Set(ModeButtonTopPx, 0f);
+			_modeButton.PaddingLeft = 8f;
+			_modeButton.PaddingRight = 8f;
 			_modeButton.OnLeftClick += (_, __) =>
 			{
-				if (TryGetTargetElevator(out 电梯TE te))
+				if (TryGetTargetElevator(out TEElevator te))
 				{
 					te.CycleFloorDetectMode();
 					te.ScanFloors();
@@ -121,16 +154,21 @@ namespace ArknightsMod.Content.Systems
 			_debugPanel.SetPadding(6);
 			_debugPanel.OverflowHidden = true; // 限制文本只在调试框内显示
 			_debugPanel.Left.Set(0f, 0f);
-			_debugPanel.Top.Set(DebugCollapsedTopPx, 0f);
+			_debugPanel.Top.Set(DebugPanelTopPx, 0f);
 			// 右侧留一点空，避免文字贴边/溢出观感很差
 			_debugPanel.Width.Set(-8f, 1f);
 			_debugPanel.Height.Set(DebugCollapsedHeightPx, 0f);
 			_settingsPanel.Append(_debugPanel);
 
-			_debugText = new UIText("", 0.76f);
+			_debugText = new UIText("", 0.82f);
+			_debugText.HAlign = 0f;
+			_debugText.VAlign = 0f;
 			_debugText.Left.Set(0f, 0f);
 			_debugText.Top.Set(0f, 0f);
 			_debugPanel.Append(_debugText);
+
+			// 最后添加，保证关闭按钮在最上层且易于点击。
+			_settingsPanel.Append(_closeButton);
 		}
 
 		public override void Update(GameTime gameTime)
@@ -155,21 +193,27 @@ namespace ArknightsMod.Content.Systems
 
 		public void SetFloorTarget(int topLeftX, int topLeftY, bool resetSelection)
 		{
+			if (_targetX != topLeftX || _targetY != topLeftY)
+				_targetTeId = -1;
 			_targetX = topLeftX;
 			_targetY = topLeftY;
+			if (TryGetTargetElevator(out TEElevator te))
+				_targetTeId = te.ID;
 			if (resetSelection)
 				_selectedFloorIndex = 0;
-			RebuildFloorButtons();
+			RebuildFloorButtons(autoSelectNearest: resetSelection);
 		}
 
 		public void ShowSettings(int topLeftX, int topLeftY)
 		{
 			_settingsVisible = true;
+			_targetTeId = -1;
 			_targetX = topLeftX;
 			_targetY = topLeftY;
+			if (TryGetTargetElevator(out TEElevator te))
+				_targetTeId = te.ID;
 			RefreshModeButtonText();
 			RefreshSettingsLayout();
-			RebuildFloorButtons();
 			RefreshDebugText();
 		}
 
@@ -195,12 +239,11 @@ namespace ArknightsMod.Content.Systems
 		{
 			if (_floorBottomYs.Count == 0)
 				return false;
-			if (!TryGetTargetElevator(out 电梯TE te))
+			if (!TryGetTargetElevator(out TEElevator te))
 				return false;
 			int bottomY = _floorBottomYs[_selectedFloorIndex];
-			te.TargetFloorBottomY = bottomY;
-			if (ElevatorUiTextEnabled)
-				Main.NewText($"[电梯] 已选择楼层 {_selectedFloorIndex + 1} (bottomY={bottomY})");
+			TEElevator.RequestMoveToFloor(te.ID, bottomY);
+			SoundEngine.PlaySound(ElevatorPressSound, Main.LocalPlayer?.Center ?? Vector2.Zero);
 			return true;
 		}
 
@@ -215,10 +258,94 @@ namespace ArknightsMod.Content.Systems
 
 		private void RefreshModeButtonText()
 		{
-			if (TryGetTargetElevator(out 电梯TE te))
-				_modeButton.SetText($"检测: {电梯TE.GetFloorDetectModeLabel(te.FloorMode)}");
+			if (TryGetTargetElevator(out TEElevator te))
+				_modeButton.SetText($"楼层检测：{TEElevator.GetFloorDetectModeLabel(te.FloorMode)}（点击切换）");
 			else
-				_modeButton.SetText("检测: 井隙+按钮");
+				_modeButton.SetText("楼层检测：—（未找到电梯）");
+		}
+
+		private static UITextPanel<string> CreateFloorButton(string label, bool selected, bool isCurrent)
+		{
+			var btn = new UITextPanel<string>(label);
+			btn.Width.Set(0f, 1f);
+			btn.Height.Set(36f, 0f);
+			btn.PaddingLeft = 6f;
+			btn.PaddingRight = 6f;
+			btn.PaddingTop = 4f;
+			btn.PaddingBottom = 4f;
+			if (selected)
+			{
+				btn.BackgroundColor = new Color(85, 120, 185);
+				btn.BorderColor = new Color(140, 180, 255);
+			}
+			else if (isCurrent)
+			{
+				btn.BackgroundColor = new Color(72, 95, 140) * 0.85f;
+				btn.BorderColor = new Color(200, 180, 90);
+			}
+			else
+			{
+				btn.BackgroundColor = new Color(63, 82, 151) * 0.6f;
+				btn.BorderColor = new Color(63, 82, 151) * 0.9f;
+			}
+			return btn;
+		}
+
+		private static string BuildElevatorSettingsReport(TEElevator te)
+		{
+			if (te == null)
+				return "未找到电梯实体（TE）";
+
+			te.ScanFloors();
+			int currentBottomY = te.GetStandingSurfaceBottomY();
+			int currentFloorUi = -1;
+			for (int i = 0; i < te.FloorBottomYs.Count; i++)
+			{
+				if (Math.Abs(te.FloorBottomYs[i] - currentBottomY) <= 1)
+				{
+					currentFloorUi = i + 1;
+					break;
+				}
+			}
+
+			var lines = new List<string>
+			{
+				"【井道】",
+				te.DebugLastLeftWallX >= 0 && te.DebugLastRightWallX >= 0
+					? $"  左壁 X = {te.DebugLastLeftWallX}    右壁 X = {te.DebugLastRightWallX}"
+					: $"  未识别井壁  （{te.DebugWallFailReason}）",
+				"",
+				"【楼层】",
+				$"  检测模式：{TEElevator.GetFloorDetectModeLabel(te.FloorMode)}",
+				$"  识别数量：{te.FloorBottomYs.Count} 层",
+				currentFloorUi > 0
+					? $"  轿厢所在：楼层 {currentFloorUi}（站立面 Y={currentBottomY}）"
+					: $"  轿厢所在：未匹配列表（站立面 Y={currentBottomY}）",
+				"",
+				"【轿厢】",
+				$"  左上角坐标：({te.Position.X}, {te.Position.Y})",
+				te.IsMoving
+					? $"  运行状态：移动中（方向 {(te.MoveDir > 0 ? "下" : "上")}）"
+					: "  运行状态：静止",
+			};
+
+			if (te.DebugLastLeftWallX < 0 || te.DebugLastRightWallX < 0)
+			{
+				lines.Add("");
+				lines.Add("【扫描候选】");
+				lines.Add($"  左：X={te.DebugBestLeftCandidateX}  墙分={te.DebugBestLeftWallScore}  空气={te.DebugBestLeftInsideAirScore}");
+				lines.Add($"  右：X={te.DebugBestRightCandidateX}  墙分={te.DebugBestRightWallScore}  空气={te.DebugBestRightInsideAirScore}");
+			}
+			else if (te.DebugDoorCandidateCount > 0)
+			{
+				lines.Add("");
+				lines.Add("【门洞候选】");
+				lines.Add($"  数量：{te.DebugDoorCandidateCount}");
+				if (!string.IsNullOrWhiteSpace(te.DebugDoorSample))
+					lines.Add($"  样例：{Ellipsize(te.DebugDoorSample.Trim(), 48)}");
+			}
+
+			return string.Join("\n", lines);
 		}
 
 		private static string Ellipsize(string text, int maxChars)
@@ -230,58 +357,13 @@ namespace ArknightsMod.Content.Systems
 			return text.Substring(0, maxChars - 1) + "…";
 		}
 
-		private static string WrapByChars(string text, int charsPerLine)
-		{
-			if (string.IsNullOrEmpty(text))
-				return text;
-			string[] lines = text.Split('\n');
-			List<string> outLines = new List<string>();
-			for (int i = 0; i < lines.Length; i++)
-			{
-				string line = lines[i];
-				if (line.Length <= charsPerLine)
-				{
-					outLines.Add(line);
-					continue;
-				}
-				int start = 0;
-				while (start < line.Length)
-				{
-					int len = Math.Min(charsPerLine, line.Length - start);
-					outLines.Add(line.Substring(start, len));
-					start += len;
-				}
-			}
-			return string.Join("\n", outLines);
-		}
-
 		private void RefreshDebugText()
 		{
-			if (TryGetTargetElevator(out 电梯TE te))
-			{
-				te.ScanFloors();
-				if (te.DebugLastLeftWallX < 0 || te.DebugLastRightWallX < 0)
-				{
-					_debugRawText =
-						$"井壁: {te.DebugLastLeftWallX}, {te.DebugLastRightWallX}  楼层数: {te.FloorBottomYs.Count}  失败: {te.DebugWallFailReason}\n" +
-						$"候选: L={te.DebugBestLeftCandidateX}({te.DebugBestLeftWallScore}/{te.DebugBestLeftInsideAirScore}) R={te.DebugBestRightCandidateX}({te.DebugBestRightWallScore}/{te.DebugBestRightInsideAirScore})";
-				}
-				else
-				{
-					_debugRawText =
-						$"井壁: {te.DebugLastLeftWallX}, {te.DebugLastRightWallX}  楼层数: {te.FloorBottomYs.Count}\n" +
-						$"门候选: {te.DebugDoorCandidateCount}  {te.DebugDoorSample}";
-				}
-			}
-			else
-			{
-				_debugRawText = "未找到电梯实体";
-			}
+			TryGetTargetElevator(out TEElevator te);
+			_debugRawText = BuildElevatorSettingsReport(te);
+			_debugText.SetText(_debugRawText);
 
-			string wrapped = WrapByChars(_debugRawText, 34);
-			_debugText.SetText(wrapped);
-
-			int lineCount = Math.Max(1, wrapped.Split('\n').Length);
+			int lineCount = Math.Max(1, _debugRawText.Split('\n').Length);
 			_debugContentHeightPx = lineCount * DebugLineHeightPx;
 			ClampDebugScrollOffset();
 			ApplyDebugScrollOffset();
@@ -302,38 +384,54 @@ namespace ArknightsMod.Content.Systems
 			_debugText.Top.Set(-_debugScrollOffsetPx, 0f);
 		}
 
-		private void RebuildFloorButtons()
+		private void RebuildFloorButtons(bool autoSelectNearest = false)
 		{
 			_floorList?.Clear();
 			_floorBottomYs.Clear();
 
-			if (!TryGetTargetElevator(out 电梯TE te))
+			if (!TryGetTargetElevator(out TEElevator te))
 			{
-				_floorList.Add(new UITextPanel<string>("未找到电梯"));
+				_floorList.Add(CreateFloorButton("未找到电梯", selected: false, isCurrent: false));
+				_floorPanel?.Recalculate();
 				return;
 			}
 			te.ScanFloors();
 			if (te.FloorBottomYs.Count == 0)
 			{
-				_floorList.Add(new UITextPanel<string>("无楼层"));
+				_floorList.Add(CreateFloorButton("无楼层", selected: false, isCurrent: false));
+				_floorPanel?.Recalculate();
 				return;
 			}
 
-			for (int i = te.FloorBottomYs.Count - 1; i >= 0; i--)
-				_floorBottomYs.Add(te.FloorBottomYs[i]);
+			// 楼层 1 = 井道最上方（Y 较小），列表自上而下排列。
+			_floorBottomYs.AddRange(te.FloorBottomYs);
+
+			int currentBottomY = te.GetStandingSurfaceBottomY();
 			if (_selectedFloorIndex < 0 || _selectedFloorIndex >= _floorBottomYs.Count)
 				_selectedFloorIndex = 0;
+
+			if (autoSelectNearest && Main.LocalPlayer != null && Main.LocalPlayer.active)
+			{
+				int nearestBottomY = te.FindNearestFloorBottomY(Main.LocalPlayer.Bottom.Y);
+				for (int i = 0; i < _floorBottomYs.Count; i++)
+				{
+					if (_floorBottomYs[i] == nearestBottomY)
+					{
+						_selectedFloorIndex = i;
+						break;
+					}
+				}
+			}
 
 			for (int i = 0; i < _floorBottomYs.Count; i++)
 			{
 				int bottomY = _floorBottomYs[i];
 				int floorIndex = i;
 				bool selected = floorIndex == _selectedFloorIndex;
+				bool isCurrent = Math.Abs(bottomY - currentBottomY) <= 1;
 
-				UITextPanel<string> btn = new UITextPanel<string>($"{(selected ? "> " : "  ")}楼层 {floorIndex + 1}");
-				btn.Width.Set(0f, 1f);
-				btn.Height.Set(34f, 0f);
-				btn.BackgroundColor = selected ? new Color(85, 120, 185) : new Color(63, 82, 151) * 0.6f;
+				string label = $"楼层 {floorIndex + 1}";
+				UITextPanel<string> btn = CreateFloorButton(label, selected, isCurrent);
 				btn.OnLeftClick += (_, __) =>
 				{
 					_selectedFloorIndex = floorIndex;
@@ -342,24 +440,40 @@ namespace ArknightsMod.Content.Systems
 				};
 				_floorList.Add(btn);
 			}
+
+			_floorPanel?.Recalculate();
 		}
 
-		private bool TryGetTargetElevator(out 电梯TE te)
+		private bool TryGetTargetElevator(out TEElevator te)
 		{
 			te = null;
-			int id = ModContent.GetInstance<电梯TE>().Find(_targetX, _targetY);
-			if (id >= 0 && TileEntity.ByID.TryGetValue(id, out TileEntity entity) && entity is 电梯TE direct)
+			if (_targetTeId >= 0 && TileEntity.ByID.TryGetValue(_targetTeId, out TileEntity byIdEntity) && byIdEntity is TEElevator byIdTe)
+			{
+				te = byIdTe;
+				_targetX = te.Position.X;
+				_targetY = te.Position.Y;
+				return true;
+			}
+
+			int id = ModContent.GetInstance<TEElevator>().Find(_targetX, _targetY);
+			if (id >= 0 && TileEntity.ByID.TryGetValue(id, out TileEntity entity) && entity is TEElevator direct)
 			{
 				te = direct;
+				_targetTeId = te.ID;
+				_targetX = te.Position.X;
+				_targetY = te.Position.Y;
 				return true;
 			}
 
 			// 兜底：移动中的电梯/成帧更新时，TE 坐标可能与 UI 缓存 topLeft 短暂不一致。
 			float worldX = (_targetX + 2f) * 16f;
 			float worldY = (_targetY + 3.5f) * 16f;
-			if (电梯TE.TryFindNearbyElevatorByWorld(worldX, worldY, maxDistanceTiles: 12, out 电梯TE nearTe, out _, out _))
+			if (TEElevator.TryFindNearbyElevatorByWorld(worldX, worldY, maxDistanceTiles: 12, out TEElevator nearTe, out _, out _))
 			{
 				te = nearTe;
+				_targetTeId = te.ID;
+				_targetX = te.Position.X;
+				_targetY = te.Position.Y;
 				return true;
 			}
 
