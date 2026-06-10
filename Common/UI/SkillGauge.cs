@@ -147,13 +147,13 @@ namespace ArknightsMod.Common.UI
 			//检查贴图资源是否存在
 			if (maxStock > 1 && stock > 0) {
 				if (stockIcon != null && stockIcon.Length >= stock && stockIcon[stock - 1] != null) {
-					if (stock == maxStock)
+					if (stock == maxStock && !skill.SuppressReadyPulse)
 						DrawChargeReadyPulse(sb, aboveHead);
 					sb.Draw(stockIcon[stock - 1], aboveHead, Color.White);
 				}
 			}
 			else if (maxStock == 1 && !skill.AutoTrigger) {
-				if (stock == 1 && skillCanUse != null) {
+				if (stock == 1 && skillCanUse != null && !mp.SkillActive) {
 					DrawChargeReadyPulse(sb, aboveHead);
 					sb.Draw(skillCanUse, aboveHead, Color.White);
 				}

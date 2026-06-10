@@ -6,6 +6,9 @@
 // Blizzard.DisplayName: Blizzard
 // BlizzardStorm.DisplayName: Blizzard Storm
 // BlizzardStormStarter.DisplayName: Blizzard Storm Starter
+DeepcolorMinion.DisplayName: 触手
+// DeepcolorSketchLogoAttack.DisplayName: Deepcolor Sketch Logo Attack
+// DeepcolorSketchLogoStrike.DisplayName: Deepcolor Sketch Logo Strike
 IceAltarShockwave.DisplayName: 冰晶祭坛冲击波
 IceAltarSummonWisp.DisplayName: 冰晶祭坛召唤风絮
 IceAltarTwinLineRing.DisplayName: 冰晶祭坛双线环
@@ -206,3 +209,6 @@ TransparentSlash.DisplayName: 透明斩击
 // BarrageDagger.DisplayName: Barrage Dagger
 // CrownslayerSmokeEmitter.DisplayName: Crownslayer Smoke Emitter
 // SwordSlashEffect.DisplayName: Sword Slash Effect
+// PramanixShockwaveRing.DisplayName: Pramanix Shockwave Ring
+// PramanixSkill1Snowflake.DisplayName: Pramanix Skill1 Snowflake
+// PramanixSkill3VolleyFx.DisplayName: Pramanix Skill3 Volley Fx

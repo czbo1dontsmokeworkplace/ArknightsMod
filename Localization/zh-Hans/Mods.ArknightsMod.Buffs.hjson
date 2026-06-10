@@ -1,3 +1,8 @@
+DeepcolorMinionBuff: {
+	DisplayName: 触手
+	Description: 触手正在为你作战
+}
+
 AcidOgSlugDebuff: {
 	DisplayName: 分泌物腐蚀
 	Description: 击中目标后使其防御力减少2
@@ -127,4 +132,14 @@ DehydratedSeasonedJerkyBuff: {
 		最大生命值[c/3791db:+5%]
 		'''
 	DisplayName: 脱水增味肉干
+}
+
+PramanixSlowDebuff: {
+	Description: 移动速度降低
+	DisplayName: 寒域减速
+}
+
+PramanixFreezeDebuff: {
+	Description: 无法行动
+	DisplayName: 寒域冻结
 }

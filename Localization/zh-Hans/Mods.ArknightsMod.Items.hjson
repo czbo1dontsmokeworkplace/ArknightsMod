@@ -3220,3 +3220,19 @@ SolidifiedFiberBoard: {
 	DisplayName: 固化纤维板
 	Tooltip: 经过塑形固化处理的特种纤维板
 }
+
+SaintBell: {
+	DisplayName: 圣女的铃铛
+	// Tooltip: ""
+}
+
+DeepcolorSketch: {
+	DisplayName: 深海色的速写
+	Tooltip:
+		'''
+		召唤触手协助作战
+		左键：部署触手
+		右键：LOGO 攻击
+		'''
+	SkillActivateKey: "[c/AAA8AA:下（S）+右键]开启技能"
+}

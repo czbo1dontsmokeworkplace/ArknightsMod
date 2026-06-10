@@ -2858,3 +2858,19 @@ SolidifiedFiberBoard: {
 	DisplayName: Solidified Fiber Board
 	Tooltip: A specialized fiber board, solidified in a mold.
 }
+
+SaintBell: {
+	DisplayName: Saint's Bell
+	Tooltip: ""
+}
+
+DeepcolorSketch: {
+	DisplayName: Deepcolor's Sketch
+	Tooltip:
+		'''
+		Summons tentacles to fight for you.
+		Left click: deploy tentacle
+		Right click: LOGO attack
+		'''
+	SkillActivateKey: "[c/AAA8AA:Down (S) + Right Click] to activate skill"
+}

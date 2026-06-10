@@ -1,3 +1,8 @@
+DeepcolorMinionBuff: {
+	DisplayName: Tentacle
+	Description: Tentacles are fighting for you.
+}
+
 AcidOgSlugDebuff: {
 	DisplayName: Acid Og Slug Debuff
 	Description: Mods.ArknightsMod.Buffs.AcidOgSlugDebuff.Description
@@ -96,4 +101,14 @@ SeasonedRationsBuff: {
 DehydratedSeasonedJerkyBuff: {
 	Description: Mods.ArknightsMod.Buffs.DehydratedSeasonedJerkyBuff.Description
 	DisplayName: Dehydrated Seasoned Jerky Buff
+}
+
+PramanixSlowDebuff: {
+	Description: Movement speed reduced
+	DisplayName: Pramanix Slow Debuff
+}
+
+PramanixFreezeDebuff: {
+	Description: Cannot move
+	DisplayName: Pramanix Freeze
 }

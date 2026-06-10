@@ -65,7 +65,7 @@ namespace ArknightsMod.Systems.Gameplay.Skill
 		/// </summary>
 		public bool SummonSkill;
 
-
+		public bool SuppressReadyPulse;
 
 		public bool IsPermanent;
 		/// <summary>

@@ -262,3 +262,49 @@ DN_Weapon: {
 		Desc: Mods.ArknightsMod.Skills.DN_Weapon.2.Desc
 	}
 }
+
+DeepcolorSketch: {
+	1: {
+		Label: Shadow Tentacle
+		Desc:
+			'''
+			All Tentacles' ATK and DEF [c/3791db:+6%]
+			Restores [c/3791db:7] HP per second
+			'''
+	}
+
+	2: {
+		Label: Visual Trap
+		Desc:
+			'''
+			Expands Tentacles' attack range
+			Allies within range gain [c/3791db:50%] chance to dodge
+			'''
+	}
+}
+
+SaintBell: {
+	1: {
+		Label: Belltone Snowsquall
+		Desc:
+			'''
+			(Coming soon)
+			2 charges, costs [c/3791db:12] SP
+			'''
+	}
+
+	2: {
+		Label: Frost Tide Over Peaks
+		Desc:
+			'''
+			While active, left-click releases a shockwave for [c/3791db:380%] magic damage
+			Heavy chill buildup; every 3 hits guarantees freeze
+			Lasts until toggled off, costs [c/3791db:45] SP
+			'''
+	}
+
+	3: {
+		Label: Mountains Bow
+		Desc: Expands attack range, immediately lures all enemies in range to reachable ground near you for [c/3791db:10] seconds, frost accumulation speed increased, ATK [c/3791db:+100%], ASPD [c/3791db:+13%], attacks ignore [c/3791db:10] Arts Resistance, each attack deals Arts damage equal to [c/3791db:260%] ATK
+	}
+}

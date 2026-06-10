@@ -6,6 +6,9 @@ BlackIceProjectile.DisplayName: Black Ice Projectile
 Blizzard.DisplayName: Blizzard
 BlizzardStorm.DisplayName: Blizzard Storm
 BlizzardStormStarter.DisplayName: Blizzard Storm Starter
+DeepcolorMinion.DisplayName: Tentacle
+DeepcolorSketchLogoAttack.DisplayName: Deepcolor Sketch Logo Attack
+DeepcolorSketchLogoStrike.DisplayName: Deepcolor Sketch Logo Strike
 IceAltarShockwave.DisplayName: Ice Altar Shockwave
 IceAltarSummonWisp.DisplayName: Ice Altar Summon Wisp
 IceAltarTwinLineRing.DisplayName: Ice Altar Twin Line Ring
@@ -206,3 +209,6 @@ TyphonStarReleaseBurst.DisplayName: Typhon Star Release Burst
 BarrageDagger.DisplayName: Barrage Dagger
 CrownslayerSmokeEmitter.DisplayName: Crownslayer Smoke Emitter
 SwordSlashEffect.DisplayName: Sword Slash Effect
+PramanixShockwaveRing.DisplayName: Pramanix Shockwave Ring
+PramanixSkill1Snowflake.DisplayName: Pramanix Skill1 Snowflake
+PramanixSkill3VolleyFx.DisplayName: Pramanix Skill3 Volley Fx
