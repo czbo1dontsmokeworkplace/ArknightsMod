@@ -6,6 +6,7 @@ namespace ArknightsMod.Content.Items.Consumables.VanityBags
 {
 	public class TexalterDefault : ArknightsVanityBag
 	{
+		public override int Rarity => 6;
 		protected override List<int> GetItems() {
 			return
 			[

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -8,6 +8,28 @@ namespace ArknightsMod.Content.Items.Consumables.VanityBags
 {
 	public abstract class ArknightsVanityBag : ModItem
 	{
+		public enum ObtainTypes {
+			/// <summary>常驻干员（明日方舟）</summary>
+			Default,
+			/// <summary>限定干员（明日方舟，周年庆典）</summary>
+			Limited_Celebration,
+			/// <summary>限定干员（明日方舟，夏季庆典）</summary>
+			Limited_Carnival,
+			/// <summary>限定干员（明日方舟，春节庆典）</summary>
+			Limited_Festival,
+			/// <summary>限定干员（明日方舟，联动）</summary>
+			Limited_CrossOver,
+			/// <summary>常驻干员（终末地）</summary>
+			EndfieldDefault,
+			/// <summary>特殊，比如博士/阿米娅/管理员套装，无法通过 Gacha 获得</summary>
+			NoGacha,
+		}
+
+		public virtual ObtainTypes ObtainType => ObtainTypes.Default;
+
+		/// <summary>干员的星数，请输入1~6</summary>
+		public abstract int Rarity { get; }
+
 		protected abstract List<int> GetItems();
 
 		public override void SetStaticDefaults() {
@@ -23,7 +45,7 @@ namespace ArknightsMod.Content.Items.Consumables.VanityBags
 		}
 
 		public override bool CanRightClick() {
-			return true;
+			return Item.stack == 1;
 		}
 
 		public override void ModifyItemLoot(ItemLoot itemLoot)

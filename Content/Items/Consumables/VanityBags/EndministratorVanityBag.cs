@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ArknightsMod.Content.Items.Armor.Vanity.Endfield.Guard.Endministrator;
 using Terraria;
 using Terraria.ID;
@@ -45,6 +45,8 @@ namespace ArknightsMod.Content.Items.Consumables.VanityBags
 			return true;
 		}
 
+		public override ObtainTypes ObtainType => ObtainTypes.EndfieldDefault;
+		public override int Rarity => 6;
 		protected override List<int> GetItems()
 		{
 			return new List<int>

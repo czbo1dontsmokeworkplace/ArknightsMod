@@ -5,6 +5,7 @@ namespace ArknightsMod.Content.Items.Consumables.VanityBags
 {
 	internal class UtageDefault:ArknightsVanityBag
 	{
+		public override int Rarity => 4;
 		protected override List<int> GetItems() {
 			return
 			[

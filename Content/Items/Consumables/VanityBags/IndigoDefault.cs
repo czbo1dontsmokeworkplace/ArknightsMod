@@ -6,6 +6,7 @@ namespace ArknightsMod.Content.Items.Consumables.VanityBags
 {
 	public class IndigoDefault : ArknightsVanityBag
 	{
+		public override int Rarity => 4;
 		protected override List<int> GetItems() {
 			return
 			[

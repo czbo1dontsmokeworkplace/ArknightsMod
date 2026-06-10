@@ -6,6 +6,7 @@ namespace ArknightsMod.Content.Items.Consumables.VanityBags
 {
 	internal class VulcanDefault : ArknightsVanityBag
 	{
+		public override int Rarity => 5;
 		protected override List<int> GetItems()
 		{
 			return

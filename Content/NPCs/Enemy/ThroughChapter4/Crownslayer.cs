@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Common.VisualEffects;
+using ArknightsMod.Common.VisualEffects;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -10,12 +10,14 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 {
-	public class Crownslayer : ModNPC
+	[AutoloadBossHead]
+	public partial class Crownslayer : ModNPC
 	{
 		public AIState LastSkill = AIState.Idle; // 记录上一个技能
 		public int FogSkillCooldown = 0;
 		public int ExSkillCooldown = 0;
 		public int UtSkillCooldown = 0;
+		public int DaggerSkillCooldown = 0;
 		// 记录已经触发过的阶段：0=未触发, 1=75%, 2=40%, 3=10%
 		public int PhaseLevel = 0;
 		private Vector2 phaseOffset; // 用于记录相对于玩家的偏移点位
@@ -31,6 +33,34 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		internal const int Skill3_SecondHoverEnd = 160;
 		internal const int Skill3_End = 196;
 		private const float Skill3CornerOffset = 220f;
+		private const int Skill3RetreatFrameHold = 6;
+
+		private Vector2 skill3DashStart;
+		private int skill3RetreatVisualStep = -1;
+		private int skill3RetreatTick;
+		private int suppressSkill1AfterSkill3;
+
+		private Vector2 skill9DashStart;
+		private Vector2 skill9DashGoal;
+		private Vector2 skill7VApex;
+		private Vector2 skill7SecondCorner;
+		private int skill7CycleStep;
+		private int skill7StepTimer;
+		private bool skill7WillThrowDagger;
+		private const int Skill9WindupEnd = 22;
+		private const int Skill9DashEnd = 54;
+		private const int Skill9RecoverEnd = 62;
+		private const float Skill9DashOvershoot = 96f;
+		private const float Skill7CornerOffsetX = 300f;
+		private const float Skill7CornerOffsetY = 280f;
+		private const float Skill7Leg1Span = 32f;
+		private const int Skill7Leg1End = 34;
+		private const float Skill7Leg2Span = 28f;
+		private const int Skill7Leg2End = 30;
+
+		private static int daggerPredictLineType = -1;
+		private static int DaggerPredictLineType =>
+			daggerPredictLineType >= 0 ? daggerPredictLineType : daggerPredictLineType = ModContent.ProjectileType<DaggerPredictLine>();
 
 		public override void SetStaticDefaults() {
 			Main.npcFrameCount[Type] = 56;
@@ -93,6 +123,14 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		public override void FindFrame(int frameHeight) {
 			// 动画播放速度：数值越小越快
 			int frameSpeed = 6;
+
+			if (CurrentAIState == AIState.Skill_3 && skill3RetreatVisualStep >= 0) {
+				int pinnedRow = skill3RetreatVisualStep <= 0 ? 19 : 50;
+				NPC.frame.Y = pinnedRow * frameHeight;
+				NPC.frameCounter = 0;
+				return;
+			}
+
 			NPC.frameCounter++;
 
 			// 每一帧对应的起始位置和结束位置
@@ -153,6 +191,16 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
 			if (CurrentAnimation == NPCState.Blank || NPC.alpha >= 250)
 				return;
+
+			if (CurrentAIState == AIState.Skill_3 && skill3RetreatVisualStep == 2) {
+				Texture2D texture = TextureAssets.Npc[NPC.type].Value;
+				Rectangle frame = NPC.frame;
+				Vector2 origin = frame.Size() * 0.5f;
+				SpriteEffects effects = NPC.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+				Color ghostColor = drawColor * 0.5f;
+				ghostColor.A = (byte)(drawColor.A / 2);
+				spriteBatch.Draw(texture, NPC.Center - screenPos, frame, ghostColor, NPC.rotation, origin, NPC.scale, effects, 0f);
+			}
 
 			if (grayScaleIntensity > 0.02f) {
 				CrownslayerTrailEffects.DrawBossOrbitLines(spriteBatch, NPC, grayScaleIntensity);
@@ -218,6 +266,11 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			if (NPC.life < NPC.lifeMax * 0.5f) {
 				Music = MusicLoader.GetMusicSlot("ArknightsMod/Music/Crownslayer2");
 			}
+			if (suppressSkill1AfterSkill3 > 0)
+				suppressSkill1AfterSkill3--;
+			if (DaggerSkillCooldown > 0)
+				DaggerSkillCooldown--;
+			Move_BeginFrame();
 			NPC.TargetClosest(true);
 			Player target = Main.player[NPC.target];
 			float distanceToTarget = Vector2.Distance(NPC.Center, target.Center);
@@ -280,6 +333,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 					break;
 			}
 
+			Move_AfterStateMachine(target);
 			EmitPhaseOneSmokeDecor();
 		}
 
@@ -292,7 +346,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			if (hpRatio <= 0.5f)
 				return;
 
-			if (CurrentAIState != AIState.Skill_1 && CurrentAIState != AIState.Skill_2 && CurrentAIState != AIState.Skill_3 && CurrentAIState != AIState.Skill_5)
+			if (CurrentAIState != AIState.Skill_1 && CurrentAIState != AIState.Skill_2 && CurrentAIState != AIState.Skill_3
+				&& CurrentAIState != AIState.Skill_5 && CurrentAIState != AIState.Skill_6 && CurrentAIState != AIState.Skill_7)
 				return;
 
 			if (NPC.alpha > 250)
@@ -404,71 +459,50 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 		// --- 核心方法：处理常态模式与技能切换 ---
 		private void HandleIdle(Player target, float distance) {
-			// 更新动画状态为走路或待机
-			// CurrentState = NPCState.Walk; (对应你之前的动画代码)
-			// --- 基础属性重置 ---
 			SetPhysics(true, true);
 			NPC.damage = NPC.defDamage;
-										// --- 1. 卡墙检查与修正 ---
+			CurrentAnimation = NPCState.Walk;
 
-			if (Collision.SolidCollision(NPC.position, NPC.width, NPC.height)) {
-				// 寻找最近的空地并直接闪现
-				Vector2 safePos = FindSafeSpot(NPC.Center);
-				if (safePos != NPC.Center) {
-					NPC.Center = safePos;
-					NPC.velocity = Vector2.Zero; // 瞬移后急停，防止惯性再次入墙
-					NPC.netUpdate = true;        // 确保联机同步
-												 // --- 修改这里：进入恢复硬直 ---
-					CurrentAIState = AIState.Recover;
-					StateTimer = 18; // 设置硬直时间为 18 单位
-					return;
-				}
-
-			}
-
-			// --- 2. 移动逻辑 ---
 			float maxSpeed = 2.4f;
 			float acceleration = 0.2f;
-			float friction = 0.15f; // 减速摩擦力
-			float deadzone = 12f;   // 死区范围（像素）。如果水平距离小于 12，就不再左右横跳。
+			float friction = 0.15f;
+			float deadzone = 12f;
 
 			float diffX = target.Center.X - NPC.Center.X;
+			bool wantsMoveX = Math.Abs(diffX) >= deadzone;
 
-			// 检查是否在死区内
-			if (Math.Abs(diffX) < deadzone) {
-				// 在死区内：快速减速至静止，避免抽搐
-				if (NPC.velocity.X > 0) {
-					NPC.velocity.X -= friction;
-					if (NPC.velocity.X < 0)
-						NPC.velocity.X = 0;
+			if (wantsMoveX) {
+				if (diffX > 0) {
+					if (!NPC.collideX || Move_AllowHorizontalAccel(1))
+						NPC.velocity.X += acceleration;
+					else if (NPC.velocity.X > 0f)
+						NPC.velocity.X = 0f;
 				}
-				else if (NPC.velocity.X < 0) {
-					NPC.velocity.X += friction;
-					if (NPC.velocity.X > 0)
-						NPC.velocity.X = 0;
+				else {
+					if (!NPC.collideX || Move_AllowHorizontalAccel(-1))
+						NPC.velocity.X -= acceleration;
+					else if (NPC.velocity.X < 0f)
+						NPC.velocity.X = 0f;
 				}
 			}
 			else {
-				// 在死区外：正常的加速逻辑
-				if (diffX > 0) {
-					NPC.velocity.X += acceleration;
-					// 掉头补正：如果正在向左跑却要向右转，给个双倍动力
-					if (NPC.velocity.X < 0)
-						NPC.velocity.X += acceleration;
+				if (NPC.velocity.X > 0f) {
+					NPC.velocity.X -= friction;
+					if (NPC.velocity.X < 0f)
+						NPC.velocity.X = 0f;
 				}
-				else {
-					NPC.velocity.X -= acceleration;
-					// 掉头补正
-					if (NPC.velocity.X > 0)
-						NPC.velocity.X -= acceleration;
+				else if (NPC.velocity.X < 0f) {
+					NPC.velocity.X += friction;
+					if (NPC.velocity.X > 0f)
+						NPC.velocity.X = 0f;
 				}
 			}
 
-			// 限制最大速度
 			NPC.velocity.X = MathHelper.Clamp(NPC.velocity.X, -maxSpeed, maxSpeed);
-			// 平台下跳逻辑：如果玩家在下方且自己站在平台上
+			Move_TickIdleChase(target, wantsMoveX, diffX);
+
 			if (target.Center.Y > NPC.Center.Y + 32f && Main.tile[(int)(NPC.Center.X / 16), (int)((NPC.position.Y + NPC.height + 8) / 16)].TileType == TileID.Platforms) {
-				NPC.position.Y += 1f; // 轻轻沉入平台使其通过
+				NPC.position.Y += 1f;
 			}
 
 			if (distance >= 32f)
@@ -483,6 +517,11 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			if (UtSkillCooldown > 0)
 				UtSkillCooldown--;
 			StateTimer--;
+
+			if (Move_BlockSkillPick()) {
+				StateTimer = Math.Max(StateTimer, 16f);
+				return;
+			}
 
 			if (StateTimer <= 0) {
 				float distanceInTiles = distance / 16f;
@@ -500,7 +539,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 					if (chosen == AIState.Skill_6)
 						ExSkillCooldown = 10 * 60;
 					if (chosen == AIState.Skill_7)
-						UtSkillCooldown = 20 * 60;
+						UtSkillCooldown = 8 * 60;
 
 					CurrentAIState = chosen;
 					LastSkill = chosen;
@@ -525,14 +564,16 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				if (distanceInTiles <= 14f && !skip(AIState.Skill_9))
 					pool.Add((AIState.Skill_9, 44));
 
-				if (distanceInTiles >= 3f && distanceInTiles <= 22f && !skip(AIState.Skill_1))
+				if (suppressSkill1AfterSkill3 <= 0 && distanceInTiles >= 3f && distanceInTiles <= 22f && !skip(AIState.Skill_1))
 					pool.Add((AIState.Skill_1, 40));
 
-				if (distanceInTiles <= 18f && !skip(AIState.Skill_2))
-					pool.Add((AIState.Skill_2, 26));
+				if (distanceInTiles <= 18f && DaggerSkillCooldown <= 0 && !skip(AIState.Skill_2)
+					&& LastSkill != AIState.Skill_2 && LastSkill != AIState.Skill_3)
+					pool.Add((AIState.Skill_2, 14));
 
-				if (!skip(AIState.Skill_3))
-					pool.Add((AIState.Skill_3, 20));
+				if (DaggerSkillCooldown <= 0 && !skip(AIState.Skill_3)
+					&& LastSkill != AIState.Skill_2 && LastSkill != AIState.Skill_3)
+					pool.Add((AIState.Skill_3, 12));
 			}
 			else {
 				if (distanceInTiles <= 8f && !skip(AIState.Skill_8))
@@ -545,13 +586,15 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 					pool.Add((AIState.Skill_4, 22));
 
 				if (!skip(AIState.Skill_5))
-					pool.Add((AIState.Skill_5, 34));
+					pool.Add((AIState.Skill_5, 22));
 
 				if (ExSkillCooldown <= 0 && !skip(AIState.Skill_6))
-					pool.Add((AIState.Skill_6, 28));
+					pool.Add((AIState.Skill_6, 24));
 
 				if (UtSkillCooldown <= 0 && !skip(AIState.Skill_7))
-					pool.Add((AIState.Skill_7, 18));
+					pool.Add((AIState.Skill_7, 52));
+				else if (!skip(AIState.Skill_7))
+					pool.Add((AIState.Skill_7, 28));
 			}
 
 			return pool;
@@ -610,21 +653,43 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			SetPhysics(false, false);
 			NPC.dontTakeDamage = false;
 			NPC.damage = NPC.defDamage;
+			skill3RetreatVisualStep = 0;
+			skill3RetreatTick = 0;
 		}
 
-		private void UpdateSkill3RetreatMotion(Player target) {
+		private void UpdateSkill3RetreatMotion(Player target, bool secondRetreat) {
 			NPC.velocity.Y += 0.28f;
 			NPC.velocity.X *= 0.92f;
 			FaceTargetHorizontal(target);
 			CurrentAnimation = NPCState.Dodge;
+
+			skill3RetreatTick++;
+			if (skill3RetreatVisualStep < 0)
+				skill3RetreatVisualStep = 0;
+			if (skill3RetreatTick >= Skill3RetreatFrameHold) {
+				skill3RetreatTick = 0;
+				skill3RetreatVisualStep++;
+				if (skill3RetreatVisualStep > 2)
+					skill3RetreatVisualStep = 2;
+			}
+		}
+
+		private void FinishDaggerSkill() {
+			suppressSkill1AfterSkill3 = 90;
+			DaggerSkillCooldown = Main.rand.Next(480, 661);
+			ResetToIdle();
 		}
 
 		private void ResetToIdle() {
 			CurrentAIState = AIState.Idle;
 			CurrentAnimation = NPCState.Walk;
+			skill3RetreatVisualStep = -1;
+			skill3RetreatTick = 0;
 			NPC.alpha = 0;
 			NPC.dontTakeDamage = false;
 			SetPhysics(true, true);
+			Move_ResetWatch();
+			Move_SoftenLandingOnIdle();
 
 			float lifeRatio = (float)NPC.life / NPC.lifeMax;
 			float minTime;
@@ -640,28 +705,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 			StateTimer = Main.rand.NextFloat(minTime, maxTime) * 60f;
 		}
-		private Vector2 FindSafeSpot(Vector2 currentPos) {
-			Point tileCoords = currentPos.ToTileCoordinates();
-
-			// 如果当前位置已经没有物块，直接返回
-			if (!Collision.SolidCollision(currentPos - new Vector2(NPC.width / 2, NPC.height / 2), NPC.width, NPC.height)) {
-				return currentPos;
-			}
-
-			// 在周围 16x16的范围内寻找最近的可容纳空间
-			for (int i = 1; i < 16; i++) {
-				for (int x = -i; x <= i; x++) {
-					for (int y = -i; y <= i; y++) {
-						Vector2 checkPos = currentPos + new Vector2(x * 16, y * 16);
-						// 检测该位置是否能塞下 NPC 的碰撞箱且不是实体墙
-						if (!Collision.SolidCollision(checkPos - new Vector2(NPC.width / 2, NPC.height / 2), NPC.width, NPC.height)) {
-							return checkPos;
-						}
-					}
-				}
-			}
-			return currentPos; // 实在没找到就原地不动（理论上极少发生）
-		}
+		private Vector2 FindSafeSpot(Vector2 currentPos) =>
+			Move_FindOpen(currentPos, requireGround: false);
 
 		// 冲刺时背后少量向后飘散的粒子（客户端）。
 		private Vector2 GetBladeSlashSpawnOffset() => new Vector2(NPC.spriteDirection * -28f, -8f);
@@ -689,7 +734,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			Projectile slash = Main.projectile[projIndex];
 			slash.rotation = rotation;
 			slash.ai[2] = NPC.whoAmI;
-			slash.localAI[1] = NPC.whoAmI;
+			Vector2 relOffset = pos - NPC.Center;
+			slash.localAI[1] = relOffset.X;
+			slash.localAI[2] = relOffset.Y;
 			slash.netUpdate = true;
 		}
 
@@ -809,7 +856,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			}
 			else {
 				NPC.velocity *= 0.8f;
-				ResetToIdle();
+				Move_EndMelee(target);
 			}
 		}
 
@@ -842,7 +889,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				NPC.velocity *= 0.9f;
 			}
 			else {
-				ResetToIdle();
+				FinishDaggerSkill();
 			}
 		}
 
@@ -882,22 +929,24 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				if (StateTimer == Skill3_FirstAppearEnd)
 					BeginSkill3Retreat(target, secondRetreat: false);
 
-				UpdateSkill3RetreatMotion(target);
+				UpdateSkill3RetreatMotion(target, secondRetreat: false);
 			}
 			else if (StateTimer < Skill3_DashEnd) {
 				if (StateTimer == Skill3_FirstRetreatEnd) {
 					NPC.dontTakeDamage = true;
 					NPC.damage = 0;
-					Vector2 toGoal = upperLeft - NPC.Center;
-					float dist = toGoal.Length();
-					Vector2 dashDir = toGoal.SafeNormalize(Vector2.UnitX * -NPC.spriteDirection);
-					NPC.velocity = dashDir * MathHelper.Clamp(dist * 0.6f, 18f, 26f);
+					skill3DashStart = NPC.Center;
+					NPC.velocity = Vector2.Zero;
 					CurrentAnimation = NPCState.Attack2;
 					NPC.netUpdate = true;
 				}
 
-				NPC.velocity *= 0.90f;
-				NPC.spriteDirection = NPC.velocity.X >= 0f ? -1 : 1;
+				float dashSpan = Skill3_DashEnd - Skill3_FirstRetreatEnd;
+				float t = MathHelper.Clamp((StateTimer - Skill3_FirstRetreatEnd) / dashSpan, 0f, 1f);
+				t = t * t * (3f - 2f * t);
+				NPC.Center = Vector2.Lerp(skill3DashStart, upperLeft, t);
+				NPC.velocity = Vector2.Zero;
+				NPC.spriteDirection = upperLeft.X >= skill3DashStart.X ? -1 : 1;
 				EmitDashAccentParticles(0.5f);
 			}
 			else if (StateTimer < Skill3_SecondHoverEnd) {
@@ -921,10 +970,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				if (StateTimer == Skill3_SecondHoverEnd)
 					BeginSkill3Retreat(target, secondRetreat: true);
 
-				UpdateSkill3RetreatMotion(target);
+				UpdateSkill3RetreatMotion(target, secondRetreat: true);
 			}
 			else {
-				ResetToIdle();
+				NPC.velocity = Vector2.Zero;
+				skill3RetreatVisualStep = -1;
+				FinishDaggerSkill();
 			}
 		}
 
@@ -1208,6 +1259,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 			// --- 阶段 1: 起手式（插刀、起雾） ---
 			if (StateTimer < 60) {
+				skill7CycleStep = 0;
+				skill7StepTimer = 0;
 				CurrentAnimation = NPCState.TeleportDown;
 				NPC.velocity.X *= 0.5f;
 				NPC.velocity.Y = 10f;
@@ -1220,113 +1273,101 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				}
 			}
 
-			// --- 阶段 2: 隐身与循环闪现冲刺 (60 - 960帧, 约15秒) ---
+			// --- 阶段 2: 一排预警飞刀 → 清场 → V 字机动 → 短暂隐身，循环 ---
 			else if (StateTimer < 960) {
-				grayScaleIntensity = 0.85f; // 维持红雾渲染
+				grayScaleIntensity = 0.85f;
 				NPC.noGravity = true;
-				int subTimer = (int)(StateTimer - 60) % 120;
-				NPC.noTileCollide = true; // 闪现期间穿过地形
-										  // 1. 寻找位置 + 锁定角度 + 显示判定线 (0 - 42帧)
-				if (subTimer < 42) {
-					NPC.alpha = 255;
-					NPC.velocity = Vector2.Zero;
+				NPC.noTileCollide = true;
+				skill7StepTimer++;
 
-					if (subTimer == 1) {
-						
-						// --- 核心逻辑：计算固定 45 度角 ---
-						// 玩家在 Boss 右边，就从左上往右下冲 (45°)；反之从右上往左下冲 (135°)
-						float direction = (focusTarget.Center.X > NPC.Center.X) ? -1f : 1f;
+				switch (skill7CycleStep) {
+					// 0：定角、只召唤一排预警飞刀，等预警+飞刀打完
+					case 0:
+						NPC.alpha = 255;
+						NPC.velocity = Vector2.Zero;
+						CurrentAnimation = NPCState.Blank;
 
-						// 计算 45 度或 135 度的弧度
-						// MathHelper.PiOver4 是 45度
-						float dashRadian = (direction == 1f) ? MathHelper.PiOver4 : MathHelper.PiOver4 * 3f;
-
-						// 存入 ai[3]，让判定线弹幕和后续冲刺逻辑直接读这个固定值
-						NPC.ai[3] = dashRadian;
-
-						// 根据 45 度角反推 Boss 的闪现位置 (距离玩家中心 400 像素)
-						Vector2 offset = new Vector2(-direction * 300, -300); // 形成 45 度等腰直角三角形
-						NPC.Center = focusTarget.Center + offset;
-
-						// 召唤【不追踪】的静态判定线
-						// 注意：把锁定的角度 NPC.ai[3] 传给弹幕的 ai[1]
-
-						NPC.netUpdate = true;
-					}
-				}
-
-				// 2. 固定角度冲刺 (42 - 72帧)
-				else if (subTimer < 72) {
-					NPC.alpha = 0;
-					if (subTimer == 42) {
-						CurrentAnimation = NPCState.Lurk;
-						// 直接读取第一帧锁定的角度，绝对不会随玩家移动改变
-						float dashAngle = NPC.ai[3];
-						float speed = 15f + (StateTimer - 60) / 70f;
-						NPC.velocity = dashAngle.ToRotationVector2() * speed;
-
-						SoundEngine.PlaySound(SoundID.Item71, NPC.Center);
-					}
-					// 旋转角度锁定在冲刺方向
-					
-				}
-
-				// 3. 镜像弹走 (72 - 102帧)
-				else if (subTimer < 102) {
-					if (subTimer == 72) {
-						CurrentAnimation = NPCState.Lurk;
-						NPC.velocity.Y = -NPC.velocity.Y; // 镜像反射
-														  // 同样，这里的弹幕也应该使用锁定的角度方向
-						
-					}
-
-					NPC.alpha = 0;
-					
-				}
-
-				// 4. 彻底消失等待下一次闪现 (90帧 - 120帧)
-				else {
-					if (subTimer == 103) {
-
-
-						int count = 5 + (int)(10 * (1 - (float)StateTimer / 960));
-						float spacing = 270f - count * 6;
-						float angleDeg = Main.rand.NextFloat(30f, 150f);
-						float speed = 52f;
-						float spawnDist = 820f;
-
-						float radian = MathHelper.ToRadians(angleDeg);
-						Vector2 shootDir = radian.ToRotationVector2();
-						Vector2 perpDir = new Vector2(-shootDir.Y, shootDir.X); // 垂直于射击方向的排队方向
-
-						// 1. 确定这排“点”的中心位置，围绕最近仇恨玩家附近展开
-						Vector2 centerPoint = focusTarget.Center - shootDir * spawnDist;
-
-						// 2. 循环生成每一个“点”
-						for (int i = 0; i < count; i++) {
-							// 计算每个点相对于中心点的偏移
-							float offset = (i - (count - 1) / 2f) * spacing;
-							Vector2 spawnPos = centerPoint + perpDir * offset;
-
-							// 3. 在这个点上，画一条线（生成预警弹幕）
-							// 第二个参数传 spawnPos，保证弹幕的 Center 就在这个点上
-							Projectile.NewProjectile(
-								NPC.GetSource_FromAI(),
-								spawnPos,
-								Vector2.Zero,
-								ModContent.ProjectileType<DaggerPredictLine>(),
-								0, 0, Main.myPlayer,
-								speed,
-								radian
-							);
+						if (skill7StepTimer == 1) {
+							SetupSkill7VPath(focusTarget, out float barrageAngle);
+							TrySpawnPhase2PredictBarrage(focusTarget, barrageAngle, 5);
+							NPC.netUpdate = true;
 						}
 
+						if (skill7StepTimer > 8 && !HasActivePhase2PredictLines()) {
+							Skill7AdvanceStep(1);
+						}
 
+						break;
 
+					// 1：V 字第一腿 — 上角 → 玩家（顶点）
+					case 1:
+						NPC.alpha = 0;
+						CurrentAnimation = NPCState.Lurk;
 
-					}
-					NPC.alpha = 255;
-					NPC.velocity = Vector2.Zero;
+						if (skill7StepTimer == 1) {
+							skill9DashStart = NPC.Center;
+							SoundEngine.PlaySound(SoundID.Item71, NPC.Center);
+						}
+
+						Skill7ApplyVLerp(skill7StepTimer, Skill7Leg1Span, skill9DashStart, skill7VApex);
+
+						if (skill7StepTimer >= Skill7Leg1End) {
+							NPC.Center = skill7VApex;
+							Skill7AdvanceStep(2);
+						}
+
+						break;
+
+					// 2：V 字第二腿 — 玩家（顶点）→ 对角
+					case 2:
+						NPC.alpha = 0;
+						CurrentAnimation = NPCState.Lurk;
+
+						if (skill7StepTimer == 1)
+							SoundEngine.PlaySound(SoundID.Item71, NPC.Center);
+
+						Skill7ApplyVLerp(skill7StepTimer, Skill7Leg2Span, skill7VApex, skill7SecondCorner);
+
+						if (skill7StepTimer >= Skill7Leg2End) {
+							NPC.Center = skill7SecondCorner;
+							Skill7AdvanceStep(3);
+						}
+
+						break;
+
+					// 3：V 字结束后有时转身对玩家补一发普通飞刀
+					case 3:
+						NPC.alpha = 0;
+						NPC.velocity *= 0.88f;
+						FaceTargetHorizontal(focusTarget);
+
+						if (skill7StepTimer == 1)
+							skill7WillThrowDagger = Main.rand.NextBool(38);
+
+						CurrentAnimation = skill7WillThrowDagger ? NPCState.Attack2 : NPCState.Lurk;
+
+						if (skill7WillThrowDagger && skill7StepTimer == 14)
+							ShootSingleDagger(focusTarget);
+
+						if (skill7StepTimer >= (skill7WillThrowDagger ? 26 : 8))
+							Skill7AdvanceStep(4);
+
+						break;
+
+					// 4：短隐身，下一圈再从一排飞刀开始
+					case 4:
+						NPC.alpha = 255;
+						NPC.velocity = Vector2.Zero;
+						CurrentAnimation = NPCState.Blank;
+
+						if (skill7StepTimer >= 18)
+							Skill7AdvanceStep(0);
+
+						break;
+
+					default:
+						Skill7AdvanceStep(0);
+						break;
 				}
 			}
 
@@ -1381,19 +1422,21 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				NPC.velocity *= 0.86f;
 			}
 			else {
-				ResetToIdle();
+				Move_EndMelee(target);
 			}
 		}
 
-		// 独立突刺：JumpIn 冲刺 + 精灵图帧 7~10 刀光。
+		// 独立突刺：蓄力 → 固定时长 Lerp 冲刺（穿透玩家一点）→ 收招。
 		private void ExecuteSkill9(Player target) {
 			StateTimer++;
 			FaceTargetHorizontal(target);
+			NPC.dontTakeDamage = false;
+			NPC.damage = NPC.defDamage;
 
-			if (StateTimer < 18) {
+			if (StateTimer < Skill9WindupEnd) {
 				SetPhysics(true, true);
 				CurrentAnimation = NPCState.Attack2;
-				NPC.velocity *= 0.70f;
+				NPC.velocity *= 0.72f;
 
 				if (StateTimer == 14 && !Main.dedServ) {
 					for (int i = 0; i < 8; i++) {
@@ -1404,49 +1447,56 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 					}
 				}
 			}
-			else if (StateTimer < 22) {
-				SetPhysics(true, true);
-				CurrentAnimation = NPCState.JumpIn;
-				NPC.velocity *= 0.55f;
-			}
-			else if (StateTimer == 22) {
+			else if (StateTimer == Skill9WindupEnd) {
 				SetPhysics(false, false);
 				CurrentAnimation = NPCState.JumpIn;
-				Vector2 dashVel = target.Center - NPC.Center;
-				if (dashVel.LengthSquared() < 1f)
-					dashVel = new Vector2(-NPC.spriteDirection, 0f);
-				dashVel.Normalize();
-				dashVel *= 24f;
-				NPC.velocity = dashVel;
+				Vector2 toTarget = target.Center - NPC.Center;
+				if (toTarget.LengthSquared() < 1f)
+					toTarget = new Vector2(-NPC.spriteDirection, 0f);
+				Vector2 dir = Vector2.Normalize(toTarget);
+				skill9DashStart = NPC.Center;
+				skill9DashGoal = target.Center + dir * Skill9DashOvershoot;
+				NPC.velocity = Vector2.Zero;
+				NPC.netUpdate = true;
 
 				EmitThrustBurstParticles();
-				SpawnCrownslayerSwordSlashAtBlade(thrust: true, rotation: dashVel.ToRotation());
+				SpawnCrownslayerSwordSlashAtBlade(thrust: true, rotation: dir.ToRotation());
 				Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero,
 					ModContent.ProjectileType<TransparentSlash>(), damage, 2f, Main.myPlayer);
 				SoundEngine.PlaySound(SoundID.Item71, NPC.Center);
 			}
-			else if (StateTimer < 44) {
+			else if (StateTimer < Skill9DashEnd) {
 				SetPhysics(false, false);
 				CurrentAnimation = NPCState.JumpIn;
-				NPC.velocity *= 0.89f;
-
-				if (NPC.velocity.LengthSquared() > 64f)
+				float span = Skill9DashEnd - Skill9WindupEnd;
+				float t = MathHelper.Clamp((StateTimer - Skill9WindupEnd) / span, 0f, 1f);
+				t = t * t * (3f - 2f * t);
+				NPC.Center = Vector2.Lerp(skill9DashStart, skill9DashGoal, t);
+				NPC.velocity = Vector2.Zero;
+				NPC.spriteDirection = skill9DashGoal.X >= skill9DashStart.X ? -1 : 1;
+				if (StateTimer % 3 == 0)
 					EmitDashAccentParticles(0.45f);
 			}
+			else if (StateTimer < Skill9RecoverEnd) {
+				SetPhysics(true, true);
+				CurrentAnimation = NPCState.JumpIn;
+				NPC.velocity *= 0.82f;
+			}
 			else {
-				ResetToIdle();
+				Move_EndMelee(target);
 			}
 		}
 
 		private void ExecuteRecover() {
 			StateTimer--;
 			SetPhysics(true, true);
-			NPC.velocity *= 0.8f; // 保持原地不动或微弱减速
-			CurrentAnimation = NPCState.Dodge; // 播放 Dodge 动画
+			NPC.velocity *= 0.8f;
+			CurrentAnimation = NPCState.Walk;
 			if (StateTimer <= 0) {
-				// 18单位时间结束后，回到 Idle，动画会自动由 HandleIdle 切回 Walk
 				CurrentAIState = AIState.Idle;
-				StateTimer = 30; // 给一点点缓冲防止立即连续触发技能
+				StateTimer = 30;
+				CurrentAnimation = NPCState.Walk;
+				Move_ResetWatch();
 			}
 		}
 		private void ExecuteSummoning(Player target) {
@@ -1469,38 +1519,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				// 这里的计时器从 0 开始计算召唤时间 (StateTimer - 30)
 				int summonTimer = (int)StateTimer - 24;
 				if ((int)(summonTimer % 300) == 0) {
-
-					int count = 5 + (int)(6 * (1 - (float)NPC.life / NPC.lifeMax));
-					float spacing = 240f - count * 6;  // 你的原始公式
-					float angleDeg = Main.rand.NextFloat(0f, 180f); // 你的原始随机范围
-					float speed = 52f;
-					float spawnDist = 1300f; // 你的原始距离
-
-					// 弧度和方向
-					float radian = MathHelper.ToRadians(angleDeg);
-					Vector2 shootDir = radian.ToRotationVector2(); // (0, 1) 代表向下
-
-					// 阵列中心点：玩家中心 减去 (0, 800) = 玩家头顶 800 像素
-					Vector2 centerOrigin = target.Center - shootDir * spawnDist;
-					Vector2 perpDir = new Vector2(-shootDir.Y, shootDir.X); // 垂直向量 (1, 0)
-
-					for (int i = 0; i < count; i++) {
-						// 水平排开生成点
-						Vector2 spawnPos = centerOrigin + perpDir * (i - (count - 1) / 2f) * spacing;
-
-						// 召唤预警线
-						Projectile.NewProjectile(
-							NPC.GetSource_FromAI(),
-							spawnPos,
-							Vector2.Zero,
-							ModContent.ProjectileType<DaggerPredictLine>(),
-							0, 0, Main.myPlayer,
-							speed,
-							radian
-						);
-					}
-
-
+					float angleDeg = Main.rand.NextFloat(0f, 180f);
+					TrySpawnPhase2PredictBarrage(target, MathHelper.ToRadians(angleDeg), 5);
 				}
 				// 根据不同的 PhaseLevel 执行不同的分批召唤计划
 				switch (PhaseLevel) {
@@ -1584,6 +1604,20 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 					ModContent.ProjectileType<GravityDagger>(), (int)(damage * 0.4f), 3f, Main.myPlayer);
 			}
 		}
+
+		private void ShootSingleDagger(Player target) {
+			if (Main.netMode == NetmodeID.MultiplayerClient)
+				return;
+
+			Vector2 toTarget = target.Center - NPC.Center;
+			if (toTarget.LengthSquared() < 1f)
+				toTarget = new Vector2(-NPC.spriteDirection, 0f);
+
+			Vector2 shotVel = Vector2.Normalize(toTarget) * 16f;
+			Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, shotVel,
+				ModContent.ProjectileType<GravityDagger>(), (int)(damage * 0.4f), 3f, Main.myPlayer);
+			SoundEngine.PlaySound(SoundID.Item71, NPC.Center);
+		}
 		private void ShootMoreDaggers(Player target) {
 
 			Vector2 baseVel = Vector2.Normalize(target.Center - NPC.Center) * 20f;
@@ -1595,6 +1629,84 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			}
 
 		}
+		// 仅统计预警线；已发射的 BarrageDagger 不再挡住下一排。
+		private static bool HasActivePhase2PredictLines() {
+			for (int i = 0; i < Main.maxProjectiles; i++) {
+				if (Main.projectile[i].active && Main.projectile[i].type == DaggerPredictLineType)
+					return true;
+			}
+
+			return false;
+		}
+
+		private bool TrySpawnPhase2PredictBarrage(Player target, float? forcedAngleRad = null, int lineCount = 5) {
+			if (Main.netMode == NetmodeID.MultiplayerClient)
+				return false;
+
+			if (HasActivePhase2PredictLines())
+				return false;
+
+			Player focus = GetNearestThreatPlayer(target);
+			int count = Math.Clamp(lineCount, 4, 6);
+			float angleDeg = forcedAngleRad.HasValue
+				? MathHelper.ToDegrees(forcedAngleRad.Value)
+				: Main.rand.NextFloat(20f, 160f);
+			float speed = 48f + Main.rand.NextFloat(-6f, 8f);
+			float spawnDist = 760f + Main.rand.NextFloat(-80f, 120f);
+
+			float radian = MathHelper.ToRadians(angleDeg);
+			Vector2 shootDir = radian.ToRotationVector2();
+			Vector2 perpDir = new Vector2(-shootDir.Y, shootDir.X);
+			Vector2 centerPoint = focus.Center - shootDir * spawnDist;
+			float spacing = Math.Max(48f, 240f - count * 8f);
+
+			for (int i = 0; i < count; i++) {
+				float offset = (i - (count - 1) / 2f) * spacing;
+				Vector2 spawnPos = centerPoint + perpDir * offset;
+				Projectile.NewProjectile(
+					NPC.GetSource_FromAI(),
+					spawnPos,
+					Vector2.Zero,
+					ModContent.ProjectileType<DaggerPredictLine>(),
+					0, 0, Main.myPlayer,
+					speed,
+					radian);
+			}
+
+			return true;
+		}
+
+		// V 字路径：玩家为顶点，两对角为起止；每轮随机从左或右上方切入。
+		private void SetupSkill7VPath(Player focusTarget, out float barrageAngle) {
+			float startSide = Main.rand.NextBool() ? -1f : 1f;
+			skill7VApex = focusTarget.Center + new Vector2(0f, -12f);
+			Vector2 firstCorner = skill7VApex + new Vector2(startSide * Skill7CornerOffsetX, -Skill7CornerOffsetY);
+			skill7SecondCorner = skill7VApex + new Vector2(-startSide * Skill7CornerOffsetX, -Skill7CornerOffsetY);
+			NPC.Center = firstCorner;
+			barrageAngle = (skill7VApex - firstCorner).ToRotation();
+			NPC.ai[3] = barrageAngle;
+		}
+
+		private void Skill7AdvanceStep(int nextStep) {
+			skill7CycleStep = nextStep;
+			skill7StepTimer = 0;
+		}
+
+		private static float Skill7SmoothStep(float t) {
+			t = MathHelper.Clamp(t, 0f, 1f);
+			return t * t * (3f - 2f * t);
+		}
+
+		private void Skill7ApplyVLerp(int stepTimer, float span, Vector2 start, Vector2 goal) {
+			float t = Skill7SmoothStep(stepTimer / span);
+			NPC.Center = Vector2.Lerp(start, goal, t);
+			Vector2 legDir = goal - start;
+			if (legDir.LengthSquared() > 1f) {
+				NPC.velocity = legDir.SafeNormalize(Vector2.UnitX) * (14f + t * 10f);
+				NPC.spriteDirection = NPC.velocity.X >= 0f ? -1 : 1;
+			}
+		}
+
 		private Player GetNearestThreatPlayer(Player fallbackTarget) {
 			Player bestTarget = fallbackTarget;
 			float bestDistanceSq = float.MaxValue;
@@ -1802,7 +1914,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			}
 		}
 
-		public override bool PreDraw(ref Color lightColor) {
+		public override bool PreDraw(Player player, ref Color lightColor) {
 			// 只在准备阶段绘制判定线
 			if (Projectile.ai[1] < 60) {
 				float progress = Projectile.ai[1] / 60f;
@@ -1909,7 +2021,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			Projectile.localAI[0] += 0.35f + Projectile.velocity.Length() * 0.015f;
 		}
 
-		public override bool PreDraw(ref Color lightColor) {
+		public override bool PreDraw(Player player, ref Color lightColor) {
 			return CrownslayerTrailEffects.DrawGravityDaggerTrail(Projectile);
 		}
 
@@ -2013,7 +2125,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			}
 		}
 
-		public override bool PreDraw(ref Color lightColor) {
+		public override bool PreDraw(Player player, ref Color lightColor) {
 			Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
 			Vector2 origin = tex.Size() / 2f;
 
@@ -2052,62 +2164,6 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			return false;
 		}
 	}
-	public class StaticPredictLine : ModProjectile
-	{
-		public override string Texture => "Terraria/Images/MagicPixel";
-
-		public override void SetDefaults() {
-			Projectile.width = 1;
-			Projectile.height = 1;
-			Projectile.hostile = false;
-			Projectile.tileCollide = false;
-			Projectile.timeLeft = 42; // 0.7秒预警
-			Projectile.alpha = 255;
-		}
-
-		public override void AI() {
-			// 第一帧：根据生成时 Boss 指向玩家的角度锁定旋转
-			if (Projectile.localAI[0] == 0) {
-				NPC owner = Main.npc[(int)Projectile.ai[0]];
-				Player target = Main.player[owner.target];
-
-				// 锁定方向：指向产生那一刻的玩家中心
-				Projectile.rotation = (target.Center - owner.Center).ToRotation();
-				Projectile.localAI[0] = 1;
-			}
-
-			// 后续逻辑：虽然位置跟随 Boss 移动，但 rotation 保持不变
-			NPC boss = Main.npc[(int)Projectile.ai[0]];
-			if (boss.active) {
-				Projectile.Center = boss.Center;
-			}
-			else {
-				Projectile.Kill();
-			}
-		}
-
-		public override bool PreDraw(ref Color lightColor) {
-			// 绘制长度覆盖整个屏幕的实线
-			float lineLength = 2400f;
-
-			// 随时间衰减或闪烁
-			float progress = 1f - (Projectile.timeLeft / 42f); // 0 到 1
-			Color lineColor = Color.Red * (0.4f + 0.6f * progress); // 临近发射时颜色更亮
-
-			Main.EntitySpriteDraw(
-				Terraria.GameContent.TextureAssets.MagicPixel.Value,
-				Projectile.Center - Main.screenPosition,
-				new Rectangle(0, 0, 1, 1),
-				lineColor,
-				Projectile.rotation,
-				new Vector2(0f, 0.5f),
-				new Vector2(lineLength, 2f), // 极长的判定线
-				SpriteEffects.None,
-				0
-			);
-			return false;
-		}
-	}
 
 	public class DaggerPredictLine : ModProjectile
 	{
@@ -2140,7 +2196,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			}
 		}
 
-		public override bool PreDraw(ref Color lightColor) {
+		public override bool PreDraw(Player player, ref Color lightColor) {
 			Texture2D lineTex = TextureAssets.MagicPixel.Value;
 			float beamRotation = Projectile.ai[1];
 			Vector2 drawPos = Projectile.Center - Main.screenPosition;
@@ -2198,7 +2254,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			}
 		}
 
-		public override bool PreDraw(ref Color lightColor) {
+		public override bool PreDraw(Player player, ref Color lightColor) {
 			return CrownslayerTrailEffects.DrawGravityDaggerTrail(Projectile);
 		}
 

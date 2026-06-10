@@ -6,6 +6,7 @@ namespace ArknightsMod.Content.Items.Consumables.VanityBags
 {
 	public class MelanthaDefault : ArknightsVanityBag
 	{
+		public override int Rarity => 3;
 		protected override List<int> GetItems() {
 			return
 			[

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ArknightsMod.Content.Items.Armor.Vanity.Vanguard.Texas;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -15,6 +15,8 @@ namespace ArknightsMod.Content.Items.Consumables.VanityBags
 			Item.rare = ItemRarityID.Pink;
 		}
 
+		public override ObtainTypes ObtainType => ObtainTypes.Default;
+		public override int Rarity => 5;
 		protected override List<int> GetItems()
 		{
 			return
