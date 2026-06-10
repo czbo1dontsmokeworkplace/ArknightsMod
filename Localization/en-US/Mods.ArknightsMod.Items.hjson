@@ -2823,3 +2823,38 @@ DN_Weapon: {
 	DisplayName: D N_ Weapon
 	Tooltip: ""
 }
+
+RephasicEnantiomer: {
+	DisplayName: Rephasic Enantiomer
+	Tooltip: A product of cutting-edge research on luminescent materials.
+}
+
+FuscousFiber: {
+	DisplayName: Fuscous Fiber
+	Tooltip: A specialized fiber bundle, possessing high tensile strength and elastic modulus.
+}
+
+CyclicenePrefab: {
+	DisplayName: Cyclicene Prefab
+	Tooltip: A prefabricated industrial intermediate composed of multiple first-rate materials.
+}
+
+CoagulativeNodule: {
+	DisplayName: Coagulative Nodule
+	Tooltip: A lab-made synthetic particle, boasting powerful adsorption properties.
+}
+
+ChiralRefractor: {
+	DisplayName: Chiral Refractor
+	Tooltip: A specialized material that displays useful optical qualities and other physical traits.
+}
+
+AggregateCyclicene: {
+	DisplayName: Aggregate Cyclicene
+	Tooltip: A superlatively heat- and chemical-resistant industrial material.
+}
+
+SolidifiedFiberBoard: {
+	DisplayName: Solidified Fiber Board
+	Tooltip: A specialized fiber board, solidified in a mold.
+}

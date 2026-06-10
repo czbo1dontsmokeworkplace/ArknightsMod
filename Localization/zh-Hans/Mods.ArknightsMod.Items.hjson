@@ -3185,3 +3185,38 @@ DN_Weapon: {
 	// DisplayName: D N_ Weapon
 	// Tooltip: ""
 }
+
+RephasicEnantiomer: {
+	DisplayName: 重相位对映体
+	Tooltip: 光功能材料领域最尖端技术的产物
+}
+
+FuscousFiber: {
+	DisplayName: 褐素纤维
+	Tooltip: 具备高强度与高模量的特种纤维束
+}
+
+CyclicenePrefab: {
+	DisplayName: 环烃预制体
+	Tooltip: 由多种优良材料预加工而成的工业用材
+}
+
+CoagulativeNodule: {
+	DisplayName: 类凝结核
+	Tooltip: 在实验室中人工合成的微粒，拥有良好的吸附性能
+}
+
+ChiralRefractor: {
+	DisplayName: 手性屈光体
+	Tooltip: 具备良好光学性能和物理性能的特种光学材料
+}
+
+AggregateCyclicene: {
+	DisplayName: 环烃聚质
+	Tooltip: 一种耐热性、耐化学性俱优的工业材料
+}
+
+SolidifiedFiberBoard: {
+	DisplayName: 固化纤维板
+	Tooltip: 经过塑形固化处理的特种纤维板
+}
