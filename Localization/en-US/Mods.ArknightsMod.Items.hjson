@@ -3884,3 +3884,108 @@ VanillaHelmet: {
 	DisplayName: Vanilla Helmet
 	Tooltip: ""
 }
+
+StewardStaff: {
+	DisplayName: Steward Staff
+	Tooltip: ""
+}
+
+GitanoUmbrella: {
+	DisplayName: Gitano Umbrella
+	Tooltip: ""
+}
+
+GoldenglowWand: {
+	DisplayName: Goldenglow Wand
+	Tooltip: ""
+}
+
+CardiganShield: {
+	DisplayName: Cardigan Shield
+	Tooltip: ""
+}
+
+BeehunterBag: {
+	DisplayName: Beehunter Bag
+	Tooltip: ""
+}
+
+DobermannWhip: {
+	DisplayName: Dobermann Whip
+	Tooltip: ""
+}
+
+EstelleGlove: {
+	DisplayName: Estelle Glove
+	Tooltip: ""
+}
+
+FrostleafAxe: {
+	DisplayName: Frostleaf Axe
+	Tooltip: ""
+}
+
+HongdouLance: {
+	DisplayName: Hongdou Lance
+	Tooltip: ""
+}
+
+MataimaruGlaive: {
+	DisplayName: Mataimaru Glaive
+	Tooltip: ""
+}
+
+MelanthasSword: {
+	DisplayName: Melanthas Sword
+	Tooltip: ""
+}
+
+MousseGlove: {
+	DisplayName: Mousse Glove
+	Tooltip: ""
+}
+
+SkadisGreatsword: {
+	DisplayName: Skadis Greatsword
+	Tooltip: ""
+}
+
+JessicaGun: {
+	DisplayName: Jessica Gun
+	Tooltip: ""
+}
+
+MeteorBow: {
+	DisplayName: Meteor Bow
+	Tooltip: ""
+}
+
+GravelDualBlades: {
+	DisplayName: Gravel Dual Blades
+	Tooltip: ""
+}
+
+AnselClaw: {
+	DisplayName: Ansel Claw
+	Tooltip: ""
+}
+
+BeanstalkOrb: {
+	DisplayName: Beanstalk Orb
+	Tooltip: ""
+}
+
+EarthspiritWand: {
+	DisplayName: Earthspirit Wand
+	Tooltip: ""
+}
+
+PlumePike: {
+	DisplayName: Plume Pike
+	Tooltip: ""
+}
+
+VanillaAxe: {
+	DisplayName: Vanilla Axe
+	Tooltip: ""
+}

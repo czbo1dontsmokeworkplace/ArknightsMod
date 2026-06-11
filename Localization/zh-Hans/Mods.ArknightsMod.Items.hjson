@@ -1116,8 +1116,8 @@ OrchidUmbrellla: {
 }
 
 ShawAxe: {
-	DisplayName: 阿消的斧子
-	Tooltip: '''"根据消防守则，你这是违禁行为！"'''
+	DisplayName: 阿消的消防斧
+	Tooltip: 技能可将目标大力推开
 }
 
 ShawWaterCannon: {
@@ -4244,5 +4244,114 @@ VanillaGreaves: {
 
 VanillaHelmet: {
 	// DisplayName: Vanilla Helmet
+	// Tooltip: ""
+}
+
+StewardStaff: {
+	DisplayName: 史都华德的法杖
+	Tooltip:
+		'''
+		连续攻击蓄力，下一击射出强化追踪法弹
+		优先追踪附近防御力最高的敌人
+		'''
+}
+
+GitanoUmbrella: {
+	DisplayName: 梓兰的伞
+	Tooltip: 技能激活时攻击速度提升
+}
+
+GoldenglowWand: {
+	DisplayName: 澄闪的法杖
+	Tooltip: 精英2可解锁澄净闪耀
+}
+
+CardiganShield: {
+	DisplayName: 卡缇的盾牌
+	Tooltip: 技能激活时立即恢复最大生命40%
+}
+
+BeehunterBag: {
+	DisplayName: 蛇屠箱的背包
+	Tooltip: 技能2壳状防御：停止攻击，防御大幅提升并缓慢回血
+}
+
+DobermannWhip: {
+	DisplayName: 杜宾的鞭子
+	Tooltip: 技能1为强力击·B（攻击充能），技能2大幅提升攻击力
+}
+
+EstelleGlove: {
+	DisplayName: 艾丝黛尔的手套
+	Tooltip: 技能2舍身突击：攻击力大幅提升，但不再回血
+}
+
+FrostleafAxe: {
+	DisplayName: 霜叶的巨斧
+	Tooltip: 技能2可对命中目标持续施加减速
+}
+
+HongdouLance: {
+	DisplayName: 红豆的长枪
+	Tooltip: 技能2为槌音：攻击间隔增大但伤害大幅提升
+}
+
+MataimaruGlaive: {
+	DisplayName: 缠丸的薙刀
+	Tooltip: 技能2为恶鬼之力：防御归零，攻击力大幅提升
+}
+
+MelanthasSword: {
+	DisplayName: 玫兰莎的剑
+	// Tooltip: ""
+}
+
+MousseGlove: {
+	DisplayName: 慕斯的手套
+	Tooltip: 技能1挠伤（攻击充能），技能2炸毛：攻击防御各+75%
+}
+
+SkadisGreatsword: {
+	DisplayName: 斯卡蒂的巨剑
+	Tooltip: 精英2可解锁涌潮悲歌
+}
+
+JessicaGun: {
+	DisplayName: 杰西卡的枪
+	Tooltip: 技能1为强力击·B（攻击充能），技能2提供掩护烟幕
+}
+
+MeteorBow: {
+	DisplayName: 流星的弓
+	Tooltip: 技能1/2均可碎甲，削减目标防御力
+}
+
+GravelDualBlades: {
+	DisplayName: 砾的双刀
+	Tooltip: 技能开局即满，技能1防御大幅提升
+}
+
+AnselClaw: {
+	DisplayName: 暗索的勾爪
+	Tooltip: 技能可将敌人勾爪拉至身前造成高额伤害
+}
+
+BeanstalkOrb: {
+	DisplayName: 远山的水晶球
+	Tooltip: 技能2为命运：全屏范围攻击
+}
+
+EarthspiritWand: {
+	DisplayName: 地灵的法杖
+	Tooltip: 技能2流沙化：停止攻击，周期性对附近敌人施加减速
+}
+
+PlumePike: {
+	DisplayName: 翎羽的戈
+	Tooltip: 技能激活时攻击速度大幅提升
+}
+
+VanillaAxe: {
+	DisplayName: 香草的巨斧
 	// Tooltip: ""
 }
