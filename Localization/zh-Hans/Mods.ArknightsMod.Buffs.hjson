@@ -3,6 +3,11 @@ DeepcolorMinionBuff: {
 	Description: 触手正在为你作战
 }
 
+CameraTruckBuff: {
+	DisplayName: 移动摄影车
+	Description: 已部署移动摄影车
+}
+
 AcidOgSlugDebuff: {
 	DisplayName: 分泌物腐蚀
 	Description: 击中目标后使其防御力减少2

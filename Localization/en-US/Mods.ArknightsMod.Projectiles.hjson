@@ -7,6 +7,10 @@ Blizzard.DisplayName: Blizzard
 BlizzardStorm.DisplayName: Blizzard Storm
 BlizzardStormStarter.DisplayName: Blizzard Storm Starter
 DeepcolorMinion.DisplayName: Tentacle
+CameraTruck.DisplayName: Mobile Camera Truck
+SceneCameraShot.DisplayName: Scene Camera Shot
+SceneCameraBullet.DisplayName: Scene Camera Bullet
+SceneCameraHitBurst.DisplayName: Scene Camera Hit Burst
 DeepcolorSketchLogoAttack.DisplayName: Deepcolor Sketch Logo Attack
 DeepcolorSketchLogoStrike.DisplayName: Deepcolor Sketch Logo Strike
 IceAltarShockwave.DisplayName: Ice Altar Shockwave

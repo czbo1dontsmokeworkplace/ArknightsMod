@@ -3,6 +3,11 @@ DeepcolorMinionBuff: {
 	Description: Tentacles are fighting for you.
 }
 
+CameraTruckBuff: {
+	DisplayName: Mobile Camera Truck
+	Description: A Mobile Camera Truck is deployed.
+}
+
 AcidOgSlugDebuff: {
 	DisplayName: Acid Og Slug Debuff
 	Description: Mods.ArknightsMod.Buffs.AcidOgSlugDebuff.Description

@@ -2875,6 +2875,18 @@ DeepcolorSketch: {
 	SkillActivateKey: "[c/AAA8AA:Down (S) + Right Click] to activate skill"
 }
 
+SceneCamera: {
+	DisplayName: Scene's Camera
+	Tooltip:
+		'''
+		Left click to fire a magic shutter bullet at the cursor.
+		Right click to deploy a Mobile Camera Truck on the ground below the cursor (5s cooldown).
+		'Smile for the camera.'
+		'''
+	DeployInfo: Camera Trucks: {0}/{1} deployed (can deploy {2})
+	DeploySlotNote: Other minions are using {0} minion slot(s)
+}
+
 Elevator: {
 	DisplayName: Elevator
 	Tooltip: ""

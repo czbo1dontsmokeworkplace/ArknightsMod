@@ -7,6 +7,10 @@
 // BlizzardStorm.DisplayName: Blizzard Storm
 // BlizzardStormStarter.DisplayName: Blizzard Storm Starter
 DeepcolorMinion.DisplayName: 触手
+CameraTruck.DisplayName: 移动摄影车
+SceneCameraShot.DisplayName: 稀音的摄像机快门
+SceneCameraBullet.DisplayName: 稀音的摄像机弹丸
+SceneCameraHitBurst.DisplayName: 稀音的摄像机命中特效
 // DeepcolorSketchLogoAttack.DisplayName: Deepcolor Sketch Logo Attack
 // DeepcolorSketchLogoStrike.DisplayName: Deepcolor Sketch Logo Strike
 IceAltarShockwave.DisplayName: 冰晶祭坛冲击波

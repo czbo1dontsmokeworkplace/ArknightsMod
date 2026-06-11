@@ -3237,6 +3237,18 @@ DeepcolorSketch: {
 	SkillActivateKey: "[c/AAA8AA:下（S）+右键]开启技能"
 }
 
+SceneCamera: {
+	DisplayName: 稀音的摄像机
+	Tooltip:
+		'''
+		左键朝光标射出魔法快门弹丸（消耗魔法）。
+		右键在鼠标位置正下方的地面上部署「移动摄影车」（5 秒冷却）。
+		'对着镜头笑一个。'
+		'''
+	DeployInfo: 摄影车：已部署 {0}/{1}（可再部署 {2}）
+	DeploySlotNote: 其他召唤物占用了 {0} 个仆从位
+}
+
 Elevator: {
 	// DisplayName: Elevator
 	// Tooltip: ""
