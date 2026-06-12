@@ -1,3 +1,9 @@
+# Furniture
+AutoDoorItem: {
+	DisplayName: Automatic Door
+	Tooltip: Opens automatically when approached, closes when you leave
+}
+
 # Weapons
 YatoKatana: {
 	DisplayName: Yato's Katana

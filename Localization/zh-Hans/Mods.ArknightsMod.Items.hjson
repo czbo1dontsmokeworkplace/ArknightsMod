@@ -1,3 +1,9 @@
+# Furniture
+AutoDoorItem: {
+	DisplayName: 自动门
+	Tooltip: 靠近时自动开启，离开后自动关闭
+}
+
 # Weapons
 YatoKatana: {
 	DisplayName: 夜刀的武士刀
