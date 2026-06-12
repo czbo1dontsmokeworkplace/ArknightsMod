@@ -657,3 +657,26 @@ ShawAxe: {
 			'''
 	}
 }
+
+SceneCamera: {
+	1: {
+		Label: Protective Camouflage
+		Desc:
+			'''
+			All Camera Trucks' ATK [c/3791db:+60%]
+			Gain Camouflage: immune to all damage from the nearest single enemy, until a second enemy attacks; re-targets the nearest attacker if the immune one leaves or dies (per truck)
+			Infinite duration
+			'''
+	}
+
+	2: {
+		Label: Panorama Overload Camera
+		Desc:
+			'''
+			Immediately deploy 1 Camera Truck (does not occupy a minion slot; cap stays 5)
+			All trucks expand recon: enemies within the ring take [c/3791db:+150%] damage from you
+			All Camera Trucks' ATK and DEF [c/3791db:+130%]
+			Lasts 20s; afterwards all trucks are stunned for 5s
+			'''
+	}
+}

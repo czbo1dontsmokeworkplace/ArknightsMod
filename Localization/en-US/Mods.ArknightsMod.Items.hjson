@@ -2885,10 +2885,11 @@ SceneCamera: {
 	DisplayName: Scene's Camera
 	Tooltip:
 		'''
-		Left click to fire a magic shutter bullet at the cursor.
-		Right click to deploy a Mobile Camera Truck on the ground below the cursor (5s cooldown).
+		Left click: cast magic attack.
+		Right click: summon a Mobile Camera Truck.
 		'Smile for the camera.'
 		'''
+	SkillActivateKey: "[c/AAA8AA:Down (S) + Right Click] to activate the selected skill"
 	DeployInfo: Camera Trucks: {0}/{1} deployed (can deploy {2})
 	DeploySlotNote: Other minions are using {0} minion slot(s)
 }

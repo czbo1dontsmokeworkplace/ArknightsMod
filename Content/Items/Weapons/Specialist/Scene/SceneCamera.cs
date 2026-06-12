@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using ArknightsMod.Content.Buffs.Specialist.Scene;
+using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.Projectiles.Specialist.Scene;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -12,10 +13,13 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.Items.Weapons.Specialist.Scene
 {
 	// 稀音的摄像机：
-	// 左键朝光标射出魔法快门弹丸（消耗魔法值），伴随圆环快门特效；
-	// 右键在鼠标位置正下方的地面上部署「移动摄影车」召唤物（5 秒冷却、最多 5 辆、占用仆从位）。
-	public class SceneCamera : ModItem
+	// 左键释放魔法攻击（消耗魔法）；右键召唤「移动摄影车」（5 秒冷却、最多 5 辆、占用仆从位）。
+	// 接入技力/技能系统：技能栏可选 技能一/二，用 Down(S)+右键 释放选中技能。
+	public class SceneCamera : UpgradeWeaponBase
 	{
+		// 摄影车召唤伤害基数（召唤系加成基于此）。
+		public const int TruckBaseDamage = 24;
+
 		public override void SetDefaults() {
 			Item.width = 34;
 			Item.height = 26;
@@ -37,12 +41,21 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.Scene
 			Item.buffType = ModContent.BuffType<CameraTruckBuff>();
 		}
 
-		// 左键：魔法快门弹丸；右键：部署移动摄影车。
+		// 升级预览伤害用固定值，避免 weaponData 未初始化。
+		protected override int GetDamage(int level) => Item.damage;
+
+		public override string GetSkillActivateKeyHint()
+			=> Language.GetTextValue("Mods.ArknightsMod.Items.SceneCamera.SkillActivateKey");
+
+		// 左键：魔法攻击；右键：召唤摄影车（按住 Down 时让位给技能释放）。
 		public override bool AltFunctionUse(Player player) => true;
 
 		public override bool CanUseItem(Player player) {
-			if (player.altFunctionUse == 2)
-				return player.GetModPlayer<SceneCameraPlayer>().CanRedeploy; // 右键受 5 秒冷却限制
+			if (player.altFunctionUse == 2) {
+				if (player.controlDown)
+					return false; // Down(S)+右键 用于释放技能，不召唤
+				return player.GetModPlayer<SceneCameraPlayer>().CanRedeploy; // 右键受 5 秒冷却
+			}
 			return true;
 		}
 
@@ -62,15 +75,16 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.Scene
 			// 左键：朝光标方向开火。
 			Vector2 dir = (Main.MouseWorld - player.Center).SafeNormalize(Vector2.UnitX);
 
-			// 圆环快门特效（纯视觉），出现在身前、离玩家略近一点。
+			// 圆环快门特效（纯视觉）。
 			const float ringForwardOffset = 22f;
 			Vector2 ringCenter = player.Center + dir * ringForwardOffset;
 			Projectile.NewProjectile(source, ringCenter, dir * 4f,
 				ModContent.ProjectileType<SceneCameraShot>(), 0, 0f, player.whoAmI);
 
-			// 抛物线魔法弹丸（承担伤害），从枪口射出后受重力下坠。
+			// 抛物线魔法弹丸：求解初速度，使其在重力下恰好命中光标位置。
 			Vector2 muzzle = player.Center + dir * 16f;
-			Projectile.NewProjectile(source, muzzle, dir * Item.shootSpeed,
+			Vector2 launchVel = SceneCameraBullet.ComputeLaunchVelocity(muzzle, Main.MouseWorld);
+			Projectile.NewProjectile(source, muzzle, launchVel,
 				ModContent.ProjectileType<SceneCameraBullet>(), damage, knockback, player.whoAmI);
 			return false;
 		}
@@ -83,25 +97,31 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.Scene
 			if (current >= effectiveMax)
 				CameraTruck.TryRemoveOldestForPlayer(player); // 满员：消除最早的一辆，再在新位置部署
 
-			player.AddBuff(Item.buffType, 2);
-			int summonDamage = (int)Math.Round(player.GetDamage(DamageClass.Summon).ApplyTo(Item.damage));
-			Vector2 spawnPos = CameraTruck.FindGroundSpawnPosition(Main.MouseWorld, CameraTruck.Width, CameraTruck.Height);
-			Projectile.NewProjectile(source, spawnPos, Vector2.Zero,
-				ModContent.ProjectileType<CameraTruck>(), summonDamage, knockback, player.whoAmI);
+			SummonTruck(player, source, free: false);
 			player.GetModPlayer<SceneCameraPlayer>().StartRedeployCooldown();
 			return false;
 		}
 
-		// 统计当前可部署情况：受 5 辆硬上限与剩余仆从位共同约束。
+		// 在鼠标正下方地面召唤一辆摄影车。free=true 时不占仆从位（技能二额外召唤）。
+		public static int SummonTruck(Player player, IEntitySource source, bool free) {
+			player.AddBuff(ModContent.BuffType<CameraTruckBuff>(), 2);
+			int summonDamage = (int)Math.Round(player.GetDamage(DamageClass.Summon).ApplyTo(TruckBaseDamage));
+			Vector2 spawnPos = CameraTruck.FindGroundSpawnPosition(Main.MouseWorld, CameraTruck.Width, CameraTruck.Height);
+			return Projectile.NewProjectile(source, spawnPos, Vector2.Zero,
+				ModContent.ProjectileType<CameraTruck>(), summonDamage, 0f, player.whoAmI, free ? 1f : 0f);
+		}
+
+		// 当前可部署情况：受 5 辆硬上限与剩余仆从位共同约束（免位车计入数量但不占仆从位）。
 		private static void GetDeployStats(Player player, out int current, out int effectiveMax, out int remaining, out float otherSlots) {
-			current = CameraTruck.CountActiveForPlayer(player);
+			CameraTruck.CountForPlayer(player, out int total, out int slotUsing);
+			current = total;
 			float usedSlots = player.slotsMinions;
 			int maxSlots = player.maxMinions;
-			otherSlots = Math.Max(0f, usedSlots - current); // 非摄影车占用的仆从位
+			otherSlots = Math.Max(0f, usedSlots - slotUsing); // 非摄影车占用的仆从位
 			float freeSlots = Math.Max(0f, maxSlots - usedSlots);
-			int slotCapForTrucks = current + (int)Math.Floor(freeSlots);
+			int slotCapForTrucks = total + (int)Math.Floor(freeSlots);
 			effectiveMax = Math.Clamp(Math.Min(CameraTruck.MaxTrucks, slotCapForTrucks), 0, CameraTruck.MaxTrucks);
-			remaining = Math.Max(0, effectiveMax - current);
+			remaining = Math.Max(0, effectiveMax - total);
 		}
 
 		public override void ModifyTooltips(List<TooltipLine> tooltips) {

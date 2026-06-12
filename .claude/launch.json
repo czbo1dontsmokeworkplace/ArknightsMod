@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "wiki",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8765", "--directory", "C:/Users/Cherry/Downloads/泰拉方舟游戏进度表/src/main/resources/static"],
+      "port": 8765
+    }
+  ]
+}

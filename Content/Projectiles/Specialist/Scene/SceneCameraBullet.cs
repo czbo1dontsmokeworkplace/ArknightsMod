@@ -17,7 +17,12 @@ namespace ArknightsMod.Content.Projectiles.Specialist.Scene
 		private const float BallRadius = 4.5f;
 		private const float TrailHalfWidth = 7f;        // 拖尾头部半宽（已加宽）
 		private const float Gravity = 0.18f;
-		private const float MaxFallSpeed = 13f;
+		private const float MaxFallSpeed = 24f;
+
+		// 弹道求解参数：按到目标距离推飞行时间，保证落点正好在光标。
+		private const float LaunchSpeed = 13f;
+		private const float MinFlightTime = 12f;
+		private const float MaxFlightTime = 55f;
 
 		private static readonly Color BallCenter = new(240, 255, 215);  // 接近白色的黄绿
 		private static readonly Color BallEdge = new(190, 255, 70);     // 黄绿
@@ -50,6 +55,17 @@ namespace ArknightsMod.Content.Projectiles.Specialist.Scene
 			if (Projectile.velocity.Y > MaxFallSpeed)
 				Projectile.velocity.Y = MaxFallSpeed;
 			Projectile.rotation = Projectile.velocity.ToRotation();
+		}
+
+		// 计算从 start 发射、在重力作用下恰好经过 target 的初速度（固定飞行时间法）。
+		// 保证"光标点哪就打到哪"，同时保留抛物线下坠手感。
+		public static Vector2 ComputeLaunchVelocity(Vector2 start, Vector2 target) {
+			Vector2 to = target - start;
+			float dist = to.Length();
+			float t = MathHelper.Clamp(dist / LaunchSpeed, MinFlightTime, MaxFlightTime);
+			float vx = to.X / t;
+			float vy = to.Y / t - 0.5f * Gravity * t;
+			return new Vector2(vx, vy);
 		}
 
 		public override bool OnTileCollide(Vector2 oldVelocity) => true; // 撞墙即破，由 OnKill 触发命中特效

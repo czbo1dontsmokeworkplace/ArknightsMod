@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using ArknightsMod.Content.Buffs.Specialist.Scene;
+using ArknightsMod.Content.Items.Weapons.Specialist.Scene;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -40,8 +42,9 @@ namespace ArknightsMod.Content.Projectiles.Specialist.Scene
 		private const float BodyBobAmplitude = 2f;
 		private const float HeadBodyMaxGap = 0.5f;
 
-		// 攻击（小跳）
-		private const float AttackRange = 150f;
+		// 攻击（小跳）：仅当敌人在「左右约一个车身」且大致同高时才出击
+		private const float AttackReachX = 48f;   // 横向攻击距离 ≈ 一个车身
+		private const float AttackBandY = 40f;     // 纵向容差（敌人需与小车大致同高）
 		private const int HopDuration = 22;
 		private const int HopCooldownMax = 38;
 		private const float HopForward = 26f;
@@ -57,11 +60,18 @@ namespace ArknightsMod.Content.Projectiles.Specialist.Scene
 		// 受伤
 		private const int ReceiveDamageCooldownMax = 30;
 
+		// 迷彩 / 眩晕 / 侦查圈
+		private const float CamouflageForgetRange = 320f; // 免疫目标超出此距离则重新选取
+		private const float StunHeadAngle = 0.6f;         // 眩晕时头部斜向下角度
+		private const int ReconRingSegments = 60;
+		private const float ReconRingBandWidth = 10f;     // 侦查圈光带宽度
+
 		private ref float AnimTimer => ref Projectile.ai[0];
 		private ref float HopTimer => ref Projectile.ai[1];
 		private ref float CooldownTimer => ref Projectile.ai[2];
 
 		private int hopDir = 1;
+		private int facingDir = 1;   // 朝向（-1=左，1=右），用于贴图翻转与转向
 		private float hopStartCenterX;
 		private float hopGroundBottomY;
 		private float headJoltOffset;
@@ -74,6 +84,11 @@ namespace ArknightsMod.Content.Projectiles.Specialist.Scene
 		internal int spawnOrder;
 		private int receiveCooldown;
 		private bool lifeInitialized;
+
+		// 技能相关
+		internal bool freeSummon;     // 技能二额外召唤，不占仆从位
+		private int immuneNpcId = -1; // 迷彩免疫目标
+		internal int stunTimer;       // 眩晕剩余刻
 
 		private bool IsHopping => HopTimer > 0f;
 
@@ -102,6 +117,10 @@ namespace ArknightsMod.Content.Projectiles.Specialist.Scene
 		}
 
 		public override void OnSpawn(IEntitySource source) {
+			freeSummon = Projectile.ai[0] != 0f; // SummonTruck 用 ai0 传入「免位」标记
+			if (freeSummon)
+				Projectile.minionSlots = 0f;     // 技能二额外召唤：不占仆从位
+
 			Projectile.velocity = Vector2.Zero;
 			SnapToGround();
 			AnimTimer = Main.rand.Next(360);
@@ -121,8 +140,15 @@ namespace ArknightsMod.Content.Projectiles.Specialist.Scene
 
 		public override bool? CanCutTiles() => false;
 
-		// 仅小跳扑击期间造成接触伤害。
-		public override bool MinionContactDamage() => IsHopping;
+		// 仅小跳扑击期间、且未眩晕时造成接触伤害。
+		public override bool MinionContactDamage() => IsHopping && stunTimer <= 0;
+
+		// 技能攻击加成。
+		public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) {
+			float m = SceneCameraSkills.AttackMult(Main.player[Projectile.owner]);
+			if (m != 1f)
+				modifiers.SourceDamage *= m;
+		}
 
 		public override void AI() {
 			Player owner = Main.player[Projectile.owner];
@@ -143,14 +169,21 @@ namespace ArknightsMod.Content.Projectiles.Specialist.Scene
 
 			UpdateHeadJoltSpring();
 
-			if (IsHopping) {
+			if (stunTimer > 0) {
+				stunTimer--;       // 眩晕：原地待机、不攻击
+				SnapToGround();
+			}
+			else if (IsHopping) {
 				UpdateHop();
 			}
 			else {
 				SnapToGround();
+				bool hasTarget = TryFindTarget(owner, out int dir);
+				if (hasTarget)
+					facingDir = dir; // 先转向面对目标（即便仍在冷却中）
 				if (CooldownTimer > 0f)
 					CooldownTimer--;
-				else if (TryFindTarget(owner, out int dir))
+				else if (hasTarget)
 					StartHop(dir);
 			}
 
@@ -199,27 +232,33 @@ namespace ArknightsMod.Content.Projectiles.Specialist.Scene
 		}
 
 		private bool TryFindTarget(Player owner, out int dir) {
-			dir = 1;
+			dir = facingDir;
 			Vector2 center = Projectile.Center;
-			float rangeSq = AttackRange * AttackRange;
 			NPC best = null;
-			float bestDistSq = rangeSq;
+			float bestDx = float.MaxValue;
+
+			bool InRange(NPC npc) {
+				if (npc == null || !npc.active || !npc.CanBeChasedBy(Projectile))
+					return false;
+				float dx = Math.Abs(npc.Center.X - center.X);
+				float dy = Math.Abs(npc.Center.Y - center.Y);
+				return dx <= AttackReachX && dy <= AttackBandY;
+			}
 
 			if (owner.HasMinionAttackTargetNPC) {
 				NPC marked = Main.npc[owner.MinionAttackTargetNPC];
-				if (marked.active && marked.CanBeChasedBy(Projectile)
-					&& Vector2.DistanceSquared(marked.Center, center) <= rangeSq)
+				if (InRange(marked))
 					best = marked;
 			}
 
 			if (best == null) {
 				for (int i = 0; i < Main.maxNPCs; i++) {
 					NPC npc = Main.npc[i];
-					if (!npc.active || !npc.CanBeChasedBy(Projectile))
+					if (!InRange(npc))
 						continue;
-					float dSq = Vector2.DistanceSquared(npc.Center, center);
-					if (dSq < bestDistSq) {
-						bestDistSq = dSq;
+					float dx = Math.Abs(npc.Center.X - center.X);
+					if (dx < bestDx) {
+						bestDx = dx;
 						best = npc;
 					}
 				}
@@ -242,14 +281,34 @@ namespace ArknightsMod.Content.Projectiles.Specialist.Scene
 				return false;
 			}
 
+			// 迷彩：技能一生效且未眩晕时，免疫单一「最近」敌人的接触伤害。
+			bool camo = stunTimer <= 0 && SceneCameraSkills.Skill1Active(owner);
+			if (camo && immuneNpcId >= 0) {
+				NPC im = Main.npc[immuneNpcId];
+				if (!im.active || im.friendly || Vector2.Distance(im.Center, Projectile.Center) > CamouflageForgetRange)
+					immuneNpcId = -1; // 目标失效/远离 → 重新选取
+			}
+			if (!camo)
+				immuneNpcId = -1;
+
 			foreach (NPC npc in Main.ActiveNPCs) {
 				if (!npc.active || npc.friendly || npc.damage <= 0 || npc.dontTakeDamage)
 					continue;
 				if (!Projectile.Hitbox.Intersects(npc.Hitbox))
 					continue;
-				return ApplyDamage(npc.damage);
+
+				if (camo) {
+					if (immuneNpcId < 0) {        // 首个来袭敌人成为免疫目标
+						immuneNpcId = npc.whoAmI;
+						continue;
+					}
+					if (npc.whoAmI == immuneNpcId) // 免疫目标的伤害被免除
+						continue;
+				}
+				return ApplyDamage(npc.damage);    // 其他（第二个）敌人正常造成伤害
 			}
 
+			// 敌对弹幕（迷彩不免疫弹幕）
 			foreach (Projectile other in Main.ActiveProjectiles) {
 				if (!other.active || !other.hostile || other.owner == Projectile.owner)
 					continue;
@@ -262,7 +321,8 @@ namespace ArknightsMod.Content.Projectiles.Specialist.Scene
 		}
 
 		private bool ApplyDamage(int rawDamage) {
-			int dealt = Math.Max(1, rawDamage - defense);
+			int eff = (int)(defense * SceneCameraSkills.DefenseMult(Main.player[Projectile.owner]));
+			int dealt = Math.Max(1, rawDamage - eff);
 			life -= dealt;
 			receiveCooldown = ReceiveDamageCooldownMax;
 			Projectile.netUpdate = true;
@@ -298,28 +358,60 @@ namespace ArknightsMod.Content.Projectiles.Specialist.Scene
 		}
 
 		public override bool PreDraw(ref Color lightColor) {
+			Player owner = Main.player[Projectile.owner];
+			bool stunned = stunTimer > 0;
+
+			// 侦查圈光带（技能二、未眩晕时）：圆心=车中心，绿色，不透明度 ≤40%。
+			if (!stunned && SceneCameraSkills.Skill2Active(owner))
+				DrawReconRing();
+
 			Texture2D bodyTex = TextureAssets.Projectile[Type].Value;
 			Texture2D headTex = ModContent.Request<Texture2D>(
 				"ArknightsMod/Content/Projectiles/Specialist/Scene/CameraTruck_Head").Value;
 
-			float bodyBob = IsHopping ? 0f : (1f - (float)Math.Cos(AnimTimer * BodyBobSpeed)) * 0.5f * BodyBobAmplitude;
-			float lean = IsHopping ? LeanMax * (float)Math.Sin(MathHelper.Pi * MathHelper.Clamp(HopTimer / HopDuration, 0f, 1f)) * hopDir : 0f;
+			float bodyBob = (IsHopping || stunned) ? 0f : (1f - (float)Math.Cos(AnimTimer * BodyBobSpeed)) * 0.5f * BodyBobAmplitude;
+			float lean = (!stunned && IsHopping) ? LeanMax * (float)Math.Sin(MathHelper.Pi * MathHelper.Clamp(HopTimer / HopDuration, 0f, 1f)) * hopDir : 0f;
 			float idleSep = ((float)Math.Sin(AnimTimer * HeadBobSpeed) * 0.5f + 0.5f) * HeadBodyMaxGap;
+			// 眩晕：头部固定斜向下看。
+			float headLean = stunned ? StunHeadAngle * facingDir : lean;
 
 			Vector2 footScreen = new Vector2(Projectile.Center.X, Projectile.Bottom.Y) - Main.screenPosition
 				+ new Vector2(0f, Projectile.gfxOffY);
 
+			// 朝向翻转：面向左侧目标时水平翻转贴图，实现"转向"。
+			SpriteEffects fx = facingDir < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+
 			Vector2 bodyOrigin = new Vector2(bodyTex.Width / 2f, bodyTex.Height);
 			Vector2 pivot = footScreen + new Vector2(0f, bodyBob);
-			Main.EntitySpriteDraw(bodyTex, pivot, null, lightColor, lean, bodyOrigin, DrawScale, SpriteEffects.None, 0);
+			Main.EntitySpriteDraw(bodyTex, pivot, null, lightColor, lean, bodyOrigin, DrawScale, fx, 0);
 
 			float effectiveGap = Math.Min(idleSep - headJoltOffset, HeadBodyMaxGap);
 			Vector2 headLocalUp = new Vector2(0f, -(bodyTex.Height * DrawScale) - effectiveGap);
 			Vector2 headPos = pivot + headLocalUp.RotatedBy(lean);
 			Vector2 headOrigin = new Vector2(headTex.Width / 2f, headTex.Height);
-			Main.EntitySpriteDraw(headTex, headPos, null, lightColor, lean, headOrigin, DrawScale, SpriteEffects.None, 0);
+			Main.EntitySpriteDraw(headTex, headPos, null, lightColor, headLean, headOrigin, DrawScale, fx, 0);
 
 			return false;
+		}
+
+		// 侦查圈：绿色环形光带（半径 = SceneCameraSkills.ReconRadiusPx）。
+		private void DrawReconRing() {
+			float rOut = SceneCameraSkills.ReconRadiusPx;
+			float rIn = Math.Max(2f, rOut - ReconRingBandWidth);
+			Vector2 c = Projectile.Center;
+			Color col = new Color(60, 220, 90) * 0.35f; // ≤40% 不透明度
+
+			var verts = new List<VertexPositionColor>(ReconRingSegments * 6);
+			for (int i = 0; i < ReconRingSegments; i++) {
+				float a0 = MathHelper.TwoPi * i / ReconRingSegments;
+				float a1 = MathHelper.TwoPi * (i + 1) / ReconRingSegments;
+				Vector2 d0 = a0.ToRotationVector2(), d1 = a1.ToRotationVector2();
+				Vector2 o0 = c + d0 * rOut, o1 = c + d1 * rOut;
+				Vector2 i0 = c + d0 * rIn, i1 = c + d1 * rIn;
+				verts.Add(ScenePrimitiveRenderer.Vert(i0, col)); verts.Add(ScenePrimitiveRenderer.Vert(o0, col)); verts.Add(ScenePrimitiveRenderer.Vert(o1, col));
+				verts.Add(ScenePrimitiveRenderer.Vert(i0, col)); verts.Add(ScenePrimitiveRenderer.Vert(o1, col)); verts.Add(ScenePrimitiveRenderer.Vert(i1, col));
+			}
+			ScenePrimitiveRenderer.DrawTriangles(verts);
 		}
 
 		public override void PostDraw(Color lightColor) {
@@ -347,6 +439,8 @@ namespace ArknightsMod.Content.Projectiles.Specialist.Scene
 			writer.Write(lifeMax);
 			writer.Write(defense);
 			writer.Write(spawnOrder);
+			writer.Write(freeSummon);
+			writer.Write(stunTimer);
 		}
 
 		public override void ReceiveExtraAI(BinaryReader reader) {
@@ -354,6 +448,8 @@ namespace ArknightsMod.Content.Projectiles.Specialist.Scene
 			lifeMax = reader.ReadInt32();
 			defense = reader.ReadInt32();
 			spawnOrder = reader.ReadInt32();
+			freeSummon = reader.ReadBoolean();
+			stunTimer = reader.ReadInt32();
 			lifeInitialized = true;
 		}
 
@@ -368,6 +464,40 @@ namespace ArknightsMod.Content.Projectiles.Specialist.Scene
 					count++;
 			}
 			return count;
+		}
+
+		// total = 全部摄影车；slotUsing = 占用仆从位的（非免位）摄影车。
+		public static void CountForPlayer(Player player, out int total, out int slotUsing) {
+			int type = ModContent.ProjectileType<CameraTruck>();
+			total = 0;
+			slotUsing = 0;
+			for (int i = 0; i < Main.maxProjectiles; i++) {
+				Projectile p = Main.projectile[i];
+				if (!p.active || p.owner != player.whoAmI || p.type != type)
+					continue;
+				total++;
+				if (p.ModProjectile is CameraTruck t && !t.freeSummon)
+					slotUsing++;
+			}
+		}
+
+		// 技能二结束：令该玩家所有摄影车眩晕。
+		public static void StunAllForPlayer(Player player, int ticks) {
+			int type = ModContent.ProjectileType<CameraTruck>();
+			for (int i = 0; i < Main.maxProjectiles; i++) {
+				Projectile p = Main.projectile[i];
+				if (!p.active || p.owner != player.whoAmI || p.type != type)
+					continue;
+				if (p.ModProjectile is not CameraTruck t)
+					continue;
+				if (t.HopTimer > 0f) {
+					p.position.X = t.hopStartCenterX - p.width / 2f; // 取消小跳，回到起跳点
+					t.HopTimer = 0f;
+				}
+				t.stunTimer = ticks;
+				t.SnapToGround();
+				p.netUpdate = true;
+			}
 		}
 
 		// 满员时移除最早召唤的一辆。
