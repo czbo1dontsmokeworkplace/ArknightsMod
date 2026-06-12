@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Common.UI.BattleRecord;
+using ArknightsMod.Common.UI.BattleRecord;
 using ArknightsMod.Common.UI.BattleRecord.Calculators;
 using ArknightsMod.Content.Items.Weapons.Defender.Beagle;
 using ArknightsMod.Systems.Gameplay.Skill;
@@ -131,6 +131,8 @@ namespace ArknightsMod.Content.Items.Weapons
 					}
 				}
 			}
+			if (skillDatas.TryGetValue("SceneCamera", out var sceneCameraSkills) && sceneCameraSkills[0] != null)
+				sceneCameraSkills[0].IsPermanent = true;
 		}
 		public SkillData GetSkillData(int index) {
 			return GetSkillDataForItem(Name, index);

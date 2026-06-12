@@ -38,21 +38,48 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.Scene
 			if (Player.dead) {
 				Skill1Active = false;
 				Skill2Timer = 0;
+				if (Player.whoAmI == Main.myPlayer) {
+					var deadWp = Player.GetModPlayer<WeaponPlayer>();
+					deadWp.SkillActive = false; // 死亡时清空技力条持续状态
+					deadWp.SkillTimer = 0;
+				}
 				return;
 			}
 
 			bool holding = Player.whoAmI == Main.myPlayer && Player.HeldItem.ModItem is SceneCamera;
 
-			// 技能二限时：仅手持时推进；归 0 当帧令全部摄影车眩晕。
-			if (Skill2Timer > 0 && holding) {
-				Skill2Timer--;
-				if (Skill2Timer == 0)
-					CameraTruck.StunAllForPlayer(Player, Skill2StunTicks);
+			if (Skill2Timer > 0) {
+				var wp = Player.GetModPlayer<WeaponPlayer>();
+				if (Player.whoAmI == Main.myPlayer) {
+					if (holding && wp.Skill == 1) {
+						wp.SkillActive = true;
+						wp.SkillTimer = Skill2DurationTicks - Skill2Timer; // 同步技力条倒退
+					}
+					else if (!Skill1Active) {
+						wp.SkillActive = false; // 非二技能槽时清除遗留状态
+						wp.SkillTimer = 0;
+					}
+				}
+
+				if (holding)
+					Skill2Timer--; // 仅手持时推进
+
+				if (Skill2Timer == 0) {
+					if (Player.whoAmI == Main.myPlayer && !Skill1Active) {
+						wp.SkillActive = false; // 结束时重置技力条
+						wp.SkillTimer = 0;
+					}
+					if (holding)
+						CameraTruck.StunAllForPlayer(Player, Skill2StunTicks);
+				}
 			}
 
 			// 输入：手持 + Down(S) 按住 + 右键刚按下 → 释放选中技能
 			if (holding && !BlocksInput() && Player.controlDown && PlayerInput.Triggers.JustPressed.MouseRight)
 				TryActivateSelectedSkill();
+
+			if (holding && Skill1Active)
+				SceneCameraSkills.MaintainSkill1ChargeState(Player); // 一技能期间保持满层显示
 		}
 
 		private bool BlocksInput() =>
@@ -68,14 +95,19 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.Scene
 					if (Skill1Active)
 						return;
 					Skill1Active = true;
-					wp.DelStockCount();
+					wp.SkillActive = true; // 开启持续状态
+					wp.SkillTimer = 0;
+					SceneCameraSkills.MaintainSkill1ChargeState(Player);
 					SoundEngine.PlaySound(SkillActiveSound, Player.Center);
 					break;
 				case 1:
-					if (Skill2Timer > 0)
+					if (Skill2Timer > 0 || wp.SkillActive) // 持续中不可重复释放
 						return;
-					Skill2Timer = Skill2DurationTicks;
+					wp.SkillActive = true; // 开启持续状态
+					wp.SkillTimer = 0;
+					wp.UpdateActiveSkill2(); // 由 SceneCameraPlayer 驱动计时
 					wp.DelStockCount();
+					Skill2Timer = Skill2DurationTicks; // 启动 20 秒持续
 					// 立即额外召唤一辆「免位」摄影车（不占仆从位，总数仍受 5 上限约束）
 					if (CameraTruck.CountActiveForPlayer(Player) < CameraTruck.MaxTrucks)
 						SceneCamera.SummonTruck(Player, Player.GetSource_Misc("SceneCameraSkill2"), free: true);

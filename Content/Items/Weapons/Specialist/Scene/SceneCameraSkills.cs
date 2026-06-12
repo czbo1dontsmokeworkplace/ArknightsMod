@@ -1,5 +1,6 @@
 using ArknightsMod.Content.Projectiles.Specialist.Scene;
 using ArknightsMod.Players;
+using ArknightsMod.Systems.Gameplay.Skill;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
@@ -23,6 +24,32 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.Scene
 
 		public static bool Skill2Active(Player player)
 			=> IsHolding(player) && player.GetModPlayer<SceneCameraPlayer>().Skill2Timer > 0;
+
+		public static bool BlocksSkillCharge(Player player) {
+			if (!IsHolding(player))
+				return false;
+			var scene = player.GetModPlayer<SceneCameraPlayer>();
+			var wp = player.GetModPlayer<WeaponPlayer>();
+			if (wp.Skill == 0 && scene.Skill1Active)
+				return true; // 一技能 latch
+			if (wp.Skill == 1 && scene.Skill2Timer > 0)
+				return true; // 二技能倒计时
+			return false;
+		}
+
+		public static bool BlocksSkill1Charge(Player player) => BlocksSkillCharge(player);
+
+		public static void MaintainSkill1ChargeState(Player player) {
+			var wp = player.GetModPlayer<WeaponPlayer>();
+			if (wp.Skill != 0 || wp.CurrentSkill == null)
+				return;
+
+			SkillLevelData data = wp.CurrentSkill.CurrentLevelData;
+			wp.StockCount = data.MaxStack;
+			wp.SkillCharge = 0;
+			wp.SP = data.MaxSP;
+			wp.SkillActive = true;
+		}
 
 		// 摄影车攻击倍率（技能一/二可叠加，乘法）。
 		public static float AttackMult(Player player) {

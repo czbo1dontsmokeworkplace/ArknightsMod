@@ -4008,3 +4008,16 @@ VanillaAxe: {
 	DisplayName: Vanilla Axe
 	Tooltip: ""
 }
+
+OriginiumCore: {
+	DisplayName: Originium Core
+	Tooltip:
+		'''
+		Developer Item
+		You shouldn't have this!
+		Press F while holding an Arknights weapon to instantly fill its skill charge.
+
+		It seems to bypass every known law of Originium energy conversion and can supply the wearer with near-limitless Arts support.
+		"Doctor, I don't know how you did it, but please don't plug it into the terminal's charging port."
+		'''
+}
