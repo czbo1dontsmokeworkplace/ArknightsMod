@@ -52,8 +52,11 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.Scene
 
 		public override bool CanUseItem(Player player) {
 			if (player.altFunctionUse == 2) {
-				if (player.controlDown)
-					return false; // Down(S)+右键 用于释放技能，不召唤
+				if (player.controlDown) {
+					// Down(S)+右键：仅释放选中技能，绝不召唤（技能激活与召唤走同一条右键路径，杜绝双触发多召唤）
+					player.GetModPlayer<SceneCameraPlayer>().TryActivateSelectedSkillFromInput();
+					return false;
+				}
 				return player.GetModPlayer<SceneCameraPlayer>().CanRedeploy; // 右键受 5 秒冷却
 			}
 			return true;
@@ -111,15 +114,16 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.Scene
 				ModContent.ProjectileType<CameraTruck>(), summonDamage, 0f, player.whoAmI, free ? 1f : 0f);
 		}
 
-		// 当前可部署情况：受 5 辆硬上限与剩余仆从位共同约束（免位车计入数量但不占仆从位）。
+		// 当前可部署情况：受 5 辆硬上限与剩余仆从位共同约束（免位车计入数量但不占配额）。
+		// 摄影车 minionSlots=0 不进 vanilla slotsMinions，这里手动把占位车计入 maxMinions 配额。
 		private static void GetDeployStats(Player player, out int current, out int effectiveMax, out int remaining, out float otherSlots) {
 			CameraTruck.CountForPlayer(player, out int total, out int slotUsing);
 			current = total;
-			float usedSlots = player.slotsMinions;
+			otherSlots = player.slotsMinions;            // 其他（非摄影车）召唤物占用的仆从位
 			int maxSlots = player.maxMinions;
-			otherSlots = Math.Max(0f, usedSlots - slotUsing); // 非摄影车占用的仆从位
-			float freeSlots = Math.Max(0f, maxSlots - usedSlots);
-			int slotCapForTrucks = total + (int)Math.Floor(freeSlots);
+			// 占位摄影车(slotUsing)各占 1 配额；免位车不占。剩余可再部署的配额：
+			float freeForTrucks = Math.Max(0f, maxSlots - otherSlots - slotUsing);
+			int slotCapForTrucks = total + (int)Math.Floor(freeForTrucks);
 			effectiveMax = Math.Clamp(Math.Min(CameraTruck.MaxTrucks, slotCapForTrucks), 0, CameraTruck.MaxTrucks);
 			remaining = Math.Max(0, effectiveMax - total);
 		}

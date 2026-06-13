@@ -106,7 +106,9 @@ namespace ArknightsMod.Content.Projectiles.Specialist.Scene
 			Projectile.friendly = true;
 			Projectile.minion = true;
 			Projectile.DamageType = DamageClass.Summon;
-			Projectile.minionSlots = 1f;
+			// 不占用 vanilla 仆从位：摄影车数量完全由模组自管（MaxTrucks + GetDeployStats），
+			// 避免新车（尤其技能二的免位车）创建瞬间触发 vanilla 的 MinionSacrificable 牺牲，把已有车清掉。
+			Projectile.minionSlots = 0f;
 			Projectile.penetrate = -1;
 			Projectile.tileCollide = false;
 			Projectile.ignoreWater = true;
@@ -117,9 +119,7 @@ namespace ArknightsMod.Content.Projectiles.Specialist.Scene
 		}
 
 		public override void OnSpawn(IEntitySource source) {
-			freeSummon = Projectile.ai[0] != 0f; // SummonTruck 用 ai0 传入「免位」标记
-			if (freeSummon)
-				Projectile.minionSlots = 0f;     // 技能二额外召唤：不占仆从位
+			freeSummon = Projectile.ai[0] != 0f; // SummonTruck 用 ai0 传入「免位」标记（区分是否计入部署配额）
 
 			Projectile.velocity = Vector2.Zero;
 			SnapToGround();
