@@ -4312,7 +4312,7 @@ FrostleafAxe: {
 
 HongdouLance: {
 	DisplayName: 红豆的长枪
-	Tooltip: 技能2为槌音：攻击间隔增大但伤害大幅提升
+	// Tooltip: ""
 }
 
 MataimaruGlaive: {

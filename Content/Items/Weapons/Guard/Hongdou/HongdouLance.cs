@@ -1,6 +1,8 @@
 using ArknightsMod.Content.Items.Weapons;
+using ArknightsMod.Content.Projectiles.Guard.Hongdou;
 using ArknightsMod.Players;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -9,6 +11,18 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Hongdou
 	public class HongdouLance : ExpansionWeaponBase
 	{
 		protected override int[] EliteDamage => [44, 52, 60];
+
+		private static SoundStyle SkillActiveSfx;
+
+		public override void Load() {
+			SkillActiveSfx = new SoundStyle("ArknightsMod/Sounds/SkillActive1") { Volume = 0.5f, MaxInstances = 2 };
+		}
+
+		public override void SetStaticDefaults() {
+			base.SetStaticDefaults();
+			ItemID.Sets.Spears[Item.type] = true;
+			ItemID.Sets.SkipsInitialUseSound[Item.type] = true;
+		}
 
 		public override void SetDefaults() {
 			Item.damage = EliteDamage[0];
@@ -21,29 +35,49 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Hongdou
 			Item.value = Item.sellPrice(silver: 40);
 			Item.rare = ItemRarityID.Green;
 			Item.autoReuse = true;
-			Item.useStyle = ItemUseStyleID.Swing;
+			Item.useStyle = ItemUseStyleID.Shoot;
+			Item.noMelee = true;
+			Item.noUseGraphic = true;
+			Item.shoot = ModContent.ProjectileType<HongdouSpearStab>();
+			Item.shootSpeed = 3f;
 			Item.crit = 4;
 		}
 
+		public override bool AltFunctionUse(Player player) => true;
+
 		public override bool CanUseItem(Player player) {
 			var mp = player.GetModPlayer<WeaponPlayer>();
-			if (mp.SkillActive) {
-				Item.damage = mp.Skill == 0
-					? (int)(EliteDamage[EliteStage] * 1.8f)   // S1 攻击力+80%
-					: (int)(EliteDamage[EliteStage] * 3.0f);  // S2 槌音 攻击力+200%，攻击间隔增大
-				if (mp.Skill == 1) {
-					Item.useTime = 33;
-					Item.useAnimation = 33;
-				} else {
-					Item.useTime = 22;
-					Item.useAnimation = 22;
+			if (player.altFunctionUse == 2) {
+				if (mp.StockCount > 0 && !mp.SkillActive) {
+					mp.SkillActive = true;
+					mp.SkillTimer = 0;
+					mp.DelStockCount();
+					SoundEngine.PlaySound(SkillActiveSfx, player.Center);
 				}
+				return false;
+			}
+
+			// S2 槌音：攻击间隔增大
+			if (mp.SkillActive && mp.Skill == 1) {
+				Item.useTime = 33;
+				Item.useAnimation = 33;
 			} else {
-				Item.damage = EliteDamage[EliteStage];
 				Item.useTime = 22;
 				Item.useAnimation = 22;
 			}
-			return base.CanUseItem(player);
+
+			return player.ownedProjectileCounts[Item.shoot] < 1 && base.CanUseItem(player);
+		}
+
+		public override void ModifyWeaponDamage(Player player, ref StatModifier damage) {
+			base.ModifyWeaponDamage(player, ref damage);
+			var mp = player.GetModPlayer<WeaponPlayer>();
+			if (mp.SkillActive) {
+				if (mp.Skill == 0)
+					damage *= 1.8f;
+				else if (mp.Skill == 1)
+					damage *= 3.0f;
+			}
 		}
 	}
 }
