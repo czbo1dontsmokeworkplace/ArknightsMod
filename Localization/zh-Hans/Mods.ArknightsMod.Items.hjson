@@ -4287,7 +4287,7 @@ GoldenglowWand: {
 
 CardiganShield: {
 	DisplayName: 卡缇的盾牌
-	Tooltip: 技能激活时立即恢复最大生命40%
+	// Tooltip: ""
 }
 
 BeehunterBag: {
@@ -4332,7 +4332,7 @@ MousseGlove: {
 
 SkadisGreatsword: {
 	DisplayName: 斯卡蒂的巨剑
-	Tooltip: 精英2可解锁涌潮悲歌
+	// Tooltip: ""
 }
 
 JessicaGun: {
