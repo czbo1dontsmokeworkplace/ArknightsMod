@@ -4357,7 +4357,7 @@ AnselClaw: {
 
 BeanstalkOrb: {
 	DisplayName: 远山的水晶球
-	Tooltip: 技能2为命运：全屏范围攻击
+	// Tooltip: ""
 }
 
 EarthspiritWand: {
