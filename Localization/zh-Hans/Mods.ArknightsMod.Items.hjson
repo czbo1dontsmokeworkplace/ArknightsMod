@@ -4362,7 +4362,7 @@ BeanstalkOrb: {
 
 EarthspiritWand: {
 	DisplayName: 地灵的法杖
-	Tooltip: 技能2流沙化：停止攻击，周期性对附近敌人施加减速
+	// Tooltip: ""
 }
 
 PlumePike: {
