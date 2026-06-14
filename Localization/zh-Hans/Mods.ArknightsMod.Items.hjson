@@ -4307,7 +4307,6 @@ EstelleGlove: {
 
 FrostleafAxe: {
 	DisplayName: 霜叶的巨斧
-	Tooltip: 技能2可对命中目标持续施加减速
 }
 
 HongdouLance: {
