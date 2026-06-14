@@ -1123,7 +1123,7 @@ OrchidUmbrellla: {
 
 ShawAxe: {
 	DisplayName: 阿消的消防斧
-	Tooltip: 技能可将目标大力推开
+	// Tooltip: ""
 }
 
 ShawWaterCannon: {

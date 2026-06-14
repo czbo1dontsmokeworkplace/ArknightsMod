@@ -1,8 +1,7 @@
 using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Players;
-using ArknightsMod.Systems.Gameplay.Skill;
 using Terraria;
-using Terraria.DataStructures;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
@@ -12,6 +11,12 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.Shaw
 	public class ShawAxe : ExpansionWeaponBase
 	{
 		protected override int[] EliteDamage => [39, 47, 57];
+
+		private static SoundStyle SkillActiveSfx;
+
+		public override void Load() {
+			SkillActiveSfx = new SoundStyle("ArknightsMod/Sounds/SkillActive1") { Volume = 0.5f, MaxInstances = 2 };
+		}
 
 		public override void SetDefaults() {
 			Item.damage = EliteDamage[0];
@@ -28,36 +33,54 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.Shaw
 			Item.crit = 4;
 		}
 
+		public override bool AltFunctionUse(Player player) => true;
+
 		public override bool CanUseItem(Player player) {
 			var mp = player.GetModPlayer<WeaponPlayer>();
-			if (mp.CurrentSkill?.ChargeType == SkillChargeType.Attack && !mp.SkillActive)
-				mp.OffensiveRecovery();
+
+			if (player.altFunctionUse == 2) {
+				if (mp.StockCount > 0 && !mp.SkillActive) {
+					mp.SkillActive = true;
+					mp.SkillTimer = 0;
+					mp.DelStockCount();
+					SoundEngine.PlaySound(SkillActiveSfx, player.Center);
+
+					// S2 高压水炮：立即击退并伤害前方范围内所有敌人
+					if (mp.Skill == 1) {
+						int dmg = (int)(player.GetWeaponDamage(Item) * 3.0f);
+						Vector2 knockDir = new Vector2(player.direction, -0.2f);
+						foreach (NPC npc in Main.npc) {
+							if (!npc.active || npc.friendly || npc.dontTakeDamage) continue;
+							if (Vector2.Distance(npc.Center, player.Center) > 160f) continue;
+							// 仅击退前方（同向）的敌人
+							if ((npc.Center.X - player.Center.X) * player.direction < -20f) continue;
+							npc.StrikeNPC(npc.CalculateHitInfo(dmg, player.direction, false, 14f, DamageClass.Melee));
+							npc.velocity += knockDir * 16f;
+						}
+						mp.SkillActive = false;
+					}
+				}
+				return false;
+			}
+
+			mp.OffensiveRecovery();
 			return base.CanUseItem(player);
 		}
 
-		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
+		public override void ModifyWeaponDamage(Player player, ref StatModifier damage) {
+			base.ModifyWeaponDamage(player, ref damage);
 			var mp = player.GetModPlayer<WeaponPlayer>();
-			if (mp.StockCount > 0) {
-				mp.DelStockCount();
-				damage = mp.Skill == 0
-					? (int)(damage * 1.5f)
-					: (int)(damage * 3.0f);
-				NPC target = FindNearestNPC(player);
-				if (target != null)
-					target.velocity += velocity.SafeNormalize(Vector2.Zero) * (mp.Skill == 0 ? 8f : 14f);
-			}
-			return base.Shoot(player, source, position, velocity, type, damage, knockback);
+			// S1 水蒸气泵：下次攻击 ×1.5
+			if (mp.SkillActive && mp.Skill == 0)
+				damage *= 1.5f;
 		}
 
-		private static NPC FindNearestNPC(Player player) {
-			NPC best = null;
-			float dist = 300f;
-			foreach (NPC npc in Main.npc) {
-				if (!npc.active || npc.friendly) continue;
-				float d = Vector2.Distance(npc.Center, player.Center);
-				if (d < dist) { dist = d; best = npc; }
-			}
-			return best;
+		public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers) {
+			var mp = player.GetModPlayer<WeaponPlayer>();
+			if (!mp.SkillActive || mp.Skill != 0) return;
+			// S1：大力击退目标，单次触发后消耗
+			target.velocity += new Vector2(player.direction * 18f, -3f);
+			mp.SkillActive = false;
 		}
 	}
 }
