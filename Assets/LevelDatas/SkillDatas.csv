@@ -50,9 +50,9 @@ StewardStaff,0,1,2,0,0,0
 SkadisGreatsword,0,1,1,0,1,0
 SkadisGreatsword,1,2,1,0,1,0
 SkadisGreatsword,2,3,1,0,1,0
-GoldenglowWand,0,1,1,0,0,0
+GoldenglowWand,0,1,1,0,1,0
 GoldenglowWand,1,2,1,0,0,0
-GoldenglowWand,2,3,1,0,0,0
+GoldenglowWand,2,3,1,0,1,0
 MelanthasSword,0,1,1,0,1,0
 VanillaAxe,0,1,1,0,1,0
 CardiganShield,0,1,1,0,0,0

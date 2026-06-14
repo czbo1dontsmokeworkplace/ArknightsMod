@@ -4287,7 +4287,7 @@ GoldenglowWand: {
 
 CardiganShield: {
 	DisplayName: 卡缇的盾牌
-	// Tooltip: ""
+	Tooltip: 技能激活时立即恢复最大生命40%
 }
 
 BeehunterBag: {
@@ -4312,7 +4312,7 @@ FrostleafAxe: {
 
 HongdouLance: {
 	DisplayName: 红豆的长枪
-	// Tooltip: ""
+	Tooltip: 技能2为槌音：攻击间隔增大但伤害大幅提升
 }
 
 MataimaruGlaive: {
@@ -4332,7 +4332,7 @@ MousseGlove: {
 
 SkadisGreatsword: {
 	DisplayName: 斯卡蒂的巨剑
-	// Tooltip: ""
+	Tooltip: 精英2可解锁涌潮悲歌
 }
 
 JessicaGun: {

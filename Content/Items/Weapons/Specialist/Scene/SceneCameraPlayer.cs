@@ -74,7 +74,9 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.Scene
 				}
 			}
 
-			// 技能释放输入改由 SceneCamera.CanUseItem 的 Down+右键分支统一驱动（单一路径，避免与召唤竞争多召唤）。
+			// 输入：手持 + Down(S) 按住 + 右键刚按下 → 释放选中技能
+			if (holding && !BlocksInput() && Player.controlDown && PlayerInput.Triggers.JustPressed.MouseRight)
+				TryActivateSelectedSkill();
 
 			if (holding && Skill1Active)
 				SceneCameraSkills.MaintainSkill1ChargeState(Player); // 一技能期间保持满层显示
@@ -85,12 +87,9 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.Scene
 
 		// 供武器右键路径调用：手持且无 UI 遮挡时释放当前选中技能。
 		public void TryActivateSelectedSkillFromInput() {
-			if (Player.whoAmI != Main.myPlayer)
-				return;
-			if (!(Player.HeldItem.ModItem is SceneCamera))
-				return;
-			if (BlocksInput())
-				return;
+			if (Player.whoAmI != Main.myPlayer) return;
+			if (!(Player.HeldItem.ModItem is SceneCamera)) return;
+			if (BlocksInput()) return;
 			TryActivateSelectedSkill();
 		}
 
