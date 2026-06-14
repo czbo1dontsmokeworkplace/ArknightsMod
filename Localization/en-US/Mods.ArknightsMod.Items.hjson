@@ -4011,3 +4011,8 @@ OriginiumCore: {
 		"Doctor, I don't know how you did it, but please don't plug it into the terminal's charging port."
 		'''
 }
+
+LupineScarlet: {
+	DisplayName: Lupine Scarlet
+	Tooltip: ""
+}

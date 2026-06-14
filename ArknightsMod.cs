@@ -46,6 +46,7 @@ namespace ArknightsMod
 		public static Asset<Effect> AACTSTG3RBNoise;//红蓝噪声效果（AACT三阶段）
 		public static Asset<Effect> FNTwistedRing;//霜星限制阈（扭曲环效果）
 		public static Asset<Effect> LavaExplosionShaderEffect;//炎熔的爆炸效果
+		public static Asset<Effect> LupineKnifeLight;//狼之绯刀光（顶点 trail 着色器，非屏幕滤镜）
 		public const string AssetPath = "ArknightsMod/Sound/";
 
 		public override void Load() {
@@ -99,6 +100,9 @@ namespace ArknightsMod
 				LavaExplosionShaderEffect = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/LavaExplosionShaderEffect", ReLogic.Content.AssetRequestMode.ImmediateLoad);
 				Filters.Scene["LavaExplosionShaderEffect"] = new Filter(new ScreenShaderData(LavaExplosionShaderEffect, "LavaExplosionShaderEffect"), EffectPriority.VeryHigh);
 				Filters.Scene["LavaExplosionShaderEffect"].Load();
+
+				// 狼之绯刀光：直接作用于顶点图元，不注册为屏幕滤镜
+				LupineKnifeLight = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/LupineKnifeLight", ReLogic.Content.AssetRequestMode.ImmediateLoad);
 			}
 			Filters.Scene["AshStorm"] = new Filter(new ScreenShaderData("FilterAsh").UseColor(1f, 0.8f, 0.5f), EffectPriority.High);
 
