@@ -4337,7 +4337,7 @@ SkadisGreatsword: {
 
 JessicaGun: {
 	DisplayName: 杰西卡的枪
-	Tooltip: 技能1为强力击·B（攻击充能），技能2提供掩护烟幕
+	// Tooltip: ""
 }
 
 MeteorBow: {
