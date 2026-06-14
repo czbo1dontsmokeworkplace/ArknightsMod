@@ -1,6 +1,7 @@
 using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Players;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -9,6 +10,12 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Matoimaru
 	public class MataimaruGlaive : ExpansionWeaponBase
 	{
 		protected override int[] EliteDamage => [60, 72, 87];
+
+		private static SoundStyle SkillActiveSfx;
+
+		public override void Load() {
+			SkillActiveSfx = new SoundStyle("ArknightsMod/Sounds/SkillActive1") { Volume = 0.5f, MaxInstances = 2 };
+		}
 
 		public override void SetDefaults() {
 			Item.damage = EliteDamage[0];
@@ -25,27 +32,38 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Matoimaru
 			Item.crit = 4;
 		}
 
+		public override bool AltFunctionUse(Player player) => true;
+
 		public override bool CanUseItem(Player player) {
 			var mp = player.GetModPlayer<WeaponPlayer>();
-			if (mp.SkillActive) {
-				// S1 生命回复·B：触发时恢复50%最大生命（在激活一次）
-				if (mp.Skill == 0 && mp.SkillTimer == 1)
-					player.statLife = System.Math.Min(player.statLife + (int)(player.statLifeMax * 0.5f), player.statLifeMax);
-				// S2 恶鬼之力：防御归零，攻击力+150%
-				if (mp.Skill == 1)
-					Item.damage = (int)(EliteDamage[EliteStage] * 2.5f);
-				else
-					Item.damage = EliteDamage[EliteStage];
-			} else {
-				Item.damage = EliteDamage[EliteStage];
+
+			if (player.altFunctionUse == 2) {
+				if (mp.StockCount > 0 && !mp.SkillActive) {
+					if (mp.Skill == 0)
+						player.statLife = System.Math.Min(player.statLife + (int)(player.statLifeMax * 0.5f), player.statLifeMax);
+					mp.SkillActive = true;
+					mp.SkillTimer = 0;
+					mp.DelStockCount();
+					SoundEngine.PlaySound(SkillActiveSfx, player.Center);
+				}
+				return false;
 			}
+
 			return base.CanUseItem(player);
 		}
 
-		public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers) {
+		public override void ModifyWeaponDamage(Player player, ref StatModifier damage) {
+			base.ModifyWeaponDamage(player, ref damage);
 			var mp = player.GetModPlayer<WeaponPlayer>();
 			if (mp.SkillActive && mp.Skill == 1)
-				modifiers.Defense.Base -= target.defense; // 防御降至0
+				damage *= 2.5f;
+		}
+
+		public override void HoldItem(Player player) {
+			// S2 恶鬼之力：持续期间玩家防御归零
+			var mp = player.GetModPlayer<WeaponPlayer>();
+			if (mp.SkillActive && mp.Skill == 1)
+				player.statDefense -= (int)player.statDefense;
 		}
 	}
 }
