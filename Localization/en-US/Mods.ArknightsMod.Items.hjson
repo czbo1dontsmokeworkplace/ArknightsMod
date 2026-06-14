@@ -3899,11 +3899,6 @@ StewardStaff: {
 	Tooltip: ""
 }
 
-GitanoUmbrella: {
-	DisplayName: Gitano Umbrella
-	Tooltip: ""
-}
-
 GoldenglowWand: {
 	DisplayName: Goldenglow Wand
 	Tooltip: ""

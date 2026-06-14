@@ -4265,11 +4265,6 @@ StewardStaff: {
 		'''
 }
 
-GitanoUmbrella: {
-	DisplayName: 梓兰的伞
-	Tooltip: 技能激活时攻击速度提升
-}
-
 GoldenglowWand: {
 	DisplayName: 澄闪的法杖
 	Tooltip: 精英2可解锁澄净闪耀
