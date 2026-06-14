@@ -494,14 +494,33 @@ namespace ArknightsMod.Content.Tiles.Infrastructure.Elevators
 
 		public override bool RightClick(int i, int j)
 		{
-			(int topLeftX, int topLeftY) = FindBestTopLeft(i, j);
-			int id = ModContent.GetInstance<TEElevator>().Find(topLeftX, topLeftY);
-			if (id < 0 && Main.netMode != NetmodeID.MultiplayerClient)
+			// 优先用 footprint 反查已存在的 TE，使用其权威坐标打开 UI；
+			// 这样可避免 topLeft 反推与 TE 注册坐标不一致导致“检测不到电梯”。
+			if (TEElevator.TryFindElevatorContainingTile(i, j, out TEElevator existing))
 			{
-				DebugLog($"[Elevator] TE missing on RightClick. AutoPlace at=({topLeftX},{topLeftY})");
-				ModContent.GetInstance<TEElevator>().Place(topLeftX, topLeftY);
+				ModContent.GetInstance<ElevatorUISystem>().ShowSettingsWindow(existing.Position.X, existing.Position.Y);
+				return true;
 			}
-			// 右键电梯：打开独立“设置窗口”，不影响右下角楼层按钮列。
+
+			// 没有 TE（例如旧世界放置的电梯）：反推 topLeft，单机/主机补建一个 TE。
+			(int topLeftX, int topLeftY) = FindBestTopLeft(i, j);
+			if (Main.netMode != NetmodeID.MultiplayerClient)
+			{
+				int id = ModContent.GetInstance<TEElevator>().Find(topLeftX, topLeftY);
+				if (id < 0)
+				{
+					DebugLog($"[Elevator] TE missing on RightClick. AutoPlace at=({topLeftX},{topLeftY})");
+					id = ModContent.GetInstance<TEElevator>().Place(topLeftX, topLeftY);
+				}
+				if (id >= 0 && TileEntity.ByID.TryGetValue(id, out TileEntity entity) && entity is TEElevator placed)
+				{
+					placed.ScanFloors();
+					ModContent.GetInstance<ElevatorUISystem>().ShowSettingsWindow(placed.Position.X, placed.Position.Y);
+					return true;
+				}
+			}
+
+			// 兜底：直接用反推坐标打开（多人客户端等待服务端同步 TE）。
 			ModContent.GetInstance<ElevatorUISystem>().ShowSettingsWindow(topLeftX, topLeftY);
 			return true;
 		}

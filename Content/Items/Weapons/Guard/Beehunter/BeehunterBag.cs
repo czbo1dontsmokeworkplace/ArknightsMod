@@ -13,7 +13,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Beehunter
 	{
 		// 手持/挥砍时显示棒球棍贴图；库存图标用 PreDrawInInventory 画盾牌
 		public override string Texture =>
-			"ArknightsMod/Content/Items/Weapons/Guard/Beehunter/BeehunterBat_protile";
+			"ArknightsMod/Content/Items/Weapons/Guard/Beehunter/BeehunterBat";
 
 		protected override int[] EliteDamage => [23, 28, 34];
 

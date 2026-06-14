@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Players
 			if (Main.myPlayer != Player.whoAmI)
 				return;
 
-			if (电梯TE.TryFindNearbyElevatorForPlayer(Player, out _, out _, out _))
+			if (TEElevator.TryFindNearbyElevatorForPlayer(Player, out _, out _, out _))
 				PlayerInput.LockVanillaMouseScroll(ElevatorScrollLockKey);
 		}
 	}

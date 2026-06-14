@@ -3068,16 +3068,6 @@ ExusiaiAlterDefault: {
 	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 }
 
-电梯: {
-	// DisplayName: 电梯
-	// Tooltip: ""
-}
-
-电梯交互按钮: {
-	// DisplayName: 电梯交互按钮
-	// Tooltip: ""
-}
-
 FireworksHand: {
 	DisplayName: 烟花之手
 	Tooltip:
@@ -3257,13 +3247,13 @@ SceneCamera: {
 }
 
 Elevator: {
-	// DisplayName: Elevator
-	// Tooltip: ""
+	DisplayName: 电梯
+	Tooltip: ""
 }
 
 ElevatorButton: {
-	// DisplayName: Elevator Button
-	// Tooltip: ""
+	DisplayName: 电梯交互按钮
+	Tooltip: ""
 }
 
 ArmorSkadiBody: {

@@ -40,6 +40,11 @@ namespace ArknightsMod.Content.Systems
 		private bool _debugExpanded = true;
 		private string _debugRawText = "";
 
+		// 设置面板刚打开后的宽限期：这段时间内不允许“走远自动关闭”逻辑触发，
+		// 避免开窗当帧因 TE 成帧/同步时序导致的瞬时解析失败把面板一闪关掉。
+		private ulong _settingsOpenedAtTick;
+		private const ulong SettingsOpenGraceTicks = 30;
+
 		private const int FloorPanelWidthPx = 220;
 		private const int FloorPanelHeightPx = 300;
 		private const int FloorMarginRightPx = 260;
@@ -67,6 +72,10 @@ namespace ArknightsMod.Content.Systems
 		{
 			if (!_settingsVisible || player == null || !player.active)
 				return false;
+
+			// 宽限期内强制保持打开，避免开窗瞬间被自动关闭逻辑误关（一闪消失）。
+			if (Main.GameUpdateCount - _settingsOpenedAtTick < SettingsOpenGraceTicks)
+				return true;
 
 			if (TryGetTargetElevator(out TEElevator te))
 				return TEElevator.IsPlayerInElevatorRange(player, te);
@@ -207,6 +216,7 @@ namespace ArknightsMod.Content.Systems
 		public void ShowSettings(int topLeftX, int topLeftY)
 		{
 			_settingsVisible = true;
+			_settingsOpenedAtTick = Main.GameUpdateCount;
 			_targetTeId = -1;
 			_targetX = topLeftX;
 			_targetY = topLeftY;
@@ -259,7 +269,7 @@ namespace ArknightsMod.Content.Systems
 		private void RefreshModeButtonText()
 		{
 			if (TryGetTargetElevator(out TEElevator te))
-				_modeButton.SetText($"楼层检测：{TEElevator.GetFloorDetectModeLabel(te.FloorMode)}（点击切换）");
+				_modeButton.SetText($"楼层检测：{TEElevator.GetFloorDetectModeLabel(te.FloorMode)}");
 			else
 				_modeButton.SetText("楼层检测：—（未找到电梯）");
 		}

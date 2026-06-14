@@ -446,6 +446,25 @@ namespace ArknightsMod.Content.Tiles
 			return true;
 		}
 
+		// 直接按“4×7 footprint 是否包含某个格子”反查 TE，使用 TE 自身权威坐标，
+		// 不依赖 topLeft 反推，避免多 Origin 放置时 Find 精确匹配失败。
+		public static bool TryFindElevatorContainingTile(int i, int j, out TEElevator te)
+		{
+			te = null;
+			foreach (var kv in ByID)
+			{
+				if (kv.Value is not TEElevator e)
+					continue;
+				if (i >= e.Position.X && i < e.Position.X + ElevatorWidth
+					&& j >= e.Position.Y && j < e.Position.Y + 7)
+				{
+					te = e;
+					return true;
+				}
+			}
+			return false;
+		}
+
 		public static bool IsPlayerInElevatorRange(Player player, TEElevator te, int maxDistanceTiles = 16)
 		{
 			if (player == null || te == null || !player.active)

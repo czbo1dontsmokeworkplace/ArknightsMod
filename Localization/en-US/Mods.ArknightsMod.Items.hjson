@@ -2715,16 +2715,6 @@ ExusiaiAlterDefault: {
 	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 }
 
-电梯: {
-	DisplayName: 电梯
-	Tooltip: ""
-}
-
-电梯交互按钮: {
-	DisplayName: 电梯交互按钮
-	Tooltip: ""
-}
-
 FireworksHand: {
 	DisplayName: Fireworks Hand
 	Tooltip: ""

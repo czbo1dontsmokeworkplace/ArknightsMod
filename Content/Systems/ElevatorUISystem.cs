@@ -35,11 +35,24 @@ namespace ArknightsMod.Content.Systems
 
 				int selectedBeforeWheel = player?.selectedItem ?? 0;
 				int wheelSteps = PlayerInput.ScrollWheelDelta / 120;
-				if (wheelSteps != 0 && _state.IsMouseOverFloorPanel && !_state.IsSettingsVisible)
-					_state.ScrollSelection(wheelSteps);
-
-				if (player != null && wheelSteps != 0 && TEElevator.TryFindElevatorForPlayer(player, out _, out _, out _))
-					player.selectedItem = selectedBeforeWheel;
+				if (wheelSteps != 0 && !_state.IsSettingsVisible)
+				{
+					// 玩家处于电梯井道竖向范围内时（与禁用物品栏滚轮一致的判定），
+					// 滚轮用于切换楼层选择，并把被改动的快捷栏选择还原回去。
+					if (player != null
+						&& TEElevator.TryFindNearbyElevatorForPlayer(player, out _, out int scrollTopLeftX, out int scrollTopLeftY))
+					{
+						if (_state.TargetX != scrollTopLeftX || _state.TargetY != scrollTopLeftY)
+							_state.SetFloorTarget(scrollTopLeftX, scrollTopLeftY, resetSelection: false);
+						_state.ScrollSelection(wheelSteps);
+						player.selectedItem = selectedBeforeWheel;
+					}
+					else if (_state.IsMouseOverFloorPanel)
+					{
+						// 不在井道内但鼠标悬停在右下角楼层面板上时，也允许滚轮切换楼层。
+						_state.ScrollSelection(wheelSteps);
+					}
+				}
 
 				bool confirmPressed = Main.keyState.IsKeyDown(Keys.F) && !Main.oldKeyState.IsKeyDown(Keys.F);
 				if (confirmPressed)
