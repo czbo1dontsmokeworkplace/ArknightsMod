@@ -4342,7 +4342,7 @@ JessicaGun: {
 
 MeteorBow: {
 	DisplayName: 流星的弓
-	Tooltip: 技能1/2均可碎甲，削减目标防御力
+	// Tooltip: ""
 }
 
 GravelDualBlades: {
