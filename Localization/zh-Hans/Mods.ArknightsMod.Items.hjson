@@ -4327,7 +4327,7 @@ MelanthasSword: {
 
 MousseGlove: {
 	DisplayName: 慕斯的手套
-	Tooltip: 技能1挠伤（攻击充能），技能2炸毛：攻击防御各+75%
+	// Tooltip: ""
 }
 
 SkadisGreatsword: {
