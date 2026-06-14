@@ -4291,8 +4291,8 @@ CardiganShield: {
 }
 
 BeehunterBag: {
-	DisplayName: 蛇屠箱的背包
-	Tooltip: 技能2壳状防御：停止攻击，防御大幅提升并缓慢回血
+	DisplayName: 蛇屠箱的棒球棍
+	// Tooltip: ""
 }
 
 DobermannWhip: {
