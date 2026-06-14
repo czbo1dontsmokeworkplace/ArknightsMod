@@ -4302,11 +4302,12 @@ DobermannWhip: {
 
 EstelleGlove: {
 	DisplayName: 艾丝黛尔的手套
-	Tooltip: 技能2舍身突击：攻击力大幅提升，但不再回血
+	// Tooltip: ""
 }
 
 FrostleafAxe: {
 	DisplayName: 霜叶的巨斧
+	// Tooltip: ""
 }
 
 HongdouLance: {
