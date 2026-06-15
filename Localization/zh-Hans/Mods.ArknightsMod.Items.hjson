@@ -3161,3 +3161,13 @@ DN_Weapon: {
 	// DisplayName: D N_ Weapon
 	// Tooltip: ""
 }
+
+CuoraWeapon: {
+	// DisplayName: Cuora Weapon
+	// Tooltip: ""
+}
+
+CardiWeapon: {
+	// DisplayName: Cardi Weapon
+	// Tooltip: ""
+}

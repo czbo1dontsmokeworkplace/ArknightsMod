@@ -27,7 +27,8 @@ namespace ArknightsMod.Content.Projectiles.Defender.Beagle
 		public override void UpdateEquips() {
 			var it = Player.HeldItem;
 			if (it.type == ModContent.ItemType<BeagleWeapon>() && Main.mouseRight) {
-				Player.statDefense *= 1.5f;
+				Player.statDefense += 10;
+				Player.noKnockback = true;
 			}
 			base.UpdateEquips();
 		}
@@ -134,7 +135,7 @@ namespace ArknightsMod.Content.Projectiles.Defender.Beagle
         Stack<NPC> RecordNPC = new Stack<NPC>();
         public override bool? CanHitNPC(NPC target)
         {
-            if (target.townNPC) 
+            if (target.townNPC)
                 return false; // ???? NPC
             return !RecordNPC.Contains(target) && Projectile.ai[1] > 0;
         }
@@ -187,7 +188,7 @@ namespace ArknightsMod.Content.Projectiles.Defender.Beagle
                     for (int i = 0; i < Projectile.oldRot.Length; i++)
                         Projectile.oldRot[i] = Projectile.rotation;
 
-                    
+
                 }
             }
             else
