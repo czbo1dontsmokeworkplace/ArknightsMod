@@ -24,6 +24,11 @@ namespace ArknightsMod.Common.UI
 		private Color gradientA;
 		private Color gradientB;
 		private Color skillColor;
+		private const int ChargePulseActiveTicks = 36;
+		private const int ChargePulsePauseTicks = 12;
+		private const int ChargePulseCycleTicks = ChargePulseActiveTicks + ChargePulsePauseTicks;
+		private const float ChargePulseExpandMax = 1.75f;
+		private static readonly Color ChargePulseColor = new(255, 220, 0);
 		private readonly Texture2D[] stockIcon = [
 			ModContent.Request<Texture2D>("ArknightsMod/Common/UI/SkillStock1", AssetRequestMode.ImmediateLoad).Value,
 			ModContent.Request<Texture2D>("ArknightsMod/Common/UI/SkillStock2", AssetRequestMode.ImmediateLoad).Value,
@@ -142,15 +147,47 @@ namespace ArknightsMod.Common.UI
 			//检查贴图资源是否存在
 			if (maxStock > 1 && stock > 0) {
 				if (stockIcon != null && stockIcon.Length >= stock && stockIcon[stock - 1] != null) {
+					if (stock == maxStock && !skill.SuppressReadyPulse)
+						DrawChargeReadyPulse(sb, aboveHead);
 					sb.Draw(stockIcon[stock - 1], aboveHead, Color.White);
 				}
 			}
 			else if (maxStock == 1 && !skill.AutoTrigger) {
-				if (stock == 1 && skillCanUse != null) {
+				if (stock == 1 && skillCanUse != null && !mp.SkillActive) {
+					DrawChargeReadyPulse(sb, aboveHead);
 					sb.Draw(skillCanUse, aboveHead, Color.White);
 				}
 			}
 		}
+
+		private static void DrawChargeReadyPulse(SpriteBatch sb, Rectangle iconRect) {
+			Texture2D pixel = TextureAssets.MagicPixel.Value;
+			int tickInCycle = (int)(Main.GameUpdateCount % ChargePulseCycleTicks);
+			if (tickInCycle >= ChargePulseActiveTicks)
+				return;
+
+			float progress = tickInCycle / (float)ChargePulseActiveTicks;
+			float alpha = 1f - progress;
+			if (alpha <= 0f)
+				return;
+
+			float expand = MathHelper.Lerp(0.55f, ChargePulseExpandMax, progress);
+			float side = iconRect.Width * expand;
+			Vector2 center = iconRect.Center.ToVector2();
+			Color color = ChargePulseColor * alpha;
+
+			sb.Draw(
+				pixel,
+				center,
+				new Rectangle(0, 0, 1, 1),
+				color,
+				MathHelper.PiOver4,
+				new Vector2(0.5f, 0.5f),
+				new Vector2(side, side),
+				SpriteEffects.None,
+				0f);
+		}
+
 		//public override void Update(GameTime gameTime) {
 		//	if (Main.LocalPlayer.HeldItem.ModItem is not KroosCrossbow)
 		//		return;

@@ -1,9 +1,9 @@
+using ArknightsMod.Content.Items.Armor.Caster.Amiya;
 using ArknightsMod.Content.Items.Consumables.VanityBags;
 using ArknightsMod.Content.NPCs.Friendly;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
@@ -14,47 +14,9 @@ namespace ArknightsMod.Systems
 	public class NPCShopSystem : ModSystem
 	{
 		public static List<int> ClosureTodaysRotation = [];
-		// 修改：保存完整的 Item 对象而不是只保存 type
+		// 保存完整的 Item 对象而不是只保存 type
 		public static List<Item> CannotShopItems = [];
 		public static int OldCannotShopCount;
-
-		public static readonly List<int> SixStars = [
-			ModContent.ItemType<ChenDefault>(),
-			ModContent.ItemType<WDefault>(),
-			ModContent.ItemType<MudrockDefault>(),
-			ModContent.ItemType<OblivionisDefault>(),
-			ModContent.ItemType<RaidianDefault>(),
-			ModContent.ItemType<WisdelDefault>(),
-			ModContent.ItemType<BagpipeDefault>(),
-			ModContent.ItemType<FiammettaDefault>(),
-			ModContent.ItemType<CivilightEternaDefault>(),
-			ModContent.ItemType<DorothyDefault>(),
-			ModContent.ItemType<ExusiaiDefault>(),
-			ModContent.ItemType<FartoothDefault>(),
-			ModContent.ItemType<KaltsitDefault>(),
-			ModContent.ItemType<LingDefault>(),
-			ModContent.ItemType<MostimaDefault>(),
-			ModContent.ItemType<RosmontisDefault>(),
-			ModContent.ItemType<SariaDefault>(),
-			ModContent.ItemType<SkadiDefault>(),
-			ModContent.ItemType<SurtrDefault>(),
-			ModContent.ItemType<TexalterDefault>(),
-		];
-
-		public static readonly List<int> Others = [
-			ModContent.ItemType<MelanthaDefault>(),
-			ModContent.ItemType<MatoimaruDefault>(),
-			ModContent.ItemType<IndigoDefault>(),
-			ModContent.ItemType<BeagleDefault>(),
-			ModContent.ItemType<HazeDefault>(),
-			ModContent.ItemType<KroosAlterDefault>(),
-			ModContent.ItemType<LaPlumaDefault>(),
-			ModContent.ItemType<ManticoreDefault>(),
-			ModContent.ItemType<MelaniteDefault>(),
-			ModContent.ItemType<UtageDefault>(),
-			ModContent.ItemType<WarfarinDefault>(),
-			ModContent.ItemType<LapplandDefault>(),
-		];
 
 		public override void Load() {
 			On_Main.UpdateTime_StartDay += On_Main_UpdateTime_StartDay;
@@ -67,15 +29,25 @@ namespace ArknightsMod.Systems
 
 		public static void UpdateClosureShop(Mod mod, bool firstTime = false) {
 			if (Main.netMode != NetmodeID.MultiplayerClient) {
-				ClosureTodaysRotation = [ModContent.ItemType<AmiyaDefault>()];
+				int amiyaType = ModContent.ItemType<AmiyaDefault>();
+				var sixStars = new List<int>();
+				var others = new List<int>();
+
+				foreach (var bag in ModContent.GetContent<ArknightsVanityBag>()) {
+					if (bag.Type == amiyaType) continue;
+					if (bag.Rarity == 6)
+						sixStars.Add(bag.Type);
+					else
+						others.Add(bag.Type);
+				}
+
+				ClosureTodaysRotation = [amiyaType];
 				int rand = Main.rand.Next(3, 6);
-				List<int> sixStars = [.. SixStars];
 				while (sixStars.Count > rand) {
 					sixStars.RemoveAt(Main.rand.Next(sixStars.Count));
 				}
 				ClosureTodaysRotation.AddRange(sixStars);
 				rand = Main.rand.Next(3, 6);
-				List<int> others = [.. Others];
 				while (others.Count > rand) {
 					others.RemoveAt(Main.rand.Next(others.Count));
 				}

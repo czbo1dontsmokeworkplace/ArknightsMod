@@ -6,6 +6,13 @@ BlackIceProjectile.DisplayName: Black Ice Projectile
 Blizzard.DisplayName: Blizzard
 BlizzardStorm.DisplayName: Blizzard Storm
 BlizzardStormStarter.DisplayName: Blizzard Storm Starter
+DeepcolorMinion.DisplayName: Tentacle
+CameraTruck.DisplayName: Mobile Camera Truck
+SceneCameraShot.DisplayName: Scene Camera Shot
+SceneCameraBullet.DisplayName: Scene Camera Bullet
+SceneCameraHitBurst.DisplayName: Scene Camera Hit Burst
+DeepcolorSketchLogoAttack.DisplayName: Deepcolor Sketch Logo Attack
+DeepcolorSketchLogoStrike.DisplayName: Deepcolor Sketch Logo Strike
 IceAltarShockwave.DisplayName: Ice Altar Shockwave
 IceAltarSummonWisp.DisplayName: Ice Altar Summon Wisp
 IceAltarTwinLineRing.DisplayName: Ice Altar Twin Line Ring
@@ -192,10 +199,45 @@ ValarqvinProj_2.DisplayName: Valarqvin Proj_2
 ValarqvinProj.DisplayName: Valarqvin Proj
 DN_Shield.DisplayName: D N_ Shield
 DN_Sword.DisplayName: D N_ Sword
+GravityDagger.DisplayName: Gravity Dagger
+RedMagicBlade.DisplayName: Red Magic Blade
+StaticPredictLine.DisplayName: Static Predict Line
+DaggerPredictLine.DisplayName: Dagger Predict Line
 TyphonAimReticle.DisplayName: Typhon Aim Reticle
 TyphonStar.DisplayName: Typhon Star
+DelayDagger.DisplayName: Delay Dagger
+GroundDagger.DisplayName: Ground Dagger
+StallDagger.DisplayName: Stall Dagger
+TransparentSlash.DisplayName: Transparent Slash
 TyphonStarReleaseBurst.DisplayName: Typhon Star Release Burst
-Cuora_Bat.DisplayName: Cuora_ Bat
-Cuora_Shield.DisplayName: Cuora_ Shield
-Cardi_Shield.DisplayName: Cardi_ Shield
-Cardi_Sword.DisplayName: Cardi_ Sword
+BarrageDagger.DisplayName: Barrage Dagger
+CrownslayerSmokeEmitter.DisplayName: Crownslayer Smoke Emitter
+SwordSlashEffect.DisplayName: Sword Slash Effect
+PramanixShockwaveRing.DisplayName: Pramanix Shockwave Ring
+PramanixSkill1Snowflake.DisplayName: Pramanix Skill1 Snowflake
+PramanixSkill3VolleyFx.DisplayName: Pramanix Skill3 Volley Fx
+RosmontisTacticalEquipment.DisplayName: Rosmontis Tactical Equipment
+DorothySweeper.DisplayName: Dorothy Sweeper
+DorothySweeperShot.DisplayName: Dorothy Sweeper Shot
+ExusiaiAlterBomb.DisplayName: Exusiai Alter Bomb
+CivilightDustMote.DisplayName: Civilight Dust Mote
+StewardProj.DisplayName: Steward Proj
+MelanthaSlash.DisplayName: Melantha Slash
+CardiganShieldBash.DisplayName: Cardigan Shield Bash
+HongdouLanceThrust.DisplayName: Hongdou Lance Thrust
+HongdouSpearStab.DisplayName: Hongdou Spear Stab
+DobermannWhipProjectile.DisplayName: Dobermann Whip Projectile
+GravelSlash.DisplayName: Gravel Slash
+GravelShieldVfx.DisplayName: Gravel Shield Vfx
+GoldenglowBeacon.DisplayName: Goldenglow Beacon
+GoldenglowBolt.DisplayName: Goldenglow Bolt
+EstelleGlovePunch.DisplayName: Estelle Glove Punch
+MousseGlovePunch.DisplayName: Mousse Glove Punch
+BeehunterBatSwing.DisplayName: Beehunter Bat Swing
+MeteorArrow.DisplayName: Meteor Arrow
+LupineScarletExplosion.DisplayName: Lupine Scarlet Explosion
+LupineScarletRightClickController.DisplayName: Lupine Scarlet Right Click Controller
+LupineScarletSkillShard.DisplayName: Lupine Scarlet Skill Shard
+LupineScarletSwingProjectile.DisplayName: Lupine Scarlet Swing Projectile
+AnselHookProjectile.DisplayName: Ansel Hook Projectile
+AnselWhipProjectile.DisplayName: Ansel Whip Projectile

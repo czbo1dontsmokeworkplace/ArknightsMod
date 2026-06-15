@@ -1,5 +1,5 @@
-using System.Collections.Generic;
-using ArknightsMod.Content.Items.Armor.Vanity.Endfield.Striker.LastRite;
+﻿using System.Collections.Generic;
+using ArknightsMod.Content.Items.Armor.Endfield.Striker.LastRite;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -8,7 +8,7 @@ namespace ArknightsMod.Content.Items.Consumables.VanityBags
 {
 	public class LastRiteVanityBag : ArknightsVanityBag
 	{
-		public override string Texture => "ArknightsMod/Content/Items/Armor/Vanity/Endfield/Striker/LastRite/LastRite_GIFFullArmor";
+		public override string Texture => "ArknightsMod/Content/Items/Armor/Endfield/Striker/LastRite/LastRiteDefault";
 
 		public override void SetStaticDefaults()
 		{
@@ -45,6 +45,8 @@ namespace ArknightsMod.Content.Items.Consumables.VanityBags
 			return true;
 		}
 
+		public override ObtainTypes ObtainType => ObtainTypes.EndfieldDefault;
+		public override int Rarity => 6;
 		protected override List<int> GetItems()
 		{
 			return new List<int>

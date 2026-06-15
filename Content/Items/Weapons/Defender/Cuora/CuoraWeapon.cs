@@ -1,5 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor.Vanity.Defender.Beagle.Armor;
-using ArknightsMod.Content.Items.Material;
+﻿using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.Projectiles.Defender.Beagle;
 using ArknightsMod.Content.Projectiles.Defender.Cuora;

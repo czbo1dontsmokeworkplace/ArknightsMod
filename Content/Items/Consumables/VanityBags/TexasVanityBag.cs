@@ -1,5 +1,5 @@
-using System.Collections.Generic;
-using ArknightsMod.Content.Items.Armor.Vanity.Vanguard.Texas;
+﻿using System.Collections.Generic;
+using ArknightsMod.Content.Items.Armor.Vanguard.Texas;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -7,7 +7,7 @@ namespace ArknightsMod.Content.Items.Consumables.VanityBags
 {
 	public class TexasVanityBag : ArknightsVanityBag
 	{
-		public override string Texture => "ArknightsMod/Content/Items/Armor/Vanity/Vanguard/Texas/Texas";
+		public override string Texture => "ArknightsMod/Content/Items/Armor/Vanguard/Texas/TexasDefault";
 
 		public override void SetDefaults()
 		{
@@ -15,6 +15,8 @@ namespace ArknightsMod.Content.Items.Consumables.VanityBags
 			Item.rare = ItemRarityID.Pink;
 		}
 
+		public override ObtainTypes ObtainType => ObtainTypes.Default;
+		public override int Rarity => 5;
 		protected override List<int> GetItems()
 		{
 			return

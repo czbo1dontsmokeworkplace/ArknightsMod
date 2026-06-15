@@ -1,4 +1,5 @@
 using ArknightsMod.Common.UI;
+using ArknightsMod.Content.Items.Weapons.Specialist.Scene;
 using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.Items.Weapons.Caster.Lava;
 using ArknightsMod.Content.Items.Weapons.Defender.Beagle;
@@ -166,6 +167,22 @@ namespace ArknightsMod.Players
 			SummonMode = false;
 		}
 
+		// 将当前技能技力填满至可释放状态
+		public void DevFillSkillCharge()
+		{
+			if (CurrentSkill == null || SkillActive)
+				return;
+
+			SkillLevelData data = CurrentSkill.CurrentLevelData;
+			StockCount = data.MaxStack;
+			SkillCharge = 0;
+			SP = data.MaxSP;
+			chargeOpen = true;
+
+			if (Player.HeldItem.ModItem is UpgradeWeaponBase ark)
+				ark.chargeReady = [true, true, true];
+		}
+
 		public void SetSkill(int skill) {
 			if (SkillInitialize) {
 				Skill = skill;
@@ -275,6 +292,8 @@ namespace ArknightsMod.Players
 		}
 
 		public void TryAutoCharge() {
+			if (SceneCameraSkills.BlocksSkillCharge(Player)) // 稀音技能持续期间冻结充能
+				return;
 			if (chargeOpen && !hasNearbyEnemy)
 				return;
 			if (CurrentSkill?.ChargeType == SkillChargeType.Auto)
@@ -323,6 +342,8 @@ namespace ArknightsMod.Players
 			TryHurtCharge();
 		}
 		public void AutoCharge() {
+			if (SceneCameraSkills.BlocksSkillCharge(Player)) // 稀音技能持续期间冻结充能
+				return;
 			if (CurrentSkill != null) {
 				SkillLevelData data = CurrentSkill.CurrentLevelData;
 				if (!SkillActive && StockCount < data.MaxStack) {
@@ -353,6 +374,9 @@ namespace ArknightsMod.Players
 		//============================================================================
 		private float AccessoriesChargeFraction;
 		public void AccessoriesAutoCharge() {
+
+			if (SceneCameraSkills.BlocksSkillCharge(Player)) // 稀音技能持续期间冻结充能
+				return;
 
 			if (chargeOpen && !hasNearbyEnemy)
 				return;
@@ -418,6 +442,9 @@ namespace ArknightsMod.Players
 		}
 		//===============================================================================
 		public void OffensiveRecovery() {
+			if (SceneCameraSkills.BlocksSkillCharge(Player)) // 稀音技能持续期间冻结充能
+				return;
+
 			if (CurrentSkill != null) {
 				SkillLevelData data = CurrentSkill.CurrentLevelData;
 				if (!SkillActive && StockCount < data.MaxStack) {

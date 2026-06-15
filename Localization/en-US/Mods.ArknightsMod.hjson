@@ -80,4 +80,12 @@ Tiles: {
 	PipeBlueLightPipeTile.MapEntry: "{$Mods.ArknightsMod.Items.PipeBlueLightItem.DisplayName}"
 	ProtocolSpacePortalTile.MapEntry: Protocol Space Portal
 	ProtocolSpaceExitPortalTile.MapEntry: Protocol Space Exit Portal
+	ElevatorTile.MapEntry: "{$Mods.ArknightsMod.Items.Elevator.DisplayName}"
+	ElevatorButtonTile.MapEntry: "{$Mods.ArknightsMod.Items.ElevatorButton.DisplayName}"
+	GrindstoneTile.MapEntry: Grindstone Tile
+	ManganeseOreTile.MapEntry: Manganese Ore Tile
+	OrirockCubeTile.MapEntry: Orirock Cube Tile
+	RMA7012Tile.MapEntry: R M A7012 Tile
 }
+
+"Keybinds.Rosmontis Tactical Deploy.DisplayName": Rosmontis  Tactical  Deploy

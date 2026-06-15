@@ -1,0 +1,38 @@
+﻿using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+using ArknightsMod.Content.Tiles.Infrastructure;
+using ArknightsMod.Content.Items.Material;
+
+namespace ArknightsMod.Content.Items.Armor.Guard.Chen
+{
+	[AutoloadEquip(EquipType.Head)]
+	public class ChenHead : NeoArmorHead
+	{
+		public override int Rarity => 6;
+		public override int ArmorLifeBonus => 288;
+		
+		public override void Load() {
+			if (Main.netMode == NetmodeID.Server)
+				return;
+		}
+
+		public override void SetArmorDefaults() {
+			Item.defense = 0;
+		}
+		
+
+		public override void AddRecipes() {
+			CreateRecipe()
+			.AddIngredient<ChenHead>(1)
+			.AddIngredient<Orundum>(60)
+			.AddIngredient<PolymerizationPreparation>(6)
+			.AddIngredient<WhiteHorseKohl>(7)
+			.AddTile(ModContent.TileType<FactoryTile>())
+			.AddCondition(NeoArmorUtils.NeedVanity)
+			.DisableDecraft()
+			.Register();
+		}
+	}
+}
+	

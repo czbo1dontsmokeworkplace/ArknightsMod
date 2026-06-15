@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
 using ArknightsMod.Content.Tiles;
+using ArknightsMod.Content.Tiles.Infrastructure.Elevators;
 using System.Collections.Generic;
 
 namespace ArknightsMod.Content.Systems
@@ -26,7 +27,7 @@ namespace ArknightsMod.Content.Systems
 			bool hasAnyElevatorTE = false;
 			foreach (var kv in TileEntity.ByID)
 			{
-				if (kv.Value is 电梯TE)
+				if (kv.Value is TEElevator)
 				{
 					hasAnyElevatorTE = true;
 					break;
@@ -49,29 +50,29 @@ namespace ArknightsMod.Content.Systems
 				{
 					foreach (var kv in TileEntity.ByID)
 					{
-						if (kv.Value is not 电梯TE te)
+						if (kv.Value is not TEElevator te)
 							continue;
 
 						if (te.IsMoving)
 						{
-							电梯Tile.DrawMovingElevator(Main.spriteBatch, te);
+							ElevatorTile.DrawMovingElevator(Main.spriteBatch, te);
 						}
 						else
 						{
 							// 静止电梯：同样在 PostDrawTiles 里绘制玻璃罩，保证覆盖在电梯材质前面。
-							(int topLeftX, int topLeftY) = 电梯Tile.GetBestTopLeftForRender(te.Position.X, te.Position.Y);
+							(int topLeftX, int topLeftY) = ElevatorTile.GetBestTopLeftForRender(te.Position.X, te.Position.Y);
 							Tile topLeftTile = Framing.GetTileSafely(topLeftX, topLeftY);
-							if (topLeftTile.HasTile && topLeftTile.TileType == ModContent.TileType<电梯Tile>())
+							if (topLeftTile.HasTile && topLeftTile.TileType == ModContent.TileType<ElevatorTile>())
 							{
 								if (_staticGlassDrawAttemptDiagLoggedElevatorIds.Add(te.ID))
 								{
 									if (ElevatorRenderDiagLogging)
 									{
-										ModContent.GetInstance<电梯TE>().Mod.Logger.Info(
+										ModContent.GetInstance<TEElevator>().Mod.Logger.Info(
 											$"[ElevatorDiag] static glass draw attempt elevatorId={te.ID} topLeft=({topLeftX},{topLeftY}) tePos=({te.Position.X},{te.Position.Y})");
 									}
 								}
-								电梯Tile.DrawStaticGlassOverlay(Main.spriteBatch, topLeftX, topLeftY, topLeftTile, te.ID);
+								ElevatorTile.DrawStaticGlassOverlay(Main.spriteBatch, topLeftX, topLeftY, topLeftTile, te.ID);
 							}
 							else
 							{
@@ -79,7 +80,7 @@ namespace ArknightsMod.Content.Systems
 								{
 										if (ElevatorRenderDiagLogging)
 										{
-											ModContent.GetInstance<电梯TE>().Mod.Logger.Info(
+											ModContent.GetInstance<TEElevator>().Mod.Logger.Info(
 												$"[ElevatorDiag] static glass NOT drawn elevatorId={te.ID} topLeft=({topLeftX},{topLeftY}) tePos=({te.Position.X},{te.Position.Y}) hasTile={(topLeftTile.HasTile ? 1 : 0)} tileType={topLeftTile.TileType}");
 										}
 								}
@@ -90,7 +91,7 @@ namespace ArknightsMod.Content.Systems
 
 				if (shouldScanTiles)
 				{
-					int type = ModContent.TileType<电梯Tile>();
+					int type = ModContent.TileType<ElevatorTile>();
 					int minTileX = (int)(Main.screenPosition.X / 16f) - 2;
 					int minTileY = (int)(Main.screenPosition.Y / 16f) - 2;
 					int maxTileX = minTileX + (Main.screenWidth / 16) + 6;
@@ -109,7 +110,7 @@ namespace ArknightsMod.Content.Systems
 							if (!t.HasTile || t.TileType != type)
 								continue;
 							// 用渲染侧的 topLeft 推导，避免 frame 异常导致错位。
-							(int topLeftX, int topLeftY) = 电梯Tile.GetBestTopLeftForRender(x, y);
+							(int topLeftX, int topLeftY) = ElevatorTile.GetBestTopLeftForRender(x, y);
 							Point16 key = new Point16(topLeftX, topLeftY);
 							if (drawn.Contains(key))
 								continue;
@@ -120,7 +121,7 @@ namespace ArknightsMod.Content.Systems
 								continue;
 							// 没有 TE 时，用坐标组合出一个稳定 key 来驱动玻璃罩开/关动画状态。
 							int pseudoId = (topLeftX & 0xFFFF) | (topLeftY << 16);
-							电梯Tile.DrawStaticGlassOverlay(Main.spriteBatch, topLeftX, topLeftY, tl, pseudoId);
+							ElevatorTile.DrawStaticGlassOverlay(Main.spriteBatch, topLeftX, topLeftY, tl, pseudoId);
 						}
 					}
 				}

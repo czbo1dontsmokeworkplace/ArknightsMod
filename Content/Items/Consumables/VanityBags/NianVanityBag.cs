@@ -1,5 +1,5 @@
-using System.Collections.Generic;
-using ArknightsMod.Content.Items.Armor.Vanity.Defender.Nian;
+﻿using System.Collections.Generic;
+using ArknightsMod.Content.Items.Armor.Defender.Nian;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -7,7 +7,7 @@ namespace ArknightsMod.Content.Items.Consumables.VanityBags
 {
 	public class NianVanityBag : ArknightsVanityBag
 	{
-		public override string Texture => "ArknightsMod/Content/Items/Armor/Vanity/Defender/Nian/NianVanityBag";
+		public override string Texture => "ArknightsMod/Content/Items/Armor/Defender/Nian/NianDefault";
 
 		public override void SetDefaults()
 		{
@@ -15,6 +15,8 @@ namespace ArknightsMod.Content.Items.Consumables.VanityBags
 			Item.rare = ItemRarityID.Red;
 		}
 
+		public override ObtainTypes ObtainType => ObtainTypes.Limited_Festival;
+		public override int Rarity => 6;
 		protected override List<int> GetItems()
 		{
 			return

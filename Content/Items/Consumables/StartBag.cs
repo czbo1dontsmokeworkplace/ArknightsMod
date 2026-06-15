@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using ArknightsMod.Content.Items.Armor.Doctor;
+using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -24,9 +25,9 @@ namespace ArknightsMod.Content.Items.Consumables
 		}
 
 		public override void ModifyItemLoot(ItemLoot itemLoot) {
-			itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Armor.Vanity.DoctorHood>()));
-			itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Armor.Vanity.DoctorJacket>()));
-			itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Armor.Vanity.DoctorPants>()));
+			itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DoctorHood>()));
+			itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DoctorJacket>()));
+			itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DoctorPants>()));
 		}
 	}
 }

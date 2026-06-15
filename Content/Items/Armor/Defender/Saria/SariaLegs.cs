@@ -1,0 +1,31 @@
+﻿using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+using ArknightsMod.Content.Tiles.Infrastructure;
+using ArknightsMod.Content.Items.Material;
+
+namespace ArknightsMod.Content.Items.Armor.Defender.Saria
+{
+	[AutoloadEquip(EquipType.Legs)]
+	public class SariaLegs : NeoArmorLegs
+	{
+		public override int Rarity => 6;
+		public override int ArmorLifeBonus => 158;
+		
+		public override void SetArmorDefaults() {
+			Item.defense = 15;
+		}
+
+		public override void AddRecipes() {
+			CreateRecipe()
+			.AddIngredient<SariaLegs>(1)
+			.AddIngredient<Orundum>(60)
+			.AddIngredient<PolymerizationPreparation>(6)
+			.AddIngredient<RMA7024>(6)
+			.AddTile(ModContent.TileType<FactoryTile>())
+			.AddCondition(NeoArmorUtils.NeedVanity)
+			.DisableDecraft()
+			.Register();
+		}
+	}
+}

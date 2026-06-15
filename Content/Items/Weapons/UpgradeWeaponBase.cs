@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Common.UI.BattleRecord;
+using ArknightsMod.Common.UI.BattleRecord;
 using ArknightsMod.Common.UI.BattleRecord.Calculators;
 using ArknightsMod.Content.Items.Weapons.Defender.Beagle;
 using ArknightsMod.Systems.Gameplay.Skill;
@@ -80,10 +80,11 @@ namespace ArknightsMod.Content.Items.Weapons
 						if (index < 0 || index >= datas.Length)
 							throw new IndexOutOfRangeException($"Skill index {index} out of range for item '{item}'");
 						SkillData data = new() {
-							ChargeType = (SkillChargeType)int.Parse(info[3]),
-							AutoTrigger = int.Parse(info[4]) == 1,
+							ChargeType       = (SkillChargeType)int.Parse(info[3]),
+							AutoTrigger      = int.Parse(info[4]) == 1,
 							AutoUpdateActive = int.Parse(info[5]) == 1,
-							SummonSkill = int.Parse(info[6]) == 1,
+							SummonSkill      = int.Parse(info[6]) == 1,
+							SuppressReadyPulse = info.Length >= 8 && info[7].Trim() == "1",
 						};
 						string name = info[2];
 						data.BindKey(item, index, name);
@@ -130,13 +131,20 @@ namespace ArknightsMod.Content.Items.Weapons
 					}
 				}
 			}
+			if (skillDatas.TryGetValue("SceneCamera", out var sceneCameraSkills) && sceneCameraSkills[0] != null)
+				sceneCameraSkills[0].IsPermanent = true;
 		}
 		public SkillData GetSkillData(int index) {
-			if (!skillDatas.TryGetValue(Name, out var datas)) {
-				// Main.NewText(Name + " hasn't skill datas");
+			return GetSkillDataForItem(Name, index);
+		}
+
+		public static SkillData GetSkillDataForItem(string itemName, int index) {
+			if (!skillDatas.TryGetValue(itemName, out var datas))
 				return null;
-			}
 			return datas[index];
 		}
+
+		/// <summary>覆盖默认「右键开启技能」说明；为 null 时不追加。</summary>
+		public virtual string GetSkillActivateKeyHint() => null;
 	}
 }
