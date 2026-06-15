@@ -4337,7 +4337,7 @@ GravelDualBlades: {
 
 AnselClaw: {
 	DisplayName: 暗索的勾爪
-	Tooltip: 技能可将敌人勾爪拉至身前造成高额伤害
+	Tooltip: ""
 }
 
 BeanstalkOrb: {

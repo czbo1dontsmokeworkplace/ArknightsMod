@@ -543,6 +543,17 @@ PlumePike: {
 	}
 }
 
+GitanoUmbrella: {
+	1: {
+		// Label: 迅捷打击·α型
+		/* Desc:
+			'''
+			攻击力[c/3791db:+25%]
+			攻击速度[c/3791db:+25]
+			''' */
+	}
+}
+
 HongdouLance: {
 	1: {
 		Label: 攻击力强化·B型

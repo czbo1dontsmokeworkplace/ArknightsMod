@@ -1,7 +1,11 @@
+using System.Collections.Generic;
+using System.Linq;
 using ArknightsMod.Content.Items.Weapons;
+using ArknightsMod.Content.Projectiles.Supporter.Ansel;
 using ArknightsMod.Players;
 using ArknightsMod.Systems.Gameplay.Skill;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -9,62 +13,125 @@ using Microsoft.Xna.Framework;
 
 namespace ArknightsMod.Content.Items.Weapons.Supporter.Ansel
 {
+	// 暗索的钩爪：链鞭类武器。
+	// 普通攻击挥出钩链，命中把敌人拉向玩家（拉到近处）。
+	// S1 勾爪发射：攻击充能，下次鞭击 ×1.9 并把敌人强力拉至面前。
+	// S2 复式勾爪：攻击充能，右键即时向 2 个最远的敌人发射抓钩 ×2.25 拖拽至面前。
 	public class AnselClaw : ExpansionWeaponBase
 	{
 		protected override int[] EliteDamage => [44, 53, 64];
+
+		private static SoundStyle SkillActiveSfx;
+
+		private const float HookSpeed = 22f;      // S2 抓钩飞出速度
+		private const float S2SearchRange = 900f; // S2 搜索最远敌人的范围
+
+		public override void Load() {
+			SkillActiveSfx = new SoundStyle("ArknightsMod/Sounds/SkillActive1") { Volume = 0.5f, MaxInstances = 2 };
+		}
+
+		public override void SetStaticDefaults() {
+			base.SetStaticDefaults();
+			ItemID.Sets.SkipsInitialUseSound[Item.type] = true;
+		}
 
 		public override void SetDefaults() {
 			Item.damage = EliteDamage[0];
 			Item.DamageType = DamageClass.Melee;
 			Item.width = 46;
 			Item.height = 46;
-			Item.useTime = 22;
-			Item.useAnimation = 22;
-			Item.knockBack = 5f;
+			Item.useTime = 32;
+			Item.useAnimation = 32;
+			Item.knockBack = 4f;
 			Item.value = Item.sellPrice(silver: 35);
 			Item.rare = ItemRarityID.Green;
 			Item.autoReuse = true;
-			Item.useStyle = ItemUseStyleID.Swing;
+			Item.useStyle = ItemUseStyleID.Shoot;
+			Item.noMelee = true;
+			Item.noUseGraphic = true;
+			Item.shoot = ModContent.ProjectileType<AnselWhipProjectile>();
+			Item.shootSpeed = 6f;
 			Item.crit = 4;
 		}
 
+		public override bool AltFunctionUse(Player player) => true;
+
 		public override bool CanUseItem(Player player) {
 			var mp = player.GetModPlayer<WeaponPlayer>();
+
+			if (player.altFunctionUse == 2) {
+				// S2 复式勾爪：即时向 2 个最远敌人发射抓钩
+				if (mp.Skill == 1 && mp.StockCount > 0 && !mp.SkillActive) {
+					mp.DelStockCount();
+					SoundEngine.PlaySound(SkillActiveSfx, player.Center);
+					FireDoubleHooks(player, 2.25f);
+				}
+				return false;
+			}
+
+			// 同时只允许一根钩链；base 检查精英阶段等条件
+			if (player.ownedProjectileCounts[Item.shoot] >= 1 || !base.CanUseItem(player))
+				return false;
+
+			// 当前所选技能为攻击充能型 → 本次攻击充能
 			if (mp.CurrentSkill?.ChargeType == SkillChargeType.Attack && !mp.SkillActive)
 				mp.OffensiveRecovery();
-			return base.CanUseItem(player);
+
+			return true;
 		}
 
 		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
 			var mp = player.GetModPlayer<WeaponPlayer>();
+
+			bool empowered = false;
+			// S1 勾爪发射：消耗库存，本次鞭击 ×1.9 并强力拉拽
 			if (mp.Skill == 0 && mp.StockCount > 0) {
 				mp.DelStockCount();
-				// S1 勾爪发射：190% 伤害，拉扯最近敌人
 				damage = (int)(damage * 1.9f);
-				NPC target = FindNearestNPC(player);
-				if (target != null)
-					target.velocity += (player.Center - target.Center) * 0.2f;
-			} else if (mp.Skill == 1 && mp.StockCount > 0) {
-				mp.DelStockCount();
-				// S2 复式勾爪：225% 伤害，拉扯2个敌人
-				damage = (int)(damage * 2.25f);
-				NPC t1 = FindNearestNPC(player);
-				if (t1 != null) t1.velocity += (player.Center - t1.Center) * 0.25f;
-				NPC t2 = FindNearestNPC(player, t1);
-				if (t2 != null) t2.velocity += (player.Center - t2.Center) * 0.25f;
+				empowered = true;
 			}
-			return base.Shoot(player, source, position, velocity, type, damage, knockback);
+
+			int p = Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI);
+			if (empowered && p >= 0 && p < Main.maxProjectiles
+				&& Main.projectile[p].ModProjectile is AnselWhipProjectile whip)
+				whip.Empowered = true;
+
+			return false;
 		}
 
-		private static NPC FindNearestNPC(Player player, NPC exclude = null) {
-			NPC best = null;
-			float dist = 800f;
-			foreach (NPC npc in Main.npc) {
-				if (!npc.active || npc.friendly || npc == exclude) continue;
-				float d = Vector2.Distance(npc.Center, player.Center);
-				if (d < dist) { dist = d; best = npc; }
+		// S2：朝 2 个最远敌人各发射一枚抓钩
+		private void FireDoubleHooks(Player player, float dmgMul) {
+			if (Main.myPlayer != player.whoAmI) return;
+			int dmg = (int)(player.GetWeaponDamage(Item) * dmgMul);
+
+			var targets = FindFarthestTargets(player, 2);
+			if (targets.Count == 0) {
+				SpawnHook(player, Main.MouseWorld, dmg);
+				return;
 			}
-			return best;
+			foreach (NPC npc in targets)
+				SpawnHook(player, npc.Center, dmg);
+		}
+
+		private void SpawnHook(Player player, Vector2 target, int dmg) {
+			Vector2 dir = (target - player.Center).SafeNormalize(new Vector2(player.direction, 0f));
+			Projectile.NewProjectile(
+				player.GetSource_ItemUse(Item),
+				player.Center,
+				dir * HookSpeed,
+				ModContent.ProjectileType<AnselHookProjectile>(),
+				dmg, Item.knockBack, player.whoAmI);
+		}
+
+		// 找出范围内最远的若干个敌人
+		private static List<NPC> FindFarthestTargets(Player player, int count) {
+			return Main.npc
+				.Where(npc => npc.active && !npc.friendly && !npc.dontTakeDamage
+					&& npc.CanBeChasedBy()
+					&& Vector2.Distance(npc.Center, player.Center) <= S2SearchRange)
+				.OrderByDescending(npc => Vector2.Distance(npc.Center, player.Center))
+				.Take(count)
+				.ToList();
 		}
 	}
 }
