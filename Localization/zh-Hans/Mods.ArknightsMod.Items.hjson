@@ -4352,7 +4352,7 @@ EarthspiritWand: {
 
 PlumePike: {
 	DisplayName: 翎羽的戈
-	Tooltip: 技能激活时攻击速度大幅提升
+	// Tooltip: ""
 }
 
 VanillaAxe: {
