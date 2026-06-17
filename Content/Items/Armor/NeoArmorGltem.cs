@@ -24,11 +24,13 @@ namespace ArknightsMod.Content.Items.Armor
 					neoArmor.SetBaseArmorDefaults();
 			}
 		}
+
 		public override void UpdateInventory(Item Item, Player player) {
 			if (isNeoArmor && hasUpgraded) {
 				Item.maxStack = 1;
 			}
 		}
+
 		public override void OnCreated(Item Item, ItemCreationContext context) {
 			if (isNeoArmor)
 			{

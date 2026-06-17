@@ -16,7 +16,9 @@ namespace ArknightsMod.Content.Items.Armor
 		}
 
 		public static void ApplySetBonusText(Player player, bool fullSetActive, string setBonusKey) {
-			player.setBonus = fullSetActive ? Language.GetTextValue(setBonusKey) : string.Empty;
+			//player.setBonus = fullSetActive ? Language.GetTextValue(setBonusKey) : string.Empty;
+			if (fullSetActive)
+				player.setBonus = Language.GetTextValue(setBonusKey);
 		}
 	}
 }
