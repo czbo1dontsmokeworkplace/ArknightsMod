@@ -1,4 +1,4 @@
-using ArknightsMod.Content.Items.Armor.Guard.Oblivionis;
+﻿using ArknightsMod.Content.Items.Armor.Guard.Oblivionis;
 using System.Collections.Generic;
 using Terraria.ModLoader;
 

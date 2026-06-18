@@ -1,4 +1,4 @@
-using ArknightsMod.Content.Items.Armor.Specialist.Dorothy;
+﻿using ArknightsMod.Content.Items.Armor.Specialist.Dorothy;
 using System.Collections.Generic;
 using Terraria.ModLoader;
 

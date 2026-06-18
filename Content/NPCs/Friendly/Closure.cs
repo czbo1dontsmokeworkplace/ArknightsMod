@@ -1,5 +1,5 @@
 using ArknightsMod.Content.Items;
-using ArknightsMod.Content.Items.Consumables.VanityBags;
+using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.DisplayForUI;
 using ArknightsMod.Content.Items.Gacha;
 using ArknightsMod.Content.Items.Material;

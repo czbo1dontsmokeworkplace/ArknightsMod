@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ArknightsMod.Content.Items.Armor.Guard.Ulpianus;
 using Terraria.ID;
 using Terraria.ModLoader;

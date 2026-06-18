@@ -1,4 +1,4 @@
-using ArknightsMod.Content.Items.Armor;
+﻿using ArknightsMod.Content.Items.Armor;
 using System.Collections.Generic;
 using Terraria.ModLoader;
 

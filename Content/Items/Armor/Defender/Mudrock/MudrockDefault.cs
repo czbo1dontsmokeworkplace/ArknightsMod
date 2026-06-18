@@ -7,6 +7,7 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Mudrock
 	public class MudrockDefault : ArknightsVanityBag
 	{
 		public override int Rarity => 6;
+		public override ObtainTypes ObtainType => ObtainTypes.NoGacha;
 		protected override List<int> GetItems() {
 			return
 			[

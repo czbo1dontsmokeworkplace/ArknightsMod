@@ -1,5 +1,5 @@
-using ArknightsMod.Content.Items.Armor.Caster.Amiya;
-using ArknightsMod.Content.Items.Consumables.VanityBags;
+﻿using ArknightsMod.Content.Items.Armor.Caster.Amiya;
+using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.NPCs.Friendly;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
@@ -14,7 +14,7 @@ namespace ArknightsMod.Systems
 	public class NPCShopSystem : ModSystem
 	{
 		public static List<int> ClosureTodaysRotation = [];
-		// 保存完整的 Item 对象而不是只保存 type
+		// 淇濆瓨瀹屾暣鐨?Item 瀵硅薄鑰屼笉鏄彧淇濆瓨 type
 		public static List<Item> CannotShopItems = [];
 		public static int OldCannotShopCount;
 
@@ -70,29 +70,29 @@ namespace ArknightsMod.Systems
 		public static void TryUpdateCannotShop(Mod mod, bool forcedUpdate = false) {
 			if (Main.netMode != NetmodeID.MultiplayerClient) {
 				int countBeforeSkeletron = 1 +
-					(NPC.downedSlimeKing ? 1 : 0) +//史莱姆
-					(NPC.downedBoss1 ? 1 : 0) +//克眼
-					(NPC.downedBoss2 ? 1 : 0) +//邪恶boss
-					(NPC.downedDeerclops ? 1 : 0);//巨鹿
+					(NPC.downedSlimeKing ? 1 : 0) +//鍙茶幈濮?
+					(NPC.downedBoss1 ? 1 : 0) +//鍏嬬溂
+					(NPC.downedBoss2 ? 1 : 0) +//閭伓boss
+					(NPC.downedDeerclops ? 1 : 0);//宸ㄩ箍
 
 
 				int countBetweenSkeletronAndPlantera =
-					(NPC.downedBoss3 ? 1 : 0) +//骷髅王
-					(NPC.downedQueenBee ? 1 : 0) +//蜂后
-					(Main.hardMode ? 1 : 0) +//肉山
-					(NPC.downedMechBoss1 ? 1 : 0) +//机械1
-					(NPC.downedMechBoss2 ? 1 : 0) +//机械2
-					(NPC.downedMechBoss3 ? 1 : 0);//机械3
+					(NPC.downedBoss3 ? 1 : 0) +//楠烽珔鐜?
+					(NPC.downedQueenBee ? 1 : 0) +//铚傚悗
+					(Main.hardMode ? 1 : 0) +//鑲夊北
+					(NPC.downedMechBoss1 ? 1 : 0) +//鏈烘1
+					(NPC.downedMechBoss2 ? 1 : 0) +//鏈烘2
+					(NPC.downedMechBoss3 ? 1 : 0);//鏈烘3
 
 				int countBetweenPlanteraAndDukeFishron =
-					(NPC.downedPlantBoss ? 1 : 0) +//世花
-					(NPC.downedGolemBoss ? 1 : 0);//石巨人
+					(NPC.downedPlantBoss ? 1 : 0) +//涓栬姳
+					(NPC.downedGolemBoss ? 1 : 0);//鐭冲法浜?
 
 				int countFromFishronOnward =
-					(NPC.downedFishron ? 1 : 0) +//猪鲨
-					(NPC.downedEmpressOfLight ? 1 : 0) +//光女
-					(NPC.downedAncientCultist ? 1 : 0) +//教徒
-					(NPC.downedMoonlord ? 1 : 0);//月总
+					(NPC.downedFishron ? 1 : 0) +//鐚波
+					(NPC.downedEmpressOfLight ? 1 : 0) +//鍏夊コ
+					(NPC.downedAncientCultist ? 1 : 0) +//鏁欏緬
+					(NPC.downedMoonlord ? 1 : 0);//鏈堟€?
 
 				int cannotShopCount = countBeforeSkeletron + countBetweenSkeletronAndPlantera + countBetweenPlanteraAndDukeFishron + countFromFishronOnward;
 				if (!forcedUpdate && cannotShopCount == OldCannotShopCount)
@@ -108,7 +108,7 @@ namespace ArknightsMod.Systems
 				if (countFromFishronOnward > 0)
 					tempShop.AddPoolFromNameSpace("Rogue.Rarity_l4", countFromFishronOnward, "ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4", mod);
 
-				// 保存完整的 Item 对象
+				// 淇濆瓨瀹屾暣鐨?Item 瀵硅薄
 				CannotShopItems.Clear();
 				CannotShopItems.AddRange(tempShop.GenerateNewInventoryList());
 
@@ -144,7 +144,7 @@ namespace ArknightsMod.Systems
 			packet.Send();
 		}
 
-		// 修改：同步自定义货币信息
+		// 淇敼锛氬悓姝ヨ嚜瀹氫箟璐у竵淇℃伅
 		public static void SendUpdateCannotShop(Mod mod) {
 			var packet = mod.GetPacket();
 			packet.Write((short)ArknightsMod.ArkMessageID.UpdateCannotShop);
@@ -169,7 +169,7 @@ namespace ArknightsMod.Systems
 			}
 		}
 
-		// 读取并恢复自定义货币信息
+		// 璇诲彇骞舵仮澶嶈嚜瀹氫箟璐у竵淇℃伅
 		public static void ReadUpdateCannotShop(BinaryReader reader) {
 			CannotShopItems = [];
 			try {
