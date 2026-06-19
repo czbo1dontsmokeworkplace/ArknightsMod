@@ -1033,7 +1033,11 @@ RAMeat: {
 
 UnionInvader: {
 	DisplayName: 破损的整合运动旗帜
-	Tooltip: 白天使用以召唤整合运动的先锋部队
+	Tooltip:
+		'''
+		使用以召唤 觉悟归来的弑君者，战斗途中会有新整合运动成员前来参与
+		获胜以解锁蓝色品质的精英材料合成与售卖
+		'''
 }
 
 FrontlineBattleRecord: {
