@@ -6,14 +6,15 @@ using ArknightsMod.Content.Items.Material;
 
 namespace ArknightsMod.Content.Items.Armor.Supporter.Deepcolor
 {
+	// 数值范例：生命基数210 / 防御基数12（见 DeepcolorHead 注释），躯干取生命25%、防御75%。
 	[AutoloadEquip(EquipType.Body)]
 	public class DeepcolorBody : NeoArmorBody
 	{
 		public override int Rarity => 4;
-		public override int ArmorLifeBonus => 52;
+		public override int ArmorLifeBonus => 52; // 210 * 25%
 
 		public override void SetArmorDefaults() {
-			Item.defense = 9;
+			Item.defense = 9; // 12 * 75%
 		}
 		
 		public override void AddRecipes() {

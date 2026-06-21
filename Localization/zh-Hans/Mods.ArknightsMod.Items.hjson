@@ -4116,22 +4116,22 @@ CivilightEternaHelmet: {
 }
 
 DeepcolorBody: {
-	// DisplayName: Deepcolor Body
+	DisplayName: 深海色的上衣
 	// Tooltip: ""
 }
 
 DeepcolorDefault: {
-	// DisplayName: Deepcolor Default
+	DisplayName: 深海色的服饰（常规）
 	// Tooltip: ""
 }
 
 DeepcolorHead: {
-	// DisplayName: Deepcolor Head
+	DisplayName: 深海色的头套
 	// Tooltip: ""
 }
 
 DeepcolorLegs: {
-	// DisplayName: Deepcolor Legs
+	DisplayName: 深海色的下装
 	// Tooltip: ""
 }
 
