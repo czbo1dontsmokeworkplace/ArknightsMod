@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "wiki",
+      "runtimeExecutable": "C:\\Users\\Cherry\\AppData\\Roaming\\Badlion Client\\Data\\jdk-21.0.2\\bin\\java.exe",
+      "runtimeArgs": ["-jar", "C:/Users/Cherry/Downloads/泰拉方舟游戏进度表/target/terra-arknights-wiki-1.0.0.jar", "--server.port=8090"],
+      "port": 8090
+    }
+  ]
+}

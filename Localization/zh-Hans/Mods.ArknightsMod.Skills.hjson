@@ -230,7 +230,7 @@ ThornsWeapon: {
 
 BeagleWeapon: {
 	1: {
-		Desc: 防御力[c/3791db:+50%]
+		Desc: 防御力[c/3791db:+25%]
 		Label: 防御力强化·α型
 	}
 }

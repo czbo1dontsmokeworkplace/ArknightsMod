@@ -27,7 +27,6 @@ namespace ArknightsMod.Content.Projectiles.Defender.Beagle
 		public override void UpdateEquips() {
 			var it = Player.HeldItem;
 			if (it.type == ModContent.ItemType<BeagleWeapon>() && Main.mouseRight) {
-				Player.statDefense += 10;
 				Player.noKnockback = true;
 			}
 			base.UpdateEquips();
