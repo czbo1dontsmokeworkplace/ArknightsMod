@@ -11,9 +11,9 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Mudrock
 		protected override List<int> GetItems() {
 			return
 			[
-				ModContent.ItemType<MudrockHelmet>(),
-				ModContent.ItemType<MudrockChestplate>(),
-				ModContent.ItemType<MudrockGreaves>()
+				ModContent.ItemType<MudrockHead>(),
+				ModContent.ItemType<MudrockBody>(),
+				ModContent.ItemType<MudrockLegs>()
 			];
 		}
 	}

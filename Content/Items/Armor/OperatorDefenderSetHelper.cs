@@ -19,11 +19,17 @@ namespace ArknightsMod.Content.Items.Armor
 				|| HasSet(player, ModContent.ItemType<NianHelmet>(), ModContent.ItemType<NianChestplate>(), ModContent.ItemType<NianGreaves>())
 				|| HasSet(player, ModContent.ItemType<SpotHelmet>(), ModContent.ItemType<SpotChestplate>(), ModContent.ItemType<SpotGreaves>())
 				|| HasSet(player, ModContent.ItemType<VulcanHelmet>(), ModContent.ItemType<VulcanChestplate>(), ModContent.ItemType<VulcanGreaves>())
-				|| HasSet(player, ModContent.ItemType<MudrockHelmet>(), ModContent.ItemType<MudrockChestplate>(), ModContent.ItemType<MudrockGreaves>());
+				|| HasMudrockSet(player);
 		}
 
 		private static bool HasSet(Player player, int helmet, int chest, int greaves) {
 			return OperatorSetEquipHelper.HasFullSet(player, helmet, chest, greaves);
+		}
+
+		private static bool HasMudrockSet(Player player) {
+			return player.armor[0].type == ModContent.ItemType<MudrockHead>() && player.armor[0].neoarmor().hasUpgraded
+				&& player.armor[1].type == ModContent.ItemType<MudrockBody>() && player.armor[1].neoarmor().hasUpgraded
+				&& player.armor[2].type == ModContent.ItemType<MudrockLegs>() && player.armor[2].neoarmor().hasUpgraded;
 		}
 	}
 }

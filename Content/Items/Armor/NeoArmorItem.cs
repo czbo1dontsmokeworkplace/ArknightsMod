@@ -62,10 +62,35 @@ namespace ArknightsMod.Content.Items.Armor
 			}
 		}
 
+		/// <summary> 在不重建 GlobalItem 实例（不丢失 hasUpgraded）的前提下，重新套用时装/盔甲属性。<br/>
+		/// 用于右键切换 hasUpgraded 后刷新物品状态（双向切换，而非仅依赖一次性升级）。</summary>
+		public void RefreshState() {
+			hasInitialized = false;
+			Item.rare = ItemRarityID.White;
+			Item.maxStack = 1;
+			Item.value = Value;
+			Item.vanity = true;
+			SetVanityDefaults();
+			if (Item.neoarmor().hasUpgraded)
+				SetBaseArmorDefaults();
+		}
+
+		/// <summary> 升级为盔甲后，库存图标替换为的贴图路径（为 null 时不替换，沿用时装图标）</summary>
+		protected virtual string ArmorIconTexture => null;
+
 		public sealed override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
 		{
 			if (Item.neoarmor().hasUpgraded)
+			{
 				SetBaseArmorDefaults();
+
+				if (ArmorIconTexture != null)
+				{
+					Texture2D tex = ModContent.Request<Texture2D>(ArmorIconTexture).Value;
+					spriteBatch.Draw(tex, position, null, drawColor, 0f, tex.Size() / 2f, scale, SpriteEffects.None, 0f);
+					return false;
+				}
+			}
 
 			return true;
 		}

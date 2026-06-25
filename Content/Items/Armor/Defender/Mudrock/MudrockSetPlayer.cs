@@ -21,13 +21,10 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Mudrock
 		}
 
 		public override void PostUpdateEquips() {
-			MudrockHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<MudrockHelmet>());
-			MudrockSetActive = OperatorSetEquipHelper.HasFullSet(
-				Player,
-				ModContent.ItemType<MudrockHelmet>(),
-				ModContent.ItemType<MudrockChestplate>(),
-				ModContent.ItemType<MudrockGreaves>());
-			OperatorSetEquipHelper.ApplySetBonusText(Player, MudrockSetActive, "Mods.ArknightsMod.ArmorSets.Mudrock.SetBonus");
+			MudrockHelmetActive = Player.armor[0].type == ModContent.ItemType<MudrockHead>() && Player.armor[0].neoarmor().hasUpgraded;
+			MudrockSetActive = MudrockHelmetActive
+				&& Player.armor[1].type == ModContent.ItemType<MudrockBody>() && Player.armor[1].neoarmor().hasUpgraded
+				&& Player.armor[2].type == ModContent.ItemType<MudrockLegs>() && Player.armor[2].neoarmor().hasUpgraded;
 		}
 
 		public override void PostUpdate() {

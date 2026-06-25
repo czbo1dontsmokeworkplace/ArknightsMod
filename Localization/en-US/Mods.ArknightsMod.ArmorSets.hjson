@@ -326,6 +326,7 @@ Mudrock: {
 	HelmetEffect: "[c/beebff:Helmet]: -30% damage taken from Sarkaz enemies"
 	SetEffect: "[c/beebff:Set]: Gain a shield every 9s (max 3). When hit for >50, consume 1 shield for -20% damage and heal 10% max HP"
 	SetBonus: Periodic shields; big hits consume shield for mitigation and heal
+	ToggleHint: Hold this item and right-click to toggle between the vanity look and the armor set look (activates the set effect). Hold and right-click again to switch back.
 }
 
 Mlynar: {
