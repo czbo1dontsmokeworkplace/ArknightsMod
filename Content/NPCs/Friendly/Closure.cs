@@ -24,6 +24,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 
 		public static int ButtonCount;
 
+		private static string closureShop1FullName;
 		private static string closureShop2FullName;
 
 		public override void SetStaticDefaults() {
@@ -288,69 +289,16 @@ namespace ArknightsMod.Content.NPCs.Friendly
 
 		public override void AddShops() {
 			var npcShop = new NPCShop(Type, ShopName[0])
-				.Add(new Item(ModContent.ItemType<Polyketon>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<Oriron>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<Sugar>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<Device>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<Polyester>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<ManganeseOre>()) {
-					shopCustomPrice = 30,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<Grindstone>()) {
-					shopCustomPrice = 30,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<LoxicKohl>()) {
-					shopCustomPrice = 30,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<CoagulatingGel>()) {
-					shopCustomPrice = 30,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<IncandescentAlloy>()) {
-					shopCustomPrice = 30,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<CrystallineComponent>()) {
-					shopCustomPrice = 30,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<CompoundCuttingFluid>()) {
-					shopCustomPrice = 30,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<SemiSyntheticSolvent>()) {
-					shopCustomPrice = 30,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<TransmutedSalt>()) {
-					shopCustomPrice = 30,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<CarbonBrick>()) {
-					shopCustomPrice = Item.buyPrice(0, 0, 10, 0),
-				})
 				.Add(new Item(ModContent.ItemType<Items.Placeable.Furniture.DareUsa>()) {
 					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				});
+			foreach (int materialType in NPCShopSystem.BuildClosureMaterialPool(true)) {
+				npcShop.Add(new Item(materialType) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				});
+			}
 			npcShop.Register();
 			npcShop = new NPCShop(Type, ShopName[1]);
 			foreach (var bag in ModContent.GetContent<ArknightsVanityBag>()) {
@@ -375,7 +323,29 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		}
 
 		public override void ModifyActiveShop(string shopName, Item[] items) {
+			closureShop1FullName ??= NPCShopDatabase.GetShopName(ModContent.NPCType<Closure>(), ShopName[0]);
 			closureShop2FullName ??= NPCShopDatabase.GetShopName(ModContent.NPCType<Closure>(), ShopName[1]);
+
+			if (shopName == closureShop1FullName) {
+				if (NPCShopSystem.ClosureMaterialRotation.Count == 0)
+					NPCShopSystem.UpdateClosureShop(Mod, true);
+				Array.Fill(items, null);
+
+				items[0] = new Item(ModContent.ItemType<Items.Placeable.Furniture.DareUsa>()) {
+					shopCustomPrice = 30,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				};
+
+				var materialRotation = NPCShopSystem.ClosureMaterialRotation;
+				for (int j = 0; j < materialRotation.Count && j + 1 < items.Length; j++) {
+					items[j + 1] = new Item(materialRotation[j]) {
+						shopCustomPrice = 10,
+						shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+					};
+				}
+				return;
+			}
+
 			if (shopName != closureShop2FullName)
 				return;
 

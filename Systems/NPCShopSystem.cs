@@ -1,5 +1,7 @@
 ﻿using ArknightsMod.Content.Items.Armor.Caster.Amiya;
 using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Items.Material.ReclamAlgor;
 using ArknightsMod.Content.NPCs.Friendly;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
@@ -14,6 +16,98 @@ namespace ArknightsMod.Systems
 	public class NPCShopSystem : ModSystem
 	{
 		public static List<int> ClosureTodaysRotation = [];
+		public static List<int> ClosureMaterialRotation = [];
+
+		public static List<int> BuildClosureMaterialPool(bool forceAllTiers = false) {
+			var pool = new List<int> {
+				ModContent.ItemType<Orirock>(),
+				ModContent.ItemType<OrironShard>(),
+				ModContent.ItemType<SugarSubstitute>(),
+				ModContent.ItemType<Polyester>(),
+				ModContent.ItemType<Diketon>(),
+				ModContent.ItemType<Ester>(),
+				ModContent.ItemType<DamagedDevice>(),
+				ModContent.ItemType<CarbonBrick>(),
+				ModContent.ItemType<CrabClaw>(),
+				ModContent.ItemType<RAWater>(),
+				ModContent.ItemType<RAMeat>(),
+				ModContent.ItemType<RiceGrain>(),
+				ModContent.ItemType<RALegmeat>(),
+			};
+
+			if (forceAllTiers || NPC.downedBoss1) {
+				pool.AddRange([
+					ModContent.ItemType<Oriron>(),
+					ModContent.ItemType<Sugar>(),
+					ModContent.ItemType<Polyketon>(),
+					ModContent.ItemType<Device>(),
+					ModContent.ItemType<OrirockCube>(),
+					ModContent.ItemType<OriginiumShard>(),
+					ModContent.ItemType<CorruptedRecord>(),
+				]);
+			}
+
+			if (forceAllTiers || NPC.downedBoss3) {
+				pool.AddRange([
+					ModContent.ItemType<ManganeseOre>(),
+					ModContent.ItemType<Grindstone>(),
+					ModContent.ItemType<LoxicKohl>(),
+					ModContent.ItemType<RMA7012>(),
+					ModContent.ItemType<OrirockCluster>(),
+					ModContent.ItemType<SugarPack>(),
+					ModContent.ItemType<PolyesterPack>(),
+					ModContent.ItemType<CoagulatingGel>(),
+					ModContent.ItemType<OrironCluster>(),
+					ModContent.ItemType<Aketon>(),
+					ModContent.ItemType<IntegratedDevice>(),
+					ModContent.ItemType<IncandescentAlloy>(),
+					ModContent.ItemType<CrystallineComponent>(),
+					ModContent.ItemType<CompoundCuttingFluid>(),
+					ModContent.ItemType<TransmutedSalt>(),
+					ModContent.ItemType<SemiSyntheticSolvent>(),
+					ModContent.ItemType<CoagulativeNodule>(),
+					ModContent.ItemType<FuscousFiber>(),
+					ModContent.ItemType<AggregateCyclicene>(),
+				]);
+			}
+
+			if (forceAllTiers || (NPC.downedMechBoss1 && NPC.downedMechBoss2 && NPC.downedMechBoss3)) {
+				pool.AddRange([
+					ModContent.ItemType<ManganeseTrihydrate>(),
+					ModContent.ItemType<GrindstonePentahydrate>(),
+					ModContent.ItemType<WhiteHorseKohl>(),
+					ModContent.ItemType<RMA7024>(),
+					ModContent.ItemType<OrirockConcentration>(),
+					ModContent.ItemType<SugarLump>(),
+					ModContent.ItemType<PolyesterLump>(),
+					ModContent.ItemType<PolymerizedGel>(),
+					ModContent.ItemType<CyclicenePrefab>(),
+					ModContent.ItemType<ChiralRefractor>(),
+					ModContent.ItemType<OrironBlock>(),
+					ModContent.ItemType<KetonColloid>(),
+					ModContent.ItemType<OptimizedDevice>(),
+					ModContent.ItemType<IncandescentAlloyBlock>(),
+					ModContent.ItemType<CrystallineCircuit>(),
+					ModContent.ItemType<CuttingFluidSolution>(),
+					ModContent.ItemType<RefinedSolvent>(),
+					ModContent.ItemType<TransmutedSaltAgglomerate>(),
+					ModContent.ItemType<SolidifiedFiberBoard>(),
+				]);
+			}
+
+			if (forceAllTiers || NPC.downedPlantBoss) {
+				pool.AddRange([
+					ModContent.ItemType<RephasicEnantiomer>(),
+					ModContent.ItemType<PolymerizationPreparation>(),
+					ModContent.ItemType<D32Steel>(),
+					ModContent.ItemType<CrystallineElectronicUnit>(),
+					ModContent.ItemType<BipolarNanoflake>(),
+					ModContent.ItemType<NucleicCrystalSinter>(),
+				]);
+			}
+
+			return pool;
+		}
 		// 淇濆瓨瀹屾暣鐨?Item 瀵硅薄鑰屼笉鏄彧淇濆瓨 type
 		public static List<Item> CannotShopItems = [];
 		public static int OldCannotShopCount;
@@ -52,6 +146,16 @@ namespace ArknightsMod.Systems
 					others.RemoveAt(Main.rand.Next(others.Count));
 				}
 				ClosureTodaysRotation.AddRange(others);
+
+				var materialPool = BuildClosureMaterialPool();
+				ClosureMaterialRotation = [];
+				int materialCount = Main.rand.Next(8, 13);
+				while (materialPool.Count > 0 && ClosureMaterialRotation.Count < materialCount) {
+					int idx = Main.rand.Next(materialPool.Count);
+					ClosureMaterialRotation.Add(materialPool[idx]);
+					materialPool.RemoveAt(idx);
+				}
+
 				if (Main.dedServ) {
 					SendUpdateClosureShop(mod);
 				}
@@ -141,6 +245,10 @@ namespace ArknightsMod.Systems
 			for (int i = 0; i < ClosureTodaysRotation.Count; i++) {
 				packet.Write(ClosureTodaysRotation[i]);
 			}
+			packet.Write(ClosureMaterialRotation.Count);
+			for (int i = 0; i < ClosureMaterialRotation.Count; i++) {
+				packet.Write(ClosureMaterialRotation[i]);
+			}
 			packet.Send();
 		}
 
@@ -158,14 +266,20 @@ namespace ArknightsMod.Systems
 
 		public static void ReadUpdateClosureShop(BinaryReader reader) {
 			ClosureTodaysRotation = [];
+			ClosureMaterialRotation = [];
 			try {
 				int count = reader.ReadInt32();
 				for (int i = 0; i < count; i++) {
 					ClosureTodaysRotation.Add(reader.ReadInt32());
 				}
+				int materialCount = reader.ReadInt32();
+				for (int i = 0; i < materialCount; i++) {
+					ClosureMaterialRotation.Add(reader.ReadInt32());
+				}
 			}
 			catch {
 				ClosureTodaysRotation = [ModContent.ItemType<AmiyaDefault>()];
+				ClosureMaterialRotation = [];
 			}
 		}
 
