@@ -50,10 +50,9 @@ namespace ArknightsMod.Content.Projectiles.Specialist.Scene
 		private const float WalkStopDist = 32f;   // 离目标点此范围内停下
 
 		// 地面攻击（小跳）
-		private const float AttackReachX   = 48f;
-		private const float AttackBandY    = 40f;
+		private const float SearchRadius   = 280f;  // 圆形索敌半径（像素）
 		private const int   HopDuration    = 22;
-		private const int   HopCooldownMax = 38;
+		private const int   HopCooldownMax = 180;   // 低频攻击：约3秒
 		private const float HopForward     = 26f;
 		private const float HopHeight      = 15f;
 		private const float LeanMax        = 0.22f;
@@ -438,12 +437,11 @@ namespace ArknightsMod.Content.Projectiles.Specialist.Scene
 			dir = facingDir;
 			Vector2 center = Projectile.Center;
 			NPC     best   = null;
-			float   bestDx = float.MaxValue;
+			float   bestDist = float.MaxValue;
 
 			bool InRange(NPC npc) {
 				if (npc == null || !npc.active || !npc.CanBeChasedBy(Projectile)) return false;
-				return Math.Abs(npc.Center.X - center.X) <= AttackReachX
-					&& Math.Abs(npc.Center.Y - center.Y) <= AttackBandY;
+				return Vector2.Distance(npc.Center, center) <= SearchRadius;
 			}
 
 			if (owner.HasMinionAttackTargetNPC) {
@@ -454,8 +452,8 @@ namespace ArknightsMod.Content.Projectiles.Specialist.Scene
 				for (int i = 0; i < Main.maxNPCs; i++) {
 					NPC npc = Main.npc[i];
 					if (!InRange(npc)) continue;
-					float dx = Math.Abs(npc.Center.X - center.X);
-					if (dx < bestDx) { bestDx = dx; best = npc; }
+					float dist = Vector2.Distance(npc.Center, center);
+					if (dist < bestDist) { bestDist = dist; best = npc; }
 				}
 			}
 
