@@ -10,9 +10,9 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.Ling
 		protected override List<int> GetItems() {
 			return
 			[
-				ModContent.ItemType<LingHelmet>(),
-				ModContent.ItemType<LingChestplate>(),
-				ModContent.ItemType<LingGreaves>()
+				ModContent.ItemType<LingHead>(),
+				ModContent.ItemType<LingBody>(),
+				ModContent.ItemType<LingLegs>()
 			];
 		}
 	}
