@@ -21,6 +21,7 @@ public class Cardi_Sword : ModProjectile
 	private const float Reach = 96f; // 攻击有效长度，独立于贴图大小，适当拉长以弥补贴图过短
 	private const float DrawScale = 1.6f; // 持握时的绘制缩放，配合 Reach 拉长后的视觉表现
 	private const float ThrowDistance = 200f; // 回旋投掷的最大飞出距离
+	private const float HandLift = 14f; // 整体抬高手持位置
 
 	private ProjMode projMode = ProjMode.Move;
 	private int comboStep; // 0 = 下劈，1 = 戳刺，2 = 回旋投掷，三种攻击依次循环
@@ -121,6 +122,7 @@ public class Cardi_Sword : ModProjectile
 		float armRot = ToArmRot(worldRot);
 		player.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, armRot);
 		handPos = player.GetBackHandPosition(Player.CompositeArmStretchAmount.Full, armRot);
+		handPos.Y -= HandLift;
 		Projectile.rotation = worldRot;
 		Projectile.Center = handPos;
 
@@ -173,6 +175,7 @@ public class Cardi_Sword : ModProjectile
 		float armRot = ToArmRot(Projectile.rotation);
 		player.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, armRot);
 		handPos = player.GetBackHandPosition(Player.CompositeArmStretchAmount.Full, armRot);
+		handPos.Y -= HandLift;
 		swordEnd = handPos + Projectile.rotation.ToRotationVector2() * Reach;
 		Projectile.Center = handPos;
 	}
@@ -183,6 +186,7 @@ public class Cardi_Sword : ModProjectile
 		float armRot = ToArmRot(mouseRad);
 		player.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, armRot);
 		Vector2 baseHandPos = player.GetBackHandPosition(Player.CompositeArmStretchAmount.Full, armRot);
+		baseHandPos.Y -= HandLift;
 
 		// 0 -> 1 -> 0 的三角形曲线：先伸出再收回
 		float extend = progress < 0.5f ? progress / 0.5f : 1f - (progress - 0.5f) / 0.5f;
@@ -197,6 +201,7 @@ public class Cardi_Sword : ModProjectile
 		float armRot = ToArmRot(mouseRad);
 		player.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, armRot);
 		handPos = player.GetBackHandPosition(Player.CompositeArmStretchAmount.Full, armRot);
+		handPos.Y -= HandLift;
 
 		bool outbound = progress < 0.5f;
 		if (!outbound && !throwReturning)
@@ -220,9 +225,11 @@ public class Cardi_Sword : ModProjectile
 		}
 		else {
 			// 持握状态：以刀柄(贴图左侧中心)为锚点，按 DrawScale 适当放大视觉表现
+			// 面朝左时旋转角是按 Pi - 角度 镜像得到的，贴图本身不会跟着镜像，需要额外纵向翻转才能让开刃面保持朝下
 			Vector2 origin = new(0f, tex.Height / 2f);
 			Vector2 drawPos = handPos - Main.screenPosition;
-			Main.spriteBatch.Draw(tex, drawPos, null, lightColor, Projectile.rotation, origin, DrawScale, SpriteEffects.None, 0f);
+			SpriteEffects effects = player.direction == -1 ? SpriteEffects.FlipVertically : SpriteEffects.None;
+			Main.spriteBatch.Draw(tex, drawPos, null, lightColor, Projectile.rotation, origin, DrawScale, effects, 0f);
 		}
 		return false;
 	}
