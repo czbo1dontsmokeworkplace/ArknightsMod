@@ -3,6 +3,11 @@ DeepcolorMinionBuff: {
 	Description: Tentacles are fighting for you.
 }
 
+GoldenglowBeaconBuff: {
+	DisplayName: Floating Beacon
+	Description: "{0} Floating Drones deployed. Right-click to dismiss them all."
+}
+
 CameraTruckBuff: {
 	DisplayName: Mobile Camera Truck
 	Description: A Mobile Camera Truck is deployed.

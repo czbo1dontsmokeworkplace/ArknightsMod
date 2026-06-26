@@ -4251,7 +4251,8 @@ StewardStaff: {
 
 GoldenglowWand: {
 	DisplayName: 澄闪的法杖
-	Tooltip: 精英2可解锁澄净闪耀
+	// Tooltip: ""
+	BeaconCount: 当前浮游单元：{0} / {1}
 }
 
 CardiganShield: {

@@ -3882,6 +3882,7 @@ StewardStaff: {
 GoldenglowWand: {
 	DisplayName: Goldenglow Wand
 	Tooltip: ""
+	BeaconCount: Floating Drones: {0} / {1}
 }
 
 CardiganShield: {
