@@ -3993,11 +3993,6 @@ LupineScarlet: {
 	Tooltip: ""
 }
 
-CardiWeapon: {
-	DisplayName: Cardi Weapon
-	Tooltip: ""
-}
-
 CuoraWeapon: {
 	DisplayName: Cuora Weapon
 	Tooltip: ""

@@ -265,12 +265,6 @@ namespace ArknightsMod.Common
 				Damage = 23, UseTime = 25, UseAnimation = 25, KnockBack = 7f, Crit = 2
 			},
 
-			// CardiWeapon - 斑点 - 盾牌
-			// 原始值: damage=23, useTime=25, useAnimation=25, knockBack=7, crit=2
-			[typeof(Content.Items.Weapons.Defender.Cardigan.CardiWeapon)] = new() {
-				Damage = 23, UseTime = 25, UseAnimation = 25, KnockBack = 7f, Crit = 2
-			},
-
 			// CardiganShield - 斑点(精英) - 盾牌 (EliteDamage=[24,30])
 			// 原始值: damage=24, useTime=20, useAnimation=20, knockBack=7, shootSpeed=18, crit=4
 			[typeof(Content.Items.Weapons.Defender.Cardigan.CardiganShield)] = new() {

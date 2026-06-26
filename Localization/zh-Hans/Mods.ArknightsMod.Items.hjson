@@ -4256,8 +4256,8 @@ GoldenglowWand: {
 }
 
 CardiganShield: {
-	DisplayName: 卡缇的盾牌
-	Tooltip: 技能激活时立即恢复最大生命40%
+	DisplayName: 卡缇的剑盾
+	Tooltip: ""
 }
 
 BeehunterBag: {
@@ -4365,11 +4365,6 @@ LupineScarlet: {
 		左键：三段绯紫连斩
 		右键：散射绯红碎影，归拢至光标处引爆
 		'''
-}
-
-CardiWeapon: {
-	// DisplayName: Cardi Weapon
-	// Tooltip: ""
 }
 
 CuoraWeapon: {
