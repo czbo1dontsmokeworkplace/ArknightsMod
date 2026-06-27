@@ -385,6 +385,11 @@ namespace ArknightsMod.Content.NPCs.Friendly
 				if (npc.type == Type)
 					return base.SpawnChance(spawnInfo);
 			}
+			// 死亡后的重生冷却：RespawnCooldown 在 CheckDead() 中被设为 7200，
+			// 此前一直只在 CannotSpawnHelper 里递减，但没有任何地方真正用它阻止重新生成，
+			// 导致坎诺特死亡后下一刻就可能被重新刷出来。
+			if (RespawnCooldown > 0)
+				return 0f;
 			if (!spawnInfo.Invasion && !spawnInfo.Sky && (NPC.downedBoss1 || NPC.downedBoss2 || NPC.downedBoss3))
 				return 0.2f;
 			return base.SpawnChance(spawnInfo);
