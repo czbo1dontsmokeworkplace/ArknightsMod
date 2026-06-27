@@ -12,7 +12,7 @@ namespace ArknightsMod.Players
 		// 场上由浮游单元发射、仍存在的魔法弹幕数量，用于限制弹幕堆叠上限
 		public int BoltCount;
 
-		public const int MaxBolts = 5;
+		public const int MaxBolts = 1;
 
 		private int lastMaxBeacons = GoldenglowBeacon.BaseMaxBeacons;
 

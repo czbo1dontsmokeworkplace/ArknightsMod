@@ -14,7 +14,7 @@ namespace ArknightsMod.Content.Projectiles.Caster.Goldenglow
 	{
 		public override string Texture => "ArknightsMod/Content/Items/Weapons/Caster/Goldenglow/GoldenglowBeacon";
 
-		public const int BaseMaxBeacons = 4;
+		public const int BaseMaxBeacons = 3;
 
 		// 当前玩家的浮游单元数量上限：基础 4 个，技能 1/2/3 激活时分别 +1/+1/+2
 		public static int GetMaxBeacons(Player player) {
@@ -86,7 +86,8 @@ namespace ArknightsMod.Content.Projectiles.Caster.Goldenglow
 			// 每个浮游单元独立按冷却发射，冷却时长等于攻击间隔，保证每次攻击最多发射一枚，不计入玩家左键弹幕的堆叠上限
 			if (playerAttacking && Projectile.owner == Main.myPlayer) {
 				Vector2 dir = (Main.MouseWorld - Projectile.Center).SafeNormalize(Vector2.UnitX);
-				int boltDamage = (int)(owner.HeldItem.damage * owner.GetDamage(DamageClass.Magic).Multiplicative);
+				// 浮游单元弹幕伤害为武器面板伤害(GetWeaponDamage，含加成后的展示伤害)的 40%
+				int boltDamage = (int)(owner.GetWeaponDamage(owner.HeldItem) * 0.4f);
 				int boltIndex = Projectile.NewProjectile(
 					Projectile.GetSource_FromThis(),
 					Projectile.Center,
