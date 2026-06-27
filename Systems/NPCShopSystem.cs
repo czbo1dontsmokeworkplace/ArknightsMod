@@ -215,6 +215,8 @@ namespace ArknightsMod.Systems
 				// 淇濆瓨瀹屾暣鐨?Item 瀵硅薄
 				CannotShopItems.Clear();
 				CannotShopItems.AddRange(tempShop.GenerateNewInventoryList());
+				foreach (var item in CannotShopItems)
+					MakeCannotPriceEven(item);
 
 				if (Main.dedServ)
 					SendUpdateCannotShop(mod);
@@ -223,6 +225,17 @@ namespace ArknightsMod.Systems
 			}
 			else
 				RequestUpdateCannotShop(mod, forcedUpdate);
+		}
+
+		// 坎诺特的商品只能呈现偶数定价：OriginiumIngotCurrency 把 item.value/50000 取整作为显示价格（见 GetItemExpectedPrice），
+		// 这里用同样的换算把价格向上调整为偶数后再换算回 item.value，使商店里显示的价格永远是偶数。
+		public static void MakeCannotPriceEven(Item item) {
+			long price = item.value / 50000;
+			if (price == 0 && item.value > 0)
+				price = 1;
+			if (price % 2 != 0)
+				price += 1;
+			item.value = (int)(price * 50000);
 		}
 
 		public static void RequestUpdateClosureShopWhenStartDay(Mod mod) {
@@ -294,6 +307,7 @@ namespace ArknightsMod.Systems
 					var item = new Item(type) {
 						shopSpecialCurrency = currency
 					};
+					MakeCannotPriceEven(item);
 					CannotShopItems.Add(item);
 				}
 			}
