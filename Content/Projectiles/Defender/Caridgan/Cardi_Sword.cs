@@ -22,11 +22,14 @@ public class Cardi_Sword : ModProjectile
 	private const float DrawScale = 1.6f; // 持握时的绘制缩放，配合 Reach 拉长后的视觉表现
 	private const float ThrowDistance = 200f; // 回旋投掷的最大飞出距离
 	private const float HandLift = 14f; // 整体抬高手持位置
+	private const int RecoveryTime = 15; // 每段攻击结束后的强制停顿，约 0.25 秒
+	private const int ComboResetWindow = 40; // 超过这段时间没有继续攻击，则视为连击中断，下次重新从第一段开始
 
 	private ProjMode projMode = ProjMode.Move;
 	private int comboStep; // 0 = 下劈，1 = 戳刺，2 = 回旋投掷，三种攻击依次循环
 	private int attackTime;
 	private int attackMaxTime; // 与 Item.useAnimation 同步，保证攻击频率与挥砍动画一致
+	private int idleTimer = ComboResetWindow; // 距离上一段攻击结束已经过去的 tick 数，初始值保证游戏刚开始时可以立即攻击
 
 	private float mouseRad;
 	private float walkPhase;
@@ -67,8 +70,11 @@ public class Cardi_Sword : ModProjectile
 
 	// SetCompositeArmBack 接受的并非世界坐标旋转角，而是“以玩家朝向为基准的相对角”；
 	// 我们的刀身旋转 Projectile.rotation 始终是标准世界角(0=朝右)，需要换算后再喂给手臂 IK。
+	// 朝左时换算结果会落在 ±2π 之外的等效角(例如 290°而不是 -70°)，IK 对超出常规范围的角度会被钳制，
+	// 表现为挥砍幅度被压缩得很小，所以这里要 WrapAngle 归一化到 (-π, π] 再返回。
 	private float ToArmRot(float worldRot) {
-		return worldRot + MathHelper.PiOver2 - MathHelper.PiOver2 * player.direction;
+		float armRot = worldRot + MathHelper.PiOver2 - MathHelper.PiOver2 * player.direction;
+		return MathHelper.WrapAngle(armRot);
 	}
 
 	public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {
@@ -126,8 +132,13 @@ public class Cardi_Sword : ModProjectile
 		Projectile.rotation = worldRot;
 		Projectile.Center = handPos;
 
+		idleTimer = Math.Min(idleTimer + 1, ComboResetWindow);
+
 		if (Main.myPlayer == player.whoAmI) {
-			if (!Main.mouseRight && player.controlUseItem) {
+			if (!Main.mouseRight && player.controlUseItem && idleTimer >= RecoveryTime) {
+				// 距离上一段攻击结束太久，视为连击中断，重新从第一段开始
+				if (idleTimer >= ComboResetWindow)
+					comboStep = 0;
 				mouseRad = MathF.Atan2((Main.MouseWorld - player.MountedCenter).Y, (Main.MouseWorld - player.MountedCenter).X);
 				player.direction = (Main.MouseWorld - player.MountedCenter).X >= 0 ? 1 : -1;
 				projMode = ProjMode.Attack;
@@ -160,6 +171,7 @@ public class Cardi_Sword : ModProjectile
 		if (attackTime > attackMaxTime) {
 			projMode = ProjMode.Move;
 			comboStep = (comboStep + 1) % 3;
+			idleTimer = 0;
 		}
 	}
 
@@ -167,8 +179,10 @@ public class Cardi_Sword : ModProjectile
 	// 注意：不要用 RotationHelper.GetSwingRotation，它会把 playerDir 乘进起始角里，
 	// 而 mouseRad 本身已经是绝对世界角(自带朝向信息)，两者叠加会导致左右朝向时挥砍轨迹不对称且都错误。
 	private void AttackChop(float progress) {
-		float startRot = mouseRad - MathHelper.ToRadians(70f);
-		float endRot = mouseRad + MathHelper.ToRadians(70f);
+		// 角度增大在屏幕坐标(y 朝下)中表现为顺时针；朝右时顺时针正好是由上往下劈，
+		// 但朝左时画面是镶像的，顺时针反而变成由下往上，所以朝左要交换起止角改走逆时针，才能同样表现为往下劈。
+		float startRot = player.direction == 1 ? mouseRad - MathHelper.ToRadians(70f) : mouseRad + MathHelper.ToRadians(70f);
+		float endRot = player.direction == 1 ? mouseRad + MathHelper.ToRadians(70f) : mouseRad - MathHelper.ToRadians(70f);
 		float easedT = RotationHelper.EaseOutCubic(progress);
 		Projectile.rotation = MathHelper.Lerp(startRot, endRot, easedT);
 

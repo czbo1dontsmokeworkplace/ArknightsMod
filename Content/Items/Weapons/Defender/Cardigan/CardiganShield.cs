@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -55,17 +56,21 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Cardigan
 		public override bool CanUseItem(Player player) {
 			var mp = player.GetModPlayer<WeaponPlayer>();
 			if (player.altFunctionUse == 2 && player.controlDown) {
-				// 下+右键：技能一，即时回复最大生命 40%
-				// 用 mp.SkillActive 做按键状态锁，避免组合键持续按住时每帧重复触发回血/扣血（导致回的血又被扣回去）
-				if (mp.StockCount > 0 && !mp.SkillActive) {
-					mp.SkillActive = true;
-					player.statLife = Math.Min(player.statLife + (int)(player.statLifeMax * 0.4f), player.statLifeMax);
+				// 下+右键：技能一，即时回复最大生命 40%，是瞬发技能，不应该有持续时间
+				// 这里不能用 mp.SkillActive 做按键锁：Cardigan 没有在 WeaponPlayer.SetAllSkillsData 里注册专属技能数据，
+				// CurrentSkill 始终是 null，导致 SkillActiveTime[Skill] 取到默认值 0，SkillActive 一旦被设为 true 就永远不会自动复位，
+				// 既会在技力回充判定里被当成“技能仍在持续”从而卡住回充，也会在血量没来得及刷新前的下一帧被同一段逻辑判定为“尚未消耗”再次触发，
+				// 表现为回的血瞬间又被扣掉。改用按键边沿检测，只在刚按下右键的那一帧触发一次，彻底避免重复触发。
+				if (Main.myPlayer == player.whoAmI && PlayerInput.Triggers.JustPressed.MouseRight && mp.StockCount > 0) {
+					// 钳制上限要用 statLifeMax2（含套装/饰品等加成后的实际生效上限），不能用 statLifeMax（基础上限）。
+					// 部分干员套装只会给 statLifeMax2 加成（见 NeoArmorItem.UpdateEquip），穿着这类套装时当前血量本就高于 statLifeMax，
+					// 之前钳制到 statLifeMax 会把血量瞬间砍到更低的基础上限，表现为回血瞬间又消失。
+					player.statLife = Math.Min(player.statLife + (int)(player.statLifeMax * 0.4f), player.statLifeMax2);
 					mp.DelStockCount();
 					SoundEngine.PlaySound(SkillActiveSfx, player.Center);
 				}
 				return false;
 			}
-			mp.SkillActive = false;
 			return base.CanUseItem(player);
 		}
 	}
