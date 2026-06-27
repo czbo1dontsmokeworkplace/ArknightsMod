@@ -376,5 +376,12 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			cooldown = 30;
 			randExtraCooldown = 30;
 		}
+
+		// AttackType=3（近战挥砍）需要这个 hook 提供命中判定的宽高，否则 vanilla 只对几个特定原版 NPC 类型
+		// 设置了默认值，可露希尔不在其中，itemWidth/itemHeight 会停留在默认的 0，挥砍动画照常播放但永远打不到怪物。
+		public override void TownNPCAttackSwing(ref int itemWidth, ref int itemHeight) {
+			itemWidth = 40;
+			itemHeight = 40;
+		}
 	}
 }
