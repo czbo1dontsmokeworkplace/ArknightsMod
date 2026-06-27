@@ -238,8 +238,8 @@ TransparentSlash.DisplayName: 透明斩击
 // LupineScarletRightClickController.DisplayName: Lupine Scarlet Right Click Controller
 // LupineScarletSkillShard.DisplayName: Lupine Scarlet Skill Shard
 // LupineScarletSwingProjectile.DisplayName: Lupine Scarlet Swing Projectile
-// AnselHookProjectile.DisplayName: Ansel Hook Projectile
-// AnselWhipProjectile.DisplayName: Ansel Whip Projectile
+// RopeHookProjectile.DisplayName: Rope Hook Projectile
+// RopeWhipProjectile.DisplayName: Rope Whip Projectile
 // Cardi_Shield.DisplayName: Cardi_ Shield
 // Cardi_Sword.DisplayName: Cardi_ Sword
 // Cuora_Bat.DisplayName: Cuora_ Bat

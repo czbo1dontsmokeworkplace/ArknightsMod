@@ -4320,7 +4320,7 @@ GravelDualBlades: {
 	Tooltip: 技能开局即满，技能1防御大幅提升
 }
 
-AnselClaw: {
+RopeClaw: {
 	DisplayName: 暗索的勾爪
 	Tooltip: ""
 }

@@ -7,14 +7,14 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace ArknightsMod.Content.Projectiles.Supporter.Ansel
+namespace ArknightsMod.Content.Projectiles.Specialist.Rope
 {
 	// 暗索的钩爪：链鞭类普通攻击弹幕。
 	// 仿杜宾的鞭子(DobermannWhipProjectile)，但末端为钩爪、连接为链条，
 	// 且命中敌人会把敌人拉向玩家（钩爪武器特性）。
-	public class AnselWhipProjectile : ModProjectile
+	public class RopeWhipProjectile : ModProjectile
 	{
-		private const string TexRoot = "ArknightsMod/Content/Items/Weapons/Supporter/Ansel/AnselClaw";
+		private const string TexRoot = "ArknightsMod/Content/Items/Weapons/Specialist/Rope/RopeClaw";
 
 		public override string Texture => TexRoot + "_Hand";
 
@@ -63,6 +63,13 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Ansel
 			Projectile.FillWhipControlPoints(Projectile, pts);
 			Projectile.Center = Vector2.Lerp(Projectile.Center, pts[pts.Count - 1], 1f);
 			Projectile.spriteDirection = Projectile.velocity.X >= 0f ? 1 : -1;
+
+			// 沿鞭身末端的挥击路径留下紫色发光粒子，每帧在末端及其前一节各生成一颗，兼顾密度与轨迹宽度
+			for (int i = pts.Count - 2; i < pts.Count; i++) {
+				Dust d = Dust.NewDustPerfect(pts[i], DustID.PurpleTorch, Vector2.Zero, 0, default, 1.3f);
+				d.noGravity = true;
+				d.fadeIn = 0.7f;
+			}
 
 			owner.heldProj = Projectile.whoAmI;
 

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ArknightsMod.Content.Items.Weapons;
-using ArknightsMod.Content.Projectiles.Supporter.Ansel;
+using ArknightsMod.Content.Projectiles.Specialist.Rope;
 using ArknightsMod.Players;
 using ArknightsMod.Systems.Gameplay.Skill;
 using Terraria;
@@ -11,13 +11,13 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 
-namespace ArknightsMod.Content.Items.Weapons.Supporter.Ansel
+namespace ArknightsMod.Content.Items.Weapons.Specialist.Rope
 {
 	// 暗索的钩爪：链鞭类武器。
 	// 普通攻击挥出钩链，命中把敌人拉向玩家（拉到近处）。
 	// S1 勾爪发射：攻击充能，下次鞭击 ×1.9 并把敌人强力拉至面前。
 	// S2 复式勾爪：攻击充能，右键即时向 2 个最远的敌人发射抓钩 ×2.25 拖拽至面前。
-	public class AnselClaw : ExpansionWeaponBase
+	public class RopeClaw : ExpansionWeaponBase
 	{
 		protected override int[] EliteDamage => [44, 53, 64];
 
@@ -49,7 +49,7 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Ansel
 			Item.useStyle = ItemUseStyleID.Shoot;
 			Item.noMelee = true;
 			Item.noUseGraphic = true;
-			Item.shoot = ModContent.ProjectileType<AnselWhipProjectile>();
+			Item.shoot = ModContent.ProjectileType<RopeWhipProjectile>();
 			Item.shootSpeed = 6f;
 			Item.crit = 4;
 		}
@@ -93,7 +93,7 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Ansel
 
 			int p = Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI);
 			if (empowered && p >= 0 && p < Main.maxProjectiles
-				&& Main.projectile[p].ModProjectile is AnselWhipProjectile whip)
+				&& Main.projectile[p].ModProjectile is RopeWhipProjectile whip)
 				whip.Empowered = true;
 
 			return false;
@@ -119,7 +119,7 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Ansel
 				player.GetSource_ItemUse(Item),
 				player.Center,
 				dir * HookSpeed,
-				ModContent.ProjectileType<AnselHookProjectile>(),
+				ModContent.ProjectileType<RopeHookProjectile>(),
 				dmg, Item.knockBack, player.whoAmI);
 		}
 

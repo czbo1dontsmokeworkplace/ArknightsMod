@@ -6,15 +6,15 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
 
-namespace ArknightsMod.Content.Projectiles.Supporter.Ansel
+namespace ArknightsMod.Content.Projectiles.Specialist.Rope
 {
 	// 暗索的勾爪：抓钩弹幕。
 	// 右键技能发射 → 飞出命中第一个敌人造成伤害 → 把敌人拖拽到玩家面前 → 收回自毁。
 	// S1 单钩、S2 双钩（各自独立飞行、抓取各自路径上的第一个敌人）。
-	public class AnselHookProjectile : ModProjectile
+	public class RopeHookProjectile : ModProjectile
 	{
 		// 复用钩链爪尖贴图作为钩头，外观与鞭子统一
-		public override string Texture => "ArknightsMod/Content/Items/Weapons/Supporter/Ansel/AnselClaw_Tip";
+		public override string Texture => "ArknightsMod/Content/Items/Weapons/Specialist/Rope/RopeClaw_Tip";
 
 		// 状态机：0 伸出 / 1 拖拽 / 2 收回
 		private ref float State => ref Projectile.ai[0];
@@ -61,6 +61,13 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Ansel
 				Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
 			Lighting.AddLight(Projectile.Center, 0.35f, 0.12f, 0.12f);
+
+			// 在飞出/收回的攻击路径上留下紫色发光粒子，每帧一颗
+			if (State != 1) {
+				Dust d = Dust.NewDustPerfect(Projectile.Center, DustID.PurpleTorch, Vector2.Zero, 0, default, 1.4f);
+				d.noGravity = true;
+				d.fadeIn = 0.7f;
+			}
 		}
 
 		// 伸出：直线飞行，超出射程则收回（命中交给 OnHitNPC 处理）

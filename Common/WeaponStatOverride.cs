@@ -345,6 +345,12 @@ namespace ArknightsMod.Common
 				Damage = 25, UseTime = 22, UseAnimation = 22, KnockBack = 3f, ShootSpeed = 1f
 			},
 
+			// RopeClaw - 暗索 - 钩爪 (EliteDamage=[44,53,64])
+			// 原始值: damage=44, useTime=32, useAnimation=32, knockBack=4, shootSpeed=6
+			[typeof(Content.Items.Weapons.Specialist.Rope.RopeClaw)] = new() {
+				Damage = 44, UseTime = 32, UseAnimation = 32, KnockBack = 4f, ShootSpeed = 6f
+			},
+
 			// SceneCamera - 稀音 - 相机
 			// 原始值: damage=24, useTime=30, useAnimation=30, knockBack=0, shootSpeed=11, mana=8
 			[typeof(Content.Items.Weapons.Specialist.Scene.SceneCamera)] = new() {
@@ -384,12 +390,6 @@ namespace ArknightsMod.Common
 			// ══════════════════════════════════════════════════════════════
 			//  Supporter (辅助)
 			// ══════════════════════════════════════════════════════════════
-
-			// AnselClaw - 安赛尔 - 爪 (EliteDamage=[44,53,64])
-			// 原始值: damage=44, useTime=32, useAnimation=32, knockBack=4, shootSpeed=6
-			[typeof(Content.Items.Weapons.Supporter.Ansel.AnselClaw)] = new() {
-				Damage = 44, UseTime = 32, UseAnimation = 32, KnockBack = 4f, ShootSpeed = 6f
-			},
 
 			// BeanstalkOrb - 豆苗 - 法球 (EliteDamage=[57,64,74])
 			// 原始值: damage=57, useTime=37, useAnimation=37, knockBack=2, shootSpeed=9, mana=11

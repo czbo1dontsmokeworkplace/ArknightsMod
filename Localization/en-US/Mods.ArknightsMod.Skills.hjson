@@ -548,7 +548,7 @@ EstelleGlove: {
 	}
 }
 
-AnselClaw: {
+RopeClaw: {
 	1: {
 		Label: 勾爪发射
 		Desc:

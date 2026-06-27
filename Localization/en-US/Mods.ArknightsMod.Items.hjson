@@ -3950,8 +3950,8 @@ GravelDualBlades: {
 	Tooltip: ""
 }
 
-AnselClaw: {
-	DisplayName: Ansel Claw
+RopeClaw: {
+	DisplayName: Rope Claw
 	Tooltip: ""
 }
 
