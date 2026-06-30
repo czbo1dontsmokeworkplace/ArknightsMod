@@ -3890,6 +3890,11 @@ CardiganShield: {
 	Tooltip: ""
 }
 
+EntelechiaScythe: {
+	DisplayName: Entelechia Scythe
+	Tooltip: ""
+}
+
 BeehunterBag: {
 	DisplayName: Beehunter Bag
 	Tooltip: ""

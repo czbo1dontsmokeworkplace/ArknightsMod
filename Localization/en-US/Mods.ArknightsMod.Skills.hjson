@@ -568,6 +568,36 @@ RopeClaw: {
 	}
 }
 
+EntelechiaScythe: {
+	1: {
+		Label: Rose Shadow Tracking
+		Desc:
+			'''
+			Increases the next attack's damage to [c/3791db:175%]
+			and attacks [c/3791db:twice] in succession
+			'''
+	}
+
+	2: {
+		Label: Crimson Coalescence
+		Desc:
+			'''
+			Stops attacking and summons blood scythes at self and cursor
+			to slash all surrounding enemies
+			dealing physical damage equal to [c/3791db:195%] ATK every [c/3791db:0.5]s
+			'''
+	}
+
+	3: {
+		Label: Parting of Soul and Desire
+		Desc:
+			'''
+			Attack range expanded, ATK [c/3791db:+135%]
+			and attack speed increased
+			'''
+	}
+}
+
 MousseGlove: {
 	1: {
 		Label: 挠伤

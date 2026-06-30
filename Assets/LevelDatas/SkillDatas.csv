@@ -87,3 +87,6 @@ ShawAxe,0,1,1,0,0,0
 ShawAxe,1,2,1,0,0,0
 SceneCamera,0,1,1,0,0,0
 SceneCamera,1,2,1,0,0,0
+EntelechiaScythe,0,1,1,0,0,0
+EntelechiaScythe,1,2,1,0,1,0
+EntelechiaScythe,2,3,1,0,1,0

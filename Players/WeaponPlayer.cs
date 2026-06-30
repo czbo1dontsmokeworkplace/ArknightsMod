@@ -46,6 +46,14 @@ namespace ArknightsMod.Players
 		public bool SummonMode;
 		public bool SkillInitialize = true;
 
+		// 隐德来希 S1「玫影觅迹」：下次普攻强化（175% 伤害 + 连续两段刀光）
+		public bool EntelechiaEmpoweredNext;
+		// 第二段刀光延迟发射（一前一后分两次）
+		public int EntelechiaSecondShotDelay;
+		public Microsoft.Xna.Framework.Vector2 EntelechiaPendingVel;
+		public int EntelechiaPendingDamage;
+		public float EntelechiaPendingKb;
+
 		// SP恢复加成系统
 		public float SPRegenMultiplier { get; set; } = 1f;
 		private float spRegenFraction;
@@ -113,6 +121,18 @@ namespace ArknightsMod.Players
 		//新添入的，用于更新
 		public override void PostUpdate() {
 			UnderAttack = false;
+
+			// S1 第二段刀光：倒计时结束后发射（更大、正常速度的放大刀光）
+			if (EntelechiaSecondShotDelay > 0) {
+				if (--EntelechiaSecondShotDelay == 0 && Player.whoAmI == Main.myPlayer) {
+					int id = Projectile.NewProjectile(Player.GetSource_ItemUse(Player.HeldItem),
+						Player.Center, EntelechiaPendingVel,
+						ModContent.ProjectileType<Content.Projectiles.Guard.Entelechia.EntelechiaScytheBladeWaveProjectile>(),
+						EntelechiaPendingDamage, EntelechiaPendingKb, Player.whoAmI, 1f, 1.6f, 1f);
+					if (id >= 0 && id < Main.maxProjectiles)
+						Main.projectile[id].scale = 1.5f;
+				}
+			}
 			if (!Player.dead && HowManySkills > 0) {
 				if (CurrentSkill?.ChargeType == SkillChargeType.Auto) {
 					AccessoriesAutoCharge();

@@ -4260,6 +4260,11 @@ CardiganShield: {
 	Tooltip: ""
 }
 
+EntelechiaScythe: {
+	DisplayName: 隐德来希的镰刀
+	Tooltip: ""
+}
+
 BeehunterBag: {
 	DisplayName: 蛇屠箱的棒球棍
 	// Tooltip: ""
