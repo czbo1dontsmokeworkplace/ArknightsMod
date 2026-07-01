@@ -165,13 +165,6 @@ namespace ArknightsMod
 						global::ArknightsMod.Content.Tiles.TEElevator.ApplyMoveRequest(teId, floorBottomY);
 					}
 					break;
-				case ArkMessageID.ProtocolSpaceRequestStart:
-				case ArkMessageID.ProtocolSpaceRequestExitInteract:
-				case ArkMessageID.ProtocolSpaceRequestExitCountdown:
-				case ArkMessageID.ProtocolSpaceSyncState:
-				case ArkMessageID.ProtocolSpaceExitCountdown:
-					global::ArknightsMod.Systems.InstancedSpace.ProtocolSpaceEventSystem.ReceivePacket(reader, whoAmI, (ArkMessageID)id);
-					break;
 			}
 		}
 
@@ -185,11 +178,6 @@ namespace ArknightsMod
 			CannotLifeTokenSync,
 			CoffeeMachineRequest,
 			ElevatorRequestFloor,
-			ProtocolSpaceRequestStart,
-			ProtocolSpaceRequestExitInteract,
-			ProtocolSpaceRequestExitCountdown,
-			ProtocolSpaceSyncState,
-			ProtocolSpaceExitCountdown,
 		}
 	}
 	//public class Ex : GlobalNPC
