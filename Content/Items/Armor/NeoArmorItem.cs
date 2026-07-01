@@ -81,15 +81,14 @@ namespace ArknightsMod.Content.Items.Armor
 		public sealed override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
 		{
 			if (Item.neoarmor().hasUpgraded)
-			{
 				SetBaseArmorDefaults();
 
-				if (ArmorIconTexture != null)
-				{
-					Texture2D tex = ModContent.Request<Texture2D>(ArmorIconTexture).Value;
-					spriteBatch.Draw(tex, position, null, drawColor, 0f, tex.Size() / 2f, scale, SpriteEffects.None, 0f);
-					return false;
-				}
+			// 库存图标跟随外观形态（helmetForm），与时装/套装归类（hasUpgraded）解耦
+			if (Item.neoarmor().helmetForm && ArmorIconTexture != null)
+			{
+				Texture2D tex = ModContent.Request<Texture2D>(ArmorIconTexture).Value;
+				spriteBatch.Draw(tex, position, null, drawColor, 0f, tex.Size() / 2f, scale, SpriteEffects.None, 0f);
+				return false;
 			}
 
 			return true;

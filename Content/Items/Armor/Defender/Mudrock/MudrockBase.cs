@@ -5,8 +5,8 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Mudrock
 	{
 		public static void Toggle(NeoArmorItem armorItem) {
 			var neoArmor = armorItem.Item.neoarmor();
-			neoArmor.hasUpgraded = !neoArmor.hasUpgraded;
-			armorItem.RefreshState();
+			// 只切换外观形态，不改变时装↔套装归类：时装切换后仍是时装，套装切换后仍是套装。
+			neoArmor.helmetForm = !neoArmor.helmetForm;
 		}
 	}
 }

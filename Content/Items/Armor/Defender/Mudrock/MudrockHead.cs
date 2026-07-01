@@ -42,11 +42,11 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Mudrock
 		}
 
 		public override void UpdateVanityEquip(Player player) {
-			Item.headSlot = EquipLoader.GetEquipSlot(Mod, Name, EquipType.Head);
-		}
-
-		public override void UpdateArmorEquip(Player player) {
-			Item.headSlot = EquipLoader.GetEquipSlot(Mod, HelmetSlotName, EquipType.Head);
+			// 帧图（穿戴贴图）跟随形态切换：升级形态用头盔贴图，否则用默认头部贴图。
+			// 时装/社交栏也走此方法，故任意穿戴方式下切换形态都能改变帧图。
+			Item.headSlot = Item.neoarmor().helmetForm
+				? EquipLoader.GetEquipSlot(Mod, HelmetSlotName, EquipType.Head)
+				: EquipLoader.GetEquipSlot(Mod, Name, EquipType.Head);
 		}
 
 		public override void ModifyVanityTooltips(List<TooltipLine> tooltips) {

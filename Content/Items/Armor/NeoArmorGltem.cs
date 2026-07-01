@@ -16,6 +16,9 @@ namespace ArknightsMod.Content.Items.Armor
 	{
 		public override bool InstancePerEntity => true;
 		public bool hasUpgraded = false;
+		// 外观形态（默认外观 / 升级外观），与 hasUpgraded（时装↔套装 归类）解耦：
+		// 右键切换只改这个外观标记，不改变物品是时装还是套装。
+		public bool helmetForm = false;
 		public bool isNeoArmor;
 		public override void PostUpdate(Item Item) {
 			if (isNeoArmor && hasUpgraded) {
@@ -42,6 +45,7 @@ namespace ArknightsMod.Content.Items.Armor
 						if (Item.type == i.type && i.neoarmor().isNeoArmor && !i.neoarmor().hasUpgraded)
 						{
 							hasUpgraded = true;
+							helmetForm = true; // 合成升级为套装时，默认呈现升级外观
 							if(Item.ModItem is NeoArmorItem neoArmor)
 								neoArmor.SetDefaults();
 							break;
@@ -53,15 +57,20 @@ namespace ArknightsMod.Content.Items.Armor
 
 		public override void NetSend(Item Item, BinaryWriter writer) {
 			writer.Write(hasUpgraded);
+			writer.Write(helmetForm);
 		}
 		public override void NetReceive(Item Item, BinaryReader reader) {
 			hasUpgraded = reader.ReadBoolean();
+			helmetForm = reader.ReadBoolean();
 		}
 		public override void LoadData(Item Item, TagCompound tag) {
 			hasUpgraded = tag.GetBool("hasUpgraded");
+			// 旧存档没有 helmetForm 时，外观默认跟随 hasUpgraded（保持旧行为，避免套装显示成默认外观）
+			helmetForm = tag.ContainsKey("helmetForm") ? tag.GetBool("helmetForm") : hasUpgraded;
 		}
 		public override void SaveData(Item Item, TagCompound tagCompound) {
 			tagCompound["hasUpgraded"] = hasUpgraded;
+			tagCompound["helmetForm"] = helmetForm;
 		}
 	}
 }

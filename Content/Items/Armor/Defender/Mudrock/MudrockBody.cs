@@ -48,11 +48,10 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Mudrock
 		}
 
 		public override void UpdateVanityEquip(Player player) {
-			Item.bodySlot = EquipLoader.GetEquipSlot(Mod, Name, EquipType.Body);
-		}
-
-		public override void UpdateArmorEquip(Player player) {
-			Item.bodySlot = EquipLoader.GetEquipSlot(Mod, ChestplateSlotName, EquipType.Body);
+			// 帧图（穿戴贴图）跟随形态切换：升级形态用胸甲贴图，否则用默认躯干贴图。
+			Item.bodySlot = Item.neoarmor().helmetForm
+				? EquipLoader.GetEquipSlot(Mod, ChestplateSlotName, EquipType.Body)
+				: EquipLoader.GetEquipSlot(Mod, Name, EquipType.Body);
 		}
 
 		public override void ModifyVanityTooltips(List<TooltipLine> tooltips) {
@@ -74,7 +73,10 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Mudrock
 
 		public override bool GetDefaultVisibility(PlayerDrawSet drawInfo) {
 			Player player = drawInfo.drawPlayer;
-			return player.armor[1].type == ModContent.ItemType<MudrockBody>() && player.armor[1].neoarmor().hasUpgraded;
+			// 实际显示的躯干 = 社交/时装栏(armor[11]) 优先，否则盔甲栏(armor[1])；
+			// 只要显示的是「已升级」的泥岩躯干（无论盔甲栏还是时装栏），就绘制额外胸甲层。
+			Item shown = !player.armor[11].IsAir ? player.armor[11] : player.armor[1];
+			return shown.type == ModContent.ItemType<MudrockBody>() && shown.neoarmor().helmetForm;
 		}
 
 		public override Position GetDefaultPosition() => new AfterParent(PlayerDrawLayers.Head);
