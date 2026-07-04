@@ -3,6 +3,9 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+#if DEBUG
+using ArknightsMod.Common.Configs;
+#endif
 
 namespace ArknightsMod.Content.Items.Armor
 {
@@ -32,11 +35,28 @@ namespace ArknightsMod.Content.Items.Armor
 			if (isNeoArmor && hasUpgraded) {
 				Item.maxStack = 1;
 			}
+#if DEBUG
+			if (isNeoArmor && !hasUpgraded && ModContent.GetInstance<DebugConfig>().AutoUpgradeNeoArmor) {
+				hasUpgraded = true;
+				helmetForm = true;
+				if (Item.ModItem is NeoArmorItem neoArmor)
+					neoArmor.SetDefaults();
+			}
+#endif
 		}
 
 		public override void OnCreated(Item Item, ItemCreationContext context) {
 			if (isNeoArmor)
 			{
+#if DEBUG
+				if (ModContent.GetInstance<DebugConfig>().AutoUpgradeNeoArmor) {
+					hasUpgraded = true;
+					helmetForm = true;
+					if (Item.ModItem is NeoArmorItem neoArmor)
+						neoArmor.SetDefaults();
+					return;
+				}
+#endif
 				if (context is RecipeItemCreationContext)
 				{
 					RecipeItemCreationContext c = context as RecipeItemCreationContext;

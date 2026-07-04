@@ -167,3 +167,12 @@ WeaponStatOverrideConfig: {
 
 	// DisplayName: Weapon Stat Override Config
 }
+
+DebugConfig: {
+	// DisplayName: Debug Config
+
+	AutoUpgradeNeoArmor: {
+		// Label: NeoArmor 自动升级
+		// Tooltip: 获取 NeoArmor 物品时自动设为已升级样式（DEBUG 专用）
+	}
+}

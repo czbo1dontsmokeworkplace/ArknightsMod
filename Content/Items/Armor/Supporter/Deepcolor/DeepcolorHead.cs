@@ -1,6 +1,8 @@
-﻿using Terraria;
+﻿using System.Collections.Generic;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Content.Items.Material;
 
@@ -21,8 +23,13 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.Deepcolor
 				legs.type == ModContent.ItemType<DeepcolorLegs>() && legs.neoarmor().hasUpgraded;
 		}
 
-		public override void UpdateArmorSet(Player player) {
-			player.setBonus = "";
+		// 头盔单件效果：自身获得7%物理与法术闪避
+		public override void UpdateArmorEquip(Player player) {
+			player.GetModPlayer<DeepcolorSetPlayer>().DeepcolorHelmetActive = true;
+		}
+
+		public override void ModifyArmorTooltips(List<TooltipLine> tooltips) {
+			OperatorOutfitTooltipLayout.AddWrappedEffectLines(Mod, tooltips, "Mods.ArknightsMod.ArmorSets.Deepcolor.HelmetEffect", "HelmetEffect");
 		}
 
 		public override void AddRecipes() {

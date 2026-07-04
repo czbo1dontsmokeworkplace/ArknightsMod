@@ -392,6 +392,13 @@ Bagpipe: {
 	SetBonus: Vanguard deploy SP; melee proc bonus hit
 }
 
+Deepcolor: {
+	HeadName: Deepcolor's Helmet
+	HelmetEffect: "[c/beebff:Helmet]: Self and summons gain 7% physical and magic dodge"
+	SetEffect: "[c/beebff:Set]: While on field, all of Deepcolor's summons regenerate 25 HP per second"
+	SetBonus: Summons regenerate 25 HP/s while on field
+}
+
 Mornia: {
 	HeadName: Mornia's Helmet
 	HelmetEffect: "[c/beebff:Helmet]: Magic damage 106%"
