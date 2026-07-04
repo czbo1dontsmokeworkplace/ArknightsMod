@@ -399,6 +399,13 @@ Deepcolor: {
 	SetBonus: 在场时召唤物每秒恢复25点生命
 }
 
+Wisadel: {
+	HeadName: 维什戴尔的头盔
+	HelmetEffect: "[c/beebff:头盔效果]：环绕魂灵之影，抵挡飞行物；60秒冷却重生"
+	SetEffect: "[c/beebff:套装效果]：远程伤害+15%；命中附加残影标记，余震击中标记时引发爆炸与困惑"
+	SetBonus: 远程+15%；残影标记引爆爆炸+困惑
+}
+
 Mornia: {
 	HeadName: 末柠头盔
 	HelmetEffect: "[c/beebff:头盔]: 魔法伤害 106%"

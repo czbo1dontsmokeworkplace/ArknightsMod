@@ -1,5 +1,7 @@
 ﻿using System.Linq;
 using ArknightsMod.Common.Particle;
+using ArknightsMod.Content.Buffs;
+using ArknightsMod.Content.Buffs.ArmorSets;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -109,6 +111,28 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Wisadel
 						info.Crit = crit;
 						info.DamageType = Projectile.DamageType;
 						npc.StrikeNPC(info);
+
+						// 维什戴尔套装：残影标记被余震命中时引爆
+						if (npc.HasBuff<WisadelMarkDebuff>()) {
+							int buffIndex = npc.FindBuffIndex(ModContent.BuffType<WisadelMarkDebuff>());
+							if (buffIndex >= 0)
+								npc.DelBuff(buffIndex);
+
+							// 直接造成爆炸伤害
+							NPC.HitInfo blast = new();
+							bool blastCrit = Main.rand.Next(100) < Projectile.CritChance;
+							blast.Damage = (int)(Projectile.damage * (blastCrit ? 2f : 1f) * Main.rand.NextFloat(0.95f, 1.051f) * 1.5f);
+							blast.Knockback = 0;
+							blast.HitDirection = (npc.position.X - player.position.X > 0 ? 1 : -1);
+							blast.Crit = blastCrit;
+							blast.DamageType = Projectile.DamageType;
+							npc.StrikeNPC(blast);
+
+							HitEffect(Projectile);
+
+							// 困惑
+							OperatorStunNPC.TryApplyFromWisadel(npc, 60);
+						}
 					}
 				}
 			}
@@ -117,11 +141,11 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Wisadel
         {
 			if (!hasHit)
 			{
-				HitEffect();
+				HitEffect(Projectile);
 				Aftershock(Projectile, Main.player[Projectile.owner], Projectile.damage);
 			}
 		}
-		public void HitEffect()
+		public static void HitEffect(Projectile Projectile)
 		{
 			SoundEngine.PlaySound(Wisdel_Probe.ShootBlast.WithVolumeScale(1.5f), Projectile.position);
 
@@ -171,7 +195,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Wisadel
 		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Player player = Main.player[Projectile.owner];
-			HitEffect();
+			HitEffect(Projectile);
 			Aftershock(Projectile, Main.player[Projectile.owner], Projectile.damage, target);
 			hasHit = true;
         }

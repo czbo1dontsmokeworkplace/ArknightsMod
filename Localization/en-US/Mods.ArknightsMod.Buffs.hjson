@@ -182,3 +182,8 @@ FearlessDebuff: {
 	DisplayName: Fearless Debuff
 	Description: Mods.ArknightsMod.Buffs.FearlessDebuff.Description
 }
+
+WisadelMarkDebuff: {
+	DisplayName: Wisadel Mark Debuff
+	Description: Mods.ArknightsMod.Buffs.WisadelMarkDebuff.Description
+}

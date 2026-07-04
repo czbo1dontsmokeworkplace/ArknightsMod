@@ -1,4 +1,6 @@
-﻿using ArknightsMod.Content.Items.Material;
+﻿using System.Collections.Generic;
+using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using Terraria;
 using Terraria.ID;
@@ -26,8 +28,13 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Wisadel
 				legs.type == ModContent.ItemType<WisadelLegs>() && legs.neoarmor().hasUpgraded;
 		}
 
-		public override void UpdateArmorSet(Player player) {
-			player.setBonus = "";
+		// 头盔单件效果：魂灵之影环绕
+		public override void UpdateArmorEquip(Player player) {
+			player.GetModPlayer<WisadelSetPlayer>().WisadelHelmetActive = true;
+		}
+
+		public override void ModifyArmorTooltips(List<TooltipLine> tooltips) {
+			OperatorOutfitTooltipLayout.AddWrappedEffectLines(Mod, tooltips, "Mods.ArknightsMod.ArmorSets.Wisadel.HelmetEffect", "HelmetEffect");
 		}
 
 		public override void AddRecipes() {

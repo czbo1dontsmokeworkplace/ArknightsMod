@@ -399,6 +399,13 @@ Deepcolor: {
 	SetBonus: Summons regenerate 25 HP/s while on field
 }
 
+Wisadel: {
+	HeadName: Wisadel's Helmet
+	HelmetEffect: "[c/beebff:Helmet]: Orbiting Revenant's Shadow blocks projectiles; 60s cooldown respawn"
+	SetEffect: "[c/beebff:Set]: +15% ranged damage; marks hit enemies, aftershock triggers explosion + confuse on marked targets"
+	SetBonus: +15% ranged; residual mark detonates on aftershock
+}
+
 Mornia: {
 	HeadName: Mornia's Helmet
 	HelmetEffect: "[c/beebff:Helmet]: Magic damage 106%"
