@@ -10,7 +10,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 {
 	public class SnowCaster : ModNPC {
 		public override void SetStaticDefaults() {
-			Main.npcFrameCount[Type] = 15;
+			Main.npcFrameCount[Type] = 20;
 			NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers() { // Influences how the NPC looks in the Bestiary
 				Velocity = 1f // Draws the NPC in the bestiary as if its walking +1 tiles in the x direction
 			};
@@ -45,17 +45,39 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 			attackframeY = 6 * frameHeight;
 			NPC.TargetClosest(true);
 			framecounter++;
-			if (framecounter >= Framespeed) {
-				NPC.frame.Y += frameHeight;
-				framecounter = 0;
-			}
-			if (walk == true && NPC.frame.Y >= attackframeY) {
+			/*if (walk == true && NPC.frame.Y >= attackframeY) {
 				NPC.frame.Y = 0;
 			}
 			if (attack == true && (NPC.frame.Y < (attackframeY) || NPC.frame.Y > (14 * frameHeight))) {
 				NPC.frame.Y = attackframeY;
+			}*/
+
+
+			//26.6.11 改
+			//基本上重写播放逻辑
+
+			if (attack /* && (NPC.frame.Y < (attackframeY) || NPC.frame.Y > (22 * frameHeight))*/) {
+				if (AttackCD == 1)
+					NPC.frame.Y = attackframeY;
+				else
+					if (framecounter % Framespeed == 0)
+						NPC.frame.Y += frameHeight;
+
 			}
 
+			//26.6.10 改
+			//速度为0时播放 前摇第一帧
+
+			if (!attack) {
+				if (NPC.velocity.X == 0) {
+					NPC.frame.Y = (int)((framecounter / Framespeed )% 5 + 15) * frameHeight;
+					//NPC.frame.Y = 9 * frameHeight;
+					//Main.NewText((framecounter / Framespeed) % 5);
+				}
+				else {
+					NPC.frame.Y = (int)((framecounter / Framespeed) % 5) * frameHeight;
+				}
+			}
 		}
 		public override void AI() {
 			
@@ -65,6 +87,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 			if (walk == true) {
 				NPC.spriteDirection = -NPC.direction;
 				AttackCD++;
+				/*
 				if (NPC.position.X - p.position.X < -200 || (0 < NPC.position.X - p.position.X && NPC.position.X - p.position.X < 150)) {
 					if (NPC.velocity.X < maxspeed) {
 						NPC.velocity.X += 0.3f;
@@ -95,6 +118,30 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 					attack = true;
 					AttackCD = 0;
 				}
+				*/
+
+				//26.6.10 改
+				//优化移动逻辑
+				NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, NPC.direction * maxspeed, 0.1f);
+
+
+
+				//26.6.10 改
+				//防止神秘太空步 + 简单限制以确保敌怪尽可能打到玩家
+				if (Collision.CanHit(p.Center, 1, 1, NPC.Center, 1, 1)) {
+					if (Vector2.Distance(p.Center, NPC.Center) < 600 && NPC.velocity.Y == 0) {
+						NPC.velocity.X = 0;
+						if (AttackCD >= 280 && !attack) {
+							walk = false;
+							attack = true;
+							AttackCD = 0;
+						}
+					}
+				}
+
+				//26.6.10 改
+				//跳+下平台
+				IceCleaver.LandNPCMovementLogic(NPC, NPC.width, NPC.height, 7);
 			}
 			if (attack == true) {
 				NPC.velocity.X = 0;
