@@ -38,12 +38,6 @@ WorldGen: {
 	RMA7012PassMessage: "{$Mods.ArknightsMod.Items.RMA7012.DisplayName}"
 }
 
-ProtocolSpace: {
-	Name: 测试协议空间
-	ExitConfirm: 再次交互以确认离开测试协议空间
-	ExitLocked: 当前不可离开，请先完成目标
-}
-
 Tiles: {
 	BannerTile.MapEntry: 敌怪旗
 	AnniversaryWheel.MapEntry: "{$Mods.ArknightsMod.Items.AnniversaryWheel.DisplayName}"
@@ -78,8 +72,6 @@ Tiles: {
 	FileRackTile.MapEntry: "{$Mods.ArknightsMod.Items.FileRack.DisplayName}"
 	ComputerDeskTile.MapEntry: "{$Mods.ArknightsMod.Items.ComputerDesk.DisplayName}"
 	PipeBlueLightPipeTile.MapEntry: "{$Mods.ArknightsMod.Items.PipeBlueLightItem.DisplayName}"
-	ProtocolSpacePortalTile.MapEntry: 危境再现传送门
-	ProtocolSpaceExitPortalTile.MapEntry: 测试协议空间出口
 	ElevatorTile.MapEntry: "{$Mods.ArknightsMod.Items.Elevator.DisplayName}"
 	ElevatorButtonTile.MapEntry: "{$Mods.ArknightsMod.Items.ElevatorButton.DisplayName}"
 	// GrindstoneTile.MapEntry: Grindstone Tile

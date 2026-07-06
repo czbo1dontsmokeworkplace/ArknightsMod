@@ -82,17 +82,21 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Beagle
 		{
 			public bool hasMGLDEFplayer = false;
 			public override void ResetEffects() {
-				//����2��������Ч��
-				if (hasMGLDEFplayer == true) {
-					Player.statDefense *= 1.5f;
-				}
 				if (Main.myPlayer != Player.whoAmI)
-					return;  // ֻ�����������
+					return;
 				bool isHoldingTargetWeapon = Player.HeldItem.type == ModContent.ItemType<BeagleWeapon>();
 				if (!isHoldingTargetWeapon) {
-					Player.GetModPlayer<MGLDEFplayer>().hasMGLDEFplayer = false;
+					hasMGLDEFplayer = false;
 				}
-
+			}
+			public override void PostUpdateEquips() {
+				// 先乘技能加成，再加举盾固定值，保证+10不受乘算影响
+				if (hasMGLDEFplayer) {
+					Player.statDefense *= 1.25f;
+				}
+				if (Player.HeldItem.type == ModContent.ItemType<BeagleWeapon>() && Main.mouseRight) {
+					Player.statDefense += 10;
+				}
 			}
 		}
 		public override void HoldItem(Player player) {

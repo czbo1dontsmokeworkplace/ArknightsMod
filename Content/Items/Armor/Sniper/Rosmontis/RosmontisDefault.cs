@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Sniper.Rosmontis
@@ -10,9 +10,9 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Rosmontis
 		protected override List<int> GetItems() {
 			return
 			[
-				ModContent.ItemType<RosmontisHelmet>(),
-				ModContent.ItemType<RosmontisChestplate>(),
-				ModContent.ItemType<RosmontisGreaves>()
+				ModContent.ItemType<RosmontisHead>(),
+				ModContent.ItemType<RosmontisBody>(),
+				ModContent.ItemType<RosmontisLegs>()
 			];
 		}
 	}

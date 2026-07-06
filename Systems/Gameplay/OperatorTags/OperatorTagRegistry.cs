@@ -51,7 +51,7 @@ namespace ArknightsMod.Systems.Gameplay.OperatorTags
 		}
 
 		private static void RegisterAll() {
-			Register<MudrockHelmet>(OperatorClass.Defender, OperatorFaction.Sarkaz | OperatorFaction.RhodesIsland);
+			Register<MudrockHead>(OperatorClass.Defender, OperatorFaction.Sarkaz | OperatorFaction.RhodesIsland);
 			Register<MlynarHelmet>(OperatorClass.Guard, OperatorFaction.Kazimierz);
 			Register<OblivionisHelmet>(OperatorClass.Guard, OperatorFaction.AveMujica);
 			Register<UlpianusHelmet>(OperatorClass.Guard, OperatorFaction.AbyssalHunter);

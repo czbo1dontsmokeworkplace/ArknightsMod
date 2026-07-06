@@ -42,7 +42,7 @@ public class Cardi_Shield : ModProjectile
 	public override void AI()
     {
         Projectile.damage = item.damage;
-        if (player.dead || !player.active || item.type != ModContent.ItemType<CardiWeapon>())
+        if (player.dead || !player.active || item.type != ModContent.ItemType<CardiganShield>())
 	        Projectile.Kill();
         Projectile.timeLeft = 2;
         switch(projMode)

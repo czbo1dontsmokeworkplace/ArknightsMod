@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Supporter.CivilightEterna
@@ -9,9 +9,9 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.CivilightEterna
 		protected override List<int> GetItems() {
 			return
 			[
-				ModContent.ItemType<CivilightEternaHelmet>(),
-				ModContent.ItemType<CivilightEternaChestplate>(),
-				ModContent.ItemType<CivilightEternaGreaves>()
+				ModContent.ItemType<CivilightEternaHead>(),
+				ModContent.ItemType<CivilightEternaBody>(),
+				ModContent.ItemType<CivilightEternaLegs>()
 			];
 		}
 	}

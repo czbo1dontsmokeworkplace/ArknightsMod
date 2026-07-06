@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ArknightsMod.Content.Items.Armor.Guard.Ulpianus;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -12,9 +12,9 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Ulpianus
 		{
 			return
 			[
-				ModContent.ItemType<UlpianusHelmet>(),
-				ModContent.ItemType<UlpianusChestplate>(),
-				ModContent.ItemType<UlpianusGreaves>(),
+				ModContent.ItemType<UlpianusHead>(),
+				ModContent.ItemType<UlpianusBody>(),
+				ModContent.ItemType<UlpianusLegs>(),
 			];
 		}
 	}

@@ -1,3 +1,4 @@
+using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -13,12 +14,29 @@ namespace ArknightsMod.Content.Projectiles.Caster.Goldenglow
 	{
 		public override string Texture => "ArknightsMod/Content/Items/Weapons/Caster/Goldenglow/GoldenglowBeacon";
 
-		public const int MaxBeacons = 6;
+		public const int BaseMaxBeacons = 3;
+
+		// 当前玩家的浮游单元数量上限：基础 4 个，技能 1/2/3 激活时分别 +1/+1/+2
+		public static int GetMaxBeacons(Player player) {
+			var mp = player.GetModPlayer<WeaponPlayer>();
+			int bonus = 0;
+			if (mp.SkillActive) {
+				bonus = mp.Skill switch {
+					0 => 1,
+					1 => 1,
+					2 => 2,
+					_ => 0
+				};
+			}
+			return BaseMaxBeacons + bonus;
+		}
 
 		// ai[0] = 发射冷却计时器
 		// ai[1] = 生成时的 Y 坐标（浮动参考基点）
+		// localAI[0] = 生成时刻（用于在数量超限时找到最早召唤的浮游单元）
 		private ref float FireCooldown => ref Projectile.ai[0];
 		private ref float BaseY => ref Projectile.ai[1];
+		public ref float SpawnTick => ref Projectile.localAI[0];
 
 		public override void SetDefaults() {
 			Projectile.width = 14;
@@ -35,6 +53,7 @@ namespace ArknightsMod.Content.Projectiles.Caster.Goldenglow
 
 		public override void OnSpawn(IEntitySource source) {
 			BaseY = Projectile.Center.Y;
+			SpawnTick = Main.GameUpdateCount;
 		}
 
 		public override void AI() {
@@ -64,10 +83,12 @@ namespace ArknightsMod.Content.Projectiles.Caster.Goldenglow
 			bool playerAttacking = owner.itemAnimation > 0
 				&& owner.HeldItem.ModItem is Items.Weapons.Caster.Goldenglow.GoldenglowWand;
 
+			// 每个浮游单元独立按冷却发射，冷却时长等于攻击间隔，保证每次攻击最多发射一枚，不计入玩家左键弹幕的堆叠上限
 			if (playerAttacking && Projectile.owner == Main.myPlayer) {
 				Vector2 dir = (Main.MouseWorld - Projectile.Center).SafeNormalize(Vector2.UnitX);
-				int boltDamage = (int)(owner.HeldItem.damage * owner.GetDamage(DamageClass.Magic).Multiplicative);
-				Projectile.NewProjectile(
+				// 浮游单元弹幕伤害为武器面板伤害(GetWeaponDamage，含加成后的展示伤害)的 40%
+				int boltDamage = (int)(owner.GetWeaponDamage(owner.HeldItem) * 0.4f);
+				int boltIndex = Projectile.NewProjectile(
 					Projectile.GetSource_FromThis(),
 					Projectile.Center,
 					dir * owner.HeldItem.shootSpeed,
@@ -75,6 +96,8 @@ namespace ArknightsMod.Content.Projectiles.Caster.Goldenglow
 					boltDamage,
 					owner.HeldItem.knockBack,
 					owner.whoAmI);
+				if (boltIndex >= 0 && boltIndex < Main.maxProjectiles)
+					Main.projectile[boltIndex].DamageType = DamageClass.Magic;
 
 				FireCooldown = Math.Max(1, owner.HeldItem.useTime);
 			}

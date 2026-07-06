@@ -6,14 +6,15 @@ using ArknightsMod.Content.Items.Material;
 
 namespace ArknightsMod.Content.Items.Armor.Supporter.Deepcolor
 {
+	// PRTS 官方数据（精二满级）：生命 1050 / 防御 125，由 OperatorArmorStatFormula 统一换算
 	[AutoloadEquip(EquipType.Legs)]
 	public class DeepcolorLegs : NeoArmorLegs
 	{
 		public override int Rarity => 4;
-		public override int ArmorLifeBonus => 52;
-		
+		public override int ArmorLifeBonus => OperatorArmorStatFormula.LegsLifeBonus(1050);
+
 		public override void SetArmorDefaults() {
-			Item.defense = 3;
+			Item.defense = OperatorArmorStatFormula.LegsDefenseBonus(125);
 		}
 
 		public override void AddRecipes() {

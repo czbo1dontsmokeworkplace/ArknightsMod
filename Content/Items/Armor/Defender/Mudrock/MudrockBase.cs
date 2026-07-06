@@ -1,35 +1,12 @@
-using Terraria;
-using Terraria.ModLoader;
-
 namespace ArknightsMod.Content.Items.Armor.Defender.Mudrock
 {
-	internal class MudrockItemChange : GlobalItem
+	/// <summary> 泥岩套装“手持右键切换形态”共用逻辑。装备栏内右键默认会被原版用于卸下装备，无法用来做形态切换，故改为手持物品右键触发。</summary>
+	internal static class MudrockToggle
 	{
-		public override void RightClick(Item item, Player player) {
-			if (item.type == ModContent.ItemType<MudrockHelmet>() || item.type == ModContent.ItemType<MudrockHead>()) {
-				int targetType = item.type == ModContent.ItemType<MudrockHelmet>()
-					? ModContent.ItemType<MudrockHead>()
-					: ModContent.ItemType<MudrockHelmet>();
-
-				item.ChangeItemType(targetType);
-				item.stack++;
-				return;
-			}
-
-			if (item.type == ModContent.ItemType<MudrockChestplate>() || item.type == ModContent.ItemType<MudrockBody>()) {
-				int targetType = item.type == ModContent.ItemType<MudrockChestplate>()
-					? ModContent.ItemType<MudrockBody>()
-					: ModContent.ItemType<MudrockChestplate>();
-
-				item.ChangeItemType(targetType);
-				item.stack++;
-			}
-		}
-
-		public override bool CanRightClick(Item item) {
-			return item.type == ModContent.ItemType<MudrockHelmet>() || item.type == ModContent.ItemType<MudrockHead>()
-				|| item.type == ModContent.ItemType<MudrockChestplate>() || item.type == ModContent.ItemType<MudrockBody>()
-				|| base.CanRightClick(item);
+		public static void Toggle(NeoArmorItem armorItem) {
+			var neoArmor = armorItem.Item.neoarmor();
+			// 只切换外观形态，不改变时装↔套装归类：时装切换后仍是时装，套装切换后仍是套装。
+			neoArmor.helmetForm = !neoArmor.helmetForm;
 		}
 	}
 }

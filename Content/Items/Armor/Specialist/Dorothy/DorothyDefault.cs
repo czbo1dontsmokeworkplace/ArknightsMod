@@ -1,4 +1,4 @@
-using ArknightsMod.Content.Items.Armor.Specialist.Dorothy;
+﻿using ArknightsMod.Content.Items.Armor.Specialist.Dorothy;
 using System.Collections.Generic;
 using Terraria.ModLoader;
 
@@ -10,9 +10,9 @@ namespace ArknightsMod.Content.Items.Armor.Specialist.Dorothy
 		protected override List<int> GetItems() {
 			return
 			[
-				ModContent.ItemType<DorothyHelmet>(),
-				ModContent.ItemType<DorothyChestplate>(),
-				ModContent.ItemType<DorothyGreaves>()
+				ModContent.ItemType<DorothyHead>(),
+				ModContent.ItemType<DorothyBody>(),
+				ModContent.ItemType<DorothyLegs>()
 			];
 		}
 	}

@@ -2,10 +2,12 @@ using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.Projectiles.Caster.Goldenglow;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Weapons.Caster.Goldenglow
@@ -56,20 +58,60 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Goldenglow
 						SoundEngine.PlaySound(SkillActiveSfx, player.Center);
 					}
 				} else {
-					// 右键：在光标位置部署浮游信标（最多 6 个）
-					if (player.ownedProjectileCounts[ModContent.ProjectileType<GoldenglowBeacon>()] < GoldenglowBeacon.MaxBeacons) {
+					// 右键：在光标位置部署浮游信标，消耗魔法值；超过上限时移除最早召唤的一个
+					if (player.CheckMana(Item.mana, pay: true)) {
+						int beaconType = ModContent.ProjectileType<GoldenglowBeacon>();
+						if (player.ownedProjectileCounts[beaconType] >= GoldenglowBeacon.GetMaxBeacons(player)) {
+							Projectile oldest = null;
+							float oldestTick = float.MaxValue;
+							foreach (Projectile proj in Main.ActiveProjectiles) {
+								if (proj.type == beaconType && proj.owner == player.whoAmI
+									&& proj.ModProjectile is GoldenglowBeacon beacon && beacon.SpawnTick < oldestTick) {
+									oldest = proj;
+									oldestTick = beacon.SpawnTick;
+								}
+							}
+							oldest?.Kill();
+						}
+
 						Projectile.NewProjectile(
 							player.GetSource_ItemUse(Item),
 							Main.MouseWorld,
 							Vector2.Zero,
-							ModContent.ProjectileType<GoldenglowBeacon>(),
+							beaconType,
 							0, 0f, player.whoAmI);
 					}
 				}
 				return false;
 			}
 
+			// 左键弹幕已达堆叠上限时直接阻止本次使用，避免持续扣魔力却打不出新弹幕
+			var beaconPlayer = player.GetModPlayer<GoldenglowBeaconPlayer>();
+			if (beaconPlayer.BoltCount >= GoldenglowBeaconPlayer.MaxBolts)
+				return false;
+
 			return base.CanUseItem(player);
+		}
+
+		public override void ModifyTooltips(List<TooltipLine> tooltips) {
+			Player player = Main.LocalPlayer;
+			int count = player.ownedProjectileCounts[ModContent.ProjectileType<GoldenglowBeacon>()];
+			int max = GoldenglowBeacon.GetMaxBeacons(player);
+			tooltips.Add(new TooltipLine(Mod, "GoldenglowBeaconCount",
+				Language.GetTextValue("Mods.ArknightsMod.Items.GoldenglowWand.BeaconCount", count, max)));
+		}
+
+		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
+			var beaconPlayer = player.GetModPlayer<GoldenglowBeaconPlayer>();
+			if (beaconPlayer.BoltCount >= GoldenglowBeaconPlayer.MaxBolts)
+				return false;
+
+			int boltIndex = Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI);
+			if (boltIndex >= 0 && boltIndex < Main.maxProjectiles) {
+				Main.projectile[boltIndex].GetGlobalProjectile<GoldenglowBoltMarker>().IsGoldenglowBolt = true;
+				beaconPlayer.BoltCount++;
+			}
+			return false;
 		}
 
 		public override void ModifyWeaponDamage(Player player, ref StatModifier damage) {

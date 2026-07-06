@@ -1,8 +1,10 @@
-﻿using Terraria;
+﻿using ArknightsMod.Content.Items.Material;
+using Microsoft.Xna.Framework;
+using System;
+using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.GameContent.ItemDropRules;
-using System;
 
 
 namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
@@ -44,26 +46,38 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 			attackframeY = 10 * frameHeight;
 			NPC.TargetClosest(true);
 			NPC.frameCounter++;
-			if(NPC.frame.Y == 0) {
+			/*if(NPC.frame.Y == 0) {
 				NPC.frame.Y = -8;
 			}
 			if (NPC.frameCounter >= Framespeed) {
 				NPC.frame.Y += frameHeight;
 				NPC.frameCounter = 0;
+			}*/
+
+			//26.6.12,
+			//重写
+			if (!attack) {
+				if (NPC.velocity.X == 0) {
+					NPC.frame.Y = 3 * frameHeight;
+					//NPC.frame.Y = 9 * frameHeight;
+				}
+				else
+					NPC.frame.Y = (int)((NPC.frameCounter / Framespeed) % 9) * frameHeight;
+
 			}
-			if (walk == true && NPC.frame.Y >= attackframeY) {
-				NPC.frame.Y = -8;
+			else {
+				if (AttackCD == 1)
+					NPC.frame.Y = attackframeY;
+				else if (NPC.frameCounter % Framespeed == 0)
+					NPC.frame.Y += frameHeight;
 			}
-			if (attack == true && (NPC.frame.Y < (attackframeY-8)||NPC.frame.Y > (18*frameHeight-8))) {
-				NPC.frame.Y = attackframeY-8;
-			}
-		
 		}
 		public override void AI() {
 			Player p = Main.player[NPC.target];
 			if (walk == true) {
 				NPC.spriteDirection = -NPC.direction;
 				AttackCD++;
+				/*
 				if (NPC.position.X - p.position.X < -5) {
 					if (NPC.velocity.X < maxspeed) {
 						NPC.velocity.X += 0.4f;
@@ -94,6 +108,24 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 					attack = true;
 					AttackCD = 0;
 				}
+				*/
+				//26.6.11 改
+				//嗯 约等于重写
+				NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, NPC.direction * maxspeed, 0.1f);
+				IceCleaver.LandNPCMovementLogic(NPC, NPC.width, NPC.height, 7);
+				if (AttackCD >= 150 && Math.Abs(NPC.position.X - p.position.X) <= 25 && Math.Abs(NPC.position.Y - p.position.Y) <= 16) {
+
+					NPC.velocity.X = 0;
+					if (AttackCD >= 100 && !attack) {
+						walk = false;
+						attack = true;
+						AttackCD = 0;
+					}
+				}
+				if (Math.Abs(NPC.position.X - p.position.X) >= 40) {
+					AttackCD = 114514;
+				}
+
 			}
 			if (attack == true) {
 				NPC.velocity.X = 0;
@@ -125,8 +157,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 		}
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
 
-			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Material.Device>(), 8, 1, 1));
-			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Material.Polyketon>(), 8, 1, 1));
+			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Device>(), 8, 1, 1));
+			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Polyketon>(), 8, 1, 1));
 
 		}
 

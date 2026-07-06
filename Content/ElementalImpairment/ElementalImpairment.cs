@@ -115,7 +115,7 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 		}
 
 
-		
+
 	}
 
 	public class AfflictionContainer
@@ -239,32 +239,51 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 			if (!anyVisible)
 				return;
 
-			Vector2 iconPos = Vector2.Transform(npc.Center - Main.screenPosition, Main.GameViewMatrix.TransformationMatrix);
-			Vector2 ringCenter = Vector2.Transform(npc.Center - Main.screenPosition, Main.GameViewMatrix.TransformationMatrix);
-			iconPos.Y += npc.height * 0.5f + 20f;
-			ringCenter.Y += (npc.height * 0.5f + 5f) * Main.GameViewMatrix.Zoom.Y;
+			// 获取缩放比例
+			float scale = Main.GameViewMatrix.Zoom.X;
 
+			// 计算基础位置（屏幕坐标）
+			Vector2 baseScreenPos = npc.Center - Main.screenPosition;
+			float baseYOffset = npc.height * 0.5f;
+
+			// 图标位置 - 应用完整的 GameViewMatrix 变换
+			Vector2 iconWorldPos = baseScreenPos + new Vector2(0, baseYOffset + 20f);
+			Vector2 iconPos = Vector2.Transform(iconWorldPos, Main.GameViewMatrix.TransformationMatrix);
+
+			// 环的位置 - 使用相同的变换方式
+			Vector2 ringWorldPos = baseScreenPos + new Vector2(0, baseYOffset + 5f);
+			Vector2 ringPos = Vector2.Transform(ringWorldPos, Main.GameViewMatrix.TransformationMatrix);
+
+			// 结束原有的 SpriteBatch
 			spriteBatch.End();
+
+			// 使用 Matrix.Identity，因为我们已经手动应用了变换
 			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearClamp,
 				DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Matrix.Identity);
 
-			// 只绘制未被压制的异常图标。
+			// 绘制图标
 			foreach (var aff in Container.Afflictions) {
 				if (aff.IsSuppressed || aff.State == AfflictionState.Idle)
 					continue;
-				Vector2 drawPos = iconPos - new Vector2(0, 15);
+
+				// 图标在图标位置上方偏移
+				Vector2 drawPos = iconPos - new Vector2(0, 15f * scale);
+
+				// 应用缩放
+				float featherScale = aff.FeatherScale * scale;
+				float mainScale = aff.MainScale * scale;
 
 				Texture2D featherTex = ModContent.Request<Texture2D>(aff.FeatherMaskTexture).Value;
 				spriteBatch.Draw(featherTex, drawPos, null, aff.FeatherColor, 0f,
-					featherTex.Size() * 0.5f, aff.FeatherScale, SpriteEffects.None, 0);
+					featherTex.Size() * 0.5f, featherScale, SpriteEffects.None, 0);
 
 				Texture2D iconTex = ModContent.Request<Texture2D>(aff.IconMaskTexture).Value;
 				spriteBatch.Draw(iconTex, drawPos, null, aff.IconColor, 0f,
-					iconTex.Size() * 0.5f, aff.MainScale, SpriteEffects.None, 0);
+					iconTex.Size() * 0.5f, mainScale, SpriteEffects.None, 0);
 			}
 			spriteBatch.End();
 
-			// 只绘制未被压制的异常环。
+			// 绘制环
 			foreach (var aff in Container.Afflictions) {
 				if (aff.IsSuppressed || aff.State == AfflictionState.Idle)
 					continue;
@@ -280,9 +299,11 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 				Color ringColor = (aff.State == AfflictionState.Cooldown) ?
 					new Color(165, 165, 165, 180) : Color.White;
 
-				RingDrawer.DrawRing(ringCenter, 5f, 2.5f, visualProgress, ringColor, 70);
+				// 传入已变换的环位置
+				RingDrawer.DrawRing(ringPos, 5f * scale, 2.5f * scale, visualProgress, ringColor, 70);
 			}
 
+			// 恢复 SpriteBatch
 			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState,
 				DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
 		}
@@ -296,7 +317,12 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 			public static void DrawRing(Vector2 center, float radius, float thickness, float progress, Color color, int segments = 60) {
 				if (progress <= 0 || segments < 3)
 					return;
+
 				GraphicsDevice device = Main.graphics.GraphicsDevice;
+
+				// center 已经应用了 GameViewMatrix 变换，不需要再次变换
+				// 但 radius 和 thickness 已经包含了缩放
+
 				int maxSegments = (int)(segments * progress) + 1;
 				if (maxSegments < 2)
 					return;
@@ -304,6 +330,7 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 
 				if (vertices.Length < vertCount)
 					vertices = new VertexPositionColor[vertCount];
+
 				if (vertexBuffer == null || vertexBuffer.VertexCount < vertCount)
 					vertexBuffer = new DynamicVertexBuffer(device, typeof(VertexPositionColor), vertCount, BufferUsage.WriteOnly);
 
@@ -343,13 +370,20 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 				if (cachedEffect == null) {
 					cachedEffect = new BasicEffect(device) {
 						VertexColorEnabled = true,
-						View = Matrix.Identity,
-						Projection = Matrix.Identity
+						View = Matrix.Identity
 					};
 				}
+
 				cachedEffect.World = Matrix.Identity;
 				cachedEffect.View = Matrix.Identity;
-				cachedEffect.Projection = Matrix.CreateOrthographicOffCenter(0f, Main.screenWidth, Main.screenHeight, 0f, -1f, 1f);
+				cachedEffect.Projection = Matrix.CreateOrthographicOffCenter(
+					0f,
+					device.Viewport.Width,
+					device.Viewport.Height,
+					0f,
+					-1f,
+					1f
+				);
 
 				foreach (var pass in cachedEffect.CurrentTechnique.Passes) {
 					pass.Apply();

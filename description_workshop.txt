@@ -1,5 +1,0 @@
-模组具体内容在创意工坊简介中，更新内容在改动说明中查看
-
-The specific content of the mod can be found in the Creative Workshop description, and the update content can be viewed in the change log.
-
-（注：description.txt是创意工坊简介的文件 workshop那个是游戏内的简介 一般没人看）

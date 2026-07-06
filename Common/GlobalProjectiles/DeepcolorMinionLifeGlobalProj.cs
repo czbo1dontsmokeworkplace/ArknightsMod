@@ -1,3 +1,5 @@
+using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor.Supporter.Deepcolor;
 using ArknightsMod.Content.Items.Weapons.Supporter.Deepcolor;
 using ArknightsMod.Content.Projectiles.Supporter.Deepcolor;
 using Microsoft.Xna.Framework;
@@ -6,10 +8,10 @@ using System.Collections.Generic;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.DataStructures;
 using Terraria.ModLoader.IO;
 using Terraria.UI.Chat;
 
@@ -42,6 +44,7 @@ namespace ArknightsMod.Common.GlobalProjectiles
 		private int receiveCooldown;
 		private int dealContactCooldown;
 		private int regenTimer;
+		private int setRegenTimer;
 
 		public override void PostAI(Projectile projectile) {
 			if (!useLife || projectile.type != ModContent.ProjectileType<DeepcolorMinion>())
@@ -61,6 +64,18 @@ namespace ArknightsMod.Common.GlobalProjectiles
 			if (DeepcolorSketchSkills.ShadowTentacleActive(owner) && ++regenTimer >= 60) {
 				regenTimer = 0;
 				life = Math.Min(life + DeepcolorSketchSkills.ShadowTentacleRegenPerSecond, lifeMax);
+			}
+
+			// 深海色套装效果：所有深海色的召唤物每秒恢复25点生命值
+			if (owner.armor[0].type == ModContent.ItemType<DeepcolorHead>()
+				&& owner.armor[1].type == ModContent.ItemType<DeepcolorBody>()
+				&& owner.armor[2].type == ModContent.ItemType<DeepcolorLegs>()
+				&& owner.armor[0].neoarmor().hasUpgraded
+				&& owner.armor[1].neoarmor().hasUpgraded
+				&& owner.armor[2].neoarmor().hasUpgraded
+				&& ++setRegenTimer >= 60) {
+				setRegenTimer = 0;
+				life = Math.Min(life + 25, lifeMax);
 			}
 
 			if (receiveCooldown > 0)
@@ -108,6 +123,15 @@ namespace ArknightsMod.Common.GlobalProjectiles
 		}
 
 		public void TakeDamage(Projectile projectile, int damage) {
+			// 深海色头盔效果：召唤物获得7%闪避
+			Player owner = Main.player[projectile.owner];
+			if (owner.armor[0].type == ModContent.ItemType<DeepcolorHead>()
+				&& owner.armor[0].neoarmor().hasUpgraded
+				&& Main.rand.NextFloat() < 0.07f) {
+				CombatText.NewText(projectile.getRect(), Color.Yellow, "Miss");
+				return;
+			}
+
 			damage = (int)((damage - defense) * damageReduction);
 			if (damage < 1)
 				damage = 1;

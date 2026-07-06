@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Terraria.ModLoader;
 using ArknightsMod.Content.Items.Armor.Vanguard.Bagpipe;
 
@@ -10,9 +10,9 @@ namespace ArknightsMod.Content.Items.Armor.Vanguard.Bagpipe
 		protected override List<int> GetItems() {
 			return
 			[
-				ModContent.ItemType<BagpipeHelmet>(),
-				ModContent.ItemType<BagpipeChestplate>(),
-				ModContent.ItemType<BagpipeGreaves>()
+				ModContent.ItemType<BagpipeHead>(),
+				ModContent.ItemType<BagpipeBody>(),
+				ModContent.ItemType<BagpipeLegs>()
 			];
 		}
 	}

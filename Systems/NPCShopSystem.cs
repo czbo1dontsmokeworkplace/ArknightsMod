@@ -1,5 +1,7 @@
-using ArknightsMod.Content.Items.Armor.Caster.Amiya;
-using ArknightsMod.Content.Items.Consumables.VanityBags;
+﻿using ArknightsMod.Content.Items.Armor.Caster.Amiya;
+using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Items.Material.ReclamAlgor;
 using ArknightsMod.Content.NPCs.Friendly;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
@@ -14,7 +16,99 @@ namespace ArknightsMod.Systems
 	public class NPCShopSystem : ModSystem
 	{
 		public static List<int> ClosureTodaysRotation = [];
-		// 保存完整的 Item 对象而不是只保存 type
+		public static List<int> ClosureMaterialRotation = [];
+
+		public static List<int> BuildClosureMaterialPool(bool forceAllTiers = false) {
+			var pool = new List<int> {
+				ModContent.ItemType<Orirock>(),
+				ModContent.ItemType<OrironShard>(),
+				ModContent.ItemType<SugarSubstitute>(),
+				ModContent.ItemType<Polyester>(),
+				ModContent.ItemType<Diketon>(),
+				ModContent.ItemType<Ester>(),
+				ModContent.ItemType<DamagedDevice>(),
+				ModContent.ItemType<CarbonBrick>(),
+				ModContent.ItemType<CrabClaw>(),
+				ModContent.ItemType<RAWater>(),
+				ModContent.ItemType<RAMeat>(),
+				ModContent.ItemType<RiceGrain>(),
+				ModContent.ItemType<RALegmeat>(),
+			};
+
+			if (forceAllTiers || NPC.downedBoss1) {
+				pool.AddRange([
+					ModContent.ItemType<Oriron>(),
+					ModContent.ItemType<Sugar>(),
+					ModContent.ItemType<Polyketon>(),
+					ModContent.ItemType<Device>(),
+					ModContent.ItemType<OrirockCube>(),
+					ModContent.ItemType<OriginiumShard>(),
+					ModContent.ItemType<CorruptedRecord>(),
+				]);
+			}
+
+			if (forceAllTiers || NPC.downedBoss3) {
+				pool.AddRange([
+					ModContent.ItemType<ManganeseOre>(),
+					ModContent.ItemType<Grindstone>(),
+					ModContent.ItemType<LoxicKohl>(),
+					ModContent.ItemType<RMA7012>(),
+					ModContent.ItemType<OrirockCluster>(),
+					ModContent.ItemType<SugarPack>(),
+					ModContent.ItemType<PolyesterPack>(),
+					ModContent.ItemType<CoagulatingGel>(),
+					ModContent.ItemType<OrironCluster>(),
+					ModContent.ItemType<Aketon>(),
+					ModContent.ItemType<IntegratedDevice>(),
+					ModContent.ItemType<IncandescentAlloy>(),
+					ModContent.ItemType<CrystallineComponent>(),
+					ModContent.ItemType<CompoundCuttingFluid>(),
+					ModContent.ItemType<TransmutedSalt>(),
+					ModContent.ItemType<SemiSyntheticSolvent>(),
+					ModContent.ItemType<CoagulativeNodule>(),
+					ModContent.ItemType<FuscousFiber>(),
+					ModContent.ItemType<AggregateCyclicene>(),
+				]);
+			}
+
+			if (forceAllTiers || (NPC.downedMechBoss1 && NPC.downedMechBoss2 && NPC.downedMechBoss3)) {
+				pool.AddRange([
+					ModContent.ItemType<ManganeseTrihydrate>(),
+					ModContent.ItemType<GrindstonePentahydrate>(),
+					ModContent.ItemType<WhiteHorseKohl>(),
+					ModContent.ItemType<RMA7024>(),
+					ModContent.ItemType<OrirockConcentration>(),
+					ModContent.ItemType<SugarLump>(),
+					ModContent.ItemType<PolyesterLump>(),
+					ModContent.ItemType<PolymerizedGel>(),
+					ModContent.ItemType<CyclicenePrefab>(),
+					ModContent.ItemType<ChiralRefractor>(),
+					ModContent.ItemType<OrironBlock>(),
+					ModContent.ItemType<KetonColloid>(),
+					ModContent.ItemType<OptimizedDevice>(),
+					ModContent.ItemType<IncandescentAlloyBlock>(),
+					ModContent.ItemType<CrystallineCircuit>(),
+					ModContent.ItemType<CuttingFluidSolution>(),
+					ModContent.ItemType<RefinedSolvent>(),
+					ModContent.ItemType<TransmutedSaltAgglomerate>(),
+					ModContent.ItemType<SolidifiedFiberBoard>(),
+				]);
+			}
+
+			if (forceAllTiers || NPC.downedPlantBoss) {
+				pool.AddRange([
+					ModContent.ItemType<RephasicEnantiomer>(),
+					ModContent.ItemType<PolymerizationPreparation>(),
+					ModContent.ItemType<D32Steel>(),
+					ModContent.ItemType<CrystallineElectronicUnit>(),
+					ModContent.ItemType<BipolarNanoflake>(),
+					ModContent.ItemType<NucleicCrystalSinter>(),
+				]);
+			}
+
+			return pool;
+		}
+		// 淇濆瓨瀹屾暣鐨?Item 瀵硅薄鑰屼笉鏄彧淇濆瓨 type
 		public static List<Item> CannotShopItems = [];
 		public static int OldCannotShopCount;
 
@@ -52,6 +146,16 @@ namespace ArknightsMod.Systems
 					others.RemoveAt(Main.rand.Next(others.Count));
 				}
 				ClosureTodaysRotation.AddRange(others);
+
+				var materialPool = BuildClosureMaterialPool();
+				ClosureMaterialRotation = [];
+				int materialCount = Main.rand.Next(8, 13);
+				while (materialPool.Count > 0 && ClosureMaterialRotation.Count < materialCount) {
+					int idx = Main.rand.Next(materialPool.Count);
+					ClosureMaterialRotation.Add(materialPool[idx]);
+					materialPool.RemoveAt(idx);
+				}
+
 				if (Main.dedServ) {
 					SendUpdateClosureShop(mod);
 				}
@@ -70,29 +174,29 @@ namespace ArknightsMod.Systems
 		public static void TryUpdateCannotShop(Mod mod, bool forcedUpdate = false) {
 			if (Main.netMode != NetmodeID.MultiplayerClient) {
 				int countBeforeSkeletron = 1 +
-					(NPC.downedSlimeKing ? 1 : 0) +//史莱姆
-					(NPC.downedBoss1 ? 1 : 0) +//克眼
-					(NPC.downedBoss2 ? 1 : 0) +//邪恶boss
-					(NPC.downedDeerclops ? 1 : 0);//巨鹿
+					(NPC.downedSlimeKing ? 1 : 0) +//鍙茶幈濮?
+					(NPC.downedBoss1 ? 1 : 0) +//鍏嬬溂
+					(NPC.downedBoss2 ? 1 : 0) +//閭伓boss
+					(NPC.downedDeerclops ? 1 : 0);//宸ㄩ箍
 
 
 				int countBetweenSkeletronAndPlantera =
-					(NPC.downedBoss3 ? 1 : 0) +//骷髅王
-					(NPC.downedQueenBee ? 1 : 0) +//蜂后
-					(Main.hardMode ? 1 : 0) +//肉山
-					(NPC.downedMechBoss1 ? 1 : 0) +//机械1
-					(NPC.downedMechBoss2 ? 1 : 0) +//机械2
-					(NPC.downedMechBoss3 ? 1 : 0);//机械3
+					(NPC.downedBoss3 ? 1 : 0) +//楠烽珔鐜?
+					(NPC.downedQueenBee ? 1 : 0) +//铚傚悗
+					(Main.hardMode ? 1 : 0) +//鑲夊北
+					(NPC.downedMechBoss1 ? 1 : 0) +//鏈烘1
+					(NPC.downedMechBoss2 ? 1 : 0) +//鏈烘2
+					(NPC.downedMechBoss3 ? 1 : 0);//鏈烘3
 
 				int countBetweenPlanteraAndDukeFishron =
-					(NPC.downedPlantBoss ? 1 : 0) +//世花
-					(NPC.downedGolemBoss ? 1 : 0);//石巨人
+					(NPC.downedPlantBoss ? 1 : 0) +//涓栬姳
+					(NPC.downedGolemBoss ? 1 : 0);//鐭冲法浜?
 
 				int countFromFishronOnward =
-					(NPC.downedFishron ? 1 : 0) +//猪鲨
-					(NPC.downedEmpressOfLight ? 1 : 0) +//光女
-					(NPC.downedAncientCultist ? 1 : 0) +//教徒
-					(NPC.downedMoonlord ? 1 : 0);//月总
+					(NPC.downedFishron ? 1 : 0) +//鐚波
+					(NPC.downedEmpressOfLight ? 1 : 0) +//鍏夊コ
+					(NPC.downedAncientCultist ? 1 : 0) +//鏁欏緬
+					(NPC.downedMoonlord ? 1 : 0);//鏈堟€?
 
 				int cannotShopCount = countBeforeSkeletron + countBetweenSkeletronAndPlantera + countBetweenPlanteraAndDukeFishron + countFromFishronOnward;
 				if (!forcedUpdate && cannotShopCount == OldCannotShopCount)
@@ -108,9 +212,11 @@ namespace ArknightsMod.Systems
 				if (countFromFishronOnward > 0)
 					tempShop.AddPoolFromNameSpace("Rogue.Rarity_l4", countFromFishronOnward, "ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4", mod);
 
-				// 保存完整的 Item 对象
+				// 淇濆瓨瀹屾暣鐨?Item 瀵硅薄
 				CannotShopItems.Clear();
 				CannotShopItems.AddRange(tempShop.GenerateNewInventoryList());
+				foreach (var item in CannotShopItems)
+					MakeCannotPriceEven(item);
 
 				if (Main.dedServ)
 					SendUpdateCannotShop(mod);
@@ -119,6 +225,17 @@ namespace ArknightsMod.Systems
 			}
 			else
 				RequestUpdateCannotShop(mod, forcedUpdate);
+		}
+
+		// 坎诺特的商品只能呈现偶数定价：OriginiumIngotCurrency 把 item.value/50000 取整作为显示价格（见 GetItemExpectedPrice），
+		// 这里用同样的换算把价格向上调整为偶数后再换算回 item.value，使商店里显示的价格永远是偶数。
+		public static void MakeCannotPriceEven(Item item) {
+			long price = item.value / 50000;
+			if (price == 0 && item.value > 0)
+				price = 1;
+			if (price % 2 != 0)
+				price += 1;
+			item.value = (int)(price * 50000);
 		}
 
 		public static void RequestUpdateClosureShopWhenStartDay(Mod mod) {
@@ -141,10 +258,14 @@ namespace ArknightsMod.Systems
 			for (int i = 0; i < ClosureTodaysRotation.Count; i++) {
 				packet.Write(ClosureTodaysRotation[i]);
 			}
+			packet.Write(ClosureMaterialRotation.Count);
+			for (int i = 0; i < ClosureMaterialRotation.Count; i++) {
+				packet.Write(ClosureMaterialRotation[i]);
+			}
 			packet.Send();
 		}
 
-		// 修改：同步自定义货币信息
+		// 淇敼锛氬悓姝ヨ嚜瀹氫箟璐у竵淇℃伅
 		public static void SendUpdateCannotShop(Mod mod) {
 			var packet = mod.GetPacket();
 			packet.Write((short)ArknightsMod.ArkMessageID.UpdateCannotShop);
@@ -158,18 +279,24 @@ namespace ArknightsMod.Systems
 
 		public static void ReadUpdateClosureShop(BinaryReader reader) {
 			ClosureTodaysRotation = [];
+			ClosureMaterialRotation = [];
 			try {
 				int count = reader.ReadInt32();
 				for (int i = 0; i < count; i++) {
 					ClosureTodaysRotation.Add(reader.ReadInt32());
 				}
+				int materialCount = reader.ReadInt32();
+				for (int i = 0; i < materialCount; i++) {
+					ClosureMaterialRotation.Add(reader.ReadInt32());
+				}
 			}
 			catch {
 				ClosureTodaysRotation = [ModContent.ItemType<AmiyaDefault>()];
+				ClosureMaterialRotation = [];
 			}
 		}
 
-		// 读取并恢复自定义货币信息
+		// 璇诲彇骞舵仮澶嶈嚜瀹氫箟璐у竵淇℃伅
 		public static void ReadUpdateCannotShop(BinaryReader reader) {
 			CannotShopItems = [];
 			try {
@@ -180,6 +307,7 @@ namespace ArknightsMod.Systems
 					var item = new Item(type) {
 						shopSpecialCurrency = currency
 					};
+					MakeCannotPriceEven(item);
 					CannotShopItems.Add(item);
 				}
 			}

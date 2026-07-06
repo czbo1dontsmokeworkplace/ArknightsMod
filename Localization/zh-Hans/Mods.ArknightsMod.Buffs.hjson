@@ -3,6 +3,11 @@ DeepcolorMinionBuff: {
 	Description: 触手正在为你作战
 }
 
+GoldenglowBeaconBuff: {
+	DisplayName: 浮游信标
+	Description: 当前已部署 {0} 个浮游单元，右键取消可全部移除
+}
+
 CameraTruckBuff: {
 	DisplayName: 移动摄影车
 	Description: 已部署移动摄影车
@@ -207,4 +212,9 @@ WarfarinAllyRegenBuff: {
 FearlessDebuff: {
 	// DisplayName: Fearless Debuff
 	// Description: Mods.ArknightsMod.Buffs.FearlessDebuff.Description
+}
+
+WisadelMarkDebuff: {
+	// DisplayName: Wisadel Mark Debuff
+	// Description: Mods.ArknightsMod.Buffs.WisadelMarkDebuff.Description
 }

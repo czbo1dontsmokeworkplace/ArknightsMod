@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria;
-using ArknightsMod.Content.Events;
+using ArknightsMod.Content.NPCs.Enemy.ThroughChapter4;
 
 namespace ArknightsMod.Content.Items.BossSummon
 {
@@ -25,12 +24,12 @@ namespace ArknightsMod.Content.Items.BossSummon
 		}
 
 		public override bool CanUseItem(Player player) {
-			return !UnionInvade.EventActive && Main.dayTime;
+			return !NPC.AnyNPCs(ModContent.NPCType<Crownslayer>());
 		}
 
 		public override bool? UseItem(Player player) {
-			if (player.whoAmI == Main.myPlayer) {
-				UnionInvade.StartEvent();
+			if (Main.netMode != NetmodeID.MultiplayerClient) {
+				NPC.NewNPC(player.GetSource_ItemUse(Item), (int)player.Center.X, (int)player.Center.Y, ModContent.NPCType<Crownslayer>());
 			}
 			return true;
 		}
@@ -41,11 +40,5 @@ namespace ArknightsMod.Content.Items.BossSummon
 				.AddTile(TileID.DemonAltar)
 				.Register();
 		}
-
-		public override void ModifyTooltips(List<TooltipLine> tooltips) {
-			tooltips.Add(new TooltipLine(Mod, "EventInfo", "只能在白昼使用"));
-		}
-
-
 	}
 }
