@@ -56,7 +56,7 @@ GoldenglowWand,2,3,1,0,1,0
 MelanthasSword,0,1,1,0,1,0
 VanillaAxe,0,1,1,0,1,0
 CardiganShield,0,1,1,0,0,0
-PlumePike,0,1,1,0,0,0
+PlumePike,0,1,1,0,1,0
 HongdouLance,0,1,1,0,1,0
 HongdouLance,1,2,1,0,1,0
 BeanstalkOrb,0,1,1,0,1,0
@@ -73,8 +73,8 @@ FrostleafAxe,0,1,2,0,0,0
 FrostleafAxe,1,2,1,0,1,0
 EstelleGlove,0,1,1,0,1,0
 EstelleGlove,1,2,1,0,1,0
-AnselClaw,0,1,1,0,0,0
-AnselClaw,1,2,1,0,0,0
+RopeClaw,0,1,1,0,0,0
+RopeClaw,1,2,1,0,0,0
 MousseGlove,0,1,2,0,0,0
 MousseGlove,1,2,1,0,1,0
 GravelDualBlades,0,1,1,1,1,0
@@ -87,3 +87,12 @@ ShawAxe,0,1,1,0,0,0
 ShawAxe,1,2,1,0,0,0
 SceneCamera,0,1,1,0,0,0
 SceneCamera,1,2,1,0,0,0
+EntelechiaScythe,0,1,1,0,0,0
+EntelechiaScythe,1,2,1,0,1,0
+EntelechiaScythe,2,3,1,0,1,0
+ClosureScanGun,0,1,1,0,1,0
+ClosureScanGun,1,2,1,0,1,0
+ClosureScanGun,2,3,1,0,1,0
+CardiWeapon,0,1,1,0,1,0
+CuoraWeapon,0,1,1,0,1,0
+CuoraWeapon,1,2,1,0,1,0

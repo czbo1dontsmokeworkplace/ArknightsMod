@@ -321,8 +321,8 @@ HazeDefault: {
 	Tooltip: ""
 }
 
-KaltsitDefault: {
-	DisplayName: Kaltsit Default
+ClosureDefault: {
+	DisplayName: Closure Default
 	Tooltip: ""
 }
 
@@ -481,18 +481,18 @@ HazeLegs: {
 	Tooltip: ""
 }
 
-KaltsitBody: {
-	DisplayName: Kaltsit Body
+ClosureBody: {
+	DisplayName: Closure Body
 	Tooltip: ""
 }
 
-KaltsitHead: {
-	DisplayName: Kaltsit Head
+ClosureHead: {
+	DisplayName: Closure Head
 	Tooltip: ""
 }
 
-KaltsitLegs: {
-	DisplayName: Kaltsit Legs
+ClosureLegs: {
+	DisplayName: Closure Legs
 	Tooltip: ""
 }
 
@@ -2909,18 +2909,18 @@ ArmorSkadiLegs: {
 	Tooltip: ""
 }
 
-ArmorKaltsitBody: {
-	DisplayName: Armor Kaltsit Body
+ArmorClosureBody: {
+	DisplayName: Armor Closure Body
 	Tooltip: ""
 }
 
-ArmorKaltsitHead: {
-	DisplayName: Armor Kaltsit Head
+ArmorClosureHead: {
+	DisplayName: Armor Closure Head
 	Tooltip: ""
 }
 
-ArmorKaltsitLegs: {
-	DisplayName: Armor Kaltsit Legs
+ArmorClosureLegs: {
+	DisplayName: Armor Closure Legs
 	Tooltip: ""
 }
 
@@ -3100,8 +3100,8 @@ CardiganHelmet: {
 }
 
 MudrockLegs: {
-	DisplayName: Mudrock Legs
 	Tooltip: ""
+	DisplayName: Mudrock Legs
 }
 
 NianChestplate: {
@@ -4009,5 +4009,50 @@ OriginiumCore: {
 
 LupineScarlet: {
 	DisplayName: Lupine Scarlet
+	Tooltip: ""
+}
+
+CuoraWeapon: {
+	DisplayName: Cuora Weapon
+	Tooltip: ""
+}
+
+ClosureScanGun: {
+	DisplayName: Engineering Scanner Gun
+	Tooltip: ""
+}
+
+KaltsitBody: {
+	DisplayName: Kaltsit Body
+	Tooltip: ""
+}
+
+KaltsitDefault: {
+	DisplayName: Kaltsit Default
+	Tooltip: ""
+}
+
+KaltsitHead: {
+	DisplayName: Kaltsit Head
+	Tooltip: ""
+}
+
+KaltsitLegs: {
+	DisplayName: Kaltsit Legs
+	Tooltip: ""
+}
+
+CardiWeapon: {
+	DisplayName: Cardi Weapon
+	Tooltip: ""
+}
+
+EntelechiaScythe: {
+	DisplayName: Entelechia Scythe
+	Tooltip: ""
+}
+
+RopeClaw: {
+	DisplayName: Rope Claw
 	Tooltip: ""
 }

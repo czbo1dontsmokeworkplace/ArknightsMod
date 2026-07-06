@@ -239,5 +239,28 @@ LupineScarletExplosion.DisplayName: Lupine Scarlet Explosion
 LupineScarletRightClickController.DisplayName: Lupine Scarlet Right Click Controller
 LupineScarletSkillShard.DisplayName: Lupine Scarlet Skill Shard
 LupineScarletSwingProjectile.DisplayName: Lupine Scarlet Swing Projectile
-AnselHookProjectile.DisplayName: Ansel Hook Projectile
-AnselWhipProjectile.DisplayName: Ansel Whip Projectile
+RopeHookProjectile.DisplayName: Rope Hook Projectile
+RopeWhipProjectile.DisplayName: Rope Whip Projectile
+Cardi_Shield.DisplayName: Cardi_ Shield
+Cardi_Sword.DisplayName: Cardi_ Sword
+Cuora_Bat.DisplayName: Cuora_ Bat
+Cuora_Shield.DisplayName: Cuora_ Shield
+PlumeSweepProjectile.DisplayName: Plume Sweep Projectile
+PlumeStabProjectile.DisplayName: Plume Stab Projectile
+PlumeSpearStab.DisplayName: Plume Spear Stab
+ValarqvinHitParticle.DisplayName: Valarqvin Hit Particle
+ValarqvinProj3_Hit.DisplayName: Valarqvin Proj3_ Hit
+ValarqvinProj_Hit.DisplayName: Valarqvin Proj_ Hit
+EntelechiaScytheCircleSlashProjectile.DisplayName: Entelechia Scythe Circle Slash Projectile
+EntelechiaScytheStarFXProjectile.DisplayName: Entelechia Scythe Star F X Projectile
+EntelechiaScytheCursorMiniSlashProjectile.DisplayName: Entelechia Scythe Cursor Mini Slash Projectile
+EntelechiaScytheBladeWaveProjectile.DisplayName: Entelechia Scythe Blade Wave Projectile
+EntelechiaCrossStar.DisplayName: Entelechia Cross Star
+EntelechiaHitBurst.DisplayName: Entelechia Hit Burst
+EntelechiaScytheS3Aura.DisplayName: Entelechia Scythe S3 Aura
+ClosureScanShotProjectile.DisplayName: Closure Scan Shot Projectile
+ClosureHitBurstProjectile.DisplayName: Closure Hit Burst Projectile
+ClosureMuzzleFlashProjectile.DisplayName: Closure Muzzle Flash Projectile
+ClosureMarkLaserProjectile.DisplayName: Closure Mark Laser Projectile
+ClosureTargetMarkProjectile.DisplayName: Closure Target Mark Projectile
+RevenantsShadow.DisplayName: Revenants Shadow

@@ -323,7 +323,7 @@ HazeDefault: {
 	Tooltip: ""
 }
 
-KaltsitDefault: {
+ClosureDefault: {
 	DisplayName: 凯尔西的服饰（常规）
 	Tooltip: ""
 }
@@ -483,17 +483,17 @@ HazeLegs: {
 	// Tooltip: ""
 }
 
-KaltsitBody: {
+ClosureBody: {
 	DisplayName: 凯尔希的上衣
 	// Tooltip: ""
 }
 
-KaltsitHead: {
+ClosureHead: {
 	DisplayName: 凯尔希的头套
 	// Tooltip: ""
 }
 
-KaltsitLegs: {
+ClosureLegs: {
 	DisplayName: 凯尔希的下装
 	// Tooltip: ""
 }
@@ -3271,18 +3271,18 @@ ArmorSkadiLegs: {
 	// Tooltip: ""
 }
 
-ArmorKaltsitBody: {
-	// DisplayName: Armor Kaltsit Body
+ArmorClosureBody: {
+	// DisplayName: Armor Closure Body
 	// Tooltip: ""
 }
 
-ArmorKaltsitHead: {
-	// DisplayName: Armor Kaltsit Head
+ArmorClosureHead: {
+	// DisplayName: Armor Closure Head
 	// Tooltip: ""
 }
 
-ArmorKaltsitLegs: {
-	// DisplayName: Armor Kaltsit Legs
+ArmorClosureLegs: {
+	// DisplayName: Armor Closure Legs
 	// Tooltip: ""
 }
 
@@ -3462,8 +3462,8 @@ CardiganHelmet: {
 }
 
 MudrockLegs: {
-	// DisplayName: Mudrock Legs
 	// Tooltip: ""
+	DisplayName: 泥岩的下装
 }
 
 NianChestplate: {
@@ -4380,4 +4380,49 @@ LupineScarlet: {
 		左键：三段绯紫连斩
 		右键：散射绯红碎影，归拢至光标处引爆
 		'''
+}
+
+CuoraWeapon: {
+	// DisplayName: Cuora Weapon
+	// Tooltip: ""
+}
+
+ClosureScanGun: {
+	DisplayName: 工程部特制扫描枪
+	// Tooltip: ""
+}
+
+KaltsitBody: {
+	// DisplayName: Kaltsit Body
+	// Tooltip: ""
+}
+
+KaltsitDefault: {
+	// DisplayName: Kaltsit Default
+	// Tooltip: ""
+}
+
+KaltsitHead: {
+	// DisplayName: Kaltsit Head
+	// Tooltip: ""
+}
+
+KaltsitLegs: {
+	// DisplayName: Kaltsit Legs
+	// Tooltip: ""
+}
+
+CardiWeapon: {
+	// DisplayName: Cardi Weapon
+	// Tooltip: ""
+}
+
+EntelechiaScythe: {
+	// DisplayName: Entelechia Scythe
+	// Tooltip: ""
+}
+
+RopeClaw: {
+	// DisplayName: Rope Claw
+	// Tooltip: ""
 }

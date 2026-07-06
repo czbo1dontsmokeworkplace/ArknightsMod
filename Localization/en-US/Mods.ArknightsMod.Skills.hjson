@@ -736,3 +736,20 @@ CardiWeapon: {
 		Desc: Mods.ArknightsMod.Skills.CardiWeapon.1.Desc
 	}
 }
+
+ClosureScanGun: {
+	1: {
+		Label: Recursive Strategy
+		Desc: Mods.ArknightsMod.Skills.ClosureScanGun.1.Desc
+	}
+
+	2: {
+		Label: Model Expansion
+		Desc: Mods.ArknightsMod.Skills.ClosureScanGun.2.Desc
+	}
+
+	3: {
+		Label: Q.E.D.
+		Desc: Mods.ArknightsMod.Skills.ClosureScanGun.3.Desc
+	}
+}
