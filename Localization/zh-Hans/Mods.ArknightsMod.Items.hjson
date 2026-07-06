@@ -4381,3 +4381,13 @@ LupineScarlet: {
 		右键：散射绯红碎影，归拢至光标处引爆
 		'''
 }
+
+CardiWeapon: {
+	// DisplayName: Cardi Weapon
+	// Tooltip: ""
+}
+
+CuoraWeapon: {
+	// DisplayName: Cuora Weapon
+	// Tooltip: ""
+}

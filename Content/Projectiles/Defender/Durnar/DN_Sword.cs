@@ -42,6 +42,12 @@ namespace ArknightsMod.Content.Projectiles.Defender.Durnar
             Projectile.ignoreWater = true;
             Projectile.localNPCHitCooldown = attackMaxTime+1;
         }
+
+        public void ReloadArray() {
+	        oldRot = new float[20];
+	        oldPos = new Vector2[20];
+	        oldHandpos = new Vector2[20];
+        }
         private ProjMode projMode = ProjMode.Move;
 		public override void AI()
         {
@@ -244,6 +250,7 @@ namespace ArknightsMod.Content.Projectiles.Defender.Durnar
             if(attackTime > attackMaxTime)
             {
                 projMode = ProjMode.Move;
+                ReloadArray();
                 press = false;
             }
         }

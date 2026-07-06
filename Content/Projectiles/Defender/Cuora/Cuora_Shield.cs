@@ -1,17 +1,13 @@
 ﻿using ArknightsMod.Common.VisualEffects;
-using ArknightsMod.Content.Items.Weapons.Defender.Beagle;
 using ArknightsMod.Content.Items.Weapons.Defender.Cuora;
-using ArknightsMod.Content.Items.Weapons.Defender.Durnar;
 using ArknightsMod.Content.Projectiles.Defender.Durnar;
-using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+using ReLogic.Content;
 using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent;
-using Terraria.GameInput;
 using Terraria.ModLoader;
 //TODO : 需要制作龟龟二技能开启效果的特效
 namespace ArknightsMod.Content.Projectiles.Defender.Cuora;
@@ -35,6 +31,7 @@ public class Cuora_Shield: ModProjectile
         Projectile.ownerHitCheck = true; // ?��?�����?���������?�����??�?�����?�?��?����?�?
         Projectile.DamageType = DamageClass.MeleeNoSpeed; // ?����?��??����
         Projectile.ignoreWater = true;
+        LoadAssets();
     }
     private ProjMode projMode = ProjMode.Move;
 	public override void AI()
@@ -65,7 +62,7 @@ public class Cuora_Shield: ModProjectile
         sb.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
             SamplerState.AnisotropicClamp, DepthStencilState.None,
             RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-        Draw_Shield(sb);
+        Draw_Shield(sb,lightColor);
         sb.End();
         sb.Begin();
         return false;
@@ -107,10 +104,12 @@ public class Cuora_Shield: ModProjectile
         if(Main.myPlayer == player.whoAmI)
         {
 	        var modPlayer = player.GetModPlayer<CuoraProj_Player>();
-            if(!Main.mouseRight||modPlayer.DefensiveStance)
-            {
-                projMode = ProjMode.Move;
-            }
+	        if (!modPlayer.DefensiveStance) {
+		        if(!Main.mouseRight)
+		        {
+			        projMode = ProjMode.Move;
+		        }
+	        }
         }
         player.direction = (Main.MouseWorld - player.MountedCenter).X >=0? 1:-1;
         float rotation = MathF.Atan2((Main.MouseWorld - player.MountedCenter).Y,(Main.MouseWorld - player.MountedCenter).X);
@@ -120,9 +119,8 @@ public class Cuora_Shield: ModProjectile
     }
 
     private float TexWidth { get =>ShieldTex.Width; }
-
 	private float TexHeight { get =>ShieldTex.Height; }
-    public void Draw_Shield(SpriteBatch sb)
+    public void Draw_Shield(SpriteBatch sb,Color lightColor)
     {
 		Vector2 Center =  Projectile.Center - Main.screenPosition;
 		Vector2 halfWidth = new Vector2(TexWidth / 2, 0).RotatedBy(Projectile.rotation);
@@ -147,9 +145,44 @@ public class Cuora_Shield: ModProjectile
 		Main.graphics.GraphicsDevice.Textures[0] = ShieldTex;
 		if (vertices.Count > 4)
 			Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices.ToArray(), 0, vertices.Count / 3);
+		var mp = player.GetModPlayer<CuoraProj_Player>();
+		float hitRad = 0f;
+		bool hitting = false;
+		if (mp.DefensiveStance) {
+			DrawShield(sb, lightColor);
+		}
+
     }
 	public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
     {
         overPlayers.Add(index);
     }
+
+	private static Texture2D Shield;//高90宽90
+	private static Texture2D ShieldLine;//高80宽90
+	private int index = 0;
+	public void LoadAssets() {
+		Shield = ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Defender/Cuora/Shield",AssetRequestMode.ImmediateLoad).Value;
+		ShieldLine = ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Defender/Cuora/ShieldLine",AssetRequestMode.ImmediateLoad).Value;
+	}
+
+	private int frameCounter;
+	public void DrawShield(SpriteBatch sb,Color lightColor) {
+		Color Shieldcolor = lightColor *0.6f;
+		SpriteEffects a = player.direction == 1? SpriteEffects.None:SpriteEffects.FlipHorizontally;
+		Vector2 pos = player.MountedCenter - Main.screenPosition;
+		Lighting.AddLight(player.MountedCenter,lightColor.ToVector3());
+		sb.Draw(Shield,new Rectangle((int)pos.X,(int)pos.Y,90,82)
+			,new Rectangle(0,index*82,90,82),Shieldcolor,0f,new Vector2(45,41),a,0f);
+		sb.Draw(ShieldLine,new Rectangle((int)pos.X,(int)pos.Y,90,82)
+			,new Rectangle(0,index*82,90,82),lightColor,0f,new Vector2(45,41),a,0f);
+		frameCounter++;
+		if (frameCounter >= 4)
+		{
+			frameCounter = 0;
+			index++;
+			if (index >= 15) index = 0;
+		}
+	}
+
 }

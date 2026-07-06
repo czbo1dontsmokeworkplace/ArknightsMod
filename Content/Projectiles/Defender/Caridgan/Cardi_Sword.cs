@@ -44,7 +44,11 @@ public class Cardi_Sword : ModProjectile
 	}
 
 	private ProjMode projMode = ProjMode.Move;
-
+	public void ReloadArray() {
+		oldRot = new float[20];
+		oldPos = new Vector2[20];
+		oldHandpos = new Vector2[20];
+	}
 	public override void AI() {
 		if (player.dead || !player.active || item.type != ModContent.ItemType<CardiWeapon>()) Projectile.Kill();
 		Projectile.timeLeft = 2;
@@ -233,6 +237,7 @@ public class Cardi_Sword : ModProjectile
 		attackTime++;
 		if (attackTime > attackMaxTime) {
 			projMode = ProjMode.Move;
+			ReloadArray();
 			press = false;
 		}
 	}

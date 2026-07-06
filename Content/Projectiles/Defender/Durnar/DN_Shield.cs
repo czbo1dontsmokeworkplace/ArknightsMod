@@ -207,5 +207,12 @@ namespace ArknightsMod.Content.Projectiles.Defender.Durnar
 			if (vertices.Count > 4)
 				Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices.ToArray(), 0, vertices.Count / 3);
 		}
+
+		public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs,
+			List<int> behindProjectiles, List<int> overPlayers,
+			List<int> overWiresUI) {
+			overPlayers.Add(index);
+
+		}
 	}
 }

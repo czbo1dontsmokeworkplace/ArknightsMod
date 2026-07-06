@@ -175,7 +175,11 @@ public class Cuora_Bat : ModProjectile
 		oldPos[0] = pos;
 		oldRot[0] = rot;
 	}
-
+	public void ReloadArray() {
+		oldRot = new float[20];
+		oldPos = new Vector2[20];
+		oldHandpos = new Vector2[20];
+	}
 	public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {
 		float point = 0f;
 		switch (projMode) {
@@ -234,6 +238,7 @@ public class Cuora_Bat : ModProjectile
 		attackTime++;
 		if (attackTime > attackMaxTime) {
 			projMode = ProjMode.Move;
+			ReloadArray();
 			press = false;
 		}
 	}

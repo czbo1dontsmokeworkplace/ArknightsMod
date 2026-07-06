@@ -825,3 +825,29 @@ SceneCamera: {
 			'''
 	}
 }
+
+CardiganWeapon: {
+	1: {
+		// Label: Mods.ArknightsMod.Skills.CardiganWeapon.1.Label
+		// Desc: Mods.ArknightsMod.Skills.CardiganWeapon.1.Desc
+	}
+}
+
+CuoraWeapon: {
+	1: {
+		// Label: Mods.ArknightsMod.Skills.CuoraWeapon.1.Label
+		// Desc: Mods.ArknightsMod.Skills.CuoraWeapon.1.Desc
+	}
+
+	2: {
+		// Label: Mods.ArknightsMod.Skills.CuoraWeapon.2.Label
+		// Desc: Mods.ArknightsMod.Skills.CuoraWeapon.2.Desc
+	}
+}
+
+CardiWeapon: {
+	1: {
+		// Label: Mods.ArknightsMod.Skills.CardiWeapon.1.Label
+		// Desc: Mods.ArknightsMod.Skills.CardiWeapon.1.Desc
+	}
+}

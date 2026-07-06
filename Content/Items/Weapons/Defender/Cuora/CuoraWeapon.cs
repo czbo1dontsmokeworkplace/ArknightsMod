@@ -10,83 +10,84 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace ArknightsMod.Content.Items.Weapons.Defender.Cuora;
-public class CuoraWeapon : UpgradeWeaponBase
+namespace ArknightsMod.Content.Items.Weapons.Defender.Cuora
 {
-	public override void AddRecipes() {
-		CreateRecipe()
-			.AddIngredient(ModContent.ItemType<OrirockCube>(), 1)
-			.AddIngredient(ModContent.ItemType<Grindstone>(), 14)
-			.AddTile(ModContent.TileType<FactoryTile>())
-			.Register();
-	}
-	private static SoundStyle SkillActive3;
-	private static SoundStyle NoSound;
-	public override void Load()
+	public class CuoraWeapon : UpgradeWeaponBase
 	{
-		SkillActive3 = new SoundStyle("ArknightsMod/Sounds/SkillActive3")
+		public override void AddRecipes() {
+			CreateRecipe()
+				.AddIngredient(ModContent.ItemType<OrirockCube>(), 1)
+				.AddIngredient(ModContent.ItemType<Grindstone>(), 14)
+				.AddTile(ModContent.TileType<FactoryTile>())
+				.Register();
+		}
+		private static SoundStyle SkillActive3;
+		private static SoundStyle NoSound;
+		public override void Load()
 		{
-			Volume = 0.4f,
-			MaxInstances = 4,
-		};
-		NoSound = new SoundStyle("ArknightsMod/Sounds/NoSound")
-		{
-			Volume = 0f,
-			MaxInstances = 4,
-		};
-	}
-
-	public override void SetDefaults()
-	{
-		Item.damage = 23; // �����˺�
-		Item.knockBack = 7;
-		Item.crit = 2; // ������
-		Item.DamageType = DamageClass.Melee; // �˺�����
-		Item.width = 48; // ��Ʒ����
-		Item.height = 60; // ��Ʒ�߶�
-		Item.useTime = 25; // ʹ��ʱ��
-		Item.useAnimation = 25; // ʹ�ö���ʱ��
-		Item.autoReuse = true; // �Զ�ʹ��
-		Item.noUseGraphic = true;
-		Item.noMelee = true;
-		Item.useStyle = ItemUseStyleID.HiddenAnimation;
-	}
-    public override bool AltFunctionUse(Player player) => true;
-	public override bool CanUseItem(Player player)
-	{
-		var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
-		if (Main.myPlayer == player.whoAmI)
-		{
-			if (player.altFunctionUse == 2)
+			SkillActive3 = new SoundStyle("ArknightsMod/Sounds/SkillActive3")
 			{
-				if (!modPlayer.SummonMode&&modPlayer.StockCount > 0 )
+				Volume = 0.4f,
+				MaxInstances = 4,
+			};
+			NoSound = new SoundStyle("ArknightsMod/Sounds/NoSound")
+			{
+				Volume = 0f,
+				MaxInstances = 4,
+			};
+		}
+
+		public override void SetDefaults()
+		{
+			Item.damage = 23; // �����˺�
+			Item.knockBack = 7;
+			Item.crit = 2; // ������
+			Item.DamageType = DamageClass.Melee; // �˺�����
+			Item.width = 48; // ��Ʒ����
+			Item.height = 60; // ��Ʒ�߶�
+			Item.useTime = 25; // ʹ��ʱ��
+			Item.useAnimation = 25; // ʹ�ö���ʱ��
+			Item.autoReuse = true; // �Զ�ʹ��
+			Item.noUseGraphic = true;
+			Item.noMelee = true;
+			Item.useStyle = ItemUseStyleID.HiddenAnimation;
+		}
+	    public override bool AltFunctionUse(Player player) => true;
+		public override bool CanUseItem(Player player)
+		{
+			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
+			if (Main.myPlayer == player.whoAmI)
+			{
+				if (player.altFunctionUse == 2)
 				{
-					// S1
-					if (modPlayer.Skill == 0 && !modPlayer.SkillActive)
+					if (!modPlayer.SummonMode&&modPlayer.StockCount > 0 )
 					{
-						modPlayer.SkillActive = true;
-						modPlayer.SkillTimer = 0;
+						// S1
+						if (modPlayer.Skill == 0 && !modPlayer.SkillActive)
+						{
+							modPlayer.SkillActive = true;
+							modPlayer.SkillTimer = 0;
 
-						modPlayer.DelStockCount();
+							modPlayer.DelStockCount();
+							SoundEngine.PlaySound(SkillActive3, player.Center);
+						}
+						else if(modPlayer.Skill == 1 && !modPlayer.SkillActive)
+						{
+							modPlayer.SkillActive = true;
+							modPlayer.SkillTimer = 0;
+							var ca_Player = player.GetModPlayer<CuoraProj_Player>();
+							ca_Player.DefensiveStance = true;
+							modPlayer.DelStockCount();
 
-						SoundEngine.PlaySound(SkillActive3, player.Center);
+							SoundEngine.PlaySound(SkillActive3, player.Center);
+						}
+						return false;
 					}
-					else if(modPlayer.Skill == 1 && !modPlayer.SkillActive)
-					{
-						modPlayer.SkillActive = true;
-						modPlayer.SkillTimer = 0;
-						var ca_Player = player.GetModPlayer<CuoraProj_Player>();
-						ca_Player.DefensiveStance = true;
-						modPlayer.DelStockCount();
-
-						SoundEngine.PlaySound(SkillActive3, player.Center);
-					}
-					return false;
 				}
 			}
+			return base.CanUseItem(player);
 		}
-		return base.CanUseItem(player);
+
+
 	}
-
-
 }

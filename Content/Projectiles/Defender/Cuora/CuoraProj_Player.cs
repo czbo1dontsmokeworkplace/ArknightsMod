@@ -17,6 +17,7 @@ namespace ArknightsMod.Content.Projectiles.Defender.Cuora;
 public class CuoraProj_Player : ModPlayer
 {
 	public bool DefensiveStance = false;//龟龟形态！！！
+	public bool Active1 = false;
 	public override void PostUpdate()
 	{
 		var it = Player.HeldItem;
@@ -32,11 +33,27 @@ public class CuoraProj_Player : ModPlayer
 		}
 	}
 	private int time = 0;
+	public bool UnderAttack = false;
+	public float UnderRad = 0;
+	public int byTime = 0;
+
+	public override void OnHitByNPC(NPC npc, Player.HurtInfo hurtInfo) {
+		UnderAttack = true;
+		Vector2 pos = npc.Center - Player.MountedCenter;
+		UnderRad = MathF.Atan2(pos.Y, pos.X);
+	}
+
+	public override void OnHitByProjectile(Projectile proj, Player.HurtInfo hurtInfo) {
+		UnderAttack = true;
+		Vector2 pos = proj.Center - Player.MountedCenter;
+		UnderRad = MathF.Atan2(pos.Y, pos.X);
+	}
+
 	public override void UpdateEquips()
 	{
 		var it = Player.HeldItem;
 		var modPlayer = Player.GetModPlayer<WeaponPlayer>();
-		if(it.type == ModContent.ItemType<CuoraWeapon>()&&Main.mouseRight)
+		if(it.type == ModContent.ItemType<CuoraWeapon>()&& (Main.mouseRight||DefensiveStance))
 		{
 			Player.statDefense += 10;
 			Player.noKnockback = true;
@@ -48,13 +65,16 @@ public class CuoraProj_Player : ModPlayer
 		}
 		if (DefensiveStance) {
 			Player.moveSpeed *= 0.9f;
-			time++;
-			if (time % 60f == 0) {
-				Player.statLife += (Player.statLifeMax2+Player.statLifeMax)/100;
-				if(Player.statLife > Player.statLifeMax2+Player.statLifeMax)
-					Player.statLife = Player.statLifeMax2+Player.statLifeMax;
-			}
+			Player.statDefense *= 2.3f;
+			Player.statLife += (Player.statLifeMax2)/300;
+			if(Player.statLife > Player.statLifeMax2)
+				Player.statLife = Player.statLifeMax2;
 
 		}
+
+		if (Active1 && !modPlayer.SkillActive)
+			Active1 = false;
+		if(Active1)
+			Player.statDefense *= 1.8f;
 	}
 }
