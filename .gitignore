@@ -6,3 +6,7 @@ obj/
 /Content/Items/源石锭
 /Music
 /.gitignore
+.idea/
+.codegraph/
+.claude/
+.omo/

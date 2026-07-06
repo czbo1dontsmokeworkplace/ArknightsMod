@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using ArknightsMod.Content.Items.Consumables.VanityBags;
+using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework.Input;
 using Terraria;
@@ -19,7 +19,7 @@ namespace ArknightsMod.Content.Items.Gacha
 
 		public override void ModifyTooltips(List<TooltipLine> tooltips)
 		{
-			tooltips.Add(new TooltipLine(Mod, "DoctorArchivePool", "只能抽出常驻干员"));
+			tooltips.Add(new TooltipLine(Mod, "DoctorArchivePool", "可抽出常驻及限定干员时装"));
 
 			try
 			{
@@ -58,11 +58,11 @@ namespace ArknightsMod.Content.Items.Gacha
 				return _rarityBags;
 
 			_rarityBags = new();
+
 			foreach (var bag in ModContent.GetContent<ArknightsVanityBag>())
 			{
-				if (bag.ObtainType != ArknightsVanityBag.ObtainTypes.Default)
+				if (bag.ObtainType == ArknightsVanityBag.ObtainTypes.NoGacha)
 					continue;
-
 				int r = bag.Rarity;
 				if (!_rarityBags.TryGetValue(r, out var list))
 				{
@@ -71,6 +71,7 @@ namespace ArknightsMod.Content.Items.Gacha
 				}
 				list.Add(bag.Type);
 			}
+
 			return _rarityBags;
 		}
 
@@ -136,13 +137,12 @@ namespace ArknightsMod.Content.Items.Gacha
 
 		private static int RollBagType(int stars)
 		{
-			var bags = GetRarityBags();
-			if (!bags.TryGetValue(stars, out var list) || list.Count == 0)
-			{
-				if (!bags.TryGetValue(3, out list) || list.Count == 0)
-					return 0;
-			}
-			return list[Main.rand.Next(list.Count)];
+			// 从全部可抽袋子中均匀随机，保证每抽必出且各干员概率相等。
+			// 星级保底计数依然由 RollStars 和 RegisterPull 维护，不影响这里的选袋逻辑。
+			var allBags = new List<int>();
+			foreach (var list in GetRarityBags().Values)
+				allBags.AddRange(list);
+			return allBags.Count > 0 ? allBags[Main.rand.Next(allBags.Count)] : 0;
 		}
 
 		private int RollStars(DoctorArchiveGachaPlayer gacha, bool isTenPull)

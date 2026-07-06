@@ -326,6 +326,7 @@ Mudrock: {
 	HelmetEffect: "[c/beebff:头盔效果]：受到的来自【萨卡兹】敌人的伤害降低30%"
 	SetEffect: "[c/beebff:套装效果]：每9秒获得一层护盾，最多持有3层；受到的单次伤害超过50时，消耗一张护盾使受到的伤害-20%，并回复自身相当于生命上限10%的生命值"
 	SetBonus: 周期护盾；大伤消耗护盾减伤并回血
+	ToggleHint: 手持该物品右键可切换为套装盔甲外观并激活套装效果，再次手持右键切回时装
 }
 
 Mlynar: {
@@ -389,6 +390,20 @@ Bagpipe: {
 	HelmetEffect: "[c/beebff:头盔效果]：部署或再部署时，所有【先锋】干员技力+8"
 	SetEffect: "[c/beebff:套装效果]：造成近战伤害时有20%概率额外造成一次伤害，并且这次伤害提升至150%"
 	SetBonus: 部署先锋+8技力；近战20%概率额外150%伤害
+}
+
+Deepcolor: {
+	HeadName: 深海色的头盔
+	HelmetEffect: "[c/beebff:头盔效果]：自身和召唤物获得7%物理与法术闪避"
+	SetEffect: "[c/beebff:套装效果]：在场时，所有「深海色的召唤物」每秒恢复25点生命值"
+	SetBonus: 在场时召唤物每秒恢复25点生命
+}
+
+Wisadel: {
+	HeadName: 维什戴尔的头盔
+	HelmetEffect: "[c/beebff:头盔效果]：环绕魂灵之影，抵挡飞行物；60秒冷却重生"
+	SetEffect: "[c/beebff:套装效果]：远程伤害+15%；命中附加残影标记，余震击中标记时引发爆炸与困惑"
+	SetBonus: 远程+15%；残影标记引爆爆炸+困惑
 }
 
 Mornia: {

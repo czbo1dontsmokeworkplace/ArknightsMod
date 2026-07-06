@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ArknightsMod.Content.Items.Armor.Guard.Mlynar;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -12,9 +12,9 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Mlynar
 		{
 			return
 			[
-				ModContent.ItemType<MlynarHelmet>(),
-				ModContent.ItemType<MlynarChestplate>(),
-				ModContent.ItemType<MlynarGreaves>(),
+				ModContent.ItemType<MlynarHead>(),
+				ModContent.ItemType<MlynarBody>(),
+				ModContent.ItemType<MlynarLegs>(),
 			];
 		}
 	}

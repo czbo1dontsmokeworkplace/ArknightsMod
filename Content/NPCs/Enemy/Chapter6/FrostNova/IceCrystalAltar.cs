@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using ArknightsMod.Common.VisualEffects;
 using ArknightsMod.Systems;
@@ -327,7 +327,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 			gChan = 210 + 35 * (int)MathF.Sin(timer * MathHelper.Pi / 140f);
 		}
 
-		public override bool PreDraw(ref Color lightColor) {
+		public override bool PreDraw(ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */ {
 			if (Main.dedServ)
 				return false;
 			Texture2D trailtexture = ModContent.Request<Texture2D>("ArknightsMod/Common/VisualEffects/LineTrail").Value;
@@ -374,7 +374,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		}
 
 		/// <summary>抵达销毁时在主机与联机客户端都会调用，在此播放落点爆开（权威端在 <see cref="AI"/> 里不再直接生成粒子）。</summary>
-		public override void Kill(int timeLeft) {
+		public override void OnKill(int timeLeft) {
 			if (Main.dedServ)
 				return;
 			Vector2 target = Target;
@@ -414,7 +414,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 			Projectile.netUpdate = true;
 		}
 
-		public override bool PreDraw(ref Color lightColor) {
+		public override bool PreDraw(ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */ {
 			if (Main.dedServ)
 				return false;
 			Texture2D trailtexture = ModContent.Request<Texture2D>("ArknightsMod/Common/VisualEffects/WindTrail").Value;
@@ -626,7 +626,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 			Projectile.netUpdate = true;
 		}
 
-		public override bool PreDraw(ref Color lightColor) {
+		public override bool PreDraw(ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */ {
 			if (Main.dedServ)
 				return false;
 			Texture2D trailtexture = ModContent.Request<Texture2D>("ArknightsMod/Common/VisualEffects/WindTrail").Value;
@@ -1035,7 +1035,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 			}
 		}
 
-		public override bool PreDraw(ref Color lightColor) {
+		public override bool PreDraw(ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */ {
 			if (Main.dedServ)
 				return false;
 			if (IsBlastPhase(Projectile.ai[0])) {

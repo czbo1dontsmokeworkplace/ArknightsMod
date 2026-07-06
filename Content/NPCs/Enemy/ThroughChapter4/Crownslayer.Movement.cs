@@ -16,8 +16,10 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 		private int moveStuckTicks;
 		private int moveWallBumpTicks;
+		private int moveWallEmbedTicks;
 		private int moveUnstuckCooldown;
 		private Vector2 moveStuckAnchor;
+		private const int MoveWallEmbedThreshold = 12;
 
 		private float Move_FootY => NPC.position.Y + NPC.height;
 
@@ -228,6 +230,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		private void Move_ResetWatch() {
 			moveStuckTicks = 0;
 			moveWallBumpTicks = 0;
+			moveWallEmbedTicks = 0;
 			moveStuckAnchor = NPC.position;
 		}
 
@@ -237,13 +240,19 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		}
 
 		private void Move_AfterStateMachine(Player target) {
-			if (!Move_UsesGroundTick())
+			if (!Move_UsesGroundTick()) {
+				moveWallEmbedTicks = 0;
 				return;
+			}
 
 			Move_AdhereToGround();
 
-			if (!Move_IsWallEmbedded(NPC.Center))
+			if (!Move_IsWallEmbedded(NPC.Center)) {
+				moveWallEmbedTicks = 0;
 				return;
+			}
+
+			moveWallEmbedTicks++;
 
 			Vector2 nudge = Move_SnapToGround(Move_FindOpen(NPC.Center, requireGround: true));
 			if (!Move_IsWallEmbedded(nudge)) {
@@ -254,7 +263,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				return;
 			}
 
-			if (moveUnstuckCooldown <= 0)
+			// 连续嵌墙超过阈值帧才强制脱困，避免坡面单帧误判触发传送
+			if (moveWallEmbedTicks >= MoveWallEmbedThreshold && moveUnstuckCooldown <= 0)
 				Move_ForceUnstuck(target);
 		}
 
@@ -307,6 +317,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			NPC.Center = escape;
 			NPC.velocity = Vector2.Zero;
 			SetPhysics(true, true);
+
+			// 清除位置历史，防止传送后残留旧轨迹被渲染为冲刺拖尾
+			if (NPC.oldPos != null)
+				for (int i = 0; i < NPC.oldPos.Length; i++)
+					NPC.oldPos[i] = Vector2.Zero;
+
 			NPC.netUpdate = true;
 			Move_ResetWatch();
 			moveUnstuckCooldown = MoveUnstuckCooldown;

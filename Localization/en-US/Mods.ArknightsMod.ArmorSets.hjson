@@ -326,6 +326,7 @@ Mudrock: {
 	HelmetEffect: "[c/beebff:Helmet]: -30% damage taken from Sarkaz enemies"
 	SetEffect: "[c/beebff:Set]: Gain a shield every 9s (max 3). When hit for >50, consume 1 shield for -20% damage and heal 10% max HP"
 	SetBonus: Periodic shields; big hits consume shield for mitigation and heal
+	ToggleHint: Hold this item and right-click to toggle between the vanity look and the armor set look (activates the set effect). Hold and right-click again to switch back.
 }
 
 Mlynar: {
@@ -389,6 +390,20 @@ Bagpipe: {
 	HelmetEffect: "[c/beebff:Helmet]: +8 SP to all Vanguard operators on deploy and redeploy"
 	SetEffect: "[c/beebff:Set]: 20% chance melee hits deal an extra 150% damage hit"
 	SetBonus: Vanguard deploy SP; melee proc bonus hit
+}
+
+Deepcolor: {
+	HeadName: Deepcolor's Helmet
+	HelmetEffect: "[c/beebff:Helmet]: Self and summons gain 7% physical and magic dodge"
+	SetEffect: "[c/beebff:Set]: While on field, all of Deepcolor's summons regenerate 25 HP per second"
+	SetBonus: Summons regenerate 25 HP/s while on field
+}
+
+Wisadel: {
+	HeadName: Wisadel's Helmet
+	HelmetEffect: "[c/beebff:Helmet]: Orbiting Revenant's Shadow blocks projectiles; 60s cooldown respawn"
+	SetEffect: "[c/beebff:Set]: +15% ranged damage; marks hit enemies, aftershock triggers explosion + confuse on marked targets"
+	SetBonus: +15% ranged; residual mark detonates on aftershock
 }
 
 Mornia: {

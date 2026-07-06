@@ -13,7 +13,7 @@ public class CardiProj_Player : ModPlayer
 	public override void PostUpdate()
 	{
 		var it = Player.HeldItem;
-		if (it.type == ModContent.ItemType<CardiWeapon>()) {
+		if (it.type == ModContent.ItemType<CardiganShield>()) {
 			if (Player.ownedProjectileCounts[ModContent.ProjectileType<Cardi_Sword>()] == 0)
 				Projectile.NewProjectile(Player.GetSource_FromThis(), Player.MountedCenter - Main.screenPosition,
 					Vector2.One, ModContent.ProjectileType<Cardi_Sword>()
@@ -29,7 +29,7 @@ public class CardiProj_Player : ModPlayer
 	public override void UpdateEquips() {
 		var it = Player.HeldItem;
 		var modPlayer = Player.GetModPlayer<WeaponPlayer>();
-		if (it.type == ModContent.ItemType<CardiWeapon>() && Main.mouseRight) {
+		if (it.type == ModContent.ItemType<CardiganShield>() && Main.mouseRight) {
 			Player.statDefense += 10;
 			Player.noKnockback = true;
 		}

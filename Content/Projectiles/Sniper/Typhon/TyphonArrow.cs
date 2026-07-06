@@ -1,10 +1,12 @@
 ﻿using ArknightsMod.Content.Buffs;
 using ArknightsMod.Content.Items.Weapons.Sniper.Typhon;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -404,7 +406,59 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
                     TyphonS3StarChargeEffects.DrawChargeCrossStarOnly(screen, burstScale, opacity);
             }
 
-            return true;
+			/* 普攻、一技能拖尾 */
+			if (Projectile.ai[2] == 0f || Projectile.ai[2] == 2f) {
+				int count = 0;
+				for (int i = 0; i < Projectile.oldPos.Length; i++) {
+					if (i > 0 && Projectile.oldPos[i] == Vector2.Zero)
+						break;
+					count++;
+				}
+				if (count < 2)
+					return true;
+
+				Texture2D pixel = TextureAssets.MagicPixel.Value;
+				var pixelRect = new Rectangle(0, 0, 1, 1);
+				var origin = new Vector2(0.5f, 0.5f);
+
+				for (int i = 0; i < count - 1; i++) {
+					Vector2 a = Projectile.oldPos[i] + Projectile.Size / 2f - Main.screenPosition;
+					Vector2 b = Projectile.oldPos[i + 1] + Projectile.Size / 2f - Main.screenPosition;
+
+					Vector2 delta = b - a;
+					float length = delta.Length();
+					if (length < 0.5f)
+						continue;
+					float rot = delta.ToRotation();
+
+					float t = (float)i / (count - 1);
+					float opacity;
+					if (t <= 0.2f)
+						opacity = t / 0.2f;
+					else if (t <= 0.5f)
+						opacity = 1f - (t - 0.2f) / 0.3f;
+					else
+						opacity = 0f;
+
+					float thickness = MathHelper.Lerp(8f, 2f, t);
+
+					Main.spriteBatch.Draw(
+						pixel, a, pixelRect,
+						new Color(150, 80, 230) * (opacity * 0.55f),
+						rot, origin,
+						new Vector2(length, thickness * 1.6f),
+						SpriteEffects.None, 0f);
+
+					Main.spriteBatch.Draw(
+						pixel, a, pixelRect,
+						new Color(230, 180, 255) * (opacity * 0.9f),
+						rot, origin,
+						new Vector2(length, thickness * 0.5f),
+						SpriteEffects.None, 0f);
+				}
+			}
+
+			return true;
         }
 
         public override void PostDraw(Color lightColor)

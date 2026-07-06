@@ -1,4 +1,4 @@
-using ArknightsMod.Content.Items.Armor;
+﻿using ArknightsMod.Content.Items.Armor;
 using System.Collections.Generic;
 using Terraria.ModLoader;
 
@@ -11,9 +11,9 @@ namespace ArknightsMod.Content.Items.Armor.Specialist.ExusiaiAlter
 		protected override List<int> GetItems() {
 			return new List<int>
 			{
-				ModContent.ItemType<ExusiaiAlterHelmet>(),
-				ModContent.ItemType<ExusiaiAlterChestplate>(),
-				ModContent.ItemType<ExusiaiAlterGreaves>()
+				ModContent.ItemType<ExusiaiAlterHead>(),
+				ModContent.ItemType<ExusiaiAlterBody>(),
+				ModContent.ItemType<ExusiaiAlterLegs>()
 			};
 		}
 	}
