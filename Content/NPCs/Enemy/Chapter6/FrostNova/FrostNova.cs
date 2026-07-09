@@ -184,6 +184,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		private int iceAltarSpawnCooldown;
 		int[] subNPCType = new int[6] { ModContent.NPCType<SnowCaster>(), ModContent.NPCType<SnowSoldier>(), ModContent.NPCType<Oneiros>(), ModContent.NPCType<IceCleaver>(),ModContent.NPCType<SnowSniper>(),ModContent.NPCType<SnowHound>() };
 		int SummonTypeChoice=0;
+		int LeftSummonCount;
+		int CurCount;
 
 		public static int IceAltarType() {
 			return ModContent.ProjectileType<BlizzardStorm>();
@@ -703,7 +705,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 						}
 						break;
 					case 4:
-						for(int i = 0; i < 3; i++) {
+						for (int i = 0; i < 3; i++) {
 							NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowSoldier>());
 						}
 						for(int i = 0; i < 2; i++) {
@@ -766,15 +768,24 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 					summonCD++;
 				}
 				isnpcdefeated = true;
+				CurCount= 0;
 				for (int i = 0; i < Main.maxNPCs; i++) {
 					NPC SeekForNPCs = Main.npc[i];
 					if (SeekForNPCs.active && Array.Exists(subNPCType, x => x == SeekForNPCs.type)) {
+						CurCount++;
 						isnpcdefeated = false;//判断是否有雪怪小队存活
-						break;
 					}
+				}
+				if (LeftSummonCount==0) {
+					LeftSummonCount = CurCount;
+				}
+				if (CurCount < LeftSummonCount) {
+					Main.NewText("击败支援霜星的雪怪小队，当前雪怪小队剩余数量：" + CurCount + "，剩余召唤次数：" + (summontime - summontimes), 0, 255, 255);
+					LeftSummonCount = CurCount;
 				}
 				if (summonCD==0&&isnpcdefeated&&summontimes<summontime)
 				{
+					Main.NewText("击败支援霜星的雪怪小队,当前"+(summontimes+1)+"/"+(summontime+1));
 					summontimes++;
 					isnpcdefeated = false;
 					int Choice1,Choice2;
