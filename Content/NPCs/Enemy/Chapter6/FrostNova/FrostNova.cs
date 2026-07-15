@@ -76,6 +76,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 			npcLoot.Add(ItemDropRule.Common(ItemType<IncandescentAlloyBlock>(), 3, 3, 5));
 			npcLoot.Add(ItemDropRule.Common(ItemType<CrystallineCircuit>(), 3, 3, 5));
 			npcLoot.Add(ItemDropRule.Common(ItemType<OptimizedDevice>(), 3, 3, 5));
+			// 霜星掉落：12 源石锭 & 1000 合成玉
+			npcLoot.Add(ItemDropRule.Common(ItemType<global::ArknightsMod.Content.Items.OriginiumIngot>(), 1, 12, 12));
+			npcLoot.Add(ItemDropRule.Common(ItemType<global::ArknightsMod.Content.Items.Orundum>(), 1, 1000, 1000));
 		}
 		#endregion
 		#region 自定义血条

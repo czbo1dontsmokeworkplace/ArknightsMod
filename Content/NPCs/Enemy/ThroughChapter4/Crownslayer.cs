@@ -1,10 +1,12 @@
 using ArknightsMod.Common.VisualEffects;
+using ArknightsMod.Content.Items;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -83,6 +85,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			NPC.knockBackResist = 0f;
 			NPC.aiStyle = -1; // 重要：不使用任何预设AI
 			NPCID.Sets.BossBestiaryPriority.Add(Type);
+		}
+
+		public override void ModifyNPCLoot(NPCLoot npcLoot) {
+			// 弑君者掉落：8 源石锭 & 600 合成玉
+			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OriginiumIngot>(), 1, 8, 8));
+			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Orundum>(), 1, 600, 600));
 		}
 		// 定义状态枚举
 		private int damage = 40; //为某些情况设置的伤害，记得跟初始（经典）伤害同步。

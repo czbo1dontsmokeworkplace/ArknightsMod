@@ -1207,6 +1207,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
 			npcLoot.Add(ItemDropRule.Common(ItemType<OrirockCube>(), 1, LootOrirockCubeCount, LootOrirockCubeCount));
 			npcLoot.Add(ItemDropRule.Common(ItemType<Polyester>(), 1, LootPolyesterCount, LootPolyesterCount));
+			// 庞贝掉落：4 源石锭 & 200 合成玉
+			npcLoot.Add(ItemDropRule.Common(ItemType<global::ArknightsMod.Content.Items.OriginiumIngot>(), 1, 4, 4));
+			npcLoot.Add(ItemDropRule.Common(ItemType<global::ArknightsMod.Content.Items.Orundum>(), 1, 200, 200));
 		}
     }
 
