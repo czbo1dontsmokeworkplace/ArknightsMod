@@ -17,6 +17,7 @@ using ArknightsMod.Content.Items.Weapons.Sniper.Shirayuki;
 using ArknightsMod.Content.Items.Weapons.Sniper.Typhon;
 using ArknightsMod.Content.Items.Weapons.Vanguard.Bagpipe;
 using ArknightsMod.Content.Items.Weapons.Caster.Haze;
+using ArknightsMod.Content.Items.Weapons.Medic.Closure;
 using ArknightsMod.Systems.Gameplay.Skill;
 using System;
 using System.Collections.Generic;
@@ -148,6 +149,13 @@ namespace ArknightsMod.Players
 			    && Player.HeldItem.ModItem is TyphonBow) {
 				Player.itemRotation = TyphonBow.GetS3SkillIdleItemRotation(Player);
 			}
+
+			// 可露希尔·扫描枪开火后坐力：必须在 PostUpdate（原版 ItemCheck_ApplyUseStyle 之后）
+			// 才能叠加 itemRotation，否则在 HoldItem 里设置会被随后的原版持枪瞄准逻辑覆盖掉，
+			// 表现为"抬起动作完全不生效"。
+			if (Player.HeldItem.ModItem is ClosureScanGun closureGun) {
+				closureGun.ApplyRecoilKick(Player);
+			}
 		}
 		//=======================================================================
 		public void InitSkill(bool giveCharge) {
@@ -201,6 +209,42 @@ namespace ArknightsMod.Players
 
 			if (Player.HeldItem.ModItem is UpgradeWeaponBase ark)
 				ark.chargeReady = [true, true, true];
+		}
+
+		/// <summary>
+		/// 部署费用是否可以被当前玩家吸收：必须手持本模组的（有技力系统的）武器，
+		/// 且当前技能未处于开启状态（技力自然回复时）。技能开启期间、或手持其它武器/无技能武器时不可吸收；
+		/// 另外——技力已满（技能就绪、无处可加）时也不吸收，让部署费用继续环绕等待。
+		/// </summary>
+		public bool CanAbsorbDeploymentCost() {
+			if (Player.HeldItem.ModItem is not UpgradeWeaponBase || CurrentSkill == null || SkillActive)
+				return false;
+			// 已攒满一个可用技能（技力满）：不再吸收，否则会白白吞掉部署费用
+			if (StockCount >= CurrentSkill.CurrentLevelData.MaxStack)
+				return false;
+			return true;
+		}
+
+		/// <summary>
+		/// 吸收部署费用：直接把充能加到当前技能的技力条上（不以物品形式出现在背包）。
+		/// 沿用 Div 的换算关系——Div 单位的 SkillCharge 对应 1 点可见技力（与 <see cref="AutoCharge"/> 等一致）。
+		/// </summary>
+		public void AbsorbDeploymentCost(int points) {
+			if (!CanAbsorbDeploymentCost())
+				return;
+
+			SkillLevelData data = CurrentSkill.CurrentLevelData;
+			if (StockCount >= data.MaxStack)
+				return;
+
+			SkillCharge += points * Div;
+			while (SkillCharge >= SkillChargeMax && StockCount < data.MaxStack) {
+				SkillCharge -= SkillChargeMax;
+				StockCount++;
+			}
+			SP = StockCount >= data.MaxStack ? data.MaxSP : SkillCharge / Div;
+			if (StockCount >= data.MaxStack)
+				SkillCharge = 0;
 		}
 
 		public void SetSkill(int skill) {

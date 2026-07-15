@@ -264,3 +264,8 @@ TransparentSlash.DisplayName: 透明斩击
 // ClosureMarkLaserProjectile.DisplayName: Closure Mark Laser Projectile
 // ClosureTargetMarkProjectile.DisplayName: Closure Target Mark Projectile
 // RevenantsShadow.DisplayName: Revenants Shadow
+// ClosureLaserImpactProjectile.DisplayName: Closure Laser Impact Projectile
+// ClosurePartialSquareProjectile.DisplayName: Closure Partial Square Projectile
+// ClosureShieldProjectile.DisplayName: Closure Shield Projectile
+// CommandCenterPet.DisplayName: Command Center Pet
+// ClosureSkillSquareEffect.DisplayName: Closure Skill Square Effect

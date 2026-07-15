@@ -885,16 +885,16 @@ CardiWeapon: {
 ClosureScanGun: {
 	1: {
 		Label: 递归策略
-		// Desc: Mods.ArknightsMod.Skills.ClosureScanGun.1.Desc
+		Desc: 立即使自身的援军获得1层护盾（不叠加），技能持续时间内逐渐获得3点部署费用；部署后每使用过一次技能，获得的部署费用+1（最多提升至7点）。
 	}
 
 	2: {
 		Label: 模型扩展
-		// Desc: Mods.ArknightsMod.Skills.ClosureScanGun.2.Desc
+		Desc: 立即获得10点部署费用，持续时间内逐渐获得15点部署费用，自身的援军防御力+60%，阻挡数+1，自身攻击力+80%，同时攻击2个目标且能攻击到自身援军阻挡的敌人；在战术点效果范围内部署干员时，立即返还部署费用的40%。
 	}
 
 	3: {
 		Label: Q.E.D.
-		// Desc: Mods.ArknightsMod.Skills.ClosureScanGun.3.Desc
+		Desc: 技能持续时间内逐渐获得18点部署费用，攻击间隔缩短(-0.5)，锁定自身和援军原本攻击范围内的敌人进行攻击，造成可露希尔250%攻击力的物理伤害并施加持续3秒的6%迟钝效果（可叠加，最高60%），每攻击9次后攻击目标数+1（最多触发6次）。
 	}
 }

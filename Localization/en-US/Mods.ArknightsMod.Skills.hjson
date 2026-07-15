@@ -740,16 +740,16 @@ CardiWeapon: {
 ClosureScanGun: {
 	1: {
 		Label: Recursive Strategy
-		Desc: Mods.ArknightsMod.Skills.ClosureScanGun.1.Desc
+		Desc: Immediately grants your reinforcements 1 layer of Shield (does not stack); gradually gain 3 Deployment Cost over the skill's duration. Each subsequent use of this skill after deployment increases the Deployment Cost gained by +1 (up to a maximum of 7).
 	}
 
 	2: {
 		Label: Model Expansion
-		Desc: Mods.ArknightsMod.Skills.ClosureScanGun.2.Desc
+		Desc: Immediately gain 10 Deployment Cost, gradually gaining 15 more over the skill's duration. Your reinforcements' DEF +60% and Block +1; your ATK +80%, striking 2 targets at once and able to hit enemies blocked by your reinforcements. Deploying an operator within a Tactical Point's effect range immediately refunds 40% of its Deployment Cost.
 	}
 
 	3: {
 		Label: Q.E.D.
-		Desc: Mods.ArknightsMod.Skills.ClosureScanGun.3.Desc
+		Desc: Gradually gain 18 Deployment Cost over the skill's duration. Attack interval reduced by 0.5s. Locks onto enemies within your and your reinforcements' original attack range, dealing 250% of Closure's ATK as Physical damage and inflicting a stacking 6% Sluggish effect for 3 seconds (stacks up to 60%). Every 9th attack increases the number of targets hit by +1 (up to 6 triggers).
 	}
 }
