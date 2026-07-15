@@ -18,12 +18,12 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Provence
 		}
 
 		public override void PostUpdateEquips() {
-			ProvenceHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<ProvenceHelmet>());
+			ProvenceHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<ProvenceHead>());
 			ProvenceSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<ProvenceHelmet>(),
-				ModContent.ItemType<ProvenceChestplate>(),
-				ModContent.ItemType<ProvenceGreaves>());
+				ModContent.ItemType<ProvenceHead>(),
+				ModContent.ItemType<ProvenceBody>(),
+				ModContent.ItemType<ProvenceLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, ProvenceSetActive, "Mods.ArknightsMod.ArmorSets.Provence.SetBonus");
 		}
 

@@ -20,12 +20,12 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.CivilightEterna
 		}
 
 		public override void PostUpdateEquips() {
-			CivilightEternaHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<CivilightEternaHelmet>());
+			CivilightEternaHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<CivilightEternaHead>());
 			CivilightEternaSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<CivilightEternaHelmet>(),
-				ModContent.ItemType<CivilightEternaChestplate>(),
-				ModContent.ItemType<CivilightEternaGreaves>());
+				ModContent.ItemType<CivilightEternaHead>(),
+				ModContent.ItemType<CivilightEternaBody>(),
+				ModContent.ItemType<CivilightEternaLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, CivilightEternaSetActive, "Mods.ArknightsMod.ArmorSets.CivilightEterna.SetBonus");
 		}
 

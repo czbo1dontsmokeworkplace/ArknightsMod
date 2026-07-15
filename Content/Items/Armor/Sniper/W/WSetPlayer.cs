@@ -16,12 +16,12 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.W
 		}
 
 		public override void PostUpdateEquips() {
-			WHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<WHelmet>());
+			WHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<WHead>());
 			WSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<WHelmet>(),
-				ModContent.ItemType<WChestplate>(),
-				ModContent.ItemType<WGreaves>());
+				ModContent.ItemType<WHead>(),
+				ModContent.ItemType<WBody>(),
+				ModContent.ItemType<WLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(
 				Player,
 				WSetActive,

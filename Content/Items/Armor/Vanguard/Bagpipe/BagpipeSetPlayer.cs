@@ -18,12 +18,12 @@ namespace ArknightsMod.Content.Items.Armor.Vanguard.Bagpipe
 		}
 
 		public override void PostUpdateEquips() {
-			BagpipeHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<BagpipeHelmet>());
+			BagpipeHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<BagpipeHead>());
 			BagpipeSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<BagpipeHelmet>(),
-				ModContent.ItemType<BagpipeChestplate>(),
-				ModContent.ItemType<BagpipeGreaves>());
+				ModContent.ItemType<BagpipeHead>(),
+				ModContent.ItemType<BagpipeBody>(),
+				ModContent.ItemType<BagpipeLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, BagpipeSetActive, "Mods.ArknightsMod.ArmorSets.Bagpipe.SetBonus");
 		}
 

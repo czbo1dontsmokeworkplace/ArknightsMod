@@ -20,12 +20,12 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Skadi
 		}
 
 		public override void PostUpdateEquips() {
-			SkadiHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<SkadiHelmet>());
+			SkadiHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<SkadiHead>());
 			SkadiSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<SkadiHelmet>(),
-				ModContent.ItemType<SkadiChestplate>(),
-				ModContent.ItemType<SkadiGreaves>());
+				ModContent.ItemType<SkadiHead>(),
+				ModContent.ItemType<SkadiBody>(),
+				ModContent.ItemType<SkadiLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, SkadiSetActive, "Mods.ArknightsMod.ArmorSets.Skadi.SetBonus");
 		}
 

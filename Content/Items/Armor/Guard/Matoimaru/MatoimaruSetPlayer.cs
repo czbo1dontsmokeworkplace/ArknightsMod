@@ -15,12 +15,12 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Matoimaru
 		}
 
 		public override void PostUpdateEquips() {
-			MatoimaruHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<MatoimaruHelmet>());
+			MatoimaruHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<MatoimaruHead>());
 			MatoimaruSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<MatoimaruHelmet>(),
-				ModContent.ItemType<MatoimaruChestplate>(),
-				ModContent.ItemType<MatoimaruGreaves>());
+				ModContent.ItemType<MatoimaruHead>(),
+				ModContent.ItemType<MatoimaruBody>(),
+				ModContent.ItemType<MatoimaruLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, MatoimaruSetActive, "Mods.ArknightsMod.ArmorSets.Matoimaru.SetBonus");
 
 			if (MatoimaruSetActive)

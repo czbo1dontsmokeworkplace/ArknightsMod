@@ -15,12 +15,12 @@ namespace ArknightsMod.Content.Items.Armor.Vanguard.Plume
 		}
 
 		public override void PostUpdateEquips() {
-			PlumeHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<PlumeHelmet>());
+			PlumeHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<PlumeHead>());
 			PlumeSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<PlumeHelmet>(),
-				ModContent.ItemType<PlumeChestplate>(),
-				ModContent.ItemType<PlumeGreaves>());
+				ModContent.ItemType<PlumeHead>(),
+				ModContent.ItemType<PlumeBody>(),
+				ModContent.ItemType<PlumeLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, PlumeSetActive, "Mods.ArknightsMod.ArmorSets.Plume.SetBonus");
 		}
 

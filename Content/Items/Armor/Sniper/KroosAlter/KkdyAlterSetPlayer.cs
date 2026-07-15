@@ -17,12 +17,12 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.KroosAlter
 		}
 
 		public override void PostUpdateEquips() {
-			KkdyAlterHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<KkdyAlterHelmet>());
+			KkdyAlterHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<KkdyAlterHead>());
 			KkdyAlterSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<KkdyAlterHelmet>(),
-				ModContent.ItemType<KkdyAlterChestplate>(),
-				ModContent.ItemType<KkdyAlterGreaves>());
+				ModContent.ItemType<KkdyAlterHead>(),
+				ModContent.ItemType<KkdyAlterBody>(),
+				ModContent.ItemType<KkdyAlterLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, KkdyAlterSetActive, "Mods.ArknightsMod.ArmorSets.KkdyAlter.SetBonus");
 		}
 

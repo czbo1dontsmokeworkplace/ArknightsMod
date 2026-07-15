@@ -21,12 +21,12 @@ namespace ArknightsMod.Content.Items.Armor.Medic.Warfarin
 		}
 
 		public override void PostUpdateEquips() {
-			WarfarinHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<WarfarinHelmet>());
+			WarfarinHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<WarfarinHead>());
 			WarfarinSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<WarfarinHelmet>(),
-				ModContent.ItemType<WarfarinChestplate>(),
-				ModContent.ItemType<WarfarinGreaves>());
+				ModContent.ItemType<WarfarinHead>(),
+				ModContent.ItemType<WarfarinBody>(),
+				ModContent.ItemType<WarfarinLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, WarfarinSetActive, "Mods.ArknightsMod.ArmorSets.Warfarin.SetBonus");
 		}
 

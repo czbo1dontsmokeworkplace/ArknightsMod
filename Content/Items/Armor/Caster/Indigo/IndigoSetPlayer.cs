@@ -18,12 +18,12 @@ namespace ArknightsMod.Content.Items.Armor.Caster.Indigo
 		}
 
 		public override void PostUpdateEquips() {
-			IndigoHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<IndigoHelmet>());
+			IndigoHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<IndigoHead>());
 			IndigoSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<IndigoHelmet>(),
-				ModContent.ItemType<IndigoChestplate>(),
-				ModContent.ItemType<IndigoGreaves>());
+				ModContent.ItemType<IndigoHead>(),
+				ModContent.ItemType<IndigoBody>(),
+				ModContent.ItemType<IndigoLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, IndigoSetActive, "Mods.ArknightsMod.ArmorSets.Indigo.SetBonus");
 		}
 

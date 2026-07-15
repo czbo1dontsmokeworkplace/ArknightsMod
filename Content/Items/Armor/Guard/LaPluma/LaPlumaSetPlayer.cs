@@ -17,12 +17,12 @@ namespace ArknightsMod.Content.Items.Armor.Guard.LaPluma
 		}
 
 		public override void PostUpdateEquips() {
-			LaPlumaHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<LaPlumaHelmet>());
+			LaPlumaHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<LaPlumaHead>());
 			LaPlumaSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<LaPlumaHelmet>(),
-				ModContent.ItemType<LaPlumaChestplate>(),
-				ModContent.ItemType<LaPlumaGreaves>());
+				ModContent.ItemType<LaPlumaHead>(),
+				ModContent.ItemType<LaPlumaBody>(),
+				ModContent.ItemType<LaPlumaLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, LaPlumaSetActive, "Mods.ArknightsMod.ArmorSets.LaPluma.SetBonus");
 		}
 

@@ -19,12 +19,12 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Fartooth
 		}
 
 		public override void PostUpdateEquips() {
-			FartoothHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<FartoothHelmet>());
+			FartoothHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<FartoothHead>());
 			FartoothSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<FartoothHelmet>(),
-				ModContent.ItemType<FartoothChestplate>(),
-				ModContent.ItemType<FartoothGreaves>());
+				ModContent.ItemType<FartoothHead>(),
+				ModContent.ItemType<FartoothBody>(),
+				ModContent.ItemType<FartoothLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, FartoothSetActive, "Mods.ArknightsMod.ArmorSets.Fartooth.SetBonus");
 		}
 

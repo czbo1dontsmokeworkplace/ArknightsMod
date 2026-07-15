@@ -15,12 +15,12 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Beagle
 		}
 
 		public override void PostUpdateEquips() {
-			BeagleHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<BeagleHelmet>());
+			BeagleHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<BeagleHead>());
 			BeagleSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<BeagleHelmet>(),
-				ModContent.ItemType<BeagleChestplate>(),
-				ModContent.ItemType<BeagleGreaves>());
+				ModContent.ItemType<BeagleHead>(),
+				ModContent.ItemType<BeagleBody>(),
+				ModContent.ItemType<BeagleLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, BeagleSetActive, "Mods.ArknightsMod.ArmorSets.Beagle.SetBonus");
 
 			if (BeagleSetActive) {

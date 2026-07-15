@@ -52,24 +52,24 @@ namespace ArknightsMod.Systems.Gameplay.OperatorTags
 
 		private static void RegisterAll() {
 			Register<MudrockHead>(OperatorClass.Defender, OperatorFaction.Sarkaz | OperatorFaction.RhodesIsland);
-			Register<MlynarHelmet>(OperatorClass.Guard, OperatorFaction.Kazimierz);
-			Register<OblivionisHelmet>(OperatorClass.Guard, OperatorFaction.AveMujica);
-			Register<UlpianusHelmet>(OperatorClass.Guard, OperatorFaction.AbyssalHunter);
-			Register<SkadiHelmet>(OperatorClass.Guard, OperatorFaction.AbyssalHunter);
-			Register<RosmontisHelmet>(OperatorClass.Sniper, OperatorFaction.RhodesIsland);
-			Register<DorothyHelmet>(OperatorClass.Specialist, OperatorFaction.RhodesIsland);
-			Register<ExusiaiHelmet>(OperatorClass.Sniper, OperatorFaction.Laterano);
-			Register<ExusiaiAlterHelmet>(OperatorClass.Specialist, OperatorFaction.Laterano);
-			Register<MostimaHelmet>(OperatorClass.Caster, OperatorFaction.Laterano);
-			Register<FartoothHelmet>(OperatorClass.Sniper, OperatorFaction.Laterano);
-			Register<CivilightEternaHelmet>(OperatorClass.Supporter, OperatorFaction.Sarkaz | OperatorFaction.RhodesIsland);
-			Register<LingHelmet>(OperatorClass.Supporter, OperatorFaction.RhodesIsland);
-			Register<BagpipeHelmet>(OperatorClass.Vanguard, OperatorFaction.RhodesIsland);
+			Register<MlynarHead>(OperatorClass.Guard, OperatorFaction.Kazimierz);
+			Register<OblivionisHead>(OperatorClass.Guard, OperatorFaction.AveMujica);
+			Register<UlpianusHead>(OperatorClass.Guard, OperatorFaction.AbyssalHunter);
+			Register<SkadiHead>(OperatorClass.Guard, OperatorFaction.AbyssalHunter);
+			Register<RosmontisHead>(OperatorClass.Sniper, OperatorFaction.RhodesIsland);
+			Register<DorothyHead>(OperatorClass.Specialist, OperatorFaction.RhodesIsland);
+			Register<ExusiaiHead>(OperatorClass.Sniper, OperatorFaction.Laterano);
+			Register<ExusiaiAlterHead>(OperatorClass.Specialist, OperatorFaction.Laterano);
+			Register<MostimaHead>(OperatorClass.Caster, OperatorFaction.Laterano);
+			Register<FartoothHead>(OperatorClass.Sniper, OperatorFaction.Laterano);
+			Register<CivilightEternaHead>(OperatorClass.Supporter, OperatorFaction.Sarkaz | OperatorFaction.RhodesIsland);
+			Register<LingHead>(OperatorClass.Supporter, OperatorFaction.RhodesIsland);
+			Register<BagpipeHead>(OperatorClass.Vanguard, OperatorFaction.RhodesIsland);
 		}
 
-		private static void Register<THelmet>(OperatorClass cls, OperatorFaction factions)
-			where THelmet : ModItem {
-			OperatorTagRegistry.Register(ModContent.ItemType<THelmet>(), cls, factions);
+		private static void Register<THead>(OperatorClass cls, OperatorFaction factions)
+			where THead : ModItem {
+			OperatorTagRegistry.Register(ModContent.ItemType<THead>(), cls, factions);
 		}
 	}
 }

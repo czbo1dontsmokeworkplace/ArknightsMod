@@ -24,12 +24,12 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Entelechia
 		}
 
 		public override void PostUpdateEquips() {
-			EntelechiaHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<EntelechiaHelmet>());
+			EntelechiaHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<EntelechiaHead>());
 			EntelechiaSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<EntelechiaHelmet>(),
-				ModContent.ItemType<EntelechiaChestplate>(),
-				ModContent.ItemType<EntelechiaGreaves>());
+				ModContent.ItemType<EntelechiaHead>(),
+				ModContent.ItemType<EntelechiaBody>(),
+				ModContent.ItemType<EntelechiaLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, EntelechiaSetActive, "Mods.ArknightsMod.ArmorSets.Entelechia.SetBonus");
 		}
 

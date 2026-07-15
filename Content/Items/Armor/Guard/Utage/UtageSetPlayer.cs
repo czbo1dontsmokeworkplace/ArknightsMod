@@ -19,12 +19,12 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Utage
 		}
 
 		public override void PostUpdateEquips() {
-			UtageHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<UtageHelmet>());
+			UtageHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<UtageHead>());
 			UtageSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<UtageHelmet>(),
-				ModContent.ItemType<UtageChestplate>(),
-				ModContent.ItemType<UtageGreaves>());
+				ModContent.ItemType<UtageHead>(),
+				ModContent.ItemType<UtageBody>(),
+				ModContent.ItemType<UtageLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(
 				Player,
 				UtageSetActive,

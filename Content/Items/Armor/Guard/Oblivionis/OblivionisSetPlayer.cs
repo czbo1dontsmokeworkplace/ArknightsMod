@@ -19,12 +19,12 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Oblivionis
 		}
 
 		public override void PostUpdateEquips() {
-			OblivionisHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<OblivionisHelmet>());
+			OblivionisHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<OblivionisHead>());
 			OblivionisSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<OblivionisHelmet>(),
-				ModContent.ItemType<OblivionisChestplate>(),
-				ModContent.ItemType<OblivionisGreaves>());
+				ModContent.ItemType<OblivionisHead>(),
+				ModContent.ItemType<OblivionisBody>(),
+				ModContent.ItemType<OblivionisLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, OblivionisSetActive, "Mods.ArknightsMod.ArmorSets.Oblivionis.SetBonus");
 		}
 

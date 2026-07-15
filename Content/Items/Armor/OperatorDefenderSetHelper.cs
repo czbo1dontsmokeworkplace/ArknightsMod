@@ -13,12 +13,12 @@ namespace ArknightsMod.Content.Items.Armor
 	internal static class OperatorDefenderSetHelper
 	{
 		public static bool WearsFullDefenderSet(Player player) {
-			return HasSet(player, ModContent.ItemType<BeagleHelmet>(), ModContent.ItemType<BeagleChestplate>(), ModContent.ItemType<BeagleGreaves>())
-				|| HasSet(player, ModContent.ItemType<CardiganHelmet>(), ModContent.ItemType<CardiganChestplate>(), ModContent.ItemType<CardiganGreaves>())
-				|| HasSet(player, ModContent.ItemType<SariaHelmet>(), ModContent.ItemType<SariaChestplate>(), ModContent.ItemType<SariaGreaves>())
-				|| HasSet(player, ModContent.ItemType<NianHelmet>(), ModContent.ItemType<NianChestplate>(), ModContent.ItemType<NianGreaves>())
-				|| HasSet(player, ModContent.ItemType<SpotHelmet>(), ModContent.ItemType<SpotChestplate>(), ModContent.ItemType<SpotGreaves>())
-				|| HasSet(player, ModContent.ItemType<VulcanHelmet>(), ModContent.ItemType<VulcanChestplate>(), ModContent.ItemType<VulcanGreaves>())
+			return HasSet(player, ModContent.ItemType<BeagleHead>(), ModContent.ItemType<BeagleBody>(), ModContent.ItemType<BeagleLegs>())
+				|| HasSet(player, ModContent.ItemType<CardiganHead>(), ModContent.ItemType<CardiganBody>(), ModContent.ItemType<CardiganLegs>())
+				|| HasSet(player, ModContent.ItemType<SariaHead>(), ModContent.ItemType<SariaBody>(), ModContent.ItemType<SariaLegs>())
+				|| HasSet(player, ModContent.ItemType<NianHead>(), ModContent.ItemType<NianBody>(), ModContent.ItemType<NianLegs>())
+				|| HasSet(player, ModContent.ItemType<SpotHead>(), ModContent.ItemType<SpotBody>(), ModContent.ItemType<SpotLegs>())
+				|| HasSet(player, ModContent.ItemType<VulcanHead>(), ModContent.ItemType<VulcanBody>(), ModContent.ItemType<VulcanLegs>())
 				|| HasMudrockSet(player);
 		}
 

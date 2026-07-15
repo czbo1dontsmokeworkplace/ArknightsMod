@@ -18,12 +18,12 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Chen
 		}
 
 		public override void PostUpdateEquips() {
-			ChenHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<ChenHelmet>());
+			ChenHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<ChenHead>());
 			ChenSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<ChenHelmet>(),
-				ModContent.ItemType<ChenChestplate>(),
-				ModContent.ItemType<ChenGreaves>());
+				ModContent.ItemType<ChenHead>(),
+				ModContent.ItemType<ChenBody>(),
+				ModContent.ItemType<ChenLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, ChenSetActive, "Mods.ArknightsMod.ArmorSets.Chen.SetBonus");
 
 			if (ChenHelmetActive) {

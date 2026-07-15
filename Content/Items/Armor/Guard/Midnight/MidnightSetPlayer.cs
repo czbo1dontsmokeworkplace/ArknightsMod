@@ -15,12 +15,12 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Midnight
 		}
 
 		public override void PostUpdateEquips() {
-			MidnightHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<MidnightHelmet>());
+			MidnightHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<MidnightHead>());
 			MidnightSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<MidnightHelmet>(),
-				ModContent.ItemType<MidnightChestplate>(),
-				ModContent.ItemType<MidnightGreaves>());
+				ModContent.ItemType<MidnightHead>(),
+				ModContent.ItemType<MidnightBody>(),
+				ModContent.ItemType<MidnightLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, MidnightSetActive, "Mods.ArknightsMod.ArmorSets.Midnight.SetBonus");
 
 			if (MidnightHelmetActive)

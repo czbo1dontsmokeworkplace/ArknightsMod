@@ -15,12 +15,12 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Popukar
 		}
 
 		public override void PostUpdateEquips() {
-			PopukarHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<PopukarHelmet>());
+			PopukarHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<PopukarHead>());
 			PopukarSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<PopukarHelmet>(),
-				ModContent.ItemType<PopukarChestplate>(),
-				ModContent.ItemType<PopukarGreaves>());
+				ModContent.ItemType<PopukarHead>(),
+				ModContent.ItemType<PopukarBody>(),
+				ModContent.ItemType<PopukarLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, PopukarSetActive, "Mods.ArknightsMod.ArmorSets.Popukar.SetBonus");
 		}
 

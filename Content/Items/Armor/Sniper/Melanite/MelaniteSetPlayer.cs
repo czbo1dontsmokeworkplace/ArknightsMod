@@ -21,12 +21,12 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Melanite
 		}
 
 		public override void PostUpdateEquips() {
-			MelaniteHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<MelaniteHelmet>());
+			MelaniteHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<MelaniteHead>());
 			MelaniteSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<MelaniteHelmet>(),
-				ModContent.ItemType<MelaniteChestplate>(),
-				ModContent.ItemType<MelaniteGreaves>());
+				ModContent.ItemType<MelaniteHead>(),
+				ModContent.ItemType<MelaniteBody>(),
+				ModContent.ItemType<MelaniteLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, MelaniteSetActive, "Mods.ArknightsMod.ArmorSets.Melanite.SetBonus");
 		}
 

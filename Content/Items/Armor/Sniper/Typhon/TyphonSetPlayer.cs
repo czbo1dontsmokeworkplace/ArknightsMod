@@ -24,12 +24,12 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Typhon
 		}
 
 		public override void PostUpdateEquips() {
-			TyphonHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<TyphonHelmet>());
+			TyphonHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<TyphonHead>());
 			TyphonSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<TyphonHelmet>(),
-				ModContent.ItemType<TyphonChestplate>(),
-				ModContent.ItemType<TyphonGreaves>());
+				ModContent.ItemType<TyphonHead>(),
+				ModContent.ItemType<TyphonBody>(),
+				ModContent.ItemType<TyphonLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, TyphonSetActive, "Mods.ArknightsMod.ArmorSets.Typhon.SetBonus");
 		}
 

@@ -18,12 +18,12 @@ namespace ArknightsMod.Content.Items.Armor.Caster.Mostima
 		}
 
 		public override void PostUpdateEquips() {
-			MostimaHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<MostimaHelmet>());
+			MostimaHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<MostimaHead>());
 			MostimaSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<MostimaHelmet>(),
-				ModContent.ItemType<MostimaChestplate>(),
-				ModContent.ItemType<MostimaGreaves>());
+				ModContent.ItemType<MostimaHead>(),
+				ModContent.ItemType<MostimaBody>(),
+				ModContent.ItemType<MostimaLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, MostimaSetActive, "Mods.ArknightsMod.ArmorSets.Mostima.SetBonus");
 
 			if (ShouldReceiveMostimaSpRegen(Player))

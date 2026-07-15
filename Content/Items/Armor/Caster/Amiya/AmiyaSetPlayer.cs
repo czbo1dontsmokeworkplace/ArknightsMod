@@ -16,12 +16,12 @@ namespace ArknightsMod.Content.Items.Armor.Caster.Amiya
 		}
 
 		public override void PostUpdateEquips() {
-			AmiyaHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<AmiyaHelmet>());
+			AmiyaHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<AmiyaHead>());
 			AmiyaSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<AmiyaHelmet>(),
-				ModContent.ItemType<AmiyaChestplate>(),
-				ModContent.ItemType<AmiyaGreaves>());
+				ModContent.ItemType<AmiyaHead>(),
+				ModContent.ItemType<AmiyaBody>(),
+				ModContent.ItemType<AmiyaLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, AmiyaSetActive, "Mods.ArknightsMod.ArmorSets.Amiya.SetBonus");
 		}
 

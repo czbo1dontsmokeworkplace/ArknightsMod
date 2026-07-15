@@ -20,12 +20,12 @@ namespace ArknightsMod.Content.Items.Armor.Specialist.Mizuki
 		}
 
 		public override void PostUpdateEquips() {
-			MizukiHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<MizukiHelmet>());
+			MizukiHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<MizukiHead>());
 			MizukiSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<MizukiHelmet>(),
-				ModContent.ItemType<MizukiChestplate>(),
-				ModContent.ItemType<MizukiGreaves>());
+				ModContent.ItemType<MizukiHead>(),
+				ModContent.ItemType<MizukiBody>(),
+				ModContent.ItemType<MizukiLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, MizukiSetActive, "Mods.ArknightsMod.ArmorSets.Mizuki.SetBonus");
 		}
 

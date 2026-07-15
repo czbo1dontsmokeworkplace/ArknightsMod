@@ -20,12 +20,12 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.Radian
 		}
 
 		public override void PostUpdateEquips() {
-			RaidianHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<RaidianHelmet>());
+			RaidianHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<RaidianHead>());
 			RaidianSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<RaidianHelmet>(),
-				ModContent.ItemType<RaidianChestplate>(),
-				ModContent.ItemType<RaidianGreaves>());
+				ModContent.ItemType<RaidianHead>(),
+				ModContent.ItemType<RaidianBody>(),
+				ModContent.ItemType<RaidianLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, RaidianSetActive, "Mods.ArknightsMod.ArmorSets.Raidian.SetBonus");
 
 			int slotBonus = 0;

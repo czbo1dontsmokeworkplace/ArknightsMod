@@ -15,12 +15,12 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Kroos
 		}
 
 		public override void PostUpdateEquips() {
-			KroosHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<KroosHelmet>());
+			KroosHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<KroosHead>());
 			KroosSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<KroosHelmet>(),
-				ModContent.ItemType<KroosChestplate>(),
-				ModContent.ItemType<KroosGreaves>());
+				ModContent.ItemType<KroosHead>(),
+				ModContent.ItemType<KroosBody>(),
+				ModContent.ItemType<KroosLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, KroosSetActive, "Mods.ArknightsMod.ArmorSets.Kroos.SetBonus");
 		}
 

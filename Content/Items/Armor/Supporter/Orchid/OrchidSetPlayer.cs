@@ -17,12 +17,12 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.Orchid
 		}
 
 		public override void PostUpdateEquips() {
-			OrchidHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<OrchidHelmet>());
+			OrchidHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<OrchidHead>());
 			OrchidSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<OrchidHelmet>(),
-				ModContent.ItemType<OrchidChestplate>(),
-				ModContent.ItemType<OrchidGreaves>());
+				ModContent.ItemType<OrchidHead>(),
+				ModContent.ItemType<OrchidBody>(),
+				ModContent.ItemType<OrchidLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, OrchidSetActive, "Mods.ArknightsMod.ArmorSets.Orchid.SetBonus");
 		}
 

@@ -20,12 +20,12 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Rosmontis
 		}
 
 		public override void PostUpdateEquips() {
-			RosmontisHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<RosmontisHelmet>());
+			RosmontisHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<RosmontisHead>());
 			RosmontisSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<RosmontisHelmet>(),
-				ModContent.ItemType<RosmontisChestplate>(),
-				ModContent.ItemType<RosmontisGreaves>());
+				ModContent.ItemType<RosmontisHead>(),
+				ModContent.ItemType<RosmontisBody>(),
+				ModContent.ItemType<RosmontisLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, RosmontisSetActive, "Mods.ArknightsMod.ArmorSets.Rosmontis.SetBonus");
 		}
 

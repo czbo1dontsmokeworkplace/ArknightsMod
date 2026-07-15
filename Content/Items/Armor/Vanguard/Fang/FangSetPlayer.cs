@@ -18,12 +18,12 @@ namespace ArknightsMod.Content.Items.Armor.Vanguard.Fang
 		}
 
 		public override void PostUpdateEquips() {
-			FangHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<FangHelmet>());
+			FangHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<FangHead>());
 			FangSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<FangHelmet>(),
-				ModContent.ItemType<FangChestplate>(),
-				ModContent.ItemType<FangGreaves>());
+				ModContent.ItemType<FangHead>(),
+				ModContent.ItemType<FangBody>(),
+				ModContent.ItemType<FangLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, FangSetActive, "Mods.ArknightsMod.ArmorSets.Fang.SetBonus");
 		}
 

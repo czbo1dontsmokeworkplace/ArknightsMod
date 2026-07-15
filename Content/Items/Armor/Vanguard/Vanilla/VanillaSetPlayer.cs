@@ -15,12 +15,12 @@ namespace ArknightsMod.Content.Items.Armor.Vanguard.Vanilla
 		}
 
 		public override void PostUpdateEquips() {
-			VanillaHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<VanillaHelmet>());
+			VanillaHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<VanillaHead>());
 			VanillaSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<VanillaHelmet>(),
-				ModContent.ItemType<VanillaChestplate>(),
-				ModContent.ItemType<VanillaGreaves>());
+				ModContent.ItemType<VanillaHead>(),
+				ModContent.ItemType<VanillaBody>(),
+				ModContent.ItemType<VanillaLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, VanillaSetActive, "Mods.ArknightsMod.ArmorSets.Vanilla.SetBonus");
 
 			if (VanillaSetActive && Player.GetModPlayer<OperatorDeployCostPlayer>().DeployCost > 50)

@@ -21,12 +21,12 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Nian
 		}
 
 		public override void PostUpdateEquips() {
-			NianHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<NianHelmet>());
+			NianHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<NianHead>());
 			NianSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<NianHelmet>(),
-				ModContent.ItemType<NianChestplate>(),
-				ModContent.ItemType<NianGreaves>());
+				ModContent.ItemType<NianHead>(),
+				ModContent.ItemType<NianBody>(),
+				ModContent.ItemType<NianLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, NianSetActive, "Mods.ArknightsMod.ArmorSets.Nian.SetBonus");
 		}
 

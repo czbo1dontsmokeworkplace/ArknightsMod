@@ -11,11 +11,11 @@ namespace ArknightsMod.Content.Items.Armor
 	internal static class OperatorVanguardSetHelper
 	{
 		public static bool WearsFullVanguardSet(Player player) {
-			return HasSet(player, ModContent.ItemType<BagpipeHelmet>(), ModContent.ItemType<BagpipeChestplate>(), ModContent.ItemType<BagpipeGreaves>())
-				|| HasSet(player, ModContent.ItemType<FangHelmet>(), ModContent.ItemType<FangChestplate>(), ModContent.ItemType<FangGreaves>())
-				|| HasSet(player, ModContent.ItemType<PlumeHelmet>(), ModContent.ItemType<PlumeChestplate>(), ModContent.ItemType<PlumeGreaves>())
-				|| HasSet(player, ModContent.ItemType<TexasHelmet>(), ModContent.ItemType<TexasChestplate>(), ModContent.ItemType<TexasGreaves>())
-				|| HasSet(player, ModContent.ItemType<VanillaHelmet>(), ModContent.ItemType<VanillaChestplate>(), ModContent.ItemType<VanillaGreaves>());
+			return HasSet(player, ModContent.ItemType<BagpipeHead>(), ModContent.ItemType<BagpipeBody>(), ModContent.ItemType<BagpipeLegs>())
+				|| HasSet(player, ModContent.ItemType<FangHead>(), ModContent.ItemType<FangBody>(), ModContent.ItemType<FangLegs>())
+				|| HasSet(player, ModContent.ItemType<PlumeHead>(), ModContent.ItemType<PlumeBody>(), ModContent.ItemType<PlumeLegs>())
+				|| HasSet(player, ModContent.ItemType<TexasHead>(), ModContent.ItemType<TexasBody>(), ModContent.ItemType<TexasLegs>())
+				|| HasSet(player, ModContent.ItemType<VanillaHead>(), ModContent.ItemType<VanillaBody>(), ModContent.ItemType<VanillaLegs>());
 		}
 
 		private static bool HasSet(Player player, int helmet, int chest, int greaves) {

@@ -15,12 +15,12 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Cardigan
 		}
 
 		public override void PostUpdateEquips() {
-			CardiganHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<CardiganHelmet>());
+			CardiganHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<CardiganHead>());
 			CardiganSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<CardiganHelmet>(),
-				ModContent.ItemType<CardiganChestplate>(),
-				ModContent.ItemType<CardiganGreaves>());
+				ModContent.ItemType<CardiganHead>(),
+				ModContent.ItemType<CardiganBody>(),
+				ModContent.ItemType<CardiganLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, CardiganSetActive, "Mods.ArknightsMod.ArmorSets.Cardigan.SetBonus");
 
 			if (CardiganSetActive)

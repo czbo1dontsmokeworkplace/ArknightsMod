@@ -18,12 +18,12 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Fiammetta
 		}
 
 		public override void PostUpdateEquips() {
-			FiammettaHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<FiammettaHelmet>());
+			FiammettaHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<FiammettaHead>());
 			FiammettaSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<FiammettaHelmet>(),
-				ModContent.ItemType<FiammettaChestplate>(),
-				ModContent.ItemType<FiammettaGreaves>());
+				ModContent.ItemType<FiammettaHead>(),
+				ModContent.ItemType<FiammettaBody>(),
+				ModContent.ItemType<FiammettaLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, FiammettaSetActive, "Mods.ArknightsMod.ArmorSets.Fiammetta.SetBonus");
 		}
 

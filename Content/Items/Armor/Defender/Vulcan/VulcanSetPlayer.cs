@@ -16,12 +16,12 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Vulcan
 		}
 
 		public override void PostUpdateEquips() {
-			VulcanHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<VulcanHelmet>());
+			VulcanHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<VulcanHead>());
 			VulcanSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<VulcanHelmet>(),
-				ModContent.ItemType<VulcanChestplate>(),
-				ModContent.ItemType<VulcanGreaves>());
+				ModContent.ItemType<VulcanHead>(),
+				ModContent.ItemType<VulcanBody>(),
+				ModContent.ItemType<VulcanLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, VulcanSetActive, "Mods.ArknightsMod.ArmorSets.Vulcan.SetBonus");
 		}
 

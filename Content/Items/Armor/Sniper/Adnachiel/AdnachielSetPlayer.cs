@@ -15,12 +15,12 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Adnachiel
 		}
 
 		public override void PostUpdateEquips() {
-			AdnachielHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<AdnachielHelmet>());
+			AdnachielHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<AdnachielHead>());
 			AdnachielSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<AdnachielHelmet>(),
-				ModContent.ItemType<AdnachielChestplate>(),
-				ModContent.ItemType<AdnachielGreaves>());
+				ModContent.ItemType<AdnachielHead>(),
+				ModContent.ItemType<AdnachielBody>(),
+				ModContent.ItemType<AdnachielLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, AdnachielSetActive, "Mods.ArknightsMod.ArmorSets.Adnachiel.SetBonus");
 		}
 

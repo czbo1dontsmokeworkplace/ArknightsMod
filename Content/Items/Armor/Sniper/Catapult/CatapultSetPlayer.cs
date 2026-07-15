@@ -17,12 +17,12 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Catapult
 		}
 
 		public override void PostUpdateEquips() {
-			CatapultHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<CatapultHelmet>());
+			CatapultHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<CatapultHead>());
 			CatapultSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<CatapultHelmet>(),
-				ModContent.ItemType<CatapultChestplate>(),
-				ModContent.ItemType<CatapultGreaves>());
+				ModContent.ItemType<CatapultHead>(),
+				ModContent.ItemType<CatapultBody>(),
+				ModContent.ItemType<CatapultLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, CatapultSetActive, "Mods.ArknightsMod.ArmorSets.Catapult.SetBonus");
 		}
 

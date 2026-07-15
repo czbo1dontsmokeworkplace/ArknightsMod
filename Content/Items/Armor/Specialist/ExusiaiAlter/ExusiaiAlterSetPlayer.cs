@@ -20,12 +20,12 @@ namespace ArknightsMod.Content.Items.Armor.Specialist.ExusiaiAlter
 		}
 
 		public override void PostUpdateEquips() {
-			ExusiaiAlterHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<ExusiaiAlterHelmet>());
+			ExusiaiAlterHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<ExusiaiAlterHead>());
 			ExusiaiAlterSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<ExusiaiAlterHelmet>(),
-				ModContent.ItemType<ExusiaiAlterChestplate>(),
-				ModContent.ItemType<ExusiaiAlterGreaves>());
+				ModContent.ItemType<ExusiaiAlterHead>(),
+				ModContent.ItemType<ExusiaiAlterBody>(),
+				ModContent.ItemType<ExusiaiAlterLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, ExusiaiAlterSetActive, "Mods.ArknightsMod.ArmorSets.ExusiaiAlter.SetBonus");
 		}
 

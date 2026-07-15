@@ -19,12 +19,12 @@ namespace ArknightsMod.Content.Items.Armor.Specialist.TexasAlter
 		}
 
 		public override void PostUpdateEquips() {
-			TexalterHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<TexalterHelmet>());
+			TexalterHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<TexalterHead>());
 			TexalterSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<TexalterHelmet>(),
-				ModContent.ItemType<TexalterChestplate>(),
-				ModContent.ItemType<TexalterGreaves>());
+				ModContent.ItemType<TexalterHead>(),
+				ModContent.ItemType<TexalterBody>(),
+				ModContent.ItemType<TexalterLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, TexalterSetActive, "Mods.ArknightsMod.ArmorSets.Texalter.SetBonus");
 		}
 

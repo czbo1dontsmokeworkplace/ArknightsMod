@@ -17,12 +17,12 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Lappland
 		}
 
 		public override void PostUpdateEquips() {
-			LapplandHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<LapplandHelmet>());
+			LapplandHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<LapplandHead>());
 			LapplandSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<LapplandHelmet>(),
-				ModContent.ItemType<LapplandChestplate>(),
-				ModContent.ItemType<LapplandGreaves>());
+				ModContent.ItemType<LapplandHead>(),
+				ModContent.ItemType<LapplandBody>(),
+				ModContent.ItemType<LapplandLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, LapplandSetActive, "Mods.ArknightsMod.ArmorSets.Lappland.SetBonus");
 		}
 

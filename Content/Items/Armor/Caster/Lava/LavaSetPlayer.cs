@@ -18,12 +18,12 @@ namespace ArknightsMod.Content.Items.Armor.Caster.Lava
 		}
 
 		public override void PostUpdateEquips() {
-			LavaHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<LavaHelmet>());
+			LavaHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<LavaHead>());
 			LavaSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<LavaHelmet>(),
-				ModContent.ItemType<LavaChestplate>(),
-				ModContent.ItemType<LavaGreaves>());
+				ModContent.ItemType<LavaHead>(),
+				ModContent.ItemType<LavaBody>(),
+				ModContent.ItemType<LavaLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, LavaSetActive, "Mods.ArknightsMod.ArmorSets.Lava.SetBonus");
 		}
 

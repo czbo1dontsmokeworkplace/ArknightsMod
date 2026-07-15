@@ -21,12 +21,12 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Melantha
 		}
 
 		public override void PostUpdateEquips() {
-			MelanthaHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ItemType<MelanthaHelmet>());
+			MelanthaHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ItemType<MelanthaHead>());
 			MelanthaSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ItemType<MelanthaHelmet>(),
-				ItemType<MelanthaChestplate>(),
-				ItemType<MelanthaGreaves>());
+				ItemType<MelanthaHead>(),
+				ItemType<MelanthaBody>(),
+				ItemType<MelanthaLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(
 				Player,
 				MelanthaSetActive,

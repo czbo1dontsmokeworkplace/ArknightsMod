@@ -19,12 +19,12 @@ namespace ArknightsMod.Content.Items.Armor.Specialist.Manticore
 		}
 
 		public override void PostUpdateEquips() {
-			ManticoreHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<ManticoreHelmet>());
+			ManticoreHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<ManticoreHead>());
 			ManticoreSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<ManticoreHelmet>(),
-				ModContent.ItemType<ManticoreChestplate>(),
-				ModContent.ItemType<ManticoreGreaves>());
+				ModContent.ItemType<ManticoreHead>(),
+				ModContent.ItemType<ManticoreBody>(),
+				ModContent.ItemType<ManticoreLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, ManticoreSetActive, "Mods.ArknightsMod.ArmorSets.Manticore.SetBonus");
 		}
 

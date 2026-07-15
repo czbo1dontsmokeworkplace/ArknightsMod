@@ -16,12 +16,12 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Spot
 		}
 
 		public override void PostUpdateEquips() {
-			SpotHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<SpotHelmet>());
+			SpotHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<SpotHead>());
 			SpotSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<SpotHelmet>(),
-				ModContent.ItemType<SpotChestplate>(),
-				ModContent.ItemType<SpotGreaves>());
+				ModContent.ItemType<SpotHead>(),
+				ModContent.ItemType<SpotBody>(),
+				ModContent.ItemType<SpotLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, SpotSetActive, "Mods.ArknightsMod.ArmorSets.Spot.SetBonus");
 		}
 

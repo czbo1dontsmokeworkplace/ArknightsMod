@@ -15,12 +15,12 @@ namespace ArknightsMod.Content.Items.Armor.Medic.Ansel
 		}
 
 		public override void PostUpdateEquips() {
-			AnselHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<AnselHelmet>());
+			AnselHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<AnselHead>());
 			AnselSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<AnselHelmet>(),
-				ModContent.ItemType<AnselChestplate>(),
-				ModContent.ItemType<AnselGreaves>());
+				ModContent.ItemType<AnselHead>(),
+				ModContent.ItemType<AnselBody>(),
+				ModContent.ItemType<AnselLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, AnselSetActive, "Mods.ArknightsMod.ArmorSets.Ansel.SetBonus");
 		}
 	}

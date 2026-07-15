@@ -15,12 +15,12 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Exusiai
 		}
 
 		public override void PostUpdateEquips() {
-			ExusiaiHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<ExusiaiHelmet>());
+			ExusiaiHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<ExusiaiHead>());
 			ExusiaiSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<ExusiaiHelmet>(),
-				ModContent.ItemType<ExusiaiChestplate>(),
-				ModContent.ItemType<ExusiaiGreaves>());
+				ModContent.ItemType<ExusiaiHead>(),
+				ModContent.ItemType<ExusiaiBody>(),
+				ModContent.ItemType<ExusiaiLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, ExusiaiSetActive, "Mods.ArknightsMod.ArmorSets.Exusiai.SetBonus");
 
 		}

@@ -16,12 +16,12 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Mlynar
 		}
 
 		public override void PostUpdateEquips() {
-			MlynarHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<MlynarHelmet>());
+			MlynarHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<MlynarHead>());
 			MlynarSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<MlynarHelmet>(),
-				ModContent.ItemType<MlynarChestplate>(),
-				ModContent.ItemType<MlynarGreaves>());
+				ModContent.ItemType<MlynarHead>(),
+				ModContent.ItemType<MlynarBody>(),
+				ModContent.ItemType<MlynarLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, MlynarSetActive, "Mods.ArknightsMod.ArmorSets.Mlynar.SetBonus");
 		}
 

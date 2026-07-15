@@ -18,12 +18,12 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Saria
 		}
 
 		public override void PostUpdateEquips() {
-			SariaHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<SariaHelmet>());
+			SariaHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<SariaHead>());
 			SariaSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<SariaHelmet>(),
-				ModContent.ItemType<SariaChestplate>(),
-				ModContent.ItemType<SariaGreaves>());
+				ModContent.ItemType<SariaHead>(),
+				ModContent.ItemType<SariaBody>(),
+				ModContent.ItemType<SariaLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, SariaSetActive, "Mods.ArknightsMod.ArmorSets.Saria.SetBonus");
 
 			if (SariaSetActive && GuardStacks > 0) {

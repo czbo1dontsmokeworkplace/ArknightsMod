@@ -18,12 +18,12 @@ namespace ArknightsMod.Content.Items.Armor.Vanguard.Texas
 		}
 
 		public override void PostUpdateEquips() {
-			TexasHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<TexasHelmet>());
+			TexasHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<TexasHead>());
 			TexasSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<TexasHelmet>(),
-				ModContent.ItemType<TexasChestplate>(),
-				ModContent.ItemType<TexasGreaves>());
+				ModContent.ItemType<TexasHead>(),
+				ModContent.ItemType<TexasBody>(),
+				ModContent.ItemType<TexasLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, TexasSetActive, "Mods.ArknightsMod.ArmorSets.Texas.SetBonus");
 		}
 

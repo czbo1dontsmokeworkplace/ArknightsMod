@@ -19,12 +19,12 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.Ling
 		}
 
 		public override void PostUpdateEquips() {
-			LingHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<LingHelmet>());
+			LingHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<LingHead>());
 			LingSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<LingHelmet>(),
-				ModContent.ItemType<LingChestplate>(),
-				ModContent.ItemType<LingGreaves>());
+				ModContent.ItemType<LingHead>(),
+				ModContent.ItemType<LingBody>(),
+				ModContent.ItemType<LingLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, LingSetActive, "Mods.ArknightsMod.ArmorSets.Ling.SetBonus");
 
 			if (LingHelmetActive)

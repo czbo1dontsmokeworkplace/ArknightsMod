@@ -20,12 +20,12 @@ namespace ArknightsMod.Content.Items.Armor.Specialist.Dorothy
 		}
 
 		public override void PostUpdateEquips() {
-			DorothyHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<DorothyHelmet>());
+			DorothyHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<DorothyHead>());
 			DorothySetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<DorothyHelmet>(),
-				ModContent.ItemType<DorothyChestplate>(),
-				ModContent.ItemType<DorothyGreaves>());
+				ModContent.ItemType<DorothyHead>(),
+				ModContent.ItemType<DorothyBody>(),
+				ModContent.ItemType<DorothyLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, DorothySetActive, "Mods.ArknightsMod.ArmorSets.Dorothy.SetBonus");
 
 			if (DorothyHelmetActive)

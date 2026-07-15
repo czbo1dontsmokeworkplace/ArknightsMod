@@ -20,12 +20,12 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Surtr
 		}
 
 		public override void PostUpdateEquips() {
-			SurtrHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<SurtrHelmet>());
+			SurtrHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<SurtrHead>());
 			SurtrSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<SurtrHelmet>(),
-				ModContent.ItemType<SurtrChestplate>(),
-				ModContent.ItemType<SurtrGreaves>());
+				ModContent.ItemType<SurtrHead>(),
+				ModContent.ItemType<SurtrBody>(),
+				ModContent.ItemType<SurtrLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, SurtrSetActive, "Mods.ArknightsMod.ArmorSets.Surtr.SetBonus");
 		}
 

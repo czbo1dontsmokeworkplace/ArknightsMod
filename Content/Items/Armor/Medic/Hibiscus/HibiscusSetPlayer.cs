@@ -15,12 +15,12 @@ namespace ArknightsMod.Content.Items.Armor.Medic.Hibiscus
 		}
 
 		public override void PostUpdateEquips() {
-			HibiscusHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<HibiscusHelmet>());
+			HibiscusHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<HibiscusHead>());
 			HibiscusSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<HibiscusHelmet>(),
-				ModContent.ItemType<HibiscusChestplate>(),
-				ModContent.ItemType<HibiscusGreaves>());
+				ModContent.ItemType<HibiscusHead>(),
+				ModContent.ItemType<HibiscusBody>(),
+				ModContent.ItemType<HibiscusLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, HibiscusSetActive, "Mods.ArknightsMod.ArmorSets.Hibiscus.SetBonus");
 		}
 

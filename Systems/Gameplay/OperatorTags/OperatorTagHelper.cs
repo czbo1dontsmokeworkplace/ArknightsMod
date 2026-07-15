@@ -1,4 +1,5 @@
 using ArknightsMod.Common.GlobalNPCs;
+using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Projectiles.Guard.Saki;
 using Terraria;
 using Terraria.ModLoader;
@@ -12,6 +13,10 @@ namespace ArknightsMod.Systems.Gameplay.OperatorTags
 			factions = OperatorFaction.None;
 
 			if (player?.armor == null || player.armor[0].IsAir)
+				return false;
+
+			// 干员标签（职业/阵营）仅在头部件作为「已升级盔甲」穿戴时生效，与套装效果一致（纯时装不触发）。
+			if (!player.armor[0].neoarmor().hasUpgraded)
 				return false;
 
 			if (!OperatorTagRegistry.TryGetFromHelmet(player.armor[0].type, out OperatorTagRegistry.OperatorTagEntry entry))
@@ -65,7 +70,8 @@ namespace ArknightsMod.Systems.Gameplay.OperatorTags
 			int helmetType = ModContent.ItemType<THelmet>();
 			for (int i = 0; i < Main.maxPlayers; i++) {
 				Player player = Main.player[i];
-				if (player.active && !player.dead && player.armor[0].type == helmetType) {
+				if (player.active && !player.dead
+				    && player.armor[0].type == helmetType && player.armor[0].neoarmor().hasUpgraded) {
 					found = player;
 					return true;
 				}

@@ -17,12 +17,12 @@ namespace ArknightsMod.Content.Items.Armor.Caster.Haze
 		}
 
 		public override void PostUpdateEquips() {
-			HazeHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<HazeHelmet>());
+			HazeHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<HazeHead>());
 			HazeSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<HazeHelmet>(),
-				ModContent.ItemType<HazeChestplate>(),
-				ModContent.ItemType<HazeGreaves>());
+				ModContent.ItemType<HazeHead>(),
+				ModContent.ItemType<HazeBody>(),
+				ModContent.ItemType<HazeLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, HazeSetActive, "Mods.ArknightsMod.ArmorSets.Haze.SetBonus");
 
 			if (HazeSetActive) {

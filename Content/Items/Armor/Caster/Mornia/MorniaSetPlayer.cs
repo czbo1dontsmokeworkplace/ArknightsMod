@@ -15,12 +15,12 @@ namespace ArknightsMod.Content.Items.Armor.Caster.Mornia
 		}
 
 		public override void PostUpdateEquips() {
-			MorniaHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<MorniaHelmet>());
+			MorniaHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<MorniaHead>());
 			MorniaSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<MorniaHelmet>(),
-				ModContent.ItemType<MorniaChestplate>(),
-				ModContent.ItemType<MorniaGreaves>());
+				ModContent.ItemType<MorniaHead>(),
+				ModContent.ItemType<MorniaBody>(),
+				ModContent.ItemType<MorniaLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, MorniaSetActive, "Mods.ArknightsMod.ArmorSets.Mornia.SetBonus");
 		}
 

@@ -15,12 +15,12 @@ namespace ArknightsMod.Content.Items.Armor.Caster.Steward
 		}
 
 		public override void PostUpdateEquips() {
-			StewardHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<StewardHelmet>());
+			StewardHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<StewardHead>());
 			StewardSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<StewardHelmet>(),
-				ModContent.ItemType<StewardChestplate>(),
-				ModContent.ItemType<StewardGreaves>());
+				ModContent.ItemType<StewardHead>(),
+				ModContent.ItemType<StewardBody>(),
+				ModContent.ItemType<StewardLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, StewardSetActive, "Mods.ArknightsMod.ArmorSets.Steward.SetBonus");
 		}
 

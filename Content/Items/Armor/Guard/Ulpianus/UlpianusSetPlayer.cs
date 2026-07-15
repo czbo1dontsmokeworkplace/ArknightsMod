@@ -24,12 +24,12 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Ulpianus
 		}
 
 		public override void PostUpdateEquips() {
-			UlpianusHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<UlpianusHelmet>());
+			UlpianusHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<UlpianusHead>());
 			UlpianusSetActive = OperatorSetEquipHelper.HasFullSet(
 				Player,
-				ModContent.ItemType<UlpianusHelmet>(),
-				ModContent.ItemType<UlpianusChestplate>(),
-				ModContent.ItemType<UlpianusGreaves>());
+				ModContent.ItemType<UlpianusHead>(),
+				ModContent.ItemType<UlpianusBody>(),
+				ModContent.ItemType<UlpianusLegs>());
 			OperatorSetEquipHelper.ApplySetBonusText(Player, UlpianusSetActive, "Mods.ArknightsMod.ArmorSets.Ulpianus.SetBonus");
 
 			if (UlpianusHelmetActive) {
@@ -37,7 +37,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Ulpianus
 				attackBonus = KillStacks * 4f;
 			}
 			else if (OperatorTagHelper.PlayerHasFaction(Player, OperatorFaction.AbyssalHunter)
-				&& OperatorTagHelper.AnyPlayerWithHelmet<UlpianusHelmet>(out Player ulpianus)) {
+				&& OperatorTagHelper.AnyPlayerWithHelmet<UlpianusHead>(out Player ulpianus)) {
 				int stacks = ulpianus.GetModPlayer<UlpianusSetPlayer>().KillStacks;
 				lifeBonus = (int)(stacks * 12 * 0.5f);
 				attackBonus = stacks * 4f * 0.5f;
