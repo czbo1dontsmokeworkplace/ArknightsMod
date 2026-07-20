@@ -1577,7 +1577,14 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				bool allWavesDispatched = summonTimer > 180;
 
 				bool minionsAlive = false;
-				foreach (int index in MinionWhoAmIs) {
+				//foreach (int index in MinionWhoAmIs) {
+				// 从后向前遍历以安全移除无效索引，同时在移除时发送提示
+				for (int i = MinionWhoAmIs.Count - 1; i >= 0; i--) {
+					int index = MinionWhoAmIs[i];
+					if (index < 0 || index >= Main.maxNPCs) {
+						MinionWhoAmIs.RemoveAt(i);
+						continue;
+					}
 					NPC minion = Main.npc[index];
 
 					// 关键：必须同时满足以下三个条件，才判定为“召唤的小怪还活着”：
@@ -1588,7 +1595,19 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 					if (minion.active && minion.life > 0 && minion.ai[3] == 999f) {
 						// 这样即使史莱姆路过，只要它的索引不在 MinionWhoAmIs 里，就不会被统计
 						minionsAlive = true;
-						break;
+					} else {
+						// 小怪已死亡或被移除，更新列表并提示剩余数量
+						MinionWhoAmIs.RemoveAt(i);
+						int remaining = 0;
+						foreach (int id in MinionWhoAmIs) {
+							if (id >= 0 && id < Main.maxNPCs) {
+								NPC m = Main.npc[id];
+								if (m.active && m.life > 0 && m.ai[3] == 999f) remaining++;
+							}
+						}
+						string deathMsg = $"支援者被击败，当前剩余支援者：{remaining}";
+						if (Main.netMode != NetmodeID.Server) Main.NewText(deathMsg, Color.OrangeRed);
+						CombatText.NewText(new Rectangle((int)NPC.position.X, (int)NPC.position.Y - 20, NPC.width, NPC.height), Color.OrangeRed, $"剩余 {remaining}");
 					}
 				}
 
@@ -1740,7 +1759,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 			Vector2 spawnPos = FindSafeSpot(new Vector2(spawnX, spawnY));
 			int index = NPC.NewNPC(NPC.GetSource_FromAI(), (int)spawnPos.X, (int)spawnPos.Y, type);
-			Main.npc[index].ai[3] = 999f;
+				Main.npc[index].ai[3] = 999f;
 			if (index < Main.maxNPCs) {
 				MinionWhoAmIs.Add(index);
 				Main.npc[index].netUpdate = true;
@@ -1749,6 +1768,19 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				for (int i = 0; i < 15; i++) {
 					Dust.NewDust(Main.npc[index].position, 32, 32, DustID.Shadowflame);
 				}
+
+				// 聊天提示与屏幕浮动提示（显示当前存活召唤体数量）
+				int alive = 0;
+				foreach (int id in MinionWhoAmIs) {
+					if (id >= 0 && id < Main.maxNPCs) {
+						NPC m = Main.npc[id];
+						if (m.active && m.life > 0 && m.ai[3] == 999f)
+							alive++;
+					}
+				}
+				string spawnMsg = $"弑君者请求了支援：{Lang.GetNPCNameValue(type)}，该支援单位数量：{alive}";
+				if (Main.netMode != NetmodeID.Server) Main.NewText(spawnMsg, Color.OrangeRed);
+				CombatText.NewText(new Rectangle((int)spawnPos.X, (int)spawnPos.Y - 20, 2, 2), Color.OrangeRed, $"剩余 {alive}");
 			}
 		}
 		private void ExecuteSlamImpact() {
