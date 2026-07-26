@@ -128,6 +128,36 @@ AmiyaLegs: {
 	// Tooltip: ""
 }
 
+NecrassBody: {
+	DisplayName: 死芒的上衣
+	// Tooltip: ""
+}
+
+NecrassHead: {
+	DisplayName: 死芒的头套
+	// Tooltip: ""
+}
+
+NecrassLegs: {
+	DisplayName: 死芒的下装
+	// Tooltip: ""
+}
+
+ReedFlameShadowBody: {
+	DisplayName: 焰影苇草的上衣
+	// Tooltip: ""
+}
+
+ReedFlameShadowHead: {
+	DisplayName: 焰影苇草的头套
+	// Tooltip: ""
+}
+
+ReedFlameShadowLegs: {
+	DisplayName: 焰影苇草的下装
+	// Tooltip: ""
+}
+
 MelanthaBody: {
 	DisplayName: 玫兰莎的上衣
 	// Tooltip: ""
@@ -240,6 +270,16 @@ StartBag: {
 
 AmiyaDefault: {
 	DisplayName: 阿米娅的服饰（常规）
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+NecrassDefault: {
+	DisplayName: 死芒的服饰（常规）
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+ReedFlameShadowDefault: {
+	DisplayName: 焰影苇草的服饰（常规）
 	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 }
 

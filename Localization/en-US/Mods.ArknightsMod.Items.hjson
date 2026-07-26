@@ -126,6 +126,36 @@ AmiyaLegs: {
 	Tooltip: ""
 }
 
+NecrassBody: {
+	DisplayName: Necrass's outfit (Body)
+	Tooltip: ""
+}
+
+NecrassHead: {
+	DisplayName: Necrass's outfit (Head)
+	Tooltip: ""
+}
+
+NecrassLegs: {
+	DisplayName: Necrass's outfit (Legs)
+	Tooltip: ""
+}
+
+ReedFlameShadowBody: {
+	DisplayName: Reed the Flame Shadow's outfit (Body)
+	Tooltip: ""
+}
+
+ReedFlameShadowHead: {
+	DisplayName: Reed the Flame Shadow's outfit (Head)
+	Tooltip: ""
+}
+
+ReedFlameShadowLegs: {
+	DisplayName: Reed the Flame Shadow's outfit (Legs)
+	Tooltip: ""
+}
+
 MelanthaBody: {
 	DisplayName: Melantha's outfit (Body)
 	Tooltip: ""
@@ -238,6 +268,16 @@ StartBag: {
 
 AmiyaDefault: {
 	DisplayName: Amiya's costume (default)
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+NecrassDefault: {
+	DisplayName: Necrass's costume (default)
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+ReedFlameShadowDefault: {
+	DisplayName: Reed the Flame Shadow's costume (default)
 	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 }
 
