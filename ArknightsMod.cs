@@ -45,6 +45,7 @@ namespace ArknightsMod
 		public static Asset<Effect> FNTwistedRing;//霜星限制阈（扭曲环效果）
 		public static Asset<Effect> LavaExplosionShaderEffect;//炎熔的爆炸效果
 		public static Asset<Effect> LupineKnifeLight;//狼之绯刀光（顶点 trail 着色器，非屏幕滤镜）
+		public static Asset<Effect> ReedFlameTrail;//焰影苇草火焰拖尾（顶点 trail 着色器，非屏幕滤镜）
 		public const string AssetPath = "ArknightsMod/Sound/";
 
 		public override void Load() {
@@ -101,6 +102,9 @@ namespace ArknightsMod
 
 				// 狼之绯刀光：直接作用于顶点图元，不注册为屏幕滤镜
 				LupineKnifeLight = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/LupineKnifeLight", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+
+				// 焰影苇草火焰拖尾：同样直接作用于顶点图元
+				ReedFlameTrail = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/ReedFlameTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad);
 			}
 			Filters.Scene["AshStorm"] = new Filter(new ScreenShaderData("FilterAsh").UseColor(1f, 0.8f, 0.5f), EffectPriority.High);
 

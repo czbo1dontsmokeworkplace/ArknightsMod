@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Content.Items.Material;
 
-namespace ArknightsMod.Content.Items.Armor.Caster.ReedFlameShadow
+namespace ArknightsMod.Content.Items.Armor.Medic.ReedFlameShadow
 {
 	[AutoloadEquip(EquipType.Head)]
 	public class ReedFlameShadowHead : NeoArmorHead

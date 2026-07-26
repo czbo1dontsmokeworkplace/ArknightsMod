@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using Terraria.ModLoader;
-using ArknightsMod.Content.Items.Armor.Caster.ReedFlameShadow;
+using ArknightsMod.Content.Items.Armor.Medic.ReedFlameShadow;
 
-namespace ArknightsMod.Content.Items.Armor.Caster.ReedFlameShadow
+namespace ArknightsMod.Content.Items.Armor.Medic.ReedFlameShadow
 {
 	public class ReedFlameShadowDefault : ArknightsVanityBag
 	{

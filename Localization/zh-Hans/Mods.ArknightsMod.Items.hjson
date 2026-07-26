@@ -3202,6 +3202,11 @@ HazeMagicBook: {
 	// Tooltip: ""
 }
 
+ReedFlameShadowStaff: {
+	DisplayName: 焰影苇草的法杖
+	Tooltip: 灼烧命中的敌人
+}
+
 DN_Weapon: {
 	// DisplayName: D N_ Weapon
 	// Tooltip: ""

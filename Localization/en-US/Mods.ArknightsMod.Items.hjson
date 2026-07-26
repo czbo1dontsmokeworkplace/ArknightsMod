@@ -2840,6 +2840,11 @@ HazeMagicBook: {
 	Tooltip: ""
 }
 
+ReedFlameShadowStaff: {
+	DisplayName: Reed the Flame Shadow's Staff
+	Tooltip: Sets struck enemies ablaze
+}
+
 DN_Weapon: {
 	DisplayName: D N_ Weapon
 	Tooltip: ""
