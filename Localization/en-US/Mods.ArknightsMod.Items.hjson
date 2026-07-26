@@ -3201,3 +3201,25 @@ RopeClaw: {
 	DisplayName: Rope Claw
 	Tooltip: ""
 }
+
+PortableSafehouseDeploymentUnit: {
+	DisplayName: Portable Self-Built Safehouse
+	Tooltip:
+		'''
+		Left-click to build the safehouse directly at the cursor.
+		The safehouse expands to the lower right from the cursor.
+		Ordinary blocks in the area are cleared. Chests, ores, and functional blocks prevent deployment.
+		'''
+
+	Deploy: {
+		Success: Safehouse deployed.
+
+		Failure: {
+			Client: The client cannot deploy structures directly.
+			OutOfBounds: The target position is outside the deployment area.
+			Chest: A chest is in the deployment area.
+			TileEntity: A functional tile is in the deployment area.
+			Ore: Ore is in the deployment area.
+		}
+	}
+}

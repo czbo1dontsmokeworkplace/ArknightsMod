@@ -1,21 +1,19 @@
+using ArknightsMod.Assets.Effects;
 using ArknightsMod.Content.Items;
 using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.NPCs.Friendly;
 using ArknightsMod.Content.Players;
+using ArknightsMod.Content.Tiles.Infrastructure.ReceptionRoom;
+using ArknightsMod.Systems;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
+using System.IO;
 using Terraria;
 using Terraria.GameContent.UI;
 using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using ReLogic.Content;
-using ArknightsMod.Assets.Effects;
-using System;
-using System.IO;
-using ArknightsMod.Systems;
-using ArknightsMod.Content.Tiles.Infrastructure.ReceptionRoom;
-using ArknightsMod.Content.Items.Material;
 
 namespace ArknightsMod
 {
@@ -165,6 +163,9 @@ namespace ArknightsMod
 						global::ArknightsMod.Content.Tiles.TEElevator.ApplyMoveRequest(teId, floorBottomY);
 					}
 					break;
+				case ArkMessageID.PortableSafehouseRequestDeploy:
+					global::ArknightsMod.Content.Items.Consumables.PortableSafehouse.PortableSafehouseDeploymentUnit.ReceiveDeployRequest(reader, whoAmI);
+					break;
 			}
 		}
 
@@ -178,6 +179,7 @@ namespace ArknightsMod
 			CannotLifeTokenSync,
 			CoffeeMachineRequest,
 			ElevatorRequestFloor,
+			PortableSafehouseRequestDeploy,
 		}
 	}
 	//public class Ex : GlobalNPC

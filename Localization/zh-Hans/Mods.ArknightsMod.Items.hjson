@@ -3571,3 +3571,25 @@ RopeClaw: {
 	// DisplayName: Rope Claw
 	// Tooltip: ""
 }
+
+PortableSafehouseDeploymentUnit: {
+	DisplayName: 便携自建安全屋
+	Tooltip:
+		'''
+		左键在鼠标位置直接建造安全屋
+		安全屋从鼠标位置向右下展开
+		区域内的普通物块会被清除；宝箱、矿石和功能方块会阻止部署
+		'''
+
+	Deploy: {
+		Success: 安全屋已部署。
+
+		Failure: {
+			Client: 客户端不能直接部署结构。
+			OutOfBounds: 目标位置超出可部署范围。
+			Chest: 部署区域内有宝箱，无法部署安全屋。
+			TileEntity: 部署区域内有功能方块，无法部署安全屋。
+			Ore: 部署区域内有矿石，无法部署安全屋。
+		}
+	}
+}
