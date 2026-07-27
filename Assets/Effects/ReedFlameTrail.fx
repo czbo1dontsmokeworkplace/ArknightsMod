@@ -38,6 +38,11 @@ float uHeadRound;       // 鼻端圆头长度占比
 float uPixelWarp;       // 像素级细节抖动（很小的值，别调大）
 float uTailBrightness;  // 尾部相对亮度下限（防止尾巴整个消失）
 
+// 发光集中度控制：光晕只在头部，身体保持细而明确
+float uGlowLength;      // 头部发光沿长度延伸多远（0.10~0.35）
+float uHeadHeat;        // 鼻端亮度倍率（大 = 头部爆亮）
+float uBodyHeat;        // 身体/尾部亮度倍率（小 = 身体不发光只是"一条"）
+
 float3 uHeadColor;
 float3 uMidColor;
 float3 uTailColor;
@@ -91,8 +96,14 @@ float4 FlamePS(PSInput input) : COLOR0
     float2 noiseUV = float2(along, across) * uNoiseScale + uFlowOffset;
     float n = tex2D(uNoiseTex, noiseUV).r;
 
-    // 横截面：柔和边缘 = 外发光来源
-    float body = pow(saturate(1.0 - distToCenter), 1.15);
+    // 头部发光权重：只在前 uGlowLength 段内显著，二次衰减收得更紧
+    float headZone = saturate(1.0 - along / max(uGlowLength, 0.001));
+    float headGlow = headZone * headZone;
+
+    // 横截面：边缘软硬沿长度变化 —— 头部软（=光晕外扩），尾部锐（=细而明确的一条线）
+    // 指数小 = 衰减慢 = 边缘糊 = 发光感；指数大 = 边缘干净利落
+    float edgeExp = lerp(2.7, 1.05, headGlow);
+    float body = pow(saturate(1.0 - distToCenter), edgeExp);
 
     // 芯部：紧而亮
     float core = saturate(1.0 - distToCenter * 2.05);
@@ -122,11 +133,12 @@ float4 FlamePS(PSInput input) : COLOR0
     float3 rampCol = FlameRamp(along);
     float3 edgeCol = rampCol * uEdgeTint;                  // 外圈黄橙外发光
     float3 col = lerp(edgeCol, rampCol, core);
-    col = lerp(col, float3(1.0, 0.98, 0.93), saturate(core * core * (1.0 - along * 1.5)));
+    // 白热芯只出现在头部（跟着 headGlow 收），身体不再泛白
+    col = lerp(col, float3(1.0, 0.98, 0.93), saturate(core * core * headGlow * 1.35));
     col *= lerp(0.82, 1.15, n);                            // 噪声调制明暗（幅度收窄，避免忽明忽暗）
 
-    // 头部更热
-    float heat = lerp(1.4, 0.75, saturate(along));
+    // 亮度：头部爆亮，身体维持较低基准 —— 这是"发光集中在头部"的主要来源
+    float heat = lerp(uBodyHeat, uHeadHeat, headGlow);
 
     float alpha = body * lengthFade * dissolveMask * headCap;
     alpha *= input.Color.a;

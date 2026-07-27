@@ -187,3 +187,8 @@ WisadelMarkDebuff: {
 	DisplayName: Wisadel Mark Debuff
 	Description: Mods.ArknightsMod.Buffs.WisadelMarkDebuff.Description
 }
+
+RedeployReadyBuff: {
+	DisplayName: Redeploy Ready
+	Description: Greatly shortens respawn time on death; lost when the set is removed
+}

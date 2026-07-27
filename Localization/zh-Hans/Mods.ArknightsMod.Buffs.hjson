@@ -218,3 +218,8 @@ WisadelMarkDebuff: {
 	// DisplayName: Wisadel Mark Debuff
 	// Description: Mods.ArknightsMod.Buffs.WisadelMarkDebuff.Description
 }
+
+RedeployReadyBuff: {
+	DisplayName: 再部署准备
+	Description: 死亡后的复活时间大幅缩短；脱下套装后失效
+}

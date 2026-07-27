@@ -34,9 +34,13 @@ namespace ArknightsMod.Content.Projectiles.Medic.ReedFlameShadow
 		private const float MinPointDist    = 7f;    // 走够这么多像素才记一个新点（去重，保证线段不退化）
 		private const int   SubDivide       = 3;     // 每段细分几份（曲线更顺、摆动更细腻）
 
-		private const float HeadWidth       = 27f;   // 鼻端半宽（像素）—— 整体大小主要调这个
-		private const float TaperPower      = 0.62f; // 收窄曲线；<1 头部更饱满
-		private const float TailMinWidth    = 0.20f; // 尾端保留的最小宽度比例
+		// 宽度拆成两个分量叠加：细长的身体 + 头部的光团。
+		// 这样身体可以很细（"一条"），同时头部仍有一个明显更粗的发光头。
+		private const float BodyWidth       = 9f;    // 身体半宽（像素）—— 调"细不细"看这个
+		private const float HeadExtraWidth  = 8f;    // 鼻端额外加宽（头部光团大小）
+		private const float HeadBulgeLength = 0.16f; // 头部光团沿长度延伸多远（0~1）
+		private const float TaperPower      = 0.62f; // 身体收窄曲线；<1 前段更饱满
+		private const float TailMinWidth    = 0.22f; // 尾端保留的最小宽度比例
 
 		private const float WobbleAmplitude = 3.2f;  // 尾部摆动振幅（像素）
 		private const float WobbleSpeed     = 2.6f;
@@ -47,10 +51,15 @@ namespace ArknightsMod.Content.Projectiles.Medic.ReedFlameShadow
 		private const float DissolveStart   = 0.55f; // 从哪开始允许溶解（之前恒不透明）
 		private const float NoiseScaleX     = 2.0f;
 		private const float NoiseScaleY     = 1.0f;
-		private const float TrailIntensity  = 1.5f;
+		private const float TrailIntensity  = 1.2f;
 		private const float HeadRound       = 0.09f;
 		private const float PixelWarp       = 0.10f;
-		private const float TailBrightness  = 0.30f; // 尾部亮度下限，防止后半段整个消失
+		private const float TailBrightness  = 0.26f; // 尾部亮度下限，防止后半段整个消失
+
+		// 发光集中度：头部爆亮、身体只是"一条"，不整条泛光
+		private const float GlowLength      = 0.20f; // 头部发光沿长度延伸多远
+		private const float HeadHeat        = 2.1f;  // 鼻端亮度倍率
+		private const float BodyHeat        = 0.62f; // 身体/尾部亮度倍率
 
 		// 配色：白 → 黄 → 褐，不含红
 		private static readonly Vector3 HeadColor = new(1.00f, 0.96f, 0.86f);
@@ -261,6 +270,9 @@ namespace ArknightsMod.Content.Projectiles.Medic.ReedFlameShadow
 			fx.Parameters["uHeadRound"]?.SetValue(HeadRound);
 			fx.Parameters["uPixelWarp"]?.SetValue(PixelWarp);
 			fx.Parameters["uTailBrightness"]?.SetValue(TailBrightness);
+			fx.Parameters["uGlowLength"]?.SetValue(GlowLength);
+			fx.Parameters["uHeadHeat"]?.SetValue(HeadHeat);
+			fx.Parameters["uBodyHeat"]?.SetValue(BodyHeat);
 			fx.Parameters["uHeadColor"]?.SetValue(HeadColor);
 			fx.Parameters["uMidColor"]?.SetValue(MidColor);
 			fx.Parameters["uTailColor"]?.SetValue(TailColor);
@@ -278,9 +290,13 @@ namespace ArknightsMod.Content.Projectiles.Medic.ReedFlameShadow
 
 		// 在给定路径点处，按彗星宽度剖面 + 尾部摆动，生成条带两侧的一对顶点
 		private void AddPair(List<Vertex> bars, Vector2 point, Vector2 normal, float along) {
-			float taper = MathF.Pow(1f - along, TaperPower);
-			taper = MathHelper.Lerp(TailMinWidth, 1f, taper);
-			float w = HeadWidth * taper;
+			// 身体：细长、沿长度收窄
+			float bodyTaper = MathF.Pow(1f - along, TaperPower);
+			bodyTaper = MathHelper.Lerp(TailMinWidth, 1f, bodyTaper);
+			// 头部光团：只在最前面一小段鼓起来，二次衰减收得紧
+			float headBulge = MathHelper.Clamp(1f - along / HeadBulgeLength, 0f, 1f);
+			headBulge *= headBulge;
+			float w = BodyWidth * bodyTaper + HeadExtraWidth * headBulge;
 
 			float wobbleWeight = MathHelper.Clamp((along - WobbleStart) / (1f - WobbleStart), 0f, 1f);
 			float amp = WobbleAmplitude * wobbleWeight * wobbleWeight;
