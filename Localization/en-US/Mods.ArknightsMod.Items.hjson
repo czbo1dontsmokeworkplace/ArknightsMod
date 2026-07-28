@@ -3269,6 +3269,17 @@ PortableSafehouseDeploymentUnit: {
 	}
 }
 
+PortableRhodesIslandSafehouse: {
+	DisplayName: Portable Rhodes Island Safehouse
+	Tooltip:
+		'''
+		Left-click to instantly place a standard-issue Rhodes Island safehouse
+		The cursor always aligns with the building's horizontal center, at ground level
+		'''
+}
+
+PortableStructure.Deploy.Failure.OutOfBounds: The target position is outside the deployment area.
+
 PompeiiLavaCore: {
 	DisplayName: Pompeii's Lava Core
 	Tooltip:
@@ -3277,5 +3288,23 @@ PompeiiLavaCore: {
 		When taking over 40 damage from a single hit, triggers an explosion centered on you
 		dealing 200 area damage and inflicting On Fire! on enemies
 		Explosion damage benefits from melee damage bonuses
+		'''
+}
+
+DevTestWrench: {
+	DisplayName: Dev Test Wrench
+	Tooltip:
+		'''
+		Developer item
+		Hold left click and drag to select a region, then use /exp to export it as a structure file
+		'''
+}
+
+FoldableBuildingItem: {
+	DisplayName: Foldable Building
+	Tooltip:
+		'''
+		Developer item (placeholder / unfinished)
+		Hold to preview the building projection at your cursor, left click to place it
 		'''
 }

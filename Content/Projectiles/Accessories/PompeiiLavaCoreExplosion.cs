@@ -7,26 +7,20 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles.Accessories
 {
-	/// <summary>
-	/// 庞贝的熔岩核心 —— 受重伤时以玩家为中心的熔岩爆炸。
-	/// <para>
-	/// 视觉全部由 Dust 构成，不绘制任何贴图（<c>PreDraw</c> 返回 false），
-	/// 所以这个弹幕<b>不需要配套 .png 素材</b>。
-	/// </para>
-	/// <para>
-	/// 伤害值由 <c>PompeiiLavaCorePlayer</c> 在生成时算好传入（已含近战加成），
-	/// 本类不再做任何伤害缩放。
-	/// </para>
-	/// </summary>
+	// 庞贝的熔岩核心 —— 受重伤时以玩家为中心的熔岩爆炸。
+	// 视觉全部由 Dust 构成，不绘制任何贴图（PreDraw 返回 false），
+	// 所以这个弹幕不需要配套 .png 素材。
+	// 伤害值由 PompeiiLavaCorePlayer 在生成时算好传入（已含近战加成），
+	// 本类不再做任何伤害缩放。
 	public class PompeiiLavaCoreExplosion : ModProjectile
 	{
-		/// <summary>爆炸判定半径（像素）。160 ≈ 10 格。</summary>
+		// 爆炸判定半径（像素）。160 ≈ 10 格。
 		private const float Radius = 160f;
 
-		/// <summary>命中敌人后附加的"着火了!"持续时间（帧）。</summary>
+		// 命中敌人后附加的"着火了!"持续时间（帧）。
 		private const int OnFireDuration = 60 * 5;
 
-		/// <summary>存在帧数：只需要够判定一次 + 播完 Dust。</summary>
+		// 存在帧数：只需要够判定一次 + 播完 Dust。
 		private const int LifeTime = 24;
 
 		// 贴图不存在，指向一张已有的小图避免加载失败；反正 PreDraw 里不画。

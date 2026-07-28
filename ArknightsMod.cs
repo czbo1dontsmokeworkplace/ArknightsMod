@@ -170,6 +170,12 @@ namespace ArknightsMod
 				case ArkMessageID.PortableSafehouseRequestDeploy:
 					global::ArknightsMod.Content.Items.Consumables.PortableSafehouse.PortableSafehouseDeploymentUnit.ReceiveDeployRequest(reader, whoAmI);
 					break;
+				case ArkMessageID.AkStructureRequestDeploy:
+					global::ArknightsMod.Systems.Structures.AkStructureDeploySystem.ReceiveDeployRequest(reader, whoAmI);
+					break;
+				case ArkMessageID.AkStructurePlacedEffect:
+					global::ArknightsMod.Systems.Structures.AkStructureDeploySystem.ReceivePlacedEffect(reader);
+					break;
 			}
 		}
 
@@ -184,6 +190,8 @@ namespace ArknightsMod
 			CoffeeMachineRequest,
 			ElevatorRequestFloor,
 			PortableSafehouseRequestDeploy,
+			AkStructureRequestDeploy,
+			AkStructurePlacedEffect,
 		}
 	}
 	//public class Ex : GlobalNPC

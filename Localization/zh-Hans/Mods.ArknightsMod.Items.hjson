@@ -3639,6 +3639,20 @@ PortableSafehouseDeploymentUnit: {
 	}
 }
 
+PortableRhodesIslandSafehouse: {
+	DisplayName: 便携罗德岛安全屋
+	Tooltip:
+		'''
+		罗德岛外勤干员的标准住宿设施，Mechanist的得意之作。
+		其内置的能源核心可以在极短时间内展开预置的碳素板，
+		构筑起舒适而又可靠的休息空间。
+		最初的开发目的是奖励给夺得办公室圆凳滑行大赛冠军的干员的玩具模型，
+		后被改造出实用用途配给外勤干员……
+		'''
+}
+
+PortableStructure.Deploy.Failure.OutOfBounds: 目标位置超出可部署范围。
+
 PompeiiLavaCore: {
 	DisplayName: 庞贝的熔岩核心
 	Tooltip:
@@ -3647,5 +3661,23 @@ PompeiiLavaCore: {
 		受到的单次伤害超过40点时，以自身为中心引发一次爆炸
 		造成200点范围伤害并对敌人附加"着火了!"减益
 		爆炸伤害享受近战伤害加成
+		'''
+}
+
+DevTestWrench: {
+	DisplayName: 开发测试扳手
+	Tooltip:
+		'''
+		开发者物品
+		按住左键拖动框选一块区域，松开后用聊天指令 /exp 导出为结构文件
+		'''
+}
+
+FoldableBuildingItem: {
+	DisplayName: 折叠式建筑
+	Tooltip:
+		'''
+		开发者物品（占位/未完成）
+		手持时在光标处显示建筑投影，左键点击后整体放置
 		'''
 }

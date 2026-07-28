@@ -6,16 +6,12 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Accessories.Boss
 {
-	/// <summary>
-	/// 庞贝的熔岩核心 —— 饰品。
-	/// <list type="bullet">
-	///   <item>防御力 +2</item>
-	///   <item>获得黑曜石皮药水效果（免疫岩浆与火焰块，免疫"着火了!"）</item>
-	///   <item>单次受到伤害超过 <see cref="PompeiiLavaCorePlayer.ExplosionThreshold"/> 点时，
-	///         以自身为中心引爆一次范围伤害，并对命中的敌人附加"着火了!"；
-	///         每次触发后有 <see cref="PompeiiLavaCorePlayer.ExplosionCooldown"/> 帧（5 秒）冷却</item>
-	/// </list>
-	/// </summary>
+	// 庞贝的熔岩核心 —— 饰品。
+	//   - 防御力 +2
+	//   - 获得黑曜石皮药水效果（免疫岩浆与火焰块，免疫"着火了!"）
+	//   - 单次受到伤害超过 PompeiiLavaCorePlayer.ExplosionThreshold 点时，
+	//     以自身为中心引爆一次范围伤害，并对命中的敌人附加"着火了!"；
+	//     每次触发后有 PompeiiLavaCorePlayer.ExplosionCooldown 帧（5 秒）冷却
 	public class PompeiiLavaCore : ModItem
 	{
 		public override void SetStaticDefaults() {
@@ -45,13 +41,13 @@ namespace ArknightsMod.Content.Items.Accessories.Boss
 
 	public class PompeiiLavaCorePlayer : ModPlayer
 	{
-		/// <summary>触发爆炸所需的单次伤害阈值（点）。</summary>
+		// 触发爆炸所需的单次伤害阈值（点）。
 		public const int ExplosionThreshold = 40;
 
-		/// <summary>爆炸基础伤害（未计入近战加成）。</summary>
+		// 爆炸基础伤害（未计入近战加成）。
 		public const int BaseExplosionDamage = 200;
 
-		/// <summary>触发一次爆炸后的冷却时间（帧）。60 帧 = 1 秒，300 帧 = 5 秒。</summary>
+		// 触发一次爆炸后的冷却时间（帧）。60 帧 = 1 秒，300 帧 = 5 秒。
 		public const int ExplosionCooldown = 60 * 5;
 
 		public bool Equipped;
