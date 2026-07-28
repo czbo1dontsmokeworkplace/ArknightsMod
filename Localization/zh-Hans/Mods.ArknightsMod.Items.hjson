@@ -3638,3 +3638,14 @@ PortableSafehouseDeploymentUnit: {
 		}
 	}
 }
+
+PompeiiLavaCore: {
+	DisplayName: 庞贝的熔岩核心
+	Tooltip:
+		'''
+		获得黑曜石皮药水效果（对火块、岩浆免疫）
+		受到的单次伤害超过40点时，以自身为中心引发一次爆炸
+		造成200点范围伤害并对敌人附加"着火了!"减益
+		爆炸伤害享受近战伤害加成
+		'''
+}

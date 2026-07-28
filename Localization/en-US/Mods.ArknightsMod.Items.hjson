@@ -3268,3 +3268,14 @@ PortableSafehouseDeploymentUnit: {
 		}
 	}
 }
+
+PompeiiLavaCore: {
+	DisplayName: Pompeii's Lava Core
+	Tooltip:
+		'''
+		Grants the Obsidian Skin Potion effect (immunity to fire blocks and lava)
+		When taking over 40 damage from a single hit, triggers an explosion centered on you
+		dealing 200 area damage and inflicting On Fire! on enemies
+		Explosion damage benefits from melee damage bonuses
+		'''
+}
