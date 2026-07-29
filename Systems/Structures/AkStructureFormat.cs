@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using ArknightsMod.Systems;
 
 namespace ArknightsMod.Systems.Structures
 {
@@ -31,7 +32,16 @@ namespace ArknightsMod.Systems.Structures
 		// 版本 2：HasWall 分支新增 WallFrameX/WallFrameY（供预览用真实贴图帧），
 		// 版本 1 的旧文件没有这两个字段，读取时按 0/0 补齐（真正落地时墙的帧
 		// 反正会被 SquareWallFrame 重新算过，这两个字段只影响预览像不像）。
-		public const ushort FormatVersion = 2;
+		//
+		// 版本 3：新增 HasDecorInstances 分支，补存会客室家具系统（见
+		// ReceptionRoomDecorSystem）挂在锚点 tile 上的"这里具体摆了什么家具"数据
+		// （种类/朝向/变体/相对锚点的偏移）。这类家具落地后世界里真实的 tile 只是
+		// 一个空壳锚点，图全靠系统按 TileEntity 里的数据自己画——之前只存 tile
+		// 类型不存这份数据，办公桌/办公椅这类家具录进结构再放出来就会变成"能挖、
+		// 有判定，但什么都不画"的空壳。版本 1/2 的旧文件没有这个分支，读到这类
+		// 家具的锚点 tile 时只能重现空壳（老问题依旧存在，无法追溯修复，只能
+		// 重新导出一份新文件）。
+		public const ushort FormatVersion = 3;
 
 		public const string FileExtension = ".akstruct";
 
@@ -49,6 +59,9 @@ namespace ArknightsMod.Systems.Structures
 			HasActuator = 1 << 4,
 			IsActuated = 1 << 5,
 			HasWire = 1 << 6,
+			// CellFlags 是 byte，这是最后一个空位了（bit 7）——以后再要加新的
+			// "有没有 XXX"标志位，得先把 CellFlags 换成 ushort，不能直接接着往下加。
+			HasDecorInstances = 1 << 7,
 		}
 
 		[Flags]
@@ -89,12 +102,12 @@ namespace ArknightsMod.Systems.Structures
 
 			for (int y = minY; y <= maxY; y++) {
 				for (int x = minX; x <= maxX; x++) {
-					WriteCell(w, Main.tile[x, y]);
+					WriteCell(w, Main.tile[x, y], x, y);
 				}
 			}
 		}
 
-		private static void WriteCell(BinaryWriter w, Tile tile) {
+		private static void WriteCell(BinaryWriter w, Tile tile, int x, int y) {
 			CellFlags flags = CellFlags.None;
 			if (tile.HasTile) flags |= CellFlags.HasTile;
 			if (tile.WallType != WallID.None) flags |= CellFlags.HasWall;
@@ -109,6 +122,13 @@ namespace ArknightsMod.Systems.Structures
 			if (tile.GreenWire) wire |= WireFlags.Green;
 			if (tile.YellowWire) wire |= WireFlags.Yellow;
 			if (wire != WireFlags.None) flags |= CellFlags.HasWire;
+
+			List<ReceptionRoomDecorSystem.DecorInstance> decorInstances = null;
+			if (tile.HasTile && ReceptionRoomDecorSystem.IsAnchorTileType(tile.TileType)
+				&& ReceptionRoomDecorSystem.TryGetInstancesAt(new Point16(x, y), out decorInstances)
+				&& decorInstances.Count > 0) {
+				flags |= CellFlags.HasDecorInstances;
+			}
 
 			w.Write((byte)flags);
 
@@ -134,6 +154,19 @@ namespace ArknightsMod.Systems.Structures
 
 			if (flags.HasFlag(CellFlags.HasWire))
 				w.Write((byte)wire);
+
+			if (flags.HasFlag(CellFlags.HasDecorInstances)) {
+				w.Write((byte)decorInstances.Count);
+				foreach (ReceptionRoomDecorSystem.DecorInstance inst in decorInstances) {
+					w.Write((byte)inst.Kind);
+					w.Write(inst.Direction);
+					w.Write(inst.Variant);
+					// 存相对这个锚点格的偏移，而不是绝对世界坐标——结构放到新位置时
+					// 只要把偏移加回新的锚点坐标就行，不用管原来导出时具体在哪。
+					w.Write((short)(inst.TopLeft.X - x));
+					w.Write((short)(inst.TopLeft.Y - y));
+				}
+			}
 		}
 
 		// 读取一个本机磁盘上的 .akstruct 文件（比如开发测试扳手刚导出、还躺在
@@ -164,9 +197,9 @@ namespace ArknightsMod.Systems.Structures
 				throw new InvalidDataException($"不是有效的 .akstruct 文件（文件头不匹配）：{sourceDescription}");
 
 			ushort version = r.ReadUInt16();
-			if (version != 1 && version != FormatVersion) {
+			if (version < 1 || version > FormatVersion) {
 				throw new InvalidDataException(
-					$"不支持的 .akstruct 版本号 {version}（当前代码只认识版本 1 和 {FormatVersion}）：{sourceDescription}");
+					$"不支持的 .akstruct 版本号 {version}（当前代码只认识版本 1~{FormatVersion}）：{sourceDescription}");
 			}
 
 			ushort width = r.ReadUInt16();
@@ -222,6 +255,20 @@ namespace ArknightsMod.Systems.Structures
 			cell.HasActuator = flags.HasFlag(CellFlags.HasActuator);
 			cell.IsActuated = flags.HasFlag(CellFlags.IsActuated);
 
+			if (version >= 3 && flags.HasFlag(CellFlags.HasDecorInstances)) {
+				byte count = r.ReadByte();
+				cell.DecorInstances = new List<DecorInstanceRecord>(count);
+				for (int k = 0; k < count; k++) {
+					cell.DecorInstances.Add(new DecorInstanceRecord {
+						Kind = (ReceptionRoomDecorSystem.DecorKind)r.ReadByte(),
+						Direction = r.ReadSByte(),
+						Variant = r.ReadByte(),
+						OffsetX = r.ReadInt16(),
+						OffsetY = r.ReadInt16(),
+					});
+				}
+			}
+
 			return cell;
 		}
 
@@ -233,6 +280,18 @@ namespace ArknightsMod.Systems.Structures
 			Directory.CreateDirectory(dir);
 			return dir;
 		}
+	}
+
+	// 挂在一个锚点格上的"这里具体摆了什么会客室家具"记录，对应
+	// ReceptionRoomDecorSystem.DecorInstance，只是把 TopLeft 换成了相对锚点格的
+	// 偏移（OffsetX/OffsetY），方便结构整体挪到新位置时直接加回新锚点坐标。
+	public struct DecorInstanceRecord
+	{
+		public ReceptionRoomDecorSystem.DecorKind Kind;
+		public sbyte Direction;
+		public byte Variant;
+		public short OffsetX;
+		public short OffsetY;
 	}
 
 	// 单个格子的方块数据。struct 是为了让 StructureCell[,] 数组不额外产生几十万个对象。
@@ -259,6 +318,9 @@ namespace ArknightsMod.Systems.Structures
 		public bool IsActuated;
 
 		public bool RedWire, BlueWire, GreenWire, YellowWire;
+
+		// null 表示这一格没有挂会客室家具实例数据（绝大多数格子都是这样）。
+		public List<DecorInstanceRecord> DecorInstances;
 	}
 
 	// 内存中的一份已加载结构，提供预览取色与放置逻辑。
@@ -312,6 +374,28 @@ namespace ArknightsMod.Systems.Structures
 					int wy = worldTopLeft.Y + y;
 					if (WorldGen.InWorld(wx, wy, 5) && Main.tile[wx, wy].WallType != WallID.None)
 						WorldGen.SquareWallFrame(wx, wy, true);
+				}
+			}
+
+			// 会客室家具的锚点 tile 只是个空壳，PlaceCell 那一遍只把壳子（tile 类型/帧）
+			// 摆上去了，真正"这里画的是什么家具"的数据要单独在这里按记录重建一遍
+			// TileEntity，不然摆出来就是"能挖、有判定，但什么都不画"的空壳。
+			for (int y = 0; y < Height; y++) {
+				for (int x = 0; x < Width; x++) {
+					StructureCell cell = _cells[x, y];
+					if (cell.DecorInstances == null)
+						continue;
+
+					int wx = worldTopLeft.X + x;
+					int wy = worldTopLeft.Y + y;
+					if (!WorldGen.InWorld(wx, wy, 5))
+						continue;
+
+					Point16 anchorPos = new(wx, wy);
+					foreach (DecorInstanceRecord rec in cell.DecorInstances) {
+						Point16 topLeft = new(wx + rec.OffsetX, wy + rec.OffsetY);
+						ReceptionRoomDecorSystem.RestoreInstanceAtAnchor(anchorPos, rec.Kind, topLeft, rec.Direction, rec.Variant);
+					}
 				}
 			}
 		}
