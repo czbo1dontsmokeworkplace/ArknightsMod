@@ -1,30 +1,21 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using ArknightsMod.Content.Tiles.Infrastructure;
+﻿using Terraria.ModLoader;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content.Items.Material;
 
 namespace ArknightsMod.Content.Items.Armor.Sniper.Catapult
 {
 	[AutoloadEquip(EquipType.Legs)]
-	public class CatapultLegs : NeoArmorLegs
+	public class CatapultLegs : NeoArmorReforgeVanityLegs
 	{
 		public override int Rarity => 3;
-		public override int ArmorLifeBonus => 58;
-		
-		public override void SetArmorDefaults() {
-			Item.defense = 2;
-		}
 
-		public override void AddRecipes() {
-			CreateRecipe()
-			.AddIngredient<CatapultLegs>(1)
-			.AddIngredient<Orundum>(30)
-			.AddIngredient<Oriron>(1)
-			.AddTile(ModContent.TileType<FactoryTile>())
-			.AddCondition(NeoArmorUtils.NeedVanity)
-			.DisableDecraft()
-			.Register();
-		}
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
+			Defense = 2,
+			LifeBonus = 58,
+			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Catapult",
+			Materials = recipe => recipe
+				.AddIngredient<Orundum>(30)
+				.AddIngredient<Oriron>(1),
+		};
 	}
 }

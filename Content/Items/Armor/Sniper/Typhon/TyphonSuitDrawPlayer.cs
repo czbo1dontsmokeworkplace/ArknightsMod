@@ -1,3 +1,4 @@
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -30,14 +31,10 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Typhon
 			}*/
 		}
 
+		// 迁移改动：原先手写"比对 armor[1] / armor[11] 的 ItemID"，那样只认时装、
+		// 漏掉套装形态（套装件是另一个独立 ItemID）。统一走 IsPartVisible，两者都认，
+		// 而且它已经处理了"时装栏覆盖盔甲栏外观"的原版规则。
 		private static bool IsTyphonBodyEquipped(Player p)
-		{
-			int t = ModContent.ItemType<TyphonBody>();
-			if (p.armor[1].type == t)
-				return true;
-			if (p.armor.Length > 11 && p.armor[11].type == t)
-				return true;
-			return false;
-		}
+			=> NeoArmorReforgeSetLoader.IsPartVisible<TyphonBody>(p, EquipType.Body);
 	}
 }

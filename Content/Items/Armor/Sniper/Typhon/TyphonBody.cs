@@ -1,31 +1,22 @@
-﻿using ArknightsMod.Content.Items.Material;
-using ArknightsMod.Content.Tiles.Infrastructure;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+﻿using Terraria.ModLoader;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
+using ArknightsMod.Content.Items.Material;
 
 namespace ArknightsMod.Content.Items.Armor.Sniper.Typhon
 {
 	[AutoloadEquip(EquipType.Body)]
-	public class TyphonBody : NeoArmorBody
+	public class TyphonBody : NeoArmorReforgeVanityBody
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 85;
 
-		public override void SetArmorDefaults() {
-			Item.defense = 8;
-		}
-		
-		public override void AddRecipes() {
-			CreateRecipe()
-			.AddIngredient<TyphonBody>(1)
-			.AddIngredient<Orundum>(60)
-			.AddIngredient<D32Steel>(6)
-			.AddIngredient<WhiteHorseKohl>(7)
-			.AddTile(ModContent.TileType<FactoryTile>())
-			.AddCondition(NeoArmorUtils.NeedVanity)
-			.DisableDecraft()
-			.Register();
-		}
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
+			Defense = 8,
+			LifeBonus = 85,
+			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Typhon",
+			Materials = recipe => recipe
+				.AddIngredient<Orundum>(60)
+				.AddIngredient<D32Steel>(6)
+				.AddIngredient<WhiteHorseKohl>(7),
+		};
 	}
 }

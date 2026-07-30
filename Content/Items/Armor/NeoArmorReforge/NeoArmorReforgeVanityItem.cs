@@ -375,6 +375,9 @@ namespace ArknightsMod.Content.Items.Armor.NeoArmorReforge
 	//           ※ 电弧只迁了时装，套装仍缺配方，原因见 RaidianHead 顶部说明
 	//         + 第六批【特种 Specialist】：多萝西、新约能天使、狮蝎、水月、若叶睦、缄默德克萨斯
 	//                                     （特种职业至此清空）
+	//         + 第七批【狙击 Sniper】：安德切尔、空爆、能天使、远牙、菲亚梅塔、克洛斯、
+	//                                 寒芒克洛丝、玫拉、普罗旺斯、提丰、W、维什戴尔
+	//                                 （加上首批的迷迭香，狙击职业至此清空）
 	// 其余干员仍在旧的 NeoArmorItem 上，两套系统并存、互不干扰。旧系统全部迁完后，
 	// 可以直接删掉 NeoArmorItem / NeoArmorGltem / NeoArmorSlots / NeoArmorEquipSystem
 	// 这四个文件。

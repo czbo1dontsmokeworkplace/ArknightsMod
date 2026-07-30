@@ -1,5 +1,6 @@
 using ArknightsMod.Content.Buffs.ArmorSets;
 using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content.Projectiles.Sniper.Wisadel;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -30,14 +31,19 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Wisadel
 			WisadelSetActive = false;
 		}
 
-		public override void PostUpdateEquips() {
-			WisadelHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<WisadelHead>())
-				&& Player.armor[0].neoarmor().hasUpgraded;
-			WisadelSetActive = WisadelHelmetActive
-				&& Player.armor[1].type == ModContent.ItemType<WisadelBody>() && Player.armor[1].neoarmor().hasUpgraded
-				&& Player.armor[2].type == ModContent.ItemType<WisadelLegs>() && Player.armor[2].neoarmor().hasUpgraded;
+		// 头盔标记的入口。旧代码是 WisadelHead.UpdateArmorEquip 直接写这个字段，
+		// 新系统由 WisadelHead 的 SetProfile.OnHelmetActive 调这里（文档第 6 节写法 B）。
+		public static void OnHelmetActive(Player player) {
+			player.GetModPlayer<WisadelSetPlayer>().WisadelHelmetActive = true;
+		}
 
-			OperatorSetEquipHelper.ApplySetBonusText(Player, WisadelSetActive, "Mods.ArknightsMod.ArmorSets.Wisadel.SetBonus");
+		// NeoArmor Reforge：套装件是独立 ItemID，穿上它本身就代表"已经是套装形态"，
+		// 不需要再查 hasUpgraded；player.setBonus 文本交给 WisadelHead 的
+		// SetProfile.SetBonusKey 统一设置，这里不再重复设置一遍。
+		public override void PostUpdateEquips() {
+			WisadelSetActive = WisadelHelmetActive
+				&& Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<WisadelBody>()
+				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<WisadelLegs>();
 		}
 
 		public override void PostUpdate() {
