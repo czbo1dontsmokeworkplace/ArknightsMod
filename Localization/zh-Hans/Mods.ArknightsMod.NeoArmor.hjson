@@ -51,4 +51,22 @@ SetName: {
 	// VanillaBody: 香草的躯干（套装）
 	// VanillaHead: 香草的头盔
 	// VanillaLegs: 香草的腿部（套装）
+	// BeagleBody: 米格鲁的上衣（套装）
+	// BeagleHead: 米格鲁的头盔
+	// BeagleLegs: 米格鲁的裤子（套装）
+	// CardiganBody: 卡缇的躯干（套装）
+	// CardiganHead: 卡缇的头盔
+	// CardiganLegs: 卡缇的腿部（套装）
+	// NianBody: 年的上衣（套装）
+	// NianHead: 年的头盔
+	// NianLegs: 年的下装（套装）
+	// SariaBody: 塞雷娅的上衣（套装）
+	// SariaHead: 塞雷娅的头盔
+	// SariaLegs: 塞雷娅的下装（套装）
+	// SpotBody: 斑点的躯干（套装）
+	// SpotHead: 斑点的头盔
+	// SpotLegs: 斑点的腿部（套装）
+	// VulcanBody: 火神的躯干（套装）
+	// VulcanHead: 火神的头盔
+	// VulcanLegs: 火神的腿部（套装）
 }

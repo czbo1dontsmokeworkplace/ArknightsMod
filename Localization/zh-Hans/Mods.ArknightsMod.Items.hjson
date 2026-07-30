@@ -629,17 +629,17 @@ RosmontisLegs: {
 }
 
 SariaBody: {
-	DisplayName: 赛雷娅的上衣
+	DisplayName: 塞雷娅的上衣
 	// Tooltip: ""
 }
 
 SariaHead: {
-	DisplayName: 赛雷娅的头套
+	DisplayName: 塞雷娅的头套
 	// Tooltip: ""
 }
 
 SariaLegs: {
-	DisplayName: 赛雷娅的下装
+	DisplayName: 塞雷娅的下装
 	// Tooltip: ""
 }
 
@@ -3731,3 +3731,21 @@ MorniaLegsSet.Tooltip: 开发者套装
 // VanillaBodySet.Tooltip: ""
 // VanillaHeadSet.Tooltip: ""
 // VanillaLegsSet.Tooltip: ""
+// BeagleBodySet.Tooltip: ""
+// BeagleHeadSet.Tooltip: ""
+// BeagleLegsSet.Tooltip: ""
+// CardiganBodySet.Tooltip: ""
+// CardiganHeadSet.Tooltip: ""
+// CardiganLegsSet.Tooltip: ""
+// NianBodySet.Tooltip: ""
+// NianHeadSet.Tooltip: ""
+// NianLegsSet.Tooltip: ""
+// SariaBodySet.Tooltip: ""
+// SariaHeadSet.Tooltip: ""
+// SariaLegsSet.Tooltip: ""
+// SpotBodySet.Tooltip: ""
+// SpotHeadSet.Tooltip: ""
+// SpotLegsSet.Tooltip: ""
+// VulcanBodySet.Tooltip: ""
+// VulcanHeadSet.Tooltip: ""
+// VulcanLegsSet.Tooltip: ""

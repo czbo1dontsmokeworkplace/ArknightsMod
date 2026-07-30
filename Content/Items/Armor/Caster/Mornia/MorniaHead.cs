@@ -18,6 +18,7 @@ namespace ArknightsMod.Content.Items.Armor.Caster.Mornia
 				.AddIngredient<Aketon>(3)
 				.AddIngredient<RefinedSolvent>(2),
 			OnHelmetActive = MorniaSetPlayer.OnHelmetActive,
+			OnFullSetActive = MorniaSetPlayer.OnFullSetActive,
 			SetBonusKey = "Mods.ArknightsMod.ArmorSets.Mornia.SetBonus",
 		};
 	}
