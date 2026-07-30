@@ -1,5 +1,6 @@
-using System;
+﻿using System;
 using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -18,17 +19,14 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Utage
 			UtageSetActive = false;
 		}
 
+		// NeoArmor Reforge：套装件是独立 ItemID，穿上它本身就代表"已经是套装形态"，
+		// 不需要再查 hasUpgraded；player.setBonus 文本交给 UtageHead 的
+		// SetProfile.SetBonusKey 统一设置，这里不再重复设置一遍。
 		public override void PostUpdateEquips() {
-			UtageHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<UtageHead>());
-			UtageSetActive = OperatorSetEquipHelper.HasFullSet(
-				Player,
-				ModContent.ItemType<UtageHead>(),
-				ModContent.ItemType<UtageBody>(),
-				ModContent.ItemType<UtageLegs>());
-			OperatorSetEquipHelper.ApplySetBonusText(
-				Player,
-				UtageSetActive,
-				"Mods.ArknightsMod.ArmorSets.Utage.SetBonus");
+			UtageHelmetActive = Player.armor[0].type == NeoArmorReforgeSetLoader.GetSetType<UtageHead>();
+			UtageSetActive = UtageHelmetActive
+				&& Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<UtageBody>()
+				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<UtageLegs>();
 		}
 
 		public override void PostUpdate() {

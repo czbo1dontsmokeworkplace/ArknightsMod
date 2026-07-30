@@ -378,9 +378,14 @@ namespace ArknightsMod.Content.Items.Armor.NeoArmorReforge
 	//         + 第七批【狙击 Sniper】：安德切尔、空爆、能天使、远牙、菲亚梅塔、克洛斯、
 	//                                 寒芒克洛丝、玫拉、普罗旺斯、提丰、W、维什戴尔
 	//                                 （加上首批的迷迭香，狙击职业至此清空）
-	// 其余干员仍在旧的 NeoArmorItem 上，两套系统并存、互不干扰。旧系统全部迁完后，
-	// 可以直接删掉 NeoArmorItem / NeoArmorGltem / NeoArmorSlots / NeoArmorEquipSystem
-	// 这四个文件。
+	//         + 第八批【近卫 Guard】：陈、隐德来希、羽毛笔、拉普兰德、缠丸、玫兰莎、月见夜、
+	//                                 玛恩纳、旋律之主、泡普卡、斯卡蒂、史尔特尔、乌尔比安、宴
+	//                                 （近卫职业至此清空）
+	//         + 终末地【管理员 / 别礼 / 伊冯】与博士初始装：均为纯时装（无套装文案与配方）
+	//
+	// ✅ 全部干员已迁移完毕，旧的 NeoArmor 系统已无任何引用，
+	//    NeoArmorItem / NeoArmorGltem / NeoArmorSlots / NeoArmorEquipSystem /
+	//    OperatorSetEquipHelper 这五个文件可以直接删除。
 	//
 	// ⚠ 迁移一批干员时，除了本文件第 9 节列的那些步骤，别忘了检查**跨干员的判定入口**：
 	//   · Operator<职业>SetHelper（如 OperatorVanguardSetHelper）里的 HasFullSet 判定，

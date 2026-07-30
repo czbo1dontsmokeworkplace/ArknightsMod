@@ -1,5 +1,6 @@
-using System;
+﻿using System;
 using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
@@ -27,14 +28,14 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Skadi
 			SkadiSetActive = false;
 		}
 
+		// NeoArmor Reforge：套装件是独立 ItemID，穿上它本身就代表"已经是套装形态"，
+		// 不需要再查 hasUpgraded；player.setBonus 文本交给 SkadiHead 的
+		// SetProfile.SetBonusKey 统一设置，这里不再重复设置一遍。
 		public override void PostUpdateEquips() {
-			SkadiHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<SkadiHead>());
-			SkadiSetActive = OperatorSetEquipHelper.HasFullSet(
-				Player,
-				ModContent.ItemType<SkadiHead>(),
-				ModContent.ItemType<SkadiBody>(),
-				ModContent.ItemType<SkadiLegs>());
-			OperatorSetEquipHelper.ApplySetBonusText(Player, SkadiSetActive, "Mods.ArknightsMod.ArmorSets.Skadi.SetBonus");
+			SkadiHelmetActive = Player.armor[0].type == NeoArmorReforgeSetLoader.GetSetType<SkadiHead>();
+			SkadiSetActive = SkadiHelmetActive
+				&& Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<SkadiBody>()
+				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<SkadiLegs>();
 		}
 
 		public override void ModifyMaxStats(out StatModifier health, out StatModifier mana) {

@@ -1,8 +1,10 @@
 using System;
 using ArknightsMod.Content.Buffs.ArmorSets;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor
@@ -169,8 +171,12 @@ namespace ArknightsMod.Content.Items.Armor
 		public sealed override void PostUpdateEquips() {
 			base.PostUpdateEquips();
 
-			SetActive = OperatorSetEquipHelper.HasFullSet(
-				Player, HeadItemType, BodyItemType, LegsItemType);
+			// NeoArmor Reforge：套装件是独立 ItemID，穿上它本身就代表"已经是套装形态"，
+			// 不再需要旧系统的 hasUpgraded 判断。子类给的三个 ItemType 是**时装**的，
+			// 这里用 GetSetType 换算成对应套装件再比对。
+			SetActive = Player.armor[0].type == NeoArmorReforgeSetLoader.GetSetType(HeadItemType)
+				&& Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType(BodyItemType)
+				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType(LegsItemType);
 
 			if (SetActive) {
 				if (_wearTicks < ChargeUpTicks)
@@ -186,8 +192,11 @@ namespace ArknightsMod.Content.Items.Armor
 						OnRedeployReadyGained();
 				}
 
+				// ⚠ 一般不该走这里：套装文案应该由干员 Head 的 SetProfile.SetBonusKey 统一设置，
+				// 两处都设会互相覆盖。这个分支只服务于"没有 SetProfile 却想显示套装文案"的
+				// 特殊子类，默认 SetBonusKey 为 null 时不生效。
 				if (SetBonusKey != null)
-					OperatorSetEquipHelper.ApplySetBonusText(Player, true, SetBonusKey);
+					Player.setBonus = Language.GetTextValue(SetBonusKey);
 			}
 			else {
 				// 脱下套装：蓄力清零 + Buff 立即消失

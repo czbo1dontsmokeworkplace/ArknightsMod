@@ -1,4 +1,5 @@
-using ArknightsMod.Content.Items.Armor;
+﻿using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Systems.Gameplay.OperatorTags;
 using Terraria;
 using Terraria.ModLoader;
@@ -15,14 +16,14 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Mlynar
 			MlynarSetActive = false;
 		}
 
+		// NeoArmor Reforge：套装件是独立 ItemID，穿上它本身就代表"已经是套装形态"，
+		// 不需要再查 hasUpgraded；player.setBonus 文本交给 MlynarHead 的
+		// SetProfile.SetBonusKey 统一设置，这里不再重复设置一遍。
 		public override void PostUpdateEquips() {
-			MlynarHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<MlynarHead>());
-			MlynarSetActive = OperatorSetEquipHelper.HasFullSet(
-				Player,
-				ModContent.ItemType<MlynarHead>(),
-				ModContent.ItemType<MlynarBody>(),
-				ModContent.ItemType<MlynarLegs>());
-			OperatorSetEquipHelper.ApplySetBonusText(Player, MlynarSetActive, "Mods.ArknightsMod.ArmorSets.Mlynar.SetBonus");
+			MlynarHelmetActive = Player.armor[0].type == NeoArmorReforgeSetLoader.GetSetType<MlynarHead>();
+			MlynarSetActive = MlynarHelmetActive
+				&& Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<MlynarBody>()
+				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<MlynarLegs>();
 		}
 
 		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {

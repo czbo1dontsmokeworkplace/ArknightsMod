@@ -1,54 +1,43 @@
-﻿using ArknightsMod.Common;
+using ArknightsMod.Common;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content.Items.Material;
-using ArknightsMod.Content.Tiles.Infrastructure;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.DataStructures;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Guard.Surtr
 {
 	[AutoloadEquip(EquipType.Head)]
-	public class SurtrHead : NeoArmorHead
+	public class SurtrHead : NeoArmorReforgeVanityHead
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 292;
+
 		public override int Value => 560000;
-		
-		public override void Load() {
-			if (Main.netMode == NetmodeID.Server)
-				return;
-		}
 
-		public override void SetArmorDefaults() {
-			Item.defense = 0;
-		}
-		
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
+			Defense = 0,
+			LifeBonus = 292,
+			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Surtr",
+			Materials = recipe => recipe
+				.AddIngredient<Orundum>(60)
+				.AddIngredient<D32Steel>(6)
+				.AddIngredient<OptimizedDevice>(4),
+			SetBonusKey = "Mods.ArknightsMod.ArmorSets.Surtr.SetBonus",
+		};
 
-		public override void AddRecipes() {
-			CreateRecipe()
-			.AddIngredient<SurtrHead>(1)
-			.AddIngredient<Orundum>(60)
-			.AddIngredient<D32Steel>(6)
-			.AddIngredient<OptimizedDevice>(4)
-			.AddTile(ModContent.TileType<FactoryTile>())
-			.AddCondition(NeoArmorUtils.NeedVanity)
-			.DisableDecraft()
-			.Register();
-		}
-
+		// 后发叠加层，走文档 12.5 的【路 A】。
 		internal class SurtrHeadLayer : PlayerDrawLayer
 		{
 			public override Position GetDefaultPosition() => new BeforeParent(PlayerDrawLayers.BackAcc);
+
 			public override bool GetDefaultVisibility(PlayerDrawSet drawInfo) {
-				Item head = new(ModContent.ItemType<SurtrHead>());
-				return drawInfo.drawPlayer.head == head.headSlot && !drawInfo.drawPlayer.dead;
+				Player player = drawInfo.drawPlayer;
+				return NeoArmorReforgeSetLoader.IsPartVisible<SurtrHead>(player, EquipType.Head) && !player.dead;
 			}
 
 			protected override void Draw(ref PlayerDrawSet drawInfo) {
-
 				Texture2D texture = ModContent.Request<Texture2D>
 					("ArknightsMod/Content/Items/Armor/Guard/Surtr/SurtrHead_Back").Value;
 

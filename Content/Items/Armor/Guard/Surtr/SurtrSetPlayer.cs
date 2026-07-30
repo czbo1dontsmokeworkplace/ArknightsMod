@@ -1,5 +1,6 @@
-using System;
+﻿using System;
 using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -19,14 +20,14 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Surtr
 			SurtrSetActive = false;
 		}
 
+		// NeoArmor Reforge：套装件是独立 ItemID，穿上它本身就代表"已经是套装形态"，
+		// 不需要再查 hasUpgraded；player.setBonus 文本交给 SurtrHead 的
+		// SetProfile.SetBonusKey 统一设置，这里不再重复设置一遍。
 		public override void PostUpdateEquips() {
-			SurtrHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<SurtrHead>());
-			SurtrSetActive = OperatorSetEquipHelper.HasFullSet(
-				Player,
-				ModContent.ItemType<SurtrHead>(),
-				ModContent.ItemType<SurtrBody>(),
-				ModContent.ItemType<SurtrLegs>());
-			OperatorSetEquipHelper.ApplySetBonusText(Player, SurtrSetActive, "Mods.ArknightsMod.ArmorSets.Surtr.SetBonus");
+			SurtrHelmetActive = Player.armor[0].type == NeoArmorReforgeSetLoader.GetSetType<SurtrHead>();
+			SurtrSetActive = SurtrHelmetActive
+				&& Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<SurtrBody>()
+				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<SurtrLegs>();
 		}
 
 		public override void ModifyHitNPCWithItem(Item item, NPC target, ref NPC.HitModifiers modifiers) {

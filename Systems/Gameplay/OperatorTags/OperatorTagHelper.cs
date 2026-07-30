@@ -83,21 +83,14 @@ namespace ArknightsMod.Systems.Gameplay.OperatorTags
 
 		// 「这件东西是不是某位干员的**盔甲形态**头部件」。
 		//
-		// 两套系统的"盔甲形态"表示方式不同，都要认：
-		//   · 旧 NeoArmor：物品还是那个时装 ItemID，靠 GlobalItem 上的 hasUpgraded 标记区分；
-		//   · NeoArmor Reforge：套装件是**另一个独立的 ItemID**，压根没有 hasUpgraded 这个
-		//     状态，只查旧标记的话所有已迁移干员都会被判成"没升级"，标签系统直接失效
-		//     且没有任何报错。
-		private static bool IsUpgradedHelmet(Item helmet) {
-			return helmet.neoarmor().hasUpgraded
-				|| NeoArmorReforgeSetLoader.GetVanity(helmet.type) != null;
-		}
+		// NeoArmor Reforge 里"盔甲形态"就是一个独立的套装件 ItemID，所以判定等价于
+		// "这个 ItemType 能反查到对应的时装"。GetVanity 返回非 null 即成立。
+		// （旧 NeoArmor 靠 GlobalItem 上的 hasUpgraded 标记区分，全员迁移完成后已无此形态。）
+		private static bool IsUpgradedHelmet(Item helmet) =>
+			NeoArmorReforgeSetLoader.GetVanity(helmet.type) != null;
 
 		// 同上，外加"必须是指定那位干员的"。传入的 helmetType 是**时装**的 ItemID。
 		private static bool IsUpgradedHelmetOf(Item helmet, int vanityHelmetType) {
-			if (helmet.type == vanityHelmetType && helmet.neoarmor().hasUpgraded)
-				return true;
-
 			NeoArmorReforgeVanityItem vanity = NeoArmorReforgeSetLoader.GetVanity(helmet.type);
 			return vanity != null && vanity.Type == vanityHelmetType;
 		}

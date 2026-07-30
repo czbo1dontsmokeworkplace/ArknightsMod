@@ -108,10 +108,16 @@ namespace ArknightsMod.Content.Items.Armor.NeoArmorReforge
 		/// 时用这个，不需要记住自动生成的套装类名，直接传时装类型即可：
 		/// <c>player.armor[0].type == NeoArmorReforgeSetLoader.GetSetType&lt;MudrockHead&gt;()</c>
 		/// </summary>
-		public static int GetSetType<TVanity>() where TVanity : NeoArmorReforgeVanityItem {
-			int vanityType = ModContent.ItemType<TVanity>();
-			return PieceByVanityType.TryGetValue(vanityType, out NeoArmorReforgeSetPiece piece) ? piece.Type : -1;
-		}
+		public static int GetSetType<TVanity>() where TVanity : NeoArmorReforgeVanityItem =>
+			GetSetType(ModContent.ItemType<TVanity>());
+
+		/// <summary>
+		/// 同上，但按时装的 ItemType 查询——给"只拿得到 int 类型、拿不到泛型参数"的地方用
+		/// （比如 RedeploySetPlayer 这种由子类填三个 ItemType 的通用基类）。
+		/// 查不到返回 -1，而 Item.type 不可能是 -1，所以拿去比较是安全的。
+		/// </summary>
+		public static int GetSetType(int vanityType) =>
+			PieceByVanityType.TryGetValue(vanityType, out NeoArmorReforgeSetPiece piece) ? piece.Type : -1;
 
 		/// <summary>
 		/// 某个干员部位（时装或套装，两者都算）当前是否正被"看得见地"穿在身上。

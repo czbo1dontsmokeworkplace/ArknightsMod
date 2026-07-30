@@ -1,5 +1,6 @@
 using ArknightsMod.Content.Buffs.Guard.Melantha;
 using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -20,17 +21,14 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Melantha
 			MelanthaSetActive = false;
 		}
 
+		// NeoArmor Reforge：套装件是独立 ItemID，穿上它本身就代表"已经是套装形态"，
+		// 不需要再查 hasUpgraded；player.setBonus 文本交给 MelanthaHead 的
+		// SetProfile.SetBonusKey 统一设置，这里不再重复设置一遍。
 		public override void PostUpdateEquips() {
-			MelanthaHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ItemType<MelanthaHead>());
-			MelanthaSetActive = OperatorSetEquipHelper.HasFullSet(
-				Player,
-				ItemType<MelanthaHead>(),
-				ItemType<MelanthaBody>(),
-				ItemType<MelanthaLegs>());
-			OperatorSetEquipHelper.ApplySetBonusText(
-				Player,
-				MelanthaSetActive,
-				"Mods.ArknightsMod.ArmorSets.Melantha.SetBonus");
+			MelanthaHelmetActive = Player.armor[0].type == NeoArmorReforgeSetLoader.GetSetType<MelanthaHead>();
+			MelanthaSetActive = MelanthaHelmetActive
+				&& Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<MelanthaBody>()
+				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<MelanthaLegs>();
 		}
 
 		public override void PostUpdate() {

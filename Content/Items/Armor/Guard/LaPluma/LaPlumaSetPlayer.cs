@@ -1,4 +1,5 @@
-using ArknightsMod.Content.Items.Armor;
+﻿using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -16,14 +17,14 @@ namespace ArknightsMod.Content.Items.Armor.Guard.LaPluma
 			LaPlumaSetActive = false;
 		}
 
+		// NeoArmor Reforge：套装件是独立 ItemID，穿上它本身就代表"已经是套装形态"，
+		// 不需要再查 hasUpgraded；player.setBonus 文本交给 LaPlumaHead 的
+		// SetProfile.SetBonusKey 统一设置，这里不再重复设置一遍。
 		public override void PostUpdateEquips() {
-			LaPlumaHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<LaPlumaHead>());
-			LaPlumaSetActive = OperatorSetEquipHelper.HasFullSet(
-				Player,
-				ModContent.ItemType<LaPlumaHead>(),
-				ModContent.ItemType<LaPlumaBody>(),
-				ModContent.ItemType<LaPlumaLegs>());
-			OperatorSetEquipHelper.ApplySetBonusText(Player, LaPlumaSetActive, "Mods.ArknightsMod.ArmorSets.LaPluma.SetBonus");
+			LaPlumaHelmetActive = Player.armor[0].type == NeoArmorReforgeSetLoader.GetSetType<LaPlumaHead>();
+			LaPlumaSetActive = LaPlumaHelmetActive
+				&& Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<LaPlumaBody>()
+				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<LaPlumaLegs>();
 		}
 
 		public override float UseSpeedMultiplier(Item item) {
