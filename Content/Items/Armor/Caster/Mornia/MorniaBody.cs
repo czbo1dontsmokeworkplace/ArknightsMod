@@ -1,74 +1,29 @@
-﻿using ArknightsMod.Content.Items.Material;
-using ArknightsMod.Content.Tiles.Infrastructure;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
-using Terraria.DataStructures;
-using Terraria.ID;
+using ArknightsMod.Content.Items.Armor.Reforge;
+using ArknightsMod.Content.Items.Material;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Caster.Mornia
 {
+	// 开发者时装，无任何获取途径（不参与「博士的档案袋」抽奖，也没有配方）。
+	//
+	// 说明：原本这里有一个 MorniaBodyLayer（PlayerDrawLayer），负责在角色背后额外
+	// 画一条尾巴（MorniaBody_Tail.png）。那条尾巴属于早期的占位美术，和现在导入的
+	// 这套真实时装是两套完全不同的设计（配色/轮廓都不一致），继续画上去只会是残留
+	// 瑕疵，因此该图层已移除。MorniaBody_Tail.png 仍保留在目录里，将来若这套时装
+	// 补了配套的尾巴/背饰美术，把图层加回来即可。
 	[AutoloadEquip(EquipType.Body)]
-	public class MorniaBody : NeoArmorBody
+	public class MorniaBody : ReforgeVanityBody
 	{
 		public override int Rarity => 4;
-		public override int ArmorLifeBonus => 70;
 
-		public override void SetArmorDefaults() {
-			Item.defense = 14;
-		}
-
-		public override void AddRecipes() {
-			CreateRecipe()
-			.AddIngredient<MorniaBody>(1)
-			.AddIngredient<Orundum>(40)
-			.AddIngredient<ManganeseTrihydrate>(3)
-			.AddIngredient<IntegratedDevice>(1)
-			.AddTile(ModContent.TileType<FactoryTile>())
-			.AddCondition(NeoArmorUtils.NeedVanity)
-			.DisableDecraft()
-			.Register();
-		}
-
-		internal class MorniaBodyLayer : PlayerDrawLayer
-		{
-			public override Position GetDefaultPosition() => new BeforeParent(PlayerDrawLayers.BackAcc);
-			public override bool GetDefaultVisibility(PlayerDrawSet drawInfo) {
-				Item body = new(ModContent.ItemType<MorniaBody>());
-				return drawInfo.drawPlayer.body == body.bodySlot && !drawInfo.drawPlayer.dead;
-			}
-
-			protected override void Draw(ref PlayerDrawSet drawInfo) {
-				Texture2D texture = ModContent.Request<Texture2D>
-					("ArknightsMod/Content/Items/Armor/Caster/Mornia/MorniaBody_Tail").Value;
-
-				var offset = new Vector2(-7, 12);
-
-				int drawX = (int)(drawInfo.drawPlayer.MountedCenter.X + offset.X * drawInfo.drawPlayer.direction - Main.screenPosition.X);
-				int drawY = (int)(drawInfo.drawPlayer.MountedCenter.Y + (int)drawInfo.drawPlayer.gravDir * offset.Y - Main.screenPosition.Y);
-				int dyeShader = drawInfo.drawPlayer.dye?[0].dye ?? 0;
-				float offsetY = 0;
-				if (drawInfo.drawPlayer.bodyFrame.Y >= 7 * drawInfo.drawPlayer.bodyFrame.Height &&
-					drawInfo.drawPlayer.bodyFrame.Y <= 9 * drawInfo.drawPlayer.bodyFrame.Height ||
-					drawInfo.drawPlayer.bodyFrame.Y >= 14 * drawInfo.drawPlayer.bodyFrame.Height &&
-					drawInfo.drawPlayer.bodyFrame.Y <= 16 * drawInfo.drawPlayer.bodyFrame.Height) {
-					offsetY = -2;
-				}
-				int bodyframe = drawInfo.drawPlayer.bodyFrame.Y / drawInfo.drawPlayer.bodyFrame.Height;
-				Rectangle sourceRect = new(0, bodyframe * (18 + 38) + 33, texture.Width, 18);
-				Vector2 origin = sourceRect.Size() / 2;
-				float h_pi = MathHelper.Pi / 2;
-				float r = h_pi - h_pi * drawInfo.drawPlayer.gravDir;
-				drawInfo.DrawDataCache.Add(
-					new DrawData(texture, new Vector2(drawX, drawY + offsetY + drawInfo.drawPlayer.gfxOffY),
-					sourceRect, drawInfo.colorArmorBody, r, origin, 1f,
-					drawInfo.drawPlayer.gravDir * drawInfo.drawPlayer.direction == 1
-						? SpriteEffects.None
-						: SpriteEffects.FlipHorizontally, 0) {
-						shader = dyeShader
-					});
-			}
-		}
+		public override ReforgeSetProfile SetProfile => new() {
+			Defense = 14,
+			LifeBonus = 70,
+			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Mornia",
+			Materials = recipe => recipe
+				.AddIngredient<Orundum>(40)
+				.AddIngredient<ManganeseTrihydrate>(3)
+				.AddIngredient<IntegratedDevice>(1),
+		};
 	}
 }

@@ -1,31 +1,28 @@
+using ArknightsMod.Content.Items.Armor.Reforge;
 using ArknightsMod.Content.Items.Armor;
 using Terraria;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Caster.Mornia
 {
-	internal class MorniaSetPlayer : ArknightsArmorPlayer
+	// NeoArmor Reforge：头盔效果不再靠 UpdateEquip 里的一堆 if(hasUpgraded) 判断，
+	// 而是 MorniaHead 的 SetProfile.OnHelmetActive 在套装头盔实际装备时直接调用
+	// OnHelmetActive(player)——这个类现在只负责"记住这一帧是否生效"和真正的
+	// 玩法效果（ModifyWeaponDamage），检测逻辑完全交给 ReforgeSetPiece。
+	internal class MorniaSetPlayer : ModPlayer
 	{
-		public bool MorniaHelmetActive;
-		public bool MorniaSetActive;
+		public bool HelmetActive;
 
 		public override void ResetEffects() {
-			MorniaHelmetActive = false;
-			MorniaSetActive = false;
+			HelmetActive = false;
 		}
 
-		public override void PostUpdateEquips() {
-			MorniaHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<MorniaHead>());
-			MorniaSetActive = OperatorSetEquipHelper.HasFullSet(
-				Player,
-				ModContent.ItemType<MorniaHead>(),
-				ModContent.ItemType<MorniaBody>(),
-				ModContent.ItemType<MorniaLegs>());
-			OperatorSetEquipHelper.ApplySetBonusText(Player, MorniaSetActive, "Mods.ArknightsMod.ArmorSets.Mornia.SetBonus");
+		public static void OnHelmetActive(Player player) {
+			player.GetModPlayer<MorniaSetPlayer>().HelmetActive = true;
 		}
 
 		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {
-			if (MorniaHelmetActive && item.DamageType.CountsAsClass(DamageClass.Magic))
+			if (HelmetActive && item.DamageType.CountsAsClass(DamageClass.Magic))
 				damage *= 1.06f;
 		}
 	}

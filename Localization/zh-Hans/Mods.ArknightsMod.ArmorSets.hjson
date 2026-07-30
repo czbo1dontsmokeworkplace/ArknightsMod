@@ -407,7 +407,7 @@ Wisadel: {
 }
 
 Mornia: {
-	HeadName: 末柠头盔
+	HeadName: Mornia-Cherry的头盔
 	HelmetEffect: "[c/beebff:头盔]: 魔法伤害 106%"
 	SetEffect: "[c/beebff:套装]: +8% 魔法暴击；奥术弹幕自动追踪最近的敌人"
 	SetBonus: +8% 魔法暴击，奥术弹幕自动追踪敌人

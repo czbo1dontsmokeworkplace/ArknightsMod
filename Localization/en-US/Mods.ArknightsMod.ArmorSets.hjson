@@ -407,7 +407,7 @@ Wisadel: {
 }
 
 Mornia: {
-	HeadName: Mornia's Helmet
+	HeadName: Mornia-Cherry's Helmet
 	HelmetEffect: "[c/beebff:Helmet]: Magic damage 106%"
 	SetEffect: "[c/beebff:Set]: 8% magic crit; arcane bolts seek nearby enemies"
 	SetBonus: 8% magic crit, arcane bolts seek enemies

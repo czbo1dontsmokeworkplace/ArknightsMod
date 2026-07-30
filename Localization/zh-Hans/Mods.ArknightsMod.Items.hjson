@@ -3337,23 +3337,27 @@ ArmorOblivionisHead: {
 }
 
 MorniaBody: {
-	// DisplayName: Mornia Body
-	// Tooltip: ""
+	DisplayName: Mornia-Cherry的上衣
+	Tooltip: 开发者时装
 }
 
 MorniaDefault: {
-	// DisplayName: Mornia Default
-	// Tooltip: ""
+	DisplayName: Mornia-Cherry的服饰（常规）
+	Tooltip:
+		'''
+		开发者时装
+		{$CommonItemTooltip.RightClickToOpen}
+		'''
 }
 
 MorniaHead: {
-	// DisplayName: Mornia Head
-	// Tooltip: ""
+	DisplayName: Mornia-Cherry的头饰
+	Tooltip: 开发者时装
 }
 
 MorniaLegs: {
-	// DisplayName: Mornia Legs
-	// Tooltip: ""
+	DisplayName: Mornia-Cherry的下装
+	Tooltip: 开发者时装
 }
 
 MudrockLegs: {
@@ -3668,7 +3672,7 @@ DevTestWrench: {
 	DisplayName: 开发测试扳手
 	Tooltip:
 		'''
-		开发者物品
+		开发者调试物品
 		按住左键拖动框选一块区域，松开后用聊天指令 /exp 导出为结构文件
 		'''
 }
@@ -3681,3 +3685,13 @@ FoldableBuildingItem: {
 		手持时在光标处显示建筑投影，左键点击后整体放置
 		'''
 }
+
+MorniaBodySet.Tooltip: 开发者套装
+MorniaHeadSet.Tooltip: 开发者套装
+MorniaLegsSet.Tooltip: 开发者套装
+// MudrockBodySet.Tooltip: ""
+// MudrockHeadSet.Tooltip: ""
+// MudrockLegsSet.Tooltip: ""
+// RosmontisBodySet.Tooltip: ""
+// RosmontisHeadSet.Tooltip: ""
+// RosmontisLegsSet.Tooltip: ""

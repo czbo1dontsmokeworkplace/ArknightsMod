@@ -139,20 +139,8 @@ namespace ArknightsMod.Content.Items.Armor
 			}
 		}
 
-		public static int GetRarity(int rarity)
-        {
-            rarity = Math.Clamp(rarity, 1, 6);
-            return rarity switch
-            {
-                1 => ItemRarityID.White,
-                2 => ItemRarityID.White,
-                3 => ItemRarityID.White,
-                4 => ItemRarityID.Blue,
-                5 => ItemRarityID.Orange,
-                6 => ItemRarityID.Quest,
-                _ => ItemRarityID.Quest
-            };
-        }
+		// 星级→稀有度的换算统一由新系统那份实现负责，避免两处各写一份导致数值走漏。
+		public static int GetRarity(int rarity) => Reforge.ReforgeRarity.Get(rarity);
 
 		/// <summary>额外为 <see cref="SetDefaults"/> 设置盔甲属性<br/> - 会覆盖 <see cref="SetVanityDefaults"/> 中的相同字段</summary>
 		public virtual void SetArmorDefaults() { }

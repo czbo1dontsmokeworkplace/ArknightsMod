@@ -2975,23 +2975,27 @@ ArmorOblivionisHead: {
 }
 
 MorniaBody: {
-	DisplayName: Mornia Body
-	Tooltip: ""
+	DisplayName: Mornia-Cherry's Top
+	Tooltip: Developer Vanity
 }
 
 MorniaDefault: {
-	DisplayName: Mornia Default
-	Tooltip: ""
+	DisplayName: Mornia-Cherry's costume (default)
+	Tooltip:
+		'''
+		Developer Vanity
+		{$CommonItemTooltip.RightClickToOpen}
+		'''
 }
 
 MorniaHead: {
-	DisplayName: Mornia Head
-	Tooltip: ""
+	DisplayName: Mornia-Cherry's Headwear
+	Tooltip: Developer Vanity
 }
 
 MorniaLegs: {
-	DisplayName: Mornia Legs
-	Tooltip: ""
+	DisplayName: Mornia-Cherry's Bottoms
+	Tooltip: Developer Vanity
 }
 
 MudrockLegs: {
@@ -3295,7 +3299,7 @@ DevTestWrench: {
 	DisplayName: Dev Test Wrench
 	Tooltip:
 		'''
-		Developer item
+		Developer debug item
 		Hold left click and drag to select a region, then use /exp to export it as a structure file
 		'''
 }
@@ -3308,3 +3312,13 @@ FoldableBuildingItem: {
 		Hold to preview the building projection at your cursor, left click to place it
 		'''
 }
+
+MorniaBodySet.Tooltip: Developer Set
+MorniaHeadSet.Tooltip: Developer Set
+MorniaLegsSet.Tooltip: Developer Set
+MudrockBodySet.Tooltip: ""
+MudrockHeadSet.Tooltip: ""
+MudrockLegsSet.Tooltip: ""
+RosmontisBodySet.Tooltip: ""
+RosmontisHeadSet.Tooltip: ""
+RosmontisLegsSet.Tooltip: ""

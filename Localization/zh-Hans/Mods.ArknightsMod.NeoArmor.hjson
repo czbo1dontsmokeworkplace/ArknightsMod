@@ -1,6 +1,18 @@
 NeedVanity: 需要未升级的时装
 Upgraded: （套装）
-VanityHint: 在基建工厂升级后可作为套装盔甲装备，并激活套装效果
+VanityHint: 在加工站升级后可作为套装盔甲装备，并激活套装效果
 // LifeReplacement: 将{0}的生命值替换为固定值{1}
 // LifeBonus: 最大生命值 +{0}
 // LifeItemsReduction: 生命果/生命水晶增加的生命上限 -{0} (仅生效一次)
+
+SetName: {
+	MorniaBody: Mornia-Cherry的上衣（套装）
+	MorniaHead: Mornia-Cherry的头盔
+	MorniaLegs: Mornia-Cherry的下装（套装）
+	MudrockBody: 泥岩的上衣（套装）
+	MudrockHead: 泥岩的头盔
+	MudrockLegs: 泥岩的下装（套装）
+	RosmontisBody: 迷迭香的上衣（套装）
+	RosmontisHead: 迷迭香的头盔
+	RosmontisLegs: 迷迭香的下装（套装）
+}

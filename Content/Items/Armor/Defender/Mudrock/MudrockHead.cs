@@ -1,65 +1,29 @@
-using System.Collections.Generic;
-using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
+using ArknightsMod.Content.Items.Armor.Reforge;
 
 namespace ArknightsMod.Content.Items.Armor.Defender.Mudrock
 {
+	// 泥岩：带"手持右键切换头盔造型"的干员。只要声明下面这三个属性，切换能力
+	// （右键触发、图标替换、穿戴贴图替换、提示文案）就由框架自动提供，时装和它
+	// 对应的套装件（MudrockHeadSet）都会获得同样的切换能力。
 	[AutoloadEquip(EquipType.Head)]
-	internal class MudrockHead : NeoArmorHead
+	internal class MudrockHead : ReforgeVanityHead
 	{
-		private const string HelmetSlotName = "MudrockHelmet";
-
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 443;
 
-		public override void SetArmorDefaults() {
-			Item.defense = 0;
-		}
+		// 切换后：图标换成头盔图标，穿戴帧表换成头盔帧表（两张不同的图，都要换）。
+		public override string AltIconTexture => "ArknightsMod/Content/Items/Armor/Defender/Mudrock/MudrockHelmet";
+		internal override string AltEquipTexture => "ArknightsMod/Content/Items/Armor/Defender/Mudrock/MudrockHelmet_Head";
+		protected override string ToggleHintKey => "Mods.ArknightsMod.ArmorSets.Mudrock.ToggleHint";
 
-		protected override string ArmorIconTexture => "ArknightsMod/Content/Items/Armor/Defender/Mudrock/MudrockHelmet";
-
-		public override void SetVanityDefaults() {
-			Item.useStyle = ItemUseStyleID.HoldUp;
-			Item.useTime = 20;
-			Item.useAnimation = 20;
-			Item.UseSound = SoundID.Item4;
-		}
-
-		public override bool AltFunctionUse(Player player) => true;
-
-		public override bool CanUseItem(Player player) => player.altFunctionUse == 2;
-
-		public override bool? UseItem(Player player) {
-			MudrockToggle.Toggle(this);
-			return true;
-		}
-
-		public override void Load() {
-			int helmetSlot = EquipLoader.AddEquipTexture(Mod, "ArknightsMod/Content/Items/Armor/Defender/Mudrock/MudrockHelmet_Head", EquipType.Head, null, HelmetSlotName);
-			if (helmetSlot >= 0 && helmetSlot < ArmorIDs.Head.Sets.DrawHead.Length)
-				ArmorIDs.Head.Sets.DrawHead[helmetSlot] = false;
-		}
-
-		public override void UpdateVanityEquip(Player player) {
-			// 帧图（穿戴贴图）跟随形态切换：升级形态用头盔贴图，否则用默认头部贴图。
-			// 时装/社交栏也走此方法，故任意穿戴方式下切换形态都能改变帧图。
-			Item.headSlot = Item.neoarmor().helmetForm
-				? EquipLoader.GetEquipSlot(Mod, HelmetSlotName, EquipType.Head)
-				: EquipLoader.GetEquipSlot(Mod, Name, EquipType.Head);
-		}
-
-		public override void ModifyVanityTooltips(List<TooltipLine> tooltips) {
-			OperatorOutfitTooltipLayout.ApplyWrappedVanityLine(Mod, tooltips, "Mods.ArknightsMod.ArmorSets.Mudrock.ToggleHint");
-		}
-
-		public override bool IsArmorSet(Item head, Item body, Item legs) {
-			return body.type == ModContent.ItemType<MudrockBody>() && body.neoarmor().hasUpgraded &&
-				legs.type == ModContent.ItemType<MudrockLegs>() && legs.neoarmor().hasUpgraded;
-		}
-
-		public override void UpdateArmorSet(Player player) {
-			OperatorSetEquipHelper.ApplySetBonusText(player, true, "Mods.ArknightsMod.ArmorSets.Mudrock.SetBonus");
-		}
+		// 旧版本从来没给泥岩写过 AddRecipes，也就是说泥岩套装此前在正常游玩中根本
+		// 合成不出来，只能靠 debug 配置或抽卡直接拿到已升级状态。这里保留"不需要
+		// 额外材料"（原本就没有材料数据可参考），顺手把这个缺口补成真正可合成。
+		public override ReforgeSetProfile SetProfile => new() {
+			Defense = 0,
+			LifeBonus = 443,
+			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Mudrock",
+			SetBonusKey = "Mods.ArknightsMod.ArmorSets.Mudrock.SetBonus",
+		};
 	}
 }

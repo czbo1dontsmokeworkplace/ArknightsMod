@@ -1,6 +1,18 @@
 NeedVanity: Requires unupgraded outfit
 Upgraded: (Set)
-VanityHint: Upgrade at the Factory to equip as set armor and unlock set bonuses
-LifeReplacement: 将{0}的生命值替换为固定值{1}
-LifeBonus: 最大生命值 +{0}
-LifeItemsReduction: 生命果/生命水晶增加的生命上限 -{0} (仅生效一次)
+VanityHint: Upgrade at the Factory Station to equip as set armor and unlock set bonuses
+LifeReplacement: Replaces {0} max life with a flat {1}
+LifeBonus: Max life +{0}
+LifeItemsReduction: Max life gained from Life Fruit / Life Crystals -{0} (applies once)
+
+SetName: {
+	MorniaBody: Mornia-Cherry's Chestplate
+	MorniaHead: Mornia-Cherry's Helmet
+	MorniaLegs: Mornia-Cherry's Greaves
+	MudrockBody: Mudrock's Chestplate
+	MudrockHead: Mudrock's Helmet
+	MudrockLegs: Mudrock's Greaves
+	RosmontisBody: Rosmontis's Chestplate
+	RosmontisHead: Rosmontis's Helmet
+	RosmontisLegs: Rosmontis's Greaves
+}
