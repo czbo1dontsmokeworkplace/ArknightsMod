@@ -1,38 +1,22 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using ArknightsMod.Content.Tiles.Infrastructure;
+﻿using Terraria.ModLoader;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content.Items.Material;
 
 namespace ArknightsMod.Content.Items.Armor.Vanguard.Fang
 {
 	[AutoloadEquip(EquipType.Head)]
-	public class FangHead : NeoArmorHead
+	public class FangHead : NeoArmorReforgeVanityHead
 	{
 		public override int Rarity => 3;
-		public override int ArmorLifeBonus => 133;
-		
-		public override void Load() {
-			if (Main.netMode == NetmodeID.Server)
-				return;
-		}
 
-		public override void SetArmorDefaults() {
-			Item.defense = 0;
-		}
-		
-
-
-		public override void AddRecipes() {
-			CreateRecipe()
-			.AddIngredient<FangHead>(1)
-			.AddIngredient<Orundum>(30)
-			.AddIngredient<Orirock>(2)
-			.AddTile(ModContent.TileType<FactoryTile>())
-			.AddCondition(NeoArmorUtils.NeedVanity)
-			.DisableDecraft()
-			.Register();
-		}
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
+			Defense = 0,
+			LifeBonus = 133,
+			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Fang",
+			Materials = recipe => recipe
+				.AddIngredient<Orundum>(30)
+				.AddIngredient<Orirock>(2),
+			SetBonusKey = "Mods.ArknightsMod.ArmorSets.Fang.SetBonus",
+		};
 	}
 }
-	

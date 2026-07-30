@@ -10,6 +10,7 @@ using ArknightsMod.Content.Items.Armor.Sniper.Exusiai;
 using ArknightsMod.Content.Items.Armor.Sniper.Fartooth;
 using ArknightsMod.Content.Items.Armor.Sniper.Rosmontis;
 using ArknightsMod.Content.Items.Armor.Caster.Mostima;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content.Items.Armor.Supporter.CivilightEterna;
 using ArknightsMod.Content.Items.Armor.Supporter.Ling;
 using ArknightsMod.Content.Items.Armor.Vanguard.Bagpipe;
@@ -36,8 +37,17 @@ namespace ArknightsMod.Systems.Gameplay.OperatorTags
 			ByHelmet[helmetType] = new OperatorTagEntry(cls, factions);
 		}
 
+		// 注册时登记的是**时装**头部件的 ItemType，但调用方传进来的是 player.armor[0].type。
+		// 对已迁移到 NeoArmor Reforge 的干员来说，穿在盔甲栏里的是自动生成的**套装件**，
+		// 它是另一个 ItemID，直接查表必然落空（表现为干员标签、职业/阵营判定全部失效，
+		// 且没有任何报错）。所以查不到时再用套装件反查它对应的时装，拿时装类型重试一次。
+		// 这样处理是"未来自动生效"的：后续批次迁移任何干员都不需要再改这里。
 		internal static bool TryGetFromHelmet(int helmetType, out OperatorTagEntry entry) {
-			return ByHelmet.TryGetValue(helmetType, out entry);
+			if (ByHelmet.TryGetValue(helmetType, out entry))
+				return true;
+
+			NeoArmorReforgeVanityItem vanity = NeoArmorReforgeSetLoader.GetVanity(helmetType);
+			return vanity != null && ByHelmet.TryGetValue(vanity.Type, out entry);
 		}
 
 		internal static void Clear() => ByHelmet.Clear();

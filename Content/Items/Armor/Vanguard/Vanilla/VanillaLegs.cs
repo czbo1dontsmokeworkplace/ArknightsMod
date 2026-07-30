@@ -1,30 +1,21 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using ArknightsMod.Content.Tiles.Infrastructure;
+﻿using Terraria.ModLoader;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content.Items.Material;
 
 namespace ArknightsMod.Content.Items.Armor.Vanguard.Vanilla
 {
 	[AutoloadEquip(EquipType.Legs)]
-	public class VanillaLegs : NeoArmorLegs
+	public class VanillaLegs : NeoArmorReforgeVanityLegs
 	{
 		public override int Rarity => 3;
-		public override int ArmorLifeBonus => 64;
-		
-		public override void SetArmorDefaults() {
-			Item.defense = 6;
-		}
 
-		public override void AddRecipes() {
-			CreateRecipe()
-			.AddIngredient<VanillaLegs>(1)
-			.AddIngredient<Orundum>(30)
-			.AddIngredient<Polyester>(1)
-			.AddTile(ModContent.TileType<FactoryTile>())
-			.AddCondition(NeoArmorUtils.NeedVanity)
-			.DisableDecraft()
-			.Register();
-		}
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
+			Defense = 6,
+			LifeBonus = 64,
+			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Vanilla",
+			Materials = recipe => recipe
+				.AddIngredient<Orundum>(30)
+				.AddIngredient<Polyester>(1),
+		};
 	}
 }

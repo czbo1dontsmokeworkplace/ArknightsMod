@@ -36,4 +36,19 @@ SetName: {
 	// StewardBody: 史都华德的躯干（套装）
 	// StewardHead: 史都华德的头盔
 	// StewardLegs: 史都华德的腿部（套装）
+	// BagpipeBody: 风笛的上衣（套装）
+	// BagpipeHead: 风笛的头盔
+	// BagpipeLegs: 风笛的下装（套装）
+	// FangBody: 芬的躯干（套装）
+	// FangHead: 芬的头盔
+	// FangLegs: 芬的腿部（套装）
+	// PlumeBody: 翎羽的躯干（套装）
+	// PlumeHead: 翎羽的头盔
+	// PlumeLegs: 翎羽的腿部（套装）
+	// TexasBody: 德克萨斯的上衣（套装）
+	// TexasHead: 德克萨斯的头盔
+	// TexasLegs: 德克萨斯的下装（套装）
+	// VanillaBody: 香草的躯干（套装）
+	// VanillaHead: 香草的头盔
+	// VanillaLegs: 香草的腿部（套装）
 }

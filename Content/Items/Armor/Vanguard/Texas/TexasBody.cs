@@ -1,31 +1,22 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using ArknightsMod.Content.Tiles.Infrastructure;
+﻿using Terraria.ModLoader;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content.Items.Material;
 
 namespace ArknightsMod.Content.Items.Armor.Vanguard.Texas
 {
 	[AutoloadEquip(EquipType.Body)]
-	public class TexasBody : NeoArmorBody
+	public class TexasBody : NeoArmorReforgeVanityBody
 	{
 		public override int Rarity => 5;
-		public override int ArmorLifeBonus => 98;
 
-		public override void SetArmorDefaults() {
-			Item.defense = 26;
-		}
-		
-		public override void AddRecipes() {
-			CreateRecipe()
-			.AddIngredient<TexasBody>(1)
-			.AddIngredient<Orundum>(50)
-			.AddIngredient<ManganeseTrihydrate>(3)
-			.AddIngredient<IntegratedDevice>(2)
-			.AddTile(ModContent.TileType<FactoryTile>())
-			.AddCondition(NeoArmorUtils.NeedVanity)
-			.DisableDecraft()
-			.Register();
-		}
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
+			Defense = 26,
+			LifeBonus = 98,
+			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Texas",
+			Materials = recipe => recipe
+				.AddIngredient<Orundum>(50)
+				.AddIngredient<ManganeseTrihydrate>(3)
+				.AddIngredient<IntegratedDevice>(2),
+		};
 	}
 }

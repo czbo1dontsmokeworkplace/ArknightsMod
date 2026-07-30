@@ -367,10 +367,18 @@ namespace ArknightsMod.Content.Items.Armor.NeoArmorReforge
 	// ── 迁移进度 ──────────────────────────────────────────────────────────────
 	//
 	// 已迁移：末柠(Mornia)、泥岩(Mudrock)、迷迭香(Rosmontis)
-	//         + 第一批 Caster：阿米娅、夜烟、深靛、炎熔、莫斯提马、死芒、史都华德
+	//         + 第一批【术师 Caster】：阿米娅、夜烟、深靛、炎熔、莫斯提马、死芒、史都华德
+	//         + 第二批【先锋 Vanguard】：风笛、芬、翎羽、德克萨斯、香草
 	// 其余干员仍在旧的 NeoArmorItem 上，两套系统并存、互不干扰。旧系统全部迁完后，
 	// 可以直接删掉 NeoArmorItem / NeoArmorGltem / NeoArmorSlots / NeoArmorEquipSystem
 	// 这四个文件。
+	//
+	// ⚠ 迁移一批干员时，除了本文件第 9 节列的那些步骤，别忘了检查**跨干员的判定入口**：
+	//   · Operator<职业>SetHelper（如 OperatorVanguardSetHelper）里的 HasFullSet 判定，
+	//     要一起换成 GetSetType，否则"整套是否穿着"恒为 false，且没有任何报错。
+	//   · 任何以「时装头部件 ItemType」为 key、却用 player.armor[0].type 去查的表。
+	//     OperatorTagRegistry 就是这种，它已改为查不到时用套装件反查时装再重试一次，
+	//     所以后续批次不需要再改它；但如果新写了类似的表，记得照这个思路处理。
 	//
 	// ══════════════════════════════════════════════════════════════════════════════
 	public abstract class NeoArmorReforgeVanityItem : ModItem

@@ -1,39 +1,23 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using ArknightsMod.Content.Tiles.Infrastructure;
+﻿using Terraria.ModLoader;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content.Items.Material;
 
 namespace ArknightsMod.Content.Items.Armor.Vanguard.Texas
 {
 	[AutoloadEquip(EquipType.Head)]
-	public class TexasHead : NeoArmorHead
+	public class TexasHead : NeoArmorReforgeVanityHead
 	{
 		public override int Rarity => 5;
-		public override int ArmorLifeBonus => 195;
-		
-		public override void Load() {
-			if (Main.netMode == NetmodeID.Server)
-				return;
-		}
 
-		public override void SetArmorDefaults() {
-			Item.defense = 0;
-		}
-		
-
-
-		public override void AddRecipes() {
-			CreateRecipe()
-			.AddIngredient<TexasHead>(1)
-			.AddIngredient<Orundum>(50)
-			.AddIngredient<PolyesterLump>(8)
-			.AddIngredient<OrirockCluster>(16)
-			.AddTile(ModContent.TileType<FactoryTile>())
-			.AddCondition(NeoArmorUtils.NeedVanity)
-			.DisableDecraft()
-			.Register();
-		}
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
+			Defense = 0,
+			LifeBonus = 195,
+			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Texas",
+			Materials = recipe => recipe
+				.AddIngredient<Orundum>(50)
+				.AddIngredient<PolyesterLump>(8)
+				.AddIngredient<OrirockCluster>(16),
+			SetBonusKey = "Mods.ArknightsMod.ArmorSets.Texas.SetBonus",
+		};
 	}
 }
-	
