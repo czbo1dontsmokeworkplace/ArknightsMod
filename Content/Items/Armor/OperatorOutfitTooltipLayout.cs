@@ -71,12 +71,6 @@ namespace ArknightsMod.Content.Items.Armor
 			return builder.Length;
 		}
 
-		public static void ApplyDisplayName(List<TooltipLine> tooltips, string nameKey) {
-			int index = tooltips.FindIndex(t => t.Name == "ItemName");
-			if (index != -1)
-				tooltips[index].Text = Language.GetTextValue(nameKey);
-		}
-
 		public static void AddWrappedEffectLines(Mod mod, List<TooltipLine> tooltips, string localizationKey, string tooltipLineId) {
 			string text = Language.GetTextValue(localizationKey);
 			int lineIndex = 0;
@@ -86,23 +80,6 @@ namespace ArknightsMod.Content.Items.Armor
 				});
 				lineIndex++;
 			}
-		}
-
-		// 头盔：显示名称 + 头盔效果 + 套装效果说明。
-		public static void ApplyHelmetTooltips(
-			Mod mod,
-			List<TooltipLine> tooltips,
-			string headNameKey,
-			string helmetEffectKey,
-			string setEffectKey) {
-			ApplyDisplayName(tooltips, headNameKey);
-			AddWrappedEffectLines(mod, tooltips, helmetEffectKey, "HelmetEffect");
-			AddWrappedEffectLines(mod, tooltips, setEffectKey, "SetEffect");
-		}
-
-		// 胸甲/腿甲：仅显示套装效果说明。
-		public static void ApplySetPieceTooltips(Mod mod, List<TooltipLine> tooltips, string setEffectKey) {
-			AddWrappedEffectLines(mod, tooltips, setEffectKey, "SetEffect");
 		}
 
 		// 时装等物品的通用长文本折行。

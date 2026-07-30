@@ -1,6 +1,7 @@
 using ArknightsMod.Content.Buffs;
 using ArknightsMod.Content.Buffs.ArmorSets;
 using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -17,14 +18,14 @@ namespace ArknightsMod.Content.Items.Armor.Caster.Indigo
 			IndigoSetActive = false;
 		}
 
+		// NeoArmor Reforge：套装件是独立 ItemID，穿上它本身就代表"已经是套装形态"，
+		// 不需要再查 hasUpgraded；player.setBonus 文本交给 IndigoHead 的
+		// SetProfile.SetBonusKey 统一设置，这里不再重复设置一遍。
 		public override void PostUpdateEquips() {
-			IndigoHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<IndigoHead>());
-			IndigoSetActive = OperatorSetEquipHelper.HasFullSet(
-				Player,
-				ModContent.ItemType<IndigoHead>(),
-				ModContent.ItemType<IndigoBody>(),
-				ModContent.ItemType<IndigoLegs>());
-			OperatorSetEquipHelper.ApplySetBonusText(Player, IndigoSetActive, "Mods.ArknightsMod.ArmorSets.Indigo.SetBonus");
+			IndigoHelmetActive = Player.armor[0].type == NeoArmorReforgeSetLoader.GetSetType<IndigoHead>();
+			IndigoSetActive = IndigoHelmetActive
+				&& Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<IndigoBody>()
+				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<IndigoLegs>();
 		}
 
 		public override void ModifyHitNPCWithItem(Item item, NPC target, ref NPC.HitModifiers modifiers) {

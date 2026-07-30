@@ -1,31 +1,22 @@
-﻿using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
-using ArknightsMod.Content.Tiles.Infrastructure;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content.Items.Material;
 
 namespace ArknightsMod.Content.Items.Armor.Caster.Indigo
 {
 	[AutoloadEquip(EquipType.Legs)]
-	public class IndigoLegs : NeoArmorLegs
+	public class IndigoLegs : NeoArmorReforgeVanityLegs
 	{
 		public override int Rarity => 4;
-		public override int ArmorLifeBonus => 72;
-		
-		public override void SetArmorDefaults() {
-			Item.defense = 3;
-		}
 
-		public override void AddRecipes() {
-			CreateRecipe()
-			.AddIngredient<IndigoLegs>(1)
-			.AddIngredient<Orundum>(40)
-			.AddIngredient<Device>(1)
-			.AddIngredient<Grindstone>(2)
-			.AddTile(ModContent.TileType<FactoryTile>())
-			.AddCondition(NeoArmorUtils.NeedVanity)
-			.DisableDecraft()
-			.Register();
-		}
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
+			Defense = 3,
+			LifeBonus = 72,
+			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Indigo",
+			Materials = recipe => recipe
+				.AddIngredient<Orundum>(40)
+				.AddIngredient<Device>(1)
+				.AddIngredient<Grindstone>(2),
+		};
 	}
 }

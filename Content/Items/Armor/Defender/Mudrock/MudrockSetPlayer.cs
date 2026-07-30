@@ -1,4 +1,4 @@
-using ArknightsMod.Content.Items.Armor.Reforge;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using System;
 using ArknightsMod.Content.Buffs.ArmorSets;
 using ArknightsMod.Content.Items.Armor;
@@ -24,10 +24,10 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Mudrock
 		// NeoArmor Reforge：套装件是独立 ItemID（MudrockHeadSet 等），穿上它本身就代表
 		// "已经是套装形态"，不需要再像旧版那样另外查一个 hasUpgraded 标志位。
 		public override void PostUpdateEquips() {
-			MudrockHelmetActive = Player.armor[0].type == ReforgeSetLoader.GetSetType<MudrockHead>();
+			MudrockHelmetActive = Player.armor[0].type == NeoArmorReforgeSetLoader.GetSetType<MudrockHead>();
 			MudrockSetActive = MudrockHelmetActive
-				&& Player.armor[1].type == ReforgeSetLoader.GetSetType<MudrockBody>()
-				&& Player.armor[2].type == ReforgeSetLoader.GetSetType<MudrockLegs>();
+				&& Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<MudrockBody>()
+				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<MudrockLegs>();
 		}
 
 		public override void PostUpdate() {

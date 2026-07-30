@@ -7,7 +7,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
-namespace ArknightsMod.Content.Items.Armor.Reforge
+namespace ArknightsMod.Content.Items.Armor.NeoArmorReforge
 {
 	// ══════════════════════════════════════════════════════════════════════════════
 	//
@@ -21,20 +21,21 @@ namespace ArknightsMod.Content.Items.Armor.Reforge
 	//  │  2. 快速上手：加一个新干员（最小示例）                                 │
 	//  │  3. 需要准备的贴图文件                                                 │
 	//  │  4. 需要准备的本地化文案                                               │
-	//  │  5. ReforgeSetProfile 字段速查表                                       │
+	//  │  5. NeoArmorReforgeSetProfile 字段速查表                                       │
 	//  │  6. 套装效果怎么写（三种写法，按复杂度递增）                           │
 	//  │  7. 外观形态切换（可选，如泥岩的头盔造型）                             │
 	//  │  8. 纯时装（不做套装）怎么写                                           │
 	//  │  9. 从旧 NeoArmor 迁移一个干员的步骤                                   │
 	//  │ 10. 系统内各文件的分工                                                 │
 	//  │ 11. 踩过的坑（改动本系统前必读）                                       │
+	//  │ 12. 干员专属叠加图层（PlayerDrawLayer）写法                            │
 	//  └────────────────────────────────────────────────────────────────────────┘
 	//
 	//
 	// ── 1. 这个系统是什么 / 和旧 NeoArmor 的区别 ──────────────────────────────
 	//
 	// 一个干员有两样东西：**时装**（纯外观，穿时装栏）和**套装**（有防御和套装效果，
-	// 穿装备栏）。玩家在加工站用时装 + 材料合成出套装。
+	// 穿装备栏）。玩家在制造加工站用时装 + 材料合成出套装。
 	//
 	// 和旧 NeoArmor 的根本区别：时装和套装是**两个独立的 ItemID**，不再靠一个
 	// GlobalItem 上的 hasUpgraded 布尔值让同一个物品在运行时"变形"兼职两种身份。
@@ -57,17 +58,17 @@ namespace ArknightsMod.Content.Items.Armor.Reforge
 	//
 	//   // ---------- XxxHead.cs ----------
 	//   using Terraria.ModLoader;
-	//   using ArknightsMod.Content.Items.Armor.Reforge;
+	//   using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 	//   using ArknightsMod.Content.Items.Material;
 	//
 	//   namespace ArknightsMod.Content.Items.Armor.Caster.Xxx
 	//   {
 	//       [AutoloadEquip(EquipType.Head)]          // ← 别忘了，部位要和基类一致
-	//       public class XxxHead : ReforgeVanityHead
+	//       public class XxxHead : NeoArmorReforgeVanityHead
 	//       {
 	//           public override int Rarity => 5;     // 干员星级 1~6，决定稀有度颜色
 	//
-	//           public override ReforgeSetProfile SetProfile => new() {
+	//           public override NeoArmorReforgeSetProfile SetProfile => new() {
 	//               Defense   = 8,                   // 套装件的防御力
 	//               LifeBonus = 100,                 // 套装件的最大生命加成
 	//               LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Xxx",
@@ -80,7 +81,7 @@ namespace ArknightsMod.Content.Items.Armor.Reforge
 	//   }
 	//
 	//   // ---------- XxxBody.cs / XxxLegs.cs ----------
-	//   // 一模一样，只是基类换成 ReforgeVanityBody / ReforgeVanityLegs，
+	//   // 一模一样，只是基类换成 NeoArmorReforgeVanityBody / NeoArmorReforgeVanityLegs，
 	//   // [AutoloadEquip] 换成 EquipType.Body / EquipType.Legs，数值各自填。
 	//   // SetBonusKey 只需要写在 Head 上（身体/腿填了也不会被用到）。
 	//
@@ -126,14 +127,14 @@ namespace ArknightsMod.Content.Items.Armor.Reforge
 	//     HeadName 不填时，套装头部件的名字会自动退化成"时装名 +（套装）"。
 	//
 	//
-	// ── 5. ReforgeSetProfile 字段速查表 ───────────────────────────────────────
+	// ── 5. NeoArmorReforgeSetProfile 字段速查表 ───────────────────────────────────────
 	//
 	//   Defense             int              套装件防御力。时装恒为 0（框架强制清零）
 	//   LifeBonus           int              套装件最大生命加成
 	//   LocalizationPrefix  string           文案前缀，见上面第 4 节
-	//   Materials           Action<Recipe>   升级所需的**额外**材料（时装本身和加工
-	//                                        站已由框架自动加上，不要重复添加，也
-	//                                        不要自己调 Register()）
+	//   Materials           Action<Recipe>   升级所需的**额外**材料（时装本身和制造
+	//                                        加工站已由框架自动加上，不要重复添加，
+	//                                        也不要自己调 Register()）
 	//   SetBonusKey         string           三件齐全时 player.setBonus 显示的文案 key
 	//   OnHelmetActive      Action<Player>   头部套装穿在装备栏时**每帧**调用
 	//   OnFullSetActive     Action<Player>   三件齐全时**每帧**调用（在上者之后）
@@ -168,11 +169,11 @@ namespace ArknightsMod.Content.Items.Armor.Reforge
 	//   末柠(Mornia) 就是这种写法，可以直接照抄。
 	//
 	// 【写法 C】ModPlayer 里需要自己判断"是否穿着套装"（比如效果依赖计时器、
-	//          或者要在 PostUpdate 里做事）→ 用 ReforgeSetLoader.GetSetType：
+	//          或者要在 PostUpdate 里做事）→ 用 NeoArmorReforgeSetLoader.GetSetType：
 	//
-	//     bool full = Player.armor[0].type == ReforgeSetLoader.GetSetType<XxxHead>()
-	//              && Player.armor[1].type == ReforgeSetLoader.GetSetType<XxxBody>()
-	//              && Player.armor[2].type == ReforgeSetLoader.GetSetType<XxxLegs>();
+	//     bool full = Player.armor[0].type == NeoArmorReforgeSetLoader.GetSetType<XxxHead>()
+	//              && Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<XxxBody>()
+	//              && Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<XxxLegs>();
 	//
 	//   注意传的是**时装**类型，框架会换算成对应的套装件 ItemType；你不需要知道
 	//   自动生成的套装类叫什么。泥岩(Mudrock)、迷迭香(Rosmontis) 是这种写法。
@@ -206,13 +207,13 @@ namespace ArknightsMod.Content.Items.Armor.Reforge
 	//
 	// ── 9. 从旧 NeoArmor 迁移一个干员的步骤 ───────────────────────────────────
 	//
-	//   1) 基类：NeoArmorHead/Body/Legs  →  ReforgeVanityHead/Body/Legs
-	//      并加上 using ArknightsMod.Content.Items.Armor.Reforge;
+	//   1) 基类：NeoArmorHead/Body/Legs  →  NeoArmorReforgeVanityHead/Body/Legs
+	//      并加上 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 	//   2) 删掉 ArmorLifeBonus、SetArmorDefaults()、AddRecipes()、
 	//      IsArmorSet()、UpdateArmorSet()，把它们的内容搬进 SetProfile：
 	//        ArmorLifeBonus        → LifeBonus
 	//        SetArmorDefaults 里的 Item.defense → Defense
-	//        AddRecipes 里除"自己 ×1"和加工站之外的材料 → Materials
+	//        AddRecipes 里除"自己 ×1"和制造加工站之外的材料 → Materials
 	//        UpdateArmorSet 里的 setBonus 文案 → SetBonusKey
 	//   3) 删掉 ArmorIconTexture / UpdateVanityEquip 里手动切槽位的代码，
 	//      改用第 7 节的 AltIconTexture / AltEquipTexture。
@@ -223,15 +224,15 @@ namespace ArknightsMod.Content.Items.Armor.Reforge
 	//
 	// ── 10. 系统内各文件的分工 ────────────────────────────────────────────────
 	//
-	//   ReforgeVanityItem.cs       ← 本文件。时装基类 + 全部使用文档
-	//   ReforgeVanitySlots.cs      部位标记类（Head/Body/Legs）
-	//   ReforgeSetProfile.cs       套装描述数据（纯数据容器）
-	//   ReforgeSetPiece.cs         套装件本体，一个类服务所有干员
-	//   ReforgeSetLoader.cs        注册中枢 + GetSetType<T>() 对外查询
-	//   ReforgeAppearance.cs       装备贴图槽位的注册与形态切换
-	//   ReforgeAppearancePlayer.cs 每帧兜底同步装备槽位
-	//   ReforgeEquipSystem.cs      记录默认槽位、隐藏原版身体部位
-	//   ReforgeRarity.cs           星级 → 稀有度换算
+	//   NeoArmorReforgeVanityItem.cs       ← 本文件。时装基类 + 全部使用文档
+	//   NeoArmorReforgeVanitySlots.cs      部位标记类（Head/Body/Legs）
+	//   NeoArmorReforgeSetProfile.cs       套装描述数据（纯数据容器）
+	//   NeoArmorReforgeSetPiece.cs         套装件本体，一个类服务所有干员
+	//   NeoArmorReforgeSetLoader.cs        注册中枢 + GetSetType<T>() 对外查询
+	//   NeoArmorReforgeAppearance.cs       装备贴图槽位的注册与形态切换
+	//   NeoArmorReforgeAppearancePlayer.cs 每帧兜底同步装备槽位
+	//   NeoArmorReforgeEquipSystem.cs      记录默认槽位、隐藏原版身体部位
+	//   NeoArmorReforgeRarity.cs           星级 → 稀有度换算
 	//
 	//
 	// ── 11. 踩过的坑（改动本系统前必读）───────────────────────────────────────
@@ -250,20 +251,129 @@ namespace ArknightsMod.Content.Items.Armor.Reforge
 	//  (5) player.head/body/legs 只在 Player.Update 里从 armor[0..2] 的槽位字段
 	//      读取；而 ItemLoader.UpdateEquip 的调用被 UpdateEquips_CanItemGrantBenefits
 	//      挡着，时装（Item.vanity = true）穿在装备栏时可能一个钩子都不走。所以
-	//      槽位同步必须放在 ReforgeAppearancePlayer 里每帧兜底，不能只靠物品钩子。
+	//      槽位同步必须放在 NeoArmorReforgeAppearancePlayer 里每帧兜底，不能只靠物品钩子。
 	//  (6) 套装件必须在 **SetDefaults** 阶段就设好装备槽位，否则原版不认为它是防具，
 	//      既进不了装备栏也进不了时装栏，于是永远等不到 UpdateEquip —— 死循环。
+	//  (7) ArmorIDs.*.Sets 的那些数组（HidesArms / HidesTopSkin / HidesBottomSkin /
+	//      DrawHead 等）会在 Load 阶段之后被**整体重置一次**：
+	//          ModContent.Load()
+	//            ├ LoadModContent(...)  第一遍 → Mod.Load / AddContent / ModType.Load()
+	//            ├ ResizeArrays() → EquipLoader.ResizeAndFillArrays()
+	//            │                   → LoaderUtils.ResetStaticMembers(typeof(ArmorIDs))  ★
+	//            ├ LoadModContent(...)  第二遍 → SetStaticDefaults
+	//            └ LoadModContent(...)  第三遍 → PostSetupContent
+	//      所以任何在 Load() 里写进 ArmorIDs 的值都会被 ★ 抹掉，且没有任何报错，
+	//      表现是"穿上后原版裸体胳膊/皮肤/头发和干员贴图重叠画出来"。
+	//      本系统统一走 NeoArmorReforgeAppearance.HideVanillaSkin() 登记 →
+	//      NeoArmorReforgeEquipSystem.PostSetupContent 里一次性写入，别再在 Load() 里直接写。
+	//  (8) 自定义叠加图层（PlayerDrawLayer）有一整套坑，**单独见下面第 12 节**。
+	//
+	//
+	// ── 12. 干员专属叠加图层（PlayerDrawLayer）写法 ────────────────────────────
+	//
+	// 有些干员除了三件套贴图，还要额外画一层东西：死芒的后发、莫斯提马的头部光环和
+	// 背部翅膀、迷迭香的背部特效等。这类图层踩过的坑特别多，而且**全部都是静默失败
+	// （不画 / 画错位置，一个报错都没有）**，所以这里把已验证的正确写法完整列出来。
+	//
+	// ── 12.1 模板（照抄这个）────────────────────────────────────────────────
+	//
+	//   internal class XxxHeadBackLayer : PlayerDrawLayer
+	//   {
+	//       // ① 图层顺序：见 12.2
+	//       public override Position GetDefaultPosition() => new BeforeParent(PlayerDrawLayers.HeadBack);
+	//
+	//       // ② 可见性：见 12.3
+	//       public override bool GetDefaultVisibility(PlayerDrawSet drawInfo) {
+	//           Player player = drawInfo.drawPlayer;
+	//           return NeoArmorReforgeSetLoader.IsPartVisible<XxxHead>(player, EquipType.Head)
+	//               && !player.dead;
+	//       }
+	//
+	//       protected override void Draw(ref PlayerDrawSet drawInfo) { … 见 12.4 / 12.5 }
+	//   }
+	//
+	// ── 12.2 图层顺序：别乱挂父层 ───────────────────────────────────────────
+	//
+	// PlayerDrawLayers 的字段顺序就是绘制顺序，从后往前大致是：
+	//   … Wings → HairBack → BackAcc → HeadBack → BalloonAcc → Skin → Leggings →
+	//     Shoes → Robe → SkinLongCoat → ArmorLongCoat → Torso → OffhandAcc →
+	//     WaistAcc → NeckAcc → Head → FinchNest → FaceAcc → … → HeldItem
+	//
+	//   · 要"在身体背后、被身体挡住"（后发、背部特效、翅膀）→ 挂 HeadBack / BackAcc /
+	//     HairBack / Wings 这一段。
+	//   · 要"盖在身体之上"（头部光环、面部发光）→ 挂 Head 之后。
+	//   ⚠ 死芒后发最初挂在 BeforeParent(Head)（第 21 层），结果排在 Skin(12)、
+	//     Torso(17)、NeckAcc(20) 之后，把整个角色糊住了。
+	//   ⚠ 父层 Visible == false 时**整个子树会被跳过**（PlayerDrawLayer
+	//     .DrawWithTransformationAndChildren 开头就 return），子层自己的
+	//     GetDefaultVisibility 根本不会被调用。所以父层要挑恒可见的——已确认
+	//     HairBack / HeadBack / BackAcc / Skin / Head / Wings 的 condition 都是 null，
+	//     即恒可见，可以放心挂。若不确定，用 new Between(层A, 层B) 让它成为独立顶层
+	//     图层，完全不受父层可见性影响。
+	//
+	// ── 12.3 可见性：不要比对装备槽位 ID ───────────────────────────────────
+	//
+	// ❌ 不要写 player.head == EquipLoader.GetEquipSlot(Mod, nameof(XxxHead), EquipType.Head)
+	// ✅ 用 NeoArmorReforgeSetLoader.IsPartVisible<XxxHead>(player, EquipType.Head)
+	//
+	// 反编译 Player.PlayerFrame 可以看到 head/body/legs 的赋值是三步：先从 armor[0..2]
+	// 取、再被 armor[10..12]（时装栏）覆盖、**最后还会被 Player.SetMatch 整个重写一遍**
+	// （原版盔甲套装替换机制）。绘制时刻的 player.head 未必等于我们注册时拿到的槽位
+	// ID，比对就静默失败、图层直接不画。IsPartVisible 是直接看"最终显示出来的那件装备
+	// 是什么物品"，且时装和套装两个 ItemID 都认，确定且不受上述机制影响。
+	//
+	// ── 12.4 取动画帧：只能用 bodyFrame ────────────────────────────────────
+	//
+	// ❌ player.headFrame —— **恒为 {0,0,0,0}**。全 tModLoader 只有
+	//    UICharacter.UpdateAnim（角色选择界面的预览动画）会写它，游戏内行走/战斗时
+	//    从来不赋值。用它算帧号会得到 Width/Height == 0，被判非法直接 return，
+	//    图层永远画不出来且无任何报错——死芒后发就是栽在这一条上。
+	// ✅ player.bodyFrame —— 原版画头部装备的 DrawPlayer_21_Head 用的也是它。
+	//    头部 / 躯干 / 腿部帧表本来就是同一套 20 帧 x 56px 的结构，所以头部叠加层
+	//    按 bodyFrame 取帧就能和角色动画完全同步。
+	//
+	//    Rectangle frame = p.bodyFrame;
+	//    if (frame.Height <= 0) return;
+	//    int frameIndex = frame.Y / frame.Height;
+	//    Rectangle sourceRect = new(0, frameIndex * frame.Height, texture.Width, frame.Height);
+	//    if (sourceRect.Bottom > texture.Height) return;
+	//
+	// ── 12.5 坐标：两条路，别自己瞎凑 ──────────────────────────────────────
+	//
+	// 【路 A｜整张贴图、不需要按帧取】用现成的 PlayerLayerHelper（莫斯提马的光环和
+	//   翅膀、迷迭香的背部都走这条）。它以 player.MountedCenter 为锚点，已经算好了
+	//   gfxOffY 和行走时的 2px 上下抖动：
+	//
+	//     PlayerLayerHelper.AddPlayerDrawLayer(ref drawInfo, texture, 0, new Vector2(0, -3));
+	//     // 第三个参数是部位（Head=0/Body=1/Legs=2，决定用哪个染料槽）
+	//     // (0, -3) 是本项目头部叠加层通用的"身体中心 → 头部中心"偏移
+	//
+	// 【路 B｜需要按帧取，必须自己写 DrawData】完整照抄原版 DrawPlayer_21_Head 的
+	//   坐标公式，三步一步都不能少（死芒后发是这一类）：
+	//
+	//     Vector2 position = Utils.Floor(
+	//         new Vector2(
+	//             -(p.bodyFrame.Width / 2) + (p.width / 2),   // ← 少了这项会右偏 10px
+	//             p.height - p.bodyFrame.Height + 4f)         // ← 少了这项会下偏 10px
+	//         + drawInfo.Position - Main.screenPosition)      // ← Utils.Floor 整体取整
+	//         + p.headPosition + drawInfo.headVect;
+	//     Vector2 origin = drawInfo.headVect;                 // ← 旋转轴心对齐原版头部
+	//
+	//   ⚠ Utils.Floor 不能省：headVect.Y 是 22.4 这类小数，不取整会半像素采样，
+	//     表现是"游戏里的像素和贴图像素对不上、发虚错行"。
+	//   ⚠ origin 用 drawInfo.headVect，不要用源矩形中心——后者会再多引入 5.6px 偏移。
 	//
 	//
 	// ── 迁移进度 ──────────────────────────────────────────────────────────────
 	//
 	// 已迁移：末柠(Mornia)、泥岩(Mudrock)、迷迭香(Rosmontis)
+	//         + 第一批 Caster：阿米娅、夜烟、深靛、炎熔、莫斯提马、死芒、史都华德
 	// 其余干员仍在旧的 NeoArmorItem 上，两套系统并存、互不干扰。旧系统全部迁完后，
 	// 可以直接删掉 NeoArmorItem / NeoArmorGltem / NeoArmorSlots / NeoArmorEquipSystem
 	// 这四个文件。
 	//
 	// ══════════════════════════════════════════════════════════════════════════════
-	public abstract class ReforgeVanityItem : ModItem
+	public abstract class NeoArmorReforgeVanityItem : ModItem
 	{
 		/// <summary>干员的星数，1~6。</summary>
 		public abstract int Rarity { get; }
@@ -272,7 +382,7 @@ namespace ArknightsMod.Content.Items.Armor.Reforge
 		public virtual int Value => 15000;
 
 		/// <summary>升级成套装的描述数据；返回 null 表示这件时装没有对应套装（纯时装用法）。</summary>
-		public virtual ReforgeSetProfile SetProfile => null;
+		public virtual NeoArmorReforgeSetProfile SetProfile => null;
 
 		/// <summary>
 		/// 外观形态开关。只影响外观，不影响任何数值/功能——切换后时装还是时装、
@@ -286,7 +396,7 @@ namespace ArknightsMod.Content.Items.Armor.Reforge
 		/// <summary>
 		/// 形态切换后穿戴时显示的替代帧表贴图（注意是 _Head/_Body/_Legs 那张完整帧表，
 		/// 不是图标）；为 null 表示这件装备没有形态切换功能。
-		/// internal 是因为 ReforgeSetPiece 需要读它来给套装件注册同一份替代外观。
+		/// internal 是因为 NeoArmorReforgeSetPiece 需要读它来给套装件注册同一份替代外观。
 		/// </summary>
 		internal virtual string AltEquipTexture => null;
 
@@ -296,12 +406,12 @@ namespace ArknightsMod.Content.Items.Armor.Reforge
 		/// </summary>
 		protected virtual string ToggleHintKey => null;
 
-		/// <summary>由 ReforgeVanityHead/Body/Legs 声明这件时装属于哪个装备类型。</summary>
+		/// <summary>由 NeoArmorReforgeVanityHead/Body/Legs 声明这件时装属于哪个装备类型。</summary>
 		internal virtual EquipType? SlotType => null;
 
 		public override void Load() {
 			if (SlotType is EquipType type)
-				ReforgeAppearance.RegisterAltEquip(Mod, type, Name, AltEquipTexture);
+				NeoArmorReforgeAppearance.RegisterAltEquip(Mod, type, Name, AltEquipTexture);
 
 			// 在时装自己的 Load() 里就把配套的套装件创建 + 注册掉，而不是交给一个统一的
 			// ModSystem 去扫描所有时装——tModLoader 的自动加载是按类型全名的字母序进行的
@@ -309,7 +419,7 @@ namespace ArknightsMod.Content.Items.Armor.Reforge
 			// 只能看到"字母序排在它自己前面"的那些干员，排在后面的会被整批漏掉，而且完全
 			// 静默无报错。改成"每件时装各自注册自己的套装件"，就跟加载顺序彻底无关了。
 			if (SetProfile != null)
-				ReforgeSetLoader.RegisterSetPieceFor(this);
+				NeoArmorReforgeSetLoader.RegisterSetPieceFor(this);
 		}
 
 		public sealed override void SetStaticDefaults() {
@@ -354,10 +464,10 @@ namespace ArknightsMod.Content.Items.Armor.Reforge
 		}
 
 		public sealed override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-			return ReforgeAppearance.DrawInventoryIcon(spriteBatch, position, drawColor, scale, HelmetForm, AltIconTexture);
+			return NeoArmorReforgeAppearance.DrawInventoryIcon(spriteBatch, position, drawColor, scale, HelmetForm, AltIconTexture);
 		}
 
-		// 注意：这里不需要再同步装备槽位——ReforgeAppearancePlayer 每帧会统一处理，
+		// 注意：这里不需要再同步装备槽位——NeoArmorReforgeAppearancePlayer 每帧会统一处理，
 		// 原因见那个类的注释（原版对这两个钩子有前置判断，时装穿在盔甲栏时可能一个
 		// 都不走，靠这里同步槽位并不可靠）。
 		public sealed override void UpdateVanity(Player player) => UpdateVanityEquip(player);
@@ -366,7 +476,7 @@ namespace ArknightsMod.Content.Items.Armor.Reforge
 		public sealed override void ModifyTooltips(List<TooltipLine> tooltips) {
 			ModifyVanityTooltips(tooltips);
 			if (SetProfile != null)
-				ReforgeSetPiece.AppendUpgradeHint(Mod, tooltips, SetProfile);
+				NeoArmorReforgeSetPiece.AppendUpgradeHint(Mod, tooltips, SetProfile);
 		}
 
 		public override void SaveData(TagCompound tag) => tag["helmetForm"] = HelmetForm;

@@ -1,4 +1,4 @@
-using ArknightsMod.Content.Items.Armor.Reforge;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Common;
 using ArknightsMod.Content.Items.Material;
 using Microsoft.Xna.Framework;
@@ -10,11 +10,11 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.Items.Armor.Sniper.Rosmontis
 {
 	[AutoloadEquip(EquipType.Body)]
-	public class RosmontisBody : ReforgeVanityBody
+	public class RosmontisBody : NeoArmorReforgeVanityBody
 	{
 		public override int Rarity => 6;
 
-		public override ReforgeSetProfile SetProfile => new() {
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
 			Defense = 21,
 			LifeBonus = 97,
 			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Rosmontis",
@@ -29,11 +29,9 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Rosmontis
 			public override Position GetDefaultPosition() => new BeforeParent(PlayerDrawLayers.Wings);
 			public override bool GetDefaultVisibility(PlayerDrawSet drawInfo) {
 				Player player = drawInfo.drawPlayer;
-				// 时装和套装（RosmontisBodySet）各自注册了一个装备槽位（贴图相同，
-				// 槽位 ID 不同），两个槽位都要认，不然穿套装就看不到这层背部特效了。
-				int vanitySlot = EquipLoader.GetEquipSlot(Mod, nameof(RosmontisBody), EquipType.Body);
-				int setSlot = EquipLoader.GetEquipSlot(Mod, nameof(RosmontisBody) + "Set", EquipType.Body);
-				return (player.body == vanitySlot || player.body == setSlot) && !player.dead;
+				// 时装和套装都要认。判断走 IsPartVisible（看穿的是哪个物品），
+				// 不比对 player.body 槽位 ID——原因见 IsPartVisible 的注释。
+				return NeoArmorReforgeSetLoader.IsPartVisible<RosmontisBody>(player, EquipType.Body) && !player.dead;
 			}
 
 			protected override void Draw(ref PlayerDrawSet drawInfo) {

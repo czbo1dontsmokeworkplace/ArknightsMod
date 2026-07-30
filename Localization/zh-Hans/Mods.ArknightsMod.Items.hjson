@@ -1513,7 +1513,7 @@ TexasLegs: {
 }
 
 FactoryItem: {
-	DisplayName: 加工站
+	DisplayName: 制造加工站
 	Tooltip: 用于特殊合成
 }
 
@@ -2652,17 +2652,17 @@ TrainingRoomSofa: {
 }
 
 WorkshopChair: {
-	DisplayName: 加工站椅
+	DisplayName: 制造加工站椅
 	// Tooltip: ""
 }
 
 WorkshopComputer: {
-	DisplayName: 加工站台式电脑
+	DisplayName: 制造加工站台式电脑
 	// Tooltip: ""
 }
 
 WorkshopTeleportStation: {
-	DisplayName: 加工站传送站
+	DisplayName: 制造加工站传送站
 	// Tooltip: ""
 }
 
@@ -2757,12 +2757,12 @@ ClothesHanger2: {
 }
 
 WorkshopMachine: {
-	DisplayName: 加工站机器
+	DisplayName: 制造加工站机器
 	// Tooltip: ""
 }
 
 WorkshopToolCabinet: {
-	DisplayName: 加工站工具柜
+	DisplayName: 制造加工站工具柜
 	// Tooltip: ""
 }
 
@@ -2852,12 +2852,12 @@ OblivionisSword: {
 
 WorkshopWallYellowItem: {
 	// Tooltip: ""
-	DisplayName: 加工站黄色墙
+	DisplayName: 制造加工站黄色墙
 }
 
 WorkshopWallPinkItem: {
 	// Tooltip: ""
-	DisplayName: 加工站粉色墙
+	DisplayName: 制造加工站粉色墙
 }
 
 WaterDispenser: {
@@ -3695,3 +3695,24 @@ MorniaLegsSet.Tooltip: 开发者套装
 // RosmontisBodySet.Tooltip: ""
 // RosmontisHeadSet.Tooltip: ""
 // RosmontisLegsSet.Tooltip: ""
+// AmiyaBodySet.Tooltip: ""
+// AmiyaHeadSet.Tooltip: ""
+// AmiyaLegsSet.Tooltip: ""
+// HazeBodySet.Tooltip: ""
+// HazeHeadSet.Tooltip: ""
+// HazeLegsSet.Tooltip: ""
+// IndigoBodySet.Tooltip: ""
+// IndigoHeadSet.Tooltip: ""
+// IndigoLegsSet.Tooltip: ""
+// LavaBodySet.Tooltip: ""
+// LavaHeadSet.Tooltip: ""
+// LavaLegsSet.Tooltip: ""
+// MostimaBodySet.Tooltip: ""
+// MostimaHeadSet.Tooltip: ""
+// MostimaLegsSet.Tooltip: ""
+// NecrassBodySet.Tooltip: ""
+// NecrassHeadSet.Tooltip: ""
+// NecrassLegsSet.Tooltip: ""
+// StewardBodySet.Tooltip: ""
+// StewardHeadSet.Tooltip: ""
+// StewardLegsSet.Tooltip: ""

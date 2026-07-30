@@ -2,16 +2,16 @@ using System;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace ArknightsMod.Content.Items.Armor.Reforge
+namespace ArknightsMod.Content.Items.Armor.NeoArmorReforge
 {
-	// NeoArmor Reforge：由时装类（ReforgeVanityItem）的 SetProfile 属性提供，声明
+	// NeoArmor Reforge：由时装类（NeoArmorReforgeVanityItem）的 SetProfile 属性提供，声明
 	// "这件时装升级成套装之后长什么样、需要什么材料、装备时有什么效果"。
-	// ReforgeSetLoader 靠这份数据自动生成对应的套装物品（ReforgeSetPiece），
+	// NeoArmorReforgeSetLoader 靠这份数据自动生成对应的套装物品（NeoArmorReforgeSetPiece），
 	// 作者不需要再手写一个 Set 类。
 	//
 	// 只是一个纯数据容器：不要往这里加行为/逻辑，那些应该放到 OnHelmetActive /
 	// OnFullSetActive 的回调里，或者放到干员自己的 ModPlayer 里。
-	public sealed class ReforgeSetProfile
+	public sealed class NeoArmorReforgeSetProfile
 	{
 		/// <summary>套装件提供的防御力。时装永远是 0（框架强制），只有套装才有防御。</summary>
 		public int Defense;
@@ -28,7 +28,7 @@ namespace ArknightsMod.Content.Items.Armor.Reforge
 
 		/// <summary>
 		/// 除了"这件时装本身 ×1"之外，升级还需要哪些额外材料。直接对传入的 Recipe 操作，
-		/// 不需要自己 Register()——框架会补上加工站和注册。
+		/// 不需要自己 Register()——框架会补上制造加工站和注册。
 		/// </summary>
 		public Action<Recipe> Materials;
 
@@ -40,7 +40,7 @@ namespace ArknightsMod.Content.Items.Armor.Reforge
 
 		/// <summary>
 		/// 头/身/腿三件套装全部穿在盔甲栏时每帧调用（在 OnHelmetActive 之后）。
-		/// "同一套"的判定依据是三件时装处于同一个命名空间，见 ReforgeSetLoader。
+		/// "同一套"的判定依据是三件时装处于同一个命名空间，见 NeoArmorReforgeSetLoader。
 		/// </summary>
 		public Action<Player> OnFullSetActive;
 

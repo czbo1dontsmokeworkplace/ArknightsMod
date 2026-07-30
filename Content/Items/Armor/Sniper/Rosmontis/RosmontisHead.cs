@@ -1,15 +1,15 @@
-using ArknightsMod.Content.Items.Armor.Reforge;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria.ModLoader;
 using ArknightsMod.Content.Items.Material;
 
 namespace ArknightsMod.Content.Items.Armor.Sniper.Rosmontis
 {
 	[AutoloadEquip(EquipType.Head)]
-	public class RosmontisHead : ReforgeVanityHead
+	public class RosmontisHead : NeoArmorReforgeVanityHead
 	{
 		public override int Rarity => 6;
 
-		public override ReforgeSetProfile SetProfile => new() {
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
 			Defense = 0,
 			LifeBonus = 195,
 			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Rosmontis",

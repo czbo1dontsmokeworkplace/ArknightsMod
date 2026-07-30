@@ -1,5 +1,5 @@
 using Terraria.ModLoader;
-using ArknightsMod.Content.Items.Armor.Reforge;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 
 namespace ArknightsMod.Content.Items.Armor.Defender.Mudrock
 {
@@ -8,13 +8,13 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Mudrock
 	// 旧版本这里挂了切换代码和切换提示，但腿部压根没有替代贴图，右键其实什么都不会
 	// 发生，属于误导，已一并清掉。
 	[AutoloadEquip(EquipType.Legs)]
-	internal class MudrockLegs : ReforgeVanityLegs
+	internal class MudrockLegs : NeoArmorReforgeVanityLegs
 	{
 		public override int Rarity => 6;
 
 		public override string Texture => "ArknightsMod/Content/Items/Armor/Defender/Mudrock/MudrockGreaves";
 
-		public override ReforgeSetProfile SetProfile => new() {
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
 			Defense = 17,
 			LifeBonus = 222,
 			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Mudrock",

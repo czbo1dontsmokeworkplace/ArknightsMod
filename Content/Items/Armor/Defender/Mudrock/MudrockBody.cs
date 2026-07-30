@@ -1,4 +1,4 @@
-using ArknightsMod.Content.Items.Armor.Reforge;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.Items.Armor.Defender.Mudrock
 {
 	[AutoloadEquip(EquipType.Body)]
-	internal class MudrockBody : ReforgeVanityBody
+	internal class MudrockBody : NeoArmorReforgeVanityBody
 	{
 		public override int Rarity => 6;
 
@@ -18,7 +18,7 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Mudrock
 		internal override string AltEquipTexture => "ArknightsMod/Content/Items/Armor/Defender/Mudrock/MudrockChestplate_Body";
 		protected override string ToggleHintKey => "Mods.ArknightsMod.ArmorSets.Mudrock.ToggleHint";
 
-		public override ReforgeSetProfile SetProfile => new() {
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
 			Defense = 50,
 			LifeBonus = 222,
 			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Mudrock",
@@ -46,7 +46,7 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Mudrock
 			Item shown = !player.armor[11].IsAir ? player.armor[11] : player.armor[1];
 			bool helmetForm = shown.ModItem switch {
 				MudrockBody vanity => vanity.HelmetForm,
-				ReforgeSetPiece piece when piece.Vanity is MudrockBody => piece.HelmetForm,
+				NeoArmorReforgeSetPiece piece when piece.Vanity is MudrockBody => piece.HelmetForm,
 				_ => false,
 			};
 			return helmetForm;

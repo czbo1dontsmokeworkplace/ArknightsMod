@@ -1,4 +1,4 @@
-using ArknightsMod.Content.Items.Armor.Reforge;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content.Items.Armor.Defender.Beagle;
 using ArknightsMod.Content.Items.Armor.Defender.Cardigan;
 using ArknightsMod.Content.Items.Armor.Defender.Mudrock;
@@ -29,9 +29,9 @@ namespace ArknightsMod.Content.Items.Armor
 
 		// NeoArmor Reforge：泥岩迁到新系统后，套装件是独立 ItemID，不再需要 hasUpgraded 判断。
 		private static bool HasMudrockSet(Player player) {
-			return player.armor[0].type == ReforgeSetLoader.GetSetType<MudrockHead>()
-				&& player.armor[1].type == ReforgeSetLoader.GetSetType<MudrockBody>()
-				&& player.armor[2].type == ReforgeSetLoader.GetSetType<MudrockLegs>();
+			return player.armor[0].type == NeoArmorReforgeSetLoader.GetSetType<MudrockHead>()
+				&& player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<MudrockBody>()
+				&& player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<MudrockLegs>();
 		}
 	}
 }

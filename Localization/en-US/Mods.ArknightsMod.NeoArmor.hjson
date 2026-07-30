@@ -1,6 +1,6 @@
 NeedVanity: Requires unupgraded outfit
 Upgraded: (Set)
-VanityHint: Upgrade at the Factory Station to equip as set armor and unlock set bonuses
+VanityHint: Upgrade at the Manufacturing Station to equip as set armor and unlock set bonuses
 LifeReplacement: Replaces {0} max life with a flat {1}
 LifeBonus: Max life +{0}
 LifeItemsReduction: Max life gained from Life Fruit / Life Crystals -{0} (applies once)
@@ -15,4 +15,25 @@ SetName: {
 	RosmontisBody: Rosmontis's Chestplate
 	RosmontisHead: Rosmontis's Helmet
 	RosmontisLegs: Rosmontis's Greaves
+	AmiyaBody: 阿米娅的上衣（套装）
+	AmiyaHead: 阿米娅的头盔
+	AmiyaLegs: 阿米娅的下装（套装）
+	HazeBody: 夜烟的上衣（套装）
+	HazeHead: 夜烟的头盔
+	HazeLegs: 夜烟的下装（套装）
+	IndigoBody: 深靛的上衣（套装）
+	IndigoHead: 深靛的头盔
+	IndigoLegs: 深靛的下装（套装）
+	LavaBody: 炎熔的躯干（套装）
+	LavaHead: 炎熔的头盔
+	LavaLegs: 炎熔的腿部（套装）
+	MostimaBody: 莫斯提马的上衣（套装）
+	MostimaHead: 莫斯提马的头盔
+	MostimaLegs: 莫斯提马的下装（套装）
+	NecrassBody: 死芒的上衣（套装）
+	NecrassHead: 死芒的头套（套装）
+	NecrassLegs: 死芒的下装（套装）
+	StewardBody: 史都华德的躯干（套装）
+	StewardHead: 史都华德的头盔
+	StewardLegs: 史都华德的腿部（套装）
 }

@@ -46,7 +46,7 @@ Tiles: {
 	ManganeseOre.MapEntry: Manganese Ore
 	OrirockCube.MapEntry: "{$Mods.ArknightsMod.Items.OrirockCube.DisplayName}"
 	RMA7012.MapEntry: "{$Mods.ArknightsMod.Items.RMA7012.DisplayName}"
-	FactoryTile.MapEntry: Factory Station
+	FactoryTile.MapEntry: Manufacturing Station
 	WMusicBoxTile.MapEntry: Music Box (W)
 	HoundTile.MapEntry: Hound Tile
 	HoundproTile.MapEntry: Houndpro Tile

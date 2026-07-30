@@ -1,4 +1,4 @@
-using ArknightsMod.Content.Items.Armor.Reforge;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content.Items.Material;
 using Terraria.ModLoader;
 
@@ -12,11 +12,11 @@ namespace ArknightsMod.Content.Items.Armor.Caster.Mornia
 	// 瑕疵，因此该图层已移除。MorniaBody_Tail.png 仍保留在目录里，将来若这套时装
 	// 补了配套的尾巴/背饰美术，把图层加回来即可。
 	[AutoloadEquip(EquipType.Body)]
-	public class MorniaBody : ReforgeVanityBody
+	public class MorniaBody : NeoArmorReforgeVanityBody
 	{
 		public override int Rarity => 4;
 
-		public override ReforgeSetProfile SetProfile => new() {
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
 			Defense = 14,
 			LifeBonus = 70,
 			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Mornia",

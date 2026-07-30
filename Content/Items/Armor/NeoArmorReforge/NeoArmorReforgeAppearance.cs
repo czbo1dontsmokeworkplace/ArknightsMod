@@ -5,13 +5,13 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace ArknightsMod.Content.Items.Armor.Reforge
+namespace ArknightsMod.Content.Items.Armor.NeoArmorReforge
 {
 	// 外观形态切换（HelmetForm，比如泥岩的头盔造型）相关的注册/绘制逻辑。
-	// 时装（ReforgeVanityItem）和套装（ReforgeSetPiece）共用同一份——形态切换只影响
+	// 时装（NeoArmorReforgeVanityItem）和套装（NeoArmorReforgeSetPiece）共用同一份——形态切换只影响
 	// 外观，两个 ItemID 各自独立记录 HelmetForm，互不影响，但"怎么注册贴图槽位、
 	// 怎么画"是同一套规则。
-	internal static class ReforgeAppearance
+	internal static class NeoArmorReforgeAppearance
 	{
 		// 槽位 ID 一律在「注册的那一刻」就记录下来（AddEquipTexture 的返回值），
 		// 运行时直接查这两张表，不再靠 EquipLoader.GetEquipSlot 按名字反查——
@@ -22,12 +22,15 @@ namespace ArknightsMod.Content.Items.Armor.Reforge
 		private static readonly Dictionary<string, int> DefaultSlotByOwner = new();
 		private static readonly Dictionary<string, int> AltSlotByOwner = new();
 
+		// 待隐藏原版部位的 (装备类型, 槽位) 清单，统一攒着，等 PostSetupContent 再一次性写入。
+		// 原因见 HideVanillaSkin 上方的说明。
+		private static readonly List<(EquipType Type, int Slot)> PendingHideVanillaSkin = new();
+
 		public static void Unload() {
 			DefaultSlotByOwner.Clear();
 			AltSlotByOwner.Clear();
+			PendingHideVanillaSkin.Clear();
 		}
-
-		public static bool HasAltForm(string ownerName) => AltSlotByOwner.ContainsKey(ownerName);
 
 		// 库存图标：形态切换开启且声明了替代图标时画替代图标；否则返回 true 交给原版画默认图标。
 		public static bool DrawInventoryIcon(SpriteBatch spriteBatch, Vector2 position, Color drawColor, float scale, bool helmetForm, string altIconTexture) {
@@ -54,14 +57,10 @@ namespace ArknightsMod.Content.Items.Armor.Reforge
 		// 记录「默认（未切换）形态」的槽位 ID。
 		// 套装件是自己手动 AddEquipTexture 的，注册时就能拿到返回值，直接调这个存下来；
 		// 时装是 [AutoloadEquip] 自动注册的，拿不到返回值，只能等 PostSetupContent
-		// 阶段按名字查一次再存（那个阶段注册肯定已完成，查得到）。
+		// 阶段按名字查一次再存（那个阶段注册肯定已完成，查得到，见 NeoArmorReforgeEquipSystem）。
 		public static void RecordDefaultSlot(string ownerName, int slot) {
 			if (slot >= 0)
 				DefaultSlotByOwner[ownerName] = slot;
-		}
-
-		public static void RecordDefaultSlotByLookup(Mod mod, EquipType type, string ownerName) {
-			RecordDefaultSlot(ownerName, EquipLoader.GetEquipSlot(mod, ownerName, type));
 		}
 
 		// 给"形态切换后的穿戴外观"注册一个独立的装备贴图槽位，槽位名固定用 ownerName + "Alt"。
@@ -88,7 +87,34 @@ namespace ArknightsMod.Content.Items.Armor.Reforge
 		}
 
 		// 把原版对应部位的皮肤/头部隐藏掉，默认槽位和 Alt 槽位都要设。
+		//
+		// ⚠ 这里只登记，不立刻写入——ArmorIDs.*.Sets 的那些数组会在 Load 阶段结束后被
+		// 整体重置一次，任何在 Load() 里写进去的值都会被抹掉。tModLoader 的加载顺序是：
+		//     ModContent.Load()
+		//       ├ LoadModContent(...)  第一遍 → Mod.Load / AddContent / ModType.Load()
+		//       ├ ResizeArrays()       → EquipLoader.ResizeAndFillArrays()
+		//       │                        → LoaderUtils.ResetStaticMembers(typeof(ArmorIDs))  ★ 清空
+		//       ├ LoadModContent(...)  第二遍 → SetStaticDefaults
+		//       └ LoadModContent(...)  第三遍 → PostSetupContent
+		// 套装件（NeoArmorReforgeSetPiece.Load）和替代外观（RegisterAltEquip）都是在第一遍里注册的，
+		// 当场写 ArmorIDs 必定被 ★ 处清空，表现出来就是"穿上套装/切换形态后，原版的
+		// 裸体胳膊、皮肤、头发和干员贴图一起画出来"，且没有任何报错。
+		// 所以统一攒到 ApplyPendingHideVanillaSkin()，由 NeoArmorReforgeEquipSystem 在
+		// PostSetupContent 里调用——那时清空早已发生，写进去的值才留得住。
 		public static void HideVanillaSkin(EquipType type, int slot) {
+			if (slot >= 0)
+				PendingHideVanillaSkin.Add((type, slot));
+		}
+
+		// 由 NeoArmorReforgeEquipSystem.PostSetupContent 统一调用，真正落盘。
+		public static void ApplyPendingHideVanillaSkin() {
+			foreach ((EquipType type, int slot) in PendingHideVanillaSkin)
+				WriteHideVanillaSkin(type, slot);
+
+			PendingHideVanillaSkin.Clear();
+		}
+
+		private static void WriteHideVanillaSkin(EquipType type, int slot) {
 			switch (type) {
 				case EquipType.Head:
 					if (slot >= 0 && slot < ArmorIDs.Head.Sets.DrawHead.Length)

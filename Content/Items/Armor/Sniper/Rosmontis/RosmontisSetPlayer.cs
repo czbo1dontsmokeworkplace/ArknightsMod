@@ -1,4 +1,4 @@
-using ArknightsMod.Content.Items.Armor.Reforge;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content;
 using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Projectiles.Sniper.Rosmontis;
@@ -26,10 +26,10 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Rosmontis
 		// （旧代码这里和 RosmontisHead.UpdateArmorSet 各设置一次，两个不同的文本
 		// 谁执行在后谁生效，是一个没被注意到的 bug）。
 		public override void PostUpdateEquips() {
-			RosmontisHelmetActive = Player.armor[0].type == ReforgeSetLoader.GetSetType<RosmontisHead>();
+			RosmontisHelmetActive = Player.armor[0].type == NeoArmorReforgeSetLoader.GetSetType<RosmontisHead>();
 			RosmontisSetActive = RosmontisHelmetActive
-				&& Player.armor[1].type == ReforgeSetLoader.GetSetType<RosmontisBody>()
-				&& Player.armor[2].type == ReforgeSetLoader.GetSetType<RosmontisLegs>();
+				&& Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<RosmontisBody>()
+				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<RosmontisLegs>();
 		}
 
 		public override void PostUpdate() {

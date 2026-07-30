@@ -1,5 +1,5 @@
 using Terraria.ModLoader;
-using ArknightsMod.Content.Items.Armor.Reforge;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 
 namespace ArknightsMod.Content.Items.Armor.Defender.Mudrock
 {
@@ -7,7 +7,7 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Mudrock
 	// （右键触发、图标替换、穿戴贴图替换、提示文案）就由框架自动提供，时装和它
 	// 对应的套装件（MudrockHeadSet）都会获得同样的切换能力。
 	[AutoloadEquip(EquipType.Head)]
-	internal class MudrockHead : ReforgeVanityHead
+	internal class MudrockHead : NeoArmorReforgeVanityHead
 	{
 		public override int Rarity => 6;
 
@@ -19,7 +19,7 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Mudrock
 		// 旧版本从来没给泥岩写过 AddRecipes，也就是说泥岩套装此前在正常游玩中根本
 		// 合成不出来，只能靠 debug 配置或抽卡直接拿到已升级状态。这里保留"不需要
 		// 额外材料"（原本就没有材料数据可参考），顺手把这个缺口补成真正可合成。
-		public override ReforgeSetProfile SetProfile => new() {
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
 			Defense = 0,
 			LifeBonus = 443,
 			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Mudrock",

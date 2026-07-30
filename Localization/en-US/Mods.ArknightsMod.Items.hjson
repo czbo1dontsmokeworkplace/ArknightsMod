@@ -1421,8 +1421,8 @@ TexasLegs: {
 }
 
 FactoryItem: {
-	DisplayName: Factory Item
-	Tooltip: ""
+	DisplayName: Manufacturing Station
+	Tooltip: Used for special crafting
 }
 
 AdnachielCrossbow: {
@@ -3322,3 +3322,24 @@ MudrockLegsSet.Tooltip: ""
 RosmontisBodySet.Tooltip: ""
 RosmontisHeadSet.Tooltip: ""
 RosmontisLegsSet.Tooltip: ""
+AmiyaBodySet.Tooltip: ""
+AmiyaHeadSet.Tooltip: ""
+AmiyaLegsSet.Tooltip: ""
+HazeBodySet.Tooltip: ""
+HazeHeadSet.Tooltip: ""
+HazeLegsSet.Tooltip: ""
+IndigoBodySet.Tooltip: ""
+IndigoHeadSet.Tooltip: ""
+IndigoLegsSet.Tooltip: ""
+LavaBodySet.Tooltip: ""
+LavaHeadSet.Tooltip: ""
+LavaLegsSet.Tooltip: ""
+MostimaBodySet.Tooltip: ""
+MostimaHeadSet.Tooltip: ""
+MostimaLegsSet.Tooltip: ""
+NecrassBodySet.Tooltip: ""
+NecrassHeadSet.Tooltip: ""
+NecrassLegsSet.Tooltip: ""
+StewardBodySet.Tooltip: ""
+StewardHeadSet.Tooltip: ""
+StewardLegsSet.Tooltip: ""
