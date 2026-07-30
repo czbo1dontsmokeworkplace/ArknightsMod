@@ -369,6 +369,12 @@ namespace ArknightsMod.Content.Items.Armor.NeoArmorReforge
 	// 已迁移：末柠(Mornia)、泥岩(Mudrock)、迷迭香(Rosmontis)
 	//         + 第一批【术师 Caster】：阿米娅、夜烟、深靛、炎熔、莫斯提马、死芒、史都华德
 	//         + 第二批【先锋 Vanguard】：风笛、芬、翎羽、德克萨斯、香草
+	//         + 第三批【重装 Defender】：米格鲁、卡缇、年、塞雷娅、斑点、火神（重装职业至此清空）
+	//         + 第四批【医疗 Medic】：安赛尔、芙蓉、凯尔希、焰影苇草、华法琳（医疗职业至此清空）
+	//         + 第五批【辅助 Supporter】：魔王、深海色、令、梓兰、电弧（辅助职业至此清空）
+	//           ※ 电弧只迁了时装，套装仍缺配方，原因见 RaidianHead 顶部说明
+	//         + 第六批【特种 Specialist】：多萝西、新约能天使、狮蝎、水月、若叶睦、缄默德克萨斯
+	//                                     （特种职业至此清空）
 	// 其余干员仍在旧的 NeoArmorItem 上，两套系统并存、互不干扰。旧系统全部迁完后，
 	// 可以直接删掉 NeoArmorItem / NeoArmorGltem / NeoArmorSlots / NeoArmorEquipSystem
 	// 这四个文件。

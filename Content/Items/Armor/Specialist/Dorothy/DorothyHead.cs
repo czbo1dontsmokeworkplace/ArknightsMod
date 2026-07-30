@@ -1,46 +1,23 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using ArknightsMod.Content.Tiles.Infrastructure;
+﻿using Terraria.ModLoader;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content.Items.Material;
 
 namespace ArknightsMod.Content.Items.Armor.Specialist.Dorothy
 {
 	[AutoloadEquip(EquipType.Head)]
-	public class DorothyHead : NeoArmorHead
+	public class DorothyHead : NeoArmorReforgeVanityHead
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 150;
-		
-		public override void Load() {
-			if (Main.netMode == NetmodeID.Server)
-				return;
-		}
 
-		public override void SetArmorDefaults() {
-			Item.defense = 0;
-		}
-		
-		public override bool IsArmorSet(Item head, Item body, Item legs) {
-			return body.type == ModContent.ItemType<DorothyBody>() && body.neoarmor().hasUpgraded &&
-				legs.type == ModContent.ItemType<DorothyLegs>() && legs.neoarmor().hasUpgraded;
-		}
-
-		public override void UpdateArmorSet(Player player) {
-			player.setBonus = "";
-		}
-
-		public override void AddRecipes() {
-			CreateRecipe()
-			.AddIngredient<DorothyHead>(1)
-			.AddIngredient<Orundum>(60)
-			.AddIngredient<BipolarNanoflake>(6)
-			.AddIngredient<CuttingFluidSolution>(5)
-			.AddTile(ModContent.TileType<FactoryTile>())
-			.AddCondition(NeoArmorUtils.NeedVanity)
-			.DisableDecraft()
-			.Register();
-		}
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
+			Defense = 0,
+			LifeBonus = 150,
+			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Dorothy",
+			Materials = recipe => recipe
+				.AddIngredient<Orundum>(60)
+				.AddIngredient<BipolarNanoflake>(6)
+				.AddIngredient<CuttingFluidSolution>(5),
+			SetBonusKey = "Mods.ArknightsMod.ArmorSets.Dorothy.SetBonus",
+		};
 	}
 }
-	

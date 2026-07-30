@@ -1,5 +1,6 @@
-using ArknightsMod.Content.Buffs.ArmorSets;
+﻿using ArknightsMod.Content.Buffs.ArmorSets;
 using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -16,14 +17,14 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.Orchid
 			OrchidSetActive = false;
 		}
 
+		// NeoArmor Reforge：套装件是独立 ItemID，穿上它本身就代表"已经是套装形态"，
+		// 不需要再查 hasUpgraded；player.setBonus 文本交给 OrchidHead 的
+		// SetProfile.SetBonusKey 统一设置，这里不再重复设置一遍。
 		public override void PostUpdateEquips() {
-			OrchidHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<OrchidHead>());
-			OrchidSetActive = OperatorSetEquipHelper.HasFullSet(
-				Player,
-				ModContent.ItemType<OrchidHead>(),
-				ModContent.ItemType<OrchidBody>(),
-				ModContent.ItemType<OrchidLegs>());
-			OperatorSetEquipHelper.ApplySetBonusText(Player, OrchidSetActive, "Mods.ArknightsMod.ArmorSets.Orchid.SetBonus");
+			OrchidHelmetActive = Player.armor[0].type == NeoArmorReforgeSetLoader.GetSetType<OrchidHead>();
+			OrchidSetActive = OrchidHelmetActive
+				&& Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<OrchidBody>()
+				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<OrchidLegs>();
 		}
 
 		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {

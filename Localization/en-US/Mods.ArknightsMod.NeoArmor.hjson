@@ -69,4 +69,49 @@ SetName: {
 	VulcanBody: 火神的躯干（套装）
 	VulcanHead: 火神的头盔
 	VulcanLegs: 火神的腿部（套装）
+	AnselBody: 安赛尔的躯干（套装）
+	AnselHead: 安赛尔的头盔
+	AnselLegs: 安赛尔的腿部（套装）
+	HibiscusBody: 芙蓉的躯干（套装）
+	HibiscusHead: 芙蓉的头盔
+	HibiscusLegs: 芙蓉的腿部（套装）
+	KaltsitBody: Kaltsit Body（套装）
+	KaltsitHead: Kaltsit Head（套装）
+	KaltsitLegs: Kaltsit Legs（套装）
+	ReedFlameShadowBody: 焰影苇草的上衣（套装）
+	ReedFlameShadowHead: 焰影苇草的头套（套装）
+	ReedFlameShadowLegs: 焰影苇草的下装（套装）
+	WarfarinBody: 华法琳的上衣（套装）
+	WarfarinHead: 华法琳的头盔
+	WarfarinLegs: 华法琳的下装（套装）
+	DorothyBody: 多萝西的上衣（套装）
+	DorothyHead: 多萝西的头盔
+	DorothyLegs: 多萝西的下装（套装）
+	ExusiaiAlterBody: 新约能天使的上衣（套装）
+	ExusiaiAlterHead: 新约能天使的头盔
+	ExusiaiAlterLegs: 新约能天使的下装（套装）
+	ManticoreBody: 狮蝎的上衣（套装）
+	ManticoreHead: 狮蝎的头盔
+	ManticoreLegs: 狮蝎的下装（套装）
+	MizukiBody: 水月的躯干（套装）
+	MizukiHead: 水月的头盔
+	MizukiLegs: 水月的腿部（套装）
+	MortisBody: 若叶睦的上衣（套装）
+	MortisHead: 若叶睦的头套（套装）
+	MortisLegs: 若叶睦的下装（套装）
+	TexalterBody: 缄默德克萨斯的上衣（套装）
+	TexalterHead: 缄默德克萨斯的头盔
+	TexalterLegs: 缄默德克萨斯的下装（套装）
+	CivilightEternaBody: 魔王的上衣（套装）
+	CivilightEternaHead: 魔王的头盔
+	CivilightEternaLegs: 魔王的裤子（套装）
+	DeepcolorBody: Deepcolor Body（套装）
+	DeepcolorHead: 深海色的头盔
+	DeepcolorLegs: Deepcolor Legs（套装）
+	LingBody: 令的上衣（套装）
+	LingHead: 令的头盔
+	LingLegs: 令的下装（套装）
+	OrchidBody: 梓兰的躯干（套装）
+	OrchidHead: 梓兰的头盔
+	OrchidLegs: 梓兰的腿部（套装）
 }

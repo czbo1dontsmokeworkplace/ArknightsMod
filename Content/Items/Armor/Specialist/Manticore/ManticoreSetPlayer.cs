@@ -1,4 +1,5 @@
-using ArknightsMod.Content.Items.Armor;
+﻿using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -18,14 +19,14 @@ namespace ArknightsMod.Content.Items.Armor.Specialist.Manticore
 			ManticoreSetActive = false;
 		}
 
+		// NeoArmor Reforge：套装件是独立 ItemID，穿上它本身就代表"已经是套装形态"，
+		// 不需要再查 hasUpgraded；player.setBonus 文本交给 ManticoreHead 的
+		// SetProfile.SetBonusKey 统一设置，这里不再重复设置一遍。
 		public override void PostUpdateEquips() {
-			ManticoreHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<ManticoreHead>());
-			ManticoreSetActive = OperatorSetEquipHelper.HasFullSet(
-				Player,
-				ModContent.ItemType<ManticoreHead>(),
-				ModContent.ItemType<ManticoreBody>(),
-				ModContent.ItemType<ManticoreLegs>());
-			OperatorSetEquipHelper.ApplySetBonusText(Player, ManticoreSetActive, "Mods.ArknightsMod.ArmorSets.Manticore.SetBonus");
+			ManticoreHelmetActive = Player.armor[0].type == NeoArmorReforgeSetLoader.GetSetType<ManticoreHead>();
+			ManticoreSetActive = ManticoreHelmetActive
+				&& Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<ManticoreBody>()
+				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<ManticoreLegs>();
 		}
 
 		public override void ModifyHurt(ref Player.HurtModifiers modifiers) {

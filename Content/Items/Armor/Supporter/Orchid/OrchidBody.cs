@@ -1,30 +1,21 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using ArknightsMod.Content.Tiles.Infrastructure;
+﻿using Terraria.ModLoader;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content.Items.Material;
 
 namespace ArknightsMod.Content.Items.Armor.Supporter.Orchid
 {
 	[AutoloadEquip(EquipType.Body)]
-	public class OrchidBody : NeoArmorBody
+	public class OrchidBody : NeoArmorReforgeVanityBody
 	{
 		public override int Rarity => 3;
-		public override int ArmorLifeBonus => 47;
 
-		public override void SetArmorDefaults() {
-			Item.defense = 6;
-		}
-		
-		public override void AddRecipes() {
-			CreateRecipe()
-			.AddIngredient<OrchidBody>(1)
-			.AddIngredient<Orundum>(30)
-			.AddIngredient<Polyester>(2)
-			.AddTile(ModContent.TileType<FactoryTile>())
-			.AddCondition(NeoArmorUtils.NeedVanity)
-			.DisableDecraft()
-			.Register();
-		}
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
+			Defense = 6,
+			LifeBonus = 47,
+			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Orchid",
+			Materials = recipe => recipe
+				.AddIngredient<Orundum>(30)
+				.AddIngredient<Polyester>(2),
+		};
 	}
 }

@@ -1,5 +1,6 @@
 using ArknightsMod.Common.GlobalNPCs;
 using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content.Projectiles.Guard.Saki;
 using Terraria;
 using Terraria.ModLoader;
@@ -16,7 +17,7 @@ namespace ArknightsMod.Systems.Gameplay.OperatorTags
 				return false;
 
 			// 干员标签（职业/阵营）仅在头部件作为「已升级盔甲」穿戴时生效，与套装效果一致（纯时装不触发）。
-			if (!player.armor[0].neoarmor().hasUpgraded)
+			if (!IsUpgradedHelmet(player.armor[0]))
 				return false;
 
 			if (!OperatorTagRegistry.TryGetFromHelmet(player.armor[0].type, out OperatorTagRegistry.OperatorTagEntry entry))
@@ -70,8 +71,7 @@ namespace ArknightsMod.Systems.Gameplay.OperatorTags
 			int helmetType = ModContent.ItemType<THelmet>();
 			for (int i = 0; i < Main.maxPlayers; i++) {
 				Player player = Main.player[i];
-				if (player.active && !player.dead
-				    && player.armor[0].type == helmetType && player.armor[0].neoarmor().hasUpgraded) {
+				if (player.active && !player.dead && IsUpgradedHelmetOf(player.armor[0], helmetType)) {
 					found = player;
 					return true;
 				}
@@ -79,6 +79,27 @@ namespace ArknightsMod.Systems.Gameplay.OperatorTags
 
 			found = null;
 			return false;
+		}
+
+		// 「这件东西是不是某位干员的**盔甲形态**头部件」。
+		//
+		// 两套系统的"盔甲形态"表示方式不同，都要认：
+		//   · 旧 NeoArmor：物品还是那个时装 ItemID，靠 GlobalItem 上的 hasUpgraded 标记区分；
+		//   · NeoArmor Reforge：套装件是**另一个独立的 ItemID**，压根没有 hasUpgraded 这个
+		//     状态，只查旧标记的话所有已迁移干员都会被判成"没升级"，标签系统直接失效
+		//     且没有任何报错。
+		private static bool IsUpgradedHelmet(Item helmet) {
+			return helmet.neoarmor().hasUpgraded
+				|| NeoArmorReforgeSetLoader.GetVanity(helmet.type) != null;
+		}
+
+		// 同上，外加"必须是指定那位干员的"。传入的 helmetType 是**时装**的 ItemID。
+		private static bool IsUpgradedHelmetOf(Item helmet, int vanityHelmetType) {
+			if (helmet.type == vanityHelmetType && helmet.neoarmor().hasUpgraded)
+				return true;
+
+			NeoArmorReforgeVanityItem vanity = NeoArmorReforgeSetLoader.GetVanity(helmet.type);
+			return vanity != null && vanity.Type == vanityHelmetType;
 		}
 	}
 }

@@ -1,46 +1,26 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using ArknightsMod.Content.Tiles.Infrastructure;
+﻿using Terraria.ModLoader;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content.Items.Material;
 
 namespace ArknightsMod.Content.Items.Armor.Medic.Kaltsit
 {
 	[AutoloadEquip(EquipType.Head)]
-	public class KaltsitHead : NeoArmorHead
+	public class KaltsitHead : NeoArmorReforgeVanityHead
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 204;
-		
-		public override void Load() {
-			if (Main.netMode == NetmodeID.Server)
-				return;
-		}
 
-		public override void SetArmorDefaults() {
-			Item.defense = 0;
-		}
-		
-		public override bool IsArmorSet(Item head, Item body, Item legs) {
-			return body.type == ModContent.ItemType<KaltsitBody>() && body.neoarmor().hasUpgraded &&
-				legs.type == ModContent.ItemType<KaltsitLegs>() && legs.neoarmor().hasUpgraded;
-		}
+		// 旧系统这里 IsArmorSet/UpdateArmorSet 只是把 player.setBonus 设成空字符串，
+		// ArmorSets.hjson 里也从来没写过 Kaltsit 的 HelmetEffect/SetEffect —— 套装效果
+		// 始终是空的。SetBonusKey 留 null 就是这个"没有文本"的等价物。
 
-		public override void UpdateArmorSet(Player player) {
-			player.setBonus = "";
-		}
-
-		public override void AddRecipes() {
-			CreateRecipe()
-			.AddIngredient<KaltsitHead>(1)
-			.AddIngredient<Orundum>(60)
-			.AddIngredient<PolymerizationPreparation>(6)
-			.AddIngredient<OrironBlock>(5)
-			.AddTile(ModContent.TileType<FactoryTile>())
-			.AddCondition(NeoArmorUtils.NeedVanity)
-			.DisableDecraft()
-			.Register();
-		}
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
+			Defense = 0,
+			LifeBonus = 204,
+			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Kaltsit",
+			Materials = recipe => recipe
+				.AddIngredient<Orundum>(60)
+				.AddIngredient<PolymerizationPreparation>(6)
+				.AddIngredient<OrironBlock>(5),
+		};
 	}
 }
-	

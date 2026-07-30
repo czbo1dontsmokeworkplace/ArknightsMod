@@ -1,34 +1,22 @@
-﻿using ArknightsMod.Content.Items.Material;
-using ArknightsMod.Content.Tiles.Infrastructure;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+﻿using Terraria.ModLoader;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
+using ArknightsMod.Content.Items.Material;
 
 namespace ArknightsMod.Content.Items.Armor.Supporter.CivilightEterna
 {
 	[AutoloadEquip(EquipType.Legs)]
-	public class CivilightEternaLegs : NeoArmorLegs
+	public class CivilightEternaLegs : NeoArmorReforgeVanityLegs
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 97;
-		
-		public override void Load() {
-		}
 
-		public override void SetArmorDefaults() {
-			Item.defense = 6;
-		}
-
-		public override void AddRecipes() {
-			CreateRecipe()
-			.AddIngredient<CivilightEternaLegs>(1)
-			.AddIngredient<Orundum>(60)
-			.AddIngredient<CrystallineElectronicUnit>(6)
-			.AddIngredient<OrironBlock>(3)
-			.AddTile(ModContent.TileType<FactoryTile>())
-			.AddCondition(NeoArmorUtils.NeedVanity)
-			.DisableDecraft()
-			.Register();
-		}
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
+			Defense = 6,
+			LifeBonus = 97,
+			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.CivilightEterna",
+			Materials = recipe => recipe
+				.AddIngredient<Orundum>(60)
+				.AddIngredient<CrystallineElectronicUnit>(6)
+				.AddIngredient<OrironBlock>(3),
+		};
 	}
 }
