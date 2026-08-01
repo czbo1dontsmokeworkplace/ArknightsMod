@@ -287,25 +287,49 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			}
 		}
 
+		// tModLoader 的商店展示槽位是有限的（40 格）。这两个商店的实际内容完全由
+		// ModifyActiveShop 每天重新决定（含材料商店里永远常驻的碳素条），下面注册的静态列表
+		// 只是给「哪里能买到」这类外部工具查询用的样本，本身并不会被玩家直接看到。
+		// ⚠ 这里注册的条目没有挂任何 Condition，运行时全部算"生效中"——一旦数量超过槽位
+		//   上限，tModLoader 每次开店都会弹出"物品太多，塞不进商店里 :("的警告。材料池
+		//   （forceAllTiers=true 时 60+ 种）和全部时装袋（当前 50+ 个）都远超 40，
+		//   所以必须截断，不能把 GetContent 的结果直接全塞进去。
+		private const int MaxStaticShopSampleCount = 30;
+
 		public override void AddShops() {
 			var npcShop = new NPCShop(Type, ShopName[0])
 				.Add(new Item(ModContent.ItemType<Items.Placeable.Furniture.DareUsa>()) {
 					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				});
-			foreach (int materialType in NPCShopSystem.BuildClosureMaterialPool(true)) {
+			foreach (int materialType in NPCShopSystem.BuildClosurePinnedMaterials()) {
 				npcShop.Add(new Item(materialType) {
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				});
 			}
+			int materialSampleCount = 0;
+			foreach (int materialType in NPCShopSystem.BuildClosureMaterialPool(true)) {
+				if (materialSampleCount >= MaxStaticShopSampleCount)
+					break;
+				npcShop.Add(new Item(materialType) {
+					shopCustomPrice = 10,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				});
+				materialSampleCount++;
+			}
 			npcShop.Register();
+
 			npcShop = new NPCShop(Type, ShopName[1]);
+			int bagSampleCount = 0;
 			foreach (var bag in ModContent.GetContent<ArknightsVanityBag>()) {
+				if (bagSampleCount >= MaxStaticShopSampleCount)
+					break;
 				npcShop.Add(new Item(bag.Type) {
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				});
+				bagSampleCount++;
 			}
 			npcShop.Register();
 		}

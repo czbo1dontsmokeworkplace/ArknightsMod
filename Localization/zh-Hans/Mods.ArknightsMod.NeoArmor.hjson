@@ -153,4 +153,46 @@ SetName: {
 	// RaidianBody: 电弧的上衣（套装）
 	// RaidianHead: 电弧的头盔
 	// RaidianLegs: 电弧的下装（套装）
+	// ChenBody: 陈的上衣（套装）
+	// ChenHead: 陈的头盔
+	// ChenLegs: 陈的下装（套装）
+	// EntelechiaBody: 隐德来希的躯干（套装）
+	// EntelechiaHead: 隐德来希的头盔
+	// EntelechiaLegs: 隐德来希的腿部（套装）
+	// LaPlumaBody: 羽毛笔的上衣（套装）
+	// LaPlumaHead: 羽毛笔的头盔
+	// LaPlumaLegs: 羽毛笔的下装（套装）
+	// LapplandBody: 拉普兰德的上衣（套装）
+	// LapplandHead: 拉普兰德的头盔
+	// LapplandLegs: 拉普兰德的下装（套装）
+	// MatoimaruBody: 缠丸的上衣（套装）
+	// MatoimaruHead: 缠丸的头盔
+	// MatoimaruLegs: 缠丸的下装（套装）
+	// MelanthaBody: 玫兰莎的上衣（套装）
+	// MelanthaHead: 玫兰莎的头盔
+	// MelanthaLegs: 玫兰莎的下装（套装）
+	// MidnightBody: 月见夜的躯干（套装）
+	// MidnightHead: 月见夜的头盔
+	// MidnightLegs: 月见夜的腿部（套装）
+	// MlynarBody: 玛恩纳的躯干（套装）
+	// MlynarHead: 玛恩纳的头盔
+	// MlynarLegs: 玛恩纳的腿部（套装）
+	// OblivionisBody: 旋律之主上衣（套装）
+	// OblivionisHead: 丰川祥子的头盔
+	// OblivionisLegs: 旋律之主下装（套装）
+	// PopukarBody: 泡普卡的躯干（套装）
+	// PopukarHead: 泡普卡的头盔
+	// PopukarLegs: 泡普卡的腿部（套装）
+	// SkadiBody: 斯卡蒂的上衣（套装）
+	// SkadiHead: 斯卡蒂的头盔
+	// SkadiLegs: 斯卡蒂的下装（套装）
+	// SurtrBody: 史尔特尔的上衣（套装）
+	// SurtrHead: 史尔特尔的头盔
+	// SurtrLegs: 史尔特尔的下装（套装）
+	// UlpianusBody: 乌尔比安的上衣（套装）
+	// UlpianusHead: 乌尔比安的头盔
+	// UlpianusLegs: 乌尔比安的下装（套装）
+	// UtageBody: 宴的上衣（套装）
+	// UtageHead: 宴的头盔
+	// UtageLegs: 宴的下装（套装）
 }
