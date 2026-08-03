@@ -58,6 +58,17 @@ namespace ArknightsMod.Players
 		// SP恢复加成系统
 		public float SPRegenMultiplier { get; set; } = 1f;
 		private float spRegenFraction;
+
+		/// <summary>
+		/// 全局技力恢复速度倍率：开启配置开关时为 2（二倍速），关闭时为 1（原速）。
+		/// 只影响"技力条恢复的快慢"（自然回复/受击回复/攻击回复/饰品加速），不影响任何数值——
+		/// 技能所需技力、技力上限等仍按 CSV/武器数据里 1 倍速的原始数值走，
+		/// 部署费用吸收、套装/技能直接赠送技力等"技力返还"效果同样不受这个倍率影响
+		/// （它们不经过这里，直接改 SP 或 SkillCharge，参见 <see cref="AbsorbDeploymentCost"/>
+		/// 与 OperatorSPHelper.TryGainSP）。
+		/// </summary>
+		public static int GlobalSPRegenSpeedMultiplier =>
+			ModContent.GetInstance<Common.Configs.SkillChargeConfig>().DoubleSPRegenSpeed ? 2 : 1;
 		private bool chargeReady;
 		private bool chargeOpen;
 		private bool hasNearbyEnemy;
@@ -351,8 +362,11 @@ namespace ArknightsMod.Players
 			}
 		}
 
+		// 释放技能后，如果附近 560px 内没有可仇恨的敌人，自然回复会被冻结，
+		// 直到出现敌人、或等够这个时长才解锁（见 ResetEffects 里 chargeOpen/hasNearbyEnemy 的判定）。
+		// 原本是 60*15（15 秒），空窗期太长、容易被误认为"技力卡住了"，缩短到 3 秒。
 		private int GetRestoreTime() {
-			return 60 * 15;
+			return 60 * 3;
 		}
 
 		public void TryAutoCharge() {
@@ -390,9 +404,12 @@ namespace ArknightsMod.Players
 				SkillLevelData data = CurrentSkill.CurrentLevelData;
 				if (!SkillActive && StockCount < data.MaxStack)
 				{
-					SP++;
-					SkillCharge++;
-					if (SkillCharge == SkillChargeMax)
+					// 受击回复类型 Div=1，SkillCharge 和 SP 一一对应；倍率大于 1 时用 >= 而非 ==
+					// 判满，避免（比如 MaxSP 为奇数时）两点两点跳过精确等于 SkillChargeMax 那一格。
+					int gain = GlobalSPRegenSpeedMultiplier;
+					SP += gain;
+					SkillCharge += gain;
+					if (SkillCharge >= SkillChargeMax)
 					{
 						SkillCharge=0;
 						SP = ++StockCount == data.MaxStack ? data.MaxSP : 0;
@@ -408,29 +425,36 @@ namespace ArknightsMod.Players
 		public void AutoCharge() {
 			if (SceneCameraSkills.BlocksSkillCharge(Player)) // 稀音技能持续期间冻结充能
 				return;
+			// 自然回复类型 Div=60（SkillCharge 每 60 tick = 1 点可见技力）。倍率 x2 时每 tick
+			// 累加 2 点 SkillCharge，SP 直接按 SkillCharge/Div 换算——和原来"每 60 tick 视觉 +1"
+			// 的模运算在倍率为 1 时完全等价，但同时天然支持任意倍率，不会有跳格风险。
+			int gain = GlobalSPRegenSpeedMultiplier;
 			if (CurrentSkill != null) {
 				SkillLevelData data = CurrentSkill.CurrentLevelData;
 				if (!SkillActive && StockCount < data.MaxStack) {
-					if (++SkillCharge % 60 == 0)
-						SP++;
+					SkillCharge += gain;
 
-					if (SkillCharge == SkillChargeMax) {
+					if (SkillCharge >= SkillChargeMax) {
 						SkillCharge = 0;
 						SP = ++StockCount == data.MaxStack ? data.MaxSP : 0;
+					}
+					else {
+						SP = SkillCharge / Div;
 					}
 				}
 			}
 			else {
 				// 旧版自动充能逻辑
 				if (!SkillActive && StockCount < StockMax[Skill]) {
-					SkillCharge += 1;
-					if (SkillCharge != 0 && SkillCharge % 60 == 0)
-						SP += 1;
+					SkillCharge += gain;
 
-					if (SkillCharge == SkillChargeMax) {
+					if (SkillCharge >= SkillChargeMax) {
 						SkillCharge = 0;
 						StockCount += 1;
 						SP = StockCount == StockMax[Skill] ? (int)MaxSP[Skill] : 0;
+					}
+					else {
+						SP = SkillCharge / Div;
 					}
 				}
 			}
@@ -451,7 +475,10 @@ namespace ArknightsMod.Players
 				SkillLevelData data = CurrentSkill.CurrentLevelData;
 				if (!SkillActive && StockCount < data.MaxStack) {
 
-					float extraCharge = SPRegenMultiplier - 1f;
+					// 饰品/套装给的额外回复速度加成也按同一倍率放大，保持"相对加成比例不变，
+					// 只是整体更快"——这里 while 循环每次只消耗掉整数 1 点 AccessoriesChargeFraction、
+					// SkillCharge 每次只 +1，不受倍率影响，所以内部判满逻辑不需要改。
+					float extraCharge = (SPRegenMultiplier - 1f) * GlobalSPRegenSpeedMultiplier;
 					AccessoriesChargeFraction += extraCharge;
 
 
@@ -480,7 +507,7 @@ namespace ArknightsMod.Players
 			else {
 				// 旧版武器支持
 				if (!SkillActive && StockCount < StockMax[Skill]) {
-					float extraCharge = SPRegenMultiplier - 1f;
+					float extraCharge = (SPRegenMultiplier - 1f) * GlobalSPRegenSpeedMultiplier;
 					AccessoriesChargeFraction += extraCharge;
 
 					while (AccessoriesChargeFraction >= 1f) {
@@ -509,14 +536,18 @@ namespace ArknightsMod.Players
 			if (SceneCameraSkills.BlocksSkillCharge(Player)) // 稀音技能持续期间冻结充能
 				return;
 
+			// 攻击回复类型同样 Div=1，理由同 HurtCharge：倍率大于 1 时必须用 >= 而不是 ==
+			// 判满，否则 MaxSP 为奇数时会永远跳过精确等于 SkillChargeMax 的那一格，技能卡死攒不满。
+			int gain = GlobalSPRegenSpeedMultiplier;
+
 			if (CurrentSkill != null) {
 				SkillLevelData data = CurrentSkill.CurrentLevelData;
 				if (!SkillActive && StockCount < data.MaxStack) {
-					SkillCharge++;
-					SP++;
+					SkillCharge += gain;
+					SP += gain;
 				}
 
-				if (SkillCharge == SkillChargeMax) {
+				if (SkillCharge >= SkillChargeMax) {
 					SkillCharge = 0;
 					SP = ++StockCount == data.MaxStack ? data.MaxSP : 0;
 				}
@@ -524,12 +555,12 @@ namespace ArknightsMod.Players
 			else {
 				// 旧版攻击恢复逻辑
 				if (!SkillActive && StockCount < StockMax[Skill]) {
-					SkillCharge += 1;
+					SkillCharge += gain;
 					if (SkillCharge != 0)
-						SP += 1;
+						SP += gain;
 				}
 
-				if (SkillCharge == SkillChargeMax) {
+				if (SkillCharge >= SkillChargeMax) {
 					SkillCharge = 0;
 					StockCount += 1;
 					SP = StockCount == StockMax[Skill] ? (int)MaxSP[Skill] : 0;
