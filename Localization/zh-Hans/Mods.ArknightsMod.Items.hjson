@@ -3426,22 +3426,22 @@ WisadelDefault: {
 }
 
 DeepcolorBody: {
-	// DisplayName: Deepcolor Body
+	DisplayName: 深海色的躯干
 	// Tooltip: ""
 }
 
 DeepcolorDefault: {
-	// DisplayName: Deepcolor Default
+	DisplayName: 深海色的服饰（常规）
 	// Tooltip: ""
 }
 
 DeepcolorHead: {
-	// DisplayName: Deepcolor Head
+	DisplayName: 深海色的头部
 	// Tooltip: ""
 }
 
 DeepcolorLegs: {
-	// DisplayName: Deepcolor Legs
+	DisplayName: 深海色的腿部
 	// Tooltip: ""
 }
 
@@ -3587,22 +3587,22 @@ ClosureScanGun: {
 }
 
 KaltsitBody: {
-	// DisplayName: Kaltsit Body
+	DisplayName: 凯尔希的躯干
 	// Tooltip: ""
 }
 
 KaltsitDefault: {
-	// DisplayName: Kaltsit Default
+	DisplayName: 凯尔希的服饰（常规）
 	// Tooltip: ""
 }
 
 KaltsitHead: {
-	// DisplayName: Kaltsit Head
+	DisplayName: 凯尔希的头部
 	// Tooltip: ""
 }
 
 KaltsitLegs: {
-	// DisplayName: Kaltsit Legs
+	DisplayName: 凯尔希的腿部
 	// Tooltip: ""
 }
 

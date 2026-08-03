@@ -1,4 +1,4 @@
-NeedVanity: Requires unupgraded outfit
+﻿NeedVanity: Requires unupgraded outfit
 Upgraded: (Set)
 VanityHint: Upgrade at the Manufacturing Station to equip as set armor and unlock set bonuses
 LifeReplacement: Replaces {0} max life with a flat {1}
@@ -75,9 +75,9 @@ SetName: {
 	HibiscusBody: 芙蓉的躯干（套装）
 	HibiscusHead: 芙蓉的头盔
 	HibiscusLegs: 芙蓉的腿部（套装）
-	KaltsitBody: Kaltsit Body（套装）
-	KaltsitHead: Kaltsit Head（套装）
-	KaltsitLegs: Kaltsit Legs（套装）
+	KaltsitBody: 凯尔希的躯干（套装）
+	KaltsitHead: 凯尔希的头盔
+	KaltsitLegs: 凯尔希的腿部（套装）
 	ReedFlameShadowBody: 焰影苇草的上衣（套装）
 	ReedFlameShadowHead: 焰影苇草的头套（套装）
 	ReedFlameShadowLegs: 焰影苇草的下装（套装）
@@ -105,9 +105,9 @@ SetName: {
 	CivilightEternaBody: 魔王的上衣（套装）
 	CivilightEternaHead: 魔王的头盔
 	CivilightEternaLegs: 魔王的裤子（套装）
-	DeepcolorBody: Deepcolor Body（套装）
+	DeepcolorBody: 深海色的躯干（套装）
 	DeepcolorHead: 深海色的头盔
-	DeepcolorLegs: Deepcolor Legs（套装）
+	DeepcolorLegs: 深海色的腿部（套装）
 	LingBody: 令的上衣（套装）
 	LingHead: 令的头盔
 	LingLegs: 令的下装（套装）

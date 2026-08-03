@@ -13,6 +13,11 @@ CameraTruckBuff: {
 	Description: A Mobile Camera Truck is deployed.
 }
 
+Mon3trBuff: {
+	DisplayName: Mon3tr
+	Description: Mon3tr is accompanying you.
+}
+
 AcidOgSlugDebuff: {
 	DisplayName: Acid Og Slug Debuff
 	Description: Mods.ArknightsMod.Buffs.AcidOgSlugDebuff.Description

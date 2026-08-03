@@ -9,10 +9,10 @@ namespace ArknightsMod.Content.Items.Armor.Medic.Kaltsit
 	{
 		public override int Rarity => 6;
 
-		// 旧系统这里 IsArmorSet/UpdateArmorSet 只是把 player.setBonus 设成空字符串，
-		// ArmorSets.hjson 里也从来没写过 Kaltsit 的 HelmetEffect/SetEffect —— 套装效果
-		// 始终是空的。SetBonusKey 留 null 就是这个"没有文本"的等价物。
-
+		// 套装效果——召唤 M3(Mon3tr) 伴随战斗，见 KaltsitSetPlayer / Mon3trBuff / Mon3tr。
+		// 效果本身是"生成一个会打会死会复活的召唤物"，不是简单的加数值，没法用
+		// OnFullSetActive 一行 lambda 表达，所以这里不接 OnFullSetActive，全部逻辑
+		// 放在 KaltsitSetPlayer.PostUpdateEquips 里（文档第 6 节写法 C）。
 		public override NeoArmorReforgeSetProfile SetProfile => new() {
 			Defense = 0,
 			LifeBonus = 204,
@@ -21,6 +21,7 @@ namespace ArknightsMod.Content.Items.Armor.Medic.Kaltsit
 				.AddIngredient<Orundum>(60)
 				.AddIngredient<PolymerizationPreparation>(6)
 				.AddIngredient<OrironBlock>(5),
+			SetBonusKey = "Mods.ArknightsMod.ArmorSets.Kaltsit.SetBonus",
 		};
 	}
 }
