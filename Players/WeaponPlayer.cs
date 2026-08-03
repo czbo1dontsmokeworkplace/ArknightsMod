@@ -389,9 +389,10 @@ namespace ArknightsMod.Players
 
 		// 释放技能后，如果附近 560px 内没有可仇恨的敌人，自然回复会被冻结，
 		// 直到出现敌人、或等够这个时长才解锁（见 ResetEffects 里 chargeOpen/hasNearbyEnemy 的判定）。
-		// 原本是 60*15（15 秒），空窗期太长、容易被误认为"技力卡住了"，缩短到 3 秒。
+		// 原本是 60*15（15 秒），空窗期太长、容易被误认为"技力卡住了"，先缩短到 3 秒，
+		// 又觉得 3 秒太快、缺乏节奏感，改为 5 秒。这是全局值，作用于所有武器，不是某个武器专属的。
 		private int GetRestoreTime() {
-			return 60 * 3;
+			return 60 * 5;
 		}
 
 		public void TryAutoCharge() {
