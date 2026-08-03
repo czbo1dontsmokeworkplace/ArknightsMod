@@ -50,12 +50,14 @@ namespace ArknightsMod.Content.Projectiles.Specialist.Scene
 		private const float WalkStopDist = 32f;   // 离目标点此范围内停下
 
 		// 地面攻击（小跳）
-		private const float SearchRadius   = 280f;  // 圆形索敌半径（像素）
-		private const int   HopDuration    = 22;
-		private const int   HopCooldownMax = 180;   // 低频攻击：约3秒
-		private const float HopForward     = 26f;
-		private const float HopHeight      = 15f;
-		private const float LeanMax        = 0.22f;
+		private const float SearchRadius     = 280f;  // 圆形索敌半径（像素）：发现目标后会主动靠近，
+		                                               // 但不代表能打到——是否起跳攻击看下面 AttackRangeMargin 算出的近战距离。
+		private const int   HopDuration      = 22;
+		private const int   HopCooldownMax   = 180;   // 低频攻击：约3秒
+		private const float HopForward       = 26f;
+		private const float HopHeight        = 15f;
+		private const float LeanMax          = 0.22f;
+		private const float AttackRangeMargin = 8f;   // 近战可攻击距离 = 车身半宽 + 起跳位移 + 目标半宽 + 这个余量
 
 		// 地面头部弹簧
 		private const float HeadSpringK    = 0.20f;
@@ -311,10 +313,27 @@ namespace ArknightsMod.Content.Projectiles.Specialist.Scene
 			// 重力
 			Projectile.velocity.Y = Math.Min(Projectile.velocity.Y + Gravity, MaxFallSpeed);
 
-			// 跟随目标：玩家身后排队站位（按召唤顺序错开，避免叠在一起）
-			int   slotIndex = GetSlotIndex(owner);
-			float targetX   = owner.Center.X - owner.direction * (60f + slotIndex * SlotSpacing);
-			float dx        = targetX - Projectile.Center.X;
+			// 索敌：SearchRadius 范围内发现目标后就主动朝目标移动，而不是仍旧原地跟着玩家走；
+			// 只有真正贴近到"近战距离"（车身半宽 + 起跳位移 + 目标半宽 + 余量）才会触发起跳攻击——
+			// 之前是一发现目标（哪怕还隔着一大截 SearchRadius）就在原地跳，位置完全不往怪物那边挪。
+			bool hasTarget    = TryFindTarget(owner, out NPC target);
+			bool inAttackRange = false;
+			if (hasTarget) {
+				float attackRange = Projectile.width / 2f + HopForward + target.width / 2f + AttackRangeMargin;
+				inAttackRange = Vector2.Distance(target.Center, Projectile.Center) <= attackRange;
+			}
+
+			// 跟随目标 X：有目标就一直朝目标贴过去（哪怕已经进入攻击距离也继续以目标为跟随点，
+			// 这样冷却转好能立刻再打一下，不会先跑回玩家身后再折返）；没有目标才回到玩家身后排队站位。
+			float targetX;
+			if (hasTarget) {
+				targetX = target.Center.X;
+			}
+			else {
+				int slotIndex = GetSlotIndex(owner);
+				targetX = owner.Center.X - owner.direction * (60f + slotIndex * SlotSpacing);
+			}
+			float dx = targetX - Projectile.Center.X;
 
 			if (Math.Abs(dx) > WalkStopDist) {
 				int moveDir = dx > 0 ? 1 : -1;
@@ -343,13 +362,13 @@ namespace ArknightsMod.Content.Projectiles.Specialist.Scene
 			wasGrounded = grounded;
 			Projectile.velocity = corrVel;
 
-			// 攻击
-			bool hasTarget = TryFindTarget(owner, out int hopDir2);
-			if (hasTarget) facingDir = hopDir2;
+			// 攻击：面朝目标，但只有真正进入近战范围才起跳
+			if (hasTarget)
+				facingDir = target.Center.X >= Projectile.Center.X ? 1 : -1;
 			if (CooldownTimer > 0f)
 				CooldownTimer--;
-			else if (hasTarget && wasGrounded)
-				StartHop(hopDir2);
+			else if (inAttackRange && wasGrounded)
+				StartHop(facingDir);
 		}
 
 		private void UpdateStun() {
@@ -433,32 +452,59 @@ namespace ArknightsMod.Content.Projectiles.Specialist.Scene
 
 		// -------- 目标搜索 --------
 
-		private bool TryFindTarget(Player owner, out int dir) {
-			dir = facingDir;
+		// 记录本 tick 内，每个玩家已经被"某一辆车"选中的怪物，避免多辆车不约而同扎堆打
+		// 同一只、放着旁边其它怪不管。key 是 Player.whoAmI；tick 号变了就自动清空重建，
+		// 不需要额外的清理时机。
+		private static readonly Dictionary<int, (ulong Tick, HashSet<int> Claimed)> ClaimedTargetsByOwner = new();
+
+		private static HashSet<int> GetClaimedTargetsThisTick(int ownerWhoAmI) {
+			ulong tick = Main.GameUpdateCount;
+			if (!ClaimedTargetsByOwner.TryGetValue(ownerWhoAmI, out var entry) || entry.Tick != tick) {
+				entry = (tick, new HashSet<int>());
+				ClaimedTargetsByOwner[ownerWhoAmI] = entry;
+			}
+			return entry.Claimed;
+		}
+
+		// 只负责"在 SearchRadius 范围内有没有可打的目标"，不代表已经近到能攻击——
+		// 是否真的进入近战范围由调用方（UpdateGroundFollow）自己拿返回的 target 算距离判断。
+		private bool TryFindTarget(Player owner, out NPC target) {
+			target = null;
 			Vector2 center = Projectile.Center;
-			NPC     best   = null;
-			float   bestDist = float.MaxValue;
 
 			bool InRange(NPC npc) {
 				if (npc == null || !npc.active || !npc.CanBeChasedBy(Projectile)) return false;
 				return Vector2.Distance(npc.Center, center) <= SearchRadius;
 			}
 
+			// 玩家手动标记的目标优先级最高，所有车统一围攻它——这是原版召唤物"指定目标"
+			// 的通用规则，属于玩家的主动选择，不受下面"分散打不同目标"的限制。
 			if (owner.HasMinionAttackTargetNPC) {
 				NPC marked = Main.npc[owner.MinionAttackTargetNPC];
-				if (InRange(marked)) best = marked;
-			}
-			if (best == null) {
-				for (int i = 0; i < Main.maxNPCs; i++) {
-					NPC npc = Main.npc[i];
-					if (!InRange(npc)) continue;
-					float dist = Vector2.Distance(npc.Center, center);
-					if (dist < bestDist) { bestDist = dist; best = npc; }
-				}
+				if (InRange(marked)) { target = marked; return true; }
 			}
 
-			if (best == null) return false;
-			dir = best.Center.X >= center.X ? 1 : -1;
+			// 没有手动标记：各车各自找最近的怪，但优先避开"本 tick 内已经被其它车认领"的目标，
+			// 这样多辆车碰上多只怪物时会自然分散攻击；如果避开之后就没有可打的目标了
+			// （比如附近就剩这一只怪），才允许退回去和别的车扎堆打同一只，而不是干脆不打。
+			HashSet<int> claimed = GetClaimedTargetsThisTick(owner.whoAmI);
+
+			NPC   bestUnclaimed = null; float bestUnclaimedDist = float.MaxValue;
+			NPC   bestAny       = null; float bestAnyDist       = float.MaxValue;
+
+			for (int i = 0; i < Main.maxNPCs; i++) {
+				NPC npc = Main.npc[i];
+				if (!InRange(npc)) continue;
+
+				float dist = Vector2.Distance(npc.Center, center);
+				if (dist < bestAnyDist) { bestAnyDist = dist; bestAny = npc; }
+				if (!claimed.Contains(npc.whoAmI) && dist < bestUnclaimedDist) { bestUnclaimedDist = dist; bestUnclaimed = npc; }
+			}
+
+			target = bestUnclaimed ?? bestAny;
+			if (target == null) return false;
+
+			claimed.Add(target.whoAmI);
 			return true;
 		}
 
