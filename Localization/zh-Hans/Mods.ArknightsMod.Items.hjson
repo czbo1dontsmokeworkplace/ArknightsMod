@@ -3257,8 +3257,8 @@ DeepcolorSketch: {
 	Tooltip:
 		'''
 		召唤触手协助作战
-		左键：部署触手
-		右键：LOGO 攻击
+		左键：LOGO 攻击
+		右键：部署触手
 		'''
 	SkillActivateKey: "[c/AAA8AA:{0}]开启技能"
 }

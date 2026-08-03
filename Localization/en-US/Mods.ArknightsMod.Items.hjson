@@ -2895,8 +2895,8 @@ DeepcolorSketch: {
 	Tooltip:
 		'''
 		Summons tentacles to fight for you.
-		Left click: deploy tentacle
-		Right click: LOGO attack
+		Left click: LOGO attack
+		Right click: deploy tentacle
 		'''
 	SkillActivateKey: "[c/AAA8AA:{0}] to activate skill"
 }

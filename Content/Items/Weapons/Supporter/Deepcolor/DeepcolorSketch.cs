@@ -48,7 +48,8 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Deepcolor
 			Item.buffType = ModContent.BuffType<DeepcolorMinionBuff>();
 		}
 
-		public override bool AltFunctionUse(Player player) => false;
+		// 左右键功能对调：左键 LOGO 攻击（弹幕另按魔法伤害单独结算），右键部署触手（原来是反过来）。
+		public override bool AltFunctionUse(Player player) => true;
 
 		public override string GetSkillActivateKeyHint()
 			=> Language.GetTextValue("Mods.ArknightsMod.Items.DeepcolorSketch.SkillActivateKey", ArknightsKeybinds.SkillActivateKeyDisplay);
@@ -59,20 +60,34 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Deepcolor
 		}
 
 		public override bool CanUseItem(Player player) {
-			if (!player.GetModPlayer<DeepcolorSketchPlayer>().CanRedeploy)
-				return false;
+			if (player.altFunctionUse == 2)
+				return player.GetModPlayer<DeepcolorSketchPlayer>().CanRedeploy;
 
-			return base.CanUseItem(player);
+			// 左键 LOGO 攻击：弹幕还在场（IsLogoChargeActive）时不允许打出下一次
+			return !player.GetModPlayer<DeepcolorSketchPlayer>().IsLogoChargeActive && base.CanUseItem(player);
 		}
 
 		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
-			if (DeepcolorMinion.CountActiveForPlayer(player) >= DeepcolorMinion.MaxTentacles)
-				DeepcolorMinion.TryDespawnOldestForPlayer(player);
+			var sketchPlayer = player.GetModPlayer<DeepcolorSketchPlayer>();
 
-			player.AddBuff(Item.buffType, 2);
-			Vector2 spawnPos = DeepcolorMinion.FindGroundSpawnPosition(Main.MouseWorld, DeepcolorMinion.FrameWidth, DeepcolorMinion.FrameHeight);
-			Projectile.NewProjectile(source, spawnPos, Vector2.Zero, type, damage, knockback, player.whoAmI);
-			player.GetModPlayer<DeepcolorSketchPlayer>().StartRedeployCooldown();
+			if (player.altFunctionUse == 2) {
+				// 右键：部署触手
+				if (DeepcolorMinion.CountActiveForPlayer(player) >= DeepcolorMinion.MaxTentacles)
+					DeepcolorMinion.TryDespawnOldestForPlayer(player);
+
+				player.AddBuff(Item.buffType, 2);
+				Vector2 spawnPos = DeepcolorMinion.FindGroundSpawnPosition(Main.MouseWorld, DeepcolorMinion.FrameWidth, DeepcolorMinion.FrameHeight);
+				Projectile.NewProjectile(source, spawnPos, Vector2.Zero, type, damage, knockback, player.whoAmI);
+				sketchPlayer.StartRedeployCooldown();
+				return false;
+			}
+
+			// 左键：LOGO 攻击。伤害按魔法伤害类型单独结算（弹幕本身是 DamageClass.Magic），
+			// 不能直接用传入的 damage——那是按 Item.DamageType（Summon）算出来的召唤伤害。
+			sketchPlayer.LogoStrikeWorld = Main.MouseWorld;
+			int logoDamage = (int)Math.Round(player.GetDamage(DamageClass.Magic).ApplyTo(Item.damage));
+			Projectile.NewProjectile(source, player.Center, Vector2.Zero,
+				ModContent.ProjectileType<DeepcolorSketchLogoAttack>(), logoDamage, player.GetWeaponKnockback(Item), player.whoAmI);
 			return false;
 		}
 
@@ -88,34 +103,6 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Deepcolor
 			modPlayer.SkillTimer = 0;
 			modPlayer.DelStockCount();
 			SoundEngine.PlaySound(SkillActiveSound, player.Center);
-			return true;
-		}
-
-		internal static bool TryTriggerLogoAttack(Player player, Item item) {
-			if (Main.myPlayer != player.whoAmI)
-				return false;
-
-			if (!player.active || player.dead || player.noItems)
-				return false;
-
-			var sketchPlayer = player.GetModPlayer<DeepcolorSketchPlayer>();
-			if (sketchPlayer.IsLogoChargeActive)
-				return false;
-
-			if (!player.CheckMana(item.mana, pay: true))
-				return false;
-
-			sketchPlayer.LogoStrikeWorld = Main.MouseWorld;
-
-			int damage = (int)Math.Round(player.GetDamage(DamageClass.Magic).ApplyTo(item.damage));
-			float knockback = player.GetWeaponKnockback(item);
-			var source = player.GetSource_ItemUse(item);
-			Projectile.NewProjectile(source, player.Center, Vector2.Zero,
-				ModContent.ProjectileType<DeepcolorSketchLogoAttack>(), damage, knockback, player.whoAmI);
-
-			if (item.UseSound.HasValue)
-				SoundEngine.PlaySound(item.UseSound.Value, player.Center);
-
 			return true;
 		}
 	}
