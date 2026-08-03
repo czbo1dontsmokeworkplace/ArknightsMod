@@ -1,11 +1,8 @@
 using System.ComponentModel;
 using Terraria.ModLoader.Config;
 
-// 全局技力（SP）恢复速度开关。
-// 开启后，所有本模组武器的技力条恢复速度（自然回复、受击回复、攻击回复、饰品加速等）
-// 整体加快到 2 倍——只影响"回转的快慢"，不影响任何数值本身：技能所需技力、技力上限等
-// 数值不变；部署费用吸收、套装/技能直接赠送技力这类"技力返还"效果也不会被翻倍。
-// 因此填写 CSV/武器数据时仍按 1 倍速的数值填写，无需为了适配二倍速而手动 /2。
+// 技力（SP）节奏相关的全局开关。两个选项都只在运行时改判定阈值，不动任何数值来源，
+// 所以 CSV/武器数据一律按"开关关闭时"的 1 倍速数值填写，不需要为了适配开关手动折算。
 
 namespace ArknightsMod.Common.Configs
 {
@@ -13,10 +10,14 @@ namespace ArknightsMod.Common.Configs
 	{
 		public override ConfigScope Mode => ConfigScope.ClientSide;
 
-		[Label("技力恢复二倍速")]
-		[Tooltip("开启后，所有干员武器的技力条恢复速度整体 x2（自然回复/受击回复/攻击回复/饰品加速）。\n" +
-			"技力上限、技能消耗等数值不受影响；部署费用吸收、套装直接赠送技力等\"技力返还\"类效果也不会被翻倍。")]
+		// 注意：[Label]/[Tooltip] 特性在当前 tModLoader 已废弃（编译会报 CS0618），运行时完全不生效。
+		// 配置项在游戏里显示的文字一律以 Localization/<语言>/Mods.ArknightsMod.Configs.hjson 为准；
+		// 某语言的条目若被注释掉，会回落到 en-US 那份。改文案请去改 hjson，不要改这里。
 		[DefaultValue(true)]
 		public bool DoubleSPRegenSpeed { get; set; }
+
+		// 实现在 WeaponPlayer.ActiveDurationMultiplier：把"技能持续时间到期"的判断阈值乘 0.5。
+		[DefaultValue(true)]
+		public bool DoubleSkillDurationConsumption { get; set; }
 	}
 }

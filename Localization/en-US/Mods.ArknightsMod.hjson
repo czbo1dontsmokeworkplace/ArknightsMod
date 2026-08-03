@@ -80,4 +80,7 @@ Tiles: {
 	RMA7012Tile.MapEntry: R M A7012 Tile
 }
 
-"Keybinds.Rosmontis Tactical Deploy.DisplayName": Rosmontis  Tactical  Deploy
+Keybinds: {
+	"Rosmontis Tactical Deploy.DisplayName": Rosmontis  Tactical  Deploy
+	"Skill Activate.DisplayName": Skill  Activate
+}

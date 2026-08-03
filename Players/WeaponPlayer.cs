@@ -1,6 +1,9 @@
 using ArknightsMod.Common.UI;
+using ArknightsMod.Content;
 using ArknightsMod.Content.Items.Weapons.Specialist.Scene;
 using ArknightsMod.Content.Items.Weapons;
+using ArknightsMod.Content.Items.Weapons.Guard.Lupine;
+using ArknightsMod.Content.Items.Weapons.Guard.Oblivionis;
 using ArknightsMod.Content.Items.Weapons.Caster.Lava;
 using ArknightsMod.Content.Items.Weapons.Defender.Beagle;
 using ArknightsMod.Content.Items.Weapons.Defender.Nian;
@@ -69,6 +72,16 @@ namespace ArknightsMod.Players
 		/// </summary>
 		public static int GlobalSPRegenSpeedMultiplier =>
 			ModContent.GetInstance<Common.Configs.SkillChargeConfig>().DoubleSPRegenSpeed ? 2 : 1;
+
+		/// <summary>
+		/// 技能开启后，"消耗"技力（即倒数持续时间）的速度倍率：开启配置时为 2（二倍速），
+		/// 关闭时为 1（原速）。用在 UpdateActiveSkill/StrikeSkill 里，把用来判断"技能是否
+		/// 该结束"的时长阈值按这个倍率缩小——阈值越小，同样每帧 +1 的 SkillTimer 越快到达，
+		/// 表现就是持续时间变成原来的 1/2。CSV/武器数据里的持续时间数值本身不受影响。
+		/// </summary>
+		public static float ActiveDurationMultiplier =>
+			ModContent.GetInstance<Common.Configs.SkillChargeConfig>().DoubleSkillDurationConsumption ? 0.5f : 1f;
+
 		private bool chargeReady;
 		private bool chargeOpen;
 		private bool hasNearbyEnemy;
@@ -357,7 +370,19 @@ namespace ArknightsMod.Players
 				}
 				else if (ark.chargeReady[Skill] && StockCount == 0) {
 					ark.chargeReady[Skill] = false;
-					SkillCharge = Math.Max(SkillCharge, ark.GetSkillData(Skill).LevelData[SkillLevel[Skill] - 1].InitSP * Div);
+
+					// SkillLevel 只有旧体系武器的 SetAllSkillsData 会填；新体系武器（技能数据走 CSV）
+					// 手持时它仍是默认的 0，原来直接拿 SkillLevel[Skill] - 1 去索引 LevelData 会得到
+					// -1 而抛 IndexOutOfRangeException。这个异常是在 ResetEffects 里抛的，会把整个
+					// Player.Update 当帧打断，导致排在后面的 ProcessTriggers/物品使用全都不执行——
+					// 表现就是"手持这类武器时技能完全开不了"。这里改成：等级为 0 时回退到技能自身的
+					// 当前等级，并统一夹到 [1, LevelData.Length] 范围内，任何情况下都不会越界。
+					SkillData data = ark.GetSkillData(Skill);
+					if (data?.LevelData is { Length: > 0 } levelData) {
+						int level = SkillLevel[Skill] > 0 ? SkillLevel[Skill] : data.Level;
+						level = Math.Clamp(level, 1, levelData.Length);
+						SkillCharge = Math.Max(SkillCharge, levelData[level - 1].InitSP * Div);
+					}
 				}
 			}
 		}
@@ -386,6 +411,31 @@ namespace ArknightsMod.Players
 		{
 			if (Player.lifeRegen < 0)
 				UnderAttack = true;
+		}
+
+		/// <summary>
+		/// 统一技能开启热键的核心：ProcessTriggers 只在本地客户端跑，是自定义 ModKeybind
+		/// 唯一能读到"当前是否按住"的地方。各武器的 CanUseItem/Shoot 里已经改成检查
+		/// ArknightsKeybinds.SkillActivatePressed(player)，但那些钩子本身只在玩家真的
+		/// 左键/右键点击、原版判定"这次点击要不要交给物品使用"时才会被调用——单纯按热键
+		/// 并不会触发它们。这里在按住热键时把 Player.controlUseItem 设成 true，相当于
+		/// "伪造一次左键点击"，把它接入原版本来就有的点击处理管线，武器那边的判定才有
+		/// 机会跑起来。之所以伪造左键而不是右键：这样武器代码里剩下的
+		/// player.altFunctionUse==2（比如摄影车部署、浮游信标）不会被误触发——两者互不干扰。
+		///
+		/// 只在手持本模组的技能武器时才伪造点击，避免误把其它物品（工具、纯输出武器、
+		/// 别的模组物品）也顺带触发一次使用。LupineScarlet/OblivionisSword 没有继承
+		/// UpgradeWeaponBase（历史遗留），单独列出来。
+		/// </summary>
+		public override void ProcessTriggers(Terraria.GameInput.TriggersSet triggersSet) {
+			if (!ArknightsKeybinds.SkillActivatePressed(Player))
+				return;
+
+			if (Player.HeldItem.ModItem is UpgradeWeaponBase
+				or LupineScarlet
+				or OblivionisSword) {
+				Player.controlUseItem = true;
+			}
 		}
 
 		public void TryHurtCharge()
@@ -570,13 +620,17 @@ namespace ArknightsMod.Players
 
 		public void UpdateActiveSkill() {
 			if (SkillActive) {
+				// 阈值本身乘倍率缩小（而不是让 SkillTimer 跳着加），并且统一用 >= 判断——
+				// 倍率是 0.5 时阈值大概率不再是整数，用 == 精确相等会出现永远判不到的情况，
+				// 参照之前修 SP 二倍速时踩过的同一个坑（见 HurtCharge 的注释）。
 				if (CurrentSkill != null) {
-					if (CurrentSkill.AutoUpdateActive && ++SkillTimer >= CurrentSkill.CurrentLevelData.ActiveTime * 60)
+					if (CurrentSkill.AutoUpdateActive
+						&& ++SkillTimer >= CurrentSkill.CurrentLevelData.ActiveTime * 60 * ActiveDurationMultiplier)
 						SkillActive = false;
 				}
 				else {
 					SkillTimer++;
-					if (SkillTimer == SkillActiveTime[Skill] * 60)
+					if (SkillTimer >= SkillActiveTime[Skill] * 60 * ActiveDurationMultiplier)
 						SkillActive = false;
 				}
 			}
@@ -588,7 +642,7 @@ namespace ArknightsMod.Players
 		public void StrikeSkill() {
 			if (SkillActive) {
 				SkillTimer++;
-				if (SkillTimer == 10)
+				if (SkillTimer >= 10 * ActiveDurationMultiplier)
 					SkillActive = false;
 			}
 		}

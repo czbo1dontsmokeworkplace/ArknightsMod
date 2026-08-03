@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ArknightsMod.Content;
 using ArknightsMod.Content.Buffs.Specialist.Scene;
 using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.Projectiles.Specialist.Scene;
@@ -45,18 +46,19 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.Scene
 		protected override int GetDamage(int level) => Item.damage;
 
 		public override string GetSkillActivateKeyHint()
-			=> Language.GetTextValue("Mods.ArknightsMod.Items.SceneCamera.SkillActivateKey");
+			=> Language.GetTextValue("Mods.ArknightsMod.Items.SceneCamera.SkillActivateKey", ArknightsKeybinds.SkillActivateKeyDisplay);
 
-		// 左键：魔法攻击；右键：召唤摄影车（按住 Down 时让位给技能释放）。
+		// 左键：魔法攻击；右键：召唤摄影车；技能开启键：释放选中的技能。
 		public override bool AltFunctionUse(Player player) => true;
 
 		public override bool CanUseItem(Player player) {
+			// 技能开启键：只释放选中技能，绝不召唤。原来是"Down(S)+右键"的组合，
+			// 现在统一挪到独立热键，不再占用右键——右键单独按下改为纯粹的"召唤摄影车"。
+			if (ArknightsKeybinds.SkillActivatePressed(player)) {
+				player.GetModPlayer<SceneCameraPlayer>().TryActivateSelectedSkillFromInput();
+				return false;
+			}
 			if (player.altFunctionUse == 2) {
-				if (player.controlDown) {
-					// Down(S)+右键：仅释放选中技能，绝不召唤（技能激活与召唤走同一条右键路径，杜绝双触发多召唤）
-					player.GetModPlayer<SceneCameraPlayer>().TryActivateSelectedSkillFromInput();
-					return false;
-				}
 				return player.GetModPlayer<SceneCameraPlayer>().CanRedeploy; // 右键受 5 秒冷却
 			}
 			return true;

@@ -93,7 +93,10 @@ namespace ArknightsMod.Common.UI
 
 			SkillLevelData data = skill.CurrentLevelData;
 
-			float activeTime = data.ActiveTime * 60;
+			// 必须和 WeaponPlayer.UpdateActiveSkill 里判断"技能到期"的阈值用同一个倍率，
+			// 否则开了"技能持续时间技力消耗二倍速"后，进度条按 1 倍速的总长度画，
+			// 而技能在一半处就结束了，表现为条子掉到一半突然清空。
+			float activeTime = data.ActiveTime * 60 * WeaponPlayer.ActiveDurationMultiplier;
 			int maxStock = data.MaxStack;
 			int stock = mp.StockCount;
 

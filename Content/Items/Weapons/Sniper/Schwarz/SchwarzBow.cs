@@ -8,6 +8,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using ArknightsMod.Content;
 
 using static Mono.CompilerServices.SymbolWriter.CodeBlockEntry;
 
@@ -64,11 +65,11 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Schwarz
 				MaxInstances = 4,
 			};
 		}
-		public override bool AltFunctionUse(Player player) => true;
+		public override bool AltFunctionUse(Player player) => false;
         public override bool CanUseItem(Player player) {
 			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
 			if (Main.myPlayer == player.whoAmI) {
-				if (player.altFunctionUse == 2) {
+				if (ArknightsKeybinds.SkillActivatePressed(player)) {
 					if (!modPlayer.SummonMode) {
 						//S2
 						if (modPlayer.Skill == 1 && modPlayer.StockCount > 0 && !modPlayer.SkillActive) {

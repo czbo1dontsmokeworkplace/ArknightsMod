@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ArknightsMod.Content;
 using ArknightsMod.Content.Buffs.Supporter.Deepcolor;
 using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.Projectiles.Supporter.Deepcolor;
@@ -50,18 +51,14 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Deepcolor
 		public override bool AltFunctionUse(Player player) => false;
 
 		public override string GetSkillActivateKeyHint()
-			=> Language.GetTextValue("Mods.ArknightsMod.Items.DeepcolorSketch.SkillActivateKey");
+			=> Language.GetTextValue("Mods.ArknightsMod.Items.DeepcolorSketch.SkillActivateKey", ArknightsKeybinds.SkillActivateKeyDisplay);
 
 		public override void ModifyTooltips(List<TooltipLine> tooltips) {
 			tooltips.Add(new TooltipLine(Mod, "DeepcolorSketchSkillKey",
-				Language.GetTextValue("Mods.ArknightsMod.Items.DeepcolorSketch.SkillActivateKey")));
+				Language.GetTextValue("Mods.ArknightsMod.Items.DeepcolorSketch.SkillActivateKey", ArknightsKeybinds.SkillActivateKeyDisplay)));
 		}
 
 		public override bool CanUseItem(Player player) {
-			// 右键由 DeepcolorSketchPlayer 处理
-			if (player.altFunctionUse == 2)
-				return false;
-
 			if (!player.GetModPlayer<DeepcolorSketchPlayer>().CanRedeploy)
 				return false;
 
@@ -69,9 +66,6 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Deepcolor
 		}
 
 		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
-			if (player.altFunctionUse == 2)
-				return false;
-
 			if (DeepcolorMinion.CountActiveForPlayer(player) >= DeepcolorMinion.MaxTentacles)
 				DeepcolorMinion.TryDespawnOldestForPlayer(player);
 
@@ -80,13 +74,6 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Deepcolor
 			Projectile.NewProjectile(source, spawnPos, Vector2.Zero, type, damage, knockback, player.whoAmI);
 			player.GetModPlayer<DeepcolorSketchPlayer>().StartRedeployCooldown();
 			return false;
-		}
-
-		// 下方向键 / S（与 Terraria「向下」操作一致）
-		internal static bool IsSkillActivateModifierHeld(Player player) {
-			if (Main.myPlayer != player.whoAmI)
-				return false;
-			return player.controlDown;
 		}
 
 		internal static bool TryActivateSkill(Player player) {

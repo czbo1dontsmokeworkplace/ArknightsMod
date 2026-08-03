@@ -1,4 +1,5 @@
-﻿using ArknightsMod.Content.Items.Material;
+﻿using ArknightsMod.Content;
+using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Content.Projectiles.Sniper.Pozemka;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
@@ -103,11 +104,11 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Pozemka
 					return;
 			}
 		}
-		public override bool AltFunctionUse(Player player) => true;
+		public override bool AltFunctionUse(Player player) => false;
 		public override bool CanUseItem(Player player) {
 			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
 			if (Main.myPlayer == player.whoAmI) {
-				if (player.altFunctionUse == 2) {
+				if (ArknightsKeybinds.SkillActivatePressed(player)) {
 					if (!modPlayer.SummonMode) {
 						// S2
 						if (modPlayer.Skill == 1 && modPlayer.StockCount > 0 && !modPlayer.SkillActive) {
@@ -210,7 +211,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Pozemka
 
 		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
 			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
-			if (player.altFunctionUse == 2) {
+			if (ArknightsKeybinds.SkillActivatePressed(player)) {
 				if (modPlayer.Skill == 1) {
 					damage = (int)Math.Round(damage * 2.3f);
 				}

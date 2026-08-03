@@ -7,6 +7,7 @@ using Terraria.Audio;
 using ArknightsMod.Players;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using Microsoft.Xna.Framework;
+using ArknightsMod.Content;
 
 
 // 阻挡数+1，沉默和抵抗未实现
@@ -52,7 +53,7 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Nian
 			Item.crit = 21; 
 		}
 
-		public override bool AltFunctionUse(Player player) => true;
+		public override bool AltFunctionUse(Player player) => false;
 
 		public override void Load() {
 			SkillActive1 = new SoundStyle("ArknightsMod/Sounds/SkillActive1") {
@@ -68,7 +69,7 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Nian
 		public override bool CanUseItem(Player player) {
 			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
 			if (Main.myPlayer == player.whoAmI) {
-				if (player.altFunctionUse == 2) {
+				if (ArknightsKeybinds.SkillActivatePressed(player)) {
 					// S1
 					if (modPlayer.Skill == 0 && modPlayer.StockCount > 0 && !modPlayer.SkillActive) {
 						modPlayer.SkillActive = true;

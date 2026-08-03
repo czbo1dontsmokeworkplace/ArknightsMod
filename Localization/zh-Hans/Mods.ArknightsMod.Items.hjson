@@ -3260,7 +3260,7 @@ DeepcolorSketch: {
 		左键：部署触手
 		右键：LOGO 攻击
 		'''
-	SkillActivateKey: "[c/AAA8AA:下（S）+右键]开启技能"
+	SkillActivateKey: "[c/AAA8AA:{0}]开启技能"
 }
 
 SceneCamera: {
@@ -3271,7 +3271,7 @@ SceneCamera: {
 		右键召唤「移动摄影车」。
 		'对着镜头笑一个。'
 		'''
-	SkillActivateKey: "[c/AAA8AA:下（S）+右键]释放选中的技能"
+	SkillActivateKey: "[c/AAA8AA:{0}]释放选中的技能"
 	DeployInfo: 摄影车：已部署 {0}/{1}（可再部署 {2}）
 	DeploySlotNote: 其他召唤物占用了 {0} 个仆从位
 }

@@ -1,3 +1,4 @@
+﻿using ArknightsMod.Content;
 using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.Projectiles.Guard.Entelechia;
@@ -58,7 +59,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Entelechia
 			Item.shoot = ModContent.ProjectileType<EntelechiaScytheBladeWaveProjectile>();
 		}
 
-		public override bool AltFunctionUse(Player player) => true;
+		public override bool AltFunctionUse(Player player) => false;
 
 		// S3「灵与欲的惜别」激活期间：攻击力 +135%
 		public override void ModifyWeaponDamage(Player player, ref StatModifier damage) {
@@ -77,7 +78,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Entelechia
 		public override bool CanUseItem(Player player) {
 			var mp = player.GetModPlayer<WeaponPlayer>();
 
-			if (player.altFunctionUse == 2 && player.controlDown) {
+			if (ArknightsKeybinds.SkillActivatePressed(player)) {
 				// 下+右键：激活当前选中的技能
 				if (mp.StockCount > 0 && !mp.SkillActive) {
 					if (mp.Skill == 0) {

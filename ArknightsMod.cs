@@ -49,6 +49,9 @@ namespace ArknightsMod
 		public const string AssetPath = "ArknightsMod/Sound/";
 
 		public override void Load() {
+			// 热键必须在这里注册：KeybindLoader 只认 Mod.Load() 期间的注册，
+			// 放在 ModSystem.Load() 里不会生效（详见 ArknightsKeybinds 的注释）。
+			Content.ArknightsKeybinds.Register(this);
 			UpgradeItemBase.LoadLevelData(this);
 			UpgradeWeaponBase.LoadSkillData(this);
 			// Registers a new custom currency
@@ -114,6 +117,12 @@ namespace ArknightsMod
 			MusicLoader.AddMusic(this, "Assets/OriginalMusic/AACTintro");
 			MusicLoader.AddMusic(this, "Assets/OriginalMusic/AACTloop");
 		}
+
+		public override void Unload() {
+			// 静态字段在模组卸载/重载时不会自动清空，留着会指向上一次加载的实例
+			Content.ArknightsKeybinds.Unregister();
+		}
+
 		public static Texture2D UnionInvadeSkyTexture { get; private set; }
 
 		private void LoadClient() {

@@ -9,6 +9,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using ArknightsMod.Content;
 
 namespace ArknightsMod.Content.Items.Weapons.Medic.Closure
 {
@@ -105,13 +106,13 @@ namespace ArknightsMod.Content.Items.Weapons.Medic.Closure
 			Item.useStyle = ItemUseStyleID.Shoot;
 		}
 
-		public override bool AltFunctionUse(Player player) => true;
+		public override bool AltFunctionUse(Player player) => false;
 
 		public override bool CanUseItem(Player player) {
 			var mp = player.GetModPlayer<WeaponPlayer>();
 
 			// 右键：手动激活技能。一技能（下标 0）为自动释放技能，禁止手动开启；仅二/三技能可手动激活。
-			if (player.altFunctionUse == 2) {
+			if (ArknightsKeybinds.SkillActivatePressed(player)) {
 				if (mp.Skill != 0 && mp.StockCount > 0 && !mp.SkillActive) {
 					mp.SkillActive = true;
 					mp.SkillTimer = 0;

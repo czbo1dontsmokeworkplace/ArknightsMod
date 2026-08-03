@@ -4,6 +4,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using ArknightsMod.Content.Projectiles.Guard.Lupine;
+using ArknightsMod.Content;
 
 namespace ArknightsMod.Content.Items.Weapons.Guard.Lupine
 {
@@ -43,10 +44,10 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Lupine
 			Item.shootSpeed = 0f;
 		}
 
-		public override bool AltFunctionUse(Player player) => true;
+		public override bool AltFunctionUse(Player player) => false;
 
 		public override bool CanUseItem(Player player) {
-			if (player.altFunctionUse == 2) {
+			if (ArknightsKeybinds.SkillActivatePressed(player)) {
 				Item.useStyle = ItemUseStyleID.Shoot;
 				Item.useTime = 32;
 				Item.useAnimation = 32;
@@ -65,7 +66,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Lupine
 
 		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source,
 				Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
-			if (player.altFunctionUse == 2) {
+			if (ArknightsKeybinds.SkillActivatePressed(player)) {
 				Projectile.NewProjectile(source, player.MountedCenter, Vector2.Zero, Item.shoot,
 					damage, knockback, player.whoAmI, Main.MouseWorld.X, Main.MouseWorld.Y);
 				return false;

@@ -2898,7 +2898,7 @@ DeepcolorSketch: {
 		Left click: deploy tentacle
 		Right click: LOGO attack
 		'''
-	SkillActivateKey: "[c/AAA8AA:Down (S) + Right Click] to activate skill"
+	SkillActivateKey: "[c/AAA8AA:{0}] to activate skill"
 }
 
 SceneCamera: {
@@ -2909,7 +2909,7 @@ SceneCamera: {
 		Right click: summon a Mobile Camera Truck.
 		'Smile for the camera.'
 		'''
-	SkillActivateKey: "[c/AAA8AA:Down (S) + Right Click] to activate the selected skill"
+	SkillActivateKey: "[c/AAA8AA:{0}] to activate the selected skill"
 	DeployInfo: Camera Trucks: {0}/{1} deployed (can deploy {2})
 	DeploySlotNote: Other minions are using {0} minion slot(s)
 }
