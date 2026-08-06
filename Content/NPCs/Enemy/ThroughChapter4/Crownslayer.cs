@@ -77,7 +77,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			NPC.boss = true;
 			NPC.damage = 40;
 			NPC.defense = 10;
-			NPC.width = 36;
+			NPC.width = MoveDefaultHitboxWidth;
 			NPC.height = 64;
 			NPC.HitSound = SoundID.NPCHit1;
 			NPC.DeathSound = SoundID.NPCDeath3;
@@ -129,6 +129,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		public NPCState CurrentAnimation = NPCState.Walk; // 默认为走路
 
 		public override void FindFrame(int frameHeight) {
+			Move_RestoreCombatHitbox();
+
 			// 动画播放速度：数值越小越快
 			int frameSpeed = 6;
 
@@ -243,6 +245,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		}
 
 		public override void AI() {
+			// 正常 AI 始终使用完整战斗碰撞箱；这是 FindFrame 未执行时的保险恢复。
+			Move_RestoreCombatHitbox();
+
 			// 确保有目标，否则清空状态
 			// 获取当前到目标的距离
 			float healthPercent = (float)NPC.life / NPC.lifeMax;
@@ -343,6 +348,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 			Move_AfterStateMachine(target);
 			EmitPhaseOneSmokeDecor();
+			Move_PrepareSlopeCollisionHitbox();
 		}
 
 		// 一阶段：瞬移/现身、路径位移与冲刺上的烟雾修饰（仅客户端）。
