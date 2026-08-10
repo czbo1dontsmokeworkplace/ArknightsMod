@@ -1,30 +1,21 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using ArknightsMod.Content.Tiles.Infrastructure;
+﻿using Terraria.ModLoader;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content.Items.Material;
 
 namespace ArknightsMod.Content.Items.Armor.Vanguard.Fang
 {
 	[AutoloadEquip(EquipType.Body)]
-	public class FangBody : NeoArmorBody
+	public class FangBody : NeoArmorReforgeVanityBody
 	{
 		public override int Rarity => 3;
-		public override int ArmorLifeBonus => 66;
 
-		public override void SetArmorDefaults() {
-			Item.defense = 23;
-		}
-		
-		public override void AddRecipes() {
-			CreateRecipe()
-			.AddIngredient<FangBody>(1)
-			.AddIngredient<Orundum>(30)
-			.AddIngredient<Polyester>(2)
-			.AddTile(ModContent.TileType<FactoryTile>())
-			.AddCondition(NeoArmorUtils.NeedVanity)
-			.DisableDecraft()
-			.Register();
-		}
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
+			Defense = 23,
+			LifeBonus = 66,
+			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Fang",
+			Materials = recipe => recipe
+				.AddIngredient<Orundum>(30)
+				.AddIngredient<Polyester>(2),
+		};
 	}
 }

@@ -1,4 +1,5 @@
-using ArknightsMod.Content.Items.Armor;
+﻿using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -17,14 +18,14 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Saria
 			SariaSetActive = false;
 		}
 
+		// NeoArmor Reforge：套装件是独立 ItemID，穿上它本身就代表"已经是套装形态"，
+		// 不需要再查 hasUpgraded；player.setBonus 文本交给 SariaHead 的
+		// SetProfile.SetBonusKey 统一设置，这里不再重复设置一遍。
 		public override void PostUpdateEquips() {
-			SariaHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<SariaHelmet>());
-			SariaSetActive = OperatorSetEquipHelper.HasFullSet(
-				Player,
-				ModContent.ItemType<SariaHelmet>(),
-				ModContent.ItemType<SariaChestplate>(),
-				ModContent.ItemType<SariaGreaves>());
-			OperatorSetEquipHelper.ApplySetBonusText(Player, SariaSetActive, "Mods.ArknightsMod.ArmorSets.Saria.SetBonus");
+			SariaHelmetActive = Player.armor[0].type == NeoArmorReforgeSetLoader.GetSetType<SariaHead>();
+			SariaSetActive = SariaHelmetActive
+				&& Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<SariaBody>()
+				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<SariaLegs>();
 
 			if (SariaSetActive && GuardStacks > 0) {
 				Player.GetDamage(DamageClass.Generic) += 0.05f * GuardStacks;

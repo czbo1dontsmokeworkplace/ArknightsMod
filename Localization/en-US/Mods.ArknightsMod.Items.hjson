@@ -126,6 +126,36 @@ AmiyaLegs: {
 	Tooltip: ""
 }
 
+NecrassBody: {
+	DisplayName: Necrass's outfit (Body)
+	Tooltip: ""
+}
+
+NecrassHead: {
+	DisplayName: Necrass's outfit (Head)
+	Tooltip: ""
+}
+
+NecrassLegs: {
+	DisplayName: Necrass's outfit (Legs)
+	Tooltip: ""
+}
+
+ReedFlameShadowBody: {
+	DisplayName: Reed the Flame Shadow's outfit (Body)
+	Tooltip: ""
+}
+
+ReedFlameShadowHead: {
+	DisplayName: Reed the Flame Shadow's outfit (Head)
+	Tooltip: ""
+}
+
+ReedFlameShadowLegs: {
+	DisplayName: Reed the Flame Shadow's outfit (Legs)
+	Tooltip: ""
+}
+
 MelanthaBody: {
 	DisplayName: Melantha's outfit (Body)
 	Tooltip: ""
@@ -191,23 +221,8 @@ MudrockBody: {
 	Tooltip: Right-Click to change outfits
 }
 
-MudrockChestplate: {
-	DisplayName: Mudrock's Chestplate
-	Tooltip: Right-Click to change outfits
-}
-
-MudrockGreaves: {
-	DisplayName: Mudrock's Greaves
-	Tooltip: ""
-}
-
 MudrockHead: {
 	DisplayName: Mudrock' outfit (Head)
-	Tooltip: Right-Click to change outfits
-}
-
-MudrockHelmet: {
-	DisplayName: Mudrock's Helmet
 	Tooltip: Right-Click to change outfits
 }
 
@@ -253,6 +268,16 @@ StartBag: {
 
 AmiyaDefault: {
 	DisplayName: Amiya's costume (default)
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+NecrassDefault: {
+	DisplayName: Necrass's costume (default)
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+ReedFlameShadowDefault: {
+	DisplayName: Reed the Flame Shadow's costume (default)
 	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 }
 
@@ -321,8 +346,8 @@ HazeDefault: {
 	Tooltip: ""
 }
 
-KaltsitDefault: {
-	DisplayName: Kaltsit Default
+ClosureDefault: {
+	DisplayName: Closure Default
 	Tooltip: ""
 }
 
@@ -481,18 +506,18 @@ HazeLegs: {
 	Tooltip: ""
 }
 
-KaltsitBody: {
-	DisplayName: Kaltsit Body
+ClosureBody: {
+	DisplayName: Closure Body
 	Tooltip: ""
 }
 
-KaltsitHead: {
-	DisplayName: Kaltsit Head
+ClosureHead: {
+	DisplayName: Closure Head
 	Tooltip: ""
 }
 
-KaltsitLegs: {
-	DisplayName: Kaltsit Legs
+ClosureLegs: {
+	DisplayName: Closure Legs
 	Tooltip: ""
 }
 
@@ -1396,8 +1421,8 @@ TexasLegs: {
 }
 
 FactoryItem: {
-	DisplayName: Factory Item
-	Tooltip: ""
+	DisplayName: Manufacturing Station
+	Tooltip: Used for special crafting
 }
 
 AdnachielCrossbow: {
@@ -2815,6 +2840,11 @@ HazeMagicBook: {
 	Tooltip: ""
 }
 
+ReedFlameShadowStaff: {
+	DisplayName: Reed the Flame Shadow's Staff
+	Tooltip: Sets struck enemies ablaze
+}
+
 DN_Weapon: {
 	DisplayName: D N_ Weapon
 	Tooltip: ""
@@ -2865,10 +2895,10 @@ DeepcolorSketch: {
 	Tooltip:
 		'''
 		Summons tentacles to fight for you.
-		Left click: deploy tentacle
-		Right click: LOGO attack
+		Left click: LOGO attack
+		Right click: deploy tentacle
 		'''
-	SkillActivateKey: "[c/AAA8AA:Down (S) + Right Click] to activate skill"
+	SkillActivateKey: "[c/AAA8AA:{0}] to activate skill"
 }
 
 SceneCamera: {
@@ -2879,7 +2909,7 @@ SceneCamera: {
 		Right click: summon a Mobile Camera Truck.
 		'Smile for the camera.'
 		'''
-	SkillActivateKey: "[c/AAA8AA:Down (S) + Right Click] to activate the selected skill"
+	SkillActivateKey: "[c/AAA8AA:{0}] to activate the selected skill"
 	DeployInfo: Camera Trucks: {0}/{1} deployed (can deploy {2})
 	DeploySlotNote: Other minions are using {0} minion slot(s)
 }
@@ -2909,18 +2939,18 @@ ArmorSkadiLegs: {
 	Tooltip: ""
 }
 
-ArmorKaltsitBody: {
-	DisplayName: Armor Kaltsit Body
+ArmorClosureBody: {
+	DisplayName: Armor Closure Body
 	Tooltip: ""
 }
 
-ArmorKaltsitHead: {
-	DisplayName: Armor Kaltsit Head
+ArmorClosureHead: {
+	DisplayName: Armor Closure Head
 	Tooltip: ""
 }
 
-ArmorKaltsitLegs: {
-	DisplayName: Armor Kaltsit Legs
+ArmorClosureLegs: {
+	DisplayName: Armor Closure Legs
 	Tooltip: ""
 }
 
@@ -2944,228 +2974,37 @@ ArmorOblivionisHead: {
 	Tooltip: ""
 }
 
-AmiyaChestplate: {
-	DisplayName: Amiya Chestplate
-	Tooltip: ""
-}
-
-AmiyaGreaves: {
-	DisplayName: Amiya Greaves
-	Tooltip: ""
-}
-
-AmiyaHelmet: {
-	DisplayName: Amiya Helmet
-	Tooltip: ""
-}
-
-HazeChestplate: {
-	DisplayName: Haze Chestplate
-	Tooltip: ""
-}
-
-HazeGreaves: {
-	DisplayName: Haze Greaves
-	Tooltip: ""
-}
-
-HazeHelmet: {
-	DisplayName: Haze Helmet
-	Tooltip: ""
-}
-
-IndigoChestplate: {
-	DisplayName: Indigo Chestplate
-	Tooltip: ""
-}
-
-IndigoGreaves: {
-	DisplayName: Indigo Greaves
-	Tooltip: ""
-}
-
-IndigoHelmet: {
-	DisplayName: Indigo Helmet
-	Tooltip: ""
-}
-
-LavaChestplate: {
-	DisplayName: Lava Chestplate
-	Tooltip: ""
-}
-
-LavaGreaves: {
-	DisplayName: Lava Greaves
-	Tooltip: ""
-}
-
-LavaHelmet: {
-	DisplayName: Lava Helmet
-	Tooltip: ""
-}
-
 MorniaBody: {
-	DisplayName: Mornia Body
-	Tooltip: ""
-}
-
-MorniaChestplate: {
-	DisplayName: Mornia Chestplate
-	Tooltip: ""
+	DisplayName: Mornia-Cherry's Top
+	Tooltip: Developer Vanity
 }
 
 MorniaDefault: {
-	DisplayName: Mornia Default
-	Tooltip: ""
-}
-
-MorniaGreaves: {
-	DisplayName: Mornia Greaves
-	Tooltip: ""
+	DisplayName: Mornia-Cherry's costume (default)
+	Tooltip:
+		'''
+		Developer Vanity
+		{$CommonItemTooltip.RightClickToOpen}
+		'''
 }
 
 MorniaHead: {
-	DisplayName: Mornia Head
-	Tooltip: ""
-}
-
-MorniaHelmet: {
-	DisplayName: Mornia Helmet
-	Tooltip: ""
+	DisplayName: Mornia-Cherry's Headwear
+	Tooltip: Developer Vanity
 }
 
 MorniaLegs: {
-	DisplayName: Mornia Legs
-	Tooltip: ""
-}
-
-MostimaChestplate: {
-	DisplayName: Mostima Chestplate
-	Tooltip: ""
-}
-
-MostimaGreaves: {
-	DisplayName: Mostima Greaves
-	Tooltip: ""
-}
-
-MostimaHelmet: {
-	DisplayName: Mostima Helmet
-	Tooltip: ""
-}
-
-StewardChestplate: {
-	DisplayName: Steward Chestplate
-	Tooltip: ""
-}
-
-StewardGreaves: {
-	DisplayName: Steward Greaves
-	Tooltip: ""
-}
-
-StewardHelmet: {
-	DisplayName: Steward Helmet
-	Tooltip: ""
-}
-
-BeagleChestplate: {
-	DisplayName: Beagle Chestplate
-	Tooltip: ""
-}
-
-BeagleGreaves: {
-	DisplayName: Beagle Greaves
-	Tooltip: ""
-}
-
-BeagleHelmet: {
-	DisplayName: Beagle Helmet
-	Tooltip: ""
-}
-
-CardiganChestplate: {
-	DisplayName: Cardigan Chestplate
-	Tooltip: ""
-}
-
-CardiganGreaves: {
-	DisplayName: Cardigan Greaves
-	Tooltip: ""
-}
-
-CardiganHelmet: {
-	DisplayName: Cardigan Helmet
-	Tooltip: ""
+	DisplayName: Mornia-Cherry's Bottoms
+	Tooltip: Developer Vanity
 }
 
 MudrockLegs: {
+	Tooltip: ""
 	DisplayName: Mudrock Legs
-	Tooltip: ""
-}
-
-NianChestplate: {
-	DisplayName: Nian Chestplate
-	Tooltip: ""
 }
 
 NianDefault: {
 	DisplayName: Nian Default
-	Tooltip: ""
-}
-
-NianGreaves: {
-	DisplayName: Nian Greaves
-	Tooltip: ""
-}
-
-NianHelmet: {
-	DisplayName: Nian Helmet
-	Tooltip: ""
-}
-
-SariaChestplate: {
-	DisplayName: Saria Chestplate
-	Tooltip: ""
-}
-
-SariaGreaves: {
-	DisplayName: Saria Greaves
-	Tooltip: ""
-}
-
-SariaHelmet: {
-	DisplayName: Saria Helmet
-	Tooltip: ""
-}
-
-SpotChestplate: {
-	DisplayName: Spot Chestplate
-	Tooltip: ""
-}
-
-SpotGreaves: {
-	DisplayName: Spot Greaves
-	Tooltip: ""
-}
-
-SpotHelmet: {
-	DisplayName: Spot Helmet
-	Tooltip: ""
-}
-
-VulcanChestplate: {
-	DisplayName: Vulcan Chestplate
-	Tooltip: ""
-}
-
-VulcanGreaves: {
-	DisplayName: Vulcan Greaves
-	Tooltip: ""
-}
-
-VulcanHelmet: {
-	DisplayName: Vulcan Helmet
 	Tooltip: ""
 }
 
@@ -3209,193 +3048,8 @@ YvonneDefault: {
 	Tooltip: ""
 }
 
-ChenChestplate: {
-	DisplayName: Chen Chestplate
-	Tooltip: ""
-}
-
-ChenGreaves: {
-	DisplayName: Chen Greaves
-	Tooltip: ""
-}
-
-ChenHelmet: {
-	DisplayName: Chen Helmet
-	Tooltip: ""
-}
-
-EntelechiaChestplate: {
-	DisplayName: Entelechia Chestplate
-	Tooltip: ""
-}
-
-EntelechiaGreaves: {
-	DisplayName: Entelechia Greaves
-	Tooltip: ""
-}
-
-EntelechiaHelmet: {
-	DisplayName: Entelechia Helmet
-	Tooltip: ""
-}
-
-LaPlumaChestplate: {
-	DisplayName: La Pluma Chestplate
-	Tooltip: ""
-}
-
-LaPlumaGreaves: {
-	DisplayName: La Pluma Greaves
-	Tooltip: ""
-}
-
-LaPlumaHelmet: {
-	DisplayName: La Pluma Helmet
-	Tooltip: ""
-}
-
-LapplandChestplate: {
-	DisplayName: Lappland Chestplate
-	Tooltip: ""
-}
-
-LapplandGreaves: {
-	DisplayName: Lappland Greaves
-	Tooltip: ""
-}
-
-LapplandHelmet: {
-	DisplayName: Lappland Helmet
-	Tooltip: ""
-}
-
-MatoimaruChestplate: {
-	DisplayName: Matoimaru Chestplate
-	Tooltip: ""
-}
-
-MatoimaruGreaves: {
-	DisplayName: Matoimaru Greaves
-	Tooltip: ""
-}
-
-MatoimaruHelmet: {
-	DisplayName: Matoimaru Helmet
-	Tooltip: ""
-}
-
-MelanthaChestplate: {
-	DisplayName: Melantha Chestplate
-	Tooltip: ""
-}
-
-MelanthaGreaves: {
-	DisplayName: Melantha Greaves
-	Tooltip: ""
-}
-
-MelanthaHelmet: {
-	DisplayName: Melantha Helmet
-	Tooltip: ""
-}
-
-MidnightChestplate: {
-	DisplayName: Midnight Chestplate
-	Tooltip: ""
-}
-
-MidnightGreaves: {
-	DisplayName: Midnight Greaves
-	Tooltip: ""
-}
-
-MidnightHelmet: {
-	DisplayName: Midnight Helmet
-	Tooltip: ""
-}
-
-MlynarChestplate: {
-	DisplayName: Mlynar Chestplate
-	Tooltip: ""
-}
-
 MlynarDefault: {
 	DisplayName: Mlynar Default
-	Tooltip: ""
-}
-
-MlynarGreaves: {
-	DisplayName: Mlynar Greaves
-	Tooltip: ""
-}
-
-MlynarHelmet: {
-	DisplayName: Mlynar Helmet
-	Tooltip: ""
-}
-
-OblivionisChestplate: {
-	DisplayName: Oblivionis Chestplate
-	Tooltip: ""
-}
-
-OblivionisGreaves: {
-	DisplayName: Oblivionis Greaves
-	Tooltip: ""
-}
-
-OblivionisHelmet: {
-	DisplayName: Oblivionis Helmet
-	Tooltip: ""
-}
-
-PopukarChestplate: {
-	DisplayName: Popukar Chestplate
-	Tooltip: ""
-}
-
-PopukarGreaves: {
-	DisplayName: Popukar Greaves
-	Tooltip: ""
-}
-
-PopukarHelmet: {
-	DisplayName: Popukar Helmet
-	Tooltip: ""
-}
-
-SkadiChestplate: {
-	DisplayName: Skadi Chestplate
-	Tooltip: ""
-}
-
-SkadiGreaves: {
-	DisplayName: Skadi Greaves
-	Tooltip: ""
-}
-
-SkadiHelmet: {
-	DisplayName: Skadi Helmet
-	Tooltip: ""
-}
-
-SurtrChestplate: {
-	DisplayName: Surtr Chestplate
-	Tooltip: ""
-}
-
-SurtrGreaves: {
-	DisplayName: Surtr Greaves
-	Tooltip: ""
-}
-
-SurtrHelmet: {
-	DisplayName: Surtr Helmet
-	Tooltip: ""
-}
-
-UlpianusChestplate: {
-	DisplayName: Ulpianus Chestplate
 	Tooltip: ""
 }
 
@@ -3404,493 +3058,33 @@ UlpianusDefault: {
 	Tooltip: ""
 }
 
-UlpianusGreaves: {
-	DisplayName: Ulpianus Greaves
-	Tooltip: ""
-}
-
-UlpianusHelmet: {
-	DisplayName: Ulpianus Helmet
-	Tooltip: ""
-}
-
-UtageChestplate: {
-	DisplayName: Utage Chestplate
-	Tooltip: ""
-}
-
-UtageGreaves: {
-	DisplayName: Utage Greaves
-	Tooltip: ""
-}
-
-UtageHelmet: {
-	DisplayName: Utage Helmet
-	Tooltip: ""
-}
-
-AnselChestplate: {
-	DisplayName: Ansel Chestplate
-	Tooltip: ""
-}
-
-AnselGreaves: {
-	DisplayName: Ansel Greaves
-	Tooltip: ""
-}
-
-AnselHelmet: {
-	DisplayName: Ansel Helmet
-	Tooltip: ""
-}
-
-HibiscusChestplate: {
-	DisplayName: Hibiscus Chestplate
-	Tooltip: ""
-}
-
-HibiscusGreaves: {
-	DisplayName: Hibiscus Greaves
-	Tooltip: ""
-}
-
-HibiscusHelmet: {
-	DisplayName: Hibiscus Helmet
-	Tooltip: ""
-}
-
-WarfarinChestplate: {
-	DisplayName: Warfarin Chestplate
-	Tooltip: ""
-}
-
-WarfarinGreaves: {
-	DisplayName: Warfarin Greaves
-	Tooltip: ""
-}
-
-WarfarinHelmet: {
-	DisplayName: Warfarin Helmet
-	Tooltip: ""
-}
-
-AdnachielChestplate: {
-	DisplayName: Adnachiel Chestplate
-	Tooltip: ""
-}
-
-AdnachielGreaves: {
-	DisplayName: Adnachiel Greaves
-	Tooltip: ""
-}
-
-AdnachielHelmet: {
-	DisplayName: Adnachiel Helmet
-	Tooltip: ""
-}
-
-CatapultChestplate: {
-	DisplayName: Catapult Chestplate
-	Tooltip: ""
-}
-
-CatapultGreaves: {
-	DisplayName: Catapult Greaves
-	Tooltip: ""
-}
-
-CatapultHelmet: {
-	DisplayName: Catapult Helmet
-	Tooltip: ""
-}
-
-ExusiaiChestplate: {
-	DisplayName: Exusiai Chestplate
-	Tooltip: ""
-}
-
-ExusiaiGreaves: {
-	DisplayName: Exusiai Greaves
-	Tooltip: ""
-}
-
-ExusiaiHelmet: {
-	DisplayName: Exusiai Helmet
-	Tooltip: ""
-}
-
-FartoothChestplate: {
-	DisplayName: Fartooth Chestplate
-	Tooltip: ""
-}
-
-FartoothGreaves: {
-	DisplayName: Fartooth Greaves
-	Tooltip: ""
-}
-
-FartoothHelmet: {
-	DisplayName: Fartooth Helmet
-	Tooltip: ""
-}
-
-FiammettaChestplate: {
-	DisplayName: Fiammetta Chestplate
-	Tooltip: ""
-}
-
-FiammettaGreaves: {
-	DisplayName: Fiammetta Greaves
-	Tooltip: ""
-}
-
-FiammettaHelmet: {
-	DisplayName: Fiammetta Helmet
-	Tooltip: ""
-}
-
-KroosChestplate: {
-	DisplayName: Kroos Chestplate
-	Tooltip: ""
-}
-
-KroosGreaves: {
-	DisplayName: Kroos Greaves
-	Tooltip: ""
-}
-
-KroosHelmet: {
-	DisplayName: Kroos Helmet
-	Tooltip: ""
-}
-
-KkdyAlterChestplate: {
-	DisplayName: Kkdy Alter Chestplate
-	Tooltip: ""
-}
-
-KkdyAlterGreaves: {
-	DisplayName: Kkdy Alter Greaves
-	Tooltip: ""
-}
-
-KkdyAlterHelmet: {
-	DisplayName: Kkdy Alter Helmet
-	Tooltip: ""
-}
-
-MelaniteChestplate: {
-	DisplayName: Melanite Chestplate
-	Tooltip: ""
-}
-
-MelaniteGreaves: {
-	DisplayName: Melanite Greaves
-	Tooltip: ""
-}
-
-MelaniteHelmet: {
-	DisplayName: Melanite Helmet
-	Tooltip: ""
-}
-
-ProvenceChestplate: {
-	DisplayName: Provence Chestplate
-	Tooltip: ""
-}
-
-ProvenceGreaves: {
-	DisplayName: Provence Greaves
-	Tooltip: ""
-}
-
-ProvenceHelmet: {
-	DisplayName: Provence Helmet
-	Tooltip: ""
-}
-
-RosmontisChestplate: {
-	DisplayName: Rosmontis Chestplate
-	Tooltip: ""
-}
-
-RosmontisGreaves: {
-	DisplayName: Rosmontis Greaves
-	Tooltip: ""
-}
-
-RosmontisHelmet: {
-	DisplayName: Rosmontis Helmet
-	Tooltip: ""
-}
-
-TyphonChestplate: {
-	DisplayName: Typhon Chestplate
-	Tooltip: ""
-}
-
-TyphonGreaves: {
-	DisplayName: Typhon Greaves
-	Tooltip: ""
-}
-
-TyphonHelmet: {
-	DisplayName: Typhon Helmet
-	Tooltip: ""
-}
-
-WChestplate: {
-	DisplayName: W Chestplate
-	Tooltip: ""
-}
-
-WGreaves: {
-	DisplayName: W Greaves
-	Tooltip: ""
-}
-
-WHelmet: {
-	DisplayName: W Helmet
-	Tooltip: ""
-}
-
 WisadelDefault: {
 	DisplayName: Wisadel Default
 	Tooltip: ""
 }
 
-DorothyChestplate: {
-	DisplayName: Dorothy Chestplate
-	Tooltip: ""
-}
-
-DorothyGreaves: {
-	DisplayName: Dorothy Greaves
-	Tooltip: ""
-}
-
-DorothyHelmet: {
-	DisplayName: Dorothy Helmet
-	Tooltip: ""
-}
-
-ExusiaiAlterChestplate: {
-	DisplayName: Exusiai Alter Chestplate
-	Tooltip: ""
-}
-
-ExusiaiAlterGreaves: {
-	DisplayName: Exusiai Alter Greaves
-	Tooltip: ""
-}
-
-ExusiaiAlterHelmet: {
-	DisplayName: Exusiai Alter Helmet
-	Tooltip: ""
-}
-
-ManticoreChestplate: {
-	DisplayName: Manticore Chestplate
-	Tooltip: ""
-}
-
-ManticoreGreaves: {
-	DisplayName: Manticore Greaves
-	Tooltip: ""
-}
-
-ManticoreHelmet: {
-	DisplayName: Manticore Helmet
-	Tooltip: ""
-}
-
-MizukiChestplate: {
-	DisplayName: Mizuki Chestplate
-	Tooltip: ""
-}
-
-MizukiGreaves: {
-	DisplayName: Mizuki Greaves
-	Tooltip: ""
-}
-
-MizukiHelmet: {
-	DisplayName: Mizuki Helmet
-	Tooltip: ""
-}
-
-TexalterChestplate: {
-	DisplayName: Texalter Chestplate
-	Tooltip: ""
-}
-
-TexalterGreaves: {
-	DisplayName: Texalter Greaves
-	Tooltip: ""
-}
-
-TexalterHelmet: {
-	DisplayName: Texalter Helmet
-	Tooltip: ""
-}
-
-CivilightEternaChestplate: {
-	DisplayName: Civilight Eterna Chestplate
-	Tooltip: ""
-}
-
-CivilightEternaGreaves: {
-	DisplayName: Civilight Eterna Greaves
-	Tooltip: ""
-}
-
-CivilightEternaHelmet: {
-	DisplayName: Civilight Eterna Helmet
-	Tooltip: ""
-}
-
 DeepcolorBody: {
-	DisplayName: Deepcolor Body
+	DisplayName: 深海色的躯干
 	Tooltip: ""
 }
 
 DeepcolorDefault: {
-	DisplayName: Deepcolor Default
+	DisplayName: 深海色的服饰（常规）
 	Tooltip: ""
 }
 
 DeepcolorHead: {
-	DisplayName: Deepcolor Head
+	DisplayName: 深海色的头部
 	Tooltip: ""
 }
 
 DeepcolorLegs: {
-	DisplayName: Deepcolor Legs
-	Tooltip: ""
-}
-
-LingChestplate: {
-	DisplayName: Ling Chestplate
-	Tooltip: ""
-}
-
-LingGreaves: {
-	DisplayName: Ling Greaves
-	Tooltip: ""
-}
-
-LingHelmet: {
-	DisplayName: Ling Helmet
-	Tooltip: ""
-}
-
-OrchidChestplate: {
-	DisplayName: Orchid Chestplate
-	Tooltip: ""
-}
-
-OrchidGreaves: {
-	DisplayName: Orchid Greaves
-	Tooltip: ""
-}
-
-OrchidHelmet: {
-	DisplayName: Orchid Helmet
-	Tooltip: ""
-}
-
-RaidianChestplate: {
-	DisplayName: Raidian Chestplate
-	Tooltip: ""
-}
-
-RaidianGreaves: {
-	DisplayName: Raidian Greaves
-	Tooltip: ""
-}
-
-RaidianHelmet: {
-	DisplayName: Raidian Helmet
-	Tooltip: ""
-}
-
-BagpipeChestplate: {
-	DisplayName: Bagpipe Chestplate
-	Tooltip: ""
-}
-
-BagpipeGreaves: {
-	DisplayName: Bagpipe Greaves
-	Tooltip: ""
-}
-
-BagpipeHelmet: {
-	DisplayName: Bagpipe Helmet
-	Tooltip: ""
-}
-
-FangChestplate: {
-	DisplayName: Fang Chestplate
-	Tooltip: ""
-}
-
-FangGreaves: {
-	DisplayName: Fang Greaves
-	Tooltip: ""
-}
-
-FangHelmet: {
-	DisplayName: Fang Helmet
-	Tooltip: ""
-}
-
-PlumeChestplate: {
-	DisplayName: Plume Chestplate
-	Tooltip: ""
-}
-
-PlumeGreaves: {
-	DisplayName: Plume Greaves
-	Tooltip: ""
-}
-
-PlumeHelmet: {
-	DisplayName: Plume Helmet
-	Tooltip: ""
-}
-
-TexasChestplate: {
-	DisplayName: Texas Chestplate
+	DisplayName: 深海色的腿部
 	Tooltip: ""
 }
 
 TexasDefault: {
 	DisplayName: Texas Default
-	Tooltip: ""
-}
-
-TexasGreaves: {
-	DisplayName: Texas Greaves
-	Tooltip: ""
-}
-
-TexasHelmet: {
-	DisplayName: Texas Helmet
-	Tooltip: ""
-}
-
-VanillaChestplate: {
-	DisplayName: Vanilla Chestplate
-	Tooltip: ""
-}
-
-VanillaGreaves: {
-	DisplayName: Vanilla Greaves
-	Tooltip: ""
-}
-
-VanillaHelmet: {
-	DisplayName: Vanilla Helmet
 	Tooltip: ""
 }
 
@@ -4011,3 +3205,300 @@ LupineScarlet: {
 	DisplayName: Lupine Scarlet
 	Tooltip: ""
 }
+
+CuoraWeapon: {
+	DisplayName: Cuora Weapon
+	Tooltip: ""
+}
+
+ClosureScanGun: {
+	DisplayName: Engineering Scanner Gun
+	Tooltip: ""
+}
+
+KaltsitBody: {
+	DisplayName: 凯尔希的躯干
+	Tooltip: ""
+}
+
+KaltsitDefault: {
+	DisplayName: 凯尔希的服饰（常规）
+	Tooltip: ""
+}
+
+KaltsitHead: {
+	DisplayName: 凯尔希的头部
+	Tooltip: ""
+}
+
+KaltsitLegs: {
+	DisplayName: 凯尔希的腿部
+	Tooltip: ""
+}
+
+CardiWeapon: {
+	DisplayName: Cardi Weapon
+	Tooltip: ""
+}
+
+EntelechiaScythe: {
+	DisplayName: Entelechia Scythe
+	Tooltip: ""
+}
+
+RopeClaw: {
+	DisplayName: Rope Claw
+	Tooltip: ""
+}
+
+PortableSafehouseDeploymentUnit: {
+	DisplayName: Portable Self-Built Safehouse
+	Tooltip:
+		'''
+		Left-click to build the safehouse directly at the cursor.
+		The safehouse expands to the lower right from the cursor.
+		Ordinary blocks in the area are cleared. Chests, ores, and functional blocks prevent deployment.
+		'''
+
+	Deploy: {
+		Success: Safehouse deployed.
+
+		Failure: {
+			Client: The client cannot deploy structures directly.
+			OutOfBounds: The target position is outside the deployment area.
+			Chest: A chest is in the deployment area.
+			TileEntity: A functional tile is in the deployment area.
+			Ore: Ore is in the deployment area.
+		}
+	}
+}
+
+PortableRhodesIslandSafehouse: {
+	DisplayName: Portable Rhodes Island Safehouse
+	Tooltip:
+		'''
+		Left-click to instantly place a standard-issue Rhodes Island safehouse
+		The cursor always aligns with the building's horizontal center, at ground level
+		'''
+}
+
+PortableStructure.Deploy.Failure.OutOfBounds: The target position is outside the deployment area.
+
+PompeiiLavaCore: {
+	DisplayName: Pompeii's Lava Core
+	Tooltip:
+		'''
+		Grants the Obsidian Skin Potion effect (immunity to fire blocks and lava)
+		When taking over 40 damage from a single hit, triggers an explosion centered on you
+		dealing 200 area damage and inflicting On Fire! on enemies
+		Explosion damage benefits from melee damage bonuses
+		'''
+}
+
+DevTestWrench: {
+	DisplayName: Dev Test Wrench
+	Tooltip:
+		'''
+		Developer debug item
+		Hold left click and drag to select a region, then use /exp to export it as a structure file
+		'''
+}
+
+FoldableBuildingItem: {
+	DisplayName: Foldable Building
+	Tooltip:
+		'''
+		Developer item (placeholder / unfinished)
+		Hold to preview the building projection at your cursor, left click to place it
+		'''
+}
+
+MorniaBodySet.Tooltip: Developer Set
+MorniaHeadSet.Tooltip: Developer Set
+MorniaLegsSet.Tooltip: Developer Set
+MudrockBodySet.Tooltip: ""
+MudrockHeadSet.Tooltip: ""
+MudrockLegsSet.Tooltip: ""
+RosmontisBodySet.Tooltip: ""
+RosmontisHeadSet.Tooltip: ""
+RosmontisLegsSet.Tooltip: ""
+AmiyaBodySet.Tooltip: ""
+AmiyaHeadSet.Tooltip: ""
+AmiyaLegsSet.Tooltip: ""
+HazeBodySet.Tooltip: ""
+HazeHeadSet.Tooltip: ""
+HazeLegsSet.Tooltip: ""
+IndigoBodySet.Tooltip: ""
+IndigoHeadSet.Tooltip: ""
+IndigoLegsSet.Tooltip: ""
+LavaBodySet.Tooltip: ""
+LavaHeadSet.Tooltip: ""
+LavaLegsSet.Tooltip: ""
+MostimaBodySet.Tooltip: ""
+MostimaHeadSet.Tooltip: ""
+MostimaLegsSet.Tooltip: ""
+NecrassBodySet.Tooltip: ""
+NecrassHeadSet.Tooltip: ""
+NecrassLegsSet.Tooltip: ""
+StewardBodySet.Tooltip: ""
+StewardHeadSet.Tooltip: ""
+StewardLegsSet.Tooltip: ""
+BagpipeBodySet.Tooltip: ""
+BagpipeHeadSet.Tooltip: ""
+BagpipeLegsSet.Tooltip: ""
+FangBodySet.Tooltip: ""
+FangHeadSet.Tooltip: ""
+FangLegsSet.Tooltip: ""
+PlumeBodySet.Tooltip: ""
+PlumeHeadSet.Tooltip: ""
+PlumeLegsSet.Tooltip: ""
+TexasBodySet.Tooltip: ""
+TexasHeadSet.Tooltip: ""
+TexasLegsSet.Tooltip: ""
+VanillaBodySet.Tooltip: ""
+VanillaHeadSet.Tooltip: ""
+VanillaLegsSet.Tooltip: ""
+BeagleBodySet.Tooltip: ""
+BeagleHeadSet.Tooltip: ""
+BeagleLegsSet.Tooltip: ""
+CardiganBodySet.Tooltip: ""
+CardiganHeadSet.Tooltip: ""
+CardiganLegsSet.Tooltip: ""
+NianBodySet.Tooltip: ""
+NianHeadSet.Tooltip: ""
+NianLegsSet.Tooltip: ""
+SariaBodySet.Tooltip: ""
+SariaHeadSet.Tooltip: ""
+SariaLegsSet.Tooltip: ""
+SpotBodySet.Tooltip: ""
+SpotHeadSet.Tooltip: ""
+SpotLegsSet.Tooltip: ""
+VulcanBodySet.Tooltip: ""
+VulcanHeadSet.Tooltip: ""
+VulcanLegsSet.Tooltip: ""
+AnselBodySet.Tooltip: ""
+AnselHeadSet.Tooltip: ""
+AnselLegsSet.Tooltip: ""
+HibiscusBodySet.Tooltip: ""
+HibiscusHeadSet.Tooltip: ""
+HibiscusLegsSet.Tooltip: ""
+KaltsitBodySet.Tooltip: ""
+KaltsitHeadSet.Tooltip: ""
+KaltsitLegsSet.Tooltip: ""
+ReedFlameShadowBodySet.Tooltip: ""
+ReedFlameShadowHeadSet.Tooltip: ""
+ReedFlameShadowLegsSet.Tooltip: ""
+WarfarinBodySet.Tooltip: ""
+WarfarinHeadSet.Tooltip: ""
+WarfarinLegsSet.Tooltip: ""
+DorothyBodySet.Tooltip: ""
+DorothyHeadSet.Tooltip: ""
+DorothyLegsSet.Tooltip: ""
+ExusiaiAlterBodySet.Tooltip: ""
+ExusiaiAlterHeadSet.Tooltip: ""
+ExusiaiAlterLegsSet.Tooltip: ""
+ManticoreBodySet.Tooltip: ""
+ManticoreHeadSet.Tooltip: ""
+ManticoreLegsSet.Tooltip: ""
+MizukiBodySet.Tooltip: ""
+MizukiHeadSet.Tooltip: ""
+MizukiLegsSet.Tooltip: ""
+MortisBodySet.Tooltip: ""
+MortisHeadSet.Tooltip: ""
+MortisLegsSet.Tooltip: ""
+TexalterBodySet.Tooltip: ""
+TexalterHeadSet.Tooltip: ""
+TexalterLegsSet.Tooltip: ""
+CivilightEternaBodySet.Tooltip: ""
+CivilightEternaHeadSet.Tooltip: ""
+CivilightEternaLegsSet.Tooltip: ""
+DeepcolorBodySet.Tooltip: ""
+DeepcolorHeadSet.Tooltip: ""
+DeepcolorLegsSet.Tooltip: ""
+LingBodySet.Tooltip: ""
+LingHeadSet.Tooltip: ""
+LingLegsSet.Tooltip: ""
+OrchidBodySet.Tooltip: ""
+OrchidHeadSet.Tooltip: ""
+OrchidLegsSet.Tooltip: ""
+AdnachielBodySet.Tooltip: ""
+AdnachielHeadSet.Tooltip: ""
+AdnachielLegsSet.Tooltip: ""
+CatapultBodySet.Tooltip: ""
+CatapultHeadSet.Tooltip: ""
+CatapultLegsSet.Tooltip: ""
+ExusiaiBodySet.Tooltip: ""
+ExusiaiHeadSet.Tooltip: ""
+ExusiaiLegsSet.Tooltip: ""
+FartoothBodySet.Tooltip: ""
+FartoothHeadSet.Tooltip: ""
+FartoothLegsSet.Tooltip: ""
+FiammettaBodySet.Tooltip: ""
+FiammettaHeadSet.Tooltip: ""
+FiammettaLegsSet.Tooltip: ""
+KroosBodySet.Tooltip: ""
+KroosHeadSet.Tooltip: ""
+KroosLegsSet.Tooltip: ""
+KkdyAlterBodySet.Tooltip: ""
+KkdyAlterHeadSet.Tooltip: ""
+KkdyAlterLegsSet.Tooltip: ""
+MelaniteBodySet.Tooltip: ""
+MelaniteHeadSet.Tooltip: ""
+MelaniteLegsSet.Tooltip: ""
+ProvenceBodySet.Tooltip: ""
+ProvenceHeadSet.Tooltip: ""
+ProvenceLegsSet.Tooltip: ""
+TyphonBodySet.Tooltip: ""
+TyphonHeadSet.Tooltip: ""
+TyphonLegsSet.Tooltip: ""
+WBodySet.Tooltip: ""
+WHeadSet.Tooltip: ""
+WLegsSet.Tooltip: ""
+WisadelBodySet.Tooltip: ""
+WisadelHeadSet.Tooltip: ""
+WisadelLegsSet.Tooltip: ""
+RaidianBodySet.Tooltip: ""
+RaidianHeadSet.Tooltip: ""
+RaidianLegsSet.Tooltip: ""
+ChenBodySet.Tooltip: ""
+ChenHeadSet.Tooltip: ""
+ChenLegsSet.Tooltip: ""
+EntelechiaBodySet.Tooltip: ""
+EntelechiaHeadSet.Tooltip: ""
+EntelechiaLegsSet.Tooltip: ""
+LaPlumaBodySet.Tooltip: ""
+LaPlumaHeadSet.Tooltip: ""
+LaPlumaLegsSet.Tooltip: ""
+LapplandBodySet.Tooltip: ""
+LapplandHeadSet.Tooltip: ""
+LapplandLegsSet.Tooltip: ""
+MatoimaruBodySet.Tooltip: ""
+MatoimaruHeadSet.Tooltip: ""
+MatoimaruLegsSet.Tooltip: ""
+MelanthaBodySet.Tooltip: ""
+MelanthaHeadSet.Tooltip: ""
+MelanthaLegsSet.Tooltip: ""
+MidnightBodySet.Tooltip: ""
+MidnightHeadSet.Tooltip: ""
+MidnightLegsSet.Tooltip: ""
+MlynarBodySet.Tooltip: ""
+MlynarHeadSet.Tooltip: ""
+MlynarLegsSet.Tooltip: ""
+OblivionisBodySet.Tooltip: ""
+OblivionisHeadSet.Tooltip: ""
+OblivionisLegsSet.Tooltip: ""
+PopukarBodySet.Tooltip: ""
+PopukarHeadSet.Tooltip: ""
+PopukarLegsSet.Tooltip: ""
+SkadiBodySet.Tooltip: ""
+SkadiHeadSet.Tooltip: ""
+SkadiLegsSet.Tooltip: ""
+SurtrBodySet.Tooltip: ""
+SurtrHeadSet.Tooltip: ""
+SurtrLegsSet.Tooltip: ""
+UlpianusBodySet.Tooltip: ""
+UlpianusHeadSet.Tooltip: ""
+UlpianusLegsSet.Tooltip: ""
+UtageBodySet.Tooltip: ""
+UtageHeadSet.Tooltip: ""
+UtageLegsSet.Tooltip: ""

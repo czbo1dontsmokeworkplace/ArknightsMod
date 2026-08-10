@@ -8,6 +8,7 @@ using Terraria.DataStructures;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using ArknightsMod.Content;
 
 namespace ArknightsMod.Content.Items.Weapons.Supporter.Pramanix
 {
@@ -56,10 +57,10 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Pramanix
 			tooltips.RemoveAll(line => line.Name == "CritChance");
 		}
 
-		public override bool AltFunctionUse(Player player) => true;
+		public override bool AltFunctionUse(Player player) => false;
 
 		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
-			if (player.altFunctionUse == 2)
+			if (ArknightsKeybinds.SkillActivatePressed(player))
 				return false;
 
 			var sb = player.GetModPlayer<SaintBellPlayer>();
@@ -85,7 +86,7 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Pramanix
 			var wp = player.GetModPlayer<WeaponPlayer>();
 			var sb = player.GetModPlayer<SaintBellPlayer>();
 
-			if (player.altFunctionUse == 2) {
+			if (ArknightsKeybinds.SkillActivatePressed(player)) {
 				if (wp.Skill == 1 && sb.Skill2Active) {
 					sb.DeactivateSkill2();
 					return false;

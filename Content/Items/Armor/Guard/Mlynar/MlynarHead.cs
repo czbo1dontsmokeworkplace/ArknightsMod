@@ -1,46 +1,23 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using ArknightsMod.Content.Tiles.Infrastructure;
+﻿using Terraria.ModLoader;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content.Items.Material;
 
 namespace ArknightsMod.Content.Items.Armor.Guard.Mlynar
 {
 	[AutoloadEquip(EquipType.Head)]
-	public class MlynarHead : NeoArmorHead
+	public class MlynarHead : NeoArmorReforgeVanityHead
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 427;
-		
-		public override void Load() {
-			if (Main.netMode == NetmodeID.Server)
-				return;
-		}
 
-		public override void SetArmorDefaults() {
-			Item.defense = 0;
-		}
-		
-		public override bool IsArmorSet(Item head, Item body, Item legs) {
-			return body.type == ModContent.ItemType<MlynarBody>() && body.neoarmor().hasUpgraded &&
-				legs.type == ModContent.ItemType<MlynarLegs>() && legs.neoarmor().hasUpgraded;
-		}
-
-		public override void UpdateArmorSet(Player player) {
-			player.setBonus = "";
-		}
-
-		public override void AddRecipes() {
-			CreateRecipe()
-			.AddIngredient<MlynarHead>(1)
-			.AddIngredient<Orundum>(60)
-			.AddIngredient<PolymerizationPreparation>(6)
-			.AddIngredient<WhiteHorseKohl>(7)
-			.AddTile(ModContent.TileType<FactoryTile>())
-			.AddCondition(NeoArmorUtils.NeedVanity)
-			.DisableDecraft()
-			.Register();
-		}
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
+			Defense = 0,
+			LifeBonus = 427,
+			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Mlynar",
+			Materials = recipe => recipe
+				.AddIngredient<Orundum>(60)
+				.AddIngredient<PolymerizationPreparation>(6)
+				.AddIngredient<WhiteHorseKohl>(7),
+			SetBonusKey = "Mods.ArknightsMod.ArmorSets.Mlynar.SetBonus",
+		};
 	}
 }
-	

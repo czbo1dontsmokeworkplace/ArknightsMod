@@ -1,30 +1,21 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using ArknightsMod.Content.Tiles.Infrastructure;
+﻿using Terraria.ModLoader;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content.Items.Material;
 
 namespace ArknightsMod.Content.Items.Armor.Sniper.Kroos
 {
 	[AutoloadEquip(EquipType.Legs)]
-	public class KroosLegs : NeoArmorLegs
+	public class KroosLegs : NeoArmorReforgeVanityLegs
 	{
 		public override int Rarity => 3;
-		public override int ArmorLifeBonus => 53;
-		
-		public override void SetArmorDefaults() {
-			Item.defense = 3;
-		}
 
-		public override void AddRecipes() {
-			CreateRecipe()
-			.AddIngredient<KroosLegs>(1)
-			.AddIngredient<Orundum>(30)
-			.AddIngredient<OrirockCube>(2)
-			.AddTile(ModContent.TileType<FactoryTile>())
-			.AddCondition(NeoArmorUtils.NeedVanity)
-			.DisableDecraft()
-			.Register();
-		}
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
+			Defense = 3,
+			LifeBonus = 53,
+			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Kroos",
+			Materials = recipe => recipe
+				.AddIngredient<Orundum>(30)
+				.AddIngredient<OrirockCube>(2),
+		};
 	}
 }

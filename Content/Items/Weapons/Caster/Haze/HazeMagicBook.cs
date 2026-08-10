@@ -2,6 +2,7 @@
 using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
+using ArknightsMod.Content;
 
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -56,7 +57,7 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Haze
             recipe.Register();
         }
 
-        public override bool AltFunctionUse(Player player) => true;
+        public override bool AltFunctionUse(Player player) => false;
 
 		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
@@ -101,7 +102,7 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Haze
             Item.useAnimation = BaseUseTime;
             Item.UseSound = SoundID.Item9;
 
-            if (player.altFunctionUse == 2)
+            if (ArknightsKeybinds.SkillActivatePressed(player))
             {
                 if (modPlayer.Skill == 0 && modPlayer.StockCount > 0 && !modPlayer.SkillActive)
                 {

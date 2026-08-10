@@ -1,31 +1,22 @@
-﻿using ArknightsMod.Content.Items.Material;
-using ArknightsMod.Content.Tiles.Infrastructure;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+﻿using Terraria.ModLoader;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
+using ArknightsMod.Content.Items.Material;
 
 namespace ArknightsMod.Content.Items.Armor.Guard.Lappland
 {
 	[AutoloadEquip(EquipType.Legs)]
-	public class LapplandLegs : NeoArmorLegs
+	public class LapplandLegs : NeoArmorReforgeVanityLegs
 	{
 		public override int Rarity => 5;
-		public override int ArmorLifeBonus => 118;
-		
-		public override void SetArmorDefaults() {
-			Item.defense = 9;
-		}
 
-		public override void AddRecipes() {
-			CreateRecipe()
-			.AddIngredient<LapplandLegs>(1)
-			.AddIngredient<Orundum>(50)
-			.AddIngredient<SugarLump>(3)
-			.AddIngredient<RMA7012>(3)
-			.AddTile(ModContent.TileType<FactoryTile>())
-			.AddCondition(NeoArmorUtils.NeedVanity)
-			.DisableDecraft()
-			.Register();
-		}
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
+			Defense = 9,
+			LifeBonus = 118,
+			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Lappland",
+			Materials = recipe => recipe
+				.AddIngredient<Orundum>(50)
+				.AddIngredient<SugarLump>(3)
+				.AddIngredient<RMA7012>(3),
+		};
 	}
 }

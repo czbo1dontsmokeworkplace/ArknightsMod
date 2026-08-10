@@ -10,6 +10,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using ArknightsMod.Content;
 
 namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
 {
@@ -74,7 +75,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
 
         public override Vector2? HoldoutOffset() => new(-8, 0);
 
-        public override bool AltFunctionUse(Player player) => true;
+        public override bool AltFunctionUse(Player player) => false;
 
         public override void HoldItem(Player player)
         {
@@ -155,7 +156,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
             Item.useAnimation = BaseUseTime;
             Item.UseSound = SoundID.Item5;
 
-            if (player.altFunctionUse == 2)
+            if (ArknightsKeybinds.SkillActivatePressed(player))
             {
                 if (modPlayer.Skill == 0 && modPlayer.StockCount > 0 && !modPlayer.SkillActive)
                 {

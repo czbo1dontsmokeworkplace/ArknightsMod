@@ -1,30 +1,21 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using ArknightsMod.Content.Tiles.Infrastructure;
+﻿using Terraria.ModLoader;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content.Items.Material;
 
 namespace ArknightsMod.Content.Items.Armor.Medic.Hibiscus
 {
 	[AutoloadEquip(EquipType.Body)]
-	public class HibiscusBody : NeoArmorBody
+	public class HibiscusBody : NeoArmorReforgeVanityBody
 	{
 		public override int Rarity => 3;
-		public override int ArmorLifeBonus => 61;
 
-		public override void SetArmorDefaults() {
-			Item.defense = 8;
-		}
-		
-		public override void AddRecipes() {
-			CreateRecipe()
-			.AddIngredient<HibiscusBody>(1)
-			.AddIngredient<Orundum>(30)
-			.AddIngredient<Polyketon>(2)
-			.AddTile(ModContent.TileType<FactoryTile>())
-			.AddCondition(NeoArmorUtils.NeedVanity)
-			.DisableDecraft()
-			.Register();
-		}
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
+			Defense = 8,
+			LifeBonus = 61,
+			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Hibiscus",
+			Materials = recipe => recipe
+				.AddIngredient<Orundum>(30)
+				.AddIngredient<Polyketon>(2),
+		};
 	}
 }

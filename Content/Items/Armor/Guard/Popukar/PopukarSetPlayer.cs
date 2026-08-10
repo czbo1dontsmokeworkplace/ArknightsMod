@@ -1,4 +1,5 @@
-using ArknightsMod.Content.Items.Armor;
+﻿using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -14,14 +15,14 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Popukar
 			PopukarSetActive = false;
 		}
 
+		// NeoArmor Reforge：套装件是独立 ItemID，穿上它本身就代表"已经是套装形态"，
+		// 不需要再查 hasUpgraded；player.setBonus 文本交给 PopukarHead 的
+		// SetProfile.SetBonusKey 统一设置，这里不再重复设置一遍。
 		public override void PostUpdateEquips() {
-			PopukarHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<PopukarHelmet>());
-			PopukarSetActive = OperatorSetEquipHelper.HasFullSet(
-				Player,
-				ModContent.ItemType<PopukarHelmet>(),
-				ModContent.ItemType<PopukarChestplate>(),
-				ModContent.ItemType<PopukarGreaves>());
-			OperatorSetEquipHelper.ApplySetBonusText(Player, PopukarSetActive, "Mods.ArknightsMod.ArmorSets.Popukar.SetBonus");
+			PopukarHelmetActive = Player.armor[0].type == NeoArmorReforgeSetLoader.GetSetType<PopukarHead>();
+			PopukarSetActive = PopukarHelmetActive
+				&& Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<PopukarBody>()
+				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<PopukarLegs>();
 		}
 
 		public override void ModifyMaxStats(out StatModifier health, out StatModifier mana) {

@@ -1,3 +1,4 @@
+﻿using ArknightsMod.Content;
 using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.Projectiles.Guard.Entelechia;
@@ -15,7 +16,8 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Entelechia
 	// 隐德来希的镰刀：迁移自 EntelechiaScytheS2 模组。
 	// 普通攻击朝光标方向甩出月牙形「刀光」（EntelechiaScytheBladeWaveProjectile，shader 程序化绘制）。
 	// 三个技能位分别对应：
-	// S1 玫影觅迹：次数型瞬发技能，效果暂留空。
+	// S1 玫影觅迹：次数型瞬发技能，技力满后自动引爆（不接受技能键手动开启）——
+	// 下一次普通攻击自动变为 175% 伤害、连续两段刀光的强化攻击。
 	// S2 绯红壁合：持续型技能，激活后 12 秒内按住左键可挥出循环斩（沿用原模组的攻击特效与判定方式），替代普通攻击。
 	// S3 灵与欲的惜别：持续型技能，效果暂留空。
 	public class EntelechiaScythe : ExpansionWeaponBase
@@ -58,7 +60,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Entelechia
 			Item.shoot = ModContent.ProjectileType<EntelechiaScytheBladeWaveProjectile>();
 		}
 
-		public override bool AltFunctionUse(Player player) => true;
+		public override bool AltFunctionUse(Player player) => false;
 
 		// S3「灵与欲的惜别」激活期间：攻击力 +135%
 		public override void ModifyWeaponDamage(Player player, ref StatModifier damage) {
@@ -74,32 +76,41 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Entelechia
 			return (mp.Skill == 2 && mp.SkillActive) ? 1.4f : 1f;
 		}
 
+		// S1「玫影觅迹」技力满后自动引爆，不接受手动开启：满技力后的下一次普攻自动变为强化攻击。
+		// 具体的自动触发放在 HoldItem 里（见下方），这里只需要在技能键按下、且当前选中的是 S1 时
+		// 直接吞掉这次按键、什么都不做——避免误触发 base.CanUseItem 走到普通攻击判定之外的逻辑。
+		public override void HoldItem(Player player) {
+			if (Main.myPlayer != player.whoAmI)
+				return;
+
+			var mp = player.GetModPlayer<WeaponPlayer>();
+			// EntelechiaEmpoweredNext 本身就是"已引爆待发"的标记，天然防止连续多帧重复扣充能：
+			// 一旦置为 true，要等下一次 Shoot 把它消费掉（置回 false）才会再次触发这里的判断。
+			if (mp.Skill == 0 && mp.StockCount > 0 && !mp.EntelechiaEmpoweredNext) {
+				mp.EntelechiaEmpoweredNext = true;
+				mp.DelStockCount();
+				SoundEngine.PlaySound(SkillActiveSfx, player.Center);
+			}
+		}
+
 		public override bool CanUseItem(Player player) {
 			var mp = player.GetModPlayer<WeaponPlayer>();
 
-			if (player.altFunctionUse == 2 && player.controlDown) {
-				// 下+右键：激活当前选中的技能
-				if (mp.StockCount > 0 && !mp.SkillActive) {
-					if (mp.Skill == 0) {
-						// S1 玫影觅迹：次数型瞬发技能 —— 标记下次普攻强化（175% 伤害 + 连续两段刀光）
-						mp.EntelechiaEmpoweredNext = true;
-						mp.DelStockCount();
-						SoundEngine.PlaySound(SkillActiveSfx, player.Center);
-					}
-					else {
-						// S2/S3：进入持续技能状态，由技力系统按持续时间自动结束
-						mp.SkillActive = true;
-						mp.SkillTimer = 0;
-						mp.DelStockCount();
-						SoundEngine.PlaySound(SkillActiveSfx, player.Center);
+			if (ArknightsKeybinds.SkillActivatePressed(player)) {
+				// S1 自动触发，技能键对它不生效；只处理 S2/S3 的手动开启。
+				if (mp.Skill != 0 && mp.StockCount > 0 && !mp.SkillActive) {
+					// S2/S3：进入持续技能状态，由技力系统按持续时间自动结束
+					mp.SkillActive = true;
+					mp.SkillTimer = 0;
+					mp.DelStockCount();
+					SoundEngine.PlaySound(SkillActiveSfx, player.Center);
 
-						// S3「灵与欲的惜别」：在玩家身上召唤血雾光环
-						if (mp.Skill == 2 && player.whoAmI == Main.myPlayer &&
-							player.ownedProjectileCounts[ModContent.ProjectileType<EntelechiaScytheS3Aura>()] <= 0) {
-							Projectile.NewProjectile(player.GetSource_ItemUse(player.HeldItem),
-								player.Bottom, Vector2.Zero,
-								ModContent.ProjectileType<EntelechiaScytheS3Aura>(), 0, 0, player.whoAmI);
-						}
+					// S3「灵与欲的惜别」：在玩家身上召唤血雾光环
+					if (mp.Skill == 2 && player.whoAmI == Main.myPlayer &&
+						player.ownedProjectileCounts[ModContent.ProjectileType<EntelechiaScytheS3Aura>()] <= 0) {
+						Projectile.NewProjectile(player.GetSource_ItemUse(player.HeldItem),
+							player.Bottom, Vector2.Zero,
+							ModContent.ProjectileType<EntelechiaScytheS3Aura>(), 0, 0, player.whoAmI);
 					}
 				}
 				return false;

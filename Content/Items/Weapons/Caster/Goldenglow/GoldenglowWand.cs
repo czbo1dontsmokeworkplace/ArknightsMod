@@ -1,3 +1,4 @@
+using ArknightsMod.Content;
 using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.Projectiles.Caster.Goldenglow;
 using ArknightsMod.Players;
@@ -48,39 +49,41 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Goldenglow
 		public override bool CanUseItem(Player player) {
 			var mp = player.GetModPlayer<WeaponPlayer>();
 
-			if (player.altFunctionUse == 2) {
-				if (player.controlDown) {
-					// 下+右键：激活当前选中技能
-					if (mp.StockCount > 0 && !mp.SkillActive) {
-						mp.SkillActive = true;
-						mp.SkillTimer = 0;
-						mp.DelStockCount();
-						SoundEngine.PlaySound(SkillActiveSfx, player.Center);
-					}
-				} else {
-					// 右键：在光标位置部署浮游信标，消耗魔法值；超过上限时移除最早召唤的一个
-					if (player.CheckMana(Item.mana, pay: true)) {
-						int beaconType = ModContent.ProjectileType<GoldenglowBeacon>();
-						if (player.ownedProjectileCounts[beaconType] >= GoldenglowBeacon.GetMaxBeacons(player)) {
-							Projectile oldest = null;
-							float oldestTick = float.MaxValue;
-							foreach (Projectile proj in Main.ActiveProjectiles) {
-								if (proj.type == beaconType && proj.owner == player.whoAmI
-									&& proj.ModProjectile is GoldenglowBeacon beacon && beacon.SpawnTick < oldestTick) {
-									oldest = proj;
-									oldestTick = beacon.SpawnTick;
-								}
-							}
-							oldest?.Kill();
-						}
+			// 技能开启键：激活当前选中技能。原来是"下+右键"的组合，现在统一挪到独立热键，
+			// 不再占用右键——右键单独按下改为纯粹的"部署浮游信标"，见下面的分支。
+			if (ArknightsKeybinds.SkillActivatePressed(player)) {
+				if (mp.StockCount > 0 && !mp.SkillActive) {
+					mp.SkillActive = true;
+					mp.SkillTimer = 0;
+					mp.DelStockCount();
+					SoundEngine.PlaySound(SkillActiveSfx, player.Center);
+				}
+				return false;
+			}
 
-						Projectile.NewProjectile(
-							player.GetSource_ItemUse(Item),
-							Main.MouseWorld,
-							Vector2.Zero,
-							beaconType,
-							0, 0f, player.whoAmI);
+			if (player.altFunctionUse == 2) {
+				// 右键：在光标位置部署浮游信标，消耗魔法值；超过上限时移除最早召唤的一个
+				if (player.CheckMana(Item.mana, pay: true)) {
+					int beaconType = ModContent.ProjectileType<GoldenglowBeacon>();
+					if (player.ownedProjectileCounts[beaconType] >= GoldenglowBeacon.GetMaxBeacons(player)) {
+						Projectile oldest = null;
+						float oldestTick = float.MaxValue;
+						foreach (Projectile proj in Main.ActiveProjectiles) {
+							if (proj.type == beaconType && proj.owner == player.whoAmI
+								&& proj.ModProjectile is GoldenglowBeacon beacon && beacon.SpawnTick < oldestTick) {
+								oldest = proj;
+								oldestTick = beacon.SpawnTick;
+							}
+						}
+						oldest?.Kill();
 					}
+
+					Projectile.NewProjectile(
+						player.GetSource_ItemUse(Item),
+						Main.MouseWorld,
+						Vector2.Zero,
+						beaconType,
+						0, 0f, player.whoAmI);
 				}
 				return false;
 			}

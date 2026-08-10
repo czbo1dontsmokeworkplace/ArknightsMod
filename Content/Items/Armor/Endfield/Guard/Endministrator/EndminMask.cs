@@ -1,3 +1,4 @@
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -15,7 +16,10 @@ namespace ArknightsMod.Content.Items.Armor.Endfield.Guard.Endministrator
 		{
 			Item.width = 28;
 			Item.height = 28;
-			Item.rare = NeoArmorHead.GetRarity(Rarity);
+			// 迁移改动：原先用旧系统的 NeoArmorHead.GetRarity。这个类本身只是个普通饰品、
+			// 不属于任何一套 NeoArmor，但那条静态调用会让它跟着旧系统一起被删掉时编译不过，
+			// 所以换成新系统的星级换算（两者结果一致）。
+			Item.rare = NeoArmorReforgeRarity.Get(Rarity);
 			Item.value = Value;
 			Item.accessory = true;
 			Item.vanity = true;

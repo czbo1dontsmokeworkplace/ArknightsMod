@@ -1,6 +1,7 @@
-using System;
+﻿using System;
 using ArknightsMod.Content.Buffs.ArmorSets;
 using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -20,14 +21,14 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Nian
 			NianSetActive = false;
 		}
 
+		// NeoArmor Reforge：套装件是独立 ItemID，穿上它本身就代表"已经是套装形态"，
+		// 不需要再查 hasUpgraded；player.setBonus 文本交给 NianHead 的
+		// SetProfile.SetBonusKey 统一设置，这里不再重复设置一遍。
 		public override void PostUpdateEquips() {
-			NianHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<NianHelmet>());
-			NianSetActive = OperatorSetEquipHelper.HasFullSet(
-				Player,
-				ModContent.ItemType<NianHelmet>(),
-				ModContent.ItemType<NianChestplate>(),
-				ModContent.ItemType<NianGreaves>());
-			OperatorSetEquipHelper.ApplySetBonusText(Player, NianSetActive, "Mods.ArknightsMod.ArmorSets.Nian.SetBonus");
+			NianHelmetActive = Player.armor[0].type == NeoArmorReforgeSetLoader.GetSetType<NianHead>();
+			NianSetActive = NianHelmetActive
+				&& Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<NianBody>()
+				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<NianLegs>();
 		}
 
 		public override void ModifyMaxStats(out StatModifier health, out StatModifier mana) {

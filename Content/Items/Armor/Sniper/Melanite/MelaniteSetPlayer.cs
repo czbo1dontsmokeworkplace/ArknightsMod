@@ -1,4 +1,5 @@
-using ArknightsMod.Content.Items.Armor;
+﻿using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Players;
 using Terraria;
 using Terraria.ModLoader;
@@ -20,14 +21,14 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Melanite
 			MelaniteSetActive = false;
 		}
 
+		// NeoArmor Reforge：套装件是独立 ItemID，穿上它本身就代表"已经是套装形态"，
+		// 不需要再查 hasUpgraded；player.setBonus 文本交给 MelaniteHead 的
+		// SetProfile.SetBonusKey 统一设置，这里不再重复设置一遍。
 		public override void PostUpdateEquips() {
-			MelaniteHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<MelaniteHelmet>());
-			MelaniteSetActive = OperatorSetEquipHelper.HasFullSet(
-				Player,
-				ModContent.ItemType<MelaniteHelmet>(),
-				ModContent.ItemType<MelaniteChestplate>(),
-				ModContent.ItemType<MelaniteGreaves>());
-			OperatorSetEquipHelper.ApplySetBonusText(Player, MelaniteSetActive, "Mods.ArknightsMod.ArmorSets.Melanite.SetBonus");
+			MelaniteHelmetActive = Player.armor[0].type == NeoArmorReforgeSetLoader.GetSetType<MelaniteHead>();
+			MelaniteSetActive = MelaniteHelmetActive
+				&& Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<MelaniteBody>()
+				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<MelaniteLegs>();
 		}
 
 		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {

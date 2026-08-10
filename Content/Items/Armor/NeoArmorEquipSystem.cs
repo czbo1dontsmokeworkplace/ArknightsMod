@@ -3,7 +3,12 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor
 {
-	// 时装装备槽注册完成后再配置 NeoArmor 的静态绘制规则，避免 SetStaticDefaults 阶段数组越界。
+	// 旧 NeoArmor 系统的静态绘制规则配置：隐藏原版对应的身体部位。
+	// 放在 PostSetupContent 而不是 SetStaticDefaults，是为了避免装备槽位还没注册完
+	// 时访问 ArmorIDs 数组越界。
+	//
+	// 新系统（NeoArmor Reforge）有自己的 NeoArmorReforgeEquipSystem，两者互不干扰；
+	// 等所有干员都迁移完、旧 NeoArmor 整体删除时，这个文件也一起删掉。
 	internal sealed class NeoArmorEquipSystem : ModSystem
 	{
 		public override void PostSetupContent() {

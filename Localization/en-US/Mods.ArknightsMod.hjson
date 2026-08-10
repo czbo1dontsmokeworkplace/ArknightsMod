@@ -46,7 +46,7 @@ Tiles: {
 	ManganeseOre.MapEntry: Manganese Ore
 	OrirockCube.MapEntry: "{$Mods.ArknightsMod.Items.OrirockCube.DisplayName}"
 	RMA7012.MapEntry: "{$Mods.ArknightsMod.Items.RMA7012.DisplayName}"
-	FactoryTile.MapEntry: Factory Station
+	FactoryTile.MapEntry: Manufacturing Station
 	WMusicBoxTile.MapEntry: Music Box (W)
 	HoundTile.MapEntry: Hound Tile
 	HoundproTile.MapEntry: Houndpro Tile
@@ -80,4 +80,7 @@ Tiles: {
 	RMA7012Tile.MapEntry: R M A7012 Tile
 }
 
-"Keybinds.Rosmontis Tactical Deploy.DisplayName": Rosmontis  Tactical  Deploy
+Keybinds: {
+	"Rosmontis Tactical Deploy.DisplayName": Rosmontis  Tactical  Deploy
+	"Skill Activate.DisplayName": Skill  Activate
+}

@@ -1,39 +1,23 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using ArknightsMod.Content.Tiles.Infrastructure;
+﻿using Terraria.ModLoader;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content.Items.Material;
 
 namespace ArknightsMod.Content.Items.Armor.Guard.Entelechia
 {
 	[AutoloadEquip(EquipType.Head)]
-	public class EntelechiaHead : NeoArmorHead
+	public class EntelechiaHead : NeoArmorReforgeVanityHead
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 258;
-		
-		public override void Load() {
-			if (Main.netMode == NetmodeID.Server)
-				return;
-		}
 
-		public override void SetArmorDefaults() {
-			Item.defense = 0;
-		}
-		
-
-
-		public override void AddRecipes() {
-			CreateRecipe()
-			.AddIngredient<EntelechiaHead>(1)
-			.AddIngredient<Orundum>(60)
-			.AddIngredient<CrystallineElectronicUnit>(6)
-			.AddIngredient<GrindstonePentahydrate>(1)
-			.AddTile(ModContent.TileType<FactoryTile>())
-			.AddCondition(NeoArmorUtils.NeedVanity)
-			.DisableDecraft()
-			.Register();
-		}
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
+			Defense = 0,
+			LifeBonus = 258,
+			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Entelechia",
+			Materials = recipe => recipe
+				.AddIngredient<Orundum>(60)
+				.AddIngredient<CrystallineElectronicUnit>(6)
+				.AddIngredient<GrindstonePentahydrate>(1),
+			SetBonusKey = "Mods.ArknightsMod.ArmorSets.Entelechia.SetBonus",
+		};
 	}
 }
-	

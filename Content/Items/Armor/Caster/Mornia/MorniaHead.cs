@@ -1,31 +1,25 @@
-﻿using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
-using ArknightsMod.Content.Tiles.Infrastructure;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content.Items.Material;
 
 namespace ArknightsMod.Content.Items.Armor.Caster.Mornia
 {
 	[AutoloadEquip(EquipType.Head)]
-	public class MorniaHead : NeoArmorHead
+	public class MorniaHead : NeoArmorReforgeVanityHead
 	{
 		public override int Rarity => 4;
-		public override int ArmorLifeBonus => 100;
 
-		public override void SetArmorDefaults() {
-			Item.defense = 8;
-		}
-
-		public override void AddRecipes() {
-			CreateRecipe()
-			.AddIngredient<MorniaHead>(1)
-			.AddIngredient<Orundum>(40)
-			.AddIngredient<Aketon>(3)
-			.AddIngredient<RefinedSolvent>(2)
-			.AddTile(ModContent.TileType<FactoryTile>())
-			.AddCondition(NeoArmorUtils.NeedVanity)
-			.DisableDecraft()
-			.Register();
-		}
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
+			Defense = 8,
+			LifeBonus = 100,
+			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Mornia",
+			Materials = recipe => recipe
+				.AddIngredient<Orundum>(40)
+				.AddIngredient<Aketon>(3)
+				.AddIngredient<RefinedSolvent>(2),
+			OnHelmetActive = MorniaSetPlayer.OnHelmetActive,
+			OnFullSetActive = MorniaSetPlayer.OnFullSetActive,
+			SetBonusKey = "Mods.ArknightsMod.ArmorSets.Mornia.SetBonus",
+		};
 	}
 }

@@ -1,30 +1,24 @@
-﻿using ArknightsMod.Content.Items.Material;
-using ArknightsMod.Content.Tiles.Infrastructure;
-using Terraria;
-using Terraria.ModLoader;
+﻿using Terraria.ModLoader;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
+using ArknightsMod.Content.Items.Material;
 
 namespace ArknightsMod.Content.Items.Armor.Defender.Beagle
 {
 	[AutoloadEquip(EquipType.Head)]
-    public class BeagleHead : NeoArmorHead
-    {
+	public class BeagleHead : NeoArmorReforgeVanityHead
+	{
 		public override int Rarity => 3;
 
-		public override void SetArmorDefaults() {
-			Item.defense = 0;
-		}
 		public override int Value => 560000;
-		public override int ArmorLifeBonus => 115;
 
-		public override void AddRecipes() {
-			CreateRecipe()
-			.AddIngredient<BeagleHead>(1)
-			.AddIngredient<Orundum>(30)
-			.AddIngredient<Diketon>(1)
-			.AddTile(ModContent.TileType<FactoryTile>())
-			.AddCondition(NeoArmorUtils.NeedVanity)
-			.DisableDecraft()
-			.Register();
-		}
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
+			Defense = 0,
+			LifeBonus = 115,
+			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Beagle",
+			Materials = recipe => recipe
+				.AddIngredient<Orundum>(30)
+				.AddIngredient<Diketon>(1),
+			SetBonusKey = "Mods.ArknightsMod.ArmorSets.Beagle.SetBonus",
+		};
 	}
 }

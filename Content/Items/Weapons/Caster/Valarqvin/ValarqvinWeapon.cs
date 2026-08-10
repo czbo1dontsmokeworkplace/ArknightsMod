@@ -11,6 +11,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using ArknightsMod.Content;
 
 namespace ArknightsMod.Content.Items.Weapons.Caster.Valarqvin
 {
@@ -63,7 +64,7 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Valarqvin
 			Item.rare = ItemRarityID.Blue;
 		}
 
-		public override bool AltFunctionUse(Player player) => true;
+		public override bool AltFunctionUse(Player player) => false;
 
 		public override bool CanUseItem(Player player) {
 			if (Main.myPlayer != player.whoAmI)
@@ -72,7 +73,7 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Valarqvin
 			var modPlayer = player.GetModPlayer<WeaponPlayer>();
 
 
-			if (player.altFunctionUse == 2) {
+			if (ArknightsKeybinds.SkillActivatePressed(player)) {
 				if (modPlayer.Skill == 1 && modPlayer.StockCount > 0 && !modPlayer.SkillActive) {
 					modPlayer.SkillActive = true;
 					modPlayer.SkillTimer = 0;

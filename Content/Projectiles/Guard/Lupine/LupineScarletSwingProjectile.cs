@@ -3,34 +3,48 @@ using System.Collections.Generic;
 using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using ArknightsMod.Assets.Effects;
 
 namespace ArknightsMod.Content.Projectiles.Guard.Lupine
 {
 	// ============================================================
-	//  狼之绯 挥砍弹幕（独立实现）
-	//  炫酷刀光 = 月牙刀光（Slash 贴图，多层加色 + 缩放弹出）
-	//            + 干净带状 ribbon（沿刀身扫过路径，KnifeLight 着色器）
-	//  红色气雾 = 月牙外层红晕 + 红紫尘埃
+	//  狼之绯 挥砍弹幕
+	//  刀光 = 由刀尖拖曳出的紫红色主体带（Flow pass：噪声调制颜色/明暗 + 沿挥砍反方向
+	//         流动 + 尾部水墨式溶解消散）
+	//       + 刀尖轨迹单独描一条高亮白线
+	//       + 背景屏幕扭曲（安全抓屏模式，扭曲偏移取自与可见刀光同一张噪声贴图，
+	//         使扭曲的形状天然贴合可见的颜色纹理）
 	//  —— 手持贴图 LupineScarlet_protile（横向，尖右柄左）
+	//
+	//  参考 tEffectSkill 的 slash-mechanics.md（多段连击状态机）与
+	//  slash-texture.md（真实屏幕扭曲：偏移场复用可见纹理的技巧）；
+	//  水墨溶解与"随机强度纹理"的具体做法是本次新写的，不是照抄某个已有实现。
 	// ============================================================
 	public class LupineScarletSwingProjectile : ModProjectile
 	{
 		private const string RibbonShapePath = "ArknightsMod/Content/Projectiles/Guard/Lupine/LupineRibbon";
-		private const string SlashPath       = "ArknightsMod/Content/Projectiles/Guard/Lupine/LupineSlash";
 		private const string BladeTexPath    = "ArknightsMod/Content/Items/Weapons/Guard/Lupine/LupineScarlet_protile";
+		private const string NoiseTexPath    = "ArknightsMod/Content/Projectiles/Rogue/FireworksHand/NoiseTexture";
+		private const string DistortShaderPath = "ArknightsMod/Assets/Effects/LupineSlashDistortion";
 
 		// === 可调常量（视觉微调入口）===
-		private const float CrescentRotOffset = MathHelper.PiOver2; // 月牙朝向修正
-		private const float CrescentLength    = 0.55f;              // 月牙沿弧长缩放
-		private const float CrescentThick     = 0.85f;              // 月牙厚度缩放
-		private const float RibbonWidthMul    = 1.0f;               // ribbon 宽度系数
+		private const float RibbonWidthMul   = 1.0f;
+		private const float FlowScrollSpeed  = 0.9f;   // 噪声滚动速度（沿挥砍反方向）
+		private const float DissolveAmount   = 0.85f;  // 尾部水墨溶解强度，0=不溶解
+		private const float AccentThreshold  = 0.72f;  // 噪声亮度超过此值处混入更亮高光
+		private const float NoiseScaleX      = 3.2f;   // 噪声沿长度方向的平铺密度
+		private const float NoiseScaleY      = 1.4f;   // 噪声沿宽度方向的平铺密度
+		private const float TipHighlightWidthMul = 0.14f; // 刀尖高亮线相对主体宽度的比例
+		private const float DistortIntensity = 6.5f;   // 屏幕扭曲强度（像素）
+		private const float DistortHalfWidth = 34f;    // 扭曲影响的半宽（像素，屏幕空间）
 
-		private const int TrailLength = 22;
+		private const int TrailLength = 24;
 		private const float DisFromPlayer = 6f;
 
 		// 挥砍状态
@@ -46,15 +60,37 @@ namespace ArknightsMod.Content.Projectiles.Guard.Lupine
 		private bool hitThisAttack;
 		private float lockedDir = 1f;
 
-		// 当前段攻击的活跃窗口（用于月牙渐隐）
+		// 当前段攻击的活跃窗口
 		private int segActiveStart;
 		private int segActiveEnd;
 
-		// 程序生成主刀光渐变（白→紫）
+		// 水墨流动状态：滚动偏移 + 每段随机种子（每次进入新连击段时重新随机，
+		// 让三段连击的纹理观感不完全一样——呼应 skill 里"每次挥砍不完全相同"的设计习惯）
+		private Vector2 flowOffset;
+		private Vector2 noiseSeedOffset;
+		private float prevRotation;
+		private bool hasPrevRotation;
+
+		private static Asset<Effect> _distortEffect;
 		private static Texture2D _mainColorTex;
+		private static Texture2D _tipColorTex;
 
 		Player Owner => Main.player[Projectile.owner];
 		public override string Texture => BladeTexPath;
+
+		public override void Load() {
+			if (!Main.dedServ) {
+				try {
+					_distortEffect = ModContent.Request<Effect>(DistortShaderPath, AssetRequestMode.ImmediateLoad);
+				} catch { _distortEffect = null; }
+			}
+		}
+
+		public override void Unload() {
+			_distortEffect = null;
+			_mainColorTex = null;
+			_tipColorTex = null;
+		}
 
 		public override void SetDefaults() {
 			Projectile.width = 30;
@@ -102,6 +138,17 @@ namespace ArknightsMod.Content.Projectiles.Guard.Lupine
 			Attack(p);
 			Timer++;
 
+			// 水墨流动：沿"挥砍反方向"滚动——用旋转角的帧间变化量的符号反过来推流动偏移，
+			// 这样即使连击段之间挥砍方向左右交替，流动方向也会自动跟着反转，而不是固定一个方向
+			if (hasPrevRotation) {
+				float delta = MathHelper.WrapAngle(Projectile.rotation - prevRotation);
+				float dirSign = Math.Abs(delta) > 0.0001f ? Math.Sign(delta) : 0f;
+				flowOffset.X -= dirSign * FlowScrollSpeed * 0.016f;
+				flowOffset.Y += 0.05f * 0.016f; // 轻微的纵向漂移，避免看起来完全是一维滚动
+			}
+			prevRotation = Projectile.rotation;
+			hasPrevRotation = true;
+
 			bool shouldEnd = !isAttacking && !p.controlUseItem;
 			if (shouldEnd) {
 				killTimer++;
@@ -135,6 +182,8 @@ namespace ArknightsMod.Content.Projectiles.Guard.Lupine
 			Timer = 0;
 			attackType++;
 			if (attackType > maxAttackType) attackType = 0;
+			// 每进入新的一段连击就重新随机噪声采样起点，三段连击的纹理不会长得一模一样
+			noiseSeedOffset = new Vector2(Main.rand.NextFloat(0f, 100f), Main.rand.NextFloat(0f, 100f));
 		}
 
 		// ── 三段连击 ──────────────────────────────────────
@@ -154,7 +203,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Lupine
 				}
 				if (Timer > 14 && Timer < 34) {
 					isAttacking = true;
-					Projectile.rotation += dir * 0.38f;
+					Projectile.rotation += dir * 0.13f;
 					mainVec = Projectile.rotation.ToRotationVector2() * 108f;
 					SpawnSwingDust(p);
 				}
@@ -173,7 +222,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Lupine
 				}
 				if (Timer > 10 && Timer < 30) {
 					isAttacking = true;
-					Projectile.rotation -= dir * 0.44f;
+					Projectile.rotation -= dir * 0.14f;
 					mainVec = Projectile.rotation.ToRotationVector2() * 112f;
 					SpawnSwingDust(p);
 				}
@@ -192,7 +241,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Lupine
 				}
 				if (Timer > 18 && Timer < 42) {
 					isAttacking = true;
-					Projectile.rotation += dir * 0.32f;
+					Projectile.rotation += dir * 0.10f;
 					mainVec = Projectile.rotation.ToRotationVector2() * 118f;
 					SpawnSwingDust(p);
 				}
@@ -225,16 +274,16 @@ namespace ArknightsMod.Content.Projectiles.Guard.Lupine
 				Projectile.width * Projectile.scale, DelegateMethods.CutTiles);
 		}
 
-		// ── 挥砍尘埃（红紫气焰）──────────────────────────
+		// ── 挥砍尘埃（紫红气焰，呼应刀光主色）──────────────
 		private void SpawnSwingDust(Player p) {
 			if (!Main.rand.NextBool(2)) return;
 			for (int i = 3; i < 6; i++) {
 				if (!Main.rand.NextBool()) continue;
 				float frac = i / 5f;
 				Vector2 spawnPos = Projectile.Center + mainVec * frac;
-				bool red = Main.rand.NextBool(3);
-				int dustType = red ? DustID.RedTorch : DustID.PurpleTorch;
-				Color dustColor = red ? new Color(255, 50, 50) : new Color(180, 80, 255);
+				bool bright = Main.rand.NextBool(3);
+				int dustType = bright ? DustID.PinkFairy : DustID.PurpleTorch;
+				Color dustColor = bright ? new Color(230, 170, 255) : new Color(150, 40, 130);
 				Dust d = Dust.NewDustDirect(spawnPos, 6, 6, dustType, 0f, 0f, 0, dustColor,
 					Main.rand.NextFloat(0.9f, 1.4f));
 				d.noGravity = true;
@@ -247,9 +296,10 @@ namespace ArknightsMod.Content.Projectiles.Guard.Lupine
 		// ── 绘制 ──────────────────────────────────────────
 		public override bool PreDraw(ref Color lightColor) {
 			if (Main.dedServ) return false;
-			DrawRibbon();        // 连续带状拖尾（底）
-			DrawCrescent();      // 月牙刀光（炫酷主体）
-			DrawBlade();         // 刀身
+			DrawScreenDistortion(); // 最底层：先扭曲背景，再在上面画刀光本体
+			DrawSlashBody();        // 主体：紫红渐变 + 流动噪声 + 尾部水墨溶解
+			DrawTipHighlight();     // 刀尖轨迹单独描白
+			DrawBlade();            // 刀身
 			return false;
 		}
 
@@ -258,25 +308,34 @@ namespace ArknightsMod.Content.Projectiles.Guard.Lupine
 			return MathHelper.Lerp(0.02f, 1.1f, smooth);
 		}
 
-		// 带状 ribbon：沿刀身扫过路径，白→紫，KnifeLight 着色器
-		private void DrawRibbon() {
+		// 收集当前有效的拖尾点数，返回 (顶点用的 inner/outer 位置表, 有效计数)
+		private int ValidTrailCount() {
+			int counts = 0;
+			for (int i = 0; i < trailVec.Length; i++) if (trailVec[i] != Vector2.Zero) counts++;
+			return counts;
+		}
+
+		// 主体刀光：紫红渐变 + 噪声调制的流动纹理 + 尾部水墨式溶解（Flow pass）
+		private void DrawSlashBody() {
 			if (ArknightsMod.LupineKnifeLight?.Value == null) return;
 			Texture2D colorTex = GetMainColorTex();
-			if (colorTex == null) return;
+			Texture2D noiseTex = GetNoiseTex();
+			if (colorTex == null || noiseTex == null) return;
 
-			float counts = 0f;
-			for (int i = 0; i < trailVec.Length; i++) if (trailVec[i] != Vector2.Zero) counts += 1f;
-			if (counts < 2f) return;
+			int counts = ValidTrailCount();
+			if (counts < 2) return;
 
 			var bars = new List<Vertex>();
 			for (int j = 0; j < trailVec.Length; j++) {
 				if (trailVec[j] == Vector2.Zero) continue;
-				float factor = 1f - j / counts;
+				float factor = 1f - j / (float)counts;   // 1=刀尖当前位置(新)，→0=尾部(旧)
 				float w = TrailAlpha(factor) * RibbonWidthMul;
-				Vector2 inner = Projectile.Center + trailVec[j] * 0.15f * Projectile.scale;
+				// inner 更靠近握持位置（刀柄一侧），outer 是刀尖拖曳出的外缘——
+				// coord.y 在 0(inner)→1(outer) 间由光栅化插值，对应"越靠近刀柄颜色越深"的取值轴
+				Vector2 inner = Projectile.Center + trailVec[j] * 0.12f * Projectile.scale;
 				Vector2 outer = Projectile.Center + trailVec[j] * Projectile.scale;
-				bars.Add(new Vertex(inner, new Vector3(factor, 1f, 0f), Color.White));
-				bars.Add(new Vertex(outer, new Vector3(factor, 0f, w), Color.White));
+				bars.Add(new Vertex(inner, new Vector3(factor, 0f, 0f), Color.White));
+				bars.Add(new Vertex(outer, new Vector3(factor, 1f, w), Color.White));
 			}
 			if (bars.Count < 3) return;
 
@@ -291,7 +350,13 @@ namespace ArknightsMod.Content.Projectiles.Guard.Lupine
 			fx.Parameters["uTransform"].SetValue(model * projection);
 			fx.Parameters["tex0"].SetValue(ModContent.Request<Texture2D>(RibbonShapePath).Value);
 			fx.Parameters["tex1"].SetValue(colorTex);
-			fx.CurrentTechnique.Passes["Trail0"].Apply();
+			fx.Parameters["tex2"]?.SetValue(noiseTex);
+			fx.Parameters["uFlowOffset"]?.SetValue(flowOffset + noiseSeedOffset);
+			fx.Parameters["uNoiseScale"]?.SetValue(new Vector2(NoiseScaleX, NoiseScaleY));
+			fx.Parameters["uDissolveAmount"]?.SetValue(DissolveAmount);
+			fx.Parameters["uAccentThreshold"]?.SetValue(AccentThreshold);
+			fx.Parameters["uAccentColor"]?.SetValue(new Vector3(0.85f, 0.55f, 1f)); // 更亮的紫、趋近白
+			fx.CurrentTechnique.Passes["Flow"].Apply();
 
 			Main.graphics.GraphicsDevice.DrawUserPrimitives(
 				PrimitiveType.TriangleStrip, bars.ToArray(), 0, bars.Count - 2);
@@ -302,39 +367,138 @@ namespace ArknightsMod.Content.Projectiles.Guard.Lupine
 				null, Main.GameViewMatrix.TransformationMatrix);
 		}
 
-		// 月牙刀光：多层加色（红晕 + 紫体 + 白芯），缩放弹出 + 渐隐
-		private void DrawCrescent() {
-			// 段内进度（0→1），峰值在中段
-			float denom = Math.Max(1, segActiveEnd - segActiveStart);
-			float prog = MathHelper.Clamp((Timer - segActiveStart) / denom, 0f, 1f);
-			if (Timer < segActiveStart - 2 || Timer > segActiveEnd + 4) return;
-			float fade = (float)Math.Sin(prog * Math.PI);           // 0→1→0
-			if (fade <= 0.01f) return;
-			float pop = MathHelper.Lerp(0.7f, 1.25f, prog);          // 逐渐展开
-
-			Texture2D slash = ModContent.Request<Texture2D>(SlashPath).Value;
-			Vector2 origin = slash.Size() * 0.5f;
-			Vector2 pos = Projectile.Center + mainVec * 0.5f - Main.screenPosition;
-			float rot = mainVec.ToRotation() + CrescentRotOffset;
+		// 刀尖轨迹单独描白：只取 outer（刀尖历史位置）连成一条细高亮线，不经过 Flow 噪声调制，
+		// 保持纯净、不被溶解影响，和主体的"越靠近刀柄越深"形成对比
+		private void DrawTipHighlight() {
+			int counts = ValidTrailCount();
+			if (counts < 2) return;
 
 			Main.spriteBatch.End();
 			Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive,
 				SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone,
 				null, Main.GameViewMatrix.TransformationMatrix);
 
-			// 基础缩放：把贴图(128x256)映射到弧长/厚度
-			float baseY = mainVec.Length() * 2f / slash.Height * CrescentLength;
-			float baseX = mainVec.Length() / slash.Width * CrescentThick;
+			// 注意：不能用 ArknightsMod/Assets/null——那是给"不显示任何东西"用的全透明像素(A=0)，
+			// 这里要画实际可见的线，必须用原版 MagicPixel（不透明白色 1x1，专门给这种用途用）
+			Texture2D pixel = Terraria.GameContent.TextureAssets.MagicPixel.Value;
+			float baseWidth = 30f * TipHighlightWidthMul * Projectile.scale;
 
-			// 红色气雾外晕（最大、最柔）
-			Main.spriteBatch.Draw(slash, pos, null, new Color(255, 40, 40, 0) * (fade * 0.45f),
-				rot, origin, new Vector2(baseX * 1.35f, baseY * 1.12f) * pop, SpriteEffects.None, 0f);
-			// 紫色主体
-			Main.spriteBatch.Draw(slash, pos, null, new Color(165, 65, 255, 0) * (fade * 0.95f),
-				rot, origin, new Vector2(baseX, baseY) * pop, SpriteEffects.None, 0f);
-			// 白色亮芯（细、最亮）
-			Main.spriteBatch.Draw(slash, pos, null, new Color(255, 235, 255, 0) * fade,
-				rot, origin, new Vector2(baseX * 0.55f, baseY * 0.98f) * pop, SpriteEffects.None, 0f);
+			for (int j = 0; j < trailVec.Length - 1; j++) {
+				if (trailVec[j] == Vector2.Zero || trailVec[j + 1] == Vector2.Zero) continue;
+				float factor = 1f - j / (float)counts;
+				float alpha = MathHelper.Clamp(factor * factor, 0f, 1f); // 比主体衰减更快，只在靠近刀尖处明显
+				if (alpha <= 0.02f) continue;
+
+				Vector2 a = Projectile.Center + trailVec[j] * Projectile.scale - Main.screenPosition;
+				Vector2 b = Projectile.Center + trailVec[j + 1] * Projectile.scale - Main.screenPosition;
+				Vector2 diff = b - a;
+				float length = diff.Length();
+				if (length < 0.5f) continue;
+				float rot = diff.ToRotation();
+
+				Main.spriteBatch.Draw(pixel, a, null, new Color(255, 250, 255) * alpha, rot,
+					Vector2.Zero, new Vector2(length, baseWidth * alpha), SpriteEffects.None, 0f);
+			}
+
+			Main.spriteBatch.End();
+			Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
+				Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullNone,
+				null, Main.GameViewMatrix.TransformationMatrix);
+		}
+
+		// 背景屏幕扭曲——安全抓屏模式（参照 SchwarzArrow.DrawDistortionTrail），偏移场取自
+		// 与可见刀光相同的噪声贴图 + 相同的 flowOffset，让扭曲的形状贴合可见的颜色纹理
+		private void DrawScreenDistortion() {
+			if (_distortEffect?.Value == null || !isAttacking) return;
+			int counts = ValidTrailCount();
+			if (counts < 2) return;
+
+			var gd = Main.instance?.GraphicsDevice;
+			if (gd == null) return;
+			var screenRT = Main.screenTarget;
+			if (screenRT == null || screenRT.IsDisposed) return;
+
+			int sw = screenRT.Width, sh = screenRT.Height;
+
+			if (LupineDistortionSystem.ScreenSnapshot == null ||
+				LupineDistortionSystem.ScreenSnapshot.IsDisposed ||
+				LupineDistortionSystem.ScreenSnapshot.Width  != sw ||
+				LupineDistortionSystem.ScreenSnapshot.Height != sh) {
+				LupineDistortionSystem.ScreenSnapshot?.Dispose();
+				LupineDistortionSystem.ScreenSnapshot = new RenderTarget2D(gd, sw, sh, false, screenRT.Format, DepthFormat.None);
+			}
+			if (LupineDistortionSystem.CaptureBatch == null || LupineDistortionSystem.CaptureBatch.IsDisposed) {
+				LupineDistortionSystem.CaptureBatch = new SpriteBatch(gd);
+			}
+
+			var snap = LupineDistortionSystem.ScreenSnapshot;
+			var cap = LupineDistortionSystem.CaptureBatch;
+			var eff = _distortEffect.Value;
+			Texture2D noiseTex = GetNoiseTex();
+			if (noiseTex == null) return;
+
+			try { Main.spriteBatch.End(); } catch { }
+
+			// 步骤1：把当前 screenTarget 内容抓到快照
+			gd.SetRenderTarget(snap);
+			cap.Begin(SpriteSortMode.Deferred, BlendState.Opaque, SamplerState.LinearClamp,
+				DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
+			cap.Draw(screenRT, Vector2.Zero, Color.White);
+			cap.End();
+
+			// 步骤2：重新绑定 screenTarget 并整面填回（重绑会触发内容丢弃，必须先整面复原）
+			gd.SetRenderTarget(screenRT);
+			cap.Begin(SpriteSortMode.Deferred, BlendState.Opaque, SamplerState.LinearClamp,
+				DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
+			cap.Draw(snap, Vector2.Zero, Color.White);
+			cap.End();
+
+			var snapSz = new Vector2(sw, sh);
+			Matrix viewMtx = Main.GameViewMatrix.TransformationMatrix;
+			float halfWidthUV = DistortHalfWidth / sw;
+			float padPx = DistortIntensity + 8f;
+
+			eff.Parameters["uScreenResolution"]?.SetValue(snapSz);
+			eff.Parameters["tex1"]?.SetValue(noiseTex);
+			eff.Parameters["uFlowOffset"]?.SetValue(flowOffset + noiseSeedOffset);
+			eff.Parameters["uNoiseScale"]?.SetValue(new Vector2(NoiseScaleX, NoiseScaleY));
+			eff.Parameters["uIntensity"]?.SetValue(DistortIntensity);
+
+			Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
+				SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, eff, Matrix.Identity);
+
+			for (int j = 0; j < trailVec.Length - 1; j++) {
+				if (trailVec[j] == Vector2.Zero || trailVec[j + 1] == Vector2.Zero) continue;
+
+				Vector2 posA = Projectile.Center + trailVec[j] * Projectile.scale;
+				Vector2 posB = Projectile.Center + trailVec[j + 1] * Projectile.scale;
+				Vector2 scrA = Vector2.Transform(posA - Main.screenPosition, viewMtx);
+				Vector2 scrB = Vector2.Transform(posB - Main.screenPosition, viewMtx);
+
+				Vector2 dirPx = scrB - scrA;
+				float dirLen = dirPx.Length();
+				if (dirLen < 0.5f) continue;
+				Vector2 perpPx = new Vector2(-dirPx.Y * DistortHalfWidth / dirLen, dirPx.X * DistortHalfWidth / dirLen);
+
+				float bminX = Math.Max(0f, MathF.Min(MathF.Min(scrA.X + perpPx.X, scrA.X - perpPx.X), MathF.Min(scrB.X + perpPx.X, scrB.X - perpPx.X)) - padPx);
+				float bminY = Math.Max(0f, MathF.Min(MathF.Min(scrA.Y + perpPx.Y, scrA.Y - perpPx.Y), MathF.Min(scrB.Y + perpPx.Y, scrB.Y - perpPx.Y)) - padPx);
+				float bmaxX = Math.Min(sw, MathF.Max(MathF.Max(scrA.X + perpPx.X, scrA.X - perpPx.X), MathF.Max(scrB.X + perpPx.X, scrB.X - perpPx.X)) + padPx);
+				float bmaxY = Math.Min(sh, MathF.Max(MathF.Max(scrA.Y + perpPx.Y, scrA.Y - perpPx.Y), MathF.Max(scrB.Y + perpPx.Y, scrB.Y - perpPx.Y)) + padPx);
+				if (bmaxX <= bminX || bmaxY <= bminY) continue;
+
+				var srcRect = new Rectangle((int)bminX, (int)bminY, (int)(bmaxX - bminX), (int)(bmaxY - bminY));
+
+				Vector2 uvA = scrA / snapSz;
+				Vector2 uvB = scrB / snapSz;
+				Vector2 uvDir = uvB - uvA;
+
+				eff.Parameters["uTargetPosition"]?.SetValue(uvA);
+				eff.Parameters["uDirection"]?.SetValue(uvDir);
+				eff.Parameters["uImageSize1"]?.SetValue(new Vector2(uvDir.Length(), halfWidthUV));
+
+				eff.CurrentTechnique.Passes[0].Apply();
+				Main.spriteBatch.Draw(snap, new Vector2(bminX, bminY), srcRect, Color.White);
+			}
 
 			Main.spriteBatch.End();
 			Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
@@ -366,7 +530,10 @@ namespace ArknightsMod.Content.Projectiles.Guard.Lupine
 				null, Main.GameViewMatrix.TransformationMatrix);
 		}
 
-		// ── 程序生成主刀光渐变（faint紫 → 亮紫 → 白核）──
+		// ── 程序生成主刀光渐变（紫红为主体，越靠近刀柄一侧越深）──
+		// 采样轴对应 Flow pass 里的 coord.y（径向：0=inner/刀柄端 → 1=outer/刀尖端），
+		// 不是挥砍历史轴 coord.x（那条轴管新旧/溶解，两件事分开控制）。
+		// 注意：这里的"深"指亮度更低更暗，不是更透明——不透明度由 shape/dissolve 单独控制。
 		private static Texture2D GetMainColorTex() {
 			if (_mainColorTex != null) return _mainColorTex;
 			if (Main.dedServ || Main.instance?.GraphicsDevice == null) return null;
@@ -374,19 +541,21 @@ namespace ArknightsMod.Content.Projectiles.Guard.Lupine
 			var tex = new Texture2D(Main.instance.GraphicsDevice, w, 1);
 			var data = new Color[w];
 			for (int x = 0; x < w; x++) {
-				float t = x / (w - 1f);
+				float t = x / (w - 1f); // 0=刀柄端(深) → 1=刀尖端(亮)
 				Color c;
-				if (t < 0.45f) c = Color.Lerp(new Color(40, 0, 80), new Color(150, 50, 240), t / 0.45f);
-				else if (t < 0.78f) c = Color.Lerp(new Color(150, 50, 240), new Color(210, 150, 255), (t - 0.45f) / 0.33f);
-				else c = Color.Lerp(new Color(210, 150, 255), new Color(255, 255, 255), (t - 0.78f) / 0.22f);
-				float alphaT = MathHelper.Clamp((t - 0.08f) / 0.92f, 0f, 1f);
-				alphaT *= alphaT;
-				byte a = (byte)MathHelper.Clamp(255f * alphaT * 1.4f, 0f, 255f);
-				data[x] = new Color(c.R, c.G, c.B, a);
+				if (t < 0.5f) c = Color.Lerp(new Color(35, 5, 45), new Color(140, 30, 130), t / 0.5f);      // 深紫→紫红
+				else if (t < 0.85f) c = Color.Lerp(new Color(140, 30, 130), new Color(200, 70, 200), (t - 0.5f) / 0.35f); // 紫红→亮紫红
+				else c = Color.Lerp(new Color(200, 70, 200), new Color(255, 210, 255), (t - 0.85f) / 0.15f);  // 亮紫红→近白（刀尖最亮）
+				data[x] = new Color(c.R, c.G, c.B, (byte)255);
 			}
 			tex.SetData(data);
 			_mainColorTex = tex;
 			return tex;
+		}
+
+		private static Texture2D GetNoiseTex() {
+			try { return ModContent.Request<Texture2D>(NoiseTexPath, AssetRequestMode.ImmediateLoad).Value; }
+			catch { return null; }
 		}
 
 		private static Vector2 Normalize(Vector2 v) => v == Vector2.Zero ? Vector2.Zero : Vector2.Normalize(v);

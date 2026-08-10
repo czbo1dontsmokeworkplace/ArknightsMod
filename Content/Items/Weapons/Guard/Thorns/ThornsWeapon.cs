@@ -16,6 +16,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using static Terraria.Graphics.VertexStrip;
 using Color = Microsoft.Xna.Framework.Color;
+using ArknightsMod.Content;
 
 namespace ArknightsMod.Content.Items.Weapons.Guard.Thorns
 {
@@ -86,7 +87,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Thorns
             Item.useStyle = 13;//?
             Item.channel = true;
         }
-		public override bool AltFunctionUse(Player player) => true;
+		public override bool AltFunctionUse(Player player) => false;
 		public override void HoldItem(Player player) {
 			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
 			if (Main.myPlayer == player.whoAmI) {
@@ -105,7 +106,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Thorns
 		public override bool CanUseItem(Player player) {
 			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
 			if (Main.myPlayer == player.whoAmI) {
-				if (player.altFunctionUse == 2) {
+				if (ArknightsKeybinds.SkillActivatePressed(player)) {
 					if (!modPlayer.SummonMode) {
 						// S1
 						if (modPlayer.Skill == 0 && modPlayer.StockCount > 0 && !modPlayer.SkillActive) {

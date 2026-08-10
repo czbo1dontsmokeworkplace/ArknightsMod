@@ -13,6 +13,11 @@ CameraTruckBuff: {
 	Description: 已部署移动摄影车
 }
 
+Mon3trBuff: {
+	DisplayName: Mon3tr
+	Description: M3正伴随在身边
+}
+
 AcidOgSlugDebuff: {
 	DisplayName: 分泌物腐蚀
 	Description: 击中目标后使其防御力减少2
@@ -217,4 +222,9 @@ FearlessDebuff: {
 WisadelMarkDebuff: {
 	// DisplayName: Wisadel Mark Debuff
 	// Description: Mods.ArknightsMod.Buffs.WisadelMarkDebuff.Description
+}
+
+RedeployReadyBuff: {
+	DisplayName: 再部署准备
+	Description: 死亡后的复活时间大幅缩短；脱下套装后失效
 }

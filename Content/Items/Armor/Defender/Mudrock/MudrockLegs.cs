@@ -1,40 +1,23 @@
-using System.Collections.Generic;
-using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 
 namespace ArknightsMod.Content.Items.Armor.Defender.Mudrock
 {
+	// 腿部没有"切换形态"这回事（只有头和躯干有第二套贴图），所以不声明
+	// AltIconTexture/AltEquipTexture，框架也就不会给它加右键切换和切换提示。
+	// 旧版本这里挂了切换代码和切换提示，但腿部压根没有替代贴图，右键其实什么都不会
+	// 发生，属于误导，已一并清掉。
 	[AutoloadEquip(EquipType.Legs)]
-	internal class MudrockLegs : NeoArmorLegs
+	internal class MudrockLegs : NeoArmorReforgeVanityLegs
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 222;
-
-		public override void SetArmorDefaults() {
-			Item.defense = 17;
-		}
-
-		public override void SetVanityDefaults() {
-			Item.useStyle = ItemUseStyleID.HoldUp;
-			Item.useTime = 20;
-			Item.useAnimation = 20;
-			Item.UseSound = SoundID.Item4;
-		}
-
-		public override bool AltFunctionUse(Player player) => true;
-
-		public override bool CanUseItem(Player player) => player.altFunctionUse == 2;
-
-		public override bool? UseItem(Player player) {
-			MudrockToggle.Toggle(this);
-			return true;
-		}
 
 		public override string Texture => "ArknightsMod/Content/Items/Armor/Defender/Mudrock/MudrockGreaves";
 
-		public override void ModifyVanityTooltips(List<TooltipLine> tooltips) {
-			OperatorOutfitTooltipLayout.ApplyWrappedVanityLine(Mod, tooltips, "Mods.ArknightsMod.ArmorSets.Mudrock.ToggleHint");
-		}
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
+			Defense = 17,
+			LifeBonus = 222,
+			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Mudrock",
+		};
 	}
 }

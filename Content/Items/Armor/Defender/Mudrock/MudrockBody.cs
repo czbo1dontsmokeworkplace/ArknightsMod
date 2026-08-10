@@ -1,64 +1,31 @@
-using System.Collections.Generic;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria;
 using Terraria.DataStructures;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Defender.Mudrock
 {
 	[AutoloadEquip(EquipType.Body)]
-	internal class MudrockBody : NeoArmorBody
+	internal class MudrockBody : NeoArmorReforgeVanityBody
 	{
-		private const string ChestplateSlotName = "MudrockChestplate";
-
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 222;
 
-		public override void SetArmorDefaults() {
-			Item.defense = 50;
-		}
+		// 切换后：图标换成胸甲图标，穿戴帧表换成胸甲帧表。
+		public override string AltIconTexture => "ArknightsMod/Content/Items/Armor/Defender/Mudrock/MudrockChestplate";
+		internal override string AltEquipTexture => "ArknightsMod/Content/Items/Armor/Defender/Mudrock/MudrockChestplate_Body";
+		protected override string ToggleHintKey => "Mods.ArknightsMod.ArmorSets.Mudrock.ToggleHint";
 
-		protected override string ArmorIconTexture => "ArknightsMod/Content/Items/Armor/Defender/Mudrock/MudrockChestplate";
-
-		public override void SetVanityDefaults() {
-			Item.useStyle = ItemUseStyleID.HoldUp;
-			Item.useTime = 20;
-			Item.useAnimation = 20;
-			Item.UseSound = SoundID.Item4;
-		}
-
-		public override bool AltFunctionUse(Player player) => true;
-
-		public override bool CanUseItem(Player player) => player.altFunctionUse == 2;
-
-		public override bool? UseItem(Player player) {
-			MudrockToggle.Toggle(this);
-			return true;
-		}
-
-		public override void Load() {
-			int chestplateSlot = EquipLoader.AddEquipTexture(Mod, "ArknightsMod/Content/Items/Armor/Defender/Mudrock/MudrockChestplate_Body", EquipType.Body, null, ChestplateSlotName);
-			if (chestplateSlot >= 0 && chestplateSlot < ArmorIDs.Body.Sets.HidesArms.Length) {
-				ArmorIDs.Body.Sets.HidesTopSkin[chestplateSlot] = true;
-				ArmorIDs.Body.Sets.HidesArms[chestplateSlot] = true;
-			}
-		}
-
-		public override void UpdateVanityEquip(Player player) {
-			// 帧图（穿戴贴图）跟随形态切换：升级形态用胸甲贴图，否则用默认躯干贴图。
-			Item.bodySlot = Item.neoarmor().helmetForm
-				? EquipLoader.GetEquipSlot(Mod, ChestplateSlotName, EquipType.Body)
-				: EquipLoader.GetEquipSlot(Mod, Name, EquipType.Body);
-		}
-
-		public override void ModifyVanityTooltips(List<TooltipLine> tooltips) {
-			OperatorOutfitTooltipLayout.ApplyWrappedVanityLine(Mod, tooltips, "Mods.ArknightsMod.ArmorSets.Mudrock.ToggleHint");
-		}
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
+			Defense = 50,
+			LifeBonus = 222,
+			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Mudrock",
+		};
 	}
 
+	// 切换到胸甲形态时额外叠加的一层装饰贴图。
 	internal class MudrockBodyDrawLayer : PlayerDrawLayer
 	{
 		private Asset<Texture2D> texture;
@@ -73,10 +40,16 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Mudrock
 
 		public override bool GetDefaultVisibility(PlayerDrawSet drawInfo) {
 			Player player = drawInfo.drawPlayer;
-			// 实际显示的躯干 = 社交/时装栏(armor[11]) 优先，否则盔甲栏(armor[1])；
-			// 只要显示的是「已升级」的泥岩躯干（无论盔甲栏还是时装栏），就绘制额外胸甲层。
+			// 实际显示的躯干 = 社交/时装栏(armor[11]) 优先，否则盔甲栏(armor[1])。
+			// 时装和套装（MudrockBodySet）都可能是"实际显示"的那一件，两边都认，
+			// 只要它当前处于切换后的形态就画这层额外胸甲。
 			Item shown = !player.armor[11].IsAir ? player.armor[11] : player.armor[1];
-			return shown.type == ModContent.ItemType<MudrockBody>() && shown.neoarmor().helmetForm;
+			bool helmetForm = shown.ModItem switch {
+				MudrockBody vanity => vanity.HelmetForm,
+				NeoArmorReforgeSetPiece piece when piece.Vanity is MudrockBody => piece.HelmetForm,
+				_ => false,
+			};
+			return helmetForm;
 		}
 
 		public override Position GetDefaultPosition() => new AfterParent(PlayerDrawLayers.Head);
