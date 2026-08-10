@@ -308,19 +308,29 @@ namespace ArknightsMod.Content.NPCs.Friendly
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				});
 			foreach (int materialType in NPCShopSystem.BuildClosurePinnedMaterials()) {
-				npcShop.Add(new Item(materialType) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				});
+				if (materialType == ModContent.ItemType<CarbonBrick>()) {
+					npcShop.Add(new Item(materialType));
+				}
+				else {
+					npcShop.Add(new Item(materialType) {
+						shopCustomPrice = 10,
+						shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+					});
+				}
 			}
 			int materialSampleCount = 0;
 			foreach (int materialType in NPCShopSystem.BuildClosureMaterialPool(true)) {
 				if (materialSampleCount >= MaxStaticShopSampleCount)
 					break;
-				npcShop.Add(new Item(materialType) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				});
+				if (materialType == ModContent.ItemType<CarbonBrick>()) {
+					npcShop.Add(new Item(materialType));
+				}
+				else {
+					npcShop.Add(new Item(materialType) {
+						shopCustomPrice = 10,
+						shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+					});
+				}
 				materialSampleCount++;
 			}
 			npcShop.Register();
@@ -367,10 +377,15 @@ namespace ArknightsMod.Content.NPCs.Friendly
 
 				var materialRotation = NPCShopSystem.ClosureMaterialRotation;
 				for (int j = 0; j < materialRotation.Count && j + 1 < items.Length; j++) {
-					items[j + 1] = new Item(materialRotation[j]) {
-						shopCustomPrice = 10,
-						shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-					};
+					if (materialRotation[j] == ModContent.ItemType<CarbonBrick>()) {
+						items[j + 1] = new Item(materialRotation[j]);
+					}
+					else {
+						items[j + 1] = new Item(materialRotation[j]) {
+							shopCustomPrice = 10,
+							shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+						};
+					}
 				}
 				return;
 			}
