@@ -3875,3 +3875,8 @@ MorniaLegsSet.Tooltip: 开发者套装
 // UtageBodySet.Tooltip: ""
 // UtageHeadSet.Tooltip: ""
 // UtageLegsSet.Tooltip: ""
+
+FactoryPlusItem: {
+	// DisplayName: Factory Plus Item
+	// Tooltip: ""
+}

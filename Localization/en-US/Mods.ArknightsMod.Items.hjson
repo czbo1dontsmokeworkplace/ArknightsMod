@@ -3502,3 +3502,8 @@ UlpianusLegsSet.Tooltip: ""
 UtageBodySet.Tooltip: ""
 UtageHeadSet.Tooltip: ""
 UtageLegsSet.Tooltip: ""
+
+FactoryPlusItem: {
+	DisplayName: Factory Plus Item
+	Tooltip: ""
+}
