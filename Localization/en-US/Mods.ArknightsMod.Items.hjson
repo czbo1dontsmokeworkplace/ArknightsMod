@@ -2480,6 +2480,21 @@ RiceGrain: {
 	Tooltip: ""
 }
 
+TragodiaHead: {
+	DisplayName: Tragodia Head
+	Tooltip: ""
+}
+
+TragodiaBody: {
+	DisplayName: Tragodia Body
+	Tooltip: ""
+}
+
+TragodiaLegs: {
+	DisplayName: Tragodia Legs
+	Tooltip: ""
+}
+
 YvonneBody: {
 	DisplayName: Yvonne Body
 	Tooltip: ""
@@ -3505,5 +3520,10 @@ UtageLegsSet.Tooltip: ""
 
 FactoryPlusItem: {
 	DisplayName: Factory Plus Item
+	Tooltip: ""
+}
+
+TragodiaDefault: {
+	DisplayName: Tragodia Default
 	Tooltip: ""
 }

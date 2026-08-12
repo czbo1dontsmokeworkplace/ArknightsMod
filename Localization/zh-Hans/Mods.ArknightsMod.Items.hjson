@@ -2785,6 +2785,21 @@ RiceGrain: {
 	Tooltip: ""
 }
 
+TragodiaHead: {
+	DisplayName: 酒神的头部
+	Tooltip: ""
+}
+
+TragodiaBody: {
+	DisplayName: 酒神的躯干
+	Tooltip: ""
+}
+
+TragodiaLegs: {
+	DisplayName: 酒神的下装
+	Tooltip: ""
+}
+
 YvonneBody: {
 	DisplayName: 伊冯的躯干
 	Tooltip: ""
@@ -3159,7 +3174,7 @@ ArmorUtageLegs: {
 
 ValarqvinWeapon: {
 	// Tooltip: ""
-	// DisplayName: Valarqvin Weapon
+	DisplayName: 凛视的法杖
 }
 
 ArmorExusiaiBody: {
@@ -3376,22 +3391,22 @@ DoctorStartBag: {
 }
 
 EndminFemaleBody: {
-	// DisplayName: Endmin Female Body
+	DisplayName: 管理员的衣物（女性）
 	// Tooltip: ""
 }
 
 EndminFemaleDefault: {
-	// DisplayName: Endmin Female Default
+	DisplayName: 管理员的服饰（女性）
 	// Tooltip: ""
 }
 
 EndminFemaleHead: {
-	// DisplayName: Endmin Female Head
+	DisplayName: 管理员的头部（女性）
 	// Tooltip: ""
 }
 
 EndminFemaleLegs: {
-	// DisplayName: Endmin Female Legs
+	DisplayName: 管理员的下装（女性）
 	// Tooltip: ""
 }
 
@@ -3577,7 +3592,7 @@ LupineScarlet: {
 }
 
 CuoraWeapon: {
-	// DisplayName: Cuora Weapon
+	DisplayName: 蛇屠箱的盾牌
 	// Tooltip: ""
 }
 
@@ -3607,7 +3622,7 @@ KaltsitLegs: {
 }
 
 CardiWeapon: {
-	// DisplayName: Cardi Weapon
+	DisplayName: 卡缇的盾牌
 	// Tooltip: ""
 }
 
@@ -3879,4 +3894,9 @@ MorniaLegsSet.Tooltip: 开发者套装
 FactoryPlusItem: {
 	// DisplayName: Factory Plus Item
 	// Tooltip: ""
+}
+
+TragodiaDefault: {
+	DisplayName: 酒神的服饰
+	Tooltip: ""
 }
