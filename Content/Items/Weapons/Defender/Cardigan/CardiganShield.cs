@@ -1,3 +1,4 @@
+﻿using ArknightsMod.Content;
 using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.Tiles.Infrastructure;
@@ -51,11 +52,11 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Cardigan
 			Item.useStyle = ItemUseStyleID.HiddenAnimation;
 		}
 
-		public override bool AltFunctionUse(Player player) => true;
+		public override bool AltFunctionUse(Player player) => false;
 
 		public override bool CanUseItem(Player player) {
 			var mp = player.GetModPlayer<WeaponPlayer>();
-			if (player.altFunctionUse == 2 && player.controlDown) {
+			if (ArknightsKeybinds.SkillActivatePressed(player)) {
 				// 下+右键：技能一，即时回复最大生命 40%，是瞬发技能，不应该有持续时间
 				// 这里不能用 mp.SkillActive 做按键锁：Cardigan 没有在 WeaponPlayer.SetAllSkillsData 里注册专属技能数据，
 				// CurrentSkill 始终是 null，导致 SkillActiveTime[Skill] 取到默认值 0，SkillActive 一旦被设为 true 就永远不会自动复位，

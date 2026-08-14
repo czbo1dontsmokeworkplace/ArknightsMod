@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using ArknightsMod.Content;
 
 namespace ArknightsMod.Content.Items.Weapons.Guard.Matoimaru
 {
@@ -32,12 +33,12 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Matoimaru
 			Item.crit = 4;
 		}
 
-		public override bool AltFunctionUse(Player player) => true;
+		public override bool AltFunctionUse(Player player) => false;
 
 		public override bool CanUseItem(Player player) {
 			var mp = player.GetModPlayer<WeaponPlayer>();
 
-			if (player.altFunctionUse == 2) {
+			if (ArknightsKeybinds.SkillActivatePressed(player)) {
 				if (mp.StockCount > 0 && !mp.SkillActive) {
 					if (mp.Skill == 0)
 						player.statLife = System.Math.Min(player.statLife + (int)(player.statLifeMax * 0.5f), player.statLifeMax);

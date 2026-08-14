@@ -1,7 +1,7 @@
+using ArknightsMod.Content;
 using ArknightsMod.Content.Projectiles.Supporter.Deepcolor;
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.GameInput;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Weapons.Supporter.Deepcolor
@@ -18,7 +18,6 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Deepcolor
 		public Vector2 LogoStrikeWorld;
 
 		private static int _logoChargeType = -1;
-		private bool logoRightClickArmed = true;
 
 		private static int LogoChargeType =>
 			_logoChargeType >= 0 ? _logoChargeType : _logoChargeType = ModContent.ProjectileType<DeepcolorSketchLogoAttack>();
@@ -36,11 +35,11 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Deepcolor
 			if (!IsLocalHoldingSketch())
 				return;
 
-			if (!Main.mouseRight)
-				logoRightClickArmed = true;
-
-			TryHandleRightClickPress();
-			TryHandleRightClickRelease();
+			// 技能开启键：释放选中的技能。原来是"按住 Down 时，右键松开"这个组合手势，
+			// 现在统一挪到独立热键，不再需要额外按住方向键——TryActivateSkill 内部本来就有
+			// !SkillActive 的守卫，按住热键连续调用也不会重复触发，不需要另外做按下/松开的边沿检测。
+			if (ArknightsKeybinds.SkillActivatePressed(Player) && !BlocksLogoInput())
+				DeepcolorSketch.TryActivateSkill(Player);
 		}
 
 		private void UpdateLogoChargeActive() {
@@ -65,25 +64,6 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Deepcolor
 			|| Main.playerInventory
 			|| Main.LocalPlayer.talkNPC >= 0
 			|| Main.LocalPlayer.chest != -1;
-
-		private void TryHandleRightClickPress() {
-			if (!PlayerInput.Triggers.JustPressed.MouseRight || BlocksLogoInput())
-				return;
-			if (DeepcolorSketch.IsSkillActivateModifierHeld(Player) || IsLogoChargeActive)
-				return;
-
-			DeepcolorSketch.TryTriggerLogoAttack(Player, Player.HeldItem);
-		}
-
-		private void TryHandleRightClickRelease() {
-			if (!PlayerInput.Triggers.JustReleased.MouseRight || BlocksLogoInput())
-				return;
-			if (!logoRightClickArmed || !DeepcolorSketch.IsSkillActivateModifierHeld(Player))
-				return;
-
-			if (DeepcolorSketch.TryActivateSkill(Player))
-				logoRightClickArmed = false;
-		}
 
 		public override void ModifyHurt(ref Player.HurtModifiers modifiers) {
 			if (!DeepcolorSketchSkills.IsOwnerInAnyTentacleAttackRange(Player))

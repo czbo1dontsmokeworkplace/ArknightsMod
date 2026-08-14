@@ -915,3 +915,20 @@ Tragodia: {
 		// Desc: Mods.ArknightsMod.Skills.Tragodia.3.Desc
 	}
 }
+
+SurtrLaevatain: {
+	1: {
+		// Label: Mods.ArknightsMod.Skills.SurtrLaevatain.1.Label
+		// Desc: Mods.ArknightsMod.Skills.SurtrLaevatain.1.Desc
+	}
+
+	2: {
+		// Label: Mods.ArknightsMod.Skills.SurtrLaevatain.2.Label
+		// Desc: Mods.ArknightsMod.Skills.SurtrLaevatain.2.Desc
+	}
+
+	3: {
+		// Label: Mods.ArknightsMod.Skills.SurtrLaevatain.3.Label
+		// Desc: Mods.ArknightsMod.Skills.SurtrLaevatain.3.Desc
+	}
+}

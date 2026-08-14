@@ -7,6 +7,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static Terraria.ModLoader.ModContent;
+using ArknightsMod.Content;
 
 namespace ArknightsMod.Content.Items.Weapons.Guard.Melantha
 {
@@ -42,7 +43,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Melantha
 			Item.crit = 4;
 		}
 
-		public override bool AltFunctionUse(Player player) => true;
+		public override bool AltFunctionUse(Player player) => false;
 
 		private int segment;   // 0=向下挥砍(白)，1=上挑挥砍(粉)，每次攻击交替
 
@@ -50,7 +51,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Melantha
 			var mp = player.GetModPlayer<WeaponPlayer>();
 
 			// 右键：激活已充能的技能
-			if (player.altFunctionUse == 2) {
+			if (ArknightsKeybinds.SkillActivatePressed(player)) {
 				if (mp.StockCount > 0 && !mp.SkillActive) {
 					mp.SkillActive = true;
 					mp.SkillTimer = 0;

@@ -1,31 +1,22 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using ArknightsMod.Content.Tiles.Infrastructure;
+﻿using Terraria.ModLoader;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content.Items.Material;
 
 namespace ArknightsMod.Content.Items.Armor.Sniper.Fiammetta
 {
 	[AutoloadEquip(EquipType.Body)]
-	public class FiammettaBody : NeoArmorBody
+	public class FiammettaBody : NeoArmorReforgeVanityBody
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 96;
 
-		public override void SetArmorDefaults() {
-			Item.defense = 12;
-		}
-		
-		public override void AddRecipes() {
-			CreateRecipe()
-			.AddIngredient<FiammettaBody>(1)
-			.AddIngredient<Orundum>(60)
-			.AddIngredient<BipolarNanoflake>(6)
-			.AddIngredient<WhiteHorseKohl>(5)
-			.AddTile(ModContent.TileType<FactoryTile>())
-			.AddCondition(NeoArmorUtils.NeedVanity)
-			.DisableDecraft()
-			.Register();
-		}
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
+			Defense = 12,
+			LifeBonus = 96,
+			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Fiammetta",
+			Materials = recipe => recipe
+				.AddIngredient<Orundum>(60)
+				.AddIngredient<BipolarNanoflake>(6)
+				.AddIngredient<WhiteHorseKohl>(5),
+		};
 	}
 }

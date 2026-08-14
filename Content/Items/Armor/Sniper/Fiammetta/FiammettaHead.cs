@@ -1,38 +1,23 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using ArknightsMod.Content.Tiles.Infrastructure;
+﻿using Terraria.ModLoader;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content.Items.Material;
 
 namespace ArknightsMod.Content.Items.Armor.Sniper.Fiammetta
 {
 	[AutoloadEquip(EquipType.Head)]
-	public class FiammettaHead : NeoArmorHead
+	public class FiammettaHead : NeoArmorReforgeVanityHead
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 193;
-		
-		public override void Load() {
-			if (Main.netMode == NetmodeID.Server)
-				return;
-		}
 
-		public override void SetArmorDefaults() {
-			Item.defense = 0;
-		}
-		
-
-		public override void AddRecipes() {
-			CreateRecipe()
-			.AddIngredient<FiammettaHead>(1)
-			.AddIngredient<Orundum>(60)
-			.AddIngredient<CrystallineElectronicUnit>(6)
-			.AddIngredient<GrindstonePentahydrate>(4)
-			.AddTile(ModContent.TileType<FactoryTile>())
-			.AddCondition(NeoArmorUtils.NeedVanity)
-			.DisableDecraft()
-			.Register();
-		}
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
+			Defense = 0,
+			LifeBonus = 193,
+			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Fiammetta",
+			Materials = recipe => recipe
+				.AddIngredient<Orundum>(60)
+				.AddIngredient<CrystallineElectronicUnit>(6)
+				.AddIngredient<GrindstonePentahydrate>(4),
+			SetBonusKey = "Mods.ArknightsMod.ArmorSets.Fiammetta.SetBonus",
+		};
 	}
 }
-	

@@ -22,7 +22,7 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Tragodia
 	{
 		public const int BaseDamage = 150;
 		public const int BaseUseTime = 45;
-		public const int S2UseTime = 33;
+		public const int S2UseTime = 33;//按理来说应该使用攻速加成来写
 		public const float BaseKnockback = 6f;
 		public const float BaseShootSpeed = 1f;
 
@@ -42,7 +42,7 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Tragodia
 		private NPC spTarget = null;
 		private int spDamage = 0;
 		private int instinctCallCooldown = 0;
-		private const int InstinctCallCooldownTime = 1;
+		private const int InstinctCallCooldownTime = 600;
 
 		public override void Load() {
 			SkillActiveSound = new SoundStyle("ArknightsMod/Sounds/SkillActive1") { Volume = 0.5f, MaxInstances = 3 };

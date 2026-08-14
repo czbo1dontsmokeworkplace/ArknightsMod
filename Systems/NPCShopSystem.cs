@@ -18,6 +18,15 @@ namespace ArknightsMod.Systems
 		public static List<int> ClosureTodaysRotation = [];
 		public static List<int> ClosureMaterialRotation = [];
 
+		/// <summary>
+		/// 永远常驻售卖、不参与每日随机刷新的材料。碳素条是基建/摆件配方的常用材料，
+		/// 放进随机池会被别的材料挤掉，专门给它留一个不刷新的固定位置。
+		/// 不放进 <see cref="BuildClosureMaterialPool"/>，避免被随机抽走后又被移除。
+		/// </summary>
+		public static List<int> BuildClosurePinnedMaterials() => [
+			ModContent.ItemType<CarbonBrick>(),
+		];
+
 		public static List<int> BuildClosureMaterialPool(bool forceAllTiers = false) {
 			var pool = new List<int> {
 				ModContent.ItemType<Orirock>(),
@@ -27,7 +36,6 @@ namespace ArknightsMod.Systems
 				ModContent.ItemType<Diketon>(),
 				ModContent.ItemType<Ester>(),
 				ModContent.ItemType<DamagedDevice>(),
-				ModContent.ItemType<CarbonBrick>(),
 				ModContent.ItemType<CrabClaw>(),
 				ModContent.ItemType<RAWater>(),
 				ModContent.ItemType<RAMeat>(),
@@ -148,8 +156,11 @@ namespace ArknightsMod.Systems
 				ClosureTodaysRotation.AddRange(others);
 
 				var materialPool = BuildClosureMaterialPool();
-				ClosureMaterialRotation = [];
-				int materialCount = Main.rand.Next(8, 13);
+				var pinnedMaterials = BuildClosurePinnedMaterials();
+				// 常驻材料（碳素条）永远排在最前面、不参与随机抽取和刷新；
+				// 随机部分的抽取数量（8~12 种）保持和迁移前一致，不因为常驻项而缩水。
+				ClosureMaterialRotation = [.. pinnedMaterials];
+				int materialCount = Main.rand.Next(8, 13) + pinnedMaterials.Count;
 				while (materialPool.Count > 0 && ClosureMaterialRotation.Count < materialCount) {
 					int idx = Main.rand.Next(materialPool.Count);
 					ClosureMaterialRotation.Add(materialPool[idx]);

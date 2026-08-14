@@ -1,5 +1,6 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -19,14 +20,14 @@ namespace ArknightsMod.Content.Items.Armor.Specialist.Mizuki
 			MizukiSetActive = false;
 		}
 
+		// NeoArmor Reforge：套装件是独立 ItemID，穿上它本身就代表"已经是套装形态"，
+		// 不需要再查 hasUpgraded；player.setBonus 文本交给 MizukiHead 的
+		// SetProfile.SetBonusKey 统一设置，这里不再重复设置一遍。
 		public override void PostUpdateEquips() {
-			MizukiHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<MizukiHead>());
-			MizukiSetActive = OperatorSetEquipHelper.HasFullSet(
-				Player,
-				ModContent.ItemType<MizukiHead>(),
-				ModContent.ItemType<MizukiBody>(),
-				ModContent.ItemType<MizukiLegs>());
-			OperatorSetEquipHelper.ApplySetBonusText(Player, MizukiSetActive, "Mods.ArknightsMod.ArmorSets.Mizuki.SetBonus");
+			MizukiHelmetActive = Player.armor[0].type == NeoArmorReforgeSetLoader.GetSetType<MizukiHead>();
+			MizukiSetActive = MizukiHelmetActive
+				&& Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<MizukiBody>()
+				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<MizukiLegs>();
 		}
 
 		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {

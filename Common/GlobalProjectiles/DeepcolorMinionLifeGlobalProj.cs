@@ -66,13 +66,11 @@ namespace ArknightsMod.Common.GlobalProjectiles
 				life = Math.Min(life + DeepcolorSketchSkills.ShadowTentacleRegenPerSecond, lifeMax);
 			}
 
-			// 深海色套装效果：所有深海色的召唤物每秒恢复25点生命值
-			if (owner.armor[0].type == ModContent.ItemType<DeepcolorHead>()
-				&& owner.armor[1].type == ModContent.ItemType<DeepcolorBody>()
-				&& owner.armor[2].type == ModContent.ItemType<DeepcolorLegs>()
-				&& owner.armor[0].neoarmor().hasUpgraded
-				&& owner.armor[1].neoarmor().hasUpgraded
-				&& owner.armor[2].neoarmor().hasUpgraded
+			// 深海色套装效果：所有深海色的召唤物每秒恢复25点生命值。
+			// NeoArmor Reforge：深海色迁到新系统后，穿在盔甲栏里的是独立 ItemID 的套装件，
+			// 比对时装类型 + hasUpgraded 会恒为 false（静默失效）。判定统一读
+			// DeepcolorSetPlayer 的标记，它在 PostUpdateEquips 里用 GetSetType 算好了。
+			if (owner.GetModPlayer<DeepcolorSetPlayer>().DeepcolorSetActive
 				&& ++setRegenTimer >= 60) {
 				setRegenTimer = 0;
 				life = Math.Min(life + 25, lifeMax);
@@ -123,10 +121,9 @@ namespace ArknightsMod.Common.GlobalProjectiles
 		}
 
 		public void TakeDamage(Projectile projectile, int damage) {
-			// 深海色头盔效果：召唤物获得7%闪避
+			// 深海色头盔效果：召唤物获得7%闪避（判定改读 SetPlayer 标记，原因同上）
 			Player owner = Main.player[projectile.owner];
-			if (owner.armor[0].type == ModContent.ItemType<DeepcolorHead>()
-				&& owner.armor[0].neoarmor().hasUpgraded
+			if (owner.GetModPlayer<DeepcolorSetPlayer>().DeepcolorHelmetActive
 				&& Main.rand.NextFloat() < 0.07f) {
 				CombatText.NewText(projectile.getRect(), Color.Yellow, "Miss");
 				return;

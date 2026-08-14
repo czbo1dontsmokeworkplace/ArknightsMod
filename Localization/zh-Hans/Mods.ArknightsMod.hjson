@@ -46,7 +46,7 @@ Tiles: {
 	ManganeseOre.MapEntry: "{$Mods.ArknightsMod.Items.ManganeseOre.DisplayName}"
 	OrirockCube.MapEntry: "{$Mods.ArknightsMod.Items.OrirockCube.DisplayName}"
 	RMA7012.MapEntry: "{$Mods.ArknightsMod.Items.RMA7012.DisplayName}"
-	FactoryTile.MapEntry: 加工站
+	FactoryTile.MapEntry: 制造加工站
 	WMusicBoxTile.MapEntry: 音乐盒(W)
 	// HoundTile.MapEntry: Hound Tile
 	// HoundproTile.MapEntry: Houndpro Tile
@@ -78,6 +78,10 @@ Tiles: {
 	// ManganeseOreTile.MapEntry: Manganese Ore Tile
 	// OrirockCubeTile.MapEntry: Orirock Cube Tile
 	// RMA7012Tile.MapEntry: R M A7012 Tile
+	// FactoryPlusTile.MapEntry: Factory Plus Tile
 }
 
-// "Keybinds.Rosmontis Tactical Deploy.DisplayName": Rosmontis  Tactical  Deploy
+Keybinds: {
+	"Rosmontis Tactical Deploy.DisplayName": 罗默林斯战术部署
+	"Skill Activate.DisplayName": 技能开启
+}

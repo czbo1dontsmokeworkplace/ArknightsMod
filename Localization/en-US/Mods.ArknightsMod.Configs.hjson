@@ -176,3 +176,21 @@ DebugConfig: {
 		Tooltip: 获取 NeoArmor 物品时自动设为已升级样式（DEBUG 专用）
 	}
 }
+
+SkillChargeConfig: {
+	DisplayName: Skill Charge Config
+
+	DoubleSPRegenSpeed: {
+		Label: 技力恢复二倍速
+		Tooltip:
+			'''
+			开启后，所有干员武器的技力条恢复速度整体 x2（自然回复/受击回复/攻击回复/饰品加速）。
+			技力上限、技能消耗等数值不受影响；部署费用吸收、套装直接赠送技力等"技力返还"类效果也不会被翻倍。
+			'''
+	}
+
+	DoubleSkillDurationConsumption: {
+		Label: 技能持续时间技力消耗二倍速
+		Tooltip: 开启后，技能开启期间"消耗"技力的速度整体 x2，表现为技能的持续时间缩短为原来的一半。
+	}
+}

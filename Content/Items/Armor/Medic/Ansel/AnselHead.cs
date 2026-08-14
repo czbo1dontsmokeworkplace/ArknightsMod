@@ -1,52 +1,43 @@
-﻿using ArknightsMod.Common;
+using ArknightsMod.Common;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content.Items.Material;
-using ArknightsMod.Content.Tiles.Infrastructure;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.DataStructures;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Medic.Ansel
 {
 	[AutoloadEquip(EquipType.Head)]
-	public class AnselHead : NeoArmorHead
+	public class AnselHead : NeoArmorReforgeVanityHead
 	{
 		public override int Rarity => 3;
-		public override int ArmorLifeBonus => 114;
-		
-		public override void Load() {
-			if (Main.netMode == NetmodeID.Server)
-				return;
-		}
 
-		public override void SetArmorDefaults() {
-			Item.defense = 0;
-		}
-		
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
+			Defense = 0,
+			LifeBonus = 114,
+			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Ansel",
+			Materials = recipe => recipe
+				.AddIngredient<Orundum>(30)
+				.AddIngredient<OrironShard>(1),
+			SetBonusKey = "Mods.ArknightsMod.ArmorSets.Ansel.SetBonus",
+		};
 
-		public override void AddRecipes() {
-			CreateRecipe()
-			.AddIngredient<AnselHead>(1)
-			.AddIngredient<Orundum>(30)
-			.AddIngredient<OrironShard>(1)
-			.AddTile(ModContent.TileType<FactoryTile>())
-			.AddCondition(NeoArmorUtils.NeedVanity)
-			.DisableDecraft()
-			.Register();
-		}
-
+		// 耳朵叠加层。整张贴图直接画、不按帧取，所以走文档 12.5 的【路 A】：用
+		// PlayerLayerHelper，锚点（MountedCenter）、gfxOffY 和行走抖动都由它负责。
 		internal class AnselHeadLayer : PlayerDrawLayer
 		{
 			public override Position GetDefaultPosition() => new BeforeParent(PlayerDrawLayers.BackAcc);
+
 			public override bool GetDefaultVisibility(PlayerDrawSet drawInfo) {
-				Item head = new(ModContent.ItemType<AnselHead>());
-				return drawInfo.drawPlayer.head == head.headSlot && !drawInfo.drawPlayer.dead;
+				Player player = drawInfo.drawPlayer;
+				// 时装和套装都要认。判断走 IsPartVisible（看穿的是哪个物品），
+				// 不比对 player.head 槽位 ID——原因见 IsPartVisible 的注释。
+				return NeoArmorReforgeSetLoader.IsPartVisible<AnselHead>(player, EquipType.Head) && !player.dead;
 			}
 
 			protected override void Draw(ref PlayerDrawSet drawInfo) {
-
 				Texture2D texture = ModContent.Request<Texture2D>
 					("ArknightsMod/Content/Items/Armor/Medic/Ansel/AnselHead_Ear").Value;
 

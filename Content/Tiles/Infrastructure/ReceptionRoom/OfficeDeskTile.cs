@@ -23,6 +23,7 @@ namespace ArknightsMod.Content.Tiles.Infrastructure.ReceptionRoom
 		{
 			Main.tileFrameImportant[Type] = true;
 			Main.tileObsidianKill[Type] = true;
+			AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTable);
 
 			DustType = DustID.Iron;
 			AddMapEntry(new Color(106, 106, 101), CreateMapEntryName());

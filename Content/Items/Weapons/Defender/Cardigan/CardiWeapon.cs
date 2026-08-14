@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using ArknightsMod.Content;
 
 namespace ArknightsMod.Content.Items.Weapons.Defender.Cardigan
 {
@@ -49,13 +50,13 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Cardigan
 			Item.noMelee = true;
 			Item.useStyle = ItemUseStyleID.HiddenAnimation;
 		}
-		public override bool AltFunctionUse(Player player) => true;
+		public override bool AltFunctionUse(Player player) => false;
 		public override bool CanUseItem(Player player)
 		{
 			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
 			if (Main.myPlayer == player.whoAmI)
 			{
-				if (player.altFunctionUse == 2)
+				if (ArknightsKeybinds.SkillActivatePressed(player))
 				{
 					if (!modPlayer.SummonMode&&modPlayer.StockCount > 0 )
 					{

@@ -1,3 +1,4 @@
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content;
 using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Projectiles.Sniper.Rosmontis;
@@ -19,14 +20,16 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Rosmontis
 			RosmontisSetActive = false;
 		}
 
+		// NeoArmor Reforge：套装件是独立 ItemID，穿上它本身就代表"已经是套装形态"，
+		// 不需要再查 hasUpgraded；player.setBonus 文本也交给 RosmontisHead 的
+		// SetProfile.SetBonusKey 统一设置，这里不再重复设置一遍
+		// （旧代码这里和 RosmontisHead.UpdateArmorSet 各设置一次，两个不同的文本
+		// 谁执行在后谁生效，是一个没被注意到的 bug）。
 		public override void PostUpdateEquips() {
-			RosmontisHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<RosmontisHead>());
-			RosmontisSetActive = OperatorSetEquipHelper.HasFullSet(
-				Player,
-				ModContent.ItemType<RosmontisHead>(),
-				ModContent.ItemType<RosmontisBody>(),
-				ModContent.ItemType<RosmontisLegs>());
-			OperatorSetEquipHelper.ApplySetBonusText(Player, RosmontisSetActive, "Mods.ArknightsMod.ArmorSets.Rosmontis.SetBonus");
+			RosmontisHelmetActive = Player.armor[0].type == NeoArmorReforgeSetLoader.GetSetType<RosmontisHead>();
+			RosmontisSetActive = RosmontisHelmetActive
+				&& Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<RosmontisBody>()
+				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<RosmontisLegs>();
 		}
 
 		public override void PostUpdate() {

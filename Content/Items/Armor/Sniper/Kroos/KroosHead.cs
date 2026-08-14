@@ -1,37 +1,22 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using ArknightsMod.Content.Tiles.Infrastructure;
+﻿using Terraria.ModLoader;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content.Items.Material;
 
 namespace ArknightsMod.Content.Items.Armor.Sniper.Kroos
 {
 	[AutoloadEquip(EquipType.Head)]
-	public class KroosHead : NeoArmorHead
+	public class KroosHead : NeoArmorReforgeVanityHead
 	{
 		public override int Rarity => 3;
-		public override int ArmorLifeBonus => 106;
-		
-		public override void Load() {
-			if (Main.netMode == NetmodeID.Server)
-				return;
-		}
 
-		public override void SetArmorDefaults() {
-			Item.defense = 0;
-		}
-		
-
-		public override void AddRecipes() {
-			CreateRecipe()
-			.AddIngredient<KroosHead>(1)
-			.AddIngredient<Orundum>(30)
-			.AddIngredient<DamagedDevice>(1)
-			.AddTile(ModContent.TileType<FactoryTile>())
-			.AddCondition(NeoArmorUtils.NeedVanity)
-			.DisableDecraft()
-			.Register();
-		}
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
+			Defense = 0,
+			LifeBonus = 106,
+			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Kroos",
+			Materials = recipe => recipe
+				.AddIngredient<Orundum>(30)
+				.AddIngredient<DamagedDevice>(1),
+			SetBonusKey = "Mods.ArknightsMod.ArmorSets.Kroos.SetBonus",
+		};
 	}
 }
-	

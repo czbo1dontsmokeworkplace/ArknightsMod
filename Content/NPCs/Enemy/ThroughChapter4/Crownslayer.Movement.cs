@@ -9,6 +9,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 	// 弑君者地面移动与脱困：贴地、嵌墙、脱困逻辑集中在此，主 AI 只调用公开入口。
 	public partial class Crownslayer
 	{
+		private const int MoveDefaultHitboxWidth = 36;
+		private const int MoveSlopeCollisionWidth = 24;
 		private const int MoveStuckThreshold = 48;
 		private const int MoveWallBumpUnstuck = 28;
 		private const int MoveUnstuckCooldown = 90;
@@ -19,19 +21,63 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		private int moveWallEmbedTicks;
 		private int moveUnstuckCooldown;
 		private Vector2 moveStuckAnchor;
+		private bool moveSlopeHitboxNarrowed;
 		private const int MoveWallEmbedThreshold = 12;
 
 		private float Move_FootY => NPC.position.Y + NPC.height;
 
 		private Vector2 MoveBoxTopLeft(Vector2 center) => center - NPC.Size * 0.5f;
 
+		private bool Move_IsNearTopSlope() {
+			float nextX = NPC.position.X + NPC.velocity.X;
+			float nextFootY = Move_FootY + NPC.velocity.Y;
+			int minTileX = (int)Math.Floor((Math.Min(NPC.position.X, nextX) - 2f) / 16f);
+			int maxTileX = (int)Math.Floor((Math.Max(NPC.position.X, nextX) + NPC.width + 2f) / 16f);
+			int minTileY = (int)Math.Floor((Math.Min(Move_FootY, nextFootY) - 24f) / 16f);
+			int maxTileY = (int)Math.Floor((Math.Max(Move_FootY, nextFootY) + 24f) / 16f);
+
+			for (int tx = minTileX; tx <= maxTileX; tx++) {
+				for (int ty = minTileY; ty <= maxTileY; ty++) {
+					if (!WorldGen.InWorld(tx, ty, 1))
+						continue;
+
+					Tile tile = Main.tile[tx, ty];
+					if (tile.HasUnactuatedTile && Main.tileSolid[tile.TileType] && !Main.tileSolidTop[tile.TileType]
+						&& (tile.Slope == SlopeType.SlopeDownLeft || tile.Slope == SlopeType.SlopeDownRight))
+						return true;
+				}
+			}
+
+			return false;
+		}
+
+		// 原版用整个 NPC 矩形贴斜坡，36px 宽的矩形会被高侧提前托住。
+		// 仅在引擎处理地形碰撞时改用与双脚相近的宽度，绘制和战斗判定前立即恢复。
+		private void Move_PrepareSlopeCollisionHitbox() {
+			if (moveSlopeHitboxNarrowed || NPC.noTileCollide || NPC.width != MoveDefaultHitboxWidth || !Move_IsNearTopSlope())
+				return;
+
+			Vector2 center = NPC.Center;
+			NPC.width = MoveSlopeCollisionWidth;
+			NPC.Center = center;
+			moveSlopeHitboxNarrowed = true;
+		}
+
+		private void Move_RestoreCombatHitbox() {
+			if (!moveSlopeHitboxNarrowed)
+				return;
+
+			Vector2 center = NPC.Center;
+			NPC.width = MoveDefaultHitboxWidth;
+			NPC.Center = center;
+			moveSlopeHitboxNarrowed = false;
+		}
+
 		private static float Move_GetSlopeSurfaceOffset(SlopeType slope, float localX) {
 			localX = MathHelper.Clamp(localX, 0f, 16f);
 			return slope switch {
-				SlopeType.SlopeDownLeft => 16f - localX,
-				SlopeType.SlopeDownRight => localX,
-				SlopeType.SlopeUpLeft => localX,
-				SlopeType.SlopeUpRight => 16f - localX,
+				SlopeType.SlopeDownLeft => localX,
+				SlopeType.SlopeDownRight => 16f - localX,
 				_ => 0f
 			};
 		}
@@ -51,8 +97,10 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				float surface = ty * 16f;
 				if (tile.IsHalfBlock)
 					surface += 8f;
-				else if (tile.Slope != SlopeType.Solid)
+				else if (tile.Slope == SlopeType.SlopeDownLeft || tile.Slope == SlopeType.SlopeDownRight)
 					surface += Move_GetSlopeSurfaceOffset(tile.Slope, worldX - tx * 16f);
+				else if (tile.Slope != SlopeType.Solid)
+					continue;
 
 				if (fromFootY <= surface + 12f) {
 					surfaceFootY = surface;
@@ -68,7 +116,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		private bool Move_IsWallEmbedded(Vector2 center) {
 			Vector2 box = MoveBoxTopLeft(center) + new Vector2(6f, 10f);
 			int w = NPC.width - 12;
-			int h = NPC.height - 18;
+			// SolidCollision 会把斜砖当作完整的 16x16 包围盒。排除脚底 18px，
+			// 只检查躯干，避免正常站在斜坡低端时被误判为嵌墙。
+			int h = NPC.height - 28;
 			return w > 8 && h > 8 && Collision.SolidCollision(box, w, h);
 		}
 
@@ -83,10 +133,19 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		}
 
 		private bool Move_HasGround(Vector2 center) {
-			float footProbe = center.Y + NPC.height * 0.5f + 6f;
-			return Move_TryGetSurfaceY(center.X, footProbe, out float surfaceY)
-				&& footProbe >= surfaceY - 4f
-				&& footProbe <= surfaceY + 18f;
+			float footY = center.Y + NPC.height * 0.5f;
+			float halfWidth = NPC.width * 0.5f;
+			float footInset = Math.Min(4f, NPC.width * 0.25f);
+
+			return Move_HasGroundAtX(center.X - halfWidth + footInset, footY)
+				|| Move_HasGroundAtX(center.X, footY)
+				|| Move_HasGroundAtX(center.X + halfWidth - footInset, footY);
+		}
+
+		private static bool Move_HasGroundAtX(float worldX, float footY) {
+			return Move_TryGetSurfaceY(worldX, footY, out float surfaceY)
+				&& surfaceY >= footY - 4f
+				&& surfaceY <= footY + 6f;
 		}
 
 		private bool Move_NeedsLanding(Vector2 center) =>
@@ -96,24 +155,11 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			hereY = 0f;
 			aheadY = 0f;
 			float footY = Move_FootY;
-			if (!Move_TryGetSurfaceY(NPC.Center.X, footY + 6f, out hereY))
+			if (!Move_TryGetSurfaceY(NPC.Center.X, footY, out hereY))
 				return false;
 
-			return Move_TryGetSurfaceY(NPC.Center.X + dir * 20f, footY + 10f, out aheadY);
-		}
-
-		private void Move_AdhereToGround() {
-			if (!Move_UsesGroundTick() || NPC.noTileCollide || NPC.velocity.Y < -5f)
-				return;
-
-			if (!Move_TryGetSurfaceY(NPC.Center.X, Move_FootY + 6f, out float surfaceY))
-				return;
-
-			float delta = surfaceY - Move_FootY;
-			if (Math.Abs(delta) <= 8f)
-				NPC.position.Y += delta;
-			else if (delta > 0f && delta <= 16f)
-				NPC.position.Y += Math.Min(delta, 3f);
+			// 探针略高于脚底，确保能识别半砖与一格砖形成的 8~16px 上台阶。
+			return Move_TryGetSurfaceY(NPC.Center.X + dir * 20f, footY - 4f, out aheadY);
 		}
 
 		// 斜坡/台阶方向仍有路时，不因 collideX 停住。
@@ -126,7 +172,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		}
 
 		private void Move_TickSlopeAssist(bool wantsMoveX, float diffX) {
-			if (!wantsMoveX || NPC.noTileCollide)
+			// 斜砖由原版坡面碰撞负责；这里的负 Y 速度只用于跨半砖/直角台阶。
+			// 否则上坡会被误认成连续台阶，弑君者会反复起跳并悬在坡面上方。
+			if (!wantsMoveX || NPC.noTileCollide || Move_IsNearTopSlope())
 				return;
 
 			int dir = diffX > 0 ? 1 : -1;
@@ -136,8 +184,6 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 					NPC.velocity.Y = -6f;
 			}
 
-			if (NPC.collideY && Math.Abs(NPC.velocity.X) < 0.6f && Math.Abs(NPC.velocity.Y) < 1.2f)
-				NPC.position.Y -= 1f;
 		}
 
 		private Vector2 Move_FindOpen(Vector2 from, bool requireGround) {
@@ -163,12 +209,6 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		}
 
 		private Vector2 Move_SnapToGround(Vector2 desired) {
-			if (Move_TryGetSurfaceY(desired.X, desired.Y + NPC.height + 8f, out float surfaceY)) {
-				Vector2 center = new Vector2(desired.X, surfaceY - NPC.height * 0.5f);
-				if (!Move_IsBlocked(center) && Move_HasGround(center))
-					return center;
-			}
-
 			for (int dy = 0; dy <= 16; dy++) {
 				Vector2 lower = desired + new Vector2(0f, dy * 4f);
 				if (!Move_IsBlocked(lower) && Move_HasGround(lower))
@@ -245,14 +285,14 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				return;
 			}
 
-			Move_AdhereToGround();
-
 			if (!Move_IsWallEmbedded(NPC.Center)) {
 				moveWallEmbedTicks = 0;
 				return;
 			}
 
 			moveWallEmbedTicks++;
+			if (moveWallEmbedTicks < MoveWallEmbedThreshold)
+				return;
 
 			Vector2 nudge = Move_SnapToGround(Move_FindOpen(NPC.Center, requireGround: true));
 			if (!Move_IsWallEmbedded(nudge)) {
@@ -263,8 +303,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				return;
 			}
 
-			// 连续嵌墙超过阈值帧才强制脱困，避免坡面单帧误判触发传送
-			if (moveWallEmbedTicks >= MoveWallEmbedThreshold && moveUnstuckCooldown <= 0)
+			// 位置微调也受连续帧阈值保护；若微调失败，再执行强制脱困。
+			if (moveUnstuckCooldown <= 0)
 				Move_ForceUnstuck(target);
 		}
 

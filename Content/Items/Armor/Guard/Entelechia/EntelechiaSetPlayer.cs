@@ -1,7 +1,8 @@
-using System;
+﻿using System;
 using ArknightsMod.Common.GlobalNPCs;
 using ArknightsMod.Content.Buffs.ArmorSets;
 using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -23,14 +24,14 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Entelechia
 			EntelechiaSetActive = false;
 		}
 
+		// NeoArmor Reforge：套装件是独立 ItemID，穿上它本身就代表"已经是套装形态"，
+		// 不需要再查 hasUpgraded；player.setBonus 文本交给 EntelechiaHead 的
+		// SetProfile.SetBonusKey 统一设置，这里不再重复设置一遍。
 		public override void PostUpdateEquips() {
-			EntelechiaHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<EntelechiaHead>());
-			EntelechiaSetActive = OperatorSetEquipHelper.HasFullSet(
-				Player,
-				ModContent.ItemType<EntelechiaHead>(),
-				ModContent.ItemType<EntelechiaBody>(),
-				ModContent.ItemType<EntelechiaLegs>());
-			OperatorSetEquipHelper.ApplySetBonusText(Player, EntelechiaSetActive, "Mods.ArknightsMod.ArmorSets.Entelechia.SetBonus");
+			EntelechiaHelmetActive = Player.armor[0].type == NeoArmorReforgeSetLoader.GetSetType<EntelechiaHead>();
+			EntelechiaSetActive = EntelechiaHelmetActive
+				&& Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<EntelechiaBody>()
+				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<EntelechiaLegs>();
 		}
 
 		public override void ModifyMaxStats(out StatModifier health, out StatModifier mana) {

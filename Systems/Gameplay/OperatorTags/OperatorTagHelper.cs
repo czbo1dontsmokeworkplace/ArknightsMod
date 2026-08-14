@@ -1,5 +1,6 @@
 using ArknightsMod.Common.GlobalNPCs;
 using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content.Projectiles.Guard.Saki;
 using Terraria;
 using Terraria.ModLoader;
@@ -16,7 +17,7 @@ namespace ArknightsMod.Systems.Gameplay.OperatorTags
 				return false;
 
 			// 干员标签（职业/阵营）仅在头部件作为「已升级盔甲」穿戴时生效，与套装效果一致（纯时装不触发）。
-			if (!player.armor[0].neoarmor().hasUpgraded)
+			if (!IsUpgradedHelmet(player.armor[0]))
 				return false;
 
 			if (!OperatorTagRegistry.TryGetFromHelmet(player.armor[0].type, out OperatorTagRegistry.OperatorTagEntry entry))
@@ -70,8 +71,7 @@ namespace ArknightsMod.Systems.Gameplay.OperatorTags
 			int helmetType = ModContent.ItemType<THelmet>();
 			for (int i = 0; i < Main.maxPlayers; i++) {
 				Player player = Main.player[i];
-				if (player.active && !player.dead
-				    && player.armor[0].type == helmetType && player.armor[0].neoarmor().hasUpgraded) {
+				if (player.active && !player.dead && IsUpgradedHelmetOf(player.armor[0], helmetType)) {
 					found = player;
 					return true;
 				}
@@ -79,6 +79,20 @@ namespace ArknightsMod.Systems.Gameplay.OperatorTags
 
 			found = null;
 			return false;
+		}
+
+		// 「这件东西是不是某位干员的**盔甲形态**头部件」。
+		//
+		// NeoArmor Reforge 里"盔甲形态"就是一个独立的套装件 ItemID，所以判定等价于
+		// "这个 ItemType 能反查到对应的时装"。GetVanity 返回非 null 即成立。
+		// （旧 NeoArmor 靠 GlobalItem 上的 hasUpgraded 标记区分，全员迁移完成后已无此形态。）
+		private static bool IsUpgradedHelmet(Item helmet) =>
+			NeoArmorReforgeSetLoader.GetVanity(helmet.type) != null;
+
+		// 同上，外加"必须是指定那位干员的"。传入的 helmetType 是**时装**的 ItemID。
+		private static bool IsUpgradedHelmetOf(Item helmet, int vanityHelmetType) {
+			NeoArmorReforgeVanityItem vanity = NeoArmorReforgeSetLoader.GetVanity(helmet.type);
+			return vanity != null && vanity.Type == vanityHelmetType;
 		}
 	}
 }

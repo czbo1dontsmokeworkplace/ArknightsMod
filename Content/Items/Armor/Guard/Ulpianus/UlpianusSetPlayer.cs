@@ -1,5 +1,6 @@
-using System;
+﻿using System;
 using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Systems.Gameplay.OperatorTags;
 using Terraria;
 using Terraria.ID;
@@ -23,14 +24,14 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Ulpianus
 			attackBonus = 0f;
 		}
 
+		// NeoArmor Reforge：套装件是独立 ItemID，穿上它本身就代表"已经是套装形态"，
+		// 不需要再查 hasUpgraded；player.setBonus 文本交给 UlpianusHead 的
+		// SetProfile.SetBonusKey 统一设置，这里不再重复设置一遍。
 		public override void PostUpdateEquips() {
-			UlpianusHelmetActive = OperatorSetEquipHelper.HasHelmet(Player, ModContent.ItemType<UlpianusHead>());
-			UlpianusSetActive = OperatorSetEquipHelper.HasFullSet(
-				Player,
-				ModContent.ItemType<UlpianusHead>(),
-				ModContent.ItemType<UlpianusBody>(),
-				ModContent.ItemType<UlpianusLegs>());
-			OperatorSetEquipHelper.ApplySetBonusText(Player, UlpianusSetActive, "Mods.ArknightsMod.ArmorSets.Ulpianus.SetBonus");
+			UlpianusHelmetActive = Player.armor[0].type == NeoArmorReforgeSetLoader.GetSetType<UlpianusHead>();
+			UlpianusSetActive = UlpianusHelmetActive
+				&& Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<UlpianusBody>()
+				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<UlpianusLegs>();
 
 			if (UlpianusHelmetActive) {
 				lifeBonus = KillStacks * 12;

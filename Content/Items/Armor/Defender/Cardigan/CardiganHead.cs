@@ -1,38 +1,22 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using ArknightsMod.Content.Tiles.Infrastructure;
+﻿using Terraria.ModLoader;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content.Items.Material;
 
 namespace ArknightsMod.Content.Items.Armor.Defender.Cardigan
 {
 	[AutoloadEquip(EquipType.Head)]
-	public class CardiganHead : NeoArmorHead
+	public class CardiganHead : NeoArmorReforgeVanityHead
 	{
 		public override int Rarity => 3;
-		public override int ArmorLifeBonus => 243;
-		
-		public override void Load() {
-			if (Main.netMode == NetmodeID.Server)
-				return;
-		}
 
-		public override void SetArmorDefaults() {
-			Item.defense = 0;
-		}
-		
-
-
-		public override void AddRecipes() {
-			CreateRecipe()
-			.AddIngredient<CardiganHead>(1)
-			.AddIngredient<Orundum>(30)
-			.AddIngredient<OrironShard>(1)
-			.AddTile(ModContent.TileType<FactoryTile>())
-			.AddCondition(NeoArmorUtils.NeedVanity)
-			.DisableDecraft()
-			.Register();
-		}
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
+			Defense = 0,
+			LifeBonus = 243,
+			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Cardigan",
+			Materials = recipe => recipe
+				.AddIngredient<Orundum>(30)
+				.AddIngredient<OrironShard>(1),
+			SetBonusKey = "Mods.ArknightsMod.ArmorSets.Cardigan.SetBonus",
+		};
 	}
 }
-	

@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using ArknightsMod.Content;
 
 namespace ArknightsMod.Content.Items.Weapons.Supporter.Beanstalk
 {
@@ -42,12 +43,12 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Beanstalk
 			Item.staff[Item.type] = true;
 		}
 
-		public override bool AltFunctionUse(Player player) => true;
+		public override bool AltFunctionUse(Player player) => false;
 
 		public override bool CanUseItem(Player player) {
 			var mp = player.GetModPlayer<WeaponPlayer>();
 
-			if (player.altFunctionUse == 2) {
+			if (ArknightsKeybinds.SkillActivatePressed(player)) {
 				if (mp.StockCount > 0 && !mp.SkillActive) {
 					mp.SkillActive = true;
 					mp.SkillTimer = 0;

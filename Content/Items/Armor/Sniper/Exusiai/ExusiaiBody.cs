@@ -1,31 +1,22 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using ArknightsMod.Content.Tiles.Infrastructure;
+﻿using Terraria.ModLoader;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content.Items.Material;
 
 namespace ArknightsMod.Content.Items.Armor.Sniper.Exusiai
 {
 	[AutoloadEquip(EquipType.Body)]
-	public class ExusiaiBody : NeoArmorBody
+	public class ExusiaiBody : NeoArmorReforgeVanityBody
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 84;
 
-		public override void SetArmorDefaults() {
-			Item.defense = 12;
-		}
-		
-		public override void AddRecipes() {
-			CreateRecipe()
-			.AddIngredient<ExusiaiBody>(1)
-			.AddIngredient<Orundum>(60)
-			.AddIngredient<PolymerizationPreparation>(6)
-			.AddIngredient<WhiteHorseKohl>(7)
-			.AddTile(ModContent.TileType<FactoryTile>())
-			.AddCondition(NeoArmorUtils.NeedVanity)
-			.DisableDecraft()
-			.Register();
-		}
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
+			Defense = 12,
+			LifeBonus = 84,
+			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Exusiai",
+			Materials = recipe => recipe
+				.AddIngredient<Orundum>(60)
+				.AddIngredient<PolymerizationPreparation>(6)
+				.AddIngredient<WhiteHorseKohl>(7),
+		};
 	}
 }

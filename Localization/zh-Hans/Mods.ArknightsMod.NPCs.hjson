@@ -48,6 +48,7 @@ InsaneZombieL.DisplayName: 狂暴宿主组长
 Rioter.DisplayName: 暴徒
 Crownslayer.DisplayName: 弑君者
 RockCrab.DisplayName: 磐蟹
+MiZhenQiaoXie.DisplayName: 迷珍巧械
 
 Closure: {
 	DisplayName: 可露希尔
@@ -119,4 +120,5 @@ Cragpincer.DisplayName: 岩壳蟹
 FieryOriginiumSlugNPC.DisplayName: 炽焰源石虫
 PmpSlugEggLandNPC.DisplayName: 炽焰源石虫卵
 // DeploymentCost.DisplayName: Deployment Cost
-// FrenzyCage.DisplayName: Frenzy Cage
+// RaptorDrone.DisplayName: Raptor Drone
+// CasterShoot.DisplayName: Caster Shoot

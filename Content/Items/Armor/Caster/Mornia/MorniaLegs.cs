@@ -1,30 +1,21 @@
-﻿using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
-using ArknightsMod.Content.Tiles.Infrastructure;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content.Items.Material;
 
 namespace ArknightsMod.Content.Items.Armor.Caster.Mornia
 {
 	[AutoloadEquip(EquipType.Legs)]
-	public class MorniaLegs : NeoArmorLegs
+	public class MorniaLegs : NeoArmorReforgeVanityLegs
 	{
 		public override int Rarity => 4;
-		public override int ArmorLifeBonus => 50;
 
-		public override void SetArmorDefaults() {
-			Item.defense = 6;
-		}
-
-		public override void AddRecipes() {
-			CreateRecipe()
-			.AddIngredient<MorniaLegs>(1)
-			.AddIngredient<Orundum>(40)
-			.AddIngredient<Polyester>(3)
-			.AddTile(ModContent.TileType<FactoryTile>())
-			.AddCondition(NeoArmorUtils.NeedVanity)
-			.DisableDecraft()
-			.Register();
-		}
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
+			Defense = 6,
+			LifeBonus = 50,
+			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Mornia",
+			Materials = recipe => recipe
+				.AddIngredient<Orundum>(40)
+				.AddIngredient<Polyester>(3),
+		};
 	}
 }

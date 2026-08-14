@@ -10,6 +10,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
+using ArknightsMod.Content;
 
 namespace ArknightsMod.Content.Items.Weapons.Specialist.Rope
 {
@@ -54,12 +55,12 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.Rope
 			Item.crit = 4;
 		}
 
-		public override bool AltFunctionUse(Player player) => true;
+		public override bool AltFunctionUse(Player player) => false;
 
 		public override bool CanUseItem(Player player) {
 			var mp = player.GetModPlayer<WeaponPlayer>();
 
-			if (player.altFunctionUse == 2) {
+			if (ArknightsKeybinds.SkillActivatePressed(player)) {
 				// S2 复式勾爪：即时向 2 个最远敌人发射抓钩
 				if (mp.Skill == 1 && mp.StockCount > 0 && !mp.SkillActive) {
 					mp.DelStockCount();

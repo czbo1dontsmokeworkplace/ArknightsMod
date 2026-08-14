@@ -1,13 +1,18 @@
-using ArknightsMod.Common.UI;
+﻿using ArknightsMod.Common.UI;
+using ArknightsMod.Content;
 using ArknightsMod.Content.Items.Weapons.Specialist.Scene;
 using ArknightsMod.Content.Items.Weapons;
+using ArknightsMod.Content.Items.Weapons.Guard.Lupine;
+using ArknightsMod.Content.Items.Weapons.Guard.Oblivionis;
 using ArknightsMod.Content.Items.Weapons.Caster.Lava;
+using ArknightsMod.Content.Items.Weapons.Caster.Haze;
 using ArknightsMod.Content.Items.Weapons.Defender.Beagle;
 using ArknightsMod.Content.Items.Weapons.Defender.Nian;
 using ArknightsMod.Content.Items.Weapons.Defender.NoirCorne;
 using ArknightsMod.Content.Items.Weapons.Guard.Chen;
 using ArknightsMod.Content.Items.Weapons.Guard.SilverAsh;
 using ArknightsMod.Content.Items.Weapons.Guard.Thorns;
+using ArknightsMod.Content.Items.Weapons.Guard.Surtr;
 using ArknightsMod.Content.Items.Weapons.Sniper.Exusiai;
 using ArknightsMod.Content.Items.Weapons.Sniper.Kroos;
 using ArknightsMod.Content.Items.Weapons.Sniper.KroosAlter;
@@ -58,6 +63,27 @@ namespace ArknightsMod.Players
 		// SP恢复加成系统
 		public float SPRegenMultiplier { get; set; } = 1f;
 		private float spRegenFraction;
+
+		/// <summary>
+		/// 全局技力恢复速度倍率：开启配置开关时为 2（二倍速），关闭时为 1（原速）。
+		/// 只影响"技力条恢复的快慢"（自然回复/受击回复/攻击回复/饰品加速），不影响任何数值——
+		/// 技能所需技力、技力上限等仍按 CSV/武器数据里 1 倍速的原始数值走，
+		/// 部署费用吸收、套装/技能直接赠送技力等"技力返还"效果同样不受这个倍率影响
+		/// （它们不经过这里，直接改 SP 或 SkillCharge，参见 <see cref="AbsorbDeploymentCost"/>
+		/// 与 OperatorSPHelper.TryGainSP）。
+		/// </summary>
+		public static int GlobalSPRegenSpeedMultiplier =>
+			ModContent.GetInstance<Common.Configs.SkillChargeConfig>().DoubleSPRegenSpeed ? 2 : 1;
+
+		/// <summary>
+		/// 技能开启后，"消耗"技力（即倒数持续时间）的速度倍率：开启配置时为 2（二倍速），
+		/// 关闭时为 1（原速）。用在 UpdateActiveSkill/StrikeSkill 里，把用来判断"技能是否
+		/// 该结束"的时长阈值按这个倍率缩小——阈值越小，同样每帧 +1 的 SkillTimer 越快到达，
+		/// 表现就是持续时间变成原来的 1/2。CSV/武器数据里的持续时间数值本身不受影响。
+		/// </summary>
+		public static float ActiveDurationMultiplier =>
+			ModContent.GetInstance<Common.Configs.SkillChargeConfig>().DoubleSkillDurationConsumption ? 0.5f : 1f;
+
 		private bool chargeReady;
 		private bool chargeOpen;
 		private bool hasNearbyEnemy;
@@ -87,6 +113,7 @@ namespace ArknightsMod.Players
 		public bool HoldSchwarzBow = false;
 		public bool HoldTyphonBow = false;
 		public bool HoldHazeMagicBook = false;
+		public bool HoldSurtrLaevatain = false;
 
 		private int oldHeld;
 		private int oldSkill;
@@ -118,6 +145,7 @@ namespace ArknightsMod.Players
 			chargeReady = true;
 			chargeOpen = true;
 		}
+
 		//======================================================================
 		//新添入的，用于更新
 		public override void PostUpdate() {
@@ -296,6 +324,7 @@ namespace ArknightsMod.Players
 			HoldSchwarzBow = Main.LocalPlayer.HeldItem.ModItem is SchwarzBow;
 			HoldTyphonBow  = Main.LocalPlayer.HeldItem.ModItem is TyphonBow;
 			HoldHazeMagicBook  = Main.LocalPlayer.HeldItem.ModItem is HazeMagicBook;
+			HoldSurtrLaevatain  = Main.LocalPlayer.HeldItem.ModItem is SurtrLaevatain;
 			// 基于武器的技能系统
 			hasNearbyEnemy = false;
 			// 旧版武器支持
@@ -346,13 +375,29 @@ namespace ArknightsMod.Players
 				}
 				else if (ark.chargeReady[Skill] && StockCount == 0) {
 					ark.chargeReady[Skill] = false;
-					SkillCharge = Math.Max(SkillCharge, ark.GetSkillData(Skill).LevelData[SkillLevel[Skill] - 1].InitSP * Div);
+
+					// SkillLevel 只有旧体系武器的 SetAllSkillsData 会填；新体系武器（技能数据走 CSV）
+					// 手持时它仍是默认的 0，原来直接拿 SkillLevel[Skill] - 1 去索引 LevelData 会得到
+					// -1 而抛 IndexOutOfRangeException。这个异常是在 ResetEffects 里抛的，会把整个
+					// Player.Update 当帧打断，导致排在后面的 ProcessTriggers/物品使用全都不执行——
+					// 表现就是"手持这类武器时技能完全开不了"。这里改成：等级为 0 时回退到技能自身的
+					// 当前等级，并统一夹到 [1, LevelData.Length] 范围内，任何情况下都不会越界。
+					SkillData data = ark.GetSkillData(Skill);
+					if (data?.LevelData is { Length: > 0 } levelData) {
+						int level = SkillLevel[Skill] > 0 ? SkillLevel[Skill] : data.Level;
+						level = Math.Clamp(level, 1, levelData.Length);
+						SkillCharge = Math.Max(SkillCharge, levelData[level - 1].InitSP * Div);
+					}
 				}
 			}
 		}
 
+		// 释放技能后，如果附近 560px 内没有可仇恨的敌人，自然回复会被冻结，
+		// 直到出现敌人、或等够这个时长才解锁（见 ResetEffects 里 chargeOpen/hasNearbyEnemy 的判定）。
+		// 原本是 60*15（15 秒），空窗期太长、容易被误认为"技力卡住了"，先缩短到 3 秒，
+		// 又觉得 3 秒太快、缺乏节奏感，改为 5 秒。这是全局值，作用于所有武器，不是某个武器专属的。
 		private int GetRestoreTime() {
-			return 60 * 15;
+			return 60 * 5;
 		}
 
 		public void TryAutoCharge() {
@@ -374,6 +419,31 @@ namespace ArknightsMod.Players
 				UnderAttack = true;
 		}
 
+		/// <summary>
+		/// 统一技能开启热键的核心：ProcessTriggers 只在本地客户端跑，是自定义 ModKeybind
+		/// 唯一能读到"当前是否按住"的地方。各武器的 CanUseItem/Shoot 里已经改成检查
+		/// ArknightsKeybinds.SkillActivatePressed(player)，但那些钩子本身只在玩家真的
+		/// 左键/右键点击、原版判定"这次点击要不要交给物品使用"时才会被调用——单纯按热键
+		/// 并不会触发它们。这里在按住热键时把 Player.controlUseItem 设成 true，相当于
+		/// "伪造一次左键点击"，把它接入原版本来就有的点击处理管线，武器那边的判定才有
+		/// 机会跑起来。之所以伪造左键而不是右键：这样武器代码里剩下的
+		/// player.altFunctionUse==2（比如摄影车部署、浮游信标）不会被误触发——两者互不干扰。
+		///
+		/// 只在手持本模组的技能武器时才伪造点击，避免误把其它物品（工具、纯输出武器、
+		/// 别的模组物品）也顺带触发一次使用。LupineScarlet/OblivionisSword 没有继承
+		/// UpgradeWeaponBase（历史遗留），单独列出来。
+		/// </summary>
+		public override void ProcessTriggers(Terraria.GameInput.TriggersSet triggersSet) {
+			if (!ArknightsKeybinds.SkillActivatePressed(Player))
+				return;
+
+			if (Player.HeldItem.ModItem is UpgradeWeaponBase
+				or LupineScarlet
+				or OblivionisSword) {
+				Player.controlUseItem = true;
+			}
+		}
+
 		public void TryHurtCharge()
 		{
 			if (CurrentSkill?.ChargeType == SkillChargeType.Hurt)
@@ -390,9 +460,12 @@ namespace ArknightsMod.Players
 				SkillLevelData data = CurrentSkill.CurrentLevelData;
 				if (!SkillActive && StockCount < data.MaxStack)
 				{
-					SP++;
-					SkillCharge++;
-					if (SkillCharge == SkillChargeMax)
+					// 受击回复类型 Div=1，SkillCharge 和 SP 一一对应；倍率大于 1 时用 >= 而非 ==
+					// 判满，避免（比如 MaxSP 为奇数时）两点两点跳过精确等于 SkillChargeMax 那一格。
+					int gain = GlobalSPRegenSpeedMultiplier;
+					SP += gain;
+					SkillCharge += gain;
+					if (SkillCharge >= SkillChargeMax)
 					{
 						SkillCharge=0;
 						SP = ++StockCount == data.MaxStack ? data.MaxSP : 0;
@@ -408,29 +481,36 @@ namespace ArknightsMod.Players
 		public void AutoCharge() {
 			if (SceneCameraSkills.BlocksSkillCharge(Player)) // 稀音技能持续期间冻结充能
 				return;
+			// 自然回复类型 Div=60（SkillCharge 每 60 tick = 1 点可见技力）。倍率 x2 时每 tick
+			// 累加 2 点 SkillCharge，SP 直接按 SkillCharge/Div 换算——和原来"每 60 tick 视觉 +1"
+			// 的模运算在倍率为 1 时完全等价，但同时天然支持任意倍率，不会有跳格风险。
+			int gain = GlobalSPRegenSpeedMultiplier;
 			if (CurrentSkill != null) {
 				SkillLevelData data = CurrentSkill.CurrentLevelData;
 				if (!SkillActive && StockCount < data.MaxStack) {
-					if (++SkillCharge % 60 == 0)
-						SP++;
+					SkillCharge += gain;
 
-					if (SkillCharge == SkillChargeMax) {
+					if (SkillCharge >= SkillChargeMax) {
 						SkillCharge = 0;
 						SP = ++StockCount == data.MaxStack ? data.MaxSP : 0;
+					}
+					else {
+						SP = SkillCharge / Div;
 					}
 				}
 			}
 			else {
 				// 旧版自动充能逻辑
 				if (!SkillActive && StockCount < StockMax[Skill]) {
-					SkillCharge += 1;
-					if (SkillCharge != 0 && SkillCharge % 60 == 0)
-						SP += 1;
+					SkillCharge += gain;
 
-					if (SkillCharge == SkillChargeMax) {
+					if (SkillCharge >= SkillChargeMax) {
 						SkillCharge = 0;
 						StockCount += 1;
 						SP = StockCount == StockMax[Skill] ? (int)MaxSP[Skill] : 0;
+					}
+					else {
+						SP = SkillCharge / Div;
 					}
 				}
 			}
@@ -451,7 +531,10 @@ namespace ArknightsMod.Players
 				SkillLevelData data = CurrentSkill.CurrentLevelData;
 				if (!SkillActive && StockCount < data.MaxStack) {
 
-					float extraCharge = SPRegenMultiplier - 1f;
+					// 饰品/套装给的额外回复速度加成也按同一倍率放大，保持"相对加成比例不变，
+					// 只是整体更快"——这里 while 循环每次只消耗掉整数 1 点 AccessoriesChargeFraction、
+					// SkillCharge 每次只 +1，不受倍率影响，所以内部判满逻辑不需要改。
+					float extraCharge = (SPRegenMultiplier - 1f) * GlobalSPRegenSpeedMultiplier;
 					AccessoriesChargeFraction += extraCharge;
 
 
@@ -480,7 +563,7 @@ namespace ArknightsMod.Players
 			else {
 				// 旧版武器支持
 				if (!SkillActive && StockCount < StockMax[Skill]) {
-					float extraCharge = SPRegenMultiplier - 1f;
+					float extraCharge = (SPRegenMultiplier - 1f) * GlobalSPRegenSpeedMultiplier;
 					AccessoriesChargeFraction += extraCharge;
 
 					while (AccessoriesChargeFraction >= 1f) {
@@ -509,14 +592,18 @@ namespace ArknightsMod.Players
 			if (SceneCameraSkills.BlocksSkillCharge(Player)) // 稀音技能持续期间冻结充能
 				return;
 
+			// 攻击回复类型同样 Div=1，理由同 HurtCharge：倍率大于 1 时必须用 >= 而不是 ==
+			// 判满，否则 MaxSP 为奇数时会永远跳过精确等于 SkillChargeMax 的那一格，技能卡死攒不满。
+			int gain = GlobalSPRegenSpeedMultiplier;
+
 			if (CurrentSkill != null) {
 				SkillLevelData data = CurrentSkill.CurrentLevelData;
 				if (!SkillActive && StockCount < data.MaxStack) {
-					SkillCharge++;
-					SP++;
+					SkillCharge += gain;
+					SP += gain;
 				}
 
-				if (SkillCharge == SkillChargeMax) {
+				if (SkillCharge >= SkillChargeMax) {
 					SkillCharge = 0;
 					SP = ++StockCount == data.MaxStack ? data.MaxSP : 0;
 				}
@@ -524,12 +611,12 @@ namespace ArknightsMod.Players
 			else {
 				// 旧版攻击恢复逻辑
 				if (!SkillActive && StockCount < StockMax[Skill]) {
-					SkillCharge += 1;
+					SkillCharge += gain;
 					if (SkillCharge != 0)
-						SP += 1;
+						SP += gain;
 				}
 
-				if (SkillCharge == SkillChargeMax) {
+				if (SkillCharge >= SkillChargeMax) {
 					SkillCharge = 0;
 					StockCount += 1;
 					SP = StockCount == StockMax[Skill] ? (int)MaxSP[Skill] : 0;
@@ -539,13 +626,17 @@ namespace ArknightsMod.Players
 
 		public void UpdateActiveSkill() {
 			if (SkillActive) {
+				// 阈值本身乘倍率缩小（而不是让 SkillTimer 跳着加），并且统一用 >= 判断——
+				// 倍率是 0.5 时阈值大概率不再是整数，用 == 精确相等会出现永远判不到的情况，
+				// 参照之前修 SP 二倍速时踩过的同一个坑（见 HurtCharge 的注释）。
 				if (CurrentSkill != null) {
-					if (CurrentSkill.AutoUpdateActive && ++SkillTimer >= CurrentSkill.CurrentLevelData.ActiveTime * 60)
+					if (CurrentSkill.AutoUpdateActive
+						&& ++SkillTimer >= CurrentSkill.CurrentLevelData.ActiveTime * 60 * ActiveDurationMultiplier)
 						SkillActive = false;
 				}
 				else {
 					SkillTimer++;
-					if (SkillTimer == SkillActiveTime[Skill] * 60)
+					if (SkillTimer >= SkillActiveTime[Skill] * 60 * ActiveDurationMultiplier)
 						SkillActive = false;
 				}
 			}
@@ -557,7 +648,7 @@ namespace ArknightsMod.Players
 		public void StrikeSkill() {
 			if (SkillActive) {
 				SkillTimer++;
-				if (SkillTimer == 10)
+				if (SkillTimer >= 10 * ActiveDurationMultiplier)
 					SkillActive = false;
 			}
 		}
@@ -901,6 +992,28 @@ namespace ArknightsMod.Players
 				AutoTrigger = new() { false, false, false };
 				ShowSummonIconBySkills = new() { false, false, false };
 				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 15 };//夜烟这里的所有技能数据我都瞎填的
+				InitialSPs2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 42 };
+				InitialSPs3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 25 };
+				MaxSPs1List     = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 35 };
+				MaxSPs2List     = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 50 };
+				MaxSPs3List     = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 40 };
+				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 35f };
+				SkillActiveTimeS2List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 20f };
+				SkillActiveTimeS3List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 30f };
+				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+				StockMaxS2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+				StockMaxS3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+				SetSkillData();
+			}
+
+			else if (HoldSurtrLaevatain) {
+				IconName = "SurtrLaevatain";
+				HowManySkills = 2;
+				SkillLevel = new() { 10, 10, 10 };
+				ChargeTypeIsPerSecond = new() { false, true, true };
+				AutoTrigger = new() { true, false, false };
+				ShowSummonIconBySkills = new() { false, false, false };
+				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 15 };//42这里的所有技能数据我都瞎填的
 				InitialSPs2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 42 };
 				InitialSPs3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 25 };
 				MaxSPs1List     = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 35 };

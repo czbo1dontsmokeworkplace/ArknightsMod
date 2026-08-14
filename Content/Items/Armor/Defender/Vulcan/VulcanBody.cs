@@ -1,31 +1,22 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using ArknightsMod.Content.Tiles.Infrastructure;
+﻿using Terraria.ModLoader;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content.Items.Material;
 
 namespace ArknightsMod.Content.Items.Armor.Defender.Vulcan
 {
 	[AutoloadEquip(EquipType.Body)]
-	public class VulcanBody : NeoArmorBody
+	public class VulcanBody : NeoArmorReforgeVanityBody
 	{
 		public override int Rarity => 5;
-		public override int ArmorLifeBonus => 205;
 
-		public override void SetArmorDefaults() {
-			Item.defense = 44;
-		}
-		
-		public override void AddRecipes() {
-			CreateRecipe()
-			.AddIngredient<VulcanBody>(1)
-			.AddIngredient<Orundum>(50)
-			.AddIngredient<WhiteHorseKohl>(3)
-			.AddIngredient<Aketon>(5)
-			.AddTile(ModContent.TileType<FactoryTile>())
-			.AddCondition(NeoArmorUtils.NeedVanity)
-			.DisableDecraft()
-			.Register();
-		}
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
+			Defense = 44,
+			LifeBonus = 205,
+			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Vulcan",
+			Materials = recipe => recipe
+				.AddIngredient<Orundum>(50)
+				.AddIngredient<WhiteHorseKohl>(3)
+				.AddIngredient<Aketon>(5),
+		};
 	}
 }

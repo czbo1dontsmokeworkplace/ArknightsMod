@@ -1,0 +1,1116 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Terraria;
+using Terraria.GameContent;
+using Terraria.Graphics;
+using Terraria.Graphics.CameraModifiers;
+using Terraria.ModLoader;
+
+// TODO : 提供屏幕朝向震动以及卡肉等攻击效果 制作被打出血的粒子特效
+/* TODO : 刀砍快慢以及后摇啥的 提供多种情况AI 通过链式调用来调整整体的状态机 例如 于Move.State 点击左键 进入Attack.State 然后
+          在Attack.State中用右键或者特殊按键的时候 切换为特殊State  */
+namespace ArknightsMod.Content.SwingHelper
+{
+    public class SwingHelper
+    {
+        public SwingHelper(int index,int catmullScale)
+        {
+            SwingUseTime = index;
+            CatmullScale = catmullScale;
+            this.index = index;
+            oldPos = new Vector2[index];
+            oldHandPos = new Vector2[index];
+            oldWorldPos = new Vector2[index];
+            oldWorldHandPos = new Vector2[index];
+            oldRot = new float[index];
+        }
+        #region 提供的着色器资源
+        /// <summary>
+        /// 消融
+        /// </summary>
+        public static Effect Dissolve;
+        /// <summary>
+        /// 内流动
+        /// </summary>
+        public static Effect Flow;
+        /// <summary>
+        /// 噪声流动
+        /// </summary>
+        public static Effect NoiseFlow;
+
+
+        public enum SwingEffect
+        {
+            zero,
+            dissolve,
+            Flow,
+            NoiseFlow,
+        }
+
+        public enum TripTex
+        {
+	        Streamline,
+	        Afterimage
+        }
+        #endregion
+
+        #region 基础的字段及属性
+        /// <summary>
+        /// 绑定的弹幕
+        /// </summary>
+        public Projectile proj;
+        /// <summary>
+        /// 弹幕贴图
+        /// </summary>
+        public Texture2D projTexture;
+        /// <summary>
+        /// 贴图大小
+        /// </summary>
+        public Vector2 texSize => projTexture.Size();
+        /// <summary>
+        /// 大小倍率
+        /// </summary>
+        public Vector2 scale = new Vector2(1,1);
+        /// <summary>
+        /// 剑体长度
+        /// </summary>
+        public float Length => (texSize*scale).Length();
+
+        public Vector2 texLength => new Vector2(Length, 0);
+        public Vector2 handleLength;
+        public Vector2 swordLength;
+
+        /// <summary>
+        /// 实际剑方向（SwordAHandCon 算好的，DrawBlade 用它对齐柄）
+        /// </summary>
+        public float swordRot;
+
+        /// <summary>
+        /// 绑定的玩家
+        /// </summary>
+        public Player player;
+        /// <summary>
+        /// 卡肉时间
+        /// </summary>
+        public float lagTime;
+        /// <summary>
+        /// 鼠标弧度
+        /// </summary>
+        public float mouseRad;
+
+        private float startRad;
+        private float endRad;
+        /// <summary>
+        /// 手部弧度
+        /// </summary>
+        public float armRad;
+        /// <summary>
+        /// 挥舞总弧度
+        /// </summary>
+        public float swingRad;
+        /// <summary>
+        /// 手状态
+        /// </summary>
+        public Player.CompositeArmStretchAmount handType = Player.CompositeArmStretchAmount.Full;
+        /// <summary>
+        /// 前手位置
+        /// </summary>
+        public Vector2 frontHandPos => player.GetFrontHandPosition(handType, armRad);
+        /// <summary>
+        /// 剑柄位置
+        /// </summary>
+        public Vector2 setoff;
+        /// <summary>
+        /// 剑体所使用的顶点结构体
+        /// </summary>
+        public List<Vertex> sword = new List<Vertex>();
+        public List<Vertex> trip = new List<Vertex>();
+        public Vector2[] swordPos_Draw = new Vector2[4];
+        /// <summary>
+        /// 剑与手的角度 默认为二者垂直
+        /// </summary>
+        public float swordRad = MathF.PI / 2;
+        /// <summary>
+        /// 记录次数/各类动作使用时间
+        /// </summary>
+        private int index;
+
+        public Vector2 swordScale = new Vector2(1, 1);  // X=剑身长，Y=剑身宽
+
+        public int SwingUseTime;
+        /// <summary>
+        /// 细分曲线倍数
+        /// </summary>
+        private int CatmullScale;
+        //保存的old信息 -- 剑尖位置 旋转值 手位置 (以及两个世界位置)
+        private Vector2[] oldPos;
+        private float[] oldRot;
+        private Vector2[] oldHandPos;
+        private Vector2[] oldWorldPos;
+        private Vector2[] oldWorldHandPos;
+        #endregion
+
+        #region 专门给部分方法所提供的字段及属性
+        /// <summary>
+        /// 挥砍时间
+        /// </summary>
+        public int swingTime;
+        /// <summary>
+        /// 戳刺时间
+        /// </summary>
+        public int jabTime;
+        /// <summary>
+        /// 行进速率
+        /// </summary>
+        public float walkPhase;
+        #endregion
+
+        #region 工具变量
+        /// <summary>
+        /// 剑柄位置
+        /// </summary>
+        public Vector2 handlePos;
+		/// <summary>
+		/// 剑体尾部
+		/// </summary>
+        public Vector2 swordEnd;
+		/// <summary>
+		/// 剑体首部
+		/// </summary>
+        public Vector2 swordHead;
+        /// <summary>
+        /// 剑尖位置
+        /// </summary>
+        public Vector2 swordPos;
+        /// <summary>
+        /// 进度
+        /// </summary>
+        public float progress;
+        /// <summary>
+        /// 玩家速度
+        /// </summary>
+        public float playerX;
+        #endregion
+
+        #region 蓄力所需字段
+        /// <summary>
+        /// 当前蓄力时间
+        /// </summary>
+        public float Chargetime;
+        /// <summary>
+        /// 最大蓄力时间
+        /// </summary>
+        public float MaxChargetime;
+        /// <summary>
+        /// 最大蓄力比例倍率
+        /// </summary>
+        public float MaxChargeScale_size;
+        /// <summary>
+        /// 最大蓄力伤害倍率
+        /// </summary>
+        public float MaxChargeScale_damage;
+        /// <summary>
+        /// 蓄力比例
+        /// </summary>
+        public float ChargeProgress;
+        #endregion
+
+        #region 设置挥舞帮助的参数
+        public SwingHelper SetTex(Texture2D tex)
+        {
+            projTexture = tex;
+            return this;
+        }
+        public SwingHelper SetPlayer(Player player)
+        {
+            this.player = player;
+            return this;
+        }
+        public SwingHelper SetProj(Projectile proj)
+        {
+            this.proj = proj;
+            return this;
+        }
+        public SwingHelper SetSwingRad(float rad)
+        {
+            this.swingRad = rad;
+            return this;
+        }
+
+        public SwingHelper SetScale(Vector2 scale)
+        {
+            this.scale = scale;
+            return this;
+        }
+        public SwingHelper SetcatmullScale(int catmullScale)
+        {
+            this.CatmullScale = catmullScale;
+            return this;
+        }
+
+        public SwingHelper SetIndex(int index)
+        {
+            SwingUseTime = index;
+            this.index = index;
+            oldPos = new Vector2[index];
+            oldHandPos = new Vector2[index];
+            oldWorldPos = new Vector2[index];
+            oldWorldHandPos = new Vector2[index];
+            oldRot = new float[index];
+            return this;
+        }
+
+        public SwingHelper ReloadIndex()
+        {
+            oldPos = new Vector2[index];
+            oldHandPos = new Vector2[index];
+            oldWorldPos = new Vector2[index];
+            oldWorldHandPos = new Vector2[index];
+            oldRot = new float[index];
+            return this;
+        }
+        /// <summary>
+        /// 保存鼠标朝向
+        /// </summary>
+        /// <param name="rad"></param>
+        public SwingHelper PointMouseRad(float rad)
+        {
+	        float half = swingRad / 2f;
+	        if (player.direction == 1)
+	        {
+		        startRad = rad - half;   // 朝右：身后(-90°) → 前方(+90°)
+		        endRad   = rad + half;
+	        }
+	        else
+	        {
+		        startRad = rad + half;   // 朝左：身后(+90°) → 前方(-90°)
+		        endRad   = rad - half;
+	        }
+	        if (endRad > MathF.PI * 2f)
+	        {
+		        endRad -= MathF.PI * 2f;
+		        startRad -= MathF.PI * 2f;
+	        }
+	        if (startRad > endRad)
+		        startRad -= MathF.PI * 2f;
+	        return this;
+        }
+        #endregion
+        /// <summary>
+        /// 移动时剑的AI
+        /// </summary>
+        public virtual void Move()
+        {
+            player.heldProj = proj.whoAmI;
+            playerX = Math.Abs(player.velocity.X);
+            if (Math.Abs(player.velocity.Y) > 0.01f) {
+                armRad = MathHelper.ToRadians(-20f);
+                walkPhase = 0f;
+            }
+            else if (playerX > 0.1f) {
+                walkPhase += 0.12f + playerX * 0.04f;
+                progress = (MathF.Sin(walkPhase) + 1f) * 0.5f;
+                armRad = MathHelper.ToRadians(MathHelper.Lerp(50f, -20f, progress));
+            }
+            else {
+                walkPhase = 0f;
+                armRad = 0f;
+            }
+            SwordAHandCon(-MathF.PI/2f * player.direction, armRad + MathF.PI/2f *  player.direction,texLength.Length(),handleLength.Length(),swordLength.Length());
+            proj.rotation = armRad * -player.direction;
+        }
+
+        /// <summary>
+        /// 蓄力/等待时剑AI
+        /// </summary>
+        public virtual void Wait()
+        {
+            swordRad = RotationHelper.GetSwingRotation(startRad, endRad,swingTime,SwingUseTime,player.direction,scale
+	            ,texLength,handleLength,swordLength,out float length,out float handlelen,out float swordlen);
+            SwordAHandCon(0f, startRad,length,handlelen,swordlen);
+            Chargetime = MathF.Min(Chargetime+1, MaxChargetime);
+            ChargeProgress = Chargetime / MaxChargetime;
+        }
+
+        /// <summary>
+        /// 基础挥砍
+        /// </summary>
+        public virtual bool Swing(float hold = 0.1f, float recovery = 0.15f)
+        {
+            player.heldProj = proj.whoAmI;
+            if (swingTime > SwingUseTime)
+                return true;
+            swordRad = RotationHelper.GetSwingRotation(startRad, endRad,swingTime,SwingUseTime,player.direction,scale
+	            ,texLength,handleLength,swordLength,out float length,out float handlelen,out float swordlen);
+            SwordAHandCon(0,swordRad,length,handlelen,swordlen,true,true);
+            if (lagTime == 0)
+	            swingTime++;
+            else
+	            lagTime--;
+            return false;
+        }
+        private Matrix uTransform = Matrix.CreateOrthographicOffCenter(
+            0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
+        private int i = 0;
+
+        public Color GetDominantColor(Texture2D texture) {
+	        Color[] pixels = new Color[texture.Width * texture.Height];
+	        texture.GetData(pixels);
+
+	        //将颜色存放到字典里面
+	        Dictionary<Color, int> colorFrequency = new Dictionary<Color, int>();
+
+	        foreach (Color pixel in pixels) {
+		        if (pixel.A > 100) {
+			        //RGB颜色为16进制 用这个算法去除重复成分
+			        Color simplified = new Color(
+				        (byte)(pixel.R / 16 * 16),
+				        (byte)(pixel.G / 16 * 16),
+				        (byte)(pixel.B / 16 * 16)
+			        );
+
+			        if (colorFrequency.ContainsKey(simplified))
+				        colorFrequency[simplified]++;
+			        else
+				        colorFrequency[simplified] = 1;
+		        }
+	        }
+
+	        // 返回字典里面最多的
+	        return colorFrequency.OrderByDescending(x => x.Value).First().Key;
+        }
+
+
+        /// <summary>
+        /// 绘制剑体
+        /// </summary>
+        public virtual void DrawBlade(SpriteBatch sb, bool handPlayerDir = true)
+        {
+	        Vector2 Length = swordPos - handlePos;
+	        Vector2 handPos = handPlayerDir
+		        ? handlePos + setoff.RotatedBy(swordRot)
+		        : handlePos + setoff.RotatedBy(swordRot);
+	        handPos -= Main.screenPosition;
+	        Vector2 halfPos = Length / 2f;
+	        if (scale.X != 1)
+		        halfPos = halfPos.RotatedBy(TransformHelper.CalculateTiltAngle(projTexture, scale.X));
+	        else
+		        halfPos = halfPos.RotatedBy(TransformHelper.CalculateTiltAngle(projTexture, scale.Y));
+	        Vector2 halfWidth = new Vector2(-halfPos.Y, halfPos.X);
+	        swordPos_Draw =
+	        [
+		        handPos + halfPos - halfWidth * player.direction,   //左上
+		        handPos + Length,                 //右上
+		        handPos,                          //左下
+		        handPos + halfPos + halfWidth * player.direction   //右下
+	        ];
+	        sword.Clear();
+	        for (int i = 0; i < 4; i++)
+		        sword.Add(default);
+	        {
+		        sword[0] = new Vertex(swordPos_Draw[0], new Vector3(0, 0, 0), Color.White);
+		        sword[1] = new Vertex(swordPos_Draw[2], new Vector3(0, 1, 0), Color.White);
+		        sword[2] = new Vertex(swordPos_Draw[1], new Vector3(1, 0, 0), Color.White);
+		        sword[3] = new Vertex(swordPos_Draw[3], new Vector3(1, 1, 0), Color.White);
+	        }
+	        Main.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+	        Main.graphics.GraphicsDevice.Textures[0] = projTexture;
+	        if (sword.Count >= 4)
+		        Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, sword.ToArray(), 0,
+			        sword.Count - 2);
+        }
+
+        /// <summary>
+        /// 绘制刀光拖尾
+        /// </summary>
+        public virtual void DrawTrip(SwingEffect en, Color Tripcolor, SpriteBatch sb)
+        {
+	        GetCatmullPos(oldHandPos, CatmullScale, out Vector2[] TriphandPos);
+	        GetCatmullPos(oldPos, CatmullScale, out Vector2[] TripswordPos);
+	        trip.Clear();
+	        for (int i = 0; i < TriphandPos.Length; i++)
+	        {
+		        if (TriphandPos[i] == Vector2.Zero)
+			        continue;
+		        float progress = i / (float)TriphandPos.Length;
+		        trip.Add(new Vertex(TriphandPos[i], new Vector3(progress, 0, 0), Tripcolor));
+		        trip.Add(new Vertex(TripswordPos[i], new Vector3(progress, 1, 0), Tripcolor));
+	        }
+	        switch (en)
+	        {
+		        case SwingEffect.zero:
+			        break;
+		        case SwingEffect.dissolve:
+			        Dissolve.Parameters["uTransform"].SetValue(uTransform);
+			        Dissolve.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.05f);
+			        Dissolve.Parameters["uDissolve"].SetValue(0);
+			        Dissolve.CurrentTechnique.Passes[0].Apply();
+			        break;
+		        case SwingEffect.Flow:
+			        Flow.Parameters["uTransform"].SetValue(uTransform);
+			        Flow.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.1f);
+			        Flow.CurrentTechnique.Passes[0].Apply();
+			        break;
+	        }
+	        sb.End();
+	        sb.Begin(SpriteSortMode.Immediate, BlendState.Additive,
+		        SamplerState.AnisotropicClamp, DepthStencilState.None,
+		        RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+	        Main.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+	        Main.graphics.GraphicsDevice.Textures[0] = ModContent
+		        .Request<Texture2D>("MushokuTense/Assets/Images/SlashTex").Value;
+	        if (trip.Count >= 3)
+		        Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, trip.ToArray(), 0,
+			        trip.Count - 2);
+	        sb.End();
+	        sb.Begin();
+        }
+		/// <summary>
+		/// 绘制弯刀拖尾
+		/// </summary>
+		/// <param name="en"></param>
+		/// <param name="Tripcolor"></param>
+		/// <param name="sb"></param>
+        public virtual void DrawTrip(SwingEffect en, Color[] Tripcolor, SpriteBatch sb)
+        {
+	        GetCatmullPos(oldHandPos, CatmullScale, out Vector2[] TriphandPos);
+	        GetCatmullPos(oldPos, CatmullScale, out Vector2[] TripswordPos);
+	        trip.Clear();
+	        for (int i = 0; i < TriphandPos.Length; i++)
+	        {
+		        if (TriphandPos[i] == Vector2.Zero)
+			        continue;
+		        float progress = i / (float)TriphandPos.Length;
+		        trip.Add(new Vertex(TriphandPos[i], new Vector3(progress, 0, 0), Tripcolor[0]));
+		        trip.Add(new Vertex(TripswordPos[i], new Vector3(progress, 1, 0), Tripcolor[1]));
+	        }
+	        switch (en)
+	        {
+		        case SwingEffect.zero:
+			        break;
+		        case SwingEffect.dissolve:
+			        Dissolve.Parameters["uTransform"].SetValue(uTransform);
+			        Dissolve.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.05f);
+			        Dissolve.Parameters["uDissolve"].SetValue(0);
+			        Dissolve.CurrentTechnique.Passes[0].Apply();
+			        break;
+		        case SwingEffect.Flow:
+			        Flow.Parameters["uTransform"].SetValue(uTransform);
+			        Flow.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.1f);
+			        Flow.CurrentTechnique.Passes[0].Apply();
+			        break;
+	        }
+	        sb.End();
+	        sb.Begin(SpriteSortMode.Immediate, BlendState.Additive,
+		        SamplerState.AnisotropicClamp, DepthStencilState.None,
+		        RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+	        Main.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+	        Main.graphics.GraphicsDevice.Textures[0] = ModContent
+		        .Request<Texture2D>("MushokuTense/Assets/Images/SlashTex").Value;
+	        if (trip.Count >= 3)
+		        Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, trip.ToArray(), 0,
+			        trip.Count - 2);
+	        sb.End();
+	        sb.Begin();
+        }
+
+        public virtual void DrawTrip(SwingEffect en, Color Tripcolor, SpriteBatch sb,float rot,int point = 16,TripTex tex = TripTex.Afterimage)
+        {
+	        GetCatmullPos(oldHandPos, CatmullScale, out Vector2[] TriphandPos);
+	        GetCatmullPos(oldPos, CatmullScale, out Vector2[] TripswordPos);
+	        trip.Clear();
+	        List<Vertex>[] tripPos = new List<Vertex>[point-1];
+	        for (int j = 0; j < point-1; j++) {
+		        tripPos[j] = new List<Vertex>();
+	        }
+	        for (int i = 0; i < TriphandPos.Length; i++)
+	        {
+		        if (TriphandPos[i] == Vector2.Zero)
+			        continue;
+		        List<Vector2> a;
+		        if (player.direction == 1)
+			        a = CircularArcPoints(TripswordPos[i] , TriphandPos[i]
+				        , 300,point);
+		        else
+			        a = CircularArcPoints(TriphandPos[i]
+				        , TripswordPos[i] , 300,point);
+		        float progress = i / (float)TriphandPos.Length;
+		        for (int j=0,m=-1;j<a.Count-1;j++) {
+			        float progress2 = player.direction==-1? j / (float)a.Count: 1-(j / (float)a.Count);
+			        float progress3 =  player.direction==-1? (j+1) / (float)a.Count: 1-((j+1) / (float)a.Count);
+			        m += 1;
+			        tripPos[m].Add(new Vertex(a[j],new Vector3(progress,progress2,0),Tripcolor));
+			        tripPos[m].Add(new Vertex(a[j+1],new Vector3(progress,progress3,0),Tripcolor));
+		        }
+	        }
+	        switch (en)
+	        {
+		        case SwingEffect.zero:
+			        break;
+		        case SwingEffect.dissolve:
+			        Dissolve.Parameters["uTransform"].SetValue(uTransform);
+			        Dissolve.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.05f);
+			        Dissolve.Parameters["uDissolve"].SetValue(0);
+			        Dissolve.CurrentTechnique.Passes[0].Apply();
+			        break;
+		        case SwingEffect.Flow:
+			        Flow.Parameters["uTransform"].SetValue(uTransform);
+			        Flow.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.1f);
+			        Flow.CurrentTechnique.Passes[0].Apply();
+			        break;
+	        }
+	        sb.End();
+	        sb.Begin(SpriteSortMode.Immediate, BlendState.Additive,
+		        SamplerState.AnisotropicClamp, DepthStencilState.None,
+		        RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+	        Main.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+	        switch (tex) {
+		        case TripTex.Afterimage:
+			        Main.graphics.GraphicsDevice.Textures[0] = ModContent
+				        .Request<Texture2D>("MushokuTense/Assets/Images/Extra_209").Value;
+			        break;
+		        case TripTex.Streamline:
+			        Main.graphics.GraphicsDevice.Textures[0] = ModContent
+				        .Request<Texture2D>("MushokuTense/Assets/Images/SlashTex").Value;
+			        break;
+	        }
+	        for (int i = 0; i < point-1; i++) {
+		        if (tripPos[i].Count > 3) {
+			        Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, tripPos[i].ToArray(), 0,
+				        tripPos[i].Count - 2);
+		        }
+	        }
+	        sb.End();
+	        sb.Begin();
+        }
+
+        public virtual void DrawTrip(SwingEffect en, Color[] Tripcolor, SpriteBatch sb,float rot,int point = 16,TripTex tex = TripTex.Afterimage)
+        {
+	        GetCatmullPos(oldHandPos, CatmullScale, out Vector2[] TriphandPos);
+	        GetCatmullPos(oldPos, CatmullScale, out Vector2[] TripswordPos);
+	        trip.Clear();
+	        List<Vertex>[] tripPos = new List<Vertex>[point-1];
+	        for (int j = 0; j < point-1; j++) {
+		        tripPos[j] = new List<Vertex>();
+	        }
+	        for (int i = 0; i < TriphandPos.Length; i++)
+	        {
+		        if (TriphandPos[i] == Vector2.Zero)
+			        continue;
+		        List<Vector2> a;
+		        if (player.direction == 1)
+			        a = CircularArcPoints(TripswordPos[i] , TriphandPos[i]
+				        , 300,point);
+		        else
+			        a = CircularArcPoints(TriphandPos[i]
+				        , TripswordPos[i] , 300,point);
+		        float progress = i / (float)TriphandPos.Length;
+		        for (int j=0,m=-1;j<a.Count-1;j++) {
+			        float progress2 = player.direction==-1? j / (float)a.Count: 1-(j / (float)a.Count);
+			        float progress3 =  player.direction==-1? (j+1) / (float)a.Count: 1-((j+1) / (float)a.Count);
+			        m += 1;
+			        tripPos[m].Add(new Vertex(a[j],new Vector3(progress,progress2,0),Tripcolor[0]));
+			        tripPos[m].Add(new Vertex(a[j+1],new Vector3(progress,progress3,0),Tripcolor[1]));
+		        }
+	        }
+	        switch (en)
+	        {
+		        case SwingEffect.zero:
+			        break;
+		        case SwingEffect.dissolve:
+			        Dissolve.Parameters["uTransform"].SetValue(uTransform);
+			        Dissolve.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.05f);
+			        Dissolve.Parameters["uDissolve"].SetValue(0);
+			        Dissolve.CurrentTechnique.Passes[0].Apply();
+			        break;
+		        case SwingEffect.Flow:
+			        Flow.Parameters["uTransform"].SetValue(uTransform);
+			        Flow.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.1f);
+			        Flow.CurrentTechnique.Passes[0].Apply();
+			        break;
+	        }
+	        sb.End();
+	        sb.Begin(SpriteSortMode.Immediate, BlendState.Additive,
+		        SamplerState.AnisotropicClamp, DepthStencilState.None,
+		        RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+	        Main.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+	        switch (tex) {
+		        case TripTex.Afterimage:
+			        Main.graphics.GraphicsDevice.Textures[0] = ModContent
+				        .Request<Texture2D>("MushokuTense/Assets/Images/Extra_209").Value;
+			        break;
+		        case TripTex.Streamline:
+			        Main.graphics.GraphicsDevice.Textures[0] = ModContent
+				        .Request<Texture2D>("MushokuTense/Assets/Images/SlashTex").Value;
+			        break;
+	        }//贴图选择
+	        for (int i = 0; i < point-1; i++) {
+		        if (tripPos[i].Count > 3) {
+			        Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, tripPos[i].ToArray(), 0,
+				        tripPos[i].Count - 2);
+		        }
+	        }
+	        sb.End();
+	        sb.Begin();
+        }
+
+		public virtual void DrawTrip(SwingEffect en, Color[] Tripcolor, SpriteBatch sb,float rot,Texture2D tex,int point = 16)
+        {
+	        GetCatmullPos(oldHandPos, CatmullScale, out Vector2[] TriphandPos);
+	        GetCatmullPos(oldPos, CatmullScale, out Vector2[] TripswordPos);
+	        trip.Clear();
+	        List<Vertex>[] tripPos = new List<Vertex>[point-1];
+	        for (int j = 0; j < point-1; j++) {
+		        tripPos[j] = new List<Vertex>();
+	        }
+	        for (int i = 0; i < TriphandPos.Length; i++)
+	        {
+		        if (TriphandPos[i] == Vector2.Zero)
+			        continue;
+		        List<Vector2> a;
+		        if (player.direction == 1)
+			        a = CircularArcPoints(TripswordPos[i] , TriphandPos[i]
+				        , 300,point);
+		        else
+			        a = CircularArcPoints(TriphandPos[i]
+				        , TripswordPos[i] , 300,point);
+		        float progress = i / (float)TriphandPos.Length;
+		        for (int j=0,m=-1;j<a.Count-1;j++) {
+			        float progress2 = player.direction==-1? j / (float)a.Count: 1-(j / (float)a.Count);
+			        float progress3 =  player.direction==-1? (j+1) / (float)a.Count: 1-((j+1) / (float)a.Count);
+			        m += 1;
+			        tripPos[m].Add(new Vertex(a[j],new Vector3(progress,progress2,0),Tripcolor[0]));
+			        tripPos[m].Add(new Vertex(a[j+1],new Vector3(progress,progress3,0),Tripcolor[1]));
+		        }
+	        }
+	        switch (en)
+	        {
+		        case SwingEffect.zero:
+			        break;
+		        case SwingEffect.dissolve:
+			        Dissolve.Parameters["uTransform"].SetValue(uTransform);
+			        Dissolve.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.05f);
+			        Dissolve.Parameters["uDissolve"].SetValue(0);
+			        Dissolve.CurrentTechnique.Passes[0].Apply();
+			        break;
+		        case SwingEffect.Flow:
+			        Flow.Parameters["uTransform"].SetValue(uTransform);
+			        Flow.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.1f);
+			        Flow.CurrentTechnique.Passes[0].Apply();
+			        break;
+	        }
+	        sb.End();
+	        sb.Begin(SpriteSortMode.Immediate, BlendState.Additive,
+		        SamplerState.AnisotropicClamp, DepthStencilState.None,
+		        RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+	        Main.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+	        Main.graphics.GraphicsDevice.Textures[0] = tex;
+	        for (int i = 0; i < point-1; i++) {
+		        if (tripPos[i].Count > 3) {
+			        Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, tripPos[i].ToArray(), 0,
+				        tripPos[i].Count - 2);
+		        }
+	        }
+	        sb.End();
+	        sb.Begin();
+        }
+
+	    public virtual void DrawTrip(SwingEffect en, Color Tripcolor, SpriteBatch sb,float rot,Texture2D tex,int point = 16)
+        {
+	        GetCatmullPos(oldHandPos, CatmullScale, out Vector2[] TriphandPos);
+	        GetCatmullPos(oldPos, CatmullScale, out Vector2[] TripswordPos);
+	        trip.Clear();
+	        List<Vertex>[] tripPos = new List<Vertex>[point-1];
+	        for (int j = 0; j < point-1; j++) {
+		        tripPos[j] = new List<Vertex>();
+	        }
+	        for (int i = 0; i < TriphandPos.Length; i++)
+	        {
+		        if (TriphandPos[i] == Vector2.Zero)
+			        continue;
+		        List<Vector2> a;
+		        if (player.direction == 1)
+			        a = CircularArcPoints(TripswordPos[i] , TriphandPos[i]
+				        , 300,point);
+		        else
+			        a = CircularArcPoints(TriphandPos[i]
+				        , TripswordPos[i] , 300,point);
+		        float progress = i / (float)TriphandPos.Length;
+		        for (int j=0,m=-1;j<a.Count-1;j++) {
+			        float progress2 = player.direction==-1? j / (float)a.Count: 1-(j / (float)a.Count);
+			        float progress3 =  player.direction==-1? (j+1) / (float)a.Count: 1-((j+1) / (float)a.Count);
+			        m += 1;
+			        tripPos[m].Add(new Vertex(a[j],new Vector3(progress,progress2,0),Tripcolor));
+			        tripPos[m].Add(new Vertex(a[j+1],new Vector3(progress,progress3,0),Tripcolor));
+		        }
+	        }
+	        switch (en)
+	        {
+		        case SwingEffect.zero:
+			        break;
+		        case SwingEffect.dissolve:
+			        Dissolve.Parameters["uTransform"].SetValue(uTransform);
+			        Dissolve.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.05f);
+			        Dissolve.Parameters["uDissolve"].SetValue(0);
+			        Dissolve.CurrentTechnique.Passes[0].Apply();
+			        break;
+		        case SwingEffect.Flow:
+			        Flow.Parameters["uTransform"].SetValue(uTransform);
+			        Flow.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.1f);
+			        Flow.CurrentTechnique.Passes[0].Apply();
+			        break;
+	        }
+	        sb.End();
+	        sb.Begin(SpriteSortMode.Immediate, BlendState.Additive,
+		        SamplerState.AnisotropicClamp, DepthStencilState.None,
+		        RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+	        Main.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+	        Main.graphics.GraphicsDevice.Textures[0] = tex;
+	        for (int i = 0; i < point-1; i++) {
+		        if (tripPos[i].Count > 3) {
+			        Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, tripPos[i].ToArray(), 0,
+				        tripPos[i].Count - 2);
+		        }
+	        }
+	        sb.End();
+	        sb.Begin();
+        }
+        /// <summary>
+        /// 绘制入口
+        /// </summary>
+        public virtual void Draw(SwingEffect en,Color Tripcolor,bool drawTrip,SpriteBatch sb,bool handPlayerDir = true)
+        {
+            #region 剑体取点及绘制
+            Vector2 Length = swordPos - handlePos;
+            Vector2 handPos = handPlayerDir
+	            ? handlePos + setoff.RotatedBy(swordRot)
+	            : handlePos + setoff.RotatedBy(swordRot);
+            handPos -= Main.screenPosition;
+            Vector2 halfPos = Length / 2f;
+            if(scale.X!=1)
+                halfPos = halfPos.RotatedBy(TransformHelper.CalculateTiltAngle(projTexture,scale.X));
+            else
+                halfPos = halfPos.RotatedBy(TransformHelper.CalculateTiltAngle(projTexture,scale.Y));
+            Vector2 halfWidth = new Vector2(-halfPos.Y, halfPos.X);
+            swordPos_Draw =
+            [
+                handPos + halfPos + halfWidth,//左上
+                handPos + Length,//右上
+                handPos,//左下
+                handPos + halfPos - halfWidth//右下
+            ];
+            sword.Clear();
+            for(int i=0;i<4;i++)
+                sword.Add(default);
+            {
+                sword[0] = new Vertex(swordPos_Draw[0],new Vector3(0,0,0),Color.White);
+                sword[1] = new Vertex(swordPos_Draw[2],new Vector3(0,1,0),Color.White);
+                sword[2] = new Vertex(swordPos_Draw[1],new Vector3(1,0,0),Color.White);
+                sword[3] = new Vertex(swordPos_Draw[3],new Vector3(1,1,0),Color.White);
+            }
+            Main.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+            Main.graphics.GraphicsDevice.Textures[0] = projTexture;
+            if(sword.Count>=4)
+                Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, sword.ToArray(), 0,
+                    sword.Count - 2);
+            #endregion
+
+            if (!drawTrip)
+                return;
+            GetCatmullPos(oldHandPos, CatmullScale, out Vector2[] TriphandPos);
+            GetCatmullPos(oldPos, CatmullScale, out Vector2[] TripswordPos);
+            trip.Clear();
+            for (int i = 0; i < TriphandPos.Length; i++)
+            {
+                if (TriphandPos[i] == Vector2.Zero)
+                    continue;
+                float progress = i/(float)TriphandPos.Length;
+                trip.Add(new Vertex(TriphandPos[i] , new Vector3(progress, 0, 0), Tripcolor));
+                trip.Add(new Vertex(TripswordPos[i], new Vector3(progress, 1, 0), Tripcolor));
+            }
+            switch (en)
+            {
+                case SwingEffect.zero:
+                    break;
+                case SwingEffect.dissolve:
+                    Dissolve.Parameters["uTransform"].SetValue(uTransform);
+                    Dissolve.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.05f);
+                    Dissolve.Parameters["uDissolve"].SetValue(0);
+                    Dissolve.CurrentTechnique.Passes[0].Apply();
+                    break;
+                case SwingEffect.Flow:
+                    Flow.Parameters["uTransform"].SetValue(uTransform);
+                    Flow.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.1f);
+                    Flow.CurrentTechnique.Passes[0].Apply();
+                    break;
+            }
+            sb.End();
+            sb.Begin(SpriteSortMode.Immediate, BlendState.Additive,
+                SamplerState.AnisotropicClamp, DepthStencilState.None,
+                RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.graphics.GraphicsDevice.Textures[0] = ModContent
+                .Request<Texture2D>("ArknightsMod/Content/SwingHelper/Images/SlashTex").Value;
+            if (trip.Count >= 3)
+                Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, trip.ToArray(), 0,
+                    trip.Count - 2);
+            sb.End();
+            sb.Begin();
+        }
+
+        /// <summary>
+        /// 剑尖自动跟随对应点位
+        /// </summary>
+        /// <param name="swordToHand"></param>
+        /// <param name="hand"></param>
+        /// <param name="handPlayerDir"></param>
+        public virtual void SwordAHandCon(float swordToHand,float hand,float length,float handleLen,float swordlen,
+	        bool savePos = true,bool handPlayerDir = true)
+        {
+            float armAngle;
+            if(handPlayerDir)
+                armAngle = hand - MathF.PI / 2f * player.direction;
+            else
+                armAngle = hand - MathF.PI / 2f;
+            player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, armAngle);
+            handlePos = player.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, armAngle);
+            if(handPlayerDir)
+            {
+                swordToHand = player.direction == 1? swordToHand: MathF.PI + swordToHand;
+                swordPos = handlePos + new Vector2(length,0).RotatedBy(hand + swordToHand);
+                swordPos.Y += player.gfxOffY;
+                swordEnd = handlePos + new Vector2(handleLen,0).RotatedBy(hand + swordToHand);
+                swordHead = handlePos + new Vector2(swordlen,0).RotatedBy(hand + swordToHand);
+                proj.Center = swordPos;
+                swordRot = hand + swordToHand;
+                if(savePos)
+                    SavePos(swordHead,hand + swordToHand * player.direction,swordEnd);
+            }
+            else
+            {
+                swordPos = handlePos + new Vector2(length,0).RotatedBy(hand + swordToHand);
+                swordPos.Y += player.gfxOffY;
+                swordEnd = handlePos + new Vector2(handleLen,0).RotatedBy(hand + swordToHand);
+                swordHead = handlePos + new Vector2(swordlen,0).RotatedBy(hand + swordToHand);
+                proj.Center = swordPos;
+                swordRot = hand + swordToHand;
+                if(savePos)
+                    SavePos(swordHead,hand + swordToHand,swordEnd);
+            }
+        }
+
+        #region 攻击特殊效果 -- 卡肉/视线追踪/屏幕抖动......
+        /// <summary>
+        /// 碰撞点
+        /// </summary>
+        public float point;
+
+        /// <summary>
+        /// 判断碰撞方法
+        /// </summary>
+        /// <param name="targetHitbox">目标碰撞箱</param>
+        /// <returns></returns>
+        public bool Colliding(Rectangle targetHitbox)
+        {
+            return Collision.CheckAABBvLineCollision(
+                targetHitbox.TopLeft(),
+                targetHitbox.Size(),
+                handlePos,
+                swordPos,
+                20f,
+                ref point);
+        }
+
+        public void SwordPunchCameraModifier(Vector2 hitPos, Vector2 hitDir, float strength, float time = 4f,
+            int frames = 6)
+        {
+            Main.instance.CameraModifiers.Add(new PunchCameraModifier(
+                hitPos, hitDir, strength, time, frames));
+        }
+
+        public void ScreenRotModify(float rot)
+        {
+            Main.instance.CameraModifiers.Add(new ScreenRotateModifier
+            {
+                TargetRotation = MathHelper.ToRadians(rot)  // 其他字段有默认值
+            });
+        }
+
+        /// <summary>
+        /// 屏幕位置修改
+        /// </summary>
+        /// <param name="WorldPos"></param>
+        public void ScreenPosModify(Vector2 WorldPos)
+        {
+	        var mP = player.GetModPlayer<ModifyScreenPosPlayer>();
+	        mP.ScreenPosition = WorldPos;
+	        mP.modifyScreenPos = true;
+        }
+
+        #endregion
+
+        #region 数据存储/读取
+        public void SavePos(Vector2 pos,float rot,Vector2 swordend)
+        {
+            for (int i = index -1; i > 0; i--)
+            {
+                oldPos[i] = oldPos[i - 1];
+                oldRot[i] = oldRot[i - 1];
+                oldHandPos[i] = oldHandPos[i - 1];
+                oldWorldPos[i] = oldWorldPos[i - 1];
+                oldWorldHandPos[i] = oldWorldHandPos[i - 1];
+            }
+            oldPos[0] = pos-Main.screenPosition;
+            oldRot[0] = rot;
+            oldHandPos[0] = swordend-Main.screenPosition;
+            oldWorldHandPos[0] = swordend;
+            oldWorldPos[0] = pos;
+        }
+
+
+        /// <summary>
+		/// 圆弧取点（等角度间隔，真正对称的圆弧）
+		/// </summary>
+		/// <param name="start">起点</param>
+		/// <param name="end">终点</param>
+		/// <param name="arc">弧度（角度制，>0 逆时针弯，<0 顺时针弯）</param>
+		/// <param name="samples">点数</param>
+		public static List<Vector2> CircularArcPoints(Vector2 start, Vector2 end, float arc, int samples = 16)
+		{
+		    List<Vector2> points = new(samples);
+		    Vector2 chord = end - start;
+		    float chordLen = chord.Length();
+		    if (chordLen < 0.001f)
+		        return points;
+
+		    float theta = MathHelper.ToRadians(arc);
+		    theta = Math.Clamp(theta, -MathF.PI + 0.01f, MathF.PI - 0.01f);
+
+		    // 直线退化
+		    if (Math.Abs(theta) < 0.001f)
+		    {
+		        for (int i = 0; i < samples; i++)
+		            points.Add(Vector2.Lerp(start, end, (float)i / (samples - 1)));
+		        return points;
+		    }
+
+		    float sign = MathF.Sign(theta);
+		    float absTheta = Math.Abs(theta);
+		    float radius = chordLen / (2f * MathF.Sin(absTheta / 2f));  // 半径恒正
+		    if (radius < 0.001f)
+		        return points;
+
+		    Vector2 dir = chord / chordLen;
+		    Vector2 perp = new Vector2(-dir.Y, dir.X);  // 垂直方向
+		    Vector2 bulge = perp * sign;                // 弧凸向
+		    Vector2 mid = (start + end) * 0.5f;
+		    float centerDist = radius * MathF.Cos(absTheta / 2f);
+		    Vector2 center = mid - bulge * centerDist;  // 圆心在凸向反侧
+
+		    float angleStart = MathF.Atan2(start.Y - center.Y, start.X - center.X);
+		    float angleEnd   = MathF.Atan2(end.Y - center.Y, end.X - center.X);
+		    float angleBulge = MathF.Atan2(bulge.Y, bulge.X);
+
+		    // 有向扫角（先走短路径）
+		    float sweep = angleEnd - angleStart;
+		    while (sweep > MathF.PI) sweep -= MathF.Tau;
+		    while (sweep < -MathF.PI) sweep += MathF.Tau;
+
+		    // 短路径必须经过凸向，否则走长路（保证弯向正确）
+		    float midAngle = angleStart + sweep / 2f;
+		    float diff = MathF.Atan2(MathF.Sin(midAngle - angleBulge),
+		                             MathF.Cos(midAngle - angleBulge));
+		    if (Math.Abs(diff) > MathF.PI / 2f)
+		        sweep = sweep > 0 ? sweep - MathF.Tau : sweep + MathF.Tau;
+
+		    for (int i = 0; i < samples; i++)
+		    {
+		        float t = (float)i / (samples - 1);
+		        float a = angleStart + sweep * t;
+		        points.Add(center + new Vector2(MathF.Cos(a), MathF.Sin(a)) * radius);
+		    }
+		    return points;
+		}
+        /// <summary>
+        /// 生成两点间的弯曲弧线点
+        /// </summary>
+        /// <param name="start">起点</param>
+        /// <param name="end">终点</param>
+        /// <param name="arc">弯曲弧度（角度制，>0 逆时针弯，<0 顺时针弯）</param>
+        /// <param name="samples">返回的点数</param>
+        public static List<Vector2> ArcPoints(Vector2 start, Vector2 end, float arc, int samples = 16)
+        {
+	        List<Vector2> points = new(samples);
+
+	        // 弦方向
+	        Vector2 chord = end - start;
+	        float chordLen = chord.Length();
+	        if (chordLen < 0.001f)
+		        return points;
+
+	        // 由弧度求弧高（弦中点垂直于弦方向的偏移）
+	        float arcRad = MathHelper.ToRadians(arc);
+	        // 弧半径：r = 弦长 / (2 * sin(弧角/2))，弧高 = r * (1 - cos(弧角/2))
+	        float r = chordLen / (2f * MathF.Sin(arcRad / 2f));
+	        float sag = r * (1f - MathF.Cos(arcRad / 2f));
+
+	        Vector2 dir = chord / chordLen;
+	        Vector2 perp = new Vector2(-dir.Y, dir.X);
+	        Vector2 mid = (start + end) * 0.5f;
+	        Vector2 control = mid + perp * sag;  // 控制点（弧顶点）
+
+	        // 二次贝塞尔扫过
+	        for (int i = 0; i < samples; i++)
+	        {
+		        float t = (float)i / (samples - 1);
+		        float u = 1 - t;
+		        points.Add(u * u * start + 2 * u * t * control + t * t * end);
+	        }
+	        return points;
+        }
+
+        public static Vector2 CatMullRom(Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3, float t)
+        {
+            float t2 = t * t;
+            float t3 = t2 * t;
+
+            return 0.5f * (
+                (2 * p1) +
+                (-p0 + p2) * t +
+                (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2 +
+                (-p0 + 3 * p1 - 3 * p2 + p3) * t3
+            );
+        }
+        /// <summary>
+        /// 获取细分曲线坐标
+        /// </summary>
+        /// <param name="pos">坐标数组</param>
+        /// <param name="CatmullRom">细分数</param>
+        /// <param name="catmullPos">返回值</param>
+        public void GetCatmullPos(Vector2[] pos, float CatmullRom, out Vector2[] catmullPos)
+        {
+            catmullPos = new Vector2[index * CatmullScale];
+            int k = 0;
+            for (int i = 0; i < pos.Length - 1; i++)
+            {
+
+                Vector2 p0 = i > 0 ? pos[i - 1] : pos[i];
+                Vector2 p1 = pos[i];
+                Vector2 p2 = pos[i + 1];
+                Vector2 p3 = i + 2 < pos.Length ? pos[i + 2] : pos[i + 1];
+                if(p0==Vector2.Zero|| p1==Vector2.Zero|| p2==Vector2.Zero|| p3==Vector2.Zero)
+                    continue;
+                catmullPos[k++] = p1;
+                for (int j = 1; j < CatmullScale; j++)
+                {
+                    float t = (float)j / CatmullScale;
+                    catmullPos[k++] = CatMullRom(p0, p1, p2, p3, t);
+                }
+            }
+            catmullPos[k] = pos[^1];
+        }
+        #endregion
+    }
+}

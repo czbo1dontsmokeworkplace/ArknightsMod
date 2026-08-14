@@ -1,31 +1,22 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using ArknightsMod.Content.Tiles.Infrastructure;
+﻿using Terraria.ModLoader;
+using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content.Items.Material;
 
 namespace ArknightsMod.Content.Items.Armor.Guard.Mlynar
 {
 	[AutoloadEquip(EquipType.Legs)]
-	public class MlynarLegs : NeoArmorLegs
+	public class MlynarLegs : NeoArmorReforgeVanityLegs
 	{
 		public override int Rarity => 6;
-		public override int ArmorLifeBonus => 213;
-		
-		public override void SetArmorDefaults() {
-			Item.defense = 13;
-		}
 
-		public override void AddRecipes() {
-			CreateRecipe()
-			.AddIngredient<MlynarLegs>(1)
-			.AddIngredient<Orundum>(60)
-			.AddIngredient<CrystallineElectronicUnit>(6)
-			.AddIngredient<CrystallineCircuit>(4)
-			.AddTile(ModContent.TileType<FactoryTile>())
-			.AddCondition(NeoArmorUtils.NeedVanity)
-			.DisableDecraft()
-			.Register();
-		}
+		public override NeoArmorReforgeSetProfile SetProfile => new() {
+			Defense = 13,
+			LifeBonus = 213,
+			LocalizationPrefix = "Mods.ArknightsMod.ArmorSets.Mlynar",
+			Materials = recipe => recipe
+				.AddIngredient<Orundum>(60)
+				.AddIngredient<CrystallineElectronicUnit>(6)
+				.AddIngredient<CrystallineCircuit>(4),
+		};
 	}
 }
