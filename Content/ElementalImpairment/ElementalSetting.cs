@@ -63,10 +63,11 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
         public override float MainScale => 0.215f;
         public override Color BurstFlashMainColor => new Color(255, 255, 255);
         public override Color BurstFlashFeatherColor => new Color(109, 146, 125, 60);
-        public override void OnBurstEffects(NPC npc)
-        {
-        }
-    }
+		public override void OnBurstEffects(NPC npc) {
+
+			npc.GetGlobalNPC<PalsyGlobalNPC>().AddPalsyStacks(3);
+		}
+	}
     public class NecrosisImpairment : ElementalAffliction
     {
         public override int MaxValue => 200;

@@ -184,6 +184,7 @@ FierySlugFireballProjectile.DisplayName: 炽焰源石虫火球射弹
 // ParticleExplosionParticle.DisplayName: Particle Explosion Particle
 // Light_Vertical.DisplayName: Light_ Vertical
 // Light_horizontal.DisplayName: Light_horizontal
+// Light.DisplayName: Light
 // BlackExplosionParticle.DisplayName: Black Explosion Particle
 // BlackExplosion.DisplayName: Black Explosion
 // ProjLightCore.DisplayName: Proj Light Core
@@ -269,3 +270,25 @@ TransparentSlash.DisplayName: 透明斩击
 // ClosureShieldProjectile.DisplayName: Closure Shield Projectile
 // CommandCenterPet.DisplayName: Command Center Pet
 // ClosureSkillSquareEffect.DisplayName: Closure Skill Square Effect
+// TragodiaWaveSpawner.DisplayName: Tragodia Wave Spawner
+// RibbonProjectile.DisplayName: Ribbon Projectile
+// LightParticle.DisplayName: Light Particle
+// StarParticle.DisplayName: Star Particle
+// WaveProjectile.DisplayName: Wave Projectile
+// WindDustProjectile.DisplayName: Wind Dust Projectile
+// TragodiaNormalAttack.DisplayName: Tragodia Normal Attack
+// SP1Extract.DisplayName: S P1 Extract
+// InstinctCall.DisplayName: Instinct Call
+// InstinctCallDust.DisplayName: Instinct Call Dust
+// InstinctCallNoteDust.DisplayName: Instinct Call Note Dust
+// InstinctCallSuctionLines.DisplayName: Instinct Call Suction Lines
+// Pre_Attack.DisplayName: Pre_ Attack
+// SP1TragodiaNormalAttack.DisplayName: S P1 Tragodia Normal Attack
+// SP2TragodiaNormalAttack.DisplayName: S P2 Tragodia Normal Attack
+// LightBurstEffect.DisplayName: Light Burst Effect
+// SP2Wave.DisplayName: S P2 Wave
+// SP2ExtraVisual.DisplayName: S P2 Extra Visual
+// SP3ExtraVisual.DisplayName: S P3 Extra Visual
+// SP3TragodiaNormalAttack.DisplayName: S P3 Tragodia Normal Attack
+// SP3Wave.DisplayName: S P3 Wave
+// FrenzyCage.DisplayName: Frenzy Cage

@@ -3201,3 +3201,8 @@ RopeClaw: {
 	DisplayName: Rope Claw
 	Tooltip: ""
 }
+
+Tragodia: {
+	DisplayName: Tragodia
+	Tooltip: ""
+}
