@@ -6,6 +6,13 @@
 // Blizzard.DisplayName: Blizzard
 // BlizzardStorm.DisplayName: Blizzard Storm
 // BlizzardStormStarter.DisplayName: Blizzard Storm Starter
+DeepcolorMinion.DisplayName: 触手
+CameraTruck.DisplayName: 移动摄影车
+SceneCameraShot.DisplayName: 稀音的摄像机快门
+SceneCameraBullet.DisplayName: 稀音的摄像机弹丸
+SceneCameraHitBurst.DisplayName: 稀音的摄像机命中特效
+// DeepcolorSketchLogoAttack.DisplayName: Deepcolor Sketch Logo Attack
+// DeepcolorSketchLogoStrike.DisplayName: Deepcolor Sketch Logo Strike
 IceAltarShockwave.DisplayName: 冰晶祭坛冲击波
 IceAltarSummonWisp.DisplayName: 冰晶祭坛召唤风絮
 IceAltarTwinLineRing.DisplayName: 冰晶祭坛双线环
@@ -190,5 +197,79 @@ FierySlugFireballProjectile.DisplayName: 炽焰源石虫火球射弹
 // PalsyLightningSpawner.DisplayName: Palsy Lightning Spawner
 // ValarqvinProj_2.DisplayName: Valarqvin Proj_2
 // ValarqvinProj.DisplayName: Valarqvin Proj
-// TyphonStar.DisplayName: Typhon Star
+// DN_Shield.DisplayName: D N_ Shield
+// DN_Sword.DisplayName: D N_ Sword
+GravityDagger.DisplayName: 重力匕首
+RedMagicBlade.DisplayName: 红魔刃
+StaticPredictLine.DisplayName: 静态预警线
+DaggerPredictLine.DisplayName: 匕首预警线
 // TyphonAimReticle.DisplayName: Typhon Aim Reticle
+// TyphonStar.DisplayName: Typhon Star
+DelayDagger.DisplayName: 延时匕首
+GroundDagger.DisplayName: 地刺匕首
+StallDagger.DisplayName: 滞空匕首
+TransparentSlash.DisplayName: 透明斩击
+// TyphonStarReleaseBurst.DisplayName: Typhon Star Release Burst
+// BarrageDagger.DisplayName: Barrage Dagger
+// CrownslayerSmokeEmitter.DisplayName: Crownslayer Smoke Emitter
+// SwordSlashEffect.DisplayName: Sword Slash Effect
+// PramanixShockwaveRing.DisplayName: Pramanix Shockwave Ring
+// PramanixSkill1Snowflake.DisplayName: Pramanix Skill1 Snowflake
+// PramanixSkill3VolleyFx.DisplayName: Pramanix Skill3 Volley Fx
+// RosmontisTacticalEquipment.DisplayName: Rosmontis Tactical Equipment
+// DorothySweeper.DisplayName: Dorothy Sweeper
+// DorothySweeperShot.DisplayName: Dorothy Sweeper Shot
+// ExusiaiAlterBomb.DisplayName: Exusiai Alter Bomb
+// CivilightDustMote.DisplayName: Civilight Dust Mote
+// StewardProj.DisplayName: Steward Proj
+// MelanthaSlash.DisplayName: Melantha Slash
+// CardiganShieldBash.DisplayName: Cardigan Shield Bash
+// HongdouLanceThrust.DisplayName: Hongdou Lance Thrust
+// HongdouSpearStab.DisplayName: Hongdou Spear Stab
+// DobermannWhipProjectile.DisplayName: Dobermann Whip Projectile
+// GravelSlash.DisplayName: Gravel Slash
+// GravelShieldVfx.DisplayName: Gravel Shield Vfx
+// GoldenglowBeacon.DisplayName: Goldenglow Beacon
+// GoldenglowBolt.DisplayName: Goldenglow Bolt
+// EstelleGlovePunch.DisplayName: Estelle Glove Punch
+// MousseGlovePunch.DisplayName: Mousse Glove Punch
+// BeehunterBatSwing.DisplayName: Beehunter Bat Swing
+// MeteorArrow.DisplayName: Meteor Arrow
+// LupineScarletExplosion.DisplayName: Lupine Scarlet Explosion
+// LupineScarletRightClickController.DisplayName: Lupine Scarlet Right Click Controller
+// LupineScarletSkillShard.DisplayName: Lupine Scarlet Skill Shard
+// LupineScarletSwingProjectile.DisplayName: Lupine Scarlet Swing Projectile
+// RopeHookProjectile.DisplayName: Rope Hook Projectile
+// RopeWhipProjectile.DisplayName: Rope Whip Projectile
+// Cardi_Shield.DisplayName: Cardi_ Shield
+// Cardi_Sword.DisplayName: Cardi_ Sword
+// Cuora_Bat.DisplayName: Cuora_ Bat
+// Cuora_Shield.DisplayName: Cuora_ Shield
+// PlumeSweepProjectile.DisplayName: Plume Sweep Projectile
+// PlumeStabProjectile.DisplayName: Plume Stab Projectile
+// PlumeSpearStab.DisplayName: Plume Spear Stab
+// ValarqvinHitParticle.DisplayName: Valarqvin Hit Particle
+// ValarqvinProj3_Hit.DisplayName: Valarqvin Proj3_ Hit
+// ValarqvinProj_Hit.DisplayName: Valarqvin Proj_ Hit
+// EntelechiaScytheCircleSlashProjectile.DisplayName: Entelechia Scythe Circle Slash Projectile
+// EntelechiaScytheStarFXProjectile.DisplayName: Entelechia Scythe Star F X Projectile
+// EntelechiaScytheCursorMiniSlashProjectile.DisplayName: Entelechia Scythe Cursor Mini Slash Projectile
+// EntelechiaScytheBladeWaveProjectile.DisplayName: Entelechia Scythe Blade Wave Projectile
+// EntelechiaCrossStar.DisplayName: Entelechia Cross Star
+// EntelechiaHitBurst.DisplayName: Entelechia Hit Burst
+// EntelechiaScytheS3Aura.DisplayName: Entelechia Scythe S3 Aura
+// ClosureScanShotProjectile.DisplayName: Closure Scan Shot Projectile
+// ClosureHitBurstProjectile.DisplayName: Closure Hit Burst Projectile
+// ClosureMuzzleFlashProjectile.DisplayName: Closure Muzzle Flash Projectile
+// ClosureMarkLaserProjectile.DisplayName: Closure Mark Laser Projectile
+// ClosureTargetMarkProjectile.DisplayName: Closure Target Mark Projectile
+// RevenantsShadow.DisplayName: Revenants Shadow
+// ClosureLaserImpactProjectile.DisplayName: Closure Laser Impact Projectile
+// ClosurePartialSquareProjectile.DisplayName: Closure Partial Square Projectile
+// ClosureShieldProjectile.DisplayName: Closure Shield Projectile
+// CommandCenterPet.DisplayName: Command Center Pet
+// ClosureSkillSquareEffect.DisplayName: Closure Skill Square Effect
+// ReedFlameShadowFlame.DisplayName: Reed Flame Shadow Flame
+// PompeiiLavaCoreExplosion.DisplayName: Pompeii Lava Core Explosion
+// Mon3tr.DisplayName: Mon3tr
+// RaptorDroneBullet.DisplayName: Raptor Drone Bullet

@@ -122,6 +122,20 @@ namespace ArknightsMod.Systems
 			return false;
 		}
 
+		// 两种家具是否允许互相压在一起摆放。同种一直允许（这是这套系统本来就有的
+		// 能力）；另外单独放开了"办公桌 + 办公椅"这一对，允许部分重叠——不是泛化成
+		// "任意家具都能互相重叠"，只开放这一对明确要求的组合，避免重蹈之前那个
+		// "所有家具无差别都能叠"的设计覆盖掉原版住房检测的覆辙。
+		private static bool IsOverlapAllowed(DecorKind placing, DecorKind existing)
+		{
+			if (placing == existing)
+				return true;
+			return (placing == DecorKind.OfficeDesk && existing == DecorKind.OfficeChair)
+				|| (placing == DecorKind.OfficeChair && existing == DecorKind.OfficeDesk);
+		}
+
+		// 名字仍叫"SameKind"是历史遗留（外部一堆 Tile 类都在用这个方法名），但
+		// 匹配逻辑已经不只是"同种"了，见 IsOverlapAllowed。
 		public static bool TryFindSameKindAtTile(int i, int j, int tileType, out Point16 anchor, out DecorInstance inst)
 		{
 			anchor = default;
@@ -136,7 +150,7 @@ namespace ArknightsMod.Systems
 				Point16 a = te.Position;
 				for (int k = te.Instances.Count - 1; k >= 0; k--) {
 					DecorInstance d = te.Instances[k];
-					if (d.Kind != kind)
+					if (!IsOverlapAllowed(kind, d.Kind))
 						continue;
 					Point16 s = GetSize(d.Kind);
 					Rectangle rect = new Rectangle(d.TopLeft.X, d.TopLeft.Y, s.X, s.Y);
@@ -176,12 +190,15 @@ namespace ArknightsMod.Systems
 				TileEntity.ByPosition.Remove(anchor);
 				TileEntity.ByID.Remove(te.ID);
 				Tile t = Framing.GetTileSafely(anchor.X, anchor.Y);
-				if (t.HasTile && t.TileType == ModContent.TileType<ReceptionRoomDecorAnchorTile>())
+				if (t.HasTile && IsAnchorTileType(t.TileType))
 					t.HasTile = false;
 				if (Main.netMode != NetmodeID.SinglePlayer)
 					NetMessage.SendTileSquare(-1, anchor.X, anchor.Y, 1);
 				return true;
 			}
+
+			// 还剩其它家具：锚点该算桌子还是椅子可能因为这次移除而变了，重新算一次。
+			UpdateAnchorTileType(anchor, te);
 
 			// Refresh all remaining instances' covered areas so client tile state stays correct.
 			if (Main.netMode != NetmodeID.SinglePlayer) {
@@ -402,6 +419,94 @@ namespace ArknightsMod.Systems
 			return s;
 		}
 
+		// 原版住房检测（TileID.Sets.RoomNeeds.CountsAsTable/CountsAsChair）只按
+		// tile 类型判断，没有"这个格子里具体摆的是什么家具"这种动态钩子——而这套
+		// 接待室装饰系统落地后，世界里所有种类的家具（桌子、椅子、垃圾桶……）
+		// 统一只留下一个不可见的锚点 tile，真正的外观全靠 DrawAllDecor 自己画。
+		// 为了让"算桌子"/"算椅子"的家具能被原版住房检测认出来，锚点 tile 按
+		// 家具种类换成对应的子类（ReceptionRoomDecorAnchorTableTile/
+		// ReceptionRoomDecorAnchorChairTile），其余种类仍用基类（不参与住房判定）。
+		private static int GetAnchorTileType(DecorKind kind) => kind switch {
+			DecorKind.OfficeDesk or DecorKind.ComputerDesk or DecorKind.VaseTable
+				=> ModContent.TileType<ReceptionRoomDecorAnchorTableTile>(),
+			DecorKind.OfficeChair or DecorKind.OfficeRecliner
+				=> ModContent.TileType<ReceptionRoomDecorAnchorChairTile>(),
+			_ => ModContent.TileType<ReceptionRoomDecorAnchorTile>(),
+		};
+
+		// 锚点 tile 现在有三种可能的类型（基类 + 桌子变体 + 椅子变体），凡是判断
+		// "这一格是不是锚点"的地方都要认全这三种，不能只认基类那一种。
+		internal static bool IsAnchorTileType(int tileType) =>
+			tileType == ModContent.TileType<ReceptionRoomDecorAnchorTile>() ||
+			tileType == ModContent.TileType<ReceptionRoomDecorAnchorTableTile>() ||
+			tileType == ModContent.TileType<ReceptionRoomDecorAnchorChairTile>();
+
+		// 一个锚点格理论上可以叠多件不同种类的家具（同一个 TE 的 Instances 列表），
+		// 但 tile 只能是一种类型，只能按优先级二选一：桌子优先于椅子，都没有才用
+		// 不参与住房判定的基类。正常玩法里一个锚点通常只对应一件家具，这个优先级
+		// 只在故意把两种家具重叠摆在同一格角点时才会用到。
+		private static int ComputeAnchorTileType(List<DecorInstance> instances) {
+			bool hasTable = false, hasChair = false;
+			foreach (DecorInstance inst in instances) {
+				int t = GetAnchorTileType(inst.Kind);
+				if (t == ModContent.TileType<ReceptionRoomDecorAnchorTableTile>())
+					hasTable = true;
+				else if (t == ModContent.TileType<ReceptionRoomDecorAnchorChairTile>())
+					hasChair = true;
+			}
+			if (hasTable)
+				return ModContent.TileType<ReceptionRoomDecorAnchorTableTile>();
+			if (hasChair)
+				return ModContent.TileType<ReceptionRoomDecorAnchorChairTile>();
+			return ModContent.TileType<ReceptionRoomDecorAnchorTile>();
+		}
+
+		// 给 .akstruct 结构格式（AkStructureFormat）导出用：查询某个锚点格当前
+		// 挂了哪些家具实例。锚点格本身只是个空壳 tile，真正"这里摆了什么"的数据
+		// 全在 TE 的 Instances 里，结构导出如果只存 tile 类型不存这份数据，放到
+		// 新位置后就会变成"能挖、有判定，但什么都不画"的空壳——这正是这个方法
+		// 存在的原因。
+		internal static bool TryGetInstancesAt(Point16 anchorPos, out List<DecorInstance> instances) {
+			if (ReceptionRoomDecorAnchorTE.TryGet(anchorPos, out ReceptionRoomDecorAnchorTE te)) {
+				instances = te.Instances;
+				return true;
+			}
+			instances = null;
+			return false;
+		}
+
+		// 给 .akstruct 结构放置用：在目标世界位置重新创建一条家具实例记录
+		// （锚点 tile + TE + Instances 项），照抄 ConvertPlacedTileToDecor 里
+		// "创建锚点 → 加实例 → 按实例重算锚点类型 → 联机同步"这一套流程，
+		// 只是数据来源换成结构文件里存的记录，而不是玩家刚刚放下的物品。
+		internal static void RestoreInstanceAtAnchor(Point16 anchorPos, DecorKind kind, Point16 topLeft, sbyte direction, byte variant) {
+			EnsureAnchorAndTE(anchorPos, kind, out ReceptionRoomDecorAnchorTE te);
+			te.Instances.Add(new DecorInstance {
+				Kind = kind,
+				TopLeft = topLeft,
+				Direction = direction,
+				Variant = variant,
+			});
+			UpdateAnchorTileType(anchorPos, te);
+			if (Main.netMode != NetmodeID.SinglePlayer) {
+				te.SendSync();
+				Point16 s = GetSize(kind);
+				NetMessage.SendTileSquare(-1, topLeft.X, topLeft.Y, s.X, s.Y);
+			}
+		}
+
+		// 按当前锚点上所有家具重新算一次"这一格该是哪种锚点 tile"，类型变了就
+		// 原地切换 + 联机同步。放实例/删实例之后都要调用一次。
+		private static void UpdateAnchorTileType(Point16 anchorPos, ReceptionRoomDecorAnchorTE te) {
+			int desired = ComputeAnchorTileType(te.Instances);
+			Tile t = Framing.GetTileSafely(anchorPos.X, anchorPos.Y);
+			if (!t.HasTile || t.TileType == desired)
+				return;
+			t.TileType = (ushort)desired;
+			if (Main.netMode != NetmodeID.SinglePlayer)
+				NetMessage.SendTileSquare(-1, anchorPos.X, anchorPos.Y, 1);
+		}
+
 		private static Point16 GetSeatTile(DecorInstance inst)
 		{
 			Point16 size = GetSize(inst.Kind);
@@ -416,8 +521,7 @@ namespace ArknightsMod.Systems
 			Tile t = Framing.GetTileSafely(i, j);
 			if (!t.HasTile)
 				return false;
-			int type = ModContent.TileType<ReceptionRoomDecorAnchorTile>();
-			return t.TileType == type;
+			return IsAnchorTileType(t.TileType);
 		}
 
 		private static bool TryGetTopMostHit(Point16 anchor, Vector2 mouseWorld, out int index, out DecorInstance inst)
@@ -467,7 +571,7 @@ namespace ArknightsMod.Systems
 
 			(sbyte direction, byte variant) = ExtractState(kind, origin);
 
-			EnsureAnchorAndTE(anchorPos, out ReceptionRoomDecorAnchorTE te);
+			EnsureAnchorAndTE(anchorPos, kind, out ReceptionRoomDecorAnchorTE te);
 			DecorInstance inst = new DecorInstance {
 				Kind = kind,
 				TopLeft = topLeft,
@@ -486,6 +590,7 @@ namespace ArknightsMod.Systems
 			}
 			te.Instances.Add(inst);
 			ClearObjectTiles(topLeft, kind, anchorPos);
+			UpdateAnchorTileType(anchorPos, te);
 			if (Main.netMode != NetmodeID.SinglePlayer) {
 				te.SendSync();
 				NetMessage.SendTileSquare(-1, topLeft.X, topLeft.Y, GetSize(kind).X, GetSize(kind).Y);
@@ -511,11 +616,15 @@ namespace ArknightsMod.Systems
 				TryRightClick(anchor.X, anchor.Y, player);
 		}
 
-		private static void EnsureAnchorAndTE(Point16 anchorPos, out ReceptionRoomDecorAnchorTE te)
+		private static void EnsureAnchorAndTE(Point16 anchorPos, DecorKind kind, out ReceptionRoomDecorAnchorTE te)
 		{
-			int anchorType = ModContent.TileType<ReceptionRoomDecorAnchorTile>();
+			// 这里先按"这一件家具自己"的种类选一个初始锚点类型；如果是叠加到已有
+			// 锚点上（stack 到同类家具），UpdateAnchorTileType 会在加入实例之后
+			// 按全部实例重新算一次最终类型，这里的初始选择只是给"全新创建锚点"
+			// 那条路径用的。
+			int anchorType = GetAnchorTileType(kind);
 			Tile t = Framing.GetTileSafely(anchorPos.X, anchorPos.Y);
-			if (!t.HasTile || t.TileType != anchorType) {
+			if (!t.HasTile || !IsAnchorTileType(t.TileType)) {
 				t.HasTile = true;
 				t.TileType = (ushort)anchorType;
 				t.TileFrameX = 0;
@@ -533,13 +642,12 @@ namespace ArknightsMod.Systems
 			Point16 s = GetSize(kind);
 			int skipX = anchorPos.X - topLeft.X;
 			int skipY = anchorPos.Y - topLeft.Y;
-			int anchorType = ModContent.TileType<ReceptionRoomDecorAnchorTile>();
 			for (int x = 0; x < s.X; x++)
 				for (int y = 0; y < s.Y; y++) {
 					if (x == skipX && y == skipY)
 						continue;
 					Tile t = Framing.GetTileSafely(topLeft.X + x, topLeft.Y + y);
-					if (t.HasTile && t.TileType == anchorType)
+					if (t.HasTile && IsAnchorTileType(t.TileType))
 						continue;
 					if (t.HasTile)
 						t.HasTile = false;
@@ -694,7 +802,7 @@ namespace ArknightsMod.Systems
 		public override bool IsTileValidForEntity(int x, int y)
 		{
 			Tile t = Framing.GetTileSafely(x, y);
-			return t.HasTile && t.TileType == ModContent.TileType<ReceptionRoomDecorAnchorTile>();
+			return t.HasTile && ReceptionRoomDecorSystem.IsAnchorTileType(t.TileType);
 		}
 
 		public override int Hook_AfterPlacement(int i, int j, int type, int style, int direction, int alternate)

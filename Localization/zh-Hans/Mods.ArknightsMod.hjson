@@ -38,12 +38,6 @@ WorldGen: {
 	RMA7012PassMessage: "{$Mods.ArknightsMod.Items.RMA7012.DisplayName}"
 }
 
-ProtocolSpace: {
-	Name: 测试协议空间
-	ExitConfirm: 再次交互以确认离开测试协议空间。
-	ExitLocked: 当前不可离开，请先完成目标。
-}
-
 Tiles: {
 	BannerTile.MapEntry: 敌怪旗
 	AnniversaryWheel.MapEntry: "{$Mods.ArknightsMod.Items.AnniversaryWheel.DisplayName}"
@@ -52,7 +46,7 @@ Tiles: {
 	ManganeseOre.MapEntry: "{$Mods.ArknightsMod.Items.ManganeseOre.DisplayName}"
 	OrirockCube.MapEntry: "{$Mods.ArknightsMod.Items.OrirockCube.DisplayName}"
 	RMA7012.MapEntry: "{$Mods.ArknightsMod.Items.RMA7012.DisplayName}"
-	FactoryTile.MapEntry: 加工站
+	FactoryTile.MapEntry: 制造加工站
 	WMusicBoxTile.MapEntry: 音乐盒(W)
 	// HoundTile.MapEntry: Hound Tile
 	// HoundproTile.MapEntry: Houndpro Tile
@@ -77,6 +71,17 @@ Tiles: {
 	OfficeChairTile.MapEntry: "{$Mods.ArknightsMod.Items.OfficeChair.DisplayName}"
 	FileRackTile.MapEntry: "{$Mods.ArknightsMod.Items.FileRack.DisplayName}"
 	ComputerDeskTile.MapEntry: "{$Mods.ArknightsMod.Items.ComputerDesk.DisplayName}"
-	ProtocolSpacePortalTile.MapEntry: 危境再现传送门
-	ProtocolSpaceExitPortalTile.MapEntry: 测试协议空间出口
+	PipeBlueLightPipeTile.MapEntry: "{$Mods.ArknightsMod.Items.PipeBlueLightItem.DisplayName}"
+	ElevatorTile.MapEntry: "{$Mods.ArknightsMod.Items.Elevator.DisplayName}"
+	ElevatorButtonTile.MapEntry: "{$Mods.ArknightsMod.Items.ElevatorButton.DisplayName}"
+	// GrindstoneTile.MapEntry: Grindstone Tile
+	// ManganeseOreTile.MapEntry: Manganese Ore Tile
+	// OrirockCubeTile.MapEntry: Orirock Cube Tile
+	// RMA7012Tile.MapEntry: R M A7012 Tile
+	// FactoryPlusTile.MapEntry: Factory Plus Tile
+}
+
+Keybinds: {
+	"Rosmontis Tactical Deploy.DisplayName": 罗默林斯战术部署
+	"Skill Activate.DisplayName": 技能开启
 }

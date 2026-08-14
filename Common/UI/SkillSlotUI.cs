@@ -1,4 +1,5 @@
-﻿using ArknightsMod.Players;
+﻿using ArknightsMod.Content.Items.Weapons;
+using ArknightsMod.Players;
 using ArknightsMod.Systems.Gameplay.Skill;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -52,8 +53,15 @@ namespace ArknightsMod.Common.UI
 				if (skillData == null)
 					return;
 				var font = FontAssets.MouseText.Value;
-				const float maxWidth = 800f;
-				string tips = skillData.Label.Value + "\n" + skillData.Desc.Value;
+				const float maxWidth = 420f;
+				// 中文没有空格，原版的按空格换行不会生效，导致描述整行超长溢出；
+				// 这里按字符宽度手动折行（CJK 逐字断行）。标题不折行，描述折行。
+				string tips = skillData.Label.Value + "\n" + WrapCjk(font, skillData.Desc.Value, maxWidth);
+				if (Main.LocalPlayer.HeldItem.ModItem is UpgradeWeaponBase ark) {
+					string activateKey = ark.GetSkillActivateKeyHint();
+					if (!string.IsNullOrEmpty(activateKey))
+						tips += "\n" + WrapCjk(font, activateKey, maxWidth);
+				}
 				string[] lines = tips.Replace("\r", string.Empty).Split('\n');
 				int width = 0;
 				int height = 0;
@@ -76,6 +84,29 @@ namespace ArknightsMod.Common.UI
 					drawPos.Y += lineSize.Y;
 				}
 			}
+		}
+
+		// 按字符宽度逐字折行（适配中文等无空格文本）。保留原文里已有的换行符。
+		private static string WrapCjk(ReLogic.Graphics.DynamicSpriteFont font, string text, float maxWidth) {
+			if (string.IsNullOrEmpty(text))
+				return text;
+			var result = new System.Text.StringBuilder(text.Length + 16);
+			float lineWidth = 0f;
+			foreach (char c in text) {
+				if (c == '\n') {
+					result.Append(c);
+					lineWidth = 0f;
+					continue;
+				}
+				float cw = font.MeasureString(c.ToString()).X;
+				if (lineWidth > 0f && lineWidth + cw > maxWidth) {
+					result.Append('\n');
+					lineWidth = 0f;
+				}
+				result.Append(c);
+				lineWidth += cw;
+			}
+			return result.ToString();
 		}
 
 		protected override void DrawChildren(SpriteBatch sb) {

@@ -1,5 +1,6 @@
-﻿using ArknightsMod.Common.UI.BattleRecord;
+using ArknightsMod.Common.UI.BattleRecord;
 using ArknightsMod.Common.UI.BattleRecord.Calculators;
+using ArknightsMod.Content.Items.Weapons.Defender.Beagle;
 using ArknightsMod.Systems.Gameplay.Skill;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -15,6 +16,33 @@ using Terraria.ModLoader.IO;
 
 namespace ArknightsMod.Content.Items.Weapons
 {
+	/// <summary>
+	/// 新武器接入"技能开启键"（<see cref="ArknightsMod.Content.ArknightsKeybinds.SkillActivate"/>，
+	/// 默认 C，玩家可在 设置-控制-模组按键 里自由改绑）的方法：
+	///
+	/// 1. 只要武器类继承自 <see cref="UpgradeWeaponBase"/>（本类），就不需要额外注册任何东西——
+	///    <see cref="ArknightsMod.Players.WeaponPlayer.ProcessTriggers"/> 已经按基类做了统一判断，
+	///    按住技能键时会自动帮你把 <c>Player.controlUseItem</c> 置为 true，把按键"翻译"成一次
+	///    左键点击，交给原版的物品使用管线。
+	/// 2. 武器代码里原来判断"右键是否按下"（<c>player.altFunctionUse == 2</c>）的地方，一律换成
+	///    <c>ArknightsMod.Content.ArknightsKeybinds.SkillActivatePressed(player)</c>；判断"没按住"
+	///    则换成 <c>!ArknightsKeybinds.SkillActivatePressed(player)</c>。不要直接读
+	///    <c>ArknightsKeybinds.SkillActivate.Current</c>——那个字段只反映本地客户端状态，不经过
+	///    联机同步，在 CanUseItem/Shoot 这类对任意 Player 实例都会调用的钩子里直接读会在联机时
+	///    把本地玩家的按键状态错误套用到其他玩家身上；SkillActivatePressed 已经内置了
+	///    <c>whoAmI == Main.myPlayer</c> 的本地判定，直接用它就行。
+	/// 3. 如果右键本身还保留着其它专属功能（部署/召唤之类，和技能开启是两件事——参考
+	///    GoldenglowWand/PozemkaCrossbow/SceneCamera/DeepcolorSketch 的写法），就把
+	///    <c>AltFunctionUse(Player player)</c> 继续返回 true，在 CanUseItem 里把"技能键判断"分支
+	///    放在"右键判断"分支前面并各自 return，两者不会互相干扰。如果右键没有其它用途，把
+	///    <c>AltFunctionUse</c> 改成返回 false 即可（不再需要 altFunctionUse 字段参与判断）。
+	/// 4. 只有当武器类不继承 UpgradeWeaponBase（历史遗留，例如 LupineScarlet/OblivionisSword 直接
+	///    继承 ModItem）时，才需要额外去 WeaponPlayer.ProcessTriggers 里把这个类加进判断列表，
+	///    否则按键不会被翻译成点击，武器里写的 SkillActivatePressed 判断永远不会被触发到。
+	/// 5. 如果技能触发逻辑压根不走物品使用管线（比如像 DeepcolorSketchPlayer 那样在
+	///    ModPlayer.PostUpdate 里直接读输入），就不需要 ProcessTriggers 这层桥接，直接在对应的
+	///    ModPlayer 钩子里判断 ArknightsKeybinds.SkillActivatePressed(Player) 即可。
+	/// </summary>
 	public abstract class UpgradeWeaponBase : UpgradeItemBase
 	{
 		protected int[] skillLevel = new int[3];
@@ -27,7 +55,6 @@ namespace ArknightsMod.Content.Items.Weapons
 			var previewLevel = Level + experienceCalculator.UpgradeLevelPreview;
 			int nowDamage = GetDamage(Level);
 			int previewDamage = GetDamage(previewLevel);
-
 			var font = FontAssets.MouseText.Value;
 			string text = Language.GetTextValue("Mods.ArknightsMod.UpgradeWeapon.LevelPreview.Damage");
 			Vector2 textSize = font.MeasureString(text);
@@ -80,10 +107,11 @@ namespace ArknightsMod.Content.Items.Weapons
 						if (index < 0 || index >= datas.Length)
 							throw new IndexOutOfRangeException($"Skill index {index} out of range for item '{item}'");
 						SkillData data = new() {
-							ChargeType = (SkillChargeType)int.Parse(info[3]),
-							AutoTrigger = int.Parse(info[4]) == 1,
+							ChargeType       = (SkillChargeType)int.Parse(info[3]),
+							AutoTrigger      = int.Parse(info[4]) == 1,
 							AutoUpdateActive = int.Parse(info[5]) == 1,
-							SummonSkill = int.Parse(info[6]) == 1,
+							SummonSkill      = int.Parse(info[6]) == 1,
+							SuppressReadyPulse = info.Length >= 8 && info[7].Trim() == "1",
 						};
 						string name = info[2];
 						data.BindKey(item, index, name);
@@ -130,13 +158,20 @@ namespace ArknightsMod.Content.Items.Weapons
 					}
 				}
 			}
+			if (skillDatas.TryGetValue("SceneCamera", out var sceneCameraSkills) && sceneCameraSkills[0] != null)
+				sceneCameraSkills[0].IsPermanent = true;
 		}
 		public SkillData GetSkillData(int index) {
-			if (!skillDatas.TryGetValue(Name, out var datas)) {
-				// Main.NewText(Name + " hasn't skill datas");
+			return GetSkillDataForItem(Name, index);
+		}
+
+		public static SkillData GetSkillDataForItem(string itemName, int index) {
+			if (!skillDatas.TryGetValue(itemName, out var datas))
 				return null;
-			}
 			return datas[index];
 		}
+
+		/// <summary>覆盖默认「右键开启技能」说明；为 null 时不追加。</summary>
+		public virtual string GetSkillActivateKeyHint() => null;
 	}
 }

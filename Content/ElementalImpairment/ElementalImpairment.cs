@@ -1,4 +1,3 @@
-// ElementalAffliction.cs (ĞŞ¸Ä²¿·Ö)
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -33,7 +32,7 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 		public int CooldownTimer;
 		public AfflictionState State { get; private set; } = AfflictionState.Idle;
 
-		// ĞÂÔö£º±ê¼Ç´ËËğÉËÊÇ·ñ±»ÆäËûËğÉËÒÖÖÆ£¨²»ÏÔÊ¾¡¢²»Ôì³ÉĞ§¹û£©
+		// æ ‡è®°å½“å‰å¼‚å¸¸æ˜¯å¦è¢«å…¶ä»–å¼‚å¸¸å‹åˆ¶ï¼›è¢«å‹åˆ¶æ—¶ä¸æ˜¾ç¤ºå›¾æ ‡å’Œç‰¹æ•ˆã€‚
 		public bool IsSuppressed { get; set; }
 
 		public virtual void ApplyDefenseReduction(NPC npc, int amount) {
@@ -116,14 +115,14 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 		}
 
 
-		
+
 	}
 
 	public class AfflictionContainer
 	{
 		public NPC Owner { get; }
 		public List<ElementalAffliction> Afflictions = new();
-		private int globalCooldownTimer = 0; // È«¾ÖÀäÈ´¼ÆÊ±Æ÷
+		private int globalCooldownTimer = 0; // å…¨å±€å†·å´è®¡æ—¶å™¨
 
 		public AfflictionContainer(NPC owner) => Owner = owner;
 
@@ -153,18 +152,18 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 		private void UpdateSuppression() {
 			var dominant = GetDominantAffliction();
 			foreach (var aff in Afflictions) {
-				// ÀäÈ´»ò±¬ÌõÖĞµÄËğÉË²»±»ÒÖÖÆ
+				// å†·å´æˆ–çˆ†å‘ä¸­çš„å¼‚å¸¸ä¸å‚ä¸å‹åˆ¶åˆ¤æ–­ã€‚
 				if (aff.State == AfflictionState.Cooldown || aff.State == AfflictionState.Burst) {
 					aff.IsSuppressed = false;
 					continue;
 				}
-				// ÆäËûËğÉË£ºÈô²»ÊÇµ±Ç°Ö÷µ¼£¬ÔòÒÖÖÆ
+				// å…¶ä½™å¼‚å¸¸é‡Œï¼Œåªæœ‰å½“å‰ç´¯è®¡å€¼æœ€é«˜çš„é‚£ä¸ªä¸è¢«å‹åˆ¶ã€‚
 				aff.IsSuppressed = (aff != dominant && dominant != null && dominant.CurrentValue > 0);
 			}
 		}
 
 		public void AddAfflictionValue<T>(int amount) where T : ElementalAffliction, new() {
-			// È«¾ÖÀäÈ´ÖĞ£¬ÍêÈ«ÎŞ·¨Ê©¼ÓÈÎºÎËğÉË
+			// å…¨å±€å†·å´æœŸé—´ï¼Œä¸èƒ½æ–½åŠ ä»»ä½•æ–°çš„å¼‚å¸¸å€¼ã€‚
 			if (globalCooldownTimer > 0)
 				return;
 
@@ -177,17 +176,17 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 			if (Owner == null || !Owner.active)
 				return;
 
-			// Ã¿Ãë¼õÉÙÒ»´ÎÈ«¾ÖÀäÈ´¼ÆÊ±£¨¿É¸ù¾İĞèÒªµ÷Õûµ÷ÓÃÆµÂÊ£¬´Ë´¦¸úËæ PostAI Ã¿Ö¡Ò»´Î£©
+			// æ¯å¸§å‡å°‘ä¸€æ¬¡å…¨å±€å†·å´è®¡æ—¶å™¨ï¼›è¿™é‡Œä¾èµ– PostAI æ¯å¸§è°ƒç”¨ä¸€æ¬¡ã€‚
 			if (globalCooldownTimer > 0)
 				globalCooldownTimer--;
 
 			UpdateSuppression();
 
-			// ±éÀú¸üĞÂËùÓĞËğÉË£¨±»ÒÖÖÆµÄ»áÖ±½Ó·µ»Ø UpdateResult.None£©
+			// æ›´æ–°æ‰€æœ‰å¼‚å¸¸ï¼›å¦‚æœæ²¡æœ‰è§¦å‘çˆ†å‘ï¼Œå°±ç›´æ¥è¿”å› UpdateResult.Noneã€‚
 			foreach (var aff in Afflictions) {
 				var result = aff.Update();
 				if (result == UpdateResult.Burst) {
-					// ±¬ÌõÊÓ¾õĞ§¹ûÓëÓ¦ÓÃÉËº¦
+					// æ’­æ”¾è§†è§‰æ•ˆæœå¹¶åº”ç”¨çˆ†å‘ä¼¤å®³ã€‚
 					string mainTex = aff.BurstFlashMainMask;
 					string featherTex = aff.BurstFlashFeatherMask;
 					Vector2 flashPos = aff.GetFlashPosition(Owner);
@@ -196,17 +195,17 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 					aff.ApplyBurstDamage(Owner);
 					BurstFlashEffect.Play(Owner, flashPos, mainTex, featherTex, mainCol, featherCol);
 
-					// ÉèÖÃÈ«¾ÖÀäÈ´£¬½ûÖ¹ÕâÒ»¶ÎÊ±¼äÄÚÊ©¼ÓÈÎºÎËğÉË
+					// è¿›å…¥å…¨å±€å†·å´ï¼Œé˜²æ­¢çŸ­æ—¶é—´å†…è¿ç»­è§¦å‘å¤šä¸ªå¼‚å¸¸çˆ†å‘ã€‚
 					globalCooldownTimer = aff.CooldownTicks;
 
-					// Çå¿ÕÆäËûËùÓĞËğÉËµÄ»ıÀÛÖµ£¬²¢ÖØÖÃÎª Idle£¨²»½øÈëÀäÈ´£©
+					// å…¶ä½™å¼‚å¸¸æ¸…ç©ºç´¯è®¡å€¼å¹¶é‡ç½®ä¸º Idleï¼Œç­‰å¾…é‡æ–°ç§¯ç´¯ã€‚
 					foreach (var otherAff in Afflictions) {
 						if (otherAff != aff)
-							otherAff.ClearAccumulation(); // ClearAccumulation ÄÚÒÑ½« State ÉèÎª Idle
+							otherAff.ClearAccumulation(); // ClearAccumulation ä¼šé¡ºå¸¦æŠŠ State è®¾ä¸º Idle
 					}
 
 					UpdateSuppression();
-					break; // Ò»´ÎÖ»´¦ÀíÒ»¸ö±¬Ìõ
+					break; // ä¸€æ¬¡åªå¤„ç†ä¸€ä¸ªçˆ†å‘ã€‚
 				}
 			}
 		}
@@ -233,39 +232,58 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 				npc.Center.Y < Main.screenPosition.Y - 100 || npc.Center.Y > Main.screenPosition.Y + Main.screenHeight + 100)
 				return;
 
-			// Ö»ÏÔÊ¾Î´±»ÒÖÖÆµÄËğÉË
+			// åªæ˜¾ç¤ºæœªè¢«å‹åˆ¶çš„å¼‚å¸¸ã€‚
 			bool anyVisible = false;
 			foreach (var aff in Container.Afflictions)
 				if (!aff.IsSuppressed && aff.State != AfflictionState.Idle) { anyVisible = true; break; }
 			if (!anyVisible)
 				return;
 
-			Vector2 iconPos = npc.Center - Main.screenPosition;
-			Vector2 ringCenter = npc.Center - Main.screenPosition;
-			iconPos.Y += npc.height * 0.5f + 20f;
-			ringCenter.Y += npc.height * 0.5f + 5f;
+			// è·å–ç¼©æ”¾æ¯”ä¾‹
+			float scale = Main.GameViewMatrix.Zoom.X;
 
+			// è®¡ç®—åŸºç¡€ä½ç½®ï¼ˆå±å¹•åæ ‡ï¼‰
+			Vector2 baseScreenPos = npc.Center - Main.screenPosition;
+			float baseYOffset = npc.height * 0.5f;
+
+			// å›¾æ ‡ä½ç½® - åº”ç”¨å®Œæ•´çš„ GameViewMatrix å˜æ¢
+			Vector2 iconWorldPos = baseScreenPos + new Vector2(0, baseYOffset + 20f);
+			Vector2 iconPos = Vector2.Transform(iconWorldPos, Main.GameViewMatrix.TransformationMatrix);
+
+			// ç¯çš„ä½ç½® - ä½¿ç”¨ç›¸åŒçš„å˜æ¢æ–¹å¼
+			Vector2 ringWorldPos = baseScreenPos + new Vector2(0, baseYOffset + 5f);
+			Vector2 ringPos = Vector2.Transform(ringWorldPos, Main.GameViewMatrix.TransformationMatrix);
+
+			// ç»“æŸåŸæœ‰çš„ SpriteBatch
 			spriteBatch.End();
-			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearClamp,
-				DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.Transform);
 
-			// Ö»»æÖÆÎ´±»ÒÖÖÆµÄËğÉËÍ¼±ê
+			// ä½¿ç”¨ Matrix.Identityï¼Œå› ä¸ºæˆ‘ä»¬å·²ç»æ‰‹åŠ¨åº”ç”¨äº†å˜æ¢
+			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearClamp,
+				DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Matrix.Identity);
+
+			// ç»˜åˆ¶å›¾æ ‡
 			foreach (var aff in Container.Afflictions) {
 				if (aff.IsSuppressed || aff.State == AfflictionState.Idle)
 					continue;
-				Vector2 drawPos = iconPos - new Vector2(0, 15);
+
+				// å›¾æ ‡åœ¨å›¾æ ‡ä½ç½®ä¸Šæ–¹åç§»
+				Vector2 drawPos = iconPos - new Vector2(0, 15f * scale);
+
+				// åº”ç”¨ç¼©æ”¾
+				float featherScale = aff.FeatherScale * scale;
+				float mainScale = aff.MainScale * scale;
 
 				Texture2D featherTex = ModContent.Request<Texture2D>(aff.FeatherMaskTexture).Value;
 				spriteBatch.Draw(featherTex, drawPos, null, aff.FeatherColor, 0f,
-					featherTex.Size() * 0.5f, aff.FeatherScale, SpriteEffects.None, 0);
+					featherTex.Size() * 0.5f, featherScale, SpriteEffects.None, 0);
 
 				Texture2D iconTex = ModContent.Request<Texture2D>(aff.IconMaskTexture).Value;
 				spriteBatch.Draw(iconTex, drawPos, null, aff.IconColor, 0f,
-					iconTex.Size() * 0.5f, aff.MainScale, SpriteEffects.None, 0);
+					iconTex.Size() * 0.5f, mainScale, SpriteEffects.None, 0);
 			}
 			spriteBatch.End();
 
-			// Ö»»æÖÆÎ´±»ÒÖÖÆµÄËğÉË»·
+			// ç»˜åˆ¶ç¯
 			foreach (var aff in Container.Afflictions) {
 				if (aff.IsSuppressed || aff.State == AfflictionState.Idle)
 					continue;
@@ -281,11 +299,13 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 				Color ringColor = (aff.State == AfflictionState.Cooldown) ?
 					new Color(165, 165, 165, 180) : Color.White;
 
-				RingDrawer.DrawRing(ringCenter, 5f, 2.5f, visualProgress, ringColor, 70);
+				// ä¼ å…¥å·²å˜æ¢çš„ç¯ä½ç½®
+				RingDrawer.DrawRing(ringPos, 5f * scale, 2.5f * scale, visualProgress, ringColor, 70);
 			}
 
+			// æ¢å¤ SpriteBatch
 			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState,
-				DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.Transform);
+				DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
 		}
 
 		public static class RingDrawer
@@ -297,7 +317,12 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 			public static void DrawRing(Vector2 center, float radius, float thickness, float progress, Color color, int segments = 60) {
 				if (progress <= 0 || segments < 3)
 					return;
+
 				GraphicsDevice device = Main.graphics.GraphicsDevice;
+
+				// center å·²ç»åº”ç”¨äº† GameViewMatrix å˜æ¢ï¼Œä¸éœ€è¦å†æ¬¡å˜æ¢
+				// ä½† radius å’Œ thickness å·²ç»åŒ…å«äº†ç¼©æ”¾
+
 				int maxSegments = (int)(segments * progress) + 1;
 				if (maxSegments < 2)
 					return;
@@ -305,6 +330,7 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 
 				if (vertices.Length < vertCount)
 					vertices = new VertexPositionColor[vertCount];
+
 				if (vertexBuffer == null || vertexBuffer.VertexCount < vertCount)
 					vertexBuffer = new DynamicVertexBuffer(device, typeof(VertexPositionColor), vertCount, BufferUsage.WriteOnly);
 
@@ -344,12 +370,20 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 				if (cachedEffect == null) {
 					cachedEffect = new BasicEffect(device) {
 						VertexColorEnabled = true,
-						View = Matrix.Identity,
-						Projection = Matrix.Identity
+						View = Matrix.Identity
 					};
 				}
-				cachedEffect.View = Matrix.CreateLookAt(Vector3.Zero, Vector3.Forward, Vector3.Up);
-				cachedEffect.Projection = Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
+
+				cachedEffect.World = Matrix.Identity;
+				cachedEffect.View = Matrix.Identity;
+				cachedEffect.Projection = Matrix.CreateOrthographicOffCenter(
+					0f,
+					device.Viewport.Width,
+					device.Viewport.Height,
+					0f,
+					-1f,
+					1f
+				);
 
 				foreach (var pass in cachedEffect.CurrentTechnique.Passes) {
 					pass.Apply();

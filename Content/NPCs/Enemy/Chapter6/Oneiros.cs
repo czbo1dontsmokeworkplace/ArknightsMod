@@ -31,7 +31,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 			NPC.scale = 2f;
 			NPC.noGravity = true;
 		}
-
+		public override bool? CanFallThroughPlatforms() {
+			return true;
+		}
 
 		private int AttackCD = 0;
 		private bool attack = false;
@@ -347,7 +349,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 			}
 
 		}
-		public override bool PreDraw(ref Color lightColor) {
+		public override bool PreDraw(ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */ {
 			SpriteBatch spriteBatch = Main.spriteBatch;
 			Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
 

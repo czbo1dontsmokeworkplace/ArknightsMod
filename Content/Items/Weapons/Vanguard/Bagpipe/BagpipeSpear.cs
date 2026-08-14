@@ -9,6 +9,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using ArknightsMod.Content;
 
 namespace ArknightsMod.Content.Items.Weapons.Vanguard.Bagpipe
 {
@@ -88,7 +89,7 @@ namespace ArknightsMod.Content.Items.Weapons.Vanguard.Bagpipe
 			if (modPlayer.Skill == 2 && modPlayer.SkillActive)
 				player.AddBuff(ModContent.BuffType<BagpipeDefenseBuff>(), 5);
 		}
-		public override bool AltFunctionUse(Player player) => true;
+		public override bool AltFunctionUse(Player player) => false;
 		public override bool CanUseItem(Player player) {
 			var modPlayer = player.GetModPlayer<WeaponPlayer>();
 
@@ -97,7 +98,7 @@ namespace ArknightsMod.Content.Items.Weapons.Vanguard.Bagpipe
 				if (modPlayer.Skill == 2 && modPlayer.SkillActive)
 					player.AddBuff(ModContent.BuffType<BagpipeDefenseBuff>(), 35);
 
-				if (player.altFunctionUse == 2) {
+				if (ArknightsKeybinds.SkillActivatePressed(player)) {
 					if (!modPlayer.SummonMode) {
 						//s1
 						if (modPlayer.Skill == 0 && modPlayer.StockCount > 0 && !modPlayer.SkillActive) {

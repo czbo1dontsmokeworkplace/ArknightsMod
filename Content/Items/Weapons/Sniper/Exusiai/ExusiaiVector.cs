@@ -1,4 +1,5 @@
-﻿using ArknightsMod.Content.Projectiles.Sniper.Exusiai;
+﻿using ArknightsMod.Content;
+using ArknightsMod.Content.Projectiles.Sniper.Exusiai;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
@@ -58,11 +59,11 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Exusiai
             Item.noMelee = true;
             Item.autoReuse = true;
         }
-		public override bool AltFunctionUse(Player player) => true;
+		public override bool AltFunctionUse(Player player) => false;
 		public override bool CanUseItem(Player player) {
 			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
 			if (Main.myPlayer == player.whoAmI) {
-				if (player.altFunctionUse == 2) {
+				if (ArknightsKeybinds.SkillActivatePressed(player)) {
 					if (!modPlayer.SummonMode) {
 						// S2
 						if (modPlayer.Skill == 1 && modPlayer.StockCount > 0 && !modPlayer.SkillActive) {
@@ -150,7 +151,8 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Exusiai
 			{ 
 				if (modPlayer.Skill == 2 && modPlayer.StockCount > 0 && !modPlayer.SkillActive)
 				{
-					player.altFunctionUse = 2;
+					// SP 满自动触发 S3：直接在这里完成技能激活（设置 SkillActive/计时/扣充能/音效），
+					// 不再需要伪造"右键状态"去复用 CanUseItem 里的触发分支。
 					modPlayer.SkillActive = true;
 					modPlayer.SkillTimer = 0;
 

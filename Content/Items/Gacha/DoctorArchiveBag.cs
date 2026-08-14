@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework.Input;
 using Terraria;
@@ -18,6 +19,8 @@ namespace ArknightsMod.Content.Items.Gacha
 
 		public override void ModifyTooltips(List<TooltipLine> tooltips)
 		{
+			tooltips.Add(new TooltipLine(Mod, "DoctorArchivePool", "可抽出常驻及限定干员时装"));
+
 			try
 			{
 				var player = Main.LocalPlayer;
@@ -45,6 +48,31 @@ namespace ArknightsMod.Content.Items.Gacha
 			Item.useTime = 20;
 			Item.useAnimation = 20;
 			Item.UseSound = SoundID.Item4;
+		}
+
+		private static Dictionary<int, List<int>> _rarityBags;
+
+		private static Dictionary<int, List<int>> GetRarityBags()
+		{
+			if (_rarityBags != null)
+				return _rarityBags;
+
+			_rarityBags = new();
+
+			foreach (var bag in ModContent.GetContent<ArknightsVanityBag>())
+			{
+				if (bag.ObtainType == ArknightsVanityBag.ObtainTypes.NoGacha)
+					continue;
+				int r = bag.Rarity;
+				if (!_rarityBags.TryGetValue(r, out var list))
+				{
+					list = new();
+					_rarityBags[r] = list;
+				}
+				list.Add(bag.Type);
+			}
+
+			return _rarityBags;
 		}
 
 		private static bool IsShiftDown()
@@ -100,10 +128,21 @@ namespace ArknightsMod.Content.Items.Gacha
 			for (int i = 0; i < pulls; i++)
 			{
 				int stars = RollStars(gacha, pulls >= 10);
-				var set = RollSet(stars);
-				GiveSet(player, set);
+				int bagType = RollBagType(stars);
+				if (bagType > 0)
+					GiveToInventoryOrDrop(player, player.GetSource_OpenItem(Type), bagType, 1);
 				gacha.RegisterPull(stars);
 			}
+		}
+
+		private static int RollBagType(int stars)
+		{
+			// 从全部可抽袋子中均匀随机，保证每抽必出且各干员概率相等。
+			// 星级保底计数依然由 RollStars 和 RegisterPull 维护，不影响这里的选袋逻辑。
+			var allBags = new List<int>();
+			foreach (var list in GetRarityBags().Values)
+				allBags.AddRange(list);
+			return allBags.Count > 0 ? allBags[Main.rand.Next(allBags.Count)] : 0;
 		}
 
 		private int RollStars(DoctorArchiveGachaPlayer gacha, bool isTenPull)
@@ -130,70 +169,6 @@ namespace ArknightsMod.Content.Items.Gacha
 			if (roll < 60)
 				return 4;
 			return 3;
-		}
-
-		private static DoctorArchiveGachaData.VanitySet RollSet(int stars)
-		{
-			var sets = DoctorArchiveGachaData.GetSetsByStars(stars);
-			if (sets.Length == 0)
-				sets = DoctorArchiveGachaData.GetSetsByStars(3);
-
-			return sets[Main.rand.Next(sets.Length)];
-		}
-
-		private void GiveSet(Player player, DoctorArchiveGachaData.VanitySet set)
-		{
-			var source = player.GetSource_OpenItem(Type);
-
-			if (TryGiveVanityBag(player, source, set))
-				return;
-
-			foreach (string itemKey in set.ItemKeys)
-			{
-				if (!Mod.TryFind<ModItem>(itemKey, out var modItem))
-					continue;
-
-				GiveToInventoryOrDrop(player, source, modItem.Type, 1);
-			}
-		}
-
-		private bool TryGiveVanityBag(Player player, IEntitySource source, DoctorArchiveGachaData.VanitySet set)
-		{
-			string[] candidateKeys = set.SetKey == "Wisadel"
-				?
-				[
-					$"{set.SetKey}VanityBag",
-					$"{set.SetKey}Default",
-					"WisdelVanityBag",
-					"WisdelDefault",
-				]
-				:
-				[
-					$"{set.SetKey}VanityBag",
-					$"{set.SetKey}Default",
-				];
-
-			foreach (string key in candidateKeys)
-			{
-				if (!Mod.TryFind<ModItem>(key, out var modItem))
-					continue;
-
-				GiveToInventoryOrDrop(player, source, modItem.Type, 1, GetRarityForStars(set.Stars));
-				return true;
-			}
-
-			return false;
-		}
-
-		private static int GetRarityForStars(int stars)
-		{
-			return stars switch
-			{
-				6 => ItemRarityID.Red,
-				5 => ItemRarityID.Pink,
-				4 => ItemRarityID.Orange,
-				_ => ItemRarityID.Green,
-			};
 		}
 
 		private static void GiveToInventoryOrDrop(Player player, IEntitySource source, int itemType, int stack, int? overrideRarity = null)

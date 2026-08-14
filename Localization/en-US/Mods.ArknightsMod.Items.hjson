@@ -1,3 +1,9 @@
+# Furniture
+AutoDoorItem: {
+	DisplayName: Automatic Door
+	Tooltip: Opens automatically when approached, closes when you leave
+}
+
 # Weapons
 YatoKatana: {
 	DisplayName: Yato's Katana
@@ -120,6 +126,36 @@ AmiyaLegs: {
 	Tooltip: ""
 }
 
+NecrassBody: {
+	DisplayName: Necrass's outfit (Body)
+	Tooltip: ""
+}
+
+NecrassHead: {
+	DisplayName: Necrass's outfit (Head)
+	Tooltip: ""
+}
+
+NecrassLegs: {
+	DisplayName: Necrass's outfit (Legs)
+	Tooltip: ""
+}
+
+ReedFlameShadowBody: {
+	DisplayName: Reed the Flame Shadow's outfit (Body)
+	Tooltip: ""
+}
+
+ReedFlameShadowHead: {
+	DisplayName: Reed the Flame Shadow's outfit (Head)
+	Tooltip: ""
+}
+
+ReedFlameShadowLegs: {
+	DisplayName: Reed the Flame Shadow's outfit (Legs)
+	Tooltip: ""
+}
+
 MelanthaBody: {
 	DisplayName: Melantha's outfit (Body)
 	Tooltip: ""
@@ -185,23 +221,8 @@ MudrockBody: {
 	Tooltip: Right-Click to change outfits
 }
 
-MudrockChestplate: {
-	DisplayName: Mudrock's Chestplate
-	Tooltip: Right-Click to change outfits
-}
-
-MudrockGreaves: {
-	DisplayName: Mudrock's Greaves
-	Tooltip: ""
-}
-
 MudrockHead: {
 	DisplayName: Mudrock' outfit (Head)
-	Tooltip: Right-Click to change outfits
-}
-
-MudrockHelmet: {
-	DisplayName: Mudrock's Helmet
 	Tooltip: Right-Click to change outfits
 }
 
@@ -247,6 +268,16 @@ StartBag: {
 
 AmiyaDefault: {
 	DisplayName: Amiya's costume (default)
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+NecrassDefault: {
+	DisplayName: Necrass's costume (default)
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+ReedFlameShadowDefault: {
+	DisplayName: Reed the Flame Shadow's costume (default)
 	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 }
 
@@ -315,8 +346,8 @@ HazeDefault: {
 	Tooltip: ""
 }
 
-KaltsitDefault: {
-	DisplayName: Kaltsit Default
+ClosureDefault: {
+	DisplayName: Closure Default
 	Tooltip: ""
 }
 
@@ -475,18 +506,18 @@ HazeLegs: {
 	Tooltip: ""
 }
 
-KaltsitBody: {
-	DisplayName: Kaltsit Body
+ClosureBody: {
+	DisplayName: Closure Body
 	Tooltip: ""
 }
 
-KaltsitHead: {
-	DisplayName: Kaltsit Head
+ClosureHead: {
+	DisplayName: Closure Head
 	Tooltip: ""
 }
 
-KaltsitLegs: {
-	DisplayName: Kaltsit Legs
+ClosureLegs: {
+	DisplayName: Closure Legs
 	Tooltip: ""
 }
 
@@ -1390,8 +1421,8 @@ TexasLegs: {
 }
 
 FactoryItem: {
-	DisplayName: Factory Item
-	Tooltip: ""
+	DisplayName: Manufacturing Station
+	Tooltip: Used for special crafting
 }
 
 AdnachielCrossbow: {
@@ -1504,18 +1535,8 @@ PipeItem: {
 	Tooltip: ""
 }
 
-PipeWallCopperItem: {
-	DisplayName: Pipe Wall (Variant 2)
-	Tooltip: ""
-}
-
-PipeWallInsulatedItem: {
-	DisplayName: Pipe Wall (Variant 3)
-	Tooltip: ""
-}
-
-PipeWallSteelItem: {
-	DisplayName: Pipe Wall (Variant 1)
+PipeWallItem: {
+	DisplayName: Pipe Wall
 	Tooltip: ""
 }
 
@@ -2459,6 +2480,21 @@ RiceGrain: {
 	Tooltip: ""
 }
 
+TragodiaHead: {
+	DisplayName: Tragodia Head
+	Tooltip: ""
+}
+
+TragodiaBody: {
+	DisplayName: Tragodia Body
+	Tooltip: ""
+}
+
+TragodiaLegs: {
+	DisplayName: Tragodia Legs
+	Tooltip: ""
+}
+
 YvonneBody: {
 	DisplayName: Yvonne Body
 	Tooltip: ""
@@ -2709,7 +2745,7 @@ ExusiaiAlterLegs: {
 	Tooltip: ""
 }
 
-HazeMagicBook: {
+Haze_Magicbook: {
 	DisplayName: Haze_ Magicbook
 	Tooltip: ""
 }
@@ -2717,16 +2753,6 @@ HazeMagicBook: {
 ExusiaiAlterDefault: {
 	DisplayName: Exusiai The New Covenant's costume (default)
 	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
-}
-
-电梯: {
-	DisplayName: 电梯
-	Tooltip: ""
-}
-
-电梯交互按钮: {
-	DisplayName: 电梯交互按钮
-	Tooltip: ""
 }
 
 FireworksHand: {
@@ -2789,17 +2815,715 @@ ValarqvinWeapon: {
 	DisplayName: Valarqvin Weapon
 }
 
-ArmorExusiaiLegs: {
+ArmorExusiaiBody: {
+	DisplayName: Armor Exusiai Body
 	Tooltip: ""
-	DisplayName: Armor Exusiai Legs
 }
 
 ArmorExusiaiHead: {
-	Tooltip: ""
 	DisplayName: Armor Exusiai Head
+	Tooltip: ""
 }
 
-ArmorExusiaiBody: {
+ArmorExusiaiLegs: {
+	DisplayName: Armor Exusiai Legs
 	Tooltip: ""
-	DisplayName: Armor Exusiai Body
+}
+
+PipeWallCopperItem: {
+	DisplayName: Pipe Wall Copper Item
+	Tooltip: ""
+}
+
+PipeWallInsulatedItem: {
+	DisplayName: Pipe Wall Insulated Item
+	Tooltip: ""
+}
+
+PipeWallSteelItem: {
+	DisplayName: Pipe Wall Steel Item
+	Tooltip: ""
+}
+
+PipeBlueLightBlock: {
+	DisplayName: Pipe Blue Light Block
+	Tooltip: ""
+}
+
+HazeMagicBook: {
+	DisplayName: Haze Magic Book
+	Tooltip: ""
+}
+
+ReedFlameShadowStaff: {
+	DisplayName: Reed the Flame Shadow's Staff
+	Tooltip: Sets struck enemies ablaze
+}
+
+DN_Weapon: {
+	DisplayName: D N_ Weapon
+	Tooltip: ""
+}
+
+RephasicEnantiomer: {
+	DisplayName: Rephasic Enantiomer
+	Tooltip: A product of cutting-edge research on luminescent materials.
+}
+
+FuscousFiber: {
+	DisplayName: Fuscous Fiber
+	Tooltip: A specialized fiber bundle, possessing high tensile strength and elastic modulus.
+}
+
+CyclicenePrefab: {
+	DisplayName: Cyclicene Prefab
+	Tooltip: A prefabricated industrial intermediate composed of multiple first-rate materials.
+}
+
+CoagulativeNodule: {
+	DisplayName: Coagulative Nodule
+	Tooltip: A lab-made synthetic particle, boasting powerful adsorption properties.
+}
+
+ChiralRefractor: {
+	DisplayName: Chiral Refractor
+	Tooltip: A specialized material that displays useful optical qualities and other physical traits.
+}
+
+AggregateCyclicene: {
+	DisplayName: Aggregate Cyclicene
+	Tooltip: A superlatively heat- and chemical-resistant industrial material.
+}
+
+SolidifiedFiberBoard: {
+	DisplayName: Solidified Fiber Board
+	Tooltip: A specialized fiber board, solidified in a mold.
+}
+
+SaintBell: {
+	DisplayName: Saint's Bell
+	Tooltip: ""
+}
+
+DeepcolorSketch: {
+	DisplayName: Deepcolor's Sketch
+	Tooltip:
+		'''
+		Summons tentacles to fight for you.
+		Left click: LOGO attack
+		Right click: deploy tentacle
+		'''
+	SkillActivateKey: "[c/AAA8AA:{0}] to activate skill"
+}
+
+SceneCamera: {
+	DisplayName: Scene's Camera
+	Tooltip:
+		'''
+		Left click: cast magic attack.
+		Right click: summon a Mobile Camera Truck.
+		'Smile for the camera.'
+		'''
+	SkillActivateKey: "[c/AAA8AA:{0}] to activate the selected skill"
+	DeployInfo: Camera Trucks: {0}/{1} deployed (can deploy {2})
+	DeploySlotNote: Other minions are using {0} minion slot(s)
+}
+
+Elevator: {
+	DisplayName: Elevator
+	Tooltip: ""
+}
+
+ElevatorButton: {
+	DisplayName: Elevator Button
+	Tooltip: ""
+}
+
+ArmorSkadiBody: {
+	DisplayName: Armor Skadi Body
+	Tooltip: ""
+}
+
+ArmorSkadiHead: {
+	DisplayName: Armor Skadi Head
+	Tooltip: ""
+}
+
+ArmorSkadiLegs: {
+	DisplayName: Armor Skadi Legs
+	Tooltip: ""
+}
+
+ArmorClosureBody: {
+	DisplayName: Armor Closure Body
+	Tooltip: ""
+}
+
+ArmorClosureHead: {
+	DisplayName: Armor Closure Head
+	Tooltip: ""
+}
+
+ArmorClosureLegs: {
+	DisplayName: Armor Closure Legs
+	Tooltip: ""
+}
+
+Legmeat: {
+	DisplayName: Legmeat
+	Tooltip: ""
+}
+
+MeatItem: {
+	DisplayName: Meat Item
+	Tooltip: ""
+}
+
+WaterItem: {
+	DisplayName: Water Item
+	Tooltip: ""
+}
+
+ArmorOblivionisHead: {
+	DisplayName: Armor Oblivionis Head
+	Tooltip: ""
+}
+
+MorniaBody: {
+	DisplayName: Mornia-Cherry's Top
+	Tooltip: Developer Vanity
+}
+
+MorniaDefault: {
+	DisplayName: Mornia-Cherry's costume (default)
+	Tooltip:
+		'''
+		Developer Vanity
+		{$CommonItemTooltip.RightClickToOpen}
+		'''
+}
+
+MorniaHead: {
+	DisplayName: Mornia-Cherry's Headwear
+	Tooltip: Developer Vanity
+}
+
+MorniaLegs: {
+	DisplayName: Mornia-Cherry's Bottoms
+	Tooltip: Developer Vanity
+}
+
+MudrockLegs: {
+	Tooltip: ""
+	DisplayName: Mudrock Legs
+}
+
+NianDefault: {
+	DisplayName: Nian Default
+	Tooltip: ""
+}
+
+DoctorStartBag: {
+	DisplayName: Doctor Start Bag
+	Tooltip: ""
+}
+
+EndminFemaleBody: {
+	DisplayName: Endmin Female Body
+	Tooltip: ""
+}
+
+EndminFemaleDefault: {
+	DisplayName: Endmin Female Default
+	Tooltip: ""
+}
+
+EndminFemaleHead: {
+	DisplayName: Endmin Female Head
+	Tooltip: ""
+}
+
+EndminFemaleLegs: {
+	DisplayName: Endmin Female Legs
+	Tooltip: ""
+}
+
+EndminMask: {
+	DisplayName: Endmin Mask
+	Tooltip: ""
+}
+
+LastRiteDefault: {
+	DisplayName: Last Rite Default
+	Tooltip: ""
+}
+
+YvonneDefault: {
+	DisplayName: Yvonne Default
+	Tooltip: ""
+}
+
+MlynarDefault: {
+	DisplayName: Mlynar Default
+	Tooltip: ""
+}
+
+UlpianusDefault: {
+	DisplayName: Ulpianus Default
+	Tooltip: ""
+}
+
+WisadelDefault: {
+	DisplayName: Wisadel Default
+	Tooltip: ""
+}
+
+DeepcolorBody: {
+	DisplayName: 深海色的躯干
+	Tooltip: ""
+}
+
+DeepcolorDefault: {
+	DisplayName: 深海色的服饰（常规）
+	Tooltip: ""
+}
+
+DeepcolorHead: {
+	DisplayName: 深海色的头部
+	Tooltip: ""
+}
+
+DeepcolorLegs: {
+	DisplayName: 深海色的腿部
+	Tooltip: ""
+}
+
+TexasDefault: {
+	DisplayName: Texas Default
+	Tooltip: ""
+}
+
+StewardStaff: {
+	DisplayName: Steward Staff
+	Tooltip: ""
+}
+
+GoldenglowWand: {
+	DisplayName: Goldenglow Wand
+	Tooltip: ""
+}
+
+CardiganShield: {
+	DisplayName: Cardigan Shield
+	Tooltip: ""
+}
+
+BeehunterBag: {
+	DisplayName: Beehunter Bag
+	Tooltip: ""
+}
+
+DobermannWhip: {
+	DisplayName: Dobermann Whip
+	Tooltip: ""
+}
+
+EstelleGlove: {
+	DisplayName: Estelle Glove
+	Tooltip: ""
+}
+
+FrostleafAxe: {
+	DisplayName: Frostleaf Axe
+	Tooltip: ""
+}
+
+HongdouLance: {
+	DisplayName: Hongdou Lance
+	Tooltip: ""
+}
+
+MataimaruGlaive: {
+	DisplayName: Mataimaru Glaive
+	Tooltip: ""
+}
+
+MelanthasSword: {
+	DisplayName: Melanthas Sword
+	Tooltip: ""
+}
+
+MousseGlove: {
+	DisplayName: Mousse Glove
+	Tooltip: ""
+}
+
+SkadisGreatsword: {
+	DisplayName: Skadis Greatsword
+	Tooltip: ""
+}
+
+JessicaGun: {
+	DisplayName: Jessica Gun
+	Tooltip: ""
+}
+
+MeteorBow: {
+	DisplayName: Meteor Bow
+	Tooltip: ""
+}
+
+GravelDualBlades: {
+	DisplayName: Gravel Dual Blades
+	Tooltip: ""
+}
+
+AnselClaw: {
+	DisplayName: Ansel Claw
+	Tooltip: ""
+}
+
+BeanstalkOrb: {
+	DisplayName: Beanstalk Orb
+	Tooltip: ""
+}
+
+EarthspiritWand: {
+	DisplayName: Earthspirit Wand
+	Tooltip: ""
+}
+
+PlumePike: {
+	DisplayName: Plume Pike
+	Tooltip: ""
+}
+
+VanillaAxe: {
+	DisplayName: Vanilla Axe
+	Tooltip: ""
+}
+
+OriginiumCore: {
+	DisplayName: Originium Core
+	Tooltip:
+		'''
+		Developer Item
+		You shouldn't have this!
+		Press F while holding an Arknights weapon to instantly fill its skill charge.
+
+		It seems to bypass every known law of Originium energy conversion and can supply the wearer with near-limitless Arts support.
+		"Doctor, I don't know how you did it, but please don't plug it into the terminal's charging port."
+		'''
+}
+
+LupineScarlet: {
+	DisplayName: Lupine Scarlet
+	Tooltip: ""
+}
+
+CuoraWeapon: {
+	DisplayName: Cuora Weapon
+	Tooltip: ""
+}
+
+ClosureScanGun: {
+	DisplayName: Engineering Scanner Gun
+	Tooltip: ""
+}
+
+KaltsitBody: {
+	DisplayName: 凯尔希的躯干
+	Tooltip: ""
+}
+
+KaltsitDefault: {
+	DisplayName: 凯尔希的服饰（常规）
+	Tooltip: ""
+}
+
+KaltsitHead: {
+	DisplayName: 凯尔希的头部
+	Tooltip: ""
+}
+
+KaltsitLegs: {
+	DisplayName: 凯尔希的腿部
+	Tooltip: ""
+}
+
+CardiWeapon: {
+	DisplayName: Cardi Weapon
+	Tooltip: ""
+}
+
+EntelechiaScythe: {
+	DisplayName: Entelechia Scythe
+	Tooltip: ""
+}
+
+RopeClaw: {
+	DisplayName: Rope Claw
+	Tooltip: ""
+}
+
+PortableSafehouseDeploymentUnit: {
+	DisplayName: Portable Self-Built Safehouse
+	Tooltip:
+		'''
+		Left-click to build the safehouse directly at the cursor.
+		The safehouse expands to the lower right from the cursor.
+		Ordinary blocks in the area are cleared. Chests, ores, and functional blocks prevent deployment.
+		'''
+
+	Deploy: {
+		Success: Safehouse deployed.
+
+		Failure: {
+			Client: The client cannot deploy structures directly.
+			OutOfBounds: The target position is outside the deployment area.
+			Chest: A chest is in the deployment area.
+			TileEntity: A functional tile is in the deployment area.
+			Ore: Ore is in the deployment area.
+		}
+	}
+}
+
+PortableRhodesIslandSafehouse: {
+	DisplayName: Portable Rhodes Island Safehouse
+	Tooltip:
+		'''
+		Left-click to instantly place a standard-issue Rhodes Island safehouse
+		The cursor always aligns with the building's horizontal center, at ground level
+		'''
+}
+
+PortableStructure.Deploy.Failure.OutOfBounds: The target position is outside the deployment area.
+
+PompeiiLavaCore: {
+	DisplayName: Pompeii's Lava Core
+	Tooltip:
+		'''
+		Grants the Obsidian Skin Potion effect (immunity to fire blocks and lava)
+		When taking over 40 damage from a single hit, triggers an explosion centered on you
+		dealing 200 area damage and inflicting On Fire! on enemies
+		Explosion damage benefits from melee damage bonuses
+		'''
+}
+
+DevTestWrench: {
+	DisplayName: Dev Test Wrench
+	Tooltip:
+		'''
+		Developer debug item
+		Hold left click and drag to select a region, then use /exp to export it as a structure file
+		'''
+}
+
+FoldableBuildingItem: {
+	DisplayName: Foldable Building
+	Tooltip:
+		'''
+		Developer item (placeholder / unfinished)
+		Hold to preview the building projection at your cursor, left click to place it
+		'''
+}
+
+MorniaBodySet.Tooltip: Developer Set
+MorniaHeadSet.Tooltip: Developer Set
+MorniaLegsSet.Tooltip: Developer Set
+MudrockBodySet.Tooltip: ""
+MudrockHeadSet.Tooltip: ""
+MudrockLegsSet.Tooltip: ""
+RosmontisBodySet.Tooltip: ""
+RosmontisHeadSet.Tooltip: ""
+RosmontisLegsSet.Tooltip: ""
+AmiyaBodySet.Tooltip: ""
+AmiyaHeadSet.Tooltip: ""
+AmiyaLegsSet.Tooltip: ""
+HazeBodySet.Tooltip: ""
+HazeHeadSet.Tooltip: ""
+HazeLegsSet.Tooltip: ""
+IndigoBodySet.Tooltip: ""
+IndigoHeadSet.Tooltip: ""
+IndigoLegsSet.Tooltip: ""
+LavaBodySet.Tooltip: ""
+LavaHeadSet.Tooltip: ""
+LavaLegsSet.Tooltip: ""
+MostimaBodySet.Tooltip: ""
+MostimaHeadSet.Tooltip: ""
+MostimaLegsSet.Tooltip: ""
+NecrassBodySet.Tooltip: ""
+NecrassHeadSet.Tooltip: ""
+NecrassLegsSet.Tooltip: ""
+StewardBodySet.Tooltip: ""
+StewardHeadSet.Tooltip: ""
+StewardLegsSet.Tooltip: ""
+BagpipeBodySet.Tooltip: ""
+BagpipeHeadSet.Tooltip: ""
+BagpipeLegsSet.Tooltip: ""
+FangBodySet.Tooltip: ""
+FangHeadSet.Tooltip: ""
+FangLegsSet.Tooltip: ""
+PlumeBodySet.Tooltip: ""
+PlumeHeadSet.Tooltip: ""
+PlumeLegsSet.Tooltip: ""
+TexasBodySet.Tooltip: ""
+TexasHeadSet.Tooltip: ""
+TexasLegsSet.Tooltip: ""
+VanillaBodySet.Tooltip: ""
+VanillaHeadSet.Tooltip: ""
+VanillaLegsSet.Tooltip: ""
+BeagleBodySet.Tooltip: ""
+BeagleHeadSet.Tooltip: ""
+BeagleLegsSet.Tooltip: ""
+CardiganBodySet.Tooltip: ""
+CardiganHeadSet.Tooltip: ""
+CardiganLegsSet.Tooltip: ""
+NianBodySet.Tooltip: ""
+NianHeadSet.Tooltip: ""
+NianLegsSet.Tooltip: ""
+SariaBodySet.Tooltip: ""
+SariaHeadSet.Tooltip: ""
+SariaLegsSet.Tooltip: ""
+SpotBodySet.Tooltip: ""
+SpotHeadSet.Tooltip: ""
+SpotLegsSet.Tooltip: ""
+VulcanBodySet.Tooltip: ""
+VulcanHeadSet.Tooltip: ""
+VulcanLegsSet.Tooltip: ""
+AnselBodySet.Tooltip: ""
+AnselHeadSet.Tooltip: ""
+AnselLegsSet.Tooltip: ""
+HibiscusBodySet.Tooltip: ""
+HibiscusHeadSet.Tooltip: ""
+HibiscusLegsSet.Tooltip: ""
+KaltsitBodySet.Tooltip: ""
+KaltsitHeadSet.Tooltip: ""
+KaltsitLegsSet.Tooltip: ""
+ReedFlameShadowBodySet.Tooltip: ""
+ReedFlameShadowHeadSet.Tooltip: ""
+ReedFlameShadowLegsSet.Tooltip: ""
+WarfarinBodySet.Tooltip: ""
+WarfarinHeadSet.Tooltip: ""
+WarfarinLegsSet.Tooltip: ""
+DorothyBodySet.Tooltip: ""
+DorothyHeadSet.Tooltip: ""
+DorothyLegsSet.Tooltip: ""
+ExusiaiAlterBodySet.Tooltip: ""
+ExusiaiAlterHeadSet.Tooltip: ""
+ExusiaiAlterLegsSet.Tooltip: ""
+ManticoreBodySet.Tooltip: ""
+ManticoreHeadSet.Tooltip: ""
+ManticoreLegsSet.Tooltip: ""
+MizukiBodySet.Tooltip: ""
+MizukiHeadSet.Tooltip: ""
+MizukiLegsSet.Tooltip: ""
+MortisBodySet.Tooltip: ""
+MortisHeadSet.Tooltip: ""
+MortisLegsSet.Tooltip: ""
+TexalterBodySet.Tooltip: ""
+TexalterHeadSet.Tooltip: ""
+TexalterLegsSet.Tooltip: ""
+CivilightEternaBodySet.Tooltip: ""
+CivilightEternaHeadSet.Tooltip: ""
+CivilightEternaLegsSet.Tooltip: ""
+DeepcolorBodySet.Tooltip: ""
+DeepcolorHeadSet.Tooltip: ""
+DeepcolorLegsSet.Tooltip: ""
+LingBodySet.Tooltip: ""
+LingHeadSet.Tooltip: ""
+LingLegsSet.Tooltip: ""
+OrchidBodySet.Tooltip: ""
+OrchidHeadSet.Tooltip: ""
+OrchidLegsSet.Tooltip: ""
+AdnachielBodySet.Tooltip: ""
+AdnachielHeadSet.Tooltip: ""
+AdnachielLegsSet.Tooltip: ""
+CatapultBodySet.Tooltip: ""
+CatapultHeadSet.Tooltip: ""
+CatapultLegsSet.Tooltip: ""
+ExusiaiBodySet.Tooltip: ""
+ExusiaiHeadSet.Tooltip: ""
+ExusiaiLegsSet.Tooltip: ""
+FartoothBodySet.Tooltip: ""
+FartoothHeadSet.Tooltip: ""
+FartoothLegsSet.Tooltip: ""
+FiammettaBodySet.Tooltip: ""
+FiammettaHeadSet.Tooltip: ""
+FiammettaLegsSet.Tooltip: ""
+KroosBodySet.Tooltip: ""
+KroosHeadSet.Tooltip: ""
+KroosLegsSet.Tooltip: ""
+KkdyAlterBodySet.Tooltip: ""
+KkdyAlterHeadSet.Tooltip: ""
+KkdyAlterLegsSet.Tooltip: ""
+MelaniteBodySet.Tooltip: ""
+MelaniteHeadSet.Tooltip: ""
+MelaniteLegsSet.Tooltip: ""
+ProvenceBodySet.Tooltip: ""
+ProvenceHeadSet.Tooltip: ""
+ProvenceLegsSet.Tooltip: ""
+TyphonBodySet.Tooltip: ""
+TyphonHeadSet.Tooltip: ""
+TyphonLegsSet.Tooltip: ""
+WBodySet.Tooltip: ""
+WHeadSet.Tooltip: ""
+WLegsSet.Tooltip: ""
+WisadelBodySet.Tooltip: ""
+WisadelHeadSet.Tooltip: ""
+WisadelLegsSet.Tooltip: ""
+RaidianBodySet.Tooltip: ""
+RaidianHeadSet.Tooltip: ""
+RaidianLegsSet.Tooltip: ""
+ChenBodySet.Tooltip: ""
+ChenHeadSet.Tooltip: ""
+ChenLegsSet.Tooltip: ""
+EntelechiaBodySet.Tooltip: ""
+EntelechiaHeadSet.Tooltip: ""
+EntelechiaLegsSet.Tooltip: ""
+LaPlumaBodySet.Tooltip: ""
+LaPlumaHeadSet.Tooltip: ""
+LaPlumaLegsSet.Tooltip: ""
+LapplandBodySet.Tooltip: ""
+LapplandHeadSet.Tooltip: ""
+LapplandLegsSet.Tooltip: ""
+MatoimaruBodySet.Tooltip: ""
+MatoimaruHeadSet.Tooltip: ""
+MatoimaruLegsSet.Tooltip: ""
+MelanthaBodySet.Tooltip: ""
+MelanthaHeadSet.Tooltip: ""
+MelanthaLegsSet.Tooltip: ""
+MidnightBodySet.Tooltip: ""
+MidnightHeadSet.Tooltip: ""
+MidnightLegsSet.Tooltip: ""
+MlynarBodySet.Tooltip: ""
+MlynarHeadSet.Tooltip: ""
+MlynarLegsSet.Tooltip: ""
+OblivionisBodySet.Tooltip: ""
+OblivionisHeadSet.Tooltip: ""
+OblivionisLegsSet.Tooltip: ""
+PopukarBodySet.Tooltip: ""
+PopukarHeadSet.Tooltip: ""
+PopukarLegsSet.Tooltip: ""
+SkadiBodySet.Tooltip: ""
+SkadiHeadSet.Tooltip: ""
+SkadiLegsSet.Tooltip: ""
+SurtrBodySet.Tooltip: ""
+SurtrHeadSet.Tooltip: ""
+SurtrLegsSet.Tooltip: ""
+UlpianusBodySet.Tooltip: ""
+UlpianusHeadSet.Tooltip: ""
+UlpianusLegsSet.Tooltip: ""
+UtageBodySet.Tooltip: ""
+UtageHeadSet.Tooltip: ""
+UtageLegsSet.Tooltip: ""
+
+FactoryPlusItem: {
+	DisplayName: Factory Plus Item
+	Tooltip: ""
+}
+
+TragodiaDefault: {
+	DisplayName: Tragodia Default
+	Tooltip: ""
 }

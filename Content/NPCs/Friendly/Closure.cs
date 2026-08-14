@@ -1,13 +1,16 @@
 using ArknightsMod.Content.Items;
-using ArknightsMod.Content.Items.Consumables.VanityBags;
+using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.DisplayForUI;
 using ArknightsMod.Content.Items.Gacha;
 using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Systems;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.GameContent.Personalities;
 using Terraria.ID;
 using Terraria.Localization;
@@ -24,14 +27,17 @@ namespace ArknightsMod.Content.NPCs.Friendly
 
 		public static int ButtonCount;
 
+		private static string closureShop1FullName;
 		private static string closureShop2FullName;
 
 		public override void SetStaticDefaults() {
 			Main.npcFrameCount[NPC.type] = 22;
 			NPCID.Sets.ExtraFramesCount[NPC.type] = 6;
 			NPCID.Sets.AttackFrameCount[NPC.type] = 1;
-			NPCID.Sets.DangerDetectRange[NPC.type] = 40;
-			NPCID.Sets.AttackType[NPC.type] = 3;
+			// 手持扫描枪射击，射程比原来的近战挥砍远得多，探测范围也相应放大
+			NPCID.Sets.DangerDetectRange[NPC.type] = 500;
+			// AttackType: 0=投掷 1=射击 2=魔法 3=近战挥砍。改为 1，让她端枪平射而不是挥手打人。
+			NPCID.Sets.AttackType[NPC.type] = 1;
 			NPCID.Sets.AttackTime[NPC.type] = 18;
 			NPCID.Sets.AttackAverageChance[NPC.type] = 10;
 			NPCID.Sets.HatOffsetY[NPC.type] = 4;
@@ -286,205 +292,60 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			}
 		}
 
+		// tModLoader 的商店展示槽位是有限的（40 格）。这两个商店的实际内容完全由
+		// ModifyActiveShop 每天重新决定（含材料商店里永远常驻的碳素条），下面注册的静态列表
+		// 只是给「哪里能买到」这类外部工具查询用的样本，本身并不会被玩家直接看到。
+		// ⚠ 这里注册的条目没有挂任何 Condition，运行时全部算"生效中"——一旦数量超过槽位
+		//   上限，tModLoader 每次开店都会弹出"物品太多，塞不进商店里 :("的警告。材料池
+		//   （forceAllTiers=true 时 60+ 种）和全部时装袋（当前 50+ 个）都远超 40，
+		//   所以必须截断，不能把 GetContent 的结果直接全塞进去。
+		private const int MaxStaticShopSampleCount = 30;
+
 		public override void AddShops() {
 			var npcShop = new NPCShop(Type, ShopName[0])
-				.Add(new Item(ModContent.ItemType<Polyketon>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<Oriron>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<Sugar>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<Device>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<Polyester>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<ManganeseOre>()) {
-					shopCustomPrice = 30,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<Grindstone>()) {
-					shopCustomPrice = 30,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<LoxicKohl>()) {
-					shopCustomPrice = 30,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<CoagulatingGel>()) {
-					shopCustomPrice = 30,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<IncandescentAlloy>()) {
-					shopCustomPrice = 30,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<CrystallineComponent>()) {
-					shopCustomPrice = 30,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<CompoundCuttingFluid>()) {
-					shopCustomPrice = 30,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<SemiSyntheticSolvent>()) {
-					shopCustomPrice = 30,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<TransmutedSalt>()) {
-					shopCustomPrice = 30,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<CarbonBrick>()) {
-					shopCustomPrice = Item.buyPrice(0, 0, 10, 0),
-				})
 				.Add(new Item(ModContent.ItemType<Items.Placeable.Furniture.DareUsa>()) {
 					shopCustomPrice = 30,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				});
+			foreach (int materialType in NPCShopSystem.BuildClosurePinnedMaterials()) {
+				if (materialType == ModContent.ItemType<CarbonBrick>()) {
+					npcShop.Add(new Item(materialType));
+				}
+				else {
+					npcShop.Add(new Item(materialType) {
+						shopCustomPrice = 10,
+						shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+					});
+				}
+			}
+			int materialSampleCount = 0;
+			foreach (int materialType in NPCShopSystem.BuildClosureMaterialPool(true)) {
+				if (materialSampleCount >= MaxStaticShopSampleCount)
+					break;
+				if (materialType == ModContent.ItemType<CarbonBrick>()) {
+					npcShop.Add(new Item(materialType));
+				}
+				else {
+					npcShop.Add(new Item(materialType) {
+						shopCustomPrice = 10,
+						shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+					});
+				}
+				materialSampleCount++;
+			}
 			npcShop.Register();
-			npcShop = new NPCShop(Type, ShopName[1])
-				.Add(new Item(ModContent.ItemType<AmiyaDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<MelanthaDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<MatoimaruDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<IndigoDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<ChenDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<WDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<MudrockDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<OblivionisDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<RaidianDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<WisdelDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<BagpipeDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<FiammettaDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<BeagleDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<CivilightEternaDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<DorothyDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<ExusiaiDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<FartoothDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<HazeDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<KaltsitDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<KroosAlterDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<LaPlumaDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<LingDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<ManticoreDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<MelaniteDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<MostimaDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<RosmontisDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<SariaDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<SkadiDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<SurtrDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<UtageDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<WarfarinDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<LapplandDefault>()) {
-					shopCustomPrice = 10,
-					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
-				})
-				.Add(new Item(ModContent.ItemType<TexalterDefault>()) {
+
+			npcShop = new NPCShop(Type, ShopName[1]);
+			int bagSampleCount = 0;
+			foreach (var bag in ModContent.GetContent<ArknightsVanityBag>()) {
+				if (bagSampleCount >= MaxStaticShopSampleCount)
+					break;
+				npcShop.Add(new Item(bag.Type) {
 					shopCustomPrice = 10,
 					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
 				});
+				bagSampleCount++;
+			}
 			npcShop.Register();
 		}
 
@@ -501,7 +362,34 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		}
 
 		public override void ModifyActiveShop(string shopName, Item[] items) {
+			closureShop1FullName ??= NPCShopDatabase.GetShopName(ModContent.NPCType<Closure>(), ShopName[0]);
 			closureShop2FullName ??= NPCShopDatabase.GetShopName(ModContent.NPCType<Closure>(), ShopName[1]);
+
+			if (shopName == closureShop1FullName) {
+				if (NPCShopSystem.ClosureMaterialRotation.Count == 0)
+					NPCShopSystem.UpdateClosureShop(Mod, true);
+				Array.Fill(items, null);
+
+				items[0] = new Item(ModContent.ItemType<Items.Placeable.Furniture.DareUsa>()) {
+					shopCustomPrice = 30,
+					shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+				};
+
+				var materialRotation = NPCShopSystem.ClosureMaterialRotation;
+				for (int j = 0; j < materialRotation.Count && j + 1 < items.Length; j++) {
+					if (materialRotation[j] == ModContent.ItemType<CarbonBrick>()) {
+						items[j + 1] = new Item(materialRotation[j]);
+					}
+					else {
+						items[j + 1] = new Item(materialRotation[j]) {
+							shopCustomPrice = 10,
+							shopSpecialCurrency = ArknightsMod.OrundumCurrencyId
+						};
+					}
+				}
+				return;
+			}
+
 			if (shopName != closureShop2FullName)
 				return;
 
@@ -531,6 +419,42 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		public override void TownNPCAttackCooldown(ref int cooldown, ref int randExtraCooldown) {
 			cooldown = 30;
 			randExtraCooldown = 30;
+		}
+
+		// 主动攻击改为使用「工程部特制扫描枪」，但只会武器的普通攻击——
+		// 发射和玩家左键相同的能量镖弹幕（ClosureScanShotProjectile），不涉及武器的任何技能：
+		// 技能依赖 WeaponPlayer 上的技力/充能状态，那是玩家专属的系统，NPC 身上并不存在，
+		// 所以这里只复用普攻弹幕，不去碰技能逻辑。
+		public override void TownNPCAttackProj(ref int projType, ref int attackDelay) {
+			projType = ModContent.ProjectileType<Projectiles.Medic.Closure.ClosureScanShotProjectile>();
+			attackDelay = 1;
+		}
+
+		// 弹幕本身直线飞行、不受重力影响（见 ClosureScanShotProjectile.AI），所以重力补正给 0；
+		// 速度对齐武器的 Item.shootSpeed=14，保证 NPC 打出来的手感和玩家左键一致。
+		public override void TownNPCAttackProjSpeed(ref float multiplier, ref float gravityCorrection, ref float randomOffset) {
+			multiplier = 14f;
+			gravityCorrection = 0f;
+			randomOffset = 0.1f;
+		}
+
+		// 攻击时在手上绘制扫描枪的物品贴图（AttackType=1 走这个 hook，原来的近战 TownNPCAttackSwing 不再适用）。
+		//
+		// horizontalHoldoutOffset 会被原版直接拿去当绘制原点用（Main.cs：origin = (-offset, 高度/2)），
+		// 数值越大枪越往前伸、离身体越远。原版自己算这个值的公式是
+		//     DrawPlayerItemPos(1f, 物品).X - 4
+		// 而 DrawPlayerItemPos 对没有自定义 HoldoutOffset 的物品固定返回 X=10，也就是默认 6。
+		// 原版给个别 NPC 把枪往回收，用的也是加大这个减数的办法（num10 = 16/18/28）。
+		// 这里沿用同一套算法，只把减数提出来方便调：数值越大枪贴得越近。
+		private const int GunPullback = 6;
+
+		public override void DrawTownAttackGun(ref Texture2D item, ref Rectangle itemFrame, ref float scale, ref int horizontalHoldoutOffset) {
+			int itemType = ModContent.ItemType<Items.Weapons.Medic.Closure.ClosureScanGun>();
+			Main.instance.LoadItem(itemType);
+			item = TextureAssets.Item[itemType].Value;
+			itemFrame = item.Frame();
+			scale = 1f;
+			horizontalHoldoutOffset = (int)Main.DrawPlayerItemPos(1f, itemType).X - GunPullback;
 		}
 	}
 }

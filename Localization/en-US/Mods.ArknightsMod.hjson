@@ -38,12 +38,6 @@ WorldGen: {
 	RMA7012PassMessage: "{$Mods.ArknightsMod.Items.RMA7012.DisplayName}"
 }
 
-ProtocolSpace: {
-	Name: Protocol Space
-	ExitConfirm: Press again to confirm exiting protocol space.
-	ExitLocked: You can't leave yet. Finish the objective first.
-}
-
 Tiles: {
 	BannerTile.MapEntry: Banner
 	AnniversaryWheel.MapEntry: "{$Mods.ArknightsMod.Items.AnniversaryWheel.DisplayName}"
@@ -52,7 +46,7 @@ Tiles: {
 	ManganeseOre.MapEntry: Manganese Ore
 	OrirockCube.MapEntry: "{$Mods.ArknightsMod.Items.OrirockCube.DisplayName}"
 	RMA7012.MapEntry: "{$Mods.ArknightsMod.Items.RMA7012.DisplayName}"
-	FactoryTile.MapEntry: Factory Station
+	FactoryTile.MapEntry: Manufacturing Station
 	WMusicBoxTile.MapEntry: Music Box (W)
 	HoundTile.MapEntry: Hound Tile
 	HoundproTile.MapEntry: Houndpro Tile
@@ -77,6 +71,17 @@ Tiles: {
 	OfficeChairTile.MapEntry: Office Chair Tile
 	FileRackTile.MapEntry: File Rack Tile
 	ComputerDeskTile.MapEntry: Computer Desk Tile
-	ProtocolSpacePortalTile.MapEntry: Protocol Space Portal
-	ProtocolSpaceExitPortalTile.MapEntry: Protocol Space Exit Portal
+	PipeBlueLightPipeTile.MapEntry: "{$Mods.ArknightsMod.Items.PipeBlueLightItem.DisplayName}"
+	ElevatorTile.MapEntry: "{$Mods.ArknightsMod.Items.Elevator.DisplayName}"
+	ElevatorButtonTile.MapEntry: "{$Mods.ArknightsMod.Items.ElevatorButton.DisplayName}"
+	GrindstoneTile.MapEntry: Grindstone Tile
+	ManganeseOreTile.MapEntry: Manganese Ore Tile
+	OrirockCubeTile.MapEntry: Orirock Cube Tile
+	RMA7012Tile.MapEntry: R M A7012 Tile
+	FactoryPlusTile.MapEntry: Factory Plus Tile
+}
+
+Keybinds: {
+	"Rosmontis Tactical Deploy.DisplayName": Rosmontis  Tactical  Deploy
+	"Skill Activate.DisplayName": Skill  Activate
 }

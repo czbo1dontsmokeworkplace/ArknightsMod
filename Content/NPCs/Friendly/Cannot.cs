@@ -319,8 +319,10 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		}
 
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
-			npcLoot.Add(ItemDropRule.ByCondition(new CannotDead(), ModContent.ItemType<OriginiumIngot>(), 1, 2, 3));
-			npcLoot.Add(new Cannot_DorpCollection());
+			// 被玩家击杀（非逃走）：掉落更多源石锭（5~8）
+			npcLoot.Add(ItemDropRule.ByCondition(new CannotDead(), ModContent.ItemType<OriginiumIngot>(), 1, 5, 8));
+			// 逃走掉落的“当前售卖藏品”改为在 OnKill 中确定性掉落 —— 逃走是自伤 InstantKill，
+			// 常规掉落规则(NPCLoot)在该路径下不一定会解析，导致藏品掉不出来。
 		}
 
 		public override void OnChatButtonClicked(bool firstButton, ref string shop) {
@@ -385,6 +387,11 @@ namespace ArknightsMod.Content.NPCs.Friendly
 				if (npc.type == Type)
 					return base.SpawnChance(spawnInfo);
 			}
+			// 死亡后的重生冷却：RespawnCooldown 在 CheckDead() 中被设为 7200，
+			// 此前一直只在 CannotSpawnHelper 里递减，但没有任何地方真正用它阻止重新生成，
+			// 导致坎诺特死亡后下一刻就可能被重新刷出来。
+			if (RespawnCooldown > 0)
+				return 0f;
 			if (!spawnInfo.Invasion && !spawnInfo.Sky && (NPC.downedBoss1 || NPC.downedBoss2 || NPC.downedBoss3))
 				return 0.2f;
 			return base.SpawnChance(spawnInfo);
@@ -394,6 +401,23 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			RespawnCooldown = 7200;
 			ModContent.GetInstance<CannotLifeGateSystem>().OnCannotDied();
 			return base.CheckDead();
+		}
+
+		public override void OnKill() {
+			// 逃走时确定性掉落一件“当前正在售卖的藏品”（服务器/单机权威，Item.NewItem 自动同步）
+			if (!Runaway || Main.netMode == NetmodeID.MultiplayerClient)
+				return;
+
+			var shopItems = NPCShopSystem.CannotShopItems;
+			if (shopItems.Count == 0) {
+				// 兜底：若尚未生成商店内容，强制刷新一次
+				NPCShopSystem.TryUpdateCannotShop(Mod, true);
+				shopItems = NPCShopSystem.CannotShopItems;
+			}
+			if (shopItems.Count > 0) {
+				int type = shopItems[Main.rand.Next(shopItems.Count)].type;
+				Item.NewItem(NPC.GetSource_Death(), NPC.getRect(), type, 1);
+			}
 		}
 	}
 
@@ -521,18 +545,21 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		public bool CanDrop(DropAttemptInfo info) => condition.CanDrop(info);
 
 		public void ReportDroprates(List<DropRateInfo> drops, DropRateInfoChainFeed ratesInfo) {
-			float dropRate = ratesInfo.parentDroprateChance;
-			for (int i = 0; i < Cannot.shopItems.Count; i++) {
-				Item item = Cannot.shopItems[i];
-				drops.Add(new DropRateInfo(item.type, 1, 1, dropRate, ratesInfo.conditions));
-			}
+			// 逃走时随机掉落一件“当前正在售卖的藏品”（即当前坎诺特商店内容）
+			var shopItems = NPCShopSystem.CannotShopItems;
+			float perItemRate = shopItems.Count > 0 ? ratesInfo.parentDroprateChance / shopItems.Count : 0f;
+			for (int i = 0; i < shopItems.Count; i++)
+				drops.Add(new DropRateInfo(shopItems[i].type, 1, 1, perItemRate, ratesInfo.conditions));
 			Chains.ReportDroprates(ChainedRules, 1, drops, ratesInfo);
 		}
 
 		public ItemDropAttemptResult TryDroppingItem(DropAttemptInfo info) {
-			ItemDropAttemptResult result;
-			CommonCode.DropItem(info, info.rng.Next(Cannot.shopItems.Select(item => item.type).ToArray()), 1);
-			result = default;
+			var shopItems = NPCShopSystem.CannotShopItems;
+			if (shopItems.Count > 0) {
+				int type = shopItems[info.rng.Next(shopItems.Count)].type;
+				CommonCode.DropItem(info, type, 1);
+			}
+			ItemDropAttemptResult result = default;
 			result.State = ItemDropAttemptResultState.Success;
 			return result;
 		}

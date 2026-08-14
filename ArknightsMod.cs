@@ -1,19 +1,19 @@
+using ArknightsMod.Assets.Effects;
 using ArknightsMod.Content.Items;
 using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.NPCs.Friendly;
 using ArknightsMod.Content.Players;
+using ArknightsMod.Content.Tiles.Infrastructure.ReceptionRoom;
+using ArknightsMod.Systems;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
+using System.IO;
 using Terraria;
 using Terraria.GameContent.UI;
 using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using ReLogic.Content;
-using ArknightsMod.Assets.Effects;
-using System.IO;
-using ArknightsMod.Systems;
-using ArknightsMod.Content.Tiles.Infrastructure.ReceptionRoom;
 
 namespace ArknightsMod
 {
@@ -44,9 +44,14 @@ namespace ArknightsMod
 		public static Asset<Effect> AACTSTG3RBNoise;//红蓝噪声效果（AACT三阶段）
 		public static Asset<Effect> FNTwistedRing;//霜星限制阈（扭曲环效果）
 		public static Asset<Effect> LavaExplosionShaderEffect;//炎熔的爆炸效果
+		public static Asset<Effect> LupineKnifeLight;//狼之绯刀光（顶点 trail 着色器，非屏幕滤镜）
+		public static Asset<Effect> ReedFlameTrail;//焰影苇草火焰拖尾（顶点 trail 着色器，非屏幕滤镜）
 		public const string AssetPath = "ArknightsMod/Sound/";
 
 		public override void Load() {
+			// 热键必须在这里注册：KeybindLoader 只认 Mod.Load() 期间的注册，
+			// 放在 ModSystem.Load() 里不会生效（详见 ArknightsKeybinds 的注释）。
+			Content.ArknightsKeybinds.Register(this);
 			UpgradeItemBase.LoadLevelData(this);
 			UpgradeWeaponBase.LoadSkillData(this);
 			// Registers a new custom currency
@@ -97,6 +102,12 @@ namespace ArknightsMod
 				LavaExplosionShaderEffect = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/LavaExplosionShaderEffect", ReLogic.Content.AssetRequestMode.ImmediateLoad);
 				Filters.Scene["LavaExplosionShaderEffect"] = new Filter(new ScreenShaderData(LavaExplosionShaderEffect, "LavaExplosionShaderEffect"), EffectPriority.VeryHigh);
 				Filters.Scene["LavaExplosionShaderEffect"].Load();
+
+				// 狼之绯刀光：直接作用于顶点图元，不注册为屏幕滤镜
+				LupineKnifeLight = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/LupineKnifeLight", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+
+				// 焰影苇草火焰拖尾：同样直接作用于顶点图元
+				ReedFlameTrail = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/ReedFlameTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad);
 			}
 			Filters.Scene["AshStorm"] = new Filter(new ScreenShaderData("FilterAsh").UseColor(1f, 0.8f, 0.5f), EffectPriority.High);
 
@@ -106,6 +117,12 @@ namespace ArknightsMod
 			MusicLoader.AddMusic(this, "Assets/OriginalMusic/AACTintro");
 			MusicLoader.AddMusic(this, "Assets/OriginalMusic/AACTloop");
 		}
+
+		public override void Unload() {
+			// 静态字段在模组卸载/重载时不会自动清空，留着会指向上一次加载的实例
+			Content.ArknightsKeybinds.Unregister();
+		}
+
 		public static Texture2D UnionInvadeSkyTexture { get; private set; }
 
 		private void LoadClient() {
@@ -152,12 +169,21 @@ namespace ArknightsMod
 					if (Main.netMode == NetmodeID.Server)
 						WaterDispenserTile.TryGiveCoffee(Main.player[whoAmI]);
 					break;
-				case ArkMessageID.ProtocolSpaceRequestStart:
-				case ArkMessageID.ProtocolSpaceRequestExitInteract:
-				case ArkMessageID.ProtocolSpaceRequestExitCountdown:
-				case ArkMessageID.ProtocolSpaceSyncState:
-				case ArkMessageID.ProtocolSpaceExitCountdown:
-					global::ArknightsMod.Systems.InstancedSpace.ProtocolSpaceEventSystem.ReceivePacket(reader, whoAmI, (ArkMessageID)id);
+				case ArkMessageID.ElevatorRequestFloor:
+					if (Main.netMode != NetmodeID.MultiplayerClient) {
+						int teId = reader.ReadInt32();
+						int floorBottomY = reader.ReadInt32();
+						global::ArknightsMod.Content.Tiles.TEElevator.ApplyMoveRequest(teId, floorBottomY);
+					}
+					break;
+				case ArkMessageID.PortableSafehouseRequestDeploy:
+					global::ArknightsMod.Content.Items.Consumables.PortableSafehouse.PortableSafehouseDeploymentUnit.ReceiveDeployRequest(reader, whoAmI);
+					break;
+				case ArkMessageID.AkStructureRequestDeploy:
+					global::ArknightsMod.Systems.Structures.AkStructureDeploySystem.ReceiveDeployRequest(reader, whoAmI);
+					break;
+				case ArkMessageID.AkStructurePlacedEffect:
+					global::ArknightsMod.Systems.Structures.AkStructureDeploySystem.ReceivePlacedEffect(reader);
 					break;
 			}
 		}
@@ -171,11 +197,10 @@ namespace ArknightsMod
 			CannotAggroAck,
 			CannotLifeTokenSync,
 			CoffeeMachineRequest,
-			ProtocolSpaceRequestStart,
-			ProtocolSpaceRequestExitInteract,
-			ProtocolSpaceRequestExitCountdown,
-			ProtocolSpaceSyncState,
-			ProtocolSpaceExitCountdown,
+			ElevatorRequestFloor,
+			PortableSafehouseRequestDeploy,
+			AkStructureRequestDeploy,
+			AkStructurePlacedEffect,
 		}
 	}
 	//public class Ex : GlobalNPC

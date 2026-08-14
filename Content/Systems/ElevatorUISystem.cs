@@ -29,19 +29,30 @@ namespace ArknightsMod.Content.Systems
 			if (_ui?.CurrentState != null)
 			{
 				_ui.Update(gameTime);
-				// 设置窗口打开，或鼠标悬停楼层按钮区时，占用鼠标交互，确保可点击楼层按钮。
 				Player player = Main.LocalPlayer;
-				if (player != null && (_state.IsSettingsVisible || _state.IsMouseOverFloorPanel))
+				if (player != null && (_state.IsSettingsVisible || _state.IsMouseOverFloorPanel || _state.IsMouseOverSettingsPanel))
 					Main.LocalPlayer.mouseInterface = true;
 
 				int selectedBeforeWheel = player?.selectedItem ?? 0;
 				int wheelSteps = PlayerInput.ScrollWheelDelta / 120;
-				if (wheelSteps != 0)
-					_state.ScrollSelection(wheelSteps);
-
-				// 玩家在电梯内时，禁用滚轮修改快捷物品栏（仅屏蔽滚轮，不影响数字键切换）。
-				if (player != null && wheelSteps != 0 && 电梯TE.TryFindNearbyElevatorForPlayer(player, out _, out _, out _))
-					player.selectedItem = selectedBeforeWheel;
+				if (wheelSteps != 0 && !_state.IsSettingsVisible)
+				{
+					// 玩家处于电梯井道竖向范围内时（与禁用物品栏滚轮一致的判定），
+					// 滚轮用于切换楼层选择，并把被改动的快捷栏选择还原回去。
+					if (player != null
+						&& TEElevator.TryFindNearbyElevatorForPlayer(player, out _, out int scrollTopLeftX, out int scrollTopLeftY))
+					{
+						if (_state.TargetX != scrollTopLeftX || _state.TargetY != scrollTopLeftY)
+							_state.SetFloorTarget(scrollTopLeftX, scrollTopLeftY, resetSelection: false);
+						_state.ScrollSelection(wheelSteps);
+						player.selectedItem = selectedBeforeWheel;
+					}
+					else if (_state.IsMouseOverFloorPanel)
+					{
+						// 不在井道内但鼠标悬停在右下角楼层面板上时，也允许滚轮切换楼层。
+						_state.ScrollSelection(wheelSteps);
+					}
+				}
 
 				bool confirmPressed = Main.keyState.IsKeyDown(Keys.F) && !Main.oldKeyState.IsKeyDown(Keys.F);
 				if (confirmPressed)
@@ -62,36 +73,36 @@ namespace ArknightsMod.Content.Systems
 				return;
 			}
 
-			if (电梯TE.TryFindNearbyElevatorForPlayer(player, out 电梯TE te, out int topLeftX, out int topLeftY))
+			if (_state.IsSettingsVisible)
 			{
-				// 仅当玩家“进入电梯轿厢”后才显示楼层按钮，而不是靠近就显示。
-				if (IsPlayerInsideElevatorCabin(player, te))
+				if (!_state.ShouldKeepSettingsOpen(player))
 				{
-					EnsureShown();
+					CloseElevatorUiCompletely();
+					return;
+				}
 
-					// 仅在目标电梯坐标变化时刷新按钮，避免每帧重建导致鼠标点击难以触发。
-					if (_state.TargetX != topLeftX || _state.TargetY != topLeftY)
-						_state.SetFloorTarget(topLeftX, topLeftY, resetSelection: false);
-				}
-				else if (_ui.CurrentState == _state && !_state.IsSettingsVisible)
-				{
-					HideAll();
-				}
+				EnsureShown();
 			}
-			else if (_ui.CurrentState == _state && !_state.IsSettingsVisible)
+
+			if (TEElevator.TryFindElevatorForPlayer(player, out TEElevator te, out int topLeftX, out int topLeftY)
+				&& TEElevator.IsPlayerInsideCabin(player, te))
 			{
-				HideAll();
+				EnsureShown();
+				if (_state.TargetX != topLeftX || _state.TargetY != topLeftY || _ui.CurrentState != _state)
+					_state.SetFloorTarget(topLeftX, topLeftY, resetSelection: false);
+				return;
 			}
+
+			if (_ui.CurrentState == _state && !_state.IsSettingsVisible)
+				HideAll();
 		}
 
-		private static bool IsPlayerInsideElevatorCabin(Player player, 电梯TE te)
+		private void CloseElevatorUiCompletely()
 		{
-			if (player == null || te == null)
-				return false;
-
-			// 电梯本体占 4x7 格，玩家 hitbox 与其相交才算“进入”。
-			Rectangle elevatorRect = new Rectangle(te.Position.X * 16, te.Position.Y * 16, 4 * 16, 7 * 16);
-			return player.Hitbox.Intersects(elevatorRect);
+			if (_state != null && _state.IsSettingsVisible)
+				_state.HideSettings();
+			if (_ui?.CurrentState == _state)
+				HideAll();
 		}
 
 		private void EnsureShown()

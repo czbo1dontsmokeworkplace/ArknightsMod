@@ -18,7 +18,6 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		// ===== 基础属性 =====
 		private int targetPlayer;
 		private float targetHeight;
-		private float targetOffset;
 		private float moveSpeed = 3f;           // Drone：基础更低
 		private Vector2 lastPosition;
 
@@ -51,6 +50,10 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		private const float IdlePeriodFrames = 120f; // Drone：节奏略慢
 		private const float IdleMinRaiseUp = 36f;   // 最低点上抬
 		private const float IdleMaxDropDown = 10f;   // 最高点下压
+
+		// Attack 悬停（Drone 数值）
+		private const float AttackHoverAbove = 100f;  // 目标：玩家头顶上方多少像素
+		private const float AttackMaxRise = 160f;     // 从出生高度最多上升多少像素
 
 		// 索敌距离（Drone 数值）
 		private const float LockRange = 520f;
@@ -103,7 +106,6 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 			homeAnchor = NPC.Center;
 			moveSpeed = Main.rand.NextFloat(2.5f, 3.5f);                 // Drone 区间
-			targetOffset = Main.screenHeight / Main.rand.NextFloat(3.5f, 5f);
 
 			NPC.direction = player.Center.X > NPC.Center.X ? 1 : -1;
 			NPC.spriteDirection = NPC.direction; // 贴图方向 = 移动方向
@@ -148,7 +150,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				targetHeight = MathHelper.Lerp(minY, maxY, t);
 			}
 			else {
-				targetHeight = player.position.Y - targetOffset;
+				float wantedY = player.position.Y - AttackHoverAbove;
+				float ceilY   = homeAnchor.Y - AttackMaxRise;
+				targetHeight  = Math.Max(wantedY, ceilY);
 			}
 
 			// —— 移动（会下平台 / 撞墙返航 / 不穿墙）——

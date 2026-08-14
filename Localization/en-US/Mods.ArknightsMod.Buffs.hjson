@@ -1,3 +1,23 @@
+DeepcolorMinionBuff: {
+	DisplayName: Tentacle
+	Description: Tentacles are fighting for you.
+}
+
+GoldenglowBeaconBuff: {
+	DisplayName: Floating Beacon
+	Description: "{0} Floating Drones deployed. Right-click to dismiss them all."
+}
+
+CameraTruckBuff: {
+	DisplayName: Mobile Camera Truck
+	Description: A Mobile Camera Truck is deployed.
+}
+
+Mon3trBuff: {
+	DisplayName: Mon3tr
+	Description: Mon3tr is accompanying you.
+}
+
 AcidOgSlugDebuff: {
 	DisplayName: Acid Og Slug Debuff
 	Description: Mods.ArknightsMod.Buffs.AcidOgSlugDebuff.Description
@@ -21,6 +41,11 @@ BagpipeSpearS3: {
 ChenSwordS3: {
 	DisplayName: Chen Sword S3
 	Description: Mods.ArknightsMod.Buffs.ChenSwordS3.Description
+}
+
+TyphonSkillArrowStunBuff: {
+	DisplayName: Typhon Skill Arrow Stun
+	Description: Unable to act
 }
 
 ExusiaiRingAndWingBuff: {
@@ -91,4 +116,84 @@ SeasonedRationsBuff: {
 DehydratedSeasonedJerkyBuff: {
 	Description: Mods.ArknightsMod.Buffs.DehydratedSeasonedJerkyBuff.Description
 	DisplayName: Dehydrated Seasoned Jerky Buff
+}
+
+PramanixSlowDebuff: {
+	Description: Movement speed reduced
+	DisplayName: Pramanix Slow Debuff
+}
+
+PramanixFreezeDebuff: {
+	Description: Cannot move
+	DisplayName: Pramanix Freeze
+}
+
+CivilightEternaHealBoostBuff: {
+	DisplayName: Civilight Eterna Heal Boost Buff
+	Description: Mods.ArknightsMod.Buffs.CivilightEternaHealBoostBuff.Description
+}
+
+EntelechiaBleedDebuff: {
+	DisplayName: Entelechia Bleed Debuff
+	Description: Mods.ArknightsMod.Buffs.EntelechiaBleedDebuff.Description
+}
+
+HazeMagicFragileDebuff: {
+	DisplayName: Haze Magic Fragile Debuff
+	Description: Mods.ArknightsMod.Buffs.HazeMagicFragileDebuff.Description
+}
+
+IndigoBindDebuff: {
+	DisplayName: Indigo Bind Debuff
+	Description: Mods.ArknightsMod.Buffs.IndigoBindDebuff.Description
+}
+
+LapplandSilenceDebuff: {
+	DisplayName: Lappland Silence Debuff
+	Description: Mods.ArknightsMod.Buffs.LapplandSilenceDebuff.Description
+}
+
+MostimaSlowDebuff: {
+	DisplayName: Mostima Slow Debuff
+	Description: Mods.ArknightsMod.Buffs.MostimaSlowDebuff.Description
+}
+
+NianShieldBuff: {
+	DisplayName: Nian Shield Buff
+	Description: Mods.ArknightsMod.Buffs.NianShieldBuff.Description
+}
+
+OrchidSlowDebuff: {
+	DisplayName: Orchid Slow Debuff
+	Description: Mods.ArknightsMod.Buffs.OrchidSlowDebuff.Description
+}
+
+SpotHealDodgeBuff: {
+	DisplayName: Spot Heal Dodge Buff
+	Description: Mods.ArknightsMod.Buffs.SpotHealDodgeBuff.Description
+}
+
+TyphonHelmetSlowDebuff: {
+	DisplayName: Typhon Helmet Slow Debuff
+	Description: Mods.ArknightsMod.Buffs.TyphonHelmetSlowDebuff.Description
+}
+
+WarfarinAllyRegenBuff: {
+	DisplayName: Warfarin Ally Regen Buff
+	Description: Mods.ArknightsMod.Buffs.WarfarinAllyRegenBuff.Description
+}
+
+FearlessDebuff: {
+	DisplayName: Fearless Debuff
+	Description: Mods.ArknightsMod.Buffs.FearlessDebuff.Description
+}
+
+WisadelMarkDebuff: {
+	DisplayName: Wisadel Mark Debuff
+	Description: Mods.ArknightsMod.Buffs.WisadelMarkDebuff.Description
+}
+
+RedeployReadyBuff: {
+	DisplayName: Redeploy Ready
+	Description: Greatly shortens respawn time on death; lost when the set is removed
 }

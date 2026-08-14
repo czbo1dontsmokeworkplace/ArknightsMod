@@ -1,3 +1,4 @@
+﻿using ArknightsMod.Content;
 using ArknightsMod.Content.Projectiles.Guard.Saki;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -28,7 +29,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Oblivionis
 			Item.rare = ItemRarityID.Cyan;
 		}
 		public override bool CanUseItem(Player player) {
-			if (player.altFunctionUse == 2) {
+			if (ArknightsKeybinds.SkillActivatePressed(player)) {
 				skills++;
 				if (skills > 4)
 					skills = 0;
@@ -36,7 +37,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Oblivionis
 			return player.ownedProjectileCounts[ProjectileType<SakiSwordWhite>()] <= 0 && player.ownedProjectileCounts[ProjectileType<SakiSwordBlack>()] <= 0;
 		}
 		public int skills = 0;
-		public override bool AltFunctionUse(Player player) => true;
+		public override bool AltFunctionUse(Player player) => false;
 
 		public int swordDir = 1;
 
@@ -60,7 +61,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Oblivionis
 
 		public int useTimes = 0;
 		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
-			if (player.altFunctionUse != 2) {
+			if (!ArknightsKeybinds.SkillActivatePressed(player)) {
 				useTimes++;
 				if (useTimes > 8) {
 					useTimes = 1;

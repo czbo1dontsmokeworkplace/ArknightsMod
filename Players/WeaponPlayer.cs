@@ -1,5 +1,9 @@
 ﻿using ArknightsMod.Common.UI;
+using ArknightsMod.Content;
+using ArknightsMod.Content.Items.Weapons.Specialist.Scene;
 using ArknightsMod.Content.Items.Weapons;
+using ArknightsMod.Content.Items.Weapons.Guard.Lupine;
+using ArknightsMod.Content.Items.Weapons.Guard.Oblivionis;
 using ArknightsMod.Content.Items.Weapons.Caster.Lava;
 using ArknightsMod.Content.Items.Weapons.Caster.Haze;
 using ArknightsMod.Content.Items.Weapons.Defender.Beagle;
@@ -17,6 +21,8 @@ using ArknightsMod.Content.Items.Weapons.Sniper.Schwarz;
 using ArknightsMod.Content.Items.Weapons.Sniper.Shirayuki;
 using ArknightsMod.Content.Items.Weapons.Sniper.Typhon;
 using ArknightsMod.Content.Items.Weapons.Vanguard.Bagpipe;
+using ArknightsMod.Content.Items.Weapons.Caster.Haze;
+using ArknightsMod.Content.Items.Weapons.Medic.Closure;
 using ArknightsMod.Systems.Gameplay.Skill;
 using System;
 using System.Collections.Generic;
@@ -46,9 +52,38 @@ namespace ArknightsMod.Players
 		public bool SummonMode;
 		public bool SkillInitialize = true;
 
+		// 隐德来希 S1「玫影觅迹」：下次普攻强化（175% 伤害 + 连续两段刀光）
+		public bool EntelechiaEmpoweredNext;
+		// 第二段刀光延迟发射（一前一后分两次）
+		public int EntelechiaSecondShotDelay;
+		public Microsoft.Xna.Framework.Vector2 EntelechiaPendingVel;
+		public int EntelechiaPendingDamage;
+		public float EntelechiaPendingKb;
+
 		// SP恢复加成系统
 		public float SPRegenMultiplier { get; set; } = 1f;
 		private float spRegenFraction;
+
+		/// <summary>
+		/// 全局技力恢复速度倍率：开启配置开关时为 2（二倍速），关闭时为 1（原速）。
+		/// 只影响"技力条恢复的快慢"（自然回复/受击回复/攻击回复/饰品加速），不影响任何数值——
+		/// 技能所需技力、技力上限等仍按 CSV/武器数据里 1 倍速的原始数值走，
+		/// 部署费用吸收、套装/技能直接赠送技力等"技力返还"效果同样不受这个倍率影响
+		/// （它们不经过这里，直接改 SP 或 SkillCharge，参见 <see cref="AbsorbDeploymentCost"/>
+		/// 与 OperatorSPHelper.TryGainSP）。
+		/// </summary>
+		public static int GlobalSPRegenSpeedMultiplier =>
+			ModContent.GetInstance<Common.Configs.SkillChargeConfig>().DoubleSPRegenSpeed ? 2 : 1;
+
+		/// <summary>
+		/// 技能开启后，"消耗"技力（即倒数持续时间）的速度倍率：开启配置时为 2（二倍速），
+		/// 关闭时为 1（原速）。用在 UpdateActiveSkill/StrikeSkill 里，把用来判断"技能是否
+		/// 该结束"的时长阈值按这个倍率缩小——阈值越小，同样每帧 +1 的 SkillTimer 越快到达，
+		/// 表现就是持续时间变成原来的 1/2。CSV/武器数据里的持续时间数值本身不受影响。
+		/// </summary>
+		public static float ActiveDurationMultiplier =>
+			ModContent.GetInstance<Common.Configs.SkillChargeConfig>().DoubleSkillDurationConsumption ? 0.5f : 1f;
+
 		private bool chargeReady;
 		private bool chargeOpen;
 		private bool hasNearbyEnemy;
@@ -114,6 +149,19 @@ namespace ArknightsMod.Players
 		//======================================================================
 		//新添入的，用于更新
 		public override void PostUpdate() {
+			UnderAttack = false;
+
+			// S1 第二段刀光：倒计时结束后发射（更大、正常速度的放大刀光）
+			if (EntelechiaSecondShotDelay > 0) {
+				if (--EntelechiaSecondShotDelay == 0 && Player.whoAmI == Main.myPlayer) {
+					int id = Projectile.NewProjectile(Player.GetSource_ItemUse(Player.HeldItem),
+						Player.Center, EntelechiaPendingVel,
+						ModContent.ProjectileType<Content.Projectiles.Guard.Entelechia.EntelechiaScytheBladeWaveProjectile>(),
+						EntelechiaPendingDamage, EntelechiaPendingKb, Player.whoAmI, 1f, 1.6f, 1f);
+					if (id >= 0 && id < Main.maxProjectiles)
+						Main.projectile[id].scale = 1.5f;
+				}
+			}
 			if (!Player.dead && HowManySkills > 0) {
 				if (CurrentSkill?.ChargeType == SkillChargeType.Auto) {
 					AccessoriesAutoCharge();
@@ -121,6 +169,20 @@ namespace ArknightsMod.Players
 				else if (CurrentSkill == null && ChargeTypeIsPerSecond[Skill]) {
 					AccessoriesAutoCharge();
 				}
+			}
+
+			// 提丰 S3：技能持续期间挥弓动画结束后，原版仍会对 Shoot 武器套用「朝向鼠标」的持弓旋转，
+			// 与自定义蓄力角衔接时会像收起后又扭向瞄准方向；非挥弓帧保持略向下的收起角（与 TyphonBow UseStyle 末段一致）。
+			if (!Player.dead && Skill == 2 && SkillActive && Player.itemAnimation <= 0
+			    && Player.HeldItem.ModItem is TyphonBow) {
+				Player.itemRotation = TyphonBow.GetS3SkillIdleItemRotation(Player);
+			}
+
+			// 可露希尔·扫描枪开火后坐力：必须在 PostUpdate（原版 ItemCheck_ApplyUseStyle 之后）
+			// 才能叠加 itemRotation，否则在 HoldItem 里设置会被随后的原版持枪瞄准逻辑覆盖掉，
+			// 表现为"抬起动作完全不生效"。
+			if (Player.HeldItem.ModItem is ClosureScanGun closureGun) {
+				closureGun.ApplyRecoilKick(Player);
 			}
 		}
 		//=======================================================================
@@ -161,6 +223,58 @@ namespace ArknightsMod.Players
 			SummonMode = false;
 		}
 
+		// 将当前技能技力填满至可释放状态
+		public void DevFillSkillCharge()
+		{
+			if (CurrentSkill == null || SkillActive)
+				return;
+
+			SkillLevelData data = CurrentSkill.CurrentLevelData;
+			StockCount = data.MaxStack;
+			SkillCharge = 0;
+			SP = data.MaxSP;
+			chargeOpen = true;
+
+			if (Player.HeldItem.ModItem is UpgradeWeaponBase ark)
+				ark.chargeReady = [true, true, true];
+		}
+
+		/// <summary>
+		/// 部署费用是否可以被当前玩家吸收：必须手持本模组的（有技力系统的）武器，
+		/// 且当前技能未处于开启状态（技力自然回复时）。技能开启期间、或手持其它武器/无技能武器时不可吸收；
+		/// 另外——技力已满（技能就绪、无处可加）时也不吸收，让部署费用继续环绕等待。
+		/// </summary>
+		public bool CanAbsorbDeploymentCost() {
+			if (Player.HeldItem.ModItem is not UpgradeWeaponBase || CurrentSkill == null || SkillActive)
+				return false;
+			// 已攒满一个可用技能（技力满）：不再吸收，否则会白白吞掉部署费用
+			if (StockCount >= CurrentSkill.CurrentLevelData.MaxStack)
+				return false;
+			return true;
+		}
+
+		/// <summary>
+		/// 吸收部署费用：直接把充能加到当前技能的技力条上（不以物品形式出现在背包）。
+		/// 沿用 Div 的换算关系——Div 单位的 SkillCharge 对应 1 点可见技力（与 <see cref="AutoCharge"/> 等一致）。
+		/// </summary>
+		public void AbsorbDeploymentCost(int points) {
+			if (!CanAbsorbDeploymentCost())
+				return;
+
+			SkillLevelData data = CurrentSkill.CurrentLevelData;
+			if (StockCount >= data.MaxStack)
+				return;
+
+			SkillCharge += points * Div;
+			while (SkillCharge >= SkillChargeMax && StockCount < data.MaxStack) {
+				SkillCharge -= SkillChargeMax;
+				StockCount++;
+			}
+			SP = StockCount >= data.MaxStack ? data.MaxSP : SkillCharge / Div;
+			if (StockCount >= data.MaxStack)
+				SkillCharge = 0;
+		}
+
 		public void SetSkill(int skill) {
 			if (SkillInitialize) {
 				Skill = skill;
@@ -192,7 +306,7 @@ namespace ArknightsMod.Players
 			defenseBonus = 0;
 			SPRegenMultiplier = 1f; // 重置SP恢复倍率（修改后的）
 			AccessoriesChargeFraction = 0f; // 新添加，用于重置技力藏的加成
-			
+
 			// 更新武器状态
 			HoldBagpipeSpear = Main.LocalPlayer.HeldItem.ModItem is BagpipeSpear;
 			HoldExusiaiVector = Main.LocalPlayer.HeldItem.ModItem is ExusiaiVector;
@@ -261,46 +375,142 @@ namespace ArknightsMod.Players
 				}
 				else if (ark.chargeReady[Skill] && StockCount == 0) {
 					ark.chargeReady[Skill] = false;
-					SkillCharge = Math.Max(SkillCharge, ark.GetSkillData(Skill).LevelData[SkillLevel[Skill] - 1].InitSP * Div);
+
+					// SkillLevel 只有旧体系武器的 SetAllSkillsData 会填；新体系武器（技能数据走 CSV）
+					// 手持时它仍是默认的 0，原来直接拿 SkillLevel[Skill] - 1 去索引 LevelData 会得到
+					// -1 而抛 IndexOutOfRangeException。这个异常是在 ResetEffects 里抛的，会把整个
+					// Player.Update 当帧打断，导致排在后面的 ProcessTriggers/物品使用全都不执行——
+					// 表现就是"手持这类武器时技能完全开不了"。这里改成：等级为 0 时回退到技能自身的
+					// 当前等级，并统一夹到 [1, LevelData.Length] 范围内，任何情况下都不会越界。
+					SkillData data = ark.GetSkillData(Skill);
+					if (data?.LevelData is { Length: > 0 } levelData) {
+						int level = SkillLevel[Skill] > 0 ? SkillLevel[Skill] : data.Level;
+						level = Math.Clamp(level, 1, levelData.Length);
+						SkillCharge = Math.Max(SkillCharge, levelData[level - 1].InitSP * Div);
+					}
 				}
 			}
 		}
 
+		// 释放技能后，如果附近 560px 内没有可仇恨的敌人，自然回复会被冻结，
+		// 直到出现敌人、或等够这个时长才解锁（见 ResetEffects 里 chargeOpen/hasNearbyEnemy 的判定）。
+		// 原本是 60*15（15 秒），空窗期太长、容易被误认为"技力卡住了"，先缩短到 3 秒，
+		// 又觉得 3 秒太快、缺乏节奏感，改为 5 秒。这是全局值，作用于所有武器，不是某个武器专属的。
 		private int GetRestoreTime() {
-			return 60 * 15;
+			return 60 * 5;
 		}
 
 		public void TryAutoCharge() {
+			if (SceneCameraSkills.BlocksSkillCharge(Player)) // 稀音技能持续期间冻结充能
+				return;
 			if (chargeOpen && !hasNearbyEnemy)
 				return;
 			if (CurrentSkill?.ChargeType == SkillChargeType.Auto)
 				AutoCharge();
 		}
+		/// <summary>
+		/// 玩家受击
+		/// </summary>
+		public bool UnderAttack = false;
 
+		public override void PreUpdate()
+		{
+			if (Player.lifeRegen < 0)
+				UnderAttack = true;
+		}
+
+		/// <summary>
+		/// 统一技能开启热键的核心：ProcessTriggers 只在本地客户端跑，是自定义 ModKeybind
+		/// 唯一能读到"当前是否按住"的地方。各武器的 CanUseItem/Shoot 里已经改成检查
+		/// ArknightsKeybinds.SkillActivatePressed(player)，但那些钩子本身只在玩家真的
+		/// 左键/右键点击、原版判定"这次点击要不要交给物品使用"时才会被调用——单纯按热键
+		/// 并不会触发它们。这里在按住热键时把 Player.controlUseItem 设成 true，相当于
+		/// "伪造一次左键点击"，把它接入原版本来就有的点击处理管线，武器那边的判定才有
+		/// 机会跑起来。之所以伪造左键而不是右键：这样武器代码里剩下的
+		/// player.altFunctionUse==2（比如摄影车部署、浮游信标）不会被误触发——两者互不干扰。
+		///
+		/// 只在手持本模组的技能武器时才伪造点击，避免误把其它物品（工具、纯输出武器、
+		/// 别的模组物品）也顺带触发一次使用。LupineScarlet/OblivionisSword 没有继承
+		/// UpgradeWeaponBase（历史遗留），单独列出来。
+		/// </summary>
+		public override void ProcessTriggers(Terraria.GameInput.TriggersSet triggersSet) {
+			if (!ArknightsKeybinds.SkillActivatePressed(Player))
+				return;
+
+			if (Player.HeldItem.ModItem is UpgradeWeaponBase
+				or LupineScarlet
+				or OblivionisSword) {
+				Player.controlUseItem = true;
+			}
+		}
+
+		public void TryHurtCharge()
+		{
+			if (CurrentSkill?.ChargeType == SkillChargeType.Hurt)
+				HurtCharge();
+		}
+
+		/// <summary>
+		/// 受击回复技力
+		/// </summary>
+		public void HurtCharge()
+		{
+			if (CurrentSkill != null)
+			{
+				SkillLevelData data = CurrentSkill.CurrentLevelData;
+				if (!SkillActive && StockCount < data.MaxStack)
+				{
+					// 受击回复类型 Div=1，SkillCharge 和 SP 一一对应；倍率大于 1 时用 >= 而非 ==
+					// 判满，避免（比如 MaxSP 为奇数时）两点两点跳过精确等于 SkillChargeMax 那一格。
+					int gain = GlobalSPRegenSpeedMultiplier;
+					SP += gain;
+					SkillCharge += gain;
+					if (SkillCharge >= SkillChargeMax)
+					{
+						SkillCharge=0;
+						SP = ++StockCount == data.MaxStack ? data.MaxSP : 0;
+					}
+				}
+			}
+		}
+		public override void OnHurt(Player.HurtInfo info)
+		{
+			UnderAttack = true;
+			TryHurtCharge();
+		}
 		public void AutoCharge() {
+			if (SceneCameraSkills.BlocksSkillCharge(Player)) // 稀音技能持续期间冻结充能
+				return;
+			// 自然回复类型 Div=60（SkillCharge 每 60 tick = 1 点可见技力）。倍率 x2 时每 tick
+			// 累加 2 点 SkillCharge，SP 直接按 SkillCharge/Div 换算——和原来"每 60 tick 视觉 +1"
+			// 的模运算在倍率为 1 时完全等价，但同时天然支持任意倍率，不会有跳格风险。
+			int gain = GlobalSPRegenSpeedMultiplier;
 			if (CurrentSkill != null) {
 				SkillLevelData data = CurrentSkill.CurrentLevelData;
 				if (!SkillActive && StockCount < data.MaxStack) {
-					if (++SkillCharge % 60 == 0)
-						SP++;
+					SkillCharge += gain;
 
-					if (SkillCharge == SkillChargeMax) {
+					if (SkillCharge >= SkillChargeMax) {
 						SkillCharge = 0;
 						SP = ++StockCount == data.MaxStack ? data.MaxSP : 0;
+					}
+					else {
+						SP = SkillCharge / Div;
 					}
 				}
 			}
 			else {
 				// 旧版自动充能逻辑
 				if (!SkillActive && StockCount < StockMax[Skill]) {
-					SkillCharge += 1;
-					if (SkillCharge != 0 && SkillCharge % 60 == 0)
-						SP += 1;
+					SkillCharge += gain;
 
-					if (SkillCharge == SkillChargeMax) {
+					if (SkillCharge >= SkillChargeMax) {
 						SkillCharge = 0;
 						StockCount += 1;
 						SP = StockCount == StockMax[Skill] ? (int)MaxSP[Skill] : 0;
+					}
+					else {
+						SP = SkillCharge / Div;
 					}
 				}
 			}
@@ -308,30 +518,36 @@ namespace ArknightsMod.Players
 		//============================================================================
 		private float AccessoriesChargeFraction;
 		public void AccessoriesAutoCharge() {
-			
+
+			if (SceneCameraSkills.BlocksSkillCharge(Player)) // 稀音技能持续期间冻结充能
+				return;
+
 			if (chargeOpen && !hasNearbyEnemy)
 				return;
 
-		
+
 
 			if (CurrentSkill != null) {
 				SkillLevelData data = CurrentSkill.CurrentLevelData;
 				if (!SkillActive && StockCount < data.MaxStack) {
-					
-					float extraCharge = SPRegenMultiplier - 1f;
+
+					// 饰品/套装给的额外回复速度加成也按同一倍率放大，保持"相对加成比例不变，
+					// 只是整体更快"——这里 while 循环每次只消耗掉整数 1 点 AccessoriesChargeFraction、
+					// SkillCharge 每次只 +1，不受倍率影响，所以内部判满逻辑不需要改。
+					float extraCharge = (SPRegenMultiplier - 1f) * GlobalSPRegenSpeedMultiplier;
 					AccessoriesChargeFraction += extraCharge;
 
-					
+
 					while (AccessoriesChargeFraction >= 1f) {
 						AccessoriesChargeFraction -= 1f;
 
-						
+
 						SkillCharge++;
 						if (SkillCharge % 60 == 0) {
 							SP++;
 						}
 
-						
+
 						if (SkillCharge >= SkillChargeMax) {
 							SkillCharge = 0;
 							StockCount++;
@@ -347,7 +563,7 @@ namespace ArknightsMod.Players
 			else {
 				// 旧版武器支持
 				if (!SkillActive && StockCount < StockMax[Skill]) {
-					float extraCharge = SPRegenMultiplier - 1f;
+					float extraCharge = (SPRegenMultiplier - 1f) * GlobalSPRegenSpeedMultiplier;
 					AccessoriesChargeFraction += extraCharge;
 
 					while (AccessoriesChargeFraction >= 1f) {
@@ -373,14 +589,21 @@ namespace ArknightsMod.Players
 		}
 		//===============================================================================
 		public void OffensiveRecovery() {
+			if (SceneCameraSkills.BlocksSkillCharge(Player)) // 稀音技能持续期间冻结充能
+				return;
+
+			// 攻击回复类型同样 Div=1，理由同 HurtCharge：倍率大于 1 时必须用 >= 而不是 ==
+			// 判满，否则 MaxSP 为奇数时会永远跳过精确等于 SkillChargeMax 的那一格，技能卡死攒不满。
+			int gain = GlobalSPRegenSpeedMultiplier;
+
 			if (CurrentSkill != null) {
 				SkillLevelData data = CurrentSkill.CurrentLevelData;
 				if (!SkillActive && StockCount < data.MaxStack) {
-					SkillCharge++;
-					SP++;
+					SkillCharge += gain;
+					SP += gain;
 				}
 
-				if (SkillCharge == SkillChargeMax) {
+				if (SkillCharge >= SkillChargeMax) {
 					SkillCharge = 0;
 					SP = ++StockCount == data.MaxStack ? data.MaxSP : 0;
 				}
@@ -388,12 +611,12 @@ namespace ArknightsMod.Players
 			else {
 				// 旧版攻击恢复逻辑
 				if (!SkillActive && StockCount < StockMax[Skill]) {
-					SkillCharge += 1;
+					SkillCharge += gain;
 					if (SkillCharge != 0)
-						SP += 1;
+						SP += gain;
 				}
 
-				if (SkillCharge == SkillChargeMax) {
+				if (SkillCharge >= SkillChargeMax) {
 					SkillCharge = 0;
 					StockCount += 1;
 					SP = StockCount == StockMax[Skill] ? (int)MaxSP[Skill] : 0;
@@ -403,13 +626,17 @@ namespace ArknightsMod.Players
 
 		public void UpdateActiveSkill() {
 			if (SkillActive) {
+				// 阈值本身乘倍率缩小（而不是让 SkillTimer 跳着加），并且统一用 >= 判断——
+				// 倍率是 0.5 时阈值大概率不再是整数，用 == 精确相等会出现永远判不到的情况，
+				// 参照之前修 SP 二倍速时踩过的同一个坑（见 HurtCharge 的注释）。
 				if (CurrentSkill != null) {
-					if (CurrentSkill.AutoUpdateActive && ++SkillTimer >= CurrentSkill.CurrentLevelData.ActiveTime * 60)
+					if (CurrentSkill.AutoUpdateActive
+						&& ++SkillTimer >= CurrentSkill.CurrentLevelData.ActiveTime * 60 * ActiveDurationMultiplier)
 						SkillActive = false;
 				}
 				else {
 					SkillTimer++;
-					if (SkillTimer == SkillActiveTime[Skill] * 60)
+					if (SkillTimer >= SkillActiveTime[Skill] * 60 * ActiveDurationMultiplier)
 						SkillActive = false;
 				}
 			}
@@ -421,7 +648,7 @@ namespace ArknightsMod.Players
 		public void StrikeSkill() {
 			if (SkillActive) {
 				SkillTimer++;
-				if (SkillTimer == 10)
+				if (SkillTimer >= 10 * ActiveDurationMultiplier)
 					SkillActive = false;
 			}
 		}

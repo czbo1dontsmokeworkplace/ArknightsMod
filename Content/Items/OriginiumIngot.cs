@@ -1,6 +1,7 @@
 ﻿using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -20,6 +21,7 @@ namespace ArknightsMod.Content.Items
 			Item.width = 14;
 			Item.height = 20;
 			Item.maxStack = Item.CommonMaxStack;
+			Item.rare = ItemRarityID.Green;
 		}
 
 		public override bool OnPickup(Player player) {

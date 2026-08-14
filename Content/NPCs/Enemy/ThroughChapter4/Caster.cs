@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent.Bestiary;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -78,10 +79,10 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		}
 
 		public override void SetDefaults() {
-			NPC.width = 30; 
-			NPC.height = 40; 
-			NPC.lifeMax = 80; 
-			NPC.damage = 10; 
+			NPC.width = 30;
+			NPC.height = 40;
+			NPC.lifeMax = 80;
+			NPC.damage = 10;
 			NPC.defense = 5;
 			NPC.HitSound = SoundID.NPCHit1;
 			NPC.DeathSound = SoundID.NPCDeath1;
@@ -183,9 +184,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 			int damage = 10; // 无视防御的伤害
 			float knockback = 0f;
-			int type = ModContent.ProjectileType<CasterShoot>(); // 使用恶魔镰刀作为示例，你可以替换为自己的射弹
 
-			Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, direction * 10f, type, damage, knockback, Main.myPlayer);
+			NPC.NewNPC(NPC.GetSource_FromAI(),(int)NPC.Center.X,(int)NPC.Center.Y,ModContent.NPCType<CasterShoot>());
 		}
 
 		public override void AI() {
@@ -396,7 +396,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 			var genreNPC = NPC.GetGlobalNPC<DamageCategoryNPC>();
 			if ((genreNPC.DamageGenre & 0x02) != 0) {
-				
+
 
 				for (int i = 0; i < 3; i++) {
 					Dust.NewDust(NPC.position, NPC.width, NPC.height,
@@ -406,34 +406,48 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		}
 
 	}
-	public class CasterShoot : ModProjectile {
+	public class CasterShoot : ModNPC {
 
 		public override string Texture => "ArknightsMod/Content/NPCs/Enemy/ThroughChapter4/explode";
 
 		public override void SetDefaults() {
-			Projectile.width = 10;
-			Projectile.height = 10;
-			Projectile.friendly = false;
-			Projectile.hostile = true;
-			Projectile.penetrate = 9999;
-			Projectile.timeLeft = 200;
-			Projectile.tileCollide = false;
-			Projectile.ignoreWater = true;
-			Projectile.DamageType = DamageClass.Magic;
-			Projectile.scale = 1f;
-			Projectile.localNPCHitCooldown = 10;
-			Projectile.usesLocalNPCImmunity = false;
-			Projectile.usesIDStaticNPCImmunity = false;
-
-
+			NPC.width = 10;
+			NPC.height = 10;
+			NPC.friendly = false;
+			NPC.lifeMax = 1;
+			NPC.timeLeft = 200;
+			NPC.scale = 1f;
+			NPC.damage = 10;
+			NPC.aiStyle = -1;
+			NPC.noTileCollide = true;
 		}
+
+		private Vector2 speedPos;
+		private float Distance;
+		private Vector2 playerPos;
+		private int index;
+		public override void OnSpawn(IEntitySource source)
+		{
+			Distance = playerPos.Distance(Main.player[0].position);
+			playerPos = Main.player[0].position;
+			speedPos = playerPos-NPC.Center;
+			for (int i = 0; i < Main.player.Length; i++) {
+				if (Main.player[i].active && NPC.Center.Distance(Main.player[i].position) < Distance) {
+					index = i;
+					Distance = Main.player[i].position.Distance(Main.player[i].position);
+					playerPos = Main.player[i].position;
+				}
+			}
+			speedPos = playerPos-NPC.Center;
+		}
+
 		public override void AI() {
+			NPC.velocity = speedPos;
+			NPC.velocity.Normalize();
 			Dust dust;
-			dust = Dust.NewDustDirect(Projectile.position, 22, 22, DustID.BlueTorch, 0, 0, 0, default, 4);
+			dust = Dust.NewDustDirect(NPC.position, 22, 22, DustID.BlueTorch, 0, 0, 0, default, 4);
 			dust.noGravity = true;
-			Projectile.velocity *= 1.01f;
-
-
+			NPC.velocity *= 1.01f;
 		}
 		public override void OnHitPlayer(Player target, Player.HurtInfo info) {
 			target.immuneTime = 0;

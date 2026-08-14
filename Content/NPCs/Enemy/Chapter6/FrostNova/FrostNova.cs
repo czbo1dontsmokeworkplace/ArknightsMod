@@ -1,20 +1,20 @@
+﻿using ArknightsMod.Common.VisualEffects;
+using ArknightsMod.Content.BossBars;
+using ArknightsMod.Content.Items.Material;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using System;
 using System.Collections.Generic;
-using ReLogic.Content;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using static Terraria.ModLoader.ModContent;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using ArknightsMod.Content.BossBars;
-using ArknightsMod.Content.Items.Material;
-using ArknightsMod.Common.VisualEffects;
-using Terraria.DataStructures;
 
 namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 {
@@ -49,7 +49,6 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 			NPC.noGravity = false;
 			NPC.noTileCollide = false;
 			NPC.value = Item.buyPrice(gold: 5);
-			NPC.SpawnWithHigherTime(30);
 			NPC.boss = true;
 			NPC.npcSlots = 10f;
 			NPC.aiStyle = -1;
@@ -77,6 +76,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 			npcLoot.Add(ItemDropRule.Common(ItemType<IncandescentAlloyBlock>(), 3, 3, 5));
 			npcLoot.Add(ItemDropRule.Common(ItemType<CrystallineCircuit>(), 3, 3, 5));
 			npcLoot.Add(ItemDropRule.Common(ItemType<OptimizedDevice>(), 3, 3, 5));
+			// 霜星掉落：12 源石锭 & 1000 合成玉
+			npcLoot.Add(ItemDropRule.Common(ItemType<global::ArknightsMod.Content.Items.OriginiumIngot>(), 1, 12, 12));
+			npcLoot.Add(ItemDropRule.Common(ItemType<global::ArknightsMod.Content.Items.Orundum>(), 1, 1000, 1000));
 		}
 		#endregion
 		#region 自定义血条
@@ -185,6 +187,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		private int iceAltarSpawnCooldown;
 		int[] subNPCType = new int[6] { ModContent.NPCType<SnowCaster>(), ModContent.NPCType<SnowSoldier>(), ModContent.NPCType<Oneiros>(), ModContent.NPCType<IceCleaver>(),ModContent.NPCType<SnowSniper>(),ModContent.NPCType<SnowHound>() };
 		int SummonTypeChoice=0;
+		int LeftSummonCount;
+		int CurCount;
 
 		public static int IceAltarType() {
 			return ModContent.ProjectileType<BlizzardStorm>();
@@ -704,7 +708,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 						}
 						break;
 					case 4:
-						for(int i = 0; i < 3; i++) {
+						for (int i = 0; i < 3; i++) {
 							NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowSoldier>());
 						}
 						for(int i = 0; i < 2; i++) {
@@ -767,15 +771,24 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 					summonCD++;
 				}
 				isnpcdefeated = true;
+				CurCount= 0;
 				for (int i = 0; i < Main.maxNPCs; i++) {
 					NPC SeekForNPCs = Main.npc[i];
 					if (SeekForNPCs.active && Array.Exists(subNPCType, x => x == SeekForNPCs.type)) {
+						CurCount++;
 						isnpcdefeated = false;//判断是否有雪怪小队存活
-						break;
 					}
+				}
+				if (LeftSummonCount==0) {
+					LeftSummonCount = CurCount;
+				}
+				if (CurCount < LeftSummonCount) {
+					Main.NewText("击败支援霜星的雪怪小队，当前雪怪小队剩余数量：" + CurCount + "，剩余召唤次数：" + (summontime - summontimes), 0, 255, 255);
+					LeftSummonCount = CurCount;
 				}
 				if (summonCD==0&&isnpcdefeated&&summontimes<summontime)
 				{
+					Main.NewText("击败支援霜星的雪怪小队,当前"+(summontimes+1)+"/"+(summontime+1));
 					summontimes++;
 					isnpcdefeated = false;
 					int Choice1,Choice2;
@@ -1277,7 +1290,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 			//}
 		}
 
-		public override bool PreDraw(ref Color lightColor) {
+		public override bool PreDraw(ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */ {
 			Main.spriteBatch.End();
 			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 
@@ -1417,7 +1430,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 			}
 		}
 
-		public override bool PreDraw(ref Color lightColor) {
+		public override bool PreDraw(ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */ {
 			Main.spriteBatch.End();
 			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 
@@ -1469,7 +1482,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 			}
 		}
 
-		public override bool PreDraw(ref Color lightColor) {
+		public override bool PreDraw(ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */ {
 			Main.spriteBatch.End();
 			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 
@@ -1598,7 +1611,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 			}
 		}
 
-		public override bool PreDraw(ref Color lightColor) {
+		public override bool PreDraw(ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */ {
 			Texture2D trailtexture = ModContent.Request<Texture2D>("ArknightsMod/Common/VisualEffects/WindTrail").Value;
 			TrailMaker.ProjectileDrawTailByConstWidth(Projectile, trailtexture, Vector2.Zero, new Color(r, g, 255), new Color(0, 0, 0), 15f * Math.Min(timer / 60, 1), true);
 			return true;
@@ -1644,7 +1657,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		private float timer;
 		private float startY;
 
-		public override void PostDraw(Color lightColor) {
+		public override void PostDraw(Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */ {
 			Texture2D ICGlowT = ModContent.Request<Texture2D>("ArknightsMod/Content/NPCs/Enemy/Chapter6/FrostNova/ICGlow").Value;
 			Texture2D ICRingT = ModContent.Request<Texture2D>("ArknightsMod/Content/NPCs/Enemy/Chapter6/FrostNova/ICRing").Value;
 			Main.EntitySpriteDraw(ICGlowT, Projectile.Center - Main.screenPosition + new Vector2(0, 0), new Rectangle(0, 0, ICGlowT.Width, ICGlowT.Height), Color.White * Projectile.Opacity, Projectile.rotation, new Vector2(ICGlowT.Width / 2, ICGlowT.Height / 2), 1f, SpriteEffects.None, 0);
@@ -1791,7 +1804,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 			}
 		}
 
-		public override bool PreDraw(ref Color lightColor) {
+		public override bool PreDraw(ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */ {
 			Texture2D trailtexture = ModContent.Request<Texture2D>("ArknightsMod/Common/VisualEffects/WindTrail").Value;
 			TrailMaker.ProjectileDrawTailByConstWidth(Projectile, trailtexture, Vector2.Zero, new Color((int)(r * colorstate), (int)(g * colorstate), (int)(255 * colorstate)), new Color(0, 0, 0), 35f, true);
 			return true;
@@ -1824,7 +1837,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		private float deltatime;
 		private float offsettime;
 
-		public override void PostDraw(Color lightColor) {
+		public override void PostDraw(Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */ {
 			Texture2D Ice = ModContent.Request<Texture2D>("ArknightsMod/Content/NPCs/Enemy/Chapter6/FrostNova/BlackIceProjectile").Value;
 
 			if (Projectile.frame == 5) {
@@ -2034,7 +2047,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 			Projectile.Kill();
 		}
 
-		public override void PostDraw(Color lightColor) {
+		public override void PostDraw(Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */ {
 			Texture2D Ice = ModContent.Request<Texture2D>("ArknightsMod/Content/NPCs/Enemy/Chapter6/FrostNova/BlackIce").Value;
 			for (int i = oldPos.Length - 1; i > 0; i--) {
 				if (oldPos[i] != Vector2.Zero && i % 3 == 0) {//1%3是为了增大残影绘制间隔；Color.White * 1 * (1 - m*f * i)是残影淡化； (oldPos[i - 1] - oldPos[i]).ToRotation() + (float)(0.5 * MathHelper.Pi)是速度变化角度（基准为0.5pi，前面随速度变化不需要），1 * (1 - n*f * i)是大小逐级递减（也不需要）
@@ -2351,7 +2364,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 			}
 		}
 
-		public override bool PreDraw(ref Color lightColor) {
+		public override bool PreDraw(ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */ {
 			Texture2D trailtexture = ModContent.Request<Texture2D>("ArknightsMod/Common/VisualEffects/WindTrail").Value;
 			TrailMaker.ProjectileDrawTailByConstWidth(Projectile, trailtexture, Vector2.Zero, new Color(r, g, 255) * drawopacity, new Color(0, 0, 0), 25f, true);
 			return true;
@@ -2436,7 +2449,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 			}
 		}
 
-		public override bool PreDraw(ref Color lightColor) {
+		public override bool PreDraw(ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */ {
 			Texture2D trailtexture = ModContent.Request<Texture2D>("ArknightsMod/Common/VisualEffects/LineTrail").Value;
 			TrailMaker.ProjectileDrawTailByConstWidth(Projectile, trailtexture, Vector2.Zero, new Color(r, g, 0) * drawopacity, new Color(0, 0, 0), 15f, true);
 			return true;
@@ -2483,14 +2496,14 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 			SpawnPos = Projectile.Center;
 		}
 
-		public override bool PreDraw(ref Color lightColor) {
+		public override bool PreDraw(ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */ {
 			Texture2D Gate = ModContent.Request<Texture2D>("ArknightsMod/Content/NPCs/Enemy/Chapter6/FrostNova/FNBanFloorGate").Value;
 			Vector2 GateScale = new Vector2(GateScaleX, GateScaleY);
 			Main.EntitySpriteDraw(Gate, SpawnPos - Main.screenPosition, new Rectangle(0, 0, Gate.Width, Gate.Height), Color.White * GateOpacity, 0, new Vector2(Gate.Width / 2, Gate.Height / 2), GateScale, SpriteEffects.None, 0);
 			return true;
 		}
 
-		public override void PostDraw(Color lightColor) {
+		public override void PostDraw(Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */ {
 			Texture2D Ice = ModContent.Request<Texture2D>("ArknightsMod/Content/NPCs/Enemy/Chapter6/FrostNova/FNBanFloor").Value;
 			Texture2D Mask = ModContent.Request<Texture2D>("ArknightsMod/Content/NPCs/Enemy/Chapter6/FrostNova/FNBanFloorMask").Value;
 			Main.EntitySpriteDraw(Ice, Projectile.Center - Main.screenPosition, new Rectangle(0, 0, Ice.Width, Ice.Height), Color.White * ProjOpacity, Projectile.rotation, new Vector2(Ice.Width / 2, Ice.Height / 2), Projscale, SpriteEffects.None, 0);
@@ -2698,7 +2711,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 			Dust.NewDustDirect(Projectile.Center, 0, 0, DustType<Dusts.Bosses.FrostNovaDeathDust>(), 0f, 0f, 120, new Color(255, 255, 255), 0.5f);
 		}
 
-		public override bool PreDraw(ref Color lightColor) {
+		public override bool PreDraw(ref Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */ {
 			Texture2D trailtexture = ModContent.Request<Texture2D>("ArknightsMod/Common/VisualEffects/WindTrail").Value;
 			TrailMaker.ProjectileDrawTailByConstWidth(Projectile, trailtexture, Vector2.Zero, new Color(r, g, 255) * drawopacity, new Color(0, 0, 0), 100f, true);
 			return true;

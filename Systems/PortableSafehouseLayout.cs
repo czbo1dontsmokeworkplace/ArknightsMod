@@ -1,0 +1,299 @@
+using System;
+
+namespace ArknightsMod.Systems
+{
+	public sealed partial class PortableSafehouseSystem
+	{
+		// 安全屋布局数据
+		private static readonly CellPlacement[] Layout = ReadLayout(
+"""
+0,0|True|284||162|126|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+1,0|True|284||126|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+2,0|True|284||126|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+3,0|True|284||144|162|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+4,0|True|284||126|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+5,0|True|284||126|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+6,0|True|284||144|162|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+7,0|True|284||126|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+8,0|True|284||126|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+9,0|True|284||144|162|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+10,0|True|284||126|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+11,0|True|284||126|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+12,0|True|284||144|162|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+13,0|True|284||126|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+14,0|True|284||126|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+15,0|True|284||216|126|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+16,0|True|715|ArknightsMod/BlackBridgeStructureTile|162|0|7|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+17,0|True|715|ArknightsMod/BlackBridgeStructureTile|216|36|7|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+18,0|True|284||162|126|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+19,0|True|284||126|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+20,0|True|284||126|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+21,0|True|284||216|126|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+0,1|True|722|ArknightsMod/CorridorTile|144|0|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+1,1|False|0||0|0|0|357|ArknightsMod/PipeWallCopper|0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+2,1|False|0||0|0|0|357|ArknightsMod/PipeWallCopper|0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+3,1|False|0||0|0|0|357|ArknightsMod/PipeWallCopper|0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+4,1|False|0||0|0|0|357|ArknightsMod/PipeWallCopper|0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+5,1|False|0||0|0|0|357|ArknightsMod/PipeWallCopper|0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+6,1|False|0||0|0|0|357|ArknightsMod/PipeWallCopper|0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+7,1|False|0||0|0|0|357|ArknightsMod/PipeWallCopper|0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+8,1|False|0||0|0|0|357|ArknightsMod/PipeWallCopper|0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+9,1|True|722|ArknightsMod/CorridorTile|162|18|25|357|ArknightsMod/PipeWallCopper|0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+10,1|True|722|ArknightsMod/CorridorTile|144|72|27|357|ArknightsMod/PipeWallCopper|0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+11,1|True|722|ArknightsMod/CorridorTile|144|72|27|357|ArknightsMod/PipeWallCopper|0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+12,1|True|722|ArknightsMod/CorridorTile|216|0|25|357|ArknightsMod/PipeWallCopper|0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+13,1|False|0||0|0|0|357|ArknightsMod/PipeWallCopper|0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+14,1|False|0||0|0|0|357|ArknightsMod/PipeWallCopper|0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+15,1|False|0||0|0|0|146||27|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+16,1|True|395||36|0|25|146||27|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+17,1|True|395||54|0|25|146||27|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+18,1|False|0||0|0|0|146||27|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+19,1|False|0||0|0|0|357|ArknightsMod/PipeWallCopper|0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+20,1|False|0||0|0|0|357|ArknightsMod/PipeWallCopper|0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+21,1|True|722|ArknightsMod/CorridorTile|126|0|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+0,2|True|722|ArknightsMod/CorridorTile|90|36|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+1,2|False|0||0|0|0|357|ArknightsMod/PipeWallCopper|0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+2,2|False|0||0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+3,2|False|0||0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+4,2|False|0||0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+5,2|False|0||0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+6,2|False|0||0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+7,2|True|742|ArknightsMod/OfficeBlockTile|144|0|25|231||25|2|False|False|True|0|0|False|False|False|False|False|False|False|False
+8,2|False|0||0|0|0|353|ArknightsMod/LineCorridorWallWithRailing|25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+9,2|True|19||90|342|27|353|ArknightsMod/LineCorridorWallWithRailing|25|0|False|False|True|0|0|False|False|False|False|False|False|False|False
+10,2|True|743|ArknightsMod/LightTubeTile|0|0|0|353|ArknightsMod/LineCorridorWallWithRailing|25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+11,2|True|743|ArknightsMod/LightTubeTile|0|0|0|352|ArknightsMod/LineCorridorWall|25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+12,2|True|19||90|342|27|352|ArknightsMod/LineCorridorWall|25|0|False|False|True|0|0|False|False|False|False|False|False|False|False
+13,2|False|0||0|0|0|353|ArknightsMod/LineCorridorWallWithRailing|25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+14,2|False|0||0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+15,2|True|19||342|576|27|0||0|2|False|False|True|0|0|False|False|False|False|False|False|False|False
+16,2|True|395||36|18|25|43||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+17,2|True|395||54|18|25|43||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+18,2|True|420||0|54|25|172||0|0|False|False|False|0|0|False|False|False|False|False|False|False|True
+19,2|False|0||0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+20,2|False|0||0|0|0|357|ArknightsMod/PipeWallCopper|0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+21,2|True|722|ArknightsMod/CorridorTile|90|0|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+0,3|True|722|ArknightsMod/CorridorTile|90|0|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+1,3|False|0||0|0|0|357|ArknightsMod/PipeWallCopper|0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+2,3|True|3||162|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+3,3|False|0||0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+4,3|False|0||0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+5,3|True|319||0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+6,3|True|319||18|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+7,3|True|722|ArknightsMod/CorridorTile|90|36|27|167||25|0|False|False|True|0|0|False|False|False|False|False|False|False|False
+8,3|True|746|ArknightsMod/PipeBlueLightTile|72|54|27|0||0|2|False|False|True|0|0|False|False|False|False|False|False|False|False
+9,3|True|746|ArknightsMod/PipeBlueLightTile|144|72|27|0||0|0|False|False|True|0|0|False|False|False|False|False|False|False|False
+10,3|True|746|ArknightsMod/PipeBlueLightTile|126|72|27|0||0|0|False|False|True|0|0|False|False|False|False|False|False|False|False
+11,3|True|746|ArknightsMod/PipeBlueLightTile|216|0|27|0||0|0|False|False|True|0|0|False|False|False|False|False|False|False|False
+12,3|True|420||0|18|25|136||19|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+13,3|True|746|ArknightsMod/PipeBlueLightTile|108|0|27|0||0|1|False|False|True|0|0|False|False|False|False|False|False|False|False
+14,3|False|0||0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+15,3|True|723|ArknightsMod/DeckSupportTile|180|54|27|0||0|0|False|False|True|0|0|False|False|False|False|False|False|False|False
+16,3|True|746|ArknightsMod/PipeBlueLightTile|36|54|27|43||25|0|True|False|True|0|0|False|False|False|False|False|False|False|False
+17,3|True|746|ArknightsMod/PipeBlueLightTile|54|54|27|43||25|0|True|False|True|0|0|False|False|False|False|False|False|False|False
+18,3|True|420||0|18|25|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+19,3|False|0||0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+20,3|False|0||0|0|0|357|ArknightsMod/PipeWallCopper|0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+21,3|True|722|ArknightsMod/CorridorTile|90|18|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+0,4|True|722|ArknightsMod/CorridorTile|90|36|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+1,4|False|0||0|0|0|357|ArknightsMod/PipeWallCopper|0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+2,4|True|78||0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+3,4|True|50||54|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+4,4|True|50||72|0|7|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+5,4|True|319||0|18|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+6,4|True|319||18|18|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+7,4|True|722|ArknightsMod/CorridorTile|144|54|27|167||25|0|False|False|True|0|0|False|False|False|False|False|False|False|False
+8,4|True|746|ArknightsMod/PipeBlueLightTile|90|0|27|349|ArknightsMod/BridgeStructureWall|25|0|False|False|True|0|0|False|False|False|False|False|False|False|False
+9,4|True|743|ArknightsMod/LightTubeTile|0|0|25|356|ArknightsMod/MedicalWall|25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+10,4|True|743|ArknightsMod/LightTubeTile|0|0|25|356|ArknightsMod/MedicalWall|25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+11,4|True|743|ArknightsMod/LightTubeTile|0|0|25|356|ArknightsMod/MedicalWall|25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+12,4|True|743|ArknightsMod/LightTubeTile|0|0|25|356|ArknightsMod/MedicalWall|25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+13,4|True|746|ArknightsMod/PipeBlueLightTile|90|36|27|349|ArknightsMod/BridgeStructureWall|0|0|False|False|True|0|0|False|False|False|False|False|False|False|False
+14,4|True|760|ArknightsMod/SmallDisplayTile|36|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+15,4|True|760|ArknightsMod/SmallDisplayTile|54|0|0|313||27|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+16,4|True|746|ArknightsMod/PipeBlueLightTile|0|72|27|43||25|0|False|False|True|0|0|False|False|False|False|False|False|False|False
+17,4|True|746|ArknightsMod/PipeBlueLightTile|54|72|27|43||25|0|False|False|True|0|0|False|False|False|False|False|False|False|False
+18,4|True|19||108|756|25|0||0|0|False|False|True|0|0|False|False|False|False|False|False|False|False
+19,4|False|0||0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+20,4|False|0||0|0|0|357|ArknightsMod/PipeWallCopper|0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+21,4|True|722|ArknightsMod/CorridorTile|90|18|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+0,5|True|722|ArknightsMod/CorridorTile|90|36|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+1,5|False|0||0|0|0|357|ArknightsMod/PipeWallCopper|0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+2,5|True|19||36|144|27|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+3,5|True|19||0|504|27|155||19|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+4,5|True|19||0|504|27|155||19|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+5,5|True|19||0|504|27|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+6,5|True|19||18|144|27|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+7,5|True|577||162|54|25|167||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+8,5|True|746|ArknightsMod/PipeBlueLightTile|90|36|27|349|ArknightsMod/BridgeStructureWall|25|0|False|False|True|0|0|False|False|False|False|False|False|False|False
+9,5|True|746|ArknightsMod/PipeBlueLightTile|162|18|27|356|ArknightsMod/MedicalWall|25|2|False|False|True|0|0|False|False|False|False|False|False|False|False
+10,5|True|746|ArknightsMod/PipeBlueLightTile|90|72|27|354|ArknightsMod/GlassCurtainWall|25|3|False|False|True|0|0|False|False|False|False|False|False|False|False
+11,5|False|0||0|0|0|354|ArknightsMod/GlassCurtainWall|25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+12,5|False|0||0|0|0|354|ArknightsMod/GlassCurtainWall|25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+13,5|True|746|ArknightsMod/PipeBlueLightTile|90|0|27|349|ArknightsMod/BridgeStructureWall|0|0|False|False|True|0|0|False|False|False|False|False|False|False|False
+14,5|True|760|ArknightsMod/SmallDisplayTile|36|18|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+15,5|True|760|ArknightsMod/SmallDisplayTile|54|18|0|231||0|0|False|False|False|0|0|False|False|False|False|False|False|True|False
+16,5|True|547||144|0|7|43||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+17,5|True|547||162|0|7|43||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+19,5|False|0||0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+20,5|False|0||0|0|0|357|ArknightsMod/PipeWallCopper|0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+21,5|True|722|ArknightsMod/CorridorTile|90|0|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+0,6|True|722|ArknightsMod/CorridorTile|126|54|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+1,6|False|0||0|0|0|357|ArknightsMod/PipeWallCopper|27|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+2,6|False|0||0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+3,6|False|0||0|0|0|231||19|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+4,6|False|0||0|0|0|231||19|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+5,6|False|0||0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+6,6|False|0||0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+7,6|True|722|ArknightsMod/CorridorTile|180|54|27|167||25|0|False|False|True|0|0|False|False|False|False|False|False|False|False
+8,6|True|746|ArknightsMod/PipeBlueLightTile|126|54|27|360|ArknightsMod/WorkshopWallPink|25|4|False|False|True|0|0|False|False|False|False|False|False|False|False
+9,6|False|0||0|0|0|349|ArknightsMod/BridgeStructureWall|25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+10,6|False|0||0|0|0|354|ArknightsMod/GlassCurtainWall|25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+11,6|False|0||0|0|0|354|ArknightsMod/GlassCurtainWall|25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+12,6|False|0||0|0|0|354|ArknightsMod/GlassCurtainWall|25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+13,6|True|746|ArknightsMod/PipeBlueLightTile|108|54|27|360|ArknightsMod/WorkshopWallPink|25|3|False|False|True|0|0|False|False|False|False|False|False|False|False
+14,6|True|19||54|504|27|358|ArknightsMod/PipeWallInsulated|0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+15,6|True|19||18|504|27|231||0|0|False|False|False|0|0|False|False|False|False|False|False|True|False
+16,6|True|547||144|18|7|43||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+17,6|True|547||162|18|7|43||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+19,6|False|0||0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+20,6|False|0||0|0|0|357|ArknightsMod/PipeWallCopper|0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+21,6|True|722|ArknightsMod/CorridorTile|126|54|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+0,7|True|714|ArknightsMod/AutoDoorOpenTile|0|0|0|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+1,7|False|0||0|0|0|357|ArknightsMod/PipeWallCopper|27|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+2,7|False|0||0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+3,7|False|0||0|0|0|231||7|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+4,7|False|0||0|0|0|231||7|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+5,7|False|0||0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+6,7|False|0||0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+7,7|True|19||126|504|27|231||25|0|False|False|True|0|0|False|False|False|False|False|False|False|False
+8,7|True|747|ArknightsMod/PipeTile|108|0|27|360|ArknightsMod/WorkshopWallPink|25|1|False|False|True|0|0|False|False|False|False|False|False|False|False
+9,7|True|79||0|756|25|351|ArknightsMod/CorridorWall|25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+10,7|True|79||18|756|0|351|ArknightsMod/CorridorWall|25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+11,7|True|79||36|756|0|351|ArknightsMod/CorridorWall|25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+12,7|True|79||54|756|0|351|ArknightsMod/CorridorWall|25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+13,7|True|747|ArknightsMod/PipeTile|126|0|27|360|ArknightsMod/WorkshopWallPink|25|2|False|False|True|0|0|False|False|False|False|False|False|False|False
+14,7|False|0||0|0|0|358|ArknightsMod/PipeWallInsulated|0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+15,7|True|19||90|378|7|231||0|0|True|False|True|0|0|False|False|False|False|False|False|True|False
+16,7|True|547||144|36|7|43||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+17,7|True|547||162|36|7|43||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+18,7|True|19||36|72|25|0||0|0|True|False|True|0|0|False|False|False|False|False|False|False|False
+19,7|True|19||18|72|25|231||25|0|True|False|True|0|0|False|False|False|False|False|False|False|False
+20,7|False|0||0|0|0|357|ArknightsMod/PipeWallCopper|0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+21,7|True|713|ArknightsMod/AutoDoorClosedTile|0|0|0|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+0,8|True|714|ArknightsMod/AutoDoorOpenTile|0|18|0|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+1,8|False|0||0|0|0|357|ArknightsMod/PipeWallCopper|27|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+2,8|False|0||0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+3,8|False|0||0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+4,8|False|0||0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+5,8|False|0||0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+6,8|False|0||0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+7,8|False|0||0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+8,8|True|747|ArknightsMod/PipeTile|90|36|27|146||0|0|False|False|True|0|0|False|False|False|False|False|False|False|False
+9,8|True|79||0|774|8|349|ArknightsMod/BridgeStructureWall|25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+10,8|True|79||18|774|8|349|ArknightsMod/BridgeStructureWall|25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+11,8|True|79||36|774|8|349|ArknightsMod/BridgeStructureWall|25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+12,8|True|79||54|774|8|349|ArknightsMod/BridgeStructureWall|25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+13,8|True|747|ArknightsMod/PipeTile|90|0|27|146||0|0|False|False|True|0|0|False|False|False|False|False|False|False|False
+14,8|True|272||0|54|0|231||25|0|False|False|True|0|0|False|False|False|False|False|False|False|False
+15,8|True|272||90|54|0|231||25|0|False|False|True|0|0|False|False|False|False|False|False|True|False
+16,8|True|547||144|54|7|43||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+17,8|True|547||162|54|7|43||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+18,8|True|137||72|72|27|0||0|0|False|False|True|0|0|False|False|False|False|False|False|False|False
+19,8|True|137||54|72|27|136||7|0|False|False|True|0|0|False|False|False|False|False|False|False|True
+20,8|False|0||0|0|0|357|ArknightsMod/PipeWallCopper|0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+21,8|True|713|ArknightsMod/AutoDoorClosedTile|0|18|0|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+0,9|True|714|ArknightsMod/AutoDoorOpenTile|0|36|0|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+1,9|False|0||0|0|0|357|ArknightsMod/PipeWallCopper|27|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+2,9|False|0||0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+3,9|True|754|ArknightsMod/ReceptionRoomDecorAnchorTile|0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+4,9|False|0||0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+5,9|True|754|ArknightsMod/ReceptionRoomDecorAnchorTile|0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+6,9|False|0||0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+7,9|False|0||0|0|0|231||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+8,9|True|747|ArknightsMod/PipeTile|144|54|27|146||0|0|False|False|True|0|0|False|False|False|False|False|False|False|False
+9,9|True|737|ArknightsMod/ElectroplatingPlatform|54|0|25|231||29|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+10,9|True|737|ArknightsMod/ElectroplatingPlatform|0|0|25|231||29|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+11,9|True|737|ArknightsMod/ElectroplatingPlatform|0|0|25|231||29|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+12,9|True|737|ArknightsMod/ElectroplatingPlatform|72|0|25|231||29|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+13,9|True|747|ArknightsMod/PipeTile|126|54|27|146||0|0|False|False|True|0|0|False|False|False|False|False|False|False|False
+14,9|True|272||72|72|0|231||25|0|False|False|True|0|0|False|False|False|False|False|False|False|False
+15,9|True|272||90|72|0|231||0|0|False|False|True|0|0|False|False|False|False|False|False|True|False
+16,9|True|547||144|72|27|43||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+17,9|True|547||162|72|27|43||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+18,9|True|19||36|756|25|0||0|0|False|False|True|0|0|False|False|False|False|False|False|False|False
+19,9|True|19||18|756|25|231||25|0|False|False|True|0|0|False|False|False|False|False|False|False|False
+20,9|False|0||0|0|0|357|ArknightsMod/PipeWallCopper|0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+21,9|True|713|ArknightsMod/AutoDoorClosedTile|0|36|0|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+0,10|True|715|ArknightsMod/BlackBridgeStructureTile|108|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+1,10|True|715|ArknightsMod/BlackBridgeStructureTile|108|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+2,10|True|715|ArknightsMod/BlackBridgeStructureTile|144|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+3,10|True|715|ArknightsMod/BlackBridgeStructureTile|144|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+4,10|True|715|ArknightsMod/BlackBridgeStructureTile|126|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+5,10|True|715|ArknightsMod/BlackBridgeStructureTile|108|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+6,10|True|715|ArknightsMod/BlackBridgeStructureTile|144|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+7,10|True|715|ArknightsMod/BlackBridgeStructureTile|126|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+8,10|True|715|ArknightsMod/BlackBridgeStructureTile|108|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+9,10|True|715|ArknightsMod/BlackBridgeStructureTile|108|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+10,10|True|715|ArknightsMod/BlackBridgeStructureTile|108|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+11,10|True|715|ArknightsMod/BlackBridgeStructureTile|108|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+12,10|True|715|ArknightsMod/BlackBridgeStructureTile|144|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+13,10|True|715|ArknightsMod/BlackBridgeStructureTile|126|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+14,10|True|715|ArknightsMod/BlackBridgeStructureTile|108|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+15,10|True|715|ArknightsMod/BlackBridgeStructureTile|108|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+16,10|True|715|ArknightsMod/BlackBridgeStructureTile|126|72|27|43||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+17,10|True|715|ArknightsMod/BlackBridgeStructureTile|108|72|27|43||25|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+18,10|True|715|ArknightsMod/BlackBridgeStructureTile|144|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+19,10|True|715|ArknightsMod/BlackBridgeStructureTile|144|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+20,10|True|715|ArknightsMod/BlackBridgeStructureTile|108|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+21,10|True|715|ArknightsMod/BlackBridgeStructureTile|126|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+22,10|True|715|ArknightsMod/BlackBridgeStructureTile|126|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+23,10|True|715|ArknightsMod/BlackBridgeStructureTile|126|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+24,10|True|715|ArknightsMod/BlackBridgeStructureTile|144|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+25,10|True|715|ArknightsMod/BlackBridgeStructureTile|144|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+26,10|True|715|ArknightsMod/BlackBridgeStructureTile|144|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+27,10|True|715|ArknightsMod/BlackBridgeStructureTile|144|72|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+28,10|True|715|ArknightsMod/BlackBridgeStructureTile|216|18|27|0||0|0|False|False|False|0|0|False|False|False|False|False|False|False|False
+""");
+
+		private static CellPlacement[] ReadLayout(string data)
+		{
+			string[] lines = data.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+			CellPlacement[] layout = new CellPlacement[lines.Length];
+
+			for (int index = 0; index < lines.Length; index++)
+			{
+				string[] values = lines[index].Split('|');
+				string[] position = values[0].Split(',');
+				layout[index] = new CellPlacement(
+					int.Parse(position[0]),
+					int.Parse(position[1]),
+					bool.Parse(values[1]),
+					ushort.Parse(values[2]),
+					values[3],
+					short.Parse(values[4]),
+					short.Parse(values[5]),
+					byte.Parse(values[6]),
+					ushort.Parse(values[7]),
+					values[8],
+					byte.Parse(values[9]),
+					byte.Parse(values[10]),
+					bool.Parse(values[11]),
+					bool.Parse(values[12]),
+					bool.Parse(values[13]),
+					byte.Parse(values[14]),
+					byte.Parse(values[15]),
+					bool.Parse(values[16]),
+					bool.Parse(values[17]),
+					bool.Parse(values[18]),
+					bool.Parse(values[19]),
+					bool.Parse(values[20]),
+					bool.Parse(values[21]),
+					bool.Parse(values[22]),
+					bool.Parse(values[23]));
+			}
+
+			return layout;
+		}
+	}
+}

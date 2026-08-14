@@ -45,25 +45,29 @@ ShieldGuard.DisplayName: 重装防御者
 Soldier.DisplayName: 士兵
 SoldierLeader.DisplayName: 士兵组长
 InsaneZombieL.DisplayName: 狂暴宿主组长
+Rioter.DisplayName: 暴徒
+Crownslayer.DisplayName: 弑君者
+RockCrab.DisplayName: 磐蟹
+MiZhenQiaoXie.DisplayName: 迷珍巧械
 
 Closure: {
 	DisplayName: 可露希尔
 
 	TownNPCMood: {
-		Content: 我很满足。
-		NoHome: 我讨厌没有家。
-		FarFromHome: 我离家太远了。
-		LoveSpace: 我非常喜欢有这么大的空间。
-		DislikeCrowded: 我不喜欢这么拥挤。
-		HateCrowded: 我讨厌这么拥挤。
-		LikeBiome: 我喜欢{BiomeName}。
-		DislikeBiome: 我不喜欢{BiomeName}。
-		LoveNPC: 我非常喜欢{NPCName}。
-		LikeNPC: 我喜欢{NPCName}。
-		DislikeNPC: 我不喜欢{NPCName}。
-		HateNPC: 我讨厌{NPCName}。
-		LikeNPC_Princess: 我喜欢 {NPCName}。
-		Princess_LovesNPC: 我喜欢 {NPCName}。
+		Content: 我很满足
+		NoHome: 我讨厌没有家
+		FarFromHome: 我离家太远了
+		LoveSpace: 我非常喜欢有这么大的空间
+		DislikeCrowded: 我不喜欢这么拥挤
+		HateCrowded: 我讨厌这么拥挤
+		LikeBiome: 我喜欢{BiomeName}
+		DislikeBiome: 我不喜欢{BiomeName}
+		LoveNPC: 我非常喜欢{NPCName}
+		LikeNPC: 我喜欢{NPCName}
+		DislikeNPC: 我不喜欢{NPCName}
+		HateNPC: 我讨厌{NPCName}
+		LikeNPC_Princess: 我喜欢 {NPCName}
+		Princess_LovesNPC: 我喜欢 {NPCName}
 	}
 
 	Buttons: {
@@ -82,20 +86,20 @@ Cannot: {
 	DisplayName: 坎诺特
 
 	TownNPCMood: {
-		Content: 我很满足。
-		NoHome: 我讨厌没有家。
-		FarFromHome: 我离家太远了。
-		LoveSpace: 我非常喜欢有这么大的空间。
-		DislikeCrowded: 我不喜欢这么拥挤。
-		HateCrowded: 我讨厌这么拥挤。
-		LikeBiome: 我喜欢{BiomeName}。
-		DislikeBiome: 我不喜欢{BiomeName}。
-		LoveNPC: 我非常喜欢{NPCName}。
-		LikeNPC: 我喜欢{NPCName}。
-		DislikeNPC: 我不喜欢{NPCName}。
-		HateNPC: 我讨厌{NPCName}。
-		LikeNPC_Princess: 我喜欢 {NPCName}。
-		Princess_LovesNPC: 我喜欢 {NPCName}。
+		Content: 我很满足
+		NoHome: 我讨厌没有家
+		FarFromHome: 我离家太远了
+		LoveSpace: 我非常喜欢有这么大的空间
+		DislikeCrowded: 我不喜欢这么拥挤
+		HateCrowded: 我讨厌这么拥挤
+		LikeBiome: 我喜欢{BiomeName}
+		DislikeBiome: 我不喜欢{BiomeName}
+		LoveNPC: 我非常喜欢{NPCName}
+		LikeNPC: 我喜欢{NPCName}
+		DislikeNPC: 我不喜欢{NPCName}
+		HateNPC: 我讨厌{NPCName}
+		LikeNPC_Princess: 我喜欢 {NPCName}
+		Princess_LovesNPC: 我喜欢 {NPCName}
 	}
 
 	Buttons: {
@@ -107,7 +111,7 @@ Cannot: {
 
 	DeathMessage: {
 		Death: ""
-		Runaway: 坎诺特逃走了。
+		Runaway: 坎诺特逃走了
 	}
 }
 
@@ -115,3 +119,6 @@ LeporibeastShorthorn.DisplayName: 小角跳兽
 Cragpincer.DisplayName: 岩壳蟹
 FieryOriginiumSlugNPC.DisplayName: 炽焰源石虫
 PmpSlugEggLandNPC.DisplayName: 炽焰源石虫卵
+// DeploymentCost.DisplayName: Deployment Cost
+// RaptorDrone.DisplayName: Raptor Drone
+// CasterShoot.DisplayName: Caster Shoot
