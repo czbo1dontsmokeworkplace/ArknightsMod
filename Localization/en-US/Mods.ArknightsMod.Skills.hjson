@@ -754,6 +754,7 @@ ClosureScanGun: {
 	}
 }
 
+<<<<<<< HEAD
 Tragodia: {
 	1: {
 		Label: Mods.ArknightsMod.Skills.Tragodia.1.Label
@@ -771,6 +772,8 @@ Tragodia: {
 	}
 }
 
+=======
+>>>>>>> 4a3cfc553ee2dfb5aba3f650006c23f9d8dfb13c
 SurtrLaevatain: {
 	1: {
 		Label: Mods.ArknightsMod.Skills.SurtrLaevatain.1.Label

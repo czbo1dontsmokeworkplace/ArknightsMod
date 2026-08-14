@@ -274,7 +274,10 @@ ReedFlameShadowFlame.DisplayName: Reed Flame Shadow Flame
 PompeiiLavaCoreExplosion.DisplayName: Pompeii Lava Core Explosion
 Mon3tr.DisplayName: Mon3tr
 RaptorDroneBullet.DisplayName: Raptor Drone Bullet
+<<<<<<< HEAD
 TragodiaWaveSpawner.DisplayName: Tragodia Wave Spawner
+=======
+>>>>>>> 4a3cfc553ee2dfb5aba3f650006c23f9d8dfb13c
 LaevatainProjectile_1.DisplayName: Laevatain Projectile_1
 LaevatainProjectile_1_plan2.DisplayName: Laevatain Projectile_1_plan2
 LaevatainProjectile_2.DisplayName: Laevatain Projectile_2
@@ -283,6 +286,7 @@ LaevatainProjectile_3_impactFire.DisplayName: Laevatain Projectile_3_impact Fire
 LaevatainProjectile_3_swordDrop.DisplayName: Laevatain Projectile_3_sword Drop
 LaevatainProjectile_normal.DisplayName: Laevatain Projectile_normal
 LaevatainQiHitFlash.DisplayName: Laevatain Qi Hit Flash
+<<<<<<< HEAD
 LightParticle.DisplayName: Light Particle
 RibbonProjectile.DisplayName: Ribbon Projectile
 StarParticle.DisplayName: Star Particle
@@ -301,3 +305,5 @@ SP2Wave.DisplayName: S P2 Wave
 SP3ExtraVisual.DisplayName: S P3 Extra Visual
 SP3TragodiaNormalAttack.DisplayName: S P3 Tragodia Normal Attack
 SP3Wave.DisplayName: S P3 Wave
+=======
+>>>>>>> 4a3cfc553ee2dfb5aba3f650006c23f9d8dfb13c

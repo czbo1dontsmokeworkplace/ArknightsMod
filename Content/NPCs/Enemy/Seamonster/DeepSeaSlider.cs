@@ -165,17 +165,6 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 				dust.scale *= 1f + Main.rand.NextFloat(-0.03f, 0.03f);
 			}
 		}
-		public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers) {
-			var genreNPC = NPC.GetGlobalNPC<DamageCategoryNPC>();
-			if ((genreNPC.DamageGenre & 0x02) != 0) {
-				// 法术伤害无视护甲
-
-				for (int i = 0; i < 3; i++) {
-					Dust.NewDust(NPC.position, NPC.width, NPC.height,
-						DustID.MagicMirror, 0, 0, 150, Color.LightBlue, 0.7f);
-				}
-			}
-		}
 		public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             LeadingConditionRule notExpertRule = new LeadingConditionRule(new Conditions.NotExpert());
