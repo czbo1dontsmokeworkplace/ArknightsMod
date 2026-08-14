@@ -274,10 +274,6 @@ TransparentSlash.DisplayName: 透明斩击
 // PompeiiLavaCoreExplosion.DisplayName: Pompeii Lava Core Explosion
 // Mon3tr.DisplayName: Mon3tr
 // RaptorDroneBullet.DisplayName: Raptor Drone Bullet
-<<<<<<< HEAD
-// TragodiaWaveSpawner.DisplayName: Tragodia Wave Spawner
-=======
->>>>>>> 4a3cfc553ee2dfb5aba3f650006c23f9d8dfb13c
 // LaevatainProjectile_1.DisplayName: Laevatain Projectile_1
 // LaevatainProjectile_1_plan2.DisplayName: Laevatain Projectile_1_plan2
 // LaevatainProjectile_2.DisplayName: Laevatain Projectile_2
@@ -286,7 +282,7 @@ TransparentSlash.DisplayName: 透明斩击
 // LaevatainProjectile_3_swordDrop.DisplayName: Laevatain Projectile_3_sword Drop
 // LaevatainProjectile_normal.DisplayName: Laevatain Projectile_normal
 // LaevatainQiHitFlash.DisplayName: Laevatain Qi Hit Flash
-<<<<<<< HEAD
+// TragodiaWaveSpawner.DisplayName: Tragodia Wave Spawner
 // LightParticle.DisplayName: Light Particle
 // RibbonProjectile.DisplayName: Ribbon Projectile
 // StarParticle.DisplayName: Star Particle
@@ -305,5 +301,3 @@ TransparentSlash.DisplayName: 透明斩击
 // SP3ExtraVisual.DisplayName: S P3 Extra Visual
 // SP3TragodiaNormalAttack.DisplayName: S P3 Tragodia Normal Attack
 // SP3Wave.DisplayName: S P3 Wave
-=======
->>>>>>> 4a3cfc553ee2dfb5aba3f650006c23f9d8dfb13c

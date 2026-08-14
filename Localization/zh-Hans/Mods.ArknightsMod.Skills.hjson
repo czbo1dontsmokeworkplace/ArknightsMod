@@ -899,26 +899,6 @@ ClosureScanGun: {
 	}
 }
 
-<<<<<<< HEAD
-Tragodia: {
-	1: {
-		// Label: Mods.ArknightsMod.Skills.Tragodia.1.Label
-		// Desc: Mods.ArknightsMod.Skills.Tragodia.1.Desc
-	}
-
-	2: {
-		// Label: Mods.ArknightsMod.Skills.Tragodia.2.Label
-		// Desc: Mods.ArknightsMod.Skills.Tragodia.2.Desc
-	}
-
-	3: {
-		// Label: Mods.ArknightsMod.Skills.Tragodia.3.Label
-		// Desc: Mods.ArknightsMod.Skills.Tragodia.3.Desc
-	}
-}
-
-=======
->>>>>>> 4a3cfc553ee2dfb5aba3f650006c23f9d8dfb13c
 SurtrLaevatain: {
 	1: {
 		// Label: Mods.ArknightsMod.Skills.SurtrLaevatain.1.Label
@@ -933,5 +913,22 @@ SurtrLaevatain: {
 	3: {
 		// Label: Mods.ArknightsMod.Skills.SurtrLaevatain.3.Label
 		// Desc: Mods.ArknightsMod.Skills.SurtrLaevatain.3.Desc
+	}
+}
+
+Tragodia: {
+	3: {
+		// Desc: Mods.ArknightsMod.Skills.Tragodia.3.Desc
+		// Label: Mods.ArknightsMod.Skills.Tragodia.3.Label
+	}
+
+	2: {
+		// Desc: Mods.ArknightsMod.Skills.Tragodia.2.Desc
+		// Label: Mods.ArknightsMod.Skills.Tragodia.2.Label
+	}
+
+	1: {
+		// Desc: Mods.ArknightsMod.Skills.Tragodia.1.Desc
+		// Label: Mods.ArknightsMod.Skills.Tragodia.1.Label
 	}
 }
