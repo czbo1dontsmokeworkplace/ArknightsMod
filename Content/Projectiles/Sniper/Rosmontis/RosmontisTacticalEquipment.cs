@@ -55,7 +55,9 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Rosmontis
 
 				npc.defense = Math.Max(0, npc.defense - 40);
 				DamageCategoryNPC cat = npc.GetGlobalNPC<DamageCategoryNPC>();
-				cat.artsResistance = Math.Max(0f, cat.artsResistance - 20f);
+				// 法抗是 0~1 的比例（对照本项目其它 ~20 处 artsResistance 赋值），这里原来写的是 -20f，
+				// 量级錯了两个数量级——法伤系统之前从未真正生效，这个 bug 一直没暴露出来。
+				cat.artsResistance = Math.Max(0f, cat.artsResistance - 0.20f);
 			}
 
 			for (int i = 0; i < Main.maxProjectiles; i++) {

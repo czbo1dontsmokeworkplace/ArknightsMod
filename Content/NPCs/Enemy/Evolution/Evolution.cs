@@ -267,22 +267,6 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution
 		public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers) {
 
 			var genreNPC = NPC.GetGlobalNPC<DamageCategoryNPC>();
-			if ((genreNPC.DamageGenre & 0x02) != 0) {
-
-
-				if (genreNPC.artsResistance < 20) {
-					for (int i = 0; i < 3; i++) {
-						Dust.NewDust(NPC.position, NPC.width, NPC.height,
-							DustID.MagicMirror, 0, 0, 150, Color.LightBlue, 0.7f);
-					}
-				}
-				if (genreNPC.artsResistance > 40) {
-					for (int i = 0; i < 3; i++) {
-						Dust.NewDust(NPC.position, NPC.width, NPC.height,
-							DustID.Shadowflame, 0, 0, 150, Color.LightBlue, 0.7f);
-					}
-				}
-			}
 
 			if (NPC.ai[0]==1 && (projectile.velocity.X >= NPC.velocity.X || projectile.position.X <= NPC.position.X)) {
 				genreNPC.artsResistance = 0.8f;

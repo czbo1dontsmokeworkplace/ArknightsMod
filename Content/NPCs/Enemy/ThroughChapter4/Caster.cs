@@ -392,19 +392,6 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			// 可以在这里修改伤害参数
 			// modifiers.SourceDamage *= 0.5f; // 例如减半伤害
 		}
-		public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers) {
-
-			var genreNPC = NPC.GetGlobalNPC<DamageCategoryNPC>();
-			if ((genreNPC.DamageGenre & 0x02) != 0) {
-
-
-				for (int i = 0; i < 3; i++) {
-					Dust.NewDust(NPC.position, NPC.width, NPC.height,
-						DustID.Shadowflame, 0, 0, 150, Color.LightBlue, 0.7f);
-				}
-			}
-		}
-
 	}
 	public class CasterShoot : ModNPC {
 

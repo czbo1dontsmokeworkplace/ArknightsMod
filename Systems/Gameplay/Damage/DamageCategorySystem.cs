@@ -1,769 +1,139 @@
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Mono.Cecil.Cil;
-using MonoMod.Cil;
-using System;
-using System.Linq;
-using System.Reflection;
 using Terraria;
+using Terraria.DataStructures;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Systems.Gameplay.Damage
 {
-    //ʾ����690�и���
-    public class DamageCategoryNPC : GlobalNPC
-    {
-        public override bool InstancePerEntity => true;
-
-        public float artsResistance = 0;
-        public float elemResistance = 0;
-
-        public byte DamageGenre = 0; 
-
-        private const byte PHYS_FLAG = 0x1;
-        private const byte ARTS_FLAG = 0x2;
-        private const byte ELEM_FLAG = 0x4;
-        private const byte TRUE_FLAG = 0x8;
-        private const byte ORIG_FLAG = 0x10;
-
-        public float baseDamage;
-        //GetDamageԭ�溯����baseDamage�����������˺�ʱ������finalDamage����ͣ�baseDamage��ɵ�ʵ���˺�д������
-
-        public Vector4 PhysDamages;
-        public Vector4 ArtsDamages;
-        public Vector4 ElemDamages;
-        public Vector4 TrueDamages;
-        //���ĸ��������㲢�У�������ɵ�ʵ���˺���������
-
-        public Vector4 DamageVarianceVector;
-
-        public float PhysFrag = 1f;
-        public float ArtsFrag = 1f;
-        public float ElemFrag = 1f;
-        public float TrueFrag = 1f; //����
-        public Vector4 CriticalCoefficientVector;
-        public int CriticalChance = 0; 
-
-        public DamageClass DamageType; //orig dmgType
-
-    }
-
-    public class DamageCategorySystem : ModSystem
-    {
-
-        [ThreadStatic] private static NPC _currentNPC;
-        [ThreadStatic] private static DamageClass _currentDamageClass;
-
-        /* ��ʱ������ע����
-         * public override void Load()
-        {
-            IL_NPC.GetIncomingStrikeModifiers += InjectDamageType;
-            IL_NPC.HitModifiers.GetDamage += GetDamageInject;
-            IL_NPC.HitModifiers.ToHitInfo += InjectDamageTypeRestore;
-        }
-        public override void Unload()
-        {
-            IL_NPC.GetIncomingStrikeModifiers -= InjectDamageType; 
-            IL_NPC.HitModifiers.GetDamage -= GetDamageInject;
-            IL_NPC.HitModifiers.ToHitInfo -= InjectDamageTypeRestore;
-        }
-		*/
-        public DamageCategorySystem()
-        {
-            //���淴���Լ�����Ϸ����
-        }
-        private void InjectDamageType(ILContext il)
-        {
-
-            var _IL = new ILCursor(il);
-
-            _IL.Emit(OpCodes.Ldarg_0); // NPC remember
-            _IL.Emit(OpCodes.Ldarg_1); //��ʱռ��damageType
-            _IL.Emit(OpCodes.Call, typeof(DamageCategorySystem).GetMethod("SaveDamageContext", System.Reflection.BindingFlags.Public | BindingFlags.Static));
-
-
-            if (_IL.TryGotoNext(MoveType.Before,
-                i => i.MatchLdarg1()
-                ))
-            {
-                _IL.Emit(OpCodes.Ldarg_0); // NPC
-
-                // Checked Here, is NPC
-
-                _IL.Emit(OpCodes.Call, typeof(NPC).GetMethods()
-                    .Where(method => method.Name == "GetGlobalNPC" && method.IsGenericMethod && method.GetParameters().Length == 0).First()
-                    .MakeGenericMethod(typeof(DamageCategoryNPC)));
-
-
-                _IL.Emit(OpCodes.Starg_S,(byte)1);
-
-            }
-            if (_IL.TryGotoNext(MoveType.Before, i => i.MatchRet()))
-            {
-
-                _IL.Emit(OpCodes.Call, typeof(DamageCategorySystem).GetMethod("ClearDamageContext", BindingFlags.Public | BindingFlags.Static));
-            }
-
-        }
-
-        public static void SaveDamageContext(NPC npc, DamageClass damageType)
-        {
-            _currentNPC = npc;
-            _currentDamageClass = damageType;
-
-            if(npc.TryGetGlobalNPC(out DamageCategoryNPC genreNPC)) 
-            {
-                genreNPC.DamageType = damageType;
-            }
-        }
-        public static DamageClass GetSavedDamageType() => _currentDamageClass;
-        public static void ClearDamageContext()
-        {
-            _currentNPC = null;
-            _currentDamageClass = null;
-        }
-
-        private void InjectDamageTypeRestore(ILContext il)
-        {
-            var _IL = new ILCursor(il);
-            while (il.Body.Variables.Count <= 7)
-            {
-                il.Body.Variables.Add(new VariableDefinition(il.Module.ImportReference(typeof(int))));
-            }
-            
-            if (_IL.TryGotoNext(MoveType.After,
-                i => i.MatchCall(typeof(NPC.HitInfo).GetConstructor(Type.EmptyTypes))))
-            {
-                _IL.Emit(OpCodes.Ldarg_0);
-                _IL.Emit(OpCodes.Ldarg_1);
-                _IL.Emit(OpCodes.Ldarg_2);
-                _IL.Emit(OpCodes.Ldarg, 4);
-                _IL.Emit(OpCodes.Ldarg, 5);
-                _IL.Emit(OpCodes.Call, typeof(NPC.HitModifiers).GetMethod("GetDamage"));
-                _IL.Emit(OpCodes.Stloc_S, (byte)7);
-
-
-            }
-
-            if(_IL.TryGotoNext(MoveType.Before,
-                i => i.MatchCall(typeof(NPC.HitModifiers).GetMethod("GetDamage"))))
-            {
-                _IL.Remove();
-                _IL.Emit(OpCodes.Pop);
-                _IL.Emit(OpCodes.Pop);
-                _IL.Emit(OpCodes.Pop);
-                _IL.Emit(OpCodes.Pop);
-                _IL.Emit(OpCodes.Pop);
-                _IL.Emit(OpCodes.Ldloc_S, (byte)7);
-            }
-
-        }
-
-        private void GetDamageInject(ILContext il)
-        {
-        
-            var _IL = new ILCursor(il);
-
-            var locVars = il.Body.Variables;
-            if (locVars.Count < 17)
-            {
-                var Vars = new Type[]
-                {
-                    typeof(DamageCategoryNPC),
-                    typeof(byte),
-                    typeof(Vector4),
-                    typeof(float),
-                    typeof(float),
-                    typeof(int),
-                    typeof(Vector4),
-                    typeof(Vector4),
-                    typeof(Vector4),
-                    typeof(int),
-                };
-                for(int i = locVars.Count; i < 17; i++)
-                {
-                    Type varType = (i >= 7 && i <= 16) ? Vars[i - 7] : typeof(object);
-                    locVars.Add(new VariableDefinition(il.Module.ImportReference(varType)));
-                }
-            }
-
-
-
-            _IL.Emit(OpCodes.Ldarg_0);
-            _IL.Emit(OpCodes.Call, typeof(NPC.HitModifiers).GetMethod("get_DamageType"));
-
-            _IL.Emit(OpCodes.Isinst, typeof(DamageCategoryNPC));
-
-           
-            //ALL SAFE HERE
-            _IL.Emit(OpCodes.Stloc_S,(byte)7);
-
-
-            _IL.Emit(OpCodes.Ldarg_0);
-            _IL.Emit(OpCodes.Ldloc_S, (byte)7);
-            _IL.Emit(OpCodes.Ldfld, typeof(DamageCategoryNPC).GetField("DamageType"));
-            _IL.Emit(OpCodes.Call, typeof(NPC.HitModifiers).GetMethod("set_DamageType"));
-
-
-            GetDamageEmit(_IL);
-
-
-        }
-        private void GetDamageEmit(ILCursor _IL)
-        {
-
-            //var skipPhysicDmgCalc = _IL.DefineLabel();
-            var PhysOnly = _IL.DefineLabel();
-            var All = _IL.DefineLabel();
-
-            var withOrig = _IL.DefineLabel();
-            var end = _IL.DefineLabel();
-
-
-
-            _IL.Emit(OpCodes.Ldloc_S, (byte)7); //gNPC
-
-            _IL.Emit(OpCodes.Ldfld, typeof(DamageCategoryNPC).GetField("DamageGenre")); //Genre
-
-            _IL.Emit(OpCodes.Dup);
-            _IL.Emit(OpCodes.Stloc_S, (byte)8); //Genre
-
-			_IL.Emit(OpCodes.Ldloc_S, (byte)7); // ���� gNPC
-			_IL.Emit(OpCodes.Ldc_I4_0); // ���� 0
-			_IL.Emit(OpCodes.Stfld, typeof(DamageCategoryNPC).GetField("DamageGenre"));
-
-			_IL.Emit(OpCodes.Ldc_I4_0);
-            _IL.Emit(OpCodes.Ceq);
-            _IL.Emit(OpCodes.Brtrue, PhysOnly); //tells if physic damage only
-
-            //EMPTY !!!
-            //NO BUGS EVERYTHING OK HERE
-
-            _IL.MarkLabel(All);
-
-            SharedModifiersEmit(_IL); // flat scaling targetMulti in 8 9 10
-
-
-            VariationVectorEmit(_IL); // variation in 12
-
-            _IL.Emit(OpCodes.Ldc_R4, 0f);
-            _IL.Emit(OpCodes.Newobj, typeof(Vector4).GetConstructor(new[] { typeof(float) }));  // TOTAL DMG
-
-
-            VectorDamageEmitInJumpTable(_IL);
-
-
-            _IL.Emit(OpCodes.Call, typeof(DamageCategorySystem).GetMethod("VectorSum", BindingFlags.NonPublic | BindingFlags.Static));
-
-
-            _IL.Emit(OpCodes.Conv_I4);
-            _IL.Emit(OpCodes.Ldc_I4_1);
-            _IL.Emit(OpCodes.Call, typeof(Math).GetMethod("Max", new[] { typeof(int), typeof(int) }));
-
-
-            _IL.Emit(OpCodes.Stloc_S, (byte)16); //ttl dmg
-
-            _IL.Emit(OpCodes.Ldloc_S, (byte)8);
-            _IL.Emit(OpCodes.Ldc_I4,0x10);
-            _IL.Emit(OpCodes.And);
-            _IL.Emit(OpCodes.Ldc_I4_0);
-            _IL.Emit(OpCodes.Ceq);
-            _IL.Emit(OpCodes.Brfalse, withOrig);
-
-
-            ////recycle NPC => put DamageType back
-            _IL.Emit(OpCodes.Ldloc_S, (byte)16);
-            _IL.Emit(OpCodes.Ret);
-
-
-            _IL.MarkLabel(withOrig);
-            _IL.Emit(OpCodes.Ldarg_0); // modifiers
-            _IL.Emit(OpCodes.Dup); // modifiers modifiers
-            _IL.Emit(OpCodes.Ldfld, typeof(NPC.HitModifiers).GetField("FinalDamage")); // modifiers finalDmg
-            _IL.Emit(OpCodes.Dup); //modifiers finalDmg finalDmg
-            _IL.Emit(OpCodes.Ldloc_S, (byte)16);
-            _IL.Emit(OpCodes.Stfld, typeof(StatModifier).GetField("Flat"));
-
-            //modifiers finalDmg
-            _IL.Emit(OpCodes.Ldloc_S, (byte)7);
-            _IL.Emit(OpCodes.Ldfld, typeof(DamageCategoryNPC).GetField("PhysFrag"));
-            _IL.Emit(OpCodes.Call, typeof(StatModifier).GetMethod("op_Multiply",
-                BindingFlags.Public | BindingFlags.Static,
-                null,
-                new[] { typeof(StatModifier), typeof(float) },
-                null)); //HItModifiers newStatModifer
-
-            _IL.Emit(OpCodes.Stfld, typeof(NPC.HitModifiers).GetField("FinalDamage"));
-
-
-			_IL.MarkLabel(PhysOnly);
-        }
-        private void VectorDamageEmitInJumpTable(ILCursor _IL)
-        {
-            var JumpTable = new ILLabel[16]; //��ִ��һ��
-            for(int i = 0; i < 16; i++)
-            {
-                JumpTable[i] = _IL.DefineLabel();
-            }
-            var EndTable = _IL.DefineLabel();
-
-
-            _IL.Emit(OpCodes.Ldloc_S, (byte)8);
-            _IL.Emit(OpCodes.Switch, JumpTable);
-
-            //0x00 ��ԭ�洿����
-            _IL.MarkLabel(JumpTable[0x00]);
-
-            _IL.MarkLabel(JumpTable[0x01]);
-            PhysDamageEmit(_IL);
-            CriticalCoeffEmit(_IL);
-            _IL.Emit(OpCodes.Br, EndTable);
-
-            _IL.MarkLabel(JumpTable[0x02]);
-            ArtsDamageEmit(_IL);
-            CriticalCoeffEmit(_IL);
-            _IL.Emit(OpCodes.Br, EndTable);
-
-            _IL.MarkLabel(JumpTable[0x03]);
-            PhysDamageEmit(_IL);
-            ArtsDamageEmit(_IL);
-            CriticalCoeffEmit(_IL);
-            _IL.Emit(OpCodes.Br, EndTable);
-
-            _IL.MarkLabel(JumpTable[0x04]);
-            ElemDamageEmit(_IL);
-            CriticalCoeffEmit(_IL);
-            _IL.Emit(OpCodes.Br, EndTable);
-
-            _IL.MarkLabel(JumpTable[0x05]);
-            PhysDamageEmit(_IL);
-            ElemDamageEmit(_IL);
-            CriticalCoeffEmit(_IL);
-            _IL.Emit(OpCodes.Br, EndTable);
-
-            _IL.MarkLabel(JumpTable[0x06]);
-            ArtsDamageEmit(_IL);
-            ElemDamageEmit(_IL);
-            CriticalCoeffEmit(_IL);
-            _IL.Emit(OpCodes.Br, EndTable);
-
-            _IL.MarkLabel(JumpTable[0x07]);
-            PhysDamageEmit(_IL);
-            ArtsDamageEmit(_IL);
-            ElemDamageEmit(_IL);
-            CriticalCoeffEmit(_IL);
-            _IL.Emit(OpCodes.Br, EndTable);
-
-            _IL.MarkLabel(JumpTable[0x08]);
-            TrueDamageEmit(_IL); //����û�б���
-            _IL.Emit(OpCodes.Br, EndTable);
-
-            _IL.MarkLabel(JumpTable[0x09]);
-            PhysDamageEmit(_IL);
-            CriticalCoeffEmit(_IL);
-            TrueDamageEmit(_IL); //����û�б���
-            _IL.Emit(OpCodes.Br, EndTable);
-
-            _IL.MarkLabel(JumpTable[0x0A]);
-            ArtsDamageEmit(_IL);
-            CriticalCoeffEmit(_IL);
-            TrueDamageEmit(_IL); //����û�б���
-            _IL.Emit(OpCodes.Br, EndTable);
-
-            _IL.MarkLabel(JumpTable[0x0B]);
-            PhysDamageEmit(_IL);
-            ArtsDamageEmit(_IL);
-            CriticalCoeffEmit(_IL);
-            TrueDamageEmit(_IL); //����û�б���
-            _IL.Emit(OpCodes.Br, EndTable);
-
-            _IL.MarkLabel(JumpTable[0x0C]);
-            ElemDamageEmit(_IL);
-            CriticalCoeffEmit(_IL);
-            TrueDamageEmit(_IL); //����û�б���
-            _IL.Emit(OpCodes.Br, EndTable);
-
-            _IL.MarkLabel(JumpTable[0x0D]);
-            PhysDamageEmit(_IL);
-            ElemDamageEmit(_IL);
-            CriticalCoeffEmit(_IL);
-            TrueDamageEmit(_IL); //����û�б���
-            _IL.Emit(OpCodes.Br, EndTable);
-
-            _IL.MarkLabel(JumpTable[0x0E]);
-            ArtsDamageEmit(_IL);
-            ElemDamageEmit(_IL);
-            TrueDamageEmit(_IL); //����û�б���
-            _IL.Emit(OpCodes.Br, EndTable);
-
-            _IL.MarkLabel(JumpTable[0x0F]);
-            PhysDamageEmit(_IL);
-            ArtsDamageEmit(_IL);
-            ElemDamageEmit(_IL);
-            CriticalCoeffEmit(_IL);
-            TrueDamageEmit(_IL); //����û�б���
-
-            _IL.MarkLabel(EndTable);
-
-        }
-        private void SharedModifiersEmit(ILCursor _IL)
-        {
-
-            _IL.Emit(OpCodes.Ldarg_0);
-            _IL.Emit(OpCodes.Ldfld, typeof(NPC.HitModifiers).GetField("FlatBonusDamage"));
-            _IL.Emit(OpCodes.Call, typeof(DamageCategorySystem).GetMethod("GetAddableFloatValue", BindingFlags.NonPublic | BindingFlags.Static));
-            _IL.Emit(OpCodes.Newobj, typeof(Vector4).GetConstructor(new[] { typeof(float) }));
-            _IL.Emit(OpCodes.Stloc_S, (byte)9); //flat in 9
-
-
-            _IL.Emit(OpCodes.Ldarg_0);
-            _IL.Emit(OpCodes.Ldfld, typeof(NPC.HitModifiers).GetField("ScalingBonusDamage"));
-            _IL.Emit(OpCodes.Call, typeof(DamageCategorySystem).GetMethod("GetAddableFloatValue", BindingFlags.NonPublic | BindingFlags.Static));
-            _IL.Emit(OpCodes.Ldc_R4, 1f);
-            _IL.Emit(OpCodes.Add);
-            _IL.Emit(OpCodes.Stloc_S, (byte)10); //scaling in 10
-
-            _IL.Emit(OpCodes.Ldarg_0);
-            _IL.Emit(OpCodes.Ldfld, typeof(NPC.HitModifiers).GetField("TargetDamageMultiplier"));
-            _IL.Emit(OpCodes.Call, typeof(DamageCategorySystem).GetMethod("GetAddableFloatValue", BindingFlags.NonPublic | BindingFlags.Static));
-            _IL.Emit(OpCodes.Stloc_S, (byte)11); //targetDamageMultiplier in 11
-
-        }
-        private static float GetAddableFloatValue(AddableFloat addableFloat) => addableFloat.Value;
-        private static float GetMultipliableFloatValue(MultipliableFloat multipliableFloat) => multipliableFloat.Value;
-
-        private void VariationVectorEmit(ILCursor _IL)
-        {
-
-            var noVariation = _IL.DefineLabel();
-            var endVariation = _IL.DefineLabel();
-
-            _IL.Emit(OpCodes.Ldarg_3);
-            _IL.Emit(OpCodes.Brfalse, noVariation);
-
-            _IL.Emit(OpCodes.Ldc_R4, 15f);
-            _IL.Emit(OpCodes.Ldarg_0);
-            _IL.Emit(OpCodes.Ldfld, typeof(NPC.HitModifiers).GetField("DamageVariationScale"));
-            _IL.Emit(OpCodes.Call, typeof(DamageCategorySystem).GetMethod("GetMultipliableFloatValue", BindingFlags.NonPublic | BindingFlags.Static));
-            _IL.Emit(OpCodes.Mul);
-            _IL.Emit(OpCodes.Call, typeof(Math).GetMethod("Round", new[] { typeof(float) }));
-            _IL.Emit(OpCodes.Conv_I4);
-            _IL.Emit(OpCodes.Ldc_I4_0);
-            _IL.Emit(OpCodes.Ldc_I4, 100);
-            _IL.Emit(OpCodes.Call, typeof(Utils).GetMethod("Clamp").MakeGenericMethod(typeof(int)));
-            _IL.Emit(OpCodes.Stloc_S, (byte)12); //variation percent in loc 12
-
-            _IL.Emit(OpCodes.Ldloc_S, (byte)12);
-            _IL.Emit(OpCodes.Ldc_I4_0);
-            _IL.Emit(OpCodes.Ble, noVariation);
-
-            _IL.Emit(OpCodes.Ldloc_S, (byte)12);
-            _IL.Emit(OpCodes.Ldarg, 4); //luck
-            _IL.Emit(OpCodes.Call, typeof(DamageCategorySystem).GetMethod("VariationVector4"));
-
-
-            _IL.Emit(OpCodes.Stloc_S, (byte)14); //variation multiplier in loc 14
-            _IL.Emit(OpCodes.Br, endVariation);
-
-            _IL.MarkLabel(noVariation);
-            _IL.Emit(OpCodes.Ldc_R4, 1f);
-            _IL.Emit(OpCodes.Newobj, typeof(Vector4).GetConstructor(new[] { typeof(float) }));
-            _IL.Emit(OpCodes.Stloc_S, (byte)14);
-
-            _IL.MarkLabel(endVariation);
-
-        }
-        public static Vector4 VariationVector4(int variationPercent, float luck)
-            => new Vector4(
-                DamageVar(variationPercent, luck),
-                DamageVar(variationPercent, luck + 1f),
-                DamageVar(variationPercent, luck + 2f),
-                DamageVar(variationPercent, luck + 3f)
-                );
-
-        private static float DamageVar(int variationPercent, float luck)
-        {
-            float variance = Main.rand.Next(-variationPercent, variationPercent + 1);
-            if(Main.rand.NextFloat() < luck)
-            {
-                variance = Math.Max(Main.rand.Next(-variationPercent, variationPercent + 1), variance);
-            }
-            return variance / 100f + 1f;
-        }
-
-
-        public static Vector4 ApplySourceDamageToVector4(Vector4 damages, StatModifier sourceDamage)
-            => new Vector4(
-                sourceDamage.ApplyTo(damages.X),
-                sourceDamage.ApplyTo(damages.Y),
-                sourceDamage.ApplyTo(damages.Z),
-                sourceDamage.ApplyTo(damages.W)
-                );
-
-        private void SharedModifiersApply(ILCursor _IL) // dmg = dmg * (1 + scale) + flat
-        {
-            _IL.Emit(OpCodes.Ldloc_S, (byte)10); //scale
-            _IL.Emit(OpCodes.Call, typeof(Vector4).GetMethod("op_Multiply", new Type[] { typeof(Vector4), typeof(float) }));
-            _IL.Emit(OpCodes.Ldloc_S, (byte)9); //flat
-            _IL.Emit(OpCodes.Call, typeof(Vector4).GetMethod("op_Addition"));
-
-            _IL.Emit(OpCodes.Ldloc_S, (byte)11); // targetDamageMultiplier
-            _IL.Emit(OpCodes.Call, typeof(Vector4).GetMethod("op_Multiply", new Type[] { typeof(Vector4), typeof(float) }));
-            _IL.Emit(OpCodes.Ldloc_S, (byte)14); // variation
-            _IL.Emit(OpCodes.Call, typeof(Vector4).GetMethod("op_Multiply", new Type[] { typeof(Vector4), typeof(Vector4) }));
-            // REM : CRIT AT FINAL
-        }
-        private void TrueDamageEmit(ILCursor _IL)
-        {
-            _IL.Emit(OpCodes.Ldloc_S, (byte)7);
-
-            _IL.Emit(OpCodes.Dup); //�������TrueDamagesʹ��
-            _IL.Emit(OpCodes.Ldfld,typeof(DamageCategoryNPC).GetField("TrueDamages"));
-            _IL.Emit(OpCodes.Ldarg_0);
-            _IL.Emit(OpCodes.Ldfld, typeof(NPC.HitModifiers).GetField("SourceDamage"));
-            _IL.Emit(OpCodes.Call, typeof(DamageCategorySystem).GetMethod("ApplySourceDamageToVector4"));
-
-            SharedModifiersApply(_IL);
-
-            _IL.Emit(OpCodes.Ldloc_S, (byte)7);
-            _IL.Emit(OpCodes.Ldfld, typeof(DamageCategoryNPC).GetField("TrueFrag"));
-            _IL.Emit(OpCodes.Call, typeof(Vector4).GetMethod("op_Multiply", new Type[] { typeof(Vector4), typeof(float) }));
-
-            _IL.Emit(OpCodes.Dup);
-            _IL.Emit(OpCodes.Stloc_S, (byte)13);
-
-            _IL.Emit(OpCodes.Stfld, typeof(DamageCategoryNPC).GetField("TrueDamages"));
-            //д�أ����ĵ����Ƶ�gNPC
-            _IL.Emit(OpCodes.Ldloc_S, (byte)13);
-            _IL.Emit(OpCodes.Call, typeof(Vector4).GetMethod("op_Addition"));
-        }
-        private void ArtsDamageEmit(ILCursor _IL)
-        {
-            _IL.Emit(OpCodes.Ldloc_S, (byte)7); // dmg gNPC
-
-            _IL.Emit(OpCodes.Dup); //dmg gNPC gNPC
-            _IL.Emit(OpCodes.Ldfld, typeof(DamageCategoryNPC).GetField("ArtsDamages")); //dmg gNPC artsDmgs
-            _IL.Emit(OpCodes.Ldarg_0);
-            _IL.Emit(OpCodes.Ldfld, typeof(NPC.HitModifiers).GetField("SourceDamage"));
-            _IL.Emit(OpCodes.Call, typeof(DamageCategorySystem).GetMethod("ApplySourceDamageToVector4")); //dmg gNPC artsDmgsApplied
-
-            SharedModifiersApply(_IL);
-
-            _IL.Emit(OpCodes.Ldc_R4, 1f);
-            _IL.Emit(OpCodes.Ldloc_S, (byte)7);
-            _IL.Emit(OpCodes.Ldfld, typeof(DamageCategoryNPC).GetField("artsResistance")); //get resistance from globalNPC saved
-            _IL.Emit(OpCodes.Sub);  // 1 - resistance
-            _IL.Emit(OpCodes.Ldloc_S, (byte)7);
-            _IL.Emit(OpCodes.Ldfld, typeof(DamageCategoryNPC).GetField("ArtsFrag"));
-            _IL.Emit(OpCodes.Mul);
-            _IL.Emit(OpCodes.Call, typeof(Vector4).GetMethod("op_Multiply", new Type[] { typeof(Vector4), typeof(float) }));
-
-            _IL.Emit(OpCodes.Dup); // dmg gNPC artsDmgsFin artsDmgsFin
-            _IL.Emit(OpCodes.Stloc_S, (byte)13);
-
-            _IL.Emit(OpCodes.Stfld, typeof(DamageCategoryNPC).GetField("ArtsDamages"));
-
-            _IL.Emit(OpCodes.Ldloc_S, (byte)13);
-            _IL.Emit(OpCodes.Call,typeof(Vector4).GetMethod("op_Addition"));
-        }
-        private void ElemDamageEmit(ILCursor _IL)
-        {
-            _IL.Emit(OpCodes.Ldloc_S, (byte)7); // dmg gNPC
-
-            _IL.Emit(OpCodes.Dup); //dmg gNPC gNPC
-            _IL.Emit(OpCodes.Ldfld, typeof(DamageCategoryNPC).GetField("ElemDamages")); //dmg gNPC artsDmgs
-            _IL.Emit(OpCodes.Ldarg_0);
-            _IL.Emit(OpCodes.Ldfld, typeof(NPC.HitModifiers).GetField("SourceDamage"));
-            _IL.Emit(OpCodes.Call, typeof(DamageCategorySystem).GetMethod("ApplySourceDamageToVector4")); //dmg gNPC artsDmgsApplied
-
-            SharedModifiersApply(_IL);
-
-            _IL.Emit(OpCodes.Ldc_R4, 1f);
-            _IL.Emit(OpCodes.Ldloc_S, (byte)7);
-            _IL.Emit(OpCodes.Ldfld, typeof(DamageCategoryNPC).GetField("elemResistance")); //get resistance from globalNPC saved
-            _IL.Emit(OpCodes.Sub);  // 1 - resistance
-            _IL.Emit(OpCodes.Ldloc_S, (byte)7);
-            _IL.Emit(OpCodes.Ldfld, typeof(DamageCategoryNPC).GetField("ElemFrag"));
-            _IL.Emit(OpCodes.Mul);
-            _IL.Emit(OpCodes.Call, typeof(Vector4).GetMethod("op_Multiply", new Type[] { typeof(Vector4), typeof(float) }));
-
-            _IL.Emit(OpCodes.Dup); // dmg gNPC artsDmgsFin artsDmgsFin
-            _IL.Emit(OpCodes.Stloc_S, (byte)13);
-
-            _IL.Emit(OpCodes.Stfld, typeof(DamageCategoryNPC).GetField("ElemDamages"));
-
-            _IL.Emit(OpCodes.Ldloc_S, (byte)13);
-            _IL.Emit(OpCodes.Call, typeof(Vector4).GetMethod("op_Addition"));
-        }
-        private void PhysDamageEmit(ILCursor _IL)
-        {
-            _IL.Emit(OpCodes.Ldloc_S, (byte)7); //dmg gNPC
-
-            _IL.Emit(OpCodes.Dup);
-            _IL.Emit(OpCodes.Ldfld, typeof(DamageCategoryNPC).GetField("PhysDamages")); // dmg gNPC physDmgs
-            _IL.Emit(OpCodes.Ldarg_0);
-            _IL.Emit(OpCodes.Ldfld, typeof(NPC.HitModifiers).GetField("SourceDamage")); // dmg gNPC physDmgs SourceDmg
-            _IL.Emit(OpCodes.Call, typeof(DamageCategorySystem).GetMethod("ApplySourceDamageToVector4")); //dmg gNPC physDmgsApplied
-
-            SharedModifiersApply(_IL);
-
-            _IL.Emit(OpCodes.Ldarg_0);
-            _IL.Emit(OpCodes.Call, typeof(DamageCategorySystem).GetMethod("ApplyDefenseToVector4", BindingFlags.NonPublic | BindingFlags.Static));
-
-            _IL.Emit(OpCodes.Ldloc_S, (byte)7);
-            _IL.Emit(OpCodes.Ldfld, typeof(DamageCategoryNPC).GetField("PhysFrag"));
-            _IL.Emit(OpCodes.Call, typeof(Vector4).GetMethod("op_Multiply", new Type[] { typeof(Vector4), typeof(float) }));
-
-            _IL.Emit(OpCodes.Dup);
-            _IL.Emit(OpCodes.Stloc_S, (byte)13);
-
-            _IL.Emit(OpCodes.Stfld, typeof(DamageCategoryNPC).GetField("PhysDamages"));
-
-            _IL.Emit(OpCodes.Ldloc_S, (byte)13);
-            _IL.Emit(OpCodes.Call, typeof(Vector4).GetMethod("op_Addition"));
-        }
-
-        private static Vector4 ApplyDefenseToVector4(Vector4 damage, ref NPC.HitModifiers modifiers)
-        {
-            float defense = Math.Max(modifiers.Defense.ApplyTo(0), 0);
-            float armorPenetration = defense * Math.Clamp(modifiers.ScalingArmorPenetration.Value, 0, 1) + modifiers.ArmorPenetration.Value;
-            defense = Math.Max(defense - armorPenetration, 0);
-
-            float damageReduction = defense * modifiers.DefenseEffectiveness.Value;
-            return new Vector4(
-                Math.Max(damage.X - damageReduction, 1f),
-                Math.Max(damage.Y - damageReduction, 1f),
-                Math.Max(damage.Z - damageReduction, 1f),
-                Math.Max(damage.W - damageReduction, 1f)
-                );
-        }
-
-        private void CriticalCoeffEmit(ILCursor _IL)
-        {
-            var noCrit = _IL.DefineLabel();
-            var endCrit = _IL.DefineLabel();
-            _IL.Emit(OpCodes.Ldloc_S, (byte)7); //dmg gNPC
-            _IL.Emit(OpCodes.Dup); //dmg gNPC gNPC
-            _IL.Emit(OpCodes.Ldfld, typeof(DamageCategoryNPC).GetField("CriticalChance")); //dmg gNPC critChance
-            _IL.Emit(OpCodes.Dup); //dmg gNPC critChance critChance
-            _IL.Emit(OpCodes.Ldc_I4_0);
-            _IL.Emit(OpCodes.Ble_S, noCrit); //dmg gNPC critChance
-
-            _IL.Emit(OpCodes.Call, typeof(DamageCategorySystem).GetMethod("GenerateCritCoeffVector4", BindingFlags.NonPublic | BindingFlags.Static)); //dmg gNPC crit
-            _IL.Emit(OpCodes.Dup);
-            _IL.Emit(OpCodes.Stloc_S, (byte)15); //dmg gNPC crit
-            _IL.Emit(OpCodes.Stfld, typeof(DamageCategoryNPC).GetField("CriticalCoefficientVector"));
-
-            //�ֲ���ջ,ջ�����ⲿ��Damage
-            _IL.Emit(OpCodes.Ldloc_S, (byte)15); //dmg crit
-            _IL.Emit(OpCodes.Call, typeof(Vector4).GetMethod("op_Multiply", new Type[] { typeof(Vector4), typeof(Vector4) }));
-            _IL.Emit(OpCodes.Br, endCrit);
-
-            _IL.MarkLabel(noCrit);
-            _IL.Emit(OpCodes.Pop);
-            _IL.Emit(OpCodes.Ldc_R4, 1f); //dmg gNPC  1f
-            _IL.Emit(OpCodes.Newobj, typeof(Vector4).GetConstructor(new[] { typeof(float) }));
-            _IL.Emit(OpCodes.Stfld, typeof(DamageCategoryNPC).GetField("CriticalCoefficientVector")); //dmg
-
-            _IL.MarkLabel(endCrit);
-        }
-
-        private static Vector4 GenerateCritCoeffVector4(int critChance) {
-            return new Vector4(
-                Main.rand.Next(100) < critChance ? 2f : 1f,
-                Main.rand.Next(100) < critChance ? 2f : 1f,
-                Main.rand.Next(100) < critChance ? 2f : 1f,
-                Main.rand.Next(100) < critChance ? 2f : 1f
-                );
-        }
-        private static float VectorSum(Vector4 vector)
-            => vector.X + vector.Y + vector.Z + vector.W;
-    }
-
-
-
-
-
- //   public class Bababoi : ModItem
- //   {
- //       public override void SetDefaults()
- //       {
- //           Item.width = 32;
- //           Item.height = 32;
-
- //           Item.useStyle = ItemUseStyleID.Swing;
- //           Item.useTime = 15;
- //           Item.useAnimation = 15;
- //           Item.autoReuse = true;
-
- //           Item.DamageType = DamageClass.Melee;
-            
- //           Item.damage = 27;
- //           Item.knockBack = 6;
- //           Item.crit = 6;
-            
-
- //           Item.value = Item.buyPrice(gold: 10, silver: 50);
- //           Item.rare = ItemRarityID.Green;
- //           Item.UseSound = SoundID.Item1;
-
- //       }
-
- //       public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)
- //       {
- //           if (target.TryGetGlobalNPC(out DamageCategoryNPC genreNPC))
- //           {
-
- //               genreNPC.DamageGenre = (byte)0x01 | 0x02;
- //               //������ �����ԭ�� 0x01�������� 0x02���÷��� 0x03����Ԫ�� 0x04������ʵ 0x10����ԭ��
-
- //               genreNPC.PhysDamages = new Vector4(40f, 40f, 40f, 40f);
-
- //               genreNPC.ArtsDamages = new Vector4(40f, 40f, 40f, 40f);
- //               //ͬ���������˺������ͱ�����ԭ�������˺�������
- //               genreNPC.ArtsFrag = 1;
- //               //��ǰ���ʹ���������ֵΪ1
- //               genreNPC.artsResistance = 0;
- //               //��ǰ���Ϳ��ԣ�����ֵΪ0
- //               genreNPC.CriticalChance = 10;
- //               //������
-
- //               //��������ԭ���˺�ʱSetDefault() Item.damage����Ч�������˺����Ͷ���Ҫ�ֶ���ֵ
- //           }
- //       }
-
-	//}
-
-
-	public class DamageGenreProjectile : GlobalProjectile
-    {
-        public override bool InstancePerEntity => true;
-
-        public byte WeaponGenre = 0;
-        public byte DamageGenre = 0; //���ĵ������˺�����
-        public float ArtsAdditional = 0f; 
-        public float ElemAdditional = 0f;
-        public float TrueAdditional = 0f;
-
-        public override void ModifyHitNPC(Projectile projectile, NPC target, ref NPC.HitModifiers modifiers)
-        {
-            var genreNPC = target.GetGlobalNPC<DamageCategoryNPC>();
-        }
-    }
+	/// <summary>
+	/// 法术伤害/法抗系统。
+	///
+	/// 历史备注：这里原来是一套用 MonoMod 直接改写原版字节码（IL_NPC.GetIncomingStrikeModifiers /
+	/// IL_NPC.HitModifiers.GetDamage 等）的实现，想让一次攻击同时按物理/法术/元素/真实四条轨道
+	/// 分别结算。那套代码从来没有真正启用过（Load/Unload 整段被注释掉），审查后发现里面有个
+	/// 把 DamageCategoryNPC 引用直接塞进 DamageClass 类型参数槽位、绕过类型检查的操作，
+	/// 风险是整个战斗管线级别的崩溃，所以整段替换成了下面这套用 tModLoader 官方 Hook
+	/// （ModifyHitByItem/ModifyHitByProjectile）实现的版本：只做"法术伤害吃目标法抗"这一件事，
+	/// 不做多类型伤害同时结算，但足够覆盖当前的实际需求，而且完全在受支持的 API 范围内。
+	/// </summary>
+	public class DamageCategoryNPC : GlobalNPC
+	{
+		public override bool InstancePerEntity => true;
+
+		/// <summary>法术抗性，0~1 的比例。命中来自 <see cref="ArtsWeaponRegistry"/> 的攻击时，
+		/// 按 FinalDamage *= (1 - artsResistance) 直接扣减（和 WeaknessSystem 里的减益写法同一套公式）。</summary>
+		public float artsResistance;
+
+		public override void ModifyHitByItem(NPC npc, Player player, Item item, ref NPC.HitModifiers modifiers) {
+			if (artsResistance > 0f && ArtsWeaponRegistry.ArtsItemTypes.Contains(item.type))
+				modifiers.FinalDamage *= (1f - artsResistance);
+		}
+
+		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers) {
+			if (artsResistance > 0f && ArtsWeaponRegistry.ArtsProjectileTypes.Contains(projectile.type))
+				modifiers.FinalDamage *= (1f - artsResistance);
+		}
+	}
+
+	/// <summary>
+	/// 被判定为"法术伤害"的原版武器登记表。命中走物品挥砍/戳刺判定的放 ArtsItemTypes，
+	/// 命中走独立弹幕（悠悠球、回旋镖等）的放 ArtsProjectileTypes——两边都要看攻击到底是
+	/// 通过哪种判定命中的，只登记其中一边会导致武器实际打出去没有被识别成法伤。
+	/// </summary>
+	public static class ArtsWeaponRegistry
+	{
+		// 只有这 4 件在原版 Item.SetDefaults 里没设 noMelee=true——它们的挥砍本身就有伤害判定，
+		// 除了下面 ArtsProjectileTypes 里各自对应的剑气/弹幕以外，物品本身的挥砍命中也要算。
+		// （核对方式：反编译源码里逐个查了 case 段的 noMelee/shoot 字段，不是猜的。）
+		public static readonly HashSet<int> ArtsItemTypes = new() {
+			ItemID.InfluxWaver,    // 波涌之刃
+			ItemID.LightsBane,     // 魔光剑
+			ItemID.EnchantedSword, // 附魔剑
+			ItemID.Frostbrand,     // 寒霜剑（霜印剑）
+		};
+
+		// 现代 Terraria 里大部分"剑挥出去"的伤害其实是这把剑自己生成的弹幕在打，不是物品自带的
+		// 近战碰撞框（noMelee=true）。下面这些武器基本都属于这一类，弹幕名字经常和物品名不一样
+		// （比如 附魔剑 打的是 EnchantedBeam，北极 打的是 NorthPoleWeapon），一样是查反编译源码核对的。
+		public static readonly HashSet<int> ArtsProjectileTypes = new() {
+			ProjectileID.IceSickle,       // 冰雪镰刀（回旋镖类）
+			ProjectileID.Meowmere,        // 彩虹喵之刃（纯法术弹幕）
+			ProjectileID.CorruptYoyo,     // 抑郁球
+			ProjectileID.Cascade,         // 喷流球
+			ProjectileID.HelFire,         // 狱火球
+			ProjectileID.Kraken,          // 克拉肯球
+			ProjectileID.MushroomSpear,   // 蘑菇长矛（noMelee，纯弹幕）
+			ProjectileID.DarkLance,       // 暗黑长枪（noMelee，纯弹幕）
+			ProjectileID.NorthPoleWeapon, // 北极（noMelee，纯弹幕）
+			ProjectileID.TheHorsemansBlade,// 无头骑士剑（noMelee，纯弹幕）
+			ProjectileID.TrueNightsEdge,  // 真永夜刃（noMelee，纯弹幕）
+			ProjectileID.NightsEdge,      // 永夜刃（noMelee，纯弹幕）
+			ProjectileID.CobaltNaginata,  // 钴薙刀（noMelee，纯弹幕）
+			ProjectileID.MonkStaffT2,     // 恐怖关刀（noMelee，纯弹幕）
+			ProjectileID.LightsBane,      // 魔光剑的剑气（挥砍本身也算，见上）
+			ProjectileID.InfluxWaver,     // 波涌之刃的光刃（挥砍本身也算，见上）
+			ProjectileID.EnchantedBeam,   // 附魔剑的剑气（挥砍本身也算，见上）
+			ProjectileID.FrostBoltSword,  // 寒霜剑的冰刃（挥砍本身也算，见上）
+		};
+	}
+
+	/// <summary>
+	/// 按地区给原版怪物赋默认法抗：邪恶群系（腐化/猩红）20，困难模式额外 +20；
+	/// 其余地区（森林等）默认 0。只在生成那一刻取一次附近玩家所在地区，不做逐帧跟随——
+	/// 这是"这只怪物是在什么环境里生成的"的一次性快照，不是"这只怪物当前站在哪"。
+	///
+	/// 只处理原版怪物（npc.ModNPC == null）。本模组自己的干员化敌人已经在各自 SetDefaults
+	/// 里手动设过法抗（参见 Caster.cs/Hound.cs/Evolution.cs 等 ~20 个文件），这里不会碰它们。
+	/// </summary>
+	public class ArtsResistanceZoneDefaults : GlobalNPC
+	{
+		private const float EvilBiomeResistance = 0.20f;
+		private const float EvilBiomeResistanceHardmode = 0.40f;
+
+		// 显式指定的原版怪物，优先于地区默认值。
+		private static readonly Dictionary<int, float> ExplicitOverrides = new() {
+			{ NPCID.KingSlime, 0.30f },
+			{ NPCID.PossessedArmor, 0.40f },
+		};
+
+		public override void OnSpawn(NPC npc, IEntitySource source) {
+			if (npc.ModNPC != null)
+				return;
+
+			var cat = npc.GetGlobalNPC<DamageCategoryNPC>();
+
+			if (ExplicitOverrides.TryGetValue(npc.type, out float explicitValue)) {
+				cat.artsResistance = explicitValue;
+				return;
+			}
+
+			cat.artsResistance = GetZoneDefault(npc.Center);
+		}
+
+		private static float GetZoneDefault(Vector2 position) {
+			Player nearest = FindNearestPlayer(position);
+			if (nearest == null)
+				return 0f;
+
+			if (nearest.ZoneCorrupt || nearest.ZoneCrimson)
+				return Main.hardMode ? EvilBiomeResistanceHardmode : EvilBiomeResistance;
+
+			return 0f;
+		}
+
+		private static Player FindNearestPlayer(Vector2 position) {
+			Player nearest = null;
+			float nearestDistSq = float.MaxValue;
+			foreach (Player player in Main.ActivePlayers) {
+				float distSq = Vector2.DistanceSquared(player.Center, position);
+				if (distSq < nearestDistSq) {
+					nearestDistSq = distSq;
+					nearest = player;
+				}
+			}
+			return nearest;
+		}
+	}
 }
-
-
-
-//public class Int32Expand
-//{
-//    public static void ExpandInt32()
-//    {
-//        var intassem = AssemblyDefinition.ReadAssembly(typeof(int).Assembly.Location);
-//        var intType = intassem.MainModule.Types.FirstOrDefault(t => t.FullName == "System.Int32");
-
-//        intType.Attributes &= ~Mono.Cecil.TypeAttributes.Sealed;
-//        var field1 = new FieldDefinition("Int64field1", Mono.Cecil.FieldAttributes.Public, intassem.MainModule.TypeSystem.Int64);
-//        var field2 = new FieldDefinition("Int64field2", Mono.Cecil.FieldAttributes.Public, intassem.MainModule.TypeSystem.Int64);
-//        intType.Fields.Add(field1);
-//        intType.Fields.Add(field2);
-//    }
-//}

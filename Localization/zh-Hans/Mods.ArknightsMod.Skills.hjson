@@ -898,3 +898,20 @@ ClosureScanGun: {
 		Desc: 技能持续时间内逐渐获得18点部署费用，攻击间隔缩短(-0.5)，锁定自身和援军原本攻击范围内的敌人进行攻击，造成可露希尔250%攻击力的物理伤害并施加持续3秒的6%迟钝效果（可叠加，最高60%），每攻击9次后攻击目标数+1（最多触发6次）。
 	}
 }
+
+SurtrLaevatain: {
+	1: {
+		// Label: Mods.ArknightsMod.Skills.SurtrLaevatain.1.Label
+		// Desc: Mods.ArknightsMod.Skills.SurtrLaevatain.1.Desc
+	}
+
+	2: {
+		// Label: Mods.ArknightsMod.Skills.SurtrLaevatain.2.Label
+		// Desc: Mods.ArknightsMod.Skills.SurtrLaevatain.2.Desc
+	}
+
+	3: {
+		// Label: Mods.ArknightsMod.Skills.SurtrLaevatain.3.Label
+		// Desc: Mods.ArknightsMod.Skills.SurtrLaevatain.3.Desc
+	}
+}

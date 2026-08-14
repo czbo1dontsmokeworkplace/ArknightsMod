@@ -216,26 +216,6 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				return false;
 			}
 		}
-		public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers) {
-
-			var genreNPC = NPC.GetGlobalNPC<DamageCategoryNPC>();
-			if ((genreNPC.DamageGenre & 0x02) != 0) {
-				// 法术伤害无视护甲
-				if (SpellResist < 20) {
-					for (int i = 0; i < 3; i++) {
-						Dust.NewDust(NPC.position, NPC.width, NPC.height,
-							DustID.MagicMirror, 0, 0, 150, Color.LightBlue, 0.7f);
-					}
-				}
-				if (SpellResist > 40) {
-					for (int i = 0; i < 3; i++) {
-						Dust.NewDust(NPC.position, NPC.width, NPC.height,
-							DustID.Shadowflame, 0, 0, 150, Color.LightBlue, 0.7f);
-					}
-				}
-
-			}
-		}
 	}
 	public class LightShieldCut : ModProjectile
 	{
