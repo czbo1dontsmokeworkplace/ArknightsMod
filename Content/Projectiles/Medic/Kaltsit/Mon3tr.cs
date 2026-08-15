@@ -57,7 +57,7 @@ namespace ArknightsMod.Content.Projectiles.Medic.Kaltsit
 		private const int AttackTicksPerFrame = 4;
 		private const int SkillTicksPerFrame  = 4;
 
-		private const float DrawScale = 0.75f;
+		private const float DrawScale = 1f; // 本体贴图 1:1 显示，不做缩放
 
 		// ── 水晶动画表（m3_水晶_gif_sheet.png，22x448，14 帧，每帧 22x32）──
 		private const string CrystalTexturePath = "ArknightsMod/Content/Projectiles/Medic/Kaltsit/Mon3trCrystal";
