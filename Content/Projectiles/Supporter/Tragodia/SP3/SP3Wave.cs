@@ -9,20 +9,14 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP3
 {
 	public class SP3Wave : ModProjectile
 	{
-		//超级修改参数
 		private const int CirclePoints = 120;
 		private const int DepthSegments = 8;
 		private const float StartRadius = 5f;
 		private const float MaxRadius = 80f;
 		private const float EllipseRatio = 0.6f;
-
-
-		private const int LargeWaveMaxLife = 75;           
-
-
-		private const int SmallWaveMaxLife = 95;           
-		private const int SmallWaveStartDelay = 10;       
-
+		private const int LargeWaveMaxLife = 75;
+		private const int SmallWaveMaxLife = 95;
+		private const int SmallWaveStartDelay = 10;
 		private const float PeakProgress = 0.35f;
 		private const float RiseExponent = 2.0f;
 		private const float FallExponent = 2.0f;
@@ -36,7 +30,6 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP3
 		private static readonly Color TopGlowColor = new Color(180, 100, 255);
 		private static readonly Color DepthColor = new Color(70, 90, 200);
 
-	
 		private const float SmallStartRadius = 40f;
 		private const float SmallMaxRadius = 110f;
 		private const float SmallMaxRiseHeight = 33.6f;
@@ -45,7 +38,6 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP3
 		private const float SmallWaveTimeScale = 0.04f;
 		private static readonly Color SmallTopGlowColor = new Color(140, 80, 220);
 		private static readonly Color SmallDepthColor = new Color(50, 70, 180);
-
 
 		private const int CrossTotalFrames = 32;
 		private const int CrossShrinkStartFrame = 6;
@@ -57,7 +49,6 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP3
 		private const float CrossOuterScaleEnd = 1.05f;
 		private static readonly Color CrossMainColor = new Color(180, 100, 255);
 		private static readonly Color CrossOuterColor = new Color(120, 60, 200);
-
 
 		private const int CoreGlowTotalFrames = 30;
 		private const int CoreGlowPeakFrame = 5;
@@ -77,7 +68,7 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP3
 		private static readonly Color MidGlowOuterColor = new Color(80, 20, 150, 140);
 
 		private float time = 0f;
-		private float smallWaveTime = 0f; 
+		private float smallWaveTime = 0f;
 		private BasicEffect effect;
 		private Texture2D projLightCoreTexture;
 		private Texture2D crossTexture;
@@ -93,7 +84,6 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP3
 			Projectile.DamageType = DamageClass.Magic;
 			Projectile.penetrate = -1;
 			Projectile.tileCollide = false;
-
 			Projectile.timeLeft = Math.Max(LargeWaveMaxLife, SmallWaveMaxLife + SmallWaveStartDelay);
 			Projectile.alpha = 255;
 			Projectile.ignoreWater = true;
@@ -101,10 +91,8 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP3
 
 		public override void AI() {
 			time++;
-
-			if (time > SmallWaveStartDelay) {
+			if (time > SmallWaveStartDelay)
 				smallWaveTime++;
-			}
 
 			if (time == 1) {
 				effectScale = Projectile.ai[0] > 0 ? Projectile.ai[0] : 1f;
@@ -112,10 +100,8 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP3
 				effectCenter = Projectile.Center + new Vector2(0, -20f * effectScale);
 			}
 
-
-			if (time > LargeWaveMaxLife && smallWaveTime > SmallWaveMaxLife) {
+			if (time > LargeWaveMaxLife && smallWaveTime > SmallWaveMaxLife)
 				Projectile.Kill();
-			}
 		}
 
 		public override bool PreDraw(ref Color lightColor) {
@@ -127,46 +113,49 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP3
 			if (crossTexture == null)
 				crossTexture = ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Supporter/Tragodia/EffectImage/Light_horizontal").Value;
 
-			Vector2 center = Projectile.Center - Main.screenPosition;
-			Vector2 glowCenter = effectCenter - Main.screenPosition;
+			float zoom = Main.GameViewMatrix.Zoom.X;
+
+			float totalScale = effectScale * zoom;
+			Matrix transform = Main.GameViewMatrix.TransformationMatrix;
+
+			Vector2 screenPos = Projectile.Center - Main.screenPosition;
+			Vector2 transformedPos = Vector2.Transform(screenPos, transform);
+			Vector2 glowScreenPos = effectCenter - Main.screenPosition;
+			Vector2 transformedGlowPos = Vector2.Transform(glowScreenPos, transform);
+
 			GraphicsDevice device = Main.graphics.GraphicsDevice;
 
 			if (effect == null) {
-				effect = new BasicEffect(device);
-				effect.VertexColorEnabled = true;
+				effect = new BasicEffect(device) { VertexColorEnabled = true };
 			}
 			effect.World = Matrix.Identity;
 			effect.View = Matrix.Identity;
-			effect.Projection = Matrix.CreateOrthographicOffCenter(
-				0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
+			effect.Projection = Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
 
 			Main.spriteBatch.End();
 
-
 			if (time <= LargeWaveMaxLife) {
-				DrawLargeWaveRing(device, center);
+				DrawLargeWaveRing(device, transformedPos, totalScale);
 			}
 
-
 			if (smallWaveTime > 0 && smallWaveTime <= SmallWaveMaxLife) {
-				DrawSmallWaveRing(device, center);
+				DrawSmallWaveRing(device, transformedPos, totalScale);
 			}
 
 			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend,
 				SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone,
-				null, Main.GameViewMatrix.TransformationMatrix);
+				null, Matrix.Identity);
 
-			DrawCrossAndGlowEffects(glowCenter);
+			DrawCrossAndGlowEffects(transformedGlowPos, totalScale);
 
 			return false;
 		}
 
-
-		private void DrawLargeWaveRing(GraphicsDevice device, Vector2 center) {
+		private void DrawLargeWaveRing(GraphicsDevice device, Vector2 center, float scale) {
 			float rawProgress = time / LargeWaveMaxLife;
 			float alpha = 1f - rawProgress;
 			float easedProgress = 1f - (float)Math.Pow(1f - rawProgress, 3);
-			float currentRadius = MathHelper.Lerp(StartRadius, MaxRadius, easedProgress);
+			float currentRadius = MathHelper.Lerp(StartRadius * scale, MaxRadius * scale, easedProgress);
 
 			float heightCurve;
 			if (rawProgress < PeakProgress) {
@@ -178,20 +167,20 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP3
 				heightCurve = (float)Math.Pow(1f - t, FallExponent);
 			}
 
-			float baseRise = MaxRiseHeight * heightCurve;
+			float baseRise = MaxRiseHeight * scale * heightCurve;
 			float amplitudeEnvelope = heightCurve;
+			float maxAmpl = MaxWaveAmplitude * scale;
 
 			DrawWaveRingInternal(device, center, currentRadius, baseRise, amplitudeEnvelope, alpha,
-				FinalBaselineOffset, MaxWaveAmplitude, WaveTimeScale, WaveFreq1, WaveFreq2, WaveFreq3,
+				FinalBaselineOffset * scale, maxAmpl, WaveTimeScale, WaveFreq1, WaveFreq2, WaveFreq3,
 				TopGlowColor, DepthColor);
 		}
 
-
-		private void DrawSmallWaveRing(GraphicsDevice device, Vector2 center) {
+		private void DrawSmallWaveRing(GraphicsDevice device, Vector2 center, float scale) {
 			float smallProgress = smallWaveTime / SmallWaveMaxLife;
 			float smallAlpha = (1f - smallProgress) * 0.7f;
 			float easedProgress = 1f - (float)Math.Pow(1f - smallProgress, 3);
-			float currentRadius = MathHelper.Lerp(SmallStartRadius, SmallMaxRadius, easedProgress);
+			float currentRadius = MathHelper.Lerp(SmallStartRadius * scale, SmallMaxRadius * scale, easedProgress);
 
 			float heightCurve;
 			if (smallProgress < PeakProgress) {
@@ -203,14 +192,14 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP3
 				heightCurve = (float)Math.Pow(1f - t, FallExponent);
 			}
 
-			float baseRise = SmallMaxRiseHeight * heightCurve;
+			float baseRise = SmallMaxRiseHeight * scale * heightCurve;
 			float amplitudeEnvelope = heightCurve;
+			float maxAmpl = SmallMaxWaveAmplitude * scale;
 
 			DrawWaveRingInternal(device, center, currentRadius, baseRise, amplitudeEnvelope, smallAlpha,
-				SmallFinalBaselineOffset, SmallMaxWaveAmplitude, SmallWaveTimeScale, WaveFreq1, WaveFreq2, WaveFreq3,
+				SmallFinalBaselineOffset * scale, maxAmpl, SmallWaveTimeScale, WaveFreq1, WaveFreq2, WaveFreq3,
 				SmallTopGlowColor, SmallDepthColor);
 		}
-
 
 		private void DrawWaveRingInternal(GraphicsDevice device, Vector2 center, float radius,
 			float baseRise, float amplitudeEnvelope, float alpha,
@@ -240,7 +229,7 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP3
 				topYs[i] = topY;
 
 				float diff = bottomY - topY;
-				skirtAlphas[i] = MathHelper.Clamp(diff / 8f, 0f, 1f);
+				skirtAlphas[i] = MathHelper.Clamp(diff / (8f * (radius / (MaxRadius * 1f))), 0f, 1f); // 自适应
 			}
 
 			for (int depth = 0; depth <= DepthSegments; depth++) {
@@ -312,7 +301,7 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP3
 
 			for (int layer = 0; layer < glowLayers; layer++) {
 				float layerProgress = (float)layer / (glowLayers - 1);
-				float offset = 2f + layerProgress * 8f;
+				float offset = (2f + layerProgress * 8f) * (radius / (MaxRadius * 1f)); // 自适应缩放
 				float alpha = (1f - layerProgress) * 0.9f;
 				Color layerColor = Color.Lerp(glowColor, Color.White, layerProgress * 0.5f);
 
@@ -338,23 +327,22 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP3
 			}
 		}
 
-
-		private void DrawCrossAndGlowEffects(Vector2 center) {
+		private void DrawCrossAndGlowEffects(Vector2 center, float scale) {
 			int crossFrame = (int)MathHelper.Clamp(time, 0f, (float)(CrossTotalFrames - 1));
-			DrawMidGlow(center, crossFrame);
-			DrawCoreGlow(center, crossFrame);
-			DrawCrossEffect(center, crossFrame);
+			DrawMidGlow(center, crossFrame, scale);
+			DrawCoreGlow(center, crossFrame, scale);
+			DrawCrossEffect(center, crossFrame, scale);
 		}
 
-		private void DrawCoreGlow(Vector2 center, int frame) {
+		private void DrawCoreGlow(Vector2 center, int frame, float scale) {
 			DrawGlow(center, frame, CoreGlowTotalFrames, CoreGlowPeakFrame,
-				CoreGlowStartSize, CoreGlowPeakSize, CoreGlowEndSize,
+				CoreGlowStartSize * scale, CoreGlowPeakSize * scale, CoreGlowEndSize * scale,
 				CoreGlowOuterScale, CoreGlowMainColor, CoreGlowOuterColor, 1f);
 		}
 
-		private void DrawMidGlow(Vector2 center, int frame) {
+		private void DrawMidGlow(Vector2 center, int frame, float scale) {
 			DrawGlow(center, frame, MidGlowTotalFrames, MidGlowPeakFrame,
-				MidGlowStartSize, MidGlowPeakSize, MidGlowEndSize,
+				MidGlowStartSize * scale, MidGlowPeakSize * scale, MidGlowEndSize * scale,
 				MidGlowOuterScale, MidGlowMainColor, MidGlowOuterColor, 0.9f);
 		}
 
@@ -382,7 +370,7 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP3
 			Main.spriteBatch.End();
 			Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive,
 				SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone,
-				null, Main.GameViewMatrix.TransformationMatrix);
+				null, Matrix.Identity);
 
 			Rectangle mainRect = new Rectangle(
 				(int)(center.X - size * 0.5f), (int)(center.Y - size * 0.5f),
@@ -398,17 +386,21 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP3
 			Main.spriteBatch.End();
 			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend,
 				Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer,
-				null, Main.GameViewMatrix.TransformationMatrix);
+				null, Matrix.Identity);
 		}
 
-		private void DrawCrossEffect(Vector2 center, int frame) {
+		private void DrawCrossEffect(Vector2 center, int frame, float scale) {
 			GetCrossSize(frame, out float mW, out float mH, out float oW, out float oH);
+			mW *= scale;
+			mH *= scale;
+			oW *= scale;
+			oH *= scale;
 			float alpha = CalculateCrossAlpha(frame);
 
 			Main.spriteBatch.End();
 			Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive,
 				SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone,
-				null, Main.GameViewMatrix.TransformationMatrix);
+				null, Matrix.Identity);
 
 			DrawRotatedCrossPart(center, mW, mH, oW, oH, alpha, 0f);
 			DrawRotatedCrossPart(center, mW, mH, oW, oH, alpha, MathHelper.PiOver2);
@@ -416,7 +408,7 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP3
 			Main.spriteBatch.End();
 			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend,
 				Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer,
-				null, Main.GameViewMatrix.TransformationMatrix);
+				null, Matrix.Identity);
 		}
 
 		private void DrawRotatedCrossPart(Vector2 center, float mW, float mH,

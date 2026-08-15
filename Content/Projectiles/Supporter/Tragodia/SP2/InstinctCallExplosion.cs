@@ -445,8 +445,12 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP2
 			float blackRibbonAlpha = (float)Math.Pow(1f - t, BlackRibbonAlphaPower);
 			float midRibbonAlpha = (float)Math.Pow(1f - t, MidRibbonAlphaPower);
 
-			Vector2 screenCenter = center - Main.screenPosition;
-			screenCenter.Y += 30f;
+			float zoom = Main.GameViewMatrix.Zoom.X;
+			Matrix transform = Main.GameViewMatrix.TransformationMatrix;
+			Vector2 screenCenter = Vector2.Transform(center - Main.screenPosition, transform);
+			screenCenter.Y += 30f * zoom;
+
+			float totalScale = scale * zoom;
 
 			BlendState origBlend = device.BlendState;
 			DepthStencilState origDepth = device.DepthStencilState;
@@ -457,13 +461,13 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP2
 				device.DepthStencilState = DepthStencilState.None;
 				device.RasterizerState = RasterizerState.CullNone;
 
-				DrawSphere(device, screenCenter, scale, sphereAlpha);
-				DrawRibbonList<Ribbon>(device, screenCenter, scale, ribbonAlpha, ribbons);
-				DrawRibbonList<MidRibbon>(device, screenCenter, scale, midRibbonAlpha, midRibbons);
-				DrawDarkSphere(device, screenCenter, scale, darkSphereAlpha);
+				DrawSphere(device, screenCenter, totalScale, sphereAlpha);
+				DrawRibbonList<Ribbon>(device, screenCenter, totalScale, ribbonAlpha, ribbons);
+				DrawRibbonList<MidRibbon>(device, screenCenter, totalScale, midRibbonAlpha, midRibbons);
+				DrawDarkSphere(device, screenCenter, totalScale, darkSphereAlpha);
 
 				device.BlendState = BlendState.AlphaBlend;
-				DrawBlackRibbonsWithTexture(device, screenCenter, scale, blackRibbonAlpha);
+				DrawBlackRibbonsWithTexture(device, screenCenter, totalScale, blackRibbonAlpha);
 			}
 			finally {
 				device.BlendState = origBlend;

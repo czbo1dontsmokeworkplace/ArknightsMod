@@ -414,7 +414,11 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP2
 			if (tex == null || tex.IsDisposed)
 				return;
 
-			Vector2 drawPos = Projectile.Center - Main.screenPosition + new Vector2(0, catOffsetY);
+			float zoom = Main.GameViewMatrix.Zoom.X;
+			Matrix transform = Main.GameViewMatrix.TransformationMatrix;
+
+			Vector2 drawPos = Vector2.Transform(Projectile.Center - Main.screenPosition, transform);
+			drawPos += new Vector2(0, catOffsetY * zoom);
 
 			SpriteEffects effects = SpriteEffects.None;
 
@@ -425,6 +429,11 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP2
 				effects = SpriteEffects.FlipVertically;
 			}
 
+			Main.spriteBatch.End();
+			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend,
+				SamplerState.PointClamp, DepthStencilState.None,
+				RasterizerState.CullNone, null, Matrix.Identity);
+
 			Main.spriteBatch.Draw(
 				tex,
 				drawPos,
@@ -432,10 +441,15 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP2
 				Color.White,
 				catRotation,
 				tex.Size() / 2f,
-				catScale,
+				catScale * zoom,
 				effects,
 				0f
 			);
+
+			Main.spriteBatch.End();
+			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend,
+				SamplerState.PointClamp, DepthStencilState.None,
+				RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 		}
 
 		private void DrawLightRing() {
@@ -457,24 +471,30 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP2
 			const float LightRingBrightIntensity = 0.4f;
 			Color LightRingBaseColor = new Color(180, 100, 255, 220);
 
+			float zoom = Main.GameViewMatrix.Zoom.X;
+			Matrix transform = Main.GameViewMatrix.TransformationMatrix;
+			Vector2 center = Vector2.Transform(Projectile.Center - Main.screenPosition, transform);
+			float scaledRadius = currentRadius * zoom;
+
 			SpriteBatch sb = Main.spriteBatch;
 			sb.End();
-			sb.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+			sb.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp,
+				DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
 
 			float angleStep = MathHelper.TwoPi / LightRingSegments;
 			float texScale = lightParticleTex.Height / LightRingPatternLength;
 
 			for (int i = 0; i < LightRingSegments; i++) {
 				float angle = i * angleStep;
-				Vector2 pos = Projectile.Center + new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)) * currentRadius;
+				Vector2 pos = center + new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)) * scaledRadius;
 				float rotation = angle + MathHelper.Pi;
-				float arcLen = currentRadius * angleStep;
+				float arcLen = scaledRadius * angleStep;
 				int srcHeight = (int)(arcLen * texScale + 0.5f);
 				if (srcHeight < 1)
 					srcHeight = 1;
 				int srcY = (int)((scrollOffset + i * arcLen) * texScale) % lightParticleTex.Height;
 				Rectangle sourceRect = new Rectangle(0, srcY, lightParticleTex.Width, srcHeight);
-				float scaleX = LightRingThickness / lightParticleTex.Width;
+				float scaleX = LightRingThickness * zoom / lightParticleTex.Width;
 				float scaleY = arcLen / srcHeight;
 
 				float brightFactor = 0f;
@@ -492,13 +512,15 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP2
 					(int)(LightRingBaseColor.A * ringAlpha)
 				);
 
-				sb.Draw(lightParticleTex, pos - Main.screenPosition, sourceRect, finalColor,
+				sb.Draw(lightParticleTex, pos, sourceRect, finalColor,
 					rotation, new Vector2(0, 0.5f), new Vector2(scaleX, scaleY), SpriteEffects.None, 0f);
 			}
 
 			sb.End();
-			sb.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+			sb.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp,
+				DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
 		}
+
 
 		public override void PostDraw(Color lightColor) {
 			if (!isExploding)

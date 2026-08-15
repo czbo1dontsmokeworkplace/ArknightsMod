@@ -1,4 +1,4 @@
-// Content/Items/Weapons/Supporter/Tragodia/Tragodia.cs
+using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Players;
 using ArknightsMod.Systems.Gameplay.Skill;
 using Microsoft.Xna.Framework;
@@ -15,28 +15,27 @@ using ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP3;
 using ArknightsMod.Content.Projectiles.Supporter.Tragodia.EffectImage;
 using ArknightsMod.Content.Projectiles.Supporter.Tragodia.NormalAttack;
 using ArknightsMod.Content.ElementalImpairment.Effect;
+using ArknightsMod.Content;
 
 namespace ArknightsMod.Content.Items.Weapons.Supporter.Tragodia
 {
-	public class Tragodia : UpgradeWeaponBase
+	public class Tragodia : ExpansionWeaponBase
 	{
-		public const int BaseDamage = 150;
-		public const int BaseUseTime = 45;
-		public const int S2UseTime = 33;//按理来说应该使用攻速加成来写
-		public const float BaseKnockback = 6f;
+		protected override int[] EliteDamage => [64, 82, 98];
+
+		public const int BaseUseTime = 48;
+		public const int S2UseTime = 31;
+		public const float BaseKnockback = 3f;
 		public const float BaseShootSpeed = 1f;
 
-	
 		private static SoundStyle SkillActiveSound;
-		private static SoundStyle Attack;        
-		private static SoundStyle Hit;           
+		private static SoundStyle Attack;
+		private static SoundStyle Hit;
 		private static SoundStyle SP1;
 		private static SoundStyle SP1_Hit;
-
-	
-		private static SoundStyle SP2Attack;     
-		private static SoundStyle SP3;           
-		private static SoundStyle SP3Attack;     
+		private static SoundStyle SP2Attack;
+		private static SoundStyle SP3;
+		private static SoundStyle SP3Attack;
 
 		private int spDelayTimer = 0;
 		private NPC spTarget = null;
@@ -56,6 +55,7 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Tragodia
 		}
 
 		public override void HoldItem(Player player) {
+			base.HoldItem(player);
 			var modPlayer = player.GetModPlayer<WeaponPlayer>();
 			if (modPlayer.IconName != Name)
 				modPlayer.IconName = Name;
@@ -82,7 +82,7 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Tragodia
 		}
 
 		public override void SetDefaults() {
-			Item.damage = BaseDamage;
+			Item.damage = EliteDamage[0];
 			Item.DamageType = DamageClass.Ranged;
 			Item.width = 40;
 			Item.height = 32;
@@ -107,15 +107,20 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Tragodia
 
 			var modPlayer = player.GetModPlayer<WeaponPlayer>();
 
-			if (player.altFunctionUse == 2) {
-				if (modPlayer.Skill == 1 && modPlayer.SkillActive) {
-					return true;
-				}
+			if (ArknightsKeybinds.SkillActivatePressed(player)) {
 				if (modPlayer.Skill == 2 && modPlayer.StockCount > 0 && !modPlayer.SkillActive) {
 					modPlayer.SkillActive = true;
 					modPlayer.SkillTimer = 0;
 					modPlayer.DelStockCount();
 					SoundEngine.PlaySound(SP3, player.Center);
+					return false;
+				}
+				return false;
+			}
+
+			if (player.altFunctionUse == 2) {
+				if (modPlayer.Skill == 1 && modPlayer.SkillActive) {
+					return true;
 				}
 				return false;
 			}
@@ -123,12 +128,25 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Tragodia
 			if (player.statMana < Item.mana)
 				return false;
 
-			if (modPlayer.Skill == 0)
-				HandleSkill1(modPlayer);
-			else if (modPlayer.Skill == 1)
-				HandleSkill2(modPlayer);
-			else if (modPlayer.Skill == 2)
-				HandleSkill3(modPlayer);
+			if (modPlayer.Skill == 0) {
+				if (modPlayer.StockCount == 0) {
+					modPlayer.OffensiveRecovery();
+				}
+				else if (modPlayer.StockCount > 0) {
+					modPlayer.SkillActive = true;
+					modPlayer.SkillTimer = 0;
+					modPlayer.DelStockCount();
+				}
+			}
+
+			if (modPlayer.Skill == 1 && modPlayer.SkillActive) {
+				Item.useTime = S2UseTime;
+				Item.useAnimation = S2UseTime;
+			}
+			else {
+				Item.useTime = BaseUseTime;
+				Item.useAnimation = BaseUseTime;
+			}
 
 			return base.CanUseItem(player);
 		}
@@ -169,8 +187,6 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Tragodia
 				player.statMana -= Item.mana;
 
 			int baseProjectile = ModContent.ProjectileType<TragodiaWaveSpawner>();
-
-	
 			SoundEngine.PlaySound(Attack, player.Center);
 
 			if (modPlayer.Skill == 0 && modPlayer.SkillActive) {
@@ -192,20 +208,6 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Tragodia
 
 		public override Vector2? HoldoutOffset() => new Vector2(-4, 0);
 
-		private void HandleSkill1(WeaponPlayer modPlayer) {
-			if (modPlayer.StockCount == 0) {
-				if (modPlayer.CurrentSkill?.ChargeType == SkillChargeType.Attack && !modPlayer.SkillActive)
-					modPlayer.OffensiveRecovery();
-			}
-			else if (!modPlayer.SkillActive) {
-				modPlayer.SkillActive = true;
-				modPlayer.SkillTimer = 0;
-				modPlayer.DelStockCount();
-			}
-			Item.useTime = BaseUseTime;
-			Item.useAnimation = BaseUseTime;
-		}
-
 		private bool ShootSkill1(Player player, EntitySource_ItemUse_WithAmmo source, int damage, float knockback, int baseProjectile) {
 			SoundEngine.PlaySound(SP1, player.Center);
 
@@ -222,22 +224,10 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Tragodia
 			return false;
 		}
 
-		private void HandleSkill2(WeaponPlayer modPlayer) {
-			if (modPlayer.SkillActive) {
-				Item.useTime = S2UseTime;
-				Item.useAnimation = S2UseTime;
-			}
-		}
-
 		private bool ShootSkill2(Player player, EntitySource_ItemUse_WithAmmo source, int damage, float knockback, int baseProjectile) {
 			Projectile.NewProjectile(source, Main.MouseWorld, Vector2.Zero,
 				baseProjectile, damage, knockback, player.whoAmI, 0f, 1f, 0f);
 			return false;
-		}
-
-		private void HandleSkill3(WeaponPlayer modPlayer) {
-			Item.useTime = BaseUseTime;
-			Item.useAnimation = BaseUseTime;
 		}
 
 		private bool ShootSkill3(Player player, EntitySource_ItemUse_WithAmmo source, int damage, float knockback, int baseProjectile) {
@@ -323,7 +313,6 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Tragodia
 
 				targetNPC = FindClosestEnemy();
 
-
 				SoundEngine.PlaySound(AttackSound, Projectile.Center);
 
 				if (targetNPC != null) {
@@ -369,7 +358,6 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Tragodia
 				bool isSP2 = Projectile.ai.Length > 1 && Projectile.ai[1] == 1f;
 				bool isSP3 = Projectile.ai.Length > 2 && Projectile.ai[2] == 1f;
 
-			
 				if (isSP1) {
 					SoundEngine.PlaySound(SP1HitSound, Projectile.Center);
 				}
@@ -392,12 +380,12 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Tragodia
 				}
 				else if (isSP2) {
 					attackType = ModContent.ProjectileType<SP2TragodiaNormalAttack>();
-					effectScale = 1.5f;
+					effectScale = 1.1f;
 					waveAmplitude = 1.5f;
 				}
 				else if (isSP3) {
 					attackType = ModContent.ProjectileType<SP3TragodiaNormalAttack>();
-					effectScale = 2.0f;
+					effectScale = 1.1f;
 					waveAmplitude = 2.0f;
 				}
 				else {
@@ -430,7 +418,7 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Tragodia
 					Projectile.NewProjectile(source, center, Vector2.Zero,
 						ModContent.ProjectileType<WaveProjectile>(), 0, 0, owner, effectScale, waveAmplitude);
 				}
-				//非常猎奇的方法，很多很多弹幕（
+
 				Projectile.NewProjectile(source, center, Vector2.Zero,
 					ModContent.ProjectileType<Light>(), 0, 0, owner, effectScale, 0f);
 				Projectile.NewProjectile(source, center, Vector2.Zero,

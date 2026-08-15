@@ -112,7 +112,7 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP2
 			finally {
 				Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend,
 					SamplerState.PointClamp, DepthStencilState.None,
-					RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+					RasterizerState.CullNone, null, Matrix.Identity);
 			}
 
 			return false;
@@ -125,68 +125,6 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP2
 			noteTextures = null;
 		}
 
-		private void DrawTrails() {
-			GraphicsDevice device = Main.graphics.GraphicsDevice;
-			if (device == null)
-				return;
-
-			if (trailEffect == null) {
-				trailEffect = new BasicEffect(device);
-				trailEffect.VertexColorEnabled = true;
-			}
-
-			trailEffect.World = Matrix.Identity;
-			trailEffect.View = Matrix.Identity;
-			trailEffect.Projection = Matrix.CreateOrthographicOffCenter(
-				0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
-
-			float t = time / 130f;
-			float alpha = NoteAlpha;
-			if (time <= 6f)
-				alpha *= time / 6f;
-			else if (t >= 0.3f)
-				alpha *= (float)Math.Pow(1f - (t - 0.3f) / 0.7f, 0.8f);
-
-			float scale = MathHelper.Lerp(0.85f, 1.45f, (float)Math.Pow(Math.Min(t * 1.08f, 1f), 0.5f));
-			float baseRotationAngle = t * MathHelper.TwoPi * 0.5f;
-			float cosR = (float)Math.Cos(baseRotationAngle);
-			float sinR = (float)Math.Sin(baseRotationAngle);
-
-			Vector2 screenCenter = spawnCenter - Main.screenPosition;
-			screenCenter.Y += 30f;
-
-			BlendState oldBlend = device.BlendState;
-			DepthStencilState oldDepth = device.DepthStencilState;
-			RasterizerState oldRaster = device.RasterizerState;
-
-			try {
-				device.BlendState = BlendState.Additive;
-				device.DepthStencilState = DepthStencilState.None;
-				device.RasterizerState = RasterizerState.CullNone;
-
-				for (int i = 0; i < particles.Length; i++) {
-					var trail = particles[i].Trail;
-					if (trail.Count >= 2) {
-						List<Vector2> screenTrail = new List<Vector2>();
-						foreach (var p3D in trail) {
-							Vector3 s = p3D * scale;
-							float rx = s.X * cosR - s.Z * sinR;
-							float rz = s.X * sinR + s.Z * cosR;
-							screenTrail.Add(new Vector2(
-								screenCenter.X + rx,
-								screenCenter.Y - s.Y * 0.85f + rz * 0.6f
-							));
-						}
-						DrawOneTrail(device, screenTrail, alpha);
-					}
-				}
-			}
-			finally {
-				device.BlendState = oldBlend;
-				device.DepthStencilState = oldDepth;
-				device.RasterizerState = oldRaster;
-			}
-		}
 
 		private void DrawNotes() {
 			if (!texturesLoaded || noteTextures == null)
@@ -199,25 +137,27 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP2
 			else if (t >= 0.3f)
 				alpha *= (float)Math.Pow(1f - (t - 0.3f) / 0.7f, 0.8f);
 
-			float scale = MathHelper.Lerp(0.85f, 1.45f, (float)Math.Pow(Math.Min(t * 1.08f, 1f), 0.5f));
+			float zoom = Main.GameViewMatrix.Zoom.X;
+			Matrix transform = Main.GameViewMatrix.TransformationMatrix;
+
+			float scale = MathHelper.Lerp(0.85f, 1.45f, (float)Math.Pow(Math.Min(t * 1.08f, 1f), 0.5f)) * zoom;
 			float baseRotationAngle = t * MathHelper.TwoPi * 0.5f;
 			float cosR = (float)Math.Cos(baseRotationAngle);
 			float sinR = (float)Math.Sin(baseRotationAngle);
 
-			Vector2 screenCenter = spawnCenter - Main.screenPosition;
-			screenCenter.Y += 30f;
+			Vector2 screenCenter = Vector2.Transform(spawnCenter - Main.screenPosition, transform);
+			screenCenter.Y += 30f * zoom;
 
-			// 使用Main.spriteBatch绘制
 			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive,
 				SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone,
-				null, Main.GameViewMatrix.TransformationMatrix);
+				null, Matrix.Identity);
 
 			for (int i = 0; i < particles.Length; i++) {
 				float theta = particles[i].BaseHeight + particles[i].HeightOffset;
 				float cosT = (float)Math.Cos(theta);
 				float sinT = (float)Math.Sin(theta);
-				float circleR = OrbitRadius * sinT;
-				float yH = OrbitRadius * cosT;
+				float circleR = OrbitRadius * sinT * zoom;
+				float yH = OrbitRadius * cosT * zoom;
 				float phi = particles[i].Angle;
 
 				Vector3 pos3D = new Vector3(
@@ -243,19 +183,84 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP2
 
 				float size = 10f * scale;
 
-				// 光晕
 				float glowSize = size * 1.5f;
 				Main.spriteBatch.Draw(tex,
 					new Rectangle((int)(scrPos.X - glowSize * 0.5f), (int)(scrPos.Y - glowSize * 0.5f), (int)glowSize, (int)glowSize),
 					null, new Color(180, 100, 255) * alpha * 0.4f);
 
-				// 本体
 				Main.spriteBatch.Draw(tex,
 					new Rectangle((int)(scrPos.X - size * 0.5f), (int)(scrPos.Y - size * 0.5f), (int)size, (int)size),
 					null, new Color(220, 160, 255) * alpha * 0.8f);
 			}
 
 			Main.spriteBatch.End();
+		}
+
+		private void DrawTrails() {
+			GraphicsDevice device = Main.graphics.GraphicsDevice;
+			if (device == null)
+				return;
+
+			if (trailEffect == null) {
+				trailEffect = new BasicEffect(device);
+				trailEffect.VertexColorEnabled = true;
+			}
+
+			trailEffect.World = Matrix.Identity;
+			trailEffect.View = Matrix.Identity;
+			trailEffect.Projection = Matrix.CreateOrthographicOffCenter(
+				0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
+
+			float t = time / 130f;
+			float alpha = NoteAlpha;
+			if (time <= 6f)
+				alpha *= time / 6f;
+			else if (t >= 0.3f)
+				alpha *= (float)Math.Pow(1f - (t - 0.3f) / 0.7f, 0.8f);
+
+			float zoom = Main.GameViewMatrix.Zoom.X;
+			float scale = MathHelper.Lerp(0.85f, 1.45f, (float)Math.Pow(Math.Min(t * 1.08f, 1f), 0.5f)) * zoom;
+			float baseRotationAngle = t * MathHelper.TwoPi * 0.5f;
+			float cosR = (float)Math.Cos(baseRotationAngle);
+			float sinR = (float)Math.Sin(baseRotationAngle);
+
+			Matrix transform = Main.GameViewMatrix.TransformationMatrix;
+			Vector2 screenCenter = Vector2.Transform(spawnCenter - Main.screenPosition, transform);
+			screenCenter.Y += 30f * zoom;
+
+			BlendState oldBlend = device.BlendState;
+			DepthStencilState oldDepth = device.DepthStencilState;
+			RasterizerState oldRaster = device.RasterizerState;
+
+			try {
+				device.BlendState = BlendState.Additive;
+				device.DepthStencilState = DepthStencilState.None;
+				device.RasterizerState = RasterizerState.CullNone;
+
+				float orbitRadiusScaled = OrbitRadius * zoom;
+
+				for (int i = 0; i < particles.Length; i++) {
+					var trail = particles[i].Trail;
+					if (trail.Count >= 2) {
+						List<Vector2> screenTrail = new List<Vector2>();
+						foreach (var p3D in trail) {
+							Vector3 s = p3D * scale;
+							float rx = s.X * cosR - s.Z * sinR;
+							float rz = s.X * sinR + s.Z * cosR;
+							screenTrail.Add(new Vector2(
+								screenCenter.X + rx,
+								screenCenter.Y - s.Y * 0.85f + rz * 0.6f
+							));
+						}
+						DrawOneTrail(device, screenTrail, alpha);
+					}
+				}
+			}
+			finally {
+				device.BlendState = oldBlend;
+				device.DepthStencilState = oldDepth;
+				device.RasterizerState = oldRaster;
+			}
 		}
 
 		private void DrawOneTrail(GraphicsDevice device, List<Vector2> points, float alpha) {

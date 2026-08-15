@@ -4,20 +4,14 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using ArknightsMod.Content.Projectiles.Supporter.Tragodia;
-using ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP2;
-using ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP1;
-using ArknightsMod.Content.Projectiles.Supporter.Tragodia.EffectImage;
-using ArknightsMod.Content.Projectiles.Supporter.Tragodia.NormalAttack;
+
 namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.NormalAttack
 {
 	public class Pre_Attack : ModProjectile
 	{
-
 		public int targetNPCIndex = -1;
-		public float offsetY = 20f; 
+		public float offsetY = 20f;
 		private NPC targetNPC = null;
-
 
 		private const int ParticleCount = 4;
 		private const int MaxTrailPoints = 30;
@@ -27,11 +21,9 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.NormalAttack
 		private const float EndRadiusScale = 0f;
 		private const float AngularSpeed = 0.25f;
 
-
 		private const float TrailWidth = 25f;
 		private const float ScrollSpeed = 5.0f;
 		private static readonly Color TrailColor = new Color(180, 120, 255, 240);
-
 
 		private float[] preAttackAngles;
 		private List<Vector2>[] preAttackTrailPositions;
@@ -40,7 +32,6 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.NormalAttack
 		private float time;
 
 		public override void SetStaticDefaults() {
-
 			Main.projFrames[Projectile.type] = 0;
 		}
 
@@ -58,7 +49,6 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.NormalAttack
 		}
 
 		public override void AI() {
-			// 初始化
 			if (preAttackAngles == null) {
 				Random rand = new Random();
 				preAttackAngles = new float[ParticleCount];
@@ -69,13 +59,11 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.NormalAttack
 					preAttackTrailPositions[i] = new List<Vector2>();
 				}
 
-				// 获取目标NPC
 				if (targetNPCIndex >= 0 && targetNPCIndex < Main.maxNPCs) {
 					targetNPC = Main.npc[targetNPCIndex];
 				}
 			}
 
-			// 跟随目标NPC
 			if (targetNPC != null && targetNPC.active) {
 				Projectile.Center = targetNPC.Center + new Vector2(0, offsetY);
 			}
@@ -129,6 +117,9 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.NormalAttack
 			effect.Projection = Matrix.CreateOrthographicOffCenter(
 				0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
 
+			Matrix transform = Main.GameViewMatrix.TransformationMatrix;
+			float zoom = Main.GameViewMatrix.Zoom.X;
+
 			BlendState oldBlend = device.BlendState;
 			DepthStencilState oldDepth = device.DepthStencilState;
 			RasterizerState oldRaster = device.RasterizerState;
@@ -147,10 +138,13 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.NormalAttack
 						continue;
 
 					List<Vector2> screenTrail = new List<Vector2>(trail.Count);
-					foreach (var p in trail)
-						screenTrail.Add(p - Main.screenPosition);
+					foreach (var p in trail) {
+						Vector2 transformed = Vector2.Transform(p - Main.screenPosition, transform);
+						screenTrail.Add(transformed);
+					}
 
-					DrawSingleTrail(device, screenTrail, TrailWidth, ScrollSpeed, TrailColor, alpha);
+					float scaledWidth = TrailWidth * zoom;
+					DrawSingleTrail(device, screenTrail, scaledWidth, ScrollSpeed, TrailColor, alpha);
 				}
 			}
 			finally {
@@ -159,7 +153,7 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.NormalAttack
 				device.RasterizerState = oldRaster;
 				Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend,
 					SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone,
-					null, Main.GameViewMatrix.TransformationMatrix);
+					null, Matrix.Identity);
 			}
 
 			return false;
@@ -235,12 +229,10 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.NormalAttack
 			}
 		}
 
-
 		public override bool PreDrawExtras() {
 			return false;
 		}
 
-		
 		public override bool? CanDamage() {
 			return false;
 		}

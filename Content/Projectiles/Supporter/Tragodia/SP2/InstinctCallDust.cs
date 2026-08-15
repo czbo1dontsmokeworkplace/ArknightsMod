@@ -13,7 +13,7 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP2
 {
 	public class InstinctCallDust : ModProjectile
 	{
-		// 可调配的椭圆半径参数
+
 		public float EllipseA { get; set; } = 200f;
 		public float EllipseB { get; set; } = 120f;
 		public float AngularSpeed { get; set; } = 0.15f;
@@ -21,12 +21,12 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP2
 		public Color TrailColor { get; set; } = new Color(180, 120, 255, 240);
 		public float DustAlpha { get; set; } = 1.0f;
 
-		// ============ 拖尾视觉参数 ============
+
 		private const float TrailWidth = 65f;
 		private const float ScrollSpeed = 2.0f;
 		private const int MaxTrailPoints = 20;
 
-		// ============ 内部状态 ============
+
 		private float[] particleAngles;
 		private List<Vector2>[] trailPositions;
 		private Texture2D TailTex;
@@ -93,7 +93,6 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP2
 			}
 			alpha *= DustAlpha;
 
-			// 复用或创建effect
 			if (effect == null || effect.IsDisposed) {
 				effect = new BasicEffect(device);
 				effect.VertexColorEnabled = true;
@@ -103,6 +102,10 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP2
 			effect.View = Matrix.Identity;
 			effect.Projection = Matrix.CreateOrthographicOffCenter(
 				0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
+
+			float zoom = Main.GameViewMatrix.Zoom.X;
+			Matrix transform = Main.GameViewMatrix.TransformationMatrix;
+			Vector2 screenCenter = Vector2.Transform(spawnCenter - Main.screenPosition, transform);
 
 			BlendState oldBlend = device.BlendState;
 			DepthStencilState oldDepth = device.DepthStencilState;
@@ -122,10 +125,12 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP2
 						continue;
 
 					List<Vector2> screenTrail = new List<Vector2>(trail.Count);
-					foreach (var p in trail)
-						screenTrail.Add(p - Main.screenPosition);
+					foreach (var p in trail) {
+						Vector2 transformed = Vector2.Transform(p - Main.screenPosition, transform);
+						screenTrail.Add(transformed);
+					}
 
-					float scale = MathHelper.Lerp(0.85f, 1.45f, (float)Math.Pow(t, 0.5f));
+					float scale = MathHelper.Lerp(0.85f, 1.45f, (float)Math.Pow(t, 0.5f)) * zoom;
 
 					DrawSingleTrail(device, screenTrail, TrailWidth * scale, ScrollSpeed, TrailColor, alpha);
 				}
@@ -136,7 +141,7 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP2
 				device.RasterizerState = oldRaster;
 				Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend,
 					SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone,
-					null, Main.GameViewMatrix.TransformationMatrix);
+					null, Matrix.Identity);
 			}
 
 			return false;

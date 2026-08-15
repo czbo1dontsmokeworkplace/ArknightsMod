@@ -11,7 +11,6 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP2
 	public class InstinctCallSuctionLines : ModProjectile
 	{
 		private BasicEffect trailEffect;
-		private static Texture2D projLightCoreTex;
 
 		private const int MaxLines = 16;
 		private const float SpawnInterval = 3f;
@@ -21,22 +20,12 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP2
 		private const int TailLength = 20;
 		private const float AttractSpeed = 1.2f;
 		private const float RotationSpeed = 10.0f;
-		private const int LineSegments = 4;
-
-
-		private const float FilterMinScale = 0.3f;
-		private const float FilterMaxScale = 1.5f;
-		private const float FilterFadeInDuration = 40f;
-		private static readonly Color FilterColor = new Color(180, 120, 255, 180);
-
 
 		private static readonly Color BrightColor = new Color(80, 50, 140);
 		private static readonly Color DarkColor = new Color(70, 40, 130);
 		private static readonly Color DotColor = new Color(210, 190, 255);
 
-
 		private const float FadeInDuration = 50f;
-
 
 		private class TrailLine
 		{
@@ -104,22 +93,13 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP2
 		private float globalRotation;
 		private UnifiedRandom rand;
 		private float fadeInTimer = 0f;
-		private float filterFadeInTimer = 0f;
 
-		//缓存顶点
 		private List<VertexPositionColor> verticesCache = new List<VertexPositionColor>(4096);
 		private List<short> indicesCache = new List<short>(6144);
 		private VertexPositionColor[] vertexArray;
 		private short[] indexArray;
 
 		public override string Texture => "ArknightsMod/Content/Projectiles/Supporter/Tragodia/SP2/InstinctCall";
-
-		public override void SetStaticDefaults() {
-
-			if (Main.netMode != Terraria.ID.NetmodeID.Server) {
-				projLightCoreTex = ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Supporter/Tragodia/EffectImage/ProjLightCore").Value;
-			}
-		}
 
 		public override void SetDefaults() {
 			Projectile.width = 2;
@@ -136,9 +116,6 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP2
 		public override void AI() {
 			if (fadeInTimer < FadeInDuration) {
 				fadeInTimer++;
-			}
-			if (filterFadeInTimer < FilterFadeInDuration) {
-				filterFadeInTimer++;
 			}
 
 			if (rand == null)
@@ -190,7 +167,6 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP2
 			trailEffect = null;
 		}
 
-
 		private float GetCurrentAlpha() {
 			if (fadeInTimer >= FadeInDuration)
 				return 1f;
@@ -206,22 +182,6 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP2
 			return 0.05f + 0.95f * eased;
 		}
 
-
-		private float GetFilterAlpha() {
-			if (filterFadeInTimer >= FilterFadeInDuration)
-				return 1f;
-			float t = filterFadeInTimer / FilterFadeInDuration;
-			return t * t * (3f - 2f * t);
-		}
-
-		private float GetFilterScale() {
-			if (filterFadeInTimer >= FilterFadeInDuration)
-				return FilterMaxScale;
-			float t = filterFadeInTimer / FilterFadeInDuration;
-			float eased = t * t * (3f - 2f * t);
-			return FilterMinScale + (FilterMaxScale - FilterMinScale) * eased;
-		}
-
 		private void DrawTrails() {
 			float globalAlpha = GetCurrentAlpha();
 			if (globalAlpha < 0.005f)
@@ -229,25 +189,20 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP2
 
 			float radiusScale = GetRadiusScale();
 			GraphicsDevice device = Main.graphics.GraphicsDevice;
-			Vector2 center = Projectile.Center - Main.screenPosition;
 
+			float zoom = Main.GameViewMatrix.Zoom.X;
+			Matrix transform = Main.GameViewMatrix.TransformationMatrix;
+			Vector2 screenCenter = Vector2.Transform(Projectile.Center - Main.screenPosition, transform);
 
 			Main.spriteBatch.End();
 
+			DrawTrailLines(device, screenCenter, globalAlpha, radiusScale * zoom);
 
-			DrawProjLightCoreFilter(device, center, globalAlpha);
-
-
-			DrawTrailLines(device, center, globalAlpha, radiusScale);
-
-			// 恢复SpriteBatch为默认状态
 			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp,
-				DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+				DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
 		}
 
-
 		private void DrawTrailLines(GraphicsDevice device, Vector2 center, float globalAlpha, float radiusScale) {
-
 			if (trailEffect == null || trailEffect.IsDisposed) {
 				trailEffect = new BasicEffect(device) {
 					VertexColorEnabled = true
@@ -285,46 +240,6 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP2
 
 			device.BlendState = originalBlend;
 		}
-
-
-		private void DrawProjLightCoreFilter(GraphicsDevice device, Vector2 center, float globalAlpha) {
-			if (projLightCoreTex == null || projLightCoreTex.IsDisposed)
-				return;
-
-			float filterAlpha = GetFilterAlpha() * globalAlpha * 0.7f;
-			if (filterAlpha < 0.01f)
-				return;
-
-			float filterScale = GetFilterScale();
-
-			// 使用临时SpriteBatch绘制滤镜
-			//这一部分没有效果，看看后续怎么改
-			SpriteBatch sb = new SpriteBatch(device);
-			sb.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp,
-				DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-
-			Vector2 drawPos = Projectile.Center - Main.screenPosition;
-			float baseSize = 250f;
-			float drawSize = baseSize * filterScale * 2f;
-
-			Color drawColor = FilterColor * filterAlpha;
-
-			sb.Draw(
-				projLightCoreTex,
-				drawPos,
-				null,
-				drawColor,
-				0f,
-				projLightCoreTex.Size() / 2f,
-				drawSize / projLightCoreTex.Width,
-				SpriteEffects.None,
-				0f
-			);
-
-			sb.End();
-			sb.Dispose();
-		}
-
 
 		private void BuildTrailMesh(TrailLine line, Vector2 center, List<VertexPositionColor> vertices, List<short> indices, float globalAlpha, float radiusScale) {
 			var trail = line.Trail;
@@ -394,7 +309,6 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Tragodia.SP2
 				indices.Add((short)(baseIdx + 3));
 			}
 
-			// 头部发光点
 			if (len > 0) {
 				Vector2 head = trail[len - 1] * radiusScale;
 				Vector2 screenHead = center + head;
