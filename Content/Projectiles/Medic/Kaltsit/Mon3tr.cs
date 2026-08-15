@@ -89,14 +89,14 @@ namespace ArknightsMod.Content.Projectiles.Medic.Kaltsit
 		// 冷却也正好转好，只要目标还在就能无缝接下一次，不会在两次攻击之间多出一段空等。
 		private const int AttackCooldownMax = AttackFrameCount * AttackTicksPerFrame;
 
-		// ── 生命 / 复苏（占位数值）──
-		private const int   LifeMax          = 250;
-		private const int   Defense          = 15;
+		// ── 生命 / 复苏 ──
+		private const int   LifeMax          = 1086;
+		private const int   Defense          = 41;
 		private const int   ReceiveCooldownMax = 20;
 		private const int   ReviveTicks      = 1200; // 水晶状态持续多久后自动复苏，约 20 秒
 
-		// ── 伤害（占位数值，没有对应武器，直接给固定基础伤害）──
-		private const int BaseDamage = 40;
+		// ── 伤害（没有对应武器，直接给固定基础伤害）──
+		private const int BaseDamage = 280;
 
 		private enum Mon3trState : byte { Spawning, Idle, Chasing, Attacking, Skill1, Skill2, Skill3, Crystal }
 
