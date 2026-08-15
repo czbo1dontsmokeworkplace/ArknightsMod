@@ -39,11 +39,14 @@ public class Cardi_Shield : ModProjectile
         Projectile.ignoreWater = true;
     }
     private ProjMode projMode = ProjMode.Move;
+    private Defender_Player mp;
 	public override void AI()
     {
         Projectile.damage = item.damage;
-        if (player.dead || !player.active || item.type != ModContent.ItemType<CardiganShield>())
+        if (player.dead || !player.active || item.type != ModContent.ItemType<CardiWeapon>())
 	        Projectile.Kill();
+        mp = player.GetModPlayer<Defender_Player>();
+        mp.OpenDefender = true;
         Projectile.timeLeft = 2;
         switch(projMode)
         {
@@ -54,6 +57,7 @@ public class Cardi_Shield : ModProjectile
             Defender();
             break;
         }
+
     }
 
     public override bool? CanDamage()
@@ -69,6 +73,7 @@ public class Cardi_Shield : ModProjectile
             SamplerState.AnisotropicClamp, DepthStencilState.None,
             RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
         Draw_Shield(sb);
+        mp.DrawLight();
         sb.End();
         sb.Begin();
         return false;
@@ -96,6 +101,7 @@ public class Cardi_Shield : ModProjectile
         player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, armOffsetDeg * -player.direction);
         Projectile.rotation = armOffsetDeg * -player.direction;
         Projectile.Center = player.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, armOffsetDeg * -player.direction);
+
         if(Main.myPlayer == player.whoAmI)
         {
 	        var modPlayer = player.GetModPlayer<CardiProj_Player>();

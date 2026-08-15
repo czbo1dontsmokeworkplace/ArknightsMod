@@ -50,7 +50,8 @@ public class Cardi_Sword : ModProjectile
 		oldHandpos = new Vector2[20];
 	}
 	public override void AI() {
-		if (player.dead || !player.active || item.type != ModContent.ItemType<CardiWeapon>()) Projectile.Kill();
+		if (player.dead || item.type != ModContent.ItemType<CardiWeapon>())
+			Projectile.Kill();
 		Projectile.timeLeft = 2;
 		switch (projMode) {
 			case ProjMode.Move:
@@ -118,7 +119,6 @@ public class Cardi_Sword : ModProjectile
 		Vector2 moveTip = GetSwordTipWorld(moveSwordRot);
 		Projectile.Center = Vector2.Lerp(GetSwordBaseWorld(moveSwordRot), moveTip, 0.5f);
 		if (Main.myPlayer == player.whoAmI) {
-			var modPlayer = player.GetModPlayer<CardiProj_Player>();
 			if (!Main.mouseRight &&
 			    PlayerInput.MouseInfo.LeftButton == ButtonState.Pressed && !press) {
 				press = true;
