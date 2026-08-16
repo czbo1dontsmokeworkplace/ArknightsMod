@@ -65,7 +65,7 @@ namespace ArknightsMod.Content.Projectiles.Medic.Kaltsit
 		private const int CrystalFrameHeight = 32;
 		private const int CrystalFrameCount  = 14;
 		private const int CrystalTicksPerFrame = 6;
-		private const float CrystalDrawScale = 1.4f; // 占位数值：水晶本体很小，放大一点更好辨认
+		private const float CrystalDrawScale = 1f; // 贴图 1:1 显示，不做缩放
 
 		// ── 悬浮跟随（占位数值）──
 		private const float HoverOffsetX  = 45f;
