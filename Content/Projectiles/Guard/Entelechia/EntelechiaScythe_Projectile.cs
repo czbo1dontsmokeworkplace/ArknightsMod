@@ -28,6 +28,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Entelechia
 			Projectile.DamageType = DamageClass.MeleeNoSpeed; // ?����?��??����
 			Projectile.ignoreWater = true;
 			Projectile.localNPCHitCooldown = 11;
+			tex = ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Guard/Entelechia/swooshgray").Value;
 		}
 
 		public override void OnSpawn(IEntitySource source) {
@@ -74,10 +75,12 @@ namespace ArknightsMod.Content.Projectiles.Guard.Entelechia
 				press = false;
 		}
 
+		public static Texture2D tex;
+		public Color[] Colors =  new Color[2]{Color.DarkRed,Color.Black} ;
 		public override bool PreDraw(ref Color lightColor) {
 			Helper.DrawBlade(Main.spriteBatch);
 			if (state == SwordState.Swing)
-				Helper.DrawTrip(SwingHelper.SwingHelper.SwingEffect.Flow, Color.DarkRed, Main.spriteBatch,300,32);
+				Helper.DrawTrip(SwingHelper.SwingHelper.SwingEffect.Ink,Colors , Main.spriteBatch,300,32,SwingHelper.SwingHelper.TripTex.Streamline);
 			return false;
 		}
 	}

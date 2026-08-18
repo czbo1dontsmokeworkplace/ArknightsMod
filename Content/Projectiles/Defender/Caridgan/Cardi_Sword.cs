@@ -50,7 +50,9 @@ public class Cardi_Sword : ModProjectile
 		oldHandpos = new Vector2[20];
 	}
 	public override void AI() {
-		if (player.dead || item.type != ModContent.ItemType<CardiWeapon>())
+		// 手持武器或盾都存活（持盾时原来每帧自杀→再生成 = 巨卡）
+		if (player.dead ||
+			item.type != ModContent.ItemType<CardiWeapon>())
 			Projectile.Kill();
 		Projectile.timeLeft = 2;
 		switch (projMode) {

@@ -5,9 +5,15 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.GameContent.Bestiary;
 using Terraria.Graphics;
 using Terraria.Graphics.CameraModifiers;
 using Terraria.ModLoader;
+using Terraria.Graphics.Effects;
+using Terraria.Graphics.Shaders;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
+using Filters = Terraria.Graphics.Effects.Filters;
 
 // TODO : 提供屏幕朝向震动以及卡肉等攻击效果 制作被打出血的粒子特效
 /* TODO : 刀砍快慢以及后摇啥的 提供多种情况AI 通过链式调用来调整整体的状态机 例如 于Move.State 点击左键 进入Attack.State 然后
@@ -39,15 +45,33 @@ namespace ArknightsMod.Content.SwingHelper
         /// <summary>
         /// 噪声流动
         /// </summary>
-        public static Effect NoiseFlow;
+        /// <summary>
+        /// 赛博闪烁效果
+        /// </summary>
+        public static Effect BladeFlicker;
+        /// <summary>
+        /// /屏幕扭曲效果
+        /// </summary>
+        public static Asset<Effect> BladeWarp;
+        /// <summary>
+        /// 水墨晕染效果
+        /// </summary>
+        public static Effect BladeInk;
+        /// <summary>
+        /// 测试用UuU
+        /// </summary>
+        public static Effect TestFX;
 
 
         public enum SwingEffect
         {
-            zero,
-            dissolve,
-            Flow,
-            NoiseFlow,
+	        Zero,
+	        Dissolve,
+	        Flow,
+	        Flicker,
+	        Warp,
+	        Ink,
+	        Test
         }
 
         public enum TripTex
@@ -342,7 +366,11 @@ namespace ArknightsMod.Content.SwingHelper
         {
             player.heldProj = proj.whoAmI;
             if (swingTime > SwingUseTime)
-                return true;
+            {
+	            if (Filters.Scene["BladeWarp"].IsActive())
+		            Filters.Scene["BladeWarp"].Deactivate();
+	            return true;
+            }
             swordRad = RotationHelper.GetSwingRotation(startRad, endRad,swingTime,SwingUseTime,player.direction,scale
 	            ,texLength,handleLength,swordLength,out float length,out float handlelen,out float swordlen);
             SwordAHandCon(0,swordRad,length,handlelen,swordlen,true,true);
@@ -382,7 +410,94 @@ namespace ArknightsMod.Content.SwingHelper
 	        // 返回字典里面最多的
 	        return colorFrequency.OrderByDescending(x => x.Value).First().Key;
         }
+        /// <summary>
+        /// 水墨蔓延半径（Ink 效果用，每帧涨大）
+        /// </summary>
+        private float inkSpread;
+        private float time => (float)Main.timeForVisualEffects * 0.05f;
 
+        public void ApplyShader(SwingEffect effect) {
+	        Matrix projection = Matrix.CreateOrthographicOffCenter(0f, Main.screenWidth, Main.screenHeight, 0f, 0f, 1f);
+	        projection = Main.GameViewMatrix.ZoomMatrix * projection;
+
+	        switch (effect) {
+		        case SwingEffect.Zero:
+			        break;
+		        case SwingEffect.Dissolve:
+			        Dissolve.Parameters["uTransform"].SetValue(projection);
+			        Dissolve.Parameters["uTime"].SetValue(time);
+			        Dissolve.Parameters["uDissolve"].SetValue(1f);
+			        Dissolve.Parameters["uNoiseScale"].SetValue(2.0f);
+			        Main.graphics.GraphicsDevice.Textures[1] = ModContent
+				        .Request<Texture2D>("ArknightsMod/Content/SwingHelper/Images/Hz").Value;
+			        Dissolve.CurrentTechnique.Passes[0].Apply();
+			        break;
+		        case SwingEffect.Flow:
+			        Flow.Parameters["uTransform"].SetValue(projection);
+			        Flow.Parameters["uTime"].SetValue(time);
+			        Flow.Parameters["uFlowSpeed"].SetValue(0.5f); // 流动速度
+			        // slot 1 = 流动贴图（uImage1），slot 0 由外层设为蒙版
+			        Main.graphics.GraphicsDevice.Textures[1] = ModContent
+				        .Request<Texture2D>("ArknightsMod/Content/SwingHelper/Images/Lava").Value;
+			        Flow.CurrentTechnique.Passes[0].Apply();
+			        break;
+		        case SwingEffect.Flicker:
+			        BladeFlicker.Parameters["uTransform"].SetValue(projection);
+			        BladeFlicker.Parameters["uTime"].SetValue((float)Main.GlobalTimeWrappedHourly);
+			        BladeFlicker.Parameters["uIntensity"].SetValue(0.5f);
+			        BladeFlicker.CurrentTechnique.Passes[0].Apply();
+			        break;
+		        case SwingEffect.Ink:
+			        BladeInk.Parameters["uTransform"].SetValue(projection);
+			        BladeInk.Parameters["uTime"].SetValue((float)Main.GlobalTimeWrappedHourly);
+
+
+			        BladeInk.Parameters["uInkColor"].SetValue(new Vector3(0.12f, 0.28f, 0.22f));
+
+			        BladeInk.Parameters["uWashColor"].SetValue(new Vector3(0.85f, 0.95f, 0.85f));
+
+			        BladeInk.Parameters["uAccentColor"].SetValue(new Vector3(0.90f, 0.20f, 0.20f));
+
+			        BladeInk.Parameters["uSpreadPos"].SetValue(new Vector2(0f, 0.5f));
+			        inkSpread += 0.02f;
+			        if (inkSpread > 1.4f)
+				        inkSpread = 0f;
+			        BladeInk.Parameters["uSpreadRadius"].SetValue(inkSpread);
+			        BladeInk.Parameters["uDry"].SetValue(Math.Min(inkSpread * 0.5f, 0.8f)); // 内部逐渐干涸
+
+			        BladeInk.CurrentTechnique.Passes[0].Apply();
+			        break;
+		        case SwingEffect.Warp:
+			        // 滤镜已在 Load 注册（EffectLoad.cs），这里只需激活
+			        var warpShader = Filters.Scene["BladeWarp"].GetShader();
+			        warpShader.UseOpacity(0.7f); // 整体强度
+			        var center = (swordPos - Main.screenPosition)
+			                     / new Vector2(Main.screenWidth, Main.screenHeight);
+			        warpShader.Shader.Parameters["uCenter"].SetValue(center); // 扭曲中心（归一化 UV）
+			        warpShader.Shader.Parameters["uRadius"].SetValue(0.18f); // 半径
+			        warpShader.Shader.Parameters["uStrength"].SetValue(0.02f); // 扭曲量
+			        Filters.Scene.Activate("BladeWarp", Main.LocalPlayer.Center);
+			        break;
+		        case SwingEffect.Test:
+			        var fx = TestFX;
+			        fx.Parameters["uTransform"].SetValue(projection);
+			        fx.CurrentTechnique.Passes["Base"].Apply();
+			        break;
+	        }
+        }
+
+        public void TexChance(TripTex tex) {
+	        switch (tex) {
+		        case TripTex.Afterimage:
+			        Main.graphics.GraphicsDevice.Textures[0] = ModContent
+				        .Request<Texture2D>("ArknightsMod/Content/SwingHelper/Images/Extra_209").Value;
+			        break;
+		        case TripTex.Streamline:
+			        Main.graphics.GraphicsDevice.Textures[0] = ModContent
+				        .Request<Texture2D>("ArknightsMod/Content/SwingHelper/Images/SlashTex").Value;
+			        break;
+	        }//贴图选择
+        }
 
         /// <summary>
         /// 绘制剑体
@@ -426,7 +541,7 @@ namespace ArknightsMod.Content.SwingHelper
         /// <summary>
         /// 绘制刀光拖尾
         /// </summary>
-        public virtual void DrawTrip(SwingEffect en, Color Tripcolor, SpriteBatch sb)
+        public virtual void DrawTrip(SwingEffect en, Color Tripcolor, SpriteBatch sb,TripTex tex = TripTex.Streamline)
         {
 	        GetCatmullPos(oldHandPos, CatmullScale, out Vector2[] TriphandPos);
 	        GetCatmullPos(oldPos, CatmullScale, out Vector2[] TripswordPos);
@@ -439,29 +554,13 @@ namespace ArknightsMod.Content.SwingHelper
 		        trip.Add(new Vertex(TriphandPos[i], new Vector3(progress, 0, 0), Tripcolor));
 		        trip.Add(new Vertex(TripswordPos[i], new Vector3(progress, 1, 0), Tripcolor));
 	        }
-	        switch (en)
-	        {
-		        case SwingEffect.zero:
-			        break;
-		        case SwingEffect.dissolve:
-			        Dissolve.Parameters["uTransform"].SetValue(uTransform);
-			        Dissolve.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.05f);
-			        Dissolve.Parameters["uDissolve"].SetValue(0);
-			        Dissolve.CurrentTechnique.Passes[0].Apply();
-			        break;
-		        case SwingEffect.Flow:
-			        Flow.Parameters["uTransform"].SetValue(uTransform);
-			        Flow.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.1f);
-			        Flow.CurrentTechnique.Passes[0].Apply();
-			        break;
-	        }
 	        sb.End();
 	        sb.Begin(SpriteSortMode.Immediate, BlendState.Additive,
 		        SamplerState.AnisotropicClamp, DepthStencilState.None,
 		        RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+	        ApplyShader(en);
 	        Main.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
-	        Main.graphics.GraphicsDevice.Textures[0] = ModContent
-		        .Request<Texture2D>("MushokuTense/Assets/Images/SlashTex").Value;
+	        TexChance(tex);
 	        if (trip.Count >= 3)
 		        Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, trip.ToArray(), 0,
 			        trip.Count - 2);
@@ -474,7 +573,7 @@ namespace ArknightsMod.Content.SwingHelper
 		/// <param name="en"></param>
 		/// <param name="Tripcolor"></param>
 		/// <param name="sb"></param>
-        public virtual void DrawTrip(SwingEffect en, Color[] Tripcolor, SpriteBatch sb)
+        public virtual void DrawTrip(SwingEffect en, Color[] Tripcolor, SpriteBatch sb,TripTex tex =  TripTex.Streamline)
         {
 	        GetCatmullPos(oldHandPos, CatmullScale, out Vector2[] TriphandPos);
 	        GetCatmullPos(oldPos, CatmullScale, out Vector2[] TripswordPos);
@@ -487,29 +586,13 @@ namespace ArknightsMod.Content.SwingHelper
 		        trip.Add(new Vertex(TriphandPos[i], new Vector3(progress, 0, 0), Tripcolor[0]));
 		        trip.Add(new Vertex(TripswordPos[i], new Vector3(progress, 1, 0), Tripcolor[1]));
 	        }
-	        switch (en)
-	        {
-		        case SwingEffect.zero:
-			        break;
-		        case SwingEffect.dissolve:
-			        Dissolve.Parameters["uTransform"].SetValue(uTransform);
-			        Dissolve.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.05f);
-			        Dissolve.Parameters["uDissolve"].SetValue(0);
-			        Dissolve.CurrentTechnique.Passes[0].Apply();
-			        break;
-		        case SwingEffect.Flow:
-			        Flow.Parameters["uTransform"].SetValue(uTransform);
-			        Flow.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.1f);
-			        Flow.CurrentTechnique.Passes[0].Apply();
-			        break;
-	        }
 	        sb.End();
 	        sb.Begin(SpriteSortMode.Immediate, BlendState.Additive,
 		        SamplerState.AnisotropicClamp, DepthStencilState.None,
 		        RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+	        ApplyShader(en);
 	        Main.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
-	        Main.graphics.GraphicsDevice.Textures[0] = ModContent
-		        .Request<Texture2D>("MushokuTense/Assets/Images/SlashTex").Value;
+	        TexChance(tex);
 	        if (trip.Count >= 3)
 		        Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, trip.ToArray(), 0,
 			        trip.Count - 2);
@@ -546,37 +629,13 @@ namespace ArknightsMod.Content.SwingHelper
 			        tripPos[m].Add(new Vertex(a[j+1],new Vector3(progress,progress3,0),Tripcolor));
 		        }
 	        }
-	        switch (en)
-	        {
-		        case SwingEffect.zero:
-			        break;
-		        case SwingEffect.dissolve:
-			        Dissolve.Parameters["uTransform"].SetValue(uTransform);
-			        Dissolve.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.05f);
-			        Dissolve.Parameters["uDissolve"].SetValue(0);
-			        Dissolve.CurrentTechnique.Passes[0].Apply();
-			        break;
-		        case SwingEffect.Flow:
-			        Flow.Parameters["uTransform"].SetValue(uTransform);
-			        Flow.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.1f);
-			        Flow.CurrentTechnique.Passes[0].Apply();
-			        break;
-	        }
 	        sb.End();
 	        sb.Begin(SpriteSortMode.Immediate, BlendState.Additive,
 		        SamplerState.AnisotropicClamp, DepthStencilState.None,
 		        RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+	        ApplyShader(en);
 	        Main.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
-	        switch (tex) {
-		        case TripTex.Afterimage:
-			        Main.graphics.GraphicsDevice.Textures[0] = ModContent
-				        .Request<Texture2D>("MushokuTense/Assets/Images/Extra_209").Value;
-			        break;
-		        case TripTex.Streamline:
-			        Main.graphics.GraphicsDevice.Textures[0] = ModContent
-				        .Request<Texture2D>("MushokuTense/Assets/Images/SlashTex").Value;
-			        break;
-	        }
+	        TexChance(tex);
 	        for (int i = 0; i < point-1; i++) {
 		        if (tripPos[i].Count > 3) {
 			        Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, tripPos[i].ToArray(), 0,
@@ -616,37 +675,13 @@ namespace ArknightsMod.Content.SwingHelper
 			        tripPos[m].Add(new Vertex(a[j+1],new Vector3(progress,progress3,0),Tripcolor[1]));
 		        }
 	        }
-	        switch (en)
-	        {
-		        case SwingEffect.zero:
-			        break;
-		        case SwingEffect.dissolve:
-			        Dissolve.Parameters["uTransform"].SetValue(uTransform);
-			        Dissolve.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.05f);
-			        Dissolve.Parameters["uDissolve"].SetValue(0);
-			        Dissolve.CurrentTechnique.Passes[0].Apply();
-			        break;
-		        case SwingEffect.Flow:
-			        Flow.Parameters["uTransform"].SetValue(uTransform);
-			        Flow.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.1f);
-			        Flow.CurrentTechnique.Passes[0].Apply();
-			        break;
-	        }
 	        sb.End();
 	        sb.Begin(SpriteSortMode.Immediate, BlendState.Additive,
 		        SamplerState.AnisotropicClamp, DepthStencilState.None,
 		        RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 	        Main.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
-	        switch (tex) {
-		        case TripTex.Afterimage:
-			        Main.graphics.GraphicsDevice.Textures[0] = ModContent
-				        .Request<Texture2D>("MushokuTense/Assets/Images/Extra_209").Value;
-			        break;
-		        case TripTex.Streamline:
-			        Main.graphics.GraphicsDevice.Textures[0] = ModContent
-				        .Request<Texture2D>("MushokuTense/Assets/Images/SlashTex").Value;
-			        break;
-	        }//贴图选择
+	        ApplyShader(en);
+	        TexChance(tex);
 	        for (int i = 0; i < point-1; i++) {
 		        if (tripPos[i].Count > 3) {
 			        Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, tripPos[i].ToArray(), 0,
@@ -686,26 +721,11 @@ namespace ArknightsMod.Content.SwingHelper
 			        tripPos[m].Add(new Vertex(a[j+1],new Vector3(progress,progress3,0),Tripcolor[1]));
 		        }
 	        }
-	        switch (en)
-	        {
-		        case SwingEffect.zero:
-			        break;
-		        case SwingEffect.dissolve:
-			        Dissolve.Parameters["uTransform"].SetValue(uTransform);
-			        Dissolve.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.05f);
-			        Dissolve.Parameters["uDissolve"].SetValue(0);
-			        Dissolve.CurrentTechnique.Passes[0].Apply();
-			        break;
-		        case SwingEffect.Flow:
-			        Flow.Parameters["uTransform"].SetValue(uTransform);
-			        Flow.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.1f);
-			        Flow.CurrentTechnique.Passes[0].Apply();
-			        break;
-	        }
 	        sb.End();
 	        sb.Begin(SpriteSortMode.Immediate, BlendState.Additive,
 		        SamplerState.AnisotropicClamp, DepthStencilState.None,
 		        RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+	        ApplyShader(en);
 	        Main.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
 	        Main.graphics.GraphicsDevice.Textures[0] = tex;
 	        for (int i = 0; i < point-1; i++) {
@@ -747,26 +767,11 @@ namespace ArknightsMod.Content.SwingHelper
 			        tripPos[m].Add(new Vertex(a[j+1],new Vector3(progress,progress3,0),Tripcolor));
 		        }
 	        }
-	        switch (en)
-	        {
-		        case SwingEffect.zero:
-			        break;
-		        case SwingEffect.dissolve:
-			        Dissolve.Parameters["uTransform"].SetValue(uTransform);
-			        Dissolve.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.05f);
-			        Dissolve.Parameters["uDissolve"].SetValue(0);
-			        Dissolve.CurrentTechnique.Passes[0].Apply();
-			        break;
-		        case SwingEffect.Flow:
-			        Flow.Parameters["uTransform"].SetValue(uTransform);
-			        Flow.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.1f);
-			        Flow.CurrentTechnique.Passes[0].Apply();
-			        break;
-	        }
 	        sb.End();
 	        sb.Begin(SpriteSortMode.Immediate, BlendState.Additive,
 		        SamplerState.AnisotropicClamp, DepthStencilState.None,
 		        RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+	        ApplyShader(en);
 	        Main.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
 	        Main.graphics.GraphicsDevice.Textures[0] = tex;
 	        for (int i = 0; i < point-1; i++) {
@@ -831,26 +836,11 @@ namespace ArknightsMod.Content.SwingHelper
                 trip.Add(new Vertex(TriphandPos[i] , new Vector3(progress, 0, 0), Tripcolor));
                 trip.Add(new Vertex(TripswordPos[i], new Vector3(progress, 1, 0), Tripcolor));
             }
-            switch (en)
-            {
-                case SwingEffect.zero:
-                    break;
-                case SwingEffect.dissolve:
-                    Dissolve.Parameters["uTransform"].SetValue(uTransform);
-                    Dissolve.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.05f);
-                    Dissolve.Parameters["uDissolve"].SetValue(0);
-                    Dissolve.CurrentTechnique.Passes[0].Apply();
-                    break;
-                case SwingEffect.Flow:
-                    Flow.Parameters["uTransform"].SetValue(uTransform);
-                    Flow.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.1f);
-                    Flow.CurrentTechnique.Passes[0].Apply();
-                    break;
-            }
             sb.End();
             sb.Begin(SpriteSortMode.Immediate, BlendState.Additive,
                 SamplerState.AnisotropicClamp, DepthStencilState.None,
                 RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            ApplyShader(en);
             Main.graphics.GraphicsDevice.Textures[0] = ModContent
                 .Request<Texture2D>("ArknightsMod/Content/SwingHelper/Images/SlashTex").Value;
             if (trip.Count >= 3)

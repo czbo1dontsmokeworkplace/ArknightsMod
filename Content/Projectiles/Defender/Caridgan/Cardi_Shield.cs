@@ -43,7 +43,8 @@ public class Cardi_Shield : ModProjectile
 	public override void AI()
     {
         Projectile.damage = item.damage;
-        if (player.dead || !player.active || item.type != ModContent.ItemType<CardiWeapon>())
+        if (player.dead || !player.active ||
+            item.type != ModContent.ItemType<CardiWeapon>() )
 	        Projectile.Kill();
         mp = player.GetModPlayer<Defender_Player>();
         mp.OpenDefender = true;
@@ -73,7 +74,7 @@ public class Cardi_Shield : ModProjectile
             SamplerState.AnisotropicClamp, DepthStencilState.None,
             RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
         Draw_Shield(sb);
-        mp.DrawLight();
+        mp.DrawEffect();
         sb.End();
         sb.Begin();
         return false;
