@@ -753,3 +753,37 @@ ClosureScanGun: {
 		Desc: Gradually gain 18 Deployment Cost over the skill's duration. Attack interval reduced by 0.5s. Locks onto enemies within your and your reinforcements' original attack range, dealing 250% of Closure's ATK as Physical damage and inflicting a stacking 6% Sluggish effect for 3 seconds (stacks up to 60%). Every 9th attack increases the number of targets hit by +1 (up to 6 triggers).
 	}
 }
+
+SurtrLaevatain: {
+	1: {
+		Label: Mods.ArknightsMod.Skills.SurtrLaevatain.1.Label
+		Desc: Mods.ArknightsMod.Skills.SurtrLaevatain.1.Desc
+	}
+
+	2: {
+		Label: Mods.ArknightsMod.Skills.SurtrLaevatain.2.Label
+		Desc: Mods.ArknightsMod.Skills.SurtrLaevatain.2.Desc
+	}
+
+	3: {
+		Label: Mods.ArknightsMod.Skills.SurtrLaevatain.3.Label
+		Desc: Mods.ArknightsMod.Skills.SurtrLaevatain.3.Desc
+	}
+}
+
+Tragodia: {
+	3: {
+		Desc: Mods.ArknightsMod.Skills.Tragodia.3.Desc
+		Label: Mods.ArknightsMod.Skills.Tragodia.3.Label
+	}
+
+	2: {
+		Desc: Mods.ArknightsMod.Skills.Tragodia.2.Desc
+		Label: Mods.ArknightsMod.Skills.Tragodia.2.Label
+	}
+
+	1: {
+		Desc: Mods.ArknightsMod.Skills.Tragodia.1.Desc
+		Label: Mods.ArknightsMod.Skills.Tragodia.1.Label
+	}
+}

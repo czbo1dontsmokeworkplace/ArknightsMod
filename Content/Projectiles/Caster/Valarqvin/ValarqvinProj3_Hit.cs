@@ -9,12 +9,10 @@ namespace ArknightsMod.Content.Projectiles.Caster.Valarqvin
 {
 	public class ValarqvinProj3_Hit : ModProjectile
 	{
-		// 特效总帧数
 		private const int TotalFrames = 25;
 		private const int PeakFrame = 12;
 		private const int ShrinkEndFrame = 16;
 
-		// 十字光效尺寸（更长更扁）
 		private const float MainStartWidth = 36f;
 		private const float MainStartHeight = 5f;
 		private const float MainPeakWidth = 110f;
@@ -29,15 +27,12 @@ namespace ArknightsMod.Content.Projectiles.Caster.Valarqvin
 		private const float OuterScaleShrink = 1.4f;
 		private const float OuterScaleEnd = 1.1f;
 
-		private const float CrossAngleError = 0.15f;
 		private static readonly Color MainColor = new Color(150, 180, 255);
 		private static readonly Color OuterColor = new Color(68, 90, 172);
 
-		// 更大的十字光效
 		private const float LargerCrossScale = 1.8f;
 		private const float LargerCrossAlpha = 0.25f;
 
-		// 三层圆形光晕
 		private const int CoreGlowTotalFrames = 20;
 		private const int CoreGlowPeakFrame = 7;
 		private const float CoreGlowStartSize = 12f;
@@ -64,17 +59,15 @@ namespace ArknightsMod.Content.Projectiles.Caster.Valarqvin
 		private static readonly Color BgGlowMainColor = new Color(100, 140, 200);
 		private static readonly Color BgGlowOuterColor = new Color(40, 60, 120);
 
-		// 黑色十字光效
 		private const int DarkCrossStartFrame = 3;
-		private const int DarkCrossDuration = 8;
+		private const int DarkCrossDuration = 14;
 		private const float DarkCrossStartWidth = 75f;
 		private const float DarkCrossStartHeight = 10f;
-		private const float DarkCrossEndWidth = 10f;
-		private const float DarkCrossEndHeight = 3f;
+		private const float DarkCrossEndWidth = 0f;
+		private const float DarkCrossEndHeight = 0f;
 		private const float DarkCrossAlpha = 0.55f;
 		private static readonly Color DarkCrossColor = Color.Black;
 
-		// 粒子数量
 		private const int LightParticleCount = 12;
 		private const int HitParticleCount = 15;
 		private const int PolyParticleCount = 18;
@@ -85,7 +78,6 @@ namespace ArknightsMod.Content.Projectiles.Caster.Valarqvin
 		private const int RandomParticleMinLife = 18;
 		private const int RandomParticleMaxLife = 35;
 
-		// 锯齿爆炸参数
 		private const int ExplosionSpikeCount = 45;
 		private const float ExplosionMaxRadius = 50f;
 		private const float ExplosionSpikeMinLength = 0.25f;
@@ -158,7 +150,6 @@ namespace ArknightsMod.Content.Projectiles.Caster.Valarqvin
 		private Texture2D _lightTexture;
 		private Texture2D _crossTexture;
 		private Vector2 _spawnPosition;
-		private float _crossBaseAngle;
 		private List<LightParticle> lightParticles = new List<LightParticle>();
 		private List<PolyParticle> polyParticles = new List<PolyParticle>();
 		private List<RandomParticle> randomParticles = new List<RandomParticle>();
@@ -182,7 +173,6 @@ namespace ArknightsMod.Content.Projectiles.Caster.Valarqvin
 			if (!spawnedParticles) {
 				spawnedParticles = true;
 				_spawnPosition = Projectile.Center;
-				_crossBaseAngle = Main.rand.NextFloat(-CrossAngleError, CrossAngleError);
 				InitializeExplosion();
 				SpawnParticles();
 			}
@@ -269,7 +259,6 @@ namespace ArknightsMod.Content.Projectiles.Caster.Valarqvin
 				float speed = baseSpeed * Main.rand.NextFloat(0.4f, 0.8f);
 				Vector2 vel = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)) * speed;
 				vel += Main.rand.NextVector2Circular(2f, 2f);
-
 				int life = Main.rand.Next(35, 55);
 				float size = Main.rand.NextFloat(14f, 24f);
 				Color col = new Color(68, 90, 172).MultiplyRGB(Color.White * Main.rand.NextFloat(0.8f, 1f));
@@ -386,7 +375,6 @@ namespace ArknightsMod.Content.Projectiles.Caster.Valarqvin
 			DrawLightParticles();
 			DrawPolyParticles();
 			DrawCrossEffect(frame);
-			DrawLargerCrossEffect(frame);
 			DrawRandomParticles();
 			DrawDarkCross(frame);
 			return false;
@@ -554,23 +542,8 @@ namespace ArknightsMod.Content.Projectiles.Caster.Valarqvin
 			Vector2 sp = _spawnPosition - Main.screenPosition;
 			Main.spriteBatch.End();
 			Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-			DrawRotatedCrossPart(sp, mW, mH, oW, oH, alpha, MathHelper.PiOver4 + _crossBaseAngle);
-			DrawRotatedCrossPart(sp, mW, mH, oW, oH, alpha, -MathHelper.PiOver4 + _crossBaseAngle);
-			Main.spriteBatch.End();
-			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
-		}
-
-		private void DrawLargerCrossEffect(int frame) {
-			GetCrossSize(frame, out float mW, out float mH, out float oW, out float oH);
-			float lmW = mW * LargerCrossScale, lmH = mH * LargerCrossScale, loW = oW * LargerCrossScale, loH = oH * LargerCrossScale;
-			float alpha = CalculateAlpha(frame) * LargerCrossAlpha;
-			if (alpha <= 0.01f)
-				return;
-			Vector2 sp = _spawnPosition - Main.screenPosition;
-			Main.spriteBatch.End();
-			Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-			DrawRotatedCrossPart(sp, lmW, lmH, loW, loH, alpha, 0f + _crossBaseAngle);
-			DrawRotatedCrossPart(sp, lmW, lmH, loW, loH, alpha, MathHelper.PiOver2 + _crossBaseAngle);
+			DrawRotatedCrossPart(sp, mW, mH, oW, oH, alpha, MathHelper.PiOver4);
+			DrawRotatedCrossPart(sp, mW, mH, oW, oH, alpha, -MathHelper.PiOver4);
 			Main.spriteBatch.End();
 			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 		}
@@ -597,8 +570,8 @@ namespace ArknightsMod.Content.Projectiles.Caster.Valarqvin
 			Color dc = DarkCrossColor * alpha;
 			Vector2 o = _crossTexture.Size() / 2f;
 			float sx = w / _crossTexture.Width, sy = h / _crossTexture.Height;
-			Main.spriteBatch.Draw(_crossTexture, sp, null, dc, MathHelper.PiOver4 + _crossBaseAngle, o, new Vector2(sx, sy), SpriteEffects.None, 0f);
-			Main.spriteBatch.Draw(_crossTexture, sp, null, dc, -MathHelper.PiOver4 + _crossBaseAngle, o, new Vector2(sx, sy), SpriteEffects.None, 0f);
+			Main.spriteBatch.Draw(_crossTexture, sp, null, dc, MathHelper.PiOver4, o, new Vector2(sx, sy), SpriteEffects.None, 0f);
+			Main.spriteBatch.Draw(_crossTexture, sp, null, dc, -MathHelper.PiOver4, o, new Vector2(sx, sy), SpriteEffects.None, 0f);
 			Main.spriteBatch.End();
 			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 		}

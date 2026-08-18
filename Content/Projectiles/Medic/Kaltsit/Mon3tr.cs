@@ -47,17 +47,18 @@ namespace ArknightsMod.Content.Projectiles.Medic.Kaltsit
 		private const int Skill2FrameCount = Skill2FrameLast - Skill2FrameFirst + 1;
 		private const int Skill3FrameCount = Skill3FrameLast - Skill3FrameFirst + 1;
 
-		// 攻击动画里真正判定命中的那几帧（相对 Attack 序列自己的下标，0 开始）——
-		// 只有落在这个窗口内时 MinionContactDamage() 才返回 true，避免挥空段也在判碰撞。
-		private const int AttackHitWindowStart = 4;
-		private const int AttackHitWindowEnd   = 8;
+		// 伤害不再靠"贴身碰撞判定"，而是在攻击动画的最后几帧手动打出多段命中（见
+		// UpdateAttacking/TryDealMultiHitSegment）。MultiHitSegments 段伤害平分总伤害
+		// （Projectile.damage 里的余数塞进最后一段），不是每段都打一次满伤害。
+		private const int MultiHitSegments   = 3;
+		private const int MultiHitStartFrame = AttackFrameCount - MultiHitSegments; // 倒数第几帧开始（含）
 
 		private const int SpawnTicksPerFrame  = 5;
 		private const int IdleTicksPerFrame   = 8;
 		private const int AttackTicksPerFrame = 4;
 		private const int SkillTicksPerFrame  = 4;
 
-		private const float DrawScale = 0.75f;
+		private const float DrawScale = 1f; // 本体贴图 1:1 显示，不做缩放
 
 		// ── 水晶动画表（m3_水晶_gif_sheet.png，22x448，14 帧，每帧 22x32）──
 		private const string CrystalTexturePath = "ArknightsMod/Content/Projectiles/Medic/Kaltsit/Mon3trCrystal";
@@ -65,7 +66,7 @@ namespace ArknightsMod.Content.Projectiles.Medic.Kaltsit
 		private const int CrystalFrameHeight = 32;
 		private const int CrystalFrameCount  = 14;
 		private const int CrystalTicksPerFrame = 6;
-		private const float CrystalDrawScale = 1.4f; // 占位数值：水晶本体很小，放大一点更好辨认
+		private const float CrystalDrawScale = 1f; // 贴图 1:1 显示，不做缩放
 
 		// ── 悬浮跟随（占位数值）──
 		private const float HoverOffsetX  = 45f;
@@ -83,20 +84,25 @@ namespace ArknightsMod.Content.Projectiles.Medic.Kaltsit
 		private const float ChaseAccel      = 0.9f;
 		private const float ChaseMaxSpeed   = 13f;
 		private const float ChaseDamp       = 0.92f;
-		private const float AttackRangeMargin = 6f;
+
+		// 攻击站位：停在目标左/右这么远的地方，不贴脸；具体站哪一侧取决于 M3 当前在
+		// 目标的哪一边（就近取，不绕路）。到位的容差范围内就算"到位"，可以转入攻击。
+		private const float AttackStandoffX = 60f;
+		private const float AttackStandoffY = -8f;
+		private const float StandoffArriveTolerance = 10f;
 
 		// 攻击间隔＝普攻动画播放一整轮的时长：冷却从"开始出手"那一刻起算，动画播完
 		// 冷却也正好转好，只要目标还在就能无缝接下一次，不会在两次攻击之间多出一段空等。
 		private const int AttackCooldownMax = AttackFrameCount * AttackTicksPerFrame;
 
-		// ── 生命 / 复苏（占位数值）──
-		private const int   LifeMax          = 250;
-		private const int   Defense          = 15;
+		// ── 生命 / 复苏 ──
+		private const int   LifeMax          = 1086;
+		private const int   Defense          = 41;
 		private const int   ReceiveCooldownMax = 20;
 		private const int   ReviveTicks      = 1200; // 水晶状态持续多久后自动复苏，约 20 秒
 
-		// ── 伤害（占位数值，没有对应武器，直接给固定基础伤害）──
-		private const int BaseDamage = 40;
+		// ── 伤害（没有对应武器，直接给固定基础伤害）──
+		private const int BaseDamage = 280;
 
 		private enum Mon3trState : byte { Spawning, Idle, Chasing, Attacking, Skill1, Skill2, Skill3, Crystal }
 
@@ -110,6 +116,12 @@ namespace ArknightsMod.Content.Projectiles.Medic.Kaltsit
 		private int   receiveCooldown;
 		private float bobTimer;
 		private bool  lifeInitialized;
+
+		// 当前锁定的攻击目标（NPC 下标）。Chasing/Attacking 期间每帧都用"离玩家最近"
+		// 重新核对一遍，核对结果和这个不一致就说明目标该换了——即便正在攻击动画里也会
+		// 立刻中断转而扑向新目标，实现"攻击目标可以半路转移，永远优先离玩家最近的那个"。
+		private int   currentTargetWhoAmI = -1;
+		private int   lastMultiHitFrame = -1; // 本次攻击动画里，多段伤害已经打到第几帧了（防止同一帧重复触发）
 
 		public override string Texture => "ArknightsMod/Content/Projectiles/Medic/Kaltsit/Mon3tr";
 
@@ -126,8 +138,8 @@ namespace ArknightsMod.Content.Projectiles.Medic.Kaltsit
 			Projectile.aiStyle     = -1;
 			Projectile.timeLeft    = 2;
 			Projectile.damage      = BaseDamage;
-			Projectile.usesLocalNPCImmunity = true;
-			Projectile.localNPCHitCooldown  = AttackFrameCount * AttackTicksPerFrame;
+			// 不再依赖碰撞判定造成伤害（MinionContactDamage 恒为 false，见下），
+			// usesLocalNPCImmunity/localNPCHitCooldown 这两个碰撞冷却字段就没有意义了，去掉。
 		}
 
 		public override void OnSpawn(IEntitySource source) {
@@ -157,10 +169,9 @@ namespace ArknightsMod.Content.Projectiles.Medic.Kaltsit
 
 		public override bool? CanCutTiles() => false;
 
-		public override bool MinionContactDamage() {
-			if (state != Mon3trState.Attacking) return false;
-			return animFrame >= AttackHitWindowStart && animFrame <= AttackHitWindowEnd;
-		}
+		// 不再靠"贴身碰撞"造成伤害——见 UpdateAttacking 里对 TryDealMultiHitSegment 的调用，
+		// 伤害改成在攻击动画最后几帧手动打出多段命中。碰撞本身不再产生任何伤害判定。
+		public override bool MinionContactDamage() => false;
 
 		// ========================= AI =========================
 
@@ -199,6 +210,8 @@ namespace ArknightsMod.Content.Projectiles.Medic.Kaltsit
 			state = next;
 			animFrame = 0;
 			animTimer = 0;
+			if (next == Mon3trState.Attacking)
+				lastMultiHitFrame = -1; // 每次重新进入攻击状态，多段命中记录都要清空重来
 			Projectile.netUpdate = true;
 		}
 
@@ -207,33 +220,36 @@ namespace ArknightsMod.Content.Projectiles.Medic.Kaltsit
 		private void UpdateIdle(Player owner) {
 			HoverToward(GetHoverTarget(owner), owner);
 			StepAnim(IdleFrameCount, IdleTicksPerFrame, loop: true);
-
 			TakeIncomingDamage();
 
 			// 只要附近出现目标就切去追击，冷却是否转好交给 Chasing 自己在真正出手前判断——
 			// 这样才能保证"只要目标没死、也没被更近的怪替换掉，就一直贴着打"，
 			// 不会打完一下又先飞回玩家身后再折返。
-			if (TryFindTarget(owner, out _))
+			if (TryFindTarget(owner, out NPC target)) {
+				currentTargetWhoAmI = target.whoAmI;
 				EnterState(Mon3trState.Chasing);
+			}
 		}
 
-		// -------- 追击：朝"当前离玩家最近的目标"飞，进不进攻击距离都在这里判断 --------
+		// -------- 追击：朝"当前离玩家最近的目标"侧面站位飞去，不贴脸 --------
 
 		private void UpdateChasing(Player owner) {
 			// 每一帧都重新找一次"离玩家最近的目标"，而不是死盯着上一次锁定的那个——
 			// 目标死亡、玩家把距离拉开、或者出现了更近的新目标，都会在这里自然体现出来：
 			// 找不到就回待机，找到的换了就自动转移攻击目标。
 			if (!TryFindTarget(owner, out NPC target)) {
+				currentTargetWhoAmI = -1;
 				EnterState(Mon3trState.Idle);
 				return;
 			}
+			currentTargetWhoAmI = target.whoAmI;
 
-			Vector2 toTarget = target.Center - Projectile.Center;
-			float   dist     = toTarget.Length();
-			float   attackRange = Projectile.width / 2f + target.width / 2f + AttackRangeMargin;
+			Vector2 standoff = GetStandoffPoint(target);
+			Vector2 toStandoff = standoff - Projectile.Center;
+			float   dist        = toStandoff.Length();
 
-			if (dist <= attackRange) {
-				// 已经贴近目标：不用再加速逼近，稳住等冷却；冷却转好立刻接下一次攻击。
+			if (dist <= StandoffArriveTolerance) {
+				// 已经到站位：不用再逼近，稳住等冷却；冷却转好立刻接下一次攻击。
 				Projectile.velocity *= 0.85f;
 				facingDir = target.Center.X >= Projectile.Center.X ? 1 : -1;
 				if (attackCooldown <= 0) {
@@ -243,7 +259,7 @@ namespace ArknightsMod.Content.Projectiles.Medic.Kaltsit
 				}
 			}
 			else {
-				Projectile.velocity += toTarget / dist * ChaseAccel;
+				Projectile.velocity += toStandoff / dist * ChaseAccel;
 				float speed = Projectile.velocity.Length();
 				if (speed > ChaseMaxSpeed)
 					Projectile.velocity *= ChaseMaxSpeed / speed;
@@ -257,18 +273,54 @@ namespace ArknightsMod.Content.Projectiles.Medic.Kaltsit
 			TakeIncomingDamage();
 		}
 
-		// -------- 攻击：原地播放攻击动画，命中窗口内造成接触伤害 --------
+		// 站位点：目标左侧或右侧 AttackStandoffX 远的地方，就近取——M3 当前在目标左边就
+		// 继续站左边，在右边就继续站右边，不会为了换边绕大圈。
+		private Vector2 GetStandoffPoint(NPC target) {
+			float side = Projectile.Center.X <= target.Center.X ? -1f : 1f;
+			return target.Center + new Vector2(side * AttackStandoffX, AttackStandoffY);
+		}
+
+		// -------- 攻击：原地播放攻击动画，目标半路变了就立刻中断转去追新目标 --------
 
 		private void UpdateAttacking(Player owner) {
+			// 每一帧都重新核对"当前离玩家最近的目标"，核对结果和正在打的这个对不上——
+			// 不管是目标死了、跑远了、还是出现了更近的新目标——就立刻中断攻击动画，
+			// 转入 Chasing 扑向新目标，而不是把这一下打完。
+			if (!TryFindTarget(owner, out NPC nearest) || nearest.whoAmI != currentTargetWhoAmI) {
+				currentTargetWhoAmI = nearest?.whoAmI ?? -1;
+				EnterState(Mon3trState.Chasing);
+				return;
+			}
+
 			Projectile.velocity *= 0.8f; // 攻击时基本定住，不再飞行
+			facingDir = nearest.Center.X >= Projectile.Center.X ? 1 : -1;
+
+			TryDealMultiHitSegment(nearest);
+			TakeIncomingDamage();
 
 			bool finished = StepAnim(AttackFrameCount, AttackTicksPerFrame, loop: false);
-			TakeIncomingDamage();
 
 			// 播完动画交回 Chasing 去判断"还有没有目标"——目标还活着/换了更近的都会
 			// 无缝接上下一次追击或攻击，不会先绕回玩家身后再折返。
 			if (finished)
 				EnterState(Mon3trState.Chasing);
+		}
+
+		// 攻击动画进入最后几帧后，每帧打一段（一共 MultiHitSegments 段），伤害不靠碰撞判定，
+		// 直接对锁定目标结算——总伤害平分到每一段（余数塞最后一段），不是每段都打满伤害。
+		private void TryDealMultiHitSegment(NPC target) {
+			if (Main.myPlayer != Projectile.owner) return;
+			if (animFrame < MultiHitStartFrame) return;
+			if (animFrame == lastMultiHitFrame) return; // 这一帧已经打过了
+			lastMultiHitFrame = animFrame;
+
+			int segmentIndex = animFrame - MultiHitStartFrame; // 0 开始
+			int segDamage = Projectile.damage / MultiHitSegments;
+			if (segmentIndex == MultiHitSegments - 1)
+				segDamage = Projectile.damage - segDamage * (MultiHitSegments - 1); // 余数归最后一段
+
+			int hitDirection = target.Center.X >= Projectile.Center.X ? 1 : -1;
+			target.SimpleStrikeNPC(segDamage, hitDirection, damageType: Projectile.DamageType);
 		}
 
 		// -------- 技能占位：播完动画自动回待机，命中/效果逻辑留空 --------
@@ -384,18 +436,15 @@ namespace ArknightsMod.Content.Projectiles.Medic.Kaltsit
 			return target != null;
 		}
 
-		// -------- 受伤：碰到敌人/敌方弹幕就扣血，水晶状态无敌 --------
-
+		// -------- 受伤：只吃"怪物主动打过来的弹幕"，不再因为身体撞在一起就掉血 --------
+		// M3 现在会飞到目标侧面站位，追击/游走途中难免会跟别的怪擦身而过——继续按"碰一下
+		// 就扣血"来判定的话，纯粹路过也会挨打，很冤。改成只认"敌对弹幕命中"：那才是
+		// 怪物真的把 M3 当成目标主动打过来（M3 依旧是合法的仇恨目标，能被怪物锁定攻击），
+		// 而不是擦身而过的无差别碰撞伤害。水晶状态无敌（receiveCooldown/state 逻辑不变）。
 		private void TakeIncomingDamage() {
 			if (Main.myPlayer != Projectile.owner) return;
 			if (receiveCooldown > 0) { receiveCooldown--; return; }
 
-			foreach (NPC npc in Main.ActiveNPCs) {
-				if (!npc.active || npc.friendly || npc.damage <= 0 || npc.dontTakeDamage) continue;
-				if (!Projectile.Hitbox.Intersects(npc.Hitbox)) continue;
-				ApplyDamage(npc.damage);
-				return;
-			}
 			foreach (Projectile other in Main.ActiveProjectiles) {
 				if (!other.active || !other.hostile || other.owner == Projectile.owner) continue;
 				if (!Projectile.Hitbox.Intersects(other.Hitbox)) continue;

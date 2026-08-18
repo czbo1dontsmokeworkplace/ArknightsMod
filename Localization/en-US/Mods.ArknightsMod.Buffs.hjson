@@ -197,3 +197,8 @@ RedeployReadyBuff: {
 	DisplayName: Redeploy Ready
 	Description: Greatly shortens respawn time on death; lost when the set is removed
 }
+
+SurtrLaevatainS3Buff: {
+	DisplayName: Surtr Laevatain S3 Buff
+	Description: Mods.ArknightsMod.Buffs.SurtrLaevatainS3Buff.Description
+}

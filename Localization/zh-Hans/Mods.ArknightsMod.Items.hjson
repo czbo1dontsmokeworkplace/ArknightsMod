@@ -3900,3 +3900,8 @@ TragodiaDefault: {
 	DisplayName: 酒神的服饰
 	Tooltip: ""
 }
+
+Tragodia: {
+	// DisplayName: Tragodia
+	// Tooltip: ""
+}

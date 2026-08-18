@@ -30,9 +30,8 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 
 		public int CurrentValue;
 		public int CooldownTimer;
+		private int cachedCooldownTicks;
 		public AfflictionState State { get; private set; } = AfflictionState.Idle;
-
-		// 标记当前异常是否被其他异常压制；被压制时不显示图标和特效。
 		public bool IsSuppressed { get; set; }
 
 		public virtual void ApplyDefenseReduction(NPC npc, int amount) {
@@ -65,7 +64,6 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 		}
 
 		public virtual UpdateResult Update() {
-
 			if (IsSuppressed)
 				return UpdateResult.None;
 
@@ -79,13 +77,14 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 					break;
 				case AfflictionState.Burst:
 					State = AfflictionState.Cooldown;
-					CooldownTimer = CooldownTicks;
+					cachedCooldownTicks = CooldownTicks;
+					CooldownTimer = cachedCooldownTicks;
 					CurrentValue = 0;
 					break;
 				case AfflictionState.Cooldown:
 					if (CooldownTimer > 0) {
 						CooldownTimer--;
-						CurrentValue = (int)((1f - (float)CooldownTimer / CooldownTicks) * MaxValue);
+						CurrentValue = (int)((1f - (float)CooldownTimer / cachedCooldownTicks) * MaxValue);
 					}
 					else {
 						CurrentValue = 0;
@@ -97,32 +96,23 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 		}
 
 		public void AddValue(int amount) {
-
 			if (State == AfflictionState.Cooldown)
 				return;
-
 			CurrentValue += amount;
 			if (State == AfflictionState.Idle)
 				State = AfflictionState.Accumulating;
-
-
 		}
-
 
 		public void ClearAccumulation() {
 			CurrentValue = 0;
 			State = AfflictionState.Idle;
 		}
-
-
-
 	}
 
 	public class AfflictionContainer
 	{
 		public NPC Owner { get; }
 		public List<ElementalAffliction> Afflictions = new();
-		private int globalCooldownTimer = 0; // 全局冷却计时器
 
 		public AfflictionContainer(NPC owner) => Owner = owner;
 
@@ -152,23 +142,23 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 		private void UpdateSuppression() {
 			var dominant = GetDominantAffliction();
 			foreach (var aff in Afflictions) {
-				// 冷却或爆发中的异常不参与压制判断。
 				if (aff.State == AfflictionState.Cooldown || aff.State == AfflictionState.Burst) {
 					aff.IsSuppressed = false;
 					continue;
 				}
-				// 其余异常里，只有当前累计值最高的那个不被压制。
 				aff.IsSuppressed = (aff != dominant && dominant != null && dominant.CurrentValue > 0);
 			}
 		}
 
 		public void AddAfflictionValue<T>(int amount) where T : ElementalAffliction, new() {
-			// 全局冷却期间，不能施加任何新的异常值。
-			if (globalCooldownTimer > 0)
-				return;
+			// 有任何损伤在冷却中，阻止施加新的异常值
+			foreach (var aff in Afflictions) {
+				if (aff.State == AfflictionState.Cooldown)
+					return;
+			}
 
-			var aff = GetOrAdd<T>();
-			aff.AddValue(amount);
+			var affToAdd = GetOrAdd<T>();
+			affToAdd.AddValue(amount);
 			UpdateSuppression();
 		}
 
@@ -176,17 +166,11 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 			if (Owner == null || !Owner.active)
 				return;
 
-			// 每帧减少一次全局冷却计时器；这里依赖 PostAI 每帧调用一次。
-			if (globalCooldownTimer > 0)
-				globalCooldownTimer--;
-
 			UpdateSuppression();
 
-			// 更新所有异常；如果没有触发爆发，就直接返回 UpdateResult.None。
 			foreach (var aff in Afflictions) {
 				var result = aff.Update();
 				if (result == UpdateResult.Burst) {
-					// 播放视觉效果并应用爆发伤害。
 					string mainTex = aff.BurstFlashMainMask;
 					string featherTex = aff.BurstFlashFeatherMask;
 					Vector2 flashPos = aff.GetFlashPosition(Owner);
@@ -195,17 +179,13 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 					aff.ApplyBurstDamage(Owner);
 					BurstFlashEffect.Play(Owner, flashPos, mainTex, featherTex, mainCol, featherCol);
 
-					// 进入全局冷却，防止短时间内连续触发多个异常爆发。
-					globalCooldownTimer = aff.CooldownTicks;
-
-					// 其余异常清空累计值并重置为 Idle，等待重新积累。
 					foreach (var otherAff in Afflictions) {
 						if (otherAff != aff)
-							otherAff.ClearAccumulation(); // ClearAccumulation 会顺带把 State 设为 Idle
+							otherAff.ClearAccumulation();
 					}
 
 					UpdateSuppression();
-					break; // 一次只处理一个爆发。
+					break;
 				}
 			}
 		}
@@ -232,78 +212,48 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 				npc.Center.Y < Main.screenPosition.Y - 100 || npc.Center.Y > Main.screenPosition.Y + Main.screenHeight + 100)
 				return;
 
-			// 只显示未被压制的异常。
 			bool anyVisible = false;
 			foreach (var aff in Container.Afflictions)
 				if (!aff.IsSuppressed && aff.State != AfflictionState.Idle) { anyVisible = true; break; }
 			if (!anyVisible)
 				return;
 
-			// 获取缩放比例
 			float scale = Main.GameViewMatrix.Zoom.X;
-
-			// 计算基础位置（屏幕坐标）
 			Vector2 baseScreenPos = npc.Center - Main.screenPosition;
 			float baseYOffset = npc.height * 0.5f;
 
-			// 图标位置 - 应用完整的 GameViewMatrix 变换
 			Vector2 iconWorldPos = baseScreenPos + new Vector2(0, baseYOffset + 20f);
 			Vector2 iconPos = Vector2.Transform(iconWorldPos, Main.GameViewMatrix.TransformationMatrix);
 
-			// 环的位置 - 使用相同的变换方式
 			Vector2 ringWorldPos = baseScreenPos + new Vector2(0, baseYOffset + 5f);
 			Vector2 ringPos = Vector2.Transform(ringWorldPos, Main.GameViewMatrix.TransformationMatrix);
 
-			// 结束原有的 SpriteBatch
 			spriteBatch.End();
-
-			// 使用 Matrix.Identity，因为我们已经手动应用了变换
 			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearClamp,
 				DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Matrix.Identity);
 
-			// 绘制图标
 			foreach (var aff in Container.Afflictions) {
 				if (aff.IsSuppressed || aff.State == AfflictionState.Idle)
 					continue;
-
-				// 图标在图标位置上方偏移
 				Vector2 drawPos = iconPos - new Vector2(0, 15f * scale);
-
-				// 应用缩放
 				float featherScale = aff.FeatherScale * scale;
 				float mainScale = aff.MainScale * scale;
-
 				Texture2D featherTex = ModContent.Request<Texture2D>(aff.FeatherMaskTexture).Value;
-				spriteBatch.Draw(featherTex, drawPos, null, aff.FeatherColor, 0f,
-					featherTex.Size() * 0.5f, featherScale, SpriteEffects.None, 0);
-
+				spriteBatch.Draw(featherTex, drawPos, null, aff.FeatherColor, 0f, featherTex.Size() * 0.5f, featherScale, SpriteEffects.None, 0);
 				Texture2D iconTex = ModContent.Request<Texture2D>(aff.IconMaskTexture).Value;
-				spriteBatch.Draw(iconTex, drawPos, null, aff.IconColor, 0f,
-					iconTex.Size() * 0.5f, mainScale, SpriteEffects.None, 0);
+				spriteBatch.Draw(iconTex, drawPos, null, aff.IconColor, 0f, iconTex.Size() * 0.5f, mainScale, SpriteEffects.None, 0);
 			}
 			spriteBatch.End();
 
-			// 绘制环
 			foreach (var aff in Container.Afflictions) {
 				if (aff.IsSuppressed || aff.State == AfflictionState.Idle)
 					continue;
-
 				float rawProgress = (float)aff.CurrentValue / aff.MaxValue;
-				float visualProgress;
-
-				if (aff.State == AfflictionState.Cooldown)
-					visualProgress = rawProgress;
-				else
-					visualProgress = 1f - rawProgress;
-
-				Color ringColor = (aff.State == AfflictionState.Cooldown) ?
-					new Color(165, 165, 165, 180) : Color.White;
-
-				// 传入已变换的环位置
+				float visualProgress = (aff.State == AfflictionState.Cooldown) ? rawProgress : 1f - rawProgress;
+				Color ringColor = (aff.State == AfflictionState.Cooldown) ? new Color(165, 165, 165, 180) : Color.White;
 				RingDrawer.DrawRing(ringPos, 5f * scale, 2.5f * scale, visualProgress, ringColor, 70);
 			}
 
-			// 恢复 SpriteBatch
 			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState,
 				DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
 		}
@@ -317,20 +267,13 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 			public static void DrawRing(Vector2 center, float radius, float thickness, float progress, Color color, int segments = 60) {
 				if (progress <= 0 || segments < 3)
 					return;
-
 				GraphicsDevice device = Main.graphics.GraphicsDevice;
-
-				// center 已经应用了 GameViewMatrix 变换，不需要再次变换
-				// 但 radius 和 thickness 已经包含了缩放
-
 				int maxSegments = (int)(segments * progress) + 1;
 				if (maxSegments < 2)
 					return;
 				int vertCount = maxSegments * 6;
-
 				if (vertices.Length < vertCount)
 					vertices = new VertexPositionColor[vertCount];
-
 				if (vertexBuffer == null || vertexBuffer.VertexCount < vertCount)
 					vertexBuffer = new DynamicVertexBuffer(device, typeof(VertexPositionColor), vertCount, BufferUsage.WriteOnly);
 
@@ -338,8 +281,8 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 				float inner = radius - thickness * 0.5f;
 				float angleStep = MathHelper.TwoPi / segments;
 				float startAngle = -MathHelper.PiOver2;
-
 				int vi = 0;
+
 				for (int i = 0; i < maxSegments; i++) {
 					float angle0 = startAngle + angleStep * i;
 					float angle1 = startAngle + angleStep * (i + 1);
@@ -348,7 +291,6 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 
 					Vector2 dir0 = new((float)Math.Cos(angle0), (float)Math.Sin(angle0));
 					Vector2 dir1 = new((float)Math.Cos(angle1), (float)Math.Sin(angle1));
-
 					Vector3 pOut0 = new(center + dir0 * outer, 0);
 					Vector3 pIn0 = new(center + dir0 * inner, 0);
 					Vector3 pOut1 = new(center + dir1 * outer, 0);
@@ -368,22 +310,11 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 				device.DepthStencilState = DepthStencilState.Default;
 
 				if (cachedEffect == null) {
-					cachedEffect = new BasicEffect(device) {
-						VertexColorEnabled = true,
-						View = Matrix.Identity
-					};
+					cachedEffect = new BasicEffect(device) { VertexColorEnabled = true, View = Matrix.Identity };
 				}
-
 				cachedEffect.World = Matrix.Identity;
 				cachedEffect.View = Matrix.Identity;
-				cachedEffect.Projection = Matrix.CreateOrthographicOffCenter(
-					0f,
-					device.Viewport.Width,
-					device.Viewport.Height,
-					0f,
-					-1f,
-					1f
-				);
+				cachedEffect.Projection = Matrix.CreateOrthographicOffCenter(0f, device.Viewport.Width, device.Viewport.Height, 0f, -1f, 1f);
 
 				foreach (var pass in cachedEffect.CurrentTechnique.Passes) {
 					pass.Apply();

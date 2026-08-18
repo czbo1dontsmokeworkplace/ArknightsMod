@@ -3527,3 +3527,8 @@ TragodiaDefault: {
 	DisplayName: Tragodia Default
 	Tooltip: ""
 }
+
+Tragodia: {
+	DisplayName: Tragodia
+	Tooltip: ""
+}
