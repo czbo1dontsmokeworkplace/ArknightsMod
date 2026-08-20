@@ -75,9 +75,10 @@ namespace ArknightsMod.Content.Items.Weapons.Vanguard.Yato
             public override void UpdateEquips() {
 				var it = Player.HeldItem;
 				if (it.type == ModContent.ItemType<YatoKatana>() ) {
-					Player.moveSpeed += 0.2f;
-					if (Player.controlUseTile) Player.moveSpeed += 0.3f;
-
+	
+                    float factor = Player.controlUseTile ? 1.5f : 1.2f;
+                    Player.maxRunSpeed *= factor;   // 与普通移速同样被 maxRunSpeed 乘算
+                    Player.accRunSpeed *= factor;   // 使鞋子的冲刺上限随之放大 → 才能真正叠加
 				}
 				base.UpdateEquips();
 			}
