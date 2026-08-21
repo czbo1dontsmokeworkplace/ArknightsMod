@@ -16,6 +16,17 @@ namespace ArknightsMod.Players
 
 		private int lastMaxBeacons = GoldenglowBeacon.BaseMaxBeacons;
 
+		public override void ResetEffects() {
+			int count = 0;
+			foreach (Projectile proj in Main.ActiveProjectiles) {
+				if (proj.active && proj.owner == Player.whoAmI
+					&& proj.GetGlobalProjectile<GoldenglowBoltMarker>().IsGoldenglowBolt) {
+					count++;
+				}
+			}
+			BoltCount = count;
+		}
+
 		public override void PostUpdateBuffs() {
 			int beaconType = ModContent.ProjectileType<GoldenglowBeacon>();
 			int count = Player.ownedProjectileCounts[beaconType];
