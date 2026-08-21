@@ -3561,3 +3561,60 @@ EchoCorn: {
 		While carried, talking to each different NPC raises its value (+1 per 5% happiness), once per NPC
 		'''
 }
+
+FogRollingGrass: {
+	DisplayName: Fog Rolling Grass
+	Tooltip:
+		'''
+		Swept up in the mist, drifting further from soil and root.
+		While carried, +1 value per 200m walked, up to 16
+		'''
+}
+
+WaveSpray: {
+	DisplayName: Sea Spray
+	Tooltip:
+		'''
+		Nature makes the change, thought renders it, so living things may proudly claim their freedom.
+		While carried in rain or snow, every 500m walked randomly -4 or +5 value; unchanged in clear weather
+		Never below 0 or above 66
+		'''
+}
+
+ProliferatingMoss: {
+	DisplayName: Proliferating Moss
+	Tooltip:
+		'''
+		Creeping over dirt, trees, dreams, growth.
+		While carried, +1 value per other kind of natural collectible in your inventory
+		'''
+}
+
+WitheredMossBall: {
+	DisplayName: Withered Moss Ball
+	Tooltip: Then rot, wither, despair, death.
+}
+
+BoardVine: {
+	DisplayName: Board Vine
+	Tooltip:
+		'''
+		Clings to its own kind, never letting go.
+		While carried, +4 value per other kind of natural collectible in your inventory
+		'''
+}
+
+HomesickFruit: {
+	DisplayName: Homesick Fruit
+	Tooltip:
+		'''
+		Blinded by praise, it started its own countdown with its own hands.
+		While carried, -2 value per 200m walked
+		Can be replanted in a qualifying spot (underside of grass/moss); it regains 2 value per in-game day, up to 32
+		'''
+}
+
+GlowingTruffle: {
+	DisplayName: Glowing Truffle
+	Tooltip: If it isn't dug up and savored, it hardly deserves such an honor.
+}

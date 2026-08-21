@@ -1,8 +1,5 @@
-using ArknightsMod.Content.Tiles.Natural;
-using ArknightsMod.Systems;
 using Terraria;
 using Terraria.DataStructures;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Players
@@ -14,15 +11,9 @@ namespace ArknightsMod.Players
 		private const int BossKillGain = 10;
 		private const int HurtLoss = 5;
 
-		private const int GrowthCheckInterval = 60; // 约1秒判定一次低概率生长
-		private const float GrowthRollChance = 0.001f;
-		private const int GrowthRadius = 30;
-
 		public bool HasFrostCrystalTree;
 		public int Value = BaseValue;
 		public bool Broken;
-
-		private int growthTimer;
 
 		public override void ResetEffects() {
 			HasFrostCrystalTree = false;
@@ -51,21 +42,6 @@ namespace ArknightsMod.Players
 
 		public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource) {
 			Break();
-		}
-
-		public override void PostUpdate() {
-			if (Main.netMode == NetmodeID.MultiplayerClient) {
-				growthTimer = 0;
-				return;
-			}
-
-			growthTimer++;
-			if (growthTimer >= GrowthCheckInterval) {
-				growthTimer = 0;
-				if (Main.rand.NextFloat() < GrowthRollChance) {
-					NaturalGrowthSystem.TryGrowRandomNear(Player, GrowthRadius, ModContent.TileType<FrostCrystalTree>());
-				}
-			}
 		}
 	}
 }
