@@ -3532,3 +3532,32 @@ Tragodia: {
 	DisplayName: Tragodia
 	Tooltip: ""
 }
+
+BloodMushroom: {
+	DisplayName: Blood Fungus
+	Tooltip:
+		'''
+		Feast here, until you are the one being served.
+		While carried, it may lure a "Red Mist" creature. Each kill raises the fungus's price and empowers the next one.
+		Dying resets the price.
+		'''
+}
+
+FrostCrystalTree: {
+	DisplayName: Frost Crystal Tree
+	Tooltip:
+		'''
+		Such fine unmelted beauty, before the sun pierces the flesh.
+		While carried: killing a weak enemy at full health +1 value, killing a boss at full health +10, taking damage -5
+		If the value hits zero or you die, it shatters: value is halved and locked forever
+		'''
+}
+
+EchoCorn: {
+	DisplayName: Echo Corn
+	Tooltip:
+		'''
+		Every sweet nothing, crisp and full.
+		While carried, talking to each different NPC raises its value (+1 per 5% happiness), once per NPC
+		'''
+}

@@ -3905,3 +3905,32 @@ Tragodia: {
 	// DisplayName: Tragodia
 	// Tooltip: ""
 }
+
+BloodMushroom: {
+	DisplayName: 血蕈
+	Tooltip:
+		'''
+		请在此大快朵颐，直至你被装入餐盘。
+		携带时有概率吸引"红雾"现身，每击杀一只，血蕈的估价与下一只红雾的强度都会提升
+		意外死亡后，这份"美味"会被重新标价
+		'''
+}
+
+FrostCrystalTree: {
+	DisplayName: 霜晶树
+	Tooltip:
+		'''
+		在阳光穿透脏腑前，展现未融的精致。
+		携带时：满血击杀小怪估价+1，满血击杀boss估价+10，受伤估价-5
+		估价归零或意外死亡会让它损坏，价格减半并永久锁定
+		'''
+}
+
+EchoCorn: {
+	DisplayName: 回声玉米
+	Tooltip:
+		'''
+		每一粒甜言蜜语都清晰而饱满。
+		携带时，与每个不同的NPC对话都会让估价提升（幸福度每5%+1），每个NPC仅计一次
+		'''
+}
