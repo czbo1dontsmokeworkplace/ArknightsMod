@@ -8,6 +8,8 @@ namespace ArknightsMod.Content.Items.Material
 	// 估价会随连击等级实时刷新，所以每帧都在这里重写 Item.value，而不是走基类的固定估价表。
 	public class BloodMushroom : RareCollectibleItem
 	{
+		public override int BaseOriginiumIngotValue => BloodMushroomPlayer.BaseValue;
+
 		public override void UpdateInventory(Player player) {
 			var bloodPlayer = player.GetModPlayer<BloodMushroomPlayer>();
 			bloodPlayer.HasBloodMushroom = true;

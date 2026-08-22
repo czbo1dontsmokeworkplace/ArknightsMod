@@ -8,6 +8,8 @@ namespace ArknightsMod.Content.Items.Material
 	// 之后每过一个游戏日回涨2点，采下来的时候再按 TileEntity 当时的估价现掉出物品。
 	public class HomesickFruit : RareCollectibleItem
 	{
+		public override int BaseOriginiumIngotValue => HomesickFruitPlayer.BaseValue;
+
 		public override void SafeSetCollectibleDefaults() {
 			Item.DefaultToPlaceableTile(ModContent.TileType<Tiles.Natural.HomesickFruit>());
 		}
