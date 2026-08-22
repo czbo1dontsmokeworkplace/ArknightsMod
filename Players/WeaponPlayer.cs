@@ -341,7 +341,11 @@ namespace ArknightsMod.Players
 					}
 					if (!hasNearbyEnemy && ++initChargeTimer >= GetRestoreTime()) {
 						initChargeTimer = 0;
-						chargeReady = true;
+						// 仅解锁自然回复（关闭冻结），不要置 chargeReady——
+						// chargeReady 会被 Propagate 成 ark.chargeReady，进而在下方
+						// else if 分支把 InitSP 预灌进 SkillCharge，导致技能结束后
+						// 技力不从 0 而直接从初始技力开始回复。
+						chargeOpen = false;
 					}
 				}
 				if (chargeReady) {
@@ -370,7 +374,11 @@ namespace ArknightsMod.Players
 
 				if (oldSkill != Skill) {
 					oldSkill = Skill;
-					InitSkill(ark.chargeReady[Skill]);
+					// 切换武器（oldHeld 改变时 oldSkill 被置 -1）或切换技能槽（mp.Skill 改变）时，
+					// 一律按"初始就绪"授予初始技力 InitSP，使玩家每次换武器/换技能都从初始技力起步。
+					// 不再依赖 ark.chargeReady（该标志只用于 DevFillSkillCharge / 重生等少数场景），
+					// 否则正常游玩中切换不会给初始技力，且与上一处冻结解锁污染初始技力的问题同源。
+					InitSkill(true);
 					ark.chargeReady[Skill] = false;
 				}
 				else if (ark.chargeReady[Skill] && StockCount == 0) {
@@ -394,10 +402,11 @@ namespace ArknightsMod.Players
 
 		// 释放技能后，如果附近 560px 内没有可仇恨的敌人，自然回复会被冻结，
 		// 直到出现敌人、或等够这个时长才解锁（见 ResetEffects 里 chargeOpen/hasNearbyEnemy 的判定）。
-		// 原本是 60*15（15 秒），空窗期太长、容易被误认为"技力卡住了"，先缩短到 3 秒，
-		// 又觉得 3 秒太快、缺乏节奏感，改为 5 秒。这是全局值，作用于所有武器，不是某个武器专属的。
+		// 该冻结窗口是自动充能型技能（如隐德来希 S1）放完技能后无敌人时回充被挡的"死区"。
+		// 原 5 秒过长，对瞬发/自动释放技能感知明显；现缩短到 12 帧（0.2 秒），既保留极短的节奏间隔
+		// 又不致明显卡住回充。这是全局值，作用于所有武器，不是某个武器专属的。
 		private int GetRestoreTime() {
-			return 60 * 5;
+			return 12;
 		}
 
 		public void TryAutoCharge() {

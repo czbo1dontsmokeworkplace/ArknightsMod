@@ -7,7 +7,7 @@ Currencies: {
 	OriginiumIngotCurrency: 源石锭
 }
 
-CommonTooltips.CannotOriginiumIngotValue: "卖给坎诺特的售价：{0} × {1}"
+CommonTooltips.CannotOriginiumIngotValue: 卖给坎诺特的售价：{0} × {1}
 
 ItemDropRuleCondition: {
 	CannotRunaway: 坎诺特逃跑时
