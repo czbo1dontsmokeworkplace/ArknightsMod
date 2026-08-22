@@ -61,7 +61,10 @@ namespace ArknightsMod.Common.GlobalNPCs
 		public override void PostAI(NPC npc) {
 			if (!IsRedMist) return;
 
-			npc.velocity *= StatMultiplier;
+			// 不直接改 npc.velocity——那样会被喂回下一帧的 AI 计算，
+			// 如果宿主怪物的 AI 没有每帧夹限速度（比如恶魔之眼的飞行AI），会像滚雪球一样越乘越快，
+			// 最后飞出屏幕。改成只叠加一段额外位移，怪物自己的速度状态完全不受影响，不会累积。
+			npc.position += npc.velocity * (StatMultiplier - 1f);
 
 			if (Main.rand.NextBool(4))
 				Dust.NewDust(npc.position, npc.width, npc.height, DustID.Blood, 0f, 0f, 150, default, 1.1f);
