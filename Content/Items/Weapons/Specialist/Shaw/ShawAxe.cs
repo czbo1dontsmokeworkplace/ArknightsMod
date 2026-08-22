@@ -40,32 +40,44 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.Shaw
 			var mp = player.GetModPlayer<WeaponPlayer>();
 
 			if (ArknightsKeybinds.SkillActivatePressed(player)) {
-				if (mp.StockCount > 0 && !mp.SkillActive) {
+				// S1 已改为自动释放，技能键对其不生效；此处仅保留 S2 的手动开启
+				if (mp.Skill == 1 && mp.StockCount > 0 && !mp.SkillActive) {
 					mp.SkillActive = true;
 					mp.SkillTimer = 0;
 					mp.DelStockCount();
 					SoundEngine.PlaySound(SkillActiveSfx, player.Center);
 
 					// S2 高压水炮：立即击退并伤害前方范围内所有敌人
-					if (mp.Skill == 1) {
-						int dmg = (int)(player.GetWeaponDamage(Item) * 3.0f);
-						Vector2 knockDir = new Vector2(player.direction, -0.2f);
-						foreach (NPC npc in Main.npc) {
-							if (!npc.active || npc.friendly || npc.dontTakeDamage) continue;
-							if (Vector2.Distance(npc.Center, player.Center) > 160f) continue;
-							// 仅击退前方（同向）的敌人
-							if ((npc.Center.X - player.Center.X) * player.direction < -20f) continue;
-							npc.StrikeNPC(npc.CalculateHitInfo(dmg, player.direction, false, 14f, DamageClass.Melee));
-							npc.velocity += knockDir * 16f;
-						}
-						mp.SkillActive = false;
+					int dmg = (int)(player.GetWeaponDamage(Item) * 3.0f);
+					Vector2 knockDir = new Vector2(player.direction, -0.2f);
+					foreach (NPC npc in Main.npc) {
+						if (!npc.active || npc.friendly || npc.dontTakeDamage) continue;
+						if (Vector2.Distance(npc.Center, player.Center) > 160f) continue;
+						// 仅击退前方（同向）的敌人
+						if ((npc.Center.X - player.Center.X) * player.direction < -20f) continue;
+						npc.StrikeNPC(npc.CalculateHitInfo(dmg, player.direction, false, 14f, DamageClass.Melee));
+						npc.velocity += knockDir * 16f;
 					}
+					mp.SkillActive = false;
 				}
 				return false;
 			}
 
 			mp.OffensiveRecovery();
 			return base.CanUseItem(player);
+		}
+
+		public override void HoldItem(Player player) {
+			base.HoldItem(player);
+			var mp = player.GetModPlayer<WeaponPlayer>();
+			// S1「水蒸气泵」改为自动释放：蓄满后下次攻击自动变为强化（×1.5 并大力击退），无需手动按键。
+			// !mp.SkillActive 充当"已上膛"标记，命中后 ModifyHitNPC 会置 false，待重新蓄满才会再次自动上膛。
+			if (mp.Skill == 0 && mp.StockCount > 0 && !mp.SkillActive) {
+				mp.SkillActive = true;
+				mp.SkillTimer = 0;
+				mp.DelStockCount();
+				SoundEngine.PlaySound(SkillActiveSfx, player.Center);
+			}
 		}
 
 		public override void ModifyWeaponDamage(Player player, ref StatModifier damage) {

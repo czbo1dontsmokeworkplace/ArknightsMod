@@ -1,7 +1,9 @@
+using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles.Guard.Mousse
@@ -62,6 +64,15 @@ namespace ArknightsMod.Content.Projectiles.Guard.Mousse
 
 			Projectile.Center = owner.MountedCenter + dir * Extension;
 			Projectile.velocity = Vector2.Zero;
+		}
+
+		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
+			var mp = Main.player[Projectile.owner].GetModPlayer<WeaponPlayer>();
+			// S1 挠伤：命中目标施加虚弱并立即结束技能（一次性），随后自动重新充能
+			if (mp.SkillActive && mp.Skill == 0) {
+				target.AddBuff(BuffID.Weak, 5 * 60);
+				mp.SkillActive = false;
+			}
 		}
 
 		public override bool ShouldUpdatePosition() => false;
