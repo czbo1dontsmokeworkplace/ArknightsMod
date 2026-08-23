@@ -112,7 +112,6 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Goldenglow
 			int boltIndex = Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI);
 			if (boltIndex >= 0 && boltIndex < Main.maxProjectiles) {
 				Main.projectile[boltIndex].GetGlobalProjectile<GoldenglowBoltMarker>().IsGoldenglowBolt = true;
-				beaconPlayer.BoltCount++;
 			}
 			return false;
 		}

@@ -3532,3 +3532,89 @@ Tragodia: {
 	DisplayName: Tragodia
 	Tooltip: ""
 }
+
+BloodMushroom: {
+	DisplayName: Blood Fungus
+	Tooltip:
+		'''
+		Feast here, until you are the one being served.
+		While carried, each enemy naturally spawned by the current environment has a 10% chance to be enveloped by Red Mist. Each kill raises its Originium Ingot value and empowers later Red Mist enemies.
+		Dying resets the price.
+		'''
+}
+
+FrostCrystalTree: {
+	DisplayName: Frost Crystal Tree
+	Tooltip:
+		'''
+		Such fine unmelted beauty, before the sun pierces the flesh.
+		While carried: killing a weak enemy at full health +1 Originium Ingot value, killing a boss at full health +10, taking damage -5
+		If the value hits zero or you die, it shatters: value is halved and locked forever
+		'''
+}
+
+EchoCorn: {
+	DisplayName: Echo Corn
+	Tooltip:
+		'''
+		Every sweet nothing, crisp and full.
+		While carried, talking to each different NPC raises its value (+1 per 5% happiness), once per NPC
+		'''
+}
+
+FogRollingGrass: {
+	DisplayName: Fog Rolling Grass
+	Tooltip:
+		'''
+		Swept up in the mist, drifting further from soil and root.
+		While carried, +1 value per 200m walked, up to 16
+		'''
+}
+
+WaveSpray: {
+	DisplayName: Sea Spray
+	Tooltip:
+		'''
+		Nature makes the change, thought renders it, so living things may proudly claim their freedom.
+		While carried in rain or snow, every 500m walked randomly -4 or +5 value; unchanged in clear weather
+		Never below 0 or above 66
+		'''
+}
+
+ProliferatingMoss: {
+	DisplayName: Proliferating Moss
+	Tooltip:
+		'''
+		Creeping over dirt, trees, dreams, growth.
+		While carried, +1 value per other kind of natural collectible in your inventory
+		'''
+}
+
+WitheredMossBall: {
+	DisplayName: Withered Moss Ball
+	Tooltip: Then rot, wither, despair, death.
+}
+
+BoardVine: {
+	DisplayName: Board Vine
+	Tooltip:
+		'''
+		Clings to its own kind, never letting go.
+		While carried, +4 value per other kind of natural collectible in your inventory
+		'''
+}
+
+HomesickFruit: {
+	DisplayName: Homesick Fruit
+	Tooltip:
+		'''
+		Blinded by praise, it started its own countdown with its own hands.
+		While carried, -2 value per 200m walked
+		Can be replanted in a qualifying spot (underside of grass/moss); it regains 2 value per in-game day, up to 32
+		'''
+}
+
+GlowingTruffle: {
+	DisplayName: Glowing Truffle
+	Tooltip: If it isn't dug up and savored, it hardly deserves such an honor.
+}

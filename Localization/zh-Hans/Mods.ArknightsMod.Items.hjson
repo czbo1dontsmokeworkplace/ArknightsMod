@@ -3905,3 +3905,89 @@ Tragodia: {
 	// DisplayName: Tragodia
 	// Tooltip: ""
 }
+
+BloodMushroom: {
+	DisplayName: 血蕈
+	Tooltip:
+		'''
+		请在此大快朵颐，直至你被装入餐盘。
+		携带时，当前环境每只自然刷新的敌怪都有10%概率被红雾附着；每击杀一只，血蕈的源石锭估价与后续红雾的强度都会提升
+		意外死亡后，这份"美味"会被重新标价
+		'''
+}
+
+FrostCrystalTree: {
+	DisplayName: 霜晶树
+	Tooltip:
+		'''
+		在阳光穿透脏腑前，展现未融的精致。
+		携带时：满血击杀小怪源石锭估价+1，满血击杀boss源石锭估价+10，受伤估价-5
+		估价归零或意外死亡会让它损坏，价格减半并永久锁定
+		'''
+}
+
+EchoCorn: {
+	DisplayName: 回声玉米
+	Tooltip:
+		'''
+		每一粒甜言蜜语都清晰而饱满。
+		携带时，与每个不同的NPC对话都会让估价提升（幸福度每5%+1），每个NPC仅计一次
+		'''
+}
+
+FogRollingGrass: {
+	DisplayName: 雾滚草
+	Tooltip:
+		'''
+		在迷雾裹挟下，离大地与根系越来越远。
+		携带时，每移动200m估价+1，至多16
+		'''
+}
+
+WaveSpray: {
+	DisplayName: 浪花
+	Tooltip:
+		'''
+		自然造就改变，思维将之渲染，好让生灵傲然宣称自我的自由。
+		雨雪天气携带时，每移动500m估价随机-4或+5；非雨雪天气估价不变
+		估价不会低于0或高于66
+		'''
+}
+
+ProliferatingMoss: {
+	DisplayName: 多生苔藓
+	Tooltip:
+		'''
+		爬满泥土、树木、梦想、成长。
+		携带时，背包里每有一种别的自然物，估价+1
+		'''
+}
+
+WitheredMossBall: {
+	DisplayName: 枯苔藓球
+	Tooltip: 而后腐败、枯萎、绝望、死亡。
+}
+
+BoardVine: {
+	DisplayName: 板藤
+	Tooltip:
+		'''
+		抓住同类，不愿再放手。
+		携带时，背包里每有一种别的自然物，估价+4
+		'''
+}
+
+HomesickFruit: {
+	DisplayName: 恋家果
+	Tooltip:
+		'''
+		受称颂蒙蔽，亲手启动生命的倒计时。
+		携带时，每移动200m估价-2
+		可以重新栽种在符合条件的环境（草皮/苔藓下表面），种下后每过一个游戏日估价+2，至多恢复到32
+		'''
+}
+
+GlowingTruffle: {
+	DisplayName: 光彩松露
+	Tooltip: 如果不被挖掘与品尝，它本配不上如此殊荣。
+}

@@ -36,11 +36,28 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Frostleaf
 
 		public override bool AltFunctionUse(Player player) => false;
 
+		public override void HoldItem(Player player) {
+			if (Main.myPlayer != player.whoAmI)
+				return;
+
+			var mp = player.GetModPlayer<WeaponPlayer>();
+			// S1「寒霜枪刃」改为自动释放：蓄满后下一次攻击自动变为强化（×1.5 冰刃并冰冻），无需手动按键。
+			// !mp.SkillActive 充当"已上膛"标记，命中后 ModifyHitNPC 会置 false，待重新蓄满才会再次自动上膛，
+			// 天然防止每帧重复触发。
+			if (mp.Skill == 0 && mp.StockCount > 0 && !mp.SkillActive) {
+				mp.SkillActive = true;
+				mp.SkillTimer = 0;
+				mp.DelStockCount();
+				SoundEngine.PlaySound(SkillActiveSfx, player.Center);
+			}
+		}
+
 		public override bool CanUseItem(Player player) {
 			var mp = player.GetModPlayer<WeaponPlayer>();
 
 			if (ArknightsKeybinds.SkillActivatePressed(player)) {
-				if (mp.StockCount > 0 && !mp.SkillActive) {
+				// S1 已改为自动释放，技能键对它不生效；此处只保留 S2 的手动开启
+				if (mp.Skill == 1 && mp.StockCount > 0 && !mp.SkillActive) {
 					mp.SkillActive = true;
 					mp.SkillTimer = 0;
 					mp.DelStockCount();

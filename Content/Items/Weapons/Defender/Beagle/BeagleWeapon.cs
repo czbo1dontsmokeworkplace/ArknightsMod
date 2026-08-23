@@ -91,12 +91,12 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Beagle
 				}
 			}
 			public override void PostUpdateEquips() {
-				// 先乘技能加成，再加举盾固定值，保证+10不受乘算影响
+				// 先乘技能加成（S1 防御力+25%，见技能描述），再乘举盾倍率（格挡时防御力×1.5，见武器描述）
 				if (hasMGLDEFplayer) {
 					Player.statDefense *= 1.25f;
 				}
 				if (Player.HeldItem.type == ModContent.ItemType<BeagleWeapon>() && Main.mouseRight) {
-					Player.statDefense += 10;
+					Player.statDefense *= 1.5f;
 				}
 			}
 		}

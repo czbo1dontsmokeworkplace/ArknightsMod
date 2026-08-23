@@ -1,5 +1,6 @@
 using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Players;
+using ArknightsMod.Systems.Gameplay.Skill;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -45,7 +46,8 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Jessica
 			var mp = player.GetModPlayer<WeaponPlayer>();
 
 			if (ArknightsKeybinds.SkillActivatePressed(player)) {
-				if (mp.StockCount > 0 && !mp.SkillActive) {
+				// S1 已改为攻击充能+自动释放，技能键对其不生效；此处仅保留 S2 的手动开启
+				if (mp.Skill == 0 && mp.StockCount > 0 && !mp.SkillActive) {
 					mp.SkillActive = true;
 					mp.SkillTimer = 0;
 					mp.DelStockCount();
@@ -54,31 +56,41 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Jessica
 				return false;
 			}
 
-			mp.OffensiveRecovery();
+			// S1 强力击·B：攻击充能，每次攻击积攒技力（蓄满得到 1 层库存，下一击自动释放）
+			if (mp.CurrentSkill?.ChargeType == SkillChargeType.Attack && mp.Skill == 0)
+				mp.OffensiveRecovery();
+
 			return base.CanUseItem(player);
 		}
 
 		public override void ModifyWeaponDamage(Player player, ref StatModifier damage) {
 			base.ModifyWeaponDamage(player, ref damage);
 			var mp = player.GetModPlayer<WeaponPlayer>();
-			if (!mp.SkillActive) return;
-			if (mp.Skill == 0)
-				damage *= 2.3f; // S1 强力击·B：230% 伤害
-			else if (mp.Skill == 1)
+			// S1 强力击·B：已上膛（SkillActive）时下一击自动强化（230% 伤害，无需手动开启）
+			if (mp.SkillActive && mp.Skill == 0)
+				damage *= 2.3f;
+			else if (mp.SkillActive && mp.Skill == 1)
 				damage *= 1.8f; // S2 掩护烟幕：攻击力 +80%
 		}
 
 		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source,
 				Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
 			var mp = player.GetModPlayer<WeaponPlayer>();
-			// S1：子弹射出即消耗，伤害加成已由 ModifyWeaponDamage 生效
-			if (mp.SkillActive && mp.Skill == 0)
-				mp.SkillActive = false;
+			// S1：攻击充能 → 自动释放，有库存的下一次射击消耗库存并射出强化弹
+	        if (mp.Skill == 0 && mp.StockCount > 0) {
+		        mp.DelStockCount();
+		        Projectile.NewProjectile(source, position + velocity, velocity * 0.9f, type,
+			        (int)(damage * 2.30f), knockback, player.whoAmI, ai0: 1f);
+		        SoundEngine.PlaySound(SkillActiveSfx, player.Center);
+	        }
 			return base.Shoot(player, source, position, velocity, type, damage, knockback);
 		}
 
 		public override void HoldItem(Player player) {
 			base.HoldItem(player);
+			if (Main.myPlayer != player.whoAmI)
+				return;
+
 			var mp = player.GetModPlayer<WeaponPlayer>();
 			// S2 掩护烟幕：75% 伤害减免（近似闪避效果）
 			if (mp.SkillActive && mp.Skill == 1)
