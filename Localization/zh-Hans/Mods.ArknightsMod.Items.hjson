@@ -3479,11 +3479,6 @@ GoldenglowWand: {
 	Tooltip: 精英2可解锁澄净闪耀
 }
 
-CardiganShield: {
-	DisplayName: 卡缇的盾牌
-	Tooltip: 技能激活时立即恢复最大生命40%
-}
-
 BeehunterBag: {
 	DisplayName: 蛇屠箱的棒球棍
 	// Tooltip: ""
@@ -3623,7 +3618,7 @@ KaltsitLegs: {
 
 CardiWeapon: {
 	DisplayName: 卡缇的盾牌
-	// Tooltip: ""
+	Tooltip: 技能激活时立即恢复最大生命40%
 }
 
 EntelechiaScythe: {

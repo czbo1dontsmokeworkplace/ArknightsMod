@@ -3113,11 +3113,6 @@ GoldenglowWand: {
 	Tooltip: ""
 }
 
-CardiganShield: {
-	DisplayName: Cardigan Shield
-	Tooltip: ""
-}
-
 BeehunterBag: {
 	DisplayName: Beehunter Bag
 	Tooltip: ""
@@ -3253,7 +3248,7 @@ KaltsitLegs: {
 
 CardiWeapon: {
 	DisplayName: Cardi Weapon
-	Tooltip: ""
+	Tooltip: Restores 40% of Max Life instantly when activated
 }
 
 EntelechiaScythe: {
