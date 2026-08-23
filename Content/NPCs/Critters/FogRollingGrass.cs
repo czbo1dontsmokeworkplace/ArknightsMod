@@ -28,7 +28,6 @@ namespace ArknightsMod.Content.NPCs.Critters
 			NPC.value = 0f;
 			NPC.knockBackResist = 1f;
 			NPC.noGravity = true;
-			NPC.noTileCollide = true;
 			NPC.friendly = false;
 			NPC.catchItem = (short)ModContent.ItemType<Items.Material.FogRollingGrass>();
 		}
