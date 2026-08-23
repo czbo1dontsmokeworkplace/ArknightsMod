@@ -18,6 +18,7 @@ namespace ArknightsMod.Content.SwingHelper
 	        SwingHelper.BladeFlicker = ModContent.Request<Effect>(index+"BladeFlicker",AssetRequestMode.ImmediateLoad).Value;
 	        SwingHelper.BladeInk = ModContent.Request<Effect>(index+"BladeInk",AssetRequestMode.ImmediateLoad).Value;
 	        SwingHelper.BladeWarp = ModContent.Request<Effect>(index+"BladeWarp",AssetRequestMode.ImmediateLoad);
+	        SwingHelper.BladeSlashWarp = ModContent.Request<Effect>(index+"BladeSlashWarp",AssetRequestMode.ImmediateLoad);
 			Defender_Player.shieldFx = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/ShieldDissolve",
 				AssetRequestMode.ImmediateLoad).Value;
 	        if (Main.netMode != Terraria.ID.NetmodeID.Server)
@@ -25,6 +26,9 @@ namespace ArknightsMod.Content.SwingHelper
 		        Filters.Scene["BladeWarp"] = new Filter(
 			        new ScreenShaderData(SwingHelper.BladeWarp, "Warp"), EffectPriority.VeryHigh);
 		        Filters.Scene["BladeWarp"].Load();
+		        Filters.Scene["BladeSlashWarp"] = new Filter(
+			        new ScreenShaderData(SwingHelper.BladeSlashWarp, "SlashWarp"), EffectPriority.VeryHigh);
+		        Filters.Scene["BladeSlashWarp"].Load();
 	        }
         }
     }

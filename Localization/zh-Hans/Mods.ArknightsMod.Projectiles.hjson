@@ -184,6 +184,7 @@ FierySlugFireballProjectile.DisplayName: 炽焰源石虫火球射弹
 // ParticleExplosionParticle.DisplayName: Particle Explosion Particle
 // Light_Vertical.DisplayName: Light_ Vertical
 // Light_horizontal.DisplayName: Light_horizontal
+// Light.DisplayName: Light
 // BlackExplosionParticle.DisplayName: Black Explosion Particle
 // BlackExplosion.DisplayName: Black Explosion
 // ProjLightCore.DisplayName: Proj Light Core
@@ -273,3 +274,31 @@ TransparentSlash.DisplayName: 透明斩击
 // PompeiiLavaCoreExplosion.DisplayName: Pompeii Lava Core Explosion
 // Mon3tr.DisplayName: Mon3tr
 // RaptorDroneBullet.DisplayName: Raptor Drone Bullet
+// TragodiaWaveSpawner.DisplayName: Tragodia Wave Spawner
+// EntelechiaScythe_Projectile.DisplayName: Entelechia Scythe_ Projectile
+// LaevatainProjectile_1.DisplayName: Laevatain Projectile_1
+// LaevatainProjectile_1_plan2.DisplayName: Laevatain Projectile_1_plan2
+// LaevatainProjectile_2.DisplayName: Laevatain Projectile_2
+// LaevatainProjectile_3.DisplayName: Laevatain Projectile_3
+// LaevatainProjectile_3_impactFire.DisplayName: Laevatain Projectile_3_impact Fire
+// LaevatainProjectile_3_swordDrop.DisplayName: Laevatain Projectile_3_sword Drop
+// LaevatainProjectile_normal.DisplayName: Laevatain Projectile_normal
+// LaevatainQiHitFlash.DisplayName: Laevatain Qi Hit Flash
+// LightParticle.DisplayName: Light Particle
+// RibbonProjectile.DisplayName: Ribbon Projectile
+// StarParticle.DisplayName: Star Particle
+// WaveProjectile.DisplayName: Wave Projectile
+// Pre_Attack.DisplayName: Pre_ Attack
+// TragodiaNormalAttack.DisplayName: Tragodia Normal Attack
+// SP1Extract.DisplayName: S P1 Extract
+// SP1TragodiaNormalAttack.DisplayName: S P1 Tragodia Normal Attack
+// InstinctCall.DisplayName: Instinct Call
+// InstinctCallDust.DisplayName: Instinct Call Dust
+// InstinctCallNoteDust.DisplayName: Instinct Call Note Dust
+// InstinctCallSuctionLines.DisplayName: Instinct Call Suction Lines
+// SP2ExtraVisual.DisplayName: S P2 Extra Visual
+// SP2TragodiaNormalAttack.DisplayName: S P2 Tragodia Normal Attack
+// SP2Wave.DisplayName: S P2 Wave
+// SP3ExtraVisual.DisplayName: S P3 Extra Visual
+// SP3TragodiaNormalAttack.DisplayName: S P3 Tragodia Normal Attack
+// SP3Wave.DisplayName: S P3 Wave

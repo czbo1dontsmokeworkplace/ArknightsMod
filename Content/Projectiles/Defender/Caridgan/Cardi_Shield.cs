@@ -66,6 +66,7 @@ public class Cardi_Shield : ModProjectile
         return false;
     }
 
+
 	public override bool PreDraw(ref Color lightColor)
     {
         SpriteBatch sb = Main.spriteBatch;

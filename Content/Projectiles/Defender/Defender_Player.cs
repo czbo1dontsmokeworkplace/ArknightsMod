@@ -19,8 +19,8 @@ namespace ArknightsMod.Content.Projectiles.Defender
 		public int CD = 0;
 		public bool OpenDefender = false;
 
-		private Texture2D shieldTex => ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Defender/Shield").Value;
-		private Texture2D noiseTex => ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Defender/ShieldNoise").Value;
+		private Texture2D shieldTex => ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Defender/Shield_tex").Value;
+		private Texture2D noiseTex => ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Defender/ShieldNoise_tex").Value;
 		public static Effect shieldFx;
 
 
@@ -47,7 +47,6 @@ namespace ArknightsMod.Content.Projectiles.Defender
 			parryTimer = 0;
 			openEffect = true;
 		}
-
 		/// <summary>
 		/// 画盾（纯贴图 sb.Draw + 消融 shader，effect 交给 spriteBatch 管理）
 		/// </summary>

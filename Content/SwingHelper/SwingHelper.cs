@@ -54,6 +54,10 @@ namespace ArknightsMod.Content.SwingHelper
         /// </summary>
         public static Asset<Effect> BladeWarp;
         /// <summary>
+        /// 沿刀光轨迹的局部空间扭曲
+        /// </summary>
+        public static Asset<Effect> BladeSlashWarp;
+        /// <summary>
         /// 水墨晕染效果
         /// </summary>
         public static Effect BladeInk;
@@ -63,13 +67,14 @@ namespace ArknightsMod.Content.SwingHelper
         public static Effect TestFX;
 
 
-        public enum SwingEffect
-        {
+	        public enum SwingEffect
+	        {
 	        Zero,
 	        Dissolve,
 	        Flow,
 	        Flicker,
-	        Warp,
+	        	Warp,
+	        	SlashWarp,
 	        Ink,
 	        Test
         }
@@ -369,6 +374,8 @@ namespace ArknightsMod.Content.SwingHelper
             {
 	            if (Filters.Scene["BladeWarp"].IsActive())
 		            Filters.Scene["BladeWarp"].Deactivate();
+	            if (Filters.Scene["BladeSlashWarp"].IsActive())
+		            Filters.Scene["BladeSlashWarp"].Deactivate();
 	            return true;
             }
             swordRad = RotationHelper.GetSwingRotation(startRad, endRad,swingTime,SwingUseTime,player.direction,scale
@@ -478,6 +485,26 @@ namespace ArknightsMod.Content.SwingHelper
 			        warpShader.Shader.Parameters["uStrength"].SetValue(0.02f); // 扭曲量
 			        Filters.Scene.Activate("BladeWarp", Main.LocalPlayer.Center);
 			        break;
+		        case SwingEffect.SlashWarp:
+			        // 将刀光历史位置转换为屏幕 UV，Shader 对这些刀身截面取并集。
+			        var slashShader = Filters.Scene["BladeSlashWarp"].GetShader();
+			        int segmentCount = Math.Min(index, 16);
+			        Vector4[] segments = new Vector4[16];
+			        Vector2 screenSize = new Vector2(Main.screenWidth, Main.screenHeight);
+			        for (int n = 0; n < segmentCount; n++)
+			        {
+				        Vector2 hand = oldHandPos[n] / screenSize;
+				        Vector2 tip = oldPos[n] / screenSize;
+				        segments[n] = new Vector4(hand.X, hand.Y, tip.X, tip.Y);
+			        }
+			        slashShader.Shader.Parameters["uSegments"].SetValue(segments);
+			        slashShader.Shader.Parameters["uSegmentCount"].SetValue(segmentCount);
+			        slashShader.Shader.Parameters["uWidth"].SetValue(32f / Main.screenHeight);
+			        slashShader.Shader.Parameters["uStrength"].SetValue(0.018f);
+			        slashShader.Shader.Parameters["uChromatic"].SetValue(0.006f);
+			        slashShader.UseOpacity(0.9f);
+			        Filters.Scene.Activate("BladeSlashWarp", Main.LocalPlayer.Center);
+			        break;
 		        case SwingEffect.Test:
 			        var fx = TestFX;
 			        fx.Parameters["uTransform"].SetValue(projection);
@@ -543,8 +570,8 @@ namespace ArknightsMod.Content.SwingHelper
         /// </summary>
         public virtual void DrawTrip(SwingEffect en, Color Tripcolor, SpriteBatch sb,TripTex tex = TripTex.Streamline)
         {
-	        GetCatmullPos(oldHandPos, CatmullScale, out Vector2[] TriphandPos);
-	        GetCatmullPos(oldPos, CatmullScale, out Vector2[] TripswordPos);
+	        GetCatmullPos(oldHandPos, out Vector2[] TriphandPos);
+	        GetCatmullPos(oldPos, out Vector2[] TripswordPos);
 	        trip.Clear();
 	        for (int i = 0; i < TriphandPos.Length; i++)
 	        {
@@ -575,8 +602,8 @@ namespace ArknightsMod.Content.SwingHelper
 		/// <param name="sb"></param>
         public virtual void DrawTrip(SwingEffect en, Color[] Tripcolor, SpriteBatch sb,TripTex tex =  TripTex.Streamline)
         {
-	        GetCatmullPos(oldHandPos, CatmullScale, out Vector2[] TriphandPos);
-	        GetCatmullPos(oldPos, CatmullScale, out Vector2[] TripswordPos);
+	        GetCatmullPos(oldHandPos, out Vector2[] TriphandPos);
+	        GetCatmullPos(oldPos, out Vector2[] TripswordPos);
 	        trip.Clear();
 	        for (int i = 0; i < TriphandPos.Length; i++)
 	        {
@@ -602,8 +629,8 @@ namespace ArknightsMod.Content.SwingHelper
 
         public virtual void DrawTrip(SwingEffect en, Color Tripcolor, SpriteBatch sb,float rot,int point = 16,TripTex tex = TripTex.Afterimage)
         {
-	        GetCatmullPos(oldHandPos, CatmullScale, out Vector2[] TriphandPos);
-	        GetCatmullPos(oldPos, CatmullScale, out Vector2[] TripswordPos);
+	        GetCatmullPos(oldHandPos, out Vector2[] TriphandPos);
+	        GetCatmullPos(oldPos, out Vector2[] TripswordPos);
 	        trip.Clear();
 	        List<Vertex>[] tripPos = new List<Vertex>[point-1];
 	        for (int j = 0; j < point-1; j++) {
@@ -648,8 +675,8 @@ namespace ArknightsMod.Content.SwingHelper
 
         public virtual void DrawTrip(SwingEffect en, Color[] Tripcolor, SpriteBatch sb,float rot,int point = 16,TripTex tex = TripTex.Afterimage)
         {
-	        GetCatmullPos(oldHandPos, CatmullScale, out Vector2[] TriphandPos);
-	        GetCatmullPos(oldPos, CatmullScale, out Vector2[] TripswordPos);
+	        GetCatmullPos(oldHandPos, out Vector2[] TriphandPos);
+	        GetCatmullPos(oldPos, out Vector2[] TripswordPos);
 	        trip.Clear();
 	        List<Vertex>[] tripPos = new List<Vertex>[point-1];
 	        for (int j = 0; j < point-1; j++) {
@@ -694,8 +721,8 @@ namespace ArknightsMod.Content.SwingHelper
 
 		public virtual void DrawTrip(SwingEffect en, Color[] Tripcolor, SpriteBatch sb,float rot,Texture2D tex,int point = 16)
         {
-	        GetCatmullPos(oldHandPos, CatmullScale, out Vector2[] TriphandPos);
-	        GetCatmullPos(oldPos, CatmullScale, out Vector2[] TripswordPos);
+	        GetCatmullPos(oldHandPos, out Vector2[] TriphandPos);
+	        GetCatmullPos(oldPos, out Vector2[] TripswordPos);
 	        trip.Clear();
 	        List<Vertex>[] tripPos = new List<Vertex>[point-1];
 	        for (int j = 0; j < point-1; j++) {
@@ -740,8 +767,8 @@ namespace ArknightsMod.Content.SwingHelper
 
 	    public virtual void DrawTrip(SwingEffect en, Color Tripcolor, SpriteBatch sb,float rot,Texture2D tex,int point = 16)
         {
-	        GetCatmullPos(oldHandPos, CatmullScale, out Vector2[] TriphandPos);
-	        GetCatmullPos(oldPos, CatmullScale, out Vector2[] TripswordPos);
+	        GetCatmullPos(oldHandPos, out Vector2[] TriphandPos);
+	        GetCatmullPos(oldPos, out Vector2[] TripswordPos);
 	        trip.Clear();
 	        List<Vertex>[] tripPos = new List<Vertex>[point-1];
 	        for (int j = 0; j < point-1; j++) {
@@ -825,8 +852,8 @@ namespace ArknightsMod.Content.SwingHelper
 
             if (!drawTrip)
                 return;
-            GetCatmullPos(oldHandPos, CatmullScale, out Vector2[] TriphandPos);
-            GetCatmullPos(oldPos, CatmullScale, out Vector2[] TripswordPos);
+            GetCatmullPos(oldHandPos, out Vector2[] TriphandPos);
+            GetCatmullPos(oldPos, out Vector2[] TripswordPos);
             trip.Clear();
             for (int i = 0; i < TriphandPos.Length; i++)
             {
@@ -1077,9 +1104,8 @@ namespace ArknightsMod.Content.SwingHelper
         /// 获取细分曲线坐标
         /// </summary>
         /// <param name="pos">坐标数组</param>
-        /// <param name="CatmullRom">细分数</param>
         /// <param name="catmullPos">返回值</param>
-        public void GetCatmullPos(Vector2[] pos, float CatmullRom, out Vector2[] catmullPos)
+        public void GetCatmullPos(Vector2[] pos, out Vector2[] catmullPos)
         {
             catmullPos = new Vector2[index * CatmullScale];
             int k = 0;
