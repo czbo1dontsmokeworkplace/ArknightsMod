@@ -525,13 +525,6 @@ VanillaAxe: {
 	}
 }
 
-CardiganShield: {
-	1: {
-		Label: 生命回复·α型
-		Desc: 立即恢复最大生命的[c/3791db:40%]
-	}
-}
-
 PlumePike: {
 	1: {
 		Label: 迅捷打击·α型
@@ -873,8 +866,8 @@ CuoraWeapon: {
 
 CardiWeapon: {
 	1: {
-		// Label: Mods.ArknightsMod.Skills.CardiWeapon.1.Label
-		// Desc: Mods.ArknightsMod.Skills.CardiWeapon.1.Desc
+		Label: 生命回复·α型
+		Desc: 立即恢复最大生命的[c/3791db:40%]
 	}
 }
 

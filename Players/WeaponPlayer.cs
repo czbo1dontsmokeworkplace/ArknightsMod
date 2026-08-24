@@ -14,6 +14,7 @@ using ArknightsMod.Content.Items.Weapons.Guard.SilverAsh;
 using ArknightsMod.Content.Items.Weapons.Guard.Thorns;
 using ArknightsMod.Content.Items.Weapons.Guard.Surtr;
 using ArknightsMod.Content.Items.Weapons.Sniper.Exusiai;
+using ArknightsMod.Content.Items.Weapons.Sniper.Jessica;
 using ArknightsMod.Content.Items.Weapons.Sniper.Kroos;
 using ArknightsMod.Content.Items.Weapons.Sniper.KroosAlter;
 using ArknightsMod.Content.Items.Weapons.Sniper.Pozemka;
@@ -114,6 +115,7 @@ namespace ArknightsMod.Players
 		public bool HoldTyphonBow = false;
 		public bool HoldHazeMagicBook = false;
 		public bool HoldSurtrLaevatain = false;
+		public bool HoldJessicaGun = false;
 
 		private int oldHeld;
 		private int oldSkill;
@@ -325,6 +327,7 @@ namespace ArknightsMod.Players
 			HoldTyphonBow  = Main.LocalPlayer.HeldItem.ModItem is TyphonBow;
 			HoldHazeMagicBook  = Main.LocalPlayer.HeldItem.ModItem is HazeMagicBook;
 			HoldSurtrLaevatain  = Main.LocalPlayer.HeldItem.ModItem is SurtrLaevatain;
+			HoldJessicaGun  = Main.LocalPlayer.HeldItem.ModItem is JessicaGun;
 			// 基于武器的技能系统
 			hasNearbyEnemy = false;
 			// 旧版武器支持
@@ -674,6 +677,12 @@ namespace ArknightsMod.Players
 				StockCount -= 1;
 			}
 			chargeOpen = true;
+			// 消耗了一层库存即代表该技能已被实际使用：清除"初始就绪"标记，
+			// 否则下方 ResetEffects 的 `else if (ark.chargeReady[Skill] && StockCount == 0)`
+			// 会在技能结束后（单层技能 StockCount 立刻归零）把 InitSP 预灌进 SkillCharge，
+			// 导致技力不从 0 而是从初始技力开始回复（复活后尤为明显）。
+			if (Player.HeldItem.ModItem is UpgradeWeaponBase ark)
+				ark.chargeReady[Skill] = false;
 		}
 
 		public void SetSkillData() {
@@ -1034,6 +1043,25 @@ namespace ArknightsMod.Players
 				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
 				StockMaxS2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
 				StockMaxS3List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+				SetSkillData();
+			}
+
+			else if (HoldJessicaGun) {
+				IconName = "JessicaGun";
+				HowManySkills = 2;
+				SkillLevel = new() { 10, 10, 10 };
+				ChargeTypeIsPerSecond = new() { false, true, false };
+				AutoTrigger = new() { false, false, false };
+				ShowSummonIconBySkills = new() { false, false, false };
+
+				InitialSPs1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				InitialSPs2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				MaxSPs1List     = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				MaxSPs2List     = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				SkillActiveTimeS1List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f };
+				SkillActiveTimeS2List = new() { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f };
+				StockMaxS1List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				StockMaxS2List = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 				SetSkillData();
 			}
 

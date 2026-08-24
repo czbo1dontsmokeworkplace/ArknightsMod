@@ -1,4 +1,5 @@
-﻿using ArknightsMod.Content.Items.Material;
+﻿using System;
+using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
 using Terraria;
@@ -65,9 +66,7 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Cardigan
 						{
 							modPlayer.SkillActive = true;
 							modPlayer.SkillTimer = 0;
-							player.statLife += (int)((player.statLifeMax2 ) / 0.3f);
-							if (player.statLife > (player.statLifeMax2))
-								player.statLife = (player.statLifeMax2);
+							player.statLife = Math.Min(player.statLife + (int)(player.statLifeMax * 0.4f), player.statLifeMax2);
 							modPlayer.DelStockCount();
 							SoundEngine.PlaySound(SkillActive3, player.Center);
 						}

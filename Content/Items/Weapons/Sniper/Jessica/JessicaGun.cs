@@ -46,8 +46,8 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Jessica
 			var mp = player.GetModPlayer<WeaponPlayer>();
 
 			if (ArknightsKeybinds.SkillActivatePressed(player)) {
-				// S1 已改为攻击充能+自动释放，技能键对其不生效；此处仅保留 S2 的手动开启
-				if (mp.Skill == 0 && mp.StockCount > 0 && !mp.SkillActive) {
+				// 技能键开启当前选中的技能（S1 强力击·B / S2 掩护烟幕），消耗一层库存
+				if (mp.StockCount > 0 && !mp.SkillActive) {
 					mp.SkillActive = true;
 					mp.SkillTimer = 0;
 					mp.DelStockCount();

@@ -27,56 +27,24 @@ namespace ArknightsMod.Systems.Gameplay.Damage
 		public float artsResistance;
 
 		public override void ModifyHitByItem(NPC npc, Player player, Item item, ref NPC.HitModifiers modifiers) {
-			if (artsResistance > 0f && ArtsWeaponRegistry.ArtsItemTypes.Contains(item.type))
+			if (artsResistance > 0f && IsArtsItemHit(player, item))
 				modifiers.FinalDamage *= (1f - artsResistance);
 		}
 
 		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers) {
-			if (artsResistance > 0f && ArtsWeaponRegistry.ArtsProjectileTypes.Contains(projectile.type))
+			// 弹幕算不算法伤，在它生成那一刻就判定好并记在 ArtsProjectileMarker 上了，这里只是读结果。
+			if (artsResistance > 0f && projectile.GetGlobalProjectile<ArtsProjectileMarker>().IsArtsDamage)
 				modifiers.FinalDamage *= (1f - artsResistance);
 		}
-	}
 
-	/// <summary>
-	/// 被判定为"法术伤害"的原版武器登记表。命中走物品挥砍/戳刺判定的放 ArtsItemTypes，
-	/// 命中走独立弹幕（悠悠球、回旋镖等）的放 ArtsProjectileTypes——两边都要看攻击到底是
-	/// 通过哪种判定命中的，只登记其中一边会导致武器实际打出去没有被识别成法伤。
-	/// </summary>
-	public static class ArtsWeaponRegistry
-	{
-		// 只有这 4 件在原版 Item.SetDefaults 里没设 noMelee=true——它们的挥砍本身就有伤害判定，
-		// 除了下面 ArtsProjectileTypes 里各自对应的剑气/弹幕以外，物品本身的挥砍命中也要算。
-		// （核对方式：反编译源码里逐个查了 case 段的 noMelee/shoot 字段，不是猜的。）
-		public static readonly HashSet<int> ArtsItemTypes = new() {
-			ItemID.InfluxWaver,    // 波涌之刃
-			ItemID.LightsBane,     // 魔光剑
-			ItemID.EnchantedSword, // 附魔剑
-			ItemID.Frostbrand,     // 寒霜剑（霜印剑）
-		};
+		/// <summary>物品直接命中（近战挥砍/戳刺）算不算法伤：原版武器查固定表，模组武器走带条件的规则。</summary>
+		private static bool IsArtsItemHit(Player player, Item item) {
+			if (ArtsWeaponRegistry.VanillaArtsItemTypes.Contains(item.type))
+				return true;
 
-		// 现代 Terraria 里大部分"剑挥出去"的伤害其实是这把剑自己生成的弹幕在打，不是物品自带的
-		// 近战碰撞框（noMelee=true）。下面这些武器基本都属于这一类，弹幕名字经常和物品名不一样
-		// （比如 附魔剑 打的是 EnchantedBeam，北极 打的是 NorthPoleWeapon），一样是查反编译源码核对的。
-		public static readonly HashSet<int> ArtsProjectileTypes = new() {
-			ProjectileID.IceSickle,       // 冰雪镰刀（回旋镖类）
-			ProjectileID.Meowmere,        // 彩虹喵之刃（纯法术弹幕）
-			ProjectileID.CorruptYoyo,     // 抑郁球
-			ProjectileID.Cascade,         // 喷流球
-			ProjectileID.HelFire,         // 狱火球
-			ProjectileID.Kraken,          // 克拉肯球
-			ProjectileID.MushroomSpear,   // 蘑菇长矛（noMelee，纯弹幕）
-			ProjectileID.DarkLance,       // 暗黑长枪（noMelee，纯弹幕）
-			ProjectileID.NorthPoleWeapon, // 北极（noMelee，纯弹幕）
-			ProjectileID.TheHorsemansBlade,// 无头骑士剑（noMelee，纯弹幕）
-			ProjectileID.TrueNightsEdge,  // 真永夜刃（noMelee，纯弹幕）
-			ProjectileID.NightsEdge,      // 永夜刃（noMelee，纯弹幕）
-			ProjectileID.CobaltNaginata,  // 钴薙刀（noMelee，纯弹幕）
-			ProjectileID.MonkStaffT2,     // 恐怖关刀（noMelee，纯弹幕）
-			ProjectileID.LightsBane,      // 魔光剑的剑气（挥砍本身也算，见上）
-			ProjectileID.InfluxWaver,     // 波涌之刃的光刃（挥砍本身也算，见上）
-			ProjectileID.EnchantedBeam,   // 附魔剑的剑气（挥砍本身也算，见上）
-			ProjectileID.FrostBoltSword,  // 寒霜剑的冰刃（挥砍本身也算，见上）
-		};
+			ArtsWeaponRule rule = ArtsWeaponRegistry.GetRule(item.type);
+			return rule != null && rule.DirectHit(player);
+		}
 	}
 
 	/// <summary>
