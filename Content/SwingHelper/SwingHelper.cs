@@ -22,7 +22,7 @@ namespace ArknightsMod.Content.SwingHelper
 {
     public class SwingHelper
     {
-        public SwingHelper(int index,int catmullScale)
+        public SwingHelper(int index,int catmullScale,bool isBackArm = false)
         {
             SwingUseTime = index;
             CatmullScale = catmullScale;
@@ -32,6 +32,7 @@ namespace ArknightsMod.Content.SwingHelper
             oldWorldPos = new Vector2[index];
             oldWorldHandPos = new Vector2[index];
             oldRot = new float[index];
+            this.isBackArm = isBackArm;
         }
         #region 提供的着色器资源
         /// <summary>
@@ -88,6 +89,10 @@ namespace ArknightsMod.Content.SwingHelper
 
         #region 基础的字段及属性
         /// <summary>
+        /// 是否为后手
+        /// </summary>
+        public bool isBackArm;
+        /// <summary>
         /// 绑定的弹幕
         /// </summary>
         public Projectile proj;
@@ -140,14 +145,6 @@ namespace ArknightsMod.Content.SwingHelper
         /// 挥舞总弧度
         /// </summary>
         public float swingRad;
-        /// <summary>
-        /// 手状态
-        /// </summary>
-        public Player.CompositeArmStretchAmount handType = Player.CompositeArmStretchAmount.Full;
-        /// <summary>
-        /// 前手位置
-        /// </summary>
-        public Vector2 frontHandPos => player.GetFrontHandPosition(handType, armRad);
         /// <summary>
         /// 剑柄位置
         /// </summary>
@@ -333,7 +330,6 @@ namespace ArknightsMod.Content.SwingHelper
         /// </summary>
         public virtual void Move()
         {
-            player.heldProj = proj.whoAmI;
             playerX = Math.Abs(player.velocity.X);
             if (Math.Abs(player.velocity.Y) > 0.01f) {
                 armRad = MathHelper.ToRadians(-20f);
@@ -369,7 +365,6 @@ namespace ArknightsMod.Content.SwingHelper
         /// </summary>
         public virtual bool Swing(float hold = 0.1f, float recovery = 0.15f)
         {
-            player.heldProj = proj.whoAmI;
             if (swingTime > SwingUseTime)
             {
 	            if (Filters.Scene["BladeWarp"].IsActive())
@@ -558,11 +553,15 @@ namespace ArknightsMod.Content.SwingHelper
 		        sword[2] = new Vertex(swordPos_Draw[1], new Vector3(1, 0, 0), Color.White);
 		        sword[3] = new Vertex(swordPos_Draw[3], new Vector3(1, 1, 0), Color.White);
 	        }
+	        sb.End();
+	        sb.Begin();
 	        Main.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
 	        Main.graphics.GraphicsDevice.Textures[0] = projTexture;
 	        if (sword.Count >= 4)
 		        Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, sword.ToArray(), 0,
 			        sword.Count - 2);
+	        sb.End();
+	        sb.Begin();
         }
 
         /// <summary>
@@ -573,7 +572,7 @@ namespace ArknightsMod.Content.SwingHelper
 	        GetCatmullPos(oldHandPos, out Vector2[] TriphandPos);
 	        GetCatmullPos(oldPos, out Vector2[] TripswordPos);
 	        trip.Clear();
-	        for (int i = 0; i < TriphandPos.Length; i++)
+	        for (int i = 0; i < TriphandPos.Length-1; i++)
 	        {
 		        if (TriphandPos[i] == Vector2.Zero)
 			        continue;
@@ -884,15 +883,22 @@ namespace ArknightsMod.Content.SwingHelper
         /// <param name="hand"></param>
         /// <param name="handPlayerDir"></param>
         public virtual void SwordAHandCon(float swordToHand,float hand,float length,float handleLen,float swordlen,
-	        bool savePos = true,bool handPlayerDir = true)
+	        bool savePos = false,bool handPlayerDir = true)
         {
             float armAngle;
             if(handPlayerDir)
                 armAngle = hand - MathF.PI / 2f * player.direction;
             else
                 armAngle = hand - MathF.PI / 2f;
-            player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, armAngle);
-            handlePos = player.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, armAngle);
+            if (isBackArm) {
+	            player.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, armAngle);
+	            handlePos = player.GetBackHandPosition(Player.CompositeArmStretchAmount.Full, armAngle);
+            }
+            else {
+	            player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, armAngle);
+	            handlePos = player.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, armAngle);
+	            player.heldProj = proj.whoAmI;
+            }
             if(handPlayerDir)
             {
                 swordToHand = player.direction == 1? swordToHand: MathF.PI + swordToHand;

@@ -3618,3 +3618,8 @@ GlowingTruffle: {
 	DisplayName: Glowing Truffle
 	Tooltip: If it isn't dug up and savored, it hardly deserves such an honor.
 }
+
+Vulcan_Weapon: {
+	DisplayName: Vulcan_ Weapon
+	Tooltip: ""
+}

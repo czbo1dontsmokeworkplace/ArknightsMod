@@ -3991,3 +3991,8 @@ GlowingTruffle: {
 	DisplayName: 光彩松露
 	Tooltip: 如果不被挖掘与品尝，它本配不上如此殊荣。
 }
+
+Vulcan_Weapon: {
+	// DisplayName: Vulcan_ Weapon
+	// Tooltip: ""
+}

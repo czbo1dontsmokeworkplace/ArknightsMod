@@ -1,59 +1,65 @@
 using ArknightsMod.Common.VisualEffects;
+using ArknightsMod.Content.Items.Weapons.Defender.Beagle;
 using ArknightsMod.Content.Items.Weapons.Defender.Durnar;
-using ArknightsMod.Players;
+using ArknightsMod.Content.Items.Weapons.Defender.Vulcan;
 using ArknightsMod.Content.SwingHelper;
+using ArknightsMod.Players;
+using Microsoft.Build.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using RuneSKill.Content.NeedTool;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Terraria;
-using Terraria.ID;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameInput;
+using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace ArknightsMod.Content.Projectiles.Defender.Durnar
+namespace ArknightsMod.Content.Projectiles.Defender.Vulcan
 {
-	public class DN_Shield : ModProjectile
+	public class Vulcan_Shield : ModProjectile
 	{
-		Player player => Main.player[Projectile.owner];
-		Item item => player.HeldItem;
-		private Texture2D ShieldTex {
-			get {
-				if (projMode == ProjMode.Attack)
-					return ModContent.Request<Texture2D>($"{Texture}_Attack").Value;
-				return TextureAssets.Projectile[ModContent.ProjectileType<DN_Shield>()].Value;
-				;
-			}
+		public ShieldHelper helper;
+		public Player player => Main.player[Projectile.owner];
+		public override void SetDefaults()
+		{
+			Projectile.width = 10; // ?�������?�����
+			Projectile.height = 10; // ?�������?��?�
+			Projectile.friendly = true; // ?������?��?���
+			Projectile.penetrate = -1; // ?�������?�?
+			Projectile.tileCollide = false; // ?���?����?��?
+			Projectile.usesLocalNPCImmunity = true; // ?��?�����?
+			Projectile.ownerHitCheck = true; // ?��?�����?���������?�����??�?�����?�?��?����?�?
+			Projectile.DamageType = DamageClass.MeleeNoSpeed; // ?����?��??����
+			Projectile.ignoreWater = true;
+			Projectile.localNPCHitCooldown = 11;
 		}
-		private readonly ShieldHelper shieldHelper = new();
 
-		public override void SetDefaults() {
-			shieldHelper.SetDefaults(Projectile, (int)attackMaxTime + 1);
+		public enum ShieldType {Move,Defender}
+		public ShieldType projMode =  ShieldType.Move;
+		public override void OnSpawn(IEntitySource source) {
+			helper = new ShieldHelper();
 		}
-		private ProjMode projMode = ProjMode.Move;
+
 		public override void AI() {
-			Projectile.damage = item.damage;
-			if (player.dead || !player.active || item.type != ModContent.ItemType<DN_Weapon>())
+			if(player.HeldItem.type != ModContent.ItemType<Vulcan_Weapon>())
 				Projectile.Kill();
 			Projectile.timeLeft = 2;
 			switch (projMode) {
-				case ProjMode.Move:
+				case ShieldType.Move:
 					Move();
 					break;
-				case ProjMode.Defender:
+				case ShieldType.Defender:
 					Defender();
-					break;
-				case ProjMode.Attack:
-					Attack();
 					break;
 			}
 		}
 
 		public override bool? CanDamage() {
-			if (projMode == ProjMode.Attack)
-				return true;
 			return false;
 		}
 
@@ -65,26 +71,17 @@ namespace ArknightsMod.Content.Projectiles.Defender.Durnar
 				SamplerState.AnisotropicClamp, DepthStencilState.None,
 				RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 			Draw_Shield(sb);
-			shieldHelper.mp.DrawEffect();
+			helper.mp.DrawEffect();
 			sb.End();
 			sb.Begin();
 			return false;
 		}
 		private bool press = false;
 		public void Move() {
-			shieldHelper.UpdateMovePose(Projectile, player);
+			helper.UpdateMovePose(Projectile, player);
 			if (Main.myPlayer == player.whoAmI) {
 				if (Main.mouseRight && player.itemTime == 0) {
-					projMode = ProjMode.Defender;
-				}
-				var modPlayer = player.GetModPlayer<DNProj_Player>();
-				if (modPlayer.ShieldAttackMode && PlayerInput.MouseInfo.LeftButton == ButtonState.Pressed && !press) {
-					press = true;
-					attackRad = MathF.Atan2((Main.MouseWorld - player.MountedCenter).Y, (Main.MouseWorld - player.MountedCenter).X);
-					projMode = ProjMode.Attack;
-					player.direction = (Main.MouseWorld - player.MountedCenter).X >= 0 ? 1 : -1;
-					attackTime = 0;
-					CDTime = CDTimeMax;
+					projMode = ShieldType.Defender;
 				}
 			}
 		}
@@ -133,7 +130,7 @@ namespace ArknightsMod.Content.Projectiles.Defender.Durnar
 			}
 			if (prog2 < 0) {
 				press = false;
-				projMode = ProjMode.Move;
+				projMode =  ShieldType.Move;
 			}
 			Vector2 fix = new Vector2(1, 0).RotatedBy(attackRad);
 			Projectile.Center += fix * Length;
@@ -141,14 +138,15 @@ namespace ArknightsMod.Content.Projectiles.Defender.Durnar
 		public void Defender() {
 			if (Main.myPlayer == player.whoAmI) {
 				if (!Main.mouseRight) {
-					projMode = ProjMode.Move;
+					projMode = ShieldType.Move;
 				}
 			}
-			shieldHelper.UpdateDefenderPose(Projectile, player);
+			helper.UpdateDefenderPose(Projectile, player);
 		}
 
+		public Texture2D ShieldTex => TextureAssets.Projectile[Projectile.type].Value;
 		public void Draw_Shield(SpriteBatch sb) {
-			shieldHelper.DrawShield(Projectile, player, ShieldTex, projMode == ProjMode.Defender);
+			helper.DrawShield(Projectile, player, ShieldTex, projMode == ShieldType.Defender);
 		}
 
 		public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs,
