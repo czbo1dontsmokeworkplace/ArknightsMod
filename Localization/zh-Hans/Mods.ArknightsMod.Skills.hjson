@@ -66,7 +66,7 @@ PozemkaCrossbow: {
 		Label: 点题
 		Desc:
 			'''
-			点击右键立即对前方进行[c/3791db:3]次攻击
+			点击技能键立即对前方进行[c/3791db:3]次攻击
 			每次造成自身攻击力[c/3791db:230%]的物理伤害
 			[c/EDA128:可充能2次]
 			'''
@@ -91,24 +91,25 @@ AdnachielCrossbow: {
 
 ExusiaiVector: {
 	1: {
+		Label: 冲锋模式
 		Desc:
 			'''
 			下次攻击变为[c/3791db:3]连射
 			每次射击造成相当于攻击力[c/3791db:145%]的伤害
 			'''
-		Label: 冲锋模式
 	}
 
 	2: {
+		Label: 扫射模式
 		Desc:
 			'''
 			攻击变为[c/3791db:4]连射
 			每次射击造成相当于攻击力[c/3791db:125%]的伤害
 			'''
-		Label: 扫射模式
 	}
 
 	3: {
+		Label: 过载模式
 		Desc:
 			'''
 			攻击变为[c/3791db:5]连射
@@ -116,19 +117,18 @@ ExusiaiVector: {
 			攻击力提升至[c/3791db:110%]
 			[c/EDA128:技能会自动开启]
 			'''
-		Label: 过载模式
 	}
 }
 
 KroosAlterCrossbow: {
 	1: {
+		Label: 无痕
 		Desc:
 			'''
 			攻击力[c/3791db:+40%]
 			攻击变为[c/3791db:2]连射
 			大幅降低仇恨值
 			'''
-		Label: 无痕
 	}
 
 	2: {
@@ -144,25 +144,26 @@ KroosAlterCrossbow: {
 
 Lava_Dagger: {
 	1: {
-		Desc: 攻击速度[c/3791db:+50]
 		Label: 战术咏唱·α型
+		Desc: 攻击速度[c/3791db:+50]
 	}
 }
 
 Shirayuki_Shuriken: {
 	1: {
-		Desc: 射弹可达到的最远距离[c/3791db:增加]
 		Label: 敌飙
+		Desc: 射弹可达到的最远距离[c/3791db:增加]
 	}
 
 	2: {
-		Desc: 攻击变为投掷回旋的大飞镖，使命中目标每秒受到相当于攻击力[c/3791db:80%]的伤害
 		Label: 凝武
+		Desc: 攻击变为投掷回旋的大飞镖，使命中目标每秒受到相当于攻击力[c/3791db:80%]的伤害
 	}
 }
 
 NianWeapon: {
 	1: {
+		Label: 锡灼
 		Desc:
 			'''
 			防御力[c/3791db:+70%]
@@ -170,7 +171,6 @@ NianWeapon: {
 			普通攻击造成[c/3791db:法术]伤害
 			[c/AAA8AA:技能期间年将手中大盾砸向敌人，造成][c/3791db:100%][c/AAA8AA:的法术伤害]
 			'''
-		Label: 锡灼
 	}
 
 	2: {
@@ -186,6 +186,7 @@ NianWeapon: {
 	}
 
 	3: {
+		Label: 铁御
 		Desc:
 			'''
 			攻击力[c/3791db:+120%]
@@ -194,14 +195,13 @@ NianWeapon: {
 			并获得抵抗
 			[c/AAA8AA:实际抵抗阻挡队友加防不生效，大盾跟随着鼠标进攻造成][c/3791db:100%][c/AAA8AA:的物理伤害]
 			'''
-		Label: 铁御
 	}
 }
 
 ThornsWeapon: {
 	1: {
-		Desc: 攻击力[c/3791db:+100%]
 		Label: 攻击力强化·γ型
+		Desc: 攻击力[c/3791db:+100%]
 	}
 
 	2: {
@@ -216,6 +216,7 @@ ThornsWeapon: {
 	}
 
 	3: {
+		Label: 至高之术
 		Desc:
 			'''
 			射弹可达到的最远距离[c/3791db:增加]并且可追踪目标
@@ -224,21 +225,20 @@ ThornsWeapon: {
 			远程攻击不再降低攻击力
 			[c/EDA128:第二次及以后使用时能力加成变为最初的两倍，且持续时间无限]
 			'''
-		Label: 至高之术
 	}
 }
 
 BeagleWeapon: {
 	1: {
-		Desc: 防御力[c/3791db:+25%]
 		Label: 防御力强化·α型
+		Desc: 防御力[c/3791db:+25%]
 	}
 }
 
 SilverAshWeapon: {
 	1: {
-		Desc: 下次攻击的攻击力提高至[c/3791db:290%]
 		Label: 强力击·γ型
+		Desc: 下次攻击的攻击力提高至[c/3791db:290%]
 	}
 
 	2: {
@@ -254,33 +254,33 @@ SilverAshWeapon: {
 	}
 
 	3: {
+		Label: 真银斩
 		Desc:
 			'''
 			防御力[c/3791db:-70%]
 			攻击力[c/3791db:+200%]
 			每次攻击变为一次[c/3791db:大范围]斩击，攻击伤害不再衰减
 			'''
-		Label: 真银斩
 	}
 }
 
 ChenSword_Item: {
 	1: {
+		Label: 鞘击
 		Desc:
 			'''
 			使用刀鞘砸向敌人，造成相当于攻击力[c/3791db:320%]的物理伤害
 			令命中目标[c/000000:混乱][c/3791db:1.5]秒
 			'''
-		Label: 鞘击
 	}
 
 	2: {
+		Label: 赤霄·拔刀
 		Desc:
 			'''
 			短暂蓄力后对前方范围内的敌人造成相当于攻击力[c/3791db:500%]的[c/EDA128:物理]伤害
 			和相当于攻击力[c/3791db:500%]的[c/EDA128:法术]伤害（可持续长按）
 			'''
-		Label: 赤霄·拔刀
 	}
 
 	3: {
@@ -368,42 +368,46 @@ ChargeReady: 初始技力已恢复
 
 ValarqvinWeapon: {
 	2: {
-		// Desc: Mods.ArknightsMod.Skills.ValarqvinWeapon.2.Desc
-		// Label: Mods.ArknightsMod.Skills.ValarqvinWeapon.2.Label
+		Label: 我见枯朽之后
+		Desc: 攻速提升50%，同时攻击2个目标
 	}
 
 	1: {
-		// Desc: Mods.ArknightsMod.Skills.ValarqvinWeapon.1.Desc
-		// Label: Mods.ArknightsMod.Skills.ValarqvinWeapon.1.Label
+		Label: 我见崩毁之前
+		Desc:
+			'''
+			下一次攻击的攻击力提高至130%，并提高调往损伤转化率
+			可充能两次
+			'''
 	}
 }
 
 HazeMagicBook: {
 	2: {
+		Label: 赤色之瞳
 		Desc:
 			'''
 			生命上限[c/f6643b:-75%]
 			攻击力[c/3791db:+60%]
 			攻击速度[c/3791db:+60%]
 			'''
-		Label: 赤色之瞳
 	}
 
 	1: {
-		Desc: 攻击力[c/3791db:+80%]
 		Label: 攻击力强化·β型
+		Desc: 攻击力[c/3791db:+80%]
 	}
 }
 
 DN_Weapon: {
 	1: {
-		// Label: Mods.ArknightsMod.Skills.DN_Weapon.1.Label
-		// Desc: Mods.ArknightsMod.Skills.DN_Weapon.1.Desc
+		Label: 攻击力强化·β型
+		Desc: 攻击力[c/3791db:+80%]
 	}
 
 	2: {
-		// Label: Mods.ArknightsMod.Skills.DN_Weapon.2.Label
-		// Desc: Mods.ArknightsMod.Skills.DN_Weapon.2.Desc
+		Label: 起盾回击
+		Desc: 攻击力[c/3791db:+80%]，攻击方式改为用盾牌冲锋
 	}
 }
 
@@ -538,11 +542,11 @@ PlumePike: {
 
 GitanoUmbrella: {
 	1: {
-		// Label: 迅捷打击·α型
+		// Label: Swift Strike α
 		/* Desc:
 			'''
-			攻击力[c/3791db:+25%]
-			攻击速度[c/3791db:+25]
+			ATK [c/3791db:+25%]
+			ASPD [c/3791db:+25]
 			''' */
 	}
 }
@@ -847,20 +851,25 @@ SceneCamera: {
 
 CardiganWeapon: {
 	1: {
-		// Label: Mods.ArknightsMod.Skills.CardiganWeapon.1.Label
-		// Desc: Mods.ArknightsMod.Skills.CardiganWeapon.1.Desc
+		Label: 生命回复·α型
+		Desc: 立即回复最大生命的[c/3791db:40%]
 	}
 }
 
 CuoraWeapon: {
 	1: {
-		// Label: Mods.ArknightsMod.Skills.CuoraWeapon.1.Label
-		// Desc: Mods.ArknightsMod.Skills.CuoraWeapon.1.Desc
+		Label: 防御力强化·γ型
+		Desc: 防御力[c/3791db:+80%]
 	}
 
 	2: {
-		// Label: Mods.ArknightsMod.Skills.CuoraWeapon.2.Label
-		// Desc: Mods.ArknightsMod.Skills.CuoraWeapon.2.Desc
+		Label: 壳状防御
+		Desc:
+			'''
+			防御力[c/3791db:+130%]
+			每秒回复最大生命的[c/3791db:20%]
+			移动速度[c/f6643b:-10%]
+			'''
 	}
 }
 
@@ -890,34 +899,64 @@ ClosureScanGun: {
 
 SurtrLaevatain: {
 	1: {
-		// Label: Mods.ArknightsMod.Skills.SurtrLaevatain.1.Label
-		// Desc: Mods.ArknightsMod.Skills.SurtrLaevatain.1.Desc
+		Label: 烈焰魔剑
+		Desc:
+			'''
+			攻击力[c/3791db:+210%]
+			攻击得到强化
+			持续[c/3791db:35]秒
+			'''
 	}
 
 	2: {
-		// Label: Mods.ArknightsMod.Skills.SurtrLaevatain.2.Label
-		// Desc: Mods.ArknightsMod.Skills.SurtrLaevatain.2.Desc
+		Label: 熔核巨影
+		Desc:
+			'''
+			攻击力[c/3791db:+120%]
+			攻击变为突刺，对单体目标伤害额外[c/3791db:+50%]
+			持续[c/3791db:20]秒
+			'''
 	}
 
 	3: {
-		// Label: Mods.ArknightsMod.Skills.SurtrLaevatain.3.Label
-		// Desc: Mods.ArknightsMod.Skills.SurtrLaevatain.3.Desc
+		Label: 黄昏
+		Desc:
+			'''
+			攻击力[c/3791db:+330%]，攻击范围扩大
+			生命上限[c/3791db:+1200]并立即回满生命
+			持续掉血，速率随时间提升，最高为每秒最大生命的[c/f6643b:10%]
+			效果持续至死亡
+			'''
 	}
 }
 
 Tragodia: {
 	3: {
-		// Desc: Mods.ArknightsMod.Skills.Tragodia.3.Desc
-		// Label: Mods.ArknightsMod.Skills.Tragodia.3.Label
+		Label: 空剧场
+		Desc:
+			'''
+			攻击力[c/3791db:+125%]
+			攻击变为[c/3791db:超大范围]波形攻击
+			持续[c/3791db:30]秒
+			'''
 	}
 
 	2: {
-		// Desc: Mods.ArknightsMod.Skills.Tragodia.2.Desc
-		// Label: Mods.ArknightsMod.Skills.Tragodia.2.Label
+		Label: 群体性谵妄
+		Desc:
+			'''
+			攻击速度[c/3791db:大幅提升]
+			右键召唤"创想体"，再次右键使其爆炸
+			爆炸造成[c/3791db:范围伤害]并束缚目标[c/3791db:6]秒
+			'''
 	}
 
 	1: {
-		// Desc: Mods.ArknightsMod.Skills.Tragodia.1.Desc
-		// Label: Mods.ArknightsMod.Skills.Tragodia.1.Label
+		Label: 暗夜回声
+		Desc:
+			'''
+			攻击力[c/3791db:+60%]
+			下一次攻击束缚目标[c/3791db:3]秒，并追加提取攻击
+			'''
 	}
 }

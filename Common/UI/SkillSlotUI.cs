@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Weapons;
+using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Players;
 using ArknightsMod.Systems.Gameplay.Skill;
 using Microsoft.Xna.Framework;
@@ -87,16 +87,43 @@ namespace ArknightsMod.Common.UI
 		}
 
 		// 按字符宽度逐字折行（适配中文等无空格文本）。保留原文里已有的换行符。
+		// 颜色代码 tag（[c/hex:文本]）作为不可分割单元处理：折行永远不会打断 tag，
+		// 否则被拆散的 [c/ 与 ] 无法被 ChatManager 的正则匹配（. 不跨行），颜色会原样显示。
+		// tag 的宽度按冒号后实际显示的内容计算（[c/、hex、:、] 本身不渲染）。
 		private static string WrapCjk(ReLogic.Graphics.DynamicSpriteFont font, string text, float maxWidth) {
 			if (string.IsNullOrEmpty(text))
 				return text;
 			var result = new System.Text.StringBuilder(text.Length + 16);
 			float lineWidth = 0f;
-			foreach (char c in text) {
+			int i = 0;
+			while (i < text.Length) {
+				char c = text[i];
 				if (c == '\n') {
 					result.Append(c);
 					lineWidth = 0f;
+					i++;
 					continue;
+				}
+				// 识别颜色代码 tag：[c/hex:文本]
+				if (c == '[' && i + 2 < text.Length && (text[i + 1] == 'c' || text[i + 1] == 'C') && text[i + 2] == '/') {
+					int close = text.IndexOf(']', i + 2);
+					if (close >= 0) {
+						int colon = text.IndexOf(':', i + 3);
+						string tag = text.Substring(i, close - i + 1);
+						// 只测量冒号后实际显示的内容；找不到冒号时退化为测量整个 tag
+						string displayText = (colon >= 0 && colon < close)
+							? text.Substring(colon + 1, close - colon - 1)
+							: tag;
+						float tagWidth = font.MeasureString(displayText).X;
+						if (lineWidth > 0f && lineWidth + tagWidth > maxWidth) {
+							result.Append('\n');
+							lineWidth = 0f;
+						}
+						result.Append(tag);
+						lineWidth += tagWidth;
+						i = close + 1;
+						continue;
+					}
 				}
 				float cw = font.MeasureString(c.ToString()).X;
 				if (lineWidth > 0f && lineWidth + cw > maxWidth) {
@@ -105,6 +132,7 @@ namespace ArknightsMod.Common.UI
 				}
 				result.Append(c);
 				lineWidth += cw;
+				i++;
 			}
 			return result.ToString();
 		}

@@ -1,178 +1,288 @@
 BagpipeSpear: {
 	1: {
-		Label: Mods.ArknightsMod.Skills.BagpipeSpear.1.Label
-		Desc: Mods.ArknightsMod.Skills.BagpipeSpear.1.Desc
+		Label: Swift Strike γ
+		Desc:
+			'''
+			ATK [c/3791db:+45%]
+			ASPD [c/3791db:+45]
+			'''
 	}
 
 	2: {
-		Label: Mods.ArknightsMod.Skills.BagpipeSpear.2.Label
-		Desc: Mods.ArknightsMod.Skills.BagpipeSpear.2.Desc
+		Label: High-Impact Assault
+		Desc:
+			'''
+			Next attack's ATK increased to [c/3791db:200%] and strikes an additional time
+			[c/eda128:Can be charged 3 times]
+			'''
 	}
 
 	3: {
-		Label: Mods.ArknightsMod.Skills.BagpipeSpear.3.Label
-		Desc: Mods.ArknightsMod.Skills.BagpipeSpear.3.Desc
+		Label: Breaking Shot
+		Desc:
+			'''
+			Attack interval [c/f6643b:increased (+70%)]
+			Block [c/3791db:+1]
+			ATK and DEF [c/3791db:+120%]
+			Attacks become [c/3791db:triple strikes]
+			'''
 	}
 }
 
 ChenSword: {
 	1: {
-		Label: Mods.ArknightsMod.Skills.ChenSword.1.Label
-		Desc: Mods.ArknightsMod.Skills.ChenSword.1.Desc
+		Label: Chixiao: Afterimage
+		Desc:
+			'''
+			Strike the target with [c/3791db:10] consecutive slashes
+			Each slash deals Physical damage equal to [c/3791db:320%] of ATK
+			'''
 	}
 }
 
 KroosCrossbow: {
 	1: {
-		Label: Mods.ArknightsMod.Skills.KroosCrossbow.1.Label
-		Desc: Mods.ArknightsMod.Skills.KroosCrossbow.1.Desc
+		Label: Double Shot: Auto
+		Desc:
+			'''
+			Next attack fires [c/3791db:2] shots in a row
+			Each shot deals Physical damage equal to [c/3791db:140%] of ATK
+			'''
 	}
 }
 
 PozemkaCrossbow: {
 	1: {
-		Label: Mods.ArknightsMod.Skills.PozemkaCrossbow.1.Label
-		Desc: Mods.ArknightsMod.Skills.PozemkaCrossbow.1.Desc
+		Label: Iamb
+		Desc:
+			'''
+			ATK [c/3791db:+60%]
+			[c/3791db:40%] chance per attack for that attack's ATK to increase to [c/3791db:225%]
+			[c/EDA128:Infinite duration]
+			'''
 	}
 
 	2: {
-		Label: Mods.ArknightsMod.Skills.PozemkaCrossbow.2.Label
-		Desc: Mods.ArknightsMod.Skills.PozemkaCrossbow.2.Desc
+		Label: Pointe
+		Desc:
+			'''
+			Press the skill key to immediately attack [c/3791db:3] times forward
+			Each attack deals Physical damage equal to [c/3791db:230%] of your ATK
+			[c/EDA128:Can be charged 2 times]
+			'''
 	}
 
 	3: {
-		Label: Mods.ArknightsMod.Skills.PozemkaCrossbow.3.Label
-		Desc: Mods.ArknightsMod.Skills.PozemkaCrossbow.3.Desc
+		Label: Quick Sketch
+		Desc:
+			'''
+			Attack interval [c/3791db:shortened]
+			Each attack's ATK increased to [c/3791db:200%] ([c/3791db:255%] against enemies within 25 tiles)
+			'''
 	}
 }
 
 AdnachielCrossbow: {
 	1: {
-		Label: Mods.ArknightsMod.Skills.AdnachielCrossbow.1.Label
-		Desc: Mods.ArknightsMod.Skills.AdnachielCrossbow.1.Desc
+		Label: ATK Up α
+		Desc: ATK [c/3791db:+50%]
 	}
 }
 
 ExusiaiVector: {
 	1: {
-		Desc: Mods.ArknightsMod.Skills.ExusiaiVector.1.Desc
-		Label: Mods.ArknightsMod.Skills.ExusiaiVector.1.Label
+		Label: Assault Mode
+		Desc:
+			'''
+			Next attack becomes a [c/3791db:3]-round burst
+			Each shot deals damage equal to [c/3791db:145%] of ATK
+			'''
 	}
 
 	2: {
-		Desc: Mods.ArknightsMod.Skills.ExusiaiVector.2.Desc
-		Label: Mods.ArknightsMod.Skills.ExusiaiVector.2.Label
+		Label: Sweep Mode
+		Desc:
+			'''
+			Attacks become a [c/3791db:4]-round burst
+			Each shot deals damage equal to [c/3791db:125%] of ATK
+			'''
 	}
 
 	3: {
-		Desc: Mods.ArknightsMod.Skills.ExusiaiVector.3.Desc
-		Label: Mods.ArknightsMod.Skills.ExusiaiVector.3.Label
+		Label: Overload Mode
+		Desc:
+			'''
+			Attacks become a [c/3791db:5]-round burst
+			Attack interval [c/3791db:shortened to a degree]
+			ATK increased to [c/3791db:110%]
+			[c/EDA128:Skill activates automatically]
+			'''
 	}
 }
 
 KroosAlterCrossbow: {
 	1: {
-		Desc: Mods.ArknightsMod.Skills.KroosAlterCrossbow.1.Desc
-		Label: Mods.ArknightsMod.Skills.KroosAlterCrossbow.1.Label
+		Label: Unseen
+		Desc:
+			'''
+			ATK [c/3791db:+40%]
+			Attacks become a [c/3791db:2]-round burst
+			Greatly reduces aggro
+			'''
 	}
 
 	2: {
-		Label: Mods.ArknightsMod.Skills.KroosAlterCrossbow.2.Label
-		Desc: Mods.ArknightsMod.Skills.KroosAlterCrossbow.2.Desc
+		Label: Throat Seal
+		Desc:
+			'''
+			Attack interval [c/3791db:greatly shortened]
+			Attacks become a [c/3791db:2]-round burst
+			After firing [c/3791db:32] arrows, attacks become a [c/3791db:4]-round burst for the rest of the skill
+			'''
 	}
 }
 
 Lava_Dagger: {
 	1: {
-		Desc: Mods.ArknightsMod.Skills.Lava_Dagger.1.Desc
-		Label: Mods.ArknightsMod.Skills.Lava_Dagger.1.Label
+		Label: Tactical Chant α
+		Desc: ASPD [c/3791db:+50]
 	}
 }
 
 Shirayuki_Shuriken: {
 	1: {
-		Desc: Mods.ArknightsMod.Skills.Shirayuki_Shuriken.1.Desc
-		Label: Mods.ArknightsMod.Skills.Shirayuki_Shuriken.1.Label
+		Label: Enemy Surge
+		Desc: Maximum projectile range [c/3791db:increased]
 	}
 
 	2: {
-		Desc: Mods.ArknightsMod.Skills.Shirayuki_Shuriken.2.Desc
-		Label: Mods.ArknightsMod.Skills.Shirayuki_Shuriken.2.Label
+		Label: Concentrated Blade
+		Desc: Attacks throw a spinning large shuriken; hit targets take damage equal to [c/3791db:80%] of ATK per second
 	}
 }
 
 NianWeapon: {
 	1: {
-		Desc: DEF +70%, ATK +45%, and normal attacks now deal Arts damage \n[c/00FF00:During the skill, Nian smashes the large shield in her hands toward enemies, dealing 100% magic damage.]
 		Label: Tin Burning
+		Desc:
+			'''
+			DEF [c/3791db:+70%]
+			ATK [c/3791db:+45%]
+			Normal attacks deal [c/3791db:Arts] damage
+			[c/00FF00:During the skill, Nian smashes the large shield in her hands toward enemies, dealing 100% magic damage.]
+			'''
 	}
 
 	2: {
 		Label: Copper Seal
-		Desc: Stops attacking; DEF +130%, Block +1, upon receiving an enemy attack, deals Arts damage to the attacker equal to 90% of Nian's ATK and silences them for 5 seconds. \n[c/00FF00:The original block-based counter damage and silence effects are disabled. Instead, every 0.5 seconds, enemies within a certain range take 50% source-less magic damage.]
+		Desc:
+			'''
+			[c/f6643b:Stops attacking]
+			DEF [c/3791db:+130%], Block [c/3791db:+1]
+			On receiving an enemy attack, deals Arts damage to the attacker equal to [c/3791db:90%] of ATK and silences them for [c/3791db:5] seconds
+			[c/00FF00:The original block-based counter damage and silence effects are disabled. Instead, every 0.5 seconds, enemies within a certain range take 50% source-less magic damage.]
+			'''
 	}
 
 	3: {
-		Desc: ATK +120%; Nearby allied Operators gain DEF +80%, Block +1 and status resistance.\n[c/00FF00:The original resistance and ally defense/block bonuses are disabled. The large shield now follows the mouse to attack, dealing 100% physical damage.]
 		Label: Iron Defense
+		Desc:
+			'''
+			ATK [c/3791db:+120%]
+			Nearby allied Operators gain DEF [c/3791db:+80%], Block [c/3791db:+1] and status resistance
+			[c/00FF00:The original resistance and ally defense/block bonuses are disabled. The large shield now follows the mouse to attack, dealing 100% physical damage.]
+			'''
 	}
 }
 
 ThornsWeapon: {
 	1: {
-		Desc: Mods.ArknightsMod.Skills.ThornsWeapon.1.Desc
-		Label: Mods.ArknightsMod.Skills.ThornsWeapon.1.Label
+		Label: ATK Up γ
+		Desc: ATK [c/3791db:+100%]
 	}
 
 	2: {
-		Label: Mods.ArknightsMod.Skills.ThornsWeapon.2.Label
-		Desc: Mods.ArknightsMod.Skills.ThornsWeapon.2.Desc
+		Label: Thorns
+		Desc:
+			'''
+			Stops attacking
+			ATK [c/3791db:+60%]
+			DEF [c/3791db:+110%]
+			When hit by an enemy, releases thorns that perform a ranged attack on enemies in front (at most once every [c/3791db:0.6]s)
+			'''
 	}
 
 	3: {
-		Desc: Mods.ArknightsMod.Skills.ThornsWeapon.3.Desc
-		Label: Mods.ArknightsMod.Skills.ThornsWeapon.3.Label
+		Label: Supreme Art
+		Desc:
+			'''
+			Maximum projectile range [c/3791db:increased] and projectiles home onto targets
+			ATK [c/3791db:+60%]
+			ASPD [c/3791db:+25]
+			Ranged attacks no longer reduce ATK
+			[c/EDA128:From the second activation onward, bonuses double and the duration becomes infinite]
+			'''
 	}
 }
 
 BeagleWeapon: {
 	1: {
-		Desc: Mods.ArknightsMod.Skills.BeagleWeapon.1.Desc
-		Label: Mods.ArknightsMod.Skills.BeagleWeapon.1.Label
+		Label: DEF Up α
+		Desc: DEF [c/3791db:+25%]
 	}
 }
 
 SilverAshWeapon: {
 	1: {
-		Desc: Mods.ArknightsMod.Skills.SilverAshWeapon.1.Desc
-		Label: Mods.ArknightsMod.Skills.SilverAshWeapon.1.Label
+		Label: Power Strike γ
+		Desc: Next attack's ATK increased to [c/3791db:290%]
 	}
 
 	2: {
-		Label: Mods.ArknightsMod.Skills.SilverAshWeapon.2.Label
-		Desc: Mods.ArknightsMod.Skills.SilverAshWeapon.2.Desc
+		Label: Snowfield Survival
+		Desc:
+			'''
+			[c/EDA128:Can toggle between this state and the initial state]
+			[c/f6643b:No longer performs ranged attacks]
+			DEF [c/3791db:+100%]
+			Heals [c/3791db:+6%] of Max HP per second
+			[c/AAA8AA:Right-click to toggle states; [c/f6643b:5-second] cooldown between toggles]
+			'''
 	}
 
 	3: {
-		Desc: Mods.ArknightsMod.Skills.SilverAshWeapon.3.Desc
-		Label: Mods.ArknightsMod.Skills.SilverAshWeapon.3.Label
+		Label: True Silver Slash
+		Desc:
+			'''
+			DEF [c/f6643b:-70%]
+			ATK [c/3791db:+200%]
+			Each attack becomes a [c/3791db:large-area] slash whose damage no longer falls off
+			'''
 	}
 }
 
 ChenSword_Item: {
 	1: {
-		Desc: Mods.ArknightsMod.Skills.ChenSword_Item.1.Desc
-		Label: Mods.ArknightsMod.Skills.ChenSword_Item.1.Label
+		Label: Sheath Strike
+		Desc:
+			'''
+			Smash the scabbard into the enemy, dealing Physical damage equal to [c/3791db:320%] of ATK
+			Inflicts [c/000000:Confusion] on the target for [c/3791db:1.5]s
+			'''
 	}
 
 	2: {
-		Desc: Mods.ArknightsMod.Skills.ChenSword_Item.2.Desc
-		Label: Mods.ArknightsMod.Skills.ChenSword_Item.2.Label
+		Label: Chixiao: Draw
+		Desc: After a brief charge, deal [c/EDA128:Physical] damage equal to [c/3791db:500%] of ATK and [c/EDA128:Arts] damage equal to [c/3791db:500%] of ATK to enemies in front (can be held)
 	}
 
 	3: {
-		Label: Mods.ArknightsMod.Skills.ChenSword_Item.3.Label
-		Desc: Mods.ArknightsMod.Skills.ChenSword_Item.3.Desc
+		Label: Chixiao: Afterimage
+		Desc:
+			'''
+			Hold to charge, then strike the target [c/3791db:10] consecutive times
+			Each strike deals Physical damage equal to [c/3791db:320%] of ATK (can be held)
+			'''
 	}
 }
 
@@ -229,37 +339,41 @@ ChargeReady: Initial skill points have been restored
 
 ValarqvinWeapon: {
 	2: {
-		Desc: Mods.ArknightsMod.Skills.ValarqvinWeapon.2.Desc
-		Label: Mods.ArknightsMod.Skills.ValarqvinWeapon.2.Label
+		Label: After I Saw Decay
+		Desc: ASPD +50%, attacks [c/3791db:2] targets at once
 	}
 
 	1: {
-		Desc: Mods.ArknightsMod.Skills.ValarqvinWeapon.1.Desc
-		Label: Mods.ArknightsMod.Skills.ValarqvinWeapon.1.Label
+		Label: Before I Saw Ruin
+		Desc:
+			'''
+			Next attack's ATK increased to [c/3791db:130%] and improves the Necrosis conversion rate
+			Can be charged twice
+			'''
 	}
 }
 
 HazeMagicBook: {
 	2: {
-		Desc: 生命上限[c/f6643b:-75%]，攻击力[c/3791db:+60%]，攻击速度[c/3791db:+60%]
-		Label: 赤色之瞳
+		Label: Crimson Eye
+		Desc: Max HP [c/f6643b:-75%], ATK [c/3791db:+60%], ASPD [c/3791db:+60%]
 	}
 
 	1: {
-		Desc: 攻击力[c/3791db:+80%]
-		Label: 攻击力强化·β型
+		Label: ATK Up β
+		Desc: ATK [c/3791db:+80%]
 	}
 }
 
 DN_Weapon: {
 	1: {
-		Label: Mods.ArknightsMod.Skills.DN_Weapon.1.Label
-		Desc: Mods.ArknightsMod.Skills.DN_Weapon.1.Desc
+		Label: ATK Up β
+		Desc: ATK [c/3791db:+80%]
 	}
 
 	2: {
-		Label: Mods.ArknightsMod.Skills.DN_Weapon.2.Label
-		Desc: Mods.ArknightsMod.Skills.DN_Weapon.2.Desc
+		Label: Shield Counter
+		Desc: ATK [c/3791db:+80%], attacks become shield charges
 	}
 }
 
@@ -311,248 +425,248 @@ SaintBell: {
 
 StewardStaff: {
 	1: {
-		Label: 强力击·Y型
-		Desc: 攻击充能，蓄满后下一次攻击造成[c/3791db:190%]伤害
+		Label: Power Strike Y
+		Desc: Charges on attack; when full, the next attack deals [c/3791db:190%] damage
 	}
 }
 
 SkadisGreatsword: {
 	1: {
-		Label: 迅捷打击·Y型
+		Label: Swift Strike Y
 		Desc:
 			'''
-			攻击力[c/3791db:+45%]
-			攻击速度[c/3791db:+45]
+			ATK [c/3791db:+45%]
+			ASPD [c/3791db:+45]
 			'''
 	}
 
 	2: {
-		Label: 跃浪击
-		Desc: 部署后[c/3791db:30]秒内攻击力[c/3791db:+170%]
+		Label: Wave Leap
+		Desc: Within [c/3791db:30] seconds of deployment, ATK [c/3791db:+170%]
 	}
 
 	3: {
-		Label: 涌潮悲歌
-		Desc: 攻击力、防御力和生命上限各[c/3791db:+130%]
+		Label: Tidal Elegy
+		Desc: ATK, DEF and Max HP [c/3791db:+130%]
 	}
 }
 
 GoldenglowWand: {
 	1: {
-		Label: 火花四溅
+		Label: Sparks Flying
 		Desc:
 			'''
-			浮游单元+1，锁定敌人攻击
-			攻击力[c/3791db:+40%]，攻击速度[c/3791db:+50]
+			Drone +1, locks onto enemies
+			ATK [c/3791db:+40%], ASPD [c/3791db:+50]
 			'''
 	}
 
 	2: {
-		Label: 电流翻涌
+		Label: Current Surge
 		Desc:
 			'''
-			浮游单元+1，锁定敌人攻击
-			攻击范围扩大，攻击力[c/3791db:+60%]
-			[c/EDA128:持续时间无限]
+			Drone +1, locks onto enemies
+			Attack range expanded, ATK [c/3791db:+60%]
+			[c/EDA128:Infinite duration]
 			'''
 	}
 
 	3: {
-		Label: 澄净闪耀
+		Label: Pure Radiance
 		Desc:
 			'''
-			[c/f6643b:停止攻击]，浮游单元+2
-			攻击范围扩大至全屏，攻击力[c/3791db:+80%]
+			[c/f6643b:Stops attacking], Drone +2
+			Attack range expands to the entire screen, ATK [c/3791db:+80%]
 			'''
 	}
 }
 
 MelanthasSword: {
 	1: {
-		Label: 攻击力强化·α型
-		Desc: 攻击力[c/3791db:+50%]
+		Label: ATK Up α
+		Desc: ATK [c/3791db:+50%]
 	}
 }
 
 VanillaAxe: {
 	1: {
-		Label: 冲锋号令·援军
-		Desc: 攻击力[c/3791db:+35%]
+		Label: Charge: Reinforcements
+		Desc: ATK [c/3791db:+35%]
 	}
 }
 
 PlumePike: {
 	1: {
-		Label: 迅捷打击·α型
+		Label: Swift Strike α
 		Desc:
 			'''
-			攻击力[c/3791db:+25%]
-			攻击速度[c/3791db:+25]
+			ATK [c/3791db:+25%]
+			ASPD [c/3791db:+25]
 			'''
 	}
 }
 
 GitanoUmbrella: {
 	1: {
-		Label: 迅捷打击·α型
+		Label: Swift Strike α
 		Desc:
 			'''
-			攻击力[c/3791db:+25%]
-			攻击速度[c/3791db:+25]
+			ATK [c/3791db:+25%]
+			ASPD [c/3791db:+25]
 			'''
 	}
 }
 
 HongdouLance: {
 	1: {
-		Label: 攻击力强化·B型
-		Desc: 攻击力[c/3791db:+80%]
+		Label: ATK Up B
+		Desc: ATK [c/3791db:+80%]
 	}
 
 	2: {
-		Label: 槌音
+		Label: Hammer Tune
 		Desc:
 			'''
-			攻击间隔略微[c/f6643b:增大(+0.5秒)]
-			攻击力[c/3791db:+200%]
+			Attack interval slightly [c/f6643b:increased (+0.5s)]
+			ATK [c/3791db:+200%]
 			'''
 	}
 }
 
 BeanstalkOrb: {
 	1: {
-		Label: 战术咏唱·B型
-		Desc: 攻击速度[c/3791db:+75]
+		Label: Tactical Chant B
+		Desc: ASPD [c/3791db:+75]
 	}
 
 	2: {
-		Label: 命运
+		Label: Destiny
 		Desc:
 			'''
-			攻击力[c/3791db:+100%]，攻击范围扩大
-			同时攻击范围内所有敌人
-			[c/f6643b:技能结束后停止攻击10秒]
+			ATK [c/3791db:+100%], attack range expanded
+			Attacks all enemies in range at once
+			[c/f6643b:Stops attacking for 10 seconds after the skill ends]
 			'''
 	}
 }
 
 JessicaGun: {
 	1: {
-		Label: 强力击·B型
-		Desc: 攻击充能，蓄满后下一次攻击造成[c/3791db:230%]伤害
+		Label: Power Strike B
+		Desc: Charges on attack; when full, the next attack deals [c/3791db:230%] damage
 	}
 
 	2: {
-		Label: 掩护烟幕
+		Label: Cover Smoke
 		Desc:
 			'''
-			攻击力[c/3791db:+80%]
-			获得[c/3791db:75%]的物理和法术闪避
+			ATK [c/3791db:+80%]
+			Gain [c/3791db:75%] Physical and Arts dodge
 			'''
 	}
 }
 
 MeteorBow: {
 	1: {
-		Label: 碎甲击
+		Label: Armor Break
 		Desc:
 			'''
-			攻击充能，蓄满后下次攻击造成[c/3791db:180%]物理伤害
-			[c/3791db:5]秒内使命中目标防御力[c/f6643b:-35%]
+			Charges on attack; when full, the next attack deals [c/3791db:180%] Physical damage
+			Reduces the target's DEF by [c/f6643b:-35%] for [c/3791db:5] seconds
 			'''
 	}
 
 	2: {
-		Label: 碎甲击·扩散
+		Label: Armor Break: Spread
 		Desc:
 			'''
-			立即对至多[c/3791db:5]个敌人造成[c/3791db:200%]物理伤害
-			[c/3791db:5]秒内使命中目标防御力[c/f6643b:-40%]
+			Immediately deal [c/3791db:200%] Physical damage to up to [c/3791db:5] enemies
+			Reduces their DEF by [c/f6643b:-40%] for [c/3791db:5] seconds
 			'''
 	}
 }
 
 DobermannWhip: {
 	1: {
-		Label: 强力击·B型
-		Desc: 攻击充能，蓄满后下一次攻击造成[c/3791db:230%]伤害
+		Label: Power Strike B
+		Desc: Charges on attack; when full, the next attack deals [c/3791db:230%] damage
 	}
 
 	2: {
-		Label: 鞭策
-		Desc: 攻击力[c/3791db:+100%]
+		Label: Whip
+		Desc: ATK [c/3791db:+100%]
 	}
 }
 
 MataimaruGlaive: {
 	1: {
-		Label: 生命回复·B型
-		Desc: 立即恢复最大生命的[c/3791db:50%]
+		Label: HP Recovery B
+		Desc: Instantly restores [c/3791db:50%] of Max HP
 	}
 
 	2: {
-		Label: 恶鬼之力
+		Label: Oni Power
 		Desc:
 			'''
-			防御力[c/f6643b:降至0]
-			攻击力[c/3791db:+150%]
+			DEF [c/f6643b:reduced to 0]
+			ATK [c/3791db:+150%]
 			'''
 	}
 }
 
 FrostleafAxe: {
 	1: {
-		Label: 寒霜枪刃
+		Label: Frost Lance Blade
 		Desc:
 			'''
-			攻击充能，蓄满后下次攻击造成[c/3791db:150%]物理伤害
-			令命中目标移动速度[c/f6643b:-50%]持续[c/3791db:3]秒
+			Charges on attack; when full, the next attack deals [c/3791db:150%] Physical damage
+			Reduces the target's movement speed by [c/f6643b:-50%] for [c/3791db:3] seconds
 			'''
 	}
 
 	2: {
-		Label: 凝冰枪刃
+		Label: Frozen Blade
 		Desc:
 			'''
-			攻击速度[c/3791db:+50]
-			每次攻击使命中目标移动速度[c/f6643b:-50%]
-			[c/3791db:40%]几率使其束缚[c/3791db:2]秒
+			ASPD [c/3791db:+50]
+			Each attack reduces the target's movement speed by [c/f6643b:-50%]
+			[c/3791db:40%] chance to bind the target for [c/3791db:2] seconds
 			'''
 	}
 }
 
 EstelleGlove: {
 	1: {
-		Label: 攻击力强化·B型
-		Desc: 攻击力[c/3791db:+80%]
+		Label: ATK Up B
+		Desc: ATK [c/3791db:+80%]
 	}
 
 	2: {
-		Label: 舍身突击
+		Label: Selfless Assault
 		Desc:
 			'''
-			攻击力[c/3791db:+150%]
-			[c/f6643b:不再成为治疗目标]
+			ATK [c/3791db:+150%]
+			[c/f6643b:No longer a healing target]
 			'''
 	}
 }
 
 RopeClaw: {
 	1: {
-		Label: 勾爪发射
+		Label: Grapple Launch
 		Desc:
 			'''
-			攻击充能，下次攻击将敌人拉至面前
-			造成[c/3791db:190%]物理伤害
+			Charges on attack; the next attack pulls the enemy to you
+			Dealing [c/3791db:190%] Physical damage
 			'''
 	}
 
 	2: {
-		Label: 复式勾爪
+		Label: Double Grapple
 		Desc:
 			'''
-			将[c/3791db:2]个远距离敌人拖拽至面前
-			造成[c/3791db:225%]物理伤害
+			Drag [c/3791db:2] distant enemies to you
+			Dealing [c/3791db:225%] Physical damage
 			'''
 	}
 }
@@ -589,90 +703,90 @@ EntelechiaScythe: {
 
 MousseGlove: {
 	1: {
-		Label: 挠伤
+		Label: Scratch
 		Desc:
 			'''
-			攻击充能，下次攻击时攻击力[c/3791db:+75%]
-			[c/3791db:5]秒内使击中目标攻击力[c/f6643b:-40%]
+			Charges on attack; the next attack's ATK [c/3791db:+75%]
+			Reduces the hit target's ATK by [c/f6643b:-40%] for [c/3791db:5] seconds
 			'''
 	}
 
 	2: {
-		Label: 炸毛
-		Desc: 攻击力和防御力各[c/3791db:+75%]
+		Label: Fluffed Up
+		Desc: ATK and DEF [c/3791db:+75%]
 	}
 }
 
 GravelDualBlades: {
 	1: {
-		Label: 影袭
+		Label: Shadow Strike
 		Desc:
 			'''
-			[c/EDA128:技能开局即满]
-			防御力[c/3791db:+400%]，在[c/3791db:12]秒内持续衰减
+			[c/EDA128:Charged at skill start]
+			DEF [c/3791db:+400%], decaying over [c/3791db:12] seconds
 			'''
 	}
 
 	2: {
-		Label: 鼠群
+		Label: Rat Swarm
 		Desc:
 			'''
-			[c/EDA128:技能开局即满]
-			获得可吸收最大生命[c/3791db:250%]的护盾
-			该护盾在[c/3791db:10]秒内持续衰减
+			[c/EDA128:Charged at skill start]
+			Gain a shield absorbing [c/3791db:250%] of Max HP
+			The shield decays over [c/3791db:10] seconds
 			'''
 	}
 }
 
 BeehunterBag: {
 	1: {
-		Label: 防御力强化·B型
-		Desc: 防御力[c/3791db:+80%]
+		Label: DEF Up B
+		Desc: DEF [c/3791db:+80%]
 	}
 
 	2: {
-		Label: 壳状防御
+		Label: Shell Defense
 		Desc:
 			'''
-			[c/f6643b:停止攻击]，阻挡数[c/3791db:+1]
-			防御力[c/3791db:+130%]
-			每秒恢复最大生命的[c/3791db:3%]
+			[c/f6643b:Stops attacking], Block [c/3791db:+1]
+			DEF [c/3791db:+130%]
+			Restores [c/3791db:3%] of Max HP per second
 			'''
 	}
 }
 
 EarthspiritWand: {
 	1: {
-		Label: 攻击力强化·B型
-		Desc: 攻击力[c/3791db:+80%]
+		Label: ATK Up B
+		Desc: ATK [c/3791db:+80%]
 	}
 
 	2: {
-		Label: 流沙化
+		Label: Quicksand
 		Desc:
 			'''
-			[c/f6643b:停止攻击]
-			攻击范围内敌方单位每[c/3791db:1.4]秒受到一次停顿效果
+			[c/f6643b:Stops attacking]
+			Enemy units in attack range are slowed once every [c/3791db:1.4] seconds
 			'''
 	}
 }
 
 ShawAxe: {
 	1: {
-		Label: 水蒸气泵
+		Label: Steam Pump
 		Desc:
 			'''
-			攻击充能，下次攻击将目标大力推开
-			造成[c/3791db:150%]物理伤害
+			Charges on attack; the next attack pushes the target away forcefully
+			Dealing [c/3791db:150%] Physical damage
 			'''
 	}
 
 	2: {
-		Label: 高压水炮
+		Label: High-Pressure Water Cannon
 		Desc:
 			'''
-			立即将前方两格内所有敌人大力推开
-			造成[c/3791db:300%]物理伤害
+			Immediately push all enemies in front (2 tiles) away forcefully
+			Dealing [c/3791db:300%] Physical damage
 			'''
 	}
 }
@@ -702,27 +816,32 @@ SceneCamera: {
 
 CardiganWeapon: {
 	1: {
-		Label: Mods.ArknightsMod.Skills.CardiganWeapon.1.Label
-		Desc: Mods.ArknightsMod.Skills.CardiganWeapon.1.Desc
+		Label: HP Recovery α
+		Desc: Instantly restores [c/3791db:40%] of Max HP
 	}
 }
 
 CuoraWeapon: {
 	1: {
-		Label: Mods.ArknightsMod.Skills.CuoraWeapon.1.Label
-		Desc: Mods.ArknightsMod.Skills.CuoraWeapon.1.Desc
+		Label: DEF Up γ
+		Desc: Defense [c/3791db:+80%]
 	}
 
 	2: {
-		Label: Mods.ArknightsMod.Skills.CuoraWeapon.2.Label
-		Desc: Mods.ArknightsMod.Skills.CuoraWeapon.2.Desc
+		Label: Shell Defense
+		Desc:
+			'''
+			Defense [c/3791db:+130%]
+			Restores [c/3791db:20%] of Max HP per second
+			Movement speed [c/f6643b:-10%]
+			'''
 	}
 }
 
 CardiWeapon: {
 	1: {
-		Label: 生命回复·α型
-		Desc: 立即恢复最大生命的[c/3791db:40%]
+		Label: HP Recovery α
+		Desc: Instantly restores [c/3791db:40%] of Max HP
 	}
 }
 
@@ -745,34 +864,64 @@ ClosureScanGun: {
 
 SurtrLaevatain: {
 	1: {
-		Label: Mods.ArknightsMod.Skills.SurtrLaevatain.1.Label
-		Desc: Mods.ArknightsMod.Skills.SurtrLaevatain.1.Desc
+		Label: Flame Sword
+		Desc:
+			'''
+			ATK [c/3791db:+210%]
+			Empowered attacks
+			Lasts [c/3791db:35] seconds
+			'''
 	}
 
 	2: {
-		Label: Mods.ArknightsMod.Skills.SurtrLaevatain.2.Label
-		Desc: Mods.ArknightsMod.Skills.SurtrLaevatain.2.Desc
+		Label: Molten Core
+		Desc:
+			'''
+			ATK [c/3791db:+120%]
+			Attacks become thrusts; [c/3791db:+50%] extra damage against a single target
+			Lasts [c/3791db:20] seconds
+			'''
 	}
 
 	3: {
-		Label: Mods.ArknightsMod.Skills.SurtrLaevatain.3.Label
-		Desc: Mods.ArknightsMod.Skills.SurtrLaevatain.3.Desc
+		Label: Twilight
+		Desc:
+			'''
+			ATK [c/3791db:+330%], increased attack range
+			Max HP [c/3791db:+1200] and heal to full
+			Continuously loses HP, ramping up to [c/f6643b:10%] of Max HP per second
+			Persists until death
+			'''
 	}
 }
 
 Tragodia: {
 	3: {
-		Desc: Mods.ArknightsMod.Skills.Tragodia.3.Desc
-		Label: Mods.ArknightsMod.Skills.Tragodia.3.Label
+		Label: Empty Theatre
+		Desc:
+			'''
+			ATK [c/3791db:+125%]
+			Attacks become [c/3791db:ultra-wide] wave strikes
+			Lasts [c/3791db:30] seconds
+			'''
 	}
 
 	2: {
-		Desc: Mods.ArknightsMod.Skills.Tragodia.2.Desc
-		Label: Mods.ArknightsMod.Skills.Tragodia.2.Label
+		Label: Mass Delusion
+		Desc:
+			'''
+			Attack speed [c/3791db:greatly increased]
+			Right-click to summon a "Creation"; right-click again to detonate it
+			The explosion deals [c/3791db:area damage] and binds targets for [c/3791db:6] seconds
+			'''
 	}
 
 	1: {
-		Desc: Mods.ArknightsMod.Skills.Tragodia.1.Desc
-		Label: Mods.ArknightsMod.Skills.Tragodia.1.Label
+		Label: Echoes of the Night
+		Desc:
+			'''
+			ATK [c/3791db:+60%]
+			Next attack binds the target for [c/3791db:3] seconds and follows up with an extract strike
+			'''
 	}
 }
