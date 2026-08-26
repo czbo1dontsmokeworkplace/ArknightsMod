@@ -8,8 +8,8 @@ W: {
 Melantha: {
 	HeadName: 玫兰莎的头盔
 	HelmetEffect: "[c/beebff:头盔效果]：近战伤害提升至104%"
-	SetEffect: "[c/beebff:套装效果]：造成近战伤害后，获得「无畏者」增益：每层+1.5生命/秒再生，持续4秒（可叠加层数）"
-	SetBonus: 近战命中叠加「无畏者」层数，每层+1.5生命/秒再生
+	SetEffect: "[c/beebff:套装效果]：造成近战伤害后，获得“无畏者”增益：每层+1.5生命/秒再生，持续4秒（可叠加层数）"
+	SetBonus: 近战命中叠加“无畏者”层数，每层+1.5生命/秒再生
 }
 
 Utage: {
@@ -395,7 +395,7 @@ Bagpipe: {
 Deepcolor: {
 	HeadName: 深海色的头盔
 	HelmetEffect: "[c/beebff:头盔效果]：自身和召唤物获得7%物理与法术闪避"
-	SetEffect: "[c/beebff:套装效果]：在场时，所有「深海色的召唤物」每秒恢复25点生命值"
+	SetEffect: "[c/beebff:套装效果]：在场时，所有“深海色的召唤物”每秒恢复25点生命值"
 	SetBonus: 在场时召唤物每秒恢复25点生命
 }
 
