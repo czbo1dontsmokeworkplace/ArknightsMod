@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.Projectiles.Defender.Beagle;
 using ArknightsMod.Content.Projectiles.Defender.Cuora;
@@ -68,6 +68,8 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Cuora
 						{
 							modPlayer.SkillActive = true;
 							modPlayer.SkillTimer = 0;
+							var ca_Player = player.GetModPlayer<CuoraProj_Player>();
+							ca_Player.Active1 = true;
 
 							modPlayer.DelStockCount();
 							SoundEngine.PlaySound(SkillActive3, player.Center);

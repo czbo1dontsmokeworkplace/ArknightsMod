@@ -14,9 +14,8 @@ namespace ArknightsMod.Systems.Structures
 	// 「便携建筑」类物品（PortableStructureItemBase 的所有子类共用）
 	// 的落地光标预览 + 联机部署流程。
 	//
-	// 联机流程（照抄本模组已有的「便携自建安全屋」——
-	// PortableSafehouseDeploymentUnit/PortableSafehouseSystem——
-	// 验证过可用的客户端请求/服务器权威模式，不是本次新发明的套路）：
+	// 联机流程（沿用「客户端请求 / 服务器权威」这个标准模式，不是本次新发明的套路；
+	// 这套流程最早是在已被本系统取代、现已移除的「便携自建安全屋」上验证可用的）：
 	//   1. 客户端左键 → 发送 RequestDeploy 请求包（物品类型 + 落点），
 	//      不做任何本地预测、不消耗物品。
 	//   2. 服务器收到请求（ReceiveDeployRequest）→ 校验持有物品/位置 →

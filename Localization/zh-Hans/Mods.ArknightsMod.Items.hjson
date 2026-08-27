@@ -83,12 +83,12 @@ PozemkaCrossbow: {
 # Instanced Space
 InstancedSchematicWrench: {
 	DisplayName: 蓝图扳手
-	Tooltip: 左键选择起点，右键导出区域蓝图。
+	Tooltip: 左键选择起点，右键导出区域蓝图
 }
 
 ProtocolSpacePortal: {
 	DisplayName: 危境再现传送门
-	Tooltip: 进入测试协议空间挑战。
+	Tooltip: 进入测试协议空间挑战
 }
 
 # Accessories
@@ -2395,7 +2395,8 @@ TheNightMurmurs: {
 	Tooltip:
 		'''
 		所有敌方单位的生命[c/3791db:-10%]（对[c/f6643b:Boss]无效）
-		一张黑色唱片。不。准。碰。它。
+		一张黑色唱片
+		不、准、碰、它、
 		'''
 }
 
@@ -3114,7 +3115,7 @@ FireworksHand: {
 		'''
 		使用远程武器时，有[c/3791db:25%]的概率额外发射一枚子弹
 		子弹造成[c/3791db:200%]的单体远程伤害
-		砰砰啪啪，意外之喜。
+		砰砰啪啪，意外之喜
 		'''
 }
 
@@ -3123,7 +3124,7 @@ Dedication: {
 	Tooltip:
 		'''
 		当你使用远程武器击中敌人时，或是受到治疗时（未实现），对周围的敌人施加150点单次法术伤害
-		自远古以来，这一部族笃信自己掌握着有关萨米的真相：原本万物各有声音，直到“祂”代替万物言语。
+		自远古以来，这一部族笃信自己掌握着有关萨米的真相：原本万物各有声音，直到“祂”代替万物言语
 		'''
 }
 
@@ -3223,7 +3224,7 @@ ReedFlameShadowStaff: {
 }
 
 DN_Weapon: {
-	// DisplayName: D N_ Weapon
+	DisplayName: 坚雷的剑盾
 	// Tooltip: ""
 }
 
@@ -3275,16 +3276,16 @@ DeepcolorSketch: {
 		左键：LOGO 攻击
 		右键：部署触手
 		'''
-	SkillActivateKey: "[c/AAA8AA:{0}]开启技能"
+	SkillActivateKey: "[c/AAA8AA:开启技能]"
 }
 
 SceneCamera: {
 	DisplayName: 稀音的摄像机
 	Tooltip:
 		'''
-		左键释放魔法攻击。
-		右键召唤「移动摄影车」。
-		'对着镜头笑一个。'
+		左键释放魔法攻击
+		右键召唤“移动摄影车”
+		'对着镜头笑一个'
 		'''
 	SkillActivateKey: "[c/AAA8AA:{0}]释放选中的技能"
 	DeployInfo: 摄影车：已部署 {0}/{1}（可再部署 {2}）
@@ -3570,10 +3571,10 @@ OriginiumCore: {
 		'''
 		开发者物品
 		你不该拥有这件！
-		使穿戴者按F可以立即充满当前手持武器技力。
+		使穿戴者按F可以立即充满当前手持武器技力
 
-		它似乎绕开了所有已知的源石能量转换定律，并能够直接向使用者提供近乎无限的源石技艺支持。
-		“博士，虽然我不知道你是怎么做到的，但请不要把它插在终端的充电口上。”
+		它似乎绕开了所有已知的源石能量转换定律，并能够直接向使用者提供近乎无限的源石技艺支持
+		“博士，虽然我不知道你是怎么做到的，但请不要把它插在终端的充电口上”
 		'''
 }
 
@@ -3622,50 +3623,28 @@ CardiWeapon: {
 }
 
 EntelechiaScythe: {
-	// DisplayName: Entelechia Scythe
+	DisplayName: 隐德莱希的巨镰
 	// Tooltip: ""
 }
 
 RopeClaw: {
-	// DisplayName: Rope Claw
+	DisplayName: 暗锁的钩爪
 	// Tooltip: ""
-}
-
-PortableSafehouseDeploymentUnit: {
-	DisplayName: 便携自建安全屋
-	Tooltip:
-		'''
-		左键在鼠标位置直接建造安全屋
-		安全屋从鼠标位置向右下展开
-		区域内的普通物块会被清除；宝箱、矿石和功能方块会阻止部署
-		'''
-
-	Deploy: {
-		Success: 安全屋已部署。
-
-		Failure: {
-			Client: 客户端不能直接部署结构。
-			OutOfBounds: 目标位置超出可部署范围。
-			Chest: 部署区域内有宝箱，无法部署安全屋。
-			TileEntity: 部署区域内有功能方块，无法部署安全屋。
-			Ore: 部署区域内有矿石，无法部署安全屋。
-		}
-	}
 }
 
 PortableRhodesIslandSafehouse: {
 	DisplayName: 便携罗德岛安全屋
 	Tooltip:
 		'''
-		罗德岛外勤干员的标准住宿设施，Mechanist的得意之作。
+		罗德岛外勤干员的标准住宿设施，Mechanist的得意之作
 		其内置的能源核心可以在极短时间内展开预置的碳素板，
-		构筑起舒适而又可靠的休息空间。
+		构筑起舒适而又可靠的休息空间
 		最初的开发目的是奖励给夺得办公室圆凳滑行大赛冠军的干员的玩具模型，
 		后被改造出实用用途配给外勤干员……
 		'''
 }
 
-PortableStructure.Deploy.Failure.OutOfBounds: 目标位置超出可部署范围。
+PortableStructure.Deploy.Failure.OutOfBounds: 目标位置超出可部署范围
 
 PompeiiLavaCore: {
 	DisplayName: 庞贝的熔岩核心
@@ -3897,7 +3876,7 @@ TragodiaDefault: {
 }
 
 Tragodia: {
-	// DisplayName: Tragodia
+	DisplayName: 酒神的权杖
 	// Tooltip: ""
 }
 
@@ -3905,7 +3884,7 @@ BloodMushroom: {
 	DisplayName: 血蕈
 	Tooltip:
 		'''
-		请在此大快朵颐，直至你被装入餐盘。
+		请在此大快朵颐，直至你被装入餐盘
 		携带时，当前环境每只自然刷新的敌怪都有10%概率被红雾附着；每击杀一只，血蕈的源石锭估价与后续红雾的强度都会提升
 		意外死亡后，这份"美味"会被重新标价
 		'''
@@ -3915,7 +3894,7 @@ FrostCrystalTree: {
 	DisplayName: 霜晶树
 	Tooltip:
 		'''
-		在阳光穿透脏腑前，展现未融的精致。
+		在阳光穿透脏腑前，展现未融的精致
 		携带时：满血击杀小怪源石锭估价+1，满血击杀boss源石锭估价+10，受伤估价-5
 		估价归零或意外死亡会让它损坏，价格减半并永久锁定
 		'''
@@ -3925,7 +3904,7 @@ EchoCorn: {
 	DisplayName: 回声玉米
 	Tooltip:
 		'''
-		每一粒甜言蜜语都清晰而饱满。
+		每一粒甜言蜜语都清晰而饱满
 		携带时，与每个不同的NPC对话都会让估价提升（幸福度每5%+1），每个NPC仅计一次
 		'''
 }
@@ -3934,7 +3913,7 @@ FogRollingGrass: {
 	DisplayName: 雾滚草
 	Tooltip:
 		'''
-		在迷雾裹挟下，离大地与根系越来越远。
+		在迷雾裹挟下，离大地与根系越来越远
 		携带时，每移动200m估价+1，至多16
 		'''
 }
@@ -3943,7 +3922,7 @@ WaveSpray: {
 	DisplayName: 浪花
 	Tooltip:
 		'''
-		自然造就改变，思维将之渲染，好让生灵傲然宣称自我的自由。
+		自然造就改变，思维将之渲染，好让生灵傲然宣称自我的自由
 		雨雪天气携带时，每移动500m估价随机-4或+5；非雨雪天气估价不变
 		估价不会低于0或高于66
 		'''
@@ -3953,21 +3932,21 @@ ProliferatingMoss: {
 	DisplayName: 多生苔藓
 	Tooltip:
 		'''
-		爬满泥土、树木、梦想、成长。
+		爬满泥土、树木、梦想、成长
 		携带时，背包里每有一种别的自然物，估价+1
 		'''
 }
 
 WitheredMossBall: {
 	DisplayName: 枯苔藓球
-	Tooltip: 而后腐败、枯萎、绝望、死亡。
+	Tooltip: 而后腐败、枯萎、绝望、死亡
 }
 
 BoardVine: {
 	DisplayName: 板藤
 	Tooltip:
 		'''
-		抓住同类，不愿再放手。
+		抓住同类，不愿再放手
 		携带时，背包里每有一种别的自然物，估价+4
 		'''
 }
@@ -3976,7 +3955,7 @@ HomesickFruit: {
 	DisplayName: 恋家果
 	Tooltip:
 		'''
-		受称颂蒙蔽，亲手启动生命的倒计时。
+		受称颂蒙蔽，亲手启动生命的倒计时
 		携带时，每移动200m估价-2
 		可以重新栽种在符合条件的环境（草皮/苔藓下表面），种下后每过一个游戏日估价+2，至多恢复到32
 		'''
@@ -3984,10 +3963,10 @@ HomesickFruit: {
 
 GlowingTruffle: {
 	DisplayName: 光彩松露
-	Tooltip: 如果不被挖掘与品尝，它本配不上如此殊荣。
+	Tooltip: 如果不被挖掘与品尝，它本配不上如此殊荣
 }
 
 Vulcan_Weapon: {
-	// DisplayName: Vulcan_ Weapon
+	DisplayName: 火神的锤盾
 	// Tooltip: ""
 }

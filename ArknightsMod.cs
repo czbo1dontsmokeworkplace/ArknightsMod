@@ -176,9 +176,6 @@ namespace ArknightsMod
 						global::ArknightsMod.Content.Tiles.TEElevator.ApplyMoveRequest(teId, floorBottomY);
 					}
 					break;
-				case ArkMessageID.PortableSafehouseRequestDeploy:
-					global::ArknightsMod.Content.Items.Consumables.PortableSafehouse.PortableSafehouseDeploymentUnit.ReceiveDeployRequest(reader, whoAmI);
-					break;
 				case ArkMessageID.AkStructureRequestDeploy:
 					global::ArknightsMod.Systems.Structures.AkStructureDeploySystem.ReceiveDeployRequest(reader, whoAmI);
 					break;
@@ -198,7 +195,10 @@ namespace ArknightsMod
 			CannotLifeTokenSync,
 			CoffeeMachineRequest,
 			ElevatorRequestFloor,
-			PortableSafehouseRequestDeploy,
+			// 曾经的 PortableSafehouseRequestDeploy 在这个位置，随"便携自建安全屋"一起移除。
+			// 枚举值是按顺序自动分配的，删掉它会让后面两项的数值整体前移一位——这不影响联机，
+			// 因为 tModLoader 本来就要求服务器和客户端的模组版本完全一致才能进服，
+			// 不存在新旧版本互相收发包的情况。
 			AkStructureRequestDeploy,
 			AkStructurePlacedEffect,
 		}

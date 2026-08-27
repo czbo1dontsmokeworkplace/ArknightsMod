@@ -131,8 +131,8 @@ sjds2: {
 }
 
 BagpipeDefenseBuff: {
-	// DisplayName: Bagpipe Defense Buff
-	// Description: Mods.ArknightsMod.Buffs.BagpipeDefenseBuff.Description
+	DisplayName: 闭膛连发
+	Description: 防御力[c/3791db:+120%]
 }
 
 SeasonedRationsBuff: {
