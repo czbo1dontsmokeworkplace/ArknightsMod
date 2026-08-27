@@ -49,6 +49,8 @@ namespace ArknightsMod.Content.Projectiles.Defender.Vulcan
 		}
 		public enum WeaponState { Move,Swing,Defende}
 
+		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => helper.Colliding(targetHitbox);
+
 		private bool press = false;
 		public WeaponState state = WeaponState.Move;
 		public override void AI() {

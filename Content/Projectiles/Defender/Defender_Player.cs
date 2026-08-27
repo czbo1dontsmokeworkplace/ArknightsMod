@@ -19,7 +19,6 @@ namespace ArknightsMod.Content.Projectiles.Defender
 		public int CD = 0;
 		public bool OpenDefender = false;
 
-		private Texture2D shieldTex => ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Defender/Shield_tex").Value;
 		private Texture2D noiseTex => ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Defender/ShieldNoise_tex").Value;
 		public static Effect shieldFx;
 
@@ -50,7 +49,7 @@ namespace ArknightsMod.Content.Projectiles.Defender
 		/// <summary>
 		/// 画盾（纯贴图 sb.Draw + 消融 shader，effect 交给 spriteBatch 管理）
 		/// </summary>
-		private void DrawShield(Vector2 center, float scale, Color color,float uTime = 0)
+		private void DrawShield(Vector2 center, float scale, Color color,Texture2D tex,float uTime = 0)
 		{
 			var sb = Main.spriteBatch;
 			sb.End();
@@ -65,14 +64,14 @@ namespace ArknightsMod.Content.Projectiles.Defender
 			shieldFx.Parameters["uEdgeColor"].SetValue(ParryThemeColor.ToVector3());
 			Main.graphics.GraphicsDevice.Textures[1] = noiseTex;
 
-			var origin = shieldTex.Size() * 0.5f;
-			sb.Draw(shieldTex, center, null, color, 0, origin, scale, SpriteEffects.None, 0f);
+			var origin = tex.Size() * 0.5f;
+			sb.Draw(tex, center, null, color, 0, origin, scale, SpriteEffects.None, 0f);
 
 			sb.End();
 			sb.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 		}
 
-		public void DrawEffect() {
+		public void DrawEffect(Texture2D tex) {
 			if (!openEffect)
 				return;
 			parryTimer++;
@@ -90,22 +89,21 @@ namespace ArknightsMod.Content.Projectiles.Defender
 			float pop = Math.Min(mt / 0.15f, 1f);
 			float popScale = MathHelper.Lerp(0.5f, 1.1f, EaseOutBack(pop));
 			float grow = Math.Max(0f, mt - 0.15f) / 0.85f;
-			float growScale = MathHelper.Lerp(0.08f, 0.13f, EaseOutCubic(grow));
+			float growScale = MathHelper.Lerp(2, 2.5f, EaseOutCubic(grow));
 			float scale = popScale * growScale;
 
 			float glow = 0.8f - mt * 0.4f;
 			Color col = Color.White * glow;
-			DrawShield(center, scale, col,MathF.Max(parryTimer/60f-2f,0));
+			DrawShield(center, scale, col,tex,MathF.Max(parryTimer/60f-2f,0));
 			Lighting.AddLight(Player.Center, new Vector3(1f, 0.7f, 0.4f) * (0.4f * glow));
 			if(t>=0.5f)
 			{
 				float st = (t - 0.5f) / 0.5f;
 
 				float grow1 = Math.Min(st / 0.6f, 1f);
-				float scale1 = MathHelper.Lerp(0.2f, 0.3f, EaseOutCubic(grow1));
+				float scale1 = MathHelper.Lerp(3, 3.5f, EaseOutCubic(grow1));
 				float alpha = st < 0.6f ? 0.15f : 0.15f * (1f - (st - 0.6f) / 0.4f);
-
-				DrawShield(center, scale1, Color.White * alpha);
+				DrawShield(center, scale1, Color.White * alpha,tex);
 			}
 		}
 		#endregion

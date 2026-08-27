@@ -19,13 +19,14 @@ namespace ArknightsMod.Content.SwingHelper
         /// <param name="totalTime">总时间</param>
         /// <param name="dir">挥舞方向</param>
         /// <returns>当前角度</returns>
-        public static float GetSwingRotation(float startRad, float endRad, float timer, float totalTime,int playerDir,SwingDir dir = SwingDir.plus)
-        {
-            if (totalTime <= 0f)
+        public static float GetSwingRotation(float startRad, float endRad, float timer, float totalTime,int playerDir,SwingDir dir = SwingDir.plus) {
+	        float setoff = dir == SwingDir.plus ? 0 :MathF.PI;
+	        if (totalTime <= 0f)
                 return startRad;
             float t = MathHelper.Clamp(timer / totalTime, 0f, 1f);
             float easedT = EaseOutCubic(t);
-            float rot = playerDir == 1? startRad + (endRad - startRad) * easedT * (int)dir : endRad + (startRad - endRad) * easedT* (int)dir;
+            float rot = playerDir == 1? startRad + (endRad - startRad) * easedT : endRad + (startRad - endRad) * easedT;
+            rot += setoff;
             return rot;
         }
         /// <summary>
@@ -40,9 +41,11 @@ namespace ArknightsMod.Content.SwingHelper
         /// <param name="dir"></param>
         /// <returns></returns>
         public static float GetSwingRotation(float startRad, float endRad, float timer, float totalTime, int playerDir,
-            Vector2 scale,Vector2 Length,Vector2 handleLen,Vector2 swordLen,out float length,out float handlelen,out float swordlen,
-            SwingDir dir = SwingDir.plus)
+            Vector2 scale,Vector2 Length,Vector2 handleLen,Vector2 swordLen,out float length,out float handlelen,out float swordlen
+            ,out float swordDir,SwingDir dir = SwingDir.plus)
         {
+	        float setoff = dir == SwingDir.plus ? 0 :MathF.PI;
+	        swordDir = dir == SwingDir.plus ? 1 : -1;
             if (totalTime <= 0f)
             {
                 length = Length.Length();
@@ -57,6 +60,7 @@ namespace ArknightsMod.Content.SwingHelper
             float easedT = EaseOutCubic(t);
 
             float rot = playerDir == 1? startRad + (endRad - startRad) * easedT * (int)dir : endRad + (startRad - endRad) * easedT* (int)dir;
+            rot += setoff;
             pos1 = pos1.RotatedBy(rot) * scale;
             pos2 = pos2.RotatedBy(rot) * scale;
             pos3 = pos3.RotatedBy(rot) * scale;

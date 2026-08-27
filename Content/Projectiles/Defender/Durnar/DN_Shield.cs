@@ -65,7 +65,8 @@ namespace ArknightsMod.Content.Projectiles.Defender.Durnar
 				SamplerState.AnisotropicClamp, DepthStencilState.None,
 				RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 			Draw_Shield(sb);
-			shieldHelper.mp.DrawEffect();
+			shieldHelper.mp.ParryThemeColor = Color.Purple;
+			shieldHelper.mp.DrawEffect(TextureAssets.Projectile[Projectile.type].Value);
 			sb.End();
 			sb.Begin();
 			return false;

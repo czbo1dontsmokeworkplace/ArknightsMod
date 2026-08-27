@@ -56,7 +56,8 @@ public class Cuora_Shield: ModProjectile
             SamplerState.AnisotropicClamp, DepthStencilState.None,
             RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
         Draw_Shield(sb,lightColor);
-        shieldHelper.mp.DrawEffect();
+        shieldHelper.mp.ParryThemeColor = Color.AliceBlue;
+        shieldHelper.mp.DrawEffect(TextureAssets.Projectile[Projectile.type].Value);
         sb.End();
         sb.Begin();
         return false;

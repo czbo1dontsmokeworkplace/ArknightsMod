@@ -84,14 +84,14 @@ namespace ArknightsMod.Content.Projectiles.Defender.Beagle
 
 				var ori = !Ori.HasValue ? new Vector2((TX.Width / 2 - TX.Width / 2 * Dir), TX.Height) : Ori.Value;
 				Main.spriteBatch.Draw(TX,
-									  Cent - Main.screenPosition,
-									  null,
-									  Col,
-									  Ro,
-									  ori,
-									  sc,
-									  spe,
-									  0);
+				  Cent - Main.screenPosition,
+				  null,
+				  Col,
+				  Ro,
+				  ori,
+				  sc,
+				  spe,
+				  0);
 			}
 		}
 

@@ -2,7 +2,7 @@
 
 namespace ArknightsMod.Content.SwingHelper
 {
-    public class StepSkill(bool isOver)
+    public class StepSkill(bool isEnd)
     {
         /// <summary>
         /// 技能步骤 -- 下一步
@@ -31,7 +31,7 @@ namespace ArknightsMod.Content.SwingHelper
         /// <summary>
         /// 是否为末尾技能
         /// </summary>
-        public bool isEnd = isOver;
+        public bool isEnd = isEnd;
 
 
         /// <summary>

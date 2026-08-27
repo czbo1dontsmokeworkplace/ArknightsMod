@@ -30,7 +30,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Entelechia
 			Projectile.localNPCHitCooldown = 11;
 			tex = ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Guard/Entelechia/swooshgray").Value;
 		}
-
+		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => Helper.Colliding(targetHitbox);
 		public override void OnSpawn(IEntitySource source) {
 			player = Main.player[Projectile.owner];
 			Helper = new SwingHelper.SwingHelper(10, 3)
@@ -47,7 +47,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Entelechia
 		public Player player;
 		private bool press = false;
 		public override void AI() {
-			if(player.HeldItem.type != ModContent.ItemType<EntelechiaScythe>())
+			if(player.dead||player.HeldItem.type != ModContent.ItemType<EntelechiaScythe>())
 				Projectile.Kill();
 			switch (state)
 			{
@@ -62,7 +62,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Entelechia
 					}
 					break;
 				case SwordState.Swing:
-					if (Helper.Swing(1 / 5f))
+					if (Helper.Swing())
 					{
 						state = SwordState.Move;
 						Helper.ReloadIndex();
@@ -80,7 +80,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Entelechia
 		public override bool PreDraw(ref Color lightColor) {
 			Helper.DrawBlade(Main.spriteBatch);
 			if (state == SwordState.Swing)
-				Helper.DrawTrip(SwingHelper.SwingHelper.SwingEffect.Ink,Colors , Main.spriteBatch,300,32,SwingHelper.SwingHelper.TripTex.Streamline);
+				Helper.DrawTrip(SwingHelper.SwingHelper.SwingEffect.Zero,Colors , Main.spriteBatch,300,32,SwingHelper.SwingHelper.TripTex.Streamline);
 			return false;
 		}
 	}

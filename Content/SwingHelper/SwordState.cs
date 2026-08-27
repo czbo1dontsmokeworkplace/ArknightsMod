@@ -6,6 +6,8 @@ namespace ArknightsMod.Content.SwingHelper
     {
         Move,
         Swing,
+        SpecialAttack,
+        Skill
     }
 }
 

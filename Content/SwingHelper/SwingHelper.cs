@@ -66,6 +66,14 @@ namespace ArknightsMod.Content.SwingHelper
         /// 测试用UuU
         /// </summary>
         public static Effect TestFX;
+		/// <summary>
+		/// 像素化着色器
+		/// </summary>
+        public static Effect Pixelate;
+		/// <summary>
+		/// 噪声流动着色器
+		/// </summary>
+        public static Effect NoiseTrail;
 
 
 	        public enum SwingEffect
@@ -74,8 +82,8 @@ namespace ArknightsMod.Content.SwingHelper
 	        Dissolve,
 	        Flow,
 	        Flicker,
-	        	Warp,
-	        	SlashWarp,
+	        Warp,
+	        SlashWarp,
 	        Ink,
 	        Test
         }
@@ -145,6 +153,10 @@ namespace ArknightsMod.Content.SwingHelper
         /// 挥舞总弧度
         /// </summary>
         public float swingRad;
+		/// <summary>
+		/// 剑朝向
+		/// </summary>
+        public float swordDir;
         /// <summary>
         /// 剑柄位置
         /// </summary>
@@ -328,8 +340,8 @@ namespace ArknightsMod.Content.SwingHelper
         /// <summary>
         /// 移动时剑的AI
         /// </summary>
-        public virtual void Move()
-        {
+        public virtual void Move() {
+	        swordDir = 1;
             playerX = Math.Abs(player.velocity.X);
             if (Math.Abs(player.velocity.Y) > 0.01f) {
                 armRad = MathHelper.ToRadians(-20f);
@@ -351,19 +363,24 @@ namespace ArknightsMod.Content.SwingHelper
         /// <summary>
         /// 蓄力/等待时剑AI
         /// </summary>
-        public virtual void Wait()
+        public virtual bool Wait(RotationHelper.SwingDir swingDir = RotationHelper.SwingDir.plus)
         {
             swordRad = RotationHelper.GetSwingRotation(startRad, endRad,swingTime,SwingUseTime,player.direction,scale
-	            ,texLength,handleLength,swordLength,out float length,out float handlelen,out float swordlen);
+	            ,texLength,handleLength,swordLength,out float length,out float handlelen,out float swordlen,
+	            out float SwordDir);
+            swordDir = SwordDir;
             SwordAHandCon(0f, startRad,length,handlelen,swordlen);
             Chargetime = MathF.Min(Chargetime+1, MaxChargetime);
             ChargeProgress = Chargetime / MaxChargetime;
+            if (ChargeProgress >= 1)
+	            return true;
+            return false;
         }
 
         /// <summary>
         /// 基础挥砍
         /// </summary>
-        public virtual bool Swing(float hold = 0.1f, float recovery = 0.15f)
+        public virtual bool Swing(RotationHelper.SwingDir swingDir = RotationHelper.SwingDir.plus)
         {
             if (swingTime > SwingUseTime)
             {
@@ -374,7 +391,9 @@ namespace ArknightsMod.Content.SwingHelper
 	            return true;
             }
             swordRad = RotationHelper.GetSwingRotation(startRad, endRad,swingTime,SwingUseTime,player.direction,scale
-	            ,texLength,handleLength,swordLength,out float length,out float handlelen,out float swordlen);
+	            ,texLength,handleLength,swordLength,out float length,out float handlelen,out float swordlen,
+	            out float SwordDir,swingDir);
+            swordDir = SwordDir;
             SwordAHandCon(0,swordRad,length,handlelen,swordlen,true,true);
             if (lagTime == 0)
 	            swingTime++;
@@ -428,7 +447,7 @@ namespace ArknightsMod.Content.SwingHelper
 		        case SwingEffect.Dissolve:
 			        Dissolve.Parameters["uTransform"].SetValue(projection);
 			        Dissolve.Parameters["uTime"].SetValue(time);
-			        Dissolve.Parameters["uDissolve"].SetValue(1f);
+			        Dissolve.Parameters["uDissolve"].SetValue(0.3f);
 			        Dissolve.Parameters["uNoiseScale"].SetValue(2.0f);
 			        Main.graphics.GraphicsDevice.Textures[1] = ModContent
 				        .Request<Texture2D>("ArknightsMod/Content/SwingHelper/Images/Hz").Value;
@@ -527,9 +546,7 @@ namespace ArknightsMod.Content.SwingHelper
         public virtual void DrawBlade(SpriteBatch sb, bool handPlayerDir = true)
         {
 	        Vector2 Length = swordPos - handlePos;
-	        Vector2 handPos = handPlayerDir
-		        ? handlePos + setoff.RotatedBy(swordRot)
-		        : handlePos + setoff.RotatedBy(swordRot);
+	        Vector2 handPos = handlePos + setoff.RotatedBy(swordRot);
 	        handPos -= Main.screenPosition;
 	        Vector2 halfPos = Length / 2f;
 	        if (scale.X != 1)
@@ -539,10 +556,10 @@ namespace ArknightsMod.Content.SwingHelper
 	        Vector2 halfWidth = new Vector2(-halfPos.Y, halfPos.X);
 	        swordPos_Draw =
 	        [
-		        handPos + halfPos - halfWidth * player.direction,   //左上
+		        handPos + halfPos - halfWidth * player.direction * swordDir,   //左上
 		        handPos + Length,                 //右上
 		        handPos,                          //左下
-		        handPos + halfPos + halfWidth * player.direction   //右下
+		        handPos + halfPos + halfWidth * player.direction * swordDir  //右下
 	        ];
 	        sword.Clear();
 	        for (int i = 0; i < 4; i++)
@@ -554,7 +571,15 @@ namespace ArknightsMod.Content.SwingHelper
 		        sword[3] = new Vertex(swordPos_Draw[3], new Vector3(1, 1, 0), Color.White);
 	        }
 	        sb.End();
-	        sb.Begin();
+	        sb.Begin(
+		        SpriteSortMode.Immediate,
+		        BlendState.AlphaBlend,
+		        SamplerState.AnisotropicClamp,
+		        DepthStencilState.None,
+		        RasterizerState.CullNone,
+		        null,
+		        Main.GameViewMatrix.TransformationMatrix
+	        );
 	        Main.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
 	        Main.graphics.GraphicsDevice.Textures[0] = projTexture;
 	        if (sword.Count >= 4)
@@ -575,7 +600,7 @@ namespace ArknightsMod.Content.SwingHelper
 	        for (int i = 0; i < TriphandPos.Length-1; i++)
 	        {
 		        if (TriphandPos[i] == Vector2.Zero)
-			        continue;
+			       continue ;
 		        float progress = i / (float)TriphandPos.Length;
 		        trip.Add(new Vertex(TriphandPos[i], new Vector3(progress, 0, 0), Tripcolor));
 		        trip.Add(new Vertex(TripswordPos[i], new Vector3(progress, 1, 0), Tripcolor));

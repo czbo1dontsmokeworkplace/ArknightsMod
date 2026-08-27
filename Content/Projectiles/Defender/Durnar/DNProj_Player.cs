@@ -35,11 +35,6 @@ namespace ArknightsMod.Content.Projectiles.Defender.Durnar
         {
             var it = Player.HeldItem;
             var modPlayer = Player.GetModPlayer<WeaponPlayer>();
-            if(it.type == ModContent.ItemType<DN_Weapon>()&&Main.mouseRight)
-            {
-	            Player.statDefense += 10;
-	            Player.noKnockback = true;
-            }
 
             if (ShieldAttackMode && !modPlayer.SkillActive)
 	            ShieldAttackMode = false;

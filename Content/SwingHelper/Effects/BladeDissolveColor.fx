@@ -1,5 +1,5 @@
-// Soft noise dissolve for blade textures.
-// uDissolve: 0 = fully visible, 1 = fully dissolved.
+// Noise dissolve that replaces the dissolved area with a caller supplied color.
+// uDissolve: 0 = no colored area, 1 = fully colored.
 sampler uImage0 : register(s0);
 sampler uNoiseTex : register(s1);
 float4x4 uTransform;
@@ -7,6 +7,8 @@ float uTime;
 float uDissolve;
 float uNoiseScale;
 float uEdgeWidth;
+float3 uDissolveColor;
+float uDissolveColorStrength;
 float3 uEdgeColor;
 float uEdgeIntensity;
 
@@ -35,10 +37,10 @@ VSOutput VS(VSInput input)
 
 float NoiseField(float2 uv)
 {
-    float2 drift = float2(uTime * 0.012, -uTime * 0.008);
+    float2 drift = float2(-uTime * 0.01, uTime * 0.014);
     float large = tex2D(uNoiseTex, uv * uNoiseScale + drift).r;
-    float detail = tex2D(uNoiseTex, uv * (uNoiseScale * 3.0) - drift * 1.7 + 0.37).r;
-    return large * 0.78 + detail * 0.22;
+    float detail = tex2D(uNoiseTex, uv * (uNoiseScale * 2.8) - drift * 1.5 + 0.19).r;
+    return large * 0.72 + detail * 0.28;
 }
 
 float VisibleAmount(float field, float threshold, float width)
@@ -56,14 +58,16 @@ float4 PS(VSOutput input) : COLOR0
     float field = NoiseField(input.TexCoord);
     float width = max(uEdgeWidth, 0.001);
 
-    // A soft threshold keeps the blade readable instead of cutting it into a hard silhouette.
     float visible = VisibleAmount(field, uDissolve, width);
+    float removed = 1.0 - visible;
     float edge = smoothstep(uDissolve - width, uDissolve, field)
                * (1.0 - smoothstep(uDissolve, uDissolve + width, field));
 
-    float3 rgb = source.rgb * visible;
-    rgb += uEdgeColor * edge * uEdgeIntensity;
-    float alpha = source.a * max(visible, edge * 0.9);
+    // Replace only the dissolved portion; the original texture remains readable elsewhere.
+    float colorAmount = saturate(removed * uDissolveColorStrength);
+    float3 rgb = lerp(source.rgb, uDissolveColor, colorAmount);
+    rgb = lerp(rgb, uEdgeColor, edge * uEdgeIntensity);
+    float alpha = source.a * max(visible, colorAmount);
 
     return float4(rgb, alpha) * input.Color;
 }

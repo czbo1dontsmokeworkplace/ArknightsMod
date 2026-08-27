@@ -71,7 +71,7 @@ namespace ArknightsMod.Content.Projectiles.Defender.Vulcan
 				SamplerState.AnisotropicClamp, DepthStencilState.None,
 				RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 			Draw_Shield(sb);
-			helper.mp.DrawEffect();
+			helper.mp.DrawEffect(TextureAssets.Projectile[Projectile.type].Value);
 			sb.End();
 			sb.Begin();
 			return false;
@@ -84,6 +84,12 @@ namespace ArknightsMod.Content.Projectiles.Defender.Vulcan
 					projMode = ShieldType.Defender;
 				}
 			}
+		}
+
+		public override bool? CanHitNPC(NPC target) {
+			if (projMode == ShieldType.Move)
+				return false;
+			return true;
 		}
 
 		public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) {
@@ -147,6 +153,8 @@ namespace ArknightsMod.Content.Projectiles.Defender.Vulcan
 		public Texture2D ShieldTex => TextureAssets.Projectile[Projectile.type].Value;
 		public void Draw_Shield(SpriteBatch sb) {
 			helper.DrawShield(Projectile, player, ShieldTex, projMode == ShieldType.Defender);
+			helper.mp.ParryThemeColor = Color.Black;
+			helper.mp.DrawEffect(TextureAssets.Projectile[Projectile.type].Value);
 		}
 
 		public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs,

@@ -19,7 +19,9 @@ namespace ArknightsMod.Content.SwingHelper
 	        SwingHelper.BladeInk = ModContent.Request<Effect>(index+"BladeInk",AssetRequestMode.ImmediateLoad).Value;
 	        SwingHelper.BladeWarp = ModContent.Request<Effect>(index+"BladeWarp",AssetRequestMode.ImmediateLoad);
 	        SwingHelper.BladeSlashWarp = ModContent.Request<Effect>(index+"BladeSlashWarp",AssetRequestMode.ImmediateLoad);
-			Defender_Player.shieldFx = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/ShieldDissolve",
+			SwingHelper.Pixelate = ModContent.Request<Effect>(index+"BladePixelate",AssetRequestMode.ImmediateLoad).Value;
+			SwingHelper.NoiseTrail = ModContent.Request<Effect>(index+"BladeNoiseTrail",AssetRequestMode.ImmediateLoad).Value;
+	        Defender_Player.shieldFx = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/ShieldDissolve",
 				AssetRequestMode.ImmediateLoad).Value;
 	        if (Main.netMode != Terraria.ID.NetmodeID.Server)
 	        {

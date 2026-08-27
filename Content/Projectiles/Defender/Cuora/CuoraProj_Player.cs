@@ -53,11 +53,6 @@ public class CuoraProj_Player : ModPlayer
 	{
 		var it = Player.HeldItem;
 		var modPlayer = Player.GetModPlayer<WeaponPlayer>();
-		if(it.type == ModContent.ItemType<CuoraWeapon>()&& (Main.mouseRight||DefensiveStance))
-		{
-			Player.statDefense += 10;
-			Player.noKnockback = true;
-		}
 
 		if (DefensiveStance && !modPlayer.SkillActive) {
 			DefensiveStance = false;
