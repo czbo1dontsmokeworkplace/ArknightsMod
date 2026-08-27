@@ -41,7 +41,22 @@ namespace ArknightsMod.Systems.Structures
 		// 有判定，但什么都不画"的空壳。版本 1/2 的旧文件没有这个分支，读到这类
 		// 家具的锚点 tile 时只能重现空壳（老问题依旧存在，无法追溯修复，只能
 		// 重新导出一份新文件）。
-		public const ushort FormatVersion = 3;
+		//
+		// 版本 4：文件头新增"模组方块/模组墙 ID 映射表"，解决一个会让旧结构随时间
+		// 自己烂掉的严重问题——
+		//   模组方块的数字 ID 不是固定的，是加载时由 TileLoader.ReserveTileID() 这个
+		//   自增计数器按注册顺序临时分配的。版本 1~3 直接把 tile.TileType 当数字存进
+		//   文件，只要之后往模组里新增/删除任何一个 ModTile，排在它后面的方块 ID 就会
+		//   整体移位，老文件里存的数字便会指向完全不同的方块，表现为"建筑放出来缺一块，
+		//   还冒出些没做过的奇怪方块"。（原版方块 ID 是固定常量，不受影响。）
+		//   版本 4 起改为：文件里仍然按数字存，但额外记一张
+		//   「这个文件里用到的模组方块数字 → "模组名/内部名"」的对照表，读取时按名字
+		//   查回当前这次运行的真实 ID 再替换，从此增删方块都不会再错位。
+		//   查不回来的（方块被删了/改名了/来自没装的模组）当作空气跳过，并打一条警告，
+		//   总比默默摆错方块强。
+		// ⚠ 版本 1~3 的旧文件没有这张表，里面的模组方块数字已经无从考证当时指的是什么，
+		//   无法自动修复，只能重新导出。
+		public const ushort FormatVersion = 4;
 
 		public const string FileExtension = ".akstruct";
 
@@ -100,10 +115,49 @@ namespace ArknightsMod.Systems.Structures
 			w.Write((ushort)width);
 			w.Write((ushort)height);
 
+			WriteModTypeMaps(w, minX, maxX, minY, maxY);
+
 			for (int y = minY; y <= maxY; y++) {
 				for (int x = minX; x <= maxX; x++) {
 					WriteCell(w, Main.tile[x, y], x, y);
 				}
+			}
+		}
+
+		// 扫一遍选区，把用到的所有"模组方块/模组墙"的数字 ID 和它的稳定身份
+		// （"模组名/内部名"）配对写进文件头。原版方块不进表——它们的 ID 是固定常量，
+		// 不会因为装了/改了什么模组而变化，存数字就够了。
+		private static void WriteModTypeMaps(BinaryWriter w, int minX, int maxX, int minY, int maxY) {
+			var modTiles = new Dictionary<ushort, string>();
+			var modWalls = new Dictionary<ushort, string>();
+
+			for (int y = minY; y <= maxY; y++) {
+				for (int x = minX; x <= maxX; x++) {
+					Tile tile = Main.tile[x, y];
+
+					if (tile.HasTile && tile.TileType >= TileID.Count && !modTiles.ContainsKey(tile.TileType)) {
+						ModTile mt = ModContent.GetModTile(tile.TileType);
+						if (mt != null)
+							modTiles[tile.TileType] = mt.Mod.Name + "/" + mt.Name;
+					}
+
+					if (tile.WallType != WallID.None && tile.WallType >= WallID.Count && !modWalls.ContainsKey(tile.WallType)) {
+						ModWall mw = ModContent.GetModWall(tile.WallType);
+						if (mw != null)
+							modWalls[tile.WallType] = mw.Mod.Name + "/" + mw.Name;
+					}
+				}
+			}
+
+			WriteTypeMap(w, modTiles);
+			WriteTypeMap(w, modWalls);
+		}
+
+		private static void WriteTypeMap(BinaryWriter w, Dictionary<ushort, string> map) {
+			w.Write((ushort)map.Count);
+			foreach (KeyValuePair<ushort, string> pair in map) {
+				w.Write(pair.Key);
+				w.Write(pair.Value);
 			}
 		}
 
@@ -205,36 +259,93 @@ namespace ArknightsMod.Systems.Structures
 			ushort width = r.ReadUInt16();
 			ushort height = r.ReadUInt16();
 
+			// 版本 4 起：文件头带着"模组方块数字 → 模组名/内部名"的对照表，
+			// 这里按名字查回本次运行的真实 ID，得到「文件里的旧数字 → 现在的数字」映射。
+			// 版本 1~3 没有这张表，只能原样使用文件里的数字（那些文件本来就有 ID 错位问题，
+			// 见 FormatVersion 的注释）。
+			Dictionary<ushort, ushort> tileRemap = null;
+			Dictionary<ushort, ushort> wallRemap = null;
+			if (version >= 4) {
+				tileRemap = ReadTypeMap<ModTile>(r, sourceDescription, "方块");
+				wallRemap = ReadTypeMap<ModWall>(r, sourceDescription, "墙");
+			}
+
 			var cells = new StructureCell[width, height];
 			for (int y = 0; y < height; y++) {
 				for (int x = 0; x < width; x++) {
-					cells[x, y] = ReadCell(r, version);
+					cells[x, y] = ReadCell(r, version, tileRemap, wallRemap);
 				}
 			}
 
 			return new StructureData(width, height, cells);
 		}
 
-		private static StructureCell ReadCell(BinaryReader r, ushort version) {
+		// 读一张类型对照表，返回「文件里的旧数字 → 当前运行时的真实数字」。
+		// 查不到的（方块被删了/改名了/来自没装的模组）映射到 UnresolvedType，
+		// 调用方会把这种格子当空气跳过——宁可缺一块，也不要摆上一个完全无关的方块。
+		private const ushort UnresolvedType = ushort.MaxValue;
+
+		private static Dictionary<ushort, ushort> ReadTypeMap<T>(BinaryReader r, string sourceDescription, string kindLabel)
+			where T : class, IModType {
+			ushort count = r.ReadUInt16();
+			var remap = new Dictionary<ushort, ushort>(count);
+
+			for (int i = 0; i < count; i++) {
+				ushort savedId = r.ReadUInt16();
+				string identity = r.ReadString();
+
+				if (ModContent.TryFind(identity, out T found)) {
+					remap[savedId] = found switch {
+						ModTile mt => (ushort)mt.Type,
+						ModWall mw => (ushort)mw.Type,
+						_ => UnresolvedType,
+					};
+				}
+				else {
+					remap[savedId] = UnresolvedType;
+					ModContent.GetInstance<ArknightsMod>()?.Logger.Warn(
+						$"[.akstruct] {sourceDescription}：找不到{kindLabel} \"{identity}\"（可能已被删除/改名，或来自未安装的模组），该处将留空。");
+				}
+			}
+
+			return remap;
+		}
+
+		// 把文件里存的数字翻译成当前运行时的真实类型。没有映射表（旧版本文件）时原样返回。
+		private static ushort ResolveType(ushort savedType, Dictionary<ushort, ushort> remap) =>
+			remap != null && remap.TryGetValue(savedType, out ushort actual) ? actual : savedType;
+
+		private static StructureCell ReadCell(BinaryReader r, ushort version,
+			Dictionary<ushort, ushort> tileRemap, Dictionary<ushort, ushort> wallRemap) {
 			var flags = (CellFlags)r.ReadByte();
 			StructureCell cell = default;
 
 			if (flags.HasFlag(CellFlags.HasTile)) {
 				cell.HasTile = true;
-				cell.TileType = r.ReadUInt16();
+				cell.TileType = ResolveType(r.ReadUInt16(), tileRemap);
 				cell.TileFrameX = r.ReadInt16();
 				cell.TileFrameY = r.ReadInt16();
 				cell.TileColor = r.ReadByte();
 				cell.Slope = r.ReadByte();
+
+				// 查不回来的模组方块：整格当空气，别摆上一个无关的方块。
+				if (cell.TileType == UnresolvedType)
+					cell.HasTile = false;
 			}
 
 			if (flags.HasFlag(CellFlags.HasWall)) {
 				cell.HasWall = true;
-				cell.WallType = r.ReadUInt16();
+				cell.WallType = ResolveType(r.ReadUInt16(), wallRemap);
 				cell.WallColor = r.ReadByte();
 				if (version >= 2) {
 					cell.WallFrameX = r.ReadInt16();
 					cell.WallFrameY = r.ReadInt16();
+				}
+
+				// 同上：查不回来的模组墙留空，不要摆成别的墙。
+				if (cell.WallType == UnresolvedType) {
+					cell.HasWall = false;
+					cell.WallType = WallID.None;
 				}
 			}
 
@@ -366,7 +477,6 @@ namespace ArknightsMod.Systems.Structures
 			// ⚠ RangeFrame 不会正确重算墙的帧——本格式没有保存墙的 FrameX/FrameY
 			// （StructureCell 只存了 WallType/WallColor），墙格子摆上去之后帧数据是
 			// 默认的 0，图会错位。要单独按格调用 SquareWallFrame 才能让墙正确拼接，
-			// 这是照抄 PortableSafehouseSystem.FrameWalls 里已经验证过的做法，
 			// 不要指望 RangeFrame 替你把这一步也做了。
 			for (int y = 0; y < Height; y++) {
 				for (int x = 0; x < Width; x++) {
