@@ -4,14 +4,8 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.GameContent;
-using Terraria.GameContent.Bestiary;
-using Terraria.Graphics;
 using Terraria.Graphics.CameraModifiers;
 using Terraria.ModLoader;
-using Terraria.Graphics.Effects;
-using Terraria.Graphics.Shaders;
-using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Filters = Terraria.Graphics.Effects.Filters;
 
@@ -108,6 +102,10 @@ namespace ArknightsMod.Content.SwingHelper
         /// 弹幕贴图
         /// </summary>
         public Texture2D projTexture;
+		/// <summary>
+		/// 挥舞的额外运行方法
+		/// </summary>
+        public Action swingAction;
         /// <summary>
         /// 贴图大小
         /// </summary>
@@ -257,6 +255,11 @@ namespace ArknightsMod.Content.SwingHelper
         #endregion
 
         #region 设置挥舞帮助的参数
+
+        public SwingHelper SetAction(Action action) {
+	        swingAction = action;
+	        return this;
+        }
         public SwingHelper SetTex(Texture2D tex)
         {
             projTexture = tex;
@@ -265,6 +268,7 @@ namespace ArknightsMod.Content.SwingHelper
         public SwingHelper SetPlayer(Player player)
         {
             this.player = player;
+            mP = player.GetModPlayer<ModifyScreenPosPlayer>();
             return this;
         }
         public SwingHelper SetProj(Projectile proj)
@@ -394,6 +398,7 @@ namespace ArknightsMod.Content.SwingHelper
 	            ,texLength,handleLength,swordLength,out float length,out float handlelen,out float swordlen,
 	            out float SwordDir,swingDir);
             swordDir = SwordDir;
+            swingAction?.Invoke();
             SwordAHandCon(0,swordRad,length,handlelen,swordlen,true,true);
             if (lagTime == 0)
 	            swingTime++;
@@ -594,16 +599,30 @@ namespace ArknightsMod.Content.SwingHelper
         /// </summary>
         public virtual void DrawTrip(SwingEffect en, Color Tripcolor, SpriteBatch sb,TripTex tex = TripTex.Streamline)
         {
-	        GetCatmullPos(oldHandPos, out Vector2[] TriphandPos);
-	        GetCatmullPos(oldPos, out Vector2[] TripswordPos);
 	        trip.Clear();
-	        for (int i = 0; i < TriphandPos.Length-1; i++)
-	        {
-		        if (TriphandPos[i] == Vector2.Zero)
-			       continue ;
-		        float progress = i / (float)TriphandPos.Length;
-		        trip.Add(new Vertex(TriphandPos[i], new Vector3(progress, 0, 0), Tripcolor));
-		        trip.Add(new Vertex(TripswordPos[i], new Vector3(progress, 1, 0), Tripcolor));
+	        if (mP.modifyScreenPos) {
+		        GetCatmullPos(oldWorldHandPos, out Vector2[] TriphandPos);
+		        GetCatmullPos(oldWorldPos, out Vector2[] TripswordPos);
+		        for (int i = 0; i < TriphandPos.Length-1; i++)
+		        {
+			        if (TriphandPos[i] == Vector2.Zero)
+				        continue ;
+			        float progress = i / (float)TriphandPos.Length;
+			        trip.Add(new Vertex(TriphandPos[i] - Main.screenPosition, new Vector3(progress, 0, 0), Tripcolor));
+			        trip.Add(new Vertex(TripswordPos[i] - Main.screenPosition, new Vector3(progress, 1, 0), Tripcolor));
+		        }
+	        }
+	        else {
+		        GetCatmullPos(oldHandPos, out Vector2[] TriphandPos);
+		        GetCatmullPos(oldPos, out Vector2[] TripswordPos);
+		        for (int i = 0; i < TriphandPos.Length-1; i++)
+		        {
+			        if (TriphandPos[i] == Vector2.Zero)
+				        continue ;
+			        float progress = i / (float)TriphandPos.Length;
+			        trip.Add(new Vertex(TriphandPos[i] , new Vector3(progress, 0, 0), Tripcolor));
+			        trip.Add(new Vertex(TripswordPos[i], new Vector3(progress, 1, 0), Tripcolor));
+		        }
 	        }
 	        sb.End();
 	        sb.Begin(SpriteSortMode.Immediate, BlendState.Additive,
@@ -626,16 +645,30 @@ namespace ArknightsMod.Content.SwingHelper
 		/// <param name="sb"></param>
         public virtual void DrawTrip(SwingEffect en, Color[] Tripcolor, SpriteBatch sb,TripTex tex =  TripTex.Streamline)
         {
-	        GetCatmullPos(oldHandPos, out Vector2[] TriphandPos);
-	        GetCatmullPos(oldPos, out Vector2[] TripswordPos);
 	        trip.Clear();
-	        for (int i = 0; i < TriphandPos.Length; i++)
-	        {
-		        if (TriphandPos[i] == Vector2.Zero)
-			        continue;
-		        float progress = i / (float)TriphandPos.Length;
-		        trip.Add(new Vertex(TriphandPos[i], new Vector3(progress, 0, 0), Tripcolor[0]));
-		        trip.Add(new Vertex(TripswordPos[i], new Vector3(progress, 1, 0), Tripcolor[1]));
+	        if (mP.modifyScreenPos) {
+		        GetCatmullPos(oldWorldHandPos, out Vector2[] TriphandPos);
+		        GetCatmullPos(oldWorldPos, out Vector2[] TripswordPos);
+		        for (int i = 0; i < TriphandPos.Length-1; i++)
+		        {
+			        if (TriphandPos[i] == Vector2.Zero)
+				        continue ;
+			        float progress = i / (float)TriphandPos.Length;
+			        trip.Add(new Vertex(TriphandPos[i] - Main.screenPosition, new Vector3(progress, 0, 0), Tripcolor[0]));
+			        trip.Add(new Vertex(TripswordPos[i] - Main.screenPosition, new Vector3(progress, 1, 0), Tripcolor[1]));
+		        }
+	        }
+	        else {
+		        GetCatmullPos(oldHandPos, out Vector2[] TriphandPos);
+		        GetCatmullPos(oldPos, out Vector2[] TripswordPos);
+		        for (int i = 0; i < TriphandPos.Length-1; i++)
+		        {
+			        if (TriphandPos[i] == Vector2.Zero)
+				        continue ;
+			        float progress = i / (float)TriphandPos.Length;
+			        trip.Add(new Vertex(TriphandPos[i] , new Vector3(progress, 0, 0), Tripcolor[0]));
+			        trip.Add(new Vertex(TripswordPos[i], new Vector3(progress, 1, 0), Tripcolor[1]));
+		        }
 	        }
 	        sb.End();
 	        sb.Begin(SpriteSortMode.Immediate, BlendState.Additive,
@@ -653,31 +686,57 @@ namespace ArknightsMod.Content.SwingHelper
 
         public virtual void DrawTrip(SwingEffect en, Color Tripcolor, SpriteBatch sb,float rot,int point = 16,TripTex tex = TripTex.Afterimage)
         {
-	        GetCatmullPos(oldHandPos, out Vector2[] TriphandPos);
-	        GetCatmullPos(oldPos, out Vector2[] TripswordPos);
 	        trip.Clear();
 	        List<Vertex>[] tripPos = new List<Vertex>[point-1];
 	        for (int j = 0; j < point-1; j++) {
 		        tripPos[j] = new List<Vertex>();
 	        }
-	        for (int i = 0; i < TriphandPos.Length; i++)
-	        {
-		        if (TriphandPos[i] == Vector2.Zero)
-			        continue;
-		        List<Vector2> a;
-		        if (player.direction == 1)
-			        a = CircularArcPoints(TripswordPos[i] , TriphandPos[i]
-				        , 300,point);
-		        else
-			        a = CircularArcPoints(TriphandPos[i]
-				        , TripswordPos[i] , 300,point);
-		        float progress = i / (float)TriphandPos.Length;
-		        for (int j=0,m=-1;j<a.Count-1;j++) {
-			        float progress2 = player.direction==-1? j / (float)a.Count: 1-(j / (float)a.Count);
-			        float progress3 =  player.direction==-1? (j+1) / (float)a.Count: 1-((j+1) / (float)a.Count);
-			        m += 1;
-			        tripPos[m].Add(new Vertex(a[j],new Vector3(progress,progress2,0),Tripcolor));
-			        tripPos[m].Add(new Vertex(a[j+1],new Vector3(progress,progress3,0),Tripcolor));
+	        if (mP.modifyScreenPos) {
+		        GetCatmullPos(oldWorldHandPos, out Vector2[] TriphandPos);
+		        GetCatmullPos(oldWorldPos, out Vector2[] TripswordPos);
+		        for (int i = 0; i < TriphandPos.Length; i++)
+		        {
+			        if (TriphandPos[i] == Vector2.Zero)
+				        continue;
+			        List<Vector2> a;
+			        if (player.direction == 1)
+				        a = CircularArcPoints(TripswordPos[i] , TriphandPos[i]
+					        , 300,point);
+			        else
+				        a = CircularArcPoints(TriphandPos[i]
+					        , TripswordPos[i] , 300,point);
+			        float progress = i / (float)TriphandPos.Length;
+			        for (int j=0,m=-1;j<a.Count-1;j++) {
+				        float progress2 = player.direction==-1? j / (float)a.Count: 1-(j / (float)a.Count);
+				        float progress3 =  player.direction==-1? (j+1) / (float)a.Count: 1-((j+1) / (float)a.Count);
+				        m += 1;
+				        tripPos[m].Add(new Vertex(a[j] - Main.screenPosition,new Vector3(progress,progress2,0),Tripcolor));
+				        tripPos[m].Add(new Vertex(a[j+1] - Main.screenPosition,new Vector3(progress,progress3,0),Tripcolor));
+			        }
+		        }
+	        }
+	        else {
+		        GetCatmullPos(oldHandPos, out Vector2[] TriphandPos);
+		        GetCatmullPos(oldPos, out Vector2[] TripswordPos);
+		        for (int i = 0; i < TriphandPos.Length; i++)
+		        {
+			        if (TriphandPos[i] == Vector2.Zero)
+				        continue;
+			        List<Vector2> a;
+			        if (player.direction == 1)
+				        a = CircularArcPoints(TripswordPos[i] , TriphandPos[i]
+					        , 300,point);
+			        else
+				        a = CircularArcPoints(TriphandPos[i]
+					        , TripswordPos[i] , 300,point);
+			        float progress = i / (float)TriphandPos.Length;
+			        for (int j=0,m=-1;j<a.Count-1;j++) {
+				        float progress2 = player.direction==-1? j / (float)a.Count: 1-(j / (float)a.Count);
+				        float progress3 =  player.direction==-1? (j+1) / (float)a.Count: 1-((j+1) / (float)a.Count);
+				        m += 1;
+				        tripPos[m].Add(new Vertex(a[j],new Vector3(progress,progress2,0),Tripcolor));
+				        tripPos[m].Add(new Vertex(a[j+1],new Vector3(progress,progress3,0),Tripcolor));
+			        }
 		        }
 	        }
 	        sb.End();
@@ -699,31 +758,57 @@ namespace ArknightsMod.Content.SwingHelper
 
         public virtual void DrawTrip(SwingEffect en, Color[] Tripcolor, SpriteBatch sb,float rot,int point = 16,TripTex tex = TripTex.Afterimage)
         {
-	        GetCatmullPos(oldHandPos, out Vector2[] TriphandPos);
-	        GetCatmullPos(oldPos, out Vector2[] TripswordPos);
 	        trip.Clear();
 	        List<Vertex>[] tripPos = new List<Vertex>[point-1];
 	        for (int j = 0; j < point-1; j++) {
 		        tripPos[j] = new List<Vertex>();
 	        }
-	        for (int i = 0; i < TriphandPos.Length; i++)
-	        {
-		        if (TriphandPos[i] == Vector2.Zero)
-			        continue;
-		        List<Vector2> a;
-		        if (player.direction == 1)
-			        a = CircularArcPoints(TripswordPos[i] , TriphandPos[i]
-				        , 300,point);
-		        else
-			        a = CircularArcPoints(TriphandPos[i]
-				        , TripswordPos[i] , 300,point);
-		        float progress = i / (float)TriphandPos.Length;
-		        for (int j=0,m=-1;j<a.Count-1;j++) {
-			        float progress2 = player.direction==-1? j / (float)a.Count: 1-(j / (float)a.Count);
-			        float progress3 =  player.direction==-1? (j+1) / (float)a.Count: 1-((j+1) / (float)a.Count);
-			        m += 1;
-			        tripPos[m].Add(new Vertex(a[j],new Vector3(progress,progress2,0),Tripcolor[0]));
-			        tripPos[m].Add(new Vertex(a[j+1],new Vector3(progress,progress3,0),Tripcolor[1]));
+	        if (mP.modifyScreenPos) {
+		        GetCatmullPos(oldWorldHandPos, out Vector2[] TriphandPos);
+		        GetCatmullPos(oldWorldPos, out Vector2[] TripswordPos);
+		        for (int i = 0; i < TriphandPos.Length; i++)
+		        {
+			        if (TriphandPos[i] == Vector2.Zero)
+				        continue;
+			        List<Vector2> a;
+			        if (player.direction == 1)
+				        a = CircularArcPoints(TripswordPos[i] , TriphandPos[i]
+					        , 300,point);
+			        else
+				        a = CircularArcPoints(TriphandPos[i]
+					        , TripswordPos[i] , 300,point);
+			        float progress = i / (float)TriphandPos.Length;
+			        for (int j=0,m=-1;j<a.Count-1;j++) {
+				        float progress2 = player.direction==-1? j / (float)a.Count: 1-(j / (float)a.Count);
+				        float progress3 =  player.direction==-1? (j+1) / (float)a.Count: 1-((j+1) / (float)a.Count);
+				        m += 1;
+				        tripPos[m].Add(new Vertex(a[j] - Main.screenPosition,new Vector3(progress,progress2,0),Tripcolor[0]));
+				        tripPos[m].Add(new Vertex(a[j+1] - Main.screenPosition,new Vector3(progress,progress3,0),Tripcolor[1]));
+			        }
+		        }
+	        }
+	        else {
+		        GetCatmullPos(oldHandPos, out Vector2[] TriphandPos);
+		        GetCatmullPos(oldPos, out Vector2[] TripswordPos);
+		        for (int i = 0; i < TriphandPos.Length; i++)
+		        {
+			        if (TriphandPos[i] == Vector2.Zero)
+				        continue;
+			        List<Vector2> a;
+			        if (player.direction == 1)
+				        a = CircularArcPoints(TripswordPos[i] , TriphandPos[i]
+					        , 300,point);
+			        else
+				        a = CircularArcPoints(TriphandPos[i]
+					        , TripswordPos[i] , 300,point);
+			        float progress = i / (float)TriphandPos.Length;
+			        for (int j=0,m=-1;j<a.Count-1;j++) {
+				        float progress2 = player.direction==-1? j / (float)a.Count: 1-(j / (float)a.Count);
+				        float progress3 =  player.direction==-1? (j+1) / (float)a.Count: 1-((j+1) / (float)a.Count);
+				        m += 1;
+				        tripPos[m].Add(new Vertex(a[j],new Vector3(progress,progress2,0),Tripcolor[0]));
+				        tripPos[m].Add(new Vertex(a[j+1],new Vector3(progress,progress3,0),Tripcolor[1]));
+			        }
 		        }
 	        }
 	        sb.End();
@@ -745,31 +830,57 @@ namespace ArknightsMod.Content.SwingHelper
 
 		public virtual void DrawTrip(SwingEffect en, Color[] Tripcolor, SpriteBatch sb,float rot,Texture2D tex,int point = 16)
         {
-	        GetCatmullPos(oldHandPos, out Vector2[] TriphandPos);
-	        GetCatmullPos(oldPos, out Vector2[] TripswordPos);
 	        trip.Clear();
 	        List<Vertex>[] tripPos = new List<Vertex>[point-1];
 	        for (int j = 0; j < point-1; j++) {
 		        tripPos[j] = new List<Vertex>();
 	        }
-	        for (int i = 0; i < TriphandPos.Length; i++)
-	        {
-		        if (TriphandPos[i] == Vector2.Zero)
-			        continue;
-		        List<Vector2> a;
-		        if (player.direction == 1)
-			        a = CircularArcPoints(TripswordPos[i] , TriphandPos[i]
-				        , 300,point);
-		        else
-			        a = CircularArcPoints(TriphandPos[i]
-				        , TripswordPos[i] , 300,point);
-		        float progress = i / (float)TriphandPos.Length;
-		        for (int j=0,m=-1;j<a.Count-1;j++) {
-			        float progress2 = player.direction==-1? j / (float)a.Count: 1-(j / (float)a.Count);
-			        float progress3 =  player.direction==-1? (j+1) / (float)a.Count: 1-((j+1) / (float)a.Count);
-			        m += 1;
-			        tripPos[m].Add(new Vertex(a[j],new Vector3(progress,progress2,0),Tripcolor[0]));
-			        tripPos[m].Add(new Vertex(a[j+1],new Vector3(progress,progress3,0),Tripcolor[1]));
+	        if (mP.modifyScreenPos) {
+		        GetCatmullPos(oldWorldHandPos, out Vector2[] TriphandPos);
+		        GetCatmullPos(oldWorldPos, out Vector2[] TripswordPos);
+		        for (int i = 0; i < TriphandPos.Length; i++)
+		        {
+			        if (TriphandPos[i] == Vector2.Zero)
+				        continue;
+			        List<Vector2> a;
+			        if (player.direction == 1)
+				        a = CircularArcPoints(TripswordPos[i] , TriphandPos[i]
+					        , 300,point);
+			        else
+				        a = CircularArcPoints(TriphandPos[i]
+					        , TripswordPos[i] , 300,point);
+			        float progress = i / (float)TriphandPos.Length;
+			        for (int j=0,m=-1;j<a.Count-1;j++) {
+				        float progress2 = player.direction==-1? j / (float)a.Count: 1-(j / (float)a.Count);
+				        float progress3 =  player.direction==-1? (j+1) / (float)a.Count: 1-((j+1) / (float)a.Count);
+				        m += 1;
+				        tripPos[m].Add(new Vertex(a[j] - Main.screenPosition,new Vector3(progress,progress2,0),Tripcolor[0]));
+				        tripPos[m].Add(new Vertex(a[j+1] - Main.screenPosition,new Vector3(progress,progress3,0),Tripcolor[1]));
+			        }
+		        }
+	        }
+	        else {
+		        GetCatmullPos(oldHandPos, out Vector2[] TriphandPos);
+		        GetCatmullPos(oldPos, out Vector2[] TripswordPos);
+		        for (int i = 0; i < TriphandPos.Length; i++)
+		        {
+			        if (TriphandPos[i] == Vector2.Zero)
+				        continue;
+			        List<Vector2> a;
+			        if (player.direction == 1)
+				        a = CircularArcPoints(TripswordPos[i] , TriphandPos[i]
+					        , 300,point);
+			        else
+				        a = CircularArcPoints(TriphandPos[i]
+					        , TripswordPos[i] , 300,point);
+			        float progress = i / (float)TriphandPos.Length;
+			        for (int j=0,m=-1;j<a.Count-1;j++) {
+				        float progress2 = player.direction==-1? j / (float)a.Count: 1-(j / (float)a.Count);
+				        float progress3 =  player.direction==-1? (j+1) / (float)a.Count: 1-((j+1) / (float)a.Count);
+				        m += 1;
+				        tripPos[m].Add(new Vertex(a[j],new Vector3(progress,progress2,0),Tripcolor[0]));
+				        tripPos[m].Add(new Vertex(a[j+1],new Vector3(progress,progress3,0),Tripcolor[1]));
+			        }
 		        }
 	        }
 	        sb.End();
@@ -791,31 +902,57 @@ namespace ArknightsMod.Content.SwingHelper
 
 	    public virtual void DrawTrip(SwingEffect en, Color Tripcolor, SpriteBatch sb,float rot,Texture2D tex,int point = 16)
         {
-	        GetCatmullPos(oldHandPos, out Vector2[] TriphandPos);
-	        GetCatmullPos(oldPos, out Vector2[] TripswordPos);
 	        trip.Clear();
 	        List<Vertex>[] tripPos = new List<Vertex>[point-1];
 	        for (int j = 0; j < point-1; j++) {
 		        tripPos[j] = new List<Vertex>();
 	        }
-	        for (int i = 0; i < TriphandPos.Length; i++)
-	        {
-		        if (TriphandPos[i] == Vector2.Zero)
-			        continue;
-		        List<Vector2> a;
-		        if (player.direction == 1)
-			        a = CircularArcPoints(TripswordPos[i] , TriphandPos[i]
-				        , 300,point);
-		        else
-			        a = CircularArcPoints(TriphandPos[i]
-				        , TripswordPos[i] , 300,point);
-		        float progress = i / (float)TriphandPos.Length;
-		        for (int j=0,m=-1;j<a.Count-1;j++) {
-			        float progress2 = player.direction==-1? j / (float)a.Count: 1-(j / (float)a.Count);
-			        float progress3 =  player.direction==-1? (j+1) / (float)a.Count: 1-((j+1) / (float)a.Count);
-			        m += 1;
-			        tripPos[m].Add(new Vertex(a[j],new Vector3(progress,progress2,0),Tripcolor));
-			        tripPos[m].Add(new Vertex(a[j+1],new Vector3(progress,progress3,0),Tripcolor));
+	        if (mP.modifyScreenPos) {
+		        GetCatmullPos(oldWorldHandPos, out Vector2[] TriphandPos);
+		        GetCatmullPos(oldWorldPos, out Vector2[] TripswordPos);
+		        for (int i = 0; i < TriphandPos.Length; i++)
+		        {
+			        if (TriphandPos[i] == Vector2.Zero)
+				        continue;
+			        List<Vector2> a;
+			        if (player.direction == 1)
+				        a = CircularArcPoints(TripswordPos[i] , TriphandPos[i]
+					        , 300,point);
+			        else
+				        a = CircularArcPoints(TriphandPos[i]
+					        , TripswordPos[i] , 300,point);
+			        float progress = i / (float)TriphandPos.Length;
+			        for (int j=0,m=-1;j<a.Count-1;j++) {
+				        float progress2 = player.direction==-1? j / (float)a.Count: 1-(j / (float)a.Count);
+				        float progress3 =  player.direction==-1? (j+1) / (float)a.Count: 1-((j+1) / (float)a.Count);
+				        m += 1;
+				        tripPos[m].Add(new Vertex(a[j] - Main.screenPosition,new Vector3(progress,progress2,0),Tripcolor));
+				        tripPos[m].Add(new Vertex(a[j+1] - Main.screenPosition,new Vector3(progress,progress3,0),Tripcolor));
+			        }
+		        }
+	        }
+	        else {
+		        GetCatmullPos(oldHandPos, out Vector2[] TriphandPos);
+		        GetCatmullPos(oldPos, out Vector2[] TripswordPos);
+		        for (int i = 0; i < TriphandPos.Length; i++)
+		        {
+			        if (TriphandPos[i] == Vector2.Zero)
+				        continue;
+			        List<Vector2> a;
+			        if (player.direction == 1)
+				        a = CircularArcPoints(TripswordPos[i] , TriphandPos[i]
+					        , 300,point);
+			        else
+				        a = CircularArcPoints(TriphandPos[i]
+					        , TripswordPos[i] , 300,point);
+			        float progress = i / (float)TriphandPos.Length;
+			        for (int j=0,m=-1;j<a.Count-1;j++) {
+				        float progress2 = player.direction==-1? j / (float)a.Count: 1-(j / (float)a.Count);
+				        float progress3 =  player.direction==-1? (j+1) / (float)a.Count: 1-((j+1) / (float)a.Count);
+				        m += 1;
+				        tripPos[m].Add(new Vertex(a[j],new Vector3(progress,progress2,0),Tripcolor));
+				        tripPos[m].Add(new Vertex(a[j+1],new Vector3(progress,progress3,0),Tripcolor));
+			        }
 		        }
 	        }
 	        sb.End();
@@ -833,72 +970,6 @@ namespace ArknightsMod.Content.SwingHelper
 	        }
 	        sb.End();
 	        sb.Begin();
-        }
-        /// <summary>
-        /// 绘制入口
-        /// </summary>
-        public virtual void Draw(SwingEffect en,Color Tripcolor,bool drawTrip,SpriteBatch sb,bool handPlayerDir = true)
-        {
-            #region 剑体取点及绘制
-            Vector2 Length = swordPos - handlePos;
-            Vector2 handPos = handPlayerDir
-	            ? handlePos + setoff.RotatedBy(swordRot)
-	            : handlePos + setoff.RotatedBy(swordRot);
-            handPos -= Main.screenPosition;
-            Vector2 halfPos = Length / 2f;
-            if(scale.X!=1)
-                halfPos = halfPos.RotatedBy(TransformHelper.CalculateTiltAngle(projTexture,scale.X));
-            else
-                halfPos = halfPos.RotatedBy(TransformHelper.CalculateTiltAngle(projTexture,scale.Y));
-            Vector2 halfWidth = new Vector2(-halfPos.Y, halfPos.X);
-            swordPos_Draw =
-            [
-                handPos + halfPos + halfWidth,//左上
-                handPos + Length,//右上
-                handPos,//左下
-                handPos + halfPos - halfWidth//右下
-            ];
-            sword.Clear();
-            for(int i=0;i<4;i++)
-                sword.Add(default);
-            {
-                sword[0] = new Vertex(swordPos_Draw[0],new Vector3(0,0,0),Color.White);
-                sword[1] = new Vertex(swordPos_Draw[2],new Vector3(0,1,0),Color.White);
-                sword[2] = new Vertex(swordPos_Draw[1],new Vector3(1,0,0),Color.White);
-                sword[3] = new Vertex(swordPos_Draw[3],new Vector3(1,1,0),Color.White);
-            }
-            Main.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
-            Main.graphics.GraphicsDevice.Textures[0] = projTexture;
-            if(sword.Count>=4)
-                Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, sword.ToArray(), 0,
-                    sword.Count - 2);
-            #endregion
-
-            if (!drawTrip)
-                return;
-            GetCatmullPos(oldHandPos, out Vector2[] TriphandPos);
-            GetCatmullPos(oldPos, out Vector2[] TripswordPos);
-            trip.Clear();
-            for (int i = 0; i < TriphandPos.Length; i++)
-            {
-                if (TriphandPos[i] == Vector2.Zero)
-                    continue;
-                float progress = i/(float)TriphandPos.Length;
-                trip.Add(new Vertex(TriphandPos[i] , new Vector3(progress, 0, 0), Tripcolor));
-                trip.Add(new Vertex(TripswordPos[i], new Vector3(progress, 1, 0), Tripcolor));
-            }
-            sb.End();
-            sb.Begin(SpriteSortMode.Immediate, BlendState.Additive,
-                SamplerState.AnisotropicClamp, DepthStencilState.None,
-                RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-            ApplyShader(en);
-            Main.graphics.GraphicsDevice.Textures[0] = ModContent
-                .Request<Texture2D>("ArknightsMod/Content/SwingHelper/Images/SlashTex").Value;
-            if (trip.Count >= 3)
-                Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, trip.ToArray(), 0,
-                    trip.Count - 2);
-            sb.End();
-            sb.Begin();
         }
 
         /// <summary>
@@ -986,13 +1057,15 @@ namespace ArknightsMod.Content.SwingHelper
             });
         }
 
+        public ModifyScreenPosPlayer mP;
+
+
         /// <summary>
         /// 屏幕位置修改
         /// </summary>
         /// <param name="WorldPos"></param>
         public void ScreenPosModify(Vector2 WorldPos)
         {
-	        var mP = player.GetModPlayer<ModifyScreenPosPlayer>();
 	        mP.ScreenPosition = WorldPos;
 	        mP.modifyScreenPos = true;
         }

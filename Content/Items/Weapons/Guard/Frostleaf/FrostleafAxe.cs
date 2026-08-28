@@ -53,24 +53,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Frostleaf
 		}
 
 		public override bool CanUseItem(Player player) {
-			var mp = player.GetModPlayer<WeaponPlayer>();
-
-			if (ArknightsKeybinds.SkillActivatePressed(player)) {
-				// S1 已改为自动释放，技能键对它不生效；此处只保留 S2 的手动开启
-				if (mp.Skill == 1 && mp.StockCount > 0 && !mp.SkillActive) {
-					mp.SkillActive = true;
-					mp.SkillTimer = 0;
-					mp.DelStockCount();
-					SoundEngine.PlaySound(SkillActiveSfx, player.Center);
-				}
-				return false;
-			}
-
-			// S1 攻击充能
-			if (mp.CurrentSkill?.ChargeType == SkillChargeType.Attack && mp.Skill == 0)
-				mp.OffensiveRecovery();
-
-			return base.CanUseItem(player);
+			return false;
 		}
 
 		public override void ModifyWeaponDamage(Player player, ref StatModifier damage) {
