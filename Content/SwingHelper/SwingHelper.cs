@@ -21,11 +21,13 @@ namespace ArknightsMod.Content.SwingHelper
             SwingUseTime = index;
             CatmullScale = catmullScale;
             this.index = index;
+            dashMaxTime = index;
             oldPos = new Vector2[index];
             oldHandPos = new Vector2[index];
             oldWorldPos = new Vector2[index];
             oldWorldHandPos = new Vector2[index];
             oldRot = new float[index];
+            oldPlayerPos = new  Vector2[index];
             this.isBackArm = isBackArm;
         }
         #region 提供的着色器资源
@@ -106,6 +108,10 @@ namespace ArknightsMod.Content.SwingHelper
 		/// 挥舞的额外运行方法
 		/// </summary>
         public Action swingAction;
+		/// <summary>
+		/// 冲刺的额外运行方法
+		/// </summary>
+        public Action dashAction;
         /// <summary>
         /// 贴图大小
         /// </summary>
@@ -155,6 +161,18 @@ namespace ArknightsMod.Content.SwingHelper
 		/// 剑朝向
 		/// </summary>
         public float swordDir;
+		/// <summary>
+		/// 当前冲刺时间
+		/// </summary>
+        public float dashTime;
+		/// <summary>
+		/// 冲刺所需时间
+		/// </summary>
+        public float dashMaxTime;
+		/// <summary>
+		/// 冲刺方向
+		/// </summary>
+        public float dashRad;
         /// <summary>
         /// 剑柄位置
         /// </summary>
@@ -187,6 +205,8 @@ namespace ArknightsMod.Content.SwingHelper
         private Vector2[] oldHandPos;
         private Vector2[] oldWorldPos;
         private Vector2[] oldWorldHandPos;
+
+        private Vector2[] oldPlayerPos;
         #endregion
 
         #region 专门给部分方法所提供的字段及属性
@@ -256,8 +276,13 @@ namespace ArknightsMod.Content.SwingHelper
 
         #region 设置挥舞帮助的参数
 
-        public SwingHelper SetAction(Action action) {
+        public SwingHelper SetSwingAction(Action action) {
 	        swingAction = action;
+	        return this;
+        }
+
+        public SwingHelper SetDachAction(Action action) {
+	        dashAction = action;
 	        return this;
         }
         public SwingHelper SetTex(Texture2D tex)
@@ -297,11 +322,13 @@ namespace ArknightsMod.Content.SwingHelper
         {
             SwingUseTime = index;
             this.index = index;
+            dashMaxTime = index;
             oldPos = new Vector2[index];
             oldHandPos = new Vector2[index];
             oldWorldPos = new Vector2[index];
             oldWorldHandPos = new Vector2[index];
             oldRot = new float[index];
+            oldPlayerPos = new Vector2[index];
             return this;
         }
 
@@ -312,6 +339,7 @@ namespace ArknightsMod.Content.SwingHelper
             oldWorldPos = new Vector2[index];
             oldWorldHandPos = new Vector2[index];
             oldRot = new float[index];
+            oldPlayerPos = new Vector2[index];
             return this;
         }
         /// <summary>
@@ -340,8 +368,46 @@ namespace ArknightsMod.Content.SwingHelper
 		        startRad -= MathF.PI * 2f;
 	        return this;
         }
+
+        public SwingHelper SetDashRad(float rad) {
+	        dashRad = rad;
+	        return this;
+        }
         #endregion
-        /// <summary>
+
+        private Matrix uTransform = Matrix.CreateOrthographicOffCenter(
+            0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
+        private int i = 0;
+
+        public Color GetDominantColor(Texture2D texture) {
+	        Color[] pixels = new Color[texture.Width * texture.Height];
+	        texture.GetData(pixels);
+
+	        //将颜色存放到字典里面
+	        Dictionary<Color, int> colorFrequency = new Dictionary<Color, int>();
+
+	        foreach (Color pixel in pixels) {
+		        if (pixel.A > 100) {
+			        //RGB颜色为16进制 用这个算法去除重复成分
+			        Color simplified = new Color(
+				        (byte)(pixel.R / 16 * 16),
+				        (byte)(pixel.G / 16 * 16),
+				        (byte)(pixel.B / 16 * 16)
+			        );
+
+			        if (colorFrequency.ContainsKey(simplified))
+				        colorFrequency[simplified]++;
+			        else
+				        colorFrequency[simplified] = 1;
+		        }
+	        }
+
+	        // 返回字典里面最多的
+	        return colorFrequency.OrderByDescending(x => x.Value).First().Key;
+        }
+
+        #region 动作方法
+		/// <summary>
         /// 移动时剑的AI
         /// </summary>
         public virtual void Move() {
@@ -406,37 +472,75 @@ namespace ArknightsMod.Content.SwingHelper
 	            lagTime--;
             return false;
         }
-        private Matrix uTransform = Matrix.CreateOrthographicOffCenter(
-            0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
-        private int i = 0;
 
-        public Color GetDominantColor(Texture2D texture) {
-	        Color[] pixels = new Color[texture.Width * texture.Height];
-	        texture.GetData(pixels);
-
-	        //将颜色存放到字典里面
-	        Dictionary<Color, int> colorFrequency = new Dictionary<Color, int>();
-
-	        foreach (Color pixel in pixels) {
-		        if (pixel.A > 100) {
-			        //RGB颜色为16进制 用这个算法去除重复成分
-			        Color simplified = new Color(
-				        (byte)(pixel.R / 16 * 16),
-				        (byte)(pixel.G / 16 * 16),
-				        (byte)(pixel.B / 16 * 16)
-			        );
-
-			        if (colorFrequency.ContainsKey(simplified))
-				        colorFrequency[simplified]++;
-			        else
-				        colorFrequency[simplified] = 1;
-		        }
-	        }
-
-	        // 返回字典里面最多的
-	        return colorFrequency.OrderByDescending(x => x.Value).First().Key;
+        public bool Dash(float Length,RotationHelper.SwingDir swingDir = RotationHelper.SwingDir.plus) {
+	        swordRad = RotationHelper.GetSwingRotation(startRad, endRad,swingTime,SwingUseTime,player.direction,scale
+		        ,texLength,handleLength,swordLength,out float length,out float handlelen,out float swordlen,
+		        out float SwordDir,swingDir);
+	        SwordAHandCon(0,swordRad,length,handlelen,swordlen,false,true);
+	        SavePlayerPos(player.position + new Vector2(0f, player.gfxOffY));
+	        dashAction?.Invoke();
+	        Vector2 vector2 = new Vector2(Length, 0).RotatedBy(dashRad);
+	        vector2 /= dashMaxTime;
+	        player.velocity += vector2;
+	        dashTime++;
+	        if (dashTime >= dashMaxTime)
+		        return true;
+	        return false;
         }
+
         /// <summary>
+        /// 剑尖自动跟随对应点位
+        /// </summary>
+        /// <param name="swordToHand"></param>
+        /// <param name="hand"></param>
+        /// <param name="handPlayerDir"></param>
+        public virtual void SwordAHandCon(float swordToHand,float hand,float length,float handleLen,float swordlen,
+	        bool savePos = false,bool handPlayerDir = true)
+        {
+            float armAngle;
+            if(handPlayerDir)
+                armAngle = hand - MathF.PI / 2f * player.direction;
+            else
+                armAngle = hand - MathF.PI / 2f;
+            if (isBackArm) {
+	            player.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, armAngle);
+	            handlePos = player.GetBackHandPosition(Player.CompositeArmStretchAmount.Full, armAngle);
+            }
+            else {
+	            player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, armAngle);
+	            handlePos = player.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, armAngle);
+	            player.heldProj = proj.whoAmI;
+            }
+            if(handPlayerDir)
+            {
+                swordToHand = player.direction == 1? swordToHand: MathF.PI + swordToHand;
+                swordPos = handlePos + new Vector2(length,0).RotatedBy(hand + swordToHand);
+                swordPos.Y += player.gfxOffY;
+                swordEnd = handlePos + new Vector2(handleLen,0).RotatedBy(hand + swordToHand);
+                swordHead = handlePos + new Vector2(swordlen,0).RotatedBy(hand + swordToHand);
+                proj.Center = swordPos;
+                swordRot = hand + swordToHand;
+                if(savePos)
+                    SavePos(swordHead,hand + swordToHand * player.direction,swordEnd);
+            }
+            else
+            {
+                swordPos = handlePos + new Vector2(length,0).RotatedBy(hand + swordToHand);
+                swordPos.Y += player.gfxOffY;
+                swordEnd = handlePos + new Vector2(handleLen,0).RotatedBy(hand + swordToHand);
+                swordHead = handlePos + new Vector2(swordlen,0).RotatedBy(hand + swordToHand);
+                proj.Center = swordPos;
+                swordRot = hand + swordToHand;
+                if(savePos)
+                    SavePos(swordHead,hand + swordToHand,swordEnd);
+            }
+        }
+
+        #endregion
+
+        #region 材质选择
+/// <summary>
         /// 水墨蔓延半径（Ink 效果用，每帧涨大）
         /// </summary>
         private float inkSpread;
@@ -544,8 +648,10 @@ namespace ArknightsMod.Content.SwingHelper
 			        break;
 	        }//贴图选择
         }
+        #endregion
 
-        /// <summary>
+        #region 绘制
+		/// <summary>
         /// 绘制剑体
         /// </summary>
         public virtual void DrawBlade(SpriteBatch sb, bool handPlayerDir = true)
@@ -972,53 +1078,12 @@ namespace ArknightsMod.Content.SwingHelper
 	        sb.Begin();
         }
 
-        /// <summary>
-        /// 剑尖自动跟随对应点位
-        /// </summary>
-        /// <param name="swordToHand"></param>
-        /// <param name="hand"></param>
-        /// <param name="handPlayerDir"></param>
-        public virtual void SwordAHandCon(float swordToHand,float hand,float length,float handleLen,float swordlen,
-	        bool savePos = false,bool handPlayerDir = true)
-        {
-            float armAngle;
-            if(handPlayerDir)
-                armAngle = hand - MathF.PI / 2f * player.direction;
-            else
-                armAngle = hand - MathF.PI / 2f;
-            if (isBackArm) {
-	            player.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, armAngle);
-	            handlePos = player.GetBackHandPosition(Player.CompositeArmStretchAmount.Full, armAngle);
-            }
-            else {
-	            player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, armAngle);
-	            handlePos = player.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, armAngle);
-	            player.heldProj = proj.whoAmI;
-            }
-            if(handPlayerDir)
-            {
-                swordToHand = player.direction == 1? swordToHand: MathF.PI + swordToHand;
-                swordPos = handlePos + new Vector2(length,0).RotatedBy(hand + swordToHand);
-                swordPos.Y += player.gfxOffY;
-                swordEnd = handlePos + new Vector2(handleLen,0).RotatedBy(hand + swordToHand);
-                swordHead = handlePos + new Vector2(swordlen,0).RotatedBy(hand + swordToHand);
-                proj.Center = swordPos;
-                swordRot = hand + swordToHand;
-                if(savePos)
-                    SavePos(swordHead,hand + swordToHand * player.direction,swordEnd);
-            }
-            else
-            {
-                swordPos = handlePos + new Vector2(length,0).RotatedBy(hand + swordToHand);
-                swordPos.Y += player.gfxOffY;
-                swordEnd = handlePos + new Vector2(handleLen,0).RotatedBy(hand + swordToHand);
-                swordHead = handlePos + new Vector2(swordlen,0).RotatedBy(hand + swordToHand);
-                proj.Center = swordPos;
-                swordRot = hand + swordToHand;
-                if(savePos)
-                    SavePos(swordHead,hand + swordToHand,swordEnd);
-            }
-        }
+	    public void DrawPlayer(SpriteBatch sb) {
+		    // 投射物 PreDraw 不能嵌套调用玩家渲染器，只提交残影数据，实际绘制由 ModPlayer.DrawPlayer 完成。
+		    player.GetModPlayer<PlayerAfterimageDrawPlayer>().QueueAfterimages(oldPlayerPos, index, 0.5f);
+	    }
+
+        #endregion
 
         #region 攻击特殊效果 -- 卡肉/视线追踪/屏幕抖动......
         /// <summary>
@@ -1089,7 +1154,16 @@ namespace ArknightsMod.Content.SwingHelper
             oldWorldHandPos[0] = swordend;
             oldWorldPos[0] = pos;
         }
-
+		/// <summary>
+		/// 记录玩家位置
+		/// </summary>
+		/// <param name="playerPos"></param>
+        public void SavePlayerPos(Vector2 playerPos) {
+	        for (int i = index - 1; i > 0; i--) {
+		        oldPlayerPos[i] = oldPlayerPos[i - 1];
+	        }
+	        oldPlayerPos[0] = playerPos;
+        }
 
         /// <summary>
 		/// 圆弧取点（等角度间隔，真正对称的圆弧）

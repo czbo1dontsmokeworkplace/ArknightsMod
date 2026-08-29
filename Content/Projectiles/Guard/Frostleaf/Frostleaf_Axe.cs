@@ -65,7 +65,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Frostleaf
 					helper.lagTime = 8;
 					helper.swingTime = 0;
 					helper.SetIndex(20);
-					helper.SetAction(() => {helper.ScreenPosModify(helper.swordPos);});
+					helper.SetSwingAction(() => {helper.ScreenPosModify(helper.swordPos);});
 					Projectile.NewProjectile(Projectile.GetSource_FromAI(), player.Center, Main.MouseScreen.SafeNormalize(Vector2.One)
 						,ModContent.ProjectileType<Frostleaf_Projectile>(),Projectile.damage,Projectile.knockBack);
 					return StepResult.Next;
@@ -82,7 +82,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Frostleaf
 					helper.swingTime = 0;
 					helper.SetIndex(14);
 					state = WeaponState.Move;
-					helper.SetAction(() => { });
+					helper.SetSwingAction(() => { });
 					return StepResult.Next;
 				}
 				return StepResult.Back;
@@ -107,21 +107,23 @@ namespace ArknightsMod.Content.Projectiles.Guard.Frostleaf
 					if (PlayerInput.MouseInfo.LeftButton == ButtonState.Pressed && !press)
 					{
 						press = true;
-						if (attack == 0) {
+						// if (attack == 0) {
 							state = WeaponState.Swing;
-							attack += 1;
-						}
-						else {
-							state = WeaponState.SpSwing;
-							attack = 0;
-						}
+						// 	attack += 1;
+						// }
+						// else {
+						// 	state = WeaponState.SpSwing;
+						// 	attack = 0;
+						// }
 						Vector2 mouse = Main.MouseWorld - player.Center;
 						helper.PointMouseRad(MathF.Atan2(mouse.Y, mouse.X));
+						helper.dashTime = 0;
+						helper.SetDashRad(MathF.Atan2(mouse.Y, mouse.X));
 						runner =  new StepSkillRunner(combo1);
 					}
 					break;
 				case WeaponState.Swing:
-					if (helper.Swing()) {
+					if (helper.Dash(16)) {
 						state = WeaponState.Move;
 						helper.ReloadIndex();
 						helper.swingTime = 0;
@@ -142,6 +144,8 @@ namespace ArknightsMod.Content.Projectiles.Guard.Frostleaf
 			helper.DrawBlade(sb);
 			if(state != WeaponState.Move)
 				helper.DrawTrip(SwingHelper.SwingHelper.SwingEffect.Zero,lightColor,sb);
+			if(state == WeaponState.Swing)
+				helper.DrawPlayer(sb);
 			return false;
 		}
 

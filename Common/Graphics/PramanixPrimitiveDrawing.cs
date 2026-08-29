@@ -102,6 +102,8 @@ namespace ArknightsMod.Common.Graphics
 
 		private readonly TrailColorFunction trailColorFunction;
 
+		private Vector2[] positions;
+
 		public bool IsDisposed { get; private set; }
 
 		/// <summary>
@@ -109,7 +111,7 @@ namespace ArknightsMod.Common.Graphics
 		/// </summary>
 		public Vector2[] Positions
 		{
-			get;
+			get => positions;
 			set
 			{
 				if (value.Length != maxPointCount)
@@ -117,7 +119,7 @@ namespace ArknightsMod.Common.Graphics
 					throw new ArgumentException("Array of positions was a different length than the expected result!");
 				}
 
-				field = value;
+				positions = value;
 			}
 		}
 
