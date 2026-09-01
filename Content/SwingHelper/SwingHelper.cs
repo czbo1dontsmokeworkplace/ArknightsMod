@@ -7,6 +7,7 @@ using Terraria;
 using Terraria.Graphics.CameraModifiers;
 using Terraria.ModLoader;
 using ReLogic.Content;
+using Terraria.GameContent;
 using Filters = Terraria.Graphics.Effects.Filters;
 
 // TODO : 提供屏幕朝向震动以及卡肉等攻击效果 制作被打出血的粒子特效
@@ -19,6 +20,7 @@ namespace ArknightsMod.Content.SwingHelper
         public SwingHelper(int index,int catmullScale,bool isBackArm = false)
         {
             SwingUseTime = index;
+            StabUseTime = index;
             CatmullScale = catmullScale;
             this.index = index;
             dashMaxTime = index;
@@ -31,6 +33,8 @@ namespace ArknightsMod.Content.SwingHelper
             this.isBackArm = isBackArm;
         }
         #region 提供的着色器资源
+
+        public static Texture2D lightTex = TextureAssets.Extra[98].Value;
         /// <summary>
         /// 消融
         /// </summary>
@@ -112,6 +116,14 @@ namespace ArknightsMod.Content.SwingHelper
 		/// 冲刺的额外运行方法
 		/// </summary>
         public Action dashAction;
+		/// <summary>
+		/// 戳刺的额外运行方法
+		/// </summary>
+        public Action stabAction;
+		/// <summary>
+		/// 等待的额外运行方法
+		/// </summary>
+        public Action waitAction;
         /// <summary>
         /// 贴图大小
         /// </summary>
@@ -173,6 +185,10 @@ namespace ArknightsMod.Content.SwingHelper
 		/// 冲刺方向
 		/// </summary>
         public float dashRad;
+		/// <summary>
+		/// 戳刺方向
+		/// </summary>
+        public float stabRad;
         /// <summary>
         /// 剑柄位置
         /// </summary>
@@ -193,8 +209,14 @@ namespace ArknightsMod.Content.SwingHelper
         private int index;
 
         public Vector2 swordScale = new Vector2(1, 1);  // X=剑身长，Y=剑身宽
-
+		/// <summary>
+		/// 挥舞所需时间
+		/// </summary>
         public int SwingUseTime;
+		/// <summary>
+		/// 戳刺所需时间
+		/// </summary>
+		public int StabUseTime;
         /// <summary>
         /// 细分曲线倍数
         /// </summary>
@@ -217,7 +239,7 @@ namespace ArknightsMod.Content.SwingHelper
         /// <summary>
         /// 戳刺时间
         /// </summary>
-        public int jabTime;
+        public int stabTime;
         /// <summary>
         /// 行进速率
         /// </summary>
@@ -285,6 +307,16 @@ namespace ArknightsMod.Content.SwingHelper
 	        dashAction = action;
 	        return this;
         }
+
+        public SwingHelper SetWaitAction(Action action) {
+	        waitAction = action;
+	        return this;
+        }
+
+        public SwingHelper SetStabAction(Action action) {
+	        stabAction = action;
+	        return this;
+        }
         public SwingHelper SetTex(Texture2D tex)
         {
             projTexture = tex;
@@ -342,6 +374,15 @@ namespace ArknightsMod.Content.SwingHelper
             oldPlayerPos = new Vector2[index];
             return this;
         }
+
+        public SwingHelper ResetTime(int lagtime = 0) {
+	        dashTime = 0;
+	        swingTime = 0;
+	        lagTime = lagtime;
+	        stabTime = 0;
+	        Chargetime = 0;
+	        return this;
+        }
         /// <summary>
         /// 保存鼠标朝向
         /// </summary>
@@ -371,6 +412,11 @@ namespace ArknightsMod.Content.SwingHelper
 
         public SwingHelper SetDashRad(float rad) {
 	        dashRad = rad;
+	        return this;
+        }
+
+        public SwingHelper SetStabRad(float rad) {
+	        stabRad = rad;
 	        return this;
         }
         #endregion
@@ -433,13 +479,13 @@ namespace ArknightsMod.Content.SwingHelper
         /// <summary>
         /// 蓄力/等待时剑AI
         /// </summary>
-        public virtual bool Wait(RotationHelper.SwingDir swingDir = RotationHelper.SwingDir.plus)
+        public virtual bool Wait(RotationHelper.SwingDir swingDir = RotationHelper.SwingDir.plus,float swordtohand = 0)
         {
             swordRad = RotationHelper.GetSwingRotation(startRad, endRad,swingTime,SwingUseTime,player.direction,scale
 	            ,texLength,handleLength,swordLength,out float length,out float handlelen,out float swordlen,
 	            out float SwordDir);
             swordDir = SwordDir;
-            SwordAHandCon(0f, startRad,length,handlelen,swordlen);
+            SwordAHandCon(swordtohand, startRad,length,handlelen,swordlen);
             Chargetime = MathF.Min(Chargetime+1, MaxChargetime);
             ChargeProgress = Chargetime / MaxChargetime;
             if (ChargeProgress >= 1)
@@ -447,10 +493,34 @@ namespace ArknightsMod.Content.SwingHelper
             return false;
         }
 
+        public virtual bool Stab(float swordtohand = 0) {
+	        scale = new Vector2(1, 1);
+	        if (stabTime / (float)StabUseTime < 0.3f) {
+		        swordRad = RotationHelper.GetSwingRotation(stabRad, stabRad,swingTime,SwingUseTime,player.direction,scale
+			        ,texLength,handleLength,swordLength,out float length,out float handlelen,out float swordlen,
+			        out float SwordDir);
+		        swordDir = SwordDir;
+		        SwordAHandCon(swordtohand,swordRad,length,handlelen,swordlen,true,Player.CompositeArmStretchAmount.None,false);
+	        }
+	        else {
+		        swordRad = RotationHelper.GetSwingRotation(stabRad, stabRad,swingTime,SwingUseTime,player.direction,scale
+			        ,texLength,handleLength,swordLength,out float length,out float handlelen,out float swordlen,
+			        out float SwordDir);
+		        swordDir = SwordDir;
+		        SwordAHandCon(swordtohand,swordRad,length,handlelen,swordlen,true,Player.CompositeArmStretchAmount.Full,false);
+	        }
+	        stabAction?.Invoke();
+			if (stabTime / StabUseTime >= 1f)
+		        return true;
+
+	        stabTime++;
+	        return false;
+        }
+
         /// <summary>
         /// 基础挥砍
         /// </summary>
-        public virtual bool Swing(RotationHelper.SwingDir swingDir = RotationHelper.SwingDir.plus)
+        public virtual bool Swing(RotationHelper.SwingDir swingDir = RotationHelper.SwingDir.plus,float swordtohand = 0)
         {
             if (swingTime > SwingUseTime)
             {
@@ -465,7 +535,7 @@ namespace ArknightsMod.Content.SwingHelper
 	            out float SwordDir,swingDir);
             swordDir = SwordDir;
             swingAction?.Invoke();
-            SwordAHandCon(0,swordRad,length,handlelen,swordlen,true,true);
+            SwordAHandCon(swordtohand,swordRad,length,handlelen,swordlen,true,Player.CompositeArmStretchAmount.Full,true);
             if (lagTime == 0)
 	            swingTime++;
             else
@@ -477,7 +547,7 @@ namespace ArknightsMod.Content.SwingHelper
 	        swordRad = RotationHelper.GetSwingRotation(startRad, endRad,swingTime,SwingUseTime,player.direction,scale
 		        ,texLength,handleLength,swordLength,out float length,out float handlelen,out float swordlen,
 		        out float SwordDir,swingDir);
-	        SwordAHandCon(0,swordRad,length,handlelen,swordlen,false,true);
+	        SwordAHandCon(0,swordRad,length,handlelen,swordlen,false,Player.CompositeArmStretchAmount.Full,true);
 	        SavePlayerPos(player.position + new Vector2(0f, player.gfxOffY));
 	        dashAction?.Invoke();
 	        Vector2 vector2 = new Vector2(Length, 0).RotatedBy(dashRad);
@@ -496,7 +566,7 @@ namespace ArknightsMod.Content.SwingHelper
         /// <param name="hand"></param>
         /// <param name="handPlayerDir"></param>
         public virtual void SwordAHandCon(float swordToHand,float hand,float length,float handleLen,float swordlen,
-	        bool savePos = false,bool handPlayerDir = true)
+	        bool savePos = false,Player.CompositeArmStretchAmount armType = Player.CompositeArmStretchAmount.Full,bool handPlayerDir = true)
         {
             float armAngle;
             if(handPlayerDir)
@@ -504,12 +574,12 @@ namespace ArknightsMod.Content.SwingHelper
             else
                 armAngle = hand - MathF.PI / 2f;
             if (isBackArm) {
-	            player.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, armAngle);
-	            handlePos = player.GetBackHandPosition(Player.CompositeArmStretchAmount.Full, armAngle);
+	            player.SetCompositeArmBack(true, armType, armAngle);
+	            handlePos = player.GetBackHandPosition(armType, armAngle);
             }
             else {
-	            player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, armAngle);
-	            handlePos = player.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, armAngle);
+	            player.SetCompositeArmFront(true, armType, armAngle);
+	            handlePos = player.GetFrontHandPosition(armType, armAngle);
 	            player.heldProj = proj.whoAmI;
             }
             if(handPlayerDir)
@@ -540,7 +610,7 @@ namespace ArknightsMod.Content.SwingHelper
         #endregion
 
         #region 材质选择
-/// <summary>
+		/// <summary>
         /// 水墨蔓延半径（Ink 效果用，每帧涨大）
         /// </summary>
         private float inkSpread;
@@ -696,6 +766,19 @@ namespace ArknightsMod.Content.SwingHelper
 	        if (sword.Count >= 4)
 		        Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, sword.ToArray(), 0,
 			        sword.Count - 2);
+	        sb.End();
+	        sb.Begin();
+        }
+
+        public virtual void DrawStabLight(SpriteBatch sb,Color lightcolor,Vector2 scale ) {
+	        sb.End();
+	        sb.Begin(SpriteSortMode.Immediate, BlendState.Additive,
+		        SamplerState.AnisotropicClamp, DepthStencilState.None,
+		        RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+	        Vector2 orig = lightTex.Size() / 2;
+
+	        sb.Draw(lightTex,swordHead - Main.screenPosition,null,lightcolor,swordRot + MathF.PI/2
+		        ,lightTex.Size()/2,scale ,SpriteEffects.None,0);
 	        sb.End();
 	        sb.Begin();
         }
