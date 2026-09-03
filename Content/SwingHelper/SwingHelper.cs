@@ -135,7 +135,7 @@ namespace ArknightsMod.Content.SwingHelper
         /// <summary>
         /// 剑体长度
         /// </summary>
-        public float Length => (texSize*scale).Length();
+        public float Length => (texSize).Length();
 
         public Vector2 texLength => new Vector2(Length, 0);
         public Vector2 handleLength;
@@ -193,6 +193,10 @@ namespace ArknightsMod.Content.SwingHelper
         /// 剑柄位置
         /// </summary>
         public Vector2 setoff;
+		/// <summary>
+		/// 剑柄位置
+		/// </summary>
+        public Vector2 oldSetoff;
         /// <summary>
         /// 剑体所使用的顶点结构体
         /// </summary>
@@ -298,6 +302,12 @@ namespace ArknightsMod.Content.SwingHelper
 
         #region 设置挥舞帮助的参数
 
+        public SwingHelper SetSetoff(Vector2 setoff) {
+	        this.setoff = setoff;
+	        oldSetoff = setoff;
+	        return this;
+        }
+
         public SwingHelper SetSwingAction(Action action) {
 	        swingAction = action;
 	        return this;
@@ -341,7 +351,12 @@ namespace ArknightsMod.Content.SwingHelper
 
         public SwingHelper SetScale(Vector2 scale)
         {
-            this.scale = scale;
+            // scale 只表示缩放比例，不能携带方向；负值会把剑轴镜像到另一侧。
+            this.scale = new Vector2(MathF.Abs(scale.X), MathF.Abs(scale.Y));
+            if (this.scale.X < 0.0001f)
+                this.scale.X = 1f;
+            if (this.scale.Y < 0.0001f)
+                this.scale.Y = 1f;
             return this;
         }
         public SwingHelper SetcatmullScale(int catmullScale)
@@ -389,6 +404,8 @@ namespace ArknightsMod.Content.SwingHelper
         /// <param name="rad"></param>
         public SwingHelper PointMouseRad(float rad)
         {
+	        // 非均匀缩放以本次攻击鼠标方向为局部坐标轴，而不是固定世界 X/Y 轴。
+	        mouseRad = rad;
 	        float half = swingRad / 2f;
 	        if (player.direction == 1)
 	        {
@@ -509,9 +526,12 @@ namespace ArknightsMod.Content.SwingHelper
 		        swordDir = SwordDir;
 		        SwordAHandCon(swordtohand,swordRad,length,handlelen,swordlen,true,Player.CompositeArmStretchAmount.Full,false);
 	        }
+	        setoff = (1-(stabTime / (float)StabUseTime)) * (oldSetoff * 2);
 	        stabAction?.Invoke();
-			if (stabTime / StabUseTime >= 1f)
+	        if (stabTime / StabUseTime >= 1f) {
+		        setoff = oldSetoff;
 		        return true;
+	        }
 
 	        stabTime++;
 	        return false;
@@ -568,11 +588,30 @@ namespace ArknightsMod.Content.SwingHelper
         public virtual void SwordAHandCon(float swordToHand,float hand,float length,float handleLen,float swordlen,
 	        bool savePos = false,Player.CompositeArmStretchAmount armType = Player.CompositeArmStretchAmount.Full,bool handPlayerDir = true)
         {
+            Vector2 ScaleByAttackAxis(Vector2 vector)
+            {
+                return (vector.RotatedBy(-mouseRad) * scale).RotatedBy(mouseRad);
+            }
+
+            // 手臂和剑身必须共用同一变换，否则缩放后会出现手与剑方向不一致。
+            Vector2 handDirection = ScaleByAttackAxis(Vector2.UnitX.RotatedBy(hand));
+            if (handDirection.LengthSquared() < 0.0001f)
+                handDirection = Vector2.UnitX.RotatedBy(hand);
+            float visualHandRotation = handDirection.ToRotation();
+
+            float rawSwordRotation = hand + swordToHand;
+            if (handPlayerDir && player.direction == -1)
+                rawSwordRotation += MathF.PI;
+            Vector2 swordDirection = ScaleByAttackAxis(Vector2.UnitX.RotatedBy(rawSwordRotation));
+            if (swordDirection.LengthSquared() < 0.0001f)
+                swordDirection = Vector2.UnitX.RotatedBy(rawSwordRotation);
+            float visualSwordRotation = swordDirection.ToRotation();
+
             float armAngle;
             if(handPlayerDir)
-                armAngle = hand - MathF.PI / 2f * player.direction;
+                armAngle = visualHandRotation - MathF.PI / 2f * player.direction;
             else
-                armAngle = hand - MathF.PI / 2f;
+                armAngle = visualHandRotation - MathF.PI / 2f;
             if (isBackArm) {
 	            player.SetCompositeArmBack(true, armType, armAngle);
 	            handlePos = player.GetBackHandPosition(armType, armAngle);
@@ -582,29 +621,14 @@ namespace ArknightsMod.Content.SwingHelper
 	            handlePos = player.GetFrontHandPosition(armType, armAngle);
 	            player.heldProj = proj.whoAmI;
             }
-            if(handPlayerDir)
-            {
-                swordToHand = player.direction == 1? swordToHand: MathF.PI + swordToHand;
-                swordPos = handlePos + new Vector2(length,0).RotatedBy(hand + swordToHand);
-                swordPos.Y += player.gfxOffY;
-                swordEnd = handlePos + new Vector2(handleLen,0).RotatedBy(hand + swordToHand);
-                swordHead = handlePos + new Vector2(swordlen,0).RotatedBy(hand + swordToHand);
-                proj.Center = swordPos;
-                swordRot = hand + swordToHand;
-                if(savePos)
-                    SavePos(swordHead,hand + swordToHand * player.direction,swordEnd);
-            }
-            else
-            {
-                swordPos = handlePos + new Vector2(length,0).RotatedBy(hand + swordToHand);
-                swordPos.Y += player.gfxOffY;
-                swordEnd = handlePos + new Vector2(handleLen,0).RotatedBy(hand + swordToHand);
-                swordHead = handlePos + new Vector2(swordlen,0).RotatedBy(hand + swordToHand);
-                proj.Center = swordPos;
-                swordRot = hand + swordToHand;
-                if(savePos)
-                    SavePos(swordHead,hand + swordToHand,swordEnd);
-            }
+
+            swordPos = handlePos + swordDirection * length;
+            swordEnd = handlePos + swordDirection * handleLen;
+            swordHead = handlePos + swordDirection * swordlen;
+            proj.Center = swordPos;
+            swordRot = visualSwordRotation;
+            if(savePos)
+                SavePos(swordHead, swordRot, swordEnd);
         }
 
         #endregion

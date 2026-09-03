@@ -1,60 +1,105 @@
+using ArknightsMod.Content.Items.Weapons.Guard.Frostleaf;
+using ArknightsMod.Content.Items.Weapons.Vanguard.Plume;
+using ArknightsMod.Content.Projectiles.Guard.Frostleaf;
+using ArknightsMod.Content.SwingHelper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using System;
 using Terraria;
+using Terraria.DataStructures;
+using Terraria.GameContent;
+using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles.Vanguard.Plume
 {
 	public class PlumeSpearStab : ModProjectile
-	{
-		public override string Texture =>
-			"ArknightsMod/Content/Items/Weapons/Vanguard/Plume/PlumePike_protile";
-
-		protected virtual float HoldoutRangeMin => 20f;
-		protected virtual float HoldoutRangeMax => 56f;
-
+	{public SwingHelper.SwingHelper helper;
+		public Player player => Main.player[Projectile.owner];
 		public override void SetDefaults() {
-			Projectile.CloneDefaults(ProjectileID.Spear);
-			Projectile.width  = 70;
-			Projectile.height = 70;
-			Projectile.usesLocalNPCImmunity  = true;
-			Projectile.localNPCHitCooldown   = -1;
+			Projectile.width = 10;
+			Projectile.height = 10; // ?�������?��?�
+			Projectile.friendly = true; // ?������?��?���
+			Projectile.penetrate = -1; // ?�������?�?
+			Projectile.tileCollide = false; // ?���?����?��?
+			Projectile.usesLocalNPCImmunity = true; // ?��?�����?
+			Projectile.ownerHitCheck = true; // ?��?�����?���������?�����??�?�����?�?��?����?�?
+			Projectile.DamageType = DamageClass.MeleeNoSpeed; // ?����?��??����
+			Projectile.ignoreWater = true;
+			Projectile.localNPCHitCooldown = 14;
 		}
 
-		public override bool PreAI() {
-			Player player   = Main.player[Projectile.owner];
-			int    duration = player.itemAnimationMax;
+		private enum WeaponState{Move,Swing,Stab}
 
-			player.heldProj = Projectile.whoAmI;
+		public override void OnSpawn(IEntitySource source) {
+			helper = new SwingHelper.SwingHelper(20, 2)
+				.SetPlayer(player)
+				.SetProj(Projectile)
+				.SetTex(TextureAssets.Projectile[Projectile.type].Value)
+				.SetSwingRad(MathF.PI);
+			helper.SetSetoff(new Vector2(-18, 0));
+			helper.handleLength = new Vector2(36, 10);
+			helper.swordLength = new Vector2(70, 10);
+			helper.SetScale(new Vector2(1f, 1f));
+			helper.lagTime = 8;
+			helper.MaxChargetime = 10;
+		}
 
-			if (Projectile.timeLeft > duration)
-				Projectile.timeLeft = duration;
-
-			Projectile.velocity = Vector2.Normalize(Projectile.velocity);
-
-			float returnDuration = duration * 0.8f;
-			float progress = Projectile.timeLeft < returnDuration
-				? Projectile.timeLeft / returnDuration
-				: 1 - (Projectile.timeLeft - returnDuration) / (duration - returnDuration);
-
-			Projectile.Center = player.MountedCenter + Vector2.SmoothStep(
-				Projectile.velocity * HoldoutRangeMin,
-				Projectile.velocity * HoldoutRangeMax,
-				progress);
-
-			Projectile.rotation = Projectile.velocity.ToRotation();
-
-			return false;
+		private int attack = 0;
+		private bool press = false;
+		private WeaponState state = WeaponState.Move;
+		public override void AI() {
+			if(player.dead||player.HeldItem.type != ModContent.ItemType<PlumePike>())
+				Projectile.Kill();
+			switch (state) {
+				case WeaponState.Move:
+					helper.Move();
+					if (PlayerInput.MouseInfo.LeftButton == ButtonState.Pressed && !press) {
+						press = true;
+						Vector2 mouse = Main.MouseWorld - player.Center;
+						helper.PointMouseRad(MathF.Atan2(mouse.Y, mouse.X));
+						helper.SetStabRad(MathF.Atan2(mouse.Y, mouse.X));
+						if (attack == 0) {
+							helper.ResetTime(8);
+							state = WeaponState.Swing;
+							attack += 1;
+						}
+						else {
+							helper.ResetTime(8);
+							state = WeaponState.Stab;
+							attack =0;
+						}
+					}
+					break;
+				case WeaponState.Swing:
+					if (helper.Swing()) {
+						state = WeaponState.Move;
+						helper.ReloadIndex();
+					}
+					break;
+				case WeaponState.Stab:
+					if (helper.Stab()) {
+						helper.ReloadIndex();
+						helper.ResetTime(8);
+						helper.SetScale(new Vector2(1f, 1f));
+						state = WeaponState.Move;
+					}
+					break;
+			}
+			if(press&&PlayerInput.MouseInfo.LeftButton==ButtonState.Pressed)
+				press = false;
 		}
 
 		public override bool PreDraw(ref Color lightColor) {
-			Texture2D tex     = ModContent.Request<Texture2D>(Texture).Value;
-			float     ang     = Projectile.velocity.ToRotation();
-			Vector2   origin  = tex.Size() / 2f;
-			Vector2   drawPos = Projectile.Center - Main.screenPosition;
-			Main.spriteBatch.Draw(tex, drawPos, null, lightColor, ang, origin, Projectile.scale, SpriteEffects.None, 0f);
+			SpriteBatch sb = Main.spriteBatch;
+			helper.DrawBlade(sb);
+			if(state == WeaponState.Swing)
+				helper.DrawTrip(SwingHelper.SwingHelper.SwingEffect.Zero,lightColor,sb);
 			return false;
 		}
+
+		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => helper.Colliding(targetHitbox);
 	}
 }
