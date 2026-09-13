@@ -40,7 +40,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
                 return;
             }
 
-            // ´©´÷Ê±ÏÔÊ¾¶îÍâĞÅÏ¢
+            // ç©¿æˆ´æ—¶æ˜¾ç¤ºé¢å¤–ä¿¡æ¯
             var modPlayer = player.GetModPlayer<FearlessBladePlayer>();
             if (modPlayer == null) return;
 
@@ -75,7 +75,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
     {
         public bool active;
 
-        // µ±Ç°ÔöÒæµÄÎïÆ·
+        // å½“å‰å¢ç›Šçš„ç‰©å“
         public Item buffedWeapon;
         public Item buffedArmor;
 
@@ -126,7 +126,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
                 buffedArmor = null;
             }
 
-            // ²éÕÒĞÂµÄ×î¸ßÏ¡ÓĞ¶ÈÎïÆ·
+            // æŸ¥æ‰¾æ–°çš„æœ€é«˜ç¨€æœ‰åº¦ç‰©å“
             FindHighestRarityItems();
 
             
@@ -134,13 +134,13 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 
         private bool PlayerHasItem(Item item)
         {
-            // ¼ì²éÎïÆ·ÊÇ·ñÔÚ±³°üÖĞ
+            // æ£€æŸ¥ç‰©å“æ˜¯å¦åœ¨èƒŒåŒ…ä¸­
             for (int i = 0; i < 50; i++)
             {
                 if (Player.inventory[i] == item) return true;
             }
 
-            // ¼ì²éÎïÆ·ÊÇ·ñÔÚ×°±¸À¸ÖĞ
+            // æ£€æŸ¥ç‰©å“æ˜¯å¦åœ¨è£…å¤‡æ ä¸­
             for (int i = 0; i < Player.armor.Length; i++)
             {
                 if (Player.armor[i] == item) return true;
@@ -176,7 +176,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 				return;
 			findTimer = FIND_INTERVAL;
 
-			// Ã¿Ö¡ÖØĞÂ²éÕÒÎäÆ÷
+			// æ¯å¸§é‡æ–°æŸ¥æ‰¾æ­¦å™¨
 			var weapons = GetAllWeapons();
 			if (weapons.Count > 0) {
 				var bestWeapon = weapons
@@ -184,13 +184,13 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 					.ThenBy(item => GetItemIndex(item))
 					.First();
 
-				// Èç¹û×îÓÅÎïÆ·±ä»¯ÁË
+				// å¦‚æœæœ€ä¼˜ç‰©å“å˜åŒ–äº†
 				if (buffedWeapon != bestWeapon) {
-					// »Ö¸´¾ÉÎïÆ·
+					// æ¢å¤æ—§ç‰©å“
 					if (buffedWeapon != null)
 						buffedWeapon.damage = originalWeaponDamage;
 
-					// Ó¦ÓÃĞÂÎïÆ·
+					// åº”ç”¨æ–°ç‰©å“
 					buffedWeapon = bestWeapon;
 					originalWeaponDamage = bestWeapon.damage;
 					bestWeapon.damage = (int)(bestWeapon.damage * 1.5f);
@@ -199,12 +199,12 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 				}
 			}
 			else if (buffedWeapon != null) {
-				// Ã»ÓĞÎäÆ÷ÁË£¬»Ö¸´
+				// æ²¡æœ‰æ­¦å™¨äº†ï¼Œæ¢å¤
 				buffedWeapon.damage = originalWeaponDamage;
 				buffedWeapon = null;
 			}
 
-			// Ã¿Ö¡ÖØĞÂ²éÕÒ·À¾ß
+			// æ¯å¸§é‡æ–°æŸ¥æ‰¾é˜²å…·
 			var armors = GetAllArmors();
 			if (armors.Count > 0) {
 				var bestArmor = armors
@@ -212,13 +212,13 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 					.ThenBy(item => GetItemIndex(item))
 					.First();
 
-				// Èç¹û×îÓÅÎïÆ·±ä»¯ÁË
+				// å¦‚æœæœ€ä¼˜ç‰©å“å˜åŒ–äº†
 				if (buffedArmor != bestArmor) {
-					// »Ö¸´¾ÉÎïÆ·
+					// æ¢å¤æ—§ç‰©å“
 					if (buffedArmor != null)
 						buffedArmor.defense = originalArmorDefense;
 
-					// Ó¦ÓÃĞÂÎïÆ·
+					// åº”ç”¨æ–°ç‰©å“
 					buffedArmor = bestArmor;
 					originalArmorDefense = bestArmor.defense;
 					bestArmor.defense = (int)(bestArmor.defense * 1.5f);
@@ -227,7 +227,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 				}
 			}
 			else if (buffedArmor != null) {
-				// Ã»ÓĞ·À¾ßÁË£¬»Ö¸´
+				// æ²¡æœ‰é˜²å…·äº†ï¼Œæ¢å¤
 				buffedArmor.defense = originalArmorDefense;
 				buffedArmor = null;
 			}
@@ -242,14 +242,14 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
         {
             var weapons = new List<Item>();
 
-            // É¨Ãè±³°ü
+            // æ‰«æèƒŒåŒ…
             for (int i = 0; i < 50; i++)
             {
                 Item item = Player.inventory[i];
                 if (IsValidWeapon(item)) weapons.Add(item);
             }
 
-            // É¨Ãè×°±¸À¸
+            // æ‰«æè£…å¤‡æ 
             for (int i = 0; i < Player.armor.Length; i++)
             {
                 Item item = Player.armor[i];
@@ -263,14 +263,14 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
         {
             var armors = new List<Item>();
 
-            // É¨Ãè±³°ü
+            // æ‰«æèƒŒåŒ…
             for (int i = 0; i < 50; i++)
             {
                 Item item = Player.inventory[i];
                 if (IsValidArmor(item)) armors.Add(item);
             }
 
-            // É¨Ãè×°±¸À¸
+            // æ‰«æè£…å¤‡æ 
             for (int i = 0; i < Player.armor.Length; i++)
             {
                 Item item = Player.armor[i];
@@ -282,13 +282,13 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 
         private int GetItemIndex(Item item)
         {
-            // ÔÚ±³°üÖĞ²éÕÒ
+            // åœ¨èƒŒåŒ…ä¸­æŸ¥æ‰¾
             for (int i = 0; i < 50; i++)
             {
                 if (Player.inventory[i] == item) return i;
             }
 
-            // ÔÚ×°±¸À¸ÖĞ²éÕÒ
+            // åœ¨è£…å¤‡æ ä¸­æŸ¥æ‰¾
             for (int i = 0; i < Player.armor.Length; i++)
             {
                 if (Player.armor[i] == item) return 100 + i;
@@ -312,7 +312,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 
             if (item.rare < 0)
             {
-//-12.-13ÕâÁ½±È½ÏÌØÊâ
+//-12.-13è¿™ä¸¤æ¯”è¾ƒç‰¹æ®Š
                 return item.rare == -12 ? int.MaxValue - 1 :
                        item.rare == -13 ? int.MaxValue - 2 : item.rare;
             }

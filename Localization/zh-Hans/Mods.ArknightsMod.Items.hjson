@@ -4173,3 +4173,8 @@ HarmonieStaff: {
 		以流动乐谱与共鸣水域淹没敌人
 		'''
 }
+
+WSummon: {
+	DisplayName: 十二面骰
+	Tooltip: 在地表使用，召唤 W
+}

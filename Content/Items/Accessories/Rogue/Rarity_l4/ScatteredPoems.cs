@@ -19,13 +19,13 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            // ÕÙ»½ÉËº¦ÌáÉı
+            // å¬å”¤ä¼¤å®³æå‡
             player.GetDamage(DamageClass.Summon) += 0.30f;
 
-            // ÕÙ»½±©»÷ÂÊ(ÎŞĞ§)
+            // å¬å”¤æš´å‡»ç‡(æ— æ•ˆ)
             player.GetCritChance(DamageClass.Summon) += 5;
 
-            // Ôö¼ÓÕÙ»½À¸£¨·½ÖÛÔ­°æÎª²»ÏûºÄ²¿ÊğÀ¸£©
+            // å¢åŠ å¬å”¤æ ï¼ˆæ–¹èˆŸåŸç‰ˆä¸ºä¸æ¶ˆè€—éƒ¨ç½²æ ï¼‰
             player.maxMinions += 3;
         }
     }

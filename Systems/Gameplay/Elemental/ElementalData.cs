@@ -7,14 +7,14 @@ using System;
 public struct ElementalData() {
 
 	public EntityType EntityType;
-	private readonly ushort[] _maxElementals;//ËÄÖÖ×î´óÖµ
+	private readonly ushort[] _maxElementals;//å››ç§æœ€å¤§å€¼
 	private readonly ushort[] _elementals; //[n, c, b, n]
 	private byte _minElementalIndex;
 	private ushort _minElementalValue;
 	private ushort _recoveryTimer;
 	private ushort _whoAmI;
 
-	public byte Status; //ÓÃÆì±íÊ¾¶àÖÖ×´Ì¬
+	public byte Status; //ç”¨æ——è¡¨ç¤ºå¤šç§çŠ¶æ€
 	private const byte _Active = 0x20;
 	private const byte _Full = 0x40;
 	private const byte _OnElementalBurst = 0x80;
@@ -32,7 +32,7 @@ public struct ElementalData() {
 		};
 		_maxElementals = new ushort[4];
 		for (int i = 0; i < _maxElementals.Length; i++)
-			_maxElementals[i] = maxValue; //¼ÙÉèËÄÖÖ×î´óÔªËØÖµ¶¼ÏàÍ¬£¬´«ÈëÊµÌåÀàĞÍ¶ÔÓ¦µÄ×î´óÔªËØÖµ
+			_maxElementals[i] = maxValue; //å‡è®¾å››ç§æœ€å¤§å…ƒç´ å€¼éƒ½ç›¸åŒï¼Œä¼ å…¥å®ä½“ç±»å‹å¯¹åº”çš„æœ€å¤§å…ƒç´ å€¼
 		_elementals = (ushort[])_maxElementals.Clone();
 		Status = _Active;
 		UpdateStatus();
@@ -55,20 +55,20 @@ public struct ElementalData() {
 		Status = _Active;
 		UpdateStatus();
 	}
-	//³õÊ¼»¯Ê±ÒÆ³ıËùÓĞÊ±ÖÓ
+	//åˆå§‹åŒ–æ—¶ç§»é™¤æ‰€æœ‰æ—¶é’Ÿ
 
 
 	public unsafe byte UpdateStatus() {
-		if ((_minElementalValue = _elementals[findMin()]) <= 0) { //ÕâÀïµÚÒ»´Î¼ÇÂ¼×îĞ¡Öµ£¬Èç¹û±¬Ìõ£¬ËùÓĞÔªËØÖµ»Ø¸´µ½×î´óÖµ£¬ÄÇÃ´×îµÍÔªËØÓ¦¸ÃÊÇÂúÖµ£¬·µ»ØÂú×´Ì¬
+		if ((_minElementalValue = _elementals[findMin()]) <= 0) { //è¿™é‡Œç¬¬ä¸€æ¬¡è®°å½•æœ€å°å€¼ï¼Œå¦‚æœçˆ†æ¡ï¼Œæ‰€æœ‰å…ƒç´ å€¼å›å¤åˆ°æœ€å¤§å€¼ï¼Œé‚£ä¹ˆæœ€ä½å…ƒç´ åº”è¯¥æ˜¯æ»¡å€¼ï¼Œè¿”å›æ»¡çŠ¶æ€
 			Status |= 0x80;
 			ElementalSystem._burstHandlers[_minElementalIndex].OnBurst(_whoAmI,EntityType);
 			MegaTimer.AddTimer((int)_whoAmI, &ElementalSystem.OffElementalBurst,600, true);
 			//off elemental burst should be localized, just in case
-            //ÕâÀïĞ´ÔªËØËğÉË±¬Ìõ
+            //è¿™é‡Œå†™å…ƒç´ æŸä¼¤çˆ†æ¡
 		}
 		
 		
-		return Status = (byte)(((_minElementalValue = _elementals[findMin()]) == _maxElementals[0] ? 0x40 : 0x00) | (Status & ~0x40));//Ã¿ÖÖÔªËØ×î´óÖµ²»Í¬¾Í²»ÄÜÕâÃ´Ğ´ÁË
+		return Status = (byte)(((_minElementalValue = _elementals[findMin()]) == _maxElementals[0] ? 0x40 : 0x00) | (Status & ~0x40));//æ¯ç§å…ƒç´ æœ€å¤§å€¼ä¸åŒå°±ä¸èƒ½è¿™ä¹ˆå†™äº†
 
 	}
 	
@@ -86,19 +86,19 @@ public struct ElementalData() {
 		return _minElementalIndex = (byte)minIndex;
 	}
 
-	//½Ó¿Ú
+	//æ¥å£
 	public bool IsActive => (Status & _Active) == 1;
 	public bool IsFull => (Status & _Full) == 1;
 	public bool OnElementalBurst => (Status & _Full) == 1;
-	public ElementalType MinElementalType => (ElementalType)_minElementalIndex;//µ±Ç°×îĞ¡ÔªËØÖµµÄÖÖÀà
+	public ElementalType MinElementalType => (ElementalType)_minElementalIndex;//å½“å‰æœ€å°å…ƒç´ å€¼çš„ç§ç±»
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]//µ±Ç°×îĞ¡ÔªËØÖµ
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]//å½“å‰æœ€å°å…ƒç´ å€¼
 	public ushort GetElemental() => _elementals[_minElementalIndex];
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]//Ö¸¶¨ÔªËØÖµ
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]//æŒ‡å®šå…ƒç´ å€¼
 	public ushort GetElemental(ElementalType elementalType) => _elementals[(byte)elementalType];
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]//È«²¿ËÄÖÖÔªËØÖµ
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]//å…¨éƒ¨å››ç§å…ƒç´ å€¼
 	public ushort[] GetElementals() => _elementals;
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -11,3 +11,6 @@ obj/
 .codegraph/
 .claude/
 .omo/
+/Doc/
+/AGENTS.md
+/CLAUDE.md

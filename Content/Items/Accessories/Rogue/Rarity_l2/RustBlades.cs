@@ -12,7 +12,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l2
             Item.width = 28;
             Item.height = 32;
 			Item.value = Item.sellPrice(0, 3, 0, 0);
-			Item.rare = 1; // 浅紫色稀有度
+			Item.rare = 1; // 娴呯传鑹茬█鏈夊害
             Item.accessory = true;
         }
 
@@ -44,7 +44,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l2
 			if (!damageAmplifierActive)
 				return;
 
-			// 检测法术或召唤伤害
+			// 妫�娴嬫硶鏈垨鍙敜浼ゅ
 			if (proj.DamageType == DamageClass.Melee || proj.DamageType == DamageClass.Ranged) {
 				modifiers.FinalDamage *= 1.15f;
 			}

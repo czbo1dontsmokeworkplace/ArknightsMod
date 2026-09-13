@@ -29,7 +29,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
             hasEmblem = false;
         }
 
-        // 减少所有NPC对玩家的伤害
+        // 鍑忓皯鎵�鏈塏PC瀵圭帺瀹剁殑浼ゅ
         public override void ModifyHitByNPC(NPC npc, ref Player.HurtModifiers modifiers)
         {
             if (hasEmblem && npc != null && !npc.friendly)
@@ -42,7 +42,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
             }
         }
 
-        // 减少所有NPC弹幕对玩家的伤害
+        // 鍑忓皯鎵�鏈塏PC寮瑰箷瀵圭帺瀹剁殑浼ゅ
         public override void ModifyHitByProjectile(Projectile proj, ref Player.HurtModifiers modifiers)
         {
             if (hasEmblem && proj != null && proj.hostile && proj.npcProj)

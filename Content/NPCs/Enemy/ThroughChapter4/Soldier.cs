@@ -213,24 +213,24 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		}
 		public override void OnKill() {
 			SoundStyle ghostSound = SoundID.NPCDeath6 with {
-				Pitch = -0.4f, // ·¶Î§[-1.0, 1.0]£¬-0.5±íÊ¾½µµÍ°Ë¶È
-				Volume = 0.6f  // ¿ÉÑ¡µ÷ÕûÒôÁ¿
+				Pitch = -0.4f, // èŒƒå›´[-1.0, 1.0]ï¼Œ-0.5è¡¨ç¤ºé™ä½å…«åº¦
+				Volume = 0.6f  // å¯é€‰è°ƒæ•´éŸ³é‡
 			};
 			SoundEngine.PlaySound(ghostSound, NPC.Center);
-			for (int i = 0; i < 25; i++) // ×ÜÁ£×ÓÊı
+			for (int i = 0; i < 25; i++) // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	{
-				// 70%¸ÅÂÊÉú³ÉºÚÉ«£¬30%¸ÅÂÊÉú³É³ÈÉ«
+				// 70%æ¦‚ç‡ç”Ÿæˆé»‘è‰²ï¼Œ30%æ¦‚ç‡ç”Ÿæˆæ©™è‰²
 				bool isBlack = Main.rand.NextFloat() < 0.7f;
 
 				Dust dust = Dust.NewDustPerfect(
 					NPC.Center,
-					isBlack ? DustID.Asphalt : DustID.FireworksRGB, // ºÚÉ«»ò³ÈÉ«
+					isBlack ? DustID.Asphalt : DustID.FireworksRGB, // é»‘è‰²æˆ–æ©™è‰²
 					Main.rand.NextVector2Circular(5, 5),
 					Alpha: 150,
 					Scale: Main.rand.NextFloat(1.2f, 2f)
 				);
 
-				// Í³Ò»ÎïÀí²ÎÊı
+				// Í³Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				dust.noGravity = true;
 				dust.fadeIn = 1.5f;
 				dust.rotation = Main.rand.NextFloat(MathHelper.TwoPi);
@@ -238,7 +238,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		}
 		public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers) {
 			if (projectile.CountsAsClass(DamageClass.Magic)) {
-				// ·¨ÊõÉËº¦ÎŞÊÓ»¤¼×
+				// ï¿½ï¿½ï¿½ï¿½ï¿½Ëºï¿½ï¿½ï¿½ï¿½Ó»ï¿½ï¿½ï¿½
 				modifiers.ScalingArmorPenetration += 1f;
 
 				for (int i = 0; i < 3; i++) {

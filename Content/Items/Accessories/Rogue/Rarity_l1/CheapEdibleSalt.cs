@@ -6,13 +6,13 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l1
 {
     public class CheapEdibleSalt : ModItem
     {
-        //¼Ó7%ÉËº¦£¨×îÖÕ³ËËã£©
+        //åŠ 7%ä¼¤å®³ï¼ˆæœ€ç»ˆä¹˜ç®—ï¼‰
         public override void SetDefaults()
         {
             Item.width = 28;
             Item.height = 32;
             Item.value = Item.sellPrice(0, 2, 0, 0); 
-            Item.rare = ItemRarityID.Green; // Ç³×ÏÉ«Ï¡ÓĞ¶È
+            Item.rare = ItemRarityID.Green; // æµ…ç´«è‰²ç¨€æœ‰åº¦
             Item.accessory = true;
         }
 
@@ -44,7 +44,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l1
 			if (!damageAmplifierActive)
 				return;
 
-			// ¼ì²â·¨Êõ»òÕÙ»½ÉËº¦
+			// æ£€æµ‹æ³•æœ¯æˆ–å¬å”¤ä¼¤å®³
 			if (proj.DamageType == DamageClass.Melee || proj.DamageType == DamageClass.Ranged) {
 				modifiers.FinalDamage *= 1.07f;
 			}

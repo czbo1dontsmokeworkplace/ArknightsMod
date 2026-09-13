@@ -32,11 +32,11 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
         public int selectedNPCIndex = -1;
         public int selectedPlayerForDamageIndex = -1;
 
-        // ÓÃÓÚ¸ú×ÙÊÇ·ñ´¦ÓÚBossÕ½
+        // ç”¨äºè·Ÿè¸ªæ˜¯å¦å¤„äºBossæˆ˜
         private bool wasInBossFight;
         private bool hasDisplayedMessages;
 
-        // Ìí¼Ó±êÖ¾À´¸ú×ÙÊÇ·ñÒÑÓ¦ÓÃĞ§¹û
+        // æ·»åŠ æ ‡å¿—æ¥è·Ÿè¸ªæ˜¯å¦å·²åº”ç”¨æ•ˆæœ
         private bool effectsApplied = false;
 
         public override void ResetEffects()
@@ -48,7 +48,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
         {
             if (!hasChitinousBlade)
             {
-                // Çå³ıĞ§¹û
+                // æ¸…é™¤æ•ˆæœ
                 ClearEffects();
                 wasInBossFight = false;
                 hasDisplayedMessages = false;
@@ -62,20 +62,20 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
             {
                 if (!wasInBossFight)
                 {
-                    // BossÕ½¸Õ¿ªÊ¼£¬Ñ¡ÔñÄ¿±ê
+                    // Bossæˆ˜åˆšå¼€å§‹ï¼Œé€‰æ‹©ç›®æ ‡
                     SelectTargets();
                     hasDisplayedMessages = false;
                     effectsApplied = false;
                 }
 
-                // Ó¦ÓÃĞ§¹û£¨Ö»Ó¦ÓÃÒ»´Î£©
+                // åº”ç”¨æ•ˆæœï¼ˆåªåº”ç”¨ä¸€æ¬¡ï¼‰
                 if (!effectsApplied)
                 {
                     ApplyEffects();
                     effectsApplied = true;
                 }
 
-                // ÏÔÊ¾ÔöÒæ¶ÔÏóĞÅÏ¢£¨Ö»ÏÔÊ¾Ò»´Î£©
+                // æ˜¾ç¤ºå¢ç›Šå¯¹è±¡ä¿¡æ¯ï¼ˆåªæ˜¾ç¤ºä¸€æ¬¡ï¼‰
                 if (!hasDisplayedMessages)
                 {
                     DisplayGainMessages();
@@ -84,7 +84,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
             }
             else if (wasInBossFight)
             {
-                // BossÕ½½áÊø£¬Çå³ıĞ§¹û
+                // Bossæˆ˜ç»“æŸï¼Œæ¸…é™¤æ•ˆæœ
                 ClearEffects();
                 hasDisplayedMessages = false;
                 effectsApplied = false;
@@ -108,22 +108,22 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 
         private void SelectTargets()
         {
-            // ÖØÖÃÑ¡Ôñ
+            // é‡ç½®é€‰æ‹©
             selectedMinionIndex = -1;
             selectedPlayerIndex = -1;
             selectedNPCIndex = -1;
             selectedPlayerForDamageIndex = -1;
 
-            // »ñÈ¡Íæ¼ÒÎ»ÖÃ
+            // è·å–ç©å®¶ä½ç½®
             Vector2 playerCenter = Player.Center;
-            float range = 500f; // 500ÏñËØ·¶Î§
+            float range = 500f; // 500åƒç´ èŒƒå›´
             float rangeSquared = range * range;
 
-            // Ñ¡Ôñ¹¥»÷¼Ó³ÉÄ¿±ê (ÕÙ»½Îï»òÍæ¼Ò)
+            // é€‰æ‹©æ”»å‡»åŠ æˆç›®æ ‡ (å¬å”¤ç‰©æˆ–ç©å®¶)
             List<int> validMinions = [];
             List<int> validPlayersForDamage = [];
 
-            // ¼ì²éÍæ¼Ò×Ô¼ºµÄÕÙ»½Îï
+            // æ£€æŸ¥ç©å®¶è‡ªå·±çš„å¬å”¤ç‰©
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 Projectile proj = Main.projectile[i];
@@ -134,7 +134,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
                 }
             }
 
-            // ¼ì²éÆäËûÍæ¼ÒµÄÕÙ»½Îï
+            // æ£€æŸ¥å…¶ä»–ç©å®¶çš„å¬å”¤ç‰©
             for (int p = 0; p < Main.maxPlayers; p++)
             {
                 if (p == Player.whoAmI || !Main.player[p].active) continue;
@@ -152,16 +152,16 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
                         }
                     }
 
-                    // Ìí¼ÓÍæ¼Òµ½ÓĞĞ§Íæ¼ÒÁĞ±í
+                    // æ·»åŠ ç©å®¶åˆ°æœ‰æ•ˆç©å®¶åˆ—è¡¨
                     validPlayersForDamage.Add(p);
                 }
             }
 
-            // Ìí¼Ó×Ô¼ºµ½ÓĞĞ§Íæ¼ÒÁĞ±í
+            // æ·»åŠ è‡ªå·±åˆ°æœ‰æ•ˆç©å®¶åˆ—è¡¨
             validPlayersForDamage.Add(Player.whoAmI);
 
-            // Ëæ»úÑ¡ÔñÒ»¸öÕÙ»½Îï»òÍæ¼Ò½øĞĞ¹¥»÷¼Ó³É
-            if (validMinions.Count > 0 && Main.rand.NextBool(2)) // 50%¼¸ÂÊÑ¡ÔñÕÙ»½Îï
+            // éšæœºé€‰æ‹©ä¸€ä¸ªå¬å”¤ç‰©æˆ–ç©å®¶è¿›è¡Œæ”»å‡»åŠ æˆ
+            if (validMinions.Count > 0 && Main.rand.NextBool(2)) // 50%å‡ ç‡é€‰æ‹©å¬å”¤ç‰©
             {
                 selectedMinionIndex = validMinions[Main.rand.Next(validMinions.Count)];
             }
@@ -170,22 +170,22 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
                 selectedPlayerForDamageIndex = validPlayersForDamage[Main.rand.Next(validPlayersForDamage.Count)];
             }
 
-            // Ñ¡ÔñÉúÃü¼Ó³ÉÄ¿±ê
+            // é€‰æ‹©ç”Ÿå‘½åŠ æˆç›®æ ‡
             List<int> validNPCs = [];
             List<int> validPlayersForLife = [];
 
-            // ¼ì²éÓÑºÃNPC
+            // æ£€æŸ¥å‹å¥½NPC
             for (int i = 0; i < Main.maxNPCs; i++)
             {
                 NPC npc = Main.npc[i];
-                if (npc.active && npc.friendly && npc.lifeMax > 5 && // ÓĞÑªÁ¿µÄÓÑºÃNPC
+                if (npc.active && npc.friendly && npc.lifeMax > 5 && // æœ‰è¡€é‡çš„å‹å¥½NPC
                     Vector2.DistanceSquared(playerCenter, npc.Center) <= rangeSquared)
                 {
                     validNPCs.Add(i);
                 }
             }
 
-            // ¼ì²éÍæ¼Ò
+            // æ£€æŸ¥ç©å®¶
             for (int p = 0; p < Main.maxPlayers; p++)
             {
                 if (Main.player[p].active &&
@@ -195,8 +195,8 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
                 }
             }
 
-            // Ëæ»úÑ¡ÔñÒ»¸öÍæ¼Ò»òNPC½øĞĞÉúÃü¼Ó³É
-            if (validNPCs.Count > 0 && Main.rand.NextBool(2)) // 50%¼¸ÂÊÑ¡ÔñNPC
+            // éšæœºé€‰æ‹©ä¸€ä¸ªç©å®¶æˆ–NPCè¿›è¡Œç”Ÿå‘½åŠ æˆ
+            if (validNPCs.Count > 0 && Main.rand.NextBool(2)) // 50%å‡ ç‡é€‰æ‹©NPC
             {
                 selectedNPCIndex = validNPCs[Main.rand.Next(validNPCs.Count)];
             }
@@ -212,7 +212,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
             string player = Language.GetTextValue("Mods.ArknightsMod.Default.player");
             string buff = Language.GetTextValue("Mods.ArknightsMod.Default.check");
 
-            // ÏÔÊ¾¹¥»÷¼Ó³ÉÄ¿±êĞÅÏ¢
+            // æ˜¾ç¤ºæ”»å‡»åŠ æˆç›®æ ‡ä¿¡æ¯
             if (selectedMinionIndex >= 0)
             {
                 Projectile proj = Main.projectile[selectedMinionIndex];
@@ -222,7 +222,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
                     int textIndex = CombatText.NewText(Player.getRect(), Color.Gold, $" {buff}{minionName}");
                     if (textIndex > -1)
                     {
-                        Main.combatText[textIndex].lifeTime = 300; // 3ÃëÏÔÊ¾Ê±¼ä
+                        Main.combatText[textIndex].lifeTime = 300; // 3ç§’æ˜¾ç¤ºæ—¶é—´
                     }
                 }
             }
@@ -232,11 +232,11 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
                 int textIndex = CombatText.NewText(Player.getRect(), Color.Gold, $" {buff}{playerName}");
                 if (textIndex > -1)
                 {
-                    Main.combatText[textIndex].lifeTime = 300; // 3ÃëÏÔÊ¾Ê±¼ä
+                    Main.combatText[textIndex].lifeTime = 300; // 3ç§’æ˜¾ç¤ºæ—¶é—´
                 }
             }
 
-            // ÏÔÊ¾ÉúÃü¼Ó³ÉÄ¿±êĞÅÏ¢
+            // æ˜¾ç¤ºç”Ÿå‘½åŠ æˆç›®æ ‡ä¿¡æ¯
             if (selectedNPCIndex >= 0)
             {
                 NPC npc = Main.npc[selectedNPCIndex];
@@ -246,7 +246,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
                     int textIndex = CombatText.NewText(Player.getRect(), Color.Red, $" {buff}{npcName}");
                     if (textIndex > -1)
                     {
-                        Main.combatText[textIndex].lifeTime = 300; // 3ÃëÏÔÊ¾Ê±¼ä
+                        Main.combatText[textIndex].lifeTime = 300; // 3ç§’æ˜¾ç¤ºæ—¶é—´
                     }
                 }
             }
@@ -256,20 +256,20 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
                 int textIndex = CombatText.NewText(Player.getRect(), Color.Red, $"{buff}{playerName}");
                 if (textIndex > -1)
                 {
-                    Main.combatText[textIndex].lifeTime = 300; // 3ÃëÏÔÊ¾Ê±¼ä
+                    Main.combatText[textIndex].lifeTime = 300; // 3ç§’æ˜¾ç¤ºæ—¶é—´
                 }
             }
         }
 
         private void ApplyEffects()
         {
-            // Ó¦ÓÃ¹¥»÷¼Ó³É - ÕÙ»½Îï
+            // åº”ç”¨æ”»å‡»åŠ æˆ - å¬å”¤ç‰©
             if (selectedMinionIndex >= 0 && selectedMinionIndex < Main.maxProjectiles)
             {
                 Projectile proj = Main.projectile[selectedMinionIndex];
                 if (proj.active)
                 {
-                    // Ê¹ÓÃGetGlobalProjectileÀ´´æ´¢ºÍĞŞ¸ÄÉËº¦
+                    // ä½¿ç”¨GetGlobalProjectileæ¥å­˜å‚¨å’Œä¿®æ”¹ä¼¤å®³
                     var globalProj = proj.GetGlobalProjectile<ChitinousRipperGlobalProjectile>();
                     if (!globalProj.damageModified)
                     {
@@ -277,24 +277,24 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
                         globalProj.damageModified = true;
                     }
 
-                    proj.damage = (int)(globalProj.originalDamage * 2f); // 100%¼Ó³É
+                    proj.damage = (int)(globalProj.originalDamage * 2f); // 100%åŠ æˆ
                 }
                 else
                 {
-                    // ÕÙ»½ÎïÒÑÏûÊ§£¬ÖØĞÂÑ¡Ôñ
+                    // å¬å”¤ç‰©å·²æ¶ˆå¤±ï¼Œé‡æ–°é€‰æ‹©
                     SelectTargets();
                     hasDisplayedMessages = false;
                     effectsApplied = false;
                 }
             }
 
-            // Ó¦ÓÃ¹¥»÷¼Ó³É - Íæ¼Ò
+            // åº”ç”¨æ”»å‡»åŠ æˆ - ç©å®¶
             if (selectedPlayerForDamageIndex >= 0 && selectedPlayerForDamageIndex < Main.maxPlayers)
             {
                 Player targetPlayer = Main.player[selectedPlayerForDamageIndex];
                 if (targetPlayer.active)
                 {
-                    // Ê¹ÓÃGetModPlayerÀ´´æ´¢ºÍĞŞ¸ÄÉËº¦¼Ó³É
+                    // ä½¿ç”¨GetModPlayeræ¥å­˜å‚¨å’Œä¿®æ”¹ä¼¤å®³åŠ æˆ
                     var modPlayer = targetPlayer.GetModPlayer<ChitinousRipperTargetPlayer>();
                     if (!modPlayer.damageModified)
                     {
@@ -303,14 +303,14 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
                 }
                 else
                 {
-                    // Íæ¼ÒÒÑÀë¿ª£¬ÖØĞÂÑ¡Ôñ
+                    // ç©å®¶å·²ç¦»å¼€ï¼Œé‡æ–°é€‰æ‹©
                     SelectTargets();
                     hasDisplayedMessages = false;
                     effectsApplied = false;
                 }
             }
 
-            // Ó¦ÓÃÉúÃü¼Ó³É - NPC
+            // åº”ç”¨ç”Ÿå‘½åŠ æˆ - NPC
             if (selectedNPCIndex >= 0 && selectedNPCIndex < Main.maxNPCs)
             {
                 NPC npc = Main.npc[selectedNPCIndex];
@@ -320,13 +320,13 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
                     if (!globalNPC.lifeModified)
                     {
                         globalNPC.originalLifeMax = npc.lifeMax;
-                        globalNPC.originalLife = npc.life; // ±£´æµ±Ç°ÉúÃüÖµ
+                        globalNPC.originalLife = npc.life; // ä¿å­˜å½“å‰ç”Ÿå‘½å€¼
                         globalNPC.lifeModified = true;
                     }
 
-                    // Ö±½ÓĞŞ¸ÄÉúÃüÖµ
-                    npc.lifeMax = globalNPC.originalLifeMax * 2; // 100%¼Ó³É
-                    // °´±ÈÀıµ÷Õûµ±Ç°ÉúÃüÖµ
+                    // ç›´æ¥ä¿®æ”¹ç”Ÿå‘½å€¼
+                    npc.lifeMax = globalNPC.originalLifeMax * 2; // 100%åŠ æˆ
+                    // æŒ‰æ¯”ä¾‹è°ƒæ•´å½“å‰ç”Ÿå‘½å€¼
                     float lifeRatio = (float)globalNPC.originalLife / globalNPC.originalLifeMax;
                     npc.life = (int)(npc.lifeMax * lifeRatio);
                 }
@@ -338,7 +338,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
                 }
             }
 
-            // Ó¦ÓÃÉúÃü¼Ó³É - Íæ¼Ò
+            // åº”ç”¨ç”Ÿå‘½åŠ æˆ - ç©å®¶
             if (selectedPlayerIndex >= 0 && selectedPlayerIndex < Main.maxPlayers)
             {
                 Player targetPlayer = Main.player[selectedPlayerIndex];
@@ -348,10 +348,10 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
                     if (!modPlayer.lifeModified)
                     {
                         modPlayer.originalLifeMax = targetPlayer.statLifeMax2;
-                        modPlayer.originalLife = targetPlayer.statLife; // ±£´æµ±Ç°ÉúÃüÖµ
+                        modPlayer.originalLife = targetPlayer.statLife; // ä¿å­˜å½“å‰ç”Ÿå‘½å€¼
                         modPlayer.lifeModified = true;
 
-                        // ÉèÖÃÉúÃü¼Ó³É
+                        // è®¾ç½®ç”Ÿå‘½åŠ æˆ
                         modPlayer.lifeBoost = modPlayer.originalLifeMax;
                     }
                 }
@@ -364,19 +364,19 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
             }
         }
 
-        // ÔÚÔì³ÉÉËº¦Ê±Êµ¼ÊÓ¦ÓÃ¼Ó³É
+        // åœ¨é€ æˆä¼¤å®³æ—¶å®é™…åº”ç”¨åŠ æˆ
         public override void UpdateEquips()
         {
             if (hasChitinousBlade && IsBossActive() && selectedPlayerForDamageIndex == Player.whoAmI)
             {
-                // Êµ¼Ê¼Ó±¶ÉËº¦
+                // å®é™…åŠ å€ä¼¤å®³
                 Player.GetDamage(DamageClass.Generic) += 1;
             }
         }
 
         private void ClearEffects()
         {
-            // »Ö¸´¹¥»÷¼Ó³É - ÕÙ»½Îï
+            // æ¢å¤æ”»å‡»åŠ æˆ - å¬å”¤ç‰©
             if (selectedMinionIndex >= 0 && selectedMinionIndex < Main.maxProjectiles)
             {
                 Projectile proj = Main.projectile[selectedMinionIndex];
@@ -391,7 +391,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
                 }
             }
 
-            // »Ö¸´¹¥»÷¼Ó³É - Íæ¼Ò
+            // æ¢å¤æ”»å‡»åŠ æˆ - ç©å®¶
             if (selectedPlayerForDamageIndex >= 0 && selectedPlayerForDamageIndex < Main.maxPlayers)
             {
                 Player targetPlayer = Main.player[selectedPlayerForDamageIndex];
@@ -405,7 +405,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
                 }
             }
 
-            // »Ö¸´ÉúÃü¼Ó³É - NPC
+            // æ¢å¤ç”Ÿå‘½åŠ æˆ - NPC
             if (selectedNPCIndex >= 0 && selectedNPCIndex < Main.maxNPCs)
             {
                 NPC npc = Main.npc[selectedNPCIndex];
@@ -414,9 +414,9 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
                     var globalNPC = npc.GetGlobalNPC<ChitinousRipperGlobalNPC>();
                     if (globalNPC.lifeModified)
                     {
-                        // »Ö¸´Ô­Ê¼ÉúÃüÖµ
+                        // æ¢å¤åŸå§‹ç”Ÿå‘½å€¼
                         npc.lifeMax = globalNPC.originalLifeMax;
-                        // °´±ÈÀıµ÷Õûµ±Ç°ÉúÃüÖµ
+                        // æŒ‰æ¯”ä¾‹è°ƒæ•´å½“å‰ç”Ÿå‘½å€¼
                         float lifeRatio = (float)npc.life / (globalNPC.originalLifeMax * 2);
                         npc.life = (int)(npc.lifeMax * lifeRatio);
                         globalNPC.lifeModified = false;
@@ -424,7 +424,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
                 }
             }
 
-            // »Ö¸´ÉúÃü¼Ó³É - Íæ¼Ò
+            // æ¢å¤ç”Ÿå‘½åŠ æˆ - ç©å®¶
             if (selectedPlayerIndex >= 0 && selectedPlayerIndex < Main.maxPlayers)
             {
                 Player targetPlayer = Main.player[selectedPlayerIndex];
@@ -439,7 +439,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
                 }
             }
 
-            // ÖØÖÃÑ¡Ôñ
+            // é‡ç½®é€‰æ‹©
             selectedMinionIndex = -1;
             selectedPlayerIndex = -1;
             selectedNPCIndex = -1;
@@ -447,7 +447,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
         }
     }
 
-    // ÓÃÓÚ´æ´¢Íæ¼ÒÉËº¦ºÍÉúÃüÖµĞŞ¸Ä×´Ì¬µÄÀà
+    // ç”¨äºå­˜å‚¨ç©å®¶ä¼¤å®³å’Œç”Ÿå‘½å€¼ä¿®æ”¹çŠ¶æ€çš„ç±»
     public class ChitinousRipperTargetPlayer : ModPlayer
     {
         public bool damageModified = false;
@@ -460,7 +460,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
         {
             damageModified = false;
 
-            // Ö»ÓĞÔÚÃ»ÓĞ¼¤»îÉúÃüĞŞ¸ÄÊ±²ÅÖØÖÃÉúÃü¼Ó³É
+            // åªæœ‰åœ¨æ²¡æœ‰æ¿€æ´»ç”Ÿå‘½ä¿®æ”¹æ—¶æ‰é‡ç½®ç”Ÿå‘½åŠ æˆ
             if (!lifeModified)
             {
                 lifeBoost = 0;
@@ -472,7 +472,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
             health = StatModifier.Default;
             mana = StatModifier.Default;
 
-            // Ö»ÓĞÔÚ¼¤»îÉúÃüĞŞ¸ÄÊ±²ÅÓ¦ÓÃÉúÃü¼Ó³É
+            // åªæœ‰åœ¨æ¿€æ´»ç”Ÿå‘½ä¿®æ”¹æ—¶æ‰åº”ç”¨ç”Ÿå‘½åŠ æˆ
             if (lifeModified)
             {
                 health.Base += lifeBoost;
@@ -480,7 +480,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
         }
     }
 
-    // ÓÃÓÚ´æ´¢Í¶ÉäÎïÉËº¦ĞŞ¸Ä×´Ì¬µÄÀà
+    // ç”¨äºå­˜å‚¨æŠ•å°„ç‰©ä¼¤å®³ä¿®æ”¹çŠ¶æ€çš„ç±»
     public class ChitinousRipperGlobalProjectile : GlobalProjectile
     {
         public override bool InstancePerEntity => true;
@@ -495,7 +495,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
         }
     }
 
-    // ÓÃÓÚ´æ´¢NPCÉúÃüÖµĞŞ¸Ä×´Ì¬µÄÀà
+    // ç”¨äºå­˜å‚¨NPCç”Ÿå‘½å€¼ä¿®æ”¹çŠ¶æ€çš„ç±»
     public class ChitinousRipperGlobalNPC : GlobalNPC
     {
         public override bool InstancePerEntity => true;

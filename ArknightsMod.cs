@@ -7,6 +7,7 @@ using ArknightsMod.Content.Tiles.Infrastructure.ReceptionRoom;
 using ArknightsMod.Systems;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
+using System;
 using System.IO;
 using Terraria;
 using Terraria.GameContent.UI;
@@ -46,6 +47,9 @@ namespace ArknightsMod
 		public static Asset<Effect> LavaExplosionShaderEffect;//炎熔的爆炸效果
 		public static Asset<Effect> LupineKnifeLight;//狼之绯刀光（顶点 trail 着色器，非屏幕滤镜）
 		public static Asset<Effect> ReedFlameTrail;//焰影苇草火焰拖尾（顶点 trail 着色器，非屏幕滤镜）
+		public static Asset<Effect> WShockwaveEffect;//W 爆炸冲击波
+		public static Asset<Effect> WBattleSkyEffect;//W 战天空（Far/Near 两个 technique，WBattleSky.Draw 使用）
+		public static Asset<Effect> PramanixPixelTrail;
 		public const string AssetPath = "ArknightsMod/Sound/";
 
 		public override void Load() {
@@ -108,11 +112,52 @@ namespace ArknightsMod
 
 				// 焰影苇草火焰拖尾：同样直接作用于顶点图元
 				ReedFlameTrail = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/ReedFlameTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+
+				// W 爆炸冲击波（实体着色器，WExplosion.PreDraw 使用）；加载失败时退化为纯粒子爆炸
+				if (!ModContent.RequestIfExists<Effect>("ArknightsMod/Assets/Effects/WShockwave", out WShockwaveEffect, ReLogic.Content.AssetRequestMode.ImmediateLoad)) {
+					WShockwaveEffect = null;
+					Logger.Warn("未找到着色器资源 WShockwave，W 爆炸退化为纯粒子表现。");
+				}
+
+				// W 战天空（程序化硝烟天穹）；加载失败时退化为旧的像素绘制
+				if (!ModContent.RequestIfExists<Effect>("ArknightsMod/Assets/Effects/WBattleSky", out WBattleSkyEffect, ReLogic.Content.AssetRequestMode.ImmediateLoad)) {
+					WBattleSkyEffect = null;
+					Logger.Warn("未找到着色器资源 WBattleSky，W 战天空退化为像素绘制。");
+				}
+
+				const string pixelTrailPath = "ArknightsMod/Assets/Effects/PixelTrail";
+				try {
+					if (!ModContent.HasAsset(pixelTrailPath)) {
+						Logger.Warn($"未找到着色器资源 {pixelTrailPath}（请确认 Assets/Effects/PixelTrail.fx 已参与构建）。初雪雪花拖尾已禁用。");
+						PramanixPixelTrail = null;
+					}
+					else if (!ModContent.RequestIfExists<Effect>(pixelTrailPath, out Asset<Effect> pixelTrailFx, AssetRequestMode.ImmediateLoad)) {
+						PramanixPixelTrail = null;
+					}
+					else {
+						PramanixPixelTrail = pixelTrailFx;
+					}
+				}
+				catch (Exception ex) {
+					Logger.Error($"加载 PixelTrail 失败。初雪雪花拖尾将不可用。{ex.Message}");
+					PramanixPixelTrail = null;
+				}
 			}
 			Filters.Scene["AshStorm"] = new Filter(new ScreenShaderData("FilterAsh").UseColor(1f, 0.8f, 0.5f), EffectPriority.High);
 
 			LoadClient();
 			SkyManager.Instance["ArknightsMod:UnionInvadeSky"] = new UnionInvadeSky();
+			// W 战场景：天空与滤镜必须注册在同一个键上——Player.ManageSpecialBiomeVisuals 里
+			// 只有 SkyManager/Overlays 那两行做了 null 检查，Filters.Scene[key].IsActive() 没有，
+			// 少注册滤镜就会在进入场景时 NullReferenceException（参照 CWR MachineSky 的成对注册）。
+			if (Main.netMode != NetmodeID.Server) {
+				SkyManager.Instance[Content.NPCs.Enemy.W.WBattleVisuals.SkyKey] = new Content.NPCs.Enemy.W.WBattleSky();
+				Filters.Scene[Content.NPCs.Enemy.W.WBattleVisuals.SkyKey] = new Filter(
+					new ScreenShaderData("FilterMiniTower")
+						.UseColor(Content.NPCs.Enemy.W.WBattleVisuals.FilterBaseColor)
+						.UseOpacity(0f), // 每帧由 WBattleVisuals 按硝烟浓度改写
+					EffectPriority.High);
+			}
 
 			MusicLoader.AddMusic(this, "Assets/OriginalMusic/AACTintro");
 			MusicLoader.AddMusic(this, "Assets/OriginalMusic/AACTloop");
@@ -199,6 +244,13 @@ namespace ArknightsMod
 					if (IsValidClientRequest(whoAmI))
 						DeploymentCost.ReceiveAbsorbResult(reader, whoAmI);
 					break;
+				case ArkMessageID.WD12Detach:
+					// 客户端 → 服务端：请求甩脱黏附在自己身上的 D12（15 连点达成）
+					if (Main.netMode == NetmodeID.Server) {
+						int projIndex = reader.ReadInt32();
+						global::ArknightsMod.Content.Projectiles.Bosses.W.WD12.TryDetachFromPacket(projIndex, whoAmI);
+					}
+					break;
 			}
 		}
 
@@ -227,6 +279,7 @@ namespace ArknightsMod
 			DeploymentCostAbsorbRequest,
 			DeploymentCostAbsorbGrant,
 			DeploymentCostAbsorbResult,
+			WD12Detach,
 		}
 	}
 	//public class Ex : GlobalNPC

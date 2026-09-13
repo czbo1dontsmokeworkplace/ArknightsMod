@@ -6,7 +6,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l1
 {
     public class FurongNutritiousMeal : ModItem
     {
-       //¼õÉÙ5%ÉËº¦£¨¹ÖÎï£©
+       //å‡å°‘5%ä¼¤å®³ï¼ˆæ€ªç‰©ï¼‰
 
         public override void SetDefaults()
         {
@@ -34,7 +34,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l1
             hasEmblem = false;
         }
 
-        // ¼õÉÙËùÓĞNPC¶ÔÍæ¼ÒµÄÉËº¦
+        // å‡å°‘æ‰€æœ‰NPCå¯¹ç©å®¶çš„ä¼¤å®³
         public override void ModifyHitByNPC(NPC npc, ref Player.HurtModifiers modifiers)
         {
             if (hasEmblem && npc != null && !npc.friendly)
@@ -47,7 +47,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l1
             }
         }
 
-        // ¼õÉÙËùÓĞNPCµ¯Ä»¶ÔÍæ¼ÒµÄÉËº¦
+        // å‡å°‘æ‰€æœ‰NPCå¼¹å¹•å¯¹ç©å®¶çš„ä¼¤å®³
         public override void ModifyHitByProjectile(Projectile proj, ref Player.HurtModifiers modifiers)
         {
             if (hasEmblem && proj != null && proj.hostile && proj.npcProj)

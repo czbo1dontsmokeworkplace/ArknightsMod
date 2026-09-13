@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.ElementalImpairment.Effect
 {
-	//这个是关于元素损伤爆条之后产生那个光圈的实现方法
+	//锟斤拷锟斤拷枪锟斤拷锟皆拷锟斤拷锟斤拷吮锟斤拷锟街拷锟斤拷锟斤拷锟角革拷锟斤拷圈锟斤拷实锟街凤拷锟斤拷
 	public static class BurstFlashEffect
 	{
 		private static List<FlashInstance> flashes = new();

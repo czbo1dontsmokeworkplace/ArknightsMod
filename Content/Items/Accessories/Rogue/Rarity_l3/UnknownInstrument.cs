@@ -11,12 +11,12 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
             Item.width = 30;
             Item.height = 30;
 			Item.value = Item.sellPrice(0, 6, 0, 0);
-			Item.rare = ItemRarityID.Purple; // ÇàÄûÉ«(×¨¼ÒÄ£Ê½)Ï¡ÓĞ¶È
+			Item.rare = ItemRarityID.Purple; // é’æŸ è‰²(ä¸“å®¶æ¨¡å¼)ç¨€æœ‰åº¦
             Item.accessory = true;
         }
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            // ÌáÉı50%×î´óÉúÃüÖµ
+            // æå‡50%æœ€å¤§ç”Ÿå‘½å€¼
             player.statLifeMax2 += (int)(player.statLifeMax2 * 0.5f);
         }
     }

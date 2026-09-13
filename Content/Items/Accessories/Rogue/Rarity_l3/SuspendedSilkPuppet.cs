@@ -84,7 +84,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
 
         private void ApplyDamage(NPC npc, int damage, DamageClass damageClass, IEntitySource source, string damageText)
         {
-            // ¼æÈİ¶à¸ö°æ±¾µÄÉËº¦Ó¦ÓÃ·½Ê½
+            // å…¼å®¹å¤šä¸ªç‰ˆæœ¬çš„ä¼¤å®³åº”ç”¨æ–¹å¼
             NPC.HitInfo hitInfo = new NPC.HitInfo()
             {
                 Damage = damage,
@@ -93,7 +93,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
                 Crit = false,
                 DamageType = damageClass,
             };
-            //²»ÖªµÀÎªÊ²Ã´Ôì³ÉµÄÉËº¦ÊÇÎŞÉËº¦Àà±ğ
+            //ä¸çŸ¥é“ä¸ºä»€ä¹ˆé€ æˆçš„ä¼¤å®³æ˜¯æ— ä¼¤å®³ç±»åˆ«
             npc.StrikeNPC(hitInfo);
 
 

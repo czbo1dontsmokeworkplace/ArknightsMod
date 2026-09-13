@@ -1,6 +1,11 @@
 ﻿# This file is the top-most EditorConfig file
 root = true
 
+# 统一按 UTF-8 保存。系统 ANSI 代码页是 GBK，VS 2022 打开无 BOM 的纯 ASCII 文件会回退为 GBK，
+# 写入中文再保存就会以 GBK 落盘变成乱码；声明 charset 后 VS 保存时强制 UTF-8。不加 BOM：fxc 不接受 BOM。
+[*]
+charset = utf-8
+
 # JSON files
 [*.json]
 	indent_style = tab

@@ -12,61 +12,61 @@ namespace ArknightsMod.Content.Projectiles.Rogue.Dedication
 
    
 
-        /// <summary>Á£×Ó´æÔÚ×ÜÖ¡Êı£¨Ä¬ÈÏ60Ö¡=1Ãë£©</summary>
+        /// <summary>ç²’å­å­˜åœ¨æ€»å¸§æ•°ï¼ˆé»˜è®¤60å¸§=1ç§’ï¼‰</summary>
         public int TotalFrames = 45;
 
-        /// <summary>Á£×Ó³õÊ¼´óĞ¡£¨ÏñËØ£©</summary>
+        /// <summary>ç²’å­åˆå§‹å¤§å°ï¼ˆåƒç´ ï¼‰</summary>
         public float StartSize =20f;
 
-        /// <summary>Á£×Ó½áÊø´óĞ¡£¨ÏñËØ£©</summary>
+        /// <summary>ç²’å­ç»“æŸå¤§å°ï¼ˆåƒç´ ï¼‰</summary>
         public float EndSize = 1f;
 
-        /// <summary>³õÊ¼ËÙ¶È³ËÊı£¨Êµ¼ÊËÙ¶È = ´«ÈëËÙ¶È ¡Á ´ËÖµ ¡Á Ëæ»ú·¶Î§£©</summary>
+        /// <summary>åˆå§‹é€Ÿåº¦ä¹˜æ•°ï¼ˆå®é™…é€Ÿåº¦ = ä¼ å…¥é€Ÿåº¦ Ã— æ­¤å€¼ Ã— éšæœºèŒƒå›´ï¼‰</summary>
         public float VelocityMultiplier = 1f;
 
-        /// <summary>ËÙ¶ÈËæ»ú·¶Î§£¨×îĞ¡Öµ£¬×î´óÖµ£©</summary>
+        /// <summary>é€Ÿåº¦éšæœºèŒƒå›´ï¼ˆæœ€å°å€¼ï¼Œæœ€å¤§å€¼ï¼‰</summary>
         public Vector2 VelocityRandomRange = new Vector2(0.3f, 1.05f);
 
-        /// <summary>ËÙ¶ÈË¥¼õÏµÊı£¨Ã¿Ö¡³ËÒÔ´ËÖµ£¬Ô½Ğ¡Ë¥¼õÔ½¿ì£©</summary>
+        /// <summary>é€Ÿåº¦è¡°å‡ç³»æ•°ï¼ˆæ¯å¸§ä¹˜ä»¥æ­¤å€¼ï¼Œè¶Šå°è¡°å‡è¶Šå¿«ï¼‰</summary>
         public float VelocityDamping = 0.915f;
 
-        /// <summary>ÊÇ·ñÈÃÁ£×Ó³¯ÏòÔË¶¯·½Ïò</summary>
+        /// <summary>æ˜¯å¦è®©ç²’å­æœå‘è¿åŠ¨æ–¹å‘</summary>
         public bool FaceMovementDirection = true;
 
-        /// <summary>Ğı×ªËÙ¶ÈËæ»ú·¶Î§£¨»¡¶È/Ö¡£©</summary>
+        /// <summary>æ—‹è½¬é€Ÿåº¦éšæœºèŒƒå›´ï¼ˆå¼§åº¦/å¸§ï¼‰</summary>
         public Vector2 RotationSpeedRange = new Vector2(-0.05f, 0.05f);
 
-        /// <summary>XÖáĞÎ±ä·¶Î§£¨×îĞ¡Öµ£¬×î´óÖµ£©</summary>
+        /// <summary>Xè½´å½¢å˜èŒƒå›´ï¼ˆæœ€å°å€¼ï¼Œæœ€å¤§å€¼ï¼‰</summary>
         public Vector2 DeformationXRange = new Vector2(0.1f, 0.6f);
 
-        /// <summary>YÖáĞÎ±ä·¶Î§£¨×îĞ¡Öµ£¬×î´óÖµ£©</summary>
+        /// <summary>Yè½´å½¢å˜èŒƒå›´ï¼ˆæœ€å°å€¼ï¼Œæœ€å¤§å€¼ï¼‰</summary>
         public Vector2 DeformationYRange = new Vector2(1.2f, 2.0f);
 
-        /// <summary>´óĞ¡³ËÊı£¨ÕûÌåËõ·Å£©</summary>
+        /// <summary>å¤§å°ä¹˜æ•°ï¼ˆæ•´ä½“ç¼©æ”¾ï¼‰</summary>
         public float SizeMultiplier = 1.5f;
 
-        /// <summary>Í¸Ã÷¶ÈË¥¼õÇúÏßÇ¿¶È£¨1=ÏßĞÔ£¬>1=ÏÈ¿ìºóÂı£¬<1=ÏÈÂıºó¿ì£©</summary>
+        /// <summary>é€æ˜åº¦è¡°å‡æ›²çº¿å¼ºåº¦ï¼ˆ1=çº¿æ€§ï¼Œ>1=å…ˆå¿«åæ…¢ï¼Œ<1=å…ˆæ…¢åå¿«ï¼‰</summary>
         public float OpacityPower =0.6f;
 
-        /// <summary>ËÙ¶ÈÓ°ÏìÍ¸Ã÷¶ÈÏµÊı£¨ËÙ¶ÈÔ½´óÔ½Í¸Ã÷£©</summary>
+        /// <summary>é€Ÿåº¦å½±å“é€æ˜åº¦ç³»æ•°ï¼ˆé€Ÿåº¦è¶Šå¤§è¶Šé€æ˜ï¼‰</summary>
         public float SpeedOpacityInfluence = 0.5f;
 
-        /// <summary>×î´óËÙ¶ÈÓ°ÏìÍ¸Ã÷¶ÈãĞÖµ</summary>
+        /// <summary>æœ€å¤§é€Ÿåº¦å½±å“é€æ˜åº¦é˜ˆå€¼</summary>
         public float MaxSpeedForOpacity = 10f;
 
-        /// <summary>Á£×ÓÑÕÉ«£¨RGB£©</summary>
+        /// <summary>ç²’å­é¢œè‰²ï¼ˆRGBï¼‰</summary>
         public Color ParticleColor = new Color(102, 0, 255);
 
-        /// <summary>ÊÇ·ñÊ¹ÓÃµş¼Ó»ìºÏÄ£Ê½£¨·¢¹âĞ§¹û£©</summary>
+        /// <summary>æ˜¯å¦ä½¿ç”¨å åŠ æ··åˆæ¨¡å¼ï¼ˆå‘å…‰æ•ˆæœï¼‰</summary>
         public bool UseAdditiveBlending = true;
 
-        /// <summary>Ô²ĞÎÎÆÀí³ß´ç£¨2µÄÃİ´Î·½£©</summary>
+        /// <summary>åœ†å½¢çº¹ç†å°ºå¯¸ï¼ˆ2çš„å¹‚æ¬¡æ–¹ï¼‰</summary>
         public int TextureSize = 32;
 
-        /// <summary>Ô²ĞÎÎÆÀí±ßÔµÈáºÍ¶È£¨1=ÏßĞÔ£¬>1=¸üÈñÀû£¬<1=¸üÈáºÍ£©</summary>
+        /// <summary>åœ†å½¢çº¹ç†è¾¹ç¼˜æŸ”å’Œåº¦ï¼ˆ1=çº¿æ€§ï¼Œ>1=æ›´é”åˆ©ï¼Œ<1=æ›´æŸ”å’Œï¼‰</summary>
         public float TextureSoftness = 1f;
 
-        // ========== Ë½ÓĞ×Ö¶Î ==========
+        // ========== ç§æœ‰å­—æ®µ ==========
 
         private int totalFrames;
         private float startSize;
@@ -92,7 +92,7 @@ namespace ArknightsMod.Content.Projectiles.Rogue.Dedication
         }
 
         /// <summary>
-        /// ³õÊ¼»¯Á£×Ó£¨Ê¹ÓÃÄ¬ÈÏ²ÎÊı£©
+        /// åˆå§‹åŒ–ç²’å­ï¼ˆä½¿ç”¨é»˜è®¤å‚æ•°ï¼‰
         /// </summary>
         public void Initialize(int totalFrames, float startSize, float endSize,
                               Vector2 velocity, Vector2 position)
@@ -106,7 +106,7 @@ namespace ArknightsMod.Content.Projectiles.Rogue.Dedication
         }
 
         /// <summary>
-        /// ³õÊ¼»¯Á£×Ó£¨ÍêÕû²ÎÊı°æ±¾£©
+        /// åˆå§‹åŒ–ç²’å­ï¼ˆå®Œæ•´å‚æ•°ç‰ˆæœ¬ï¼‰
         /// </summary>
         public void Initialize(int totalFrames, float startSize, float endSize,
                               Vector2 velocity, Vector2 position,
@@ -244,7 +244,7 @@ namespace ArknightsMod.Content.Projectiles.Rogue.Dedication
                     Main.DefaultSamplerState, DepthStencilState.Default,
                     Main.Rasterizer, null, Main.GameViewMatrix.ZoomMatrix);
 
-            // »æÖÆ
+            // ç»˜åˆ¶
             Color drawColor = currentColor * opacity;
             spriteBatch.Draw(_circleTexture, drawPos, null, drawColor,
                 rotation, _circleTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);

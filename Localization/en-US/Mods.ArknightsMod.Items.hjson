@@ -3803,3 +3803,8 @@ HarmonieStaff: {
 		Envelop enemies in flowing scores and resonant waters
 		'''
 }
+
+WSummon: {
+	DisplayName: Twelve-Sided Die
+	Tooltip: Use on the surface to summon W
+}

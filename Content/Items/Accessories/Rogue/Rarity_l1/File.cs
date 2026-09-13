@@ -29,12 +29,12 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l1
 
         public override void ResetEffects()
         {
-            rosemaryCount = 0; // Ã¿Ö¡ÖØÖÃ¼ÆÊı
+            rosemaryCount = 0; // æ¯å¸§é‡ç½®è®¡æ•°
         }
 
         public override void UpdateDead()
         {
-            rosemaryCount = 0; // ËÀÍöÊ±½ûÓÃĞ§¹û
+            rosemaryCount = 0; // æ­»äº¡æ—¶ç¦ç”¨æ•ˆæœ
         }
     }
 
@@ -42,7 +42,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l1
     {
         public override bool InstancePerEntity => true;
 
-        // ÔÚNPCÉú³ÉÊ±Ó¦ÓÃ·ÀÓù¼õÉÙ
+        // åœ¨NPCç”Ÿæˆæ—¶åº”ç”¨é˜²å¾¡å‡å°‘
         public override void SetDefaults(NPC npc)
         {
             if (!IsBoss(npc))
@@ -51,7 +51,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l1
             }
         }
 
-        // ÔÚNPCÉú³ÉºóÒ²Ó¦ÓÃ£¨È·±£¼æÈİĞÔ£©
+        // åœ¨NPCç”Ÿæˆåä¹Ÿåº”ç”¨ï¼ˆç¡®ä¿å…¼å®¹æ€§ï¼‰
         public override void OnSpawn(NPC npc, Terraria.DataStructures.IEntitySource source)
         {
             if (!IsBoss(npc))
@@ -62,7 +62,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l1
 
         private bool IsBoss(NPC npc)
         {
-            // ÅÅ³ıBossºÍÓÑºÃNPC
+            // æ’é™¤Bosså’Œå‹å¥½NPC
             return npc.boss ||
                    NPCID.Sets.ShouldBeCountedAsBoss[npc.type] ||
                    npc.friendly ||
@@ -73,7 +73,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l1
         {
             int totalCount = 0;
 
-            // Í³¼ÆËùÓĞ´æ»îÍæ¼ÒÅå´÷µÄÊÎÆ·ÊıÁ¿
+            // ç»Ÿè®¡æ‰€æœ‰å­˜æ´»ç©å®¶ä½©æˆ´çš„é¥°å“æ•°é‡
             for (int i = 0; i < Main.maxPlayers; i++)
             {
                 Player player = Main.player[i];
@@ -83,23 +83,23 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l1
                 }
             }
 
-            // ³ËËãµş¼Ó (1 * 0.7^n)
+            // ä¹˜ç®—å åŠ  (1 * 0.7^n)
             if (totalCount > 0)
             {
                 float multiplier = 1f;
                 for (int i = 0; i < totalCount; i++)
                 {
-                    multiplier *= 0.96f; // Ã¿´Îµş¼Ó¼õÉÙ30%
+                    multiplier *= 0.96f; // æ¯æ¬¡å åŠ å‡å°‘30%
                 }
 
-                // Ó¦ÓÃ·ÀÓùĞŞ¸Ä
+                // åº”ç”¨é˜²å¾¡ä¿®æ”¹
                 int originalDefense = npc.defense;
                 int modifiedDefense = (int)(originalDefense * multiplier);
 
-                // È·±£·ÀÓù²»»á±ä³É¸ºÖµ
+                // ç¡®ä¿é˜²å¾¡ä¸ä¼šå˜æˆè´Ÿå€¼
                 npc.defense = modifiedDefense > 0 ? modifiedDefense : 0;
 
-                // ¿ÉÑ¡£º´æ´¢Ô­Ê¼·ÀÓùÖµÓÃÓÚÏÔÊ¾»òÆäËûĞ§¹û
+                // å¯é€‰ï¼šå­˜å‚¨åŸå§‹é˜²å¾¡å€¼ç”¨äºæ˜¾ç¤ºæˆ–å…¶ä»–æ•ˆæœ
                 if (npc.TryGetGlobalNPC<RosemaryNPCDefenseData>(out var data))
                 {
                     data.originalDefense = originalDefense;
@@ -108,7 +108,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l1
         }
     }
 
-    // ÓÃÓÚ´æ´¢NPCÔ­Ê¼·ÀÓùÊı¾İµÄÀà
+    // ç”¨äºå­˜å‚¨NPCåŸå§‹é˜²å¾¡æ•°æ®çš„ç±»
     public class RosemaryNPCDefenseData : GlobalNPC
     {
         public int originalDefense;

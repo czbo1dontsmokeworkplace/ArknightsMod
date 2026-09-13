@@ -23,7 +23,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
 
     public class PaleCorollaPlayer : ModPlayer
     {
-        public int count; // ¼ÇÂ¼Åå´÷µÄÊÎÆ·ÊıÁ¿
+        public int count; // è®°å½•ä½©æˆ´çš„é¥°å“æ•°é‡
 
         public override void ResetEffects()
         {

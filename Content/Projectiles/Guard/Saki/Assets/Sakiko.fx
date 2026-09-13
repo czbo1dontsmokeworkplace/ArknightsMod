@@ -21,8 +21,8 @@ struct PSInput
 float4 PixelShaderFunction(PSInput input) : COLOR0
 {
     float3 coord = input.Texcoord;
-    float4 color = tex2D(uImage0, float2(coord.x, coord.y)).xyzw; //�Ҷ�ͼ
-    float4 color2 = tex2D(uImage1, float2(coord.x, coord.y)).xyzw; //��ɫͼ
+    float4 color = tex2D(uImage0, float2(coord.x, coord.y)).xyzw; //�Ҷ�ͼ
+    float4 color2 = tex2D(uImage1, float2(coord.x, coord.y)).xyzw; //��ɫͼ
     float readRed = uOpacity;
     if (color.r < readRed)
     {
