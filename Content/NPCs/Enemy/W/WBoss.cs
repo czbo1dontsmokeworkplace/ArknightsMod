@@ -448,33 +448,60 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 		}
 
 		private void TickCooldowns() {
-			if (CdTeleportLeft > 0) CdTeleportLeft--;
-			if (CdThrowLeft > 0) CdThrowLeft--;
-			if (CdKingLeft > 0) CdKingLeft--;
-			if (CdCountdownLeft > 0) CdCountdownLeft--;
-			if (CdDodgeLeft > 0) CdDodgeLeft--;
-			if (CdShotLeft > 0) CdShotLeft--;
-			if (CdClaymoreLeft > 0) CdClaymoreLeft--;
-			if (CdD12Left > 0) CdD12Left--;
-			if (CdHopLeft > 0) CdHopLeft--;
-			if (CdTripleLeft > 0) CdTripleLeft--;
-			if (CdBurstLeft > 0) CdBurstLeft--;
-			if (CdMortarLeft > 0) CdMortarLeft--;
-			if (CdDetonateLeft > 0) CdDetonateLeft--;
-			if (CdClusterLeft > 0) CdClusterLeft--;
-			if (CdJumpMineLeft > 0) CdJumpMineLeft--;
-			if (CdMineRunLeft > 0) CdMineRunLeft--;
-			if (CdDiceRainLeft > 0) CdDiceRainLeft--;
-			if (CdAllInLeft > 0) CdAllInLeft--;
-			if (CdPerchLeft > 0) CdPerchLeft--;
-			if (CdBlastJumpLeft > 0) CdBlastJumpLeft--;
-			if (CdAirStrafeLeft > 0) CdAirStrafeLeft--;
-			if (CdFireworkLeft > 0) CdFireworkLeft--;
-			if (CdCarpetLeft > 0) CdCarpetLeft--;
-			if (CdNukeLeft > 0) CdNukeLeft--;
-			if (CdIgniteLeft > 0) CdIgniteLeft--;
-			if (FaceAwayTicks > 0) FaceAwayTicks--;
-			if (PickDelay > 0) PickDelay--;
+			if (CdTeleportLeft > 0)
+				CdTeleportLeft--;
+			if (CdThrowLeft > 0)
+				CdThrowLeft--;
+			if (CdKingLeft > 0)
+				CdKingLeft--;
+			if (CdCountdownLeft > 0)
+				CdCountdownLeft--;
+			if (CdDodgeLeft > 0)
+				CdDodgeLeft--;
+			if (CdShotLeft > 0)
+				CdShotLeft--;
+			if (CdClaymoreLeft > 0)
+				CdClaymoreLeft--;
+			if (CdD12Left > 0)
+				CdD12Left--;
+			if (CdHopLeft > 0)
+				CdHopLeft--;
+			if (CdTripleLeft > 0)
+				CdTripleLeft--;
+			if (CdBurstLeft > 0)
+				CdBurstLeft--;
+			if (CdMortarLeft > 0)
+				CdMortarLeft--;
+			if (CdDetonateLeft > 0)
+				CdDetonateLeft--;
+			if (CdClusterLeft > 0)
+				CdClusterLeft--;
+			if (CdJumpMineLeft > 0)
+				CdJumpMineLeft--;
+			if (CdMineRunLeft > 0)
+				CdMineRunLeft--;
+			if (CdDiceRainLeft > 0)
+				CdDiceRainLeft--;
+			if (CdAllInLeft > 0)
+				CdAllInLeft--;
+			if (CdPerchLeft > 0)
+				CdPerchLeft--;
+			if (CdBlastJumpLeft > 0)
+				CdBlastJumpLeft--;
+			if (CdAirStrafeLeft > 0)
+				CdAirStrafeLeft--;
+			if (CdFireworkLeft > 0)
+				CdFireworkLeft--;
+			if (CdCarpetLeft > 0)
+				CdCarpetLeft--;
+			if (CdNukeLeft > 0)
+				CdNukeLeft--;
+			if (CdIgniteLeft > 0)
+				CdIgniteLeft--;
+			if (FaceAwayTicks > 0)
+				FaceAwayTicks--;
+			if (PickDelay > 0)
+				PickDelay--;
 			// 卡牌不在演出中时自然淡出
 			if (CardAlpha > 0f && Machine?.CurrentState is not WKingHeartsState)
 				CardAlpha = Math.Max(0f, CardAlpha - 0.08f);

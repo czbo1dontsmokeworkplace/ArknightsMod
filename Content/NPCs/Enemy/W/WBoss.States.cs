@@ -264,7 +264,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 		private const int BurstTick = 30;   // 落点烟雾炸开
 		private const int RevealEnd = 48;   // 显形完成，开始可被攻击
 		private const int EndTick = 96;     // 静场结束
-		// 骰子路径
+											// 骰子路径
 		private const int DieWalkStart = 18, DieWalkEnd = 60, DieCardTick = 72, DieStowTick = 100, DieEndTick = 120;
 
 		private int walkDir;
