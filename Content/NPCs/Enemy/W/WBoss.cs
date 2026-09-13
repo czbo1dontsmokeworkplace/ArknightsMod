@@ -18,26 +18,21 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.NPCs.Enemy.W
 {
-	/// <summary>
-	/// W（克眼时期双阶段 boss）本体：状态机上下文与通用钩子。<br/>
-	/// 状态实现见 WBoss.States.cs，地面移动/落点搜索见 WBoss.Movement.cs。<br/>
-	/// 设计规格与帧表：Doc/design/boss-W/README.md（gitignored，按完整路径读取）。
-	/// </summary>
 	[AutoloadBossHead]
 	public partial class WBoss : ModNPC, INpcStateContext
 	{
 		// ---- 帧表（0 基行号 = 策划案 1 基帧号 - 1；GIF 100ms/帧 = 6 tick/帧）----
-		public const int RowSwingStart = 0, RowSwingEnd = 4;            // 挥臂 1-5
-		public const int RowJump = 5;                                   // 跳跃 6
-		public const int RowWalkStart = 6, RowWalkEnd = 19;             // 行走 7-20
-		public const int RowThrowStart = 20, RowThrowEnd = 27;          // 抛雷引爆 21-28
-		public const int RowSmokeStart = 28, RowSmokeEnd = 38;          // 封烟跑路 29-39（37-39 帧自带渐隐，39 近全透明）
-		public const int RowDownStart = 39, RowDownEnd = 45;            // 倒地不起 40-46
-		public const int RowCountdownStart = 46, RowCountdownEnd = 63;  // 倒数计时 47-64（60-62 帧自带橙色闪光）
-		public const int RowD12Start = 64, RowD12End = 75;              // D12 65-76
+		public const int RowSwingStart = 0, RowSwingEnd = 4;            //挥臂 1-5
+		public const int RowJump = 5;                                   //跳跃 6
+		public const int RowWalkStart = 6, RowWalkEnd = 19;             //行走 7-20
+		public const int RowThrowStart = 20, RowThrowEnd = 27;          //抛雷引爆 21-28
+		public const int RowSmokeStart = 28, RowSmokeEnd = 38;          //封烟跑路 29-39（37-39 帧自带渐隐，39 近全透明）
+		public const int RowDownStart = 39, RowDownEnd = 45;            //倒地不起 40-46
+		public const int RowCountdownStart = 46, RowCountdownEnd = 63;  //倒数计时 47-64（60-62 帧自带橙色闪光）
+		public const int RowD12Start = 64, RowD12End = 75;              //D12 65-76
 		public const int TicksPerFrame = 6;
 
-		// ---- 冷却（tick）----
+		// ---- 冷却----
 		// 节奏优先：演出招冷却压到 6~12s，让节奏调度器（WBoss.States.cs）随时有演出招可挑；
 		// 策划案原值（红桃K 9s / 倒数 15s / 此面向敌 8s / D12 15s）在 2026-09-05 按「5 秒/10 秒原则」下调，见设计文档 v2。
 		public const int CdTeleport = 180, CdThrow = 180, CdKing = 360, CdCountdown = 600;
@@ -53,20 +48,20 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 		public const float NukeHpRatio = 0.40f;
 
 		// ---- 血量解锁（只留少数几道，密度是第一原则）----
-		public const float TripleTossHpRatio = 0.85f;  // 一阶段 ≤85%：跳雷
-		public const float DiceRainHpRatio = 0.45f;    // 二阶段 ≤45%：骰子雨、烟带撒雷
-		public const float MortarHpRatio = 0.35f;      // 二阶段 ≤35%：曲射弹幕
+		public const float TripleTossHpRatio = 0.85f;  //一阶段 ≤85%：跳雷
+		public const float DiceRainHpRatio = 0.45f;    //二阶段 ≤45%：骰子雨、烟带撒雷
+		public const float MortarHpRatio = 0.35f;      //二阶段 ≤35%：曲射弹幕
 
 		// ---- 伤害基准 ----
 		// 敌对弹幕对玩家的实际伤害 ≈ damage 参数 ×2（经典），故 100% 攻击力(60) → 参数 30。
-		public const int DmgHEGrenade = 30;    // 普攻手雷 100%
-		public const int DmgKingRound = 60;    // 红桃K 200%
-		public const int DmgArcRound = 30;     // 二阶段普攻 / 曲射弹 100%
-		public const int DmgClaymore = 75;     // 此面向敌 250%
-		public const int DmgD12 = 90;          // D12 300%
-		public const int DmgCarpetRound = 45;  // 地毯弹 150%
-		public const int DmgNuke = 90;         // 核骰 300%（圈外零伤害，圈内全额）
-		public const int DmgIgnite = 45;       // 烟幕地狱 150%
+		public const int DmgHEGrenade = 30;    //普攻手雷 100%
+		public const int DmgKingRound = 60;    //红桃K 200%
+		public const int DmgArcRound = 30;     //二阶段普攻 / 曲射弹 100%
+		public const int DmgClaymore = 75;     //此面向敌 250%
+		public const int DmgD12 = 90;          //D12 300%
+		public const int DmgCarpetRound = 45;  //地毯弹 150%
+		public const int DmgNuke = 90;         //核骰 300%（圈外零伤害，圈内全额）
+		public const int DmgIgnite = 45;       //烟幕地狱 150%
 
 		NPC INpcStateContext.Npc => NPC;
 
@@ -85,7 +80,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 		public int CdHopLeft, CdTripleLeft, CdBurstLeft, CdMortarLeft, CdDetonateLeft, CdClusterLeft, CdJumpMineLeft;
 		public int CdMineRunLeft, CdDiceRainLeft, CdAllInLeft, CdPerchLeft;
 		public int CdBlastJumpLeft, CdAirStrafeLeft, CdFireworkLeft, CdCarpetLeft, CdNukeLeft, CdIgniteLeft;
-		public int PickDelay;           // 技能间隙拍点 + 传送后不攻击的公平阀
+		public int PickDelay;           //技能间隙拍点 + 传送后不攻击的公平阀
 		/// <summary>核爆锁定点（装定期间由 W 画圈，掷出后由核骰接着画）；null = 无</summary>
 		public Vector2? NukeTarget;
 		/// <summary>首次 ≤40% 置位：下一招必定是核爆</summary>
@@ -109,7 +104,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 		public int HitFlash;
 		/// <summary>残影强度 0~1：跃退/落地等有速度的动作打开，PreDraw 沿 oldPos 画拖影</summary>
 		public float GhostTrail;
-		public int LastAttackStateId = -1; // 反连发：同技能不连续两次
+		public int LastAttackStateId = -1; //反连发：同技能不连续两次
 
 		// 传送目标（服务端在状态 OnEnter 计算；客户端不使用，位置靠 NPC 同步）
 		public Vector2 TeleportDest;
@@ -147,19 +142,19 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 		public enum TeleportKind
 		{
-			Approach,   // 一阶段：传送到与玩家之间的空地/平台
-			DodgeAway,  // 二阶段：向玩家反方向躲避
-			Entrance,   // 登场：玩家身侧 280~460px 的空地（原生刷怪点在屏外，靠这一跳把人带进画面）
-			Perch,      // 二阶段高台狙击：玩家上方 120~260px 的平台/台阶
-			CrossOver,  // 烟带撒雷：穿过玩家到对面 240~320px 的落点，一路撒雷
+			Approach,   //一阶段：传送到与玩家之间的空地/平台
+			DodgeAway,  //二阶段：向玩家反方向躲避
+			Entrance,   //登场：玩家身侧 280~460px 的空地（原生刷怪点在屏外，靠这一跳把人带进画面）
+			Perch,      //二阶段高台狙击：玩家上方 120~260px 的平台/台阶
+			CrossOver,  //烟带撒雷：穿过玩家到对面 240~320px 的落点，一路撒雷
 		}
 
 		// ---- 难度参数 ----
-		public float PhaseHpRatio => Main.masterMode ? 0.7f : 0.5f;          // 大师 70% 血转二阶段
-		public float SmokeDodgeChance => Main.masterMode ? 0.9f : 0.6f;      // 烟内闪避
-		public float SmokeCloudRadius => Main.masterMode ? 73f : 56f;        // 烟团半径（大师 ×1.3）
-		public float P2DamageScale => Main.masterMode ? 1.5f : 1f;           // 大师二阶段伤害 ×1.5
-		public static bool RollExpertPredict => Main.expertMode && Main.rand.NextBool(); // 专家 50% 预判
+		public float PhaseHpRatio => Main.masterMode ? 0.7f : 0.5f;          //大师 70% 血转二阶段
+		public float SmokeDodgeChance => Main.masterMode ? 0.9f : 0.6f;      //烟内闪避
+		public float SmokeCloudRadius => Main.masterMode ? 73f : 56f;        //烟团半径（大师 ×1.3）
+		public float P2DamageScale => Main.masterMode ? 1.5f : 1f;           //大师二阶段伤害 ×1.5
+		public static bool RollExpertPredict => Main.expertMode && Main.rand.NextBool(); //专家 50% 预判
 
 		public Player Target => Main.player[NPC.target];
 
@@ -182,7 +177,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 			NPC.width = 30;
 			NPC.height = 48;
 			NPC.lifeMax = 2000;
-			NPC.defense = 10;      // 全难度通用
+			NPC.defense = 10;      //全难度通用
 			NPC.damage = 60;
 			NPC.knockBackResist = 0f;
 			NPC.boss = true;
@@ -192,8 +187,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 			NPC.value = Item.buyPrice(gold: 2);
 			NPC.HitSound = SoundID.NPCHit1;
 			NPC.DeathSound = SoundID.NPCDeath1;
-			Music = MusicID.Boss1; // 占位曲目，待专属 BGM
-			NPC.ai[2] = 1;         // 初始一阶段
+			Music = MusicID.Boss1; //占位曲目，待专属 BGM
+			NPC.ai[2] = 1;         //初始一阶段
 		}
 
 		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
@@ -269,7 +264,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 			if (Machine.CurrentState is not (WDeathState or WDespawnState)) {
 				NPC.spriteDirection = target.Center.X > NPC.Center.X ? -1 : 1;
 				if (FaceAwayTicks > 0)
-					NPC.spriteDirection = -NPC.spriteDirection; // 扔完核骰背过身去，不看爆炸
+					NPC.spriteDirection = -NPC.spriteDirection; //扔完核骰背过身去，不看爆炸
 			}
 
 			// 核爆解锁：二阶段首次 ≤40% → 下一招必定是它
@@ -324,7 +319,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 		public bool Dash_Tick() {
 			DashTimer++;
 			float k = MathHelper.Clamp(DashTimer / (float)DashTicks, 0f, 1f);
-			float eased = 1f - MathF.Pow(1f - k, 2.2f); // 冲出去快，到点前刹
+			float eased = 1f - MathF.Pow(1f - k, 2.2f); //冲出去快，到点前刹
 			NPC.Center = Vector2.Lerp(DashFrom, TeleportDest, eased);
 			NPC.velocity = Vector2.Zero;
 			NPC.alpha = 255;
@@ -652,7 +647,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 			// 后坐：枪口向上跳（朝右为逆时针，朝左为顺时针）
 			float rot = AimRotation + (facingLeft ? AimRecoil : -AimRecoil);
 			SpriteEffects fx = SpriteEffects.None;
-			Vector2 origin = new(12f, 20f); // 握把锚点（右向贴图坐标，入游戏校准）
+			Vector2 origin = new(12f, 20f); //握把锚点（右向贴图坐标，入游戏校准）
 			if (facingLeft) {
 				fx = SpriteEffects.FlipVertically;
 				origin.Y = tex.Height - origin.Y;
@@ -741,7 +736,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 		public void MuzzleFire(float power) {
 			MuzzleFlash = 8;
 			AimRecoil = 0.22f * power;
-			NPC.velocity.X += NPC.spriteDirection * 1.4f * power; // 贴图朝右时 spriteDirection=-1，即向后
+			NPC.velocity.X += NPC.spriteDirection * 1.4f * power; //贴图朝右时 spriteDirection=-1，即向后
 			if (Main.dedServ)
 				return;
 			Vector2 muzzle = MuzzlePos;

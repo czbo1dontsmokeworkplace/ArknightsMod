@@ -189,7 +189,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 			float[] samples = { 0.62f, 0.5f, 0.72f, 0.38f, 0.82f, 0.28f };
 			foreach (float t in samples) {
 				Vector2 cand = Vector2.Lerp(from, to, t);
-				cand.Y = Math.Min(cand.Y, to.Y + 64f); // 别钻到玩家脚下太深
+				cand.Y = Math.Min(cand.Y, to.Y + 64f); //别钻到玩家脚下太深
 				Vector2 landed = Move_FindOpen(cand);
 				if (!Move_IsGoodLanding(landed))
 					continue;
@@ -257,7 +257,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 							NPC.velocity.Y = -6.2f;
 					}
 					else {
-						NPC.velocity.Y = -6.2f; // 前方探不到面：小跳试探（哥布林式）
+						NPC.velocity.Y = -6.2f; //前方探不到面：小跳试探（哥布林式）
 					}
 				}
 			}
