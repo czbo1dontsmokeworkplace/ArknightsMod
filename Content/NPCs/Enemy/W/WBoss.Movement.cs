@@ -6,8 +6,8 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.NPCs.Enemy.W
 {
-	// W 的地面移动与传送落点搜索：算法沿用弑君者 Movement 的地表探测/脱困思路。
-	// W 不能穿墙行走（传送可以穿），行走仅发生在物块/平台上。
+	// W 的地面移动与传送落点搜索：算法沿用弑君者 Movement 的地表探测/脱困思路
+	// W 不能穿墙行走（传送可以穿），行走仅发生在物块/平台上
 	public partial class WBoss
 	{
 		private const int MoveSafeSearchRings = 24;
@@ -120,10 +120,10 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 		}
 
 		/// <summary>
-		/// 计算传送目标（仅服务端/单机端调用）。<br/>
+		/// 计算传送目标（仅服务端/单机端调用）<br/>
 		/// Entrance：登场用，玩家身侧（W 刷新的那一侧）280~460px 的空地/平台；<br/>
 		/// Approach：在 W 与玩家连线之间按列采样找空地/平台（近玩家侧优先）；<br/>
-		/// DodgeAway：向玩家反方向 260~420px 找落点。全部失败逐级回退，最终原地。
+		/// DodgeAway：向玩家反方向 260~420px 找落点全部失败逐级回退，最终原地
 		/// </summary>
 		public Vector2 FindTeleportDest(Player target, TeleportKind kind) {
 			if (kind == TeleportKind.Perch) {
@@ -226,8 +226,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 		}
 
 		/// <summary>
-		/// 跃退投雷的落点体检：hopDir 方向约 110px 处身体不嵌墙、脚下 8 格内有可站面，且中途没有整面墙。
-		/// 两个方向都不行则不起跳（调度层据此不把该动作放进池子）。
+		/// 跃退投雷的落点体检：hopDir 方向约 110px 处身体不嵌墙、脚下 8 格内有可站面，且中途没有整面墙
+		/// 两个方向都不行则不起跳（调度层据此不把该动作放进池子）
 		/// </summary>
 		public bool CanHopTo(int hopDir) {
 			Vector2 land = NPC.Center + new Vector2(hopDir * 110f, -20f);
@@ -238,7 +238,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 		}
 
 		/// <summary>
-		/// 行走物理（仅在行走类状态调用）：向 wantDir 加速/减速，带坡度助跳与平台下穿。
+		/// 行走物理（仅在行走类状态调用）：向 wantDir 加速/减速，带坡度助跳与平台下穿
 		/// </summary>
 		public void Move_WalkTick(Player target, int wantDir) {
 			const float maxSpeed = 2.6f;
@@ -299,8 +299,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 		}
 
 		/// <summary>
-		/// 此面向敌布设点：玩家附近随机空地（可站立、彼此间距 ≥80px、离玩家 ≥48px）。
-		/// 找不齐时空投兜底（带初速下落，靠弹幕自身落地布设）。
+		/// 此面向敌布设点：玩家附近随机空地（可站立、彼此间距 ≥80px、离玩家 ≥48px）
+		/// 找不齐时空投兜底（带初速下落，靠弹幕自身落地布设）
 		/// </summary>
 		public System.Collections.Generic.List<Vector2> FindClaymoreSpots(Player target, int count) {
 			var spots = new System.Collections.Generic.List<Vector2>();

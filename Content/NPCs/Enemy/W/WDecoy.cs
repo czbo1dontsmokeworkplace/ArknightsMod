@@ -9,9 +9,9 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.NPCs.Enemy.W
 {
 	/// <summary>
-	/// 假身：W 封烟换位时留在原地的"她"。不动、不攻击、1 点血；被打中即炸成烟并暴露，8 秒没人碰也自己散掉。<br/>
-	/// 画的是 W 的站姿帧 + 手持发射器（指向最近的玩家），带一点难以察觉的闪烁——观察力强的玩家能认出来。<br/>
-	/// 作为 NPC 存在的意义：召唤物/追踪弹会真的去打它。ai[0]=存活计时；ai[1]=朝向（-1/1，与 W 的 spriteDirection 同义）。
+	/// 假身：W 封烟换位时留在原地的"她"不动、不攻击、1 点血；被打中即炸成烟并暴露，8 秒没人碰也自己散掉<br/>
+	/// 画的是 W 的站姿帧 + 手持发射器（指向最近的玩家），带一点难以察觉的闪烁——观察力强的玩家能认出来<br/>
+	/// 作为 NPC 存在的意义：召唤物/追踪弹会真的去打它ai[0]=存活计时；ai[1]=朝向（-1/1，与 W 的 spriteDirection 同义）
 	/// </summary>
 	public class WDecoy : ModNPC
 	{

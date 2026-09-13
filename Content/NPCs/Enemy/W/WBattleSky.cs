@@ -12,8 +12,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 	/// W 战天空：随 <see cref="WBattleVisuals.Gloom"/> 被硝烟压暗，由全程序化着色器 WBattleSky.fx 绘制，分两层：<br/>
 	/// - Far（最远层，日月星辰之后、云背景与远山之前）：渐变天穹 + 域扭曲 fbm 硝烟云 + 地平线火光 + 爆炸照云 + 核爆余烬<br/>
 	/// - Near（远山之后、物块之前）：噪声暗幕 + 烟霭 + 落灰/余烬粒子 + 低血量红霭 + 暗角 + 核爆白炽<br/>
-	/// 两层都带镜头视差；着色器缺失时退化为旧的像素绘制（<see cref="DrawFallback"/>）。<br/>
-	/// 注册名 "ArknightsMod:WBattleSky"（ArknightsMod.Load），激活/关闭由 WBattleVisuals 驱动。
+	/// 两层都带镜头视差；着色器缺失时退化为旧的像素绘制（<see cref="DrawFallback"/>）<br/>
+	/// 注册名 "ArknightsMod:WBattleSky"（ArknightsMod.Load），激活/关闭由 WBattleVisuals 驱动
 	/// </summary>
 	public class WBattleSky : CustomSky
 	{

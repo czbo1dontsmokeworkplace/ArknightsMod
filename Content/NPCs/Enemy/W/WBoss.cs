@@ -34,7 +34,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 		// ---- 冷却----
 		// 节奏优先：演出招冷却压到 6~12s，让节奏调度器（WBoss.States.cs）随时有演出招可挑；
-		// 策划案原值（红桃K 9s / 倒数 15s / 此面向敌 8s / D12 15s）在 2026-09-05 按「5 秒/10 秒原则」下调，见设计文档 v2。
+		// 策划案原值（红桃K 9s / 倒数 15s / 此面向敌 8s / D12 15s）在 2026-09-05 按「5 秒/10 秒原则」下调，见设计文档 v2
 		public const int CdTeleport = 180, CdThrow = 180, CdKing = 360, CdCountdown = 600;
 		public const int CdDodge = 600, CdShot = 180, CdClaymore = 360, CdD12 = 540;
 		public const int CdHop = 240, CdTriple = 300, CdBurst = 240, CdMortar = 540;
@@ -53,7 +53,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 		public const float MortarHpRatio = 0.35f;      //二阶段 ≤35%：曲射弹幕
 
 		// ---- 伤害基准 ----
-		// 敌对弹幕对玩家的实际伤害 ≈ damage 参数 ×2（经典），故 100% 攻击力(60) → 参数 30。
+		// 敌对弹幕对玩家的实际伤害 ≈ damage 参数 ×2（经典），故 100% 攻击力(60) → 参数 30
 		public const int DmgHEGrenade = 30;    //普攻手雷 100%
 		public const int DmgKingRound = 60;    //红桃K 200%
 		public const int DmgArcRound = 30;     //二阶段普攻 / 曲射弹 100%
@@ -315,7 +315,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 			NPC.alpha = 255;
 		}
 
-		/// <summary>冲刺推进一帧；到点返回 true（已自动 Dash_End）。两端各自推进，位置最终由服务端同步校正</summary>
+		/// <summary>冲刺推进一帧；到点返回 true（已自动 Dash_End）两端各自推进，位置最终由服务端同步校正</summary>
 		public bool Dash_Tick() {
 			DashTimer++;
 			float k = MathHelper.Clamp(DashTimer / (float)DashTicks, 0f, 1f);
@@ -364,8 +364,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 		}
 
 		/// <summary>
-		/// 全场起爆：所有已布设弹药 ticks 帧后爆。stagger &gt; 0 时按离 W 的水平距离排序，每颗多等 stagger 帧（顺序起爆）。<br/>
-		/// 仅权威端调用。
+		/// 全场起爆：所有已布设弹药 ticks 帧后爆stagger &gt; 0 时按离 W 的水平距离排序，每颗多等 stagger 帧（顺序起爆）<br/>
+		/// 仅权威端调用
 		/// </summary>
 		public void PrimeAllOrdnance(int ticks, int stagger = 0) {
 			var live = new List<(float dist, IWOrdnance o)>();
@@ -381,7 +381,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 		}
 
 		/// <summary>
-		/// 只起爆某一种弹药，按离 W 的水平距离排序逐颗错开（farthestFirst 为真时从最远的那颗开始，爆炸墙朝 W 滚过来）。仅权威端。
+		/// 只起爆某一种弹药，按离 W 的水平距离排序逐颗错开（farthestFirst 为真时从最远的那颗开始，爆炸墙朝 W 滚过来）仅权威端
 		/// </summary>
 		public void PrimeOrdnanceOfType<T>(int firstTicks, int stagger, bool farthestFirst) where T : ModProjectile, IWOrdnance {
 			var live = new List<(float dist, IWOrdnance o)>();
@@ -730,8 +730,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 		}
 
 		/// <summary>
-		/// 发射器开火的统一反馈：火光帧、后坐角、身体后坐、枪口烟与火星。<br/>
-		/// power 约 1 为普攻，2 为红桃K；各端各自播放。
+		/// 发射器开火的统一反馈：火光帧、后坐角、身体后坐、枪口烟与火星<br/>
+		/// power 约 1 为普攻，2 为红桃K；各端各自播放
 		/// </summary>
 		public void MuzzleFire(float power) {
 			MuzzleFlash = 8;
@@ -766,7 +766,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 		}
 
 		/// <summary>
-		/// 挥臂开火帧：开火前把 1-3 帧（举臂）均匀铺满前摇，开火帧 4 停 6 tick，随后 5 帧收势。
+		/// 挥臂开火帧：开火前把 1-3 帧（举臂）均匀铺满前摇，开火帧 4 停 6 tick，随后 5 帧收势
 		/// </summary>
 		public static int SwingRow(int timer, int fireTick) {
 			if (timer < fireTick) {
@@ -781,7 +781,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 		/// <summary>
 		/// 封烟跑路的烟雾弹小演出：32-34 帧那颗飞向前上方的烟雾弹拖一条尘迹，落点起烟；<br/>
-		/// t 为动作内部计时。两端各自播放。
+		/// t 为动作内部计时两端各自播放
 		/// </summary>
 		public void SmokeGrenadeBeat(int t) {
 			if (Main.dedServ)

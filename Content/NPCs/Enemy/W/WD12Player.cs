@@ -10,9 +10,9 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.NPCs.Enemy.W
 {
 	/// <summary>
-	/// D12 甩脱交互：被黏附时快速左键连点 15 次甩脱。<br/>
+	/// D12 甩脱交互：被黏附时快速左键连点 15 次甩脱<br/>
 	/// 黏附识别靠扫弹幕（WD12.ai[1] == 自己的 whoAmI），不需要额外同步；<br/>
-	/// 连点计数只在本地玩家进行，达成后单机直接甩脱、联机发 WD12Detach 包由服务端裁决。
+	/// 连点计数只在本地玩家进行，达成后单机直接甩脱、联机发 WD12Detach 包由服务端裁决
 	/// </summary>
 	public class WD12Player : ModPlayer
 	{

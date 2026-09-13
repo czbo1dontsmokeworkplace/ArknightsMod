@@ -17,8 +17,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 {
 	/// <summary>
 	/// W 战场景效果：把 <see cref="WBattleVisuals.SkyWanted"/> 接到原版 SceneEffect 生命周期上——<br/>
-	/// <c>ManageSpecialBiomeVisuals</c> 负责天空的 Activate/Deactivate 与离开世界时的清理，比手动调 SkyManager 稳。<br/>
-	/// 不接管音乐（Music = -1），boss 曲仍由 NPC 自己的 Music 决定。
+	/// <c>ManageSpecialBiomeVisuals</c> 负责天空的 Activate/Deactivate 与离开世界时的清理，比手动调 SkyManager 稳<br/>
+	/// 不接管音乐（Music = -1），boss 曲仍由 NPC 自己的 Music 决定
 	/// </summary>
 	public class WBattleSceneEffect : ModSceneEffect
 	{
@@ -87,8 +87,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 		}
 
 		/// <summary>
-		/// 爆炸照亮云底（仅客户端表现）：天空着色器在 worldPos 对应的屏幕横向位置上给云层一记暖光，随后由 WBattleSky 逐帧衰减。<br/>
-		/// 同一帧多次调用只保留最强的一次。
+		/// 爆炸照亮云底（仅客户端表现）：天空着色器在 worldPos 对应的屏幕横向位置上给云层一记暖光，随后由 WBattleSky 逐帧衰减<br/>
+		/// 同一帧多次调用只保留最强的一次
 		/// </summary>
 		public static void SkyFlash(Vector2 worldPos, float strength) {
 			if (Main.dedServ)
@@ -122,8 +122,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 		}
 
 		/// <summary>
-		/// W 开口（仅权威端调用）。key 为 Mods.ArknightsMod.WBossText.Quip 下的子键；<br/>
-		/// 单机直接写聊天栏，服务端广播本地化 key 由各客户端自行取文本。
+		/// W 开口（仅权威端调用）key 为 Mods.ArknightsMod.WBossText.Quip 下的子键；<br/>
+		/// 单机直接写聊天栏，服务端广播本地化 key 由各客户端自行取文本
 		/// </summary>
 		public static void Say(string key) {
 			string fullKey = $"Mods.ArknightsMod.WBossText.Quip.{key}";
@@ -167,8 +167,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 		}
 
 		/// <summary>
-		/// 屏幕滤镜跟着战况走：硝烟越浓越暗，≤25% 转血红并随脉动加深，核爆瞬间整屏过曝到白。<br/>
-		/// 激活/关闭由 <see cref="WBattleSceneEffect"/> 的 ManageSpecialBiomeVisuals 负责，这里只改参数。
+		/// 屏幕滤镜跟着战况走：硝烟越浓越暗，≤25% 转血红并随脉动加深，核爆瞬间整屏过曝到白<br/>
+		/// 激活/关闭由 <see cref="WBattleSceneEffect"/> 的 ManageSpecialBiomeVisuals 负责，这里只改参数
 		/// </summary>
 		private static void UpdateSceneFilter() {
 			Filter filter = Filters.Scene[SkyKey];

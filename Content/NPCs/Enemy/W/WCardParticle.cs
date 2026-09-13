@@ -6,8 +6,8 @@ using Terraria;
 namespace ArknightsMod.Content.NPCs.Enemy.W
 {
 	/// <summary>
-	/// 飘落的 ♥K 卡牌（纯演出粒子）：左右摆着往下落，一路慢慢翻面，最后淡出。<br/>
-	/// 贴图字段只为满足粒子系统的加载约定，实际绘制走 <see cref="WTelegraph.DrawCard"/>。
+	/// 飘落的 ♥K 卡牌（纯演出粒子）：左右摆着往下落，一路慢慢翻面，最后淡出<br/>
+	/// 贴图字段只为满足粒子系统的加载约定，实际绘制走 <see cref="WTelegraph.DrawCard"/>
 	/// </summary>
 	public class WCardParticle : Particle
 	{

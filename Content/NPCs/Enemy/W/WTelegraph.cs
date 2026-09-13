@@ -10,9 +10,9 @@ using Terraria.UI.Chat;
 namespace ArknightsMod.Content.NPCs.Enemy.W
 {
 	/// <summary>
-	/// W 战的预警与演出绘制库：激光、枪口火光、锥形扇、落点 X、骰面数字、♥K 卡牌、烟带。<br/>
-	/// 全部程序化绘制（不依赖新贴图），供 boss / 弹幕 / 粒子在各自的绘制钩子里调用。<br/>
-	/// 加法混合的图元用 <see cref="BeginAdditive"/> / <see cref="EndAdditive"/> 包裹，恢复参数与原版 NPC/弹幕批次一致。
+	/// W 战的预警与演出绘制库：激光、枪口火光、锥形扇、落点 X、骰面数字、♥K 卡牌、烟带<br/>
+	/// 全部程序化绘制（不依赖新贴图），供 boss / 弹幕 / 粒子在各自的绘制钩子里调用<br/>
+	/// 加法混合的图元用 <see cref="BeginAdditive"/> / <see cref="EndAdditive"/> 包裹，恢复参数与原版 NPC/弹幕批次一致
 	/// </summary>
 	public static class WTelegraph
 	{
@@ -67,8 +67,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 		}
 
 		/// <summary>
-		/// 锥形扇预警（加法批次内调用）：从 origin 沿 facing 张开 ±halfAngle、长 length 的一束射线，中心亮边缘暗。<br/>
-		/// 用于「此面向敌」的正面杀伤区。
+		/// 锥形扇预警（加法批次内调用）：从 origin 沿 facing 张开 ±halfAngle、长 length 的一束射线，中心亮边缘暗<br/>
+		/// 用于「此面向敌」的正面杀伤区
 		/// </summary>
 		public static void DrawCone(SpriteBatch sb, Vector2 origin, float facing, float halfAngle, float length, Color color, int rays = 17) {
 			for (int i = 0; i < rays; i++) {
@@ -84,7 +84,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 		}
 
 		/// <summary>
-		/// 大型锁定圈（加法批次内调用）：核爆的杀伤边界——用 160px 的预警圈贴图放大到 radius，外加十字线与旋转刻度；k 为强度。
+		/// 大型锁定圈（加法批次内调用）：核爆的杀伤边界——用 160px 的预警圈贴图放大到 radius，外加十字线与旋转刻度；k 为强度
 		/// </summary>
 		public static void DrawTargetRing(SpriteBatch sb, Vector2 center, float radius, float k) {
 			Texture2D ring = ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Bosses/W/WClaymoreRing").Value;
@@ -126,8 +126,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 		}
 
 		/// <summary>
-		/// ♥K 小卡（普通批次内调用）：12×16 白卡红边。flip 为翻转进度，0→1 从背面翻到正面（0.5 处侧立），<br/>
-		/// 继续到 2 翻回背面——连续递增即可让卡牌一直转。
+		/// ♥K 小卡（普通批次内调用）：12×16 白卡红边flip 为翻转进度，0→1 从背面翻到正面（0.5 处侧立），<br/>
+		/// 继续到 2 翻回背面——连续递增即可让卡牌一直转
 		/// </summary>
 		public static void DrawCard(SpriteBatch sb, Vector2 center, float rotation, float flip, float scale, float alpha) {
 			float p = flip % 2f;
@@ -154,7 +154,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 		}
 
 		/// <summary>
-		/// 烟带（普通批次内调用）：一团沿 dir 拖尾的暗色软烟，用于烟中冲刺的可见本体；k 为浓度 0~1。
+		/// 烟带（普通批次内调用）：一团沿 dir 拖尾的暗色软烟，用于烟中冲刺的可见本体；k 为浓度 0~1
 		/// </summary>
 		public static void DrawSmokeBank(SpriteBatch sb, Vector2 head, Vector2 dir, float k) {
 			for (int i = 0; i < 5; i++) {
