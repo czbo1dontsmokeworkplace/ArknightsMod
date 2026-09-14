@@ -1,4 +1,5 @@
 using System;
+using ArknightsMod.Common.Particle;
 using ArknightsMod.Content.Projectiles.BasePROJ;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -10,12 +11,13 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles.Guard.Hellagur
 {
-	/// <summary>S3「满月」专属血月刀气。只承担视觉表现并受物块阻挡，伤害统一由 2.0 倍母刀结算。</summary>
+	/// <summary>S3「满月」专属血月刀气。继承母刀伤害，可贯穿多个敌人，但仍受物块阻挡。</summary>
 	public class HellagurBloodSlash : ModProjectile
 	{
 		private const int Life = 22;
-		private const float BackReach = 32f;
-		private const float FrontReach = 60f;
+		private const float DrawScaleMultiplier = 1.5f;
+		private const float BackReach = 48f;
+		private const float FrontReach = 90f;
 
 		public override string Texture => "Terraria/Images/MagicPixel";
 
@@ -25,18 +27,18 @@ namespace ArknightsMod.Content.Projectiles.Guard.Hellagur
 		}
 
 		public override void SetDefaults() {
-			Projectile.width = 22;
-			Projectile.height = 22;
-			Projectile.friendly = false;
+			Projectile.width = 54;
+			Projectile.height = 54;
+			Projectile.friendly = true;
 			Projectile.penetrate = -1;
+			Projectile.usesLocalNPCImmunity = true;
+			Projectile.localNPCHitCooldown = -1;
 			Projectile.tileCollide = true;
 			Projectile.ignoreWater = true;
 			Projectile.DamageType = DamageClass.Melee;
 			Projectile.aiStyle = -1;
 			Projectile.timeLeft = Life;
 		}
-
-		public override bool? CanDamage() => false;
 
 		public override void AI() {
 			if (Projectile.velocity.LengthSquared() < 0.01f) {
@@ -53,17 +55,47 @@ namespace ArknightsMod.Content.Projectiles.Guard.Hellagur
 				Projectile.Kill();
 				return;
 			}
-			Projectile.velocity *= 0.955f;
+			Projectile.velocity *= 0.98f;
 			float intensity = MathHelper.Clamp(Projectile.ai[0], 0f, 1f);
-			Lighting.AddLight(Projectile.Center, new Vector3(0.82f, 0.12f, 0.045f) * (0.75f + intensity * 0.25f));
+			Lighting.AddLight(Projectile.Center, new Vector3(1f, 0.18f, 0.065f) * (0.85f + intensity * 0.3f));
 
-			if (!Main.dedServ && Main.rand.NextBool(2)) {
+			if (!Main.dedServ) {
 				Vector2 normal = new(-direction.Y, direction.X);
-				float along = Main.rand.NextFloat(-BackReach, FrontReach);
-				Vector2 position = Projectile.Center + direction * along + normal * Main.rand.NextFloat(-7f, 7f);
-				Dust dust = Dust.NewDustPerfect(position, Main.rand.NextBool(5) ? DustID.GoldFlame : DustID.Blood,
-					Projectile.velocity * 0.12f + Main.rand.NextVector2Circular(0.8f, 0.8f), 30,
-					new Color(255, 90, 48), Main.rand.NextFloat(0.8f, 1.25f));
+				for (int i = 0; i < 2; i++) {
+					float along = Main.rand.NextFloat(-BackReach, FrontReach);
+					Vector2 position = Projectile.Center + direction * along + normal * Main.rand.NextFloat(-14f, 14f);
+					Dust dust = Dust.NewDustPerfect(position, i == 0 && Main.rand.NextBool(3) ? DustID.GoldFlame : DustID.Blood,
+						Projectile.velocity * 0.1f + normal * Main.rand.NextFloat(-1.4f, 1.4f), 25,
+						i == 0 ? new Color(255, 186, 82) : new Color(255, 62, 48), Main.rand.NextFloat(0.9f, 1.45f));
+					dust.noGravity = true;
+				}
+
+				if (Main.rand.NextBool(2)) {
+					Color streakColor = Main.rand.NextBool(4)
+						? new Color(255, 226, 166)
+						: new Color(224, 28, 48);
+					var streak = new DefaultParticle(
+						Projectile.Center + normal * Main.rand.NextFloat(-20f, 20f),
+						-Projectile.velocity * Main.rand.NextFloat(0.04f, 0.1f) + Main.rand.NextVector2Circular(0.5f, 0.5f),
+						Main.rand.Next(10, 17), Main.rand.NextFloat(0.38f, 0.7f), streakColor, true) {
+						Deformation = new Vector2(0.3f, Main.rand.NextFloat(1.8f, 2.8f))
+					};
+					streak.Spawn();
+				}
+			}
+		}
+
+		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
+			if (Main.dedServ)
+				return;
+
+			Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitX);
+			HellagurOdachiSwing.SpawnHitParticles(target.Center, true, direction);
+			for (int i = 0; i < 10; i++) {
+				Dust dust = Dust.NewDustPerfect(target.Center + Main.rand.NextVector2Circular(12f, 12f),
+					i % 3 == 0 ? DustID.GoldFlame : DustID.Blood,
+					direction.RotatedByRandom(0.85f) * Main.rand.NextFloat(2.2f, 6.4f), 20,
+					new Color(255, 104, 58), Main.rand.NextFloat(0.85f, 1.35f));
 				dust.noGravity = true;
 			}
 		}
@@ -101,9 +133,9 @@ namespace ArknightsMod.Content.Projectiles.Guard.Hellagur
 			Color paleEdge = Color.Lerp(new Color(184, 174, 172), new Color(255, 218, 178), lowHealth);
 			Vector2 origin = slashSmear.Size() * 0.5f;
 			Vector2 direction = Projectile.rotation.ToRotationVector2();
-			// 新图的主刃轴为纵向，逆转 90 度后始终沿飞行方向展开。
-			float slashRotation = Projectile.rotation - MathHelper.PiOver2;
-			float slashScale = MathHelper.Lerp(0.31f, 0.35f, lowHealth);
+			// 在原有方向上再逆时针旋转 90 度，并将刀光整体放大 50%。
+			float slashRotation = Projectile.rotation - MathHelper.Pi;
+			float slashScale = MathHelper.Lerp(0.31f, 0.35f, lowHealth) * DrawScaleMultiplier;
 
 			// 只保留一层紧贴刀形的暗色背板，不再用 MagicPixel 拼巨大黑月牙。
 			spriteBatch.Draw(slashSmear, Projectile.Center - Main.screenPosition, null,

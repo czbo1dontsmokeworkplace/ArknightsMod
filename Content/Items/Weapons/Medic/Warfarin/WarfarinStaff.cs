@@ -27,10 +27,10 @@ public sealed class WarfarinStaff : ExpansionWeaponBase
         Item.damage = EliteDamage[0];
         Item.DamageType = DamageClass.Summon;
         Item.useStyle = ItemUseStyleID.Shoot;
-        // 五连血弹集中射出，下一次完整攻击按医疗五级规则在 5.7 秒后开始。
-        Item.useTime = 12;
-        Item.useAnimation = MedicalTreatment.StandardAttackIntervalTicks;
-        Item.useLimitPerAnimation = 5;
+        // 对齐深靛：每轮三发，每发间隔 5 帧；轮次间隔为 30 帧。
+        Item.useTime = 5;
+        Item.useAnimation = 30;
+        Item.useLimitPerAnimation = 3;
         Item.noMelee = true;
         Item.autoReuse = true;
         Item.knockBack = 1.5f;

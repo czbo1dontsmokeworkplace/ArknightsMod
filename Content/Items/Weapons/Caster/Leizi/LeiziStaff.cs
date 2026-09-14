@@ -15,9 +15,8 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Leizi;
 /// <summary>五星惊蛰：机械 Boss 后的链电法杖，之后用于合成异客。</summary>
 public sealed class LeiziStaff : ExpansionWeaponBase
 {
-    // 伤害与攻速各分担约 sqrt(2.5) 倍；按整数帧取 25 帧，再取伤害 144。
-    // (144 / 92) × (40 / 25) ≈ 2.504，接近目标 2.5 倍。
-    protected override int[] EliteDamage => [144, 144, 144];
+    // 在原面板基础上提升 15%。
+    protected override int[] EliteDamage => [166, 166, 166];
     private static readonly float[] Skill1Bonus = [0.30f, 0.35f, 0.40f, 0.45f, 0.50f, 0.55f, 0.60f, 0.75f, 0.90f, 1f];
     private static readonly float[] Skill2Bonus = [0.60f, 0.65f, 0.70f, 0.80f, 0.85f, 0.90f, 1f, 1.15f, 1.30f, 1.50f];
     public override string Texture => "Terraria/Images/Item_" + ItemID.ThunderStaff;
@@ -29,7 +28,10 @@ public sealed class LeiziStaff : ExpansionWeaponBase
         Item.DamageType = DamageClass.Magic;
         Item.width = Item.height = 40;
         Item.mana = 10;
-        Item.useTime = Item.useAnimation = 25;
+        // 对齐深靛的连射节奏，但改为四连发：每发 5 帧，轮次 30 帧。
+        Item.useTime = 5;
+        Item.useAnimation = 30;
+        Item.useLimitPerAnimation = 4;
         Item.useStyle = ItemUseStyleID.Shoot;
         Item.noMelee = true;
         Item.autoReuse = true;

@@ -14,7 +14,8 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Harmonie;
 // By T
 public sealed class HarmonieStaff : ExpansionWeaponBase
 {
-    protected override int[] EliteDamage => [52, 60, 70];
+    // 按 540 -> 750 DPS 的 1.3889 倍倍率调整三档面板。
+    protected override int[] EliteDamage => [73, 84, 98];
     // 杖身用翡翠法杖占位，技能图标复用黑键；音符取自模组已有的 Saki 资源。
     public override string Texture => "Terraria/Images/Item_" + ItemID.EmeraldStaff;
     public override void SetStaticDefaults() => Item.staff[Type] = true;
