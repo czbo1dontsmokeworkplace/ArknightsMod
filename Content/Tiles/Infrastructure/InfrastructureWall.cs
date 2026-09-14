@@ -6,10 +6,10 @@ namespace ArknightsMod.Content.Tiles.Infrastructure
 	public abstract class InfrastructureWall : ModWall
 	{
 		/// <summary>
-		/// »ù´¡ÉèÖÃ£¬ÒÑ°üº¬£º<code>
+		/// åŸºç¡€è®¾ç½®ï¼Œå·²åŒ…å«ï¼š<code>
 		/// Main.wallHouse[Type] = true;
 		/// </code>
-		/// »¹ĞèÒªĞ´£º<code>
+		/// è¿˜éœ€è¦å†™ï¼š<code>
 		/// DustType = type;
 		/// AddMapEntry(color);
 		/// RegisterItemDrop(type);</code>

@@ -46,7 +46,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 			int sarkazKingCount = CountSarkazKingItems(player);
 			modPlayer.effectLevel = sarkazKingCount >= 3 ? 2 : 1;
 
-			// Ö±½ÓÔÚÕâÀïÓ¦ÓÃÉúÃüÖµ¼Ó³É
+			// ç›´æ¥åœ¨è¿™é‡Œåº”ç”¨ç”Ÿå‘½å€¼åŠ æˆ
 			float healthBonus = sarkazKingCount >= 3 ? 1.2f : 0.4f;
 			player.statLifeMax2 += (int)(player.statLifeMax2 * healthBonus);
 		}
@@ -57,9 +57,9 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 		public bool effectActive;
 		public int effectLevel;
 
-		// »Ö¸´¼ÆÊ±Æ÷
+		// æ¢å¤è®¡æ—¶å™¨
 		private int regenTimer = 0;
-		private const int REGEN_INTERVAL = 60; // 60Ö¡ = 1Ãë
+		private const int REGEN_INTERVAL = 60; // 60å¸§ = 1ç§’
 
 		private float RegenBase => effectLevel == 2 ? 9f : 3f;
 		private float RegenMax => effectLevel == 2 ? 36f : 12f;
@@ -77,20 +77,20 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 			bool isAbove85 = healthPercentage >= 0.85f;
 
 			if (isAbove85 && Player.statLife < Player.statLifeMax2) {
-				// ÏßĞÔ²åÖµ£ºÑªÁ¿Ô½½Ó½ü100%£¬»Ö¸´Ô½¸ß
+				// çº¿æ€§æ’å€¼ï¼šè¡€é‡è¶Šæ¥è¿‘100%ï¼Œæ¢å¤è¶Šé«˜
 				float t = (healthPercentage - 0.85f) / 0.15f;
 				t = Math.Clamp(t, 0f, 1f);
 
-				// ¼ÆËãÃ¿Ãë»Ö¸´Á¿
+				// è®¡ç®—æ¯ç§’æ¢å¤é‡
 				float regenPerSecond = RegenBase + (RegenMax - RegenBase) * t;
 
-				// ×ª»»ÎªÃ¿Ö¡»Ö¸´Á¿£¨Ã¿Ãë60Ö¡£©
+				// è½¬æ¢ä¸ºæ¯å¸§æ¢å¤é‡ï¼ˆæ¯ç§’60å¸§ï¼‰
 				float regenPerFrame = regenPerSecond / 60f;
 
-				// ÀÛ¼Ó¼ÆÊ±Æ÷
+				// ç´¯åŠ è®¡æ—¶å™¨
 				regenTimer++;
 
-				// µ±ÀÛ¼Æ»Ö¸´Öµ´ïµ½1µãÊ±»ØÑª
+				// å½“ç´¯è®¡æ¢å¤å€¼è¾¾åˆ°1ç‚¹æ—¶å›è¡€
 				if (regenTimer >= 60 / regenPerSecond) {
 					Player.statLife++;
 					if (Player.statLife > Player.statLifeMax2)
@@ -99,7 +99,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 				}
 			}
 			else {
-				// ²»Âú×ãÌõ¼şÊ±ÖØÖÃ¼ÆÊ±Æ÷
+				// ä¸æ»¡è¶³æ¡ä»¶æ—¶é‡ç½®è®¡æ—¶å™¨
 				regenTimer = 0;
 			}
 		}

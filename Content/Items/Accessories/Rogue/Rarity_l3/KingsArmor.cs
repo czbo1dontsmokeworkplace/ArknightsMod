@@ -30,7 +30,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
             int baseDefense = GetProgressionDefense();
             player.statDefense += baseDefense;
 
-            // ÉúÃüÖµ×ª»»·ÀÓù£¨30%ÉúÃüÖµ°´10:1×ª»»£©
+            // ç”Ÿå‘½å€¼è½¬æ¢é˜²å¾¡ï¼ˆ30%ç”Ÿå‘½å€¼æŒ‰10:1è½¬æ¢ï¼‰
             player.statDefense += (int)(player.statLifeMax2 * 0.3f / 10f);
             player.statLifeMax2 = (int)(player.statLifeMax2 * 0.7f);
 
@@ -40,19 +40,19 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
 
         private int GetProgressionDefense()
         {
-            // Ä¬ÈÏÖµ£¨ÈâÇ°£©
+            // é»˜è®¤å€¼ï¼ˆè‚‰å‰ï¼‰
             int defense = 3;
 
-            // ¼ì²âÊÀ½ç½ø¶È
-            if (NPC.downedMoonlord) return 20;    // ÔÂÇòÁìÖ÷ºó
-            if (NPC.downedAncientCultist) return 15; // °İÔÂ½ÌÍ½ºó
-            if (NPC.downedPlantBoss) return 10;     // ÊÀ¼ÍÖ®»¨ºó
+            // æ£€æµ‹ä¸–ç•Œè¿›åº¦
+            if (NPC.downedMoonlord) return 20;    // æœˆçƒé¢†ä¸»å
+            if (NPC.downedAncientCultist) return 15; // æ‹œæœˆæ•™å¾’å
+            if (NPC.downedPlantBoss) return 10;     // ä¸–çºªä¹‹èŠ±å
 
-            // ¼ì²â»úĞµÈıÍõÊÇ·ñÈ«²¿»÷°Ü
+            // æ£€æµ‹æœºæ¢°ä¸‰ç‹æ˜¯å¦å…¨éƒ¨å‡»è´¥
             bool allMechsDown = NPC.downedMechBoss1 && NPC.downedMechBoss2 && NPC.downedMechBoss3;
             if (allMechsDown) return 7;
 
-            if (Main.hardMode) return 5;   // ÑªÈâÇ½ºó
+            if (Main.hardMode) return 5;   // è¡€è‚‰å¢™å
 
             return defense;
         }

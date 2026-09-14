@@ -306,3 +306,85 @@ TransparentSlash.DisplayName: 透明斩击
 // Vulcan_Shield.DisplayName: Vulcan_ Shield
 // Frostleaf_Axe.DisplayName: Frostleaf_ Axe
 // Frostleaf_Projectile.DisplayName: Frostleaf_ Projectile
+// FrostleafAxeSwing.DisplayName: Frostleaf Axe Swing
+// HongdouLanceProjectile.DisplayName: Hongdou Lance Projectile
+// FrostleafIceShard.DisplayName: Frostleaf Ice Shard
+// HongdouBreachWave.DisplayName: Hongdou Breach Wave
+// BlazeFlameArc.DisplayName: Blaze Flame Arc
+BlazeChainsawHoldout.DisplayName: 煌的链锯
+BlazeScarletEjecta.DisplayName: 炽血锯屑
+// HellagurBloodSlash.DisplayName: Hellagur Blood Slash
+// HellagurOdachiSwing.DisplayName: Hellagur Odachi Swing
+// BlazeBoilingBurstController.DisplayName: Blaze Boiling Burst Controller
+FiammettaCannonHoldout.DisplayName: 菲亚梅塔的手炮
+FiammettaReponiteController.DisplayName: 偿还落点
+FiammettaMortarShell.DisplayName: 凤凰迫击炮弹
+FiammettaScorchingShell.DisplayName: 愧悔灼痕弹
+FiammettaScorchMark.DisplayName: 灼痕
+FiammettaExplosion.DisplayName: 凤凰炮击
+SpecterBoneSawHoldout.DisplayName: 幽灵鲨的圆锯
+SpecterFrenzyAura.DisplayName: 肉斩骨断
+// ShiningBarrierProjectile.DisplayName: Shining Barrier Projectile
+// ShiningBladeProjectile.DisplayName: Shining Blade Projectile
+// ShiningSanctuaryProjectile.DisplayName: Shining Sanctuary Projectile
+PassengerChainDischarge.DisplayName: 异客的闪电链
+PassengerFlyingDischarge.DisplayName: 异客的直射闪电
+PassengerArcVisual.DisplayName: 电弧余辉
+PassengerThunderstorm.DisplayName: 辉煌裂片
+// ShiningHealingWispProjectile.DisplayName: Shining Healing Wisp Projectile
+LeiziFlyingDischarge.DisplayName: 惊蛰的直射闪电
+LeiziChainDischarge.DisplayName: 初雷传导
+UtageKatanaSwing.DisplayName: 宴的紫刃
+UtageSkillFlash.DisplayName: 宴的拔刀辉光
+RedDaggerHoldout.DisplayName: 红的匕首
+RedDaggerSlash.DisplayName: 红的连切
+RedDeploymentAura.DisplayName: 红的快速部署
+RedWolfPulse.DisplayName: 狼群
+HoolheyakWindBolt.DisplayName: 霍尔海雅的螺旋风弹
+HoolheyakSmallVortex.DisplayName: 御风旋涡
+HoolheyakTravelingCyclone.DisplayName: 博览者的旋风
+SussurroNeedle.DisplayName: 翠绿针束
+SussurroCompressionRay.DisplayName: 生命压缩光束
+SussurroHealingButterfly.DisplayName: 治疗蝴蝶
+SussurroHealingBloom.DisplayName: 生命绽放
+SussurroMedicalAura.DisplayName: 医疗光环
+EbenholzCube.DisplayName: 黑色残响
+EbenholzBurst.DisplayName: 残响爆破
+EbenholzRemnant.DisplayName: 旧日残影
+EbenholzOrbit.DisplayName: 缄默音阶
+EthanSpinningYoyo.DisplayName: 伊桑的悠悠球
+EthanEcho.DisplayName: 回旋余韵
+HornGrenade.DisplayName: 号角榴弹
+HornBurst.DisplayName: 炮火爆发
+HornFlare.DisplayName: 照明区域
+HornShieldBash.DisplayName: 号角盾击
+HornGuard.DisplayName: 号角炮盾
+// AstraSwordSlash.DisplayName: Astra Sword Slash
+// AstraSwordAura.DisplayName: Astra Sword Aura
+// SussurroStaffHoldout.DisplayName: Sussurro Staff Holdout
+// EthanCrossFlash.DisplayName: Ethan Cross Flash
+WarfarinBloodBolt.DisplayName: 血液弹幕
+WarfarinPlasmaAura.DisplayName: 不稳定血浆
+IndigoDroplet.DisplayName: 灯塔水光
+IndigoBurst.DisplayName: 紫潮涟漪
+IndigoOrbit.DisplayName: 悬浮水光
+IndigoTideSeal.DisplayName: 光影潮印
+HarmonieNote.DisplayName: 回响音符
+HarmonieBurst.DisplayName: 共鸣奏鸣
+HarmonieOrbit.DisplayName: 蓄能乐谱
+HarmonieResonance.DisplayName: 沉溺之灾
+WHEGrenade.DisplayName: 高爆手雷
+WLipstickRound.DisplayName: 口红弹
+WClaymore.DisplayName: 此面向敌
+WD12.DisplayName: D12骰雷
+WSmokeCloud.DisplayName: 烟幕
+WExplosion.DisplayName: 剧烈的爆炸
+WSummonDie.DisplayName: 十二面骰
+WEmber.DisplayName: 余火
+WJumpMine.DisplayName: 跳雷
+WShrapnel.DisplayName: 破片
+WLineCharge.DisplayName: 线雷
+WLauncherDrop.DisplayName: 榴弹发射器
+WNukeDie.DisplayName: 核骰
+WNukeCloud.DisplayName: 蘑菇云
+// WarfarinEmergencyDressing.DisplayName: Warfarin Emergency Dressing

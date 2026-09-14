@@ -1,3 +1,10 @@
+Astesia: {
+	HeadName: 星极的头盔
+	HelmetEffect: "[c/beebff:头盔效果]：附近有敌人时，每20秒近战攻击速度+5%，最多通过该效果+25%；附近无敌人超过5秒失效"
+	SetEffect: "[c/beebff:套装效果]：附近有敌人时，每20秒防御力+5%，最多通过该效果+25%；附近无敌人超过5秒失效"
+	SetBonus: 有敌人时每20秒+5%近战攻速/防御（上限25%）；无敌人5秒后清空
+}
+
 W: {
 	HeadName: W的头盔
 	HelmetEffect: "[c/beebff:头盔效果]：场上处于眩晕状态的敌人，受到的物理伤害+18%"
@@ -263,6 +270,13 @@ Manticore: {
 	HelmetEffect: "[c/beebff:头盔效果]：获得10%物理与法术闪避"
 	SetEffect: "[c/beebff:套装效果]：2.5秒内不攻击则进入隐匿，不易被攻击；攻击时解除隐匿并使当次攻击+50%"
 	SetBonus: 2.5秒不攻击隐匿；破隐首击+50%
+}
+
+Rope: {
+	HeadName: 暗索的头盔
+	HelmetEffect: "[c/beebff:头盔效果]：被击中时有15%概率闪避攻击"
+	SetEffect: "[c/beebff:套装效果]：5秒内未触发闪避且未受到伤害时，下次受击必定闪避"
+	SetBonus: 受击15%闪避；5秒无闪避且无受伤则下次必闪避
 }
 
 Mizuki: {

@@ -7,12 +7,12 @@ namespace ArknightsMod.Content.Items.Armor
     public class ArknightsArmorPlayer : ModPlayer
     {
 		/// <summary>
-		/// ¶îÍâ·ÀÓùÁ¦¼Ó³É£¬°´°Ù·Ö±ÈËã£¬Òª¼ÓËã£¬²»ÒªÖ±½Ó¸³Öµ£¡£¡
+		/// é¢å¤–é˜²å¾¡åŠ›åŠ æˆï¼ŒæŒ‰ç™¾åˆ†æ¯”ç®—ï¼Œè¦åŠ ç®—ï¼Œä¸è¦ç›´æ¥èµ‹å€¼ï¼ï¼
 		/// </summary>
 		public float extraDefenseBonus = 0f;
 
 		/// <summary>
-		/// ÉúÃüË®¾§ºÍÉúÃü¹ûĞ§¹ûµÄÏ÷¼õ°Ù·Ö±È£¬±ØĞë>0
+		/// ç”Ÿå‘½æ°´æ™¶å’Œç”Ÿå‘½æœæ•ˆæœçš„å‰Šå‡ç™¾åˆ†æ¯”ï¼Œå¿…é¡»>0
 		/// </summary>
 		public float LifeCrystalAndFruitEffectReduction = 0f;
 
@@ -35,42 +35,42 @@ namespace ArknightsMod.Content.Items.Armor
 		{
 			if (LifeCrystalAndFruitEffectReduction > 0)
 			{
-				int consumedLifeFruit = Player.ConsumedLifeFruit; //Ò»¸öÉúÃü¹ûÌá¹©5µÄÉúÃüÉÏÏŞ
-				int consumedLifeCrystals = Player.ConsumedLifeCrystals; //Ò»¸öÉúÃüË®¾§Ìá¹©20µÄÉúÃüÉÏÏŞ
+				int consumedLifeFruit = Player.ConsumedLifeFruit; //ä¸€ä¸ªç”Ÿå‘½æœæä¾›5çš„ç”Ÿå‘½ä¸Šé™
+				int consumedLifeCrystals = Player.ConsumedLifeCrystals; //ä¸€ä¸ªç”Ÿå‘½æ°´æ™¶æä¾›20çš„ç”Ÿå‘½ä¸Šé™
 
-				//ÉúÃüË®¾§
+				//ç”Ÿå‘½æ°´æ™¶
 				float crystalReduction = consumedLifeCrystals * 20 * LifeCrystalAndFruitEffectReduction;
 				int crystalReductionFinal;
-				if (consumedLifeCrystals % 2 == 1) //ÆæÊı´ÎÏûºÄ£¬ÏòÏÂÈ¡Õû
+				if (consumedLifeCrystals % 2 == 1) //å¥‡æ•°æ¬¡æ¶ˆè€—ï¼Œå‘ä¸‹å–æ•´
 				{
 					crystalReductionFinal = (int)Math.Floor(crystalReduction);
 				}
-				else //Å¼Êı´ÎÏûºÄ£¬ÏòÉÏÈ¡Õû
+				else //å¶æ•°æ¬¡æ¶ˆè€—ï¼Œå‘ä¸Šå–æ•´
 				{
 					crystalReductionFinal = (int)Math.Ceiling(crystalReduction);
 				}
 
-				//ÉúÃü¹û
+				//ç”Ÿå‘½æœ
 				float fruitReduction = consumedLifeFruit * 5 * LifeCrystalAndFruitEffectReduction;
 				int fruitReductionFinal;
-				if (consumedLifeFruit % 2 == 1) //ÆæÊı´ÎÏûºÄ£¬ÏòÏÂÈ¡Õû
+				if (consumedLifeFruit % 2 == 1) //å¥‡æ•°æ¬¡æ¶ˆè€—ï¼Œå‘ä¸‹å–æ•´
 				{
 					fruitReductionFinal = (int)Math.Floor(fruitReduction);
 				}
-				else //Å¼Êı´ÎÏûºÄ£¬ÏòÉÏÈ¡Õû
+				else //å¶æ•°æ¬¡æ¶ˆè€—ï¼Œå‘ä¸Šå–æ•´
 				{
 					fruitReductionFinal = (int)Math.Ceiling(fruitReduction);
 				}
 				Player.statLifeMax2 -= (crystalReductionFinal + fruitReductionFinal);
 			}
 		}
-		#region (ÒÑÆúÓÃ) ¿ø¼×ÉúÃüÖµ±ÈÀıÌæ»»ÏµÍ³
+		#region (å·²å¼ƒç”¨) ç›”ç”²ç”Ÿå‘½å€¼æ¯”ä¾‹æ›¿æ¢ç³»ç»Ÿ
 		/*public (float ratio, int value) LifeReplacement_Head = (0f, 0);
 		public (float ratio, int value) LifeReplacement_Body = (0f, 0);
 		public (float ratio, int value) LifeReplacement_Legs = (0f, 0);
 
 		/// <summary>
-		/// (ÒÑÆúÓÃ) ¿ø¼×ÉúÃüÖµ±ÈÀıÌæ»»£¬ÔÚUpdateLifeRegen()Àïµ÷ÓÃ
+		/// (å·²å¼ƒç”¨) ç›”ç”²ç”Ÿå‘½å€¼æ¯”ä¾‹æ›¿æ¢ï¼Œåœ¨UpdateLifeRegen()é‡Œè°ƒç”¨
 		/// </summary>
 		private void LifeRatioReplacement() {
 			int baseLife = Player.statLifeMax;
@@ -78,17 +78,17 @@ namespace ArknightsMod.Content.Items.Armor
 			float totalRatio = 0f;
 			int totalFixedValue = 0;
 
-			//Í·¿ø
+			//å¤´ç›”
 			if (LifeReplacement_Head.ratio > 0) {
 				totalRatio += LifeReplacement_Head.ratio;
 				totalFixedValue += LifeReplacement_Head.value;
 			}
-			//ĞØ¼×
+			//èƒ¸ç”²
 			if (LifeReplacement_Body.ratio > 0) {
 				totalRatio += LifeReplacement_Body.ratio;
 				totalFixedValue += LifeReplacement_Body.value;
 			}
-			//ÍÈ¼×
+			//è…¿ç”²
 			if (LifeReplacement_Legs.ratio > 0) {
 				totalRatio += LifeReplacement_Legs.ratio;
 				totalFixedValue += LifeReplacement_Legs.value;
@@ -103,7 +103,7 @@ namespace ArknightsMod.Content.Items.Armor
 		}
 
 		/// <summary>
-		/// (ÒÑÆúÓÃ) ÖØÖÃ¿ø¼×ÉúÃüÖµ±ÈÀıÌæ»»£¬ResetEffects()Àïµ÷ÓÃ
+		/// (å·²å¼ƒç”¨) é‡ç½®ç›”ç”²ç”Ÿå‘½å€¼æ¯”ä¾‹æ›¿æ¢ï¼ŒResetEffects()é‡Œè°ƒç”¨
 		/// </summary>
 		private void LifeRatioReplacement_Reset() {
 			LifeReplacement_Head = (0f, 0);

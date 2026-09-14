@@ -3,6 +3,7 @@ using ArknightsMod.Content.NPCs.Enemy.Evolution;
 using ArknightsMod.Content.NPCs.Enemy.OF.Pmp;
 using ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTargeteer;
 using ArknightsMod.Content.NPCs.Enemy.Seamonster;
+using ArknightsMod.Content.NPCs.Enemy.W;
 using ArknightsMod.Systems;
 using Terraria;
 using Terraria.ModLoader;
@@ -23,6 +24,8 @@ namespace ArknightsMod.Content.NPCs
 				DownedBossSystem.MarkDowned(ref DownedBossSystem.DownedAACT);
 			else if (npc.type == ModContent.NPCType<Evolution>())
 				DownedBossSystem.MarkDowned(ref DownedBossSystem.DownedEvolution);
+			else if (npc.type == ModContent.NPCType<WBoss>())
+				DownedBossSystem.MarkDowned(ref DownedBossSystem.DownedW);
 		}
 	}
 }

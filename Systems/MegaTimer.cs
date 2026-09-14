@@ -411,7 +411,7 @@ namespace ArknightsMod.Systems
 			// callback
 			_IL.Emit(OpCodes.Ldloca, timerStruct);
 			_IL.Emit(OpCodes.Ldfld, callbackField);
-			// µ÷ÓÃ
+			// è°ƒç”¨
 			_IL.Emit(OpCodes.Call, executeCallbackScalarMethod);
 
 

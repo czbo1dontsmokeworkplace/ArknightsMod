@@ -42,7 +42,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 
 			bool isRanged = item.CountsAsClass(DamageClass.Ranged) || item.useAmmo != AmmoID.None;
 
-			if (isRanged && Main.rand.NextBool(4)) // 25%¼¸ÂÊ
+			if (isRanged && Main.rand.NextBool(4)) // 25%å‡ ç‡
 			{
 				int damagef = damage * 2;
 				float angleOffset = Main.rand.NextFloat(-0.05f, 0.05f);
@@ -52,7 +52,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 				Vector2 offsetPos = Main.rand.NextVector2Circular(8f, 8f);
 				Vector2 newPosition = position + offsetPos;
 
-				// ·¢Éä¶îÍâµÄµ¯Ä»
+				// å‘å°„é¢å¤–çš„å¼¹å¹•
 				Projectile.NewProjectile(
 					source,
 					newPosition,

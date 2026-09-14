@@ -38,7 +38,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l2
         {
             if (hasEmblem && npc != null && !npc.friendly)
             {
-                // ¼õÉÙ17%ÉËº¦£¨³ËËã£©
+                // å‡å°‘17%ä¼¤å®³ï¼ˆä¹˜ç®—ï¼‰
                 modifiers.SourceDamage *= 0.93f;
 
 

@@ -87,3 +87,24 @@ Keybinds: {
 	"Rosmontis Tactical Deploy.DisplayName": Rosmontis  Tactical  Deploy
 	"Skill Activate.DisplayName": Skill  Activate
 }
+
+WBossText: {
+	Dodge: Miss
+	D12Prompt: Mash Left Click to shake off the D12! (15 hits)
+	D12Shaken: Shaken off!
+	Title: Sarkaz Mercenary
+
+	// Placeholder lines pending IP-side rewrite; trigger points are the WBattleVisuals.Say calls in WBoss.States.cs
+	Quip: {
+		Spawn: W: Go on, guess what this one lands on.
+		Phase2: W: Warm-up's over.
+		LowHp: W: ...Fine. All in.
+		Jackpot: W: Twelve!
+		DecoyPopped: W: That one was a fake.
+		DetonateAll: W: Everything—blow.
+		Nuke: W: Close your eyes. I saved this one for you.
+		Ignite: W: Don't stand in the smoke too long.
+		Death: W: ...The dice were rigged.
+		Despawn: W: Boring.
+	}
+}

@@ -8,7 +8,7 @@ namespace ArknightsMod.Content.Items.Material
 	public abstract class ArknightsMaterial : ModItem
 	{
 		/// <summary>
-		/// ²ÄÁÏÏ¡ÓĞ¶È£¬0~4·Ö±ğ¶ÔÓ¦ °×£¬ÂÌ£¬À¶£¬×Ï£¬½ğ²ÄÁÏ
+		/// ææ–™ç¨€æœ‰åº¦ï¼Œ0~4åˆ†åˆ«å¯¹åº” ç™½ï¼Œç»¿ï¼Œè“ï¼Œç´«ï¼Œé‡‘ææ–™
 		/// </summary>
 		public virtual int Rarity => 0;
 		public sealed override void SetStaticDefaults() {

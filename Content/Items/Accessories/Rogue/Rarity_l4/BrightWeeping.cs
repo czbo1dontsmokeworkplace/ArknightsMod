@@ -34,7 +34,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 			if (!damageAmplifierActive)
 				return;
 
-			// ¼ì²â·¨ÊõÎäÆ÷
+			// æ£€æµ‹æ³•æœ¯æ­¦å™¨
 			if (item.DamageType == DamageClass.Magic) {
 				modifiers.FinalDamage *= 1.40f;
 			}
@@ -44,7 +44,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 			if (!damageAmplifierActive)
 				return;
 
-			// ¼ì²â·¨Êõ»òÕÙ»½ÉËº¦
+			// æ£€æµ‹æ³•æœ¯æˆ–å¬å”¤ä¼¤å®³
 			if (proj.DamageType == DamageClass.Magic || proj.DamageType == DamageClass.Summon) {
 				modifiers.FinalDamage *= 1.40f;
 			}

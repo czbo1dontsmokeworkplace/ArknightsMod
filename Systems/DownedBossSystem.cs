@@ -12,6 +12,7 @@ namespace ArknightsMod.Systems
 		public static bool DownedFrostNova;
 		public static bool DownedAACT;
 		public static bool DownedEvolution;
+		public static bool DownedW;
 
 		public override void OnWorldLoad()
 		{
@@ -20,6 +21,7 @@ namespace ArknightsMod.Systems
 			DownedFrostNova = false;
 			DownedAACT = false;
 			DownedEvolution = false;
+			DownedW = false;
 		}
 
 		public override void OnWorldUnload()
@@ -29,6 +31,7 @@ namespace ArknightsMod.Systems
 			DownedFrostNova = false;
 			DownedAACT = false;
 			DownedEvolution = false;
+			DownedW = false;
 		}
 
 		public override void SaveWorldData(TagCompound tag)
@@ -43,6 +46,8 @@ namespace ArknightsMod.Systems
 				tag["ArknightsMod.DownedAACT"] = true;
 			if (DownedEvolution)
 				tag["ArknightsMod.DownedEvolution"] = true;
+			if (DownedW)
+				tag["ArknightsMod.DownedW"] = true;
 		}
 
 		public override void LoadWorldData(TagCompound tag)
@@ -52,6 +57,7 @@ namespace ArknightsMod.Systems
 			DownedFrostNova = tag.ContainsKey("ArknightsMod.DownedFrostNova");
 			DownedAACT = tag.ContainsKey("ArknightsMod.DownedAACT");
 			DownedEvolution = tag.ContainsKey("ArknightsMod.DownedEvolution");
+			DownedW = tag.ContainsKey("ArknightsMod.DownedW");
 		}
 
 		public static void MarkDowned(ref bool flag)

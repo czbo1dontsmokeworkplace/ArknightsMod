@@ -1,3 +1,28 @@
+AstesiaHead: {
+	DisplayName: 星极的头套
+	// Tooltip: ""
+}
+
+AstesiaBody: {
+	DisplayName: 星极的上衣
+	// Tooltip: ""
+}
+
+AstesiaLegs: {
+	DisplayName: 星极的下装
+	// Tooltip: ""
+}
+
+AstesiaDefault: {
+	DisplayName: 星极的服饰（常规）
+	Tooltip: ""
+}
+
+AstraSword: {
+	DisplayName: 星辉剑
+	Tooltip: ""
+}
+
 # Furniture
 AutoDoorItem: {
 	DisplayName: 自动门
@@ -373,6 +398,11 @@ ManticoreDefault: {
 	Tooltip: ""
 }
 
+RopeDefault: {
+	DisplayName: 暗索的服饰（常规）
+	Tooltip: ""
+}
+
 MostimaDefault: {
 	DisplayName: 莫斯提马的服饰（常规）
 	Tooltip: ""
@@ -580,6 +610,21 @@ ManticoreHead: {
 
 ManticoreLegs: {
 	DisplayName: 狮蝎的下装
+	// Tooltip: ""
+}
+
+RopeHead: {
+	DisplayName: 暗索的头套
+	// Tooltip: ""
+}
+
+RopeBody: {
+	DisplayName: 暗索的上衣
+	// Tooltip: ""
+}
+
+RopeLegs: {
+	DisplayName: 暗索的下装
 	// Tooltip: ""
 }
 
@@ -1937,7 +1982,7 @@ ChenSword_Item: {
 
 OriginiumIngot: {
 	DisplayName: 源石锭
-	// Tooltip: ""
+	Tooltip: 可以跟商人坎诺特交易藏品道具
 }
 
 SolidColorLowSofa: {
@@ -3969,4 +4014,166 @@ GlowingTruffle: {
 Vulcan_Weapon: {
 	DisplayName: 火神的锤盾
 	// Tooltip: ""
+}
+
+HellagurOdachi: {
+	DisplayName: 赫拉格的大太刀
+	Tooltip:
+		'''
+		生命值越低攻速越快，攻击可以回复生命值
+		“他是将军”
+		'''
+}
+
+BlazeGreatsword: {
+	DisplayName: 煌的链锯大剑
+	Tooltip:
+		'''
+		攻击所有与之接触的敌人
+		“热血沸腾”
+		'''
+}
+
+FiammettaHandCannon: {
+	DisplayName: 菲亚梅塔的手炮
+	Tooltip: 向天空释放炮弹，并对目标进行打击
+}
+
+SpecterBoneSaw: {
+	DisplayName: 幽灵鲨的圆锯
+	Tooltip:
+		'''
+		攻击所有与之接触的敌人
+		手持时生命上限提高10%，每秒恢复2%最大生命
+		'''
+}
+
+ShiningStaff: {
+	DisplayName: 闪灵的法杖
+	Tooltip:
+		'''
+		发射黑白剑形源石技艺攻击敌人
+		每次命中敌人回复该次攻击力的5%生命；技能提供自身屏障与防护领域
+		'''
+}
+
+PassengerConductor: {
+	DisplayName: 异客的电磁枢杖
+	Tooltip: 三连发闪电链，在敌人之间弹跳
+}
+
+LeiziStaff: {
+	DisplayName: 惊蛰的雷法杖
+	Tooltip:
+		'''
+		向瞄准方向发射可穿墙的绯橙金色闪电，不自动锁敌
+		实际撞敌后爆闪并传导，最多命中4个敌人
+		每次跳跃伤害递减15%，短暂减缓普通敌人的移动
+		'''
+}
+
+// RopeBodySet.Tooltip: ""
+// RopeHeadSet.Tooltip: ""
+// RopeLegsSet.Tooltip: ""
+
+UtageKatana: {
+	DisplayName: 宴的太刀
+	Tooltip:
+		'''
+		生命值越低，挥刀越快；有效命中可以回复少量生命
+		以深紫刀幕和淡紫刃光斩击敌人
+		'''
+}
+
+RedDagger: {
+	DisplayName: 红的匕首
+	Tooltip:
+		'''
+		进行极高速的近战攻击
+		快速传送或冲刺时触发“再部署”
+		手之时提供移速与跳跃提升
+		'''
+}
+
+HoolheyakWindArts: {
+	DisplayName: 霍尔海雅的御风羽饰
+	Tooltip:
+		'''
+		抬手释放风弹，命中后形成追踪风旋
+		吸附并卷起小怪，无法卷起首领
+		'''
+}
+
+SussurroStaff: {
+	DisplayName: 苏苏洛的医疗法杖
+	Tooltip:
+		'''
+		发射高速治疗光线伤害敌人
+		攻击多次可进行额外治疗
+		右键释放强力追踪的治疗蝴蝶
+		'''
+}
+
+EbenholzStaff: {
+	DisplayName: 黑键的奏鸣法杖
+	Tooltip:
+		'''
+		释放追踪黑色奏鸣块
+		可以储存多枚残响一起释放
+		'''
+}
+
+EthanYoyo: {
+	DisplayName: 伊桑的悠悠球
+	Tooltip:
+		'''
+		小概率束缚住小怪
+		使用期间降低玩家仇恨值
+		并有10%的概率闪避伤害
+		'''
+}
+
+HornGrenadeLauncher: {
+	DisplayName: 号角的榴弹炮盾
+	Tooltip:
+		'''
+		手持时自动举盾，冷却结束后自动恢复；左键始终发射榴弹
+		成功格挡后5秒内，下一次炮击伤害翻倍
+		'''
+}
+
+// AstesiaBodySet.Tooltip: ""
+// AstesiaHeadSet.Tooltip: ""
+// AstesiaLegsSet.Tooltip: ""
+
+WarfarinStaff: {
+	DisplayName: 华法琳的血浆法杖
+	Tooltip:
+		'''
+		发射血液穿透敌人
+		技能期间为召唤物提供强力增益
+		'''
+}
+
+IndigoStaff: {
+	DisplayName: 深靛的灯塔法杖
+	Tooltip:
+		'''
+		发射追踪水光，停火时储存至多三枚，随下次攻击一同释放
+		以灯塔之光疾射，以淡紫潮汐束缚敌人
+		'''
+}
+
+HarmonieStaff: {
+	DisplayName: 和弦的协奏法杖
+	Tooltip:
+		'''
+		发射追踪音符，停火时储存至多三枚，随下次攻击一同奏响
+		以流动乐谱与共鸣水域淹没敌人
+		'''
+}
+
+WSummon: {
+	DisplayName: 十二面骰
+	Tooltip: 在地表使用，召唤 W
 }

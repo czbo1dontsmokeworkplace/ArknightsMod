@@ -1,8 +1,9 @@
 displayName = 泰拉方舟模组
 author = Arknights Mod Development Team
-version = 1.3.2.1
+version = 1.3.2.2
+modReferences = InnoVault
 homepage = https://discord.gg/XKM2jeS9hY
 hideCode = true
 hideResources = true
-buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*, .git\*
+buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*, .git\*, Doc\*
 unsafe = true

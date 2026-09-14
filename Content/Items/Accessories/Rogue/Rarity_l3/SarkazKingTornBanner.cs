@@ -29,7 +29,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
 		}
 
 		public override void PostUpdateEquips() {
-			// ÅÐ¶ÏÉúÃüÖµÊÇ·ñ´óÓÚ 85%
+			// åˆ¤æ–­ç”Ÿå‘½å€¼æ˜¯å¦å¤§äºŽ 85%
 			if (effectActive && Player.statLife >= Player.statLifeMax2 * 0.85f) {
 				Player.GetAttackSpeed(DamageClass.Generic) += 0.3f;
 			}

@@ -6,18 +6,18 @@ namespace ArknightsMod.Content.Tiles.Infrastructure
 	public abstract class InfrastructureTile : ModTile
 	{
 		/// <summary>
-		/// ÊÇ·ñÓëºÚÉ«½¢ÇÅÌåÈÚºÏ
+		/// æ˜¯å¦ä¸é»‘è‰²èˆ°æ¡¥ä½“èåˆ
 		/// </summary>
 		/// <returns></returns>
 		public virtual bool ShouldMergeWithBlackBridgeStructure() => true;
 		/// <summary>
-		/// »ù´¡ÉèÖÃ£¬ÒÑ°üº¬£º<code>
+		/// åŸºç¡€è®¾ç½®ï¼Œå·²åŒ…å«ï¼š<code>
 		/// Main.tileSolid[Type] = true;
 		/// Main.tileBlockLight[Type] = true;
 		/// Main.tileMergeDirt[Type] = true;
-		/// ÓëºÚÉ«½¢ÇÅÈÚºÏÄ¬ÈÏtrue£¬ÈçĞèÒªĞŞ¸ÄÇëÖØĞ´ShouldMergeWithBlackBridgeStructure()
+		/// ä¸é»‘è‰²èˆ°æ¡¥èåˆé»˜è®¤trueï¼Œå¦‚éœ€è¦ä¿®æ”¹è¯·é‡å†™ShouldMergeWithBlackBridgeStructure()
 		/// </code>
-		/// »¹ĞèÒªĞ´£º<code>
+		/// è¿˜éœ€è¦å†™ï¼š<code>
 		/// DustType = type;
 		/// AddMapEntry(color);
 		/// </summary>

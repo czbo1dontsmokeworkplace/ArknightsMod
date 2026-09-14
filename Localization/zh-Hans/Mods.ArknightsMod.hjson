@@ -87,3 +87,24 @@ Keybinds: {
 	"Rosmontis Tactical Deploy.DisplayName": 罗默林斯战术部署
 	"Skill Activate.DisplayName": 技能开启
 }
+
+WBossText: {
+	Dodge: 闪避
+	D12Prompt: 连点左键甩脱D12！（15次）
+	D12Shaken: 甩脱了！
+	Title: 萨卡兹佣兵
+
+	// Placeholder lines pending IP-side rewrite; trigger points are the WBattleVisuals.Say calls in WBoss.States.cs
+	Quip: {
+		Spawn: W：来，猜猜这一把是几？
+		Phase2: W：热身结束。
+		LowHp: W：……行，全都押上。
+		Jackpot: W：十二！
+		DecoyPopped: W：那是个假的哦。
+		DetonateAll: W：全部——起爆。
+		Nuke: W：闭上眼，这一颗是给你留着的。
+		Ignite: W：烟里可别站太久。
+		Death: W：……骰子有问题。
+		Despawn: W：没意思。
+	}
+}

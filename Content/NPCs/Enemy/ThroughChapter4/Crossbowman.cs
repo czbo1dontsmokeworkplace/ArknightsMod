@@ -27,7 +27,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			NPC.lifeMax = 45;
 			NPC.damage = 0;
 			NPC.defense = 5;
-			NPC.knockBackResist = 0.5f;//»÷ÍË¿¹ĞÔ£¬0fÎª×î¸ß£¬1fÎª×îµÍ
+			NPC.knockBackResist = 0.5f;//å‡»é€€æŠ—æ€§ï¼Œ0fä¸ºæœ€é«˜ï¼Œ1fä¸ºæœ€ä½
 			NPC.width = 32;
 			NPC.height = 56;
 			NPC.aiStyle = 0;
@@ -58,12 +58,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			});
 		}
 
-		public override bool? CanBeHitByItem(Player player, Item item)//ÎŞµĞÖ¡
+		public override bool? CanBeHitByItem(Player player, Item item)//æ— æ•Œå¸§
 		{
 			return null;
 		}
 
-		public override bool? CanBeHitByProjectile(Projectile Projectile)//²»±»µĞ·½µ¯Ä»ºÍÎŞÀ´Ô´µ¯Ä»¹¥»÷&ÉÁ±Ü
+		public override bool? CanBeHitByProjectile(Projectile Projectile)//ä¸è¢«æ•Œæ–¹å¼¹å¹•å’Œæ— æ¥æºå¼¹å¹•æ”»å‡»&é—ªé¿
 		{
 			if (Projectile.hostile == true) {
 				return false;
@@ -116,7 +116,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			diffX = Player.Center.X - NPC.Center.X;
 			diffY = Player.Center.Y - NPC.Center.Y;
 			ax = 0.2f;
-			distance = (float)Math.Sqrt(Math.Pow(diffX / 16, 2) + Math.Pow(diffY / 16, 2));//µ½Íæ¼ÒµÄ¾àÀë£¨¸ñÊı£©
+			distance = (float)Math.Sqrt(Math.Pow(diffX / 16, 2) + Math.Pow(diffY / 16, 2));//åˆ°ç©å®¶çš„è·ç¦»ï¼ˆæ ¼æ•°ï¼‰
 			if (Main.masterMode) {
 				atkloop = 90;
 				atkrange = 30;
@@ -141,7 +141,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				escapetime = 180;
 				vx = 1.0f;
 			}
-			//Íæ¼ÒËÀÍö
+			//ç©å®¶æ­»äº¡
 			if (!Player.active || Player.dead) {
 				NPC.TargetClosest(false);
 				if (Player.dead) {
@@ -150,11 +150,11 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				}
 			}
 			
-			//Ä£Ê½Ñ¡Ôñ
-			if (distance >= atkrange) {//¹¥»÷·¶Î§Ö®Íâ
+			//æ¨¡å¼é€‰æ‹©
+			if (distance >= atkrange) {//æ”»å‡»èŒƒå›´ä¹‹å¤–
 				Walk();
 			}
-			else if (distance >= escrange + 2) {//ÌÓÅÜ·¶Î§Ö®Íâ
+			else if (distance >= escrange + 2) {//é€ƒè·‘èŒƒå›´ä¹‹å¤–
 				timer++;
 				if (timer >= atkloop) {
 					Attack();
@@ -165,7 +165,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 					//attacktimer = 0;
 				}
 			}
-			else if(distance >= escrange) {//ÖĞ¼ä·¶Î§£¬Ö»¹¥»÷²»ÒÆ¶¯
+			else if(distance >= escrange) {//ä¸­é—´èŒƒå›´ï¼Œåªæ”»å‡»ä¸ç§»åŠ¨
 				timer++;
 				NPC.velocity.X = float.Lerp(NPC.velocity.X, 0, 0.1f);
 				if (timer >= atkloop) {
@@ -176,7 +176,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 					//attacktimer = 0;
 				}
 			}
-			else {//ÌÓÅÜ·¶Î§Ö®ÄÚ
+			else {//é€ƒè·‘èŒƒå›´ä¹‹å†…
 				timer++;
 				if (timer >= atkloop) {
 					Attack();
@@ -189,7 +189,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			}
 		}
 
-		private void Walk() {//¿¿½ü£¬Èç¹ûºáÏòËÙ¶ÈÎª0Ê±×İÏòËÙ¶ÈÒ²Îª0£¬³¢ÊÔÌøÔ¾£¬ÌøÔ¾Êı´Îºó·´·½ÏòÌÓ×ß
+		private void Walk() {//é è¿‘ï¼Œå¦‚æœæ¨ªå‘é€Ÿåº¦ä¸º0æ—¶çºµå‘é€Ÿåº¦ä¹Ÿä¸º0ï¼Œå°è¯•è·³è·ƒï¼Œè·³è·ƒæ•°æ¬¡ååæ–¹å‘é€ƒèµ°
 			Player Player = Main.player[NPC.target];
 			iswalk = true;
 			isatk = false;
@@ -239,7 +239,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			}
 		}
 
-		private void Escape() {//ÍùÔ¶ÀëÍæ¼Ò·½Ïò×ß£¬¿ÉÑ¡Ôñ¹¥»÷»ò²»¹¥»÷
+		private void Escape() {//å¾€è¿œç¦»ç©å®¶æ–¹å‘èµ°ï¼Œå¯é€‰æ‹©æ”»å‡»æˆ–ä¸æ”»å‡»
 			escapetimer++;
 			isescape = true;
 			iswalk = false;
@@ -349,7 +349,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			Projectile.friendly = false;
 			Projectile.hostile = true;
 		}
-		//public override bool PreDraw(ref Color lightColor) {
+		//public override bool PreDraw(Player player, ref Color lightColor) {
 		//	Color A = new Color(255, 255, 255);
 		//	Color B = new Color(235, 235, 235);
 		//	Texture2D trailtexture = ModContent.Request<Texture2D>("ArknightsMod/Common/VisualEffects/FlameTrail").Value;

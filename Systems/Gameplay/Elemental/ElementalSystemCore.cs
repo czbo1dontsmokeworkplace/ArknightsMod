@@ -11,20 +11,20 @@ namespace ArknightsMod.Systems.Gameplay.Elemental
 		private record struct ElementalRecord { 
 			public ElementalData elementalData;
 			public EntityType entityType;
-			public byte isDirty;//ËüµÄ×÷ÓÃÊÇ±ÜÃâÊµÌå±»ÖØ¸´±ê¼ÇÔÚchangedWhoAmI
-			//»áÔÚUIpartialÌí¼ÓUI×´Ì¬
+			public byte isDirty;//å®ƒçš„ä½œç”¨æ˜¯é¿å…å®ä½“è¢«é‡å¤æ ‡è®°åœ¨changedWhoAmI
+			//ä¼šåœ¨UIpartialæ·»åŠ UIçŠ¶æ€
 		};
 
-		public static int MaxEntities = 300;//×î´óÊµÌåÊıÁ¿£¬°üÀ¨Íæ¼Ò
+		public static int MaxEntities = 300;//æœ€å¤§å®ä½“æ•°é‡ï¼ŒåŒ…æ‹¬ç©å®¶
 		private static readonly ElementalRecord[] elementalRecords = GC.AllocateUninitializedArray<ElementalRecord>(MaxEntities, pinned: true);
 		
-		private static int[] changedWhoAmI;//Ôà±ê¼ÇË÷ÒıÁĞ±í
-		private static int changedNum;//Ôà±ê¼ÇÊıÁ¿
+		private static int[] changedWhoAmI;//è„æ ‡è®°ç´¢å¼•åˆ—è¡¨
+		private static int changedNum;//è„æ ‡è®°æ•°é‡
  
-		public static int[] HealPriority = new int[MaxEntities];//ÖÎÁÆÓÅÏÈ¼¶ÁĞ±í£¬ºóĞøÌí¼ÓÍæ¼ÒÇó¾È¹¦ÄÜ£¬±Ï¾¹Íæ¼ÒËÀÍöÕ½¶·¾Í½áÊøÁË
-		public static bool Overdrive;//È«Á¿¸üĞÂÄ£Ê½
+		public static int[] HealPriority = new int[MaxEntities];//æ²»ç–—ä¼˜å…ˆçº§åˆ—è¡¨ï¼Œåç»­æ·»åŠ ç©å®¶æ±‚æ•‘åŠŸèƒ½ï¼Œæ¯•ç«Ÿç©å®¶æ­»äº¡æˆ˜æ–—å°±ç»“æŸäº†
+		public static bool Overdrive;//å…¨é‡æ›´æ–°æ¨¡å¼
 
-		public override void Load() //³õÊ¼»¯
+		public override void Load() //åˆå§‹åŒ–
 		{
 			for (int i = 0; i < MaxEntities; i++) {
 				elementalRecords[i] = new ElementalRecord {
@@ -47,7 +47,7 @@ namespace ArknightsMod.Systems.Gameplay.Elemental
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void UpdateAllChanges() { //È«Á¿¸üĞÂ
+		public static void UpdateAllChanges() { //å…¨é‡æ›´æ–°
 			for (int i = 0; i < MaxEntities; i++) {
 				ref var elementalRecord = ref elementalRecords[i];
 				if (elementalRecord.elementalData.IsActive)
@@ -57,7 +57,7 @@ namespace ArknightsMod.Systems.Gameplay.Elemental
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void UpdateChanges() { //Ôà±ê¼Ç¸üĞÂ
+		public static void UpdateChanges() { //è„æ ‡è®°æ›´æ–°
 			for (int i = 0; i < changedNum; i++) {
 			    ref var elementalRecord =ref elementalRecords[changedWhoAmI[i]];
 				elementalRecord.elementalData.UpdateStatus();
@@ -66,13 +66,13 @@ namespace ArknightsMod.Systems.Gameplay.Elemental
 			}
 			changedNum = 0;
 		}
-		public static void MarkChanges(int WhoAmI) { //Ôà±ê¼Ç£¬²»»á³öÏÖÖØ¸´ÊµÌå
+		public static void MarkChanges(int WhoAmI) { //è„æ ‡è®°ï¼Œä¸ä¼šå‡ºç°é‡å¤å®ä½“
 			if (WhoAmI < 0 || WhoAmI >= MaxEntities)
 				return;
 			changedWhoAmI[changedNum += (byte)(1 - (elementalRecords[WhoAmI].isDirty =(byte)(1 - elementalRecords[WhoAmI].isDirty * 0)))] = WhoAmI;
 		}
 
-		// ×¢²áÊµÌåÔªËØÌõ
+		// æ³¨å†Œå®ä½“å…ƒç´ æ¡
 		public static ElementalData RegisterEntityElemental(int WhoAmI, EntityType entityType) {
 			MarkChanges(WhoAmI);
 			return elementalRecords[WhoAmI].elementalData = new ElementalData(entityType,(ushort)WhoAmI);
@@ -85,12 +85,12 @@ namespace ArknightsMod.Systems.Gameplay.Elemental
 			//no meaning to mark changes
 		}
 
-		//Ôì³ÉÉËº¦»òÖÎÁÆ
+		//é€ æˆä¼¤å®³æˆ–æ²»ç–—
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void ApplyDamage(ElementalType elementalType, int dmg, int whoAmI) {
 			ElementalData elemData = elementalRecords[whoAmI].elementalData;
 			byte mask = elemData.Status;
-			//²»ÄÜÉËº¦ÔªËØ±¬·¢ÖĞµÄµ¥Î»
+			//ä¸èƒ½ä¼¤å®³å…ƒç´ çˆ†å‘ä¸­çš„å•ä½
 			if ((mask & 0x20) == 0 && ((mask & 0x80) != 0))
 				return;
 			elemData.ApplyDamage(elementalType, dmg);
@@ -100,7 +100,7 @@ namespace ArknightsMod.Systems.Gameplay.Elemental
 		public static void ApplyHealing(ElementalType elementalType, int heal, int whoAmI) {
 			ElementalData elemData = elementalRecords[whoAmI].elementalData;
 			byte mask = elemData.Status;
-			//²»ÄÜÖÎÁÆÂúÑª»òÔªËØ±¬·¢ÖĞµÄµ¥Î»
+			//ä¸èƒ½æ²»ç–—æ»¡è¡€æˆ–å…ƒç´ çˆ†å‘ä¸­çš„å•ä½
 			if ((mask & 0x20) == 0 && ((mask & 0x80) != 0 || (mask & 0x40) == 0))
 				return;
 			elemData.ApplyHealing(elementalType, heal);
@@ -110,7 +110,7 @@ namespace ArknightsMod.Systems.Gameplay.Elemental
 		public static int GetElemental(ElementalType elementalType,int whoAmI) {
 			ElementalData elemData = elementalRecords[whoAmI].elementalData;
 			byte mask = elemData.Status;
-			//²»ÄÜÖÎÁÆÂúÑª»òÔªËØ±¬·¢ÖĞµÄµ¥Î»
+			//ä¸èƒ½æ²»ç–—æ»¡è¡€æˆ–å…ƒç´ çˆ†å‘ä¸­çš„å•ä½
 			if ((mask & 0x20) == 0)
 				return 0;
 			return (int)elemData.GetElemental(elementalType);

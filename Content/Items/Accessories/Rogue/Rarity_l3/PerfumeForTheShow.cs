@@ -51,23 +51,23 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
             if (!active)
                 return;
 
-            // Ã¿Ãë60Ö¡£¬Ã¿Ãë´¥·¢Ò»´Î
+            // æ¯ç§’60å¸§ï¼Œæ¯ç§’è§¦å‘ä¸€æ¬¡
             if (++timer >= 60)
             {
                 timer = 0;
                 SpawnHealEffect();
-                // ¼ÆËã1%×î´óÉúÃüÖµ
+                // è®¡ç®—1%æœ€å¤§ç”Ÿå‘½å€¼
                 int healAmount = Player.statLifeMax2 / 100;
 
-                // È·±£ÖÁÉÙ»Ø¸´1µãÉúÃüÖµ
+                // ç¡®ä¿è‡³å°‘å›å¤1ç‚¹ç”Ÿå‘½å€¼
                 if (healAmount < 1)
                     healAmount = 1;
 
-                // Ó¦ÓÃÖÎÁÆĞ§¹û
+                // åº”ç”¨æ²»ç–—æ•ˆæœ
                 Player.HealEffect(healAmount);
                 Player.statLife += healAmount;
 
-                // ·ÀÖ¹ÉúÃüÖµ³¬¹ıÉÏÏŞ
+                // é˜²æ­¢ç”Ÿå‘½å€¼è¶…è¿‡ä¸Šé™
                 if (Player.statLife > Player.statLifeMax2)
                     Player.statLife = Player.statLifeMax2;
             }

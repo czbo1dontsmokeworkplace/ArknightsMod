@@ -17,8 +17,8 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            // Ô­ÓĞĞ§¹û
-            player.GetDamage(DamageClass.Summon) += 0.30f; // ÕÙ»½ÉËº¦+30%
+            // åŸæœ‰æ•ˆæœ
+            player.GetDamage(DamageClass.Summon) += 0.30f; // å¬å”¤ä¼¤å®³+30%
             player.GetCritChance(DamageClass.Summon) += 5; 
             player.GetModPlayer<SummonerEmblemPlayer>().whipDamageBoost = 0.60f;
         }
@@ -35,7 +35,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 
         public override void ModifyHitNPCWithItem(Item item, NPC target, ref NPC.HitModifiers modifiers)
         {
-            // ¼ì²â±Ş×ÓÎäÆ÷
+            // æ£€æµ‹é­å­æ­¦å™¨
             if (item.CountsAsClass(DamageClass.SummonMeleeSpeed))
             {
                 modifiers.FinalDamage *= 1f + whipDamageBoost;

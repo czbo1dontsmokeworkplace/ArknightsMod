@@ -29,12 +29,12 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
 
         public override void ResetEffects()
         {
-            FeardriedfishCount = 0; // Ã¿Ö¡ÖØÖÃ¼ÆÊı
+            FeardriedfishCount = 0; // æ¯å¸§é‡ç½®è®¡æ•°
         }
 
         public override void UpdateDead()
         {
-            FeardriedfishCount = 0; // ËÀÍöÊ±½ûÓÃĞ§¹û
+            FeardriedfishCount = 0; // æ­»äº¡æ—¶ç¦ç”¨æ•ˆæœ
         }
     }
 
@@ -73,7 +73,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
         {
             int totalCount = 0;
 
-            // Í³¼ÆËùÓĞ´æ»îÍæ¼ÒÅå´÷µÄÊÎÆ·ÊıÁ¿
+            // ç»Ÿè®¡æ‰€æœ‰å­˜æ´»ç©å®¶ä½©æˆ´çš„é¥°å“æ•°é‡
             for (int i = 0; i < Main.maxPlayers; i++)
             {
                 Player player = Main.player[i];
@@ -83,7 +83,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
                 }
             }
 
-            //ÆäÊµÎÒÒ²²»ÖªµÀÒ»¿ªÊ¼ÎªÊ²Ã´ÒªĞ´ÕâÃ´¶à£¬ÕâĞ©¼ÆËãÎŞÒâÒå
+            //å…¶å®æˆ‘ä¹Ÿä¸çŸ¥é“ä¸€å¼€å§‹ä¸ºä»€ä¹ˆè¦å†™è¿™ä¹ˆå¤šï¼Œè¿™äº›è®¡ç®—æ— æ„ä¹‰
             if (totalCount > 0)
             {
                 float multiplier = 1f;

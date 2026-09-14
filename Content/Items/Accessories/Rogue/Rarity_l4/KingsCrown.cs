@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
     {
         public override void SetStaticDefaults()
         {
-            // ÉèÖÃking±êÇ©
+            // è®¾ç½®kingæ ‡ç­¾
             ItemID.Sets.ItemNoGravity[Item.type] = true;
         }
 

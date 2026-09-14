@@ -119,7 +119,10 @@ LeporibeastShorthorn.DisplayName: 小角跳兽
 Cragpincer.DisplayName: 岩壳蟹
 FieryOriginiumSlugNPC.DisplayName: 炽焰源石虫
 PmpSlugEggLandNPC.DisplayName: 炽焰源石虫卵
-// DeploymentCost.DisplayName: Deployment Cost
-// RaptorDrone.DisplayName: Raptor Drone
-// CasterShoot.DisplayName: Caster Shoot
 FogRollingGrass.DisplayName: 雾滚草
+WBoss.DisplayName: W
+// The decoy shares the real name so the hover text lies too
+WDecoy.DisplayName: W
+// CasterShoot.DisplayName: Caster Shoot
+// RaptorDrone.DisplayName: Raptor Drone
+// DeploymentCost.DisplayName: Deployment Cost

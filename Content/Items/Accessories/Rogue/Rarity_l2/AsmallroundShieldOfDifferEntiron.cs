@@ -10,13 +10,13 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l2
             Item.width = 30;
             Item.height = 30;
 			Item.value = Item.sellPrice(0, 3, 0, 0);
-			Item.rare = 1; // 橙色稀有度
+			Item.rare = 1; // 姗欒壊绋�鏈夊害
             Item.accessory = true;
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            // 计算基础防御（排除所有加成）
+            // 璁＄畻鍩虹闃插尽锛堟帓闄ゆ墍鏈夊姞鎴愶級
             player.statDefense += (int)(player.statDefense * 0.15f);
         }
     }

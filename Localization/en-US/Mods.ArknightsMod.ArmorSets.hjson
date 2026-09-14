@@ -1,3 +1,10 @@
+Astesia: {
+	HeadName: Astesia's Helmet
+	HelmetEffect: "[c/beebff:Helmet]: While enemies are nearby, gain +5% melee attack speed every 20s (up to +25%); expires 5s after no enemies remain"
+	SetEffect: "[c/beebff:Set]: While enemies are nearby, gain +5% defense every 20s (up to +25%); expires 5s after no enemies remain"
+	SetBonus: +5% melee speed/DEF per 20s near enemies (max 25%); resets 5s after they leave
+}
+
 W: {
 	HeadName: W's Helmet
 	HelmetEffect: "[c/beebff:Helmet]: Stunned enemies take +18% physical damage"
@@ -263,6 +270,13 @@ Manticore: {
 	HelmetEffect: "[c/beebff:Helmet]: 10% physical and magic dodge"
 	SetEffect: "[c/beebff:Set]: After 2.5s without attacking, enter stealth; attacking breaks stealth and +50% that hit"
 	SetBonus: Stealth after 2.5s idle; +50% break-stealth hit
+}
+
+Rope: {
+	HeadName: Rope's Helmet
+	HelmetEffect: "[c/beebff:Helmet]: 15% chance to dodge attacks when hit"
+	SetEffect: "[c/beebff:Set]: If you neither dodge nor take damage for 5 seconds, the next hit is guaranteed to dodge"
+	SetBonus: 15% dodge on hit; after 5s with no dodge/damage, next hit always dodges
 }
 
 Mizuki: {

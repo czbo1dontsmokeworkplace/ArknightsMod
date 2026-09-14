@@ -12,8 +12,8 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 			float currentBonus = 0.03f * currentCount;
 			Player player = Main.LocalPlayer;
 			if (player != null) {
-				string TXT = Language.GetTextValue("Mods.Alk");//µ±Ç°ÈËÊý/¼Ó³É
-				// Ìí¼ÓÌáÊ¾(¸ºÔð±¾µØ»¯µÄ¿ÉÄÜ»áºÜÀÛ)
+				string TXT = Language.GetTextValue("Mods.Alk");//å½“å‰äººæ•°/åŠ æˆ
+				// æ·»åŠ æç¤º(è´Ÿè´£æœ¬åœ°åŒ–çš„å¯èƒ½ä¼šå¾ˆç´¯)
 				tooltips.Add(new TooltipLine(Mod, "npc", $"{TXT} {currentCount}/{currentBonus}"));
 				foreach (TooltipLine line in tooltips) {
 					if (line.Mod == "Terraria" || line.Mod == Mod.Name) {
@@ -48,7 +48,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
         }
 
 
-        //¼ÆËãÊÀ½çÉÏËùÓÐ´æ»îµÄ³ÇÕòNPCÊýÁ¿
+        //è®¡ç®—ä¸–ç•Œä¸Šæ‰€æœ‰å­˜æ´»çš„åŸŽé•‡NPCæ•°é‡
 
         private int CountAliveTownNPCs()
         {
@@ -58,7 +58,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
             {
                 NPC npc = Main.npc[i];
 
-                // ¼ì²éNPCÊÇ·ñÂú×ãÌõ¼þ£º
+                // æ£€æŸ¥NPCæ˜¯å¦æ»¡è¶³æ¡ä»¶ï¼š
                 
                 if (npc.active && npc.townNPC && npc.friendly && npc.lifeMax > 5)
                 {

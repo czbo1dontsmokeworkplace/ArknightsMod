@@ -27,7 +27,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			NPC.lifeMax = 75;
 			NPC.damage = 10;
 			NPC.defense = 12;
-			NPC.knockBackResist = 0.5f;//»÷ÍË¿¹ĞÔ£¬0fÎª×î¸ß£¬1fÎª×îµÍ
+			NPC.knockBackResist = 0.5f;//å‡»é€€æŠ—æ€§ï¼Œ0fä¸ºæœ€é«˜ï¼Œ1fä¸ºæœ€ä½
 			NPC.width = 32;
 			NPC.height = 56;
 			NPC.aiStyle = 0;
@@ -66,12 +66,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			});
 		}
 
-		public override bool? CanBeHitByItem(Player player, Item item)//ÎŞµĞÖ¡
+		public override bool? CanBeHitByItem(Player player, Item item)//æ— æ•Œå¸§
 		{
 			return null;
 		}
 
-		public override bool? CanBeHitByProjectile(Projectile Projectile)//²»±»µĞ·½µ¯Ä»ºÍÎŞÀ´Ô´µ¯Ä»¹¥»÷&ÉÁ±Ü
+		public override bool? CanBeHitByProjectile(Projectile Projectile)//ä¸è¢«æ•Œæ–¹å¼¹å¹•å’Œæ— æ¥æºå¼¹å¹•æ”»å‡»&é—ªé¿
 		{
 			if (Projectile.hostile == true) {
 				return false;
@@ -124,7 +124,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			diffX = Player.Center.X - NPC.Center.X;
 			diffY = Player.Center.Y - NPC.Center.Y;
 			ax = 0.2f;
-			distance = (float)Math.Sqrt(Math.Pow(diffX / 16, 2) + Math.Pow(diffY / 16, 2));//µ½Íæ¼ÒµÄ¾àÀë£¨¸ñÊı£©
+			distance = (float)Math.Sqrt(Math.Pow(diffX / 16, 2) + Math.Pow(diffY / 16, 2));//åˆ°ç©å®¶çš„è·ç¦»ï¼ˆæ ¼æ•°ï¼‰
 			if (NPC.velocity.X != 0) {
 				NPC.spriteDirection = Math.Sign(NPC.velocity.X);
 				NPC.rotation = 0;
@@ -153,7 +153,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				escapetime = 180;
 				vx = 1f;
 			}
-			//Íæ¼ÒËÀÍö
+			//ç©å®¶æ­»äº¡
 			if (!Player.active || Player.dead) {
 				NPC.TargetClosest(false);
 				if (Player.dead) {
@@ -162,11 +162,11 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				}
 			}
 
-			//Ä£Ê½Ñ¡Ôñ
-			if (distance >= atkrange) {//¹¥»÷·¶Î§Ö®Íâ
+			//æ¨¡å¼é€‰æ‹©
+			if (distance >= atkrange) {//æ”»å‡»èŒƒå›´ä¹‹å¤–
 				Walk();
 			}
-			else if (distance >= escrange + 2) {//ÌÓÅÜ·¶Î§Ö®Íâ
+			else if (distance >= escrange + 2) {//é€ƒè·‘èŒƒå›´ä¹‹å¤–
 				timer++;
 				if (timer >= atkloop) {
 					Attack();
@@ -177,7 +177,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 					//attacktimer = 0;
 				}
 			}
-			else if (distance >= escrange) {//ÖĞ¼ä·¶Î§£¬Ö»¹¥»÷²»ÒÆ¶¯
+			else if (distance >= escrange) {//ä¸­é—´èŒƒå›´ï¼Œåªæ”»å‡»ä¸ç§»åŠ¨
 				timer++;
 				NPC.velocity.X = float.Lerp(NPC.velocity.X, 0, 0.1f);
 				if (timer >= atkloop) {
@@ -188,7 +188,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 					//attacktimer = 0;
 				}
 			}
-			else {//ÌÓÅÜ·¶Î§Ö®ÄÚ
+			else {//é€ƒè·‘èŒƒå›´ä¹‹å†…
 				timer++;
 				if (timer >= atkloop) {
 					Attack();
@@ -201,7 +201,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			}
 		}
 
-		private void Walk() {//¿¿½ü£¬Èç¹ûºáÏòËÙ¶ÈÎª0Ê±×İÏòËÙ¶ÈÒ²Îª0£¬³¢ÊÔÌøÔ¾£¬ÌøÔ¾Êı´Îºó·´·½ÏòÌÓ×ß
+		private void Walk() {//é è¿‘ï¼Œå¦‚æœæ¨ªå‘é€Ÿåº¦ä¸º0æ—¶çºµå‘é€Ÿåº¦ä¹Ÿä¸º0ï¼Œå°è¯•è·³è·ƒï¼Œè·³è·ƒæ•°æ¬¡ååæ–¹å‘é€ƒèµ°
 			Player Player = Main.player[NPC.target];
 			iswalk = true;
 			isatk = false;
@@ -251,7 +251,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			}
 		}
 		private int jumpCD;
-		private void Escape() {//ÍùÔ¶ÀëÍæ¼Ò·½Ïò×ß£¬¿ÉÑ¡Ôñ¹¥»÷»ò²»¹¥»÷
+		private void Escape() {//å¾€è¿œç¦»ç©å®¶æ–¹å‘èµ°ï¼Œå¯é€‰æ‹©æ”»å‡»æˆ–ä¸æ”»å‡»
 			escapetimer++;
 			isescape = true;
 			iswalk = false;
@@ -346,24 +346,24 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		}
 		public override void OnKill() {
 			SoundStyle ghostSound = SoundID.NPCDeath7 with {
-				Pitch = -0.4f, // ·¶Î§[-1.0, 1.0]£¬-0.5±íÊ¾½µµÍ°Ë¶È
-				Volume = 0.6f  // ¿ÉÑ¡µ÷ÕûÒôÁ¿
+				Pitch = -0.4f, // èŒƒå›´[-1.0, 1.0]ï¼Œ-0.5è¡¨ç¤ºé™ä½å…«åº¦
+				Volume = 0.6f  // å¯é€‰è°ƒæ•´éŸ³é‡
 			};
 			SoundEngine.PlaySound(ghostSound, NPC.Center);
-			for (int i = 0; i < 25; i++) // ×ÜÁ£×ÓÊı
+			for (int i = 0; i < 25; i++) // æ€»ç²’å­æ•°
 	{
-				// 70%¸ÅÂÊÉú³ÉºÚÉ«£¬30%¸ÅÂÊÉú³É³ÈÉ«
+				// 70%æ¦‚ç‡ç”Ÿæˆé»‘è‰²ï¼Œ30%æ¦‚ç‡ç”Ÿæˆæ©™è‰²
 				bool isBlack = Main.rand.NextFloat() < 0.7f;
 
 				Dust dust = Dust.NewDustPerfect(
 					NPC.Center,
-					isBlack ? DustID.Asphalt : DustID.FireworksRGB, // ºÚÉ«»ò³ÈÉ«
+					isBlack ? DustID.Asphalt : DustID.FireworksRGB, // é»‘è‰²æˆ–æ©™è‰²
 					Main.rand.NextVector2Circular(5, 5),
 					Alpha: 150,
 					Scale: Main.rand.NextFloat(1.2f, 2f)
 				);
 
-				// Í³Ò»ÎïÀí²ÎÊı
+				// ç»Ÿä¸€ç‰©ç†å‚æ•°
 				dust.noGravity = true;
 				dust.fadeIn = 1.5f;
 				dust.rotation = Main.rand.NextFloat(MathHelper.TwoPi);

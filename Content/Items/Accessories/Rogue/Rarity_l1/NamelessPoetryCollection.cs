@@ -6,7 +6,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l1
 {
     public class NamelessPoetryCollection : ModItem
     {
-      //减少全部怪物5%生命
+      //鍑忓皯鍏ㄩ儴鎬墿5%鐢熷懡
 
         public override void SetDefaults()
         {
