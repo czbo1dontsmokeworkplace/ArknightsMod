@@ -34,23 +34,23 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Nian
 		}
 
 		public override void SetDefaults() {
-			Item.rare = ItemRarityID.Orange; 
+			Item.rare = ItemRarityID.Orange;
 			Item.value = Item.sellPrice(0, 40, 0, 0);
 			Item.consumable = false;
 
-			Item.useStyle = ItemUseStyleID.Swing; 
+			Item.useStyle = ItemUseStyleID.Swing;
 			Item.useAnimation = 45;
 			Item.useTime = 45;
-			Item.autoReuse = true; 
+			Item.autoReuse = true;
 
 			// Weapon Properties
 			Item.damage = 124;
 			Item.knockBack = 2.5f;
-			Item.noUseGraphic = true; 
+			Item.noUseGraphic = true;
 			Item.DamageType = DamageClass.Melee;
 			Item.noMelee = true;
 			Item.channel = true;
-			Item.crit = 21; 
+			Item.crit = 21;
 		}
 
 		public override bool AltFunctionUse(Player player) => false;
@@ -79,7 +79,7 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Nian
 
 						Item.UseSound = new SoundStyle("ArknightsMod/Sounds/SkillActive1") {
 							Volume = 0.6f,
-							MaxInstances = 4, 
+							MaxInstances = 4,
 						};
 						SoundEngine.PlaySound(Item.UseSound.Value, player.Center);
 					}
@@ -104,7 +104,7 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Nian
 
 						Item.UseSound = new SoundStyle("ArknightsMod/Sounds/SkillActive1") {
 							Volume = 0.4f,
-							MaxInstances = 4, 
+							MaxInstances = 4,
 						};
 						SoundEngine.PlaySound(Item.UseSound.Value, player.Center);
 					}
@@ -139,8 +139,8 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Nian
 		public override void HoldItem(Player player) {
 			var modPlayer = player.GetModPlayer<WeaponPlayer>();
 			if (Main.myPlayer == player.whoAmI) {
-				
-				
+
+
 				modPlayer.HoldBagpipeSpear = true; // you have to write this line HERE!
 			}
 			base.HoldItem(player);
@@ -151,7 +151,7 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Nian
 			public bool hasNianplayer = false;
 			public override void ResetEffects() {
 				if (Main.myPlayer != Player.whoAmI)
-					return; 
+					return;
 				bool isHoldingTargetWeapon = Player.HeldItem.type == ModContent.ItemType<NianWeapon>();
 				if (!isHoldingTargetWeapon) {
 					Player.GetModPlayer<Nianplayer>().hasNianplayer = false;
@@ -185,14 +185,14 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Nian
 					if (modPlayer.Skill == 1 && modPlayer.SkillActive == true && Player.HeldItem.type == ModContent.ItemType<NianWeapon>()) {
 						Player.statDefense *= 2.3f;
 					}
-					else if (modPlayer.Skill == 1 && !modPlayer.SkillActive == true && Player.HeldItem.type == ModContent.ItemType<NianWeapon>()) {
+					else if (modPlayer.Skill == 2 && !modPlayer.SkillActive == true && Player.HeldItem.type == ModContent.ItemType<NianWeapon>()) {
 						Player.statDefense *= 1.8f;
 					}
 				}
 				base.UpdateEquips();
 			}
 		}
-		
+
 
 
 	}
