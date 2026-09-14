@@ -363,8 +363,8 @@ namespace ArknightsMod.Content.Projectiles.Guard.Hellagur
 			Vector2 direction = BaseHeldMeleeSupport.Dir(AimAngle);
 			// 刀气始终从瞄准轴线上出发，不再使用弧顶 TipWorld，避免向斜上/斜下偏移。
 			Vector2 origin = Owner.MountedCenter + direction * 20f;
-			Projectile.NewProjectile(Projectile.GetSource_FromThis(), origin, direction * 10.5f,
-				ModContent.ProjectileType<HellagurBloodSlash>(), 0, 0f,
+			Projectile.NewProjectile(Projectile.GetSource_FromThis(), origin, direction * 21f,
+				ModContent.ProjectileType<HellagurBloodSlash>(), Projectile.damage, Projectile.knockBack,
 				Projectile.owner, LowHealthIntensity);
 		}
 

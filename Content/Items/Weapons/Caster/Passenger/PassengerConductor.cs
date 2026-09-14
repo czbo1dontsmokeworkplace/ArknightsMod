@@ -32,10 +32,10 @@ public sealed class PassengerConductor : ExpansionWeaponBase
         Item.DamageType = DamageClass.Magic;
         Item.width = Item.height = 40;
         Item.mana = 12;
-        // MiracleMatterJav 的原生三连发：0、10、20 帧射击，45 帧开始下一组。
-        Item.useTime = 10;
-        Item.useAnimation = 45;
-        Item.useLimitPerAnimation = 3;
+        // 对齐深靛的连射节奏，但改为四连发：每发 5 帧，轮次 30 帧。
+        Item.useTime = 5;
+        Item.useAnimation = 30;
+        Item.useLimitPerAnimation = 4;
         Item.useStyle = ItemUseStyleID.Shoot;
         Item.noMelee = true;
         Item.autoReuse = true;

@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Projectiles.Caster.Leizi;
 
 public sealed class LeiziFlyingDischarge : ModProjectile
 {
-    internal const float SpeedPerUpdate = 12f;
+    internal const float SpeedPerUpdate = 13.8f;
     private bool impactHandled;
     // 与异客同款表现，单发略小；两个技能保持普攻的 120% / 140%。
     internal static float Intensity(int mode) => 0.85f * (mode == 2 ? 1.4f : mode == 1 ? 1.2f : 1f);

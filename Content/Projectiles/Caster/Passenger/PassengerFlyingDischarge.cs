@@ -13,7 +13,7 @@ namespace ArknightsMod.Content.Projectiles.Caster.Passenger;
 /// <summary>非追踪的实体闪电弹。鼠标只决定方向，实际撞击后才启动链式传导。</summary>
 public sealed class PassengerFlyingDischarge : ModProjectile
 {
-    internal const float SpeedPerUpdate = 16f;
+    internal const float SpeedPerUpdate = 21.6f;
     internal const int UpdatesPerTick = 3;
     private float hitMultiplier = 1f;
     private bool empoweredHit;

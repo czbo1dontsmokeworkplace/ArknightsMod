@@ -3695,7 +3695,6 @@ LeiziStaff: {
 		Fires non-homing scarlet-orange and gold lightning through blocks
 		A direct hit triggers an impact burst and chains between up to 4 enemies
 		Each jump loses 15% damage and briefly slows ordinary enemies
-		Can be crafted into Passenger's Electromagnetic Conductor
 		'''
 }
 
