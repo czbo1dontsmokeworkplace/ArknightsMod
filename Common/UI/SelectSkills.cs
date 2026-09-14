@@ -156,9 +156,14 @@ namespace ArknightsMod.Common.UI
 			Recalculate();
 		}
 
-		private static void ChangeSkill(int index, bool force = false)
+		// UI 点击回调：这条路径下玩家必然是本地玩家，沿用 Main.LocalPlayer。
+		private static void ChangeSkill(int index, bool force = false) => ChangeSkill(Main.LocalPlayer, index, force);
+
+		// 显式传入玩家：换武器时的技能槽刷新走这条重载，
+		// 避免在加载存档/主菜单枚举阶段去碰尚未初始化的 Main.LocalPlayer。
+		private static void ChangeSkill(Player p, int index, bool force = false)
 		{
-			Player p = Main.LocalPlayer;
+			if (p == null || !p.active) return;
 			if (p.HeldItem.ModItem is not UpgradeWeaponBase ark) return;
 			var mp = p.GetModPlayer<WeaponPlayer>();
 			if (!mp.TrySelectSkill(ark, index, force)) return;
@@ -175,12 +180,25 @@ namespace ArknightsMod.Common.UI
 			_ins.ActiveSummonUI(data.SummonIcon.Value);
 		}
 
-		public static void ChangeSkillSlot(UpgradeWeaponBase ark)
+		/// <summary>
+		/// 刷新三个技能槽的显示，并把当前选中的技能同步给 UI。
+		/// </summary>
+		/// <param name="player">
+		/// 必须是已经初始化完成的玩家（实际游戏中的本地玩家）。
+		/// 不要退回使用 Main.LocalPlayer：本方法曾被 WeaponPlayer.ResetEffects 调用，
+		/// 而 ResetEffects 在加载角色存档（Player.Deserialize）、主菜单枚举角色列表时也会执行，
+		/// 那时 Main.LocalPlayer 的 ModPlayer 数组尚未初始化，会抛 IndexOutOfRangeException
+		/// 并导致角色存档加载失败。
+		/// </param>
+		public static void ChangeSkillSlot(UpgradeWeaponBase ark, Player player)
 		{
+			if (_ins == null || ark == null || player == null)
+				return;
+
 			_ins.s1.SetSkill(ark.GetSkillData(0));
 			_ins.s2.SetSkill(ark.GetSkillData(1));
 			_ins.s3.SetSkill(ark.GetSkillData(2));
-			ChangeSkill(Main.LocalPlayer.GetModPlayer<WeaponPlayer>().Skill, true);
+			ChangeSkill(player, player.GetModPlayer<WeaponPlayer>().Skill, true);
 		}
 
 		private void ActiveSummonUI(Texture2D icon)

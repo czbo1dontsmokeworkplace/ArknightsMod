@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Common.UI;
+using ArknightsMod.Common.UI;
 using ArknightsMod.Content;
 using ArknightsMod.Content.Items.Weapons.Specialist.Scene;
 using ArknightsMod.Content.Items.Weapons;
@@ -52,6 +52,15 @@ namespace ArknightsMod.Players
 		public int Skill;
 		public bool SummonMode;
 		public bool SkillInitialize = true;
+
+		/// <summary>
+		/// 「换武器后需要刷新技能槽 UI」的待处理标记。
+		/// ResetEffects 里不能直接调用 UI：它同时会被"加载角色存档"（Player.Deserialize）
+		/// 和"主菜单枚举角色列表"（Main.LoadPlayers）触发，那时 Main.LocalPlayer 还是未初始化
+		/// ModPlayer 数组的裸 Player，调用 GetModPlayer 会 IndexOutOfRangeException，
+		/// 进而让角色文件加载失败、角色无法使用。这里只登记标记，真正的刷新放到 PostUpdate。
+		/// </summary>
+		public bool pendingSkillSlotRefresh;
 
 		// 隐德来希 S1「玫影觅迹」：下次普攻强化（175% 伤害 + 连续两段刀光）
 		public bool EntelechiaEmpoweredNext;
@@ -161,6 +170,17 @@ namespace ArknightsMod.Players
 		//新添入的，用于更新
 		public override void PostUpdate() {
 			UnderAttack = false;
+
+			// 换武器后的技能槽 UI 刷新（登记于 ResetEffects，见 pendingSkillSlotRefresh 的说明）。
+			// PostUpdate 只在实际游戏中运行，此时玩家与其 ModPlayer 数组都已初始化；
+			// 同时再校一遍"确实是本地玩家本人"，避免任何非游戏内路径进到 UI 里。
+			if (pendingSkillSlotRefresh) {
+				pendingSkillSlotRefresh = false;
+				if (!Main.dedServ && !Main.gameMenu && Player.whoAmI == Main.myPlayer
+					&& Main.LocalPlayer == Player
+					&& Player.HeldItem.ModItem is UpgradeWeaponBase ark)
+					SelectSkills.ChangeSkillSlot(ark, Player);
+			}
 
 			// S1 第二段刀光：倒计时结束后发射（更大、正常速度的放大刀光）
 			if (EntelechiaSecondShotDelay > 0) {
@@ -432,8 +452,13 @@ namespace ArknightsMod.Players
 						: 0;
 					selectedSkillByItemType[type] = Skill;
 
+					// ⚠ 这里不能直接调 UI。ResetEffects 除了游戏内每帧执行，还会在
+					// "加载角色存档"（Player.Deserialize）与"主菜单枚举角色列表"（Main.LoadPlayers）
+					// 时被调用；那一刻 Main.LocalPlayer 还是 ModPlayer 数组未初始化的裸 Player，
+					// 直接进 UI 会 IndexOutOfRangeException，导致该角色文件加载失败、角色无法使用。
+					// 因此只登记待刷新标记，真正的 UI 刷新交给 PostUpdate（只在实际游戏中运行）。
 					if (!Main.dedServ && Player.whoAmI == Main.myPlayer)
-						SelectSkills.ChangeSkillSlot(ark);
+						pendingSkillSlotRefresh = true;
 				}
 
 				if (oldSkill != Skill) {
