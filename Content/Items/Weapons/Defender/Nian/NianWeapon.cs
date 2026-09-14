@@ -67,7 +67,7 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Nian
 		}
 
 		public override bool CanUseItem(Player player) {
-			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
+			var modPlayer = player.GetModPlayer<WeaponPlayer>();
 			if (Main.myPlayer == player.whoAmI) {
 				if (ArknightsKeybinds.SkillActivatePressed(player)) {
 					// S1
@@ -124,7 +124,7 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Nian
 		}
 
 		public override void ModifyWeaponDamage(Player player, ref StatModifier damage) {
-			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
+			var modPlayer = player.GetModPlayer<WeaponPlayer>();
 			if (Main.myPlayer == player.whoAmI) {
 				if (modPlayer.Skill == 0 && modPlayer.SkillActive == true) {
 					damage *= 1.45f;
@@ -137,7 +137,7 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Nian
 		}
 
 		public override void HoldItem(Player player) {
-			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
+			var modPlayer = player.GetModPlayer<WeaponPlayer>();
 			if (Main.myPlayer == player.whoAmI) {
 				
 				
@@ -174,9 +174,12 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Nian
             }
 
             public override void UpdateEquips() {
-				var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
+				var modPlayer = Player.GetModPlayer<WeaponPlayer>();
 				if (Main.myPlayer == Player.whoAmI) {
-					if (modPlayer.Skill == 0 && modPlayer.SkillActive == true) {
+					// 一技能分支必须和二/三技能一样校验"手里拿的是不是年的武器"，
+					// 否则任何干员武器的第一技能（Skill == 0）开启时都会白拿一份 ×1.7 防御。
+					if (modPlayer.Skill == 0 && modPlayer.SkillActive == true
+						&& Player.HeldItem.type == ModContent.ItemType<NianWeapon>()) {
 						Player.statDefense *= 1.7f;
 					}
 					if (modPlayer.Skill == 1 && modPlayer.SkillActive == true && Player.HeldItem.type == ModContent.ItemType<NianWeapon>()) {

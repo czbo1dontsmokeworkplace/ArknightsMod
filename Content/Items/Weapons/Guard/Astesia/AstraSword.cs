@@ -149,7 +149,9 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Astesia
 	/// <summary>
 	/// 星辉剑专属玩家效果：技能开启期间防御力 +80%
 	/// （星座守护与星辉剑两个技能的防御加成相同，共用此判断）。
-	/// PostUpdateEquips 在所有装备的防御累加之后执行，此处乘算加成最可靠。
+	/// 加成写入 DefenseStat 的百分比加算层，收益恒为 +80%：写成
+	/// <c>statDefense += (int)(statDefense * 0.8f)</c> 会把"已含乘法的总值"当平铺值再加一次，
+	/// 再被乘法层放大（例如场上另有 ×1.7 时，实际收益会从 +80% 变成 +301%）。
 	/// </summary>
 	public class AstraSwordPlayer : ModPlayer
 	{
@@ -157,7 +159,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Astesia
 			var wp = Player.GetModPlayer<WeaponPlayer>();
 			if (Player.HeldItem?.ModItem is AstraSword && wp.SkillActive
 				&& (wp.Skill == 0 || wp.Skill == 1))
-				Player.statDefense += (int)(Player.statDefense * 0.8f); // 防御力 +80%
+				Player.statDefense.AdditiveBonus += 0.8f; // 防御力 +80%
 		}
 	}
 }
