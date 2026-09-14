@@ -38,6 +38,14 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Earthspirit
 			Item.staff[Item.type] = true;
 		}
 
+		public override void AddRecipes() => CreateRecipe()
+			.AddIngredient(ItemID.MagicMissile)
+			.AddIngredient(ItemID.MeteoriteBar, 10)
+			.AddIngredient(ItemID.FallenStar, 5)
+			.AddIngredient(ItemID.ManaCrystal)
+			.AddTile(TileID.WorkBenches)
+			.Register();
+
 		public override bool AltFunctionUse(Player player) => false;
 
 		public override bool CanUseItem(Player player) {

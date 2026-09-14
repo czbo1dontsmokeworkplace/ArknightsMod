@@ -3,6 +3,7 @@ using ArknightsMod.Common.Particle;
 using ArknightsMod.Content.Projectiles.Guard.Hellagur;
 using ArknightsMod.Content.Buffs;
 using ArknightsMod.Content.Items.Weapons.Specialist.Red;
+using ArknightsMod.Content.Items.Weapons.Specialist.Gravel;
 using ArknightsMod.Content.Projectiles.BasePROJ;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -23,9 +24,10 @@ public sealed class RedDaggerHoldout : ModProjectile
     private float frontAngle;
     private float backAngle;
     private Player Owner => Main.player[Projectile.owner];
+    private bool IsGravel => Owner.HeldItem.ModItem is GravelDualBlades;
     public override string Texture => "ArknightsMod/Content/Items/Weapons/Specialist/Red/RedDagger";
-    internal static float SlashInterval(float attackSpeed) =>
-        Math.Clamp((int)MathF.Round(6f / Math.Max(.1f, attackSpeed)), 2, 60) / RedDagger.AttackSpeedBonus;
+    internal static float SlashInterval(float attackSpeed, float bonus = RedDagger.AttackSpeedBonus) =>
+        Math.Clamp((int)MathF.Round(6f / Math.Max(.1f, attackSpeed)), 2, 60) / bonus;
     public override void SetDefaults()
     {
         Projectile.width = Projectile.height = 2;
@@ -39,7 +41,7 @@ public sealed class RedDaggerHoldout : ModProjectile
     public override void AI()
     {
         if (!Owner.active || Owner.dead || Owner.CCed || Owner.noItems
-            || Owner.HeldItem.ModItem is not RedDagger
+            || (Owner.HeldItem.ModItem is not RedDagger && Owner.HeldItem.ModItem is not GravelDualBlades)
             || (Projectile.owner == Main.myPlayer && !Owner.channel))
         {
             Projectile.Kill();
@@ -57,7 +59,8 @@ public sealed class RedDaggerHoldout : ModProjectile
             {
                 var combat = Owner.GetModPlayer<RedDaggerPlayer>();
                 // 累加间隔保留上次剩余的小数，使加速不会因整数帧取整而丢失或变成 20%。
-                shotTimer += SlashInterval(Owner.GetTotalAttackSpeed(DamageClass.Melee) * combat.AttackSpeedMultiplier);
+                float speedBonus = IsGravel ? 1f : combat.AttackSpeedMultiplier;
+                shotTimer += SlashInterval(Owner.GetTotalAttackSpeed(DamageClass.Melee), IsGravel ? 1f : RedDagger.AttackSpeedBonus * speedBonus);
                 float direction = (++swipe & 1) == 0 ? -1f : 1f;
                 float angle = aim.ToRotation() + Main.rand.NextFloat(-.4363f, .4363f);
                 float scale = Math.Clamp(Owner.GetAdjustedItemScale(Owner.HeldItem), .7f, 1.3f);
@@ -65,7 +68,7 @@ public sealed class RedDaggerHoldout : ModProjectile
                     Owner.MountedCenter + aim * 12f, angle.ToRotationVector2() * 4.5f,
                     ModContent.ProjectileType<RedDaggerSlash>(), Owner.GetWeaponDamage(Owner.HeldItem),
                     Owner.HeldItem.knockBack, Projectile.owner, angle,
-                    direction * (combat.DeploymentActive ? 1.25f : 1f), scale);
+                    direction * (!IsGravel && combat.DeploymentActive ? 1.25f : 1f), IsGravel ? -scale : scale);
                 if (Main.projectile.IndexInRange(index))
                     Main.projectile[index].CritChance = Owner.GetWeaponCrit(Owner.HeldItem);
             }
@@ -77,8 +80,9 @@ public sealed class RedDaggerHoldout : ModProjectile
         Owner.heldProj = Projectile.whoAmI;
         Owner.itemTime = Owner.itemAnimation = 2;
         Owner.itemRotation = rotation + (Owner.direction < 0 ? MathHelper.Pi : 0);
-        float swing = MathF.Sin(age * MathHelper.Pi / SlashInterval(Owner.GetTotalAttackSpeed(DamageClass.Melee)
-            * Owner.GetModPlayer<RedDaggerPlayer>().AttackSpeedMultiplier)) * .9f;
+        var combatState = Owner.GetModPlayer<RedDaggerPlayer>();
+        float swing = MathF.Sin(age * MathHelper.Pi / SlashInterval(Owner.GetTotalAttackSpeed(DamageClass.Melee),
+            IsGravel ? 1f : RedDagger.AttackSpeedBonus * combatState.AttackSpeedMultiplier)) * .9f;
         frontAngle = rotation - MathHelper.PiOver2 + swing;
         backAngle = rotation - MathHelper.PiOver2 - swing;
         Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, frontAngle);
@@ -87,7 +91,7 @@ public sealed class RedDaggerHoldout : ModProjectile
     }
     public override bool PreDraw(ref Color lightColor)
     {
-        Texture2D knife = TextureAssets.Item[ModContent.ItemType<RedDagger>()].Value;
+        Texture2D knife = TextureAssets.Item[Owner.HeldItem.type].Value;
         DrawKnife(knife, Owner.GetBackHandPosition(Player.CompositeArmStretchAmount.Full, backAngle),
             backAngle, lightColor * .7f);
         DrawKnife(knife, Owner.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, frontAngle),
@@ -107,8 +111,9 @@ public sealed class RedDaggerSlash : ModProjectile
     internal const int Lifetime = 20;
     private Player Owner => Main.player[Projectile.owner];
     private int Age => Lifetime - Projectile.timeLeft;
-    private float Size => Math.Clamp(Projectile.ai[2], .7f, 1.3f);
+    private float Size => Math.Clamp(MathF.Abs(Projectile.ai[2]), .7f, 1.3f);
     private bool Empowered => MathF.Abs(Projectile.ai[1]) > 1.1f;
+    private bool IsGravel => Projectile.ai[2] < 0f;
     public override string Texture => "ArknightsMod/Content/Projectiles/Guard/Hellagur/HellagurSlashBody";
     public override void SetDefaults()
     {
@@ -135,7 +140,7 @@ public sealed class RedDaggerSlash : ModProjectile
     }
     public override void AI()
     {
-        if (!Owner.active || Owner.dead || Owner.HeldItem.ModItem is not RedDagger
+        if (!Owner.active || Owner.dead || (Owner.HeldItem.ModItem is not RedDagger && Owner.HeldItem.ModItem is not GravelDualBlades)
             || Vector2.DistanceSquared(Owner.MountedCenter, Projectile.Center) > 140f * 140f)
         {
             Projectile.Kill();
@@ -145,12 +150,12 @@ public sealed class RedDaggerSlash : ModProjectile
         if (Age == 0 && !Main.dedServ)
             SoundEngine.PlaySound(SoundID.Item1 with { Volume = .24f, Pitch = .45f,
                 PitchVariance = .16f, MaxInstances = 4 }, Projectile.Center);
-        Lighting.AddLight(Projectile.Center, new Vector3(.36f, .02f, .04f) * (1f - Age / 20f));
+        Lighting.AddLight(Projectile.Center, IsGravel ? new Vector3(.25f, .25f, .25f) : new Vector3(.36f, .02f, .04f) * (1f - Age / 20f));
     }
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
     {
         if (damageDone > 0)
-            RedDaggerVisuals.Hit(target.Center, Empowered);
+            RedDaggerVisuals.Hit(target.Center, Empowered, IsGravel);
     }
     public override bool PreDraw(ref Color lightColor)
     {
@@ -158,7 +163,7 @@ public sealed class RedDaggerSlash : ModProjectile
         float envelope = MathF.Sin(p * MathHelper.Pi);
         float angle = Projectile.ai[0] + MathF.Sign(Projectile.ai[1]) * (-1.2f + (1f - MathF.Pow(1f - p, 3f)) * 4.3f);
         RedDaggerVisuals.DrawSlash(Projectile.Center, angle, Size * (Empowered ? 1.25f : 1f),
-            envelope, Projectile.ai[1] < 0);
+            envelope, Projectile.ai[1] < 0, IsGravel);
         return false;
     }
 }
@@ -213,34 +218,35 @@ internal static class RedDaggerVisuals
         Vector2 closest = new(Math.Clamp(center.X, box.Left, box.Right), Math.Clamp(center.Y, box.Top, box.Bottom));
         return Vector2.DistanceSquared(center, closest) <= radius * radius;
     }
-    internal static void DrawSlash(Vector2 center, float angle, float scale, float fade, bool reverse)
+    internal static void DrawSlash(Vector2 center, float angle, float scale, float fade, bool reverse, bool gravel = false)
     {
         Texture2D body = ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Guard/Hellagur/HellagurSlashBody").Value;
         Texture2D edge = ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Guard/Hellagur/HellagurSlashEdge").Value;
         SpriteEffects flip = reverse ? SpriteEffects.FlipVertically : SpriteEffects.None;
         Vector2 position = center - Main.screenPosition;
-        Main.spriteBatch.Draw(body, position, null, new Color(27, 3, 10) * (fade * .62f), angle,
+            Main.spriteBatch.Draw(body, position, null, (gravel ? new Color(45, 45, 45) : new Color(27, 3, 10)) * (fade * .62f), angle,
             body.Size() * .5f, new Vector2(112, 78) / body.Size() * scale, flip, 0);
         BaseHeldMeleeSupport.BeginAdditive(Main.spriteBatch);
         for (int layer = 0; layer < 3; layer++)
         {
             float size = .72f + layer * .14f;
-            Color color = layer == 0 ? new Color(255, 216, 224) : new Color(230, 30, 64);
+            Color color = gravel ? (layer == 0 ? new Color(225, 225, 225) : new Color(150, 150, 150))
+                : (layer == 0 ? new Color(255, 216, 224) : new Color(230, 30, 64));
             Main.spriteBatch.Draw(layer == 0 ? edge : body, position, null, color * (fade * (layer == 0 ? .28f : .38f)),
                 angle, (layer == 0 ? edge : body).Size() * .5f,
                 new Vector2(112, 78) / (layer == 0 ? edge : body).Size() * (size * scale), flip, 0);
         }
         BaseHeldMeleeSupport.EndAdditive(Main.spriteBatch);
     }
-    internal static void Hit(Vector2 point, bool empowered)
+    internal static void Hit(Vector2 point, bool empowered, bool gravel = false)
     {
         if (Main.dedServ || Main.gameMenu)
             return;
         for (int i = 0; i < (empowered ? 8 : 5); i++)
             new DefaultParticle(point, Main.rand.NextVector2Circular(4f, 3f), 10 + i % 4, .32f,
-                i % 4 == 0 ? new Color(255, 216, 224) : new Color(210, 25, 57), true)
+                i % 4 == 0 ? new Color(225, 225, 225) : (gravel ? new Color(150, 150, 150) : new Color(210, 25, 57)), true)
                 { Deformation = new Vector2(.25f, 2f) }.Spawn();
-        Dust dust = Dust.NewDustPerfect(point, DustID.Blood, Main.rand.NextVector2Circular(2, 2), Scale: .7f);
+        Dust dust = Dust.NewDustPerfect(point, gravel ? DustID.Smoke : DustID.Blood, Main.rand.NextVector2Circular(2, 2), Scale: .7f);
         dust.noGravity = true;
     }
 }

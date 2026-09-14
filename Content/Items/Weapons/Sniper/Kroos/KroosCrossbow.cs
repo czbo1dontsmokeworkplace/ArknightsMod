@@ -73,6 +73,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Kroos
 		}
 
 		public override void ModifyWeaponDamage(Player player, ref StatModifier damage) {
+			damage *= 0.8f;
 			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
 			if (Main.myPlayer == player.whoAmI) {
 				if (modPlayer.Skill == 0 && (modPlayer.StockCount > 0 || modPlayer.SkillActive == true)) {
@@ -82,7 +83,9 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Kroos
 		}
 
 		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
-			Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI);
+			Vector2 perpendicular = velocity.SafeNormalize(Vector2.UnitX).RotatedBy(MathHelper.PiOver2) * 4f;
+			Projectile.NewProjectile(source, position + perpendicular, velocity, type, damage, knockback, player.whoAmI);
+			Projectile.NewProjectile(source, position - perpendicular, velocity, type, damage, knockback, player.whoAmI);
 			return false;
 		}
 		public override Vector2? HoldoutOffset()
@@ -92,7 +95,9 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Kroos
 
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.Sugar>(2);
+			recipe.AddRecipeGroup(OperatorWeaponRecipeGroups.AnyVanillaWoodenBow, 1);
+			recipe.AddIngredient(ItemID.Bunny, 1);
+			recipe.AddIngredient(ItemID.Silk, 2);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

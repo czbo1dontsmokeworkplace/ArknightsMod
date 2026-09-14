@@ -44,7 +44,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Adnachiel
 			Item.channel = true; //Channel so that you can held the weapon [Important]
 			Item.knockBack = 2;
 			Item.shoot = ProjectileID.WoodenArrowFriendly;
-			Item.shootSpeed = 15f;
+			Item.shootSpeed = 19.5f;
 			Item.useAmmo = AmmoID.Arrow;
 
 
@@ -105,7 +105,8 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Adnachiel
 
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.Polyester>(2);
+			recipe.AddRecipeGroup(OperatorWeaponRecipeGroups.AnyVanillaWoodenBow, 1);
+			recipe.AddRecipeGroup(OperatorWeaponRecipeGroups.GoldOrPlatinumBar, 3);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

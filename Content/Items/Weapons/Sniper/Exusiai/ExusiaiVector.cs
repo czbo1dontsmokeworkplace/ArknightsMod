@@ -17,10 +17,16 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Exusiai
 	{
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.PolymerizationPreparation>(4);
-			recipe.AddIngredient<Material.SugarLump>(5);
+			recipe.AddIngredient(ItemID.Uzi);
+			recipe.AddIngredient(ItemID.ChlorophyteBar, 15);
+			recipe.AddIngredient(ItemID.MusketBall, 999);
+			recipe.AddRecipeGroup(OperatorWeaponRecipeGroups.IronOrLeadBar, 25);
+			recipe.AddIngredient(ItemID.IllegalGunParts);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
+			Recipe.Create(ItemID.Uzi).AddIngredient(ItemID.Minishark)
+				.AddRecipeGroup(OperatorWeaponRecipeGroups.CobaltOrPalladiumBar, 5)
+				.AddIngredient(ItemID.IllegalGunParts).AddTile(TileID.Anvils).Register();
 		}
 		private static SoundStyle SkillActive1;
 		private static SoundStyle ExusiaiVectorA;

@@ -180,6 +180,12 @@ public sealed class RedDaggerPlayer : ModPlayer
         skill.StockCount = Deployment.Cooldown == 0 ? 1 : 0;
     }
 
+    internal void ApplyEmergencyOneSecondCharge()
+    {
+        if (Holding && Deployment.Cooldown > 0)
+            Deployment.ReduceCooldown((int)MathF.Ceiling(RedDeploymentState.Duration / 60f));
+    }
+
     public override bool FreeDodge(Player.HurtInfo info)
     {
         if (Player.whoAmI != Main.myPlayer || !ExecutionActive

@@ -14,6 +14,10 @@ internal sealed class RedDeploymentState
         if (Cooldown > 0) Cooldown--;
         if (Remaining > 0) Remaining--;
     }
+    internal void ReduceCooldown(int amount)
+    {
+        Cooldown = Math.Max(0, Cooldown - Math.Max(0, amount));
+    }
     internal bool Start()
     {
         if (Cooldown > 0) return false;

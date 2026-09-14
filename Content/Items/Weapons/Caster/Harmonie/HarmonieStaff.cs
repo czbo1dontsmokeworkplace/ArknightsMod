@@ -85,12 +85,9 @@ public sealed class HarmonieStaff : ExpansionWeaponBase
 
     public override void AddRecipes()
     {
-        // 两条等价配方，钴蓝/钯金世界都能在困难模式初期制作，不要求机械首领材料。
-        foreach (int bar in new[] { ItemID.CobaltBar, ItemID.PalladiumBar })
-            CreateRecipe().AddIngredient<IndigoStaff>().AddIngredient(bar, 12)
-                .AddIngredient(ItemID.CrystalShard, 8).AddIngredient(ItemID.SoulofLight, 6)
-                .AddIngredient<global::ArknightsMod.Content.Items.Material.Device>(3)
-                .AddIngredient<global::ArknightsMod.Content.Items.Material.RMA7024>(6)
-                .AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>()).Register();
+        CreateRecipe().AddIngredient<IndigoStaff>()
+            .AddRecipeGroup(OperatorWeaponRecipeGroups.CobaltOrPalladiumBar, 12)
+            .AddIngredient(ItemID.CrystalShard, 8).AddIngredient(ItemID.SoulofLight, 6)
+            .AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>()).Register();
     }
 }

@@ -231,8 +231,11 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Pozemka
 
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<CrystallineElectronicUnit>(3);
-			recipe.AddIngredient<OrirockConcentration>(9);
+			recipe.AddIngredient<global::ArknightsMod.Content.Items.Weapons.Sniper.Schwarz.SchwarzBow>();
+			recipe.AddIngredient(ItemID.FragmentSolar, 10);
+			recipe.AddIngredient(ItemID.FragmentVortex, 10);
+			recipe.AddIngredient(ItemID.FragmentNebula, 10);
+			recipe.AddIngredient(ItemID.FragmentStardust, 10);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

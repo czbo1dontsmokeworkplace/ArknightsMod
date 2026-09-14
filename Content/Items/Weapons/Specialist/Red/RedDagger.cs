@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using GravelDualBlades = ArknightsMod.Content.Items.Weapons.Specialist.Gravel.GravelDualBlades;
 
 namespace ArknightsMod.Content.Items.Weapons.Specialist.Red;
 
@@ -58,14 +59,9 @@ public sealed class RedDagger : ExpansionWeaponBase
     }
     public override void AddRecipes()
     {
-        // 两条等价配方：钴锭或钯金锭任选一种，不要求同时提供。
-        foreach (int bar in new[] { ItemID.CobaltBar, ItemID.PalladiumBar })
-        {
-            CreateRecipe().AddIngredient(ItemID.ThrowingKnife, 50).AddIngredient(bar, 10)
+        CreateRecipe().AddIngredient(ModContent.ItemType<GravelDualBlades>()).AddRecipeGroup(OperatorWeaponRecipeGroups.CobaltOrPalladiumBar, 10)
                 .AddIngredient(ItemID.SoulofNight, 8).AddIngredient(ItemID.Silk, 5)
-                .AddIngredient(ItemID.RedDye).AddIngredient<global::ArknightsMod.Content.Items.Material.Orirock>(7)
-                .AddIngredient<global::ArknightsMod.Content.Items.Material.ManganeseTrihydrate>(7)
+                .AddIngredient(ItemID.RedDye)
                 .AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>()).Register();
-        }
     }
 }

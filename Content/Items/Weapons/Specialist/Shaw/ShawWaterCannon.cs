@@ -49,7 +49,11 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.Shaw
         }
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.Oriron>(2);
+			recipe.AddIngredient(ItemID.AquaScepter);
+			recipe.AddIngredient(ItemID.Gel, 25);
+			recipe.AddRecipeGroup(OperatorWeaponRecipeGroups.IronOrLeadBar, 5);
+			recipe.AddIngredient(ItemID.Switch);
+			recipe.AddIngredient(ItemID.Wire, 25);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

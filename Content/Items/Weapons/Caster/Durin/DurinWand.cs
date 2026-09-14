@@ -37,7 +37,7 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Durin
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
 			recipe.AddIngredient(ItemID.ManaCrystal,1);
-			recipe.AddIngredient(ItemID.RichMahogany,10);
+			recipe.AddRecipeGroup(RecipeGroupID.Wood, 10);
 			recipe.AddTile(TileID.WorkBenches);
 			recipe.Register();
 		}

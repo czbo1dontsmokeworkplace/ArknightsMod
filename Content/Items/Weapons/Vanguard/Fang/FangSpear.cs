@@ -22,14 +22,14 @@ namespace ArknightsMod.Content.Items.Weapons.Vanguard.Fang
             Item.value = Item.sellPrice(silver: 10);
 
             // Use Properties
-            Item.useAnimation = 20;
-            Item.useTime = 33;
+            Item.useAnimation = 22;
+            Item.useTime = 22;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.UseSound = SoundID.Item71;
             Item.autoReuse = true;
 
             // Weapon Properties
-            Item.damage = 20;
+            Item.damage = 16;
             Item.knockBack = 1f;
             Item.shootSpeed = 3f;
             Item.shoot = ModContent.ProjectileType<FangSpear_Stab>();
@@ -54,7 +54,9 @@ namespace ArknightsMod.Content.Items.Weapons.Vanguard.Fang
         }
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.Polyester>(2);
+			recipe.AddIngredient(ItemID.Spear);
+			recipe.AddRecipeGroup(OperatorWeaponRecipeGroups.GoldOrPlatinumBar, 5);
+			recipe.AddIngredient(ItemID.Feather);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

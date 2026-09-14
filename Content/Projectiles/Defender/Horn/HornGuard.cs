@@ -16,7 +16,7 @@ public sealed class HornGuard : ModProjectile
     private byte visualState;
     public override void SendExtraAI(BinaryWriter writer) => writer.Write(visualState);
     public override void ReceiveExtraAI(BinaryReader reader) => visualState = reader.ReadByte();
-    public override string Texture => "Terraria/Images/Item_" + ItemID.GrenadeLauncher;
+    public override string Texture => "ArknightsMod/Content/Items/Weapons/Defender/Horn/HornMortar";
     public override void SetDefaults()
     {
         Projectile.width = Projectile.height = 24;
@@ -55,12 +55,13 @@ public sealed class HornGuard : ModProjectile
         Texture2D texture = TextureAssets.Projectile[Type].Value;
         Vector2 aim = Projectile.ai[0].ToRotationVector2();
         Vector2 gunCenter = owner.MountedCenter + aim * (19f - Projectile.ai[2] * .5f);
-        // The vanilla launcher points right at rotation zero. Vertical flipping keeps the grip below it when aiming left.
-        Main.EntitySpriteDraw(texture, gunCenter - Main.screenPosition, null, lightColor, Projectile.ai[0],
+        // The supplied mortar sprite droops by about 25 degrees; rotate it upward so its muzzle follows the aim vector.
+        float mortarRotation = Projectile.ai[0] - MathHelper.ToRadians(25f);
+        Main.EntitySpriteDraw(texture, gunCenter - Main.screenPosition, null, lightColor, mortarRotation,
             texture.Size() * .5f, 1f, owner.direction < 0 ? SpriteEffects.FlipVertically : SpriteEffects.None);
         if (Projectile.ai[1] == 1)
         {
-            Texture2D shield = ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Defender/Cuora/Cuora_Shield").Value;
+            Texture2D shield = ModContent.Request<Texture2D>("ArknightsMod/Content/Items/Weapons/Defender/Horn/HornShield").Value;
             Main.EntitySpriteDraw(shield, Projectile.Center - Main.screenPosition, null, lightColor, 0f,
                 shield.Size() * .5f, 1.25f, owner.direction < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None);
         }
@@ -69,3 +70,4 @@ public sealed class HornGuard : ModProjectile
     public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs,
         List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI) => overPlayers.Add(index);
 }
+

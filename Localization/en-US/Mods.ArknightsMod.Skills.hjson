@@ -468,8 +468,8 @@ GoldenglowWand: {
 		Label: Sparks Flying
 		Desc:
 			'''
-			Drone +1, locks onto enemies
-			ATK [c/3791db:+40%], ASPD [c/3791db:+50]
+			Drone cap +1; lightning locks onto enemies near the cursor
+			ATK [c/3791db:+40%], discharge rate [c/3791db:+50%]
 			'''
 	}
 
@@ -477,8 +477,8 @@ GoldenglowWand: {
 		Label: Current Surge
 		Desc:
 			'''
-			Drone +1, locks onto enemies
-			Attack range expanded, ATK [c/3791db:+60%]
+			Drone cap +1; expanded lightning targeting radius
+			Discharge range increased to 1300, ATK [c/3791db:+60%]
 			[c/EDA128:Infinite duration]
 			'''
 	}
@@ -487,8 +487,8 @@ GoldenglowWand: {
 		Label: Pure Radiance
 		Desc:
 			'''
-			[c/f6643b:Stops attacking], Drone +2
-			Attack range expands to the entire screen, ATK [c/3791db:+80%]
+			Maintain continuous discharge and periodic overdrive; drone cap +2
+			Discharge range increased to 1800, ATK [c/3791db:+80%]
 			'''
 	}
 }

@@ -130,11 +130,8 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Specter
 		public override void AddRecipes() {
 			CreateRecipe()
 				.AddIngredient(ItemID.SawtoothShark)
-				.AddIngredient(ItemID.HallowedBar, 5)
-				.AddIngredient(ItemID.SharkFin)
-				.AddIngredient(ItemID.SoulofFright, 4)
-				.AddIngredient<global::ArknightsMod.Content.Items.Material.Orirock>(6)
-				.AddIngredient<global::ArknightsMod.Content.Items.Material.LoxicKohl>(8)
+				.AddIngredient(ItemID.Chain, 15)
+				.AddIngredient(ItemID.Switch)
 				.AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>())
 				.Register();
 		}

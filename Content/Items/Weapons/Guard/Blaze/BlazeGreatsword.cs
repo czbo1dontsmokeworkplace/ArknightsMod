@@ -126,19 +126,14 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Blaze
 		}
 
 		public override void AddRecipes() {
-			foreach (int saw in new[] { ItemID.ButchersChainsaw, ModContent.ItemType<SpecterBoneSaw>() }) {
-				CreateRecipe()
-					.AddIngredient(saw)
-					.AddIngredient(ItemID.Wire, 150)
-					.AddIngredient(ItemID.HallowedBar, 15)
-					.AddIngredient(ItemID.MechanicalLens)
-					.AddIngredient(ItemID.Lever, 2)
-					.AddIngredient(ItemID.Switch, 4)
-					.AddIngredient<global::ArknightsMod.Content.Items.Material.Device>(5)
-					.AddIngredient<global::ArknightsMod.Content.Items.Material.D32Steel>(4)
+			CreateRecipe()
+					.AddIngredient(ModContent.ItemType<SpecterBoneSaw>())
+					.AddIngredient(ItemID.HallowedBar, 10)
+					.AddIngredient(ItemID.SoulofFright)
+					.AddIngredient(ItemID.SoulofMight)
+					.AddIngredient(ItemID.SoulofSight)
 					.AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>())
 					.Register();
-			}
 		}
 
 	}

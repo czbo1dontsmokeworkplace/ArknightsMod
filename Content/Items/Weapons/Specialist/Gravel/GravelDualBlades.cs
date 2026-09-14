@@ -1,5 +1,6 @@
 using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.Projectiles.Specialist.Gravel;
+using ArknightsMod.Content.Projectiles.Specialist.Red;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -13,7 +14,7 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.Gravel
 {
 	public class GravelDualBlades : ExpansionWeaponBase
 	{
-		protected override int[] EliteDamage => [25, 30, 36];
+		protected override int[] EliteDamage => [28, 28, 28];
 
 		private static SoundStyle SkillActiveSfx;
 
@@ -35,10 +36,14 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.Gravel
 			Item.useStyle = ItemUseStyleID.Shoot;
 			Item.noMelee = true;
 			Item.noUseGraphic = true;
-			Item.shoot = ModContent.ProjectileType<GravelSlash>();
+			Item.shoot = ModContent.ProjectileType<RedDaggerHoldout>();
 			Item.shootSpeed = 1f;
 			Item.crit = 4;
 		}
+
+		public override void AddRecipes() => CreateRecipe()
+			.AddIngredient(ItemID.ThrowingKnife, 50).AddIngredient(ItemID.StoneBlock, 100)
+			.AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>()).Register();
 
 		public override bool AltFunctionUse(Player player) => false;
 
@@ -67,13 +72,13 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.Gravel
 				return false;
 			}
 
-			return player.ownedProjectileCounts[ModContent.ProjectileType<GravelSlash>()] <= 0
+			return player.ownedProjectileCounts[ModContent.ProjectileType<RedDaggerHoldout>()] <= 0
 				&& base.CanUseItem(player);
 		}
 
 		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
 			Projectile.NewProjectile(source, player.Center, velocity,
-				ModContent.ProjectileType<GravelSlash>(), damage, knockback, player.whoAmI);
+				ModContent.ProjectileType<RedDaggerHoldout>(), damage, knockback, player.whoAmI);
 			return false;
 		}
 

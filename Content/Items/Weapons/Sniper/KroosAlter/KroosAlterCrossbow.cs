@@ -109,8 +109,9 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.KroosAlter
         }
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient(ModContent.ItemType<Aketon>());
-			recipe.AddIngredient(ModContent.ItemType<OrironCluster>());
+			recipe.AddRecipeGroup(global::ArknightsMod.Content.Items.Weapons.OperatorWeaponRecipeGroups.CobaltOrPalladiumBar, 8);
+			recipe.AddIngredient(ItemID.SoulofLight, 15);
+			recipe.AddIngredient(ItemID.CrystalShard, 5);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

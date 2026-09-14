@@ -6,6 +6,7 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using ArknightsMod.Content;
+using ArknightsMod.Content.Items.Weapons.Vanguard.Fang;
 
 namespace ArknightsMod.Content.Items.Weapons.Guard.Hongdou
 {
@@ -43,6 +44,13 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Hongdou
 			Item.shootSpeed = 3f;
 			Item.crit = 4;
 		}
+
+		public override void AddRecipes() => CreateRecipe()
+			.AddIngredient<FangSpear>()
+			.AddIngredient(ItemID.SoulofNight, 5)
+			.AddIngredient(ItemID.Ichor, 3)
+			.AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>())
+			.Register();
 
 		public override bool AltFunctionUse(Player player) => false;
 

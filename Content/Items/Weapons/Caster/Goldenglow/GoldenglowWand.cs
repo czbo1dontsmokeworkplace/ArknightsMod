@@ -1,5 +1,4 @@
 using ArknightsMod.Content;
-using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.Projectiles.Caster.Goldenglow;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
@@ -11,122 +10,115 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
-namespace ArknightsMod.Content.Items.Weapons.Caster.Goldenglow
+namespace ArknightsMod.Content.Items.Weapons.Caster.Goldenglow;
+
+public class GoldenglowWand : ExpansionWeaponBase
 {
-	public class GoldenglowWand : ExpansionWeaponBase
-	{
-		protected override int[] EliteDamage => [30, 36, 41];
+    protected override int[] EliteDamage => [450, 450, 450];
 
-		private static SoundStyle SkillActiveSfx;
+    public override void AddRecipes() => CreateRecipe()
+        .AddIngredient<global::ArknightsMod.Content.Items.Weapons.Caster.Passenger.PassengerConductor>()
+        .AddIngredient(ItemID.LunarBar, 20)
+        .AddTile(TileID.LunarCraftingStation)
+        .Register();
 
-		public override void Load() {
-			SkillActiveSfx = new SoundStyle("ArknightsMod/Sounds/SkillActive1") { Volume = 0.5f, MaxInstances = 2 };
-		}
+    public override void SetDefaults()
+    {
+        Item.damage = GoldenglowLightningBalance.Damage;
+        Item.DamageType = DamageClass.Magic;
+        Item.width = Item.height = 54;
+        Item.useTime = Item.useAnimation = 12;
+        Item.knockBack = 6f;
+        Item.value = Item.sellPrice(gold: 15);
+        Item.rare = ItemRarityID.Red;
+        Item.noMelee = true;
+        Item.noUseGraphic = true;
+        Item.shoot = ModContent.ProjectileType<GoldenglowHeldStaff>();
+        Item.mana = GoldenglowLightningBalance.ManaPerPayment;
+        Item.crit = 4;
+        Item.shootSpeed = 1f;
+        Item.useStyle = ItemUseStyleID.HoldUp;
+        Item.channel = true;
+        Item.autoReuse = false;
+    }
 
-		public override void SetDefaults() {
-			Item.damage = EliteDamage[0];
-			Item.DamageType = DamageClass.Magic;
-			Item.width = 54;
-			Item.height = 54;
-			Item.useTime = 23;
-			Item.useAnimation = 23;
-			Item.knockBack = 2f;
-			Item.value = Item.sellPrice(gold: 1);
-			Item.rare = ItemRarityID.Green;
-			Item.autoReuse = true;
-			Item.noMelee = true;
-			Item.shoot = ProjectileID.MagicMissile;  // 原版可引导导弹特效
-			Item.mana = 8;
-			Item.crit = 4;
-			Item.shootSpeed = 10f;
-			Item.useStyle = ItemUseStyleID.Shoot;
-			Item.channel = true;
-			Item.staff[Item.type] = true;
-		}
+    public override void HoldItem(Player player)
+    {
+        base.HoldItem(player);
+        // Skill activation must also work while itemTime is held at 2 by the channeled staff.
+        if (ArknightsKeybinds.SkillActivatePressed(player))
+            TryActivateSkill(player);
+    }
 
-		public override bool AltFunctionUse(Player player) => true;
+    private static void TryActivateSkill(Player player)
+    {
+        var mp = player.GetModPlayer<WeaponPlayer>();
+        if (mp.StockCount <= 0 || mp.SkillActive)
+            return;
+        mp.SkillActive = true;
+        mp.SkillTimer = 0;
+        mp.DelStockCount();
+        SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/SkillActive1")
+            { Volume = 0.5f, MaxInstances = 2 }, player.Center);
+    }
 
-		public override bool CanUseItem(Player player) {
-			var mp = player.GetModPlayer<WeaponPlayer>();
+    public override bool AltFunctionUse(Player player) => true;
 
-			// 技能开启键：激活当前选中技能。原来是"下+右键"的组合，现在统一挪到独立热键，
-			// 不再占用右键——右键单独按下改为纯粹的"部署浮游信标"，见下面的分支。
-			if (ArknightsKeybinds.SkillActivatePressed(player)) {
-				if (mp.StockCount > 0 && !mp.SkillActive) {
-					mp.SkillActive = true;
-					mp.SkillTimer = 0;
-					mp.DelStockCount();
-					SoundEngine.PlaySound(SkillActiveSfx, player.Center);
-				}
-				return false;
-			}
+    public override bool CanUseItem(Player player)
+    {
+        if (ArknightsKeybinds.SkillActivatePressed(player))
+        {
+            TryActivateSkill(player);
+            return false;
+        }
+        if (player.altFunctionUse == 2)
+        {
+            if (player.whoAmI != Main.myPlayer || !player.CheckMana(Item, 18, true))
+                return false;
+            int type = ModContent.ProjectileType<GoldenglowBeacon>();
+            if (player.ownedProjectileCounts[type] >= GoldenglowBeacon.GetMaxBeacons(player))
+            {
+                Projectile oldest = null;
+                foreach (Projectile proj in Main.ActiveProjectiles)
+                    if (proj.owner == player.whoAmI && proj.type == type &&
+                        (oldest == null || proj.timeLeft < oldest.timeLeft))
+                        oldest = proj;
+                oldest?.Kill();
+            }
+            Vector2 offset = Main.MouseWorld - player.Center;
+            if (offset.Length() > GoldenglowLightningBalance.Range)
+                offset = offset.SafeNormalize(Vector2.UnitX) * GoldenglowLightningBalance.Range;
+            Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center + offset,
+                Vector2.Zero, type, 0, 0f, player.whoAmI);
+            return false;
+        }
+        return player.ownedProjectileCounts[ModContent.ProjectileType<GoldenglowHeldStaff>()] == 0;
+    }
 
-			if (player.altFunctionUse == 2) {
-				// 右键：在光标位置部署浮游信标，消耗魔法值；超过上限时移除最早召唤的一个
-				if (player.CheckMana(Item.mana, pay: true)) {
-					int beaconType = ModContent.ProjectileType<GoldenglowBeacon>();
-					if (player.ownedProjectileCounts[beaconType] >= GoldenglowBeacon.GetMaxBeacons(player)) {
-						Projectile oldest = null;
-						float oldestTick = float.MaxValue;
-						foreach (Projectile proj in Main.ActiveProjectiles) {
-							if (proj.type == beaconType && proj.owner == player.whoAmI
-								&& proj.ModProjectile is GoldenglowBeacon beacon && beacon.SpawnTick < oldestTick) {
-								oldest = proj;
-								oldestTick = beacon.SpawnTick;
-							}
-						}
-						oldest?.Kill();
-					}
+    public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position,
+        Vector2 velocity, int type, int damage, float knockback)
+    {
+        if (player.whoAmI == Main.myPlayer)
+            Projectile.NewProjectile(source, player.MountedCenter, Vector2.Zero, type, damage,
+                knockback, player.whoAmI, 0f, player.selectedItem);
+        return false;
+    }
 
-					Projectile.NewProjectile(
-						player.GetSource_ItemUse(Item),
-						Main.MouseWorld,
-						Vector2.Zero,
-						beaconType,
-						0, 0f, player.whoAmI);
-				}
-				return false;
-			}
+    public override void ModifyTooltips(List<TooltipLine> tooltips)
+    {
+        base.ModifyTooltips(tooltips);
+        Player player = Main.LocalPlayer;
+        tooltips.Add(new TooltipLine(Mod, "GoldenglowBeaconCount", Language.GetTextValue(
+            "Mods.ArknightsMod.Items.GoldenglowWand.BeaconCount",
+            player.ownedProjectileCounts[ModContent.ProjectileType<GoldenglowBeacon>()],
+            GoldenglowBeacon.GetMaxBeacons(player))));
+    }
 
-			// 左键弹幕已达堆叠上限时直接阻止本次使用，避免持续扣魔力却打不出新弹幕
-			var beaconPlayer = player.GetModPlayer<GoldenglowBeaconPlayer>();
-			if (beaconPlayer.BoltCount >= GoldenglowBeaconPlayer.MaxBolts)
-				return false;
-
-			return base.CanUseItem(player);
-		}
-
-		public override void ModifyTooltips(List<TooltipLine> tooltips) {
-			Player player = Main.LocalPlayer;
-			int count = player.ownedProjectileCounts[ModContent.ProjectileType<GoldenglowBeacon>()];
-			int max = GoldenglowBeacon.GetMaxBeacons(player);
-			tooltips.Add(new TooltipLine(Mod, "GoldenglowBeaconCount",
-				Language.GetTextValue("Mods.ArknightsMod.Items.GoldenglowWand.BeaconCount", count, max)));
-		}
-
-		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
-			var beaconPlayer = player.GetModPlayer<GoldenglowBeaconPlayer>();
-			if (beaconPlayer.BoltCount >= GoldenglowBeaconPlayer.MaxBolts)
-				return false;
-
-			int boltIndex = Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI);
-			if (boltIndex >= 0 && boltIndex < Main.maxProjectiles) {
-				Main.projectile[boltIndex].GetGlobalProjectile<GoldenglowBoltMarker>().IsGoldenglowBolt = true;
-			}
-			return false;
-		}
-
-		public override void ModifyWeaponDamage(Player player, ref StatModifier damage) {
-			base.ModifyWeaponDamage(player, ref damage);
-			var mp = player.GetModPlayer<WeaponPlayer>();
-			if (mp.SkillActive) {
-				damage *= mp.Skill switch {
-					0 => 1.4f,
-					1 => 1.6f,
-					2 => 1.8f,
-					_ => 1f
-				};
-			}
-		}
-	}
+    public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
+    {
+        base.ModifyWeaponDamage(player, ref damage);
+        var mp = player.GetModPlayer<WeaponPlayer>();
+        if (mp.SkillActive)
+            damage *= mp.Skill switch { 0 => 1.4f, 1 => 1.6f, 2 => 1.8f, _ => 1f };
+    }
 }

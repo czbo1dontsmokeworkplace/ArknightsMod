@@ -116,8 +116,6 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Hellagur
 				.AddIngredient(ItemID.BrokenHeroSword)
 				.AddIngredient(ItemID.ChlorophyteBar, 18)
 				.AddIngredient(ItemID.SoulofNight, 12)
-				.AddIngredient<global::ArknightsMod.Content.Items.Material.Sugar>(10)
-				.AddIngredient<global::ArknightsMod.Content.Items.Material.BipolarNanoflake>(4)
 				.AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>())
 				.Register();
 		}

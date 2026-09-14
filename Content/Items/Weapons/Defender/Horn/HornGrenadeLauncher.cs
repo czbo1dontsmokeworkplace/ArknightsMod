@@ -13,7 +13,7 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Horn;
 public sealed class HornGrenadeLauncher : ExpansionWeaponBase, IShieldGuardWeapon
 {
     protected override int[] EliteDamage => [388, 462, 554]; // 原面板 × 850 / 230，取整。
-    public override string Texture => "Terraria/Images/Item_" + ItemID.GrenadeLauncher;
+    public override string Texture => "ArknightsMod/Content/Items/Weapons/Defender/Horn/HornMortar";
     public override void SetDefaults()
     {
         Item.width = 48;
@@ -47,7 +47,6 @@ public sealed class HornGrenadeLauncher : ExpansionWeaponBase, IShieldGuardWeapo
     public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.ObsidianShield)
         .AddIngredient(ItemID.GrenadeLauncher).AddIngredient(ItemID.ChlorophyteBar, 15)
         .AddIngredient(ItemID.LavaBucket, 2)
-        .AddIngredient(ItemID.IllegalGunParts).AddIngredient<global::ArknightsMod.Content.Items.Material.Orirock>(12)
-        .AddIngredient<global::ArknightsMod.Content.Items.Material.D32Steel>(4)
+        .AddIngredient(ItemID.IllegalGunParts)
         .AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>()).Register();
 }

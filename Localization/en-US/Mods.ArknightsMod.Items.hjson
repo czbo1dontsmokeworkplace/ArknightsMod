@@ -3155,7 +3155,17 @@ StewardStaff: {
 
 GoldenglowWand: {
 	DisplayName: Goldenglow Wand
-	Tooltip: ""
+	Tooltip:
+		'''
+		Raise the staff skyward and hold left-click to discharge forked lightning near the cursor
+		After 2.5 seconds of discharge, overdrive lasts 0.6 seconds
+		Overdrive unleashes thick arcs and calls down lightning from above
+		Striking water electrifies connected water and shocks enemies within it
+		Continuously consumes mana; release left-click or switch weapons to stop
+		Right-click spends 18 mana to deploy a drone that discharges with the staff
+		Elite 2 unlocks Pure Radiance
+		'''
+	BeaconCount: Drones: {0}/{1}
 }
 
 BeehunterBag: {
@@ -3806,4 +3816,15 @@ HarmonieStaff: {
 WSummon: {
 	DisplayName: Twelve-Sided Die
 	Tooltip: Use on the surface to summon W
+}
+
+RhodesIslandEmergencyChargeManual: {
+	DisplayName: Rhodes Island Emergency Charge Manual
+	Tooltip:
+		'''
+		Works while kept in your inventory and marked as favorite
+		The current skill of any Arknights weapon from this mod charges in about 1 second
+		Restores one usable skill charge at a time and does not alter skill duration
+		Developer Item
+		'''
 }

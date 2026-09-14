@@ -111,13 +111,9 @@ public sealed class SussurroStaff : ExpansionWeaponBase
 
     public override void AddRecipes()
     {
-        // 六种早期宝石法杖全部各一把，不包含琥珀法杖。
-        CreateRecipe().AddIngredient(ItemID.SapphireStaff).AddIngredient(ItemID.RubyStaff)
-            .AddIngredient(ItemID.EmeraldStaff).AddIngredient(ItemID.AmethystStaff)
-            .AddIngredient(ItemID.DiamondStaff).AddIngredient(ItemID.TopazStaff)
-            .AddIngredient(ItemID.HealingPotion, 100).AddIngredient(ItemID.CrystalShard, 20)
-            .AddIngredient(ItemID.PixieDust, 20).AddIngredient<global::ArknightsMod.Content.Items.Material.Device>()
-            .AddIngredient<global::ArknightsMod.Content.Items.Material.RMA7012>(10)
+        CreateRecipe().AddIngredient(ItemID.IceRod)
+            .AddIngredient(ItemID.HealingPotion, 100)
+            .AddRecipeGroup(OperatorWeaponRecipeGroups.AnyVanillaTombstone, 2)
             .AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>()).Register();
     }
 }

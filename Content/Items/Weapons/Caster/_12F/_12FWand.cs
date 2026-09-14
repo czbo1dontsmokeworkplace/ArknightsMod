@@ -43,7 +43,7 @@ namespace ArknightsMod.Content.Items.Weapons.Caster._12F
         {
             Recipe recipe = CreateRecipe();
 
-            recipe.AddIngredient(ItemID.GoldBar, 3);
+            recipe.AddRecipeGroup(OperatorWeaponRecipeGroups.GoldOrPlatinumBar, 3);
             recipe.AddIngredient(ItemID.PalmWood, 10);
             recipe.AddTile(TileID.WorkBenches);
 

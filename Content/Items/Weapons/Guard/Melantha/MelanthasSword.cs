@@ -43,6 +43,10 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Melantha
 			Item.crit = 4;
 		}
 
+		public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.Katana)
+			.AddIngredient(ItemID.Wood, 15).AddIngredient(ItemID.Gel, 5)
+			.AddTile(TileID.WorkBenches).Register();
+
 		public override bool AltFunctionUse(Player player) => false;
 
 		private int segment;   // 0=向下挥砍(白)，1=上挑挥砍(粉)，每次攻击交替

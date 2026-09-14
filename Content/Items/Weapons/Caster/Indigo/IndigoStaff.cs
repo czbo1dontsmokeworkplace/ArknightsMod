@@ -83,7 +83,6 @@ public sealed class IndigoStaff : ExpansionWeaponBase
 
     public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.MagicMissile)
         .AddIngredient(ItemID.BottledWater, 5).AddIngredient(ItemID.Amethyst, 8)
-        .AddIngredient(ItemID.FallenStar, 5).AddIngredient<global::ArknightsMod.Content.Items.Material.Device>()
-        .AddIngredient<global::ArknightsMod.Content.Items.Material.OrironCluster>(14)
+        .AddIngredient(ItemID.FallenStar, 5)
         .AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>()).Register();
 }

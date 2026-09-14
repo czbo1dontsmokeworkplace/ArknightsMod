@@ -73,6 +73,7 @@ namespace ArknightsMod.Players
 		// SP恢复加成系统
 		public float SPRegenMultiplier { get; set; } = 1f;
 		private float spRegenFraction;
+		private float emergencyChargeFraction;
 
 		/// <summary>
 		/// 全局技力恢复速度倍率：开启配置开关时为 2（二倍速），关闭时为 1（原速）。
@@ -305,6 +306,43 @@ namespace ArknightsMod.Players
 
 			if (Player.HeldItem.ModItem is UpgradeWeaponBase ark)
 				ark.chargeReady = [true, true, true];
+		}
+
+		/// <summary>
+		/// 收藏应急充能手册时使用：无视自然/攻击/受击回复类型，在最多 60 tick 内补出下一层技能库存。
+		/// 这里只推进当前手持武器的当前技能，不改变技能持续时间，也不会凭空重复填满多层库存。
+		/// </summary>
+		internal void ApplyEmergencyOneSecondCharge() {
+			bool isArknightsSkillWeapon = Player.HeldItem.ModItem?.Mod == Mod
+				&& (CurrentSkill != null || HowManySkills > 0 || SkillCount > 0);
+			if (!isArknightsSkillWeapon || SkillActive || SkillChargeMax <= 0) {
+				emergencyChargeFraction = 0f;
+				return;
+			}
+
+			int maxStock = CurrentSkill?.CurrentLevelData.MaxStack
+				?? (Skill >= 0 && Skill < StockMax.Count ? StockMax[Skill] : 0);
+			if (maxStock <= 0 || StockCount >= maxStock) {
+				emergencyChargeFraction = 0f;
+				return;
+			}
+
+			emergencyChargeFraction += SkillChargeMax / 60f;
+			int gain = (int)emergencyChargeFraction;
+			if (gain <= 0)
+				return;
+
+			emergencyChargeFraction -= gain;
+			SkillCharge += gain;
+			if (SkillCharge >= SkillChargeMax) {
+				SkillCharge = 0;
+				StockCount++;
+				emergencyChargeFraction = 0f;
+			}
+
+			int maxSP = CurrentSkill?.CurrentLevelData.MaxSP
+				?? (Skill >= 0 && Skill < MaxSP.Count ? MaxSP[Skill] ?? 0 : 0);
+			SP = StockCount >= maxStock ? maxSP : SkillCharge / Math.Max(1, Div);
 		}
 
 		/// <summary>

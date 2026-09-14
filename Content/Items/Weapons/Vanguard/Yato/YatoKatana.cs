@@ -44,17 +44,9 @@ namespace ArknightsMod.Content.Items.Weapons.Vanguard.Yato
 
 		public override void AddRecipes()
 		{
-			int[] metal5 = { ItemID.TinBar, ItemID.CopperBar };
-			int[] metal3 = { ItemID.IronBar, ItemID.LeadBar }; 
-			foreach (int bar5 in metal5)
-			foreach (int bar3 in metal3)
-			{
-				Recipe recipe = CreateRecipe();
-				recipe.AddIngredient(bar5, 5);  // 5 锡/铜
-				recipe.AddIngredient(bar3, 3);  // 3 铁/铅
-				recipe.AddTile(ModContent.TileType<FactoryTile>());
-				recipe.Register();
-			}
+			CreateRecipe().AddRecipeGroup(OperatorWeaponRecipeGroups.CopperOrTinBar, 5)
+				.AddRecipeGroup(OperatorWeaponRecipeGroups.IronOrLeadBar, 3)
+				.AddTile(ModContent.TileType<FactoryTile>()).Register();
 		}
 
 		public class YatoPlayer : ModPlayer

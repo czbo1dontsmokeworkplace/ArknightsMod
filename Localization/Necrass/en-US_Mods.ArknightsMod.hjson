@@ -1,0 +1,45 @@
+Items: {
+	NecrassScepter: {
+		DisplayName: Necrass's Rekindling Scepter
+		Tooltip:
+			'''
+			6-star Primal Caster
+			Fires homing violet flames; nearby enemy deaths create Lamenting Servants
+			Two servants at Elite 0, three at Elite 1 and above; further souls empower and heal ordinary servants
+			Servants inherit this weapon's magic damage, have their own health and use no minion slots
+			Servants dissolve when the weapon is put away
+			At Elite 2, attacks against enemies below half health gain 40% damage
+			With no servants present, right-click spends 40 mana to call one; 5-second cooldown
+			Select a skill in the weapon skill menu
+			'''
+	}
+}
+
+Skills: {
+	NecrassScepter: {
+		1: {
+			Label: Dread Wish
+			Desc: Servant creation and first empowerment deal 250%-450% area magic damage. Activate to recreate all servants; empowered servants provide two summons. Creates one servant if none exist
+		}
+
+		2: {
+			Label: Wither
+			Desc: Puts 2-3 nearby enemies to sleep for 12 seconds, dealing 70%-160% magic damage every half second. Marked deaths provide two additional summons. Bosses, segmented enemies and knockback-immune enemies take damage without being immobilized. Sleeping enemies remain vulnerable
+		}
+
+		3: {
+			Label: Crown the Dead
+			Desc: One servant takes a special crowned form. Activate for 2-3 pulses of 450%-800% area magic damage. Each pulse sacrifices an ordinary servant to empower and heal the crowned servant by 20%; empowered offerings count twice. Up to six upgrades; upgrades 3 and 6 extend reach, and upgrade 3 unlocks a violet thrust. The crowned servant dissolves when another skill is selected
+		}
+	}
+}
+
+Projectiles: {
+	NecrassCourt.DisplayName: Rekindling Crown
+	NecrassServant.DisplayName: Lamenting Servant
+	NecrassSoulBolt.DisplayName: Rekindled Flame
+	NecrassImpact.DisplayName: Soulfire Surge
+	NecrassSleep.DisplayName: Wither
+	NecrassRitual.DisplayName: Coronation
+	NecrassOffering.DisplayName: Soul Offering
+}

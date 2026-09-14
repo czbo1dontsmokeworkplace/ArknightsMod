@@ -32,6 +32,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Rangers
 
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
+			recipe.AddRecipeGroup(OperatorWeaponRecipeGroups.AnyVanillaWoodenBow, 1);
 			recipe.AddRecipeGroup(RecipeGroupID.Wood, 12);
             recipe.AddIngredient(ItemID.Silk, 3); 
 			recipe.AddTile(TileID.WorkBenches);

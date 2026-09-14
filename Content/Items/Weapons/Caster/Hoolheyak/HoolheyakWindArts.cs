@@ -161,8 +161,6 @@ public sealed class HoolheyakWindArts : ExpansionWeaponBase
         .AddIngredient(ItemID.CloudinaBottle)
         .AddIngredient(ItemID.Feather, 15)
         .AddIngredient(ItemID.SoulofFlight, 15)
-        .AddIngredient<global::ArknightsMod.Content.Items.Material.Polyester>(8)
-        .AddIngredient<global::ArknightsMod.Content.Items.Material.D32Steel>(4)
         .AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>())
         .Register();
 }

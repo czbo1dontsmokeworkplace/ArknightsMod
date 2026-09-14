@@ -225,10 +225,10 @@ namespace ArknightsMod.Common
 				Damage = 24, UseTime = 40, UseAnimation = 40, KnockBack = 4f, ShootSpeed = 16f, Mana = 5, Crit = 2
 			},
 
-			// GoldenglowWand - 澄闪 - 法杖 (EliteDamage=[30,36,41])
-			// 原始值: damage=30, useTime=23, useAnimation=23, knockBack=2, shootSpeed=10, mana=8, crit=4
+			// GoldenglowWand - 澄闪 - 月后持续闪电法杖
+			// 与手持弹幕的持续耗蓝一致；实际放电周期由 GoldenglowLightningBalance 控制。
 			[typeof(Content.Items.Weapons.Caster.Goldenglow.GoldenglowWand)] = new() {
-				Damage = 30, UseTime = 23, UseAnimation = 23, KnockBack = 2f, ShootSpeed = 10f, Mana = 8, Crit = 4
+				Damage = 450, UseTime = 12, UseAnimation = 12, KnockBack = 6f, ShootSpeed = 1f, Mana = 6, Crit = 4
 			},
 
 			// HazeMagicBook - 阴云 - 魔法书

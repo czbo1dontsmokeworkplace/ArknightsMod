@@ -25,8 +25,9 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Schwarz
 
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.D32Steel>(4);
-			recipe.AddIngredient<Material.OrironBlock>(5);
+			recipe.AddIngredient<global::ArknightsMod.Content.Items.Weapons.Sniper.KroosAlter.KroosAlterCrossbow>();
+			recipe.AddIngredient(ItemID.ChlorophyteBar, 15);
+			recipe.AddIngredient(ItemID.SniperScope);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}
