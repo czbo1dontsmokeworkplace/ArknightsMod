@@ -14,7 +14,7 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.Gravel
 {
 	public class GravelDualBlades : ExpansionWeaponBase
 	{
-		protected override int[] EliteDamage => [28, 28, 28];
+		protected override int[] EliteDamage => [17, 17, 17];
 
 		private static SoundStyle SkillActiveSfx;
 
@@ -33,6 +33,7 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.Gravel
 			Item.value = Item.sellPrice(silver: 25);
 			Item.rare = ItemRarityID.Green;
 			Item.autoReuse = true;
+			Item.channel = true;
 			Item.useStyle = ItemUseStyleID.Shoot;
 			Item.noMelee = true;
 			Item.noUseGraphic = true;

@@ -63,7 +63,8 @@ public sealed class NecrassScepter : ExpansionWeaponBase
         return false;
     }
     public override void AddRecipes() => CreateRecipe()
-        .AddIngredient(ItemID.InfernoFork)
+        .AddIngredient(ItemID.ShadowFlameKnife)
+        .AddRecipeGroup(OperatorWeaponRecipeGroups.AnyVanillaTombstone, 5)
         .AddIngredient(ItemID.SpectreBar, 12)
         .AddIngredient(ItemID.SpookyWood, 150)
         .AddIngredient(ItemID.SoulofNight, 15)

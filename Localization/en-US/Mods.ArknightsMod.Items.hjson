@@ -3157,13 +3157,9 @@ GoldenglowWand: {
 	DisplayName: Goldenglow Wand
 	Tooltip:
 		'''
-		Raise the staff skyward and hold left-click to discharge forked lightning near the cursor
-		After 2.5 seconds of discharge, overdrive lasts 0.6 seconds
-		Overdrive unleashes thick arcs and calls down lightning from above
-		Striking water electrifies connected water and shocks enemies within it
-		Continuously consumes mana; release left-click or switch weapons to stop
-		Right-click spends 18 mana to deploy a drone that discharges with the staff
-		Elite 2 unlocks Pure Radiance
+		Raise the staff to continuously discharge lightning at enemies near the cursor
+		Every 2.5 seconds, enter 0.6 seconds of powerful discharge
+		Drones provide coordinated attacks
 		'''
 	BeaconCount: Drones: {0}/{1}
 }
@@ -3826,5 +3822,17 @@ RhodesIslandEmergencyChargeManual: {
 		The current skill of any Arknights weapon from this mod charges in about 1 second
 		Restores one usable skill charge at a time and does not alter skill duration
 		Developer Item
+		'''
+}
+
+GavialChainsaw: {
+	DisplayName: Gavial the Invincible's Chainsaw Greataxe
+	Tooltip:
+		'''
+		Hold attack to aim the spinning saw and cut every enemy touching its blade
+		Normal cuts occur every 7 ticks; olive teeth mark the blade's reach
+		Precise Thwacking heals on hit; Chainsaw Assault extends the blade and pulls enemies
+		Soul of the Jungle accelerates cutting and postpones half of incoming hit damage
+		Switching weapons or skills ends the bonus, but deferred damage must still be repaid
 		'''
 }

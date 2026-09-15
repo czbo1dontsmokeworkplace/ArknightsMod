@@ -43,7 +43,8 @@ public sealed class HornGuard : ModProjectile
         Vector2 aim = Projectile.ai[0].ToRotationVector2();
         owner.ChangeDir(aim.X >= 0 ? 1 : -1);
         owner.heldProj = Projectile.whoAmI;
-        Projectile.Center = owner.MountedCenter + new Vector2(owner.direction * (Projectile.ai[1] == 1 ? 24f : 15f), 1f);
+        // Carry the shield behind the player at the same distance as the former forward offset.
+        Projectile.Center = owner.MountedCenter + new Vector2(-owner.direction * (Projectile.ai[1] == 1 ? 24f : 15f), 1f);
         owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.ai[0] - MathHelper.PiOver2);
         if (Projectile.ai[2] > 0) Projectile.ai[2]--;
         HornVisuals.SkillBody(owner, visualState, ++Projectile.localAI[0]);
@@ -56,7 +57,8 @@ public sealed class HornGuard : ModProjectile
         Vector2 aim = Projectile.ai[0].ToRotationVector2();
         Vector2 gunCenter = owner.MountedCenter + aim * (19f - Projectile.ai[2] * .5f);
         // The supplied mortar sprite droops by about 25 degrees; rotate it upward so its muzzle follows the aim vector.
-        float mortarRotation = Projectile.ai[0] - MathHelper.ToRadians(25f);
+        float mortarRotation = Projectile.ai[0] - MathHelper.ToRadians(25f)
+            + (owner.direction < 0 ? MathHelper.ToRadians(50f) : 0f);
         Main.EntitySpriteDraw(texture, gunCenter - Main.screenPosition, null, lightColor, mortarRotation,
             texture.Size() * .5f, 1f, owner.direction < 0 ? SpriteEffects.FlipVertically : SpriteEffects.None);
         if (Projectile.ai[1] == 1)

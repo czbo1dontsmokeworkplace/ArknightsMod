@@ -3,14 +3,8 @@ Items: {
 		DisplayName: Necrass's Rekindling Scepter
 		Tooltip:
 			'''
-			6-star Primal Caster
 			Fires homing violet flames; nearby enemy deaths create Lamenting Servants
-			Two servants at Elite 0, three at Elite 1 and above; further souls empower and heal ordinary servants
-			Servants inherit this weapon's magic damage, have their own health and use no minion slots
-			Servants dissolve when the weapon is put away
-			At Elite 2, attacks against enemies below half health gain 40% damage
-			With no servants present, right-click spends 40 mana to call one; 5-second cooldown
-			Select a skill in the weapon skill menu
+			Servants inherit this weapon's magic damage, use no minion slots, have their own health and dissolve when the weapon is put away
 			'''
 	}
 }

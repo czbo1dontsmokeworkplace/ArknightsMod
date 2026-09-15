@@ -54,10 +54,10 @@ ChenSword: {
 
 KroosCrossbow: {
 	1: {
-		Label: Double Shot: Auto
+		Label: Triple Shot: Auto
 		Desc:
 			'''
-			Next attack fires [c/3791db:2] shots in a row
+			Speeds up three-shot bursts while active, firing one arrow per shot
 			Each shot deals Physical damage equal to [c/3791db:140%] of ATK
 			'''
 	}
@@ -138,7 +138,7 @@ KroosAlterCrossbow: {
 		Desc:
 			'''
 			ATK [c/3791db:+40%]
-			Attacks become a [c/3791db:2]-round burst
+			Keeps [c/3791db:3]-shot bursts, firing one arrow per shot
 			Greatly reduces aggro
 			'''
 	}
@@ -148,8 +148,8 @@ KroosAlterCrossbow: {
 		Desc:
 			'''
 			Attack interval [c/3791db:greatly shortened]
-			Attacks become a [c/3791db:2]-round burst
-			After firing [c/3791db:32] arrows, attacks become a [c/3791db:4]-round burst for the rest of the skill
+			Keeps [c/3791db:3]-shot bursts, firing one arrow per shot
+			After firing [c/3791db:32] arrows, firing intervals are halved again for the rest of the skill
 			'''
 	}
 }
@@ -466,30 +466,17 @@ SkadisGreatsword: {
 GoldenglowWand: {
 	1: {
 		Label: Sparks Flying
-		Desc:
-			'''
-			Drone cap +1; lightning locks onto enemies near the cursor
-			ATK [c/3791db:+40%], discharge rate [c/3791db:+50%]
-			'''
+		Desc: Automatically release 2 drones to pursue locked targets; ATK +40%, attack speed +50%. Return after target death, detonation, or skill end.
 	}
 
 	2: {
 		Label: Current Surge
-		Desc:
-			'''
-			Drone cap +1; expanded lightning targeting radius
-			Discharge range increased to 1300, ATK [c/3791db:+60%]
-			[c/EDA128:Infinite duration]
-			'''
+		Desc: Automatically activates at full SP. Release 2 pursuing drones; acquisition range 1300, ATK +60%. Infinite duration.
 	}
 
 	3: {
 		Label: Pure Radiance
-		Desc:
-			'''
-			Maintain continuous discharge and periodic overdrive; drone cap +2
-			Discharge range increased to 1800, ATK [c/3791db:+80%]
-			'''
+		Desc: Stop staff attacks and release 3 pursuing drones. Target active enemies across the world; ATK +80%. Drone hits and explosions slow movement by 80% for 0.5 seconds.
 	}
 }
 
@@ -1179,5 +1166,22 @@ HarmonieStaff: {
 	2: {
 		Label: Drowning Calamity
 		Desc: Auto recovery, manual activation. Costs 40 SP and lasts 20 seconds. Gain 25% attack speed and create a 140-pixel-radius resonance pool at a visible point up to 600 pixels toward the cursor. Slows ordinary enemies and deals 35% weapon damage every 0.5 seconds without passing through walls. Bosses take damage without being slowed. One pool per owner; ends when switching weapons, the skill ends, or the owner moves 1000 pixels away
+	}
+}
+
+GavialChainsaw: {
+	1: {
+		Label: Precise Thwacking
+		Desc: Auto recovery, manual activation. Lasts 25 seconds. +80% attack; heals for 4% of damage dealt, capped at 6 HP per 0.5 seconds across all targets. Target dummies do not heal you
+	}
+
+	2: {
+		Label: Chainsaw Assault
+		Desc: Auto recovery, manual activation. Lasts 30-40 seconds. +180% attack and +50% defense; extends the blade from 112 to 158 pixels and pulls ordinary enemies touching it. Bosses and knockback-immune enemies cannot be pulled
+	}
+
+	3: {
+		Label: Soul of the Jungle
+		Desc: Auto recovery, manual activation. Lasts 25 seconds. +140% attack; cuts every 4 ticks instead of 7. Half of incoming hit damage is deferred and drained over 20 seconds after the skill ends. This can kill you; switching weapons or skills and leaving the world do not erase the debt
 	}
 }

@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Projectiles.Caster.Goldenglow;
 public sealed class GoldenglowHeldStaff : ModProjectile
 {
     private Vector2 aim;
-    private int pulseCooldown;
+    private float pulseCooldown;
     private Item channeledItem;
     internal bool Bursting => GoldenglowLightningBalance.IsBurst((int)Projectile.ai[0]);
     internal Vector2 Aim => aim;
@@ -66,6 +66,13 @@ public sealed class GoldenglowHeldStaff : ModProjectile
         Projectile.timeLeft = 2;
         var mp = player.GetModPlayer<WeaponPlayer>();
         float range = mp.SkillActive ? mp.Skill switch { 1 => 1300f, 2 => 1800f, _ => 1000f } : 1000f;
+        if (mp.SkillActive && mp.Skill == 2)
+        {
+            Projectile.Kill();
+            return;
+        }
+        if (owned)
+            GoldenglowBeacon.EnsureDrones(player);
         int tick = (int)Projectile.ai[0];
         if (owned)
         {
@@ -98,9 +105,10 @@ public sealed class GoldenglowHeldStaff : ModProjectile
         bool burst = Bursting;
         bool burstStart = tick % (GoldenglowLightningBalance.ChargeTicks + GoldenglowLightningBalance.BurstTicks)
             == GoldenglowLightningBalance.ChargeTicks;
-        if (owned && (pulseCooldown-- <= 0 || burstStart))
+        if (owned) pulseCooldown--;
+        if (owned && (pulseCooldown <= 0 || burstStart))
         {
-            Vector2 target = FindTarget(aim, player.Center, range, mp.SkillActive ? 230f : 150f);
+            Vector2 target = FindTarget(aim, player.Center, range, mp.SkillActive ? 345f : 225f);
             int damage = player.GetWeaponDamage(player.HeldItem);
             GoldenglowLightningStrike.Spawn(Projectile.GetSource_FromThis(), Tip, target, player.whoAmI,
                 (int)(damage * (burst ? GoldenglowLightningBalance.BurstDamage : 1f)),
@@ -116,8 +124,10 @@ public sealed class GoldenglowHeldStaff : ModProjectile
             float speed = MathHelper.Clamp(player.GetWeaponAttackSpeed(player.HeldItem), 0.5f, 2f);
             if (mp.SkillActive && mp.Skill == 0)
                 speed *= 1.5f;
-            pulseCooldown = Math.Max(3, (int)((burst ? GoldenglowLightningBalance.BurstPulseTicks :
-                GoldenglowLightningBalance.NormalPulseTicks) / speed)) - 1;
+            // Keep fractional ticks so +30% is not rounded to a different attack speed.
+            float interval = Math.Max(3f, (burst ? GoldenglowLightningBalance.BurstPulseTicks :
+                GoldenglowLightningBalance.NormalPulseTicks) / speed) / GoldenglowLightningBalance.FrequencyMultiplier;
+            pulseCooldown = (burstStart ? 0f : Math.Max(-1f, pulseCooldown)) + interval;
         }
         if (!Main.dedServ)
         {

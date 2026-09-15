@@ -4,8 +4,8 @@ DeepcolorMinionBuff: {
 }
 
 GoldenglowBeaconBuff: {
-	DisplayName: Floating Beacon
-	Description: "{0} Floating Drones deployed. Right-click to dismiss them all."
+	DisplayName: Goldenglow Drones
+	Description: "{0} drones assisting your attacks"
 }
 
 CameraTruckBuff: {
@@ -236,4 +236,14 @@ EthanBind: {
 IndigoTideBind: {
 	DisplayName: Tidal Bind
 	Description: Bound in lilac waterlight, temporarily unable to move
+}
+
+GavialStrain: {
+	DisplayName: Soul of the Jungle: Strain
+	Description: Repaying deferred damage; life drain ignores defense and immunity frames
+}
+
+GoldenglowSlow: {
+	DisplayName: Pure Radiance
+	Description: Movement speed reduced by 80%
 }

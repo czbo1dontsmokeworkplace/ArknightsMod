@@ -63,7 +63,7 @@ public sealed class GoldenglowConductiveWater : ModProjectile
     {
         if (strike.owner != Main.myPlayer)
             return;
-        int damage = Math.Max(1, (int)(strike.damage * 0.45f));
+        int damage = Math.Max(1, (int)(strike.damage * 0.45f * GoldenglowLightningBalance.FrequencyMultiplier));
         int type = ModContent.ProjectileType<GoldenglowConductiveWater>();
         foreach (Projectile field in Main.ActiveProjectiles)
         {

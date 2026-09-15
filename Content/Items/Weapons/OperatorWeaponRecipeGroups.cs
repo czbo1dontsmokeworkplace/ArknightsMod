@@ -37,7 +37,9 @@ public sealed class OperatorWeaponRecipeGroups : ModSystem
 
         int[] bows = [ItemID.WoodenBow, ItemID.BorealWoodBow, ItemID.PalmWoodBow, ItemID.RichMahoganyBow, ItemID.EbonwoodBow, ItemID.ShadewoodBow];
         Register(AnyVanillaWoodenBow, Lang.GetItemNameValue(ItemID.WoodenBow), bows);
-        int[] tombstones = [ItemID.Tombstone, ItemID.GraveMarker, ItemID.Headstone, ItemID.Gravestone, ItemID.Obelisk];
+        int[] tombstones = ContentSamples.ItemsByType
+            .Where(entry => entry.Key > 0 && entry.Key < ItemID.Count && entry.Value.createTile == TileID.Tombstones)
+            .Select(entry => entry.Key).OrderBy(type => type).Prepend(ItemID.Tombstone).Distinct().ToArray();
         Register(AnyVanillaTombstone, Lang.GetItemNameValue(ItemID.Tombstone), tombstones);
     }
 

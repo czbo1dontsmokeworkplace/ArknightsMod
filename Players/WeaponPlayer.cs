@@ -1060,7 +1060,7 @@ namespace ArknightsMod.Players
 				SkillLevel = [10, 10, 10];
 				ChargeTypeIsPerSecond = [false, true, true];
 				AutoTrigger = [true, false, false];
-				ShowSummonIconBySkills = [true, true, true];
+				ShowSummonIconBySkills = [false, false, false];
 
 				InitialSPs1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 				InitialSPs2List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 9];

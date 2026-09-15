@@ -158,13 +158,13 @@ namespace ArknightsMod.Common
 			// KroosCrossbow - 克洛丝 - 十字弩
 			// 原始值: damage=19, useTime=30, useAnimation=30, knockBack=2, shootSpeed=9, crit=16
 			[typeof(Content.Items.Weapons.Sniper.Kroos.KroosCrossbow)] = new() {
-				Damage = 19, UseTime = 30, UseAnimation = 30, KnockBack = 2f, ShootSpeed = 9f, Crit = 16
+				Damage = 19, UseTime = 10, UseAnimation = 10, KnockBack = 2f, ShootSpeed = 9f, Crit = 16
 			},
 
 			// KroosAlterCrossbow - 克洛丝(寒芒) - 十字弩
 			// 原始值: damage=72, useTime=30, useAnimation=30, knockBack=3, shootSpeed=8
 			[typeof(Content.Items.Weapons.Sniper.KroosAlter.KroosAlterCrossbow)] = new() {
-				Damage = 72, UseTime = 30, UseAnimation = 30, KnockBack = 3f, ShootSpeed = 8f
+				Damage = 72, UseTime = 10, UseAnimation = 10, KnockBack = 3f, ShootSpeed = 21f
 			},
 
 			// MeteorBow - 流星 - 弓 (EliteDamage=[35,42,51])
@@ -176,7 +176,7 @@ namespace ArknightsMod.Common
 			// PozemkaCrossbow - 帕捷契卡 - 十字弩
 			// 原始值: damage=175, useTime=48, useAnimation=48, knockBack=5, shootSpeed=20
 			[typeof(Content.Items.Weapons.Sniper.Pozemka.PozemkaCrossbow)] = new() {
-				Damage = 175, UseTime = 48, UseAnimation = 48, KnockBack = 5f, ShootSpeed = 20f
+				Damage = 175, UseTime = 10, UseAnimation = 10, KnockBack = 5f, ShootSpeed = 20f
 			},
 
 			// RangersBow - 猎人 - 弓
@@ -188,7 +188,7 @@ namespace ArknightsMod.Common
 			// SchwarzBow - 黑 - 弩
 			// 原始值: damage=168, useTime=48, useAnimation=48, knockBack=10, shootSpeed=20
 			[typeof(Content.Items.Weapons.Sniper.Schwarz.SchwarzBow)] = new() {
-				Damage = 168, UseTime = 48, UseAnimation = 48, KnockBack = 10f, ShootSpeed = 20f
+				Damage = 168, UseTime = 45, UseAnimation = 45, KnockBack = 10f, ShootSpeed = 20f
 			},
 
 			// Shirayuki_Shuriken - 白雪 - 飞镖
@@ -228,7 +228,7 @@ namespace ArknightsMod.Common
 			// GoldenglowWand - 澄闪 - 月后持续闪电法杖
 			// 与手持弹幕的持续耗蓝一致；实际放电周期由 GoldenglowLightningBalance 控制。
 			[typeof(Content.Items.Weapons.Caster.Goldenglow.GoldenglowWand)] = new() {
-				Damage = 450, UseTime = 12, UseAnimation = 12, KnockBack = 6f, ShootSpeed = 1f, Mana = 6, Crit = 4
+				Damage = Content.Projectiles.Caster.Goldenglow.GoldenglowLightningBalance.Damage, UseTime = 12, UseAnimation = 12, KnockBack = 6f, ShootSpeed = 1f, Mana = 6, Crit = 4
 			},
 
 			// HazeMagicBook - 阴云 - 魔法书
@@ -336,7 +336,7 @@ namespace ArknightsMod.Common
 			// GravelDualBlades - 暗索 - 双刀 (EliteDamage=[25,30,36])
 			// 原始值: damage=25, useTime=22, useAnimation=22, knockBack=3, shootSpeed=1
 			[typeof(Content.Items.Weapons.Specialist.Gravel.GravelDualBlades)] = new() {
-				Damage = 25, UseTime = 22, UseAnimation = 22, KnockBack = 3f, ShootSpeed = 1f
+				Damage = 15, UseTime = 22, UseAnimation = 22, KnockBack = 3f, ShootSpeed = 1f
 			},
 
 			// RopeClaw - 暗索 - 钩爪 (EliteDamage=[44,53,64])

@@ -1,4 +1,5 @@
-﻿using ArknightsMod.Content.Items.Weapons.Sniper.Pozemka;
+using ArknightsMod.Content.Projectiles.Sniper.Crossbows;
+using ArknightsMod.Content.Items.Weapons.Sniper.Pozemka;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using System;
@@ -40,11 +41,13 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Pozemka
 
 		public override void AI() {
 			int Cooldown = 60;
-			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
+			Player owner = Main.player[Projectile.owner];
+            var modPlayer = owner.GetModPlayer<WeaponPlayer>();
 
 			Projectile.velocity.Y++; // gravity
-			if (modPlayer.SummonMode || Main.LocalPlayer.HeldItem.ModItem is not PozemkaCrossbow) {
+			if (!owner.active || owner.dead || modPlayer.SummonMode || owner.HeldItem.ModItem is not PozemkaCrossbow) {
 				Projectile.Kill();
+                return;
 			}
 
 			NPC target = Projectile.FindTargetWithinRange(800, false);
@@ -69,7 +72,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Pozemka
 
 					if (Projectile.frame == 3 && Main.myPlayer == Projectile.owner) {
 						int damage = (int)Math.Round(Projectile.damage * 0.95);
-						Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, 15 * new Vector2((float)Math.Cos(theta), (float)Math.Sin(theta)), ModContent.ProjectileType<PozemkaCrossbow_Sentry_Projectile>(), damage, 5f, Projectile.owner);
+						Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, 15 * new Vector2((float)Math.Cos(theta), (float)Math.Sin(theta)), ModContent.ProjectileType<CrossbowBolt>(), damage, 5f, Projectile.owner, (int)CrossbowKind.Pozemka);
 						if (modPlayer.Skill == 2 && modPlayer.SkillActive) {
 							SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/PozemkaCrossbowSentryProjectileS3"));
 						}

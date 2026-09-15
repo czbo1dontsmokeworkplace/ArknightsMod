@@ -108,3 +108,5 @@ WBossText: {
 		Despawn: W: Boring.
 	}
 }
+
+GavialStrainDeath: "{0} succumbed to the wounds deferred by Soul of the Jungle."
