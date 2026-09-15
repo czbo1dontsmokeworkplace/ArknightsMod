@@ -105,7 +105,17 @@ public sealed class GoldenglowHeldStaff : ModProjectile
         bool burst = Bursting;
         bool burstStart = tick % (GoldenglowLightningBalance.ChargeTicks + GoldenglowLightningBalance.BurstTicks)
             == GoldenglowLightningBalance.ChargeTicks;
-        if (owned) pulseCooldown--;
+        if (owned)
+        {
+            if (tick == 0)
+            {
+                float initialSpeed = MathHelper.Clamp(player.GetWeaponAttackSpeed(player.HeldItem), 0.5f, 2f);
+                if (mp.SkillActive && mp.Skill == 0) initialSpeed *= 1.5f;
+                pulseCooldown = Math.Max(3f, GoldenglowLightningBalance.NormalPulseTicks / initialSpeed)
+                    / GoldenglowLightningBalance.FrequencyMultiplier;
+            }
+            else pulseCooldown--;
+        }
         if (owned && (pulseCooldown <= 0 || burstStart))
         {
             Vector2 target = FindTarget(aim, player.Center, range, mp.SkillActive ? 345f : 225f);
@@ -115,9 +125,9 @@ public sealed class GoldenglowHeldStaff : ModProjectile
                 player.GetWeaponKnockback(player.HeldItem), burst ? 1 : 0);
             if (burst)
             {
-                // The original LightningStrikeWeapon preset is a 750px, +/-5-degree sky strike.
+                // Extend the sky origin by 60%; lightning is an instantaneous path, not a falling projectile.
                 Vector2 sky = target - Vector2.UnitY.RotatedBy(Main.rand.NextFloat(-MathHelper.Pi / 36f,
-                    MathHelper.Pi / 36f)) * 750f;
+                    MathHelper.Pi / 36f)) * 1200f;
                 GoldenglowLightningStrike.Spawn(Projectile.GetSource_FromThis(), sky, target,
                     player.whoAmI, (int)(damage * 0.8f), 8f, 2);
             }

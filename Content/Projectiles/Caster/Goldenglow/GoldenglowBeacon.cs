@@ -65,7 +65,15 @@ public class GoldenglowBeacon : ModProjectile
         if (owner.HeldItem.ModItem is not GoldenglowWand ||
             (sourceItem != null && sourceItem != owner.HeldItem) || owner.noItems || owner.CCed)
         { Projectile.Kill(); return; }
-        sourceItem ??= owner.HeldItem;
+        if (sourceItem == null)
+        {
+            sourceItem = owner.HeldItem;
+            float initialSpeed = MathHelper.Clamp(owner.GetWeaponAttackSpeed(owner.HeldItem), 0.5f, 2f);
+            var initialSkill = owner.GetModPlayer<WeaponPlayer>();
+            if (initialSkill.SkillActive && initialSkill.Skill == 0) initialSpeed *= 1.5f;
+            cooldown = Math.Max(3f, GoldenglowLightningBalance.NormalPulseTicks / initialSpeed)
+                / GoldenglowLightningBalance.FrequencyMultiplier + 1f;
+        }
         Projectile.timeLeft = 120;
         var mp = owner.GetModPlayer<WeaponPlayer>();
         int skill = mp.SkillActive ? mp.Skill : -1;
@@ -105,6 +113,8 @@ public class GoldenglowBeacon : ModProjectile
                 {
                     Projectile.ai[1] = index;
                     consecutiveHits = 0;
+                    if (selected != null)
+                        TeleportTo(OrbitPosition(selected, owner));
                     Projectile.netUpdate = true;
                 }
                 target = selected;
@@ -112,9 +122,8 @@ public class GoldenglowBeacon : ModProjectile
             if (target == null) MoveTo(home, 24f);
             else
             {
-                float angle = (float)Main.GameUpdateCount * 0.045f + Projectile.ai[0] * MathHelper.TwoPi / GetMaxBeacons(owner);
                 float radius = Math.Max(target.width, target.height) * 0.5f + 48f;
-                MoveTo(target.Center + new Vector2(MathF.Cos(angle), MathF.Sin(angle)) * radius, 32f);
+                MoveTo(OrbitPosition(target, owner), 6f);
                 if (--cooldown <= 0 && Projectile.Distance(target.Center) <= radius + 100f)
                 {
                     Attack(owner, target, skill);
@@ -127,6 +136,26 @@ public class GoldenglowBeacon : ModProjectile
         }
         if (Main.GameUpdateCount % 6 == 0) Projectile.netUpdate = true;
         Lighting.AddLight(Projectile.Center, 0.15f, 0.3f, 0.6f);
+    }
+
+    private Vector2 OrbitPosition(NPC target, Player owner)
+    {
+        float angle = (float)Main.GameUpdateCount * 0.015f + Projectile.ai[0] * MathHelper.TwoPi / GetMaxBeacons(owner);
+        float radius = Math.Max(target.width, target.height) * 0.5f + 48f;
+        return target.Center + new Vector2(MathF.Cos(angle), MathF.Sin(angle)) * radius;
+    }
+
+    private void TeleportTo(Vector2 destination)
+    {
+        // Two synchronized visual-only pulses also show departure/arrival to remote players.
+        int effect = ModContent.ProjectileType<GoldenglowTeleportEffect>();
+        Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero,
+            effect, 0, 0f, Projectile.owner, 0f);
+        Projectile.Center = destination;
+        Projectile.velocity = Vector2.Zero;
+        Projectile.NewProjectile(Projectile.GetSource_FromThis(), destination, Vector2.Zero,
+            effect, 0, 0f, Projectile.owner, 1f);
+        Projectile.netUpdate = true;
     }
 
     private NPC GetTarget()

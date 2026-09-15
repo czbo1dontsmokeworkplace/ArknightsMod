@@ -117,7 +117,14 @@ public sealed class GoldenglowLightningStrike : ModProjectile
         return Vector2.DistanceSquared(targetHitbox.ClosestPointInRect(End), End) <= radius * radius;
     }
 
-    public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) => target.AddBuff(BuffID.Electrified, Strong ? 240 : 120);
+    public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+    {
+        target.AddBuff(BuffID.Electrified, Strong ? 240 : 120);
+        if (Projectile.owner == Main.myPlayer && Mode < 3)
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero,
+                ModContent.ProjectileType<GoldenglowLightningExplosion>(),
+                Math.Max(1, Projectile.damage / 2), 0f, Projectile.owner);
+    }
 
     private void SpawnImpact()
     {

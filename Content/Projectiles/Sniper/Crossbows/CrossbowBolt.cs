@@ -75,6 +75,8 @@ public sealed class CrossbowBolt : ModProjectile
 
     private void UpdateRoseHoming()
     {
+        // Zero means this arrow has never hit an enemy: do not acquire a target or steer.
+        if (Projectile.ai[2] == 0f) return;
         // 3 updates per frame: thirty straight-flight updates equal ten game frames.
         // No second damage is allowed during the fly-through, even against another nearby NPC.
         if (Projectile.ai[2] < 0f)
@@ -89,7 +91,7 @@ public sealed class CrossbowBolt : ModProjectile
         if (target == null) return;
         float speed = Projectile.velocity.Length();
         float desired = (target.Center - Projectile.Center).ToRotation();
-        float angle = Projectile.velocity.ToRotation().AngleTowards(desired, Projectile.ai[2] == 1f ? .09f : .035f);
+        float angle = Projectile.velocity.ToRotation().AngleTowards(desired, .09f);
         Projectile.velocity = angle.ToRotationVector2() * speed;
     }
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

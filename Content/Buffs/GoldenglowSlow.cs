@@ -16,9 +16,12 @@ public sealed class GoldenglowSlow : ModBuff
 // Reduce this tick's movement without repeatedly multiplying stored velocity or altering AI timers.
 public sealed class GoldenglowSlowNPC : GlobalNPC
 {
+    internal static bool IsBoss(NPC npc) => npc.boss ||
+        (npc.realLife >= 0 && npc.realLife < Main.maxNPCs && Main.npc[npc.realLife].boss);
+
     public override void PostAI(NPC npc)
     {
-        if (npc.HasBuff<GoldenglowSlow>())
+        if (!IsBoss(npc) && npc.HasBuff<GoldenglowSlow>())
             npc.position -= npc.velocity * 0.8f;
     }
 }

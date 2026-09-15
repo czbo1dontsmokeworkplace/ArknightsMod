@@ -40,7 +40,7 @@ public sealed class GoldenglowDroneHit : ModProjectile
     }
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
     {
-        if (Projectile.ai[2] > 0) target.AddBuff(ModContent.BuffType<GoldenglowSlow>(), 30);
+        if (Projectile.ai[2] > 0 && !GoldenglowSlowNPC.IsBoss(target)) target.AddBuff(ModContent.BuffType<GoldenglowSlow>(), 30);
     }
     public override bool PreDraw(ref Color lightColor) => false;
 }

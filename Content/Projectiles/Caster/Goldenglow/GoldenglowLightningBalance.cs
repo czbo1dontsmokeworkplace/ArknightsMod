@@ -3,7 +3,7 @@ namespace ArknightsMod.Content.Projectiles.Caster.Goldenglow;
 // Real ticks: attack-speed modifiers affect pulses, never the charge/burst duration.
 internal static class GoldenglowLightningBalance
 {
-    internal const int Damage = 260; // 338 / 1.3: preserve nominal damage per second.
+    internal const int Damage = 208; // 260 * 0.8.
     internal const float FrequencyMultiplier = 1.3f;
     internal const int ChargeTicks = 150;
     internal const int BurstTicks = 36;
