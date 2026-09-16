@@ -156,6 +156,19 @@ namespace ArknightsMod.Content.Projectiles.Defender.Beagle
                                                      ref collisionPoint);
             return coll;
         }
+
+        // 挥砍破坏可切物块（蜘蛛网、草丛等）。
+        public override void CutTiles()
+        {
+            if (Projectile.ai[1] <= 0)
+                return; // 仅在挥砍窗口内切割
+
+            DelegateMethods.tilecut_0 = Terraria.Enums.TileCuttingContext.AttackProjectile;
+            Vector2 start = player.MountedCenter;
+            Vector2 end = start + (Projectile.rotation - MathHelper.PiOver2).ToRotationVector2() * Projectile.scale * 60;
+            Utils.PlotTileLine(start, end, 24, DelegateMethods.CutTiles);
+        }
+
         public override void AI()
         {
             Projectile.velocity = -Vector2.UnitY.RotatedBy(Projectile.rotation);
