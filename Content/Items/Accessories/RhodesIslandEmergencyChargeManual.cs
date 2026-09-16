@@ -59,6 +59,7 @@ namespace ArknightsMod.Content.Items.Accessories
 
 				player.GetModPlayer<WeaponPlayer>().ApplyEmergencyOneSecondCharge();
 				player.GetModPlayer<RedDaggerPlayer>().ApplyEmergencyOneSecondCharge();
+				player.GetModPlayer<global::ArknightsMod.Content.Items.Weapons.Specialist.Phantom.PhantomPlayer>().ApplyEmergencyOneSecondCharge();
 			}
 		}
 	}

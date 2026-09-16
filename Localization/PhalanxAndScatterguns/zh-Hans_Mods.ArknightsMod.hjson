@@ -1,0 +1,172 @@
+Items: {
+	BeeswaxStaff: {
+		DisplayName: 蜜蜡的守砂法杖
+		Tooltip:
+			'''
+			默认展开砂金护盾，抵挡3次攻击
+			持续按住左键收起护盾，蓄力90帧后释放猛烈冲击波
+			松手或切换武器取消蓄力，持续按住可反复蓄力释放
+			护盾平滑显隐，单次抵挡不受伤害大小限制
+			破盾释放250%伤害的强化冲击波
+			连续5秒未受伤后，每2秒恢复一层
+			三把阵法法杖共用护盾消耗记录，切换与重进不会补满
+			'''
+	}
+
+	CarnelianStaff: {
+		DisplayName: 卡涅利安的赤砂法杖
+		Tooltip:
+			'''
+			默认展开赤金护盾，抵挡4次攻击
+			持续按住左键收起护盾，蓄力90帧后释放猛烈冲击波
+			松手或切换武器取消蓄力，持续按住可反复蓄力释放
+			护盾平滑显隐，单次抵挡不受伤害大小限制
+			破盾释放250%伤害的强化冲击波
+			连续5秒未受伤后，每2秒恢复一层
+			三把阵法法杖共用护盾消耗记录，切换与重进不会补满
+			'''
+	}
+
+	LinStaff: {
+		DisplayName: 林的琉璃法杖
+		Tooltip:
+			'''
+			默认展开琉璃护盾，抵挡5次攻击
+			持续按住左键收起护盾，蓄力90帧后释放猛烈冲击波
+			松手或切换武器取消蓄力，持续按住可反复蓄力释放
+			破盾时额外迸射十二枚琉璃碎片
+			护盾平滑显隐，单次抵挡不受伤害大小限制
+			破盾释放250%伤害的强化冲击波
+			连续5秒未受伤后，每2秒恢复一层
+			三把阵法法杖共用护盾消耗记录，切换与重进不会补满
+			'''
+	}
+
+	PineconeNailgun: {
+		DisplayName: 松果的射钉枪
+		Tooltip:
+			'''
+			消耗一发子弹射出五枚原版射钉枪钢钉
+			钢钉扎入敌人后延时爆炸
+			站立不动时获得更高的散射精度
+			'''
+	}
+
+	ExecutorShotgun: {
+		DisplayName: 送葬人的霰弹枪
+		Tooltip:
+			'''
+			消耗一发子弹射出八枚霰弹，可贯穿2名敌人
+			近距离造成150%伤害，忽略15点防御
+			远距离伤害逐渐衰减，每次贯穿后伤害降低20%
+			站立不动时获得更高的散射精度
+			'''
+	}
+
+	ChalterWatergun: {
+		DisplayName: 假日威龙陈的高压水枪
+		Tooltip:
+			'''
+			消耗一发子弹喷射九股高压水流，可无限贯穿敌人
+			命中使敌人湿透，近距离命中伤害更高
+			远距离伤害逐渐衰减，每次贯穿后伤害降低20%
+			站立不动时获得更高的散射精度
+			'''
+	}
+}
+
+Skills: {
+	BeeswaxStaff: {
+		1: {
+			Label: 沙暴扩散
+			Desc: 持续10秒：冲击波范围扩大45%，伤害提高25%；仍需连续蓄力90帧
+		}
+
+		2: {
+			Label: 守卫尖碑
+			Desc: 在鼠标方向的可见位置升起砂之尖碑，持续12秒，每60帧释放一次半伤害冲击波；切走武器后消失
+		}
+	}
+
+	CarnelianStaff: {
+		1: {
+			Label: 沙缚镣锁
+			Desc: 持续12秒：冲击波伤害提高40%，命中附加减速
+		}
+
+		2: {
+			Label: 食噬之印
+			Desc: 持续16秒：冲击波伤害从140%逐渐升至260%，8秒达到最大；攻击间隔不变
+		}
+	}
+
+	LinStaff: {
+		1: {
+			Label: 玲珑
+			Desc: 持续12秒：护盾每次成功抵挡都会释放一次正常强度冲击波；破盾仍释放强化攻击
+		}
+
+		2: {
+			Label: 流光乍裂
+			Desc: 持续14秒：每次主动冲击波额外迸射十二枚琉璃碎片，每枚造成33%伤害
+		}
+	}
+
+	PineconeNailgun: {
+		1: {
+			Label: 高压电流
+			Desc: 持续8秒：伤害提高35%，钢钉保留原版附着与延时爆炸机制
+		}
+
+		2: {
+			Label: 电能过载
+			Desc: 持续10秒：射速提高65%
+		}
+	}
+
+	ExecutorShotgun: {
+		1: {
+			Label: 铳口葬礼
+			Desc: 持续12秒：伤害提高35%，霰弹忽略35点防御
+		}
+
+		2: {
+			Label: 最终旅程
+			Desc: 持续12秒：射速提高75%，以连续重霰弹压制敌人
+		}
+	}
+
+	ChalterWatergun: {
+		1: {
+			Label: 高压冲洗
+			Desc: 持续12秒：伤害提高35%，水流使命中敌人减速；首领不受减速影响
+		}
+
+		2: {
+			Label: 假日风暴
+			Desc: 持续16秒：伤害提高35%，命中产生持续3秒的减速水域，最多3片；水域每30帧造成20%伤害，重叠不叠加
+		}
+	}
+}
+
+Projectiles: {
+	PhalanxFocus.DisplayName: 阵法法杖
+	PhalanxWave.DisplayName: 阵法冲击波
+	BeeswaxObelisk.DisplayName: 守卫尖碑
+	LinGlassShard.DisplayName: 琉璃碎片
+	ScattergunHoldout.DisplayName: 霰射武器
+	ScatterPellet.DisplayName: 霰射弹幕
+	ChalterWaterField.DisplayName: 假日水域
+}
+
+Buffs: {
+	HighPressureSoak: {
+		DisplayName: 高压浸润
+		Description: 被高压水流拖慢
+	}
+
+	CarnelianSandBind: {
+		DisplayName: 赤砂束缚
+		Description: 赤砂拖慢行动
+	}
+}

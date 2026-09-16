@@ -1,0 +1,172 @@
+Items: {
+	BeeswaxStaff: {
+		DisplayName: Beeswax's Sandward Staff
+		Tooltip:
+			'''
+			Passively raises a golden barrier that blocks 3 hits
+			Hold left click to lower the barrier and charge a powerful shockwave for 90 frames
+			Releasing or switching weapons cancels the charge; keep holding to repeat
+			Barrier fades smoothly and blocks hits regardless of damage
+			Breaking releases a 250% damage shockwave
+			After 5 seconds without damage, restores one charge every 2 seconds
+			All three phalanx staves share shield debt, preserved through switches and relogs
+			'''
+	}
+
+	CarnelianStaff: {
+		DisplayName: Carnelian's Crimson Sand Staff
+		Tooltip:
+			'''
+			Passively raises a crimson barrier that blocks 4 hits
+			Hold left click to lower the barrier and charge a powerful shockwave for 90 frames
+			Releasing or switching weapons cancels the charge; keep holding to repeat
+			Barrier fades smoothly and blocks hits regardless of damage
+			Breaking releases a 250% damage shockwave
+			After 5 seconds without damage, restores one charge every 2 seconds
+			All three phalanx staves share shield debt, preserved through switches and relogs
+			'''
+	}
+
+	LinStaff: {
+		DisplayName: Lin's Prismatic Staff
+		Tooltip:
+			'''
+			Passively raises a glass barrier that blocks 5 hits
+			Hold left click to lower the barrier and charge a powerful shockwave for 90 frames
+			Releasing or switching weapons cancels the charge; keep holding to repeat
+			A broken barrier also scatters twelve glass shards
+			Barrier fades smoothly and blocks hits regardless of damage
+			Breaking releases a 250% damage shockwave
+			After 5 seconds without damage, restores one charge every 2 seconds
+			All three phalanx staves share shield debt, preserved through switches and relogs
+			'''
+	}
+
+	PineconeNailgun: {
+		DisplayName: Pinecone's Nailgun
+		Tooltip:
+			'''
+			Converts one bullet into five vanilla Nail Gun nails
+			Nails stick to enemies and explode after a delay
+			Lower movement speed tightens the total spread from 20 to 5 degrees; movement does not change damage
+			'''
+	}
+
+	ExecutorShotgun: {
+		DisplayName: Executor's Shotgun
+		Tooltip:
+			'''
+			Converts one bullet into eight pellets, each piercing 2 enemies
+			Deals 150% damage up close and ignores 15 defense
+			Damage falls off with distance and drops by 20% after each penetration
+			Lower movement speed tightens the total spread from 20 to 5 degrees; movement does not change damage
+			'''
+	}
+
+	ChalterWatergun: {
+		DisplayName: Ch'en the Holungday's Pressure Washer
+		Tooltip:
+			'''
+			Converts one bullet into nine water jets with unlimited enemy penetration
+			Soaks enemies and deals more damage up close
+			Damage falls off with distance and drops by 20% after each penetration
+			Lower movement speed tightens the total spread from 20 to 5 degrees; movement does not change damage
+			'''
+	}
+}
+
+Skills: {
+	BeeswaxStaff: {
+		1: {
+			Label: Sandstorm Expansion
+			Desc: For 10 seconds: shockwaves gain 45% radius and 25% damage. Each cast still requires 90 continuous charge frames.
+		}
+
+		2: {
+			Label: Guardian Obelisk
+			Desc: Raises an obelisk toward the cursor in line of sight for 12 seconds. Pulses every 60 frames for half damage. Disappears when switching away.
+		}
+	}
+
+	CarnelianStaff: {
+		1: {
+			Label: Sand Shackles
+			Desc: For 12 seconds: shockwaves gain 40% damage and slow enemies.
+		}
+
+		2: {
+			Label: Mark of Voracity
+			Desc: For 16 seconds: shockwave damage ramps from 140% to 260% over 8 seconds, without changing the attack interval.
+		}
+	}
+
+	LinStaff: {
+		1: {
+			Label: Exquisite
+			Desc: For 12 seconds: each successful shield block releases a normal shockwave. A broken shield still releases its empowered wave.
+		}
+
+		2: {
+			Label: Prismatic Shatter
+			Desc: For 14 seconds: each active shockwave also scatters twelve shards, each dealing 33% damage.
+		}
+	}
+
+	PineconeNailgun: {
+		1: {
+			Label: High Voltage
+			Desc: For 8 seconds: +35% damage. Nails retain vanilla sticking and delayed explosions.
+		}
+
+		2: {
+			Label: Electrical Overload
+			Desc: For 10 seconds: +65% fire rate.
+		}
+	}
+
+	ExecutorShotgun: {
+		1: {
+			Label: Muzzle Funeral
+			Desc: For 12 seconds: +35% damage and pellets ignore 35 defense.
+		}
+
+		2: {
+			Label: Final Journey
+			Desc: For 12 seconds: +75% fire rate for sustained shotgun fire.
+		}
+	}
+
+	ChalterWatergun: {
+		1: {
+			Label: Pressure Rinse
+			Desc: For 12 seconds: +35% damage and water slows enemies. Bosses resist the slow.
+		}
+
+		2: {
+			Label: Holiday Storm
+			Desc: For 16 seconds: +35% damage and hits create slowing water fields lasting 3 seconds, up to 3 fields. Fields deal 20% damage every 30 frames; overlapping fields do not stack.
+		}
+	}
+}
+
+Projectiles: {
+	PhalanxFocus.DisplayName: Phalanx Focus
+	PhalanxWave.DisplayName: Phalanx Shockwave
+	BeeswaxObelisk.DisplayName: Guardian Obelisk
+	LinGlassShard.DisplayName: Glass Shard
+	ScattergunHoldout.DisplayName: Scattergun
+	ScatterPellet.DisplayName: Scatter Shot
+	ChalterWaterField.DisplayName: Holiday Water Field
+}
+
+Buffs: {
+	HighPressureSoak: {
+		DisplayName: Pressure Soaked
+		Description: Slowed by pressurized water
+	}
+
+	CarnelianSandBind: {
+		DisplayName: Sand Shackles
+		Description: Slowed by crimson sand
+	}
+}
