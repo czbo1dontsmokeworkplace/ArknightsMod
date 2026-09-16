@@ -1,4 +1,8 @@
-FrostNova.DisplayName: 霜星
+FrostNova: {
+	DisplayName: 霜星
+	BossChecklistIntegration.SpawnInfo: 在雪原使用 [i:ArknightsMod/SpicyCandy] {$Items.SpicyCandy.DisplayName} 召唤
+}
+
 IceCrystalAltar.DisplayName: 冰晶祭坛
 IceCleaver.DisplayName: 雪怪小队凿冰人
 Oneiros.DisplayName: 虚幻
@@ -10,8 +14,17 @@ Evolution.DisplayName: “进化的本质”
 tumor1.DisplayName: 畸变赘生物
 tumor2.DisplayName: 畸变恶性瘤
 AcidOgSlug.DisplayName: 酸液源石虫
-Pompeii.DisplayName: “庞贝”
-AACT.DisplayName: 邪魔炮火中枢先兆者
+
+Pompeii: {
+	DisplayName: “庞贝”
+	BossChecklistIntegration.SpawnInfo: 在任意群系使用 [i:ArknightsMod/PompeiiSummon] {$Items.PompeiiSummon.DisplayName} 召唤
+}
+
+AACT: {
+	DisplayName: 邪魔炮火中枢先兆者
+	BossChecklistIntegration.SpawnInfo: 夜晚使用 [i:ArknightsMod/AACTSummon] {$Items.AACTSummon.DisplayName} 召唤
+}
+
 AACTIntro.DisplayName: 邪魔炮火中枢先兆者（引物）
 AACTStage3TrueHealth.DisplayName: 邪魔炮火中枢先兆者（三阶段代理NPC）
 IACT.DisplayName: 帝国炮火中枢先兆者
@@ -26,7 +39,12 @@ NourishedPiercer.DisplayName: 富营养的穿刺者
 PocketSeaCrawler.DisplayName: 囊海爬行者
 PrimalSeaPiercer.DisplayName: 始海穿刺者
 ShellSeaRunner.DisplayName: 壳海狂奔者
-TheFirstToTalk.DisplayName: 首言者
+
+TheFirstToTalk: {
+	DisplayName: 首言者
+	BossChecklistIntegration.SpawnInfo: 使用 [i:ArknightsMod/TheFirstToTalkSummon] {$Items.TheFirstToTalkSummon.DisplayName} 召唤
+}
+
 Caster.DisplayName: 术士
 Crossbowman.DisplayName: 弩手
 CrossbowmanLeader.DisplayName: 弩手组长
