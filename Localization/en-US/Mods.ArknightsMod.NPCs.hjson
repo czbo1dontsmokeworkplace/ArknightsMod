@@ -1,4 +1,8 @@
-FrostNova.DisplayName: Frost Nova
+FrostNova: {
+	DisplayName: Frost Nova
+	BossChecklistIntegration.SpawnInfo: Use [i:ArknightsMod/SpicyCandy] {$Items.SpicyCandy.DisplayName} in the Snow biome (only one Frost Nova at a time)
+}
+
 IceCrystalAltar.DisplayName: Ice Crystal Altar
 IceCleaver.DisplayName: Ice Cleaver
 Oneiros.DisplayName: Oneiros
@@ -10,8 +14,17 @@ Evolution.DisplayName: Evolution
 tumor1.DisplayName: tumor1
 tumor2.DisplayName: tumor2
 AcidOgSlug.DisplayName: Acid Og Slug
-Pompeii.DisplayName: Pompeii
-AACT.DisplayName: A A C T
+
+Pompeii: {
+	DisplayName: Pompeii
+	BossChecklistIntegration.SpawnInfo: Use [i:ArknightsMod/PompeiiSummon] {$Items.PompeiiSummon.DisplayName} in any biome; it appears off-screen
+}
+
+AACT: {
+	DisplayName: A A C T
+	BossChecklistIntegration.SpawnInfo: Use [i:ArknightsMod/AACTSummon] {$Items.AACTSummon.DisplayName} at night
+}
+
 AACTIntro.DisplayName: A A C T Intro
 AACTStage3TrueHealth.DisplayName: A A C T Stage3 True Health
 IACT.DisplayName: I A C T
@@ -26,7 +39,12 @@ NourishedPiercer.DisplayName: Nourished Piercer
 PocketSeaCrawler.DisplayName: Pocket Sea Crawler
 PrimalSeaPiercer.DisplayName: Primal Sea Piercer
 ShellSeaRunner.DisplayName: Shell Sea Runner
-TheFirstToTalk.DisplayName: The First To Talk
+
+TheFirstToTalk: {
+	DisplayName: The First To Talk
+	BossChecklistIntegration.SpawnInfo: Use [i:ArknightsMod/TheFirstToTalkSummon] {$Items.TheFirstToTalkSummon.DisplayName} (no biome or time requirement)
+}
+
 Caster.DisplayName: Caster
 Crossbowman.DisplayName: Crossbowman
 CrossbowmanLeader.DisplayName: Crossbowman Leader
