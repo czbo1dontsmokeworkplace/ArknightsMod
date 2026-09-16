@@ -13,6 +13,7 @@ using Filters = Terraria.Graphics.Effects.Filters;
 // TODO : 提供屏幕朝向震动以及卡肉等攻击效果 制作被打出血的粒子特效
 /* TODO : 刀砍快慢以及后摇啥的 提供多种情况AI 通过链式调用来调整整体的状态机 例如 于Move.State 点击左键 进入Attack.State 然后
           在Attack.State中用右键或者特殊按键的时候 切换为特殊State  */
+// TODO : 制作位移斩效果 具体动作为 起手式为剑朝着冲刺反方向 然后位移后剑朝着冲刺方向 制作两个效果 一个是屏幕破碎 一个是冲刺路径光效
 namespace ArknightsMod.Content.SwingHelper
 {
     public class SwingHelper
@@ -132,15 +133,28 @@ namespace ArknightsMod.Content.SwingHelper
         /// 大小倍率
         /// </summary>
         public Vector2 scale = new Vector2(1,1);
+		/// <summary>
+		/// 长度倍率
+		/// </summary>
+        public float lenScale = 1f;
         /// <summary>
         /// 剑体长度
         /// </summary>
-        public float Length => (texSize).Length();
+        public float Length => (texSize).Length() * lenScale;
 
         public Vector2 texLength => new Vector2(Length, 0);
+        /// <summary>
+        /// 手柄位置
+        /// </summary>
         public Vector2 handleLength;
+        /// <summary>
+        /// 剑头位置
+        /// </summary>
         public Vector2 swordLength;
 
+
+        public Vector2 oldHandleLength;
+        public Vector2 oldSwordLength;
         /// <summary>
         /// 实际剑方向（SwordAHandCon 算好的，DrawBlade 用它对齐柄）
         /// </summary>
@@ -194,7 +208,7 @@ namespace ArknightsMod.Content.SwingHelper
         /// </summary>
         public Vector2 setoff;
 		/// <summary>
-		/// 剑柄位置
+		/// 用于保存数据
 		/// </summary>
         public Vector2 oldSetoff;
         /// <summary>
@@ -302,6 +316,18 @@ namespace ArknightsMod.Content.SwingHelper
 
         #region 设置挥舞帮助的参数
 
+        public SwingHelper SetHandlePos(Vector2 pos) {
+	        handleLength = pos;
+	        oldHandleLength = pos;
+	        return this;
+        }
+
+        public SwingHelper SetSwordPos(Vector2 pos) {
+	        swordLength = pos;
+	        oldSwordLength = pos;
+	        return this;
+        }
+
         public SwingHelper SetSetoff(Vector2 setoff) {
 	        this.setoff = setoff;
 	        oldSetoff = setoff;
@@ -358,6 +384,14 @@ namespace ArknightsMod.Content.SwingHelper
             if (this.scale.Y < 0.0001f)
                 this.scale.Y = 1f;
             return this;
+        }
+
+        public SwingHelper SetScale(float scale) {
+	        lenScale = scale;
+	        swordLength = scale * oldSwordLength;
+	        handleLength = scale * oldHandleLength;
+	        setoff = scale * oldSetoff;
+	        return this;
         }
         public SwingHelper SetcatmullScale(int catmullScale)
         {
@@ -498,11 +532,12 @@ namespace ArknightsMod.Content.SwingHelper
         /// </summary>
         public virtual bool Wait(RotationHelper.SwingDir swingDir = RotationHelper.SwingDir.plus,float swordtohand = 0)
         {
+
             swordRad = RotationHelper.GetSwingRotation(startRad, endRad,swingTime,SwingUseTime,player.direction,scale
 	            ,texLength,handleLength,swordLength,out float length,out float handlelen,out float swordlen,
 	            out float SwordDir);
             swordDir = SwordDir;
-            SwordAHandCon(swordtohand, startRad,length,handlelen,swordlen);
+            SwordAHandCon(swordtohand, swordRad,length,handlelen,swordlen);
             Chargetime = MathF.Min(Chargetime+1, MaxChargetime);
             ChargeProgress = Chargetime / MaxChargetime;
             if (ChargeProgress >= 1)
@@ -793,7 +828,12 @@ namespace ArknightsMod.Content.SwingHelper
 	        sb.End();
 	        sb.Begin();
         }
-
+		/// <summary>
+		/// 绘制戳刺光效(大粪来的)
+		/// </summary>
+		/// <param name="sb"></param>
+		/// <param name="lightcolor"></param>
+		/// <param name="scale"></param>
         public virtual void DrawStabLight(SpriteBatch sb,Color lightcolor,Vector2 scale ) {
 	        sb.End();
 	        sb.Begin(SpriteSortMode.Immediate, BlendState.Additive,
@@ -803,6 +843,19 @@ namespace ArknightsMod.Content.SwingHelper
 
 	        sb.Draw(lightTex,swordHead - Main.screenPosition,null,lightcolor,swordRot + MathF.PI/2
 		        ,lightTex.Size()/2,scale ,SpriteEffects.None,0);
+	        sb.End();
+	        sb.Begin();
+        }
+
+        public virtual void DrawStabLight(SpriteBatch sb,Color lightcolor,Vector2 scale,Texture2D lightTex,float rot,SpriteEffects spriteEffects =  SpriteEffects.None) {
+	        sb.End();
+	        sb.Begin(SpriteSortMode.Immediate, BlendState.Additive,
+		        SamplerState.AnisotropicClamp, DepthStencilState.None,
+		        RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+	        Vector2 orig = lightTex.Size() / 2;
+
+	        sb.Draw(lightTex,swordHead - Main.screenPosition,null,lightcolor,swordRot + MathF.PI/2 + rot
+		        ,lightTex.Size()/2,scale ,spriteEffects,0);
 	        sb.End();
 	        sb.Begin();
         }
@@ -850,14 +903,56 @@ namespace ArknightsMod.Content.SwingHelper
 	        sb.End();
 	        sb.Begin();
         }
+
+        public virtual void DrawTrip(SwingEffect en, Color Tripcolor, SpriteBatch sb,Texture2D tex, BlendState blendState = null) {
+	        blendState ??= BlendState.Additive;
+	        trip.Clear();
+	        if (mP.modifyScreenPos) {
+		        GetCatmullPos(oldWorldHandPos, out Vector2[] TriphandPos);
+		        GetCatmullPos(oldWorldPos, out Vector2[] TripswordPos);
+		        for (int i = 0; i < TriphandPos.Length-1; i++)
+		        {
+			        if (TriphandPos[i] == Vector2.Zero)
+				        continue ;
+			        float progress = i / (float)TriphandPos.Length;
+			        trip.Add(new Vertex(TriphandPos[i] - Main.screenPosition, new Vector3(progress, 0, 0), Tripcolor));
+			        trip.Add(new Vertex(TripswordPos[i] - Main.screenPosition, new Vector3(progress, 1, 0), Tripcolor));
+		        }
+	        }
+	        else {
+		        GetCatmullPos(oldHandPos, out Vector2[] TriphandPos);
+		        GetCatmullPos(oldPos, out Vector2[] TripswordPos);
+		        for (int i = 0; i < TriphandPos.Length-1; i++)
+		        {
+			        if (TriphandPos[i] == Vector2.Zero)
+				        continue ;
+			        float progress = i / (float)TriphandPos.Length;
+			        trip.Add(new Vertex(TriphandPos[i] , new Vector3(progress, 0, 0), Tripcolor));
+			        trip.Add(new Vertex(TripswordPos[i], new Vector3(progress, 1, 0), Tripcolor));
+		        }
+	        }
+	        sb.End();
+	        sb.Begin(SpriteSortMode.Immediate,blendState,
+		        SamplerState.AnisotropicClamp, DepthStencilState.None,
+		        RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+	        ApplyShader(en);
+	        Main.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+	        Main.graphics.GraphicsDevice.Textures[0] = tex;
+	        if (trip.Count >= 3)
+		        Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, trip.ToArray(), 0,
+			        trip.Count - 2);
+	        sb.End();
+	        sb.Begin();
+        }
 		/// <summary>
 		/// 绘制弯刀拖尾
 		/// </summary>
 		/// <param name="en"></param>
 		/// <param name="Tripcolor"></param>
 		/// <param name="sb"></param>
-        public virtual void DrawTrip(SwingEffect en, Color[] Tripcolor, SpriteBatch sb,TripTex tex =  TripTex.Streamline)
+        public virtual void DrawTrip(SwingEffect en, Color[] Tripcolor, SpriteBatch sb,TripTex tex =  TripTex.Streamline,BlendState blendState = null)
         {
+	        blendState ??= BlendState.Additive;
 	        trip.Clear();
 	        if (mP.modifyScreenPos) {
 		        GetCatmullPos(oldWorldHandPos, out Vector2[] TriphandPos);
@@ -884,7 +979,7 @@ namespace ArknightsMod.Content.SwingHelper
 		        }
 	        }
 	        sb.End();
-	        sb.Begin(SpriteSortMode.Immediate, BlendState.Additive,
+	        sb.Begin(SpriteSortMode.Immediate, blendState,
 		        SamplerState.AnisotropicClamp, DepthStencilState.None,
 		        RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 	        ApplyShader(en);
@@ -897,8 +992,9 @@ namespace ArknightsMod.Content.SwingHelper
 	        sb.Begin();
         }
 
-        public virtual void DrawTrip(SwingEffect en, Color Tripcolor, SpriteBatch sb,float rot,int point = 16,TripTex tex = TripTex.Afterimage)
+        public virtual void DrawTrip(SwingEffect en, Color Tripcolor, SpriteBatch sb,float rot,int point = 16,TripTex tex = TripTex.Afterimage,BlendState blendState = null)
         {
+	        blendState ??= BlendState.Additive;
 	        trip.Clear();
 	        List<Vertex>[] tripPos = new List<Vertex>[point-1];
 	        for (int j = 0; j < point-1; j++) {
@@ -953,7 +1049,7 @@ namespace ArknightsMod.Content.SwingHelper
 		        }
 	        }
 	        sb.End();
-	        sb.Begin(SpriteSortMode.Immediate, BlendState.Additive,
+	        sb.Begin(SpriteSortMode.Immediate, blendState,
 		        SamplerState.AnisotropicClamp, DepthStencilState.None,
 		        RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 	        ApplyShader(en);
@@ -969,8 +1065,8 @@ namespace ArknightsMod.Content.SwingHelper
 	        sb.Begin();
         }
 
-        public virtual void DrawTrip(SwingEffect en, Color[] Tripcolor, SpriteBatch sb,float rot,int point = 16,TripTex tex = TripTex.Afterimage)
-        {
+        public virtual void DrawTrip(SwingEffect en, Color[] Tripcolor, SpriteBatch sb,float rot,int point = 16,TripTex tex = TripTex.Afterimage,BlendState blendState = null) {
+	        blendState ??= BlendState.Additive;
 	        trip.Clear();
 	        List<Vertex>[] tripPos = new List<Vertex>[point-1];
 	        for (int j = 0; j < point-1; j++) {
@@ -1025,7 +1121,7 @@ namespace ArknightsMod.Content.SwingHelper
 		        }
 	        }
 	        sb.End();
-	        sb.Begin(SpriteSortMode.Immediate, BlendState.Additive,
+	        sb.Begin(SpriteSortMode.Immediate, blendState,
 		        SamplerState.AnisotropicClamp, DepthStencilState.None,
 		        RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 	        Main.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
@@ -1041,8 +1137,9 @@ namespace ArknightsMod.Content.SwingHelper
 	        sb.Begin();
         }
 
-		public virtual void DrawTrip(SwingEffect en, Color[] Tripcolor, SpriteBatch sb,float rot,Texture2D tex,int point = 16)
-        {
+        public virtual void DrawTrip(SwingEffect en, Color[] Tripcolor, SpriteBatch sb, float rot, Texture2D tex,
+	        int point = 16, BlendState blendState = null) {
+	        blendState ??= BlendState.Additive;
 	        trip.Clear();
 	        List<Vertex>[] tripPos = new List<Vertex>[point-1];
 	        for (int j = 0; j < point-1; j++) {
@@ -1097,7 +1194,7 @@ namespace ArknightsMod.Content.SwingHelper
 		        }
 	        }
 	        sb.End();
-	        sb.Begin(SpriteSortMode.Immediate, BlendState.Additive,
+	        sb.Begin(SpriteSortMode.Immediate, blendState,
 		        SamplerState.AnisotropicClamp, DepthStencilState.None,
 		        RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 	        ApplyShader(en);
@@ -1113,8 +1210,8 @@ namespace ArknightsMod.Content.SwingHelper
 	        sb.Begin();
         }
 
-	    public virtual void DrawTrip(SwingEffect en, Color Tripcolor, SpriteBatch sb,float rot,Texture2D tex,int point = 16)
-        {
+	    public virtual void DrawTrip(SwingEffect en, Color Tripcolor, SpriteBatch sb,float rot,Texture2D tex,int point = 16,BlendState blendState = null) {
+		    blendState ??= BlendState.Additive;
 	        trip.Clear();
 	        List<Vertex>[] tripPos = new List<Vertex>[point-1];
 	        for (int j = 0; j < point-1; j++) {
@@ -1169,7 +1266,7 @@ namespace ArknightsMod.Content.SwingHelper
 		        }
 	        }
 	        sb.End();
-	        sb.Begin(SpriteSortMode.Immediate, BlendState.Additive,
+	        sb.Begin(SpriteSortMode.Immediate, blendState,
 		        SamplerState.AnisotropicClamp, DepthStencilState.None,
 		        RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 	        ApplyShader(en);
