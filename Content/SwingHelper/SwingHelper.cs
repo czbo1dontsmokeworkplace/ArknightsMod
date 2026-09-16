@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -173,8 +173,7 @@ namespace ArknightsMod.Content.SwingHelper
         /// </summary>
         public float mouseRad;
 
-        private float startRad;
-        private float endRad;
+        private int swingFacing = 1;
         /// <summary>
         /// 手部弧度
         /// </summary>
@@ -371,7 +370,9 @@ namespace ArknightsMod.Content.SwingHelper
         }
         public SwingHelper SetSwingRad(float rad)
         {
-            this.swingRad = rad;
+	        if (rad < 0f)
+		        throw new ArgumentOutOfRangeException(nameof(rad));
+	        this.swingRad = rad;
             return this;
         }
 
@@ -440,25 +441,32 @@ namespace ArknightsMod.Content.SwingHelper
         {
 	        // 非均匀缩放以本次攻击鼠标方向为局部坐标轴，而不是固定世界 X/Y 轴。
 	        mouseRad = rad;
-	        float half = swingRad / 2f;
-	        if (player.direction == 1)
-	        {
-		        startRad = rad - half;   // 朝右：身后(-90°) → 前方(+90°)
-		        endRad   = rad + half;
-	        }
-	        else
-	        {
-		        startRad = rad + half;   // 朝左：身后(+90°) → 前方(-90°)
-		        endRad   = rad - half;
-	        }
-	        if (endRad > MathF.PI * 2f)
-	        {
-		        endRad -= MathF.PI * 2f;
-		        startRad -= MathF.PI * 2f;
-	        }
-	        if (startRad > endRad)
-		        startRad -= MathF.PI * 2f;
+	        swingFacing = player.direction;
 	        return this;
+        }
+
+        private float GetCurrentSwingRotation(RotationHelper.SwingDir swingDir)
+        {
+            float start;
+            RotationHelper.SwingDir direction;
+            if (swingFacing == 1)
+            {
+                start = mouseRad - swingRad / 2f;
+                direction = RotationHelper.SwingDir.plus;
+            }
+            else
+            {
+                start = mouseRad + swingRad / 2f;
+                direction = RotationHelper.SwingDir.minus;
+            }
+
+            // Reverse attacks traverse the same arc from its opposite end.
+            if (swingDir == RotationHelper.SwingDir.minus)
+            {
+                start += swingRad * (int)direction;
+                direction = (RotationHelper.SwingDir)(-(int)direction);
+            }
+            return RotationHelper.GetSwingRotation(start, swingRad, swingTime, SwingUseTime, direction);
         }
 
         public SwingHelper SetDashRad(float rad) {
@@ -523,7 +531,12 @@ namespace ArknightsMod.Content.SwingHelper
                 walkPhase = 0f;
                 armRad = 0f;
             }
-            SwordAHandCon(-MathF.PI/2f * player.direction, armRad + MathF.PI/2f *  player.direction,texLength.Length(),handleLength.Length(),swordLength.Length());
+            // Preserve the idle pose while passing a world-space hand angle.
+            float idleHand = armRad + MathF.PI / 2f * player.direction;
+            if (player.direction == -1)
+                idleHand += MathF.PI;
+            SwordAHandCon(-MathF.PI / 2f * player.direction, idleHand,
+                texLength.Length(), handleLength.Length(), swordLength.Length());
             proj.rotation = armRad * -player.direction;
         }
 
@@ -533,11 +546,9 @@ namespace ArknightsMod.Content.SwingHelper
         public virtual bool Wait(RotationHelper.SwingDir swingDir = RotationHelper.SwingDir.plus,float swordtohand = 0)
         {
 
-            swordRad = RotationHelper.GetSwingRotation(startRad, endRad,swingTime,SwingUseTime,player.direction,scale
-	            ,texLength,handleLength,swordLength,out float length,out float handlelen,out float swordlen,
-	            out float SwordDir);
-            swordDir = SwordDir;
-            SwordAHandCon(swordtohand, swordRad,length,handlelen,swordlen);
+            swordRad = GetCurrentSwingRotation(swingDir);
+            swordDir = (int)swingDir;
+            SwordAHandCon(swordtohand, swordRad, texLength.Length(), handleLength.Length(), swordLength.Length());
             Chargetime = MathF.Min(Chargetime+1, MaxChargetime);
             ChargeProgress = Chargetime / MaxChargetime;
             if (ChargeProgress >= 1)
@@ -548,18 +559,16 @@ namespace ArknightsMod.Content.SwingHelper
         public virtual bool Stab(float swordtohand = 0) {
 	        scale = new Vector2(1, 1);
 	        if (stabTime / (float)StabUseTime < 0.3f) {
-		        swordRad = RotationHelper.GetSwingRotation(stabRad, stabRad,swingTime,SwingUseTime,player.direction,scale
-			        ,texLength,handleLength,swordLength,out float length,out float handlelen,out float swordlen,
-			        out float SwordDir);
-		        swordDir = SwordDir;
-		        SwordAHandCon(swordtohand,swordRad,length,handlelen,swordlen,true,Player.CompositeArmStretchAmount.None,false);
+		        swordRad = stabRad;
+		        swordDir = 1;
+		        SwordAHandCon(swordtohand, swordRad, texLength.Length(), handleLength.Length(), swordLength.Length(),
+                    true, Player.CompositeArmStretchAmount.None);
 	        }
 	        else {
-		        swordRad = RotationHelper.GetSwingRotation(stabRad, stabRad,swingTime,SwingUseTime,player.direction,scale
-			        ,texLength,handleLength,swordLength,out float length,out float handlelen,out float swordlen,
-			        out float SwordDir);
-		        swordDir = SwordDir;
-		        SwordAHandCon(swordtohand,swordRad,length,handlelen,swordlen,true,Player.CompositeArmStretchAmount.Full,false);
+		        swordRad = stabRad;
+		        swordDir = 1;
+		        SwordAHandCon(swordtohand, swordRad, texLength.Length(), handleLength.Length(), swordLength.Length(),
+                    true, Player.CompositeArmStretchAmount.Full);
 	        }
 	        setoff = (1-(stabTime / (float)StabUseTime)) * (oldSetoff * 2);
 	        stabAction?.Invoke();
@@ -585,12 +594,11 @@ namespace ArknightsMod.Content.SwingHelper
 		            Filters.Scene["BladeSlashWarp"].Deactivate();
 	            return true;
             }
-            swordRad = RotationHelper.GetSwingRotation(startRad, endRad,swingTime,SwingUseTime,player.direction,scale
-	            ,texLength,handleLength,swordLength,out float length,out float handlelen,out float swordlen,
-	            out float SwordDir,swingDir);
-            swordDir = SwordDir;
+            swordRad = GetCurrentSwingRotation(swingDir);
+            swordDir = (int)swingDir;
             swingAction?.Invoke();
-            SwordAHandCon(swordtohand,swordRad,length,handlelen,swordlen,true,Player.CompositeArmStretchAmount.Full,true);
+            SwordAHandCon(swordtohand, swordRad, texLength.Length(), handleLength.Length(), swordLength.Length(),
+                true, Player.CompositeArmStretchAmount.Full);
             if (lagTime == 0)
 	            swingTime++;
             else
@@ -599,10 +607,10 @@ namespace ArknightsMod.Content.SwingHelper
         }
 
         public bool Dash(float Length,RotationHelper.SwingDir swingDir = RotationHelper.SwingDir.plus) {
-	        swordRad = RotationHelper.GetSwingRotation(startRad, endRad,swingTime,SwingUseTime,player.direction,scale
-		        ,texLength,handleLength,swordLength,out float length,out float handlelen,out float swordlen,
-		        out float SwordDir,swingDir);
-	        SwordAHandCon(0,swordRad,length,handlelen,swordlen,false,Player.CompositeArmStretchAmount.Full,true);
+	        swordRad = GetCurrentSwingRotation(swingDir);
+	        swordDir = (int)swingDir;
+	        SwordAHandCon(0, swordRad, texLength.Length(), handleLength.Length(), swordLength.Length(),
+                false, Player.CompositeArmStretchAmount.Full);
 	        SavePlayerPos(player.position + new Vector2(0f, player.gfxOffY));
 	        dashAction?.Invoke();
 	        Vector2 vector2 = new Vector2(Length, 0).RotatedBy(dashRad);
@@ -619,9 +627,8 @@ namespace ArknightsMod.Content.SwingHelper
         /// </summary>
         /// <param name="swordToHand"></param>
         /// <param name="hand"></param>
-        /// <param name="handPlayerDir"></param>
         public virtual void SwordAHandCon(float swordToHand,float hand,float length,float handleLen,float swordlen,
-	        bool savePos = false,Player.CompositeArmStretchAmount armType = Player.CompositeArmStretchAmount.Full,bool handPlayerDir = true)
+	        bool savePos = false,Player.CompositeArmStretchAmount armType = Player.CompositeArmStretchAmount.Full)
         {
             Vector2 ScaleByAttackAxis(Vector2 vector)
             {
@@ -635,18 +642,13 @@ namespace ArknightsMod.Content.SwingHelper
             float visualHandRotation = handDirection.ToRotation();
 
             float rawSwordRotation = hand + swordToHand;
-            if (handPlayerDir && player.direction == -1)
-                rawSwordRotation += MathF.PI;
             Vector2 swordDirection = ScaleByAttackAxis(Vector2.UnitX.RotatedBy(rawSwordRotation));
             if (swordDirection.LengthSquared() < 0.0001f)
                 swordDirection = Vector2.UnitX.RotatedBy(rawSwordRotation);
             float visualSwordRotation = swordDirection.ToRotation();
 
-            float armAngle;
-            if(handPlayerDir)
-                armAngle = visualHandRotation - MathF.PI / 2f * player.direction;
-            else
-                armAngle = visualHandRotation - MathF.PI / 2f;
+            // Composite arm rotation is measured from the downward axis for both facings.
+            float armAngle = visualHandRotation - MathF.PI / 2f;
             if (isBackArm) {
 	            player.SetCompositeArmBack(true, armType, armAngle);
 	            handlePos = player.GetBackHandPosition(armType, armAngle);
