@@ -29,7 +29,7 @@ public sealed class PhalanxVisuals : ModSystem
         if (!float.IsFinite(textureSize.X) || !float.IsFinite(textureSize.Y)
             || !float.IsFinite(pixels.X) || !float.IsFinite(pixels.Y)
             || textureSize.X <= 0 || textureSize.Y <= 0
-            || pixels.X <= 0 || pixels.Y <= 0 || pixels.X > 800 || pixels.Y > 800) return false;
+            || pixels.X <= 0 || pixels.Y <= 0 || pixels.X > 1280 || pixels.Y > 1280) return false;
         scale = pixels / textureSize;
         return true;
     }

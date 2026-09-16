@@ -16,7 +16,11 @@ public abstract class Scattergun : ExpansionWeaponBase
     {
         Item.width = 56; Item.height = 24;
         Item.damage = EliteDamage[0]; Item.DamageType = DamageClass.Ranged;
-        Item.useTime = Item.useAnimation = new[] { 28, 46, 32 }[Tier];
+        Item.useTime = Tier == 0 ? 28 : Tier == 1 ? 4 : 6;
+        Item.useAnimation = Tier == 0 ? 28 : Item.useTime * (Tier + 1);
+        Item.useLimitPerAnimation = Tier + 1;
+        // The final use interval belongs to the pause: last shot -> next burst is 46 / 32 frames.
+        Item.reuseDelay = Tier == 0 ? 0 : (Tier == 1 ? 46 : 32) - Item.useTime;
         Item.useStyle = ItemUseStyleID.Shoot;
         Item.noMelee = Item.noUseGraphic = Item.autoReuse = true;
         Item.useAmmo = AmmoID.Bullet;
@@ -25,6 +29,13 @@ public abstract class Scattergun : ExpansionWeaponBase
         Item.knockBack = Tier == 1 ? 6f : 3f;
         Item.rare = new[] { ItemRarityID.Green, ItemRarityID.LightRed, ItemRarityID.Red }[Tier];
         Item.value = Item.sellPrice(gold: 1 + Tier * 6);
+    }
+    internal static void ConfigureNailImmunity(Projectile nail)
+    {
+        nail.usesLocalNPCImmunity = true;
+        nail.usesIDStaticNPCImmunity = false;
+        // A finite cooldown lets the same nail damage its host again when its vanilla fuse explodes.
+        nail.localNPCHitCooldown = 10;
     }
     public override bool AltFunctionUse(Player player) => false;
     public override bool CanUseItem(Player player)
@@ -45,7 +56,7 @@ public abstract class Scattergun : ExpansionWeaponBase
         Vector2 aim = (Main.MouseWorld - player.MountedCenter).SafeNormalize(new Vector2(player.direction, 0));
         Vector2 muzzle = player.MountedCenter + aim * 42;
         if (!Collision.CanHitLine(player.MountedCenter, 1, 1, muzzle, 1, 1)) muzzle = player.MountedCenter;
-        int count = new[] { 5, 8, 9 }[Tier];
+        int count = new[] { 5, 8, 7 }[Tier];
         float fullRunSpeed = Math.Max(player.maxRunSpeed, player.accRunSpeed);
         float spread = MathHelper.ToRadians(ScattergunSpread.TotalDegrees(player.velocity.Length(), fullRunSpeed)) * .5f;
         float power = mode == 1 ? 1.35f : mode == 2 && Tier == 2 ? 1.35f : 1f;
@@ -59,11 +70,26 @@ public abstract class Scattergun : ExpansionWeaponBase
                     (int)(damage * power), knockback, player.whoAmI)
                 : Projectile.NewProjectile(source, muzzle, shotVelocity, ModContent.ProjectileType<ScatterPellet>(),
                     (int)(damage * power), knockback, player.whoAmI, Tier, mode);
-            if (Main.projectile.IndexInRange(id)) Main.projectile[id].CritChance = player.GetWeaponCrit(Item);
+            if (Main.projectile.IndexInRange(id))
+            {
+                Main.projectile[id].CritChance = player.GetWeaponCrit(Item);
+                if (Tier == 0) ConfigureNailImmunity(Main.projectile[id]);
+            }
+        }
+        // One held sprite; subsequent volleys restart its recoil and muzzle feedback.
+        foreach (Projectile held in Main.ActiveProjectiles)
+        {
+            if (held.owner != player.whoAmI || held.type != ModContent.ProjectileType<ScattergunHoldout>()) continue;
+            held.velocity = aim;
+            held.ai[0] = Tier;
+            held.ai[1] = Math.Max(10, player.itemAnimationMax + player.reuseDelay);
+            held.ai[2]++;
+            held.netUpdate = true;
+            return false;
         }
         Projectile.NewProjectile(source, player.MountedCenter, aim,
             ModContent.ProjectileType<ScattergunHoldout>(), 0, 0, player.whoAmI,
-            Tier, Math.Max(10, player.itemAnimationMax), mode);
+            Tier, Math.Max(10, player.itemAnimationMax + player.reuseDelay), 1);
         return false;
     }
 
@@ -80,7 +106,7 @@ public sealed class PineconeNailgun : Scattergun
 public sealed class ExecutorShotgun : Scattergun
 {
     public override int Tier => 1;
-    protected override int[] EliteDamage => [30, 35, 41];
+    protected override int[] EliteDamage => [12, 14, 16];
     public override void AddRecipes() => CreateRecipe().AddIngredient<PineconeNailgun>()
         .AddIngredient(ItemID.Shotgun).AddRecipeGroup(OperatorWeaponRecipeGroups.CobaltOrPalladiumBar, 12)
         .AddIngredient(ItemID.SoulofNight, 8)
@@ -89,8 +115,8 @@ public sealed class ExecutorShotgun : Scattergun
 public sealed class ChalterWatergun : Scattergun
 {
     public override int Tier => 2;
-    protected override int[] EliteDamage => [58, 68, 80];
+    protected override int[] EliteDamage => [23, 27, 32];
     public override void AddRecipes() => CreateRecipe().AddIngredient<ExecutorShotgun>()
-        .AddIngredient(ItemID.TacticalShotgun).AddIngredient(ItemID.FragmentVortex, 12).AddIngredient(ItemID.BottledWater, 20)
+        .AddIngredient(ItemID.TacticalShotgun).AddIngredient(ItemID.ShroomiteBar, 20).AddIngredient(ItemID.WetBomb, 20).AddIngredient(ItemID.BottledWater, 20)
         .AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>()).Register();
 }

@@ -16,6 +16,18 @@ public sealed class GoldenglowHeldStaff : ModProjectile
 {
     private Vector2 aim;
     private float pulseCooldown;
+    private float visualCharge;
+    private float visualBurst;
+    internal NPC LockedTarget
+    {
+        get
+        {
+            Player player = Main.player[Projectile.owner];
+            var mp = player.GetModPlayer<WeaponPlayer>();
+            float range = mp.SkillActive && mp.Skill == 1 ? 1300f : 1000f;
+            return FindTargetNPC(aim, player.Center, range, mp.SkillActive ? 345f : 225f);
+        }
+    }
     private Item channeledItem;
     internal bool Bursting => GoldenglowLightningBalance.IsBurst((int)Projectile.ai[0]);
     internal Vector2 Aim => aim;
@@ -118,7 +130,7 @@ public sealed class GoldenglowHeldStaff : ModProjectile
         }
         if (owned && (pulseCooldown <= 0 || burstStart))
         {
-            Vector2 target = FindTarget(aim, player.Center, range, mp.SkillActive ? 345f : 225f);
+            Vector2 target = LockedTarget?.Center ?? aim;
             int damage = player.GetWeaponDamage(player.HeldItem);
             GoldenglowLightningStrike.Spawn(Projectile.GetSource_FromThis(), Tip, target, player.whoAmI,
                 (int)(damage * (burst ? GoldenglowLightningBalance.BurstDamage : 1f)),
@@ -129,7 +141,7 @@ public sealed class GoldenglowHeldStaff : ModProjectile
                 Vector2 sky = target - Vector2.UnitY.RotatedBy(Main.rand.NextFloat(-MathHelper.Pi / 36f,
                     MathHelper.Pi / 36f)) * 1200f;
                 GoldenglowLightningStrike.Spawn(Projectile.GetSource_FromThis(), sky, target,
-                    player.whoAmI, (int)(damage * 0.8f), 8f, 2);
+                    player.whoAmI, (int)(damage * GoldenglowLightningBalance.SkyDamage), 8f, 2);
             }
             float speed = MathHelper.Clamp(player.GetWeaponAttackSpeed(player.HeldItem), 0.5f, 2f);
             if (mp.SkillActive && mp.Skill == 0)
@@ -141,13 +153,15 @@ public sealed class GoldenglowHeldStaff : ModProjectile
         }
         if (!Main.dedServ)
         {
-            float charge = GoldenglowLightningBalance.Charge(tick);
+            visualCharge = MathHelper.Lerp(visualCharge, GoldenglowLightningBalance.Charge(tick), 0.12f);
+            visualBurst = MathHelper.Lerp(visualBurst, burst ? 1f : 0f, 0.12f);
+            float charge = visualCharge;
             Lighting.AddLight(Tip, new Vector3(0.25f, 0.5f, 1f) * (0.7f + charge));
             if (tick % 3 == 0)
             {
                 Vector2 radial = Main.rand.NextVector2Unit();
                 Dust dust = Dust.NewDustPerfect(Tip + radial * (18f + 20f * charge), DustID.Electric,
-                    -radial * (2f + charge * 3f), 100, Color.LightSkyBlue, burst ? 1.2f : 0.65f);
+                    -radial * (2f + charge * 3f), 100, Color.LightSkyBlue, MathHelper.Lerp(0.65f, 1.2f, visualBurst));
                 dust.noGravity = true;
             }
             if (burstStart)
@@ -157,7 +171,7 @@ public sealed class GoldenglowHeldStaff : ModProjectile
         Projectile.ai[0]++;
     }
 
-    internal static Vector2 FindTarget(Vector2 cursor, Vector2 playerCenter, float range, float snap)
+    internal static NPC FindTargetNPC(Vector2 cursor, Vector2 playerCenter, float range, float snap)
     {
         NPC best = null;
         float distance = snap * snap;
@@ -172,7 +186,7 @@ public sealed class GoldenglowHeldStaff : ModProjectile
                 best = npc;
             }
         }
-        return best?.Center ?? cursor;
+        return best;
     }
 
     public override bool PreDraw(ref Color lightColor)
@@ -188,9 +202,9 @@ public sealed class GoldenglowHeldStaff : ModProjectile
         float rotation = -MathHelper.PiOver4 * player.direction * player.gravDir;
         Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, lightColor,
             rotation, origin, 1f, effects);
-        float charge = GoldenglowLightningBalance.Charge((int)Projectile.ai[0]);
+        float charge = visualCharge;
         GoldenglowLightningRenderer.DrawFlare(Tip, new Color(80, 160, 255), 0.24f + charge * 0.28f,
-            Bursting ? 1f : 0.7f);
+            MathHelper.Lerp(0.7f, 1f, visualBurst));
         return false;
     }
 }

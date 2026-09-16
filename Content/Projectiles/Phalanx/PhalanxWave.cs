@@ -16,7 +16,7 @@ public sealed class PhalanxWave : ModProjectile
     private bool Charged => Projectile.ai[2] == 1;
     private bool Powerful => Broken || Charged;
     private bool Broken => Projectile.ai[1] == 10;
-    private float MaxRadius => (180 + Tier * 36) * (Broken ? 1.4f : Projectile.ai[1] == 1 && Tier == 0 ? 1.45f : 1);
+    private float MaxRadius => (180 + Tier * 36) * (Tier == 1 ? 1.3f : Tier == 2 ? 1.7f : 1f) * (Broken ? 1.4f : Projectile.ai[1] == 1 && Tier == 0 ? 1.45f : 1);
     private float Progress => 1 - Projectile.timeLeft / 24f;
     private float Radius => MaxRadius * MathF.Sqrt(Math.Max(0, Progress));
     public override void SetDefaults()
@@ -56,6 +56,7 @@ public sealed class PhalanxWave : ModProjectile
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
     {
         PhalanxVisuals.Burst(target.Center, Tier, Powerful ? 24 : 10, Powerful ? 8 : 4);
+        PhalanxSignatureVisuals.Hit(target.Center, Tier);
         if (Tier == 1 && Projectile.ai[1] == 1) target.AddBuff(ModContent.BuffType<CarnelianSandBind>(), 90);
         if (Tier == 2) target.AddBuff(BuffID.Confused, 45);
     }
@@ -69,6 +70,7 @@ public sealed class PhalanxWave : ModProjectile
         PhalanxVisuals.Shockwave(center, new Vector2(Radius * 2), color * fade * (Powerful ? .8f : .55f),
             Progress * (Tier == 1 ? .18f : -.12f));
         PhalanxVisuals.Glow(center, new Vector2((Powerful ? 140 : 64) * fade), color * fade * .25f);
+        PhalanxSignatureVisuals.DrawRelease(center, Tier, Progress, MaxRadius, Powerful);
         return false;
     }
 }

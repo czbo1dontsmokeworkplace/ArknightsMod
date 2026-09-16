@@ -102,7 +102,11 @@ public sealed class PhalanxFocus : ModProjectile
         }
         Vector2 focus = player.MountedCenter - Main.screenPosition + new Vector2(player.direction * 27, -45);
         if (HoldingForDraw(player) && chargeFrames > 0)
+        {
             DrawCharge(focus, tier, chargeFrames / (float)PhalanxCycle.ChargeDuration);
+            PhalanxSignatureVisuals.DrawCharge(Projectile.Center - Main.screenPosition, focus, tier,
+                chargeFrames / (float)PhalanxCycle.ChargeDuration, Main.GlobalTimeWrappedHourly);
+        }
         if (releaseFlash > 0)
         {
             Color color = PhalanxVisuals.Palette(tier); color.A = 0;

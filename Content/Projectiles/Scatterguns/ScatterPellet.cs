@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.GameContent;
 using Microsoft.Xna.Framework.Graphics;
+using Terraria.DataStructures;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles.Scatterguns;
@@ -27,21 +28,33 @@ public sealed class ScatterPellet : ModProjectile
         Projectile.penetrate = 2; Projectile.ignoreWater = true;
         Projectile.usesLocalNPCImmunity = true; Projectile.localNPCHitCooldown = -1;
     }
+    private bool configured;
+    public override void OnSpawn(IEntitySource source) => ConfigureFlight();
+    private void ConfigureFlight()
+    {
+        if (configured) return;
+        configured = true;
+        if (Tier == 1)
+        {
+            // Was 2 updates/frame. Now 3; compensate velocity by 4/3 for exactly twice the old travel.
+            Projectile.extraUpdates = 2;
+            Projectile.velocity *= 4f / 3f;
+        }
+        Projectile.penetrate = Tier == 2 ? 5 : 2;
+        if (Tier == 2) Projectile.timeLeft = 150;
+        Projectile.ArmorPenetration = Tier == 1 ? (Mode == 1 ? 35 : 15) : 0;
+    }
     public override void AI()
     {
-        if (Projectile.localAI[0]++ == 0)
-        {
-            Projectile.penetrate = Tier == 2 ? -1 : 2;
-            Projectile.ArmorPenetration = Tier == 1 ? (Mode == 1 ? 35 : 15) : 0;
-        }
+        ConfigureFlight();
         Projectile.ai[2] += Projectile.velocity.Length();
         Projectile.rotation = Projectile.velocity.ToRotation();
         if (Tier == 2) Projectile.velocity.Y += .025f;
-        if (Projectile.ai[2] > 820) Projectile.Kill();
+        if (Projectile.ai[2] > (Tier == 2 ? 1230 : 820)) Projectile.Kill();
         Lighting.AddLight(Projectile.Center, ScatterVisuals.ColorFor(Tier).ToVector3() * .18f);
+        if (Tier == 1 && Projectile.numUpdates == 0) ScatterVisuals.ExecutorFlight(Projectile);
         if (Tier == 2 && Projectile.numUpdates == 0)
         {
-            Projectile.frame = ++Projectile.frameCounter / 3 % 20;
             ScatterVisuals.WaterTrail(Projectile);
         }
     }
@@ -70,47 +83,12 @@ public sealed class ScatterPellet : ModProjectile
         -Projectile.velocity.SafeNormalize(Vector2.UnitY), Tier, Tier == 2 ? 10 : 4, 3);
     public override bool PreDraw(ref Color lightColor)
     {
-        if (Tier == 2)
-        {
-            DrawWater();
-            return false;
-        }
-        Color color = ScatterVisuals.ColorFor(Tier); color.A = 0;
-        Vector2 center = Projectile.Center - Main.screenPosition;
-        // Short, texture-based afterimages; never connect unrelated history positions with a line.
-        const float maxTrail = 48f;
-        for (int i = 1; i < Math.Min(5, Projectile.oldPos.Length); i++)
-        {
-            Vector2 old = Projectile.oldPos[i];
-            if (old == Vector2.Zero || !float.IsFinite(old.X) || !float.IsFinite(old.Y)) continue;
-            Vector2 previousCenter = old + Projectile.Size / 2;
-            if (Vector2.DistanceSquared(previousCenter, Projectile.Center) > maxTrail * maxTrail) continue;
-            float fade = (1 - i / 5f) * .24f;
-            PhalanxVisuals.Glow(previousCenter - Main.screenPosition,
-                Tier == 2 ? new Vector2(12, 7) : new Vector2(6), color * fade, Projectile.rotation);
-        }
-        PhalanxVisuals.Glow(center, new Vector2(9, 5), color, Projectile.rotation);
-        PhalanxVisuals.Glow(center, new Vector2(4), new Color(255, 255, 255, 0) * .7f);
+        if (Tier == 2) return false; // Drawn together by ChalterWaterRenderer, with one shader batch.
+        Main.instance.LoadProjectile(ProjectileID.BulletHighVelocity);
+        Texture2D bullet = TextureAssets.Projectile[ProjectileID.BulletHighVelocity].Value;
+        PhalanxVisuals.Sprite(bullet, Projectile.Center - Main.screenPosition, bullet.Size(),
+            Color.White, Projectile.rotation + MathHelper.PiOver2);
         return false;
-    }
-    private void DrawWater()
-    {
-        Texture2D texture = ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Scatterguns/ChalterAquaBlast").Value;
-        Rectangle frame = texture.Frame(1, 20, 0, Math.Clamp(Projectile.frame, 0, 19));
-        // Bound each animated frame, not the full 2000px spritesheet.
-        Vector2 scale = new Vector2(16, 48) / frame.Size();
-        Vector2 center = Projectile.Center - Main.screenPosition;
-        float rotation = Projectile.rotation + MathHelper.PiOver2;
-        for (int i = 1; i < Math.Min(4, Projectile.oldPos.Length); i++)
-        {
-            Vector2 old = Projectile.oldPos[i];
-            if (old == Vector2.Zero || !float.IsFinite(old.X) || !float.IsFinite(old.Y)) continue;
-            if (Vector2.DistanceSquared(old, Projectile.position) > 48 * 48) continue;
-            Main.EntitySpriteDraw(texture, old + Projectile.Size / 2 - Main.screenPosition, frame,
-                Color.White * ((1 - i / 4f) * .18f), rotation, frame.Size() * .5f, scale, SpriteEffects.None);
-        }
-        Main.EntitySpriteDraw(texture, center, frame, Color.White * .9f, rotation,
-            frame.Size() * .5f, scale, SpriteEffects.None);
     }
 
 }

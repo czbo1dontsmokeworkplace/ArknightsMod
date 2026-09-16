@@ -15,6 +15,7 @@ public sealed class ScattergunHoldout : ModProjectile
 {
     public override string Texture => "Terraria/Images/MagicPixel";
     private int age;
+    private float shotSerial = -1;
     public override void SetDefaults()
     {
         Projectile.width = Projectile.height = 2; Projectile.tileCollide = false;
@@ -33,14 +34,18 @@ public sealed class ScattergunHoldout : ModProjectile
         player.direction = aim.X < 0 ? -1 : 1;
         player.heldProj = Projectile.whoAmI;
         player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, aim.ToRotation() - MathHelper.PiOver2);
-        if (age++ == 0)
+        if (shotSerial != Projectile.ai[2])
         {
-            SoundEngine.PlaySound((tier == 2 ? SoundID.Item85 : tier == 1 ? SoundID.Item38 : SoundID.Item11)
-                with { Volume = tier == 1 ? .85f : .55f, Pitch = tier == 0 ? .25f : -.1f }, Projectile.Center);
+            shotSerial = Projectile.ai[2];
+            age = 0;
+            Projectile.timeLeft = 90;
+            SoundEngine.PlaySound((tier == 2 ? SoundID.Item84 : tier == 1 ? SoundID.Item38 : SoundID.Item11)
+                with { Volume = tier == 1 ? .85f : .55f, Pitch = tier == 0 ? .25f : tier == 1 ? -.1f : 0f,
+                    MaxInstances = 6 }, Projectile.Center);
             if (tier == 1) ScatterVisuals.ExecutorMuzzle(Projectile.Center + aim * 30, aim);
             else ScatterVisuals.Spray(Projectile.Center + aim * 30, aim, tier, tier == 2 ? 35 : 22, 9);
         }
-        if (age >= Projectile.ai[1]) Projectile.Kill();
+        if (++age >= Projectile.ai[1]) Projectile.Kill();
     }
     public override bool PreDraw(ref Color lightColor)
     {

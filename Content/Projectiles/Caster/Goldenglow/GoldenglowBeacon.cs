@@ -104,10 +104,10 @@ public class GoldenglowBeacon : ModProjectile
         }
         else
         {
-            // Released units keep their target even after it leaves the original acquisition range.
-            if (skill < 0 || target == null)
+            // S3 has no staff attack; all other modes follow the staff lock every tick.
+            if (skill != 2 || target == null)
             {
-                NPC selected = Acquire(owner, held?.Aim ?? owner.Center, skill);
+                NPC selected = skill == 2 ? Acquire(owner, owner.Center, skill) : held?.LockedTarget;
                 int index = selected == null ? 0 : selected.whoAmI + 1;
                 if ((int)Projectile.ai[1] != index)
                 {
@@ -126,7 +126,7 @@ public class GoldenglowBeacon : ModProjectile
                 MoveTo(OrbitPosition(target, owner), 6f);
                 if (--cooldown <= 0 && Projectile.Distance(target.Center) <= radius + 100f)
                 {
-                    Attack(owner, target, skill);
+                    Attack(owner, target, skill, held?.Bursting == true);
                     float speed = MathHelper.Clamp(owner.GetWeaponAttackSpeed(owner.HeldItem), 0.5f, 2f);
                     if (skill == 0) speed *= 1.5f;
                     cooldown = Math.Max(-1f, cooldown) + Math.Max(3f, GoldenglowLightningBalance.NormalPulseTicks / speed)
@@ -190,13 +190,14 @@ public class GoldenglowBeacon : ModProjectile
         Projectile.velocity = delta.SafeNormalize(Vector2.Zero) * Math.Min(speed, delta.Length() * 0.25f);
         Projectile.rotation = Projectile.velocity.X * 0.015f;
     }
-    private void Attack(Player owner, NPC target, int skill)
+    private void Attack(Player owner, NPC target, int skill, bool bursting)
     {
         int damage = owner.GetWeaponDamage(owner.HeldItem);
         var weapon = (GoldenglowWand)owner.HeldItem.ModItem;
         bool explode = skill >= 0 && weapon.EliteStage >= 1 &&
             (explosionFailures >= 40 || Main.rand.NextFloat() < (explosionFailures + 1) * 0.015f);
         float multiplier = explode ? (weapon.EliteStage >= 2 ? 3f : 2f) : Math.Min(1.1f, 0.2f + consecutiveHits * 0.15f);
+        if (bursting) multiplier *= GoldenglowLightningBalance.BurstOutputMultiplier;
         Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero,
             ModContent.ProjectileType<GoldenglowDroneHit>(), (int)(damage * multiplier), 0f,
             owner.whoAmI, target.whoAmI, explode ? 1 : 0, skill == 2 ? 1 : 0);

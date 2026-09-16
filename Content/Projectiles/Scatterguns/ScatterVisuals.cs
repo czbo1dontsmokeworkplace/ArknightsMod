@@ -24,10 +24,25 @@ internal static class ScatterVisuals
             dust.noGravity = true;
         }
     }
+    internal static void ExecutorFlight(Projectile projectile)
+    {
+        if (Main.dedServ) return;
+        Vector2 direction = projectile.velocity.SafeNormalize(Vector2.UnitX);
+        for (int i = 0; i < 3; i++)
+        {
+            int kind = Main.rand.Next(3);
+            int type = kind == 0 ? DustID.Smoke : kind == 1 ? DustID.Torch : DustID.TintableDustLighted;
+            Vector2 velocity = (-direction).RotatedByRandom(.9f) * Main.rand.NextFloat(.4f, 2.8f)
+                + Main.rand.NextVector2Circular(1.6f, 1.6f);
+            Dust dust = Dust.NewDustPerfect(projectile.Center + Main.rand.NextVector2Circular(4, 4),
+                type, velocity, 120, kind == 2 ? new Color(180, 205, 225) : default, Main.rand.NextFloat(.45f, .9f));
+            dust.noGravity = true;
+        }
+    }
     internal static void WaterTrail(Projectile projectile)
     {
         if (Main.dedServ) return;
-        // AquaBlast / Leviatitan reference: aquamarine mist and short-lived vanilla bubbles.
+        // Compact aquamarine mist and short-lived vanilla bubbles.
         if (Main.rand.NextBool(3))
         {
             Gore bubble = Gore.NewGorePerfect(projectile.GetSource_FromAI(), projectile.Center,

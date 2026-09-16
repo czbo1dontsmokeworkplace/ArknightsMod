@@ -46,7 +46,7 @@ Items: {
 		DisplayName: Pinecone's Nailgun
 		Tooltip:
 			'''
-			Converts one bullet into five vanilla Nail Gun nails
+			Fires 5 steel nails per bullet
 			Nails stick to enemies and explode after a delay
 			Lower movement speed tightens the total spread from 20 to 5 degrees; movement does not change damage
 			'''
@@ -56,9 +56,8 @@ Items: {
 		DisplayName: Executor's Shotgun
 		Tooltip:
 			'''
-			Converts one bullet into eight pellets, each piercing 2 enemies
-			Deals 150% damage up close and ignores 15 defense
-			Damage falls off with distance and drops by 20% after each penetration
+			Rapidly fires two volleys of piercing buckshot
+			Greater stopping power and armor penetration at close range
 			Lower movement speed tightens the total spread from 20 to 5 degrees; movement does not change damage
 			'''
 	}
@@ -67,9 +66,8 @@ Items: {
 		DisplayName: Ch'en the Holungday's Pressure Washer
 		Tooltip:
 			'''
-			Converts one bullet into nine water jets with unlimited enemy penetration
-			Soaks enemies and deals more damage up close
-			Damage falls off with distance and drops by 20% after each penetration
+			Sprays water droplets that pierce up to 5 enemies
+			Deals greater damage at close range
 			Lower movement speed tightens the total spread from 20 to 5 degrees; movement does not change damage
 			'''
 	}
