@@ -398,3 +398,24 @@ GavialChainsawHoldout.DisplayName: 百炼嘉维尔的链锯战斧
 // GoldenglowDroneHit.DisplayName: Goldenglow Drone Hit
 // GoldenglowLightningExplosion.DisplayName: Goldenglow Lightning Explosion
 // GoldenglowTeleportEffect.DisplayName: Goldenglow Teleport Effect
+
+NecrassCourt.DisplayName: 复燃冠冕
+NecrassServant.DisplayName: 悲叹的仆役
+NecrassSoulBolt.DisplayName: 复燃紫焰
+NecrassImpact.DisplayName: 塑灵焰潮
+NecrassSleep.DisplayName: 折朽
+NecrassRitual.DisplayName: 冠冕仪式
+NecrassOffering.DisplayName: 仆役献祭
+
+PhantomHoldout.DisplayName: 傀影的镜中双刃
+PhantomSlash.DisplayName: 镜中连切
+PhantomPerformer.DisplayName: 镜中虚影
+PhantomCurtain.DisplayName: 夜幕突袭
+
+PhalanxFocus.DisplayName: 阵法法杖
+PhalanxWave.DisplayName: 阵法冲击波
+BeeswaxObelisk.DisplayName: 守卫尖碑
+LinGlassShard.DisplayName: 琉璃碎片
+ScattergunHoldout.DisplayName: 霰射武器
+ScatterPellet.DisplayName: 霰射弹幕
+ChalterWaterField.DisplayName: 假日水域

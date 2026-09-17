@@ -247,3 +247,23 @@ GoldenglowSlow: {
 	DisplayName: Pure Radiance
 	Description: Movement speed reduced by 80%
 }
+
+PhantomSlow: {
+	DisplayName: Nightfall Slow
+	Description: Movement speed reduced by 80%
+}
+
+PhantomBind: {
+	DisplayName: Nightfall Bind
+	Description: Unable to move
+}
+
+HighPressureSoak: {
+	DisplayName: Pressure Soaked
+	Description: Slowed by pressurized water
+}
+
+CarnelianSandBind: {
+	DisplayName: Sand Shackles
+	Description: Slowed by crimson sand
+}

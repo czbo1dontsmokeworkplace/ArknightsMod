@@ -3836,3 +3836,100 @@ GavialChainsaw: {
 		Switching weapons or skills ends the bonus, but deferred damage must still be repaid
 		'''
 }
+
+NecrassScepter: {
+	DisplayName: Necrass's Rekindling Scepter
+	Tooltip:
+		'''
+		Fires homing violet flames; nearby enemy deaths create Lamenting Servants
+		Servants inherit this weapon's magic damage, use no minion slots, have their own health and dissolve when the weapon is put away
+		'''
+}
+
+PhantomDaggers: {
+	DisplayName: Phantom's Mirror Blades
+	Tooltip:
+		'''
+		Alternate rapid cuts with silver-blue blade trails
+		Increases movement and jump speed by 15% while held
+		Deploy using the skill key, a dash start, a fast landing, or switching from another hotbar weapon
+		Combat teleports while holding the blades also deploy; body redeployment cooldown: 12 seconds
+		Right-click to place one stationary phantom for 10 seconds; independent cooldown: 25 seconds
+		The phantom has 65% base attack, copies the selected deployment skill, and attacks nearby enemies
+		Place within about 14 tiles with clear line of sight; switching away or moving over 32 tiles away dismisses it
+		Switching skills or items and dying do not reset cooldowns
+		'''
+}
+
+BeeswaxStaff: {
+	DisplayName: Beeswax's Sandward Staff
+	Tooltip:
+		'''
+		Passively raises a golden barrier that blocks 3 hits
+		Hold left click to lower the barrier and charge a powerful shockwave for 90 frames
+		Releasing or switching weapons cancels the charge; keep holding to repeat
+		Barrier fades smoothly and blocks hits regardless of damage
+		Breaking releases a 250% damage shockwave
+		After 5 seconds without damage, restores one charge every 2 seconds
+		All three phalanx staves share shield debt, preserved through switches and relogs
+		'''
+}
+
+CarnelianStaff: {
+	DisplayName: Carnelian's Crimson Sand Staff
+	Tooltip:
+		'''
+		Passively raises a crimson barrier that blocks 4 hits
+		Hold left click to lower the barrier and charge a powerful shockwave for 90 frames
+		Releasing or switching weapons cancels the charge; keep holding to repeat
+		Barrier fades smoothly and blocks hits regardless of damage
+		Breaking releases a 250% damage shockwave
+		After 5 seconds without damage, restores one charge every 2 seconds
+		All three phalanx staves share shield debt, preserved through switches and relogs
+		'''
+}
+
+LinStaff: {
+	DisplayName: Lin's Prismatic Staff
+	Tooltip:
+		'''
+		Passively raises a glass barrier that blocks 5 hits
+		Hold left click to lower the barrier and charge a powerful shockwave for 90 frames
+		Releasing or switching weapons cancels the charge; keep holding to repeat
+		A broken barrier also scatters twelve glass shards
+		Barrier fades smoothly and blocks hits regardless of damage
+		Breaking releases a 250% damage shockwave
+		After 5 seconds without damage, restores one charge every 2 seconds
+		All three phalanx staves share shield debt, preserved through switches and relogs
+		'''
+}
+
+PineconeNailgun: {
+	DisplayName: Pinecone's Nailgun
+	Tooltip:
+		'''
+		Fires 5 steel nails per bullet
+		Nails stick to enemies and explode after a delay
+		Lower movement speed tightens the total spread from 20 to 5 degrees; movement does not change damage
+		'''
+}
+
+ExecutorShotgun: {
+	DisplayName: Executor's Shotgun
+	Tooltip:
+		'''
+		Rapidly fires two volleys of piercing buckshot
+		Greater stopping power and armor penetration at close range
+		Lower movement speed tightens the total spread from 20 to 5 degrees; movement does not change damage
+		'''
+}
+
+ChalterWatergun: {
+	DisplayName: Ch'en the Holungday's Pressure Washer
+	Tooltip:
+		'''
+		Sprays water droplets that pierce up to 5 enemies
+		Deals greater damage at close range
+		Lower movement speed tightens the total spread from 20 to 5 degrees; movement does not change damage
+		'''
+}
