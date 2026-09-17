@@ -278,3 +278,23 @@ GoldenglowSlow: {
 	DisplayName: 澄净闪耀
 	Description: 移动速度降低80%
 }
+
+PhantomSlow: {
+	DisplayName: 夜幕停顿
+	Description: 移动速度降低80%
+}
+
+PhantomBind: {
+	DisplayName: 夜幕束缚
+	Description: 暂时无法移动
+}
+
+HighPressureSoak: {
+	DisplayName: 高压浸润
+	Description: 被高压水流拖慢
+}
+
+CarnelianSandBind: {
+	DisplayName: 赤砂束缚
+	Description: 赤砂拖慢行动
+}
