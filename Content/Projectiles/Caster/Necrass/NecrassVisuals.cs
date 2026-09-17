@@ -85,6 +85,23 @@ internal static class NecrassVisuals
         Line(center - new Vector2(width / 2, 0), center + new Vector2(width / 2, 0), new Color(20, 14, 28), 4);
         Line(center - new Vector2(width / 2, 0), center + new Vector2(width * (Math.Clamp(ratio, 0, 1) - .5f), 0), Violet, 2);
     }
+    internal static void SoulHelix(Projectile projectile, float phase)
+    {
+        if (Main.dedServ || Vector2.DistanceSquared(projectile.Center,
+            Main.screenPosition + new Vector2(Main.screenWidth, Main.screenHeight) / 2) > 1800 * 1800) return;
+        Vector2 forward = projectile.velocity.SafeNormalize(Vector2.UnitX);
+        Vector2 side = forward.RotatedBy(MathHelper.PiOver2);
+        for (int i = 0; i < 2; i++)
+        {
+            float angle = phase + i * MathHelper.Pi;
+            Vector2 offset = side * MathF.Sin(angle) * 9 + forward * MathF.Cos(angle) * 4;
+            Dust dust = Dust.NewDustPerfect(projectile.Center + offset, DustID.RainbowTorch,
+                forward * .45f + side * MathF.Sin(angle) * .25f, 100, i == 0 ? Violet : Lilac, .75f);
+            dust.noGravity = true;
+        }
+        Dust core = Dust.NewDustPerfect(projectile.Center, DustID.RainbowTorch, forward * .15f, 60, Violet, .9f);
+        core.noGravity = true;
+    }
     internal static void Bolt(Projectile projectile)
     {
         for (int i = projectile.oldPos.Length - 1; i > 0; i--)

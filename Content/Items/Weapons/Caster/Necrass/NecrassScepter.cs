@@ -1,3 +1,4 @@
+using System;
 using ArknightsMod.Content.Projectiles.Caster.Necrass;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -10,7 +11,7 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Necrass;
 
 public sealed class NecrassScepter : ExpansionWeaponBase
 {
-    protected override int[] EliteDamage => [76, 92, 110];
+    protected override int[] EliteDamage => [399, 483, 578];
     public override string Texture => "Terraria/Images/Item_" + ItemID.InfernoFork;
     public override void SetStaticDefaults() => Item.staff[Type] = true;
     public override void SetDefaults()
@@ -20,7 +21,9 @@ public sealed class NecrassScepter : ExpansionWeaponBase
         Item.DamageType = DamageClass.Magic;
         Item.mana = 9;
         Item.useStyle = ItemUseStyleID.Shoot;
-        Item.useTime = Item.useAnimation = 32;
+        Item.useTime = 8;
+        Item.useAnimation = 32;
+        Item.useLimitPerAnimation = 4;
         Item.noMelee = Item.autoReuse = true;
         Item.knockBack = 3f;
         Item.shootSpeed = 13f;
@@ -53,12 +56,34 @@ public sealed class NecrassScepter : ExpansionWeaponBase
             state.Command(0, NecrassCourt.SafePosition(player, Main.MouseWorld));
             return false;
         }
-        Vector2 direction = velocity.SafeNormalize(new Vector2(player.direction, 0));
-        position = player.MountedCenter;
-        if (Collision.CanHitLine(position, 1, 1, position + direction * 38, 1, 1)) position += direction * 38;
-        int index = Projectile.NewProjectile(source, position, direction * Item.shootSpeed, type, damage, knockback, player.whoAmI);
-        if (Main.projectile.IndexInRange(index)) Main.projectile[index].CritChance = player.GetWeaponCrit(Item);
-        NecrassVisuals.Embers(position, 9, 2.5f);
+        // Four releases per animation: one, two, one, then two flames.
+        // The six flames share the displayed damage across the full animation.
+        int release = Math.Clamp((Item.useAnimation - player.itemAnimation) / Item.useTime, 0, 3);
+        int boltCount = release % 2 == 0 ? 1 : 2;
+        int firstBolt = release switch { 0 => 0, 1 => 1, 2 => 3, _ => 4 };
+        Vector2 center = player.RotatedRelativePoint(player.MountedCenter, true);
+        float startAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+        for (int i = 0; i < boltCount; i++)
+        {
+            // Separate sectors keep a two-flame release visibly spread around the player.
+            position = center;
+            for (int attempt = 0; attempt < 16; attempt++)
+            {
+                Vector2 offset = (startAngle + i * MathHelper.TwoPi / boltCount + Main.rand.NextFloat(-.35f, .35f))
+                    .ToRotationVector2() * Main.rand.NextFloat(24, 60);
+                Vector2 candidate = center + offset;
+                if (!Collision.CanHitLine(center, 1, 1, candidate + offset.SafeNormalize(Vector2.UnitX) * 8, 1, 1)
+                    || Collision.SolidCollision(candidate - new Vector2(7), 14, 14)) continue;
+                position = candidate;
+                break;
+            }
+            Vector2 direction = (Main.MouseWorld - position).SafeNormalize(new Vector2(player.direction, 0));
+            int shotDamage = damage / 6 + (firstBolt + i < damage % 6 ? 1 : 0);
+            int index = Projectile.NewProjectile(source, position, direction * 2.4f, type, shotDamage, knockback,
+                player.whoAmI, 2, direction.ToRotation(), Main.rand.NextFloat(MathHelper.TwoPi));
+            if (Main.projectile.IndexInRange(index)) Main.projectile[index].CritChance = player.GetWeaponCrit(Item);
+            NecrassVisuals.Embers(position, 5, 2.5f);
+        }
         SoundEngine.PlaySound(SoundID.Item20 with { Volume = .42f, Pitch = -.65f, MaxInstances = 3 }, position);
         return false;
     }
