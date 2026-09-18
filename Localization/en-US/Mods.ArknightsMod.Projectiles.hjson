@@ -398,7 +398,6 @@ CrossbowPulse.DisplayName: Crossbow Pulse
 GoldenglowDroneHit.DisplayName: Goldenglow Drone Hit
 GoldenglowLightningExplosion.DisplayName: Goldenglow Lightning Explosion
 GoldenglowTeleportEffect.DisplayName: Goldenglow Teleport Effect
-
 NecrassCourt.DisplayName: Rekindling Crown
 NecrassServant.DisplayName: Lamenting Servant
 NecrassSoulBolt.DisplayName: Rekindled Flame
@@ -406,12 +405,10 @@ NecrassImpact.DisplayName: Soulfire Surge
 NecrassSleep.DisplayName: Wither
 NecrassRitual.DisplayName: Coronation
 NecrassOffering.DisplayName: Soul Offering
-
 PhantomHoldout.DisplayName: Phantom's Mirror Blades
 PhantomSlash.DisplayName: Mirror Cut
 PhantomPerformer.DisplayName: Mirror Phantom
 PhantomCurtain.DisplayName: Night Raid
-
 PhalanxFocus.DisplayName: Phalanx Focus
 PhalanxWave.DisplayName: Phalanx Shockwave
 BeeswaxObelisk.DisplayName: Guardian Obelisk

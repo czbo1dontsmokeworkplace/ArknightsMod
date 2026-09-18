@@ -91,16 +91,22 @@ internal static class NecrassVisuals
             Main.screenPosition + new Vector2(Main.screenWidth, Main.screenHeight) / 2) > 1800 * 1800) return;
         Vector2 forward = projectile.velocity.SafeNormalize(Vector2.UnitX);
         Vector2 side = forward.RotatedBy(MathHelper.PiOver2);
-        for (int i = 0; i < 2; i++)
+        Vector2 offset = side * MathF.Sin(phase) * 7 + forward * MathF.Cos(phase) * 3;
+        Dust core = Dust.NewDustPerfect(projectile.Center + offset, DustID.Smoke,
+            forward * .18f + side * MathF.Sin(phase) * .16f, 110, new Color(18, 14, 25), .62f);
+        core.noGravity = true;
+    }
+    internal static void SoulAsh(Vector2 center, Vector2 velocity, int count = 1)
+    {
+        if (Main.dedServ) return;
+        Vector2 forward = velocity.SafeNormalize(Vector2.UnitX);
+        for (int i = 0; i < count; i++)
         {
-            float angle = phase + i * MathHelper.Pi;
-            Vector2 offset = side * MathF.Sin(angle) * 9 + forward * MathF.Cos(angle) * 4;
-            Dust dust = Dust.NewDustPerfect(projectile.Center + offset, DustID.RainbowTorch,
-                forward * .45f + side * MathF.Sin(angle) * .25f, 100, i == 0 ? Violet : Lilac, .75f);
+            Dust dust = Dust.NewDustPerfect(center + Main.rand.NextVector2Circular(5, 5), DustID.Smoke,
+                forward * Main.rand.NextFloat(.1f, .35f) + Main.rand.NextVector2Circular(.25f, .25f),
+                130, new Color(18, 14, 25), Main.rand.NextFloat(.55f, .8f));
             dust.noGravity = true;
         }
-        Dust core = Dust.NewDustPerfect(projectile.Center, DustID.RainbowTorch, forward * .15f, 60, Violet, .9f);
-        core.noGravity = true;
     }
     internal static void Bolt(Projectile projectile)
     {

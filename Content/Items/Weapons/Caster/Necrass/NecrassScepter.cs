@@ -82,7 +82,7 @@ public sealed class NecrassScepter : ExpansionWeaponBase
             int index = Projectile.NewProjectile(source, position, direction * 2.4f, type, shotDamage, knockback,
                 player.whoAmI, 2, direction.ToRotation(), Main.rand.NextFloat(MathHelper.TwoPi));
             if (Main.projectile.IndexInRange(index)) Main.projectile[index].CritChance = player.GetWeaponCrit(Item);
-            NecrassVisuals.Embers(position, 5, 2.5f);
+            NecrassVisuals.SoulAsh(position, direction * Item.shootSpeed, 2);
         }
         SoundEngine.PlaySound(SoundID.Item20 with { Volume = .42f, Pitch = -.65f, MaxInstances = 3 }, position);
         return false;
