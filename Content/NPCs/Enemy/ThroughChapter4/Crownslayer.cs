@@ -1,3 +1,4 @@
+using ArknightsMod.Common.GlobalNPCs;
 using ArknightsMod.Common.VisualEffects;
 using ArknightsMod.Content.Items;
 using Microsoft.Xna.Framework;
@@ -41,6 +42,11 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		private int skill3RetreatVisualStep = -1;
 		private int skill3RetreatTick;
 		private int suppressSkill1AfterSkill3;
+		private bool skill6Weakened; // 本次 Skill_6 是否为「一阶段远距离削弱版」
+		private int skill6FarRangeTimer;  // 一阶段「连续超距」累计（只在 Idle 帧累加）
+		private AIState pendingSkill = AIState.Idle; // 一阶段前摇结束后要切换到的技能
+		private int skillWindupTimer;                // 前摇剩余帧
+		private int spawnIntroTimer;                 // 出生演出剩余帧
 
 		private Vector2 skill9DashStart;
 		private Vector2 skill9DashGoal;
@@ -60,12 +66,29 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		private const float Skill7Leg2Span = 28f;
 		private const int Skill7Leg2End = 30;
 
+		// 技能6「飞刀雨」固定伤害：刻意不再从 NPC.damage 派生。
+		// 敌方弹幕打玩家在原版要 ×2（Projectile.Damage），tModLoader 又会再乘一次难度倍率，
+		// 派生写法在大师 + getfixedboi 下单发实伤可达 700+，故此处写死。
+		private const int Skill6DaggerDamage = 20;
+		private const int Skill6DaggerCount = 15;            // 满编飞刀雨：第 0/6/.../84 帧各一枚
+		private const int Skill6DaggerInterval = 6;          // 每枚飞刀的发射间隔（帧）
+		private const float Skill6FarRangeTiles = 22f;       // 一阶段超过该距离视为「够不着」，改用削弱版飞刀雨
+		private const float Skill6TeleportRadiusTiles = 10f; // 削弱版收招后传送落点半径（格）
+		private const int Skill6FarRangeDelay = 120;         // 连续超出射程 2 秒（120 帧）后才允许削弱版飞刀雨
+		private const int SkillWindupFrames = 30;            // 一阶段所有技能的前摇（帧）
+		private const int SpawnIntroFrames = 120;           // 出生演出时长：2 秒（隐身 + 免疫 + 原地烟雾）
+
 		private static int daggerPredictLineType = -1;
 		private static int DaggerPredictLineType =>
 			daggerPredictLineType >= 0 ? daggerPredictLineType : daggerPredictLineType = ModContent.ProjectileType<DaggerPredictLine>();
 
 		public override void SetStaticDefaults() {
 			Main.npcFrameCount[Type] = 56;
+			// 脱战保护：mod NPC 不在原版 DoesntDespawnToInactivity 的写死名单里，
+			// 所以玩家被援军引离她一屏以上、持续 activeTime（750 帧 = 12.5 秒）后，
+			// 原版 CheckActive 会静默把她 active = false（无烟雾、无渐隐）。
+			// 该 set 让 CheckActive 直接跳过这段逻辑；代价是她会计入 npcSlots（对 boss 是期望行为）。
+			NPCID.Sets.DoesntDespawnToInactivityAndCountsNPCSlots[Type] = true;
 			NPCID.Sets.TrailCacheLength[Type] = 22;
 			NPCID.Sets.TrailingMode[Type] = 0;
 		}
@@ -85,6 +108,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			NPC.knockBackResist = 0f;
 			NPC.aiStyle = -1; // 重要：不使用任何预设AI
 			NPCID.Sets.BossBestiaryPriority.Add(Type);
+
+			// 出生演出：初始完全透明（alpha 最高）+ 免疫伤害，2 秒后瞬间现身（见 ExecuteSpawnIntro）。
+			// 注意：这里不能改 NPC.damage，否则 vanilla 的难度缩放会把 defDamage 一起算成 0。
+			spawnIntroTimer = SpawnIntroFrames;
+			NPC.alpha = 255;
+			NPC.dontTakeDamage = true;
 		}
 
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
@@ -229,7 +258,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			Skill_8,        // 斩击
 			Skill_9,        // 突刺
 			Recover,
-			Summoning
+			Summoning,
+			Leaving         // 脱战：无玩家时定身冒烟渐隐，40 帧后清场离场（追加在末尾，保持既有枚举值不变）
 
 		}
 
@@ -247,6 +277,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		public override void AI() {
 			// 正常 AI 始终使用完整战斗碰撞箱；这是 FindFrame 未执行时的保险恢复。
 			Move_RestoreCombatHitbox();
+
+			// ---- 出生演出：这两秒内原地冒烟、完全透明、不承受伤害，其余 AI 全部暂停 ----
+			if (spawnIntroTimer > 0) {
+				ExecuteSpawnIntro();
+				return;
+			}
 
 			// 确保有目标，否则清空状态
 			// 获取当前到目标的距离
@@ -293,8 +329,19 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			else {
 				NPC.spriteDirection = 1;
 			}
-			if (target.dead || !target.active)
+			// ---- 脱战：周围已无可作战玩家（全员死亡 / 离线 / 幽灵）----
+			// 规格：速度立即归零 → 原地释放烟雾 → 40 帧内 alpha 渐增至 255（完全透明）
+			//       → 清空全部弹幕与援军 → 脱离战斗。
+			if (!TryGetNearestCombatPlayer(out Player combatTarget)) {
+				EnterLeaving();
+				ExecuteLeaving();
 				return;
+			}
+
+			// 有人可打时永远以“最近的存活玩家”为准：多人局一人阵亡会自动转火，状态机不会卡死
+			target = combatTarget;
+			NPC.target = combatTarget.whoAmI;
+			distanceToTarget = Vector2.Distance(NPC.Center, target.Center);
 
 
 			// --- 阶段转场监测 ---
@@ -343,6 +390,10 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 					break;
 				case AIState.Summoning:
 					ExecuteSummoning(target);
+					break;
+				case AIState.Leaving:
+					// 渐隐途中若有玩家复活或加入，继续把离场演完（而不是僵在原地隐身）
+					ExecuteLeaving();
 					break;
 			}
 
@@ -532,6 +583,25 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				UtSkillCooldown--;
 			StateTimer--;
 
+			// 一阶段远距离保底需要「连续超距」计时：只有持续脱离射程 2 秒才会放削弱版飞刀雨，
+			// 避免玩家只是短暂拉开距离就被反复飞刀雨 + 传送追打。
+			if (distance / 16f > Skill6FarRangeTiles)
+				skill6FarRangeTimer++;
+			else
+				skill6FarRangeTimer = 0;
+
+			// 一阶段前摇：技能已选好但还没开始，等 30 帧给玩家反应时间；前摇期间不再重新选技能。
+			if (pendingSkill != AIState.Idle) {
+				if (--skillWindupTimer <= 0) {
+					CurrentAIState = pendingSkill;
+					LastSkill = pendingSkill;
+					StateTimer = 0;
+					pendingSkill = AIState.Idle;
+				}
+
+				return;
+			}
+
 			if (Move_BlockSkillPick()) {
 				StateTimer = Math.Max(StateTimer, 16f);
 				return;
@@ -550,14 +620,23 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				if (weightedSkills.Count > 0 && chosen != AIState.Idle) {
 					if (chosen == AIState.Skill_4)
 						FogSkillCooldown = 20 * 60;
-					if (chosen == AIState.Skill_6)
+					if (chosen == AIState.Skill_6) {
 						ExSkillCooldown = 10 * 60;
+						skill6FarRangeTimer = 0; // 放完重新累计，避免连续刷
+					}
 					if (chosen == AIState.Skill_7)
 						UtSkillCooldown = 8 * 60;
 
-					CurrentAIState = chosen;
-					LastSkill = chosen;
-					StateTimer = 0;
+					if (healthPercent > 0.5f) {
+						// 一阶段：先进 30 帧前摇，前摇结束才真正切换到技能状态
+						pendingSkill = chosen;
+						skillWindupTimer = SkillWindupFrames;
+					}
+					else {
+						CurrentAIState = chosen;
+						LastSkill = chosen;
+						StateTimer = 0;
+					}
 				}
 				else {
 					StateTimer = healthPercent > 0.5f ? 12 : 24;
@@ -588,6 +667,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				if (DaggerSkillCooldown <= 0 && !skip(AIState.Skill_3)
 					&& LastSkill != AIState.Skill_2 && LastSkill != AIState.Skill_3)
 					pool.Add((AIState.Skill_3, 12));
+
+				// 远距离保底：一阶段所有技能都够不着（超过 22 格）且已经连续超距 2 秒时，
+				// 才用削弱版飞刀雨拉近身位——否则技能池会为空，她只能原地走路等玩家靠近。
+				if (skill6FarRangeTimer >= Skill6FarRangeDelay
+					&& distanceInTiles > Skill6FarRangeTiles && !skip(AIState.Skill_6))
+					pool.Add((AIState.Skill_6, 60));
 			}
 			else {
 				if (distanceInTiles <= 8f && !skip(AIState.Skill_8))
@@ -694,6 +779,46 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			ResetToIdle();
 		}
 
+		// 出生演出：生成点冒烟，本体 alpha 保持最高（完全不可见）且免疫伤害；
+		// 两秒结束时 alpha 直接归零（瞬间现身，不做任何渐变），随后一切行为与原来完全一致。
+		private void ExecuteSpawnIntro() {
+			spawnIntroTimer--;
+
+			// 出生即播放 Boss 音乐（演出期间 AI 提前 return，所以这里补上）
+			if (NPC.life > NPC.lifeMax * 0.5f)
+				Music = MusicLoader.GetMusicSlot("ArknightsMod/Music/Crownslayer1");
+			else
+				Music = MusicLoader.GetMusicSlot("ArknightsMod/Music/Crownslayer2");
+
+			NPC.alpha = 255;            // 透明度保持最高（完全不可见）
+			NPC.dontTakeDamage = true;  // 这两秒内不承受伤害
+			NPC.damage = 0;             // 隐身期间也不撞伤玩家（与脱战/召唤隐身时一致）
+			NPC.velocity *= 0.85f;
+
+			// 生成处烟雾：起手三大团气团 + 浓烟，随后每 4 帧补一小股
+			int elapsed = SpawnIntroFrames - spawnIntroTimer;
+			if (elapsed == 1) {
+				SpawnLeaveGasClouds();
+				EmitLeaveSmoke(34, 3.2f, 26f);
+			}
+			else if (elapsed == 13) {
+				SpawnLeaveGasCloud(0.7f, 1.2f);
+				EmitLeaveSmoke(16, 2.4f, 34f);
+			}
+			else if (elapsed < SpawnIntroFrames && elapsed % 4 == 0) {
+				EmitLeaveSmoke(6, 1.6f, 20f);
+			}
+
+			// 两秒到：透明度瞬间归零 + 恢复承受伤害，然后交回原有 AI
+			if (spawnIntroTimer <= 0) {
+				NPC.alpha = 0;
+				NPC.dontTakeDamage = false;
+				NPC.damage = NPC.defDamage;
+				NPC.netUpdate = true;
+				EmitLeaveSmoke(18, 2.4f, 30f);   // 现身瞬间补一小团烟
+			}
+		}
+
 		private void ResetToIdle() {
 			CurrentAIState = AIState.Idle;
 			CurrentAnimation = NPCState.Walk;
@@ -719,6 +844,25 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 			StateTimer = Main.rand.NextFloat(minTime, maxTime) * 60f;
 		}
+		// 削弱版飞刀雨的落点：玩家「上半圆」（sin <= 0，即高度不低于玩家）、半径 10 格的随机一点。
+		private Vector2 PickTeleportPointAbove(Player target) {
+			float angle = Main.rand.NextFloat(MathHelper.Pi, MathHelper.TwoPi);
+			return FindSafeSpot(target.Center + angle.ToRotationVector2() * (Skill6TeleportRadiusTiles * 16f));
+		}
+
+		// 真正执行一次传送（清速度、清位置历史，避免旧轨迹被渲染成冲刺拖尾，同 Move_ForceUnstuck）。
+		private void TeleportTo(Vector2 destination) {
+			NPC.Center = destination;
+			NPC.velocity = Vector2.Zero;
+			NPC.netUpdate = true;
+
+			if (NPC.oldPos != null)
+				for (int i = 0; i < NPC.oldPos.Length; i++)
+					NPC.oldPos[i] = Vector2.Zero;
+
+			Move_ResetWatch();
+		}
+
 		private Vector2 FindSafeSpot(Vector2 currentPos) =>
 			Move_FindOpen(currentPos, requireGround: false);
 
@@ -1168,6 +1312,10 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		}
 		private void ExecuteSkill6(Player target) {
 			StateTimer++;
+			// 一阶段（HP > 50%）只可能通过「远距离保底」选到本技能，因此一律走削弱版：
+			// 飞刀数量与伤害减半，扔完立刻传送到玩家上方 10 格的上半圆并收招（不做后续冲刺/下砸）。
+			if (StateTimer == 1)
+				skill6Weakened = (float)NPC.life / NPC.lifeMax > 0.5f;
 			// 技能期间手动控制重力，防止自然重力干扰手感
 
 			// --- 阶段 1: 站在原地投掷匕首 (0 - 90帧) ---
@@ -1175,13 +1323,22 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				NPC.noGravity = false;
 				NPC.noTileCollide = false;
 				NPC.velocity *= 0.8f;
-				if (StateTimer % 6 == 0) {
+				int daggerCount = skill6Weakened ? Skill6DaggerCount / 2 : Skill6DaggerCount;
+				int daggerDamage = skill6Weakened ? Skill6DaggerDamage / 2 : Skill6DaggerDamage;
+				if (StateTimer % Skill6DaggerInterval == 0 && StateTimer / Skill6DaggerInterval < daggerCount) {
 					Vector2 targetPos = target.Center + new Vector2(Main.rand.NextFloat(-330, 330), Main.rand.NextFloat(-320, -150));
 					Vector2 launchVel = (targetPos - NPC.Center) / 25f;
 					Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, launchVel,
-						ModContent.ProjectileType<StallDagger>(), (int)(NPC.damage * 0.6f), 2f, Main.myPlayer, NPC.whoAmI, targetPos.Y);
+						ModContent.ProjectileType<StallDagger>(), daggerDamage, 2f, Main.myPlayer, NPC.whoAmI, targetPos.Y);
 					SoundEngine.PlaySound(SoundID.Item71, NPC.Center);
 
+				}
+
+				// 削弱版：这一轮飞刀扔完立刻传送拉近身位，然后收招
+				if (skill6Weakened && StateTimer >= Skill6DaggerInterval * daggerCount) {
+					TeleportTo(PickTeleportPointAbove(target));
+					ResetToIdle();
+					return;
 				}
 			}
 
@@ -1582,7 +1739,16 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				// 假设每个阶段最晚的一波是在第 3 秒（180帧）
 				bool allWavesDispatched = summonTimer > 180;
 
+				// 存活判定直接扫描全场，而不是只信 MinionWhoAmIs：
+				// 该列表只在生成侧填充，多人局客户端为空，会让客户端提前退出召唤状态。
 				bool minionsAlive = false;
+				for (int i = 0; i < Main.maxNPCs; i++) {
+					NPC summoned = Main.npc[i];
+					if (CrownslayerSummonGlobalNPC.IsSummon(summoned) && summoned.life > 0) {
+						minionsAlive = true;
+						break;
+					}
+				}
 				//foreach (int index in MinionWhoAmIs) {
 				// 从后向前遍历以安全移除无效索引，同时在移除时发送提示
 				for (int i = MinionWhoAmIs.Count - 1; i >= 0; i--) {
@@ -1598,7 +1764,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 					// 2. NPC 没死（life > 0）
 					// 3. 这里的特殊判定：检查该 NPC 的来源是否是本 Boss 召唤的
 					//    或者检查其 type 是否在你的召唤名单内
-					if (minion.active && minion.life > 0 && minion.ai[3] == 999f) {
+					if (CrownslayerSummonGlobalNPC.IsSummon(minion) && minion.life > 0) {
 						// 这样即使史莱姆路过，只要它的索引不在 MinionWhoAmIs 里，就不会被统计
 						minionsAlive = true;
 					} else {
@@ -1608,7 +1774,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 						foreach (int id in MinionWhoAmIs) {
 							if (id >= 0 && id < Main.maxNPCs) {
 								NPC m = Main.npc[id];
-								if (m.active && m.life > 0 && m.ai[3] == 999f) remaining++;
+								if (CrownslayerSummonGlobalNPC.IsSummon(m) && m.life > 0) remaining++;
 							}
 						}
 						string deathMsg = $"支援者被击败，当前剩余支援者：{remaining}";
@@ -1758,15 +1924,230 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 			return bestTarget;
 		}
+
+		// ==================== 脱战离场 ====================
+		// 规格：周围不再有玩家 → 速度立即归零 → 原地释放烟雾 → 120 帧内 alpha 0→255（完全透明）
+		//       → 清空全部弹幕与援军 → 脱离战斗。
+		private const int LeaveTransparentEnd = 120; // 120 帧后完全透明
+		private bool leaveCleared;
+
+		/// <summary>
+		/// 是否存在“活跃、未死、非幽灵”的玩家；存在则通过 <paramref name="nearest"/> 返回最近的一个。
+		/// 与 GetNearestThreatPlayer 的区别：找不到时返回 false，而不是把死亡玩家当作兜底目标。
+		/// </summary>
+		private bool TryGetNearestCombatPlayer(out Player nearest) {
+			nearest = null;
+			float bestDistanceSq = float.MaxValue;
+
+			for (int i = 0; i < Main.maxPlayers; i++) {
+				Player player = Main.player[i];
+				if (!player.active || player.dead || player.ghost)
+					continue;
+
+				float distanceSq = Vector2.DistanceSquared(NPC.Center, player.Center);
+				if (distanceSq < bestDistanceSq) {
+					bestDistanceSq = distanceSq;
+					nearest = player;
+				}
+			}
+
+			return nearest != null;
+		}
+
+		private void EnterLeaving() {
+			if (CurrentAIState == AIState.Leaving)
+				return;
+
+			CurrentAIState = AIState.Leaving;
+			StateTimer = 0;
+			leaveCleared = false;
+			NPC.netUpdate = true;
+		}
+
+		private void ExecuteLeaving() {
+			StateTimer++;
+
+			// 1) 速度立即归零，并关掉重力与地形碰撞，保证原地不动
+			NPC.velocity = Vector2.Zero;
+			SetPhysics(false, false);
+
+			// 2) 脱战期间不参与战斗：不撞伤玩家，也不吃伤害
+			NPC.damage = 0;
+			NPC.dontTakeDamage = true;
+			Move_RestoreCombatHitbox();
+
+			// 3) 动画与透明度：40 帧内 0 → 255
+			CurrentAnimation = StateTimer < 20 ? NPCState.JumpOut : NPCState.Blank;
+			NPC.alpha = (int)MathHelper.Lerp(0f, 255f, MathHelper.Clamp(StateTimer / (float)LeaveTransparentEnd, 0f, 1f));
+
+			// 4) 原地释放烟雾：起手三大团（参考原版气阱的成团气体），随后持续补充、越铺越开
+			if (StateTimer == 1) {
+				SpawnLeaveGasClouds();
+				EmitLeaveSmoke(34, 3.2f, 26f);
+			}
+			else if (StateTimer == 13) {
+				SpawnLeaveGasCloud(0.7f, 1.2f);
+				EmitLeaveSmoke(16, 2.4f, 34f);
+			}
+			else if (StateTimer == 26) {
+				SpawnLeaveGasCloud(0.5f, -1.4f);
+				EmitLeaveSmoke(12, 2.0f, 44f);
+			}
+			else if (StateTimer < LeaveTransparentEnd && StateTimer % 3 == 0) {
+				EmitLeaveSmoke(8, 1.8f, 24f + StateTimer * 0.9f);
+			}
+
+			// 5) 黑红烟雾在暗处也要看得见：补一点暗红光照
+			Lighting.AddLight(NPC.Center, 0.55f, 0.11f, 0.11f);
+
+			// 6) 完全透明后：清空所有弹幕与援军，并脱离战斗
+			if (StateTimer >= LeaveTransparentEnd) {
+				NPC.alpha = 255;
+				NPC.velocity = Vector2.Zero;
+
+				if (!leaveCleared) {
+					leaveCleared = true;
+
+					if (Main.netMode != NetmodeID.MultiplayerClient) {
+						ClearCrownslayerProjectiles();
+						DespawnSummonedMinions();
+						LeaveCombat();
+					}
+				}
+			}
+		}
+
+		// 原地烟雾：黑（暗灰）主体 + 黑红气团 + 赤红余烬，参考原版气阱"成团扩张"的观感
+		private void EmitLeaveSmoke(int count, float maxKick, float spread) {
+			if (Main.dedServ)
+				return;
+
+			for (int i = 0; i < count; i++) {
+				// 以环形分布为主，让烟向外"鼓"成一团，而不是原地抖动
+				float angle = MathHelper.TwoPi * (i / (float)count) + Main.rand.NextFloat(-0.3f, 0.3f);
+				Vector2 dir = angle.ToRotationVector2();
+				Vector2 spawnPos = NPC.Center + dir * (Main.rand.NextFloat(0.3f, 1f) * spread) + Main.rand.NextVector2Circular(8f, 10f);
+				Vector2 outVel = dir * (Main.rand.NextFloat(0.5f, 1.9f) * maxKick / 3f) + new Vector2(0f, -Main.rand.NextFloat(0.2f, 1.0f));
+
+				// A. 主体黑烟：大颗、暗色、不吃环境光，保证"黑"
+				Dust dark = Dust.NewDustPerfect(spawnPos, DustID.Smoke, outVel, 0,
+					Color.Lerp(new Color(12, 9, 9), new Color(46, 22, 22), Main.rand.NextFloat()),
+					Main.rand.NextFloat(1.6f, 3.0f));
+				dark.noGravity = true;
+				dark.noLight = true;
+				dark.fadeIn = 0.35f;
+
+				// B. 黑红气团：中颗，负责整体色调"黑偏红"
+				Dust gas = Dust.NewDustPerfect(spawnPos + Main.rand.NextVector2Circular(10f, 12f), DustID.Cloud,
+					outVel * 0.8f, 60,
+					Color.Lerp(new Color(52, 14, 16), new Color(122, 30, 28), Main.rand.NextFloat()),
+					Main.rand.NextFloat(1.2f, 2.2f));
+				gas.noGravity = true;
+
+				// C. 赤红火星 / 暗焰（每 3 颗掺 1 颗）：提亮边缘，暗处也显眼
+				if (i % 3 == 0) {
+					Dust spark = Dust.NewDustPerfect(spawnPos,
+						Main.rand.NextBool(3) ? DustID.Shadowflame : DustID.GemRuby, outVel * 1.2f, 0,
+						Color.Lerp(new Color(210, 60, 40), new Color(255, 140, 90), Main.rand.NextFloat()),
+						Main.rand.NextFloat(0.7f, 1.25f));
+					spark.noGravity = true;
+					spark.fadeIn = 0.2f;
+				}
+			}
+		}
+
+		// 清掉她自己的全部弹幕（这些类型只属于她，按类型清即可）
+		private void ClearCrownslayerProjectiles() {
+			for (int i = 0; i < Main.maxProjectiles; i++) {
+				Projectile projectile = Main.projectile[i];
+				if (!projectile.active)
+					continue;
+
+				if (projectile.type == ModContent.ProjectileType<SwordSlashEffect>()
+					|| projectile.type == ModContent.ProjectileType<TransparentSlash>()
+					|| projectile.type == ModContent.ProjectileType<GravityDagger>()
+					|| projectile.type == ModContent.ProjectileType<StallDagger>()
+					|| projectile.type == ModContent.ProjectileType<DelayDagger>()
+					|| projectile.type == ModContent.ProjectileType<RedMagicBlade>()
+					|| projectile.type == ModContent.ProjectileType<DaggerPredictLine>()
+					|| projectile.type == ModContent.ProjectileType<BarrageDagger>()
+					|| projectile.type == ModContent.ProjectileType<GroundDagger>())
+					projectile.Kill();
+			}
+		}
+
+		// 清掉她召唤的援军（统一带 CrownslayerSummonGlobalNPC 标记；用失活而非 Kill，避免产生掉落）
+		private void DespawnSummonedMinions() {
+			for (int i = 0; i < Main.maxNPCs; i++) {
+				NPC minion = Main.npc[i];
+				if (CrownslayerSummonGlobalNPC.IsSummon(minion))
+					minion.active = false;
+			}
+
+			MinionWhoAmIs.Clear();
+		}
+
+		// 脱离战斗：直接失活并广播。
+		// boss 不能靠 EncourageDespawn 走人：CheckActive 对 boss 只在 timeLeft 归零时失活
+		// （同 WBoss.WDespawnState 的说明），因此这里手动失活并同步给客户端。
+		private void LeaveCombat() {
+			NPC.active = false;
+
+			if (Main.netMode == NetmodeID.Server) {
+				NPC.life = 0;
+				NPC.netSkip = -1;
+				NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, NPC.whoAmI);
+			}
+		}
+
+		// 她死亡时：收走援军，并播放与脱战相同的黑红雾气演出（三大团气团 + 同参数烟雾）。
+		public override void OnKill() {
+			if (Main.netMode != NetmodeID.MultiplayerClient) {
+				SpawnLeaveGasClouds();
+				DespawnSummonedMinions();
+			}
+
+			// 与 ExecuteLeaving 起手同一套参数（客户端各自播放）
+			EmitLeaveSmoke(34, 3.2f, 26f);
+			EmitLeaveSmoke(16, 2.4f, 34f);
+			EmitLeaveSmoke(12, 2.0f, 44f);
+		}
+
+		// 生成一组脱战气团（视觉弹幕，不造成任何伤害；比本体活得久，负责"烟散"）
+		private void SpawnLeaveGasClouds() {
+			SpawnLeaveGasCloud(1.15f, 0.35f);
+			SpawnLeaveGasCloud(0.85f, -1.1f);
+			SpawnLeaveGasCloud(0.6f, 2.0f);
+		}
+
+		private void SpawnLeaveGasCloud(float cloudScale, float textureSeed) {
+			if (Main.netMode == NetmodeID.MultiplayerClient)
+				return;
+
+			int index = Projectile.NewProjectile(NPC.GetSource_FromAI(),
+				NPC.Center + Main.rand.NextVector2Circular(10f, 14f),
+				Main.rand.NextVector2Circular(0.35f, 0.5f) + new Vector2(0f, -0.25f),
+				ModContent.ProjectileType<CrownslayerDespawnGas>(), 0, 0f, Main.myPlayer,
+				cloudScale, textureSeed);
+
+			if (index >= 0 && index < Main.maxProjectiles)
+				Main.projectile[index].netUpdate = true;
+		}
 		// 辅助方法：封装召唤逻辑，减少重复代码
 		private void SpawnMinion(int type, bool onLeft) {
-			float spawnX = onLeft ? Main.screenPosition.X - 48 : Main.screenPosition.X + Main.screenWidth + 48;
-			float spawnY = Main.player[NPC.target].Center.Y - 32;
+			// 多人局只能由服务端生成，否则每个客户端都会各自刷出幽灵援军。
+			if (Main.netMode == NetmodeID.MultiplayerClient)
+				return;
+			// 生成在目标玩家左右两侧各 16 格处：比屏幕内侧边缘更贴近玩家，且不再依赖屏幕坐标
+			const float sideOffset = 256f;
+			Player spawnTarget = Main.player[NPC.target];
+			float spawnX = spawnTarget.Center.X + (onLeft ? -sideOffset : sideOffset);
+			float spawnY = spawnTarget.Center.Y - 32f;
 
 			Vector2 spawnPos = FindSafeSpot(new Vector2(spawnX, spawnY));
 			int index = NPC.NewNPC(NPC.GetSource_FromAI(), (int)spawnPos.X, (int)spawnPos.Y, type);
-				Main.npc[index].ai[3] = 999f;
-			if (index < Main.maxNPCs) {
+			if (index >= 0 && index < Main.maxNPCs) {
+				Main.npc[index].GetGlobalNPC<CrownslayerSummonGlobalNPC>().IsCrownslayerSummon = true;
 				MinionWhoAmIs.Add(index);
 				Main.npc[index].netUpdate = true;
 
@@ -1780,7 +2161,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				foreach (int id in MinionWhoAmIs) {
 					if (id >= 0 && id < Main.maxNPCs) {
 						NPC m = Main.npc[id];
-						if (m.active && m.life > 0 && m.ai[3] == 999f)
+						if (CrownslayerSummonGlobalNPC.IsSummon(m) && m.life > 0)
 							alive++;
 					}
 				}
@@ -1816,6 +2197,126 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			}
 		}
 	}
+	// 弑君者脱战气团：参考原版气阱（ProjectileID.GasTrap / aiStyle 92）的
+	// scale 1→6 扩张、包围盒同步放大，以及"前 25% 淡入、后 25% 淡出、峰值 0.85 不透明度"曲线；
+	// 内部持续冒黑烟（同样参考气阱在气体里补 Shadowflame 尘埃的做法）。
+	// 配色改为黑偏红；纯视觉弹幕：不伤害玩家、也不可被击中、不受地形阻挡。
+	public class CrownslayerDespawnGas : ModProjectile
+	{
+		public override string Texture => FogPaths[0];
+
+		private const int GasLife = 90; // 比本体离场（40 帧）更久，负责"烟散"
+
+		private static readonly string[] FogPaths = {
+			"ArknightsMod/Content/NPCs/Enemy/ThroughChapter4/CrownslayerFog_1",
+			"ArknightsMod/Content/NPCs/Enemy/ThroughChapter4/CrownslayerFog_2",
+			"ArknightsMod/Content/NPCs/Enemy/ThroughChapter4/CrownslayerFog_3",
+			"ArknightsMod/Content/NPCs/Enemy/ThroughChapter4/CrownslayerFog_4",
+		};
+
+		private float Progress => 1f - Projectile.timeLeft / (float)GasLife;
+		private float BaseScale => Math.Max(0.2f, Projectile.ai[0]);
+
+		public override void SetDefaults() {
+			Projectile.width = 50;   // 与气阱同尺寸，随 scale 一起放大
+			Projectile.height = 50;
+			Projectile.friendly = false;   // 不伤害任何目标
+			Projectile.hostile = false;
+			Projectile.tileCollide = false;
+			Projectile.ignoreWater = true;
+			Projectile.penetrate = -1;
+			Projectile.aiStyle = -1;
+			Projectile.timeLeft = GasLife;
+			// 不要设 hide = true：Main.DrawProjectiles() 会跳过 hide 弹幕（Main.cs:22233/22252），
+			// 而本弹幕完全由自己的 PreDraw 绘制，一旦 hide 就永远不会显示。
+		}
+
+		public override bool? CanDamage() => false;
+
+		public override void AI() {
+			float p = Progress;
+
+			// 复刻气阱曲线：0~95% 进度内从 1 倍扩张到 6 倍
+			float grow = Utils.Remap(p, 0f, 0.95f, 1f, 6f) * BaseScale;
+			Projectile.scale = grow;
+
+			// 尺寸放大时保持中心不变（气阱同款写法）
+			Vector2 center = Projectile.Center;
+			Projectile.width = (int)(50f * grow);
+			Projectile.height = (int)(50f * grow);
+			Projectile.Center = center;
+
+			// 缓慢上浮 + 自转，让气团"活"起来
+			Projectile.velocity *= 0.96f;
+			Projectile.velocity.Y -= 0.012f;
+			Projectile.rotation += (Projectile.ai[1] >= 0f ? 0.004f : -0.004f) * (0.6f + p);
+
+			// 气团内部持续冒黑烟，量与体积挂钩
+			if (!Main.dedServ && p < 0.9f && Main.rand.NextBool(2)) {
+				Vector2 spawn = Projectile.Center + Main.rand.NextVector2Circular(Projectile.width * 0.35f, Projectile.height * 0.35f);
+				Dust d = Dust.NewDustPerfect(spawn, DustID.Smoke,
+					Main.rand.NextVector2Circular(0.6f, 0.6f) + new Vector2(0f, -0.5f), 0,
+					Color.Lerp(new Color(14, 10, 10), new Color(44, 20, 20), Main.rand.NextFloat()),
+					Main.rand.NextFloat(1.4f, 2.4f));
+				d.noGravity = true;
+				d.noLight = true;
+			}
+		}
+
+		public override bool PreDraw(ref Color lightColor) {
+			// 透明度：前 25% 淡入、后 25% 淡出，峰值 0.85（与气阱完全一致）
+			float fadeIn = Utils.Remap(Progress, 0f, 0.25f, 0f, 1f);
+			float fadeOut = Utils.Remap(Progress, 0.75f, 1f, 1f, 0f);
+			float opacity = MathHelper.Clamp(fadeIn * fadeOut, 0f, 1f) * 0.85f;
+			if (opacity <= 0.002f)
+				return false;
+
+			Texture2D tex = ModContent.Request<Texture2D>(FogPaths[(int)Math.Abs(Projectile.ai[1]) % FogPaths.Length]).Value;
+			Vector2 origin = tex.Size() * 0.5f;
+			Vector2 pos = Projectile.Center - Main.screenPosition;
+
+			// 第 1 层：黑烟主体。必须用 AlphaBlend——加色混合下黑色等于不存在
+			Main.spriteBatch.End();
+			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState,
+				DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+			Main.spriteBatch.Draw(tex, pos, null, new Color(16, 11, 12) * (opacity * 0.95f),
+				Projectile.rotation, origin, Projectile.scale * 1.05f, SpriteEffects.None, 0f);
+			Main.spriteBatch.Draw(tex, pos + new Vector2(Projectile.width * 0.06f, -Projectile.height * 0.05f), null,
+				new Color(40, 14, 14) * (opacity * 0.75f), -Projectile.rotation * 0.8f, origin,
+				Projectile.scale * 0.82f, SpriteEffects.None, 0f);
+
+			// 第 2 层：赤红余晖（加色），负责"黑偏红"的亮边与可见度
+			Main.spriteBatch.End();
+			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState,
+				DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+			Main.spriteBatch.Draw(tex, pos, null, new Color(150, 34, 30) * (opacity * 0.55f),
+				Projectile.rotation * 1.3f, origin, Projectile.scale * 0.55f, SpriteEffects.None, 0f);
+
+			// 还原批处理状态
+			Main.spriteBatch.End();
+			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState,
+				DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+
+			return false;
+		}
+
+		public override void OnKill(int timeLeft) {
+			if (Main.dedServ)
+				return;
+
+			// 消散：最后一小撮烟 + 火星
+			for (int i = 0; i < 10; i++) {
+				Dust d = Dust.NewDustPerfect(
+					Projectile.Center + Main.rand.NextVector2Circular(Projectile.width * 0.3f, Projectile.height * 0.3f),
+					DustID.Smoke, Main.rand.NextVector2Circular(1.2f, 1.2f) + new Vector2(0f, -0.8f), 0,
+					Color.Lerp(new Color(16, 11, 11), new Color(60, 24, 24), Main.rand.NextFloat()),
+					Main.rand.NextFloat(1.4f, 2.6f));
+				d.noGravity = true;
+				d.noLight = true;
+			}
+		}
+	}
+
 	public class GroundDagger : ModProjectile
 	{
 		public override string Texture => "ArknightsMod/Content/NPCs/Enemy/ThroughChapter4/GravityDagger_Barrage";
