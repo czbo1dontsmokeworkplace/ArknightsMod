@@ -34,7 +34,8 @@ namespace ArknightsMod.Content.SwingHelper
         }
         #region 提供的着色器资源
 
-        public static Texture2D lightTex = TextureAssets.Extra[98].Value;
+        // 服务端也会使用挥舞逻辑，不能在类型初始化时读取客户端贴图。
+        public static Texture2D lightTex => Main.dedServ ? null : TextureAssets.Extra[98].Value;
         /// <summary>
         /// 消融
         /// </summary>
