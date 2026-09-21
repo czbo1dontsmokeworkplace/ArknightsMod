@@ -1,3 +1,4 @@
+using System;
 using ArknightsMod.Content.NPCs.Friendly;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

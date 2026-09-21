@@ -128,12 +128,13 @@ Cannot: {
 	}
 
 	Battle.Begin: 谈判破裂——坎诺特翻脸了！
+
 	Wave: {
 		Incoming: 第 {0}/{1} 波增援即将抵达
 		Cleared: 第 {0}/{1} 波增援已被击退
 	}
-	Leave: 坎诺特收拾好摊位，离开了
 
+	Leave: 坎诺特收拾好摊位，离开了
 	// Census.SpawnCondition: Conditions unknown
 
 	DeathMessage: {
