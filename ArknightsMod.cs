@@ -197,9 +197,9 @@ namespace ArknightsMod
 					bool forcedUpdate = reader.ReadBoolean();
 					NPCShopSystem.TryUpdateCannotShop(this, forcedUpdate);
 					break;
-				case ArkMessageID.SpawnReinforcements:
+				case ArkMessageID.CannotInteract:
 					if (IsValidClientRequest(whoAmI))
-						Cannot.ReadSpawnReinforcements(reader, whoAmI);
+						Cannot.ReadInteract(reader, whoAmI);
 					break;
 				case ArkMessageID.CannotAggroAck:
 					if (IsValidClientRequest(whoAmI))
@@ -264,7 +264,7 @@ namespace ArknightsMod
 			RequestUpdateClosureShopWhenStartDay,
 			UpdateCannotShop,
 			RequestUpdateCannotShop,
-			SpawnReinforcements,
+			CannotInteract, // 坎诺特对话框里的三个操作（触碰/听坎诺特的/请坎诺特降价），曾经是 SpawnReinforcements
 			CannotAggroAck,
 			CannotLifeTokenSync,
 			CoffeeMachineRequest,

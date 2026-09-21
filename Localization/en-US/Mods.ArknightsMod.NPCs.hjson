@@ -135,8 +135,18 @@ Cannot: {
 	Buttons: {
 		Shop: Shop
 		Touch: Test-touch the goods
+		Listen: Hear Cannot out
+		Haggle: '''"Ask" Cannot for a "discount"'''
 	}
 
+	Battle.Begin: Negotiations broke down - Cannot turned hostile!
+
+	Wave: {
+		Incoming: Wave {0}/{1} is incoming
+		Cleared: Wave {0}/{1} repelled
+	}
+
+	Leave: Cannot packed up his stall and left
 	Census.SpawnCondition: Conditions unknown
 
 	DeathMessage: {
