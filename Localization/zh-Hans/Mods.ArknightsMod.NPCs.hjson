@@ -93,6 +93,18 @@ Closure: {
 		Annihilation: 剿灭作战
 		Switch: 切换
 		Help: 帮助
+		MaterialShopWhite: 白色材料商店
+		MaterialShopGreen: 绿色材料商店
+		MaterialShopBlue: 蓝色材料商店
+		MaterialShopPurple: 紫色材料商店
+		MaterialShopGold: 金色材料商店
+		MaterialShopLocked: "{0}（未解锁）"
+		MaterialShopLockedGreen: 绿色材料商店还没解锁：需要击败任意 Boss
+		MaterialShopLockedBlue: 蓝色材料商店还没解锁：需要击败骷髅王或其后的 Boss
+		MaterialShopLockedPurple: 紫色材料商店还没解锁：需要击败全部新三王或其后的 Boss
+		MaterialShopLockedGold: 金色材料商店还没解锁：需要击败石巨人或其后的 Boss
+		SwitchPrompt: 博士，想看哪一页？
+		SwitchHint: 点击进入：{0}
 	}
 
 	// Census.SpawnCondition: Conditions unknown

@@ -13,6 +13,10 @@ namespace ArknightsMod.Content.Items.Material
 	public abstract class RareCollectibleItem : ArknightsMaterial
 	{
 		public override int Rarity => 0; // 不生效，颜色统一在下面改写
+
+		// 采集物只在坎诺特处换源石锭，不参与可露希尔的合成玉定价/回收/提示。
+		public override bool TradedWithOrundum => false;
+
 		public abstract int BaseOriginiumIngotValue { get; }
 
 		public sealed override void SafeSetDefaults() {

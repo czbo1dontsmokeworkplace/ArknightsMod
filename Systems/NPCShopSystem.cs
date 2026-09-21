@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor.Caster.Amiya;
+using ArknightsMod.Content.Items.Armor.Caster.Amiya;
 using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Content.Items.Material.ReclamAlgor;
@@ -16,7 +16,16 @@ namespace ArknightsMod.Systems
 	public class NPCShopSystem : ModSystem
 	{
 		public static List<int> ClosureTodaysRotation = [];
-		public static List<int> ClosureMaterialRotation = [];
+
+		/// <summary>
+		/// 当前进度下可售的全部材料：常驻材料（碳素）排最前，其后是基础池与各解锁层。
+		/// <br/>这是进度（<c>NPC.downed*</c> 与 <c>Main.hardMode</c>）的纯函数，由等级商店铺货时现场调用。
+		/// 以前它只在每日换日时算一次并缓存，于是"当天新解锁的等级商店要等到第二天才有货"，
+		/// 联机时客户端还得等服务器广播——现在改成现场计算，两边都不再有滞后。
+		/// </summary>
+		public static List<int> BuildClosureMaterialStock() {
+			return [.. BuildClosurePinnedMaterials(), .. BuildClosureMaterialPool()];
+		}
 
 		/// <summary>
 		/// 永远常驻售卖、不参与每日随机刷新的材料。碳素条是基建/摆件配方的常用材料，
@@ -103,7 +112,9 @@ namespace ArknightsMod.Systems
 				]);
 			}
 
-			if (forceAllTiers || NPC.downedPlantBoss) {
+			// 金档材料（顶级）：门槛与「金色材料商店」一致，都放在石巨人之后。
+			// （原本是世纪之花，会出现"材料已进库存但金店还锁着"的中间态。）
+			if (forceAllTiers || NPC.downedGolemBoss) {
 				pool.AddRange([
 					ModContent.ItemType<RephasicEnantiomer>(),
 					ModContent.ItemType<PolymerizationPreparation>(),
@@ -155,19 +166,12 @@ namespace ArknightsMod.Systems
 				}
 				ClosureTodaysRotation.AddRange(others);
 
-				var materialPool = BuildClosureMaterialPool();
-				var pinnedMaterials = BuildClosurePinnedMaterials();
-				// 常驻材料（碳素条）永远排在最前面、不参与随机抽取和刷新；
-				// 随机部分的抽取数量（8~12 种）保持和迁移前一致，不因为常驻项而缩水。
-				ClosureMaterialRotation = [.. pinnedMaterials];
-				int materialCount = Main.rand.Next(8, 13) + pinnedMaterials.Count;
-				while (materialPool.Count > 0 && ClosureMaterialRotation.Count < materialCount) {
-					int idx = Main.rand.Next(materialPool.Count);
-					ClosureMaterialRotation.Add(materialPool[idx]);
-					materialPool.RemoveAt(idx);
-				}
+				// 材料货架不在这里算：它随进度变化，由 Closure 铺货时现场调用 BuildClosureMaterialStock()，
+				// 免得"当天解锁的等级商店要等第二天才有货"。这里每天只重算时装商店的轮换。
 
-				if (Main.dedServ) {
+				// 走到这里说明当前进程就是服务端（见最外层的 netMode 判断），所以直接广播给客户端。
+				// 用 dedServ 判会漏掉"主机开服"（Host & Play）的情形，客户端的时装轮换会一直空着。
+				if (Main.netMode != NetmodeID.SinglePlayer) {
 					SendUpdateClosureShop(mod);
 				}
 				else if (!firstTime && Main.LocalPlayer.talkNPC > -1) {
@@ -269,10 +273,6 @@ namespace ArknightsMod.Systems
 			for (int i = 0; i < ClosureTodaysRotation.Count; i++) {
 				packet.Write(ClosureTodaysRotation[i]);
 			}
-			packet.Write(ClosureMaterialRotation.Count);
-			for (int i = 0; i < ClosureMaterialRotation.Count; i++) {
-				packet.Write(ClosureMaterialRotation[i]);
-			}
 			packet.Send();
 		}
 
@@ -290,20 +290,14 @@ namespace ArknightsMod.Systems
 
 		public static void ReadUpdateClosureShop(BinaryReader reader) {
 			ClosureTodaysRotation = [];
-			ClosureMaterialRotation = [];
 			try {
 				int count = reader.ReadInt32();
 				for (int i = 0; i < count; i++) {
 					ClosureTodaysRotation.Add(reader.ReadInt32());
 				}
-				int materialCount = reader.ReadInt32();
-				for (int i = 0; i < materialCount; i++) {
-					ClosureMaterialRotation.Add(reader.ReadInt32());
-				}
 			}
 			catch {
 				ClosureTodaysRotation = [ModContent.ItemType<AmiyaDefault>()];
-				ClosureMaterialRotation = [];
 			}
 		}
 

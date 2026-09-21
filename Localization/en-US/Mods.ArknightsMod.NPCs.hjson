@@ -93,6 +93,18 @@ Closure: {
 		Annihilation: Annihilation
 		Switch: Switch
 		Help: Help
+		MaterialShopWhite: White Material Shop
+		MaterialShopGreen: Green Material Shop
+		MaterialShopBlue: Blue Material Shop
+		MaterialShopPurple: Purple Material Shop
+		MaterialShopGold: Gold Material Shop
+		MaterialShopLocked: "{0} (Locked)"
+		MaterialShopLockedGreen: The Green Material Shop is locked: defeat any boss to unlock it
+		MaterialShopLockedBlue: The Blue Material Shop is locked: defeat Skeletron or a later boss to unlock it
+		MaterialShopLockedPurple: The Purple Material Shop is locked: defeat all three mechanical bosses or a later boss to unlock it
+		MaterialShopLockedGold: The Gold Material Shop is locked: defeat Golem or a later boss to unlock it
+		SwitchPrompt: Which page would you like, Doctor?
+		SwitchHint: Click to open: {0}
 	}
 
 	Census.SpawnCondition: Conditions unknown
