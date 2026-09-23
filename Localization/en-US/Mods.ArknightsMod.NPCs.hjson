@@ -80,7 +80,9 @@ RockCrab.DisplayName: Rock Crab
 MiZhenQiaoXie.DisplayName: Mysterious Trinket Mechanism
 
 Closure: {
-	DisplayName: Closure
+	// Type name (NPC.TypeName): shown in the housing menu, hover text, bestiary, etc.
+	// Her dialogue and shop tips still call her Closure; this is her community nickname.
+	DisplayName: Shrewd Merchant
 
 	TownNPCMood: {
 		Content: I am content.

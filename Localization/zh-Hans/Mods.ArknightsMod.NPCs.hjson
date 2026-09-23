@@ -80,7 +80,9 @@ RockCrab.DisplayName: 磐蟹
 MiZhenQiaoXie.DisplayName: 迷珍巧械
 
 Closure: {
-	DisplayName: 可露希尔
+	// Type name (NPC.TypeName): shown in the housing menu, hover text, bestiary, etc.
+	// Her dialogue and shop tips still call her Closure; this is her community nickname.
+	DisplayName: 奸商
 
 	TownNPCMood: {
 		Content: 我很满足
