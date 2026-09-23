@@ -186,8 +186,15 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			;
 		}
 
+		/// <summary>
+		/// 不提供随机名字列表：可露希尔就是她的名字，而类型名（<c>Mods.ArknightsMod.NPCs.Closure.DisplayName</c>）
+		/// 正好也是「可露希尔」，不需要再排一个"名字"。
+		/// <br/>返回空列表时 <c>NPC.HasGivenName</c> 为 false，<c>FullName</c> 直接等于类型名；
+		/// 若像以前那样把显示名塞进列表，<c>FullName</c> 会用 <c>Game.NPCTitle</c> 把"名字 + 类型名"拼起来，
+		/// 房屋界面等处就会显示成「可露希尔 可露希尔」。（坎诺特也是返回空列表，见 Cannot.cs。）
+		/// </summary>
 		public override List<string> SetNPCNameList() {
-			return [Language.GetTextValue($"Mods.ArknightsMod.NPCs.{GetType().Name}.DisplayName")];
+			return [];
 		}
 
 		public override void SetDefaults() {
