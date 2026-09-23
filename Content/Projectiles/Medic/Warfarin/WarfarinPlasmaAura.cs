@@ -39,7 +39,12 @@ public sealed class WarfarinPlasmaAura : ModProjectile
         }
         Projectile.Center = owner.MountedCenter;
         Projectile.ai[1]++;
-        Lighting.AddLight(Projectile.Center, .3f, .025f, .06f);
+        // Every client sees this once when the synchronized aura first appears.
+        if (Projectile.ai[1] == 1f)
+            WarfarinPlasmaVisuals.ActivationBurst(Projectile.Center);
+        float pulse = .72f + .28f * MathF.Sin(Projectile.ai[1] * .15f);
+        Lighting.AddLight(Projectile.Center, .42f * pulse, .028f * pulse, .085f * pulse);
+        WarfarinPlasmaVisuals.EmitAuraParticles(Projectile.Center, Projectile.ai[1]);
     }
 
     public override bool PreDraw(ref Color lightColor)
@@ -77,6 +82,8 @@ public sealed class WarfarinPlasmaAura : ModProjectile
             new(23, -10 * pulse), new(28, 3), new(33, 0), new(44, 0)];
         for (int i = 1; i < ecg.Length; i++)
             DrawLine(baseline + ecg[i - 1], baseline + ecg[i], white, 1.5f);
+        WarfarinPlasmaVisuals.DrawAuraParticles(center, age, fade, pulse);
+        WarfarinPlasmaVisuals.DrawActivationPulse(center, age, fade);
         return false;
     }
 

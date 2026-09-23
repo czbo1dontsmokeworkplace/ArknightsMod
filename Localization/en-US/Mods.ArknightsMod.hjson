@@ -12,6 +12,10 @@ CommonTooltips: {
 	OrundumRecycleHint: Can be sold to Closure: {0} {1}
 }
 
+RecipeGroups: {
+	AnyVanillaTombstone: Any Tombstone
+}
+
 ItemDropRuleCondition: {
 	CannotRunaway: When Cannot Runaway
 	CannotDead: When Cannot Dead
