@@ -78,8 +78,11 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.Gravel
 		}
 
 		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
-			Projectile.NewProjectile(source, player.Center, velocity,
-				ModContent.ProjectileType<RedDaggerHoldout>(), damage, knockback, player.whoAmI);
+			// 与红的匕首保持同一联机生成路径：只由拥有者客户端创建持握体，
+			// 避免服务器和客户端各生成一枚后互相阻止 CanUseItem。
+			if (player.whoAmI == Main.myPlayer)
+				Projectile.NewProjectile(source, player.MountedCenter, velocity,
+					ModContent.ProjectileType<RedDaggerHoldout>(), damage, knockback, player.whoAmI);
 			return false;
 		}
 

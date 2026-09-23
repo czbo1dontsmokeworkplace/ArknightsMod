@@ -184,6 +184,9 @@ namespace ArknightsMod
 		public override void HandlePacket(BinaryReader reader, int whoAmI) {
 			short id = reader.ReadInt16();
 			switch ((ArkMessageID)id) {
+				case ArkMessageID.EvolutionAccessory:
+					global::ArknightsMod.Content.Items.Evolution.EvolutionAccessoryPlayer.Receive(reader, whoAmI);
+					break;
 				case ArkMessageID.UpdateClosureShopWhenStartDay:
 					NPCShopSystem.ReadUpdateClosureShop(reader);
 					break;
@@ -279,6 +282,7 @@ namespace ArknightsMod
 			DeploymentCostAbsorbGrant,
 			DeploymentCostAbsorbResult,
 			WD12Detach,
+			EvolutionAccessory,
 		}
 	}
 	//public class Ex : GlobalNPC

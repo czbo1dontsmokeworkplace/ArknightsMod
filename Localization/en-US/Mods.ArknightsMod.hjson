@@ -36,6 +36,56 @@ StatusMessage: {
 	Pmp.GetTooClose: "{0}站在了喷发的活火山口上。"
 }
 
+Items: {
+	EvolutionSummon: {
+		DisplayName: Aberrant Culture
+		Tooltip:
+			'''
+			Summons the Essence of Evolution
+			Requires all three mechanical bosses to be defeated
+			Can be used at any time and in any biome
+			The first phase seals the area; use in an open arena
+			Not consumed
+			'''
+	}
+
+	EvolutionOrigin: {
+		DisplayName: Origin of Evolution
+		Tooltip:
+			'''
+			+6 defense, +40 maximum life and +5% damage reduction
+			Enemy kills grant one Evolution stack when no major boss is alive, up to 25
+			Event bosses and minibosses do not prevent stacking
+			Each stack grants +0.4 defense, +0.25% damage, +0.15% critical strike chance and +0.2% movement speed
+			After 20 seconds without a kill, lose one stack per second; death or unequipping clears all stacks
+			'''
+	}
+
+	EvolutionTerminus: {
+		DisplayName: Terminus of Evolution
+		Tooltip:
+			'''
+			+10% damage, +8% critical strike chance, +8% attack speed and +10% movement speed
+			Lethal damage instead triggers a 10-second Final Evolution
+			Become invulnerable and gain an additional +50% damage, +30% critical strike chance
+			Gain an additional +35% attack speed and +25% movement speed, but cannot recover life
+			Death is inevitable when the timer expires; unequipping or leaving the world cannot erase this debt
+			'''
+	}
+}
+
+Buffs: {
+	EvolutionDyingBuff: {
+		DisplayName: Final Evolution
+		Description: Invulnerable with immense offensive power, but unable to heal. Death follows when the countdown ends.
+	}
+
+	EvolutionCompanionBuff: {
+		DisplayName: Symbiotic Aberration
+		Description: The abominations fight for you
+	}
+}
+
 WorldGen: {
 	GrindstonePassMessage: "{$Mods.ArknightsMod.Items.Grindstone.DisplayName}"
 	ManganeseOrePassMessage: "{$Mods.ArknightsMod.Items.ManganeseOre.DisplayName}"
@@ -44,6 +94,8 @@ WorldGen: {
 }
 
 Tiles: {
+	EvolutionTrophyTile.MapEntry: Essence of Evolution Trophy
+	EvolutionRelicTile.MapEntry: Essence of Evolution Relic
 	BannerTile.MapEntry: Banner
 	AnniversaryWheel.MapEntry: "{$Mods.ArknightsMod.Items.AnniversaryWheel.DisplayName}"
 	DareUsa.MapEntry: "{$Mods.ArknightsMod.Items.DareUsa.DisplayName}"
@@ -84,6 +136,16 @@ Tiles: {
 	OrirockCubeTile.MapEntry: Orirock Cube Tile
 	RMA7012Tile.MapEntry: R M A7012 Tile
 	FactoryPlusTile.MapEntry: Factory Plus Tile
+}
+
+Projectiles: {
+	EvolutionHazard.DisplayName: Aberrant Blood
+	EvolutionWeaponShot.DisplayName: Blood Spirit
+	EvolutionMeleeShot.DisplayName: Hematic Ripper
+	EvolutionRangedShot.DisplayName: Blood Rock
+	EvolutionSummonShot.DisplayName: Symbiotic Blood
+	EvolutionCompanion.DisplayName: Symbiotic Excrescence
+	EvolutionHeavyCompanion.DisplayName: Symbiotic Abomination
 }
 
 Keybinds: {

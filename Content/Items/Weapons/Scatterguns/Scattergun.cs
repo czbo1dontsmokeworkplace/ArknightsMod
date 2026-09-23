@@ -98,6 +98,7 @@ public abstract class Scattergun : ExpansionWeaponBase
 public sealed class PineconeNailgun : Scattergun
 {
     public override int Tier => 0;
+    public override string Texture => "ArknightsMod/Content/Items/Weapons/Scatterguns/PineconeNailgun";
     protected override int[] EliteDamage => [14, 17, 20];
     public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.Boomstick)
         .AddRecipeGroup(OperatorWeaponRecipeGroups.IronOrLeadBar, 8).AddIngredient(ItemID.Wire, 12)

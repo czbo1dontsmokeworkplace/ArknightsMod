@@ -10,7 +10,18 @@ SnowCaster.DisplayName: Snow Caster
 SnowSoldier.DisplayName: Snow Soldier
 SnowSniper.DisplayName: Snow Sniper
 SnowHound.DisplayName: Snow Hound
-Evolution.DisplayName: Evolution
+
+Evolution: {
+	DisplayName: Essence of Evolution
+	BossChecklistIntegration.SpawnInfo: After defeating all three mechanical bosses, use an Aberrant Culture. Its first phase seals a circular arena approximately 94 tiles in radius; use in an open area.
+}
+
+EvolutionSpider.DisplayName: Mutant Rock Spider
+EvolutionGiantSpider.DisplayName: Mutant Giant Rock Spider
+EvolutionPuppet.DisplayName: Aberrant Puppet
+EvolutionAbomination.DisplayName: Originium Abomination
+EvolutionTumor.DisplayName: Malignant Tumor
+EvolutionBomb.DisplayName: Malignant Bomb
 tumor1.DisplayName: tumor1
 tumor2.DisplayName: tumor2
 AcidOgSlug.DisplayName: Acid Og Slug

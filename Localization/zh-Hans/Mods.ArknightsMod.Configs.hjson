@@ -1,3 +1,22 @@
+EvolutionCinematicConfig: {
+	DisplayName: 进化的本质：演出
+
+	ReducedEffects: {
+		Label: 减弱转阶段演出
+		Tooltip: 减少装饰光点和光晕，关闭演出震屏和转场明暗滤镜；不改变攻击、预警或伤害判定
+	}
+
+	ScreenShake: {
+		Label: Boss战斗震屏
+		Tooltip: 只影响本机视角；不会锁定镜头或移动角色
+	}
+
+	ScreenFilters: {
+		Label: 转场明暗滤镜
+		Tooltip: 蓄势时短暂压暗、蜕变时柔和白闪并快速恢复；减弱演出也会关闭此效果
+	}
+}
+
 MusicConfig: {
 	DisplayName: 音乐配置文件
 
