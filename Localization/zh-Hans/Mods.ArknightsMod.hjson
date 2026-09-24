@@ -12,9 +12,7 @@ CommonTooltips: {
 	OrundumRecycleHint: 可售卖给可露希尔：{0} {1}
 }
 
-RecipeGroups: {
-	AnyVanillaTombstone: 任意墓碑
-}
+RecipeGroups.AnyVanillaTombstone: 任意墓碑
 
 ItemDropRuleCondition: {
 	CannotRunaway: 坎诺特逃跑时
