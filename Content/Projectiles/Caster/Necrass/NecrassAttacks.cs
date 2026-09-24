@@ -22,7 +22,7 @@ public sealed class NecrassSoulBolt : NecrassAttack
     private float particleDistance;
     public override void SetStaticDefaults()
     {
-        ProjectileID.Sets.TrailCacheLength[Type] = 30;
+        ProjectileID.Sets.TrailCacheLength[Type] = 36;
         ProjectileID.Sets.TrailingMode[Type] = 0;
     }
     public override void SetDefaults()
@@ -62,35 +62,34 @@ public sealed class NecrassSoulBolt : NecrassAttack
     {
         if (Projectile.localAI[0] == 0)
         {
-            // 29 updates per frame is below 29% of the former Vivid Clarity-style
-            // 101 updates, keeping the visible flight speed over 70% lower.
-            Projectile.extraUpdates = 28;
-            Projectile.timeLeft = 360;
+            // 20 updates per frame lowers overall travel speed by about 31% from 29.
+            Projectile.extraUpdates = 19;
+            Projectile.timeLeft = 248;
         }
         float age = Projectile.localAI[0]++;
         // Let the initial curved shot read clearly before it begins to seek a target.
-        // At 29 updates per frame, 150 updates is a little over five game frames.
-        if (age >= 150 && (int)age % 15 == 0)
+        // Keep the original delay and turn cadence in real game frames after reducing sub-updates.
+        if (age >= 104 && (int)age % 10 == 0)
             normalTarget = NecrassCourt.Target(Projectile.Center, 700, Main.player[Projectile.owner])?.whoAmI ?? -1;
         if (normalTarget >= 0 && Main.npc[normalTarget].active)
         {
             Vector2 delta = Main.npc[normalTarget].Center - Projectile.Center;
             float turn = MathHelper.WrapAngle(delta.ToRotation() - Projectile.ai[1]);
-            Projectile.ai[1] += Math.Clamp(turn, -.021f, .021f);
+            Projectile.ai[1] += Math.Clamp(turn, -.0305f, .0305f);
         }
-        float speed = MathHelper.Lerp(2.4f, 6f, MathHelper.Clamp(age / 110f, 0, 1));
-        float wave = MathF.Sin(age * MathHelper.TwoPi / 100f + Projectile.ai[2]) * .20f
-            * (1 - .65f * MathHelper.Clamp(age / 240f, 0, 1));
+        float speed = MathHelper.Lerp(2.4f, 6f, MathHelper.Clamp(age / 76f, 0, 1));
+        float wave = MathF.Sin(age * MathHelper.TwoPi / 69f + Projectile.ai[2]) * .20f
+            * (1 - .65f * MathHelper.Clamp(age / 166f, 0, 1));
         Projectile.velocity = (Projectile.ai[1] + wave).ToRotationVector2() * speed;
         Projectile.rotation = Projectile.velocity.ToRotation();
         if (Main.dedServ) return;
         particleDistance += speed;
-        if (particleDistance >= 36)
+        if (particleDistance >= 30)
         {
-            particleDistance -= 36;
-            NecrassVisuals.SoulHelix(Projectile, age * .13f + Projectile.ai[2]);
+            particleDistance -= 30;
+            NecrassVisuals.SoulHelix(Projectile, age * .1885f + Projectile.ai[2]);
         }
-        if ((int)age % 24 == 0)
+        if ((int)age % 17 == 0)
         {
             Lighting.AddLight(Projectile.Center, .32f, .08f, .48f);
             NecrassVisuals.SoulAsh(Projectile.Center, Projectile.velocity);

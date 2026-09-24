@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.Items.Weapons.Caster.Goldenglow;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
@@ -194,14 +195,9 @@ public sealed class GoldenglowHeldStaff : ModProjectile
         Player player = Main.player[Projectile.owner];
         Texture2D texture = TextureAssets.Projectile[Type].Value;
         // Existing art runs bottom-left to top-right; -45 degrees makes its staff axis upright.
-        SpriteEffects effects = player.direction < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-        if (player.gravDir < 0)
-            effects |= SpriteEffects.FlipVertically;
-        Vector2 origin = new(texture.Width * (player.direction > 0 ? 0.28f : 0.72f),
-            texture.Height * (player.gravDir > 0 ? 0.75f : 0.25f));
         float rotation = -MathHelper.PiOver4 * player.direction * player.gravDir;
-        Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, lightColor,
-            rotation, origin, 1f, effects);
+        VerticalStaffBase.DrawHeldStaff(player, texture, Projectile.Center, lightColor,
+            new Vector2(0f), rotation, new Vector2(0.28f, 0.75f));
         float charge = visualCharge;
         GoldenglowLightningRenderer.DrawFlare(Tip, new Color(80, 160, 255), 0.24f + charge * 0.28f,
             MathHelper.Lerp(0.7f, 1f, visualBurst));

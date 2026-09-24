@@ -3,6 +3,7 @@ using System.IO;
 using Terraria.Audio;
 using Terraria.ID;
 using ArknightsMod.Content.Items.Weapons.Phalanx;
+using ArknightsMod.Content.Items.Weapons;
 using Microsoft.Xna.Framework;
 using Terraria.GameContent;
 using Terraria;
@@ -83,7 +84,8 @@ public sealed class PhalanxFocus : ModProjectile
         }
         if (holding)
         {
-            player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, -.55f * player.direction - MathHelper.Pi);
+            player.heldProj = Projectile.whoAmI;
+            player.itemTime = player.itemAnimation = 2;
             Lighting.AddLight(player.Center, PhalanxVisuals.Palette((int)Projectile.ai[0]).ToVector3() * .35f);
         }
     }
@@ -92,13 +94,13 @@ public sealed class PhalanxFocus : ModProjectile
         Player player = Main.player[Projectile.owner];
         int tier = (int)Projectile.ai[0];
         PhalanxVisuals.Shield(Projectile.Center, tier, opacity, flash, layers);
-        if (player.HeldItem.ModItem is PhalanxStaff)
+        if (player.HeldItem.ModItem is PhalanxStaff staff)
         {
             var texture = TextureAssets.Item[player.HeldItem.type].Value;
             float scale = 58f / System.Math.Max(texture.Width, texture.Height);
-            PhalanxVisuals.Sprite(texture,
-                player.MountedCenter - Main.screenPosition + new Vector2(player.direction * 22, -22),
-                texture.Size() * scale, lightColor, -MathHelper.PiOver4 + player.direction * .2f);
+            float rotation = staff.VerticalRotation + player.direction * .2f;
+            VerticalStaffBase.DrawHeldStaff(player, texture, player.MountedCenter, lightColor,
+                staff.VerticalOffset, rotation, staff.VerticalOrigin, scale);
         }
         Vector2 focus = player.MountedCenter - Main.screenPosition + new Vector2(player.direction * 27, -45);
         if (HoldingForDraw(player) && chargeFrames > 0)

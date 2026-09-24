@@ -115,17 +115,17 @@ internal static class NecrassVisuals
             if (projectile.oldPos[i] == Vector2.Zero || projectile.oldPos[i - 1] == Vector2.Zero) continue;
             float fade = 1 - i / (float)projectile.oldPos.Length;
             Vector2 a = projectile.oldPos[i] + projectile.Size / 2, b = projectile.oldPos[i - 1] + projectile.Size / 2;
-            Line(a, b, new Color(24, 12, 39) * fade, 11 * fade);
+            Line(a, b, new Color(30, 15, 48) * fade, 12 * fade);
             Vector2 side = (b - a).SafeNormalize(Vector2.UnitX).RotatedBy(MathHelper.PiOver2)
                 * MathF.Sin(i * .55f + Main.GlobalTimeWrappedHourly * 12) * (1 - fade) * 9;
-            Line(a + side, b + side, Glow(Violet, fade * .8f), 4 * fade);
-            Line(a, b, Glow(Lilac, fade * .65f), 1.5f * fade);
+            Line(a + side, b + side, Glow(Violet, fade * .9f), 4.5f * fade);
+            Line(a, b, Glow(Lilac, fade * .72f), 1.8f * fade);
         }
         Vector2 forward = projectile.velocity.SafeNormalize(Vector2.UnitX);
         Vector2 sideAxis = forward.RotatedBy(MathHelper.PiOver2);
         Vector2 center = projectile.Center;
-        Line(center - forward * 10, center + forward * 11, Glow(Violet, 1), 6);
-        Line(center - forward * 4, center + forward * 11, Glow(Lilac, 1), 2);
+        Line(center - forward * 10, center + forward * 11, Glow(Violet, 1), 6.5f);
+        Line(center - forward * 4, center + forward * 11, Glow(Lilac, 1), 2.2f);
         Line(center - sideAxis * 6 - forward * 3, center + forward * 11, Glow(Lilac, .85f), 1);
         Line(center + sideAxis * 6 - forward * 3, center + forward * 11, Glow(Lilac, .85f), 1);
     }
