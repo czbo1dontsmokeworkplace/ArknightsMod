@@ -1,3 +1,4 @@
+using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -68,6 +69,19 @@ namespace ArknightsMod.Systems
 			flag = true;
 			if (Main.netMode == NetmodeID.Server)
 				NetMessage.SendData(MessageID.WorldData);
+		}
+
+		public override void NetSend(BinaryWriter writer)
+		{
+			BitsByte flags = new BitsByte(DownedPompeii, DownedTheFirstToTalk, DownedFrostNova, DownedAACT, DownedEvolution, DownedW);
+			writer.Write(flags);
+		}
+
+		public override void NetReceive(BinaryReader reader)
+		{
+			BitsByte flags = reader.ReadByte();
+			DownedPompeii = flags[0]; DownedTheFirstToTalk = flags[1]; DownedFrostNova = flags[2];
+			DownedAACT = flags[3]; DownedEvolution = flags[4]; DownedW = flags[5];
 		}
 	}
 }

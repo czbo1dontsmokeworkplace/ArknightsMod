@@ -10,7 +10,18 @@ SnowCaster.DisplayName: 雪怪小队术士
 SnowSoldier.DisplayName: 雪怪小队
 SnowSniper.DisplayName: 雪怪狙击手
 SnowHound.DisplayName: 霜牙
-Evolution.DisplayName: “进化的本质”
+
+Evolution: {
+	DisplayName: “进化的本质”
+	BossChecklistIntegration.SpawnInfo: 击败全部机械三王后，使用异变培养皿召唤。第一阶段会封锁半径约94格的圆形区域，建议在开阔场地使用。
+}
+
+EvolutionSpider.DisplayName: 变异岩蛛
+EvolutionGiantSpider.DisplayName: 变异巨岩蛛
+EvolutionPuppet.DisplayName: 畸变体傀儡
+EvolutionAbomination.DisplayName: 源石畸变体
+EvolutionTumor.DisplayName: 畸变恶性瘤
+EvolutionBomb.DisplayName: 恶性瘤炸弹
 tumor1.DisplayName: 畸变赘生物
 tumor2.DisplayName: 畸变恶性瘤
 AcidOgSlug.DisplayName: 酸液源石虫

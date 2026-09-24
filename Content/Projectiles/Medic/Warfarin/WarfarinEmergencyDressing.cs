@@ -66,7 +66,8 @@ public sealed class WarfarinEmergencyDressing : ModProjectile
                     {
                         NetMessage.SendData(MessageID.SpiritHeal, -1, -1, null, target.whoAmI, amount);
                     }
-                    Burst(target.MountedCenter, 12);
+                    Burst(target.MountedCenter, 28);
+                    WarfarinPlasmaVisuals.DressingBurst(target.MountedCenter);
                     SoundEngine.PlaySound(SoundID.Item4 with { Volume = .3f, Pitch = -.1f }, target.MountedCenter);
                 }
                 Projectile.Kill();
@@ -76,9 +77,18 @@ public sealed class WarfarinEmergencyDressing : ModProjectile
 
         Projectile.rotation = Projectile.velocity.ToRotation();
         Lighting.AddLight(Projectile.Center, .42f, .025f, .09f);
-        if (!Main.dedServ && Main.rand.NextBool(3))
-            Dust.NewDustPerfect(Projectile.Center, DustID.Blood, -Projectile.velocity * .08f,
-                20, default, .85f).noGravity = true;
+        if (!Main.dedServ)
+        {
+            int count = age < MedicalTreatment.InitialTreatmentDelayTicks ? 2 : 3;
+            for (int i = 0; i < count; i++)
+            {
+                Dust dust = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(6f, 5f),
+                    i == 0 && age >= MedicalTreatment.InitialTreatmentDelayTicks ? DustID.RedTorch : DustID.Blood,
+                    -Projectile.velocity * Main.rand.NextFloat(.045f, .09f) + Main.rand.NextVector2Circular(.5f, .5f),
+                    20, default, Main.rand.NextFloat(.68f, 1.05f));
+                dust.noGravity = true;
+            }
+        }
     }
 
     private static void Burst(Vector2 position, int count)
@@ -101,6 +111,8 @@ public sealed class WarfarinEmergencyDressing : ModProjectile
             new Color(125, 4, 30), Projectile.rotation, origin, new Vector2(25f, 17f) / glow.Size(), SpriteEffects.None);
         Main.EntitySpriteDraw(glow, Projectile.Center - Main.screenPosition, null,
             new Color(255, 105, 135, 0), Projectile.rotation, origin, new Vector2(17f, 10f) / glow.Size(), SpriteEffects.None);
+        WarfarinPlasmaVisuals.DrawDressingDetails(Projectile, Projectile.localAI[0],
+            Projectile.localAI[0] >= MedicalTreatment.InitialTreatmentDelayTicks);
         return false;
     }
 }

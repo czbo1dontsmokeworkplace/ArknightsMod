@@ -1,0 +1,54 @@
+using System;
+
+namespace ArknightsMod.Content.NPCs.Enemy.Evolution;
+
+// Pure encounter rules are also exercised by the standalone validation runner.
+internal static class EvolutionRules
+{
+    public const int TransitionTicks = 600;
+    public const float ArenaRadius = 1200f;
+    public const int HazardCap = 180;
+    public const int PeripheralReserve = 32;
+    public const int WallHalfColumns = 15;
+    public const float WallSpacing = 108;
+    public static int TransitionDuration(int phase) => phase == 4 ? 720 : TransitionTicks;
+    public static int CinematicTime(int phase, int timer) => phase == 4 ? timer * TransitionTicks / 720 : timer;
+    public static float Aggression(int phase) => phase >= 5 ? 2.2f : phase >= 3 ? 1.6f : 1.3f;
+    private static readonly int[] NewbornCycle = { 0, 1, 2, 3, 4, 5, 6, 7 };
+    private static readonly EvolutionBroodGroup[][] BroodPrograms = {
+        new[] { new EvolutionBroodGroup(EvolutionBrood.Spider, EvolutionBroodPreset.Hunter, 6), new EvolutionBroodGroup(EvolutionBrood.Puppet, EvolutionBroodPreset.Hunter, 2) },
+        new[] { new EvolutionBroodGroup(EvolutionBrood.Spider, EvolutionBroodPreset.Rain, 6) },
+        new[] { new EvolutionBroodGroup(EvolutionBrood.GiantSpider, EvolutionBroodPreset.Siege, 2), new EvolutionBroodGroup(EvolutionBrood.Tumor, EvolutionBroodPreset.Siege, 3) },
+        new[] { new EvolutionBroodGroup(EvolutionBrood.Puppet, EvolutionBroodPreset.Minefield, 3), new EvolutionBroodGroup(EvolutionBrood.Bomb, EvolutionBroodPreset.Minefield, 4) },
+        new[] { new EvolutionBroodGroup(EvolutionBrood.Puppet, EvolutionBroodPreset.Weaver, 3) },
+        new[] { new EvolutionBroodGroup(EvolutionBrood.Abomination, EvolutionBroodPreset.Siege, 1), new EvolutionBroodGroup(EvolutionBrood.Spider, EvolutionBroodPreset.Ambush, 4) },
+        new[] { new EvolutionBroodGroup(EvolutionBrood.Tumor, EvolutionBroodPreset.Seeder, 5), new EvolutionBroodGroup(EvolutionBrood.GiantSpider, EvolutionBroodPreset.Artillery, 2) },
+        new[] { new EvolutionBroodGroup(EvolutionBrood.Abomination, EvolutionBroodPreset.Conductor, 1), new EvolutionBroodGroup(EvolutionBrood.Puppet, EvolutionBroodPreset.Weaver, 2) }
+    };
+    public static ReadOnlySpan<EvolutionBroodGroup> NewbornGroups(int attack) => BroodPrograms[Math.Abs(attack % BroodPrograms.Length)];
+    public static int NewbornDuration(int attack) => attack switch { 1 => 390, 2 or 6 => 480, 3 or 5 => 450, _ => 420 };
+    // Emit dangerous central lanes first; distant scenery-like shots may use only the remaining budget.
+    public static int Column(int index) => index == 0 ? 0 : (index + 1) / 2 * (index % 2 == 0 ? -1 : 1);
+    private static readonly int[] EvolvedCycle = { 1, 0, 2, 5, 3, 0, 4, 5 };
+    private static readonly int[] PerfectCycle = { 0, 1, 2, 5, 3, 0, 4, 5 };
+    private static readonly int[] DesperateCycle = { 0, 1, 5 };
+    public static int Attack(int phase, int cycle, bool desperate)
+    {
+        int[] attacks = desperate ? DesperateCycle : phase == 1 ? NewbornCycle : phase == 3 ? EvolvedCycle : PerfectCycle;
+        return attacks[Math.Abs(cycle % attacks.Length)];
+    }
+    public static int MinionCap(int phase) => phase == 5 ? 4 : phase <= 2 ? 12 : 8;
+    public static int Threshold(int maximum, int phase) => phase == 1 ? (int)Math.Ceiling(maximum * .6) : phase == 3 ? (int)Math.Ceiling(maximum * .2) : 0;
+    public static bool InGap(float angle, float gapDirection, float halfWidth = .75f)
+    {
+        float delta = MathF.IEEERemainder(angle - gapDirection, MathF.PI);
+        return MathF.Abs(delta) < halfWidth;
+    }
+    public static float RingRadius(int age) => Math.Max(0, age - 30) * 4.75f + 32f;
+    public static int ContactDamage(int phase, bool charge) => charge ? phase == 5 ? 100 : 82 : 0;
+}
+
+internal enum EvolutionShot { Blood, Spirit, Beam, Rock, Tentacle, Pulse, Core, Spike, Fragment, DashMarker, Lance, CrimsonBomb, Eruption }
+internal enum EvolutionBrood { Spider, GiantSpider, Puppet, Abomination, Tumor, Bomb }
+internal enum EvolutionBroodPreset : byte { Hunter, Rain, Siege, Minefield, Weaver, Ambush, Seeder, Artillery, Conductor }
+internal readonly record struct EvolutionBroodGroup(EvolutionBrood Kind, EvolutionBroodPreset Preset, int Count);

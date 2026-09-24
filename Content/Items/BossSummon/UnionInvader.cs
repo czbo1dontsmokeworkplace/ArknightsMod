@@ -1,6 +1,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria;
+using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Content.NPCs.Enemy.ThroughChapter4;
 
 namespace ArknightsMod.Content.Items.BossSummon
@@ -36,7 +37,10 @@ namespace ArknightsMod.Content.Items.BossSummon
 
 		public override void AddRecipes() {
 			CreateRecipe()
-				.AddIngredient(ItemID.Wood, 3)
+				.AddIngredient<OrironShard>()
+				.AddIngredient(ItemID.BlackDye)
+				.AddIngredient(ItemID.Silk, 3)
+				.AddIngredient(ItemID.Bone)
 				.AddTile(TileID.DemonAltar)
 				.Register();
 		}

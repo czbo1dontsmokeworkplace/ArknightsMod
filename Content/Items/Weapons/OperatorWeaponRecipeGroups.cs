@@ -43,7 +43,7 @@ public sealed class OperatorWeaponRecipeGroups : ModSystem
         int[] tombstones = ContentSamples.ItemsByType
             .Where(entry => entry.Key > 0 && entry.Key < ItemID.Count && entry.Value.createTile == TileID.Tombstones)
             .Select(entry => entry.Key).OrderBy(type => type).Prepend(ItemID.Tombstone).Distinct().ToArray();
-        Register(AnyVanillaTombstone, Lang.GetItemNameValue(ItemID.Tombstone), tombstones);
+        
 
         // 兔兔系列（任意一件即可）：兔子 2019 / 兔兔耳朵 4560 / 兔兔尾巴 4775 / 兔子头盔 243 / 兔兔雕像 445。
         // 标签只写物品名，和原版一致——悬停提示里游戏会自己补「任意」前缀（见 Main 的
@@ -51,6 +51,7 @@ public sealed class OperatorWeaponRecipeGroups : ModSystem
         // 用法：recipe.AddRecipeGroup(OperatorWeaponRecipeGroups.AnyVanillaBunny);
         Register(AnyVanillaBunny, Lang.GetItemNameValue(ItemID.Bunny),
             ItemID.Bunny, ItemID.BunnyEars, ItemID.BunnyTail, ItemID.BunnyHood, ItemID.BunnyStatue);
+        Register(AnyVanillaTombstone, Language.GetTextValue("Mods.ArknightsMod.RecipeGroups.AnyVanillaTombstone"), tombstones);
     }
 
     public override void AddRecipes()

@@ -12,6 +12,10 @@ CommonTooltips: {
 	OrundumRecycleHint: 可售卖给可露希尔：{0} {1}
 }
 
+RecipeGroups: {
+	AnyVanillaTombstone: 任意墓碑
+}
+
 ItemDropRuleCondition: {
 	CannotRunaway: 坎诺特逃跑时
 	CannotDead: 坎诺特被击败时
@@ -36,6 +40,55 @@ StatusMessage: {
 	Pmp.GetTooClose: "{0}站在了喷发的活火山口上"
 }
 
+Items: {
+	EvolutionSummon: {
+		DisplayName: 异变培养皿
+		Tooltip:
+			'''
+			召唤“进化的本质”
+			需要击败全部机械三王；不限时间与群系
+			第一阶段将封锁周围区域，请在开阔场地使用
+			不消耗
+			'''
+	}
+
+	EvolutionOrigin: {
+		DisplayName: 进化的起点
+		Tooltip:
+			'''
+			+6防御、+40最大生命值、+5%伤害减免
+			没有大型Boss存活时，每击杀一个敌人获得1层进化，最多25层
+			事件Boss和小Boss不阻止叠层
+			每层提供+0.4防御、+0.25%伤害、+0.15%暴击率和+0.2%移动速度
+			20秒未击杀敌人后，每秒减少1层；死亡或卸下配饰时清空
+			'''
+	}
+
+	EvolutionTerminus: {
+		DisplayName: 进化的终点
+		Tooltip:
+			'''
+			+10%伤害、+8%暴击率、+8%攻击速度、+10%移动速度
+			受到致命伤害时，阻止此次死亡并进入10秒濒死形态
+			濒死期间完全无敌，额外获得+50%伤害、+30%暴击率
+			额外获得+35%攻击速度和+25%移动速度，但无法恢复生命
+			10秒后必定死亡；卸下配饰不能解除，退出世界也不会免除死亡
+			'''
+	}
+}
+
+Buffs: {
+	EvolutionDyingBuff: {
+		DisplayName: 濒死形态
+		Description: 完全无敌且攻击能力大幅提升，无法回血；倒计时结束后必定死亡
+	}
+
+	EvolutionCompanionBuff: {
+		DisplayName: 共生畸变
+		Description: 畸变体为你而战
+	}
+}
+
 WorldGen: {
 	GrindstonePassMessage: "{$Mods.ArknightsMod.Items.Grindstone.DisplayName}"
 	ManganeseOrePassMessage: "{$Mods.ArknightsMod.Items.ManganeseOre.DisplayName}"
@@ -44,6 +97,8 @@ WorldGen: {
 }
 
 Tiles: {
+	EvolutionTrophyTile.MapEntry: 进化的本质纪念章
+	EvolutionRelicTile.MapEntry: 进化的本质圣物
 	BannerTile.MapEntry: 敌怪旗
 	AnniversaryWheel.MapEntry: "{$Mods.ArknightsMod.Items.AnniversaryWheel.DisplayName}"
 	DareUsa.MapEntry: "{$Mods.ArknightsMod.Items.DareUsa.DisplayName}"
@@ -84,6 +139,16 @@ Tiles: {
 	// OrirockCubeTile.MapEntry: Orirock Cube Tile
 	// RMA7012Tile.MapEntry: R M A7012 Tile
 	// FactoryPlusTile.MapEntry: Factory Plus Tile
+}
+
+Projectiles: {
+	EvolutionHazard.DisplayName: 畸变之血
+	EvolutionWeaponShot.DisplayName: 血灵
+	EvolutionMeleeShot.DisplayName: 血肉裂刃
+	EvolutionRangedShot.DisplayName: 血岩
+	EvolutionSummonShot.DisplayName: 共生血灵
+	EvolutionCompanion.DisplayName: 共生赘生物
+	EvolutionHeavyCompanion.DisplayName: 共生源石畸变体
 }
 
 Keybinds: {
