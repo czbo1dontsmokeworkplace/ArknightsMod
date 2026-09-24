@@ -35,7 +35,8 @@ public class KroosCrossbow : CrossbowWeaponBase
     public override void AddRecipes() {
         Recipe recipe = CreateRecipe();
         recipe.AddRecipeGroup(OperatorWeaponRecipeGroups.AnyVanillaWoodenBow, 1);
-        recipe.AddIngredient(ItemID.Bunny, 1);
+        // 兔兔：任意一件兔兔系列物品（兔子 / 兔兔耳朵 / 兔兔尾巴 / 兔子头盔 / 兔兔雕像）均可
+        recipe.AddRecipeGroup(OperatorWeaponRecipeGroups.AnyVanillaBunny, 1);
         recipe.AddIngredient(ItemID.Silk, 2);
         recipe.AddTile(ModContent.TileType<FactoryTile>());
         recipe.Register();
