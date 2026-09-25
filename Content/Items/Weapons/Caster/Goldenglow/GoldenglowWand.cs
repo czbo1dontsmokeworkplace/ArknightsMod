@@ -10,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Weapons.Caster.Goldenglow;
 
-public class GoldenglowWand : ExpansionWeaponBase
+public class GoldenglowWand : VerticalStaffBase
 {
     protected override int[] EliteDamage => [GoldenglowLightningBalance.Damage, GoldenglowLightningBalance.Damage, GoldenglowLightningBalance.Damage];
 
@@ -35,7 +35,7 @@ public class GoldenglowWand : ExpansionWeaponBase
         Item.mana = GoldenglowLightningBalance.ManaPerPayment;
         Item.crit = 4;
         Item.shootSpeed = 1f;
-        Item.useStyle = ItemUseStyleID.HoldUp;
+        ApplyVerticalStaffPose();
         Item.channel = true;
         Item.autoReuse = false;
     }

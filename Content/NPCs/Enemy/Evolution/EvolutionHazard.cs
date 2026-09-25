@@ -46,7 +46,8 @@ public sealed partial class EvolutionHazard : ModProjectile
         Encounter = r.ReadInt32(); Serial = r.ReadInt32(); Target = r.ReadInt32(); Delay = r.ReadInt32(); Lifetime = r.ReadInt32(); Parameter = r.ReadSingle();
         impact = r.ReadBoolean();
     }
-    public override bool ShouldUpdatePosition() => Kind is EvolutionShot.Blood or EvolutionShot.Spirit or EvolutionShot.Rock or EvolutionShot.Core or EvolutionShot.Fragment ||
+    public override bool ShouldUpdatePosition() => Kind is EvolutionShot.Blood or EvolutionShot.Spirit or EvolutionShot.Core or EvolutionShot.Fragment ||
+        Kind == EvolutionShot.Rock && (Parameter <= 0 || Age >= FireAge) ||
         Kind == EvolutionShot.Lance && Age >= FireAge || Kind == EvolutionShot.CrimsonBomb && Age < FireAge;
     public override bool? CanCutTiles() => false;
     public override bool? CanDamage()
@@ -61,6 +62,7 @@ public sealed partial class EvolutionHazard : ModProjectile
             EvolutionShot.Spirit => Age >= Delay ? null : false,
             EvolutionShot.CrimsonBomb => Parameter >= 0 && Age >= FireAge && Age < FireAge + 8 ? null : false,
             EvolutionShot.Eruption => Age >= FireAge + 6 && Age < FireAge + 26 ? null : false,
+            EvolutionShot.Rock when Parameter > 0 => Age >= FireAge ? null : false,
             EvolutionShot.Pulse => Age >= 30 ? null : false,
             _ => Age >= 18 ? null : false
         };
@@ -96,6 +98,7 @@ public sealed partial class EvolutionHazard : ModProjectile
                 break;
             case EvolutionShot.Rock:
                 if (Projectile.width != 48) Projectile.Resize(48, 48);
+                if (Parameter > 0 && Age < FireAge) { Projectile.tileCollide = false; break; }
                 Projectile.velocity.Y = Math.Min(19, Projectile.velocity.Y + .3f);
                 Projectile.tileCollide = !Collision.SolidCollision(Projectile.position, Projectile.width, Projectile.height);
                 if (impact) Projectile.velocity.X = Math.Sign(Projectile.velocity.X) * Math.Min(13, Math.Abs(Projectile.velocity.X) + .045f);
@@ -264,6 +267,23 @@ public sealed partial class EvolutionHazard : ModProjectile
         }
         else
         {
+            if (Kind == EvolutionShot.Rock && Parameter > 0 && Age < Delay)
+            {
+                EvolutionVisuals.Ring(center, 40, 0, EvolutionVisuals.Core * .65f, 2, false);
+                if (Parameter < 2) EvolutionVisuals.AimLine(center, center + direction * 700, (Age + 1f) / Math.Max(1, Delay));
+                else
+                {
+                    // In sky arenas this is a falling rock, so show its curved path rather than a false straight lane.
+                    Vector2 point = center, velocity = Projectile.velocity;
+                    for (int step = 0; step < 54; step++)
+                    {
+                        velocity.Y = Math.Min(19, velocity.Y + .3f);
+                        Vector2 next = point + velocity;
+                        if (step % 6 < 3) EvolutionVisuals.Line(point, next, EvolutionVisuals.Core * .6f, 1.5f, false);
+                        point = next;
+                    }
+                }
+            }
             Texture2D texture = EvolutionVisuals.Asset(name);
             float size = Kind == EvolutionShot.Rock ? 64 : Kind == EvolutionShot.Core ? 42 : Kind == EvolutionShot.Fragment ? 28 : 23;
             float scale = size / Math.Max(texture.Width, texture.Height);

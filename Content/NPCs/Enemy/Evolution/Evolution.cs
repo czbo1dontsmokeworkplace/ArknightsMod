@@ -242,12 +242,15 @@ public sealed partial class Evolution : ModNPC
         {
             brood.Preset = preset; brood.Formation = formation;
             brood.Encounter = Encounter; brood.Fuse = fuse; brood.Gap = gap; brood.FlightAnchor = center; brood.NPC.Center = center; brood.NPC.netUpdate = true;
+            brood.NPC.dontTakeDamage = true;
+            brood.NPC.chaseable = Phase < 3;
         }
     }
     public override void ModifyNPCLoot(NPCLoot loot)
     {
-        loot.Add(ItemDropRule.Common(ModContent.ItemType<EvolutionOrigin>()));
-        loot.Add(ItemDropRule.Common(ModContent.ItemType<EvolutionTerminus>()));
+        // All difficulties use the bag; expert/master retain vanilla per-player bag distribution.
+        loot.Add(ItemDropRule.BossBag(ModContent.ItemType<EvolutionTreasureBag>()));
+        loot.Add(ItemDropRule.ByCondition(new Conditions.NotExpert(), ModContent.ItemType<EvolutionTreasureBag>()));
     }
     public override void OnKill() { ClearBrood(); ClearHazards(); EvolutionVisuals.Burst(NPC.Center, 2); }
     private void UpdateVisuals()

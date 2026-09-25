@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ArknightsMod.Common.Particle;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -17,16 +18,25 @@ internal static class EvolutionVisuals
     internal static readonly Color Blood = new(222, 24, 53);
     internal static readonly Color Core = new(255, 196, 155);
     // Assets belong to tModLoader; clear references on unload, never dispose engine-owned textures.
-    private static readonly Dictionary<string, Texture2D> textures = new();
+    private static readonly Dictionary<string, Asset<Texture2D>> textures = new();
     internal static Texture2D Asset(string name)
     {
-        if (!textures.TryGetValue(name, out Texture2D texture))
+        if (!textures.TryGetValue(name, out Asset<Texture2D> texture))
             textures[name] = texture = ModContent.Request<Texture2D>(name switch {
                 "Bloom" => "ArknightsMod/Common/Particle/DefaultParticle",
                 "CinematicRing" => "ArknightsMod/Content/Textures/circle_03",
                 _ => Root + name
-            }).Value;
-        return texture;
+            }, AssetRequestMode.ImmediateLoad);
+        // Never cache .Value from an asynchronous request: it may be the transparent 1x1 fallback.
+        // Keep the live asset handle so reloads and delayed completion cannot strand the body invisible.
+        if (!texture.IsLoaded) texture.Wait();
+        return texture.Value;
+    }
+    internal static void Preload()
+    {
+        foreach (string name in new[] { "Newborn", "Evolved", "EvolvedHead", "EvolvedBody", "Perfect", "Shield", "ShieldCracked", "ShieldPerfect",
+            "Spider", "GiantSpider", "Puppet", "Abomination", "Tumor", "Bomb", "BombCharged", "BloodClot", "BloodRock", "ShellFragment",
+            "Heart", "WhiteShell", "Tentacle", "Bloom", "CinematicRing" }) Asset(name);
     }
     internal static void Unload() => textures.Clear();
     internal static void AimLine(Vector2 start, Vector2 end, float progress)

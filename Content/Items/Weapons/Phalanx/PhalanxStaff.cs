@@ -2,12 +2,15 @@ using ArknightsMod.Content.Projectiles.Phalanx;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Microsoft.Xna.Framework;
 
 namespace ArknightsMod.Content.Items.Weapons.Phalanx;
 
-public abstract class PhalanxStaff : ExpansionWeaponBase
+public abstract class PhalanxStaff : VerticalStaffBase
 {
     public abstract int Tier { get; }
+    protected override Vector2 VerticalStaffOffset => new(22f, -22f);
+    protected override Vector2 VerticalStaffOrigin => new(.5f, .5f);
     public override string Texture => "Terraria/Images/Item_" + new[] { ItemID.AmberStaff, ItemID.RubyStaff, ItemID.AmethystStaff }[Tier];
     public override void SetDefaults()
     {
@@ -15,7 +18,7 @@ public abstract class PhalanxStaff : ExpansionWeaponBase
         Item.damage = EliteDamage[0]; Item.DamageType = DamageClass.Magic;
         Item.mana = 8 + Tier * 3;
         Item.useTime = Item.useAnimation = PhalanxCycle.ChargeDuration;
-        Item.useStyle = ItemUseStyleID.Shoot;
+        ApplyVerticalStaffPose();
         Item.channel = Item.noUseGraphic = Item.noMelee = Item.autoReuse = true;
         Item.knockBack = 4f;
         Item.rare = new[] { ItemRarityID.Orange, ItemRarityID.Pink, ItemRarityID.Red }[Tier];

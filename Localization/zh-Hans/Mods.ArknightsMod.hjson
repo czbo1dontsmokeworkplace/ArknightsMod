@@ -39,6 +39,11 @@ StatusMessage: {
 }
 
 Items: {
+	EvolutionTreasureBag: {
+		DisplayName: 宝藏袋（进化的本质）
+		Tooltip: 右键打开，获得“进化的起点”和“进化的终点”
+	}
+
 	EvolutionSummon: {
 		DisplayName: 异变培养皿
 		Tooltip:

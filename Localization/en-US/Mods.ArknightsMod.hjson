@@ -39,6 +39,11 @@ StatusMessage: {
 }
 
 Items: {
+	EvolutionTreasureBag: {
+		DisplayName: Treasure Bag (Essence of Evolution)
+		Tooltip: Right click to receive Evolution's Origin and Evolution's Terminus
+	}
+
 	EvolutionSummon: {
 		DisplayName: Aberrant Culture
 		Tooltip:

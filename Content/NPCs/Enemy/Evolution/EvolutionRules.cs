@@ -1,4 +1,6 @@
 using System;
+using Microsoft.Xna.Framework;
+using Terraria;
 
 namespace ArknightsMod.Content.NPCs.Enemy.Evolution;
 
@@ -14,6 +16,17 @@ internal static class EvolutionRules
     public static int TransitionDuration(int phase) => phase == 4 ? 720 : TransitionTicks;
     public static int CinematicTime(int phase, int timer) => phase == 4 ? timer * TransitionTicks / 720 : timer;
     public static float Aggression(int phase) => phase >= 5 ? 2.2f : phase >= 3 ? 1.6f : 1.3f;
+    public static Vector2 TransitionVelocity(Vector2 position, Vector2 velocity, Vector2 target, Vector2 targetVelocity)
+    {
+        Vector2 offset = position - target;
+        float distance = offset.Length();
+        Vector2 outward = offset.SafeNormalize(new Vector2(-1, -.3f).SafeNormalize(-Vector2.UnitX));
+        Vector2 desired = targetVelocity + outward * MathHelper.Clamp((600 - distance) * .05f, -32, 24);
+        float maximum = Math.Min(48, Math.Max(18, targetVelocity.Length() + 12));
+        if (desired.Length() > maximum) desired = desired.SafeNormalize(Vector2.Zero) * maximum;
+        return Vector2.Lerp(velocity, desired, .085f);
+    }
+    public static int TransitionSupportWave(int timer) => timer >= 90 && timer <= 618 && (timer - 90) % 66 == 0 ? (timer - 90) / 66 : -1;
     private static readonly int[] NewbornCycle = { 0, 1, 2, 3, 4, 5, 6, 7 };
     private static readonly EvolutionBroodGroup[][] BroodPrograms = {
         new[] { new EvolutionBroodGroup(EvolutionBrood.Spider, EvolutionBroodPreset.Hunter, 6), new EvolutionBroodGroup(EvolutionBrood.Puppet, EvolutionBroodPreset.Hunter, 2) },

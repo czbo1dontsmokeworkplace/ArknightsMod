@@ -42,6 +42,7 @@ public sealed class EvolutionArenaPlayer : ModPlayer
 
 public sealed class EvolutionArenaSystem : ModSystem
 {
+    public override void PostSetupContent() { if (!Main.dedServ) EvolutionVisuals.Preload(); }
     public override void Unload() => EvolutionVisuals.Unload();
     public override void PostDrawTiles()
     {

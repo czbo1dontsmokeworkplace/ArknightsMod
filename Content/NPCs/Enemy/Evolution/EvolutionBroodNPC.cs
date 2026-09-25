@@ -20,6 +20,7 @@ public abstract partial class EvolutionBroodNPC : ModNPC
     private float warning;
     internal int Age => (int)NPC.ai[1];
     internal bool Retiring => NPC.ai[3] < 0;
+    internal bool SupportOnly => Parent?.Phase >= 3;
     internal Evolution Parent => Main.npc.IndexInRange((int)NPC.ai[0]) && Main.npc[(int)NPC.ai[0]].active &&
         Main.npc[(int)NPC.ai[0]].ModNPC is Evolution boss && boss.Encounter == Encounter ? boss : null;
     internal string AssetName => Kind switch
@@ -54,8 +55,11 @@ public abstract partial class EvolutionBroodNPC : ModNPC
     public override bool CanHitPlayer(Player target, ref int cooldownSlot)
     {
         cooldownSlot = ImmunityCooldownID.Bosses;
-        return !Retiring && charging;
+        return !SupportOnly && !Retiring && charging;
     }
+    public override bool? CanBeHitByItem(Player player, Item item) => SupportOnly || Retiring ? false : null;
+    public override bool? CanBeHitByProjectile(Projectile projectile) => SupportOnly || Retiring ? false : null;
+    public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position) => SupportOnly ? false : null;
     public override bool CanHitNPC(NPC target) => false;
     public override bool PreKill() => !Retiring;
     public override void SendExtraAI(BinaryWriter w) { w.Write(Encounter); w.Write(Fuse); w.Write(Gap); w.WriteVector2(FlightAnchor); w.WriteVector2(FlightDirection); w.Write((byte)Preset); w.Write(Formation); }
@@ -67,6 +71,7 @@ public abstract partial class EvolutionBroodNPC : ModNPC
         charging = false; warning = 0;
         NPC.noGravity = NPC.noTileCollide = true;
         NPC.damage = 0;
+        NPC.chaseable = !SupportOnly;
         NPC.target = boss.NPC.target;
         Player player = Main.player[NPC.target];
         NPC.ai[1]++;
@@ -82,8 +87,21 @@ public abstract partial class EvolutionBroodNPC : ModNPC
             if (NPC.ai[3] >= 0 || NPC.Distance(boss.NPC.Center) < 28) NPC.active = false;
             return;
         }
-        if (Age < 60) { NPC.velocity *= .9f; NPC.dontTakeDamage = Age < 30; return; }
-        NPC.dontTakeDamage = false;
+        NPC.dontTakeDamage = SupportOnly || Age < 30;
+        if (Age < 60) { NPC.velocity *= .9f; return; }
+        if (SupportOnly && Kind == EvolutionBrood.Spider)
+        {
+            // Phase two's spiders are invulnerable firing satellites, never contact-damage chargers.
+            float flank = NPC.ai[2] < 0 ? -1 : 1;
+            FlyTo(player.Center + new Vector2(flank * (490 + Formation * 30), -190 + MathF.Sin(Age * .025f + Formation) * 135), 20);
+            if (!boss.Transitioning && !boss.Desperate && boss.Attack != 0 && Beat(106, 80))
+                for (int i = -1; i <= 1; i++) boss.Lob(EvolutionShot.Blood, NPC.Center, player.Center + new Vector2(i * 135, 20), 62);
+            NPC.spriteDirection = NPC.direction = player.Center.X > NPC.Center.X ? 1 : -1;
+            NPC.rotation = MathHelper.Lerp(NPC.rotation, NPC.velocity.X * .012f, .12f);
+            if ((Age > 900 || NPC.Distance(player.Center) > 1900) && Main.netMode != NetmodeID.MultiplayerClient)
+            { NPC.ai[3] = -35; NPC.netUpdate = true; }
+            return;
+        }
         if (Preset != EvolutionBroodPreset.Hunter)
         {
             DoPreset(boss, player);
@@ -177,10 +195,10 @@ public abstract partial class EvolutionBroodNPC : ModNPC
         float pulse = Kind is EvolutionBrood.Tumor or EvolutionBrood.Bomb ? 1 + MathF.Sin(Age * .15f) * .035f : 1;
         EvolutionVisuals.Glow(NPC.Center, EvolutionVisuals.Blood * (.5f * appear), new Vector2(80 * pulse));
         if (warning > 0) EvolutionVisuals.AimLine(NPC.Center, NPC.Center + FlightDirection * (18 * EvolutionRules.Aggression(Parent?.Phase ?? 1) * 24 + 50), warning);
-        if (Kind is EvolutionBrood.Puppet or EvolutionBrood.Abomination)
+        if (SupportOnly || Kind is EvolutionBrood.Puppet or EvolutionBrood.Abomination)
         {
             Texture2D shield = EvolutionVisuals.Asset("Shield");
-            float shimmer = .32f + MathF.Sin(Age * .11f) * .07f;
+            float shimmer = (SupportOnly ? .52f : .32f) + MathF.Sin(Age * .11f) * .07f;
             spriteBatch.Draw(shield, NPC.Center - screenPos, null, (EvolutionVisuals.Blood with { A = 0 }) * (shimmer * appear),
                 Age * .012f, shield.Size() * .5f, new Vector2(110, 140) / shield.Size(), SpriteEffects.None, 0);
             EvolutionVisuals.Ring(NPC.Center, 62 + MathF.Sin(Age * .07f) * 3, 0, EvolutionVisuals.Core * (.3f * appear), 1.5f, false);

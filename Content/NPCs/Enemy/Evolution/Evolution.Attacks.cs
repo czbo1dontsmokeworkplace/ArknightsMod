@@ -51,7 +51,7 @@ public sealed partial class Evolution
                 if (t == 0) ClearBrood();
                 if (t == 45)
                 {
-                    for (int i = 0; i < 4; i++) SpawnBrood(EvolutionBrood.Spider, player.Center + new Vector2(i % 2 == 0 ? -600 : 600, -180 + i * 120), side: i % 2 == 0 ? -1 : 1);
+                    for (int i = 0; i < 4; i++) SpawnBrood(EvolutionBrood.Spider, player.Center + new Vector2(i % 2 == 0 ? -600 : 600, -180 + i * 120), side: i % 2 == 0 ? -1 : 1, formation: i);
                     SpawnBrood(EvolutionBrood.GiantSpider, player.Center + new Vector2(600, -400), preset: EvolutionBroodPreset.Siege);
                 }
                 if (t == 125 || t == 200 || t == 275) BloodFan(player, 3);
@@ -217,8 +217,7 @@ public sealed partial class Evolution
         }
         else
         {
-            if (t < 60) MoveTo(player.Center + new Vector2(-520, -180), 17, .06f);
-            else NPC.velocity *= .85f;
+            NPC.velocity = EvolutionRules.TransitionVelocity(NPC.Center, NPC.velocity, player.Center, player.velocity);
             if (t == 30) for (int i = 0; i < 4; i++)
             {
                 Vector2 point = player.Center + (MathHelper.PiOver4 + i * MathHelper.PiOver2).ToRotationVector2() * 620;
@@ -227,6 +226,7 @@ public sealed partial class Evolution
             if (t >= 54 && t <= 654 && (t - 54) % 48 == 0) LaserPattern(player, (t - 54) / 48 % 5, 30);
             if (t == 180 || t == 372 || t == 564) SpiritFan(player, NPC.Center, 7, 40);
             if (t == 294 || t == 486) GroundWave(player.Center, t == 294 ? 1 : -1);
+            DoInfernoSupport(player, t);
         }
         if (t >= EvolutionRules.TransitionDuration(Phase) - 1 && Main.netMode != NetmodeID.MultiplayerClient)
         {

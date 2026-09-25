@@ -21,9 +21,8 @@ public sealed class NecrassScepter : ExpansionWeaponBase
         Item.DamageType = DamageClass.Magic;
         Item.mana = 9;
         Item.useStyle = ItemUseStyleID.Shoot;
-        Item.useTime = 8;
-        Item.useAnimation = 32;
-        Item.useLimitPerAnimation = 4;
+        Item.useTime = 18;
+        Item.useAnimation = 18;
         Item.noMelee = Item.autoReuse = true;
         Item.knockBack = 3f;
         Item.shootSpeed = 13f;
@@ -56,20 +55,16 @@ public sealed class NecrassScepter : ExpansionWeaponBase
             state.Command(0, NecrassCourt.SafePosition(player, Main.MouseWorld));
             return false;
         }
-        // Four releases per animation: one, two, one, then two flames.
-        // The six flames share the displayed damage across the full animation.
-        int release = Math.Clamp((Item.useAnimation - player.itemAnimation) / Item.useTime, 0, 3);
-        int boltCount = release % 2 == 0 ? 1 : 2;
-        int firstBolt = release switch { 0 => 0, 1 => 1, 2 => 3, _ => 4 };
+        // Fire one six-bolt volley every 18 frames; the volley shares one use's damage.
         Vector2 center = player.RotatedRelativePoint(player.MountedCenter, true);
         float startAngle = Main.rand.NextFloat(MathHelper.TwoPi);
-        for (int i = 0; i < boltCount; i++)
+        for (int i = 0; i < 6; i++)
         {
-            // Separate sectors keep a two-flame release visibly spread around the player.
+            // Distribute the six bolts around the player, each aimed at the cursor.
             position = center;
             for (int attempt = 0; attempt < 16; attempt++)
             {
-                Vector2 offset = (startAngle + i * MathHelper.TwoPi / boltCount + Main.rand.NextFloat(-.35f, .35f))
+                Vector2 offset = (startAngle + i * MathHelper.TwoPi / 6 + Main.rand.NextFloat(-.22f, .22f))
                     .ToRotationVector2() * Main.rand.NextFloat(24, 60);
                 Vector2 candidate = center + offset;
                 if (!Collision.CanHitLine(center, 1, 1, candidate + offset.SafeNormalize(Vector2.UnitX) * 8, 1, 1)
@@ -78,7 +73,7 @@ public sealed class NecrassScepter : ExpansionWeaponBase
                 break;
             }
             Vector2 direction = (Main.MouseWorld - position).SafeNormalize(new Vector2(player.direction, 0));
-            int shotDamage = damage / 6 + (firstBolt + i < damage % 6 ? 1 : 0);
+            int shotDamage = damage / 6 + (i < damage % 6 ? 1 : 0);
             int index = Projectile.NewProjectile(source, position, direction * 2.4f, type, shotDamage, knockback,
                 player.whoAmI, 2, direction.ToRotation(), Main.rand.NextFloat(MathHelper.TwoPi));
             if (Main.projectile.IndexInRange(index)) Main.projectile[index].CritChance = player.GetWeaponCrit(Item);

@@ -15,7 +15,14 @@ public abstract partial class EvolutionBroodNPC
         Vector2 toward = (player.Center - NPC.Center).SafeNormalize(Vector2.UnitY);
         if (Kind is EvolutionBrood.Tumor or EvolutionBrood.Bomb)
         {
-            FlyTo(FlightAnchor + new Vector2(MathF.Sin(Age * .014f + Formation) * 35, MathF.Sin(Age * .03f) * 18), 4);
+            if (SupportOnly && Kind == EvolutionBrood.Bomb)
+            {
+                // Travel with the moving encounter, then lock in place for the entire blast warning.
+                if (Age < Fuse - 90)
+                    FlyTo(player.Center + (MathHelper.PiOver4 + Formation * MathHelper.PiOver2).ToRotationVector2() * 620, 25);
+                else NPC.velocity = Vector2.Zero;
+            }
+            else FlyTo(FlightAnchor + new Vector2(MathF.Sin(Age * .014f + Formation) * 35, MathF.Sin(Age * .03f) * 18), 4);
             if (Preset == EvolutionBroodPreset.Siege && Beat(108, 85)) boss.EruptAt(player.Center + new Vector2((Formation - 1) * 185, 24), 52);
             if (Preset == EvolutionBroodPreset.Seeder && Beat(108, 80))
                 boss.ThrowBomb(NPC.Center, player.Center + new Vector2(side * 280, -100 + Formation * 35), true, 92);

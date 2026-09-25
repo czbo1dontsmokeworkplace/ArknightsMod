@@ -4,6 +4,8 @@ FrostNova: {
 }
 
 IceCrystalAltar.DisplayName: 冰晶祭坛
+ArtsMasterA1.DisplayName: 法术大师 A1
+ArtsMasterA2.DisplayName: 法术大师 A2
 IceCleaver.DisplayName: 雪怪小队凿冰人
 Oneiros.DisplayName: 虚幻
 SnowCaster.DisplayName: 雪怪小队术士
@@ -177,5 +179,5 @@ WBoss.DisplayName: W
 // The decoy shares the real name so the hover text lies too
 WDecoy.DisplayName: W
 // CasterShoot.DisplayName: Caster Shoot
-// RaptorDrone.DisplayName: Raptor Drone
+RaptorDrone.DisplayName: 威龙无人机
 // DeploymentCost.DisplayName: Deployment Cost
