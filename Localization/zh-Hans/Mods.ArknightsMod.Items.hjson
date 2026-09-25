@@ -764,143 +764,143 @@ LapplandLegs: {
 }
 
 OrirockCluster: {
-	DisplayName: 固源岩组
+	DisplayName: ★★★★固源岩组★★★★
 	Tooltip: 从地表开采出的岩石固块组
 }
 
 OrirockConcentration: {
-	DisplayName: 提纯源岩
+	DisplayName: ★★★★★提纯源岩★★★★★
 	Tooltip: 从地表开采出的岩石固块组提纯出的物质
 }
 
 Polyketon: {
-	DisplayName: 酮凝集
+	DisplayName: ★★★酮凝集★★★
 	Tooltip: 少量的工业用有机化合物
 }
 
 Aketon: {
-	DisplayName: 酮凝集组
+	DisplayName: ★★★★酮凝集组★★★★
 	Tooltip: 中等量的工业用有机化合物
 }
 
 KetonColloid: {
-	DisplayName: 酮阵列
+	DisplayName: ★★★★★酮阵列★★★★★
 	Tooltip: 大量的工业用有机化合物
 }
 
 ManganeseTrihydrate: {
-	DisplayName: 三水锰矿
+	DisplayName: ★★★★★三水锰矿★★★★★
 	Tooltip: 用于提炼冶炼用的金属矿物
 }
 
 GrindstonePentahydrate: {
-	DisplayName: 五水研磨石
+	DisplayName: ★★★★★五水研磨石★★★★★
 	Tooltip: 用于精加工武器零件的高级研磨石
 }
 
 RMA7024: {
-	DisplayName: RMA70-24
+	DisplayName: ★★★★★RMA70-24★★★★★
 	Tooltip: 一种十分敏感且有优秀传导效果的矿物
 }
 
 LoxicKohl: {
-	DisplayName: 扭转醇
+	DisplayName: ★★★★扭转醇★★★★
 	Tooltip: 片状有机化合物
 }
 
 WhiteHorseKohl: {
-	DisplayName: 白马醇
+	DisplayName: ★★★★★白马醇★★★★★
 	Tooltip: 扭转醇精加工后的产物
 }
 
 Device: {
-	DisplayName: 装置
+	DisplayName: ★★★装置★★★
 	Tooltip: 一套相对完整的装置
 }
 
 IntegratedDevice: {
-	DisplayName: 全新装置
+	DisplayName: ★★★★全新装置★★★★
 	Tooltip: 一套全新装配而成的装置
 }
 
 OptimizedDevice: {
-	DisplayName: 改量装置
+	DisplayName: ★★★★★改量装置★★★★★
 	Tooltip: 经过大量私自改造的装置
 }
 
 Oriron: {
-	DisplayName: 异铁
+	DisplayName: ★★★异铁★★★
 	Tooltip: 罕见的工业材料
 }
 
 OrironCluster: {
-	DisplayName: 异铁组
+	DisplayName: ★★★★异铁组★★★★
 	Tooltip: 珍贵的工业材料
 }
 
 OrironBlock: {
-	DisplayName: 异铁块
+	DisplayName: ★★★★★异铁块★★★★★
 	Tooltip: 价值高昂的工业材料
 }
 
 Sugar: {
-	DisplayName: 糖
+	DisplayName: ★★★糖★★★
 	Tooltip: 机械化制作的少量糖块
 }
 
 SugarPack: {
-	DisplayName: 糖组
+	DisplayName: ★★★★糖组★★★★
 	Tooltip: 机械化制作的中等量糖块
 }
 
 SugarLump: {
-	DisplayName: 糖聚块
+	DisplayName: ★★★★★糖聚块★★★★★
 	Tooltip: 机械化制作的大量糖块
 }
 
 Polyester: {
-	DisplayName: 聚酸酯
+	DisplayName: ★★★聚酸酯★★★
 	Tooltip: 工业制造所需的零散聚酸酯
 }
 
 PolyesterPack: {
-	DisplayName: 聚酸酯组
+	DisplayName: ★★★★聚酸酯组★★★★
 	Tooltip: 工业制造所需的一组聚酸酯
 }
 
 PolyesterLump: {
-	DisplayName: 聚酸酯块
+	DisplayName: ★★★★★聚酸酯块★★★★★
 	Tooltip: 工业制造所需的成块聚酸酯
 }
 
 CoagulatingGel: {
-	DisplayName: 凝胶
+	DisplayName: ★★★★凝胶★★★★
 	Tooltip: 一种高强度的可塑性材料
 }
 
 PolymerizedGel: {
-	DisplayName: 聚合凝胶
+	DisplayName: ★★★★★聚合凝胶★★★★★
 	Tooltip: 一种具备极高强度的可塑性材料
 }
 
 # Placeable
 OrirockCube: {
-	DisplayName: 固源岩
+	DisplayName: ★★★固源岩★★★
 	Tooltip: 从地表开采出的岩石固块
 }
 
 ManganeseOre: {
-	DisplayName: 轻锰矿
+	DisplayName: ★★★★轻锰矿★★★★
 	Tooltip: 用于提炼冶炼用的金属矿物
 }
 
 Grindstone: {
-	DisplayName: 研磨石
+	DisplayName: ★★★★研磨石★★★★
 	Tooltip: 用于加工武器零件的研磨石
 }
 
 RMA7012: {
-	DisplayName: RMA70-12
+	DisplayName: ★★★★RMA70-12★★★★
 	Tooltip: 一种敏感且有良好传导效果的矿物
 }
 
@@ -927,77 +927,77 @@ Orundum: {
 }
 
 IncandescentAlloy: {
-	DisplayName: 炽合金
+	DisplayName: ★★★★炽合金★★★★
 	Tooltip: 电子工业用特殊高熔点合金
 }
 
 IncandescentAlloyBlock: {
-	DisplayName: 炽合金块
+	DisplayName: ★★★★★炽合金块★★★★★
 	Tooltip: 产量稀少的电子工业用特殊高熔点合金
 }
 
 CrystallineComponent: {
-	DisplayName: 晶体元件
+	DisplayName: ★★★★晶体元件★★★★
 	Tooltip: 可以制作与合成更高级的源石电子元件
 }
 
 CompoundCuttingFluid: {
-	DisplayName: 化合切削液
+	DisplayName: ★★★★化合切削液★★★★
 	Tooltip: 一种金属加工时必备的工业试剂
 }
 
 CrystallineCircuit: {
-	DisplayName: 晶体电路
+	DisplayName: ★★★★★晶体电路★★★★★
 	Tooltip: 重要的源石工业材料，是制作源石晶体单元的基础元件
 }
 
 PolymerizationPreparation: {
-	DisplayName: 聚合剂
+	DisplayName: ★★★★★★聚合剂★★★★★★
 	Tooltip: 复杂的液态工业产物
 }
 
 TransmutedSaltAgglomerate: {
-	DisplayName: 转质盐聚块
+	DisplayName: ★★★★★转质盐聚块★★★★★
 	Tooltip: 经过精炼处理的化合物结晶块
 }
 
 SemiSyntheticSolvent: {
-	DisplayName: 半自然溶剂
+	DisplayName: ★★★★半自然溶剂★★★★
 	Tooltip: 一种物理性能优异，耐酸碱性良好的活性溶剂
 }
 
 CrystallineElectronicUnit: {
-	DisplayName: 晶体电子单元
+	DisplayName: ★★★★★★晶体电子单元★★★★★★
 	Tooltip: 昂贵的源石工业产品
 }
 
 RefinedSolvent: {
-	DisplayName: 精炼溶剂
+	DisplayName: ★★★★★精炼溶剂★★★★★
 	Tooltip: 经特殊工艺制作而成特殊涂料
 }
 
 D32Steel: {
-	DisplayName: D32钢
+	DisplayName: ★★★★★★D32钢★★★★★★
 	Tooltip: 自然界中不应存在的人造金属材料，呈固态
 }
 
 NucleicCrystalSinter: {
-	DisplayName: 烧结核凝晶
+	DisplayName: ★★★★★★烧结核凝晶★★★★★★
 	Tooltip: 对工艺要求极高的现代科技产物
 }
 
 CuttingFluidSolution: {
-	DisplayName: 切削原液
+	DisplayName: ★★★★★切削原液★★★★★
 	Tooltip: 由多种活性溶剂配置而成的原液
 }
 
 BipolarNanoflake: {
-	DisplayName: 双极纳米片
+	DisplayName: ★★★★★★双极纳米片★★★★★★
 	Tooltip: 现代工业的创造力结晶
 }
 
 TransmutedSalt: {
-	DisplayName: 转质盐组
+	DisplayName: ★★★★转质盐组★★★★
 	Tooltip: 经过粗炼处理的化合物结晶
 }
 
@@ -1806,27 +1806,27 @@ CommandersPortrait: {
 }
 
 Orirock: {
-	DisplayName: 源岩
+	DisplayName: ★★源岩★★
 	Tooltip: 从地表开采出的岩石
 }
 
 SugarSubstitute: {
-	DisplayName: 代糖
+	DisplayName: ★★代糖★★
 	Tooltip: 机械化制作的廉价天然糖替代产物
 }
 
 Diketon: {
-	DisplayName: 双酮
+	DisplayName: ★★双酮★★
 	Tooltip: 极少量的工业用有机化合物
 }
 
 OrironShard: {
-	DisplayName: 异铁碎片
+	DisplayName: ★★异铁碎片★★
 	Tooltip: 普普通通的工业材料
 }
 
 Ester: {
-	DisplayName: 酯原料
+	DisplayName: ★★酯原料★★
 	Tooltip: 工业制造所需的酯原料
 }
 
@@ -1856,7 +1856,7 @@ SilverAshWeapon: {
 }
 
 DamagedDevice: {
-	DisplayName: 破损装置
+	DisplayName: ★★破损装置★★
 	Tooltip: 一些残破的装置
 }
 
@@ -3274,37 +3274,37 @@ DN_Weapon: {
 }
 
 RephasicEnantiomer: {
-	DisplayName: 重相位对映体
+	DisplayName: ★★★★★★重相位对映体★★★★★★
 	Tooltip: 光功能材料领域最尖端技术的产物
 }
 
 FuscousFiber: {
-	DisplayName: 褐素纤维
+	DisplayName: ★★★★褐素纤维★★★★
 	Tooltip: 具备高强度与高模量的特种纤维束
 }
 
 CyclicenePrefab: {
-	DisplayName: 环烃预制体
+	DisplayName: ★★★★★环烃预制体★★★★★
 	Tooltip: 由多种优良材料预加工而成的工业用材
 }
 
 CoagulativeNodule: {
-	DisplayName: 类凝结核
+	DisplayName: ★★★★类凝结核★★★★
 	Tooltip: 在实验室中人工合成的微粒，拥有良好的吸附性能
 }
 
 ChiralRefractor: {
-	DisplayName: 手性屈光体
+	DisplayName: ★★★★★手性屈光体★★★★★
 	Tooltip: 具备良好光学性能和物理性能的特种光学材料
 }
 
 AggregateCyclicene: {
-	DisplayName: 环烃聚质
+	DisplayName: ★★★★环烃聚质★★★★
 	Tooltip: 一种耐热性、耐化学性俱优的工业材料
 }
 
 SolidifiedFiberBoard: {
-	DisplayName: 固化纤维板
+	DisplayName: ★★★★★固化纤维板★★★★★
 	Tooltip: 经过塑形固化处理的特种纤维板
 }
 
