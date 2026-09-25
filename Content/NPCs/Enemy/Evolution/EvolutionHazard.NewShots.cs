@@ -32,9 +32,7 @@ public sealed partial class EvolutionHazard
             float charge = MathHelper.Clamp((Age - Delay + 36) / 36f, 0, 1);
             float breathe = 1 + MathF.Sin(Age * .2f) * .06f;
             EvolutionVisuals.Glow(center, wine * .8f, new Vector2(105 * breathe));
-            Texture2D shell = EvolutionVisuals.Asset("BloodRock");
-            Main.spriteBatch.Draw(shell, center - Main.screenPosition, null, new Color(153, 43, 64), Age * .025f,
-                shell.Size() * .5f, 48f * breathe / Math.Max(shell.Width, shell.Height), SpriteEffects.None, 0);
+            EvolutionProjectileVisuals.DrawBomb(center, Age * .025f, 51f * breathe, charge);
             EvolutionVisuals.Glow(center, rim * (.3f + charge * .5f), new Vector2(26 + charge * 12));
             if (Age >= Delay - 36 && Age < Delay)
             {
@@ -78,8 +76,7 @@ public sealed partial class EvolutionHazard
         float fade = MathHelper.Clamp((Lifetime - Age) / 20f, 0, 1);
         float reach = Math.Min(1, (Age - FireAge + 1) / 6f);
         Vector2 end = center + direction * length * reach;
-        EvolutionVisuals.Line(center, end, new Color(52, 0, 19) * fade, 38);
-        EvolutionVisuals.Line(center, end, EvolutionVisuals.Blood * fade, 26);
+        EvolutionProjectileVisuals.DrawBeam(center, end, Age - FireAge, fade, eruption: true);
         Texture2D shard = EvolutionVisuals.Asset("ShellFragment");
         for (int i = 0; i < 8; i++)
         {

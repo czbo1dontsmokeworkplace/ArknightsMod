@@ -132,7 +132,7 @@ public abstract partial class EvolutionBroodNPC : ModNPC
         float side = NPC.ai[2] < 0 ? -1 : 1;
         if (Kind == EvolutionBrood.Spider)
         {
-            int cycle = Math.Max(105, (int)(180 / aggression));
+            int cycle = EvolutionRules.ChargeStride(Math.Max(105, (int)(180 / aggression)), 94);
             int beat = (Age - 60 + NPC.whoAmI * 23) % cycle;
             if (beat < 42) FlyTo(player.Center + new Vector2(side * 500, 0), 15 * aggression);
             if (beat == 42)
@@ -142,7 +142,7 @@ public abstract partial class EvolutionBroodNPC : ModNPC
                 { FlightDirection = new Vector2(player.Center.X > NPC.Center.X ? 1 : -1, 0); NPC.netUpdate = true; }
             }
             if (beat >= 42 && beat < 70) { NPC.velocity = Vector2.Zero; if (beat < 66) warning = (beat - 41f) / 24; }
-            if (beat >= 70 && beat < 94) { charging = true; NPC.damage = 55; NPC.velocity = FlightDirection * 18 * aggression; }
+            if (beat >= 70 && beat < 94) { charging = true; NPC.damage = EvolutionDamageCockpit.BroodContactDamage(Kind); NPC.velocity = FlightDirection * 18 * aggression; }
             if (beat >= 94) FlyTo(player.Center + new Vector2(-side * 540, -240), 16 * aggression);
         }
         else

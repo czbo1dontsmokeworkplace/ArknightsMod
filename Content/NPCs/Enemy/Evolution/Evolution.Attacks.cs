@@ -118,7 +118,7 @@ public sealed partial class Evolution
     }
     private void DoCharges(Player player, bool perfect)
     {
-        int stride = perfect ? 86 : 100;
+        int stride = EvolutionRules.ChargeStride(perfect ? 86 : 100, perfect ? 70 : 76);
         int cycle = Timer / stride, t = Timer % stride;
         const int lockTime = 22;
         int warning = perfect ? 26 : 30;

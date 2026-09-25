@@ -41,7 +41,7 @@ public sealed partial class Evolution : ModNPC
     public override void SetDefaults()
     {
         NPC.width = 132; NPC.height = 158;
-        NPC.lifeMax = 52000; NPC.defense = 26; NPC.damage = 82;
+        NPC.lifeMax = 52000; NPC.defense = 26; NPC.damage = EvolutionDamageCockpit.BossContactDamage(3, true);
         NPC.boss = true; NPC.noGravity = NPC.noTileCollide = true;
         NPC.aiStyle = -1; NPC.knockBackResist = 0; NPC.npcSlots = 12;
         NPC.value = Item.buyPrice(gold: 15);
@@ -52,7 +52,6 @@ public sealed partial class Evolution : ModNPC
     public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)
     {
         NPC.lifeMax = (int)(NPC.lifeMax * .7f * balance * bossAdjustment);
-        NPC.damage = (int)(NPC.damage * .8f);
     }
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry entry)
     {
@@ -148,7 +147,7 @@ public sealed partial class Evolution : ModNPC
         else DoPerfect(target);
         NPC.rotation = MathHelper.Lerp(NPC.rotation, MathHelper.Clamp(NPC.velocity.X * .012f, -.25f, .25f), .12f);
         NPC.direction = NPC.spriteDirection = target.Center.X > NPC.Center.X ? 1 : -1;
-        if (Charging) NPC.damage = EvolutionRules.ContactDamage(Phase, true);
+        if (Charging) NPC.damage = EvolutionRules.ContactDamage(Phase, true, Desperate);
         NPC.ai[1]++;
         if (Main.netMode == NetmodeID.Server && Timer % 60 == 0) NPC.netUpdate = true;
         if (!Main.dedServ) UpdateVisuals();
@@ -164,7 +163,7 @@ public sealed partial class Evolution : ModNPC
         if (Main.netMode == NetmodeID.MultiplayerClient) return;
         if (Phase == 1) ClearBrood();
         ClearHazards(); Serial++;
-        NPC.ai[1] = -(int)((Desperate ? 24 : 36) / EvolutionRules.Aggression(Phase));
+        NPC.ai[1] = -EvolutionRules.Recovery((int)((Desperate ? 24 : 36) / EvolutionRules.Aggression(Phase)));
         NPC.ai[2]++; Anchor = NPC.Center; NPC.netUpdate = true;
     }
     private void MoveTo(Vector2 point, float maxSpeed = 14, float inertia = .09f)
@@ -181,8 +180,14 @@ public sealed partial class Evolution : ModNPC
         int count = 0;
         foreach (Projectile p in Main.ActiveProjectiles) if (p.ModProjectile is EvolutionHazard h && h.Encounter == Encounter) count++;
         if (count >= EvolutionRules.HazardCap - (peripheral ? EvolutionRules.PeripheralReserve : 0)) return;
-        int damage = kind switch { EvolutionShot.Beam => 42, EvolutionShot.Rock => 44, EvolutionShot.Tentacle or EvolutionShot.Eruption => 38, EvolutionShot.CrimsonBomb => 46, EvolutionShot.DashMarker => 0, _ => 32 };
-        if (Phase == 5 && damage > 0) damage += 5;
+        int damage = EvolutionDamageCockpit.ProjectileDamage(kind);
+        velocity = EvolutionRules.ShotVelocity(kind, velocity);
+        if (kind == EvolutionShot.Beam)
+        {
+            int extendedDelay = EvolutionRules.LaserWarning(delay);
+            lifetime += extendedDelay - delay; // 只延长预警，不缩短真实激光和收尾的存活窗口。
+            delay = extendedDelay;
+        }
         int index = Projectile.NewProjectile(NPC.GetSource_FromAI(), origin, velocity, ModContent.ProjectileType<EvolutionHazard>(), damage, 0,
             Main.myPlayer, (int)kind, 0, NPC.whoAmI);
         if (Main.projectile.IndexInRange(index) && Main.projectile[index].ModProjectile is EvolutionHazard hazard)

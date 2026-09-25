@@ -36,12 +36,12 @@ public abstract partial class EvolutionBroodNPC
         }
         if (Preset == EvolutionBroodPreset.Ambush)
         {
-            int beat = (Age - 60 + Formation * 15) % 164;
+            int beat = (Age - 60 + Formation * 15) % EvolutionRules.ChargeStride(164, 110);
             if (beat < 52) FlyTo(player.Center + new Vector2(side * 540, 210), 18 * aggression);
             if (beat == 52 && Main.netMode != NetmodeID.MultiplayerClient)
             { FlightDirection = (player.Center + player.velocity * 6 - NPC.Center).SafeNormalize(-Vector2.UnitY); NPC.netUpdate = true; }
             if (beat >= 52 && beat < 90) { NPC.velocity = Vector2.Zero; if (beat < 86) warning = (beat - 51f) / 34; }
-            if (beat >= 90 && beat < 110) { charging = true; NPC.damage = 55; NPC.velocity = FlightDirection * 20 * aggression; }
+            if (beat >= 90 && beat < 110) { charging = true; NPC.damage = EvolutionDamageCockpit.BroodContactDamage(Kind); NPC.velocity = FlightDirection * 20 * aggression; }
             if (beat >= 110) FlyTo(player.Center + new Vector2(-side * 580, -210), 14 * aggression);
             return;
         }

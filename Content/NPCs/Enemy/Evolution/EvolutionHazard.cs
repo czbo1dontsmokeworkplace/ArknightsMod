@@ -92,7 +92,7 @@ public sealed partial class EvolutionHazard : ModProjectile
                 {
                     float angle = direction.ToRotation();
                     float wanted = (Main.player[Target].Center - Projectile.Center).ToRotation();
-                    Projectile.velocity = angle.AngleTowards(wanted, boss.Phase == 5 ? .03f : .033f).ToRotationVector2() * Math.Min(boss.Phase == 5 ? 20 : 16, Projectile.velocity.Length() + .4f);
+                    Projectile.velocity = angle.AngleTowards(wanted, (boss.Phase == 5 ? .03f : .033f) * EvolutionRules.HomingTurnMultiplier).ToRotationVector2() * Math.Min(boss.Phase == 5 ? 20 : 16, Projectile.velocity.Length() + .4f);
                 }
                 if (Age == Delay) EvolutionVisuals.Burst(Projectile.Center, .35f, false);
                 break;
@@ -229,8 +229,7 @@ public sealed partial class EvolutionHazard : ModProjectile
         if (Kind == EvolutionShot.Lance && Age >= FireAge)
         {
             EvolutionVisuals.Trail(Projectile, 8, blood);
-            EvolutionVisuals.Line(center - direction * 45, center + direction * 25, blood, 11);
-            EvolutionVisuals.Line(center - direction * 30, center + direction * 24, EvolutionVisuals.Core * fade, 3);
+            EvolutionProjectileVisuals.DrawLance(center, direction.ToRotation(), fade);
             return false;
         }
         if (Kind is EvolutionShot.Beam or EvolutionShot.Tentacle or EvolutionShot.Spike or EvolutionShot.DashMarker or EvolutionShot.Lance)
@@ -250,10 +249,7 @@ public sealed partial class EvolutionHazard : ModProjectile
             else
             {
                 float flash = MathHelper.Clamp(1 - (Age - FireAge) / 18f, 0, 1);
-                EvolutionVisuals.Line(center, end, new Color(52, 0, 13) * flash, 32);
-                EvolutionVisuals.Line(center, end, blood * flash, 18);
-                EvolutionVisuals.Line(center, end, EvolutionVisuals.Core * flash, 5);
-                EvolutionVisuals.Glow(center, blood * flash, new Vector2(120, 60), direction.ToRotation());
+                EvolutionProjectileVisuals.DrawBeam(center, end, Age - FireAge, flash * fade);
             }
             return false;
         }
@@ -261,10 +257,10 @@ public sealed partial class EvolutionHazard : ModProjectile
         string name = Kind switch { EvolutionShot.Rock => "BloodRock", EvolutionShot.Core => "Heart", EvolutionShot.Fragment => "ShellFragment", _ => "BloodClot" };
         if (Kind == EvolutionShot.Spirit)
         {
-            EvolutionVisuals.Glow(center, blood, new Vector2(52, 30), Projectile.rotation);
-            EvolutionVisuals.Glow(center, EvolutionVisuals.Core * fade, new Vector2(21, 10), Projectile.rotation);
-            EvolutionVisuals.Line(center - direction * 13, center + direction * 9, EvolutionVisuals.Core * fade, 3);
+            EvolutionProjectileVisuals.DrawSpirit(center, Projectile.rotation, Age, fade);
         }
+        else if (Kind == EvolutionShot.Blood)
+            EvolutionProjectileVisuals.DrawDroplet(center, Projectile.rotation, fade);
         else
         {
             if (Kind == EvolutionShot.Rock && Parameter > 0 && Age < Delay)

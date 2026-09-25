@@ -13,6 +13,14 @@ internal static class EvolutionRules
     public const int PeripheralReserve = 32;
     public const int WallHalfColumns = 15;
     public const float WallSpacing = 108;
+    // 节奏调整独立于伤害和本体移动倍率，单次冲刺速度/持续时间不变。
+    public const float StraightShotSpeedMultiplier = .85f;
+    public const float HomingTurnMultiplier = .9f;
+    public static int LaserWarning(int ticks) => (int)Math.Ceiling(ticks * 1.15);
+    public static int Recovery(int ticks) => (int)Math.Ceiling(ticks * 1.10);
+    public static int ChargeStride(int stride, int chargeEnd) => chargeEnd + (int)Math.Ceiling((stride - chargeEnd) * 1.15);
+    public static Vector2 ShotVelocity(EvolutionShot kind, Vector2 velocity) =>
+        kind is EvolutionShot.Lance or EvolutionShot.Fragment ? velocity * StraightShotSpeedMultiplier : velocity;
     public static int TransitionDuration(int phase) => phase == 4 ? 720 : TransitionTicks;
     public static int CinematicTime(int phase, int timer) => phase == 4 ? timer * TransitionTicks / 720 : timer;
     public static float Aggression(int phase) => phase >= 5 ? 2.2f : phase >= 3 ? 1.6f : 1.3f;
@@ -58,7 +66,7 @@ internal static class EvolutionRules
         return MathF.Abs(delta) < halfWidth;
     }
     public static float RingRadius(int age) => Math.Max(0, age - 30) * 4.75f + 32f;
-    public static int ContactDamage(int phase, bool charge) => charge ? phase == 5 ? 100 : 82 : 0;
+    public static int ContactDamage(int phase, bool charge, bool desperate = false) => EvolutionDamageCockpit.BossContactDamage(phase, charge, desperate);
 }
 
 internal enum EvolutionShot { Blood, Spirit, Beam, Rock, Tentacle, Pulse, Core, Spike, Fragment, DashMarker, Lance, CrimsonBomb, Eruption }
