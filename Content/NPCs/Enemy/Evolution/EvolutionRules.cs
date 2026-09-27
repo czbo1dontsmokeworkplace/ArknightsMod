@@ -12,13 +12,72 @@ internal static class EvolutionRules
     public const int HazardCap = 180;
     public const int PeripheralReserve = 32;
     public const int WallHalfColumns = 15;
-    public const float WallSpacing = 108;
-    // 节奏调整独立于伤害和本体移动倍率，单次冲刺速度/持续时间不变。
-    public const float StraightShotSpeedMultiplier = .85f;
-    public const float HomingTurnMultiplier = .9f;
-    public static int LaserWarning(int ticks) => (int)Math.Ceiling(ticks * 1.15);
-    public static int Recovery(int ticks) => (int)Math.Ceiling(ticks * 1.10);
-    public static int ChargeStride(int stride, int chargeEnd) => chargeEnd + (int)Math.Ceiling((stride - chargeEnd) * 1.15);
+    public const float WallSpacing = 144;
+    // 节奏调整独立于伤害；冲刺通过延长行程扩大范围，最高速度不变。
+    public const float StraightShotSpeedMultiplier = .85f * .9f;
+    public const float HomingTurnMultiplier = .4f;
+    // 女皇式读招：普通激光至少64帧后才有伤害；这是调校目标，不是难度等价公式。
+    public static int LaserWarning(int ticks) => Math.Max(56, (int)Math.Ceiling(ticks * 1.15));
+    public const int LaserFadeTicks = 16;
+    public const int AxisActiveTicks = 16 * 60;
+    public const int AxisRayCount = 3;
+    public const float AxisPeakSpeed = .00126f * 4;
+    public const int AxisChargeTicks = 90;
+    public const int AxisSetupTicks = 60;
+    public const float AxisVisualWidth = 450;
+    public const float AxisCollisionWidth = 120;
+    public static int AxisLockEnd => AxisSetupTicks + FireTime(EvolutionShot.Beam, LaserWarning(AxisChargeTicks)) + AxisActiveTicks;
+    // 整组侧射从60帧一轮加快至40帧一轮（1.5倍），仍逐对轮流释放，不变成三倍齐射。
+    public static int AxisBladePair(int activeAge)
+    {
+        int elapsed = activeAge - 30;
+        if (elapsed < 0 || 30 + elapsed / 40 * 40 + 28 >= AxisActiveTicks) return -1;
+        for (int pair = 0; pair < 7; pair++)
+            if (elapsed % 40 == pair * 14 / 3) return pair;
+        return -1;
+    }
+    public static int AxisBladeLane(int activeAge)
+    {
+        int pair = AxisBladePair(activeAge);
+        return pair >= 0 ? 2 + pair / AxisRayCount : int.MinValue;
+    }
+    public static int AxisBladeRay(int activeAge)
+    {
+        int pair = AxisBladePair(activeAge);
+        return pair >= 0 ? (pair + (activeAge - 30) / 40) % AxisRayCount : -1;
+    }
+    public const int ChargeLockTicks = 54;
+    public static int ChargeActiveTicks(bool perfect) => perfect ? 44 : 52;
+    public static float ChargeDistance(bool perfect, bool desperate) => ChargeActiveTicks(perfect) * (perfect ? 36 * 2.2f : 32 * 1.6f) * (desperate ? 1.1f : 1);
+    public static bool IsLaser(EvolutionShot kind) => kind is EvolutionShot.Beam or EvolutionShot.Spike or EvolutionShot.Eruption;
+    public static int FireTime(EvolutionShot kind, int delay) => delay + (IsLaser(kind) ? LaserFadeTicks / 2 : 4);
+    // 预警淡出中点（50%亮度）与真实光束开火使用同一时钟。
+    public static float LaserWarningOpacity(int age, int delay)
+    {
+        float fadeIn = MathHelper.SmoothStep(0, 1, MathHelper.Clamp(age / (float)Math.Min(20, Math.Max(1, delay)), 0, 1));
+        float fadeOut = 1 - MathHelper.SmoothStep(0, 1, MathHelper.Clamp((age - delay) / (float)LaserFadeTicks, 0, 1));
+        return fadeIn * fadeOut;
+    }
+    // 对平滑速度曲线积分，靠同步时钟求绝对角度，换向时既不跳角也不跳速。
+    private static float AxisRampArea(float u) => u * u * u - .5f * u * u * u * u;
+    private static float AxisSweep(int age)
+    {
+        float t = Math.Clamp(age, 0, 480);
+        if (t <= 120) return AxisPeakSpeed * 120 * AxisRampArea(t / 120);
+        if (t <= 360) return AxisPeakSpeed * (60 + t - 120);
+        float u = (t - 360) / 120;
+        return AxisPeakSpeed * (300 + 120 * (u - AxisRampArea(u)));
+    }
+    public static float AxisAngle(int activeAge) => -MathHelper.PiOver2 +
+        (activeAge <= 480 ? AxisSweep(activeAge) : AxisSweep(480) - AxisSweep(activeAge - 480));
+    public static float PerfectChargePower(float progress) => MathHelper.Lerp(.72f, 1, MathHelper.SmoothStep(0, 1, MathHelper.Clamp(progress / .45f, 0, 1)));
+    public static int Recovery(int ticks) => (int)Math.Ceiling(ticks * 1.10 * 1.10);
+    public static int ChargeStride(int stride, int chargeEnd) => chargeEnd + (int)Math.Ceiling((stride - chargeEnd) * 1.15 * 1.10);
+    public static int VolleyInterval(int ticks) => (int)Math.Ceiling(ticks * 1.10);
+    // 偶数、奇数扇面都保留中央空槽，但不删除任何弹幕。
+    public static int FanSlot(int index, int count) => index < count / 2 ? index - count / 2 : index - count / 2 + 1;
+    public static Vector2 FormationDrift(Vector2 velocity, int fallbackSide = 1) =>
+        new((Math.Abs(velocity.X) > .5f ? Math.Sign(velocity.X) : fallbackSide) * MathHelper.Clamp(Math.Abs(velocity.X) * .3f, 1.6f, 3), 0);
     public static Vector2 ShotVelocity(EvolutionShot kind, Vector2 velocity) =>
         kind is EvolutionShot.Lance or EvolutionShot.Fragment ? velocity * StraightShotSpeedMultiplier : velocity;
     public static int TransitionDuration(int phase) => phase == 4 ? 720 : TransitionTicks;
@@ -51,8 +110,8 @@ internal static class EvolutionRules
     // Emit dangerous central lanes first; distant scenery-like shots may use only the remaining budget.
     public static int Column(int index) => index == 0 ? 0 : (index + 1) / 2 * (index % 2 == 0 ? -1 : 1);
     private static readonly int[] EvolvedCycle = { 1, 0, 2, 5, 3, 0, 4, 5 };
-    private static readonly int[] PerfectCycle = { 0, 1, 2, 5, 3, 0, 4, 5 };
-    private static readonly int[] DesperateCycle = { 0, 1, 5 };
+    private static readonly int[] PerfectCycle = { 6, 0, 1, 2, 5, 3, 0, 4, 5 };
+    private static readonly int[] DesperateCycle = { 0, 6, 1, 5 };
     public static int Attack(int phase, int cycle, bool desperate)
     {
         int[] attacks = desperate ? DesperateCycle : phase == 1 ? NewbornCycle : phase == 3 ? EvolvedCycle : PerfectCycle;
@@ -70,6 +129,7 @@ internal static class EvolutionRules
 }
 
 internal enum EvolutionShot { Blood, Spirit, Beam, Rock, Tentacle, Pulse, Core, Spike, Fragment, DashMarker, Lance, CrimsonBomb, Eruption }
+internal enum EvolutionBeamStyle : byte { Standard, Pulse, Axis }
 internal enum EvolutionBrood { Spider, GiantSpider, Puppet, Abomination, Tumor, Bomb }
 internal enum EvolutionBroodPreset : byte { Hunter, Rain, Siege, Minefield, Weaver, Ambush, Seeder, Artillery, Conductor }
 internal readonly record struct EvolutionBroodGroup(EvolutionBrood Kind, EvolutionBroodPreset Preset, int Count);

@@ -15,13 +15,18 @@ public sealed partial class EvolutionHazard
         Projectile.velocity *= .955f;
         // The final warning is stationary, so its blast disc never chases a dodging player.
         if (Age >= Delay - 36) Projectile.velocity = Vector2.Zero;
+        if (Age == Delay - 36)
+        {
+            BurstAngle = (boss.PatternCenter - Projectile.Center).ToRotation() + MathHelper.Pi / 12;
+            Projectile.netUpdate = true;
+        }
         if (Age != FireAge) return;
         EvolutionImpactSystem.Emit(Projectile.Center, BombRadius * 1.8f, 4.5f);
         EvolutionVisuals.Burst(Projectile.Center, 1.6f, false);
         if (!Main.dedServ) SoundEngine.PlaySound(SoundID.Item14 with { Pitch = -.55f, Volume = .55f, MaxInstances = 3 }, Projectile.Center);
         if (Parameter < 0)
             for (int i = 0; i < 12; i++) boss.Shoot(EvolutionShot.Fragment, Projectile.Center,
-                (i * MathHelper.TwoPi / 12).ToRotationVector2() * 7.5f, lifetime: 125);
+                (BurstAngle + i * MathHelper.TwoPi / 12).ToRotationVector2() * 7.5f, lifetime: 125);
     }
     private void DrawCrimsonBomb()
     {
@@ -44,7 +49,7 @@ public sealed partial class EvolutionHazard
                 else
                     for (int i = 0; i < 12; i++)
                     {
-                        Vector2 direction = (i * MathHelper.TwoPi / 12).ToRotationVector2();
+                        Vector2 direction = (BurstAngle + i * MathHelper.TwoPi / 12).ToRotationVector2();
                         EvolutionVisuals.Line(center + direction * 30, center + direction * (60 + charge * 60), rim * .6f, 1.5f);
                     }
             }
@@ -64,9 +69,9 @@ public sealed partial class EvolutionHazard
     {
         Vector2 center = Projectile.Center, direction = Projectile.velocity.SafeNormalize(-Vector2.UnitY);
         float length = Parameter > 0 ? Parameter : 360;
-        if (Age < Delay)
+        EvolutionVisuals.LaserWarning(center, center + direction * length, Age, Delay);
+        if (Age < FireAge)
         {
-            EvolutionVisuals.AimLine(center, center + direction * length, (Age + 1f) / Math.Max(1, Delay));
             EvolutionVisuals.Glow(center, EvolutionVisuals.Blood * .55f, new Vector2(100, 22));
             for (int i = -3; i < 3; i++) EvolutionVisuals.Line(center + new Vector2(i * 15, i % 2 * 4),
                 center + new Vector2((i + 1) * 15, (i + 1) % 2 * 4), EvolutionVisuals.Core * .7f, 2);

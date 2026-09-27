@@ -7,6 +7,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles.Guard.Gavial;
 
@@ -15,6 +16,8 @@ internal static class GavialVisuals
     internal static readonly Color Olive = new(92, 111, 54);
     private static readonly Color Steel = new(181, 183, 132);
     internal static SoundStyle MotorSound => BlazeVisuals.ButcherMotorSound;
+    private static Texture2D AssaultBlade => ModContent.Request<Texture2D>(
+        "ArknightsMod/Content/Items/Weapons/Guard/Gavial/GavialChainsawSkill2").Value;
 
     internal struct CutMark
     {
@@ -33,6 +36,23 @@ internal static class GavialVisuals
         float scale = reach / Math.Max(1f, axis.Length());
         BaseHeldMeleeSupport.DrawHeld(texture, hand, angle, MathF.Cos(angle) < 0f,
             profile, scale, Color.Lerp(light, light.MultiplyRGBA(new Color(165, 179, 137)), 0.32f));
+    }
+
+    internal static void DrawAssaultBlade(Vector2 hand, float angle, int frame, Color light)
+    {
+        Texture2D texture = AssaultBlade;
+        int frameHeight = texture.Height / 3;
+        Rectangle source = new(0, frame * frameHeight, texture.Width, frameHeight);
+        // 三帧纵向排列；手柄左侧接近 (8, 13)，锯尖靠近右边缘。
+        Vector2 grip = new(9f, 13f);
+        Vector2 tip = new(texture.Width - 4f, 24f);
+        float nativeAngle = (tip - grip).ToRotation();
+        SpriteEffects effects = MathF.Cos(angle) < 0f ? SpriteEffects.FlipVertically : SpriteEffects.None;
+        float rotation = MathF.Cos(angle) < 0f ? angle + nativeAngle : angle - nativeAngle;
+        if (effects == SpriteEffects.FlipVertically) grip.Y = frameHeight - grip.Y;
+        Vector2 origin = grip;
+        Main.spriteBatch.Draw(texture, hand - Main.screenPosition, source, light, rotation,
+            origin, 1f, effects, 0f);
     }
 
     internal static void DrawChain(Vector2 hand, Vector2 tip, int age, float spool, int mode)

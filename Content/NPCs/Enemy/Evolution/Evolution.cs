@@ -37,6 +37,8 @@ public sealed partial class Evolution : ModNPC
         NPCID.Sets.TrailCacheLength[Type] = 10;
         NPCID.Sets.TrailingMode[Type] = 1;
         NPCID.Sets.MPAllowedEnemies[Type] = true;
+        // 远端起手时也必须绘制穿过玩家区域的预瞄线，不能跟随本体一起被屏外剔除。
+        NPCID.Sets.MustAlwaysDraw[Type] = true;
     }
     public override void SetDefaults()
     {
@@ -75,11 +77,13 @@ public sealed partial class Evolution : ModNPC
     {
         w.Write(Encounter); w.Write(Serial); w.Write(Desperate);
         w.WriteVector2(Arena); w.WriteVector2(Aim); w.WriteVector2(DashDirection); w.WriteVector2(Anchor);
+        w.WriteVector2(PatternOrigin); w.WriteVector2(PatternDrift); w.Write(PatternSerial); w.Write(PatternStart);
     }
     public override void ReceiveExtraAI(BinaryReader r)
     {
         Encounter = r.ReadInt32(); Serial = r.ReadInt32(); Desperate = r.ReadBoolean();
         Arena = r.ReadVector2(); Aim = r.ReadVector2(); DashDirection = r.ReadVector2(); Anchor = r.ReadVector2();
+        PatternOrigin = r.ReadVector2(); PatternDrift = r.ReadVector2(); PatternSerial = r.ReadInt32(); PatternStart = r.ReadInt32();
     }
     public override bool CheckActive() => false;
     public override bool CanHitNPC(NPC target) => false;
@@ -95,6 +99,7 @@ public sealed partial class Evolution : ModNPC
     }
     public override bool CheckDead()
     {
+        if (AxisHealthLocked) { NPC.life = Math.Max(1, NPC.life); return false; }
         if (Phase == 6 && Timer >= 100) return true;
         if (Phase < 5) { NPC.life = Math.Max(1, EvolutionRules.Threshold(NPC.lifeMax, Phase)); return false; }
         NPC.life = 1;
@@ -105,7 +110,7 @@ public sealed partial class Evolution : ModNPC
     {
         if (Phase == 0) return;
         Charging = false; DashWarning = 0; NPC.damage = 0;
-        NPC.dontTakeDamage = Transitioning || Phase == 6 || Timer < -36;
+        NPC.dontTakeDamage = Transitioning || Phase == 6 || Timer < -36 || AxisHealthLocked;
         if (!NPC.HasValidTarget || !Main.player[NPC.target].active || Main.player[NPC.target].dead) NPC.TargetClosest(false);
         if (!NPC.HasValidTarget || NPC.Distance(Main.player[NPC.target].Center) > 7000)
         {
@@ -124,7 +129,7 @@ public sealed partial class Evolution : ModNPC
         {
             if (Phase == 1 && NPC.life <= EvolutionRules.Threshold(NPC.lifeMax, 1)) EnterPhase(2);
             else if (Phase == 3 && NPC.life <= EvolutionRules.Threshold(NPC.lifeMax, 3)) EnterPhase(4);
-            else if (Phase == 5 && !Desperate && NPC.life <= NPC.lifeMax * .08f)
+            else if (Phase == 5 && !Desperate && !AxisHealthLocked && NPC.life <= NPC.lifeMax * .08f)
             {
                 Desperate = true; ClearBrood(); ClearHazards(); Serial++;
                 NPC.ai[1] = -36; NPC.ai[2] = 0; NPC.netUpdate = true;
@@ -172,28 +177,34 @@ public sealed partial class Evolution : ModNPC
         float aggression = EvolutionRules.Aggression(Phase);
         NPC.velocity = Vector2.Lerp(NPC.velocity, delta.SafeNormalize(Vector2.UnitY) * Math.Min(maxSpeed * aggression, delta.Length() * .04f * aggression), inertia);
     }
-    private void Hover(Player player, float angle = 0) => MoveTo(player.Center + new Vector2(MathF.Cos(angle + (int)NPC.ai[2] * 2.3f) * 480,
-        -240 + MathF.Sin(angle) * 90), Phase == 5 ? 20 : 14);
-    internal void Shoot(EvolutionShot kind, Vector2 origin, Vector2 velocity, float parameter = 0, int delay = 42, int lifetime = 230, bool peripheral = false)
+    private void Hover(Player player, float angle = 0) => MoveTo(PatternCenter + new Vector2(MathF.Cos(angle + (int)NPC.ai[2] * 2.3f) * 560,
+        -400 + MathF.Sin(angle) * 120), Phase == 5 ? 20 : 14);
+    internal void Shoot(EvolutionShot kind, Vector2 origin, Vector2 velocity, float parameter = 0, int delay = 42, int lifetime = 230, bool peripheral = false,
+        EvolutionBeamStyle beamStyle = EvolutionBeamStyle.Standard, bool blade = false, bool gentleHoming = false)
     {
         if (Main.netMode == NetmodeID.MultiplayerClient) return;
         int count = 0;
         foreach (Projectile p in Main.ActiveProjectiles) if (p.ModProjectile is EvolutionHazard h && h.Encounter == Encounter) count++;
         if (count >= EvolutionRules.HazardCap - (peripheral ? EvolutionRules.PeripheralReserve : 0)) return;
-        int damage = EvolutionDamageCockpit.ProjectileDamage(kind);
+        int damage = EvolutionDamageCockpit.ProjectileDamage(kind, beamStyle);
         velocity = EvolutionRules.ShotVelocity(kind, velocity);
-        if (kind == EvolutionShot.Beam)
+        if (EvolutionRules.IsLaser(kind))
         {
             int extendedDelay = EvolutionRules.LaserWarning(delay);
             lifetime += extendedDelay - delay; // 只延长预警，不缩短真实激光和收尾的存活窗口。
             delay = extendedDelay;
         }
+        if (EvolutionRules.IsLaser(kind)) lifetime += EvolutionRules.LaserFadeTicks / 2 - 4;
+        if (beamStyle == EvolutionBeamStyle.Axis) lifetime = EvolutionRules.FireTime(kind, delay) + EvolutionRules.AxisActiveTicks + 24;
         int index = Projectile.NewProjectile(NPC.GetSource_FromAI(), origin, velocity, ModContent.ProjectileType<EvolutionHazard>(), damage, 0,
             Main.myPlayer, (int)kind, 0, NPC.whoAmI);
         if (Main.projectile.IndexInRange(index) && Main.projectile[index].ModProjectile is EvolutionHazard hazard)
         {
             hazard.Encounter = Encounter; hazard.Serial = Serial; hazard.Target = NPC.target;
             hazard.Parameter = parameter; hazard.Delay = delay; hazard.Lifetime = lifetime; hazard.Projectile.netUpdate = true;
+            hazard.BeamStyle = beamStyle; hazard.Blade = blade; hazard.GentleHoming = gentleHoming;
+            hazard.BurstAngle = (PatternCenter - origin).ToRotation() + MathHelper.Pi / 12;
+            hazard.Projectile.timeLeft = Math.Max(600, lifetime + 30);
         }
     }
     internal void Lob(EvolutionShot kind, Vector2 start, Vector2 end, float flight = 70)
@@ -206,11 +217,11 @@ public sealed partial class Evolution : ModNPC
     internal void TentacleAt(Vector2 point, int delay = 48) => Shoot(EvolutionShot.Tentacle, point + new Vector2(0, 180), -Vector2.UnitY, 360, delay, delay + 44);
     private void BloodFan(Player player, int count)
     {
-        for (int i = 0; i < count; i++) Lob(EvolutionShot.Blood, NPC.Center, player.Center + player.velocity * 20 + new Vector2((i - (count - 1) * .5f) * 100, 30), 65);
+        for (int i = 0; i < count; i++) Lob(EvolutionShot.Blood, NPC.Center, FormationLanding(i, count), 75);
     }
     private void Beam(Player player, float offset = 0, bool predict = false, int delay = 48)
     {
-        Vector2 aim = player.Center + (predict ? player.velocity * 20 : Vector2.Zero);
+        Vector2 aim = PatternCenter;
         Shoot(EvolutionShot.Beam, NPC.Center, (aim - NPC.Center).SafeNormalize(Vector2.UnitY).RotatedBy(offset), 1850, delay, delay + 28);
     }
     private void ClearHazards()
@@ -324,7 +335,7 @@ public sealed partial class Evolution : ModNPC
         Color bodyColor = Color.White * (opacity * (1 - EvolutionCinematics.BodyDissolve(this)));
         if (name == "Evolved") EvolutionVisuals.DrawEvolved(spriteBatch, NPC.Center - screenPos, bodyColor, NPC.rotation, scale, flip);
         else spriteBatch.Draw(texture, NPC.Center - screenPos, null, bodyColor, NPC.rotation, origin, scale, flip, 0);
-        if (DashWarning > 0) EvolutionVisuals.AimLine(NPC.Center, NPC.Center + DashDirection * (Phase == 5 ? 1660 : 1160), DashWarning);
+        if (DashWarning > 0) EvolutionVisuals.AimLine(NPC.Center, NPC.Center + DashDirection * EvolutionRules.ChargeDistance(Phase == 5, Desperate), DashWarning);
         EvolutionCinematics.DrawRevealedBody(this, spriteBatch, screenPos, scale, flip, opacity);
         if ((!Transitioning && visualPulse > 0) || (Transitioning && Timer < 100))
         {

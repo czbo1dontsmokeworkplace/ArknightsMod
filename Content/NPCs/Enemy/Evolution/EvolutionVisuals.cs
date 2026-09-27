@@ -25,6 +25,7 @@ internal static class EvolutionVisuals
             textures[name] = texture = ModContent.Request<Texture2D>(name switch {
                 "Bloom" => "ArknightsMod/Common/Particle/DefaultParticle",
                 "CinematicRing" => "ArknightsMod/Content/Textures/circle_03",
+                "EnergyNoise" => "ArknightsMod/Content/Projectiles/Medic/Shining/NoiseSoft",
                 _ => Root + name
             }, AssetRequestMode.ImmediateLoad);
         // Never cache .Value from an asynchronous request: it may be the transparent 1x1 fallback.
@@ -35,7 +36,7 @@ internal static class EvolutionVisuals
     internal static void Preload()
     {
         foreach (string name in new[] { "Newborn", "Evolved", "EvolvedHead", "EvolvedBody", "Perfect", "Shield", "ShieldCracked", "ShieldPerfect",
-            "Spider", "GiantSpider", "Puppet", "Abomination", "Tumor", "Bomb", "BombCharged", "BloodClot", "BloodRock", "ShellFragment",
+            "BloodClot", "BloodRock", "ShellFragment",
             "Heart", "WhiteShell", "Tentacle", "Bloom", "CinematicRing" }) Asset(name);
         foreach (var region in EvolutionProjectileVisuals.Regions) Asset(region.Name);
     }
@@ -45,6 +46,41 @@ internal static class EvolutionVisuals
         float pulse = .4f + .6f * MathF.Abs(MathF.Sin(progress * MathHelper.Pi * 2));
         Line(start, end, Blood * (.75f * pulse), 2);
         Line(start, end, Core * (.65f * pulse), .8f, false);
+    }
+    internal static void LaserWarning(Vector2 start, Vector2 end, int age, int delay)
+    {
+        float opacity = EvolutionRules.LaserWarningOpacity(age, delay);
+        if (opacity <= .001f) return;
+        Line(start, end, Blood * (.72f * opacity), 2.2f);
+        Line(start, end, Core * (.6f * opacity), .7f, false);
+    }
+    internal static void ChargeWake(Vector2 center, Vector2 direction, float progress)
+    {
+        if (Main.dedServ || EvolutionCinematics.Reduced) return;
+        Vector2 normal = direction.RotatedBy(MathHelper.PiOver2);
+        for (int side = -1; side <= 1; side += 2)
+        {
+            new DefaultParticle(center - direction * 52 + normal * side * 36, -direction * (8 + progress * 12) + normal * side * 2,
+                18, .62f, side > 0 ? Blood : Core, true) { Deformation = new Vector2(.35f, 2.2f) }.Spawn();
+        }
+    }
+    internal static void BroodOrb(Vector2 center, EvolutionBrood kind, int age, float opacity, bool support)
+    {
+        float radius = kind is EvolutionBrood.Abomination or EvolutionBrood.GiantSpider ? 34 : 23;
+        float breathe = 1 + MathF.Sin(age * .08f + (int)kind) * .055f;
+        Glow(center, new Color(130, 3, 27) * (.75f * opacity), new Vector2(radius * 4 * breathe));
+        Glow(center, Blood * opacity, new Vector2(radius * 2.8f * breathe));
+        Glow(center, new Color(255, 87, 108) * (.9f * opacity), new Vector2(radius * 1.45f));
+        Glow(center, new Color(255, 221, 218) * opacity, new Vector2(radius * .58f));
+        Texture2D ring = Asset("CinematicRing");
+        Main.spriteBatch.Draw(ring, center - Main.screenPosition, null, (Blood with { A = 0 }) * (.42f * opacity),
+            age * .016f, ring.Size() * .5f, new Vector2(radius * 2.7f, radius * 2) / ring.Size(), SpriteEffects.None, 0);
+        // 小型卫星光点区分职责，不再显示地面敌人的轮廓。
+        int motes = 1 + (int)kind % 3;
+        for (int i = 0; i < motes; i++)
+            Glow(center + (age * .025f + i * MathHelper.TwoPi / motes).ToRotationVector2() * radius,
+                Core * (.6f * opacity), new Vector2(9));
+        if (support) Glow(center, Blood * (.15f * opacity), new Vector2(radius * 4.8f));
     }
     internal static void DrawEvolved(SpriteBatch batch, Vector2 position, Color color, float rotation, Vector2 scale, SpriteEffects flip)
     {

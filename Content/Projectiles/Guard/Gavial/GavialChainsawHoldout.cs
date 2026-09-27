@@ -176,7 +176,10 @@ public sealed class GavialChainsawHoldout : ModProjectile
         if (Main.dedServ) return false;
         Main.instance.LoadItem(ItemID.ButchersChainsaw);
         Texture2D weapon = TextureAssets.Item[ItemID.ButchersChainsaw].Value;
-        GavialVisuals.DrawWeapon(weapon, drawHand, aimAngle, Reach, lightColor);
+        if (Mode == 2)
+            GavialVisuals.DrawAssaultBlade(drawHand, aimAngle, (age / 6) % 3, lightColor);
+        else
+            GavialVisuals.DrawWeapon(weapon, drawHand, aimAngle, Reach, lightColor);
         BaseHeldMeleeSupport.BeginAdditive(Main.spriteBatch);
         GavialVisuals.DrawChain(hand, tip, age, spool, Mode);
         foreach (var mark in marks) GavialVisuals.DrawCut(mark);

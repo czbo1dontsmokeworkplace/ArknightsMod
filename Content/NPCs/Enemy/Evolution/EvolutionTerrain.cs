@@ -50,39 +50,40 @@ public sealed partial class Evolution
         for (int i = -3; i <= 3; i++)
         {
             if (i == 0) continue;
-            EruptAt(center + new Vector2(i * 150, 24), 42 + (direction > 0 ? i + 3 : 3 - i) * 5);
+            EruptAt(center + new Vector2(i * 210, 24), 42 + (direction > 0 ? i + 3 : 3 - i) * 5);
         }
     }
     private void DoInfernoSupport(Player player, int timer)
     {
         int wave = EvolutionRules.TransitionSupportWave(timer);
         if (wave < 0) return;
-        // Every volley snapshots a fresh location. Neither a warned bomb nor a rolling rock retargets.
-        Vector2 center = player.Center + player.velocity * 10;
+        // 与主激光共用阵型，支援弹不再独立预判玩家并堵死刚给出的通路。
+        Vector2 center = PatternCenter;
         switch (wave % 3)
         {
             case 0:
                 for (int i = -6; i <= 6; i++)
                 {
                     if (Math.Abs(i) <= 1) continue;
-                    Shoot(EvolutionShot.Blood, center + new Vector2(i * 115, -460 - Math.Abs(i) % 2 * 60),
-                        new Vector2(-Math.Sign(i) * .7f, 3), lifetime: 190, peripheral: Math.Abs(i) > 4);
+                    Shoot(EvolutionShot.Blood, center + new Vector2(i * 144, -460 - Math.Abs(i) % 2 * 60),
+                        new Vector2(0, 3), lifetime: 190, peripheral: Math.Abs(i) > 4);
                 }
                 break;
             case 1:
                 for (int side = -1; side <= 1; side += 2)
                 for (int row = 0; row < 2; row++)
                     ThrowBomb(center + new Vector2(side * 520, -260 + row * 380),
-                        center + new Vector2(side * 250, -100 + row * 240), row == 1, 78 + row * 12);
+                        center + new Vector2(side * 360, -100 + row * 240), row == 1, 78 + row * 12);
                 break;
             default:
-                for (int side = -1; side <= 1; side += 2)
+                for (int i = 0; i < 2; i++)
                 {
-                    Vector2 lane = center + new Vector2(side * 440, 16);
+                    int side = PatternDrift.X < 0 ? 1 : -1;
+                    Vector2 lane = center + new Vector2(side * (660 + i * 260), 16);
                     if (EvolutionTerrain.TrySurface(lane, out Vector2 ground))
-                        Shoot(EvolutionShot.Rock, ground - new Vector2(0, 26), new Vector2(-side * 7, 0), 1, 42, 280);
+                        Shoot(EvolutionShot.Rock, ground - new Vector2(0, 26), new Vector2(-side * 7, 0), 1, 42 + i * 20, 300 + i * 20);
                     else
-                        Shoot(EvolutionShot.Rock, center + new Vector2(side * 380, -420), new Vector2(-side * 3.4f, 1), 2, 42, 240);
+                        Shoot(EvolutionShot.Rock, center + new Vector2(side * (480 + i * 260), -420), new Vector2(0, 1), 2, 42 + i * 20, 260 + i * 20);
                 }
                 break;
         }

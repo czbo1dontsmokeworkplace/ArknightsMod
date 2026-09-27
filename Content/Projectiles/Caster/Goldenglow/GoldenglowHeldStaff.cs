@@ -109,8 +109,7 @@ public sealed class GoldenglowHeldStaff : ModProjectile
 
         // TeslaCoil_Proj: keep a separate held projectile above MountedCenter and lock HoldUp.
         Projectile.spriteDirection = player.direction;
-        Projectile.Center = player.RotatedRelativePoint(player.MountedCenter, true) +
-            new Vector2(6f * player.direction, -8f * player.gravDir);
+        Projectile.Center = VerticalStaffBase.HeldStaffCenter(player, (GoldenglowWand)player.HeldItem.ModItem);
         player.heldProj = Projectile.whoAmI;
         player.itemTime = player.itemAnimation = 2;
         // ItemUseStyleID.HoldUp supplies the raised arm, as in TeslaCoil; do not override it with a shooting arm.

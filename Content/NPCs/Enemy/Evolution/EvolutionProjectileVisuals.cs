@@ -39,6 +39,13 @@ internal static class EvolutionProjectileVisuals
         Sprite(Lance, center, new Vector2(70, 18), new Vector2(.66f, .5f), rotation,
             (Hot with { A = 0 }) * (opacity * .4f));
     }
+    internal static void DrawBlade(Vector2 center, float rotation, float opacity)
+    {
+        // 相对旧侧向刃旋转90度，尖端与飞行方向一致；不改实际弹道。
+        Sprite(Lance, center, new Vector2(62, 17), new Vector2(.5f), rotation, Energy * opacity);
+        Sprite(Lance, center, new Vector2(48, 9), new Vector2(.5f), rotation,
+            (Hot with { A = 0 }) * (.7f * opacity));
+    }
 
     internal static void DrawDroplet(Vector2 center, float rotation, float opacity)
     {

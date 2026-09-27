@@ -23,16 +23,10 @@ public abstract partial class EvolutionBroodNPC : ModNPC
     internal bool SupportOnly => Parent?.Phase >= 3;
     internal Evolution Parent => Main.npc.IndexInRange((int)NPC.ai[0]) && Main.npc[(int)NPC.ai[0]].active &&
         Main.npc[(int)NPC.ai[0]].ModNPC is Evolution boss && boss.Encounter == Encounter ? boss : null;
-    internal string AssetName => Kind switch
-    {
-        EvolutionBrood.Spider => "Spider", EvolutionBrood.GiantSpider => "GiantSpider", EvolutionBrood.Puppet => "Puppet",
-        EvolutionBrood.Abomination => "Abomination", EvolutionBrood.Bomb => "Bomb", _ => "Tumor"
-    };
-    private int Frames => Kind switch { EvolutionBrood.Spider => 15, EvolutionBrood.GiantSpider => 24, EvolutionBrood.Puppet or EvolutionBrood.Abomination => 19, EvolutionBrood.Tumor => 3, _ => 1 };
-    public override string Texture => EvolutionVisuals.Root + AssetName;
+    public override string Texture => "ArknightsMod/Common/Particle/DefaultParticle";
     public override void SetStaticDefaults()
     {
-        Main.npcFrameCount[Type] = Frames;
+        Main.npcFrameCount[Type] = 1;
         NPCID.Sets.NPCBestiaryDrawOffset.Add(Type, new NPCID.Sets.NPCBestiaryDrawModifiers { Hide = true });
     }
     public override void SetDefaults()
@@ -89,13 +83,18 @@ public abstract partial class EvolutionBroodNPC : ModNPC
         }
         NPC.dontTakeDamage = SupportOnly || Age < 30;
         if (Age < 60) { NPC.velocity *= .9f; return; }
+        if (SupportOnly && Kind == EvolutionBrood.Puppet)
+        {
+            DoFixedBeamBattery(boss, player);
+            return;
+        }
         if (SupportOnly && Kind == EvolutionBrood.Spider)
         {
             // Phase two's spiders are invulnerable firing satellites, never contact-damage chargers.
             float flank = NPC.ai[2] < 0 ? -1 : 1;
-            FlyTo(player.Center + new Vector2(flank * (490 + Formation * 30), -190 + MathF.Sin(Age * .025f + Formation) * 135), 20);
+            FlyTo(boss.PatternCenter + new Vector2(flank * (490 + Formation * 30), -190 + MathF.Sin(Age * .025f + Formation) * 135), 20);
             if (!boss.Transitioning && !boss.Desperate && boss.Attack != 0 && Beat(106, 80))
-                for (int i = -1; i <= 1; i++) boss.Lob(EvolutionShot.Blood, NPC.Center, player.Center + new Vector2(i * 135, 20), 62);
+                for (int i = 0; i < 3; i++) boss.Lob(EvolutionShot.Blood, NPC.Center, boss.FormationLanding(i, 3), 74);
             NPC.spriteDirection = NPC.direction = player.Center.X > NPC.Center.X ? 1 : -1;
             NPC.rotation = MathHelper.Lerp(NPC.rotation, NPC.velocity.X * .012f, .12f);
             if ((Age > 900 || NPC.Distance(player.Center) > 1900) && Main.netMode != NetmodeID.MultiplayerClient)
@@ -148,7 +147,7 @@ public abstract partial class EvolutionBroodNPC : ModNPC
         else
         {
             float orbit = Age * (Kind == EvolutionBrood.Puppet ? .028f : .015f) + NPC.whoAmI * 1.7f;
-            Vector2 hover = player.Center + new Vector2(side * (480 + MathF.Sin(orbit) * 150), -230 + MathF.Cos(orbit * .7f) * 220);
+            Vector2 hover = boss.PatternCenter + new Vector2(side * (480 + MathF.Sin(orbit) * 150), -230 + MathF.Cos(orbit * .7f) * 220);
             FlyTo(hover, (Kind == EvolutionBrood.Puppet ? 19 : 12) * aggression);
         }
         NPC.direction = player.Center.X > NPC.Center.X ? 1 : -1;
@@ -161,16 +160,16 @@ public abstract partial class EvolutionBroodNPC : ModNPC
         switch (Kind)
         {
             case EvolutionBrood.GiantSpider:
-                boss.Lob(EvolutionShot.Rock, NPC.Center, player.Center + player.velocity * 12, 70);
-                for (int i = -1; i <= 1; i++) boss.Lob(EvolutionShot.Blood, NPC.Center, player.Center + new Vector2(i * 110, 0), 65);
+                boss.Lob(EvolutionShot.Rock, NPC.Center, boss.PatternCenter + new Vector2(side * 340, 20), 80);
+                for (int i = 0; i < 3; i++) boss.Lob(EvolutionShot.Blood, NPC.Center, boss.FormationLanding(i, 3), 75);
                 break;
             case EvolutionBrood.Puppet:
-                for (int i = -1; i <= 1; i += 2) boss.Shoot(EvolutionShot.Spirit, NPC.Center,
-                    (player.Center - NPC.Center).SafeNormalize(Vector2.UnitY).RotatedBy(i * .23f) * 4, delay: 32, lifetime: 160);
+                for (int i = 0; i < 2; i++) boss.Shoot(EvolutionShot.Spirit, NPC.Center,
+                    boss.FormationDirection(NPC.Center, i, 2) * 4, delay: 32, lifetime: 160);
                 break;
             case EvolutionBrood.Abomination:
-                boss.TentacleAt(player.Center + player.velocity * 12, 38);
-                boss.Shoot(EvolutionShot.Lance, NPC.Center, (player.Center - NPC.Center).SafeNormalize(Vector2.UnitX) * 30, 1500, 32, 98);
+                boss.TentacleAt(boss.PatternCenter + new Vector2(side * 220, 0), 48);
+                boss.Shoot(EvolutionShot.Lance, NPC.Center, (boss.PatternCenter - NPC.Center).SafeNormalize(Vector2.UnitX) * 30, 1500, 42, 118);
                 break;
         }
     }
@@ -188,21 +187,8 @@ public abstract partial class EvolutionBroodNPC : ModNPC
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
     {
         float appear = MathHelper.Clamp(Age / 60f, 0, 1) * NPC.Opacity;
-        Texture2D texture = EvolutionVisuals.Asset(Kind == EvolutionBrood.Bomb && Age > Fuse - 150 ? "BombCharged" : AssetName);
-        int height = texture.Height / Frames;
-        Rectangle frame = new(0, (Age / 7 % Frames) * height, texture.Width, height);
-        float scale = Kind == EvolutionBrood.Abomination ? 1.05f : Kind == EvolutionBrood.Tumor ? 1.7f : 1.15f;
-        float pulse = Kind is EvolutionBrood.Tumor or EvolutionBrood.Bomb ? 1 + MathF.Sin(Age * .15f) * .035f : 1;
-        EvolutionVisuals.Glow(NPC.Center, EvolutionVisuals.Blood * (.5f * appear), new Vector2(80 * pulse));
+        EvolutionVisuals.BroodOrb(NPC.Center, Kind, Age, appear, SupportOnly);
         if (warning > 0) EvolutionVisuals.AimLine(NPC.Center, NPC.Center + FlightDirection * (18 * EvolutionRules.Aggression(Parent?.Phase ?? 1) * 24 + 50), warning);
-        if (SupportOnly || Kind is EvolutionBrood.Puppet or EvolutionBrood.Abomination)
-        {
-            Texture2D shield = EvolutionVisuals.Asset("Shield");
-            float shimmer = (SupportOnly ? .52f : .32f) + MathF.Sin(Age * .11f) * .07f;
-            spriteBatch.Draw(shield, NPC.Center - screenPos, null, (EvolutionVisuals.Blood with { A = 0 }) * (shimmer * appear),
-                Age * .012f, shield.Size() * .5f, new Vector2(110, 140) / shield.Size(), SpriteEffects.None, 0);
-            EvolutionVisuals.Ring(NPC.Center, 62 + MathF.Sin(Age * .07f) * 3, 0, EvolutionVisuals.Core * (.3f * appear), 1.5f, false);
-        }
         if (Age < 60) EvolutionVisuals.Ring(NPC.Center, 65 * (1 - appear) + 25, 0, EvolutionVisuals.Core * appear, 2, false);
         if (Kind is EvolutionBrood.Tumor or EvolutionBrood.Bomb)
         {
@@ -212,8 +198,6 @@ public abstract partial class EvolutionBroodNPC : ModNPC
             if (Age > Fuse - 90 && (mine || Preset == EvolutionBroodPreset.Hunter))
                 EvolutionVisuals.Ring(NPC.Center, mine ? 150 : 145, Gap, EvolutionVisuals.Blood * .55f, 2, !mine);
         }
-        spriteBatch.Draw(texture, NPC.Center - screenPos, frame, Color.White * appear, NPC.rotation,
-            frame.Size() * .5f, scale * pulse, NPC.spriteDirection < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0);
         return false;
     }
 }

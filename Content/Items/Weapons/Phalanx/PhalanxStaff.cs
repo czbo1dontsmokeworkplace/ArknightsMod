@@ -2,15 +2,12 @@ using ArknightsMod.Content.Projectiles.Phalanx;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
 
 namespace ArknightsMod.Content.Items.Weapons.Phalanx;
 
 public abstract class PhalanxStaff : VerticalStaffBase
 {
     public abstract int Tier { get; }
-    protected override Vector2 VerticalStaffOffset => new(22f, -22f);
-    protected override Vector2 VerticalStaffOrigin => new(.5f, .5f);
     public override string Texture => "Terraria/Images/Item_" + new[] { ItemID.AmberStaff, ItemID.RubyStaff, ItemID.AmethystStaff }[Tier];
     public override void SetDefaults()
     {

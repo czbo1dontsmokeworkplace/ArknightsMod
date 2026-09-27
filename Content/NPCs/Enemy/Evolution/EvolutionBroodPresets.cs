@@ -12,7 +12,7 @@ public abstract partial class EvolutionBroodNPC
     {
         float side = NPC.ai[2] < 0 ? -1 : 1;
         float aggression = EvolutionRules.Aggression(boss.Phase);
-        Vector2 toward = (player.Center - NPC.Center).SafeNormalize(Vector2.UnitY);
+        Vector2 toward = (boss.PatternCenter - NPC.Center).SafeNormalize(Vector2.UnitY);
         if (Kind is EvolutionBrood.Tumor or EvolutionBrood.Bomb)
         {
             if (SupportOnly && Kind == EvolutionBrood.Bomb)
@@ -23,9 +23,9 @@ public abstract partial class EvolutionBroodNPC
                 else NPC.velocity = Vector2.Zero;
             }
             else FlyTo(FlightAnchor + new Vector2(MathF.Sin(Age * .014f + Formation) * 35, MathF.Sin(Age * .03f) * 18), 4);
-            if (Preset == EvolutionBroodPreset.Siege && Beat(108, 85)) boss.EruptAt(player.Center + new Vector2((Formation - 1) * 185, 24), 52);
+            if (Preset == EvolutionBroodPreset.Siege && Beat(108, 85)) boss.EruptAt(boss.FormationLanding(Formation % 3, 3, 210), 52);
             if (Preset == EvolutionBroodPreset.Seeder && Beat(108, 80))
-                boss.ThrowBomb(NPC.Center, player.Center + new Vector2(side * 280, -100 + Formation * 35), true, 92);
+                boss.ThrowBomb(NPC.Center, boss.PatternCenter + new Vector2(side * 360, -100 + Formation * 35), true, 92);
             if (Age >= Fuse && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 if (Preset == EvolutionBroodPreset.Minefield)
@@ -39,7 +39,7 @@ public abstract partial class EvolutionBroodNPC
             int beat = (Age - 60 + Formation * 15) % EvolutionRules.ChargeStride(164, 110);
             if (beat < 52) FlyTo(player.Center + new Vector2(side * 540, 210), 18 * aggression);
             if (beat == 52 && Main.netMode != NetmodeID.MultiplayerClient)
-            { FlightDirection = (player.Center + player.velocity * 6 - NPC.Center).SafeNormalize(-Vector2.UnitY); NPC.netUpdate = true; }
+            { FlightDirection = (player.Center - NPC.Center).SafeNormalize(-Vector2.UnitY); NPC.netUpdate = true; }
             if (beat >= 52 && beat < 90) { NPC.velocity = Vector2.Zero; if (beat < 86) warning = (beat - 51f) / 34; }
             if (beat >= 90 && beat < 110) { charging = true; NPC.damage = EvolutionDamageCockpit.BroodContactDamage(Kind); NPC.velocity = FlightDirection * 20 * aggression; }
             if (beat >= 110) FlyTo(player.Center + new Vector2(-side * 580, -210), 14 * aggression);
@@ -55,7 +55,7 @@ public abstract partial class EvolutionBroodNPC
         }
         float orbit = Age * .022f + Formation * 1.8f;
         float altitude = Preset == EvolutionBroodPreset.Artillery ? -420 : Preset == EvolutionBroodPreset.Siege && Kind == EvolutionBrood.Abomination ? 80 : -230;
-        FlyTo(player.Center + new Vector2(side * (520 + MathF.Sin(orbit) * 100), altitude + MathF.Cos(orbit * .8f) * 120),
+        FlyTo(boss.PatternCenter + new Vector2(side * (520 + MathF.Sin(orbit) * 100), altitude + MathF.Cos(orbit * .8f) * 120),
             (Kind == EvolutionBrood.Puppet ? 18 : 12) * aggression);
         if (boss.Desperate || boss.Transitioning) return;
         switch (Preset)
@@ -64,30 +64,30 @@ public abstract partial class EvolutionBroodNPC
                 if (Beat(120))
                 {
                     if (Kind == EvolutionBrood.GiantSpider)
-                        boss.Lob(EvolutionShot.Rock, NPC.Center, player.Center + new Vector2(-side * 180, 40), 64);
-                    else for (int i = -1; i <= 1; i++) boss.EruptAt(player.Center + new Vector2(i * 190, 24), 48 + (i + 1) * 8);
+                        boss.Lob(EvolutionShot.Rock, NPC.Center, boss.PatternCenter + new Vector2(side * 340, 40), 76);
+                    else for (int i = 0; i < 3; i++) boss.EruptAt(boss.FormationLanding(i, 3, 210), 48 + i * 8);
                 }
                 break;
             case EvolutionBroodPreset.Artillery:
                 if (Beat(125))
                 {
-                    boss.ThrowBomb(NPC.Center, player.Center + player.velocity * 12, Formation % 2 == 0, 94);
-                    for (int i = -1; i <= 1; i++) boss.Lob(EvolutionShot.Blood, NPC.Center, player.Center + new Vector2(i * 170, 0), 74);
+                    boss.ThrowBomb(NPC.Center, boss.PatternCenter + new Vector2(side * 360, 0), Formation % 2 == 0, 94);
+                    for (int i = 0; i < 3; i++) boss.Lob(EvolutionShot.Blood, NPC.Center, boss.FormationLanding(i, 3), 80);
                 }
                 break;
             case EvolutionBroodPreset.Minefield:
-                if (Beat(126)) boss.ThrowBomb(NPC.Center, player.Center + new Vector2(side * 210, -40), Formation % 2 == 1, 86);
+                if (Beat(126)) boss.ThrowBomb(NPC.Center, boss.PatternCenter + new Vector2(side * 340, -40), Formation % 2 == 1, 86);
                 break;
             case EvolutionBroodPreset.Weaver:
-                if (Beat(100)) for (int i = -1; i <= 1; i++)
-                    boss.Shoot(EvolutionShot.Lance, NPC.Center, toward.RotatedBy(i * .38f) * 25, 1700, 36, 126);
+                if (Beat(100)) for (int i = 0; i < 3; i++)
+                    boss.Shoot(EvolutionShot.Lance, NPC.Center, boss.FormationDirection(NPC.Center, i, 3, .38f) * 25, 1700, 36, 126);
                 if (Beat(150, 136)) for (int i = -1; i <= 1; i += 2)
                     boss.Shoot(EvolutionShot.Spirit, NPC.Center, toward.RotatedBy(i * .75f) * 4, delay: 42, lifetime: 155);
                 break;
             case EvolutionBroodPreset.Conductor:
                 if (Beat(132))
                 {
-                    boss.ThrowBomb(NPC.Center, player.Center + new Vector2(0, 130), false, 82);
+                    boss.ThrowBomb(NPC.Center, boss.PatternCenter + new Vector2(side * 340, 130), false, 82);
                     for (int i = -1; i <= 1; i += 2)
                         boss.Shoot(EvolutionShot.Beam, NPC.Center, toward.RotatedBy(i * .4f), 1750, 40, 76);
                 }

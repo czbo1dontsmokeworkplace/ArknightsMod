@@ -84,8 +84,6 @@ public sealed class PhalanxFocus : ModProjectile
         }
         if (holding)
         {
-            player.heldProj = Projectile.whoAmI;
-            player.itemTime = player.itemAnimation = 2;
             Lighting.AddLight(player.Center, PhalanxVisuals.Palette((int)Projectile.ai[0]).ToVector3() * .35f);
         }
     }
@@ -94,22 +92,25 @@ public sealed class PhalanxFocus : ModProjectile
         Player player = Main.player[Projectile.owner];
         int tier = (int)Projectile.ai[0];
         PhalanxVisuals.Shield(Projectile.Center, tier, opacity, flash, layers);
-        if (player.HeldItem.ModItem is PhalanxStaff staff)
+        Vector2 focus = Vector2.Zero;
+        if (HoldingForDraw(player) && player.HeldItem.ModItem is PhalanxStaff staff)
         {
             var texture = TextureAssets.Item[player.HeldItem.type].Value;
             float scale = 58f / System.Math.Max(texture.Width, texture.Height);
-            float rotation = staff.VerticalRotation + player.direction * .2f;
-            VerticalStaffBase.DrawHeldStaff(player, texture, player.MountedCenter, lightColor,
-                staff.VerticalOffset, rotation, staff.VerticalOrigin, scale);
+            float rotation = staff.VerticalRotation * player.direction * player.gravDir;
+            Vector2 center = VerticalStaffBase.HeldStaffCenter(player, staff);
+            VerticalStaffBase.DrawHeldStaff(player, texture, center,
+                lightColor, Vector2.Zero, rotation, staff.VerticalOrigin, scale);
+            focus = VerticalStaffBase.HeldStaffPoint(player, texture, center, staff.VerticalTip,
+                rotation, staff.VerticalOrigin, scale) - Main.screenPosition;
         }
-        Vector2 focus = player.MountedCenter - Main.screenPosition + new Vector2(player.direction * 27, -45);
         if (HoldingForDraw(player) && chargeFrames > 0)
         {
             DrawCharge(focus, tier, chargeFrames / (float)PhalanxCycle.ChargeDuration);
             PhalanxSignatureVisuals.DrawCharge(Projectile.Center - Main.screenPosition, focus, tier,
                 chargeFrames / (float)PhalanxCycle.ChargeDuration, Main.GlobalTimeWrappedHourly);
         }
-        if (releaseFlash > 0)
+        if (HoldingForDraw(player) && releaseFlash > 0)
         {
             Color color = PhalanxVisuals.Palette(tier); color.A = 0;
             PhalanxVisuals.Glow(focus, new Vector2(28 + (1 - releaseFlash) * 95), color * releaseFlash * .6f);

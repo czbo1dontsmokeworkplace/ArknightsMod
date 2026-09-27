@@ -8,6 +8,7 @@ internal static class EvolutionDamageCockpit
     // 【使用说明】
     // 1. 每行依次为：代码标识、中文名、英文名、伤害。只调整最后的整数即可。
     // 2. 同种弹幕只有一行；本体、仆从、炸弹分裂、所有阶段和所有招式共用此值。
+    //    唯一例外：最终十六秒三叉光轴在特殊表独立配置，不影响普通激光或侧射能量刃。
     // 3. 这里是传入游戏的基础伤害，不是保证玩家最终扣除的生命值。
     //    原版难度规则、玩家防御/减伤、其他模组的伤害钩子仍可能影响实际扣血。
     // 4. 修改源码后需重新编译并重新加载模组；不是游戏中的实时设置界面。
@@ -20,19 +21,26 @@ internal static class EvolutionDamageCockpit
     // 同种弹幕全阶段固定；普通/大师难度仍保留原有游戏难度倍率。
     internal static readonly (EvolutionShot Kind, string ChineseName, string EnglishName, int Damage)[] ProjectileDamages =
     {
-        (EvolutionShot.Blood,       "血液",       "Blood Droplet",       35), // 重力抛射水滴，包括仆从吐出的血液、天降血雨。
-        (EvolutionShot.Spirit,      "血灵",       "Blood Spirit",        35), // 追踪焰核；两翼血灵、扇形血灵、核心分裂共用。
-        (EvolutionShot.Beam,        "血色激光",   "Blood Laser",         45), // 横/竖/斜激光墙、十字、扇形及仆从射线共用。
-        (EvolutionShot.Rock,        "血岩",       "Blood Boulder",       44), // 抛射、空中落石、落地滚动、平台滚石共用。
-        (EvolutionShot.Tentacle,    "血色触手",   "Blood Tentacle",      40), // 触手伸出后的攻击段。
-        (EvolutionShot.Pulse,       "血色脉冲环", "Blood Pulse Ring",    35), // 仆从爆发的扩散圆环。
+        (EvolutionShot.Blood,       "血液",       "Blood Droplet",       31), // 重力抛射水滴，包括仆从吐出的血液、天降血雨。
+        (EvolutionShot.Spirit,      "血灵",       "Blood Spirit",        31), // 阵列焰核与核心分裂的轻追踪焰核共用。
+        (EvolutionShot.Beam,        "血色激光",   "Blood Laser",         40), // 横/竖/斜激光墙、十字、扇形及仆从射线共用。
+        (EvolutionShot.Rock,        "血岩",       "Blood Boulder",       39), // 抛射、空中落石、落地滚动、平台滚石共用。
+        (EvolutionShot.Tentacle,    "血色触手",   "Blood Tentacle",      36), // 触手伸出后的攻击段。
+        (EvolutionShot.Pulse,       "血色脉冲环", "Blood Pulse Ring",    31), // 仆从爆发的扩散圆环。
         (EvolutionShot.Core,        "育生核心",   "Brood Core",           0), // 不直接伤人；分裂的血灵读取 Blood Spirit 一行。
-        (EvolutionShot.Spike,       "血色尖刺",   "Blood Spike",         37), // 浮空炸弹释放的定向长尖刺。
-        (EvolutionShot.Fragment,    "血色碎片",   "Blood Fragment",      34), // 炸弹分裂的小型弹幕。
+        (EvolutionShot.Spike,       "血色尖刺",   "Blood Spike",         33), // 浮空炸弹释放的定向长尖刺。
+        (EvolutionShot.Fragment,    "血色碎片",   "Blood Fragment",      30), // 炸弹分裂的小型弹幕。
         (EvolutionShot.DashMarker,  "冲刺预瞄",   "Dash Telegraph",       0), // 纯提示，无伤害；不要通过此项尝试启用伤害。
-        (EvolutionShot.Lance,       "血喷",       "Blood Lance",         40), // 高速移动尖梭，包括横排/竖排血喷与仆从齐射。
-        (EvolutionShot.CrimsonBomb, "深红炸弹",   "Crimson Bomb",        46), // 仅范围爆炸型使用此伤害；分裂型只由碎片伤人。
-        (EvolutionShot.Eruption,    "血色喷柱",   "Blood Eruption",      44), // 从地面/平台向上喷发的柱体。
+        (EvolutionShot.Lance,       "血喷",       "Blood Lance",         36), // 高速移动尖梭，包括横排/竖排血喷、光轴侧刃与仆从齐射。
+        (EvolutionShot.CrimsonBomb, "深红炸弹",   "Crimson Bomb",        41), // 仅范围爆炸型使用此伤害；分裂型只由碎片伤人。
+        (EvolutionShot.Eruption,    "血色喷柱",   "Blood Eruption",      39), // 从地面/平台向上喷发的柱体。
+    };
+
+    // 普通表已经逐项乘以90%并向下取整（伤害只能是整数）；提示弹幕仍为0。
+    // 此处9999同样是基础伤害，仍受游戏难度和玩家防御规则影响，并非强制处决。
+    internal static readonly (EvolutionShot Kind, EvolutionBeamStyle Style, string ChineseName, string EnglishName, int Damage)[] SpecialProjectileDamages =
+    {
+        (EvolutionShot.Beam, EvolutionBeamStyle.Axis, "终末血色光轴", "Final Hemal Axis", 9999),
     };
 
     // ==================== 本体分阶段碰撞伤害 ====================
@@ -65,8 +73,10 @@ internal static class EvolutionDamageCockpit
     };
 
     // 以下是统一读取接口，通常无需修改；查不到类型时明确报错，避免漏配后悄悄使用其他伤害。
-    internal static int ProjectileDamage(EvolutionShot kind)
+    internal static int ProjectileDamage(EvolutionShot kind, EvolutionBeamStyle style = EvolutionBeamStyle.Standard)
     {
+        foreach (var row in SpecialProjectileDamages)
+            if (row.Kind == kind && row.Style == style) return Math.Max(0, row.Damage);
         foreach (var row in ProjectileDamages)
             if (row.Kind == kind) return Math.Max(0, row.Damage);
         throw new ArgumentOutOfRangeException(nameof(kind), kind, "驾驶舱缺少此弹幕的伤害配置");
