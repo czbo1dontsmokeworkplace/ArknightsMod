@@ -1,4 +1,4 @@
-using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Content.NPCs.Enemy.W;
 using ArknightsMod.Content.Projectiles.Bosses.W;
 using Microsoft.Xna.Framework;
@@ -10,14 +10,14 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.Items.BossSummon
 {
 	/// <summary>
-	/// W 的召唤物（占位贴图沿用 D12 骰子）：地表任意时间可用。<br/>
+	/// W 的召唤物【毫不遮掩的“惊喜”】：地表任意时间可用。<br/>
 	/// 使用时向光标方向掷出一枚召唤骰（WSummonDie），骰子停稳、锁定 12、炸烟后 W 从烟里登场。
 	/// </summary>
 	public class WSummon : ModItem
 	{
 		public override void SetDefaults() {
-			Item.width = 22;
-			Item.height = 22;
+			Item.width = 38;
+			Item.height = 38;
 			Item.maxStack = 1;
 			Item.value = Item.buyPrice(silver: 50);
 			Item.rare = ItemRarityID.Blue;
@@ -49,8 +49,9 @@ namespace ArknightsMod.Content.Items.BossSummon
 
 		public override void AddRecipes() {
 			CreateRecipe()
-				.AddIngredient<OrirockCube>(2)
-				.AddIngredient(ItemID.IronBar, 8)
+				.AddIngredient(ItemID.Dynamite)
+				.AddIngredient(ItemID.Silk, 5)
+				.AddTile<FactoryTile>()
 				.Register();
 		}
 	}

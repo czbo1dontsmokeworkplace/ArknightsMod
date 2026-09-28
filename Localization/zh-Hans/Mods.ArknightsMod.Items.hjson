@@ -4179,9 +4179,14 @@ HarmonieStaff: {
 		'''
 }
 
+WTreasureBag: {
+	DisplayName: 宝藏袋 (W)
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
 WSummon: {
-	DisplayName: 十二面骰
-	Tooltip: 在地表使用，召唤 W
+	DisplayName: 毫不遮掩的“惊喜”
+	Tooltip: 在地表使用，召唤萨卡兹佣兵——W
 }
 
 RhodesIslandEmergencyChargeManual: {

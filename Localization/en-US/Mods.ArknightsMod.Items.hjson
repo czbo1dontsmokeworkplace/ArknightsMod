@@ -3809,9 +3809,14 @@ HarmonieStaff: {
 		'''
 }
 
+WTreasureBag: {
+	DisplayName: Treasure Bag (W)
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
 WSummon: {
-	DisplayName: Twelve-Sided Die
-	Tooltip: Use on the surface to summon W
+	DisplayName: A Not-So-Hidden "Surprise"
+	Tooltip: Use on the surface to summon the Sarkaz mercenary W
 }
 
 RhodesIslandEmergencyChargeManual: {

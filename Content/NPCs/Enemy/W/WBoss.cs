@@ -199,9 +199,11 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 		}
 
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
-			// 掉落占位：源石锭 + 作战记录；专属掉落与宝藏袋后续再定
-			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OriginiumIngot>(), 1, 15, 25));
-			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<TacticalBattleRecord>(), 1, 2, 4));
+			// 专家/大师掉宝藏袋；普通模式直接掉袋子里的东西（WTreasureBag.AddContents）
+			npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossSummon.WTreasureBag>()));
+			LeadingConditionRule notExpert = new(new Conditions.NotExpert());
+			Items.BossSummon.WTreasureBag.AddContents(notExpert);
+			npcLoot.Add(notExpert);
 		}
 
 		/// <summary>把每次状态切换写进 client.log（权威端）：排查"她到底在切什么"用，稳定后可关</summary>
