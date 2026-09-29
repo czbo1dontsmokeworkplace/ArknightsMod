@@ -14,7 +14,7 @@ namespace ArknightsMod.Content.Projectiles.Bosses.W
 	{
 		public override string Texture => "Terraria/Images/MagicPixel";
 
-		private const int LifeUpdates = 34; // 按 AI 调用次数计寿命（extraUpdates 下 timeLeft 的语义不稳）
+		private const int LifeUpdates = 68; // 按 AI 调用次数计寿命（extraUpdates 下 timeLeft 的语义不稳）
 
 		public override void SetDefaults() {
 			Projectile.width = 6;

@@ -303,6 +303,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 			Move_PostState();
 		}
 
+		/// <summary>技能收招后的内置间隔：1~3 秒内随机，期间调度层不会再出招（传送/走位不受影响）</summary>
+		public void ArmSkillGap() => PickDelay = Main.rand.Next(60, 181);
+
 		// ---- 烟中冲刺 ----
 
 		/// <summary>开始冲刺：从当前位置到 TeleportDest，用时按距离 / pxPerTick 折算并夹在 [minTicks, maxTicks]</summary>
