@@ -72,17 +72,37 @@ namespace ArknightsMod.Common.UI
 						width = lineSize.X;
 					height += lineSize.Y;
 				}
-				Rectangle area = new(20, 220, width + 30, height + 20);
-				sb.Draw(hoverBG, area, Color.White);
-				Vector2 drawPos = new(30, 230);
-				for (int i = 0; i < lines.Length; i++) {
-					string line = lines[i];
-					var snippets = ChatManager.ParseMessage(line, Color.White).ToArray();
-					ChatManager.DrawColorCodedString(sb, font, snippets,
-						drawPos, Color.White, 0f, Vector2.Zero, Vector2.One, out _, maxWidth);
-					Point lineSize = ChatManager.GetStringSize(font, string.IsNullOrEmpty(line) ? " " : line, Vector2.One, maxWidth).ToPoint();
-					drawPos.Y += lineSize.Y;
-				}
+				// 说明框跟着技能栏走：技能栏会随 buff 行数下移，写死 y 会和技能栏叠在一起。
+				// 这里只登记，等整个技能 UI 画完再画（DrawPendingTooltip），避免被后面的图标盖住。
+				float barBottom = (Parent ?? this).GetDimensions().ToRectangle().Bottom;
+				pendingLines = lines;
+				pendingArea = new Rectangle(20, (int)barBottom + 4, width + 30, height + 20);
+				pendingWidth = maxWidth;
+			}
+		}
+
+		private static string[] pendingLines;
+		private static Rectangle pendingArea;
+		private static float pendingWidth;
+
+		/// <summary>在技能 UI 层画完之后调用：画出本帧悬停技能的说明框（没有悬停则什么都不做）</summary>
+		public static void DrawPendingTooltip(SpriteBatch sb) {
+			string[] lines = pendingLines;
+			pendingLines = null;
+			if (lines == null)
+				return;
+			var font = FontAssets.MouseText.Value;
+			float maxWidth = pendingWidth;
+			Rectangle area = pendingArea;
+			sb.Draw(hoverBG, area, Color.White);
+			Vector2 drawPos = new(area.X + 10, area.Y + 10);
+			for (int i = 0; i < lines.Length; i++) {
+				string line = lines[i];
+				var snippets = ChatManager.ParseMessage(line, Color.White).ToArray();
+				ChatManager.DrawColorCodedString(sb, font, snippets,
+					drawPos, Color.White, 0f, Vector2.Zero, Vector2.One, out _, maxWidth);
+				Point lineSize = ChatManager.GetStringSize(font, string.IsNullOrEmpty(line) ? " " : line, Vector2.One, maxWidth).ToPoint();
+				drawPos.Y += lineSize.Y;
 			}
 		}
 

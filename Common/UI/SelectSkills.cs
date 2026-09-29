@@ -251,6 +251,7 @@ namespace ArknightsMod.Common.UI
 				"ArknightsMod: Skill Select",
 				delegate {
 					_ui?.Draw(Main.spriteBatch, new GameTime());
+					SkillSlotUI.DrawPendingTooltip(Main.spriteBatch);
 					return true;
 				},
 				InterfaceScaleType.UI));
