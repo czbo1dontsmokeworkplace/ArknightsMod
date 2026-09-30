@@ -174,6 +174,8 @@ namespace ArknightsMod.Content.SwingHelper
         public float mouseRad;
 
         private int swingFacing = 1;
+        /// <summary>本次挥砍的实际起手世界角度（弧度，不折叠整圈）。</summary>
+        public float startRad { get; private set; }
         /// <summary>
         /// 手部弧度
         /// </summary>
@@ -315,6 +317,12 @@ namespace ArknightsMod.Content.SwingHelper
 
         #region 设置挥舞帮助的参数
 
+        public SwingHelper SetStartRad(float startRad, int dir) {
+	        mouseRad = startRad;
+	        swingFacing = dir;
+	        return this;
+        }
+
         public SwingHelper SetHandlePos(Vector2 pos) {
 	        handleLength = pos;
 	        oldHandleLength = pos;
@@ -442,6 +450,7 @@ namespace ArknightsMod.Content.SwingHelper
 	        // 非均匀缩放以本次攻击鼠标方向为局部坐标轴，而不是固定世界 X/Y 轴。
 	        mouseRad = rad;
 	        swingFacing = player.direction;
+	        startRad = mouseRad - swingRad * 0.5f * swingFacing;
 	        return this;
         }
 
@@ -466,7 +475,8 @@ namespace ArknightsMod.Content.SwingHelper
                 start += swingRad * (int)direction;
                 direction = (RotationHelper.SwingDir)(-(int)direction);
             }
-            return RotationHelper.GetSwingRotation(start, swingRad, swingTime, SwingUseTime, direction);
+            startRad = start;
+            return RotationHelper.GetSwingRotation(startRad, swingRad, swingTime, SwingUseTime, direction);
         }
 
         public SwingHelper SetDashRad(float rad) {

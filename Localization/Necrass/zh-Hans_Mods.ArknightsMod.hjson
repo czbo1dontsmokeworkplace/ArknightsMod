@@ -41,4 +41,5 @@ Projectiles: {
 	NecrassSleep.DisplayName: 折朽
 	NecrassRitual.DisplayName: 冠冕仪式
 	NecrassOffering.DisplayName: 仆役献祭
+	// LaevatainFireFlowParticle.DisplayName: Laevatain Fire Flow Particle
 }

@@ -42,4 +42,5 @@ Projectiles: {
 	NecrassSleep.DisplayName: Wither
 	NecrassRitual.DisplayName: Coronation
 	NecrassOffering.DisplayName: Soul Offering
+	LaevatainFireFlowParticle.DisplayName: Laevatain Fire Flow Particle
 }

@@ -19,7 +19,6 @@ namespace ArknightsMod.Content.Projectiles.Guard.Frostleaf
 	public class Frostleaf_Projectile : ModProjectile
 	{
 		private Player player=> Main.player[Projectile.owner];
-		private Vector2[] oldPos = new Vector2[16];
 		private enum ProjMode{Attack,Buff}
 		private ProjMode mode = ProjMode.Attack;
 		public override void SetDefaults() {
@@ -36,13 +35,6 @@ namespace ArknightsMod.Content.Projectiles.Guard.Frostleaf
 			Projectile.aiStyle = -1;
 		}
 
-		private void SavePos(Vector2 Pos) {
-			for (int i =15; i > 0; i--)
-			{
-				oldPos[i] = oldPos[i - 1];
-			}
-			oldPos[0] = Pos;
-		}
 		public Vector2 mousePosition;
 		public float projRotation;
 		public override void OnSpawn(IEntitySource source) {
@@ -54,7 +46,6 @@ namespace ArknightsMod.Content.Projectiles.Guard.Frostleaf
 		public override void AI() {
 			Projectile.velocity = mousePosition.SafeNormalize(Vector2.Zero) * 12;
 			Projectile.rotation = projRotation + MathF.PI;
-			SavePos(Projectile.Center);
 		}
 		public Texture2D tex => TextureAssets.Projectile[Projectile.type].Value;
 		public Vector2 TexWidth => new Vector2(TextureAssets.Projectile[Projectile.type].Value.Height, 0);
@@ -71,18 +62,6 @@ namespace ArknightsMod.Content.Projectiles.Guard.Frostleaf
 				,new Vector2(1,1),SpriteEffects.None,0);
 				sb.End();
 				sb.Begin();
-			// 	Main.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
-			// 	for (int i = 0; i < oldPos.Length; i++) {
-			// 		if (oldPos[i] != Vector2.Zero) {
-			// 			float progress = i / (float)oldPos.Length;
-			// 			trip.Add(new Vertex(oldPos[i]  - Main.screenPosition + (TexWidth / 3).RotatedBy(Projectile.rotation + MathF.PI/2), new Vector3(progress, 0, 0),lightColor * (1-progress)));
-			// 			trip.Add(new Vertex(oldPos[i]  - Main.screenPosition - (TexWidth / 3).RotatedBy(Projectile.rotation + MathF.PI/2), new Vector3(progress, 1, 0),lightColor * (1-progress)));
-			// 		}
-			// 		Main.graphics.GraphicsDevice.Textures[0] = ModContent.Request<Texture2D>("ArknightsMod/Content/SwingHelper/Images/Hz").Value;
-			// 		if (trip.Count >= 3)
-			// 			Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, trip.ToArray(), 0,
-			// 				trip.Count - 2);
-			// }
 			return false;
 		}
 	}

@@ -97,6 +97,24 @@ namespace ArknightsMod.Content.SwingHelper
 		}
 
 		/// <summary>
+		/// 抓取当前画面交给 compositeDraw 做 RT 后处理。
+		/// 复用 Draw 的备份、恢复流程；回调收到独立输入 RT，不会读写同一个目标。
+		/// 请在画面位于活动 RT 中的绘制阶段调用；没有活动 RT 时沿用 Main.screenTarget。
+		/// 返回时与 Draw 一样已调用 SpriteBatch.Begin()。
+		/// </summary>
+		public void DrawScreen(SpriteBatch spriteBatch, Action<Texture2D> compositeDraw) {
+			if (compositeDraw == null)
+				return;
+			Draw(spriteBatch, () => {
+				// Draw 已把进入时的画面存入 screenBackup；复制到独立输入 RT。
+				spriteBatch.End();
+				spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.LinearClamp,
+					DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
+				spriteBatch.Draw(screenBackup, Vector2.Zero, Color.White);
+			}, compositeDraw);
+		}
+
+		/// <summary>
 		/// 双缓冲 Ping-Pong RT。
 		/// sourceDraw 绘制初始内容。process 每执行一次，current 是上一次结果，next 是当前要写入的 RT。
 		/// process 返回 true 时继续下一次交换，返回 false 时停止处理。最后的 RT 会传给 compositeDraw。

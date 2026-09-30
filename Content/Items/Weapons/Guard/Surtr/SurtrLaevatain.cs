@@ -14,7 +14,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Surtr
 {
 	public class SurtrLaevatain : UpgradeWeaponBase
 	{
-		private static SoundStyle SkillActiveSound;
+		public static SoundStyle SkillActiveSound;
 
 		public override void SetDefaults()
 		{
@@ -66,79 +66,6 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Surtr
 			float knockback
 		)
 		{
-			var modPlayer = player.GetModPlayer<WeaponPlayer>();
-			if (modPlayer.Skill == 0 && !modPlayer.SkillActive)
-			{
-				Projectile.NewProjectile(
-					source,
-					position,
-					velocity,
-					ModContent.ProjectileType<LaevatainProjectile_normal>(),
-					damage,
-					knockback,
-					player.whoAmI,
-					0f,
-					0f,
-					0f
-				);
-				modPlayer.OffensiveRecovery();
-				return false;
-			}
-			else if (modPlayer.Skill == 0 && modPlayer.SkillActive)
-			{
-				var proj = Projectile.NewProjectile(
-					source,
-					position,
-					velocity,
-					ModContent.ProjectileType<LaevatainProjectile_1_plan2>(),
-					damage,
-					knockback,
-					player.whoAmI,
-					0f,
-					0f,
-					2f
-				);
-				return false;
-			}
-			if (modPlayer.Skill == 1 && modPlayer.SkillActive)
-			{
-				// 刺击 + 特效A/B + 白光判定，全部合并在 LaevatainProjectile_2 一个类里
-				Projectile.NewProjectile(
-					source,
-					position,
-					velocity,
-					ModContent.ProjectileType<LaevatainProjectile_2>(),
-					damage,
-					knockback,
-					player.whoAmI
-				);
-				return false;
-			}
-			else if (modPlayer.Skill == 2 && modPlayer.SkillActive)
-			{
-				Projectile.NewProjectile(
-					source,
-					position,
-					velocity,
-					ModContent.ProjectileType<LaevatainProjectile_3>(),
-					damage,
-					knockback,
-					player.whoAmI
-				);
-				return false;
-			}
-			Projectile.NewProjectile(
-				source,
-				position,
-				velocity,
-				ModContent.ProjectileType<LaevatainProjectile_normal>(),
-				damage,
-				knockback,
-				player.whoAmI,
-				0f,
-				0f,
-				0f
-			);
 			return false;
 		}
 
@@ -149,7 +76,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Surtr
 
 			var modPlayer = player.GetModPlayer<WeaponPlayer>();
 
-			if (player.altFunctionUse == 2)
+			if (ArknightsKeybinds.SkillActivatePressed(player))
 			{
 				//其实好像写成一个就行了
 				if (modPlayer.Skill == 1 && modPlayer.StockCount > 0 && !modPlayer.SkillActive)
@@ -172,7 +99,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Surtr
 				}
 				return false;
 			}
-			if (modPlayer.Skill == 0 && modPlayer.StockCount > 0 && !modPlayer.SkillActive)
+			if (modPlayer.Skill == 3 && modPlayer.StockCount > 0 && !modPlayer.SkillActive)
 			{
 				modPlayer.SkillActive = true;
 				modPlayer.SkillTimer = 0;
@@ -180,7 +107,8 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Surtr
 				SoundEngine.PlaySound(SkillActiveSound, player.Center);
 				return false;
 			}
-			return base.CanUseItem(player);
+
+			return true;
 		}
 
 		public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
