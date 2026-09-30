@@ -2902,7 +2902,7 @@ HazeMagicBook: {
 
 ReedFlameShadowStaff: {
 	DisplayName: Reed the Flame Shadow's Staff
-	Tooltip: Sets struck enemies ablaze
+	Tooltip: Hits have a 30% chance to inflict Burned Scar for 8 seconds
 }
 
 DN_Weapon: {

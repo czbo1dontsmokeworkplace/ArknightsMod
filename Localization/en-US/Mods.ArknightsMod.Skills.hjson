@@ -988,6 +988,23 @@ SpecterBoneSaw: {
 	}
 }
 
+ReedFlameShadowStaff: {
+	1: {
+		Label: QuickBits
+		Desc: Manual activation. Increases attack damage and attack speed by 45% for 35 seconds
+	}
+
+	2: {
+		Label: Resting Both Sear and Flourish
+		Desc: Summons 3 flame projectiles that orbit you at a radius of 160 pixels. Any enemy entering within 600 pixels is immediately hunted until hit. Tops up to 3 every 20 ticks while active; all dissipate when the skill ends
+	}
+
+	3: {
+		Label: Living Spark
+		Desc: Manual activation, lasts 30 seconds. ATK +60%; basic attacks fork into two streams that each deal full damage and always inflict Burned Scar (an existing scar is taken over rather than stacked, and lasts until the skill ends). Scarred enemies lose 60% of your ATK as life per second and explode on death within a 320-pixel radius, dealing 140% of your ATK to every enemy in range and inflicting Burned Scar
+	}
+}
+
 ShiningStaff: {
 	1: {
 		Label: Creed

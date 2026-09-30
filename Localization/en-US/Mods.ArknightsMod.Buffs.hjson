@@ -1,3 +1,8 @@
+BurnedScar: {
+	DisplayName: Burned Scar
+	Description: Attack damage reduced by 20%; magic damage taken increased to 138%
+}
+
 DeepcolorMinionBuff: {
 	DisplayName: Tentacle
 	Description: Tentacles are fighting for you.

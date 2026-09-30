@@ -7,6 +7,8 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using ArknightsMod.Common.VisualEffects;
+using ArknightsMod.Content.Buffs.Medic.ReedFlameShadow;
+using ArknightsMod.Content.Items.Weapons.Medic.ReedFlameShadow;
 
 namespace ArknightsMod.Content.Projectiles.Medic.ReedFlameShadow
 {
@@ -160,8 +162,38 @@ namespace ArknightsMod.Content.Projectiles.Medic.ReedFlameShadow
 			}
 		}
 
+		// 三技能的灼痕必须在"伤害结算之前"挂上，所以放在这里而不是 OnHitNPC：
+		// 被同一击直接打死的敌人，OnKill（引爆点）在 OnHitNPC 之前就已经走完了——
+		// 挂在 OnHitNPC 里的话，击杀这一下既挂不上灼痕、也不会引爆，整套机制等于失效。
+		public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) {
+			if (Projectile.ai[0] != ReedFlameShadowStaff.Skill3ShotFlag)
+				return;
+
+			// 弹幕可能比技能活得久（timeLeft = 240），在技能结束后才飞到目标。
+			// 那时不能再挂灼痕：否则会留下一个"技能已经没了"的灼痕标记，
+			// 该敌人之后死亡还会凭空引爆（实测日志里已出现过 ticks=7 的迟到命中）。
+			Player owner = Main.player[Projectile.owner];
+			if (owner == null || !owner.active || !owner.GetModPlayer<ReedFlameShadowStaffPlayer>().S3IsActive())
+				return;
+
+			// 命中必定施加灼痕（已有灼痕则接管，不叠加成第二份）；
+			// 持续帧数与攻击力由发射时写进 ai[1] / ai[2]，各端算出来一致。
+			ReedFlameShadowScarGlobalNPC.ApplyFromSkill3(
+				owner, target, (int)Projectile.ai[1], (int)Projectile.ai[2]);
+		}
+
 		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
-			target.AddBuff(BuffID.OnFire, 240);
+			// 这里刻意不再施加原版灼烧（OnFire）：它与本模组的灼痕（BurnedScar）在敌人身上
+			// 表现相似、极易混淆，数值又很小；火焰观感交给弹幕本身与灼痕自带的火星。
+			// 普攻的常规规则：只在首次施加时判定；再次命中不会刷新已有灼痕的剩余时间。
+			// 三技能那一路的灼痕在 ModifyHitNPC 里已经挂好了，这里不重复处理。
+			if (Projectile.ai[0] != ReedFlameShadowStaff.Skill3ShotFlag
+				&& !target.friendly
+				&& !target.HasBuff(ModContent.BuffType<BurnedScar>())
+				&& Main.rand.NextFloat() < 0.30f) {
+				target.AddBuff(ModContent.BuffType<BurnedScar>(), 8 * 60);
+			}
+
 			FlameBurst(14);
 		}
 

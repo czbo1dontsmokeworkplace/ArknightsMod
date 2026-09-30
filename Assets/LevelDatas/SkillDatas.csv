@@ -115,6 +115,9 @@ SpecterBoneSaw,1,2,1,0,0,0,0,0,0
 ShiningStaff,0,1,1,0,1,0,0,0,0
 ShiningStaff,1,2,1,1,1,0,1,0,0
 ShiningStaff,2,3,1,0,1,0,0,0,0
+ReedFlameShadowStaff,0,1,1,0,1,0,0,0,0
+ReedFlameShadowStaff,1,2,1,0,1,0,0,0,0
+ReedFlameShadowStaff,2,3,1,0,1,0,0,0,0
 PassengerConductor,0,1,1,1,0,0,1,0,0
 PassengerConductor,1,2,1,0,1,0,0,0,0
 PassengerConductor,2,3,1,0,0,0,0,0,0

@@ -1,3 +1,8 @@
+BurnedScar: {
+	DisplayName: 灼痕
+	Description: 攻击造成的伤害降低20%，受到的魔法伤害提高至138%
+}
+
 DeepcolorMinionBuff: {
 	DisplayName: 触手
 	Description: 触手正在为你作战
