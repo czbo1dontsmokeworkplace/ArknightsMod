@@ -1,17 +1,43 @@
-FrostNova.DisplayName: Frost Nova
+FrostNova: {
+	DisplayName: Frost Nova
+	BossChecklistIntegration.SpawnInfo: Use [i:ArknightsMod/SpicyCandy] {$Items.SpicyCandy.DisplayName} in the Snow biome (only one Frost Nova at a time)
+}
+
 IceCrystalAltar.DisplayName: Ice Crystal Altar
+ArtsMasterA1.DisplayName: Arts Master A1
+ArtsMasterA2.DisplayName: Arts Master A2
 IceCleaver.DisplayName: Ice Cleaver
 Oneiros.DisplayName: Oneiros
 SnowCaster.DisplayName: Snow Caster
 SnowSoldier.DisplayName: Snow Soldier
 SnowSniper.DisplayName: Snow Sniper
 SnowHound.DisplayName: Snow Hound
-Evolution.DisplayName: Evolution
+
+Evolution: {
+	DisplayName: Essence of Evolution
+	BossChecklistIntegration.SpawnInfo: After defeating all three mechanical bosses, use an Aberrant Culture. Its first phase seals a circular arena approximately 94 tiles in radius; use in an open area.
+}
+
+EvolutionSpider.DisplayName: Mutant Rock Spider
+EvolutionGiantSpider.DisplayName: Mutant Giant Rock Spider
+EvolutionPuppet.DisplayName: Aberrant Puppet
+EvolutionAbomination.DisplayName: Originium Abomination
+EvolutionTumor.DisplayName: Malignant Tumor
+EvolutionBomb.DisplayName: Malignant Bomb
 tumor1.DisplayName: tumor1
 tumor2.DisplayName: tumor2
 AcidOgSlug.DisplayName: Acid Og Slug
-Pompeii.DisplayName: Pompeii
-AACT.DisplayName: A A C T
+
+Pompeii: {
+	DisplayName: Pompeii
+	BossChecklistIntegration.SpawnInfo: Use [i:ArknightsMod/PompeiiSummon] {$Items.PompeiiSummon.DisplayName} in any biome; it appears off-screen
+}
+
+AACT: {
+	DisplayName: A A C T
+	BossChecklistIntegration.SpawnInfo: Use [i:ArknightsMod/AACTSummon] {$Items.AACTSummon.DisplayName} at night
+}
+
 AACTIntro.DisplayName: A A C T Intro
 AACTStage3TrueHealth.DisplayName: A A C T Stage3 True Health
 IACT.DisplayName: I A C T
@@ -26,7 +52,12 @@ NourishedPiercer.DisplayName: Nourished Piercer
 PocketSeaCrawler.DisplayName: Pocket Sea Crawler
 PrimalSeaPiercer.DisplayName: Primal Sea Piercer
 ShellSeaRunner.DisplayName: Shell Sea Runner
-TheFirstToTalk.DisplayName: The First To Talk
+
+TheFirstToTalk: {
+	DisplayName: The First To Talk
+	BossChecklistIntegration.SpawnInfo: Use [i:ArknightsMod/TheFirstToTalkSummon] {$Items.TheFirstToTalkSummon.DisplayName} (no biome or time requirement)
+}
+
 Caster.DisplayName: Caster
 Crossbowman.DisplayName: Crossbowman
 CrossbowmanLeader.DisplayName: Crossbowman Leader
@@ -51,7 +82,9 @@ RockCrab.DisplayName: Rock Crab
 MiZhenQiaoXie.DisplayName: Mysterious Trinket Mechanism
 
 Closure: {
-	DisplayName: Closure
+	// Type name (NPC.TypeName): shown in the housing menu, hover text, bestiary, etc.
+	// Her dialogue and shop tips still call her Closure; this is her community nickname.
+	DisplayName: Shrewd Merchant
 
 	TownNPCMood: {
 		Content: I am content.
@@ -75,6 +108,18 @@ Closure: {
 		Annihilation: Annihilation
 		Switch: Switch
 		Help: Help
+		MaterialShopWhite: White Material Shop
+		MaterialShopGreen: Green Material Shop
+		MaterialShopBlue: Blue Material Shop
+		MaterialShopPurple: Purple Material Shop
+		MaterialShopGold: Gold Material Shop
+		MaterialShopLocked: "{0} (Locked)"
+		MaterialShopLockedGreen: The Green Material Shop is locked: defeat any boss to unlock it
+		MaterialShopLockedBlue: The Blue Material Shop is locked: defeat Skeletron or a later boss to unlock it
+		MaterialShopLockedPurple: The Purple Material Shop is locked: defeat all three mechanical bosses or a later boss to unlock it
+		MaterialShopLockedGold: The Gold Material Shop is locked: defeat Golem or a later boss to unlock it
+		SwitchPrompt: Which page would you like, Doctor?
+		SwitchHint: Click to open: {0}
 	}
 
 	Census.SpawnCondition: Conditions unknown
@@ -105,8 +150,18 @@ Cannot: {
 	Buttons: {
 		Shop: Shop
 		Touch: Test-touch the goods
+		Listen: Hear Cannot out
+		Haggle: '''"Ask" Cannot for a "discount"'''
 	}
 
+	Battle.Begin: Negotiations broke down - Cannot turned hostile!
+
+	Wave: {
+		Incoming: Wave {0}/{1} is incoming
+		Cleared: Wave {0}/{1} repelled
+	}
+
+	Leave: Cannot packed up his stall and left
 	Census.SpawnCondition: Conditions unknown
 
 	DeathMessage: {

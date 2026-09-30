@@ -10,6 +10,9 @@ public class ElementalUI : ModSystem
 	internal Santable santable;
 	internal UserInterface sanUserInterface;
 	public override void Load() {
+		if (Main.dedServ)
+			return;
+
 		santable = new Santable();
 		santable.Activate();
 		sanUserInterface = new UserInterface();

@@ -85,6 +85,29 @@ internal static class NecrassVisuals
         Line(center - new Vector2(width / 2, 0), center + new Vector2(width / 2, 0), new Color(20, 14, 28), 4);
         Line(center - new Vector2(width / 2, 0), center + new Vector2(width * (Math.Clamp(ratio, 0, 1) - .5f), 0), Violet, 2);
     }
+    internal static void SoulHelix(Projectile projectile, float phase)
+    {
+        if (Main.dedServ || Vector2.DistanceSquared(projectile.Center,
+            Main.screenPosition + new Vector2(Main.screenWidth, Main.screenHeight) / 2) > 1800 * 1800) return;
+        Vector2 forward = projectile.velocity.SafeNormalize(Vector2.UnitX);
+        Vector2 side = forward.RotatedBy(MathHelper.PiOver2);
+        Vector2 offset = side * MathF.Sin(phase) * 7 + forward * MathF.Cos(phase) * 3;
+        Dust core = Dust.NewDustPerfect(projectile.Center + offset, DustID.Smoke,
+            forward * .18f + side * MathF.Sin(phase) * .16f, 110, new Color(18, 14, 25), .62f);
+        core.noGravity = true;
+    }
+    internal static void SoulAsh(Vector2 center, Vector2 velocity, int count = 1)
+    {
+        if (Main.dedServ) return;
+        Vector2 forward = velocity.SafeNormalize(Vector2.UnitX);
+        for (int i = 0; i < count; i++)
+        {
+            Dust dust = Dust.NewDustPerfect(center + Main.rand.NextVector2Circular(5, 5), DustID.Smoke,
+                forward * Main.rand.NextFloat(.1f, .35f) + Main.rand.NextVector2Circular(.25f, .25f),
+                130, new Color(18, 14, 25), Main.rand.NextFloat(.55f, .8f));
+            dust.noGravity = true;
+        }
+    }
     internal static void Bolt(Projectile projectile)
     {
         for (int i = projectile.oldPos.Length - 1; i > 0; i--)
@@ -92,17 +115,17 @@ internal static class NecrassVisuals
             if (projectile.oldPos[i] == Vector2.Zero || projectile.oldPos[i - 1] == Vector2.Zero) continue;
             float fade = 1 - i / (float)projectile.oldPos.Length;
             Vector2 a = projectile.oldPos[i] + projectile.Size / 2, b = projectile.oldPos[i - 1] + projectile.Size / 2;
-            Line(a, b, new Color(24, 12, 39) * fade, 11 * fade);
+            Line(a, b, new Color(30, 15, 48) * fade, 12 * fade);
             Vector2 side = (b - a).SafeNormalize(Vector2.UnitX).RotatedBy(MathHelper.PiOver2)
                 * MathF.Sin(i * .55f + Main.GlobalTimeWrappedHourly * 12) * (1 - fade) * 9;
-            Line(a + side, b + side, Glow(Violet, fade * .8f), 4 * fade);
-            Line(a, b, Glow(Lilac, fade * .65f), 1.5f * fade);
+            Line(a + side, b + side, Glow(Violet, fade * .9f), 4.5f * fade);
+            Line(a, b, Glow(Lilac, fade * .72f), 1.8f * fade);
         }
         Vector2 forward = projectile.velocity.SafeNormalize(Vector2.UnitX);
         Vector2 sideAxis = forward.RotatedBy(MathHelper.PiOver2);
         Vector2 center = projectile.Center;
-        Line(center - forward * 10, center + forward * 11, Glow(Violet, 1), 6);
-        Line(center - forward * 4, center + forward * 11, Glow(Lilac, 1), 2);
+        Line(center - forward * 10, center + forward * 11, Glow(Violet, 1), 6.5f);
+        Line(center - forward * 4, center + forward * 11, Glow(Lilac, 1), 2.2f);
         Line(center - sideAxis * 6 - forward * 3, center + forward * 11, Glow(Lilac, .85f), 1);
         Line(center + sideAxis * 6 - forward * 3, center + forward * 11, Glow(Lilac, .85f), 1);
     }

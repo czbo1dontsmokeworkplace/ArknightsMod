@@ -5,7 +5,7 @@ DeepcolorMinionBuff: {
 
 GoldenglowBeaconBuff: {
 	DisplayName: 浮游信标
-	Description: 当前已部署 {0} 个浮游单元，右键取消可全部移除
+	Description: 当前有 {0} 个自动协同攻击的浮游单元
 }
 
 CameraTruckBuff: {
@@ -267,4 +267,34 @@ EthanBind: {
 IndigoTideBind: {
 	DisplayName: 潮汐束缚
 	Description: 被淡紫色水光束缚，暂时无法移动
+}
+
+GavialStrain: {
+	DisplayName: 丛林之魂·负伤
+	Description: 正在偿还暂缓的伤害；生命流失无视防御与无敌帧
+}
+
+GoldenglowSlow: {
+	DisplayName: 澄净闪耀
+	Description: 移动速度降低80%
+}
+
+PhantomSlow: {
+	DisplayName: 夜幕停顿
+	Description: 移动速度降低80%
+}
+
+PhantomBind: {
+	DisplayName: 夜幕束缚
+	Description: 暂时无法移动
+}
+
+HighPressureSoak: {
+	DisplayName: 高压浸润
+	Description: 被高压水流拖慢
+}
+
+CarnelianSandBind: {
+	DisplayName: 赤砂束缚
+	Description: 赤砂拖慢行动
 }

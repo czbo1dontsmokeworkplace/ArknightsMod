@@ -13,6 +13,10 @@ namespace ArknightsMod.Content.SwingHelper
         public const string index = "ArknightsMod/Content/SwingHelper/Effects/";
         public override void Load()
         {
+            // 必须在访问 SwingHelper 或请求着色器之前跳过无图形环境的服务端。
+            if (Main.dedServ)
+                return;
+
 	        SwingHelper.Flow = ModContent.Request<Effect>(index+"BladeFlow",AssetRequestMode.ImmediateLoad).Value;
 	        SwingHelper.Dissolve = ModContent.Request<Effect>(index+"BladeDissolve",AssetRequestMode.ImmediateLoad).Value;
 	        SwingHelper.BladeFlicker = ModContent.Request<Effect>(index+"BladeFlicker",AssetRequestMode.ImmediateLoad).Value;

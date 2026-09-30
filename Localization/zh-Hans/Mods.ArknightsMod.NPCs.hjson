@@ -1,17 +1,43 @@
-FrostNova.DisplayName: 霜星
+FrostNova: {
+	DisplayName: 霜星
+	BossChecklistIntegration.SpawnInfo: 在雪原使用 [i:ArknightsMod/SpicyCandy] {$Items.SpicyCandy.DisplayName} 召唤
+}
+
 IceCrystalAltar.DisplayName: 冰晶祭坛
+ArtsMasterA1.DisplayName: 法术大师 A1
+ArtsMasterA2.DisplayName: 法术大师 A2
 IceCleaver.DisplayName: 雪怪小队凿冰人
 Oneiros.DisplayName: 虚幻
 SnowCaster.DisplayName: 雪怪小队术士
 SnowSoldier.DisplayName: 雪怪小队
 SnowSniper.DisplayName: 雪怪狙击手
 SnowHound.DisplayName: 霜牙
-Evolution.DisplayName: “进化的本质”
+
+Evolution: {
+	DisplayName: “进化的本质”
+	BossChecklistIntegration.SpawnInfo: 击败全部机械三王后，使用异变培养皿召唤。第一阶段会封锁半径约94格的圆形区域，建议在开阔场地使用。
+}
+
+EvolutionSpider.DisplayName: 变异岩蛛
+EvolutionGiantSpider.DisplayName: 变异巨岩蛛
+EvolutionPuppet.DisplayName: 畸变体傀儡
+EvolutionAbomination.DisplayName: 源石畸变体
+EvolutionTumor.DisplayName: 畸变恶性瘤
+EvolutionBomb.DisplayName: 恶性瘤炸弹
 tumor1.DisplayName: 畸变赘生物
 tumor2.DisplayName: 畸变恶性瘤
 AcidOgSlug.DisplayName: 酸液源石虫
-Pompeii.DisplayName: “庞贝”
-AACT.DisplayName: 邪魔炮火中枢先兆者
+
+Pompeii: {
+	DisplayName: “庞贝”
+	BossChecklistIntegration.SpawnInfo: 在任意群系使用 [i:ArknightsMod/PompeiiSummon] {$Items.PompeiiSummon.DisplayName} 召唤
+}
+
+AACT: {
+	DisplayName: 邪魔炮火中枢先兆者
+	BossChecklistIntegration.SpawnInfo: 夜晚使用 [i:ArknightsMod/AACTSummon] {$Items.AACTSummon.DisplayName} 召唤
+}
+
 AACTIntro.DisplayName: 邪魔炮火中枢先兆者（引物）
 AACTStage3TrueHealth.DisplayName: 邪魔炮火中枢先兆者（三阶段代理NPC）
 IACT.DisplayName: 帝国炮火中枢先兆者
@@ -26,7 +52,12 @@ NourishedPiercer.DisplayName: 富营养的穿刺者
 PocketSeaCrawler.DisplayName: 囊海爬行者
 PrimalSeaPiercer.DisplayName: 始海穿刺者
 ShellSeaRunner.DisplayName: 壳海狂奔者
-TheFirstToTalk.DisplayName: 首言者
+
+TheFirstToTalk: {
+	DisplayName: 首言者
+	BossChecklistIntegration.SpawnInfo: 使用 [i:ArknightsMod/TheFirstToTalkSummon] {$Items.TheFirstToTalkSummon.DisplayName} 召唤
+}
+
 Caster.DisplayName: 术士
 Crossbowman.DisplayName: 弩手
 CrossbowmanLeader.DisplayName: 弩手组长
@@ -51,7 +82,9 @@ RockCrab.DisplayName: 磐蟹
 MiZhenQiaoXie.DisplayName: 迷珍巧械
 
 Closure: {
-	DisplayName: 可露希尔
+	// Type name (NPC.TypeName): shown in the housing menu, hover text, bestiary, etc.
+	// Her dialogue and shop tips still call her Closure; this is her community nickname.
+	DisplayName: 奸商
 
 	TownNPCMood: {
 		Content: 我很满足
@@ -75,6 +108,18 @@ Closure: {
 		Annihilation: 剿灭作战
 		Switch: 切换
 		Help: 帮助
+		MaterialShopWhite: 白色材料商店
+		MaterialShopGreen: 绿色材料商店
+		MaterialShopBlue: 蓝色材料商店
+		MaterialShopPurple: 紫色材料商店
+		MaterialShopGold: 金色材料商店
+		MaterialShopLocked: "{0}（未解锁）"
+		MaterialShopLockedGreen: 绿色材料商店还没解锁：需要击败任意 Boss
+		MaterialShopLockedBlue: 蓝色材料商店还没解锁：需要击败骷髅王或其后的 Boss
+		MaterialShopLockedPurple: 紫色材料商店还没解锁：需要击败全部新三王或其后的 Boss
+		MaterialShopLockedGold: 金色材料商店还没解锁：需要击败石巨人或其后的 Boss
+		SwitchPrompt: 博士，想看哪一页？
+		SwitchHint: 点击进入：{0}
 	}
 
 	// Census.SpawnCondition: Conditions unknown
@@ -105,8 +150,18 @@ Cannot: {
 	Buttons: {
 		Shop: 商店
 		Touch: 试探性碰碰商品
+		Listen: 听坎诺特的
+		Haggle: “请”坎诺特“降价”
 	}
 
+	Battle.Begin: 谈判破裂——坎诺特翻脸了！
+
+	Wave: {
+		Incoming: 第 {0}/{1} 波增援即将抵达
+		Cleared: 第 {0}/{1} 波增援已被击退
+	}
+
+	Leave: 坎诺特收拾好摊位，离开了
 	// Census.SpawnCondition: Conditions unknown
 
 	DeathMessage: {
@@ -124,5 +179,5 @@ WBoss.DisplayName: W
 // The decoy shares the real name so the hover text lies too
 WDecoy.DisplayName: W
 // CasterShoot.DisplayName: Caster Shoot
-// RaptorDrone.DisplayName: Raptor Drone
+RaptorDrone.DisplayName: 威龙无人机
 // DeploymentCost.DisplayName: Deployment Cost

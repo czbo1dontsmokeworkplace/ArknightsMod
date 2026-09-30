@@ -9,7 +9,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
-using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -91,7 +90,8 @@ public sealed class RedDaggerHoldout : ModProjectile
     }
     public override bool PreDraw(ref Color lightColor)
     {
-        Texture2D knife = TextureAssets.Item[Owner.HeldItem.type].Value;
+        // 砾与红共用匕首挥动贴图，背包物品图标不参与手持绘制。
+        Texture2D knife = ModContent.Request<Texture2D>(Texture).Value;
         DrawKnife(knife, Owner.GetBackHandPosition(Player.CompositeArmStretchAmount.Full, backAngle),
             backAngle, lightColor * .7f);
         DrawKnife(knife, Owner.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, frontAngle),

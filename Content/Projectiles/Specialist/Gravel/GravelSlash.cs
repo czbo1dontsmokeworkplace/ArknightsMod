@@ -13,7 +13,7 @@ namespace ArknightsMod.Content.Projectiles.Specialist.Gravel
 	// 面朝左时弧线反转保持"向下"方向一致
 	public class GravelSlash : ModProjectile
 	{
-		public override string Texture => "ArknightsMod/Content/Items/Weapons/Specialist/Gravel/GravelDualBlades_protile1";
+		public override string Texture => "ArknightsMod/Content/Projectiles/Specialist/Gravel/GravelBlade";
 
 		private const float Radius = 20f;
 		private const float HalfArc = 1.3f;
@@ -75,10 +75,10 @@ namespace ArknightsMod.Content.Projectiles.Specialist.Gravel
 		public override bool PreDraw(ref Color lightColor) {
 			Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
 			SpriteEffects fx = faceRight ? SpriteEffects.None : SpriteEffects.FlipVertically;
-			Vector2 origin = new Vector2(0f, tex.Height / 2f);
+			Vector2 origin = new Vector2(0f, faceRight ? tex.Height : 0f);
 			float fade = 1f - Projectile.alpha / 255f;
 			Main.spriteBatch.Draw(tex, Main.player[Projectile.owner].Center - Main.screenPosition,
-				null, Color.White * fade, currentAng, origin, Projectile.scale, fx, 0f);
+				null, Color.White * fade, currentAng + (faceRight ? MathHelper.PiOver4 : -MathHelper.PiOver4), origin, Projectile.scale, fx, 0f);
 			return false;
 		}
 

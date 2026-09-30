@@ -1,0 +1,17 @@
+Kroos: Fires three-shot bursts from a held crossbow
+KroosAlter:
+	'''
+	Fires three-shot bursts from a held crossbow
+	Converts wooden arrows into frost arrows
+	'''
+Schwarz:
+	'''
+	Delivers slow, powerful shots
+	Black heavy arrows pierce endlessly, dealing tremendous damage
+	'''
+Pozemka:
+	'''
+	Fires rapid three-shot bursts
+	Converts wooden arrows into homing rose arrows
+	Right-click to deploy the typewriter for coordinated attacks
+	'''

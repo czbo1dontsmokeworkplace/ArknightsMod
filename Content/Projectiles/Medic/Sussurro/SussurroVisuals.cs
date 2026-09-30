@@ -163,12 +163,16 @@ internal static class SussurroVisuals
         Soft(center, new Vector2(radius * .32f, radius * 2.6f), color, opacity, rotation);
     }
 
-    internal static void DrawCompression(Vector2 start, Vector2 direction, float length, float fade, bool deep)
+    internal static void DrawCompression(Vector2 start, Vector2 direction, float length, float fade, bool deep,
+        Color? outerColor = null, Color? middleColor = null, Color? coreColor = null)
     {
+        Color outer = outerColor ?? Emerald;
+        Color middle = middleColor ?? Mint;
+        Color core = coreColor ?? Heart;
         float width = (deep ? 21f : 16f) * MathF.Sqrt(fade);
         float rotation = direction.ToRotation();
         Vector2 end = start + direction * length;
-        Soft((start + end) * .5f, new Vector2(length + 80f, width * 7f), Emerald, fade * .48f, rotation);
+        Soft((start + end) * .5f, new Vector2(length + 80f, width * 7f), outer, fade * .48f, rotation);
         // 短段拼接并收尖：亮芯连续贯穿，外缘保留翠绿，不是一根等宽实心矩形。
         const int segments = 40;
         for (int i = 0; i < segments; i++)
@@ -178,10 +182,10 @@ internal static class SussurroVisuals
             Vector2 a = Vector2.Lerp(start, end, t);
             Vector2 b = Vector2.Lerp(start, end, (i + 1f) / segments);
             // 先铺很薄的绿色实体外缘，再叠加发光层，白天天空下仍保留翠绿辨识度。
-            Line(a, b, Emerald, width * taper * 1.12f, fade * .35f, fade * .6f);
-            Line(a, b, Emerald, width * taper, fade * .65f);
-            Line(a, b, Mint, width * .45f * taper, fade * .85f);
-            Line(a, b, Heart, width * .12f * taper, fade);
+            Line(a, b, outer, width * taper * 1.12f, fade * .35f, fade * .6f);
+            Line(a, b, outer, width * taper, fade * .65f);
+            Line(a, b, middle, width * .45f * taper, fade * .85f);
+            Line(a, b, core, width * .12f * taper, fade);
         }
         Vector2 normal = direction.RotatedBy(MathHelper.PiOver2);
         for (int side = -1; side <= 1; side += 2)
@@ -192,14 +196,18 @@ internal static class SussurroVisuals
                 float t = i / 56f;
                 Vector2 point = start + direction * (length * t)
                     + normal * (MathF.Sin(t * MathHelper.TwoPi * 5f - fade * 6f) * side * width * .75f * MathF.Sin(t * MathF.PI));
-                Line(previous, point, Mint, 1f, fade * .45f);
+                Line(previous, point, middle, 1f, fade * .45f);
                 previous = point;
             }
         }
-        Star(start, width * 2.7f, rotation, fade, Heart);
+        if (outerColor.HasValue) {
+            Soft(start, new Vector2(width * 8f), outer, fade * .4f);
+            Soft(start, new Vector2(width * 3f, width * .6f), core, fade, rotation);
+        }
+        else Star(start, width * 2.7f, rotation, fade, core);
         for (int i = 0; i < 3; i++)
             Ring(start + direction * (28f + 24f * i), new Vector2(7f + i * 2f, width * (1.9f - .25f * i)),
-                rotation, fade * 5f + i, Mint, fade * (.65f - .13f * i));
+                rotation, fade * 5f + i, middle, fade * (.65f - .13f * i));
     }
 
     internal static void DrawButterfly(Vector2 center, float rotation, float age, float size, float opacity)

@@ -62,7 +62,7 @@ namespace ArknightsMod
 			OrundumCurrencyId = CustomCurrencyManager.RegisterCurrency(new Content.Currencies.OrundumCurrency(ModContent.ItemType<Orundum>(), 9999L, "Mods.ArknightsMod.Currencies.OrundumCurrency"));
 			OriginiumIngotCurrencyId = CustomCurrencyManager.RegisterCurrency(new Content.Currencies.OriginiumIngotCurrency(ModContent.ItemType<OriginiumIngot>(), 9999L));
 			//shader
-			if (Main.netMode != NetmodeID.Server) {
+			if (!Main.dedServ) {
 				IACTSW = ModContent.Request<Effect>("ArknightsMod/Assets/Effects/IACTSW", ReLogic.Content.AssetRequestMode.ImmediateLoad);
 				Filters.Scene["IACTSW"] = new Filter(new ScreenShaderData(IACTSW, "IACTSW"), EffectPriority.VeryHigh);
 				Filters.Scene["IACTSW"].Load();
@@ -143,14 +143,13 @@ namespace ArknightsMod
 					PramanixPixelTrail = null;
 				}
 			}
-			Filters.Scene["AshStorm"] = new Filter(new ScreenShaderData("FilterAsh").UseColor(1f, 0.8f, 0.5f), EffectPriority.High);
-
-			LoadClient();
-			SkyManager.Instance["ArknightsMod:UnionInvadeSky"] = new UnionInvadeSky();
 			// W 战场景：天空与滤镜必须注册在同一个键上——Player.ManageSpecialBiomeVisuals 里
 			// 只有 SkyManager/Overlays 那两行做了 null 检查，Filters.Scene[key].IsActive() 没有，
 			// 少注册滤镜就会在进入场景时 NullReferenceException（参照 CWR MachineSky 的成对注册）。
-			if (Main.netMode != NetmodeID.Server) {
+			if (!Main.dedServ) {
+				Filters.Scene["AshStorm"] = new Filter(new ScreenShaderData("FilterAsh").UseColor(1f, 0.8f, 0.5f), EffectPriority.High);
+				LoadClient();
+				SkyManager.Instance["ArknightsMod:UnionInvadeSky"] = new UnionInvadeSky();
 				SkyManager.Instance[Content.NPCs.Enemy.W.WBattleVisuals.SkyKey] = new Content.NPCs.Enemy.W.WBattleSky();
 				Filters.Scene[Content.NPCs.Enemy.W.WBattleVisuals.SkyKey] = new Filter(
 					new ScreenShaderData("FilterMiniTower")
@@ -185,6 +184,9 @@ namespace ArknightsMod
 		public override void HandlePacket(BinaryReader reader, int whoAmI) {
 			short id = reader.ReadInt16();
 			switch ((ArkMessageID)id) {
+				case ArkMessageID.EvolutionAccessory:
+					global::ArknightsMod.Content.Items.Evolution.EvolutionAccessoryPlayer.Receive(reader, whoAmI);
+					break;
 				case ArkMessageID.UpdateClosureShopWhenStartDay:
 					NPCShopSystem.ReadUpdateClosureShop(reader);
 					break;
@@ -198,9 +200,9 @@ namespace ArknightsMod
 					bool forcedUpdate = reader.ReadBoolean();
 					NPCShopSystem.TryUpdateCannotShop(this, forcedUpdate);
 					break;
-				case ArkMessageID.SpawnReinforcements:
+				case ArkMessageID.CannotInteract:
 					if (IsValidClientRequest(whoAmI))
-						Cannot.ReadSpawnReinforcements(reader, whoAmI);
+						Cannot.ReadInteract(reader, whoAmI);
 					break;
 				case ArkMessageID.CannotAggroAck:
 					if (IsValidClientRequest(whoAmI))
@@ -265,7 +267,7 @@ namespace ArknightsMod
 			RequestUpdateClosureShopWhenStartDay,
 			UpdateCannotShop,
 			RequestUpdateCannotShop,
-			SpawnReinforcements,
+			CannotInteract, // 坎诺特对话框里的三个操作（触碰/听坎诺特的/请坎诺特降价），曾经是 SpawnReinforcements
 			CannotAggroAck,
 			CannotLifeTokenSync,
 			CoffeeMachineRequest,
@@ -280,6 +282,7 @@ namespace ArknightsMod
 			DeploymentCostAbsorbGrant,
 			DeploymentCostAbsorbResult,
 			WD12Detach,
+			EvolutionAccessory,
 		}
 	}
 	//public class Ex : GlobalNPC

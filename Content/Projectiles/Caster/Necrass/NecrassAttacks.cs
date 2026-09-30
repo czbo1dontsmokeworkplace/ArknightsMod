@@ -18,9 +18,11 @@ public abstract class NecrassAttack : ModProjectile
 
 public sealed class NecrassSoulBolt : NecrassAttack
 {
+    private int normalTarget = -1;
+    private float particleDistance;
     public override void SetStaticDefaults()
     {
-        ProjectileID.Sets.TrailCacheLength[Type] = 18;
+        ProjectileID.Sets.TrailCacheLength[Type] = 36;
         ProjectileID.Sets.TrailingMode[Type] = 0;
     }
     public override void SetDefaults()
@@ -33,6 +35,12 @@ public sealed class NecrassSoulBolt : NecrassAttack
     }
     public override void AI()
     {
+        // Mode 2 belongs only to the staff's normal attack; servant bolts retain their original AI.
+        if (Projectile.ai[0] == 2)
+        {
+            NormalAttackAI();
+            return;
+        }
         if (Projectile.localAI[0]++ == 0 && Projectile.ai[0] == 1) Projectile.penetrate = 3;
         Projectile.rotation = Projectile.velocity.ToRotation();
         if (Projectile.localAI[0] > 10)
@@ -50,9 +58,47 @@ public sealed class NecrassSoulBolt : NecrassAttack
             if (Projectile.localAI[0] % 3 == 0) NecrassVisuals.Embers(Projectile.Center, 1, .8f);
         }
     }
+    private void NormalAttackAI()
+    {
+        if (Projectile.localAI[0] == 0)
+        {
+            // 20 updates per frame lowers overall travel speed by about 31% from 29.
+            Projectile.extraUpdates = 19;
+            Projectile.timeLeft = 248;
+        }
+        float age = Projectile.localAI[0]++;
+        // Let the initial curved shot read clearly before it begins to seek a target.
+        // Keep the original delay and turn cadence in real game frames after reducing sub-updates.
+        if (age >= 104 && (int)age % 10 == 0)
+            normalTarget = NecrassCourt.Target(Projectile.Center, 700, Main.player[Projectile.owner])?.whoAmI ?? -1;
+        if (normalTarget >= 0 && Main.npc[normalTarget].active)
+        {
+            Vector2 delta = Main.npc[normalTarget].Center - Projectile.Center;
+            float turn = MathHelper.WrapAngle(delta.ToRotation() - Projectile.ai[1]);
+            Projectile.ai[1] += Math.Clamp(turn, -.0305f, .0305f);
+        }
+        float speed = MathHelper.Lerp(2.4f, 6f, MathHelper.Clamp(age / 76f, 0, 1));
+        float wave = MathF.Sin(age * MathHelper.TwoPi / 69f + Projectile.ai[2]) * .20f
+            * (1 - .65f * MathHelper.Clamp(age / 166f, 0, 1));
+        Projectile.velocity = (Projectile.ai[1] + wave).ToRotationVector2() * speed;
+        Projectile.rotation = Projectile.velocity.ToRotation();
+        if (Main.dedServ) return;
+        particleDistance += speed;
+        if (particleDistance >= 30)
+        {
+            particleDistance -= 30;
+            NecrassVisuals.SoulHelix(Projectile, age * .1885f + Projectile.ai[2]);
+        }
+        if ((int)age % 17 == 0)
+        {
+            Lighting.AddLight(Projectile.Center, .32f, .08f, .48f);
+            NecrassVisuals.SoulAsh(Projectile.Center, Projectile.velocity);
+        }
+    }
     public override void OnKill(int timeLeft)
     {
-        NecrassVisuals.Embers(Projectile.Center, 12, 3);
+        if (Projectile.ai[0] == 2) NecrassVisuals.SoulAsh(Projectile.Center, Projectile.velocity, 4);
+        else NecrassVisuals.Embers(Projectile.Center, 12, 3);
         if (NecrassCourt.Authority) NecrassImpact.Spawn(Projectile, Projectile.Center, Vector2.Zero, 0, 3, 40);
     }
     public override bool PreDraw(ref Color lightColor)

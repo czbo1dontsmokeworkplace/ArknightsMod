@@ -1,3 +1,22 @@
+EvolutionCinematicConfig: {
+	DisplayName: Essence of Evolution: Cinematics
+
+	ReducedEffects: {
+		Label: Reduced transition effects
+		Tooltip: Reduces decorative motes and bloom and disables cinematic shake and exposure filters. Attacks, warnings and damage are unchanged.
+	}
+
+	ScreenShake: {
+		Label: Boss combat screen shake
+		Tooltip: Affects only your view. Never locks the camera or moves your character.
+	}
+
+	ScreenFilters: {
+		Label: Transition exposure filters
+		Tooltip: Brief dimming, a soft white flash and quick recovery. Reduced effects also disables this filter.
+	}
+}
+
 MusicConfig: {
 	DisplayName: Music Config
 

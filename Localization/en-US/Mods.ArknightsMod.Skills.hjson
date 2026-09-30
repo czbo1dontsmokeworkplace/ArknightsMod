@@ -54,10 +54,10 @@ ChenSword: {
 
 KroosCrossbow: {
 	1: {
-		Label: Double Shot: Auto
+		Label: Triple Shot: Auto
 		Desc:
 			'''
-			Next attack fires [c/3791db:2] shots in a row
+			Speeds up three-shot bursts while active, firing one arrow per shot
 			Each shot deals Physical damage equal to [c/3791db:140%] of ATK
 			'''
 	}
@@ -138,7 +138,7 @@ KroosAlterCrossbow: {
 		Desc:
 			'''
 			ATK [c/3791db:+40%]
-			Attacks become a [c/3791db:2]-round burst
+			Keeps [c/3791db:3]-shot bursts, firing one arrow per shot
 			Greatly reduces aggro
 			'''
 	}
@@ -148,8 +148,8 @@ KroosAlterCrossbow: {
 		Desc:
 			'''
 			Attack interval [c/3791db:greatly shortened]
-			Attacks become a [c/3791db:2]-round burst
-			After firing [c/3791db:32] arrows, attacks become a [c/3791db:4]-round burst for the rest of the skill
+			Keeps [c/3791db:3]-shot bursts, firing one arrow per shot
+			After firing [c/3791db:32] arrows, firing intervals are halved again for the rest of the skill
 			'''
 	}
 }
@@ -466,30 +466,17 @@ SkadisGreatsword: {
 GoldenglowWand: {
 	1: {
 		Label: Sparks Flying
-		Desc:
-			'''
-			Drone cap +1; lightning locks onto enemies near the cursor
-			ATK [c/3791db:+40%], discharge rate [c/3791db:+50%]
-			'''
+		Desc: Automatically release 2 drones to pursue locked targets; ATK +40%, attack speed +50%. Return after target death, detonation, or skill end.
 	}
 
 	2: {
 		Label: Current Surge
-		Desc:
-			'''
-			Drone cap +1; expanded lightning targeting radius
-			Discharge range increased to 1300, ATK [c/3791db:+60%]
-			[c/EDA128:Infinite duration]
-			'''
+		Desc: Automatically activates at full SP. Release 2 pursuing drones; acquisition range 1300, ATK +60%. Infinite duration.
 	}
 
 	3: {
 		Label: Pure Radiance
-		Desc:
-			'''
-			Maintain continuous discharge and periodic overdrive; drone cap +2
-			Discharge range increased to 1800, ATK [c/3791db:+80%]
-			'''
+		Desc: Stop staff attacks and release 3 pursuing drones. Target active enemies across the world; ATK +80%. Drone hits and explosions slow movement by 80% for 0.5 seconds.
 	}
 }
 
@@ -1179,5 +1166,128 @@ HarmonieStaff: {
 	2: {
 		Label: Drowning Calamity
 		Desc: Auto recovery, manual activation. Costs 40 SP and lasts 20 seconds. Gain 25% attack speed and create a 140-pixel-radius resonance pool at a visible point up to 600 pixels toward the cursor. Slows ordinary enemies and deals 35% weapon damage every 0.5 seconds without passing through walls. Bosses take damage without being slowed. One pool per owner; ends when switching weapons, the skill ends, or the owner moves 1000 pixels away
+	}
+}
+
+GavialChainsaw: {
+	1: {
+		Label: Precise Thwacking
+		Desc: Auto recovery, manual activation. Lasts 25 seconds. +80% attack; heals for 4% of damage dealt, capped at 6 HP per 0.5 seconds across all targets. Target dummies do not heal you
+	}
+
+	2: {
+		Label: Chainsaw Assault
+		Desc: Auto recovery, manual activation. Lasts 30-40 seconds. +180% attack and +50% defense; extends the blade from 112 to 158 pixels and pulls ordinary enemies touching it. Bosses and knockback-immune enemies cannot be pulled
+	}
+
+	3: {
+		Label: Soul of the Jungle
+		Desc: Auto recovery, manual activation. Lasts 25 seconds. +140% attack; cuts every 4 ticks instead of 7. Half of incoming hit damage is deferred and drained over 20 seconds after the skill ends. This can kill you; switching weapons or skills and leaving the world do not erase the debt
+	}
+}
+
+NecrassScepter: {
+	1: {
+		Label: Dread Wish
+		Desc: Servant creation and first empowerment deal 250%-450% area magic damage. Activate to recreate all servants; empowered servants provide two summons. Creates one servant if none exist
+	}
+
+	2: {
+		Label: Wither
+		Desc: Puts 2-3 nearby enemies to sleep for 12 seconds, dealing 70%-160% magic damage every half second. Marked deaths provide two additional summons. Bosses, segmented enemies and knockback-immune enemies take damage without being immobilized. Sleeping enemies remain vulnerable
+	}
+
+	3: {
+		Label: Crown the Dead
+		Desc: One servant takes a special crowned form. Activate for 2-3 pulses of 450%-800% area magic damage. Each pulse sacrifices an ordinary servant to empower and heal the crowned servant by 20%; empowered offerings count twice. Up to six upgrades; upgrades 3 and 6 extend reach, and upgrade 3 unlocks a violet thrust. The crowned servant dissolves when another skill is selected
+	}
+}
+
+PhantomDaggers: {
+	1: {
+		Label: Phantom of the Night
+		Desc: Deploy for 10 seconds of protection: 20%-50% dodge and a shield worth 20%-80% of maximum life against enemy contact and projectiles. The phantom has a 65%-strength shield and provides backup protection within 15 tiles. Dodge chances do not stack. Body cooldown: 12 seconds; independent phantom cooldown: 25 seconds
+	}
+
+	2: {
+		Label: Bloody Opus
+		Desc: Deploy with 7-10 attack stacks, each adding 10%-20% attack until this deployment ends. Each slash that deals damage consumes at most one stack; misses consume none. Body and phantom have separate stacks. Deployment lasts 10 seconds. Body cooldown: 12 seconds; independent phantom cooldown: 25 seconds
+	}
+
+	3: {
+		Label: Night Raid
+		Desc: Deployment deals 180%-300% physical attack damage and knockback to visible enemies within 8 tiles. Each deployment randomly chooses an 80% slow, bind, or stun lasting 2-4.5 seconds. Bind prevents movement but allows attacks. Bosses and segmented enemies resist control. Body and phantom trigger separately. Body cooldown: 12 seconds; independent phantom cooldown: 25 seconds
+	}
+}
+
+BeeswaxStaff: {
+	1: {
+		Label: Sandstorm Expansion
+		Desc: For 10 seconds: shockwaves gain 45% radius and 25% damage. Each cast still requires 90 continuous charge frames.
+	}
+
+	2: {
+		Label: Guardian Obelisk
+		Desc: Raises an obelisk toward the cursor in line of sight for 12 seconds. Pulses every 60 frames for half damage. Disappears when switching away.
+	}
+}
+
+CarnelianStaff: {
+	1: {
+		Label: Sand Shackles
+		Desc: For 12 seconds: shockwaves gain 40% damage and slow enemies.
+	}
+
+	2: {
+		Label: Mark of Voracity
+		Desc: For 16 seconds: shockwave damage ramps from 140% to 260% over 8 seconds, without changing the attack interval.
+	}
+}
+
+LinStaff: {
+	1: {
+		Label: Exquisite
+		Desc: For 12 seconds: each successful shield block releases a normal shockwave. A broken shield still releases its empowered wave.
+	}
+
+	2: {
+		Label: Prismatic Shatter
+		Desc: For 14 seconds: each active shockwave also scatters twelve shards, each dealing 33% damage.
+	}
+}
+
+PineconeNailgun: {
+	1: {
+		Label: High Voltage
+		Desc: For 8 seconds: +35% damage. Nails retain vanilla sticking and delayed explosions.
+	}
+
+	2: {
+		Label: Electrical Overload
+		Desc: For 10 seconds: +65% fire rate.
+	}
+}
+
+ExecutorShotgun: {
+	1: {
+		Label: Muzzle Funeral
+		Desc: For 12 seconds: +35% damage and pellets ignore 35 defense.
+	}
+
+	2: {
+		Label: Final Journey
+		Desc: For 12 seconds: +75% fire rate for sustained shotgun fire.
+	}
+}
+
+ChalterWatergun: {
+	1: {
+		Label: Pressure Rinse
+		Desc: For 12 seconds: +35% damage and water slows enemies. Bosses resist the slow.
+	}
+
+	2: {
+		Label: Holiday Storm
+		Desc: For 16 seconds: +35% damage and hits create slowing water fields lasting 3 seconds, up to 3 fields. Fields deal 20% damage every 30 frames; overlapping fields do not stack.
 	}
 }

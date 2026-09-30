@@ -19,6 +19,9 @@ public sealed class OperatorWeaponRecipeGroups : ModSystem
     public const string CobaltOrPalladiumBar = "ArknightsMod:CobaltOrPalladiumBar";
     public const string AnyVanillaMeteorPhaseblade = "ArknightsMod:AnyVanillaMeteorPhaseblade";
 
+    /// <summary>兔兔系列：兔子 / 兔兔耳朵 / 兔兔尾巴 / 兔子头盔 / 兔兔雕像（全部是原版物品）。</summary>
+    public const string AnyVanillaBunny = "ArknightsMod:AnyVanillaBunny";
+
     public override void AddRecipeGroups()
     {
         // 按实际放置的家具类型收集原版钢琴，所有家具套装共用一个材料槽和一道配方。
@@ -37,8 +40,18 @@ public sealed class OperatorWeaponRecipeGroups : ModSystem
 
         int[] bows = [ItemID.WoodenBow, ItemID.BorealWoodBow, ItemID.PalmWoodBow, ItemID.RichMahoganyBow, ItemID.EbonwoodBow, ItemID.ShadewoodBow];
         Register(AnyVanillaWoodenBow, Lang.GetItemNameValue(ItemID.WoodenBow), bows);
-        int[] tombstones = [ItemID.Tombstone, ItemID.GraveMarker, ItemID.Headstone, ItemID.Gravestone, ItemID.Obelisk];
-        Register(AnyVanillaTombstone, Lang.GetItemNameValue(ItemID.Tombstone), tombstones);
+        int[] tombstones = ContentSamples.ItemsByType
+            .Where(entry => entry.Key > 0 && entry.Key < ItemID.Count && entry.Value.createTile == TileID.Tombstones)
+            .Select(entry => entry.Key).OrderBy(type => type).Prepend(ItemID.Tombstone).Distinct().ToArray();
+        
+
+        // 兔兔系列（任意一件即可）：兔子 2019 / 兔兔耳朵 4560 / 兔兔尾巴 4775 / 兔子头盔 243 / 兔兔雕像 445。
+        // 标签只写物品名，和原版一致——悬停提示里游戏会自己补「任意」前缀（见 Main 的
+        // HoverItem.SetNameOverride(Lang.misc[37] + 物品名)），这里再写一遍会变成「任意 任意兔子」。
+        // 用法：recipe.AddRecipeGroup(OperatorWeaponRecipeGroups.AnyVanillaBunny);
+        Register(AnyVanillaBunny, Lang.GetItemNameValue(ItemID.Bunny),
+            ItemID.Bunny, ItemID.BunnyEars, ItemID.BunnyTail, ItemID.BunnyHood, ItemID.BunnyStatue);
+        Register(AnyVanillaTombstone, Language.GetTextValue("Mods.ArknightsMod.RecipeGroups.AnyVanillaTombstone"), tombstones);
     }
 
     public override void AddRecipes()

@@ -47,6 +47,14 @@ namespace ArknightsMod.Systems
 				npcIDs: new List<int> { ModContent.NPCType<AACT>() },
 				spawnItems: new List<int> { ModContent.ItemType<AACTSummon>() }
 			);
+
+			TryLogBoss(bossChecklist,
+				internalName: "Evolution",
+				progression: 11.5f,
+				downed: () => DownedBossSystem.DownedEvolution,
+				npcIDs: new List<int> { ModContent.NPCType<Content.NPCs.Enemy.Evolution.Evolution>() },
+				spawnItems: new List<int> { ModContent.ItemType<EvolutionSummon>() }
+			);
 		}
 
 		private void TryLogBoss(Mod bossChecklist, string internalName, float progression, Func<bool> downed, List<int> npcIDs, List<int> spawnItems)

@@ -462,8 +462,10 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 	[VaultState(2, typeof(WBoss))]
 	public class WSmokeTeleportState : VaultState<WBoss>
 	{
-		private const int VanishTick = 60;   // 行 38（近全透明帧）起点：烟带出发
-		private const int ReappearDelay = 6; // 烟带到点后停一拍再显形
+		// 封烟动作整体放慢到 1.5 倍（AnimT 把 Timer 换算回原 60 帧的动作时间轴）
+		private const int VanishTick = 90;
+		private const int ReappearDelay = 36; // 在落点的烟里藏一会儿再显形：不再有贴地冲过去的轨迹
+		private static int AnimT(int timer) => timer * 2 / 3;
 		private const int HoldAfter = 18;
 
 		private int arriveTick = -1;
@@ -487,10 +489,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 			if (Timer < VanishTick) {
 				npc.velocity.X *= 0.8f;
-				ctx.AnimOverrideRow = WBoss.SmokeRow(Timer);
-				ctx.SmokeGrenadeBeat(Timer);
+				int animT = AnimT(Timer);
+				ctx.AnimOverrideRow = WBoss.SmokeRow(animT);
+				if (Timer == 0 || animT != AnimT(Timer - 1))
+					ctx.SmokeGrenadeBeat(animT);
 				// 落点预告：出发前在目的地起烟 + 红光（公平阀）
-				if (Timer == VanishTick - 12)
+				if (Timer == VanishTick - 18)
 					WBoss.SmokeBurst(ctx.TeleportDest, 12, 1.8f);
 				// 隐身前：叠一层渐隐 + 一团遮掩烟，别让人"啪"一下没了
 				if (Timer >= VanishTick - 8)
@@ -506,7 +510,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 				// 二阶段的换位有四成机会留个假身
 				if (ctx.IsAuthority && ctx.Phase == 2 && Main.rand.NextFloat() < 0.4f)
 					ctx.SpawnDecoy();
-				ctx.Dash_Begin();
+				// 直接换位（1 帧），原地留一大团烟，不再沿连线冲向玩家
+				WBoss.SmokeBurst(npc.Center, 22, 2.8f);
+				ctx.Dash_Begin(1, 1);
 			}
 			if (ctx.Dashing) {
 				ctx.AnimOverrideRow = WBoss.RowSmokeEnd;
@@ -522,7 +528,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 				npc.alpha = 255;
 				ctx.AnimOverrideRow = WBoss.RowSmokeEnd;
 				if (since == 0)
-					WBoss.SmokeBurst(npc.Center, 14);
+					WBoss.SmokeBurst(npc.Center, 22, 2.8f);
+				else if (since % 8 == 0)
+					WBoss.SmokeBurst(npc.Center, 6, 1.6f);
 				return null;
 			}
 			int shown = since - ReappearDelay;
@@ -604,7 +612,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 		public override void OnExit(VaultStateMachine<WBoss> machine, WBoss ctx) {
 			ctx.AnimOverrideRow = -1;
-			ctx.PickDelay = Main.rand.Next(8, 16);
+			ctx.ArmSkillGap();
 		}
 	}
 
@@ -673,7 +681,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 			ctx.ShowLauncher = ctx.Phase == 2;
 			ctx.AnimOverrideRow = -1;
 			ctx.TelegraphLaser = 0f;
-			ctx.PickDelay = Main.rand.Next(8, 16);
+			ctx.ArmSkillGap();
 		}
 	}
 
@@ -775,7 +783,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 		public override void OnExit(VaultStateMachine<WBoss> machine, WBoss ctx) {
 			ctx.AnimOverrideRow = -1;
-			ctx.PickDelay = Main.rand.Next(10, 20);
+			ctx.ArmSkillGap();
 		}
 	}
 
@@ -1094,7 +1102,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 		public override void OnExit(VaultStateMachine<WBoss> machine, WBoss ctx) {
 			ctx.AnimOverrideRow = -1;
 			ctx.TelegraphLaser = 0f;
-			ctx.PickDelay = Main.rand.Next(8, 16);
+			ctx.ArmSkillGap();
 		}
 	}
 
@@ -1150,7 +1158,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 		public override void OnExit(VaultStateMachine<WBoss> machine, WBoss ctx) {
 			ctx.ShowLauncher = ctx.Phase == 2;
 			ctx.AnimOverrideRow = -1;
-			ctx.PickDelay = Main.rand.Next(10, 18);
+			ctx.ArmSkillGap();
 		}
 	}
 
@@ -1200,7 +1208,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 		public override void OnExit(VaultStateMachine<WBoss> machine, WBoss ctx) {
 			ctx.AnimOverrideRow = -1;
-			ctx.PickDelay = Main.rand.Next(10, 20);
+			ctx.ArmSkillGap();
 		}
 	}
 
@@ -1427,7 +1435,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 		public override void OnExit(VaultStateMachine<WBoss> machine, WBoss ctx) {
 			ctx.AnimOverrideRow = -1;
-			ctx.PickDelay = Main.rand.Next(10, 20);
+			ctx.ArmSkillGap();
 		}
 	}
 
@@ -1513,7 +1521,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 		public override void OnExit(VaultStateMachine<WBoss> machine, WBoss ctx) {
 			ctx.AnimOverrideRow = -1;
 			ctx.TelegraphLaser = 0f;
-			ctx.PickDelay = Main.rand.Next(8, 16);
+			ctx.ArmSkillGap();
 		}
 	}
 
@@ -1586,7 +1594,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 			ctx.AimOverride = null;
 			ctx.AnimOverrideRow = -1;
 			ctx.TelegraphLaser = 0f;
-			ctx.PickDelay = 26; // 弹还在天上，喘半口气再接下一招
+			ctx.ArmSkillGap();
 		}
 	}
 
@@ -1639,7 +1647,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 		public override void OnExit(VaultStateMachine<WBoss> machine, WBoss ctx) {
 			ctx.ShowLauncher = true;
 			ctx.AnimOverrideRow = -1;
-			ctx.PickDelay = 20;
+			ctx.ArmSkillGap();
 		}
 	}
 
@@ -1750,7 +1758,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 			npc.damage = (int)(npc.defDamage * ctx.P2DamageScale);
 			ctx.ShowLauncher = true;
 			ctx.AnimOverrideRow = -1;
-			ctx.PickDelay = 30;
+			ctx.ArmSkillGap();
 		}
 	}
 
@@ -1803,7 +1811,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 		public override void OnExit(VaultStateMachine<WBoss> machine, WBoss ctx) {
 			ctx.AnimOverrideRow = -1;
-			ctx.PickDelay = Main.rand.Next(12, 20);
+			ctx.ArmSkillGap();
 		}
 	}
 
@@ -1901,7 +1909,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 			ctx.ExtraLasers.Clear();
 			ctx.TelegraphLaser = 0f;
 			ctx.AnimOverrideRow = -1;
-			ctx.PickDelay = 30;
+			ctx.ArmSkillGap();
 		}
 	}
 
@@ -2021,7 +2029,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 			ctx.AimOverride = null;
 			ctx.TelegraphLaser = 0f;
 			ctx.AnimOverrideRow = -1;
-			ctx.PickDelay = Main.rand.Next(8, 16);
+			ctx.ArmSkillGap();
 		}
 	}
 
@@ -2258,7 +2266,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 		public override void OnExit(VaultStateMachine<WBoss> machine, WBoss ctx) {
 			ctx.AimOverride = null;
 			ctx.AnimOverrideRow = -1;
-			ctx.PickDelay = 14;
+			ctx.ArmSkillGap();
 		}
 	}
 
@@ -2334,7 +2342,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 			ctx.NukeTarget = null;
 			ctx.ShowLauncher = true;
 			ctx.AnimOverrideRow = -1;
-			ctx.PickDelay = 24;
+			ctx.ArmSkillGap();
 		}
 	}
 
@@ -2388,7 +2396,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 		public override void OnExit(VaultStateMachine<WBoss> machine, WBoss ctx) {
 			ctx.TelegraphLaser = 0f;
 			ctx.AnimOverrideRow = -1;
-			ctx.PickDelay = 14;
+			ctx.ArmSkillGap();
 		}
 	}
 
@@ -2487,7 +2495,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 			ctx.AimOverride = null;
 			ctx.TelegraphLaser = 0f;
 			ctx.AnimOverrideRow = -1;
-			ctx.PickDelay = 24;
+			ctx.ArmSkillGap();
 		}
 	}
 }

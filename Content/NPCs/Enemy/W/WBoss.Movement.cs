@@ -183,9 +183,18 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 				kind = TeleportKind.Approach;
 			}
 
-			// Approach：连线之间按 t 采样，偏向玩家一侧但保持最小 160px 距离
+			// Approach：以玩家为中心随机取点（左右随机、距离 200~440px），不再沿"她→玩家"的连线取点，
+			// 否则每次传送看起来都像朝玩家冲一段，玩家一直往反方向跑就能无伤拖着她
 			Vector2 from = NPC.Center;
 			Vector2 to = target.Center;
+			for (int i = 0; i < 12; i++) {
+				float side = Main.rand.NextBool() ? 1f : -1f;
+				Vector2 cand = to + new Vector2(side * Main.rand.NextFloat(200f, 440f), -Main.rand.NextFloat(16f, 120f));
+				Vector2 landed = Move_FindOpen(cand);
+				if (Move_IsGoodLanding(landed) && Vector2.Distance(landed, to) >= 160f)
+					return landed;
+			}
+			// 随机点都不行再退回连线采样
 			float[] samples = { 0.62f, 0.5f, 0.72f, 0.38f, 0.82f, 0.28f };
 			foreach (float t in samples) {
 				Vector2 cand = Vector2.Lerp(from, to, t);

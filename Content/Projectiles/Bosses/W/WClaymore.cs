@@ -18,13 +18,13 @@ namespace ArknightsMod.Content.Projectiles.Bosses.W
 	/// </summary>
 	public class WClaymore : ModProjectile, IWOrdnance
 	{
-		private const float TriggerRadius = 80f;  // 5 格
+		private const float TriggerRadius = 160f; // 10 格（预警圈直径翻倍）
 		private const int TriggerDelay = 60;      // 触发后 1s 引爆
 		private const float ConeHalfAngle = 0.6f; // 约 ±35°
-		private const float ConeLength = 260f;
+		private const float ConeLength = 520f;  // 杀伤扇翻倍
 		private const float ConeTilt = 0.2f;      // 略微上扬，破片别全贴地皮飞
 		private const int Shards = 7;
-		private const float PointBlastRadius = 48f;
+		private const float PointBlastRadius = 96f;
 
 		private bool fizzle; // 失效：Kill 时不起爆
 
@@ -174,7 +174,7 @@ namespace ArknightsMod.Content.Projectiles.Bosses.W
 				// 触发圈：淡一点，只说"走到这里会触发"
 				Texture2D ring = ModContent.Request<Texture2D>("ArknightsMod/Content/Projectiles/Bosses/W/WClaymoreRing").Value;
 				Main.EntitySpriteDraw(ring, Projectile.Center - Main.screenPosition, null,
-					Color.White * (k * 0.55f), 0f, ring.Size() * 0.5f, 1f, SpriteEffects.None, 0);
+					Color.White * (k * 0.55f), 0f, ring.Size() * 0.5f, TriggerRadius / (ring.Width * 0.5f), SpriteEffects.None, 0);
 				// 杀伤扇：亮一点，说"这一面向敌"
 				WTelegraph.BeginAdditive(Main.spriteBatch);
 				WTelegraph.DrawCone(Main.spriteBatch, Projectile.Center + new Vector2(FacingSign * 6f, -4f), FacingAngle, ConeHalfAngle, ConeLength, WTelegraph.WarnRed * k);

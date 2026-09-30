@@ -16,7 +16,6 @@ namespace ArknightsMod.Content.Items.Weapons.Medic.Sussurro;
 public sealed class SussurroStaff : ExpansionWeaponBase
 {
     protected override int[] EliteDamage => [54, 62, 70];
-    public override string Texture => "Terraria/Images/Item_" + ItemID.EmeraldStaff;
     public override void SetStaticDefaults()
     {
         Item.staff[Type] = true;
