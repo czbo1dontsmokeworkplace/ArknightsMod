@@ -1,0 +1,58 @@
+NPCs: {
+	Faust.DisplayName: 浮士德
+
+	Mephisto: {
+		DisplayName: 梅菲斯特
+		// BossChecklistIntegration.EntryName: Faust And Mephisto
+	}
+
+	ReunionCrusher.DisplayName: 粉碎攻坚手
+	ReunionCaster.DisplayName: 特战术士
+	ReunionHost.DisplayName: 狂暴宿主士兵
+	ReunionBallista.DisplayName: 弩炮塔
+}
+
+Items: {
+	FaustCrossbow: {
+		DisplayName: 无声守望
+		Tooltip:
+			'''
+			将箭矢转化为高速弩箭
+			每第三箭变为紫色重狙，造成额外 50% 伤害并轻微追踪敌人
+			'''
+	}
+
+	MephistoCenser: {
+		DisplayName: 灰白祷歌
+		Tooltip:
+			'''
+			释放扩散的灰白色治疗粉尘，对范围内敌人造成持续法术伤害
+			命中敌人可汲取 2 点生命，每半秒最多一次
+			无法从训练假人或雕像生成的敌人汲取生命
+			'''
+	}
+}
+
+Projectiles: {
+	FaustBolt.DisplayName: 浮士德的弩箭
+	BallistaBolt.DisplayName: 弩炮箭
+	ReunionArts.DisplayName: 整合运动法术
+	MephistoMedicine.DisplayName: 医疗弹
+	FaustPlayerBolt.DisplayName: 无声守望
+	MephistoHealingDust.DisplayName: 灰白祷歌
+	FaustExecution.DisplayName: 锁定狙杀
+}
+
+Buffs: {
+	OriginiumDust: {
+		DisplayName: 源石粉尘
+		Description: 每 0.25 秒失去 5 点生命
+	}
+}
+
+FaustBestiary: 沉默的整合运动狙击手。只要梅菲斯特仍在场，他便藏身于迷彩之中，以每第三发紫色重狙警告所有轻敌者。
+MephistoBestiary: 在弩箭的掩护下率领部队前进的医师。他投出的医疗弹能被拦截，但沾染的源石粉尘并非善意。
+SupportBestiary: 随浮士德与梅菲斯特一同行动的整合运动部队。宿主在医师的指挥下加速恢复，弩炮塔则为狙击手提供保护。
+Impatient: 整合运动的狙击手失去了耐心
+ExecutionDeath: "{0} 没能逃过浮士德的锁定狙击。"
+DustDeath: "{0} 被源石粉尘吞没了。"

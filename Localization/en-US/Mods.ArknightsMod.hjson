@@ -45,14 +45,11 @@ Items: {
 	}
 
 	EvolutionSummon: {
-		DisplayName: Aberrant Culture
+		DisplayName: Origin of Evolution
 		Tooltip:
 			'''
+			The beginning of Earth's humanity's forbidden glimpse into Originium technology—and its end
 			Summons the Essence of Evolution
-			Requires all three mechanical bosses to be defeated
-			Can be used at any time and in any biome
-			The first phase seals the area; use in an open arena
-			Not consumed
 			'''
 	}
 

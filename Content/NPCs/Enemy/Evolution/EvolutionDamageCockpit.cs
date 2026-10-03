@@ -34,6 +34,7 @@ internal static class EvolutionDamageCockpit
         (EvolutionShot.Lance,       "血喷",       "Blood Lance",         36), // 高速移动尖梭，包括横排/竖排血喷、光轴侧刃与仆从齐射。
         (EvolutionShot.CrimsonBomb, "深红炸弹",   "Crimson Bomb",        41), // 仅范围爆炸型使用此伤害；分裂型只由碎片伤人。
         (EvolutionShot.Eruption,    "血色喷柱",   "Blood Eruption",      39), // 从地面/平台向上喷发的柱体。
+        (EvolutionShot.Radiation,   "育生辐射波", "Brood Radiation",     31), // 第一阶段五向短程弧形波；只有可见波纹伤人。
     };
 
     // 普通表已经逐项乘以90%并向下取整（伤害只能是整数）；提示弹幕仍为0。
@@ -60,16 +61,16 @@ internal static class EvolutionDamageCockpit
     };
 
     // ==================== 仆从碰撞伤害 ====================
-    // 岩蛛两种冲刺预设共用一项；其余仆从当前没有接触伤害。
+    // 第一阶段地面仆从的接触伤害；不改变后续无敌光球的零接触伤害规则。
     // 第二阶段起的无敌辅助单位仍不碰撞伤人，不因改表而改变这个规则。
     internal static readonly (EvolutionBrood Kind, string ChineseName, string EnglishName, int Damage)[] BroodContactDamages =
     {
         (EvolutionBrood.Spider,      "变异岩蛛",   "Mutant Rock Spider",       55),
-        (EvolutionBrood.GiantSpider, "变异巨岩蛛", "Mutant Giant Rock Spider",  0),
-        (EvolutionBrood.Puppet,      "畸变体傀儡", "Abomination Puppet",        0),
-        (EvolutionBrood.Abomination, "源石畸变体", "Originium Abomination",     0),
-        (EvolutionBrood.Tumor,       "恶性瘤",     "Tumor",                     0),
-        (EvolutionBrood.Bomb,        "浮空炸弹",   "Floating Bomb",             0),
+        (EvolutionBrood.GiantSpider, "变异巨岩蛛", "Mutant Giant Rock Spider", 60),
+        (EvolutionBrood.Puppet,      "畸变体傀儡", "Abomination Puppet",       50),
+        (EvolutionBrood.Abomination, "源石畸变体", "Originium Abomination",    65),
+        (EvolutionBrood.Tumor,       "恶性瘤",     "Tumor",                    35),
+        (EvolutionBrood.Bomb,        "畸变赘生物", "Aberrant Excrescence",      38),
     };
 
     // 以下是统一读取接口，通常无需修改；查不到类型时明确报错，避免漏配后悄悄使用其他伤害。

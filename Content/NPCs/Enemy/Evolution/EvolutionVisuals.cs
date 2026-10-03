@@ -36,7 +36,7 @@ internal static class EvolutionVisuals
     internal static void Preload()
     {
         foreach (string name in new[] { "Newborn", "Evolved", "EvolvedHead", "EvolvedBody", "Perfect", "Shield", "ShieldCracked", "ShieldPerfect",
-            "BloodClot", "BloodRock", "ShellFragment",
+            "BloodClot", "BloodRock", "ShellFragment", "Tumor", "Excrescence",
             "Heart", "WhiteShell", "Tentacle", "Bloom", "CinematicRing" }) Asset(name);
         foreach (var region in EvolutionProjectileVisuals.Regions) Asset(region.Name);
     }

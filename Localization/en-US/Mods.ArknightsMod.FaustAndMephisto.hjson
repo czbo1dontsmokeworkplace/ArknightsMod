@@ -1,0 +1,58 @@
+NPCs: {
+	Faust.DisplayName: Faust
+
+	Mephisto: {
+		DisplayName: Mephisto
+		BossChecklistIntegration.EntryName: Faust And Mephisto
+	}
+
+	ReunionCrusher.DisplayName: Defense Crusher
+	ReunionCaster.DisplayName: Special Operations Caster
+	ReunionHost.DisplayName: Enraged Possessed Soldier
+	ReunionBallista.DisplayName: Ballista
+}
+
+Items: {
+	FaustCrossbow: {
+		DisplayName: Silent Vigil
+		Tooltip:
+			'''
+			Converts arrows into high-speed bolts
+			Every third bolt deals 50% more damage and weakly homes toward enemies
+			'''
+	}
+
+	MephistoCenser: {
+		DisplayName: Ashen Canticle
+		Tooltip:
+			'''
+			Releases spreading gray-white dust that repeatedly deals area Arts damage
+			Hitting enemies steals 2 life, at most once every half second
+			Target dummies and statue-spawned enemies cannot provide life
+			'''
+	}
+}
+
+Projectiles: {
+	FaustBolt.DisplayName: Faust's Bolt
+	BallistaBolt.DisplayName: Ballista Bolt
+	ReunionArts.DisplayName: Reunion Arts
+	MephistoMedicine.DisplayName: Medical Bolt
+	FaustPlayerBolt.DisplayName: Silent Vigil
+	MephistoHealingDust.DisplayName: Ashen Canticle
+	FaustExecution.DisplayName: Locked Execution
+}
+
+Buffs: {
+	OriginiumDust: {
+		DisplayName: Originium Dust
+		Description: Lose 5 life every 0.25 seconds
+	}
+}
+
+FaustBestiary: A silent Reunion sniper. Camouflage conceals him while Mephisto remains, and every third violet bolt punishes complacency.
+MephistoBestiary: A medic leading his troops under covering fire. His medical bolts can be intercepted, but the dust they carry offers no kindness.
+SupportBestiary: Reunion troops accompanying Faust and Mephisto. Possessed soldiers regenerate faster under their medic, while ballistae protect the sniper.
+Impatient: The Reunion sniper has lost his patience.
+ExecutionDeath: "{0} could not escape Faust's locked shot."
+DustDeath: "{0} succumbed to Originium dust."
