@@ -34,6 +34,14 @@ public sealed class CrossbowCadence
         if (last) ShotsInBurst = 0;
     }
 
+    public void FiredKroosSkill(ulong tick, float speed, bool last)
+    {
+        // The skill is its own two-arrow burst, regardless of the normal burst position.
+        double start = NextShotAt > tick - 1d ? NextShotAt : tick;
+        NextShotAt = start + Math.Max(1d, (last ? 30d : 5d) / Math.Max(.1f, speed));
+        ShotsInBurst = last ? 0 : 1;
+    }
+
     public void Interrupt(ulong tick, CrossbowKind kind)
     {
         if (ShotsInBurst > 0)

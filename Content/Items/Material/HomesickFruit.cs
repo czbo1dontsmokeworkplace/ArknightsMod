@@ -9,10 +9,7 @@ namespace ArknightsMod.Content.Items.Material
 	public class HomesickFruit : RareCollectibleItem
 	{
 		public override int BaseOriginiumIngotValue => HomesickFruitPlayer.BaseValue;
-
-		public override void SafeSetCollectibleDefaults() {
-			Item.DefaultToPlaceableTile(ModContent.TileType<Tiles.Natural.HomesickFruit>());
-		}
+		protected override int PlaceableTileType => ModContent.TileType<Tiles.Natural.HomesickFruit>();
 
 		public override void UpdateInventory(Player player) {
 			var fruitPlayer = player.GetModPlayer<HomesickFruitPlayer>();

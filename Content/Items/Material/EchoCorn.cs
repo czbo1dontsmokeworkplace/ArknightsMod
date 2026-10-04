@@ -1,5 +1,6 @@
 using ArknightsMod.Players;
 using Terraria;
+using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Material
 {
@@ -7,6 +8,7 @@ namespace ArknightsMod.Content.Items.Material
 	public class EchoCorn : RareCollectibleItem
 	{
 		public override int BaseOriginiumIngotValue => EchoCornPlayer.BaseValue;
+		protected override int PlaceableTileType => ModContent.TileType<Tiles.Natural.EchoCorn>();
 
 		public override void UpdateInventory(Player player) {
 			var echoPlayer = player.GetModPlayer<EchoCornPlayer>();

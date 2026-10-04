@@ -33,7 +33,10 @@ public sealed class OperatorWeaponRecipeGroups : ModSystem
 
         Register(CopperOrTinBar, Lang.GetItemNameValue(ItemID.CopperBar), ItemID.CopperBar, ItemID.TinBar);
         Register(IronOrLeadBar, Lang.GetItemNameValue(ItemID.IronBar), ItemID.IronBar, ItemID.LeadBar);
-        Register(GoldOrPlatinumBar, Lang.GetItemNameValue(ItemID.GoldBar), ItemID.GoldBar, ItemID.PlatinumBar);
+        // Recipe Browser 直接显示 GetText() 的结果，组名要自带“任意”。
+        RecipeGroup.RegisterGroup(GoldOrPlatinumBar, new RecipeGroup(
+            () => Language.GetTextValue("LegacyMisc.37") + " " + Lang.GetItemNameValue(ItemID.GoldBar),
+            ItemID.GoldBar, ItemID.PlatinumBar));
         Register(CobaltOrPalladiumChainsaw, Lang.GetItemNameValue(ItemID.CobaltChainsaw), ItemID.CobaltChainsaw, ItemID.PalladiumChainsaw);
         Register(CobaltOrPalladiumBar, Lang.GetItemNameValue(ItemID.CobaltBar), ItemID.CobaltBar, ItemID.PalladiumBar);
         Register(AnyVanillaMeteorPhaseblade, Lang.GetItemNameValue(ItemID.BluePhaseblade), ItemID.BluePhaseblade, ItemID.RedPhaseblade, ItemID.GreenPhaseblade, ItemID.PurplePhaseblade, ItemID.WhitePhaseblade, ItemID.YellowPhaseblade, ItemID.OrangePhaseblade);
@@ -46,8 +49,6 @@ public sealed class OperatorWeaponRecipeGroups : ModSystem
         
 
         // 兔兔系列（任意一件即可）：兔子 2019 / 兔兔耳朵 4560 / 兔兔尾巴 4775 / 兔子头盔 243 / 兔兔雕像 445。
-        // 标签只写物品名，和原版一致——悬停提示里游戏会自己补「任意」前缀（见 Main 的
-        // HoverItem.SetNameOverride(Lang.misc[37] + 物品名)），这里再写一遍会变成「任意 任意兔子」。
         // 用法：recipe.AddRecipeGroup(OperatorWeaponRecipeGroups.AnyVanillaBunny);
         Register(AnyVanillaBunny, Lang.GetItemNameValue(ItemID.Bunny),
             ItemID.Bunny, ItemID.BunnyEars, ItemID.BunnyTail, ItemID.BunnyHood, ItemID.BunnyStatue);

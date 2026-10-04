@@ -24,8 +24,7 @@ namespace ArknightsMod.Content.Tiles.Natural
 			TileObjectData.newTile.CoordinateWidth = 16;
 			TileObjectData.newTile.CoordinatePadding = 2;
 			TileObjectData.newTile.CoordinateHeights = new[] { 16, 16 };
-			TileObjectData.newTile.AnchorValidTiles = new int[] { TileID.Grass };
-			TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile, TileObjectData.newTile.Width, 0);
+			TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
 			RareCollectibleVisuals.ApplyDrawOffset();
 			TileObjectData.addTile(Type);
 

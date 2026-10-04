@@ -18,10 +18,12 @@ namespace ArknightsMod.Content.Items.Material
 		public override bool TradedWithOrundum => false;
 
 		public abstract int BaseOriginiumIngotValue { get; }
+		protected abstract int PlaceableTileType { get; }
 
 		public sealed override void SafeSetDefaults() {
 			Item.rare = ItemRarityID.Purple;
 			Item.value = BaseOriginiumIngotValue;
+			Item.DefaultToPlaceableTile(PlaceableTileType);
 			SafeSetCollectibleDefaults();
 		}
 

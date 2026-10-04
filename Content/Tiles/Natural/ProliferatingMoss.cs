@@ -18,8 +18,7 @@ namespace ArknightsMod.Content.Tiles.Natural
 			Main.tileLighted[Type] = false;
 
 			TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
-			TileObjectData.newTile.AnchorValidTiles = new int[] { TileID.JungleGrass };
-			TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile, TileObjectData.newTile.Width, 0);
+			TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
 			RareCollectibleVisuals.ApplyDrawOffset();
 			TileObjectData.addTile(Type);
 

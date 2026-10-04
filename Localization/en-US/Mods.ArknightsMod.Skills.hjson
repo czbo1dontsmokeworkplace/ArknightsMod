@@ -54,11 +54,11 @@ ChenSword: {
 
 KroosCrossbow: {
 	1: {
-		Label: Triple Shot: Auto
+		Label: Double Shot: Auto
 		Desc:
 			'''
-			Speeds up three-shot bursts while active, firing one arrow per shot
-			Each shot deals Physical damage equal to [c/3791db:140%] of ATK
+			Automatically fires two quick shots, one arrow per shot
+			Each arrow deals [c/3791db:140%] of a normal shot's Physical damage
 			'''
 	}
 }

@@ -7,16 +7,17 @@ using Terraria;
 using Terraria.GameContent.Events;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ObjectData;
 
 namespace ArknightsMod.Systems
 {
 	// 地表小型植物/自然物的“自然生长”注册表：/plant 调试指令、无特殊条件的低概率环境刷新（IsAmbient）、
 	// 以及各自 ModPlayer 里额外判定过的刷新（比如需要背包里有别的自然物）都走这一套放置逻辑。
-	// 具体“能不能长在这块地上”交给每个 ModTile 自己的 TileObjectData.AnchorValidTiles/AnchorType 校验，
-	// 这里只负责挑坐标、按概率触发、以及跳过校验的强制刷新（血月刷霜晶树用）。
+	// 自然刷新的地表/水体条件在注册表中校验，玩家手动放置则由各个 ModTile 的锚点处理。
+	// 这里还负责挑坐标、按概率触发，以及跳过自然条件的强制刷新（血月刷霜晶树用）。
 	public class NaturalGrowthSystem : ModSystem
 	{
-		// extraCondition：放置位置的额外校验（比如“城镇范围”“正在下雨”），参数是放置坐标 (x, y)。
+		// extraCondition：自然刷新位置的校验（如原生地面、城镇范围、雨天），参数是物体左上角坐标 (x, y)。
 		// isAmbient：是否参与本系统统一的低概率环境刷新（不依赖玩家背包/buff 状态的那类自然物）。
 		public readonly struct Entry(int tileType, int width, int height, Func<int, int, bool> extraCondition = null, bool isAmbient = false)
 		{
@@ -38,15 +39,53 @@ namespace ArknightsMod.Systems
 
 		public override void PostSetupContent() {
 			entries.Clear();
-			entries.Add(new Entry(ModContent.TileType<BloodMushroom>(), 2, 2)); // 血蕈：饱食buff触发，见 BloodMushroomPlayer
-			entries.Add(new Entry(ModContent.TileType<FrostCrystalTree>(), 3, 4, isAmbient: true));
-			entries.Add(new Entry(ModContent.TileType<EchoCorn>(), 2, 4, (x, y) => IsNearTownNPC(x, y), isAmbient: true));
-			entries.Add(new Entry(ModContent.TileType<WaveSpray>(), 2, 2, (x, y) => Main.raining, isAmbient: true));
-			entries.Add(new Entry(ModContent.TileType<ProliferatingMoss>(), 2, 2, isAmbient: true));
-			entries.Add(new Entry(ModContent.TileType<WitheredMossBall>(), 2, 2, isAmbient: true));
-			entries.Add(new Entry(ModContent.TileType<BoardVine>(), 4, 2)); // 板藤：背包里有别的自然物才触发，见 BoardVinePlayer
-			entries.Add(new Entry(ModContent.TileType<HomesickFruit>(), 3, 3, (x, y) => IsNearTownNPC(x, y, 2), isAmbient: true));
-			entries.Add(new Entry(ModContent.TileType<GlowingTruffle>(), 4, 2, (x, y) => LanternNight.LanternsUp && IsNearTownNPC(x, y), isAmbient: true));
+			// 玩家放置可以使用普通建筑方块；自然刷新仍沿用各自原本的生长地面。
+			entries.Add(new Entry(ModContent.TileType<BloodMushroom>(), 2, 2,
+				(x, y) => HasGround(x, y, 2, 2, TileID.Grass, TileID.BlueMoss, TileID.GreenMoss, TileID.PurpleMoss, TileID.RedMoss, TileID.BrownMoss))); // 血蕈：饱食buff触发，见 BloodMushroomPlayer
+			entries.Add(new Entry(ModContent.TileType<FrostCrystalTree>(), 3, 4,
+				(x, y) => HasGround(x, y, 3, 4, TileID.IceBlock, TileID.SnowBlock), isAmbient: true));
+			entries.Add(new Entry(ModContent.TileType<EchoCorn>(), 2, 4,
+				(x, y) => HasGround(x, y, 2, 4, TileID.Grass) && IsNearTownNPC(x, y), isAmbient: true));
+			entries.Add(new Entry(ModContent.TileType<WaveSpray>(), 2, 2,
+				(x, y) => HasGround(x, y, 2, 2, TileID.Grass) && Main.raining, isAmbient: true));
+			entries.Add(new Entry(ModContent.TileType<ProliferatingMoss>(), 2, 2,
+				(x, y) => HasGround(x, y, 2, 2, TileID.JungleGrass), isAmbient: true));
+			entries.Add(new Entry(ModContent.TileType<WitheredMossBall>(), 2, 2,
+				(x, y) => HasGround(x, y, 2, 2, TileID.Grass, TileID.BlueMoss, TileID.GreenMoss, TileID.PurpleMoss, TileID.RedMoss, TileID.BrownMoss), isAmbient: true));
+			entries.Add(new Entry(ModContent.TileType<BoardVine>(), 4, 2,
+				(x, y) => IsSubmerged(x, y, 4, 2))); // 板藤：背包里有别的自然物才触发，见 BoardVinePlayer
+			entries.Add(new Entry(ModContent.TileType<HomesickFruit>(), 3, 3,
+				(x, y) => HasCeiling(x, y, 3, TileID.Grass, TileID.BlueMoss, TileID.GreenMoss, TileID.PurpleMoss, TileID.RedMoss, TileID.BrownMoss) && IsNearTownNPC(x, y, 2), isAmbient: true));
+			entries.Add(new Entry(ModContent.TileType<GlowingTruffle>(), 4, 2,
+				(x, y) => HasGround(x, y, 4, 2, TileID.Grass) && LanternNight.LanternsUp && IsNearTownNPC(x, y), isAmbient: true));
+		}
+
+		private static bool HasGround(int x, int y, int width, int height, params int[] validTiles) {
+			return HasAnchorTiles(x, y + height, width, validTiles);
+		}
+
+		private static bool HasCeiling(int x, int y, int width, params int[] validTiles) {
+			return HasAnchorTiles(x, y - 1, width, validTiles);
+		}
+
+		private static bool HasAnchorTiles(int x, int y, int width, int[] validTiles) {
+			if (!WorldGen.InWorld(x, y, 1) || !WorldGen.InWorld(x + width - 1, y, 1)) return false;
+			for (int dx = 0; dx < width; dx++) {
+				Tile tile = Main.tile[x + dx, y];
+				if (!tile.HasTile || Array.IndexOf(validTiles, tile.TileType) < 0) return false;
+			}
+			return true;
+		}
+
+		private static bool IsSubmerged(int x, int y, int width, int height) {
+			if (!WorldGen.InWorld(x, y, 1) || !WorldGen.InWorld(x + width - 1, y + height - 1, 1)) return false;
+			for (int dx = 0; dx < width; dx++) {
+				for (int dy = 0; dy < height; dy++) {
+					Tile tile = Main.tile[x + dx, y + dy];
+					if (tile.LiquidAmount == 0 || tile.LiquidType != LiquidID.Water) return false;
+				}
+			}
+			return true;
 		}
 
 		// “城镇环境”：附近有至少 minCount 个已安家的镇民。
@@ -145,18 +184,22 @@ namespace ArknightsMod.Systems
 
 		private static bool TryPlaceAt(Entry entry, int x, int y, bool forced) {
 			if (!WorldGen.InWorld(x, y, 1) || Main.tile[x, y].HasTile) return false;
+			TileObjectData data = TileObjectData.GetTileData(entry.TileType, 0, 0);
+			int left = x - data.Origin.X;
+			int top = y - data.Origin.Y;
+			if (!WorldGen.InWorld(left, top, 1) || !WorldGen.InWorld(left + entry.Width - 1, top + entry.Height, 1)) return false;
 
 			if (forced) {
-				Tile ground = Main.tile[x, y + entry.Height];
+				Tile ground = Main.tile[left, top + entry.Height];
 				if (!ground.HasTile) return false; // 无视具体种类，但至少要有地面
 			}
-			else if (entry.ExtraCondition != null && !entry.ExtraCondition(x, y)) {
+			else if (entry.ExtraCondition != null && !entry.ExtraCondition(left, top)) {
 				return false;
 			}
 
 			bool placed = WorldGen.PlaceTile(x, y, entry.TileType, mute: true, forced: forced);
 			if (placed)
-				NetMessage.SendTileSquare(-1, x, y, entry.Width + 1, entry.Height + 1);
+				NetMessage.SendTileSquare(-1, left, top, entry.Width + 1, entry.Height + 1);
 
 			return placed;
 		}
