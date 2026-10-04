@@ -1,4 +1,5 @@
-﻿using ArknightsMod.Content.Items.Material;
+﻿using ArknightsMod.Common.ItemDropRules;
+using ArknightsMod.Content.Items.Material;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -96,8 +97,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
 			// Drone 掉落：Oriron 1–3、Ester 1–2
-			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OrironShard>(), ModContent.GetInstance<Dropconfig>().DropDrone1, 1, 3));
-			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Ester>(), ModContent.GetInstance<Dropconfig>().DropDrone2, 1, 2));
+			npcLoot.Add(new ConfiguredPercentageDropRule(ModContent.ItemType<OrironShard>(), () => ModContent.GetInstance<Dropconfig>().DropDrone1Percent, 1, 3));
+			npcLoot.Add(new ConfiguredPercentageDropRule(ModContent.ItemType<Ester>(), () => ModContent.GetInstance<Dropconfig>().DropDrone2Percent, 1, 2));
 		}
 
 		public override void OnSpawn(IEntitySource source) {

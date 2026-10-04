@@ -32,8 +32,8 @@ namespace ArknightsMod.Content.Items.Consumables.PortableStructures
 	// 不需要再写任何联网/预览/放置代码——那些全在这个基类和
 	// AkStructureDeploySystem 里，一次写好，所有便携建筑共用。
 	//
-	// 光标锚点约定：光标固定落在建筑"水平居中、贴底部"的位置
-	// （GetDeploymentTopLeft），不是结构左上角。这是产品需求指定的，
+	// 光标锚点根据光标相对角色中心的位置切换到建筑四角：
+	// 例如光标在角色右上方时，对齐建筑左下角。
 	// 如果某个建筑想要不同的锚点规则，重写 GetDeploymentTopLeft 即可，
 	// 其余放置/网络逻辑不用动。
 	public abstract class PortableStructureItemBase : ModItem
@@ -76,8 +76,8 @@ namespace ArknightsMod.Content.Items.Consumables.PortableStructures
 			Item.noMelee = true;
 		}
 
-		// 结构左上角要落在世界的哪个 tile。默认约定：光标始终对着建筑"水平居中、
-		// 贴底部"的位置——即结构左上角 = 光标所在格 - (宽度/2, 高度-1)。
+		// 结构左上角要落在世界的哪个 tile。光标在角色右上/左上/右下/左下方时，
+		// 分别对齐建筑左下/右下/左上/右上角，让建筑向远离角色的方向展开。
 		//
 		// ⚠ 这里不能直接用 Main.MouseWorld：它的算法就是简单的
 		// "MouseScreen + screenPosition"，完全没考虑游戏内的缩放（Zoom）设置，
@@ -90,12 +90,16 @@ namespace ArknightsMod.Content.Items.Consumables.PortableStructures
 		// 世界坐标，两边就能重新对齐。
 		public virtual Point GetDeploymentTopLeft() {
 			Vector2 unscaledMouse = Vector2.Transform(Main.MouseScreen, Matrix.Invert(Main.GameViewMatrix.TransformationMatrix));
-			Point cursor = (unscaledMouse + Main.screenPosition).ToTileCoordinates();
+			Vector2 mouseWorld = unscaledMouse + Main.screenPosition;
+			Point cursor = mouseWorld.ToTileCoordinates();
 			StructureData structure = GetStructure();
 			if (structure == null)
 				return cursor;
 
-			return new Point(cursor.X - structure.Width / 2, cursor.Y - (structure.Height - 1));
+			Vector2 playerCenter = Main.LocalPlayer.Center;
+			int anchorX = mouseWorld.X >= playerCenter.X ? 0 : structure.Width - 1;
+			int anchorY = mouseWorld.Y <= playerCenter.Y ? structure.Height - 1 : 0;
+			return new Point(cursor.X - anchorX, cursor.Y - anchorY);
 		}
 
 		public sealed override bool? UseItem(Player player) {

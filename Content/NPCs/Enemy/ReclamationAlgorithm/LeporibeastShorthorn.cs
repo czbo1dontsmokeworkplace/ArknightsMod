@@ -1,4 +1,5 @@
-﻿using ArknightsMod.Content.Items.Material.ReclamAlgor;
+﻿using ArknightsMod.Common.ItemDropRules;
+using ArknightsMod.Content.Items.Material.ReclamAlgor;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -61,7 +62,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ReclamationAlgorithm
 
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
 
-			npcLoot.Add(ItemDropRule.Common(ItemType<RAMeat>(), ModContent.GetInstance<Dropconfig>().DropLS, 1, 2));
+			npcLoot.Add(new ConfiguredPercentageDropRule(ItemType<RAMeat>(), () => ModContent.GetInstance<Dropconfig>().DropLSPercent, 1, 2));
 
 		}
 

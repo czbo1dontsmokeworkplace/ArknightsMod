@@ -1,3 +1,4 @@
+using ArknightsMod.Common.ItemDropRules;
 using ArknightsMod.Content.Items.Placeable.Banners;
 using System;
 using Terraria;
@@ -52,7 +53,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
 
-			npcLoot.Add(ItemDropRule.Common(ItemType<Items.Material.OrirockCube>(), GetInstance<Dropconfig>().DropOriginiumSlug, 1, 2));
+			npcLoot.Add(new ConfiguredPercentageDropRule(ItemType<Items.Material.OrirockCube>(), () => ModContent.GetInstance<Dropconfig>().DropOriginiumSlugPercent, 1, 2));
 
 		}
 
