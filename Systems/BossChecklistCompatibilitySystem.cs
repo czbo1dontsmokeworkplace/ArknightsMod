@@ -17,6 +17,14 @@ namespace ArknightsMod.Systems
 				return;
 
 			TryLogBoss(bossChecklist,
+				internalName: "FaustAndMephisto",
+				progression: 6.9f,
+				downed: () => DownedBossSystem.DownedFaustAndMephisto,
+				npcIDs: new List<int> { ModContent.NPCType<Content.NPCs.Enemy.FaustAndMephisto.Mephisto>(), ModContent.NPCType<Content.NPCs.Enemy.FaustAndMephisto.Faust>() },
+				spawnItems: new List<int>()
+			);
+
+			TryLogBoss(bossChecklist,
 				internalName: "Pompeii",
 				progression: 3.0f,
 				downed: () => DownedBossSystem.DownedPompeii,

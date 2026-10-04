@@ -14,9 +14,11 @@ namespace ArknightsMod.Systems
 		public static bool DownedAACT;
 		public static bool DownedEvolution;
 		public static bool DownedW;
+		public static bool DownedFaustAndMephisto;
 
 		public override void OnWorldLoad()
 		{
+			DownedFaustAndMephisto = false;
 			DownedPompeii = false;
 			DownedTheFirstToTalk = false;
 			DownedFrostNova = false;
@@ -27,6 +29,7 @@ namespace ArknightsMod.Systems
 
 		public override void OnWorldUnload()
 		{
+			DownedFaustAndMephisto = false;
 			DownedPompeii = false;
 			DownedTheFirstToTalk = false;
 			DownedFrostNova = false;
@@ -37,6 +40,8 @@ namespace ArknightsMod.Systems
 
 		public override void SaveWorldData(TagCompound tag)
 		{
+			if (DownedFaustAndMephisto)
+				tag["ArknightsMod.DownedFaustAndMephisto"] = true;
 			if (DownedPompeii)
 				tag["ArknightsMod.DownedPompeii"] = true;
 			if (DownedTheFirstToTalk)
@@ -53,6 +58,7 @@ namespace ArknightsMod.Systems
 
 		public override void LoadWorldData(TagCompound tag)
 		{
+			DownedFaustAndMephisto = tag.ContainsKey("ArknightsMod.DownedFaustAndMephisto");
 			DownedPompeii = tag.ContainsKey("ArknightsMod.DownedPompeii");
 			DownedTheFirstToTalk = tag.ContainsKey("ArknightsMod.DownedTheFirstToTalk");
 			DownedFrostNova = tag.ContainsKey("ArknightsMod.DownedFrostNova");
@@ -73,7 +79,7 @@ namespace ArknightsMod.Systems
 
 		public override void NetSend(BinaryWriter writer)
 		{
-			BitsByte flags = new BitsByte(DownedPompeii, DownedTheFirstToTalk, DownedFrostNova, DownedAACT, DownedEvolution, DownedW);
+			BitsByte flags = new BitsByte(DownedPompeii, DownedTheFirstToTalk, DownedFrostNova, DownedAACT, DownedEvolution, DownedW, DownedFaustAndMephisto);
 			writer.Write(flags);
 		}
 
@@ -82,6 +88,7 @@ namespace ArknightsMod.Systems
 			BitsByte flags = reader.ReadByte();
 			DownedPompeii = flags[0]; DownedTheFirstToTalk = flags[1]; DownedFrostNova = flags[2];
 			DownedAACT = flags[3]; DownedEvolution = flags[4]; DownedW = flags[5];
+			DownedFaustAndMephisto = flags[6];
 		}
 	}
 }

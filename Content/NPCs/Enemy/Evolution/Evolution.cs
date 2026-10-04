@@ -70,6 +70,7 @@ public sealed partial class Evolution : ModNPC
         Arena.X = MathHelper.Clamp(Arena.X, 400, Main.maxTilesX * 16 - 400);
         Arena.Y = MathHelper.Clamp(Arena.Y, 240, Main.maxTilesY * 16 - 400);
         NPC.Center = Anchor = Arena;
+        PlaceGroundNest(player);
         Aim = player.Center;
         NPC.ai[0] = 1; NPC.ai[1] = -90; NPC.netUpdate = true;
     }
@@ -123,6 +124,10 @@ public sealed partial class Evolution : ModNPC
             return;
         }
         noPlayerTime = 0;
+        int bodyHeight = Phase <= 2 ? 260 : 158;
+        if (NPC.height != bodyHeight) { Vector2 center = NPC.Center; NPC.height = bodyHeight; NPC.Center = center; }
+        NPC.noGravity = NPC.noTileCollide = Phase != 1;
+        if (Phase == 1) { NPC.velocity.X = 0; Anchor = NPC.Center; }
         Player target = Main.player[NPC.target];
         NPC.ai[3]++;
         if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -142,7 +147,7 @@ public sealed partial class Evolution : ModNPC
         }
         else if (Timer < 0) NPC.velocity *= .94f;
         else if (Transitioning) DoTransition(target);
-        else if (Phase == 1) { NPC.Center = Arena; NPC.velocity = Vector2.Zero; DoNewborn(target); }
+        else if (Phase == 1) DoNewborn(target);
         else if (NPC.Distance(target.Center) > 1300 && Timer < 25)
         {
             MoveTo(target.Center + new Vector2(NPC.Center.X < target.Center.X ? -480 : 480, -180), 34, .07f);
@@ -162,6 +167,7 @@ public sealed partial class Evolution : ModNPC
         ClearBrood(); ClearHazards(); Serial++;
         NPC.ai[0] = phase; NPC.ai[1] = 0; NPC.ai[2] = 0;
         Anchor = NPC.Center; NPC.velocity *= .25f; NPC.dontTakeDamage = true; NPC.netUpdate = true;
+        NPC.noGravity = NPC.noTileCollide = phase != 1;
     }
     private void NextAttack()
     {
@@ -260,6 +266,7 @@ public sealed partial class Evolution : ModNPC
             brood.Encounter = Encounter; brood.Fuse = fuse; brood.Gap = gap; brood.FlightAnchor = center; brood.NPC.Center = center; brood.NPC.netUpdate = true;
             brood.NPC.dontTakeDamage = true;
             brood.NPC.chaseable = Phase < 3;
+            if (Phase == 1) { brood.InitializeGroundBody(); brood.NPC.Center = center; }
         }
     }
     public override void ModifyNPCLoot(NPCLoot loot)
@@ -307,6 +314,7 @@ public sealed partial class Evolution : ModNPC
         float breathe = 1 + MathF.Sin(breathingPhase) * (.025f + charge * .018f);
         float opacity = Phase == 6 ? MathHelper.Clamp(1 - Timer / 105f, 0, 1) : MathHelper.Clamp((NPC.ai[3]) / 60f, .1f, 1);
         Vector2 origin = name == "Perfect" ? new Vector2(119, 112) : name == "Evolved" ? new Vector2(95, 108) : new Vector2(85, 107);
+        if (Phase <= 2) origin.Y = 155; // 育生形态以触肢底部贴地，不把原悬浮锚点埋进土里。
         SpriteEffects flip = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
         if (flip != SpriteEffects.None) origin.X = texture.Width - origin.X;
         Vector2 scale = new(breathe * (1 + NPC.velocity.Length() * .003f), 1 / breathe);
@@ -337,7 +345,7 @@ public sealed partial class Evolution : ModNPC
         else spriteBatch.Draw(texture, NPC.Center - screenPos, null, bodyColor, NPC.rotation, origin, scale, flip, 0);
         if (DashWarning > 0) EvolutionVisuals.AimLine(NPC.Center, NPC.Center + DashDirection * EvolutionRules.ChargeDistance(Phase == 5, Desperate), DashWarning);
         EvolutionCinematics.DrawRevealedBody(this, spriteBatch, screenPos, scale, flip, opacity);
-        if ((!Transitioning && visualPulse > 0) || (Transitioning && Timer < 100))
+        if ((Phase != 1 && !Transitioning && visualPulse > 0) || (Transitioning && Timer < 100))
         {
             Texture2D shield = EvolutionVisuals.Asset(Phase == 4 ? "ShieldPerfect" : Timer > 300 ? "ShieldCracked" : "Shield");
             float shieldScale = 250f / shield.Width * (1 + MathF.Sin(time * .16f) * .035f);

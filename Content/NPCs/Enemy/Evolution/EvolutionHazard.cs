@@ -71,6 +71,7 @@ public sealed partial class EvolutionHazard : ModProjectile
             EvolutionShot.Eruption => Age >= FireAge + 6 && Age < FireAge + 26 ? null : false,
             EvolutionShot.Rock when Parameter > 0 => Age >= FireAge ? null : false,
             EvolutionShot.Pulse => Age >= 30 ? null : false,
+            EvolutionShot.Radiation => Age >= FireAge && Age < FireAge + EvolutionNestRules.RadiationDuration ? null : false,
             _ => Age >= 18 ? null : false
         };
     }
@@ -84,6 +85,7 @@ public sealed partial class EvolutionHazard : ModProjectile
             return;
         }
         Projectile.ai[1]++;
+        if (Kind == EvolutionShot.Radiation) { UpdateRadiation(boss); return; }
         if (IsAxis) { UpdateHemalAxis(boss); return; }
         if (Kind == EvolutionShot.Lance && Age >= FireAge && (Age - FireAge + 1) * Projectile.velocity.Length() + 24 > Parameter)
         { Projectile.hostile = false; Projectile.Kill(); return; }
@@ -185,6 +187,7 @@ public sealed partial class EvolutionHazard : ModProjectile
     }
     public override bool? Colliding(Rectangle projHitbox, Rectangle box)
     {
+        if (Kind == EvolutionShot.Radiation) return RadiationCollides(box);
         Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitY);
         if (IsAxis)
         {
@@ -235,6 +238,7 @@ public sealed partial class EvolutionHazard : ModProjectile
     }
     public override bool PreDraw(ref Color lightColor)
     {
+        if (Kind == EvolutionShot.Radiation) { DrawRadiation(); return false; }
         if (IsAxis)
         {
             for (int ray = 0; ray < EvolutionRules.AxisRayCount; ray++)

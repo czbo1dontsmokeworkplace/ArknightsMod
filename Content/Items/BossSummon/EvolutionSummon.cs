@@ -10,7 +10,6 @@ namespace ArknightsMod.Content.Items.BossSummon;
 
 public sealed class EvolutionSummon : ModItem
 {
-    public override string Texture => EvolutionVisuals.Root + "Specimen";
     public override void SetStaticDefaults()
     {
         Item.ResearchUnlockCount = 1;
@@ -18,7 +17,7 @@ public sealed class EvolutionSummon : ModItem
     }
     public override void SetDefaults()
     {
-        Item.width = 52; Item.height = 40;
+        Item.width = 32; Item.height = 32;
         Item.maxStack = 1; Item.rare = ItemRarityID.Pink;
         Item.useAnimation = Item.useTime = 45;
         Item.useStyle = ItemUseStyleID.HoldUp;
@@ -36,6 +35,12 @@ public sealed class EvolutionSummon : ModItem
         }
         return true;
     }
-    public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.HallowedBar, 8).AddIngredient(ItemID.SoulofLight, 6)
-        .AddIngredient(ItemID.SoulofNight, 6).AddIngredient<OriginiumShard>(20).AddTile(TileID.MythrilAnvil).Register();
+    public override void AddRecipes()
+    {
+        // 凝胶水晶是史莱姆皇后的召唤物；两种邪恶材料任选其一。
+        foreach (int material in new[] { ItemID.TissueSample, ItemID.ShadowScale })
+            CreateRecipe().AddIngredient(ItemID.QueenSlimeCrystal)
+                .AddIngredient(material, 5).AddIngredient<OriginiumShard>()
+                .AddTile(TileID.DemonAltar).Register();
+    }
 }

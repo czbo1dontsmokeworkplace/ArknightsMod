@@ -8,8 +8,6 @@ namespace ArknightsMod.Content.Items.Evolution;
 
 public sealed class EvolutionTreasureBag : ModItem
 {
-    // Reuse the supplied fleshy sac icon; no placeholder vanilla bag or new art dependency.
-    public override string Texture => EvolutionVisuals.Root + "Excrescence";
     public override void SetStaticDefaults()
     {
         Item.ResearchUnlockCount = 3;

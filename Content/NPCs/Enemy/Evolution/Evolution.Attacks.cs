@@ -9,31 +9,7 @@ public sealed partial class Evolution
 {
     private void DoNewborn(Player player)
     {
-        PreparePattern(player);
-        int t = Timer;
-        if (t == 0) ClearBrood();
-        if (t == 45 || t == 105)
-        {
-            var groups = EvolutionRules.NewbornGroups(Attack);
-            int groupIndex = t == 45 ? 0 : 1;
-            if (groupIndex < groups.Length)
-            {
-                var group = groups[groupIndex];
-                for (int i = 0; i < group.Count; i++)
-                {
-                    float side = i % 2 == 0 ? -1 : 1;
-                    Vector2 offset = group.Preset == EvolutionBroodPreset.Rain ? new Vector2((i - 2.5f) * 190, -430) :
-                        group.Kind is EvolutionBrood.Tumor or EvolutionBrood.Bomb ? (i * MathHelper.TwoPi / group.Count + .4f).ToRotationVector2() * 690 :
-                        new Vector2(side * (530 + i % 3 * 90), group.Preset == EvolutionBroodPreset.Ambush ? 260 : -220 + i * 80);
-                    SpawnBrood(group.Kind, Arena + offset, Attack == 3 ? 200 + i * 22 : 265 + i * 24,
-                        (player.Center - Arena - offset).ToRotation(), side, group.Preset, i);
-                }
-            }
-        }
-        // Each programme has its own pacing; the body no longer repeats the same support volley.
-        if (t == 205 && Attack == 0) BloodFan(player, 3);
-        if (t == 190 && Attack == 4) Shoot(EvolutionShot.Core, NPC.Center, -Vector2.UnitY * 5, delay: 50, lifetime: 75);
-        if (t >= EvolutionRules.NewbornDuration(Attack)) NextAttack();
+        DoGroundNest(player);
     }
     private void DoEvolved(Player player)
     {
@@ -214,7 +190,7 @@ public sealed partial class Evolution
         NPC.dontTakeDamage = true;
         if (Phase == 2)
         {
-            NPC.Center = Arena; NPC.velocity = Vector2.Zero;
+            NPC.Center = Anchor; NPC.velocity = Vector2.Zero;
             if (t == 20) BloodFan(player, 7);
             if (t == 70) for (int i = 0; i < 3; i++) Shoot(EvolutionShot.Beam, NPC.Center, FormationDirection(NPC.Center, i, 3, .4f), 1850, 36, 64);
             if (t == 120) LaserWall(PatternCenter, MathHelper.PiOver2, 0, 36);

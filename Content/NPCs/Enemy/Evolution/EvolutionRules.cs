@@ -128,7 +128,7 @@ internal static class EvolutionRules
     public static int ContactDamage(int phase, bool charge, bool desperate = false) => EvolutionDamageCockpit.BossContactDamage(phase, charge, desperate);
 }
 
-internal enum EvolutionShot { Blood, Spirit, Beam, Rock, Tentacle, Pulse, Core, Spike, Fragment, DashMarker, Lance, CrimsonBomb, Eruption }
+internal enum EvolutionShot { Blood, Spirit, Beam, Rock, Tentacle, Pulse, Core, Spike, Fragment, DashMarker, Lance, CrimsonBomb, Eruption, Radiation }
 internal enum EvolutionBeamStyle : byte { Standard, Pulse, Axis }
 internal enum EvolutionBrood { Spider, GiantSpider, Puppet, Abomination, Tumor, Bomb }
 internal enum EvolutionBroodPreset : byte { Hunter, Rain, Siege, Minefield, Weaver, Ambush, Seeder, Artillery, Conductor }
