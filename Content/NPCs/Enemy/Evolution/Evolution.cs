@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Collections.Generic;
 using ArknightsMod.Content.Items.Evolution;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -21,6 +22,7 @@ public sealed partial class Evolution : ModNPC
     internal int Encounter, Serial;
     internal Vector2 Arena, Aim, DashDirection, Anchor;
     internal bool Desperate, Charging;
+    internal int DashVariant = -1;
     internal float DashWarning;
     internal EvolutionCinematicPlayback Cinema;
     internal int Phase => (int)NPC.ai[0];
@@ -28,7 +30,8 @@ public sealed partial class Evolution : ModNPC
     internal int Attack => EvolutionRules.Attack(Phase, (int)NPC.ai[2], Desperate);
     internal bool Transitioning => Phase is 2 or 4;
     internal bool ArenaActive => Phase is 1 or 2;
-    private int noPlayerTime, visualPulse;
+    private int noPlayerTime, visualPulse, lastAxisReflection = -1000;
+    private readonly List<Projectile> axisReflectionCandidates = new(12);
     private int lastVisualPhase = -1;
     private bool lastVisualDesperate;
     public override string Texture => EvolutionVisuals.Root + "Newborn";
@@ -110,7 +113,7 @@ public sealed partial class Evolution : ModNPC
     public override void AI()
     {
         if (Phase == 0) return;
-        Charging = false; DashWarning = 0; NPC.damage = 0;
+        Charging = false; DashWarning = 0; DashVariant = -1; NPC.damage = 0;
         NPC.dontTakeDamage = Transitioning || Phase == 6 || Timer < -36 || AxisHealthLocked;
         if (!NPC.HasValidTarget || !Main.player[NPC.target].active || Main.player[NPC.target].dead) NPC.TargetClosest(false);
         if (!NPC.HasValidTarget || NPC.Distance(Main.player[NPC.target].Center) > 7000)
@@ -186,7 +189,8 @@ public sealed partial class Evolution : ModNPC
     private void Hover(Player player, float angle = 0) => MoveTo(PatternCenter + new Vector2(MathF.Cos(angle + (int)NPC.ai[2] * 2.3f) * 560,
         -400 + MathF.Sin(angle) * 120), Phase == 5 ? 20 : 14);
     internal void Shoot(EvolutionShot kind, Vector2 origin, Vector2 velocity, float parameter = 0, int delay = 42, int lifetime = 230, bool peripheral = false,
-        EvolutionBeamStyle beamStyle = EvolutionBeamStyle.Standard, bool blade = false, bool gentleHoming = false)
+        EvolutionBeamStyle beamStyle = EvolutionBeamStyle.Standard, bool blade = false, bool gentleHoming = false, bool stagedSpirit = false,
+        bool quietLaunch = false)
     {
         if (Main.netMode == NetmodeID.MultiplayerClient) return;
         int count = 0;
@@ -208,7 +212,8 @@ public sealed partial class Evolution : ModNPC
         {
             hazard.Encounter = Encounter; hazard.Serial = Serial; hazard.Target = NPC.target;
             hazard.Parameter = parameter; hazard.Delay = delay; hazard.Lifetime = lifetime; hazard.Projectile.netUpdate = true;
-            hazard.BeamStyle = beamStyle; hazard.Blade = blade; hazard.GentleHoming = gentleHoming;
+            hazard.BeamStyle = beamStyle; hazard.Blade = blade; hazard.GentleHoming = gentleHoming; hazard.StagedSpirit = stagedSpirit;
+            hazard.QuietLaunch = quietLaunch;
             hazard.BurstAngle = (PatternCenter - origin).ToRotation() + MathHelper.Pi / 12;
             hazard.Projectile.timeLeft = Math.Max(600, lifetime + 30);
         }
@@ -343,13 +348,18 @@ public sealed partial class Evolution : ModNPC
         Color bodyColor = Color.White * (opacity * (1 - EvolutionCinematics.BodyDissolve(this)));
         if (name == "Evolved") EvolutionVisuals.DrawEvolved(spriteBatch, NPC.Center - screenPos, bodyColor, NPC.rotation, scale, flip);
         else spriteBatch.Draw(texture, NPC.Center - screenPos, null, bodyColor, NPC.rotation, origin, scale, flip, 0);
-        if (DashWarning > 0) EvolutionVisuals.AimLine(NPC.Center, NPC.Center + DashDirection * EvolutionRules.ChargeDistance(Phase == 5, Desperate), DashWarning);
-        EvolutionCinematics.DrawRevealedBody(this, spriteBatch, screenPos, scale, flip, opacity);
-        if ((Phase != 1 && !Transitioning && visualPulse > 0) || (Transitioning && Timer < 100))
+        if (DashWarning > 0)
         {
-            Texture2D shield = EvolutionVisuals.Asset(Phase == 4 ? "ShieldPerfect" : Timer > 300 ? "ShieldCracked" : "Shield");
+            EvolutionVisuals.AimLine(NPC.Center, NPC.Center + DashDirection * EvolutionRules.ChargeDistance(Phase == 5, Desperate), DashWarning);
+            // 本体从远处起手，变体标记放在玩家附近的预瞄线上，确保能读到。
+            EvolutionVisuals.ChargeVariantWarning(Vector2.Lerp(NPC.Center, Aim, .72f), DashDirection, DashVariant, DashWarning);
+        }
+        EvolutionCinematics.DrawRevealedBody(this, spriteBatch, screenPos, scale, flip, opacity);
+        if ((Phase != 1 && !Transitioning && visualPulse > 0) || (Transitioning && Timer < 100) || AxisHealthLocked)
+        {
+            Texture2D shield = EvolutionVisuals.Asset(AxisHealthLocked || Phase == 4 ? "ShieldPerfect" : Timer > 300 ? "ShieldCracked" : "Shield");
             float shieldScale = 250f / shield.Width * (1 + MathF.Sin(time * .16f) * .035f);
-            float shieldOpacity = Transitioning ? .75f * (1 - EvolutionCinematicFrame.Smooth(35, 100, Timer)) : .75f;
+            float shieldOpacity = AxisHealthLocked ? .48f : Transitioning ? .75f * (1 - EvolutionCinematicFrame.Smooth(35, 100, Timer)) : .75f;
             spriteBatch.Draw(shield, NPC.Center - screenPos, null, (glow with { A = 0 }) * shieldOpacity, 0, shield.Size() * .5f, shieldScale, SpriteEffects.None, 0);
             EvolutionVisuals.Glow(NPC.Center, EvolutionVisuals.Core * .2f, new Vector2(170));
         }

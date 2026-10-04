@@ -140,6 +140,7 @@ Tiles: {
 	OrirockCubeTile.MapEntry: Orirock Cube Tile
 	RMA7012Tile.MapEntry: R M A7012 Tile
 	FactoryPlusTile.MapEntry: Factory Plus Tile
+	FogRollingGrass.MapEntry: 雾滚草
 }
 
 Projectiles: {

@@ -114,6 +114,9 @@ public sealed partial class Evolution
             if (Timer >= stride * 3 + 145) NextAttack();
             return;
         }
+        // 每组三连各出现一次；下一次冲刺招式轮换起始变体。
+        int variant = EvolutionRules.ChargeVariant(cycle, (int)NPC.ai[2]);
+        DashVariant = variant;
         if (t < lockTime) MoveTo(player.Center + new Vector2((cycle % 2 == 0 ? -1 : 1) * (perfect ? 1280 : 1120), -80), perfect ? 34 : 30, .18f);
         if (t == lockTime)
         {
@@ -138,10 +141,47 @@ public sealed partial class Evolution
             NPC.velocity = DashDirection * (perfect ? 36 : 32) * EvolutionRules.Aggression(Phase) * (Desperate ? 1.1f : 1) * momentum;
             if (perfect && !Main.dedServ && (t - launch) % 3 == 0)
                 EvolutionVisuals.ChargeWake(NPC.Center, DashDirection, (t - launch) / (float)(end - launch));
+            int dashAge = t - launch;
+            if (variant == 0 && (dashAge == (end - launch) / 3 || dashAge == (end - launch) * 2 / 3))
+                DashRing(NPC.Center, DashDirection);
+            else if (variant == 1 && (dashAge == (end - launch) / 3 || dashAge == (end - launch) * 2 / 3))
+                DashResidue(NPC.Center, DashDirection);
+            else if (variant == 2)
+            {
+                if (dashAge >= 8 && dashAge % 9 == 8) DashMistBurst(NPC.Center, DashDirection);
+                if (!Main.dedServ && dashAge % 3 == 0) EvolutionVisuals.ChargeMist(NPC.Center, DashDirection);
+            }
         }
         if (t == launch) { EvolutionVisuals.Burst(NPC.Center, 1.4f); EvolutionImpactSystem.Emit(NPC.Center, 340, perfect ? 8 : 6); }
         if (t >= end) NPC.velocity *= perfect ? .86f : .76f;
-        if (perfect && t == end) SpiritFan(player, NPC.Center, 5, stride * 3 - Timer + 18);
+    }
+    private void DashRing(Vector2 center, Vector2 direction)
+    {
+        // 两侧各留约60度出口；静止蓄光后直线扩散，不朝玩家二次修正。
+        float angle = direction.ToRotation() + MathHelper.PiOver2;
+        for (int i = 0; i < 12; i++)
+        {
+            if (i is 0 or 1 or 6 or 7) continue;
+            Vector2 outward = (angle + i * MathHelper.TwoPi / 12).ToRotationVector2();
+            Shoot(EvolutionShot.Spirit, center + outward * 58, outward * 4.5f,
+                delay: 26, lifetime: 126, stagedSpirit: true);
+        }
+        if (!Main.dedServ) EvolutionVisuals.Burst(center, .55f, false);
+    }
+    private void DashResidue(Vector2 center, Vector2 direction)
+    {
+        Vector2 normal = direction.RotatedBy(MathHelper.PiOver2);
+        for (int side = -1; side <= 1; side += 2)
+            Shoot(EvolutionShot.Lance, center + normal * (side * 72), direction * 27,
+                500, 32, 104, blade: true);
+    }
+    private void DashMistBurst(Vector2 center, Vector2 direction)
+    {
+        Vector2 normal = direction.RotatedBy(MathHelper.PiOver2);
+        for (int side = -1; side <= 1; side += 2)
+            Shoot(EvolutionShot.Spirit, center + normal * (side * 48),
+                (normal * side + direction * .18f).SafeNormalize(normal * side) * 4,
+                delay: 34, lifetime: 124, stagedSpirit: true);
     }
     private void SpiritFan(Player player, Vector2 origin, int count, int delay)
     {

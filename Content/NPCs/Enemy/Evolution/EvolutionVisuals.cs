@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using ArknightsMod.Common.Particle;
+using ArknightsMod.Common.VisualEffects;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -62,6 +63,34 @@ internal static class EvolutionVisuals
         {
             new DefaultParticle(center - direction * 52 + normal * side * 36, -direction * (8 + progress * 12) + normal * side * 2,
                 18, .62f, side > 0 ? Blood : Core, true) { Deformation = new Vector2(.35f, 2.2f) }.Spawn();
+        }
+    }
+    internal static void ChargeMist(Vector2 center, Vector2 direction)
+    {
+        if (Main.dedServ || EvolutionCinematics.Reduced) return;
+        Vector2 normal = direction.RotatedBy(MathHelper.PiOver2);
+        for (int side = -1; side <= 1; side += 2)
+            OperatorTextureEffects.Puff(center - direction * 70 + normal * (side * 50),
+                -direction * 1.1f + normal * (side * 1.6f), new Color(147, 27, 47), 52, 43);
+    }
+    internal static void ChargeVariantWarning(Vector2 center, Vector2 direction, int variant, float opacity)
+    {
+        if (variant < 0) return;
+        Vector2 normal = direction.RotatedBy(MathHelper.PiOver2);
+        switch (variant)
+        {
+            case 0:
+                Ring(center, 27 + opacity * 9, 0, Blood * (.6f * opacity), 2, false);
+                break;
+            case 1:
+                for (int side = -1; side <= 1; side += 2)
+                    Line(center - direction * 42 + normal * (side * 15), center + direction * 25 + normal * (side * 15),
+                        Core * (.5f * opacity), 2);
+                break;
+            case 2:
+                Glow(center - direction * 16 + normal * 16, Blood * (.3f * opacity), new Vector2(55, 38));
+                Glow(center - direction * 16 - normal * 16, Blood * (.3f * opacity), new Vector2(55, 38));
+                break;
         }
     }
     internal static void BroodOrb(Vector2 center, EvolutionBrood kind, int age, float opacity, bool support)

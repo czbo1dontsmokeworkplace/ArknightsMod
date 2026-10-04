@@ -40,7 +40,10 @@ public sealed class EvolutionSummon : ModItem
         // 凝胶水晶是史莱姆皇后的召唤物；两种邪恶材料任选其一。
         foreach (int material in new[] { ItemID.TissueSample, ItemID.ShadowScale })
             CreateRecipe().AddIngredient(ItemID.QueenSlimeCrystal)
-                .AddIngredient(material, 5).AddIngredient<OriginiumShard>()
-                .AddTile(TileID.DemonAltar).Register();
+                .AddIngredient(ItemID.SoulofMight)
+                .AddIngredient(ItemID.SoulofSight)
+                .AddIngredient(ItemID.SoulofFright)
+                .AddIngredient(material, 5)
+                .AddTile(TileID.FleshCloningVat).Register();
     }
 }

@@ -35,6 +35,7 @@ internal static class EvolutionDamageCockpit
         (EvolutionShot.CrimsonBomb, "深红炸弹",   "Crimson Bomb",        41), // 仅范围爆炸型使用此伤害；分裂型只由碎片伤人。
         (EvolutionShot.Eruption,    "血色喷柱",   "Blood Eruption",      39), // 从地面/平台向上喷发的柱体。
         (EvolutionShot.Radiation,   "育生辐射波", "Brood Radiation",     31), // 第一阶段五向短程弧形波；只有可见波纹伤人。
+        (EvolutionShot.Reflection,  "反射血刃",   "Reflected Blood Blade", 30), // 光轴护盾吞入玩家射弹后弹回；固定伤害，不继承玩家武器伤害。
     };
 
     // 普通表已经逐项乘以90%并向下取整（伤害只能是整数）；提示弹幕仍为0。
