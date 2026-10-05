@@ -24,7 +24,6 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Pramanix
 		private readonly List<Vector2> trail = new();
 		private readonly HashSet<int> hitNpcIds = new();
 
-		// ai[0]: 发射方向 (+1 或 -1)
 		public override string Texture => "ArknightsMod/Assets/null";
 
 		public override void SetStaticDefaults() {
@@ -46,7 +45,6 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Pramanix
 		public override void OnSpawn(IEntitySource source) {
 			trail.Clear();
 			hitNpcIds.Clear();
-			Projectile.ai[0] = Projectile.velocity.X >= 0f ? 1f : -1f;
 		}
 
 		public override void AI() {
@@ -104,12 +102,12 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Pramanix
 			FrostDomainLogic.StrikeMagic(owner, npc, damage);
 			npc.AddBuff(ModContent.BuffType<PramanixSlowDebuff>(), SaintBellPlayer.Skill1ColdTicks);
 
-			int dir = (int)Projectile.ai[0];
 			float resist = MathHelper.Clamp(npc.knockBackResist, 0f, 1f);
 			float kb = Math.Max(SaintBellPlayer.Skill1BossKnockbackMin, SaintBellPlayer.Skill1KnockbackForce * resist);
 			// 小怪（knockBackResist≈1）大幅击飞，BOSS（knockBackResist≈0）仅轻微位移
-			npc.velocity.X = dir * kb;
-			npc.velocity.Y = -SaintBellPlayer.Skill1KnockbackVertical * MathHelper.Clamp(resist, 0.05f, 1f);
+			Vector2 knockbackDirection = Projectile.velocity.SafeNormalize(new Vector2(owner.direction, 0f));
+			npc.velocity = knockbackDirection * kb;
+			npc.velocity.Y -= SaintBellPlayer.Skill1KnockbackVertical * MathHelper.Clamp(resist, 0.05f, 1f);
 			npc.netUpdate = true;
 
 			PramanixColdAttachment.GrantKnockbackGrace(npc);

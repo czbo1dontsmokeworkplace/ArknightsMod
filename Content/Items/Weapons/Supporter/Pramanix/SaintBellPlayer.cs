@@ -231,39 +231,43 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Pramanix
 			wp.SkillTimer  = 0;
 			wp.SkillActive = false;
 
-			SpawnSkill1Snowflakes();
-			SpawnSkill1GroundSnow();
+			Vector2 aim = (Main.MouseWorld - Player.Center).SafeNormalize(new Vector2(Player.direction, 0f));
+			SpawnSkill1Snowflakes(aim);
+			SpawnSkill1GroundSnow(aim);
 		}
 
-		private void SpawnSkill1Snowflakes() {
+		private void SpawnSkill1Snowflakes(Vector2 aim) {
 			if (Player.whoAmI != Main.myPlayer)
 				return;
 
 			var source   = Player.GetSource_ItemUse(Player.HeldItem);
 			int projType = ModContent.ProjectileType<PramanixSkill1Snowflake>();
 
-			// 6片雪花，垂直分布形成"风墙"外观
-			float[] yOffsets = [-88f, -60f, -35f, -12f, 12f, 32f];
+			// 6片雪花沿瞄准方向的垂线分布，形成"风墙"外观
+			float[] spreadOffsets = [-88f, -60f, -35f, -12f, 12f, 32f];
 			float baseSpeed  = 15f;
+			Vector2 spread = new(-aim.Y, aim.X);
+			if (aim.X < 0f)
+				spread = -spread;
 
 			for (int i = 0; i < 6; i++) {
-				float yOff   = yOffsets[i] + Main.rand.NextFloat(-5f, 5f);
-				float xOff   = Main.rand.NextFloat(-13f, 13f);
-				Vector2 pos  = Player.Center + new Vector2(Player.direction * xOff, yOff);
-				float speedX = baseSpeed + Main.rand.NextFloat(-0.9f, 0.9f);
-				float speedY = Main.rand.NextFloat(-0.45f, 0.45f);
-				Vector2 vel  = new(Player.direction * speedX, speedY);
+				float sideOffset = spreadOffsets[i] + Main.rand.NextFloat(-5f, 5f);
+				float forwardOffset = Main.rand.NextFloat(-13f, 13f);
+				Vector2 pos = Player.Center + spread * sideOffset + aim * forwardOffset;
+				float forwardSpeed = baseSpeed + Main.rand.NextFloat(-0.9f, 0.9f);
+				float sideSpeed = Main.rand.NextFloat(-0.45f, 0.45f);
+				Vector2 vel = aim * forwardSpeed + spread * sideSpeed;
 				Projectile.NewProjectile(source, pos, vel, projType, 0, 0f, Player.whoAmI);
 			}
 		}
 
 		// 积雪向前方地面扩散（最多5格）的视觉效果
-		private void SpawnSkill1GroundSnow() {
+		private void SpawnSkill1GroundSnow(Vector2 aim) {
 			if (Player.whoAmI != Main.myPlayer || Main.netMode == NetmodeID.Server)
 				return;
 
 			Vector2 feet = Player.Bottom;
-			int dir      = Player.direction;
+			int dir      = aim.X == 0f ? Player.direction : Math.Sign(aim.X);
 			float maxX   = Skill1SnowSpreadTiles * 16f;
 
 			for (int i = 0; i < 22; i++) {

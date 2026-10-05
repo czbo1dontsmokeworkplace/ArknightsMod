@@ -29,7 +29,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 		{
 			NPC.width = 20;
 			NPC.height = 20;
-			NPC.lifeMax = 80;
+			NPC.lifeMax = 32;
 			NPC.damage = 0;
 			NPC.defense = 0;
 			NPC.knockBackResist = 0.2f;
