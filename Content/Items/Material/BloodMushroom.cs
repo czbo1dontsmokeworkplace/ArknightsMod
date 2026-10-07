@@ -9,6 +9,7 @@ namespace ArknightsMod.Content.Items.Material
 	public class BloodMushroom : RareCollectibleItem
 	{
 		public override int BaseOriginiumIngotValue => BloodMushroomPlayer.BaseValue;
+		protected override int PlaceableTileType => ModContent.TileType<Tiles.BloodMushroom>();
 
 		public override void UpdateInventory(Player player) {
 			var bloodPlayer = player.GetModPlayer<BloodMushroomPlayer>();

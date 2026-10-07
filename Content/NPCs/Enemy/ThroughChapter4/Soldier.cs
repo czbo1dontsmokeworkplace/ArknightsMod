@@ -1,3 +1,4 @@
+using ArknightsMod.Common.ItemDropRules;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -174,8 +175,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
 
 
-			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Material.DamagedDevice>(), 8, 1, 1));
-			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Material.Diketon>(), 8, 1, 1));
+			npcLoot.Add(new ConfiguredPercentageDropRule(ModContent.ItemType<Items.Material.DamagedDevice>(), () => ModContent.GetInstance<Dropconfig>().DropSoldier1Percent));
+			npcLoot.Add(new ConfiguredPercentageDropRule(ModContent.ItemType<Items.Material.Diketon>(), () => ModContent.GetInstance<Dropconfig>().DropSoldier2Percent));
 
 
 		}

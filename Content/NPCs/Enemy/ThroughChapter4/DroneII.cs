@@ -1,4 +1,5 @@
-﻿using ArknightsMod.Content.Items.Material;
+﻿using ArknightsMod.Common.ItemDropRules;
+using ArknightsMod.Content.Items.Material;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -94,8 +95,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		}
 
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
-			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OrironShard>(), ModContent.GetInstance<Dropconfig>().DropDrone1, 2, 5));
-			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Ester>(), ModContent.GetInstance<Dropconfig>().DropDrone2 * 2, 1, 2));
+			npcLoot.Add(new ConfiguredPercentageDropRule(ModContent.ItemType<OrironShard>(), () => ModContent.GetInstance<Dropconfig>().DropDrone1Percent, 2, 5));
+			npcLoot.Add(new ConfiguredPercentageDropRule(ModContent.ItemType<Ester>(), () => ModContent.GetInstance<Dropconfig>().DropDrone2Percent, 1, 2));
 		}
 
 		public override void OnSpawn(IEntitySource source) {

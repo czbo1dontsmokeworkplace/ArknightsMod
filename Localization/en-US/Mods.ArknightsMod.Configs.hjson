@@ -87,61 +87,56 @@ MusicConfig: {
 }
 
 Dropconfig: {
-	DisplayName: Dropconfig
+	DisplayName: Loot Drop Chances
 
-	DropOriginiumSlug: {
-		Label: Drop Originium Slug
-		Tooltip: ""
+	DropOriginiumSlugPercent: {
+		Label: Originium Slug Orirock Cube chance (%)
+		Tooltip: Enter a percentage: 0 disables the drop, 100 guarantees it. Decimals are supported; changes apply when saved.
 	}
 
-	DropOriginiumSlugAlpha: {
-		Label: Drop Originium Slug Alpha
-		Tooltip: ""
+	DropOriginiumSlugAlphaPercent: {
+		Label: Originium Slug Alpha Orirock Cube chance (%)
+		Tooltip: Enter a percentage: 0 disables the drop, 100 guarantees it. Decimals are supported; changes apply when saved.
 	}
 
-	DropOriginiumSlugBeta: {
-		Label: Drop Originium Slug Beta
-		Tooltip: ""
+	DropOriginiumSlugBetaPercent: {
+		Label: Originium Slug Beta Integrated Device chance (%)
+		Tooltip: Enter a percentage: 0 disables the drop, 100 guarantees it. Decimals are supported; changes apply when saved.
 	}
 
-	DropSoldier1: {
-		Label: Drop Soldier1
-		Tooltip: ""
+	DropSoldier1Percent: {
+		Label: Soldier Damaged Device chance (%)
+		Tooltip: Enter a percentage: 0 disables the drop, 100 guarantees it. Decimals are supported; changes apply when saved.
 	}
 
-	DropSoldier2: {
-		Label: Drop Soldier2
-		Tooltip: ""
+	DropSoldier2Percent: {
+		Label: Soldier Diketon chance (%)
+		Tooltip: Enter a percentage: 0 disables the drop, 100 guarantees it. Decimals are supported; changes apply when saved.
 	}
 
-	DropAcidOgSlug: {
-		Label: Drop Acid Og Slug
-		Tooltip: ""
+	DropLSPercent: {
+		Label: Shorthorn Leporibeast Round Meat chance (%)
+		Tooltip: Enter a percentage: 0 disables the drop, 100 guarantees it. Decimals are supported; changes apply when saved.
 	}
 
-	DropLS: {
-		Label: Drop L S
-		Tooltip: ""
+	DropAcidOgSlug1Percent: {
+		Label: Acid Originium Slug Polyester chance (%)
+		Tooltip: Enter a percentage: 0 disables the drop, 100 guarantees it. Decimals are supported; changes apply when saved.
 	}
 
-	DropAcidOgSlug1: {
-		Label: Drop Acid Og Slug1
-		Tooltip: ""
+	DropAcidOgSlug2Percent: {
+		Label: Acid Originium Slug Loxic Kohl chance (%)
+		Tooltip: Enter a percentage: 0 disables the drop, 100 guarantees it. Decimals are supported; changes apply when saved.
 	}
 
-	DropAcidOgSlug2: {
-		Label: Drop Acid Og Slug2
-		Tooltip: ""
+	DropDrone1Percent: {
+		Label: Drone Oriron Shard chance (%)
+		Tooltip: Drone and Drone II share this percentage. 0 disables the drop; 100 guarantees it. Changes apply when saved.
 	}
 
-	DropDrone1: {
-		Label: Drop Drone1
-		Tooltip: ""
-	}
-
-	DropDrone2: {
-		Label: Drop Drone2
-		Tooltip: ""
+	DropDrone2Percent: {
+		Label: Drone Ester chance (%)
+		Tooltip: Drone and Drone II share this percentage. 0 disables the drop; 100 guarantees it. Changes apply when saved.
 	}
 }
 

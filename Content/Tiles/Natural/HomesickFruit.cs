@@ -25,9 +25,6 @@ namespace ArknightsMod.Content.Tiles.Natural
 			TileObjectData.newTile.CoordinateWidth = 16;
 			TileObjectData.newTile.CoordinatePadding = 2;
 			TileObjectData.newTile.CoordinateHeights = new[] { 16, 16, 16 };
-			TileObjectData.newTile.AnchorValidTiles = new int[] {
-				TileID.Grass, TileID.BlueMoss, TileID.GreenMoss, TileID.PurpleMoss, TileID.RedMoss, TileID.BrownMoss
-			};
 			TileObjectData.newTile.AnchorBottom = AnchorData.Empty;
 			TileObjectData.newTile.AnchorTop = new AnchorData(AnchorType.SolidTile, TileObjectData.newTile.Width, 0);
 			TileObjectData.newTile.DrawYOffset = -6;

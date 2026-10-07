@@ -10,8 +10,8 @@ using Terraria.ObjectData;
 
 namespace ArknightsMod.Content.Tiles.Natural
 {
-	// 4x2，锚定在水体里（AnchorType.Water），只有玩家背包里已经有别的自然物时才会尝试刷新，
-	// 具体判定在 BoardVinePlayer 里。
+	// 4x2，自然刷新要求浸在水中且玩家背包里已有别的自然物；手动放置可用于普通建筑装饰。
+	// 自然刷新判定在 BoardVinePlayer 与 NaturalGrowthSystem 里。
 	public class BoardVine : ModTile
 	{
 		public override void SetStaticDefaults() {
@@ -24,7 +24,7 @@ namespace ArknightsMod.Content.Tiles.Natural
 			TileObjectData.newTile.CoordinateWidth = 16;
 			TileObjectData.newTile.CoordinatePadding = 2;
 			TileObjectData.newTile.CoordinateHeights = new[] { 16, 16 };
-			TileObjectData.newTile.WaterPlacement = LiquidPlacement.OnlyInLiquid;
+			TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
 			RareCollectibleVisuals.ApplyDrawOffset();
 			TileObjectData.addTile(Type);
 

@@ -32,8 +32,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		{
 			NPC.width = 46;
 			NPC.height = 36;
-			NPC.defense = 8;
-			NPC.lifeMax = 180;
+			NPC.defense = 3;
+			NPC.lifeMax = 72;
 			NPC.knockBackResist = 0.5f;
 			NPC.value = 50f;
 			NPC.aiStyle = NPCAIStyleID.Snail;
@@ -41,9 +41,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			NPC.DeathSound = SoundID.NPCDeath1;
 
 			if (Main.masterMode)
-				NPC.damage = 12;
+				NPC.damage = 5;
 			else
-				NPC.damage = 4;
+				NPC.damage = 2;
 		}
 
 		public override float SpawnChance(NPCSpawnInfo spawnInfo) => 0f;
@@ -151,7 +151,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			{
 				Vector2 velocity = CalculateArcVelocity(target.Center, NPC.Center, 8.5f, 0.22f);
 				Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity,
-					ProjectileType<FierySlugFireballProjectile>(), 10, 0f, Main.myPlayer);
+					ProjectileType<FierySlugFireballProjectile>(), 4, 0f, Main.myPlayer);
 			}
 
 			if (NPC.ai[3] >= 35)

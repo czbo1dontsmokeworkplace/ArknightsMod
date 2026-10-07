@@ -1,5 +1,6 @@
 using ArknightsMod.Players;
 using Terraria;
+using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Material
 {
@@ -7,6 +8,7 @@ namespace ArknightsMod.Content.Items.Material
 	public class FogRollingGrass : RareCollectibleItem
 	{
 		public override int BaseOriginiumIngotValue => FogRollingGrassPlayer.BaseValue;
+		protected override int PlaceableTileType => ModContent.TileType<Tiles.Natural.FogRollingGrass>();
 
 		public override void UpdateInventory(Player player) {
 			var fogPlayer = player.GetModPlayer<FogRollingGrassPlayer>();

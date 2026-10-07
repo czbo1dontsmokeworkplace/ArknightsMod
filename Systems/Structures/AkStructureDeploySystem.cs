@@ -28,7 +28,7 @@ namespace ArknightsMod.Systems.Structures
 	//      而不是只有放置者能看到。
 	public sealed class AkStructureDeploySystem : ModSystem
 	{
-		// ══════════════════ 光标预览：光标在建筑水平居中、贴底部 ══════════════════
+		// ══════════════════ 光标预览：根据光标相对角色的位置切换建筑四角 ══════════════════
 
 		// 记录"玩家刚刚看到的幽灵投影"落在哪个 topLeft——点击时不再重新读一次
 		// 鼠标位置，而是直接复用这个值。原因：UseItem 在 Update 阶段执行，

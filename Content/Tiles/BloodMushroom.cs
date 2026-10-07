@@ -19,10 +19,7 @@ namespace ArknightsMod.Content.Tiles
 			Main.tileLighted[Type] = false;
 
 			TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
-			TileObjectData.newTile.AnchorValidTiles = new int[] {
-				TileID.Grass, TileID.BlueMoss, TileID.GreenMoss, TileID.PurpleMoss, TileID.RedMoss, TileID.BrownMoss
-			};
-			TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile, TileObjectData.newTile.Width, 0);
+			TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
 			RareCollectibleVisuals.ApplyDrawOffset();
 			TileObjectData.addTile(Type);
 

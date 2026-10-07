@@ -3265,7 +3265,7 @@ HazeMagicBook: {
 
 ReedFlameShadowStaff: {
 	DisplayName: 焰影苇草的法杖
-	Tooltip: 灼烧命中的敌人
+	Tooltip: 命中时有30%概率施加持续8秒的灼痕
 }
 
 DN_Weapon: {

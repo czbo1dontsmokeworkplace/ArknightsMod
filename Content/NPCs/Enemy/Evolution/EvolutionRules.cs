@@ -27,24 +27,25 @@ internal static class EvolutionRules
     public const float AxisVisualWidth = 450;
     public const float AxisCollisionWidth = 120;
     public static int AxisLockEnd => AxisSetupTicks + FireTime(EvolutionShot.Beam, LaserWarning(AxisChargeTicks)) + AxisActiveTicks;
-    // 整组侧射从60帧一轮加快至40帧一轮（1.5倍），仍逐对轮流释放，不变成三倍齐射。
+    // 光轴侧射每84帧一阵：前35帧六对依次由内向外发射，之后留49帧空档。
+    public const int AxisBladeBurstTicks = 84;
     public static int AxisBladePair(int activeAge)
     {
         int elapsed = activeAge - 30;
-        if (elapsed < 0 || 30 + elapsed / 40 * 40 + 28 >= AxisActiveTicks) return -1;
-        for (int pair = 0; pair < 7; pair++)
-            if (elapsed % 40 == pair * 14 / 3) return pair;
+        if (elapsed < 0 || 30 + elapsed / AxisBladeBurstTicks * AxisBladeBurstTicks + 35 >= AxisActiveTicks) return -1;
+        for (int pair = 0; pair < 6; pair++)
+            if (elapsed % AxisBladeBurstTicks == pair * 7) return pair;
         return -1;
     }
     public static int AxisBladeLane(int activeAge)
     {
         int pair = AxisBladePair(activeAge);
-        return pair >= 0 ? 2 + pair / AxisRayCount : int.MinValue;
+        return pair >= 0 ? 2 + pair / 2 : int.MinValue;
     }
     public static int AxisBladeRay(int activeAge)
     {
         int pair = AxisBladePair(activeAge);
-        return pair >= 0 ? (pair + (activeAge - 30) / 40) % AxisRayCount : -1;
+        return pair >= 0 ? (pair + (activeAge - 30) / AxisBladeBurstTicks) % AxisRayCount : -1;
     }
     public const int ChargeLockTicks = 54;
     public static int ChargeActiveTicks(bool perfect) => perfect ? 44 : 52;
@@ -73,6 +74,7 @@ internal static class EvolutionRules
     public static float PerfectChargePower(float progress) => MathHelper.Lerp(.72f, 1, MathHelper.SmoothStep(0, 1, MathHelper.Clamp(progress / .45f, 0, 1)));
     public static int Recovery(int ticks) => (int)Math.Ceiling(ticks * 1.10 * 1.10);
     public static int ChargeStride(int stride, int chargeEnd) => chargeEnd + (int)Math.Ceiling((stride - chargeEnd) * 1.15 * 1.10);
+    public static int ChargeVariant(int cycle, int attackIndex) => (cycle + attackIndex + 2) % 3;
     public static int VolleyInterval(int ticks) => (int)Math.Ceiling(ticks * 1.10);
     // 偶数、奇数扇面都保留中央空槽，但不删除任何弹幕。
     public static int FanSlot(int index, int count) => index < count / 2 ? index - count / 2 : index - count / 2 + 1;
@@ -128,7 +130,7 @@ internal static class EvolutionRules
     public static int ContactDamage(int phase, bool charge, bool desperate = false) => EvolutionDamageCockpit.BossContactDamage(phase, charge, desperate);
 }
 
-internal enum EvolutionShot { Blood, Spirit, Beam, Rock, Tentacle, Pulse, Core, Spike, Fragment, DashMarker, Lance, CrimsonBomb, Eruption }
+internal enum EvolutionShot { Blood, Spirit, Beam, Rock, Tentacle, Pulse, Core, Spike, Fragment, DashMarker, Lance, CrimsonBomb, Eruption, Radiation, Reflection }
 internal enum EvolutionBeamStyle : byte { Standard, Pulse, Axis }
 internal enum EvolutionBrood { Spider, GiantSpider, Puppet, Abomination, Tumor, Bomb }
 internal enum EvolutionBroodPreset : byte { Hunter, Rain, Siege, Minefield, Weaver, Ambush, Seeder, Artillery, Conductor }

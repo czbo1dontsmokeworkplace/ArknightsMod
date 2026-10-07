@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Collections.Generic;
 using ArknightsMod.Content.Items.Evolution;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -21,6 +22,7 @@ public sealed partial class Evolution : ModNPC
     internal int Encounter, Serial;
     internal Vector2 Arena, Aim, DashDirection, Anchor;
     internal bool Desperate, Charging;
+    internal int DashVariant = -1;
     internal float DashWarning;
     internal EvolutionCinematicPlayback Cinema;
     internal int Phase => (int)NPC.ai[0];
@@ -28,7 +30,8 @@ public sealed partial class Evolution : ModNPC
     internal int Attack => EvolutionRules.Attack(Phase, (int)NPC.ai[2], Desperate);
     internal bool Transitioning => Phase is 2 or 4;
     internal bool ArenaActive => Phase is 1 or 2;
-    private int noPlayerTime, visualPulse;
+    private int noPlayerTime, visualPulse, lastAxisReflection = -1000;
+    private readonly List<Projectile> axisReflectionCandidates = new(12);
     private int lastVisualPhase = -1;
     private bool lastVisualDesperate;
     public override string Texture => EvolutionVisuals.Root + "Newborn";
@@ -70,6 +73,7 @@ public sealed partial class Evolution : ModNPC
         Arena.X = MathHelper.Clamp(Arena.X, 400, Main.maxTilesX * 16 - 400);
         Arena.Y = MathHelper.Clamp(Arena.Y, 240, Main.maxTilesY * 16 - 400);
         NPC.Center = Anchor = Arena;
+        PlaceGroundNest(player);
         Aim = player.Center;
         NPC.ai[0] = 1; NPC.ai[1] = -90; NPC.netUpdate = true;
     }
@@ -109,7 +113,7 @@ public sealed partial class Evolution : ModNPC
     public override void AI()
     {
         if (Phase == 0) return;
-        Charging = false; DashWarning = 0; NPC.damage = 0;
+        Charging = false; DashWarning = 0; DashVariant = -1; NPC.damage = 0;
         NPC.dontTakeDamage = Transitioning || Phase == 6 || Timer < -36 || AxisHealthLocked;
         if (!NPC.HasValidTarget || !Main.player[NPC.target].active || Main.player[NPC.target].dead) NPC.TargetClosest(false);
         if (!NPC.HasValidTarget || NPC.Distance(Main.player[NPC.target].Center) > 7000)
@@ -123,6 +127,10 @@ public sealed partial class Evolution : ModNPC
             return;
         }
         noPlayerTime = 0;
+        int bodyHeight = Phase <= 2 ? 260 : 158;
+        if (NPC.height != bodyHeight) { Vector2 center = NPC.Center; NPC.height = bodyHeight; NPC.Center = center; }
+        NPC.noGravity = NPC.noTileCollide = Phase != 1;
+        if (Phase == 1) { NPC.velocity.X = 0; Anchor = NPC.Center; }
         Player target = Main.player[NPC.target];
         NPC.ai[3]++;
         if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -142,7 +150,7 @@ public sealed partial class Evolution : ModNPC
         }
         else if (Timer < 0) NPC.velocity *= .94f;
         else if (Transitioning) DoTransition(target);
-        else if (Phase == 1) { NPC.Center = Arena; NPC.velocity = Vector2.Zero; DoNewborn(target); }
+        else if (Phase == 1) DoNewborn(target);
         else if (NPC.Distance(target.Center) > 1300 && Timer < 25)
         {
             MoveTo(target.Center + new Vector2(NPC.Center.X < target.Center.X ? -480 : 480, -180), 34, .07f);
@@ -162,6 +170,7 @@ public sealed partial class Evolution : ModNPC
         ClearBrood(); ClearHazards(); Serial++;
         NPC.ai[0] = phase; NPC.ai[1] = 0; NPC.ai[2] = 0;
         Anchor = NPC.Center; NPC.velocity *= .25f; NPC.dontTakeDamage = true; NPC.netUpdate = true;
+        NPC.noGravity = NPC.noTileCollide = phase != 1;
     }
     private void NextAttack()
     {
@@ -180,7 +189,8 @@ public sealed partial class Evolution : ModNPC
     private void Hover(Player player, float angle = 0) => MoveTo(PatternCenter + new Vector2(MathF.Cos(angle + (int)NPC.ai[2] * 2.3f) * 560,
         -400 + MathF.Sin(angle) * 120), Phase == 5 ? 20 : 14);
     internal void Shoot(EvolutionShot kind, Vector2 origin, Vector2 velocity, float parameter = 0, int delay = 42, int lifetime = 230, bool peripheral = false,
-        EvolutionBeamStyle beamStyle = EvolutionBeamStyle.Standard, bool blade = false, bool gentleHoming = false)
+        EvolutionBeamStyle beamStyle = EvolutionBeamStyle.Standard, bool blade = false, bool gentleHoming = false, bool stagedSpirit = false,
+        bool quietLaunch = false)
     {
         if (Main.netMode == NetmodeID.MultiplayerClient) return;
         int count = 0;
@@ -202,7 +212,8 @@ public sealed partial class Evolution : ModNPC
         {
             hazard.Encounter = Encounter; hazard.Serial = Serial; hazard.Target = NPC.target;
             hazard.Parameter = parameter; hazard.Delay = delay; hazard.Lifetime = lifetime; hazard.Projectile.netUpdate = true;
-            hazard.BeamStyle = beamStyle; hazard.Blade = blade; hazard.GentleHoming = gentleHoming;
+            hazard.BeamStyle = beamStyle; hazard.Blade = blade; hazard.GentleHoming = gentleHoming; hazard.StagedSpirit = stagedSpirit;
+            hazard.QuietLaunch = quietLaunch;
             hazard.BurstAngle = (PatternCenter - origin).ToRotation() + MathHelper.Pi / 12;
             hazard.Projectile.timeLeft = Math.Max(600, lifetime + 30);
         }
@@ -260,6 +271,7 @@ public sealed partial class Evolution : ModNPC
             brood.Encounter = Encounter; brood.Fuse = fuse; brood.Gap = gap; brood.FlightAnchor = center; brood.NPC.Center = center; brood.NPC.netUpdate = true;
             brood.NPC.dontTakeDamage = true;
             brood.NPC.chaseable = Phase < 3;
+            if (Phase == 1) { brood.InitializeGroundBody(); brood.NPC.Center = center; }
         }
     }
     public override void ModifyNPCLoot(NPCLoot loot)
@@ -307,6 +319,7 @@ public sealed partial class Evolution : ModNPC
         float breathe = 1 + MathF.Sin(breathingPhase) * (.025f + charge * .018f);
         float opacity = Phase == 6 ? MathHelper.Clamp(1 - Timer / 105f, 0, 1) : MathHelper.Clamp((NPC.ai[3]) / 60f, .1f, 1);
         Vector2 origin = name == "Perfect" ? new Vector2(119, 112) : name == "Evolved" ? new Vector2(95, 108) : new Vector2(85, 107);
+        if (Phase <= 2) origin.Y = 155; // 育生形态以触肢底部贴地，不把原悬浮锚点埋进土里。
         SpriteEffects flip = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
         if (flip != SpriteEffects.None) origin.X = texture.Width - origin.X;
         Vector2 scale = new(breathe * (1 + NPC.velocity.Length() * .003f), 1 / breathe);
@@ -335,13 +348,18 @@ public sealed partial class Evolution : ModNPC
         Color bodyColor = Color.White * (opacity * (1 - EvolutionCinematics.BodyDissolve(this)));
         if (name == "Evolved") EvolutionVisuals.DrawEvolved(spriteBatch, NPC.Center - screenPos, bodyColor, NPC.rotation, scale, flip);
         else spriteBatch.Draw(texture, NPC.Center - screenPos, null, bodyColor, NPC.rotation, origin, scale, flip, 0);
-        if (DashWarning > 0) EvolutionVisuals.AimLine(NPC.Center, NPC.Center + DashDirection * EvolutionRules.ChargeDistance(Phase == 5, Desperate), DashWarning);
-        EvolutionCinematics.DrawRevealedBody(this, spriteBatch, screenPos, scale, flip, opacity);
-        if ((!Transitioning && visualPulse > 0) || (Transitioning && Timer < 100))
+        if (DashWarning > 0)
         {
-            Texture2D shield = EvolutionVisuals.Asset(Phase == 4 ? "ShieldPerfect" : Timer > 300 ? "ShieldCracked" : "Shield");
+            EvolutionVisuals.AimLine(NPC.Center, NPC.Center + DashDirection * EvolutionRules.ChargeDistance(Phase == 5, Desperate), DashWarning);
+            // 本体从远处起手，变体标记放在玩家附近的预瞄线上，确保能读到。
+            EvolutionVisuals.ChargeVariantWarning(Vector2.Lerp(NPC.Center, Aim, .72f), DashDirection, DashVariant, DashWarning);
+        }
+        EvolutionCinematics.DrawRevealedBody(this, spriteBatch, screenPos, scale, flip, opacity);
+        if ((Phase != 1 && !Transitioning && visualPulse > 0) || (Transitioning && Timer < 100) || AxisHealthLocked)
+        {
+            Texture2D shield = EvolutionVisuals.Asset(AxisHealthLocked || Phase == 4 ? "ShieldPerfect" : Timer > 300 ? "ShieldCracked" : "Shield");
             float shieldScale = 250f / shield.Width * (1 + MathF.Sin(time * .16f) * .035f);
-            float shieldOpacity = Transitioning ? .75f * (1 - EvolutionCinematicFrame.Smooth(35, 100, Timer)) : .75f;
+            float shieldOpacity = AxisHealthLocked ? .48f : Transitioning ? .75f * (1 - EvolutionCinematicFrame.Smooth(35, 100, Timer)) : .75f;
             spriteBatch.Draw(shield, NPC.Center - screenPos, null, (glow with { A = 0 }) * shieldOpacity, 0, shield.Size() * .5f, shieldScale, SpriteEffects.None, 0);
             EvolutionVisuals.Glow(NPC.Center, EvolutionVisuals.Core * .2f, new Vector2(170));
         }

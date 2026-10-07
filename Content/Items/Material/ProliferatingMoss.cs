@@ -8,6 +8,7 @@ namespace ArknightsMod.Content.Items.Material
 	public class ProliferatingMoss : RareCollectibleItem
 	{
 		public override int BaseOriginiumIngotValue => 1;
+		protected override int PlaceableTileType => ModContent.TileType<Tiles.Natural.ProliferatingMoss>();
 
 		public override void UpdateInventory(Player player) {
 			int otherCount = RareCollectibleInventoryHelper.CountOtherTypesInInventory(player, Item.type);

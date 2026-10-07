@@ -76,12 +76,18 @@ public abstract partial class EvolutionBroodNPC : ModNPC
             NPC.noGravity = NPC.noTileCollide = true;
             NPC.damage = 0;
             NPC.velocity = Vector2.Lerp(NPC.velocity, (boss.NPC.Center - NPC.Center).SafeNormalize(Vector2.UnitY) * 24, .18f);
+            if (boss.Phase <= 2)
+            {
+                NPC.noGravity = NPC.noTileCollide = false;
+                NPC.velocity = new Vector2(NPC.velocity.X * .2f, 0);
+            }
             NPC.alpha = Math.Min(255, NPC.alpha + 7);
             NPC.ai[3]++;
             if (NPC.ai[3] >= 0 || NPC.Distance(boss.NPC.Center) < 28) NPC.active = false;
             return;
         }
         NPC.dontTakeDamage = SupportOnly || Age < 30;
+        if (boss.Phase == 1) { DoGroundBrood(boss, player); return; }
         if (Age < 60) { NPC.velocity *= .9f; return; }
         if (SupportOnly && Kind == EvolutionBrood.Puppet)
         {
@@ -181,12 +187,13 @@ public abstract partial class EvolutionBroodNPC : ModNPC
     public override void OnKill()
     {
         EvolutionVisuals.Burst(NPC.Center, .7f);
-        if (Kind == EvolutionBrood.Spider && Parent is Evolution boss && !boss.Transitioning)
+        if (Kind == EvolutionBrood.Spider && Parent is Evolution boss && boss.Phase != 1 && !boss.Transitioning)
             for (int i = -1; i <= 1; i += 2) boss.Shoot(EvolutionShot.Blood, NPC.Center, new Vector2(i * 4, -5), lifetime: 80);
     }
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
     {
         float appear = MathHelper.Clamp(Age / 60f, 0, 1) * NPC.Opacity;
+        if (Parent?.Phase <= 2) { DrawGroundBrood(spriteBatch, screenPos, drawColor, appear); return false; }
         EvolutionVisuals.BroodOrb(NPC.Center, Kind, Age, appear, SupportOnly);
         if (warning > 0) EvolutionVisuals.AimLine(NPC.Center, NPC.Center + FlightDirection * (18 * EvolutionRules.Aggression(Parent?.Phase ?? 1) * 24 + 50), warning);
         if (Age < 60) EvolutionVisuals.Ring(NPC.Center, 65 * (1 - appear) + 25, 0, EvolutionVisuals.Core * appear, 2, false);

@@ -184,6 +184,9 @@ namespace ArknightsMod
 		public override void HandlePacket(BinaryReader reader, int whoAmI) {
 			short id = reader.ReadInt16();
 			switch ((ArkMessageID)id) {
+				case ArkMessageID.FaustAndMephisto:
+					global::ArknightsMod.Content.NPCs.Enemy.FaustAndMephisto.DuoNet.Receive(reader);
+					break;
 				case ArkMessageID.EvolutionAccessory:
 					global::ArknightsMod.Content.Items.Evolution.EvolutionAccessoryPlayer.Receive(reader, whoAmI);
 					break;
@@ -283,6 +286,7 @@ namespace ArknightsMod
 			DeploymentCostAbsorbResult,
 			WD12Detach,
 			EvolutionAccessory,
+			FaustAndMephisto,
 		}
 	}
 	//public class Ex : GlobalNPC

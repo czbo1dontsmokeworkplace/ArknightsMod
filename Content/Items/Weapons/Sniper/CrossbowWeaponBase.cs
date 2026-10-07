@@ -125,8 +125,6 @@ public abstract class CrossbowWeaponBase : UpgradeWeaponBase
     {
         if (player.whoAmI != Main.myPlayer || !player.HasAmmo(Item)) return false;
         var skills = player.GetModPlayer<WeaponPlayer>();
-        if (skills.Skill == 0 && Kind != CrossbowKind.KroosAlter && !skills.SkillActive && skills.StockCount > 0)
-            Activate(skills);
         int type, damage, ammo;
         float speed, knockback;
         consumingShot = true;
@@ -134,10 +132,17 @@ public abstract class CrossbowWeaponBase : UpgradeWeaponBase
         try { picked = player.PickAmmo(Item, out type, out speed, out damage, out knockback, out ammo); }
         finally { consumingShot = false; }
         if (!picked) return false;
+        if (skills.Skill == 0 && Kind != CrossbowKind.KroosAlter && !skills.SkillActive
+            && ForcedShots == 0 && skills.StockCount > 0)
+        {
+            Activate(skills);
+            if (Kind == CrossbowKind.Kroos) ForcedShots = 2;
+        }
         speed *= 1.35f;
 
         int skill = skills.SkillActive ? skills.Skill + 1 : 0;
-        if (ForcedShots > 0) skill = 2; // Snapshot the whole S2 burst, even if its UI timer expires.
+        if (ForcedShots > 0) skill = Kind == CrossbowKind.Kroos ? 1 : 2;
+        bool kroosSkillShot = Kind == CrossbowKind.Kroos && ForcedShots > 0;
         float multiplier = Kind == CrossbowKind.Kroos ? .8f : 1f;
         if (Kind == CrossbowKind.Kroos && skill == 1) multiplier *= 1.4f;
         if (Kind == CrossbowKind.KroosAlter && skill == 1) multiplier *= 1.4f;
@@ -162,14 +167,21 @@ public abstract class CrossbowWeaponBase : UpgradeWeaponBase
         shot.netUpdate = true;
 
         float interval = 1f;
-        if (Kind == CrossbowKind.Kroos && skill == 1) interval = .5f;
         if (Kind == CrossbowKind.KroosAlter && skill != 0)
             interval = skill == 2 && SkillShots >= 32 ? .25f : .5f;
         if (Kind == CrossbowKind.Pozemka && skill == 3) interval = 2f / 3f;
-        Cadence.Fired(Main.GameUpdateCount, Kind, player.GetTotalAttackSpeed(DamageClass.Ranged), interval);
+        float attackSpeed = player.GetTotalAttackSpeed(DamageClass.Ranged);
+        if (kroosSkillShot)
+            Cadence.FiredKroosSkill(Main.GameUpdateCount, attackSpeed, ForcedShots == 1);
+        else
+            Cadence.Fired(Main.GameUpdateCount, Kind, attackSpeed, interval);
         if (Kind == CrossbowKind.KroosAlter && skill == 2) SkillShots++;
-        if (ForcedShots > 0) ForcedShots--;
-        if (skills.Skill == 0 && !skills.SkillActive) skills.OffensiveRecovery();
+        if (ForcedShots > 0)
+        {
+            ForcedShots--;
+            if (kroosSkillShot && ForcedShots == 0) skills.SkillActive = false;
+        }
+        if (skills.Skill == 0 && skill == 0 && !skills.SkillActive) skills.OffensiveRecovery();
         CrossbowVisuals.SpawnPulse(shot.GetSource_FromThis(), muzzle, direction, Kind, true);
         return true;
     }

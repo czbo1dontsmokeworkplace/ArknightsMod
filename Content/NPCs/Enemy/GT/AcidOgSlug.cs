@@ -1,3 +1,4 @@
+using ArknightsMod.Common.ItemDropRules;
 using ArknightsMod.Content.Items.Placeable.Banners;
 using ArknightsMod.Content.Projectiles;
 using Microsoft.Xna.Framework;
@@ -61,8 +62,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.GT
 
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
 
-			npcLoot.Add(ItemDropRule.Common(ItemType<Items.Material.Polyester>(), ModContent.GetInstance<Dropconfig>().DropAcidOgSlug1, 1, 2));
-			npcLoot.Add(ItemDropRule.Common(ItemType<Items.Material.LoxicKohl>(), ModContent.GetInstance<Dropconfig>().DropAcidOgSlug2, 1, 2));
+			npcLoot.Add(new ConfiguredPercentageDropRule(ItemType<Items.Material.Polyester>(), () => ModContent.GetInstance<Dropconfig>().DropAcidOgSlug1Percent, 1, 2));
+			npcLoot.Add(new ConfiguredPercentageDropRule(ItemType<Items.Material.LoxicKohl>(), () => ModContent.GetInstance<Dropconfig>().DropAcidOgSlug2Percent, 1, 2));
 
 		}
 

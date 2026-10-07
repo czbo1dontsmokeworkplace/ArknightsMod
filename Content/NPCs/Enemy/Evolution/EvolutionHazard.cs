@@ -15,7 +15,7 @@ public sealed partial class EvolutionHazard : ModProjectile
     internal int Age => (int)Projectile.ai[1];
     internal int FireAge => EvolutionRules.FireTime(Kind, Delay);
     internal EvolutionBeamStyle BeamStyle;
-    internal bool Blade, GentleHoming, HomingFinished;
+    internal bool Blade, GentleHoming, HomingFinished, StagedSpirit, QuietLaunch;
     internal int Encounter, Serial, Target, Delay = 42, Lifetime = 240;
     internal float Parameter, BurstAngle;
     private bool impact;
@@ -42,17 +42,18 @@ public sealed partial class EvolutionHazard : ModProjectile
     public override void SendExtraAI(BinaryWriter w)
     {
         w.Write(Encounter); w.Write(Serial); w.Write(Target); w.Write(Delay); w.Write(Lifetime); w.Write(Parameter); w.Write(impact);
-        w.Write((byte)BeamStyle); w.Write(Blade); w.Write(GentleHoming); w.Write(HomingFinished);
+        w.Write((byte)BeamStyle); w.Write(Blade); w.Write(GentleHoming); w.Write(HomingFinished); w.Write(StagedSpirit); w.Write(QuietLaunch);
         w.Write(BurstAngle);
     }
     public override void ReceiveExtraAI(BinaryReader r)
     {
         Encounter = r.ReadInt32(); Serial = r.ReadInt32(); Target = r.ReadInt32(); Delay = r.ReadInt32(); Lifetime = r.ReadInt32(); Parameter = r.ReadSingle();
         impact = r.ReadBoolean();
-        BeamStyle = (EvolutionBeamStyle)r.ReadByte(); Blade = r.ReadBoolean(); GentleHoming = r.ReadBoolean(); HomingFinished = r.ReadBoolean();
+        BeamStyle = (EvolutionBeamStyle)r.ReadByte(); Blade = r.ReadBoolean(); GentleHoming = r.ReadBoolean(); HomingFinished = r.ReadBoolean(); StagedSpirit = r.ReadBoolean(); QuietLaunch = r.ReadBoolean();
         BurstAngle = r.ReadSingle();
     }
-    public override bool ShouldUpdatePosition() => Kind is EvolutionShot.Blood or EvolutionShot.Spirit or EvolutionShot.Core or EvolutionShot.Fragment ||
+    public override bool ShouldUpdatePosition() => Kind is EvolutionShot.Blood or EvolutionShot.Core or EvolutionShot.Fragment ||
+        Kind == EvolutionShot.Spirit && (!StagedSpirit || Age >= Delay) || Kind == EvolutionShot.Reflection && Age >= Delay ||
         Kind == EvolutionShot.Rock && (Parameter <= 0 || Age >= FireAge) ||
         Kind == EvolutionShot.Lance && Age >= FireAge || Kind == EvolutionShot.CrimsonBomb && Age < FireAge;
     public override bool? CanCutTiles() => false;
@@ -67,10 +68,12 @@ public sealed partial class EvolutionHazard : ModProjectile
             EvolutionShot.Tentacle => Age >= FireAge + 5 && Age < FireAge + 24 ? null : false,
             EvolutionShot.Lance => Age >= FireAge ? null : false,
             EvolutionShot.Spirit => Age >= Delay ? null : false,
+            EvolutionShot.Reflection => Age >= Delay ? null : false,
             EvolutionShot.CrimsonBomb => Parameter >= 0 && Age >= FireAge && Age < FireAge + 8 ? null : false,
             EvolutionShot.Eruption => Age >= FireAge + 6 && Age < FireAge + 26 ? null : false,
             EvolutionShot.Rock when Parameter > 0 => Age >= FireAge ? null : false,
             EvolutionShot.Pulse => Age >= 30 ? null : false,
+            EvolutionShot.Radiation => Age >= FireAge && Age < FireAge + EvolutionNestRules.RadiationDuration ? null : false,
             _ => Age >= 18 ? null : false
         };
     }
@@ -84,6 +87,7 @@ public sealed partial class EvolutionHazard : ModProjectile
             return;
         }
         Projectile.ai[1]++;
+        if (Kind == EvolutionShot.Radiation) { UpdateRadiation(boss); return; }
         if (IsAxis) { UpdateHemalAxis(boss); return; }
         if (Kind == EvolutionShot.Lance && Age >= FireAge && (Age - FireAge + 1) * Projectile.velocity.Length() + 24 > Parameter)
         { Projectile.hostile = false; Projectile.Kill(); return; }
@@ -95,7 +99,7 @@ public sealed partial class EvolutionHazard : ModProjectile
                 Projectile.tileCollide = Age > 24 && !Collision.SolidCollision(Projectile.position, Projectile.width, Projectile.height);
                 break;
             case EvolutionShot.Spirit:
-                if (Age < Delay) Projectile.velocity *= .97f;
+                if (Age < Delay) { if (!StagedSpirit) Projectile.velocity *= .97f; }
                 else
                 {
                     float angle = direction.ToRotation();
@@ -146,8 +150,11 @@ public sealed partial class EvolutionHazard : ModProjectile
             case EvolutionShot.Lance:
                 if (Age == FireAge)
                 {
-                    EvolutionImpactSystem.Emit(Projectile.Center, 140, Kind == EvolutionShot.Beam ? 2.8f : 1.2f);
-                    EvolutionVisuals.Burst(Projectile.Center, Kind == EvolutionShot.Beam ? 1.1f : .65f, false);
+                    if (!QuietLaunch)
+                    {
+                        EvolutionImpactSystem.Emit(Projectile.Center, 140, Kind == EvolutionShot.Beam ? 2.8f : 1.2f);
+                        EvolutionVisuals.Burst(Projectile.Center, Kind == EvolutionShot.Beam ? 1.1f : .65f, false);
+                    }
                     if (!Main.dedServ) SoundEngine.PlaySound(SoundID.Item33 with { Volume = .55f, Pitch = -.5f, MaxInstances = 4 }, Projectile.Center);
                 }
                 break;
@@ -185,6 +192,7 @@ public sealed partial class EvolutionHazard : ModProjectile
     }
     public override bool? Colliding(Rectangle projHitbox, Rectangle box)
     {
+        if (Kind == EvolutionShot.Radiation) return RadiationCollides(box);
         Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitY);
         if (IsAxis)
         {
@@ -235,6 +243,7 @@ public sealed partial class EvolutionHazard : ModProjectile
     }
     public override bool PreDraw(ref Color lightColor)
     {
+        if (Kind == EvolutionShot.Radiation) { DrawRadiation(); return false; }
         if (IsAxis)
         {
             for (int ray = 0; ray < EvolutionRules.AxisRayCount; ray++)
@@ -250,6 +259,14 @@ public sealed partial class EvolutionHazard : ModProjectile
         }
         if (Kind == EvolutionShot.CrimsonBomb) { DrawCrimsonBomb(); return false; }
         if (Kind == EvolutionShot.Eruption) { DrawEruption(); return false; }
+        if (Kind == EvolutionShot.Reflection)
+        {
+            float opacity = MathHelper.Clamp(Age / 9f, 0, 1) * MathHelper.Clamp((Lifetime - Age) / 14f, 0, 1);
+            EvolutionVisuals.Glow(Projectile.Center, EvolutionVisuals.Core * (.38f * opacity), new Vector2(40));
+            if (Age >= Delay) EvolutionVisuals.Trail(Projectile, 6, EvolutionVisuals.Blood * opacity);
+            EvolutionProjectileVisuals.DrawBlade(Projectile.Center, Projectile.rotation, opacity);
+            return false;
+        }
         Vector2 center = Projectile.Center;
         Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitY);
         float fade = MathHelper.Clamp(Age / 12f, 0, 1) * MathHelper.Clamp((Lifetime - Age) / 15f, 0, 1);
