@@ -1,10 +1,15 @@
+using ArknightsMod.Content.Dusts;
+using ArknightsMod.Content.Dusts.Fire;
+using ArknightsMod.Players;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -16,6 +21,9 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 	///   2. OnSpawn 时以鼠标方向为准，在 1000 距离内挑出最近的 3 个敌人当伤害目标，
 	///      每个目标各生成一把 LaevatainProjectile_3_swordDrop（天降剑），
 	///      从目标头顶落到脚下，落地才是实际伤害来源。
+	///  以下为mokou修改内容:
+	///    1. 黄昏持续存在(技能时间内)
+	///    2. 按下攻击键后 进入AttackMode 打完后取消进入 MoveMode(moveMode本质就是保持帧图为1)
 	/// </summary>
 	public class LaevatainProjectile_3 : ModProjectile
 	{
@@ -49,17 +57,68 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 
 		public override bool ShouldUpdatePosition() => false;
 
-		public override void DrawBehind(
-			int index,
-			List<int> behindNPCsAndTiles,
-			List<int> behindNPCs,
-			List<int> behindProjectiles,
-			List<int> overPlayers,
-			List<int> overWiresUI
-		) => behindNPCs.Add(index);
+		public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI) => behindNPCs.Add(index);
 
-		public override void OnSpawn(IEntitySource source)
-		{
+		public enum ProjMode {Move,Attack}
+		public ProjMode projMode = ProjMode.Move;
+		public Player player => Main.player[Projectile.owner];
+		public override void AI() {
+			Projectile.spriteDirection = player.direction;
+			Projectile.Center = player.Center + DrawOffset;
+			if (!player.active || player.dead||player.GetModPlayer<WeaponPlayer>().Skill!=2||!player.GetModPlayer<WeaponPlayer>().SkillActive)
+			{
+				Projectile.Kill();
+				return;
+			}
+
+			switch (projMode) {
+				case  ProjMode.Move:
+					Move();
+					if (PlayerInput.MouseInfo.LeftButton == ButtonState.Pressed) {
+						Projectile.timeLeft = player.itemAnimationMax > 0 ? player.itemAnimationMax : 60;
+						Projectile.localAI[0] = Projectile.timeLeft;
+						Projectile.netUpdate = true;
+						projMode = ProjMode.Attack;
+						Attack_Proj();
+					}
+
+					break;
+				case ProjMode.Attack:
+					if (Attack()) {
+						projMode = ProjMode.Move;
+					}
+
+					break;
+			}
+
+		}
+		/// <summary>
+		/// 攻击方法
+		/// </summary>
+		/// <returns></returns>
+		public bool Attack() {
+			player.itemTime = 2;
+			player.itemAnimation = 2;
+
+			float progress = 1f - Projectile.timeLeft / Projectile.localAI[0];
+			Projectile.frame = (int)MathHelper.Clamp(progress * FrameCount, 0, FrameCount - 1);
+			if (Projectile.timeLeft == 1) {
+				Projectile.timeLeft = 2;
+				return true;
+			}
+			return false;
+		}
+		/// <summary>
+		/// 移动方法
+		/// </summary>
+		/// <returns></returns>
+		public void Move() {
+			Projectile.timeLeft = 2;
+		}
+		/// <summary>
+		/// 攻击模式下射弹AI
+		/// </summary>
+		public void Attack_Proj() {
 			if (Main.myPlayer != Projectile.owner)
 				return;
 
@@ -100,31 +159,6 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 					npc.whoAmI
 				);
 			}
-		}
-
-		public override void AI()
-		{
-			Player player = Main.player[Projectile.owner];
-			if (!player.active || player.dead)
-			{
-				Projectile.Kill();
-				return;
-			}
-
-			if (Projectile.ai[1] == 0)
-			{
-				Projectile.ai[1] = 1;
-				Projectile.timeLeft = player.itemAnimationMax > 0 ? player.itemAnimationMax : 60;
-				Projectile.localAI[0] = Projectile.timeLeft;
-				Projectile.netUpdate = true;
-			}
-			player.itemTime = 2;
-			player.itemAnimation = 2;
-			Projectile.spriteDirection = player.direction;
-			Projectile.Center = player.Center + DrawOffset;
-
-			float progress = 1f - Projectile.timeLeft / Projectile.localAI[0];
-			Projectile.frame = (int)MathHelper.Clamp(progress * FrameCount, 0, FrameCount - 1);
 		}
 	}
 
@@ -233,18 +267,18 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 
 					SpawnLandingSparks(Projectile.Center, FallHeight);
 
-					if (Main.myPlayer == Projectile.owner)
-					{
-						Projectile.NewProjectile(
-							Projectile.GetSource_FromThis(),
-							Projectile.Center,
-							Vector2.Zero,
-							ModContent.ProjectileType<LaevatainProjectile_3_impactFire>(),
-							0,
-							0f,
-							Projectile.owner
-						);
-					}
+					// if (Main.myPlayer == Projectile.owner)
+					// {
+					// 	Projectile.NewProjectile(
+					// 		Projectile.GetSource_FromThis(),
+					// 		Projectile.Center,
+					// 		Vector2.Zero,
+					// 		ModContent.ProjectileType<LaevatainProjectile_3_impactFire>(),
+					// 		0,
+					// 		0f,
+					// 		Projectile.owner
+					// 	);
+					// }
 				}
 			}
 		}
@@ -314,6 +348,15 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 				0f
 			);
 			return false;
+		}
+
+		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
+			Dust.NewDust(target.Center, 0, 0, ModContent.DustType<surtrDamage_Dust>(),Scale:1f);
+			if(Main.rand.NextBool(2))
+				Dust.NewDust(target.Center, 0, 0, ModContent.DustType<fire_28>(),Scale:1f);
+			else {
+				Dust.NewDust(target.Center, 0, 0, ModContent.DustType<fire_03>(),Scale:1f);
+			}
 		}
 
 		// 金色拖尾：贴图从剑身向上拉伸绘制，加法混合发光

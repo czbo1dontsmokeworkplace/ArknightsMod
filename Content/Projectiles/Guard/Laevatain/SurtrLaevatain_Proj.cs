@@ -72,6 +72,15 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 		public WeaponPlayer mp => player.GetModPlayer<WeaponPlayer>();
 		private bool press = false;
 		public override void AI() {
+			if (mp.Skill == 2 && mp.SkillActive) {
+				if((float)player.GetModPlayer<SurtrLaevatain_Player>()
+				   .transformationFireTimer / player.GetModPlayer<SurtrLaevatain_Player>()
+					   .transformationFireDuration >= 0.6)
+					Projectile.NewProjectile(player.GetSource_FromThis(),player.MountedCenter-Main.screenPosition,
+						Vector2.One,ModContent.ProjectileType<LaevatainProjectile_3>()
+						,player.HeldItem.damage,player.HeldItem.knockBack);
+				Projectile.Kill();
+			}
 			Projectile.timeLeft = 2;
 			if(player.dead||player.HeldItem.type != ModContent.ItemType<SurtrLaevatain>())
 				Projectile.Kill();
@@ -90,7 +99,6 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 						helper.SetScale(new Vector2(1f, 1f));
 						helper.SetScale(1f);
 						if (mp.Skill == 0) {
-							Main.NewText(mp.StockCount);
 							if (mp.SkillCharge >= mp.SkillChargeMax) {
 								helper.SetScale(new Vector2(1f, 0.856f));
 								helper.SetScale(1.3f);
@@ -145,6 +153,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 		public static Effect fire = ModContent.Request<Effect>("ArknightsMod/Content/Projectiles/Guard/Laevatain/FireProcedural").Value;
 		private int timer = 0;
 		public override bool PreDraw(ref Color lightColor) {
+
 			SpriteBatch sb = Main.spriteBatch;
 			if (projMode == ProjMode.Attack && helper.swingTime > 0)
 				DrawHeatWave(sb);
@@ -207,8 +216,11 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 				ModContent.ProjectileType<LaevatainFireFlowParticle>(), 0, 0f,
 				Projectile.owner, 0.74f, Main.rand.NextFloat(0f, MathHelper.TwoPi), helper.swordRot);
 		}
-	}
 
+	}
+	/// <summary>
+	/// 42戳刺的特效弹幕
+	/// </summary>
 	public sealed class LaevatainFireFlowParticle : ModProjectile
 	{
 		private const int Lifetime = 28;
@@ -229,7 +241,6 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 
 		public override void AI()
 		{
-			int age = Lifetime - Projectile.timeLeft;
 			Projectile.velocity = Vector2.Zero;
 			Projectile.rotation = Projectile.ai[2];
 		}
@@ -241,7 +252,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 			float fade = 1f - progress;
 			Main.spriteBatch.End();
 			Effect effect = ModContent.Request<Effect>("ArknightsMod/Content/Projectiles/Guard/Laevatain/FireProcedural",AssetRequestMode.ImmediateLoad).Value;;
-			effect.Parameters["uTime"]?.SetValue(Main.GlobalTimeWrappedHourly*2f);
+			effect.Parameters["uTime"]?.SetValue(Main.GlobalTimeWrappedHourly * 2f);
 			Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap,
 				DepthStencilState.None, RasterizerState.CullNone, effect,
 				Main.GameViewMatrix.TransformationMatrix);
