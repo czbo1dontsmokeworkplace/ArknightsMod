@@ -112,6 +112,8 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Hellagur
 
 		public override void AddRecipes() {
 			CreateRecipe()
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.BipolarNanoflake>(1)
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.PolyesterLump>(2)
 				.AddIngredient<UtageKatana>()
 				.AddIngredient(ItemID.BrokenHeroSword)
 				.AddIngredient(ItemID.ChlorophyteBar, 18)

@@ -53,7 +53,9 @@ namespace ArknightsMod.Content.Items.Weapons.Vanguard.Fang
             return null;
         }
 		public override void AddRecipes() {
-			Recipe recipe = CreateRecipe();
+			Recipe recipe = CreateRecipe()
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.Sugar>(1)
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.Orirock>(2);
 			recipe.AddIngredient(ItemID.Spear);
 			recipe.AddRecipeGroup(OperatorWeaponRecipeGroups.GoldOrPlatinumBar, 5);
 			recipe.AddIngredient(ItemID.Feather);

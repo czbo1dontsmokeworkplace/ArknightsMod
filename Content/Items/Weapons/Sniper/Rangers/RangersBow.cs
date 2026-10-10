@@ -31,7 +31,8 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Rangers
 		}
 
 		public override void AddRecipes() {
-			Recipe recipe = CreateRecipe();
+			Recipe recipe = CreateRecipe()
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.Ester>(2);
 			recipe.AddRecipeGroup(OperatorWeaponRecipeGroups.AnyVanillaWoodenBow, 1);
 			recipe.AddRecipeGroup(RecipeGroupID.Wood, 12);
             recipe.AddIngredient(ItemID.Silk, 3); 

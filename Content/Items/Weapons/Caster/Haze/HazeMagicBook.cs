@@ -50,9 +50,11 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Haze
     
 		public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
-            recipe.AddIngredient<OrirockCluster>(5);
-            recipe.AddIngredient<RMA7024>(3);
+            Recipe recipe = CreateRecipe()
+                .AddIngredient<global::ArknightsMod.Content.Items.Material.RMA7012>(1)
+                .AddIngredient<global::ArknightsMod.Content.Items.Material.OrirockCube>(2)
+                .AddIngredient(ItemID.DemonScythe)
+                .AddIngredient(ItemID.Book);
             recipe.AddTile(ModContent.TileType<FactoryTile>());
             recipe.Register();
         }

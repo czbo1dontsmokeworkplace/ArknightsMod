@@ -41,12 +41,11 @@ namespace ArknightsMod.Content.Items.Weapons.Caster._12F
 
 		public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
-
+            Recipe recipe = CreateRecipe()
+                .AddIngredient<global::ArknightsMod.Content.Items.Material.SugarSubstitute>(2);
             recipe.AddRecipeGroup(OperatorWeaponRecipeGroups.GoldOrPlatinumBar, 3);
             recipe.AddIngredient(ItemID.PalmWood, 10);
             recipe.AddTile(TileID.WorkBenches);
-
             recipe.Register();
         }
 		public override void UseItemFrame(Player player)

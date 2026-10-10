@@ -158,6 +158,8 @@ public sealed class PassengerConductor : ExpansionWeaponBase
     public override void AddRecipes()
     {
         CreateRecipe()
+            .AddIngredient<global::ArknightsMod.Content.Items.Material.BipolarNanoflake>(1)
+            .AddIngredient<global::ArknightsMod.Content.Items.Material.OrironBlock>(2)
             .AddIngredient<LeiziStaff>()
             .AddIngredient(ItemID.MagnetSphere)
             .AddIngredient(ItemID.SpectreBar, 12)

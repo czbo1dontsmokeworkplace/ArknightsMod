@@ -13,7 +13,8 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.NoirCorne
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe()
+                .AddIngredient<global::ArknightsMod.Content.Items.Material.OrironShard>(2);
             recipe.AddIngredient(ItemID.IronBar, 5);
             recipe.AddIngredient(ItemID.LeadBar, 5);
             recipe.AddTile(TileID.WorkBenches);

@@ -15,8 +15,10 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Durnar
         public override void AddRecipes()
 		{
 			CreateRecipe()
-				.AddIngredient(ModContent.ItemType<OrirockCluster>(), 19)
-				.AddIngredient(ModContent.ItemType<RMA7012>(), 3)
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.OrirockCluster>(1)
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.Polyester>(2)
+				.AddRecipeGroup(OperatorWeaponRecipeGroups.AnyVanillaMeteorPhaseblade)
+				.AddIngredient(ItemID.HellstoneBar, 8)
 				.AddTile(ModContent.TileType<FactoryTile>())
 				.Register();
 		}

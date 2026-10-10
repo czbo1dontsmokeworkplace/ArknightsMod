@@ -23,9 +23,11 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Thorns
     public class ThornsWeapon : UpgradeWeaponBase
 	{
 		public override void AddRecipes() {
-			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.PolymerizationPreparation>(4);
-			recipe.AddIngredient<Material.OrironBlock>(6);
+			Recipe recipe = CreateRecipe()
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.PolymerizationPreparation>(1)
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.OrironBlock>(2)
+				.AddIngredient(ItemID.TerraBlade)
+				.AddIngredient(ItemID.VialofVenom, 10);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

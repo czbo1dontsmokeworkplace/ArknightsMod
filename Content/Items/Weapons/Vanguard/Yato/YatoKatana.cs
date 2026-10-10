@@ -44,7 +44,8 @@ namespace ArknightsMod.Content.Items.Weapons.Vanguard.Yato
 
 		public override void AddRecipes()
 		{
-			CreateRecipe().AddRecipeGroup(OperatorWeaponRecipeGroups.CopperOrTinBar, 5)
+			CreateRecipe()
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.OrironShard>(2).AddRecipeGroup(OperatorWeaponRecipeGroups.CopperOrTinBar, 5)
 				.AddRecipeGroup(OperatorWeaponRecipeGroups.IronOrLeadBar, 3)
 				.AddTile(ModContent.TileType<FactoryTile>()).Register();
 		}

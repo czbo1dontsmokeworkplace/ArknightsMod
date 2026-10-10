@@ -14,9 +14,10 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Cardigan
 	{
 		public override void AddRecipes() {
 			CreateRecipe()
-				.AddIngredient(ModContent.ItemType<OrironShard>(), 1)
-				.AddIngredient(ModContent.ItemType<Polyketon>(), 1)
-				.AddIngredient(ModContent.ItemType<Device>(), 1)
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.Device>(1)
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.OrironShard>(2)
+				.AddRecipeGroup(OperatorWeaponRecipeGroups.IronOrLeadBar, 5)
+				.AddRecipeGroup(RecipeGroupID.Wood, 10)
 				.AddTile(ModContent.TileType<FactoryTile>())
 				.Register();
 		}

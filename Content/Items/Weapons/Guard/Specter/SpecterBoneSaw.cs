@@ -129,6 +129,8 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Specter
 
 		public override void AddRecipes() {
 			CreateRecipe()
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.Polyketon>(1)
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.Orirock>(2)
 				.AddIngredient(ItemID.SawtoothShark)
 				.AddIngredient(ItemID.Chain, 15)
 				.AddIngredient(ItemID.Switch)

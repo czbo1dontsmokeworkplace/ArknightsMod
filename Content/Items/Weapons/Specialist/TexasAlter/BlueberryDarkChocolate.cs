@@ -43,7 +43,9 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.TexasAlter
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe()
+                .AddIngredient<global::ArknightsMod.Content.Items.Material.BipolarNanoflake>(1)
+                .AddIngredient<global::ArknightsMod.Content.Items.Material.OrironBlock>(2);
             recipe.AddIngredient(ItemID.BrokenHeroSword, 2);
             recipe.AddIngredient(ModContent.ItemType<Blueberry>());
             recipe.AddIngredient(ModContent.ItemType<DarkChocolate>());

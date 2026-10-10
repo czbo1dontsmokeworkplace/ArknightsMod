@@ -127,6 +127,8 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Blaze
 
 		public override void AddRecipes() {
 			CreateRecipe()
+					.AddIngredient<global::ArknightsMod.Content.Items.Material.OptimizedDevice>(1)
+					.AddIngredient<global::ArknightsMod.Content.Items.Material.OrironCluster>(2)
 					.AddIngredient(ModContent.ItemType<SpecterBoneSaw>())
 					.AddIngredient(ItemID.HallowedBar, 10)
 					.AddIngredient(ItemID.SoulofFright)

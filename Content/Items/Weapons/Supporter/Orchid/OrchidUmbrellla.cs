@@ -37,8 +37,11 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Orchid
             Item.noMelee = true;
         }
 		public override void AddRecipes() {
-			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Polyester>(2);
+			Recipe recipe = CreateRecipe()
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.Polyester>(1)
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.Ester>(2)
+				.AddIngredient(ItemID.Umbrella)
+				.AddIngredient(ItemID.Silk, 3);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

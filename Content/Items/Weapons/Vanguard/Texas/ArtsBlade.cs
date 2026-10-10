@@ -36,10 +36,11 @@ namespace ArknightsMod.Content.Items.Weapons.Vanguard.Texas
 
         public override void AddRecipes()
 		{
-            CreateRecipe().AddIngredient(ItemID.HellstoneBar, 20)
+            CreateRecipe()
+                .AddIngredient<global::ArknightsMod.Content.Items.Material.Oriron>(1)
+                .AddIngredient<global::ArknightsMod.Content.Items.Material.Ester>(2).AddIngredient(ItemID.HellstoneBar, 20)
                 .AddRecipeGroup(OperatorWeaponRecipeGroups.AnyVanillaMeteorPhaseblade, 1)
                 .AddTile(ModContent.TileType<FactoryTile>()).Register();
-
         }
 
         public override void MeleeEffects(Player player, Rectangle hitbox)

@@ -77,7 +77,9 @@ public sealed class UtageKatana : ExpansionWeaponBase
     {
         foreach (int sword in new[] { ItemID.Katana, ItemID.Muramasa })
         {
-            CreateRecipe().AddIngredient(sword).AddIngredient(ItemID.SoulofNight, 4)
+            CreateRecipe()
+                .AddIngredient<global::ArknightsMod.Content.Items.Material.Aketon>(1)
+                .AddIngredient<global::ArknightsMod.Content.Items.Material.OrirockCube>(2).AddIngredient(sword).AddIngredient(ItemID.SoulofNight, 4)
                 .AddIngredient(ItemID.DarkShard)
                 .AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>()).Register();
         }

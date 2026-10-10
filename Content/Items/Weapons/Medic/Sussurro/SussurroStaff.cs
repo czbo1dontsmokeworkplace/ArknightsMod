@@ -110,7 +110,9 @@ public sealed class SussurroStaff : ExpansionWeaponBase
 
     public override void AddRecipes()
     {
-        CreateRecipe().AddIngredient(ItemID.IceRod)
+        CreateRecipe()
+            .AddIngredient<global::ArknightsMod.Content.Items.Material.RMA7012>(1)
+            .AddIngredient<global::ArknightsMod.Content.Items.Material.Device>(2).AddIngredient(ItemID.IceRod)
             .AddIngredient(ItemID.HealingPotion, 100)
             .AddRecipeGroup(OperatorWeaponRecipeGroups.AnyVanillaTombstone, 2)
             .AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>()).Register();

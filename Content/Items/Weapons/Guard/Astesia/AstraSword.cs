@@ -137,10 +137,11 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Astesia
 
 		public override void AddRecipes() {
 			CreateRecipe()
-				.AddIngredient<SugarPack>(3)
-				.AddIngredient<OrironCluster>(3)
-				.AddIngredient<KetonColloid>(3)
-				.AddIngredient<PolyesterLump>(5)
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.PolyesterLump>(1)
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.OrironCluster>(2)
+				.AddIngredient(ItemID.Starfury)
+				.AddIngredient(ItemID.HallowedBar, 8)
+				.AddIngredient(ItemID.FallenStar, 5)
 				.AddTile(ModContent.TileType<FactoryTile>())
 				.Register();
 		}

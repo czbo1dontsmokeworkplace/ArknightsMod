@@ -28,9 +28,12 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.SilverAsh
     public class SilverAshWeapon : UpgradeWeaponBase
 	{
 		public override void AddRecipes() {
-			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.D32Steel>(4);
-			recipe.AddIngredient<Material.WhiteHorseKohl>(6);
+			Recipe recipe = CreateRecipe()
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.D32Steel>(1)
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.WhiteHorseKohl>(2)
+				.AddIngredient(ItemID.TrueExcalibur)
+				.AddIngredient(ItemID.Feather, 3)
+				.AddIngredient(ItemID.SnowBlock, 20);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

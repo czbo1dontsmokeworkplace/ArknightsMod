@@ -32,9 +32,11 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Entelechia
 
 		public override void AddRecipes() {
 			CreateRecipe()
-				.AddIngredient(ModContent.ItemType<PolymerizationPreparation>(), 4)
-				.AddIngredient(ModContent.ItemType<RMA7024>(), 4)
-				.AddIngredient(ModContent.ItemType<D32Steel>(), 2)
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.CrystallineElectronicUnit>(1)
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.KetonColloid>(2)
+				.AddIngredient(ItemID.DeathSickle)
+				.AddIngredient(ItemID.ChlorophyteBar, 12)
+				.AddIngredient(ItemID.Chain, 3)
 				.AddTile(ModContent.TileType<FactoryTile>())
 				.Register();
 		}

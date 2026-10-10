@@ -41,14 +41,17 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.TexasAlter
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe()
+                .AddIngredient<global::ArknightsMod.Content.Items.Material.CrystallineComponent>(1)
+                .AddIngredient<global::ArknightsMod.Content.Items.Material.Polyketon>(2);
             recipe.AddIngredient(ItemID.TitaniumBar, 20);
             recipe.AddIngredient(ItemID.FrostCore, 1);
             recipe.AddTile(TileID.MythrilAnvil);
             //recipe.AddTile(TileID.OrichalcumAnvil);
             recipe.Register();
-
-            Recipe recipe2 = CreateRecipe();
+            Recipe recipe2 = CreateRecipe()
+                .AddIngredient<global::ArknightsMod.Content.Items.Material.CrystallineComponent>(1)
+                .AddIngredient<global::ArknightsMod.Content.Items.Material.Polyketon>(2);
             recipe2.AddIngredient(ItemID.AdamantiteBar, 20);
             recipe2.AddIngredient(ItemID.FrostCore, 1);
             recipe2.AddTile(TileID.MythrilAnvil);

@@ -39,6 +39,8 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Earthspirit
 		}
 
 		public override void AddRecipes() => CreateRecipe()
+			.AddIngredient<global::ArknightsMod.Content.Items.Material.Oriron>(1)
+			.AddIngredient<global::ArknightsMod.Content.Items.Material.OrironShard>(2)
 			.AddIngredient(ItemID.MagicMissile)
 			.AddIngredient(ItemID.MeteoriteBar, 10)
 			.AddIngredient(ItemID.FallenStar, 5)

@@ -28,7 +28,9 @@ public class SchwarzBow : CrossbowWeaponBase
     }
 
     public override void AddRecipes() {
-        Recipe recipe = CreateRecipe();
+        Recipe recipe = CreateRecipe()
+            .AddIngredient<global::ArknightsMod.Content.Items.Material.D32Steel>(1)
+            .AddIngredient<global::ArknightsMod.Content.Items.Material.OrironBlock>(2);
         recipe.AddIngredient<global::ArknightsMod.Content.Items.Weapons.Sniper.KroosAlter.KroosAlterCrossbow>();
         recipe.AddIngredient(ItemID.ChlorophyteBar, 15);
         recipe.AddIngredient(ItemID.SniperScope);

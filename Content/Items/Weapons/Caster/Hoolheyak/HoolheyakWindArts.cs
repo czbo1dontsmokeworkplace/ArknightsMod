@@ -157,6 +157,8 @@ public sealed class HoolheyakWindArts : ExpansionWeaponBase
     }
 
     public override void AddRecipes() => CreateRecipe()
+        .AddIngredient<global::ArknightsMod.Content.Items.Material.IntegratedDevice>(1)
+        .AddIngredient<global::ArknightsMod.Content.Items.Material.Polyester>(2)
         .AddIngredient(ItemID.CrystalStorm)
         .AddIngredient(ItemID.CloudinaBottle)
         .AddIngredient(ItemID.Feather, 15)

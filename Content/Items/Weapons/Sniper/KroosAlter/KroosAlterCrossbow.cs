@@ -31,7 +31,9 @@ public class KroosAlterCrossbow : CrossbowWeaponBase
     }
 
     public override void AddRecipes() {
-        Recipe recipe = CreateRecipe();
+        Recipe recipe = CreateRecipe()
+            .AddIngredient<global::ArknightsMod.Content.Items.Material.OrironCluster>(1)
+            .AddIngredient<global::ArknightsMod.Content.Items.Material.Polyketon>(2);
         recipe.AddIngredient<global::ArknightsMod.Content.Items.Weapons.Sniper.Kroos.KroosCrossbow>();
         recipe.AddRecipeGroup(global::ArknightsMod.Content.Items.Weapons.OperatorWeaponRecipeGroups.CobaltOrPalladiumBar, 8);
         recipe.AddIngredient(ItemID.SoulofLight, 15);

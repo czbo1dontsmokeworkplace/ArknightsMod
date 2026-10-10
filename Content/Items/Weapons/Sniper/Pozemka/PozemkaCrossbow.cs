@@ -34,7 +34,9 @@ public class PozemkaCrossbow : CrossbowWeaponBase
     }
 
     public override void AddRecipes() {
-        Recipe recipe = CreateRecipe();
+        Recipe recipe = CreateRecipe()
+            .AddIngredient<global::ArknightsMod.Content.Items.Material.CrystallineElectronicUnit>(1)
+            .AddIngredient<global::ArknightsMod.Content.Items.Material.OrirockConcentration>(2);
         recipe.AddIngredient<global::ArknightsMod.Content.Items.Weapons.Sniper.Schwarz.SchwarzBow>();
         recipe.AddIngredient(ItemID.FragmentVortex, 10);
         recipe.AddTile(ModContent.TileType<FactoryTile>());

@@ -152,9 +152,11 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 		}
 
 		public override void AddRecipes() {
-			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.PolymerizationPreparation>(4);
-			recipe.AddIngredient<Material.WhiteHorseKohl>(6);
+			Recipe recipe = CreateRecipe()
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.PolymerizationPreparation>(1)
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.WhiteHorseKohl>(2)
+				.AddIngredient(ItemID.TrueNightsEdge)
+				.AddIngredient(ItemID.TrueExcalibur);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

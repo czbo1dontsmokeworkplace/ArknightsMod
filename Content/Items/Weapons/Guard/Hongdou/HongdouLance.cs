@@ -46,6 +46,8 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Hongdou
 		}
 
 		public override void AddRecipes() => CreateRecipe()
+			.AddIngredient<global::ArknightsMod.Content.Items.Material.OrironCluster>(1)
+			.AddIngredient<global::ArknightsMod.Content.Items.Material.Device>(2)
 			.AddIngredient<FangSpear>()
 			.AddIngredient(ItemID.SoulofNight, 5)
 			.AddIngredient(ItemID.Ichor, 3)

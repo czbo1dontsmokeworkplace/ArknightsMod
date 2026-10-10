@@ -49,6 +49,8 @@ public sealed class PhantomDaggers : ExpansionWeaponBase
         return false;
     }
     public override void AddRecipes() => CreateRecipe()
+        .AddIngredient<global::ArknightsMod.Content.Items.Material.PolymerizationPreparation>(1)
+        .AddIngredient<global::ArknightsMod.Content.Items.Material.PolymerizedGel>(2)
         .AddIngredient<RedDagger>()
         .AddIngredient(ItemID.SpectreBar, 12)
         .AddIngredient(ItemID.SoulofNight, 15)

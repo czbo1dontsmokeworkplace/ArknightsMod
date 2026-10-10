@@ -59,7 +59,9 @@ public sealed class RedDagger : ExpansionWeaponBase
     }
     public override void AddRecipes()
     {
-        CreateRecipe().AddIngredient(ModContent.ItemType<GravelDualBlades>()).AddRecipeGroup(OperatorWeaponRecipeGroups.CobaltOrPalladiumBar, 10)
+        CreateRecipe()
+            .AddIngredient<global::ArknightsMod.Content.Items.Material.OrironCluster>(1)
+            .AddIngredient<global::ArknightsMod.Content.Items.Material.OrirockCube>(2).AddIngredient(ModContent.ItemType<GravelDualBlades>()).AddRecipeGroup(OperatorWeaponRecipeGroups.CobaltOrPalladiumBar, 10)
                 .AddIngredient(ItemID.SoulofNight, 8).AddIngredient(ItemID.Silk, 5)
                 .AddIngredient(ItemID.RedDye)
                 .AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>()).Register();

@@ -64,6 +64,8 @@ public sealed class GavialChainsaw : ExpansionWeaponBase
     }
 
     public override void AddRecipes() => CreateRecipe()
+        .AddIngredient<global::ArknightsMod.Content.Items.Material.BipolarNanoflake>(1)
+        .AddIngredient<global::ArknightsMod.Content.Items.Material.PolymerizedGel>(2)
         .AddIngredient<BlazeGreatsword>()
         .AddIngredient(ItemID.ButchersChainsaw)
         .AddIngredient(ItemID.ChlorophyteBar, 18)

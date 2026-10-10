@@ -198,9 +198,11 @@ namespace ArknightsMod.Content.Items.Weapons.Medic.ReedFlameShadow
 
 		public override void AddRecipes() {
 			CreateRecipe()
-			.AddIngredient<Orundum>(50)
-			.AddIngredient<OrirockConcentration>(8)
-			.AddIngredient<LoxicKohl>(6)
+			.AddIngredient<global::ArknightsMod.Content.Items.Material.NucleicCrystalSinter>(1)
+			.AddIngredient<global::ArknightsMod.Content.Items.Material.OrirockConcentration>(2)
+			.AddIngredient(ItemID.InfernoFork)
+			.AddIngredient(ItemID.Book)
+			.AddIngredient(ItemID.LivingFireBlock, 20)
 			.AddTile(ModContent.TileType<FactoryTile>())
 			.Register();
 		}

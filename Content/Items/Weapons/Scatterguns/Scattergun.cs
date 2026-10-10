@@ -100,7 +100,9 @@ public sealed class PineconeNailgun : Scattergun
     public override int Tier => 0;
     public override string Texture => "ArknightsMod/Content/Items/Weapons/Scatterguns/PineconeNailgun";
     protected override int[] EliteDamage => [14, 17, 20];
-    public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.Boomstick)
+    public override void AddRecipes() => CreateRecipe()
+     .AddIngredient<global::ArknightsMod.Content.Items.Material.Polyketon>(1)
+     .AddIngredient<global::ArknightsMod.Content.Items.Material.OrironShard>(2).AddIngredient(ItemID.Boomstick)
         .AddRecipeGroup(OperatorWeaponRecipeGroups.IronOrLeadBar, 8).AddIngredient(ItemID.Wire, 12)
         .AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>()).Register();
 }
@@ -108,7 +110,9 @@ public sealed class ExecutorShotgun : Scattergun
 {
     public override int Tier => 1;
     protected override int[] EliteDamage => [12, 14, 16];
-    public override void AddRecipes() => CreateRecipe().AddIngredient<PineconeNailgun>()
+    public override void AddRecipes() => CreateRecipe()
+     .AddIngredient<global::ArknightsMod.Content.Items.Material.Grindstone>(1)
+     .AddIngredient<global::ArknightsMod.Content.Items.Material.Device>(2).AddIngredient<PineconeNailgun>()
         .AddIngredient(ItemID.Shotgun).AddRecipeGroup(OperatorWeaponRecipeGroups.CobaltOrPalladiumBar, 12)
         .AddIngredient(ItemID.SoulofNight, 8)
         .AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>()).Register();
@@ -117,7 +121,9 @@ public sealed class ChalterWatergun : Scattergun
 {
     public override int Tier => 2;
     protected override int[] EliteDamage => [23, 27, 32];
-    public override void AddRecipes() => CreateRecipe().AddIngredient<ExecutorShotgun>()
+    public override void AddRecipes() => CreateRecipe()
+     .AddIngredient<global::ArknightsMod.Content.Items.Material.BipolarNanoflake>(1)
+     .AddIngredient<global::ArknightsMod.Content.Items.Material.IncandescentAlloyBlock>(2).AddIngredient<ExecutorShotgun>()
         .AddIngredient(ItemID.TacticalShotgun).AddIngredient(ItemID.ShroomiteBar, 20).AddIngredient(ItemID.WetBomb, 20).AddIngredient(ItemID.BottledWater, 20)
         .AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>()).Register();
 }

@@ -109,8 +109,11 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Shirayuki
 			return false;
 		}
 		public override void AddRecipes() {
-			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.OrirockCube>(4);
+			Recipe recipe = CreateRecipe()
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.OrirockCube>(1)
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.Diketon>(2)
+				.AddIngredient(ItemID.Shuriken, 50)
+				.AddRecipeGroup(OperatorWeaponRecipeGroups.IronOrLeadBar, 5);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

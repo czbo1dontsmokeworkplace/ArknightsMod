@@ -211,6 +211,8 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Fiammetta
 		public override void AddRecipes()
 		{
 			CreateRecipe()
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.CrystallineElectronicUnit>(1)
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.GrindstonePentahydrate>(2)
 				.AddIngredient(ItemID.GrenadeLauncher)
 				.AddIngredient(ItemID.ShroomiteBar, 16)
 				.AddIngredient(ItemID.RocketI, 50)

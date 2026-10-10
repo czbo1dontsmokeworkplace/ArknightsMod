@@ -43,6 +43,8 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.Gravel
 		}
 
 		public override void AddRecipes() => CreateRecipe()
+			.AddIngredient<global::ArknightsMod.Content.Items.Material.OrirockCube>(1)
+			.AddIngredient<global::ArknightsMod.Content.Items.Material.Diketon>(2)
 			.AddIngredient(ItemID.ThrowingKnife, 50).AddIngredient(ItemID.StoneBlock, 100)
 			.AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>()).Register();
 

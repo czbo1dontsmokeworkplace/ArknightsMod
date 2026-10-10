@@ -16,7 +16,9 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Exusiai
     public class ExusiaiVector : UpgradeWeaponBase
 	{
 		public override void AddRecipes() {
-			Recipe recipe = CreateRecipe();
+			Recipe recipe = CreateRecipe()
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.SugarLump>(1)
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.OrirockCube>(2);
 			recipe.AddIngredient(ItemID.Uzi);
 			recipe.AddIngredient(ItemID.ChlorophyteBar, 15);
 			recipe.AddIngredient(ItemID.MusketBall, 999);

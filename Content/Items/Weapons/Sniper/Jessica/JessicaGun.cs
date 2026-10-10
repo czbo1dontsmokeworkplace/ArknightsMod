@@ -72,7 +72,9 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Jessica
 			else if (mp.SkillActive && mp.Skill == 1)
 				damage *= 1.8f; // S2 掩护烟幕：攻击力 +80%
 		}
-		public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.FlintlockPistol)
+		public override void AddRecipes() => CreateRecipe()
+     .AddIngredient<global::ArknightsMod.Content.Items.Material.Polyester>(1)
+     .AddIngredient<global::ArknightsMod.Content.Items.Material.Ester>(2).AddIngredient(ItemID.FlintlockPistol)
 			.AddIngredient(ItemID.ObsidianShield).AddTile(TileID.Anvils).Register();
 
 		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source,

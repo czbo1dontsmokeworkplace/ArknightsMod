@@ -33,9 +33,9 @@ namespace ArknightsMod.Content.Items.Weapons.Vanguard.Bagpipe
 		public override bool MeleePrefix() => true;
 		public override void AddRecipes() {
 			CreateRecipe()
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.PolymerizationPreparation>(1)
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.OrirockConcentration>(2)
 				.AddIngredient(ItemID.JoustingLance, 1)
-				.AddIngredient<PolymerizationPreparation>(4)
-				.AddIngredient<OrirockConcentration>(9)
 				.AddTile(ModContent.TileType<FactoryTile>())
 				.Register();
 		}

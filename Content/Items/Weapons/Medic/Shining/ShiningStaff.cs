@@ -192,6 +192,8 @@ namespace ArknightsMod.Content.Items.Weapons.Medic.Shining
 		public override void AddRecipes()
 		{
 			CreateRecipe()
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.BipolarNanoflake>(1)
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.OrironBlock>(2)
 				.AddIngredient(ItemID.SpectreStaff)
 				.AddIngredient(ItemID.SpectreBar, 16)
 				.AddIngredient(ItemID.CrystalShard, 20)

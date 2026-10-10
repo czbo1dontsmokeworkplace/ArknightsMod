@@ -76,7 +76,9 @@ public sealed class EbenholzStaff : ExpansionWeaponBase
                 Main.projectile[index].CritChance = player.GetWeaponCrit(Item);
         }
     }
-    public override void AddRecipes() => CreateRecipe().AddIngredient<HarmonieStaff>().AddIngredient(ItemID.ShadowbeamStaff)
+    public override void AddRecipes() => CreateRecipe()
+     .AddIngredient<global::ArknightsMod.Content.Items.Material.D32Steel>(1)
+     .AddIngredient<global::ArknightsMod.Content.Items.Material.RefinedSolvent>(2).AddIngredient<HarmonieStaff>().AddIngredient(ItemID.ShadowbeamStaff)
         .AddIngredient(ItemID.SpectreBar, 5).AddIngredient(ItemID.SoulofNight, 5)
         .AddIngredient(ItemID.BrownDye).AddIngredient(ItemID.SilverDye)
         .AddRecipeGroup(OperatorWeaponRecipeGroups.AnyVanillaPiano)

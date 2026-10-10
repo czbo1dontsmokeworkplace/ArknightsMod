@@ -43,7 +43,9 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Melantha
 			Item.crit = 4;
 		}
 
-		public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.Katana)
+		public override void AddRecipes() => CreateRecipe()
+     .AddIngredient<global::ArknightsMod.Content.Items.Material.Oriron>(1)
+     .AddIngredient<global::ArknightsMod.Content.Items.Material.Ester>(2).AddIngredient(ItemID.Katana)
 			.AddIngredient(ItemID.Wood, 15).AddIngredient(ItemID.Gel, 5)
 			.AddTile(TileID.WorkBenches).Register();
 

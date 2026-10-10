@@ -50,9 +50,12 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Wisadel
         }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) => false;
 		public override void AddRecipes() {
-			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<CrystallineElectronicUnit>(3);
-			recipe.AddIngredient<OptimizedDevice>(6);
+			Recipe recipe = CreateRecipe()
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.CrystallineElectronicUnit>(1)
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.OptimizedDevice>(2)
+				.AddIngredient(ItemID.GrenadeLauncher)
+				.AddIngredient(ItemID.ShroomiteBar, 12)
+				.AddIngredient(ItemID.Grenade, 5);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

@@ -91,6 +91,8 @@ public sealed class LeiziStaff : ExpansionWeaponBase
     public override void AddRecipes()
     {
         CreateRecipe()
+            .AddIngredient<global::ArknightsMod.Content.Items.Material.RMA7024>(1)
+            .AddIngredient<global::ArknightsMod.Content.Items.Material.CoagulatingGel>(2)
             .AddIngredient(ItemID.ThunderStaff)
             .AddIngredient(ItemID.HallowedBar, 12)
             .AddIngredient(ItemID.SoulofLight, 8)

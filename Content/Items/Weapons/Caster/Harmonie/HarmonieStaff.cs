@@ -85,7 +85,9 @@ public sealed class HarmonieStaff : ExpansionWeaponBase
 
     public override void AddRecipes()
     {
-        CreateRecipe().AddIngredient<IndigoStaff>()
+        CreateRecipe()
+            .AddIngredient<global::ArknightsMod.Content.Items.Material.OrironCluster>(1)
+            .AddIngredient<global::ArknightsMod.Content.Items.Material.Polyester>(2).AddIngredient<IndigoStaff>()
             .AddRecipeGroup(OperatorWeaponRecipeGroups.CobaltOrPalladiumBar, 12)
             .AddIngredient(ItemID.CrystalShard, 8).AddIngredient(ItemID.SoulofLight, 6)
             .AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>()).Register();

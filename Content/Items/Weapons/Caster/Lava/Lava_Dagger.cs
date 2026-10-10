@@ -15,8 +15,11 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Lava
 	public class Lava_Dagger : UpgradeWeaponBase
 	{
 		public override void AddRecipes() {
-			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.Oriron>(2);
+			Recipe recipe = CreateRecipe()
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.Oriron>(1)
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.SugarSubstitute>(2)
+				.AddIngredient(ItemID.WandofSparking)
+				.AddIngredient(ItemID.Torch, 10);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

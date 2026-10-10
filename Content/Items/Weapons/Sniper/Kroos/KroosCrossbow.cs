@@ -33,7 +33,9 @@ public class KroosCrossbow : CrossbowWeaponBase
     }
 
     public override void AddRecipes() {
-        Recipe recipe = CreateRecipe();
+        Recipe recipe = CreateRecipe()
+            .AddIngredient<global::ArknightsMod.Content.Items.Material.OrirockCube>(1)
+            .AddIngredient<global::ArknightsMod.Content.Items.Material.DamagedDevice>(2);
         recipe.AddRecipeGroup(OperatorWeaponRecipeGroups.AnyVanillaWoodenBow, 1);
         // 兔兔：任意一件兔兔系列物品（兔子 / 兔兔耳朵 / 兔兔尾巴 / 兔子头盔 / 兔兔雕像）均可
         recipe.AddRecipeGroup(OperatorWeaponRecipeGroups.AnyVanillaBunny, 1);

@@ -40,7 +40,9 @@ public sealed class EthanYoyo : ExpansionWeaponBase
         }
         return base.CanUseItem(player);
     }
-    public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.WoodYoyo)
+    public override void AddRecipes() => CreateRecipe()
+     .AddIngredient<global::ArknightsMod.Content.Items.Material.Sugar>(1)
+     .AddIngredient<global::ArknightsMod.Content.Items.Material.SugarSubstitute>(2).AddIngredient(ItemID.WoodYoyo)
         .AddIngredient(ItemID.JungleSpores, 12)
         .AddIngredient(ItemID.GreenDye)
         .AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>()).Register();

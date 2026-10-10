@@ -33,7 +33,9 @@ public sealed class BeeswaxStaff : PhalanxStaff
 {
     public override int Tier => 0;
     protected override int[] EliteDamage => [42, 49, 57];
-    public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.AmberStaff)
+    public override void AddRecipes() => CreateRecipe()
+     .AddIngredient<global::ArknightsMod.Content.Items.Material.IntegratedDevice>(1)
+     .AddIngredient<global::ArknightsMod.Content.Items.Material.Oriron>(2).AddIngredient(ItemID.AmberStaff)
         .AddIngredient(ItemID.Amber, 6).AddIngredient(ItemID.SandBlock, 80).AddIngredient(ItemID.Bone, 30)
         .AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>()).Register();
 }
@@ -42,7 +44,9 @@ public sealed class CarnelianStaff : PhalanxStaff
 {
     public override int Tier => 1;
     protected override int[] EliteDamage => [168, 194, 224];
-    public override void AddRecipes() => CreateRecipe().AddIngredient<BeeswaxStaff>()
+    public override void AddRecipes() => CreateRecipe()
+     .AddIngredient<global::ArknightsMod.Content.Items.Material.RMA7024>(1)
+     .AddIngredient<global::ArknightsMod.Content.Items.Material.IntegratedDevice>(2).AddIngredient<BeeswaxStaff>()
         .AddIngredient(ItemID.HallowedBar, 12).AddIngredient(ItemID.SoulofMight, 8).AddIngredient(ItemID.Ruby, 8)
         .AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>()).Register();
 }
@@ -51,7 +55,9 @@ public sealed class LinStaff : PhalanxStaff
 {
     public override int Tier => 2;
     protected override int[] EliteDamage => [375, 438, 513];
-    public override void AddRecipes() => CreateRecipe().AddIngredient<CarnelianStaff>()
+    public override void AddRecipes() => CreateRecipe()
+     .AddIngredient<global::ArknightsMod.Content.Items.Material.D32Steel>(1)
+     .AddIngredient<global::ArknightsMod.Content.Items.Material.CuttingFluidSolution>(2).AddIngredient<CarnelianStaff>()
         .AddIngredient(ItemID.FragmentNebula, 12).AddIngredient(ItemID.Glass, 100).AddIngredient(ItemID.CrystalShard, 25)
         .AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>()).Register();
 }

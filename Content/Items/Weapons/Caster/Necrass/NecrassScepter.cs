@@ -83,6 +83,8 @@ public sealed class NecrassScepter : ExpansionWeaponBase
         return false;
     }
     public override void AddRecipes() => CreateRecipe()
+        .AddIngredient<global::ArknightsMod.Content.Items.Material.PolymerizationPreparation>(1)
+        .AddIngredient<global::ArknightsMod.Content.Items.Material.TransmutedSaltAgglomerate>(2)
         .AddIngredient(ItemID.ShadowFlameKnife)
         .AddRecipeGroup(OperatorWeaponRecipeGroups.AnyVanillaTombstone, 5)
         .AddIngredient(ItemID.SpectreBar, 12)

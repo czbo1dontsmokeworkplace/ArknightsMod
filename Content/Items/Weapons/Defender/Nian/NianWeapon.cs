@@ -26,9 +26,12 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Nian
 		}
 
 		public override void AddRecipes() {
-			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.PolymerizationPreparation>(4);
-			recipe.AddIngredient<Material.IncandescentAlloyBlock>(7);
+			Recipe recipe = CreateRecipe()
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.PolymerizationPreparation>(1)
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.IncandescentAlloyBlock>(2)
+				.AddIngredient(ItemID.ObsidianShield)
+				.AddIngredient(ItemID.ChlorophyteBar, 12)
+				.AddIngredient(ItemID.LavaBucket);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

@@ -81,7 +81,9 @@ public sealed class IndigoStaff : ExpansionWeaponBase
         }
     }
 
-    public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.MagicMissile)
+    public override void AddRecipes() => CreateRecipe()
+     .AddIngredient<global::ArknightsMod.Content.Items.Material.Device>(1)
+     .AddIngredient<global::ArknightsMod.Content.Items.Material.Diketon>(2).AddIngredient(ItemID.MagicMissile)
         .AddIngredient(ItemID.BottledWater, 5).AddIngredient(ItemID.Amethyst, 8)
         .AddIngredient(ItemID.FallenStar, 5)
         .AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>()).Register();

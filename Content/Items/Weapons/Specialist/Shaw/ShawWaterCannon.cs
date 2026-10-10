@@ -48,7 +48,9 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.Shaw
             return offset;
         }
 		public override void AddRecipes() {
-			Recipe recipe = CreateRecipe();
+			Recipe recipe = CreateRecipe()
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.IntegratedDevice>(1)
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.Polyester>(2);
 			recipe.AddIngredient(ItemID.AquaScepter);
 			recipe.AddIngredient(ItemID.Gel, 25);
 			recipe.AddRecipeGroup(OperatorWeaponRecipeGroups.IronOrLeadBar, 5);

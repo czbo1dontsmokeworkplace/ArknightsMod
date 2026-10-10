@@ -41,7 +41,9 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.TexasAlter
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe()
+                .AddIngredient<global::ArknightsMod.Content.Items.Material.OptimizedDevice>(1)
+                .AddIngredient<global::ArknightsMod.Content.Items.Material.Polyketon>(2);
             recipe.AddIngredient(ItemID.HallowedBar, 15);
             recipe.AddIngredient(ItemID.SoulofFright, 20);
             recipe.AddTile(TileID.MythrilAnvil);

@@ -35,7 +35,8 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Durin
 		}
 
 		public override void AddRecipes() {
-			Recipe recipe = CreateRecipe();
+			Recipe recipe = CreateRecipe()
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.Diketon>(2);
 			recipe.AddIngredient(ItemID.ManaCrystal,1);
 			recipe.AddRecipeGroup(RecipeGroupID.Wood, 10);
 			recipe.AddTile(TileID.WorkBenches);

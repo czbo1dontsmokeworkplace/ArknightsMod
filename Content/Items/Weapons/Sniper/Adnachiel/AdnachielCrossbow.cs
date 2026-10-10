@@ -104,7 +104,9 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Adnachiel
 		//}
 
 		public override void AddRecipes() {
-			Recipe recipe = CreateRecipe();
+			Recipe recipe = CreateRecipe()
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.Sugar>(1)
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.Orirock>(2);
 			recipe.AddRecipeGroup(OperatorWeaponRecipeGroups.AnyVanillaWoodenBow, 1);
 			recipe.AddRecipeGroup(OperatorWeaponRecipeGroups.GoldOrPlatinumBar, 3);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());

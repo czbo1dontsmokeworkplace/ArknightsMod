@@ -11,8 +11,11 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Beagle
 	public class BeagleWeapon : UpgradeWeaponBase
 	{
 		public override void AddRecipes() {
-			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient<Material.OrirockCube>(4);
+			Recipe recipe = CreateRecipe()
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.OrirockCube>(1)
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.Diketon>(2)
+				.AddRecipeGroup(OperatorWeaponRecipeGroups.IronOrLeadBar, 8)
+				.AddRecipeGroup(RecipeGroupID.Wood, 15);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

@@ -17,8 +17,10 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Cuora
 	{
 		public override void AddRecipes() {
 			CreateRecipe()
-				.AddIngredient(ModContent.ItemType<OrirockCube>(), 1)
-				.AddIngredient(ModContent.ItemType<Grindstone>(), 14)
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.Grindstone>(1)
+				.AddIngredient<global::ArknightsMod.Content.Items.Material.OrirockCube>(2)
+				.AddIngredient(ItemID.BatBat)
+				.AddRecipeGroup(OperatorWeaponRecipeGroups.IronOrLeadBar, 8)
 				.AddTile(ModContent.TileType<FactoryTile>())
 				.Register();
 		}

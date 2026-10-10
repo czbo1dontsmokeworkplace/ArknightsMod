@@ -47,9 +47,11 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
-            recipe.AddIngredient<PolymerizationPreparation>(4);
-            recipe.AddIngredient<RefinedSolvent>(7);
+            Recipe recipe = CreateRecipe()
+                .AddIngredient<global::ArknightsMod.Content.Items.Material.PolymerizationPreparation>(1)
+                .AddIngredient<global::ArknightsMod.Content.Items.Material.RefinedSolvent>(2)
+                .AddIngredient(ItemID.ChlorophyteShotbow)
+                .AddIngredient(ItemID.ShroomiteBar, 12);
             recipe.AddTile(ModContent.TileType<FactoryTile>());
             recipe.Register();
         }
