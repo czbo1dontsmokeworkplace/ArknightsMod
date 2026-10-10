@@ -15,9 +15,11 @@ namespace ArknightsMod.Systems
 		public static bool DownedEvolution;
 		public static bool DownedW;
 		public static bool DownedFaustAndMephisto;
+		public static bool DownedMaterialistAntagonizer;
 
 		public override void OnWorldLoad()
 		{
+			DownedMaterialistAntagonizer = false;
 			DownedFaustAndMephisto = false;
 			DownedPompeii = false;
 			DownedTheFirstToTalk = false;
@@ -29,6 +31,7 @@ namespace ArknightsMod.Systems
 
 		public override void OnWorldUnload()
 		{
+			DownedMaterialistAntagonizer = false;
 			DownedFaustAndMephisto = false;
 			DownedPompeii = false;
 			DownedTheFirstToTalk = false;
@@ -40,6 +43,8 @@ namespace ArknightsMod.Systems
 
 		public override void SaveWorldData(TagCompound tag)
 		{
+			if (DownedMaterialistAntagonizer)
+				tag["ArknightsMod.DownedMaterialistAntagonizer"] = true;
 			if (DownedFaustAndMephisto)
 				tag["ArknightsMod.DownedFaustAndMephisto"] = true;
 			if (DownedPompeii)
@@ -58,6 +63,7 @@ namespace ArknightsMod.Systems
 
 		public override void LoadWorldData(TagCompound tag)
 		{
+			DownedMaterialistAntagonizer = tag.ContainsKey("ArknightsMod.DownedMaterialistAntagonizer");
 			DownedFaustAndMephisto = tag.ContainsKey("ArknightsMod.DownedFaustAndMephisto");
 			DownedPompeii = tag.ContainsKey("ArknightsMod.DownedPompeii");
 			DownedTheFirstToTalk = tag.ContainsKey("ArknightsMod.DownedTheFirstToTalk");
@@ -79,7 +85,7 @@ namespace ArknightsMod.Systems
 
 		public override void NetSend(BinaryWriter writer)
 		{
-			BitsByte flags = new BitsByte(DownedPompeii, DownedTheFirstToTalk, DownedFrostNova, DownedAACT, DownedEvolution, DownedW, DownedFaustAndMephisto);
+			BitsByte flags = new BitsByte(DownedPompeii, DownedTheFirstToTalk, DownedFrostNova, DownedAACT, DownedEvolution, DownedW, DownedFaustAndMephisto, DownedMaterialistAntagonizer);
 			writer.Write(flags);
 		}
 
@@ -89,6 +95,7 @@ namespace ArknightsMod.Systems
 			DownedPompeii = flags[0]; DownedTheFirstToTalk = flags[1]; DownedFrostNova = flags[2];
 			DownedAACT = flags[3]; DownedEvolution = flags[4]; DownedW = flags[5];
 			DownedFaustAndMephisto = flags[6];
+			DownedMaterialistAntagonizer = flags[7];
 		}
 	}
 }

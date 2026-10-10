@@ -3939,3 +3939,27 @@ ChalterWatergun: {
 		Lower movement speed tightens the total spread from 20 to 5 degrees; movement does not change damage
 		'''
 }
+
+MaterialistUplink: {
+	DisplayName: Construction Uplink
+	Tooltip:
+		'''
+		Summons the Materialist Antagonizer on the surface or in the sky after Plantera has been defeated
+		Not consumed
+		'''
+}
+
+DroneCommandCore: {
+	DisplayName: Drone Command Core
+	Tooltip:
+		'''
+		Increases your max number of minions by 1
+		Increases summon damage by 8% and defense by 4
+		A mechanical core recovered from a runaway command network
+		'''
+}
+
+MaterialistTreasureBag: {
+	DisplayName: Treasure Bag (Materialist Antagonizer)
+	Tooltip: Right click to open for a Drone Command Core, Chlorophyte Bars and coins
+}

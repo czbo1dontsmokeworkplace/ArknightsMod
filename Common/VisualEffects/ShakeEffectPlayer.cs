@@ -10,6 +10,7 @@ namespace ArknightsMod.Common.VisualEffects
 		public int screenShakeTime = 0;//屏幕抖动时间
 		public Vector2 screenShakeModifier = Vector2.Zero;//常规为0
 		public Vector2 screenShakeVelocity = Vector2.One;//常规为1
+		public float screenShakeMaxDistance = 5f;
 		public bool screenShakeOnlyOnY = false;//纵向振动，常规为否
 		public bool screenShakeOnlyOnX = false;//纵向振动，常规为否
 
@@ -56,7 +57,7 @@ namespace ArknightsMod.Common.VisualEffects
 				}
 				else
 				{
-					maxScreenShakeDistance = 5;
+					maxScreenShakeDistance = screenShakeMaxDistance;
 					screenShakeSpeed = 4;
 					screenShakeModifier += screenShakeVelocity;//震动位移被震动速度所改变
 					screenShakeVelocity.Normalize();//将震动速度归位
@@ -81,6 +82,10 @@ namespace ArknightsMod.Common.VisualEffects
 			if (screenShakeTime > 0)
 			{
 				screenShakeTime--;
+			}
+			else
+			{
+				screenShakeMaxDistance = 5f;
 			}
 		}
 	}

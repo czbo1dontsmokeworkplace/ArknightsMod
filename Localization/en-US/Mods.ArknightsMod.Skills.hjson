@@ -887,6 +887,7 @@ SurtrLaevatain: {
 		Desc:
 			'''
 			ATK [c/3791db:+330%], increased attack range
+			Hold attack: the puppet slams every [c/3791db:0.8] seconds, raising successive fire pillars ahead; each deals one skill attack's damage
 			Max HP [c/3791db:+1200] and heal to full
 			Continuously loses HP, ramping up to [c/f6643b:10%] of Max HP per second
 			Persists until death

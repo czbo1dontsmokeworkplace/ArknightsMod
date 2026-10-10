@@ -1,4 +1,6 @@
 using ArknightsMod.Content.Items.Weapons.Guard.Surtr;
+using ArknightsMod.Content.Buffs;
+using ArknightsMod.Players;
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -42,14 +44,22 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 		public override void UpdateDead() => StopTransformationFire();
 
 		public override void PostUpdate() {
+			WeaponPlayer weapon = Player.GetModPlayer<WeaponPlayer>();
+			if (TransformationFireActive &&
+			    (Player.HeldItem.type != ModContent.ItemType<SurtrLaevatain>() ||
+			     weapon.Skill != 2 || !weapon.SkillActive || !Player.HasBuff<SurtrLaevatainS3Buff>()))
+				StopTransformationFire();
 			if (TransformationFireActive)
 				transformationFireTimer++;
 
+			if (Main.myPlayer != Player.whoAmI)
+				return;
 			if (Player.HeldItem.type == ModContent.ItemType<SurtrLaevatain>()) {
 				if (Player.ownedProjectileCounts[ModContent.ProjectileType<SurtrLaevatain_Proj>()] == 0&&
 				    Player.ownedProjectileCounts[ModContent.ProjectileType<LaevatainProjectile_3>()] == 0) {
-					Projectile.NewProjectile(Player.GetSource_FromThis(),Player.MountedCenter-Main.screenPosition,Vector2.One,ModContent.ProjectileType<SurtrLaevatain_Proj>()
-						,Player.HeldItem.damage,Player.HeldItem.knockBack);
+					Projectile.NewProjectile(Player.GetSource_FromThis(), Player.MountedCenter, Vector2.Zero,
+						ModContent.ProjectileType<SurtrLaevatain_Proj>(),
+						Player.GetWeaponDamage(Player.HeldItem), Player.HeldItem.knockBack, Player.whoAmI);
 				}
 			}
 		}

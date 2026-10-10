@@ -1,0 +1,73 @@
+Items: {
+	MagallanController: {
+		DisplayName: 麦哲伦的龙腾控制器
+		Tooltip:
+			'''
+			左键在光标处召唤「龙腾」无人机，每架占用一个仆从栏
+			默认使用冷冻模块，点击左上角技能图标切换攻击模式
+			三种模式始终生效，所有无人机会立即按照所选模式作战
+			无人机会跟随你飞行，并在待机时轻轻上下浮动
+			右键召回全部无人机，飞回身边后回收
+			冷冻模块无法减速或束缚首领
+			'''
+		CurrentModule: 当前模块：{0}
+	}
+}
+
+Skills: {
+	MagallanController: {
+		1: {
+			Label: 高效制冷模块
+			Desc:
+				'''
+				无人机持续释放寒雾，伤害并减缓附近的普通敌人
+				寒雾会短暂束缚敌人；此模式始终生效
+				'''
+		}
+
+		2: {
+			Label: 激光开采模块
+			Desc:
+				'''
+				无人机锁定15格内的敌人，持续发射激光
+				激光最长延伸15格，可贯穿沿途所有敌人，但会被地形阻挡；此模式始终生效
+				'''
+		}
+
+		3: {
+			Label: 武装打击模块
+			Desc:
+				'''
+				无人机锁定150格内的敌人，向下发射导弹
+				导弹可穿过地形，先直飞片刻，再逐渐转向追踪敌人
+				导弹爆炸时对75×75范围内的敌人造成一次伤害
+				此模式始终生效
+				'''
+		}
+	}
+}
+
+Projectiles: {
+	MagallanDrone.DisplayName: 龙腾无人机
+	MagallanColdPulse.DisplayName: 龙腾制冷脉冲
+	MagallanLaser.DisplayName: 龙腾开采激光
+	MagallanShell.DisplayName: 龙腾爆炸弹
+	MagallanExplosion.DisplayName: 龙腾爆炸
+}
+
+Buffs: {
+	MagallanDroneBuff: {
+		DisplayName: 龙腾无人机
+		Description: 龙腾无人机正跟随你作战
+	}
+
+	MagallanChill: {
+		DisplayName: 制冷减速
+		Description: 移动速度降低50%
+	}
+
+	MagallanBind: {
+		DisplayName: 制冷束缚
+		Description: 暂时无法行动
+	}
+}

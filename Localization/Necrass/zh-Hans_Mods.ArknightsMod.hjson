@@ -1,0 +1,28 @@
+Items: {
+	NecrassScepter: {
+	}
+}
+
+Skills: {
+	NecrassScepter: {
+		1: {
+		}
+
+		2: {
+		}
+
+		3: {
+		}
+	}
+}
+
+Projectiles: {
+	// NecrassCourt.DisplayName: Rekindling Crown
+	// NecrassServant.DisplayName: Lamenting Servant
+	// NecrassSoulBolt.DisplayName: Rekindled Flame
+	// NecrassImpact.DisplayName: Soulfire Surge
+	// NecrassSleep.DisplayName: Wither
+	// NecrassRitual.DisplayName: Coronation
+	// NecrassOffering.DisplayName: Soul Offering
+	// LaevatainFireFlowParticle.DisplayName: Laevatain Fire Flow Particle
+}

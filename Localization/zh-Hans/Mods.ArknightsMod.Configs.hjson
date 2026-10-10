@@ -208,3 +208,17 @@ SkillChargeConfig: {
 		Tooltip: 开启后，技能开启期间"消耗"技力的速度整体 x2，表现为技能的持续时间缩短为原来的一半
 	}
 }
+
+MaterialistVisualConfig: {
+	DisplayName: 物欲拮抗者：视觉效果
+
+	ReducedEffects: {
+		Label: 简化装饰特效
+		Tooltip: 减少粒子和背景装饰，保留全部攻击预警
+	}
+
+	ScreenShake: {
+		Label: 屏幕震动
+		Tooltip: 启用破盾、阶段切换与爆炸时的轻微震动
+	}
+}

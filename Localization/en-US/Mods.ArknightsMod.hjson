@@ -151,6 +151,8 @@ Projectiles: {
 	EvolutionSummonShot.DisplayName: Symbiotic Blood
 	EvolutionCompanion.DisplayName: Symbiotic Excrescence
 	EvolutionHeavyCompanion.DisplayName: Symbiotic Abomination
+	LaevatainTwilightPillar.DisplayName: Laevatain Twilight Pillar
+	LaevatainTwilightImpact.DisplayName: Laevatain Twilight Impact
 }
 
 Keybinds: {

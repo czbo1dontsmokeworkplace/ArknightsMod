@@ -151,6 +151,8 @@ Projectiles: {
 	EvolutionSummonShot.DisplayName: 共生血灵
 	EvolutionCompanion.DisplayName: 共生赘生物
 	EvolutionHeavyCompanion.DisplayName: 共生源石畸变体
+	// LaevatainTwilightPillar.DisplayName: Laevatain Twilight Pillar
+	// LaevatainTwilightImpact.DisplayName: Laevatain Twilight Impact
 }
 
 Keybinds: {

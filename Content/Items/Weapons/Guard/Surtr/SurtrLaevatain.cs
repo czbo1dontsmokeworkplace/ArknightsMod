@@ -93,7 +93,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Surtr
 					modPlayer.SkillTimer = 0;
 					modPlayer.DelStockCount();
 					SoundEngine.PlaySound(SkillActiveSound, player.Center);
-					// 挂成真正的 buff，即使切武器把 Skill/SkillActive 重置掉，这个效果也不会消失
+					// 持续效果只在手持本武器并保持三技能开启时生效。
 					player.AddBuff(ModContent.BuffType<SurtrLaevatainS3Buff>(), SurtrLaevatainS3Buff.InitialDuration);
 					player.GetModPlayer<SurtrLaevatain_Player>()
 						.StartTransformationFire(new Color(255, 40, 8));

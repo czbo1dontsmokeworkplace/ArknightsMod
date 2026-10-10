@@ -4309,3 +4309,27 @@ ChalterWatergun: {
 		站立不动时获得更高的散射精度
 		'''
 }
+
+MaterialistUplink: {
+	DisplayName: 施工指挥终端
+	Tooltip:
+		'''
+		在击败世纪之花后的地表或天空召唤“物欲拮抗者”
+		不会消耗
+		'''
+}
+
+DroneCommandCore: {
+	DisplayName: 无人机指挥核心
+	Tooltip:
+		'''
+		增加1个仆从上限
+		召唤伤害提高8%，防御提高4点
+		从失控指挥网络中回收的机械核心
+		'''
+}
+
+MaterialistTreasureBag: {
+	DisplayName: 宝藏袋（“物欲拮抗者”）
+	Tooltip: 右键打开，获得无人机指挥核心、叶绿锭和钱币
+}

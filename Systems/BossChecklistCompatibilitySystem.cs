@@ -17,6 +17,14 @@ namespace ArknightsMod.Systems
 				return;
 
 			TryLogBoss(bossChecklist,
+				internalName: "MaterialistAntagonizer",
+				progression: 12.5f,
+				downed: () => DownedBossSystem.DownedMaterialistAntagonizer,
+				npcIDs: new List<int> { ModContent.NPCType<Content.NPCs.Enemy.MaterialistAntagonizer.MaterialistAntagonizer>() },
+				spawnItems: new List<int> { ModContent.ItemType<Content.NPCs.Enemy.MaterialistAntagonizer.MaterialistUplink>() }
+			);
+
+			TryLogBoss(bossChecklist,
 				internalName: "FaustAndMephisto",
 				progression: 6.9f,
 				downed: () => DownedBossSystem.DownedFaustAndMephisto,

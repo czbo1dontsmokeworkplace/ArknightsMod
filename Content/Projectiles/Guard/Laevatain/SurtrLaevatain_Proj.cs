@@ -1,6 +1,7 @@
 using ArknightsMod.Content.Dusts;
 using ArknightsMod.Content.Dusts.Fire;
 using ArknightsMod.Content.Items.Weapons.Guard.Surtr;
+using ArknightsMod.Common.VisualEffects;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -13,6 +14,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameInput;
+using Terraria.ID;
 using Terraria.ModLoader;
 using HeatWaveRTEffect = ArknightsMod.Content.SwingHelper.HeatWaveRTEffect;
 using RTHelper = ArknightsMod.Content.SwingHelper.RTHelper;
@@ -31,9 +33,9 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 		{
 			WindShape = LaevatainStabWindShape.Parallel,
 			WindAngleOffsetRadians = MathHelper.ToRadians(-15f),
-			ParallelSpacing = 18f,
+			ParallelSpacing = 18f * Laevatain_SwingHelper.StabAreaScale,
 			WindColor = new Color(255, 90, 24),
-			WindPositionAlongBlade = 0.8f,
+			WindPositionAlongBlade = 0.65f,
 			WindFlowSpeed = 80f
 		};
 		public override void SetDefaults() {
@@ -65,70 +67,104 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 			helper.MaxChargetime = 12;
 			helper.TotalStabDuration = StabDuration;
 			helper.SetScale(1f);
+			helper.SwingUseTime = 13;
 		}
 
 		public enum ProjMode {Move,Attack,Wait,Stab}
 		public ProjMode projMode = ProjMode.Move;
 		public WeaponPlayer mp => player.GetModPlayer<WeaponPlayer>();
-		private bool press = false;
+		private bool hitFeedbackPlayed;
+		private const int SwingTransitionFrames = 6;
+		private int swingTransitionTimer;
+		private int comboFacing = 1;
+		private float transitionStart;
+		private float transitionEnd;
+
+		private void BeginAttack(bool continueRotation)
+		{
+			hitFeedbackPlayed = false;
+			stabEffect.Reset();
+			projMode = ProjMode.Attack;
+			Vector2 mousePos = Main.MouseWorld - player.Center;
+			float aimAngle = MathF.Atan2(mousePos.Y, mousePos.X);
+			if (continueRotation)
+				helper.SetStartRad(transitionEnd + comboFacing * helper.swingRad * 0.5f, comboFacing);
+			else {
+				comboFacing = player.direction;
+				helper.PointMouseRad(aimAngle);
+			}
+			helper.SetStabRad(aimAngle);
+			helper.ResetTime(continueRotation ? 0 : 5);
+			helper.ReloadIndex();
+			helper.SetScale(new Vector2(1f, 1f));
+			helper.SetScale(mp.Skill == 0 && mp.SkillActive ? 1.2f : 1f);
+			if (mp.Skill == 0) {
+				if (mp.SkillCharge >= mp.SkillChargeMax) {
+					helper.SetScale(new Vector2(1f, 0.856f));
+					helper.SetScale(mp.SkillActive ? 1.4f : 1.3f);
+					mp.SkillCharge = 0;
+					SoundEngine.PlaySound(SurtrLaevatain.SkillActiveSound, player.Center);
+				}
+				else
+					mp.SkillCharge++;
+			}
+			else if (mp.Skill == 1 && mp.SkillActive) {
+				helper.SetScale(1.2f);
+				projMode = ProjMode.Stab;
+			}
+			Projectile.netUpdate = true;
+		}
+
+		private void BeginSwingTransition()
+		{
+			projMode = ProjMode.Wait;
+			swingTransitionTimer = 0;
+			transitionStart = helper.swordRad;
+			float aimNow = (Main.MouseWorld - player.Center).ToRotation();
+			float aimDifference = MathHelper.WrapAngle(aimNow - helper.mouseRad);
+			float remainingArc = MathHelper.TwoPi - helper.swingRad;
+			float gap = MathHelper.Clamp(remainingArc + comboFacing * aimDifference,
+				MathHelper.ToRadians(12f), MathHelper.Pi);
+			transitionEnd = transitionStart + comboFacing * gap;
+		}
 		public override void AI() {
 			if (mp.Skill == 2 && mp.SkillActive) {
-				if((float)player.GetModPlayer<SurtrLaevatain_Player>()
-				   .transformationFireTimer / player.GetModPlayer<SurtrLaevatain_Player>()
-					   .transformationFireDuration >= 0.6)
-					Projectile.NewProjectile(player.GetSource_FromThis(),player.MountedCenter-Main.screenPosition,
-						Vector2.One,ModContent.ProjectileType<LaevatainProjectile_3>()
-						,player.HeldItem.damage,player.HeldItem.knockBack);
+				if (Main.myPlayer == Projectile.owner &&
+				    player.ownedProjectileCounts[ModContent.ProjectileType<LaevatainProjectile_3>()] == 0)
+					Projectile.NewProjectile(player.GetSource_FromThis(), player.MountedCenter,
+						Vector2.Zero, ModContent.ProjectileType<LaevatainProjectile_3>(),
+						player.GetWeaponDamage(player.HeldItem), player.HeldItem.knockBack, Projectile.owner);
 				Projectile.Kill();
+				return;
 			}
 			Projectile.timeLeft = 2;
-			if(player.dead||player.HeldItem.type != ModContent.ItemType<SurtrLaevatain>())
+			if(player.dead||player.HeldItem.type != ModContent.ItemType<SurtrLaevatain>()) {
 				Projectile.Kill();
+				return;
+			}
 			switch (projMode) {
 				case ProjMode.Move:
 					helper.Move();
-					if (!press && PlayerInput.MouseInfo.LeftButton == ButtonState.Pressed) {
-						press = true;
-						stabEffect.Reset();
-						projMode = ProjMode.Attack;
-						Vector2 mousePos = Main.MouseWorld - player.Center;
-						helper.PointMouseRad(MathF.Atan2(mousePos.Y, mousePos.X));
-						helper.SetStabRad(MathF.Atan2(mousePos.Y, mousePos.X));
-						helper.ResetTime(12);
-						helper.ReloadIndex();
-						helper.SetScale(new Vector2(1f, 1f));
-						helper.SetScale(1f);
-						if (mp.Skill == 0) {
-							if (mp.SkillCharge >= mp.SkillChargeMax) {
-								helper.SetScale(new Vector2(1f, 0.856f));
-								helper.SetScale(1.3f);
-								mp.SkillCharge = 0;
-								SoundEngine.PlaySound(SurtrLaevatain.SkillActiveSound, player.Center);
-							}
-							else {
-								mp.SkillCharge++;
-							}
-						}
-						else if(mp.Skill == 1 && mp.SkillActive)
-							projMode =  ProjMode.Stab;
-					}
+					if (Main.myPlayer == Projectile.owner && PlayerInput.MouseInfo.LeftButton == ButtonState.Pressed)
+						BeginAttack(false);
 					break;
 				case ProjMode.Attack:
 					if(Main.rand.NextBool(3))
 						Dust.NewDust(helper.swordPos, 0, 0, ModContent.DustType<SurtrAttack_Dust>());
-					if (helper.Swing()) {
-						projMode = ProjMode.Wait;
-					}
+					if (helper.Swing())
+						BeginSwingTransition();
 					break;
 				case ProjMode.Stab:
 					bool stabFinished = helper.Stab(Main.MouseWorld);
 					stabEffect.Update(helper);
+					if (helper.IsStabThrustPhase)
+						SpawnStabTrail();
 					if (helper.IsStabThrustStart) {
-						Vector2 drawOffset = helper.setoff.RotatedBy(helper.swordRot);
-						Vector2 burstTip = helper.swordPos + drawOffset;
-						Vector2 firePosition = Vector2.Lerp(player.Center, burstTip, 0.55f);
-						stabEffect.OnBurst(burstTip);
-						SpawnStabFire(firePosition);
+						if (!Main.dedServ)
+							SoundEngine.PlaySound(SoundID.Item71 with { Volume = 0.38f, Pitch = -0.3f }, player.Center);
+						helper.GetStabHitLine(out Vector2 stabStart, out Vector2 stabEnd);
+						stabEffect.OnBurst(stabEnd);
+						SpawnStabFire(stabStart, stabEnd);
 					}
 					if (stabFinished) {
 						projMode = ProjMode.Move;
@@ -136,18 +172,23 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 
 					break;
 				case ProjMode.Wait:
-					if (helper.Wait()) {
-						helper.ResetTime(12);
-						projMode = ProjMode.Move;
-						helper.SetScale(new Vector2(1f, 1f));
-						helper.ReloadIndex();
+					swingTransitionTimer++;
+					float transitionProgress = MathHelper.Clamp(swingTransitionTimer / (float)SwingTransitionFrames, 0f, 1f);
+					helper.ContinueSwingPose(MathHelper.Lerp(transitionStart, transitionEnd,
+						RotationHelper.EaseInOutSine(transitionProgress)));
+					if (swingTransitionTimer >= SwingTransitionFrames) {
+						if (Main.myPlayer == Projectile.owner && PlayerInput.MouseInfo.LeftButton == ButtonState.Pressed)
+							BeginAttack(true);
+						else {
+							projMode = ProjMode.Move;
+							helper.SetScale(1f);
+							helper.ReloadIndex();
+						}
 					}
 					break;
 
 			}
 
-			if (press && PlayerInput.MouseInfo.LeftButton == ButtonState.Released)
-				press = false;
 		}
 
 		public static Effect fire = ModContent.Request<Effect>("ArknightsMod/Content/Projectiles/Guard/Laevatain/FireProcedural").Value;
@@ -194,7 +235,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 		}
 
 		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {
-			if(projMode!=ProjMode.Move)
+			if (projMode == ProjMode.Attack || projMode == ProjMode.Stab)
 				return helper.Colliding(targetHitbox);
 			return false;
 		}
@@ -202,17 +243,75 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
 			if (projMode == ProjMode.Stab)
 				stabEffect.OnHit(target.Center);
-			Dust.NewDust(target.Center, 0, 0, ModContent.DustType<surtrDamage_Dust>(),Scale:1f);
-			if(Main.rand.NextBool(2))
-				Dust.NewDust(target.Center, 0, 0, ModContent.DustType<fire_28>(),Scale:1f);
-			else {
-				Dust.NewDust(target.Center, 0, 0, ModContent.DustType<fire_03>(),Scale:1f);
+			if (!hitFeedbackPlayed && !Main.dedServ) {
+				hitFeedbackPlayed = true;
+				SoundEngine.PlaySound(SoundID.NPCHit1 with { Volume = 0.36f, Pitch = -0.18f, MaxInstances = 5 }, target.Center);
+				if (projMode == ProjMode.Stab) {
+					SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.34f, Pitch = -0.28f, MaxInstances = 4 }, target.Center);
+					for (int i = 0; i < 24; i++) {
+						Dust spark = Dust.NewDustPerfect(target.Center + Main.rand.NextVector2Circular(12f, 12f),
+							DustID.Torch, helper.StabDirection * Main.rand.NextFloat(2f, 6f) +
+							Main.rand.NextVector2Circular(3f, 3f), 55, new Color(255, 145, 35),
+							Main.rand.NextFloat(1.1f, 1.8f));
+						spark.noGravity = true;
+					}
+				}
+				if (Main.myPlayer == Projectile.owner) {
+					ShakeEffectPlayer shake = player.GetModPlayer<ShakeEffectPlayer>();
+					shake.screenShakeTime = Math.Max(shake.screenShakeTime, projMode == ProjMode.Stab ? 5 : 2);
+					shake.screenShakeVelocity = (target.Center - player.Center).SafeNormalize(Vector2.UnitX) *
+						(projMode == ProjMode.Stab ? 3f : 1.2f);
+				}
+			}
+			Dust.NewDustPerfect(target.Center, ModContent.DustType<surtrDamage_Dust>(), Vector2.Zero,
+				0, Color.White, 1f);
+			if (projMode == ProjMode.Stab)
+				Dust.NewDustPerfect(target.Center, ModContent.DustType<fire_28>(), Vector2.Zero,
+					0, Color.White, 1.35f);
+			else if (Main.rand.NextBool(2))
+				Dust.NewDustPerfect(target.Center, ModContent.DustType<fire_28>(), Vector2.Zero,
+					0, Color.White, 1f);
+			else
+				Dust.NewDustPerfect(target.Center, ModContent.DustType<fire_03>(), Vector2.Zero,
+					0, Color.White, 1f);
+		}
+
+		private void SpawnStabTrail()
+		{
+			if (Main.dedServ)
+				return;
+			helper.GetStabHitLine(out Vector2 start, out Vector2 end);
+			Vector2 direction = (end - start).SafeNormalize(helper.StabDirection);
+			Vector2 side = new(-direction.Y, direction.X);
+			for (int i = 0; i < 9; i++) {
+				Vector2 origin = Vector2.Lerp(start, end, Main.rand.NextFloat()) +
+					side * Main.rand.NextFloat(-Laevatain_SwingHelper.StabLineWidth * 0.5f,
+						Laevatain_SwingHelper.StabLineWidth * 0.5f);
+				Dust flame = Dust.NewDustPerfect(origin, DustID.Torch,
+					direction * Main.rand.NextFloat(2f, 5f) + side * Main.rand.NextFloat(-2f, 2f),
+					70, new Color(255, 103, 18), Main.rand.NextFloat(1f, 1.65f));
+				flame.noGravity = true;
 			}
 		}
 
-		private void SpawnStabFire(Vector2 position)
+		private void SpawnStabFire(Vector2 start, Vector2 end)
 		{
-			Projectile.NewProjectile(Projectile.GetSource_FromThis(), position, Vector2.Zero,
+			if (Main.dedServ)
+				return;
+			Vector2 direction = (end - start).SafeNormalize(helper.StabDirection);
+			Vector2 side = new(-direction.Y, direction.X);
+			for (int i = 0; i < 42; i++) {
+				Vector2 origin = Vector2.Lerp(start, end, Main.rand.NextFloat()) +
+					side * Main.rand.NextFloat(-Laevatain_SwingHelper.StabLineWidth * 0.5f,
+						Laevatain_SwingHelper.StabLineWidth * 0.5f);
+				Dust flame = Dust.NewDustPerfect(origin, DustID.Torch,
+					direction * Main.rand.NextFloat(3f, 8f) + side * Main.rand.NextFloat(-3f, 3f),
+					55, new Color(255, 86, 16), Main.rand.NextFloat(1.15f, 1.9f));
+				flame.noGravity = true;
+			}
+			if (Main.myPlayer != Projectile.owner)
+				return;
+			Projectile.NewProjectile(Projectile.GetSource_FromThis(), Vector2.Lerp(start, end, 0.6f), Vector2.Zero,
 				ModContent.ProjectileType<LaevatainFireFlowParticle>(), 0, 0f,
 				Projectile.owner, 0.74f, Main.rand.NextFloat(0f, MathHelper.TwoPi), helper.swordRot);
 		}

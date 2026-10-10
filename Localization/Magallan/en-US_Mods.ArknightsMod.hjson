@@ -1,0 +1,73 @@
+Items: {
+	MagallanController: {
+		DisplayName: Magallan's Soaring Dragon Controller
+		Tooltip:
+			'''
+			Left-click to summon a Soaring Dragon at the cursor, using one minion slot
+			Cooling is selected by default; click the skill icons at the top left to change modes
+			All three modes stay active, and every drone immediately adopts the selected mode
+			Drones follow you and gently bob while waiting to attack
+			Right-click to recall every drone; they fly back to you before being recovered
+			Cooling cannot slow or bind bosses
+			'''
+		CurrentModule: Current module: {0}
+	}
+}
+
+Skills: {
+	MagallanController: {
+		1: {
+			Label: High-Efficiency Freezing Module
+			Desc:
+				'''
+				Drones continuously release cold mist that damages and slows nearby ordinary enemies
+				The mist briefly binds enemies; this mode stays active
+				'''
+		}
+
+		2: {
+			Label: Laser Mining Module
+			Desc:
+				'''
+				Drones target enemies within 15 tiles and continuously fire lasers
+				Lasers reach up to 15 tiles and pierce every enemy in their path, but stop at terrain; this mode stays active
+				'''
+		}
+
+		3: {
+			Label: Armed Combat Module
+			Desc:
+				'''
+				Drones target enemies within 150 tiles and launch missiles straight down
+				Missiles pass through terrain, fly straight briefly, then turn toward their target with increasing agility
+				Each missile explodes once, damaging enemies in a 75 by 75 area
+				This mode stays active
+				'''
+		}
+	}
+}
+
+Projectiles: {
+	MagallanDrone.DisplayName: Soaring Dragon
+	MagallanColdPulse.DisplayName: Cooling Pulse
+	MagallanLaser.DisplayName: Mining Laser
+	MagallanShell.DisplayName: Soaring Dragon Shell
+	MagallanExplosion.DisplayName: Soaring Dragon Explosion
+}
+
+Buffs: {
+	MagallanDroneBuff: {
+		DisplayName: Soaring Dragon Drone
+		Description: Soaring Dragon drones are fighting at your side
+	}
+
+	MagallanChill: {
+		DisplayName: Cooling Slow
+		Description: Movement speed reduced by 50%
+	}
+
+	MagallanBind: {
+		DisplayName: Cooling Bind
+		Description: Temporarily immobilized
+	}
+}

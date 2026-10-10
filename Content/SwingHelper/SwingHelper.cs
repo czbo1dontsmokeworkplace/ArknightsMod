@@ -477,8 +477,12 @@ namespace ArknightsMod.Content.SwingHelper
                 direction = (RotationHelper.SwingDir)(-(int)direction);
             }
             startRad = start;
-            return RotationHelper.GetSwingRotation(startRad, swingRad, swingTime, SwingUseTime, direction);
+            if (SwingUseTime <= 0)
+                return startRad;
+            return startRad + swingRad * EaseSwingProgress(swingTime / (float)SwingUseTime) * (int)direction;
         }
+
+        protected virtual float EaseSwingProgress(float progress) => RotationHelper.EaseOutCubic(progress);
 
         public SwingHelper SetDashRad(float rad) {
 	        dashRad = rad;

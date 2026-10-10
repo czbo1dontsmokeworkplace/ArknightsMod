@@ -1,8 +1,11 @@
 using ArknightsMod.Content.Dusts;
 using ArknightsMod.Content.Dusts.Fire;
+using ArknightsMod.Content.Items.Weapons.Guard.Surtr;
+using ArknightsMod.Common.VisualEffects;
 using ArknightsMod.Players;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -16,14 +19,7 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 {
 	/// <summary>
-	/// S3（Skill==2）攻击：
-	///   1. 本体只在小人位置播放一段 11 帧的挥砍动画，不参与伤害判定。
-	///   2. OnSpawn 时以鼠标方向为准，在 1000 距离内挑出最近的 3 个敌人当伤害目标，
-	///      每个目标各生成一把 LaevatainProjectile_3_swordDrop（天降剑），
-	///      从目标头顶落到脚下，落地才是实际伤害来源。
-	///  以下为mokou修改内容:
-	///    1. 黄昏持续存在(技能时间内)
-	///    2. 按下攻击键后 进入AttackMode 打完后取消进入 MoveMode(moveMode本质就是保持帧图为1)
+	/// 黄昏期间的傀儡：逐渐显现，左键每 48 帧剁地一次，落地后朝面向方向依次喷出火柱。
 	/// </summary>
 	public class LaevatainProjectile_3 : ModProjectile
 	{
@@ -31,10 +27,14 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 			"ArknightsMod/Content/Projectiles/Guard/Laevatain/LaevatainProjectile_3_melee";
 
 		private const int FrameCount = 11;
-		private const float SearchRange = 1000f;
-		private const int MaxTargets = 3;
-		private const float SearchConeCos = 0.5f; // 鼠标方向左右各 60 度视为"朝向"
-		private static readonly Vector2 DrawOffset = new(-60f, -90f); // 相对小人锚点的画面偏移，左200上300
+		private const int AttackInterval = 48;
+		private const int ImpactFrame = 21;
+		private const int RevealTicks = 90;
+		private const int PillarCount = 10;
+		private int age;
+		private int attackTimer;
+		private int attackDirection;
+		private bool revealBurstPlayed;
 
 		public override void SetStaticDefaults()
 		{
@@ -46,16 +46,28 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 			Projectile.width = 20;
 			Projectile.height = 20;
 
-			Projectile.friendly = false; // 纯动画，伤害全部交给天降剑
+			Projectile.friendly = false; // 伤害由落地点向前的火柱负责
 			Projectile.DamageType = DamageClass.Melee;
 
 			Projectile.penetrate = -1;
 			Projectile.tileCollide = false;
 			Projectile.ignoreWater = true;
-			Projectile.timeLeft = 9999;
+			Projectile.timeLeft = 2;
 		}
 
 		public override bool ShouldUpdatePosition() => false;
+
+		public override void SendExtraAI(BinaryWriter writer) {
+			writer.Write((byte)projMode);
+			writer.Write((byte)attackTimer);
+			writer.Write((sbyte)attackDirection);
+		}
+
+		public override void ReceiveExtraAI(BinaryReader reader) {
+			projMode = (ProjMode)reader.ReadByte();
+			attackTimer = reader.ReadByte();
+			attackDirection = reader.ReadSByte();
+		}
 
 		public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI) => behindNPCs.Add(index);
 
@@ -63,101 +75,124 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 		public ProjMode projMode = ProjMode.Move;
 		public Player player => Main.player[Projectile.owner];
 		public override void AI() {
-			Projectile.spriteDirection = player.direction;
-			Projectile.Center = player.Center + DrawOffset;
-			if (!player.active || player.dead||player.GetModPlayer<WeaponPlayer>().Skill!=2||!player.GetModPlayer<WeaponPlayer>().SkillActive)
+			if (!player.active || player.dead || player.HeldItem.type != ModContent.ItemType<SurtrLaevatain>() ||
+			    player.GetModPlayer<WeaponPlayer>().Skill != 2 || !player.GetModPlayer<WeaponPlayer>().SkillActive)
 			{
 				Projectile.Kill();
 				return;
 			}
+			Projectile.timeLeft = 2;
+			age++;
+			Projectile.spriteDirection = projMode == ProjMode.Attack ? attackDirection : player.direction;
+			// 傀儡的贴图中心与玩家同高，始终位于玩家身后两格（32 像素）。
+			Projectile.Center = player.Center + new Vector2(-32f * Projectile.spriteDirection, 0f);
+			if (age < RevealTicks) {
+				SpawnRevealFlames();
+				return;
+			}
+			if (!revealBurstPlayed) {
+				revealBurstPlayed = true;
+				SpawnRevealBurst();
+			}
 
 			switch (projMode) {
-				case  ProjMode.Move:
-					Move();
-					if (PlayerInput.MouseInfo.LeftButton == ButtonState.Pressed) {
-						Projectile.timeLeft = player.itemAnimationMax > 0 ? player.itemAnimationMax : 60;
-						Projectile.localAI[0] = Projectile.timeLeft;
+				case ProjMode.Move:
+					Projectile.frame = 0;
+					if (Main.myPlayer == Projectile.owner && PlayerInput.MouseInfo.LeftButton == ButtonState.Pressed) {
+						attackDirection = player.direction;
+						attackTimer = 0;
 						Projectile.netUpdate = true;
 						projMode = ProjMode.Attack;
-						Attack_Proj();
 					}
-
 					break;
 				case ProjMode.Attack:
-					if (Attack()) {
-						projMode = ProjMode.Move;
+					attackTimer++;
+					Projectile.frame = Math.Min(FrameCount - 1, attackTimer * FrameCount / AttackInterval);
+					if (attackTimer == ImpactFrame)
+						Attack_Proj();
+					if (attackTimer >= AttackInterval) {
+						attackTimer = 0;
+						bool repeat = Main.myPlayer == Projectile.owner && PlayerInput.MouseInfo.LeftButton == ButtonState.Pressed;
+						if (repeat)
+							attackDirection = player.direction;
+						else
+							projMode = ProjMode.Move;
+						Projectile.netUpdate = true;
 					}
-
 					break;
 			}
-
 		}
-		/// <summary>
-		/// 攻击方法
-		/// </summary>
-		/// <returns></returns>
-		public bool Attack() {
-			player.itemTime = 2;
-			player.itemAnimation = 2;
 
-			float progress = 1f - Projectile.timeLeft / Projectile.localAI[0];
-			Projectile.frame = (int)MathHelper.Clamp(progress * FrameCount, 0, FrameCount - 1);
-			if (Projectile.timeLeft == 1) {
-				Projectile.timeLeft = 2;
-				return true;
+		private void SpawnRevealFlames() {
+			if (Main.dedServ || age % 2 != 0)
+				return;
+			for (int i = 0; i < 3; i++) {
+				Vector2 origin = player.Center + Main.rand.NextVector2Circular(45f, 62f);
+				Vector2 velocity = (origin - player.Center).SafeNormalize(-Vector2.UnitY) * Main.rand.NextFloat(1.5f, 4f);
+				Dust dust = Dust.NewDustPerfect(origin, DustID.Torch, velocity, 90,
+					new Color(255, 76, 12), Main.rand.NextFloat(1.1f, 1.8f));
+				dust.noGravity = true;
 			}
+		}
+
+		private void SpawnRevealBurst() {
+			if (Main.dedServ)
+				return;
+			for (int i = 0; i < 42; i++) {
+				Vector2 velocity = (MathHelper.TwoPi * i / 42f).ToRotationVector2() * Main.rand.NextFloat(2.5f, 7f);
+				Dust dust = Dust.NewDustPerfect(Projectile.Center, DustID.Torch, velocity, 55,
+					new Color(255, 100, 20), Main.rand.NextFloat(1.25f, 2.1f));
+				dust.noGravity = true;
+			}
+		}
+
+		public override bool PreDraw(ref Color lightColor) {
+			Texture2D texture = Terraria.GameContent.TextureAssets.Projectile[Type].Value;
+			Rectangle source = texture.Frame(1, FrameCount, 0, Projectile.frame);
+			Vector2 origin = source.Size() * 0.5f;
+			SpriteEffects flip = Projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+			Vector2 position = Projectile.Center - Main.screenPosition;
+			float reveal = MathHelper.Clamp(age / (float)RevealTicks, 0f, 1f);
+			float outline = MathHelper.Clamp(1f - MathF.Abs(age - RevealTicks) / 15f, 0f, 1f);
+			if (outline > 0f) {
+				for (int i = 0; i < 8; i++) {
+					Vector2 offset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * (3f + 5f * outline);
+					Main.EntitySpriteDraw(texture, position + offset, source,
+						new Color(255, 92, 18) * (outline * 0.8f), 0f, origin, Projectile.scale, flip);
+				}
+			}
+			Main.EntitySpriteDraw(texture, position, source, lightColor * reveal, 0f, origin, Projectile.scale, flip);
 			return false;
 		}
-		/// <summary>
-		/// 移动方法
-		/// </summary>
-		/// <returns></returns>
-		public void Move() {
-			Projectile.timeLeft = 2;
-		}
-		/// <summary>
-		/// 攻击模式下射弹AI
-		/// </summary>
+
 		public void Attack_Proj() {
 			if (Main.myPlayer != Projectile.owner)
 				return;
-
-			Player player = Main.player[Projectile.owner];
-
-			Vector2 aimDir = (Main.MouseWorld - player.Center).SafeNormalize(Vector2.UnitX);
-
-			List<NPC> candidates = [];
-			foreach (NPC npc in Main.ActiveNPCs)
-			{
-				if (!npc.CanBeChasedBy(player) || npc.friendly || npc.life <= 0 || npc.dontTakeDamage)
-					continue;
-				if (Vector2.DistanceSquared(npc.Center, player.Center) > SearchRange * SearchRange)
-					continue;
-				if (Vector2.Dot((npc.Center - player.Center).SafeNormalize(aimDir), aimDir) < SearchConeCos)
-					continue;
-
-				candidates.Add(npc);
+			int skillDamage = player.GetWeaponDamage(player.HeldItem);
+			Vector2 impactGround = LaevatainTwilightPillar.FindGround(
+				player.Center.X + attackDirection * 16f, player.Bottom.Y);
+			Projectile.NewProjectile(Projectile.GetSource_FromThis(), impactGround - new Vector2(0f, 28f),
+				Vector2.Zero, ModContent.ProjectileType<LaevatainTwilightImpact>(),
+				0, 0f, Projectile.owner);
+			for (int i = 0; i < PillarCount; i++) {
+				float x = player.Center.X + attackDirection * (16f + 48f * i);
+				Vector2 ground = LaevatainTwilightPillar.FindGround(x, player.Bottom.Y);
+				Projectile.NewProjectile(Projectile.GetSource_FromThis(), ground - new Vector2(0f, LaevatainTwilightPillar.PillarHeight * 0.5f),
+					Vector2.Zero, ModContent.ProjectileType<LaevatainTwilightPillar>(),
+					skillDamage, Projectile.knockBack, Projectile.owner, i * 3f);
 			}
-
-			var targets = candidates
-				.OrderBy(npc => Vector2.DistanceSquared(npc.Center, player.Center))
-				.Take(MaxTargets);
-
-			foreach (NPC npc in targets)
-			{
-				// 只传目标的 npc 索引，下落过程中天降剑自己每帧读取目标当前位置来跟随，
-				// 而不是在这里把落点写死成一个坐标快照
-				Vector2 spawnCenter = npc.Bottom - new Vector2(0f, LaevatainProjectile_3_swordDrop.FallHeight);
-				Projectile.NewProjectile(
-					Projectile.GetSource_FromThis(),
-					spawnCenter,
-					Vector2.Zero,
-					ModContent.ProjectileType<LaevatainProjectile_3_swordDrop>(),
-					Projectile.damage,
-					Projectile.knockBack,
-					Projectile.owner,
-					npc.whoAmI
-				);
+			if (!Main.dedServ) {
+				ShakeEffectPlayer shake = player.GetModPlayer<ShakeEffectPlayer>();
+				shake.screenShakeTime = Math.Max(shake.screenShakeTime, 10);
+				shake.screenShakeMaxDistance = Math.Max(shake.screenShakeMaxDistance, 11f);
+				shake.screenShakeVelocity = new Vector2(attackDirection * 6f, -4f);
+				Terraria.Audio.SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.65f, Pitch = -0.25f }, player.Center);
+				for (int i = 0; i < 20; i++) {
+					Dust dust = Dust.NewDustPerfect(player.Bottom + new Vector2(attackDirection * 16f, -4f),
+						DustID.Torch, Main.rand.NextVector2Circular(5f, 3f), 70,
+						new Color(255, 92, 16), Main.rand.NextFloat(1f, 1.6f));
+					dust.noGravity = true;
+				}
 			}
 		}
 	}

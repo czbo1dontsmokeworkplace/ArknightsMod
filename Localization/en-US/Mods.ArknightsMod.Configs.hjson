@@ -208,3 +208,17 @@ SkillChargeConfig: {
 		Tooltip: 开启后，技能开启期间"消耗"技力的速度整体 x2，表现为技能的持续时间缩短为原来的一半。
 	}
 }
+
+MaterialistVisualConfig: {
+	DisplayName: Materialist Antagonizer visuals
+
+	ReducedEffects: {
+		Label: Reduced decorative effects
+		Tooltip: Reduces particles and background decoration while preserving every attack warning
+	}
+
+	ScreenShake: {
+		Label: Screen shake
+		Tooltip: Enables mild shake on shield breaks, phase changes and explosions
+	}
+}

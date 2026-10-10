@@ -15,6 +15,10 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 	/// </summary>
 	public class Laevatain_SwingHelper : SwingHelper.SwingHelper
 	{
+		public const float StabAreaScale = 1.75f;
+		public const float StabBaseLineWidth = 24f;
+		public const float StabLineWidth = StabBaseLineWidth * StabAreaScale;
+		private const float StabTipExtension = 28f;
 		public const int StabWindupFrames = 7;
 		public const int StabHoldFrames = 2;
 		public const int StabThrustFrames = 4;
@@ -64,10 +68,26 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 		/// <summary>锁定的世界戳刺方向。</summary>
 		public Vector2 StabDirection => lockedStabRad.ToRotationVector2();
 
+		/// <summary>连击间沿同一旋转方向补完剩余弧线，不触发碰撞。</summary>
+		public void ContinueSwingPose(float angle)
+		{
+			swordRad = angle;
+			swordDir = 1f;
+			SwordAHandCon(0f, swordRad, texLength.Length(), handleLength.Length(), swordLength.Length(),
+				true, Player.CompositeArmStretchAmount.Full);
+		}
+
 		public Laevatain_SwingHelper(int index, int catmullScale, bool isBackArm = false)
 			: base(index, catmullScale, isBackArm)
 		{
 			StabUseTime = StabTotalFrames;
+		}
+
+		// BB 式短促节奏：起手迅速加速，越过中点后迅速制动，末端仍连续。
+		protected override float EaseSwingProgress(float progress)
+		{
+			float t = MathHelper.Clamp(progress, 0f, 1f);
+			return t * t * t * (t * (t * 6f - 15f) + 10f);
 		}
 
 		/// <summary>清除本次戳刺的锁定状态。</summary>
@@ -142,7 +162,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 				StabEffectOpacity = 0.35f + 0.65f * MathF.Sin(MathHelper.Clamp(p, 0f, 1f) * MathF.PI);
 				desiredHandRad = LerpAngle(lockedStabRad + MathHelper.ToRadians(34f), lockedStabRad, burst);
 				desiredSwordRad = lockedStabRad;
-				travel = MathHelper.Lerp(-20f, 68f, burst);
+				travel = MathHelper.Lerp(-20f, 88f, burst);
 			}
 			else if (t < windupFrames + holdFrames + thrustFrames + impactFrames)
 			{
@@ -150,7 +170,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 				StabEffectOpacity = 0.65f * (1f - SmoothStep(p));
 				desiredHandRad = lockedStabRad;
 				desiredSwordRad = lockedStabRad;
-				travel = MathHelper.Lerp(68f, 56f, SmoothStep(p));
+				travel = MathHelper.Lerp(88f, 76f, SmoothStep(p));
 			}
 			else
 			{
@@ -159,7 +179,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 				float eased = SmoothStep(MathHelper.Clamp(p, 0f, 1f));
 				desiredHandRad = LerpAngle(lockedStabRad, initialHandRad, eased);
 				desiredSwordRad = LerpAngle(lockedStabRad, initialSwordRad, eased);
-				travel = MathHelper.Lerp(56f, 0f, eased);
+				travel = MathHelper.Lerp(76f, 0f, eased);
 			}
 
 			stabRad_hand = desiredHandRad;
@@ -252,19 +272,40 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 			return from + MathHelper.WrapAngle(to - from) * MathHelper.Clamp(amount, 0f, 1f);
 		}
 
+		/// <summary>二技能判定与绘制共用的突刺轴线，长度相对原判定扩大 1.75 倍。</summary>
+		public void GetStabHitLine(out Vector2 start, out Vector2 end)
+		{
+			Vector2 drawOffset = setoff.RotatedBy(swordRot);
+			start = handlePos + drawOffset;
+			Vector2 originalEnd = swordPos + drawOffset + StabDirection * StabTipExtension;
+			end = start + (originalEnd - start) * StabAreaScale;
+		}
+
 		/// <summary>碰撞线与 DrawBlade 的 setoff 位移保持一致。</summary>
 		public new bool Colliding(Rectangle targetHitbox)
 		{
 			if (stabInitialized && !IsStabDamageWindow)
 				return false;
 
-			Vector2 drawOffset = setoff.RotatedBy(swordRot);
+			Vector2 start;
+			Vector2 end;
+			float width;
+			if (stabInitialized) {
+				GetStabHitLine(out start, out end);
+				width = StabLineWidth;
+			}
+			else {
+				Vector2 drawOffset = setoff.RotatedBy(swordRot);
+				start = handlePos + drawOffset;
+				end = swordPos + drawOffset;
+				width = 20f;
+			}
 			return Collision.CheckAABBvLineCollision(
 				targetHitbox.TopLeft(),
 				targetHitbox.Size(),
-				handlePos + drawOffset,
-				swordPos + drawOffset,
-				20f,
+				start,
+				end,
+				width,
 				ref point);
 		}
 	}
@@ -338,25 +379,20 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 			if (opacity <= 0.01f && !drawImpact)
 				return;
 
-			Vector2 offset = helper.setoff.RotatedBy(helper.swordRot);
-			Vector2 grip = helper.handlePos + offset;
-			Vector2 tip = helper.swordPos + offset;
+			helper.GetStabHitLine(out Vector2 startWorld, out Vector2 endWorld);
 			Vector2 axis = helper.StabDirection;
 			Vector2 side = new(-axis.Y, axis.X);
-			float bladeLength = Vector2.Distance(grip, tip);
 			Matrix view = Main.GameViewMatrix.TransformationMatrix;
 
-			Vector2 startWorld = grip + axis * bladeLength * 0.05f;
-			Vector2 endWorld = tip + axis * 28f;
 			Vector2 screenStart = Vector2.Transform(startWorld - Main.screenPosition, view);
 			Vector2 screenEnd = Vector2.Transform(endWorld - Main.screenPosition, view);
-			float halfWidth = Vector2.TransformNormal(side * MathHelper.Clamp(bladeLength * 0.18f, 16f, 28f), view).Length();
+			float halfWidth = Vector2.TransformNormal(side * (Laevatain_SwingHelper.StabLineWidth * 0.5f), view).Length();
 			Vector2 screenImpact = drawImpact
 				? Vector2.Transform(impactCenter - Main.screenPosition, view)
 				: Vector2.Zero;
 			float impactProgress = drawImpact ? impactAge / (float)(ImpactRippleFrames - 1) : 0f;
 			float impactRadius = drawImpact
-				? Vector2.TransformNormal(new Vector2(10f + impactAge * 12f, 0f), view).Length()
+				? Vector2.TransformNormal(new Vector2((10f + impactAge * 12f) * Laevatain_SwingHelper.StabAreaScale, 0f), view).Length()
 				: 0f;
 			float impactOpacity = drawImpact ? 0.95f * (1f - impactProgress) : 0f;
 			float strength = 34f + MathHelper.Clamp(tipSpeed * 1.0f, 0f, 24f);
@@ -377,20 +413,29 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 			Main.spriteBatch.End();
 			Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive,
 				SamplerState.LinearClamp, DepthStencilState.None,
-				RasterizerState.CullNone, null, Matrix.Identity);
+				RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
-			Vector2 offset = helper.setoff.RotatedBy(helper.swordRot);
-			Vector2 grip = helper.handlePos + offset;
-			Vector2 tip = helper.swordPos + offset;
+			helper.GetStabHitLine(out Vector2 start, out Vector2 end);
 			Vector2 axis = helper.StabDirection;
-			float bladeLength = Vector2.Distance(grip, tip);
+			float bladeLength = Vector2.Distance(start, end);
 			float motion = MathHelper.Clamp(tipSpeed / 20f, 0.35f, 1f);
-			Vector2 screenWindCenter = Vector2.Lerp(grip, tip,
+			Vector2 screenWindCenter = Vector2.Lerp(start, end,
 				MathHelper.Clamp(WindPositionAlongBlade, 0.05f, 0.95f)) - Main.screenPosition;
 			Vector2 windDirection = axis.RotatedBy(WindAngleOffsetRadians);
 			Vector2 windSide = new(-axis.Y, axis.X);
 			Color windColor = WindColor;
-			float windLength = MathHelper.Clamp(bladeLength * 0.42f + motion * 8f, 28f, 75f);
+			float windLength = MathHelper.Clamp(bladeLength * 0.42f + motion * 8f, 28f, 130f);
+			Vector2 coreStart = start - Main.screenPosition;
+			Vector2 coreEnd = end - Main.screenPosition;
+			float halfWidth = Laevatain_SwingHelper.StabLineWidth * 0.5f;
+			DrawLine(coreStart, coreEnd, windColor * (opacity * 0.42f), halfWidth * 1.5f);
+			DrawLine(coreStart, coreEnd, new Color(255, 220, 170) * (opacity * 0.9f), 5f);
+			foreach (int sign in new[] { -1, 1 })
+				DrawLine(coreStart + windSide * (sign * halfWidth), coreEnd + windSide * (sign * halfWidth),
+					new Color(255, 105, 25) * (opacity * 0.36f), 2.5f);
+			Vector2 screenTip = coreEnd;
+			DrawLine(screenTip - windSide * halfWidth, screenTip + windSide * halfWidth,
+				new Color(255, 163, 48) * (opacity * 0.7f), 5f);
 
 			if (WindShape == LaevatainStabWindShape.Parallel)
 			{

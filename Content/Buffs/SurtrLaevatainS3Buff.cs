@@ -1,4 +1,6 @@
 using ArknightsMod.Players;
+using ArknightsMod.Content.Items.Weapons.Guard.Surtr;
+using ArknightsMod.Content.Projectiles.Guard.Laevatain;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
@@ -58,12 +60,14 @@ namespace ArknightsMod.Content.Buffs
 			wasS3Active = nowActive;
 		}
 
-		private void OnS3BuffRemoved()
+		internal void OnS3BuffRemoved()
 		{
 			// 回满血标记和掉血累加器都跟着 buff 走：buff 没了就清掉，下次挂上重新来
 			S3HealDone = false;
 			S3HealPending = false;
 			S3DrainAccumulator = 0f;
+			Player.GetModPlayer<SurtrLaevatain_Player>().StopTransformationFire();
+			wasS3Active = false;
 
 			// 同步清掉 WeaponPlayer 里的技能激活状态。不然死亡复活后 buff 已经没了，
 			// 技能条却还亮着、攻击还保持 S3 强化形态。
@@ -79,9 +83,8 @@ namespace ArknightsMod.Content.Buffs
 
 	/// <summary>
 	/// S3「黄昏」的持续效果：生命上限+1200 并回满血（都在下面 Update 里做，原因见 Update 内注释），
-	/// 并按持续时间线性爬坡扣血，90 秒爬满后稳定在每秒扣除最大生命 10%，扣到 0 会真正触发死亡。
-	/// 用 buffTime 自己记录经过了多久，不依赖 WeaponPlayer.Skill/SkillActive——那两个字段切换武器就会被重置，
-	/// 而这个 buff 一旦挂上就只能靠死亡结束，换武器免疫不了。
+	/// 并按持续时间线性爬坡扣血，90 秒爬满后稳定在每秒扣除最大生命 10%。
+	/// 仅在当前手持史尔特尔且三技能保持开启时生效；切武器或换技能立即结束。
 	/// </summary>
 	public class SurtrLaevatainS3Buff : ModBuff
 	{
@@ -99,10 +102,16 @@ namespace ArknightsMod.Content.Buffs
 
 		public override void Update(Player player, ref int buffIndex)
 		{
-			if (player.dead)
+			WeaponPlayer weapon = player.GetModPlayer<WeaponPlayer>();
+			// 技能槽和激活标记由持有者本机维护；其他客户端/服务器至少校验已同步的手持物品。
+			bool localSkillEnded = player.whoAmI == Main.myPlayer &&
+				(weapon.Skill != 2 || !weapon.SkillActive);
+			if (player.dead || player.HeldItem.type != ModContent.ItemType<SurtrLaevatain>() ||
+				localSkillEnded)
 			{
 				player.DelBuff(buffIndex);
 				buffIndex--;
+				player.GetModPlayer<SurtrLaevatainS3Player>().OnS3BuffRemoved();
 				return;
 			}
 

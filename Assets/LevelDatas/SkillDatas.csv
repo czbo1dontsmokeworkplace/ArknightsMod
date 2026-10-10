@@ -1,4 +1,7 @@
 Item,Index,Name,ChargeType,AutoTrigger,AutoUpdateActive,SummonSkill,SuppressReadyPulse,IsPermanent,UsesCustomCharge
+MagallanController,0,1,1,1,1,0,1,1,0
+MagallanController,1,2,1,1,1,0,1,1,0
+MagallanController,2,3,1,1,1,0,1,1,0
 BagpipeSpear,0,1,1,0,1,0,
 BagpipeSpear,1,2,1,1,1,0,
 BagpipeSpear,2,3,1,0,1,0,
@@ -39,7 +42,7 @@ HazeMagicBook,0,1,1,0,1,0,
 HazeMagicBook,1,2,1,0,1,0,
 SurtrLaevatain,0,1,0,1,1,0,
 SurtrLaevatain,1,2,1,0,1,0,
-SurtrLaevatain,2,3,1,0,1,0,
+SurtrLaevatain,2,3,1,0,1,0,,1,
 ValarqvinWeapon,0,1,1,1,1,0,
 ValarqvinWeapon,1,2,1,0,1,0,
 DN_Weapon,0,1,1,0,1,0,

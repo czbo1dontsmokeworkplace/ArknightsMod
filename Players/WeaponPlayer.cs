@@ -1167,7 +1167,7 @@ namespace ArknightsMod.Players
 
 			else if (HoldSurtrLaevatain) {
 				IconName = "SurtrLaevatain";
-				HowManySkills = 2;
+				HowManySkills = 3;
 				SkillLevel = new() { 10, 10, 10 };
 				ChargeTypeIsPerSecond = new() { false, true, true };
 				AutoTrigger = new() { true, false, false };
