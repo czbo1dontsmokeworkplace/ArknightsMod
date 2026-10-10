@@ -1707,7 +1707,7 @@ HoundproBanner: {
 
 SurtrLaevatain: {
 	DisplayName: Surtr Laevatain
-	Tooltip: ""
+	Tooltip: '''"I alone am enough."'''
 }
 
 SilverAshWeapon: {

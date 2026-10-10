@@ -1847,7 +1847,7 @@ HoundproBanner: {
 
 SurtrLaevatain: {
 	DisplayName: 史尔特尔的莱万汀
-	Tooltip: 未完成的武器
+	Tooltip: “我一个人就够了。”
 }
 
 SilverAshWeapon: {

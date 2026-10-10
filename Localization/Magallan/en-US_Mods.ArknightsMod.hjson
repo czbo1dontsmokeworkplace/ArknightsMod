@@ -3,14 +3,11 @@ Items: {
 		DisplayName: Magallan's Soaring Dragon Controller
 		Tooltip:
 			'''
-			Left-click to summon a Soaring Dragon at the cursor, using one minion slot
-			Cooling is selected by default; click the skill icons at the top left to change modes
-			All three modes stay active, and every drone immediately adopts the selected mode
-			Drones follow you and gently bob while waiting to attack
-			Right-click to recall every drone; they fly back to you before being recovered
-			Cooling cannot slow or bind bosses
+			Summons a “Soaring Dragon” drone to fight alongside you
+			The drone always follows you in flight
+			It equips a different module for each skill
 			'''
-		CurrentModule: Current module: {0}
+		CurrentModule: Current module: “{0}”
 	}
 }
 

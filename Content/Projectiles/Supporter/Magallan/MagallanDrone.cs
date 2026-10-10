@@ -12,7 +12,7 @@ namespace ArknightsMod.Content.Projectiles.Supporter.Magallan;
 
 public sealed class MagallanDrone : ModProjectile
 {
-    private const float VisualScale = 1.5f;
+    private const float VisualScale = 1f;
     private int cooldown;
     private int observedModule = -1;
     private int idleTimer;
@@ -42,8 +42,8 @@ public sealed class MagallanDrone : ModProjectile
 
     public override void SetDefaults()
     {
-        Projectile.width = 45;
-        Projectile.height = 54;
+        Projectile.width = 30;
+        Projectile.height = 36;
         Projectile.DamageType = DamageClass.Summon;
         Projectile.minion = true;
         Projectile.sentry = false;
