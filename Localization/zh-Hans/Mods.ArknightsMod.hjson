@@ -153,6 +153,14 @@ Projectiles: {
 	EvolutionHeavyCompanion.DisplayName: 共生源石畸变体
 	// LaevatainTwilightPillar.DisplayName: Laevatain Twilight Pillar
 	// LaevatainTwilightImpact.DisplayName: Laevatain Twilight Impact
+	// NecrassCourt.DisplayName: Necrass Court
+	// NecrassImpact.DisplayName: Necrass Impact
+	// NecrassOffering.DisplayName: Necrass Offering
+	// NecrassRitual.DisplayName: Necrass Ritual
+	// NecrassServant.DisplayName: Necrass Servant
+	// NecrassSleep.DisplayName: Necrass Sleep
+	// NecrassSoulBolt.DisplayName: Necrass Soul Bolt
+	// LaevatainFireFlowParticle.DisplayName: Laevatain Fire Flow Particle
 }
 
 Keybinds: {

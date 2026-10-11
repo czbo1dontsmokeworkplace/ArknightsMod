@@ -27,7 +27,8 @@ namespace ArknightsMod.Content.NPCs
 				if (UnionInvade.MonstersKilled >= 100) {
 					pool[ModContent.NPCType<Crossbowman>()] = 1f;
 				}
-				if (UnionInvade.MonstersKilled >= 150) {
+				if (UnionInvade.MonstersKilled >= 150
+					&& (NPC.downedBoss1 || NPC.downedBoss2 || NPC.downedBoss3 || NPC.downedQueenBee || Main.hardMode)) {
 					pool[ModContent.NPCType<Drone>()] = 0.8f;
 				}
 				if (UnionInvade.MonstersKilled >= 250) {

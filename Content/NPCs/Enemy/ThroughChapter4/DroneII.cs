@@ -91,6 +91,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		}
 
 		public override float SpawnChance(NPCSpawnInfo spawnInfo) {
+			if (!(NPC.downedBoss1 || NPC.downedBoss2 || NPC.downedBoss3 || NPC.downedQueenBee || Main.hardMode))
+				return 0f;
+
 			return SpawnCondition.OverworldDaySlime.Chance * 0.1f;
 		}
 

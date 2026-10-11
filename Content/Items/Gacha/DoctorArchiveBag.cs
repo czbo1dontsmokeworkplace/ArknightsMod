@@ -176,13 +176,16 @@ namespace ArknightsMod.Content.Items.Gacha
 			if (stack <= 0)
 				return;
 
+			// 普通背包（含快捷栏）只有 0–49；后面的钱币、弹药和鼠标物品槽不能直接写入。
+			const int mainInventorySlotCount = 50;
+
 			Item item = new(itemType, stack);
 			if (overrideRarity.HasValue)
 				item.rare = overrideRarity.Value;
 
 			int remaining = item.stack;
 
-			for (int i = 0; i < player.inventory.Length; i++)
+			for (int i = 0; i < mainInventorySlotCount; i++)
 			{
 				if (remaining <= 0)
 					break;
@@ -200,7 +203,7 @@ namespace ArknightsMod.Content.Items.Gacha
 				remaining -= move;
 			}
 
-			for (int i = 0; i < player.inventory.Length; i++)
+			for (int i = 0; i < mainInventorySlotCount; i++)
 			{
 				if (remaining <= 0)
 					break;
