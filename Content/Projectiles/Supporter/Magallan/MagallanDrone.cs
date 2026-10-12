@@ -111,7 +111,7 @@ public sealed class MagallanDrone : ModProjectile
         // Only the owner creates attacks; ordinary projectile replication carries them to peers.
         if (Projectile.owner != Main.myPlayer) return;
         if (cooldown > 0) cooldown--;
-        float range = Module switch { 0 => Boosted ? 280f : 230f, 1 => 15f * 16f, _ => 150f * 16f };
+        float range = Module switch { 0 => Boosted ? 280f : 230f, 1 => MagallanLaser.MaxLength, _ => 120f * 16f };
         NPC target = FindTarget(range);
         if (target == null || cooldown > 0) return;
         Projectile.spriteDirection = target.Center.X >= Projectile.Center.X ? 1 : -1;

@@ -1,6 +1,11 @@
-BurnedScar: {
+﻿BurnedScar: {
 	DisplayName: 灼痕
 	Description: 攻击造成的伤害降低20%，受到的魔法伤害提高至138%
+}
+
+LeonhardtFracture: {
+	DisplayName: 解构裂隙
+	Description: 法术抗性降低15个百分点
 }
 
 DeepcolorMinionBuff: {
@@ -302,4 +307,9 @@ HighPressureSoak: {
 CarnelianSandBind: {
 	DisplayName: 赤砂束缚
 	Description: 赤砂拖慢行动
+}
+
+MostimaTemporalDrag: {
+	DisplayName: 主观缓时
+	Description: 移动速度降低50%
 }

@@ -9,6 +9,8 @@ internal static class EvolutionRules
 {
     public const int TransitionTicks = 600;
     public const float ArenaRadius = 1200f;
+    public const float CorridorHeight = 50 * 16;
+    public const float EvolvedProjectileMultiplier = .85f;
     public const int HazardCap = 180;
     public const int PeripheralReserve = 32;
     public const int WallHalfColumns = 15;
@@ -51,7 +53,7 @@ internal static class EvolutionRules
     public static int ChargeActiveTicks(bool perfect) => perfect ? 44 : 52;
     public static float ChargeDistance(bool perfect, bool desperate) => ChargeActiveTicks(perfect) * (perfect ? 36 * 2.2f : 32 * 1.6f) * (desperate ? 1.1f : 1);
     public static bool IsLaser(EvolutionShot kind) => kind is EvolutionShot.Beam or EvolutionShot.Spike or EvolutionShot.Eruption;
-    public static int FireTime(EvolutionShot kind, int delay) => delay + (IsLaser(kind) ? LaserFadeTicks / 2 : 4);
+    public static int FireTime(EvolutionShot kind, int delay) => delay + (kind == EvolutionShot.Radiation ? 16 : IsLaser(kind) ? LaserFadeTicks / 2 : 4);
     // 预警淡出中点（50%亮度）与真实光束开火使用同一时钟。
     public static float LaserWarningOpacity(int age, int delay)
     {
@@ -111,7 +113,7 @@ internal static class EvolutionRules
     public static int NewbornDuration(int attack) => attack switch { 1 => 390, 2 or 6 => 480, 3 or 5 => 450, _ => 420 };
     // Emit dangerous central lanes first; distant scenery-like shots may use only the remaining budget.
     public static int Column(int index) => index == 0 ? 0 : (index + 1) / 2 * (index % 2 == 0 ? -1 : 1);
-    private static readonly int[] EvolvedCycle = { 1, 0, 2, 5, 3, 0, 4, 5 };
+    private static readonly int[] EvolvedCycle = { 0, 1, 2, 0, 3, 1 };
     private static readonly int[] PerfectCycle = { 6, 0, 1, 2, 5, 3, 0, 4, 5 };
     private static readonly int[] DesperateCycle = { 0, 6, 1, 5 };
     public static int Attack(int phase, int cycle, bool desperate)
@@ -119,8 +121,8 @@ internal static class EvolutionRules
         int[] attacks = desperate ? DesperateCycle : phase == 1 ? NewbornCycle : phase == 3 ? EvolvedCycle : PerfectCycle;
         return attacks[Math.Abs(cycle % attacks.Length)];
     }
-    public static int MinionCap(int phase) => phase == 5 ? 4 : phase <= 2 ? 12 : 8;
-    public static int Threshold(int maximum, int phase) => phase == 1 ? (int)Math.Ceiling(maximum * .6) : phase == 3 ? (int)Math.Ceiling(maximum * .2) : 0;
+    public static int MinionCap(int phase) => phase >= 4 ? 4 : phase == 3 ? 14 : 12;
+    public static int Threshold(int maximum, int phase) => phase == 1 ? (int)Math.Ceiling(maximum * .8) : phase == 3 ? (int)Math.Ceiling(maximum * .4) : 0;
     public static bool InGap(float angle, float gapDirection, float halfWidth = .75f)
     {
         float delta = MathF.IEEERemainder(angle - gapDirection, MathF.PI);

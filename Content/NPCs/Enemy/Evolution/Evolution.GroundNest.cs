@@ -11,15 +11,13 @@ internal static class EvolutionNestRules
 {
     internal const int RadiationInterval = 300; // 每五秒一次，包含一秒预警。
     internal const int RadiationWarning = 60;
-    internal const int RippleCount = 3;
-    internal const int RippleSpacing = 18;
-    internal const int RippleTravel = 44;
-    internal const float RadiationReach = 560;
-    internal const float HalfAngle = MathHelper.Pi / 36; // 总宽度10度，而非左右各10度。
-    internal const int RadiationDuration = RippleSpacing * (RippleCount - 1) + RippleTravel;
-    internal static float Radius(int age) => MathHelper.Lerp(100, RadiationReach, Math.Clamp(age / (float)RippleTravel, 0, 1));
-    internal static bool RippleActive(int age) => age >= 0 && age < RippleTravel;
+    internal const int LaserActiveTicks = 8;
+    internal const int LaserFadeTicks = 12;
+    internal const int RadiationDuration = LaserActiveTicks;
+    internal const float RadiationReach = 1450;
+    internal const float LaserWidth = 64;
     internal static float Direction(int cycle, int ray) => -MathHelper.PiOver2 + cycle % 4 * MathHelper.Pi / 10 + ray * MathHelper.TwoPi / 5;
+
 }
 
 public sealed partial class Evolution
@@ -84,7 +82,7 @@ public sealed partial class Evolution
         if (Timer % EvolutionNestRules.RadiationInterval == 60)
             Shoot(EvolutionShot.Radiation, NPC.Center, Vector2.Zero,
                 Timer / EvolutionNestRules.RadiationInterval, EvolutionNestRules.RadiationWarning,
-                EvolutionNestRules.RadiationWarning + EvolutionNestRules.RadiationDuration + 18);
+                EvolutionNestRules.RadiationWarning + 16 + EvolutionNestRules.LaserFadeTicks + 20);
     }
 
     private void BirthGroundBrood(EvolutionBrood kind, int slot)
@@ -127,54 +125,112 @@ public abstract partial class EvolutionBroodNPC
     private void DoGroundBrood(Evolution boss, Player player)
     {
         InitializeGroundBody();
+        bool evolved = boss.Phase == 3;
         bool wallCrawler = Kind is EvolutionBrood.Tumor or EvolutionBrood.Bomb;
         int wallSide = wallCrawler ? Math.Sign(NPC.ai[2]) : 0;
-        if (wallSide != 0 && HasClimbableWall(NPC, wallSide))
+        NPC.noGravity = NPC.noTileCollide = false;
+        NPC.rotation = 0;
+        // 低空带的下沿是生物可站立的能量边界；无地面时也不会把小怪丢在带外。
+        bool boundaryFloor = boss.CorridorActive && NPC.Bottom.Y + Math.Max(0, NPC.velocity.Y) >= boss.CorridorBottom - 6;
+        if (boundaryFloor)
         {
-            // 重复把碰撞箱压回墙边，减少坡面/拐角处的视觉穿插。
-            float wallFace = wallSide > 0 ? NPC.Right.X : NPC.Left.X;
-            int tileX = (int)MathF.Floor((wallFace - (wallSide < 0 ? .01f : 0)) / 16f);
-            float exactFace = (tileX + (wallSide < 0 ? 1 : 0)) * 16;
-            NPC.position.X += exactFace - wallFace;
-            NPC.noGravity = true;
-            NPC.noTileCollide = false;
-            NPC.rotation = wallSide > 0 ? MathHelper.PiOver2 : -MathHelper.PiOver2;
-            NPC.velocity = new Vector2(wallSide * 2.4f, -1.65f);
+            NPC.Bottom = new Vector2(NPC.Bottom.X, boss.CorridorBottom - 6);
+            NPC.velocity.Y = 0;
         }
-        else
-        {
-            if (wallSide != 0) { NPC.ai[2] = 0; NPC.netUpdate = true; }
-            NPC.rotation = 0;
-            NPC.noGravity = false;
-            NPC.noTileCollide = false;
-        }
+        bool grounded = boundaryFloor || NPC.collideY && NPC.velocity.Y == 0;
         if (Age < 35) { NPC.velocity.X *= .8f; return; }
-        charging = true; // 这里代表接触伤害开启，不调用空中冲刺逻辑。
-        NPC.damage = EvolutionDamageCockpit.BroodContactDamage(Kind);
-        float direction = Math.Abs(player.Center.X - NPC.Center.X) < 20 ? 0 : Math.Sign(player.Center.X - NPC.Center.X);
-        float speed = Kind switch { EvolutionBrood.Spider => 3.5f, EvolutionBrood.Tumor => 2.8f, EvolutionBrood.Bomb => 2.35f, EvolutionBrood.GiantSpider => 2, EvolutionBrood.Abomination => 1.7f, _ => 2.5f };
-        if (wallSide == 0)
+        charging = true;
+        NPC.damage = (int)(EvolutionDamageCockpit.BroodContactDamage(Kind) * (evolved ? 1.1f : 1f));
+        float direction = Math.Abs(player.Center.X - NPC.Center.X) < 24 ? 0 : Math.Sign(player.Center.X - NPC.Center.X);
+        float speed = Kind switch
         {
-            NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, direction * speed, .06f);
-            NPC.direction = NPC.spriteDirection = direction == 0 ? NPC.direction : (int)direction;
-            if (wallCrawler && NPC.collideX && HasClimbableWall(NPC, NPC.direction))
-            {
-                NPC.ai[2] = NPC.direction;
-                NPC.noGravity = true;
-                NPC.rotation = NPC.direction > 0 ? MathHelper.PiOver2 : -MathHelper.PiOver2;
-                NPC.velocity = new Vector2(NPC.direction * speed, -1.65f);
-                NPC.netUpdate = true;
-            }
-        }
-        // 只能从地面跳过障碍，不因玩家飞得高而获得持续升力。
-        if (NPC.collideX && NPC.collideY && Age % 24 == 0) NPC.velocity.Y = -5.6f;
-        if (Kind == EvolutionBrood.Puppet && Age % 180 == 110 && Math.Abs(player.Center.X - NPC.Center.X) < 650)
+            EvolutionBrood.Spider => evolved ? 4.1f : 2.8f,
+            EvolutionBrood.GiantSpider => evolved ? 2.5f : 1.6f,
+            EvolutionBrood.Abomination => evolved ? 1.9f : 1.25f,
+            EvolutionBrood.Tumor => evolved ? 4.2f : 2.8f,
+            EvolutionBrood.Bomb => evolved ? 3.2f : 2.1f,
+            _ => evolved ? 2.6f : 1.8f
+        };
+        if (Kind == EvolutionBrood.Puppet && Math.Abs(player.Center.X - NPC.Center.X) < (evolved ? 300 : 250)) direction = -direction;
+        if (grounded || wallCrawler) NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, direction * speed, .075f);
+        NPC.direction = NPC.spriteDirection = player.Center.X >= NPC.Center.X ? 1 : -1;
+        int period = Kind switch
         {
-            NPC.velocity.X *= .25f;
-            boss.Lob(EvolutionShot.Blood, NPC.Center, NPC.Center + new Vector2(NPC.direction * 330, 0), 60);
+            EvolutionBrood.Spider => evolved ? 138 : 185,
+            EvolutionBrood.GiantSpider => evolved ? 165 : 220,
+            EvolutionBrood.Puppet => evolved ? 165 : 220,
+            EvolutionBrood.Tumor => evolved ? 85 : 115,
+            EvolutionBrood.Bomb => evolved ? 125 : 165,
+            _ => evolved ? 210 : 300
+        };
+        int beat = (Age + Formation * 19) % period;
+        switch (Kind)
+        {
+            case EvolutionBrood.Spider:
+                if (beat == 40 && Main.netMode != NetmodeID.MultiplayerClient)
+                { FlightDirection = new Vector2(NPC.direction, 0); NPC.netUpdate = true; }
+                if (beat >= 40 && beat < 66) { NPC.velocity.X *= .75f; warning = (beat - 39) / 26f; }
+                if (beat >= 66 && beat < 100 && FlightDirection != Vector2.Zero)
+                    NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, FlightDirection.X * (evolved ? 12 : 8.5f), .22f);
+                if (beat >= 100 && beat < 120) NPC.velocity.X *= .86f;
+                break;
+            case EvolutionBrood.GiantSpider:
+                if (beat >= 45 && beat < 75) { NPC.velocity.X *= .8f; warning = (beat - 44) / 30f; }
+                if (beat == 75 && grounded)
+                { NPC.velocity = new Vector2(NPC.direction * (evolved ? 6.2f : 4.2f), evolved ? -13 : -10); NPC.netUpdate = true; }
+                break;
+            case EvolutionBrood.Puppet:
+                if (beat == 70 && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    FlightAnchor = player.Center + new Vector2(Math.Clamp(player.velocity.X * 12, -100, 100), 0);
+                    NPC.netUpdate = true;
+                }
+                if (beat >= 70 && beat < 116) { NPC.velocity.X *= .72f; warning = Math.Min(1, (beat - 69) / 30f); }
+                if (beat == 105)
+                {
+                    int count = evolved ? 3 : 1;
+                    for (int i = 0; i < count; i++) boss.Lob(EvolutionShot.Blood, NPC.Center - new Vector2(0, 12),
+                        FlightAnchor + new Vector2((i - (count - 1) * .5f) * 100, 0), evolved ? 65 : 75);
+                }
+                break;
+            case EvolutionBrood.Abomination:
+                if (beat >= 70 && beat < 100) { NPC.velocity.X *= .75f; warning = (beat - 69) / 30f; }
+                if (beat == 100)
+                    for (int i = 0; i < (evolved ? 2 : 1); i++) boss.SpawnBrood(EvolutionBrood.Tumor,
+                        NPC.Bottom + new Vector2((i == 0 ? -1 : 1) * 38, -10), side: NPC.direction, formation: Formation + i);
+                break;
+            case EvolutionBrood.Tumor:
+            case EvolutionBrood.Bomb:
+                if (beat >= 45 && beat < 60 && grounded) { NPC.velocity.X *= .7f; warning = (beat - 44) / 15f; }
+                if (beat == 60 && grounded)
+                {
+                    bool leaper = Kind == EvolutionBrood.Bomb;
+                    NPC.velocity = new Vector2(NPC.direction * (leaper ? (evolved ? 7 : 5) : speed),
+                        leaper ? (evolved ? -12 : -9) : (evolved ? -9 : -6));
+                    NPC.netUpdate = true;
+                }
+                if (wallSide == 0 && NPC.collideX) wallSide = NPC.direction;
+                if (wallSide != 0 && HasClimbableWall(NPC, wallSide))
+                {
+                    float face = wallSide > 0 ? NPC.Right.X : NPC.Left.X;
+                    int tileX = (int)MathF.Floor((face - (wallSide < 0 ? .01f : 0)) / 16);
+                    NPC.position.X += (tileX + (wallSide < 0 ? 1 : 0)) * 16 - face;
+                    NPC.ai[2] = wallSide;
+                    NPC.noGravity = true;
+                    NPC.rotation = wallSide > 0 ? MathHelper.PiOver2 : -MathHelper.PiOver2;
+                    NPC.velocity = new Vector2(wallSide * 2, evolved ? -2.7f : -1.65f);
+                }
+                else if (NPC.ai[2] != 0) { NPC.ai[2] = 0; NPC.netUpdate = true; }
+                break;
         }
-        if (Kind == EvolutionBrood.Abomination && Age % 240 == 150)
-            boss.SpawnBrood(EvolutionBrood.Tumor, NPC.Bottom - new Vector2(0, 9), side: NPC.direction);
+        if (!wallCrawler && NPC.collideX && grounded && Age % 24 == 0) NPC.velocity.Y = evolved ? -8 : -5.6f;
+        if (boss.CorridorActive && NPC.Top.Y < boss.CorridorTop + 6)
+        {
+            NPC.position.Y = boss.CorridorTop + 6;
+            NPC.velocity.Y = Math.Max(0, NPC.velocity.Y);
+        }
+        if (evolved && (NPC.Distance(player.Center) > 2000 || Age > 2400) && Main.netMode != NetmodeID.MultiplayerClient)
+        { NPC.ai[3] = -35; NPC.netUpdate = true; }
     }
 
     private void DrawGroundBrood(SpriteBatch batch, Vector2 screenPos, Color light, float opacity)
@@ -190,6 +246,27 @@ public abstract partial class EvolutionBroodNPC
         bool wallClimbing = (Kind is EvolutionBrood.Tumor or EvolutionBrood.Bomb) && NPC.noGravity && NPC.rotation != 0;
         Vector2 drawPosition = wallClimbing ? NPC.Center : NPC.Bottom + new Vector2(0, 2);
         Vector2 drawOrigin = wallClimbing ? new Vector2(texture.Width * .5f, height * .5f) : new Vector2(texture.Width * .5f, height);
+        Color theme = Parent?.ThemeColor ?? EvolutionVisuals.Sand;
+        if (Age < 35) EvolutionVisuals.Glow(NPC.Center, theme * (.35f * opacity), new Vector2(NPC.width + 35, NPC.height + 20));
+        if (warning > 0)
+        {
+            EvolutionVisuals.Glow(NPC.Center, theme * (.35f * warning), new Vector2(NPC.width + 20, NPC.height + 10));
+            if (Kind == EvolutionBrood.Spider && FlightDirection != Vector2.Zero)
+                EvolutionVisuals.Line(NPC.Bottom - new Vector2(0, 9), NPC.Bottom + FlightDirection * 240 - new Vector2(0, 9), theme * (.5f * warning), 1.5f);
+            if (Kind == EvolutionBrood.Puppet)
+            {
+                Vector2 point = NPC.Center - new Vector2(0, 12);
+                float flight = Parent?.Phase == 3 ? 65 : 75;
+                Vector2 velocity = (FlightAnchor - point) / flight - new Vector2(0, .21f * flight * .5f);
+                for (int step = 0; step < (int)flight; step++)
+                {
+                    if (step >= 7) velocity.Y = Math.Min(17, velocity.Y + .21f);
+                    Vector2 next = point + velocity;
+                    if (step % 8 < 4) EvolutionVisuals.Line(point, next, theme * (.45f * warning), 1, false);
+                    point = next;
+                }
+            }
+        }
         batch.Draw(texture, drawPosition - screenPos, source,
             Color.Lerp(light, Color.White, .22f) * opacity, NPC.rotation, drawOrigin, scale,
             NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0);

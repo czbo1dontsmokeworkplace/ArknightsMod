@@ -20,7 +20,7 @@ public abstract partial class EvolutionBroodNPC : ModNPC
     private float warning;
     internal int Age => (int)NPC.ai[1];
     internal bool Retiring => NPC.ai[3] < 0;
-    internal bool SupportOnly => Parent?.Phase >= 3;
+    internal bool SupportOnly => this is EvolutionSupportOrb;
     internal Evolution Parent => Main.npc.IndexInRange((int)NPC.ai[0]) && Main.npc[(int)NPC.ai[0]].active &&
         Main.npc[(int)NPC.ai[0]].ModNPC is Evolution boss && boss.Encounter == Encounter ? boss : null;
     public override string Texture => "ArknightsMod/Common/Particle/DefaultParticle";
@@ -87,7 +87,8 @@ public abstract partial class EvolutionBroodNPC : ModNPC
             return;
         }
         NPC.dontTakeDamage = SupportOnly || Age < 30;
-        if (boss.Phase == 1) { DoGroundBrood(boss, player); return; }
+        if (!SupportOnly && boss.Phase <= 3) { DoGroundBrood(boss, player); return; }
+        if (!SupportOnly && boss.Phase >= 4) { NPC.active = false; return; }
         if (Age < 60) { NPC.velocity *= .9f; return; }
         if (SupportOnly && Kind == EvolutionBrood.Puppet)
         {
@@ -186,14 +187,24 @@ public abstract partial class EvolutionBroodNPC : ModNPC
     }
     public override void OnKill()
     {
-        EvolutionVisuals.Burst(NPC.Center, .7f);
-        if (Kind == EvolutionBrood.Spider && Parent is Evolution boss && boss.Phase != 1 && !boss.Transitioning)
-            for (int i = -1; i <= 1; i += 2) boss.Shoot(EvolutionShot.Blood, NPC.Center, new Vector2(i * 4, -5), lifetime: 80);
+        EvolutionVisuals.Burst(NPC.Center, .7f, color: Parent?.ThemeColor);
+        if (Retiring || SupportOnly || Parent is not Evolution boss || boss.Transitioning || boss.Phase >= 4) return;
+        // 岩蛛死亡后分裂幼体；沿用总上限与单种上限，幼体不再递归分裂。
+        int offspring = Kind switch
+        {
+            EvolutionBrood.Spider => boss.Phase == 3 ? 3 : 2,
+            EvolutionBrood.GiantSpider => boss.Phase == 3 ? 4 : 3,
+            EvolutionBrood.Abomination => boss.Phase == 3 ? 3 : 2,
+            _ => 0
+        };
+        for (int i = 0; i < offspring; i++)
+            boss.SpawnBrood(boss.Phase == 3 ? EvolutionBrood.Tumor : EvolutionBrood.Bomb,
+                NPC.Bottom + new Vector2((i - (offspring - 1) * .5f) * 28, -12), formation: i);
     }
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
     {
         float appear = MathHelper.Clamp(Age / 60f, 0, 1) * NPC.Opacity;
-        if (Parent?.Phase <= 2) { DrawGroundBrood(spriteBatch, screenPos, drawColor, appear); return false; }
+        if (!SupportOnly) { DrawGroundBrood(spriteBatch, screenPos, drawColor, appear); return false; }
         EvolutionVisuals.BroodOrb(NPC.Center, Kind, Age, appear, SupportOnly);
         if (warning > 0) EvolutionVisuals.AimLine(NPC.Center, NPC.Center + FlightDirection * (18 * EvolutionRules.Aggression(Parent?.Phase ?? 1) * 24 + 50), warning);
         if (Age < 60) EvolutionVisuals.Ring(NPC.Center, 65 * (1 - appear) + 25, 0, EvolutionVisuals.Core * appear, 2, false);
@@ -214,3 +225,5 @@ public sealed class EvolutionPuppet : EvolutionBroodNPC { internal override Evol
 public sealed class EvolutionAbomination : EvolutionBroodNPC { internal override EvolutionBrood Kind => EvolutionBrood.Abomination; }
 public sealed class EvolutionTumor : EvolutionBroodNPC { internal override EvolutionBrood Kind => EvolutionBrood.Tumor; }
 public sealed class EvolutionBomb : EvolutionBroodNPC { internal override EvolutionBrood Kind => EvolutionBrood.Bomb; }
+// 独立注册的辅助光球：没有血条、击杀掉落和碰撞伤害，不属于育生小怪。
+public sealed class EvolutionSupportOrb : EvolutionBroodNPC { internal override EvolutionBrood Kind => EvolutionBrood.Puppet; }

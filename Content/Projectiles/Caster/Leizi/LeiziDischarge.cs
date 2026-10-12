@@ -7,13 +7,22 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles.Caster.Leizi;
 
-public sealed class LeiziFlyingDischarge : ModProjectile
+public class LeiziFlyingDischarge : ModProjectile
 {
     internal const float SpeedPerUpdate = 13.8f;
     private bool impactHandled;
-    // 与异客同款表现，单发略小；两个技能保持普攻的 120% / 140%。
+    internal virtual LightningPalette Palette => LightningPalette.Leizi;
+    internal virtual float VisualSize => 0.85f;
+    internal virtual int ChainProjectileType => ModContent.ProjectileType<LeiziChainDischarge>();
+    internal virtual int ChainTargetLimit => ChainArtsVfx.TargetCount;
+    // 紫白双轨雷束；两个技能保持普攻视觉强度的 120% / 140%。
     internal static float Intensity(int mode) => 0.85f * (mode == 2 ? 1.4f : mode == 1 ? 1.2f : 1f);
     public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.None;
+    public override void SetStaticDefaults()
+    {
+        ProjectileID.Sets.TrailCacheLength[Type] = 24;
+        ProjectileID.Sets.TrailingMode[Type] = 2;
+    }
     public override void SetDefaults()
     {
         Projectile.width = Projectile.height = 18;
@@ -30,7 +39,7 @@ public sealed class LeiziFlyingDischarge : ModProjectile
     public override bool CanHitPvp(Player target) => false;
     public override bool? CanCutTiles() => false;
     public override bool? CanHitNPC(NPC target) => !impactHandled && target.CanBeChasedBy(Projectile) ? null : false;
-    public override bool PreDraw(ref Color lightColor) => false;
+    public override bool PreDraw(ref Color lightColor) { ChainArtsVfx.Head(Projectile, Palette, 2); return false; }
 
     public override void AI()
     {
@@ -45,11 +54,14 @@ public sealed class LeiziFlyingDischarge : ModProjectile
         int phase = (int)Projectile.localAI[0]++;
         Vector2 end = Projectile.Center + Projectile.velocity;
         Vector2 start = end - Projectile.velocity * 3f;
-        float scale = Intensity((int)Projectile.ai[0]);
-        PassengerLightningVisuals.Fracture(start, end, scale, Projectile.identity * 397 + phase * 13,
-            0.5f, 9, LightningPalette.Leizi);
-        PassengerLightningVisuals.EmitSpan(start, end, scale, phase * 6, LightningPalette.Leizi);
-        Lighting.AddLight(Projectile.Center, LightningPalette.Leizi.Light * (scale * 0.7f));
+        float scale = Intensity((int)Projectile.ai[0]) * VisualSize / 0.85f;
+        EmitFlightVisuals(start, end, scale, phase);
+    }
+
+    protected virtual void EmitFlightVisuals(Vector2 start, Vector2 end, float scale, int phase)
+    {
+        ChainArtsVfx.Flight(start, end, scale, phase, Projectile.identity * 397 + phase * 13, Palette, 2);
+        Lighting.AddLight(Projectile.Center, Palette.Light * (scale * 0.7f));
     }
 
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
@@ -63,21 +75,28 @@ public sealed class LeiziFlyingDischarge : ModProjectile
             return;
         int mode = (int)Projectile.ai[0];
         int index = Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero,
-            ModContent.ProjectileType<LeiziChainDischarge>(), Projectile.damage, Projectile.knockBack,
-            Projectile.owner, mode == 2 ? 1.4f : mode == 1 ? 1.2f : 1f, 30f, 4f);
+            ChainProjectileType, Projectile.damage, Projectile.knockBack,
+            Projectile.owner, mode == 2 ? 1.4f : mode == 1 ? 1.2f : 1f, 30f, ChainTargetLimit);
         if (!Main.projectile.IndexInRange(index))
             return;
         Projectile chain = Main.projectile[index];
         chain.CritChance = Projectile.CritChance;
-        ((LeiziChainDischarge)chain.ModProjectile).InitializeRoute(Main.player[Projectile.owner], target.Center, target);
+        ((PassengerChainDischarge)chain.ModProjectile).InitializeRoute(Main.player[Projectile.owner], target.Center, target);
     }
 }
 
-// 不复制选敌、同步和粒子系统；仅覆盖惊蛰自己的配色、尺寸与初雷规则。
+// 共用确定性选敌与同步；惊蛰单独绘制双轨电弧、较小节点与初雷规则。
 public sealed class LeiziChainDischarge : PassengerChainDischarge
 {
     internal override LightningPalette Palette => LightningPalette.Leizi;
     protected override float VisualSize => 0.85f;
+    protected override void BeginHopVisuals(Vector2 start, Vector2 end, float scale, float nodeIntensity, int seed, int hop, bool targetNode)
+        => ChainArtsVfx.Hop(start, end, scale, nodeIntensity, seed, 2, Palette, targetNode);
+    protected override void ImpactHopVisuals(Vector2 end, float intensity, int seed, bool firstHop, bool collided)
+    {
+        ChainArtsVfx.Impact(end, intensity, 2, Palette);
+        PassengerLightningVisuals.ElectricImpactDust(end, intensity * .7f, firstHop, Palette);
+    }
     public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
     {
         // ai[0]=1.4 只由初雷生成，随原版弹幕消息同步；其余攻击保留 15% 递减。

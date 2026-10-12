@@ -1,4 +1,4 @@
-Item,Index,Name,ChargeType,AutoTrigger,AutoUpdateActive,SummonSkill,SuppressReadyPulse,IsPermanent,UsesCustomCharge
+﻿Item,Index,Name,ChargeType,AutoTrigger,AutoUpdateActive,SummonSkill,SuppressReadyPulse,IsPermanent,UsesCustomCharge
 MagallanController,0,1,1,1,1,0,1,1,0
 MagallanController,1,2,1,1,1,0,1,1,0
 MagallanController,2,3,1,1,1,0,1,1,0
@@ -113,6 +113,8 @@ BlazeGreatsword,2,3,1,0,0,0,0,0,0
 FiammettaHandCannon,0,1,2,0,1,0,0,0,0
 FiammettaHandCannon,1,2,2,0,0,0,0,0,0
 FiammettaHandCannon,2,3,2,0,0,0,0,1,0
+MeteoriteCannon,0,1,2,0,0,0,0,0,0
+MeteoriteCannon,1,2,2,0,0,0,0,0,0
 SpecterBoneSaw,0,1,1,0,0,0,0,0,0
 SpecterBoneSaw,1,2,1,0,0,0,0,0,0
 ShiningStaff,0,1,1,0,1,0,0,0,0
@@ -126,6 +128,14 @@ PassengerConductor,1,2,1,0,1,0,0,0,0
 PassengerConductor,2,3,1,0,0,0,0,0,0
 LeiziStaff,0,1,1,0,1,0,0,0,0
 LeiziStaff,1,2,1,0,1,0,0,0,0
+PuddingStaff,0,1,1,0,1,0,0,0,0
+PuddingStaff,1,2,1,0,1,0,0,0,0
+LeonhardtStaff,0,1,1,0,1,0,0,0,0
+LeonhardtStaff,1,2,1,0,0,0,0,0,0
+GitanoOrb,0,1,1,0,1,0,0,0,0
+GitanoOrb,1,2,1,0,1,0,0,0,0
+SkyfireStaff,0,1,1,0,1,0,0,0,0
+SkyfireStaff,1,2,1,0,1,0,0,0,0
 UtageKatana,0,1,1,0,1,0,0,0,0
 UtageKatana,1,2,1,0,1,0,0,0,0
 RedDagger,0,1,1,0,0,0,0,0,1
@@ -172,3 +182,6 @@ ExecutorShotgun,0,1,1,0,1,0,0,0,0
 ExecutorShotgun,1,2,1,0,1,0,0,0,0
 ChalterWatergun,0,1,1,0,1,0,0,0,0
 ChalterWatergun,1,2,1,0,1,0,0,0,0
+MostimaStaff,0,1,1,0,1,0,0,0,0
+MostimaStaff,1,2,1,0,1,0,0,0,0
+MostimaStaff,2,3,1,0,1,0,0,0,0

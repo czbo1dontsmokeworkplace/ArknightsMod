@@ -18,7 +18,7 @@ public sealed class PassengerFlyingDischarge : ModProjectile
     private float hitMultiplier = 1f;
     private bool empoweredHit;
     private bool impactHandled;
-    private float VisualScale => Projectile.ai[2] == 5f ? 1.15f : 1f;
+    private float VisualScale => 1.2f;
     public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.None;
 
     // ai[0] 是总更新次数；由发射者按其可视宽度计算后随弹幕同步，远端不重算屏幕尺寸。
@@ -26,6 +26,11 @@ public sealed class PassengerFlyingDischarge : ModProjectile
         => (int)MathF.Ceiling(MathHelper.Clamp(visibleWidth * (focus ? 2.9f : 2.5f),
             2400f, 24000f) / SpeedPerUpdate);
 
+    public override void SetStaticDefaults()
+    {
+        ProjectileID.Sets.TrailCacheLength[Type] = 28;
+        ProjectileID.Sets.TrailingMode[Type] = 2;
+    }
     public override void SetDefaults()
     {
         Projectile.width = Projectile.height = 20;
@@ -61,9 +66,7 @@ public sealed class PassengerFlyingDischarge : ModProjectile
         Vector2 end = Projectile.Center + Projectile.velocity;
         Vector2 start = end - Projectile.velocity * UpdatesPerTick;
         int phase = (int)Projectile.localAI[0]++;
-        PassengerLightningVisuals.Fracture(start, end, VisualScale,
-            Projectile.identity * 397 + phase * 13, 0.5f, 9);
-        PassengerLightningVisuals.EmitSpan(start, end, VisualScale, phase * 6);
+        ChainArtsVfx.Flight(start, end, VisualScale, phase, Projectile.identity * 397 + phase * 13, LightningPalette.Passenger, 3);
         Lighting.AddLight(Projectile.Center, new Vector3(0.55f, 0.26f, 0.035f) * VisualScale);
     }
 
@@ -99,5 +102,5 @@ public sealed class PassengerFlyingDischarge : ModProjectile
             emissionOrigin: Projectile.Center, firstHit: target);
     }
 
-    public override bool PreDraw(ref Color lightColor) => false;
+    public override bool PreDraw(ref Color lightColor) { ChainArtsVfx.Head(Projectile, LightningPalette.Passenger, 3); return false; }
 }

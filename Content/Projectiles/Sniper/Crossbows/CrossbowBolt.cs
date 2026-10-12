@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using ArknightsMod.Content.Projectiles.Sniper.Schwarz;
 
 namespace ArknightsMod.Content.Projectiles.Sniper.Crossbows;
 
@@ -39,7 +40,7 @@ public sealed class CrossbowBolt : ModProjectile
     }
     public override void OnSpawn(IEntitySource source)
     {
-        Projectile.extraUpdates = Kind is CrossbowKind.Schwarz or CrossbowKind.Pozemka ? 2 : 1;
+        Projectile.extraUpdates = Kind == CrossbowKind.Schwarz ? 3 : Kind == CrossbowKind.Pozemka ? 2 : 1;
         if (Kind == CrossbowKind.Schwarz) Projectile.penetrate = -1;
         if (Kind == CrossbowKind.Pozemka)
         {
@@ -52,7 +53,7 @@ public sealed class CrossbowBolt : ModProjectile
     }
     public override void AI()
     {
-        Projectile.extraUpdates = Kind is CrossbowKind.Schwarz or CrossbowKind.Pozemka ? 2 : 1;
+        Projectile.extraUpdates = Kind == CrossbowKind.Schwarz ? 3 : Kind == CrossbowKind.Pozemka ? 2 : 1;
         age++;
         if (Kind == CrossbowKind.Schwarz) Projectile.penetrate = -1;
         else if (Kind == CrossbowKind.Pozemka) UpdateRoseHoming();
@@ -68,6 +69,7 @@ public sealed class CrossbowBolt : ModProjectile
                     -Projectile.velocity * .12f + Main.rand.NextVector2Circular(1.4f, 1.4f), 60, color, .85f);
                 dust.noGravity = true;
             }
+            CrossbowFlightVfx.Wake(Projectile, Kind);
         }
     }
     public override bool? CanHitNPC(NPC target)
@@ -121,13 +123,22 @@ public sealed class CrossbowBolt : ModProjectile
             // Apply decay to the NEXT target, preserving precision instead of flooring damage every hit.
             Projectile.ai[2]++;
             Projectile.netUpdate = true;
-            CrossbowVisuals.SpawnPulse(Projectile.GetSource_FromThis(), Projectile.Center,
-                Projectile.velocity.SafeNormalize(Vector2.UnitX), Kind, false);
+            if (Projectile.owner == Main.myPlayer)
+            {
+                // 敌人中心是激光中点；随机量只改变天降方向，不能让线路绕过敌人。
+                Projectile.NewProjectile(Projectile.GetSource_OnHit(target), target.Center, Vector2.Zero,
+                    ModContent.ProjectileType<SchwarzRiftLaser>(),
+                    Math.Max(1, (int)(Projectile.damage * .72f)), Projectile.knockBack,
+                    Projectile.owner, Main.rand.NextFloat(-.12f, .12f));
+            }
         }
     }
     public override void OnKill(int timeLeft)
-        => CrossbowVisuals.SpawnPulse(Projectile.GetSource_Death(), Projectile.Center,
-            Projectile.velocity.SafeNormalize(Vector2.UnitX), Kind, false);
+    {
+        if (Kind != CrossbowKind.Schwarz)
+            CrossbowVisuals.SpawnPulse(Projectile.GetSource_Death(), Projectile.Center,
+                Projectile.velocity.SafeNormalize(Vector2.UnitX), Kind, false);
+    }
     public override bool PreDraw(ref Color lightColor)
     {
         CrossbowVisuals.DrawBolt(Projectile, Kind, age);

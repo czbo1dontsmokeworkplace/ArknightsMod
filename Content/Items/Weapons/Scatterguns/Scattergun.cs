@@ -109,6 +109,7 @@ public sealed class PineconeNailgun : Scattergun
 public sealed class ExecutorShotgun : Scattergun
 {
     public override int Tier => 1;
+    public override string Texture => "ArknightsMod/Content/Items/Weapons/Scatterguns/ExecutorShotgun";
     protected override int[] EliteDamage => [12, 14, 16];
     public override void AddRecipes() => CreateRecipe()
      .AddIngredient<global::ArknightsMod.Content.Items.Material.Grindstone>(1)

@@ -977,6 +977,18 @@ FiammettaHandCannon: {
 	}
 }
 
+MeteoriteCannon: {
+	1: {
+		Label: Scattershot Warhead
+		Desc: Offensive Recovery; automatically loads the next shot for 145% damage, a wider explosion, and extra shrapnel
+	}
+
+	2: {
+		Label: High-Explosive Warhead
+		Desc: Offensive Recovery; manually loads the next shot for 210% damage, a large explosion, and extra shrapnel; the blast inflicts Broken Armor for 8 seconds
+	}
+}
+
 SpecterBoneSaw: {
 	1: {
 		Label: ATK Up γ
@@ -1031,12 +1043,56 @@ PassengerConductor: {
 
 	2: {
 		Label: Focus Command
-		Desc: Auto recovery, manual activation. Extends flight range from about 2.5 to 2.9 visible screen widths, increases ATK by 10%-30%, reduces attack interval by 20%-50%, and chains between up to 5 targets only after a direct collision. Lasts 25-35 seconds
+		Desc: Auto recovery, manual activation. Extends flight range from about 2.5 to 2.9 visible screen widths, increases ATK by 10%-30%, reduces attack interval by 20%-50%, and keeps four-round bursts and chains between up to 4 targets only after a direct collision. Lasts 25-35 seconds
 	}
 
 	3: {
 		Label: Glorious Shards
 		Desc: Auto recovery, manual activation. Places a stationary 4-second storm with a 16-tile radius at the visible enemy with the highest current HP within 25 tiles of the cursor. Every 0.5 seconds, drops a 100%-150% damage bolt onto a random enemy inside, then chains between up to 4 targets within the storm. Stores 2 charges; one cast per key press. Storms vanish when the weapon is put away
+	}
+}
+
+LeonhardtStaff: {
+	1: {
+		Label: ATK Up γ
+		Desc:
+			'''
+			Auto recovery, manual activation, lasts [c/3791db:30] seconds
+			Staff damage increases by [c/3791db:30%-100%]
+			'''
+	}
+
+	2: {
+		Label: Deconstruct and Detonate
+		Desc:
+			'''
+			Auto recovery, manual activation; instantly blasts a visible point near the cursor
+			Deals [c/3791db:150%-230%] Arts damage in a [c/3791db:360]-pixel diameter
+			Targets lose [c/3791db:15] percentage points of Arts resistance for [c/3791db:6] seconds
+			Cast within [c/3791db:720] pixels with clear sight; stores up to [c/EDA128:1-3] charges
+			'''
+	}
+}
+
+PuddingStaff: {
+	1: {
+		Label: Tactical Chant β
+		Desc:
+			'''
+			Auto recovery, manual activation, lasts [c/3791db:25] seconds
+			Attack speed increases by [c/3791db:15%-75%]
+			'''
+	}
+
+	2: {
+		Label: Diffusion Current
+		Desc:
+			'''
+			Auto recovery, manual activation, lasts [c/3791db:20] seconds
+			Damage increases by [c/3791db:30%-110%]
+			Lightning jumps up to [c/3791db:3] times; it seeks new enemies first, then may jump back
+			Each jump still loses [c/f6643b:15%] damage
+			'''
 	}
 }
 
@@ -1307,5 +1363,79 @@ ChalterWatergun: {
 	2: {
 		Label: Holiday Storm
 		Desc: For 16 seconds: +35% damage and hits create slowing water fields lasting 3 seconds, up to 3 fields. Fields deal 20% damage every 30 frames; overlapping fields do not stack.
+	}
+}
+
+GitanoOrb: {
+	1: {
+		Label: Tactical Chant β
+		Desc:
+			'''
+			Auto recovery, manual activation, lasts [c/3791db:25] seconds
+			Charge speed increases by [c/3791db:15%-75%]
+			'''
+	}
+
+	2: {
+		Label: Fate
+		Desc:
+			'''
+			Auto recovery, manual activation, lasts [c/3791db:30] seconds
+			Damage increases by [c/3791db:30%-100%]; releasing a full charge hits every enemy within [c/3791db:900] pixels
+			After the skill ends, casting stops for [c/3791db:15-10] seconds
+			'''
+	}
+}
+
+SkyfireStaff: {
+	1: {
+		Label: ATK Up γ
+		Desc:
+			'''
+			Auto recovery, manual activation, lasts [c/3791db:30] seconds
+			Charged meteor damage increases by [c/3791db:30%-100%]
+			'''
+	}
+
+	2: {
+		Label: Skyfall
+		Desc:
+			'''
+			Auto recovery, manual activation, lasts [c/3791db:22] seconds
+			Releasing a full charge drops a meteor from above the cursor, up to [c/3791db:850] pixels away
+			Meteor damage becomes [c/3791db:150%-235%], and blast diameter grows to [c/3791db:470] pixels
+			The blast ignites and stuns enemies for [c/3791db:1] second
+			'''
+	}
+}
+
+MostimaStaff: {
+	1: {
+		Label: ATK Up γ
+		Desc:
+			'''
+			Auto recovery, manual activation, lasts [c/3791db:30] seconds
+			Increases ATK by [c/3791db:30%–100%]
+			'''
+	}
+
+	2: {
+		Label: Lock of Shattered Time
+		Desc:
+			'''
+			Auto recovery, manual activation, lasts [c/3791db:4–7] seconds
+			Creates a [c/3791db:600]-pixel time-lock domain at the cursor, stunning ordinary enemies
+			Deals [c/3791db:80%–140%] ATK as Arts damage each second; bosses and segmented enemies resist the stun
+			'''
+	}
+
+	3: {
+		Label: Key of Chronology
+		Desc:
+			'''
+			Auto recovery, manual activation, lasts [c/3791db:20–27] seconds
+			Increases ATK by [c/3791db:60%–170%]; attacks become staff swings releasing expanding clock waves
+			Waves pierce enemies and terrain, hit each enemy once with knockback and slow ordinary enemies for [c/3791db:2] seconds
+			'''
 	}
 }

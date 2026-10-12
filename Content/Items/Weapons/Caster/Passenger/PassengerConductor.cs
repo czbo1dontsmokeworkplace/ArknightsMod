@@ -86,15 +86,12 @@ public sealed class PassengerConductor : ExpansionWeaponBase
     {
         if (!ArknightsKeybinds.SkillActivatePressed(player))
         {
-            // 只在新一轮使用前切换节奏，不截断已经开始的三连发。
-            // 本轮只调整普攻；聚焦指令沿用原先 40 帧基准的加速单发。
+            // Four-shot burst for normal attacks and Focus Command; UseSpeedMultiplier scales the cadence.
             if (player.itemAnimation <= 0)
             {
-                WeaponPlayer cadence = player.GetModPlayer<WeaponPlayer>();
-                bool focus = cadence.SkillActive && cadence.Skill == 1;
-                Item.useTime = focus ? 40 : 10;
-                Item.useAnimation = focus ? 40 : 45;
-                Item.useLimitPerAnimation = focus ? 1 : 3;
+                Item.useTime = 5;
+                Item.useAnimation = 30;
+                Item.useLimitPerAnimation = 4;
             }
             return base.CanUseItem(player);
         }
@@ -149,7 +146,7 @@ public sealed class PassengerConductor : ExpansionWeaponBase
         float candidateMultiplier = skills.Skill == 0 ? (rank == 9 ? 2.5f : 1.5f + rank * 0.1f) : 1f;
         int index = Projectile.NewProjectile(source, position, direction * PassengerFlyingDischarge.SpeedPerUpdate,
             ModContent.ProjectileType<PassengerFlyingDischarge>(), damage, knockback, player.whoAmI,
-            updates, candidateMultiplier, focus ? 5 : 4);
+            updates, candidateMultiplier, ChainArtsVfx.TargetCount);
         if (Main.projectile.IndexInRange(index))
             Main.projectile[index].CritChance = player.GetWeaponCrit(Item);
         return false;

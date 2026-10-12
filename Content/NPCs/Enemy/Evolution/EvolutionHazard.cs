@@ -162,10 +162,10 @@ public sealed partial class EvolutionHazard : ModProjectile
         if (Kind != EvolutionShot.Rock && Kind != EvolutionShot.Fragment) Projectile.rotation = direction.ToRotation();
         if (!Main.dedServ)
         {
-            Lighting.AddLight(Projectile.Center, .5f, .025f, .06f);
+            Lighting.AddLight(Projectile.Center, boss.ThemeColor.ToVector3() * .55f);
             if (Age % 6 == 0 && Kind is EvolutionShot.Blood or EvolutionShot.Spirit or EvolutionShot.Core)
             {
-                Dust d = Dust.NewDustPerfect(Projectile.Center, DustID.Blood, -Projectile.velocity * .05f, 50, default, .9f);
+                Dust d = Dust.NewDustPerfect(Projectile.Center, boss.Phase == 1 ? DustID.Sand : DustID.Blood, -Projectile.velocity * .05f, 50, default, .9f);
                 d.noGravity = Kind != EvolutionShot.Blood;
             }
         }
@@ -270,7 +270,7 @@ public sealed partial class EvolutionHazard : ModProjectile
         Vector2 center = Projectile.Center;
         Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitY);
         float fade = MathHelper.Clamp(Age / 12f, 0, 1) * MathHelper.Clamp((Lifetime - Age) / 15f, 0, 1);
-        Color blood = EvolutionVisuals.Blood * fade;
+        Color blood = (Parent?.ThemeColor ?? EvolutionVisuals.Blood) * fade;
         if (Kind == EvolutionShot.Pulse)
         {
             float radius = EvolutionRules.RingRadius(Age);
@@ -326,7 +326,7 @@ public sealed partial class EvolutionHazard : ModProjectile
             EvolutionProjectileVisuals.DrawSpirit(center, Projectile.rotation, Age, fade);
         }
         else if (Kind == EvolutionShot.Blood)
-            EvolutionProjectileVisuals.DrawDroplet(center, Projectile.rotation, fade);
+            EvolutionProjectileVisuals.DrawDroplet(center, Projectile.rotation, fade, Parent?.Phase == 1 ? EvolutionVisuals.Sand : null);
         else
         {
             if (Kind == EvolutionShot.Rock && Parameter > 0 && Age < Delay)

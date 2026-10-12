@@ -1,6 +1,7 @@
 using System;
 using ArknightsMod.Content.Projectiles.Caster.Leizi;
 using ArknightsMod.Content.Projectiles.Caster.Passenger;
+using ArknightsMod.Content.Items.Weapons.Caster.Pudding;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -28,10 +29,10 @@ public sealed class LeiziStaff : ExpansionWeaponBase
         Item.DamageType = DamageClass.Magic;
         Item.width = Item.height = 40;
         Item.mana = 10;
-        // 对齐深靛的连射节奏，但改为四连发：每发 5 帧，轮次 30 帧。
+        // 三连发：每发间隔 5 帧，轮次 30 帧。
         Item.useTime = 5;
         Item.useAnimation = 30;
-        Item.useLimitPerAnimation = 4;
+        Item.useLimitPerAnimation = 3;
         Item.useStyle = ItemUseStyleID.Shoot;
         Item.noMelee = true;
         Item.autoReuse = true;
@@ -91,6 +92,7 @@ public sealed class LeiziStaff : ExpansionWeaponBase
     public override void AddRecipes()
     {
         CreateRecipe()
+            .AddIngredient<PuddingStaff>()
             .AddIngredient<global::ArknightsMod.Content.Items.Material.RMA7024>(1)
             .AddIngredient<global::ArknightsMod.Content.Items.Material.CoagulatingGel>(2)
             .AddIngredient(ItemID.ThunderStaff)

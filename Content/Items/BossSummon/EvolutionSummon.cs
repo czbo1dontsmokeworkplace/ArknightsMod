@@ -23,7 +23,7 @@ public sealed class EvolutionSummon : ModItem
         Item.useStyle = ItemUseStyleID.HoldUp;
         Item.consumable = false;
     }
-    public override bool CanUseItem(Player player) => NPC.downedMechBoss1 && NPC.downedMechBoss2 && NPC.downedMechBoss3 && !NPC.AnyNPCs(ModContent.NPCType<Boss>());
+    public override bool CanUseItem(Player player) => !NPC.AnyNPCs(ModContent.NPCType<Boss>());
     public override bool? UseItem(Player player)
     {
         if (player.whoAmI == Main.myPlayer)

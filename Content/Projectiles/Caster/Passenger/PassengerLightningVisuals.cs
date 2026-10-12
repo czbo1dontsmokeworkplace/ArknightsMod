@@ -66,6 +66,21 @@ internal static class PassengerLightningVisuals
             new PassengerLightningImpactParticle(center, intensity, seed, palette).Spawn();
     }
 
+    /// <summary>只在真实二跳及后续节点加两条短裂弧，强化弹跳瞬间而不增加伤害弹幕。</summary>
+    internal static void JumpAccent(Vector2 start, Vector2 end, float intensity, int seed,
+        LightningPalette palette)
+    {
+        if (!Visible(start, end) || ParticleManager.activeParticles.Count >= 1750)
+            return;
+        Vector2 incoming = (end - start).SafeNormalize(Vector2.UnitX);
+        Vector2 normal = incoming.RotatedBy(MathHelper.PiOver2);
+        for (int side = -1; side <= 1; side += 2)
+        {
+            Vector2 forkEnd = end + (incoming * 15f + normal * side * 24f) * intensity;
+            Fracture(end, forkEnd, intensity * .62f, seed + side * 113, 2.2f, 13, palette);
+        }
+    }
+
     internal static void Impact(Vector2 center, float intensity, int seed, bool mainStrike, LightningPalette? palette = null)
     {
         LightningPalette colors = palette ?? LightningPalette.Passenger;
@@ -91,7 +106,8 @@ internal static class PassengerLightningVisuals
         // Dust 仅作少量点缀，主体仍由爆裂贴图、扩散环和自定义电弧承担。
         for (int i = 0; i < (mainStrike ? 4 : 2); i++)
         {
-            Dust dust = Dust.NewDustPerfect(center, DustID.Torch,
+            Dust dust = Dust.NewDustPerfect(center,
+                colors == LightningPalette.Pudding ? DustID.BlueTorch : DustID.Torch,
                 Main.rand.NextVector2Circular(4f, 3f) - Vector2.UnitY * 2f, 35, colors.Edge, intensity);
             dust.noGravity = true;
         }

@@ -3671,6 +3671,15 @@ FiammettaHandCannon: {
 	Tooltip: Fires shells into the sky to strike the target
 }
 
+MeteoriteCannon: {
+	DisplayName: Meteorite's Explosive Cannon
+	Tooltip:
+		'''
+		Consumes arrows to fire fast, straight explosive shells
+		Converts every arrow into the same projectile; impacts burst into shrapnel
+		'''
+}
+
 SpecterBoneSaw: {
 	DisplayName: Specter's Bone Saw
 	Tooltip:
@@ -3689,17 +3698,31 @@ ShiningStaff: {
 		'''
 }
 
+LeonhardtStaff: {
+	DisplayName: Leonhardt's Staff
+	Tooltip: Let's see whether you're gold or manure!
+}
+
 PassengerConductor: {
 	DisplayName: Passenger's Electromagnetic Conductor
-	Tooltip: Fires three-round bursts of chain lightning that bounce between enemies
+	Tooltip: Fires four-round bursts of golden chain lightning; each shot hits up to 4 enemies (3 jumps after the first hit)
 }
 
 LeiziStaff: {
 	DisplayName: Leizi's Thunder Staff
 	Tooltip:
 		'''
-		Fires non-homing scarlet-orange and gold lightning through blocks
+		Fires three-round bursts of non-homing violet-white lightning through blocks
 		A direct hit triggers an impact burst and chains between up to 4 enemies
+		Each jump loses 15% damage and briefly slows ordinary enemies
+		'''
+}
+
+PuddingStaff: {
+	DisplayName: Pudding's Electromagnetic Staff
+	Tooltip:
+		'''
+		Fires two-round bursts of blue arcs; each shot hits up to 4 enemies (3 jumps after the first hit)
 		Each jump loses 15% damage and briefly slows ordinary enemies
 		'''
 }
@@ -3962,4 +3985,23 @@ DroneCommandCore: {
 MaterialistTreasureBag: {
 	DisplayName: Treasure Bag (Materialist Antagonizer)
 	Tooltip: Right click to open for a Drone Command Core, Chlorophyte Bars and coins
+}
+
+GitanoOrb: {
+	DisplayName: Gitano's Crystal Orb
+	Tooltip: Wait a minute, let me predict the results of this battle.
+}
+
+SkyfireStaff: {
+	DisplayName: Skyfire's Meteor Staff
+	Tooltip: May the flames of the sun devour you!
+}
+
+MostimaStaff: {
+	DisplayName: Mostima's Staff
+	Tooltip:
+		'''
+		Hold left click to charge; release at full charge to detonate a large cross-shaped clock at the cursor
+		Maximum targeting range: 1000 pixels; blast diameter: 560 pixels
+		'''
 }

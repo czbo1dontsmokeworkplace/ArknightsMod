@@ -154,8 +154,9 @@ public abstract class CrossbowWeaponBase : UpgradeWeaponBase
         if (Kind == CrossbowKind.Pozemka && skill == 1) multiplier *= 1.6f;
         if (Kind == CrossbowKind.Pozemka && skill == 2) multiplier *= 2.3f;
 
-        // Only wooden-arrow projectile types are converted (also covers the Endless Quiver).
-        bool converted = type == ProjectileID.WoodenArrowFriendly;
+        // 黑的弩消耗实际箭矢，但任何箭矢都统一转成自己的特殊弹幕。
+        // 其余弩保持原来的木箭转换规则。
+        bool converted = Kind == CrossbowKind.Schwarz || type == ProjectileID.WoodenArrowFriendly;
         if (converted) type = ModContent.ProjectileType<CrossbowBolt>();
         var shot = Projectile.NewProjectileDirect(player.GetSource_ItemUse_WithPotentialAmmo(Item, ammo),
             muzzle, direction * speed, type, Math.Max(1, (int)(damage * multiplier)), knockback,

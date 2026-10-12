@@ -29,7 +29,11 @@ public sealed partial class Evolution : ModNPC
     internal int Timer => (int)NPC.ai[1];
     internal int Attack => EvolutionRules.Attack(Phase, (int)NPC.ai[2], Desperate);
     internal bool Transitioning => Phase is 2 or 4;
-    internal bool ArenaActive => Phase is 1 or 2;
+    internal bool ArenaActive => Phase == 1;
+    internal bool CorridorActive => Phase is 2 or 3;
+    internal float CorridorTop => Arena.Y - EvolutionRules.CorridorHeight * .5f;
+    internal float CorridorBottom => Arena.Y + EvolutionRules.CorridorHeight * .5f;
+    internal Color ThemeColor => Phase == 1 ? EvolutionVisuals.Sand : EvolutionVisuals.Blood;
     private int noPlayerTime, visualPulse, lastAxisReflection = -1000;
     private readonly List<Projectile> axisReflectionCandidates = new(12);
     private int lastVisualPhase = -1;
@@ -151,13 +155,14 @@ public sealed partial class Evolution : ModNPC
         else if (Timer < 0) NPC.velocity *= .94f;
         else if (Transitioning) DoTransition(target);
         else if (Phase == 1) DoNewborn(target);
-        else if (NPC.Distance(target.Center) > 1300 && Timer < 25)
+        else if (Phase == 5 && NPC.Distance(target.Center) > 1300 && Timer < 25)
         {
             MoveTo(target.Center + new Vector2(NPC.Center.X < target.Center.X ? -480 : 480, -180), 34, .07f);
             NPC.ai[1] = 0;
         }
         else if (Phase == 3) DoEvolved(target);
         else DoPerfect(target);
+        if (CorridorActive) ConstrainLowFlight();
         NPC.rotation = MathHelper.Lerp(NPC.rotation, MathHelper.Clamp(NPC.velocity.X * .012f, -.25f, .25f), .12f);
         NPC.direction = NPC.spriteDirection = target.Center.X > NPC.Center.X ? 1 : -1;
         if (Charging) NPC.damage = EvolutionRules.ContactDamage(Phase, true, Desperate);
@@ -167,6 +172,12 @@ public sealed partial class Evolution : ModNPC
     }
     private void EnterPhase(int phase)
     {
+        if (phase == 2)
+        {
+            // 固定世界高度的800像素战斗带：下沿略低于育生核心所在的地面。
+            Arena.Y = MathHelper.Clamp(NPC.Bottom.Y + 96 - EvolutionRules.CorridorHeight * .5f,
+                EvolutionRules.CorridorHeight * .5f + 32, Main.maxTilesY * 16 - EvolutionRules.CorridorHeight * .5f - 32);
+        }
         ClearBrood(); ClearHazards(); Serial++;
         NPC.ai[0] = phase; NPC.ai[1] = 0; NPC.ai[2] = 0;
         Anchor = NPC.Center; NPC.velocity *= .25f; NPC.dontTakeDamage = true; NPC.netUpdate = true;
@@ -197,6 +208,7 @@ public sealed partial class Evolution : ModNPC
         foreach (Projectile p in Main.ActiveProjectiles) if (p.ModProjectile is EvolutionHazard h && h.Encounter == Encounter) count++;
         if (count >= EvolutionRules.HazardCap - (peripheral ? EvolutionRules.PeripheralReserve : 0)) return;
         int damage = EvolutionDamageCockpit.ProjectileDamage(kind, beamStyle);
+        if (CorridorActive) damage = (int)(damage * EvolutionRules.EvolvedProjectileMultiplier);
         velocity = EvolutionRules.ShotVelocity(kind, velocity);
         if (EvolutionRules.IsLaser(kind))
         {
@@ -251,12 +263,14 @@ public sealed partial class Evolution : ModNPC
         EvolutionBroodPreset preset = EvolutionBroodPreset.Hunter, int formation = 0)
     {
         if (Main.netMode == NetmodeID.MultiplayerClient || Desperate) return;
+        // 完美形态只允许独立的辅助光球类型，不能重新生出地面敌人。
+        if (Phase >= 4 && kind != EvolutionBrood.Puppet) return;
         int count = 0, same = 0;
         foreach (NPC n in Main.ActiveNPCs)
             if (n.ModNPC is EvolutionBroodNPC b && b.Encounter == Encounter) { count++; if (b.Kind == kind) same++; }
         int typeCap = kind == EvolutionBrood.Abomination ? 1 : kind == EvolutionBrood.GiantSpider ? 2 : kind == EvolutionBrood.Puppet ? 3 : 6;
         if (count >= EvolutionRules.MinionCap(Phase) || same >= typeCap) return;
-        int type = kind switch
+        int type = Phase >= 4 ? ModContent.NPCType<EvolutionSupportOrb>() : kind switch
         {
             EvolutionBrood.Spider => ModContent.NPCType<EvolutionSpider>(), EvolutionBrood.GiantSpider => ModContent.NPCType<EvolutionGiantSpider>(),
             EvolutionBrood.Puppet => ModContent.NPCType<EvolutionPuppet>(), EvolutionBrood.Abomination => ModContent.NPCType<EvolutionAbomination>(),
@@ -264,14 +278,26 @@ public sealed partial class Evolution : ModNPC
         };
         center.X = MathHelper.Clamp(center.X, 160, Main.maxTilesX * 16 - 160);
         center.Y = MathHelper.Clamp(center.Y, 160, Main.maxTilesY * 16 - 160);
+        if (Phase <= 3)
+        {
+            int width = kind == EvolutionBrood.GiantSpider ? 58 : kind == EvolutionBrood.Abomination ? 66 : 36;
+            int height = EvolutionBroodNPC.GroundHeight(kind);
+            if (CorridorActive) center.Y = MathHelper.Clamp(center.Y, CorridorTop + height, CorridorBottom - height * .5f - 6);
+            if (Collision.SolidCollision(center - new Vector2(width, height) * .5f, width, height)) return;
+        }
         int index = NPC.NewNPC(NPC.GetSource_FromAI(), (int)center.X, (int)center.Y, type, ai0: NPC.whoAmI, ai2: side);
         if (Main.npc.IndexInRange(index) && Main.npc[index].ModNPC is EvolutionBroodNPC brood)
         {
+            if (Phase == 3)
+            {
+                brood.NPC.lifeMax = (int)(brood.NPC.lifeMax * 1.3f);
+                brood.NPC.life = brood.NPC.lifeMax;
+            }
             brood.Preset = preset; brood.Formation = formation;
             brood.Encounter = Encounter; brood.Fuse = fuse; brood.Gap = gap; brood.FlightAnchor = center; brood.NPC.Center = center; brood.NPC.netUpdate = true;
             brood.NPC.dontTakeDamage = true;
-            brood.NPC.chaseable = Phase < 3;
-            if (Phase == 1) { brood.InitializeGroundBody(); brood.NPC.Center = center; }
+            brood.NPC.chaseable = !brood.SupportOnly;
+            if (Phase <= 3) { brood.InitializeGroundBody(); brood.NPC.Center = center; }
         }
     }
     public override void ModifyNPCLoot(NPCLoot loot)
@@ -284,7 +310,7 @@ public sealed partial class Evolution : ModNPC
     private void UpdateVisuals()
     {
         EvolutionCinematics.Update(this);
-        Lighting.AddLight(NPC.Center, Phase == 5 ? .85f : .55f, .03f, .07f);
+        Lighting.AddLight(NPC.Center, ThemeColor.ToVector3() * (Phase == 5 ? .95f : .65f));
         if (lastVisualPhase != Phase)
         {
             lastVisualPhase = Phase;
@@ -294,7 +320,7 @@ public sealed partial class Evolution : ModNPC
             if (!emerging)
             {
                 EvolutionImpactSystem.Emit(NPC.Center, 360, Transitioning ? 3 : 4);
-                EvolutionVisuals.Burst(NPC.Center, Transitioning ? 1.8f : 1f);
+                EvolutionVisuals.Burst(NPC.Center, Transitioning ? 1.8f : 1f, color: ThemeColor);
                 SoundEngine.PlaySound(SoundID.Roar with { Volume = .6f, Pitch = -.5f }, NPC.Center);
             }
         }
@@ -319,17 +345,18 @@ public sealed partial class Evolution : ModNPC
         float breathe = 1 + MathF.Sin(breathingPhase) * (.025f + charge * .018f);
         float opacity = Phase == 6 ? MathHelper.Clamp(1 - Timer / 105f, 0, 1) : MathHelper.Clamp((NPC.ai[3]) / 60f, .1f, 1);
         Vector2 origin = name == "Perfect" ? new Vector2(119, 112) : name == "Evolved" ? new Vector2(95, 108) : new Vector2(85, 107);
-        if (Phase <= 2) origin.Y = 155; // 育生形态以触肢底部贴地，不把原悬浮锚点埋进土里。
+        if (Phase == 1) origin.Y = texture.Height - 8;
         SpriteEffects flip = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
         if (flip != SpriteEffects.None) origin.X = texture.Width - origin.X;
         Vector2 scale = new(breathe * (1 + NPC.velocity.Length() * .003f), 1 / breathe);
+        if (Phase == 1) scale = new Vector2(1 + MathF.Sin(time * .045f) * .012f, 1);
         scale *= 1 - charge * .13f;
-        Color glow = EvolutionVisuals.Blood;
+        Color glow = ThemeColor;
         EvolutionVisuals.Glow(NPC.Center, glow * (.3f * opacity), new Vector2(260, 320), NPC.rotation);
         if (visualPulse > 0)
             EvolutionVisuals.Ring(NPC.Center, 80 + (45 - visualPulse) * 6, 0,
                 EvolutionVisuals.Core * (visualPulse / 90f), 3, false);
-        for (int i = 0; i < (Phase >= 3 ? 5 : 2); i++)
+        for (int i = 0; i < (Phase == 1 ? 0 : Phase >= 3 ? 5 : 2); i++)
         {
             Vector2 start = NPC.Center + new Vector2((i - 2) * 17, 53).RotatedBy(NPC.rotation);
             Vector2 end = start + new Vector2(MathF.Sin(time * .045f + i) * 55 - NPC.velocity.X * 3, 90 + i * 8);
@@ -345,9 +372,9 @@ public sealed partial class Evolution : ModNPC
                     else spriteBatch.Draw(texture, trailPosition, null, trailColor, NPC.rotation, origin, scale, flip, 0);
                 }
         EvolutionCinematics.DrawBodyAura(this, texture, origin, scale, flip);
-        Color bodyColor = Color.White * (opacity * (1 - EvolutionCinematics.BodyDissolve(this)));
+        Color bodyColor = (Phase == 1 ? new Color(255, 235, 190) : Color.White) * (opacity * (1 - EvolutionCinematics.BodyDissolve(this)));
         if (name == "Evolved") EvolutionVisuals.DrawEvolved(spriteBatch, NPC.Center - screenPos, bodyColor, NPC.rotation, scale, flip);
-        else spriteBatch.Draw(texture, NPC.Center - screenPos, null, bodyColor, NPC.rotation, origin, scale, flip, 0);
+        else spriteBatch.Draw(texture, (Phase == 1 ? NPC.Bottom : NPC.Center) - screenPos, null, bodyColor, NPC.rotation, origin, scale, flip, 0);
         if (DashWarning > 0)
         {
             EvolutionVisuals.AimLine(NPC.Center, NPC.Center + DashDirection * EvolutionRules.ChargeDistance(Phase == 5, Desperate), DashWarning);

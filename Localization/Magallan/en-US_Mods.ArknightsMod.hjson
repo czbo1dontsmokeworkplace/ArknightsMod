@@ -26,8 +26,8 @@ Skills: {
 			Label: Laser Mining Module
 			Desc:
 				'''
-				Drones target enemies within 15 tiles and continuously fire lasers
-				Lasers reach up to 15 tiles and pierce every enemy in their path, but stop at terrain; this mode stays active
+				Drones target enemies within 19.5 tiles and continuously fire lasers
+				Lasers reach up to 19.5 tiles and pierce every enemy in their path, but stop at terrain; this mode stays active
 				'''
 		}
 
@@ -35,7 +35,7 @@ Skills: {
 			Label: Armed Combat Module
 			Desc:
 				'''
-				Drones target enemies within 150 tiles and launch missiles straight down
+				Drones target enemies within 120 tiles and launch missiles straight down
 				Missiles pass through terrain, fly straight briefly, then turn toward their target with increasing agility
 				Each missile explodes once, damaging enemies in a 75 by 75 area
 				This mode stays active

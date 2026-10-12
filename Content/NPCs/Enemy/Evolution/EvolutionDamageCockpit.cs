@@ -18,7 +18,7 @@ internal static class EvolutionDamageCockpit
     // 对标本地炼狱四场战斗：普通弹幕靠近克隆体/世纪之花，重型攻击不照搬石巨人重炮。
     // 本表直接传给 Projectile.NewProjectile；专家模式下基础威力约为此值 ×4（防御前）。
     // 炼狱 NewProjectileBetter 会先除以4，切勿把其130～260直接填入本表！
-    // 同种弹幕全阶段固定；普通/大师难度仍保留原有游戏难度倍率。
+    // 二阶段及其入场转场在读取后乘以0.85；普通/大师难度保留游戏难度倍率。
     internal static readonly (EvolutionShot Kind, string ChineseName, string EnglishName, int Damage)[] ProjectileDamages =
     {
         (EvolutionShot.Blood,       "血液",       "Blood Droplet",       31), // 重力抛射水滴，包括仆从吐出的血液、天降血雨。
@@ -34,7 +34,7 @@ internal static class EvolutionDamageCockpit
         (EvolutionShot.Lance,       "血喷",       "Blood Lance",         36), // 高速移动尖梭，包括横排/竖排血喷、光轴侧刃与仆从齐射。
         (EvolutionShot.CrimsonBomb, "深红炸弹",   "Crimson Bomb",        41), // 仅范围爆炸型使用此伤害；分裂型只由碎片伤人。
         (EvolutionShot.Eruption,    "血色喷柱",   "Blood Eruption",      39), // 从地面/平台向上喷发的柱体。
-        (EvolutionShot.Radiation,   "育生辐射波", "Brood Radiation",     31), // 第一阶段五向短程弧形波；只有可见波纹伤人。
+        (EvolutionShot.Radiation,   "育生闪耀激光", "Brood Flash Laser",     31), // 第一阶段五向瞬发激光；预警无伤害，亮起后8帧生效。
         (EvolutionShot.Reflection,  "反射血刃",   "Reflected Blood Blade", 30), // 光轴护盾吞入玩家射弹后弹回；固定伤害，不继承玩家武器伤害。
     };
 
@@ -52,18 +52,19 @@ internal static class EvolutionDamageCockpit
     internal static readonly (int Stage, string ChineseName, string EnglishName, int Damage)[] BossContactDamages =
     {
         (0, "初始化",             "Initialization",      0),
-        (1, "初生形态：100%～60%", "Newborn",             0),
+        (1, "初生形态：100%～80%", "Newborn",             0),
         (2, "第一次无敌转场",     "First Transition",    0),
-        (3, "进化形态：60%～20%",  "Evolved",           155),
+        (3, "进化形态：80%～40%",  "Evolved",           155),
         (4, "第二次无敌转场",     "Second Transition",   0),
-        (5, "完美形态：20%～8%",   "Perfect",           170),
+        (5, "完美形态：40%～8%",   "Perfect",           170),
         (6, "死亡演出",           "Death Animation",     0),
         (7, "最后狂暴：8%以下",    "Desperate",         180),
     };
 
     // ==================== 仆从碰撞伤害 ====================
     // 第一阶段地面仆从的接触伤害；不改变后续无敌光球的零接触伤害规则。
-    // 第二阶段起的无敌辅助单位仍不碰撞伤人，不因改表而改变这个规则。
+    // 第二阶段为可击杀地面小怪；生命上限在生成时乘1.3，接触伤害在AI中乘1.1。
+    // 第三阶段独立辅助光球不碰撞伤人。
     internal static readonly (EvolutionBrood Kind, string ChineseName, string EnglishName, int Damage)[] BroodContactDamages =
     {
         (EvolutionBrood.Spider,      "变异岩蛛",   "Mutant Rock Spider",       55),

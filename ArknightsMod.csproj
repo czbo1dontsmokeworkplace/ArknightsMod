@@ -23,6 +23,7 @@
   <ItemGroup>
     <AdditionalFiles Remove="UI\**" />
     <Compile Remove="UI\**" />
+    <Compile Remove="Doc\**\*.cs" />
     <EmbeddedResource Remove="UI\**" />
     <None Remove="UI\**" />
   </ItemGroup>

@@ -47,10 +47,10 @@ internal static class EvolutionProjectileVisuals
             (Hot with { A = 0 }) * (.7f * opacity));
     }
 
-    internal static void DrawDroplet(Vector2 center, float rotation, float opacity)
+    internal static void DrawDroplet(Vector2 center, float rotation, float opacity, Color? tint = null)
     {
         // Place the liquid bulb (not the center of its trailing silhouette) on the hitbox.
-        Sprite(Droplet, center, new Vector2(42, 23), new Vector2(.8f, .5f), rotation, new Color(246, 65, 85) * opacity);
+        Sprite(Droplet, center, new Vector2(42, 23), new Vector2(.8f, .5f), rotation, (tint ?? new Color(246, 65, 85)) * opacity);
     }
 
     internal static void DrawSpirit(Vector2 center, float rotation, float age, float opacity)
@@ -70,14 +70,16 @@ internal static class EvolutionProjectileVisuals
             (Hot with { A = 0 }) * (.08f + charge * .65f));
     }
 
-    internal static void DrawBeam(Vector2 start, Vector2 end, float age, float opacity, bool eruption = false)
+    internal static void DrawBeam(Vector2 start, Vector2 end, float age, float opacity, bool eruption = false,
+        float widthScale = 1, Color? tint = null, Color? hotTint = null)
     {
+        Color energy = tint ?? Energy, hot = hotTint ?? Hot, coreColor = hotTint ?? EvolutionVisuals.Core;
         Vector2 delta = end - start;
         float length = delta.Length();
         if (length < .5f || opacity <= .001f) return;
         Vector2 direction = delta / length;
         float rotation = direction.ToRotation();
-        float width = (eruption ? 38 : 30) * (1 + MathF.Sin(age * .9f) * .035f);
+        float width = (eruption ? 38 : 30) * widthScale * (1 + MathF.Sin(age * .9f) * .035f);
         float capLength = Math.Min(26, length * .22f);
         Region bodyRegion = eruption ? Column : BeamBody;
         Rectangle body = bodyRegion.Area;
@@ -111,18 +113,18 @@ internal static class EvolutionProjectileVisuals
                 SpriteEffects flip = reverse ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
                 Vector2 size = new(span + .25f, width);
                 Region strip = new(bodyRegion.Name, sample);
-                Sprite(strip, point, size, new Vector2(0, .5f), rotation, Energy * opacity, flip);
+                Sprite(strip, point, size, new Vector2(0, .5f), rotation, energy * opacity, flip);
                 Sprite(strip, point, size, new Vector2(0, .5f), rotation,
-                    (Hot with { A = 0 }) * (opacity * (eruption ? .2f : .45f)), flip);
+                    (hot with { A = 0 }) * (opacity * (eruption ? .2f : .45f)), flip);
                 if (!eruption)
                 {
                     // Use the texture's hot channel, not a solid rectangle, for the
                     // narrow luminous core. Its layer stays centered on the collision line.
                     Region core = new(bodyRegion.Name, new Rectangle(sourceX, 347, count, 27));
-                    Sprite(core, point, new Vector2(size.X, 8), new Vector2(0, .5f), rotation,
-                        (EvolutionVisuals.Core with { A = 0 }) * (opacity * .85f), flip);
+                    Sprite(core, point, new Vector2(size.X, 8 * widthScale), new Vector2(0, .5f), rotation,
+                        (coreColor with { A = 0 }) * (opacity * .85f), flip);
                     EvolutionVisuals.Glow(point + direction * (span * .5f),
-                        EvolutionVisuals.Blood * (opacity * .09f), new Vector2(span + 12, 49), rotation);
+                        energy * (opacity * .09f), new Vector2(span + 12, 49 * widthScale), rotation);
                 }
             }
             cursor += span;
@@ -131,11 +133,11 @@ internal static class EvolutionProjectileVisuals
         }
 
         // Separate ignition flash and tapered light tip, ending at the real beam endpoint.
-        Sprite(BeamTip, end, new Vector2(capLength + 5, width), new Vector2(1, .5f), rotation, Energy * opacity);
+        Sprite(BeamTip, end, new Vector2(capLength + 5, width), new Vector2(1, .5f), rotation, energy * opacity);
         Sprite(BeamTip, end, new Vector2(capLength + 5, width), new Vector2(1, .5f), rotation,
-            (Hot with { A = 0 }) * (opacity * .5f));
-        Sprite(BeamMouth, start, new Vector2(eruption ? 60 : 52, eruption ? 52 : 42),
-            new Vector2(.25f, .58f), rotation, Energy * opacity);
-        EvolutionVisuals.Glow(start, EvolutionVisuals.Blood * (opacity * .35f), new Vector2(64, 45), rotation);
+            (hot with { A = 0 }) * (opacity * .5f));
+        Sprite(BeamMouth, start, new Vector2(eruption ? 60 : 52, eruption ? 52 : 42) * MathF.Sqrt(widthScale),
+            new Vector2(.25f, .58f), rotation, energy * opacity);
+        EvolutionVisuals.Glow(start, energy * (opacity * .35f), new Vector2(64, 45) * MathF.Sqrt(widthScale), rotation);
     }
 }

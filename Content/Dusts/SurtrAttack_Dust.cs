@@ -20,11 +20,14 @@ namespace ArknightsMod.Content.Dusts
 		{
 			dust.position += dust.velocity;
 			dust.velocity *= 0.9f;
-			dust.customData = (int)dust.customData + 1;
-			dust.frame = new Rectangle((64 * ((int)dust.customData))%4, (64 * ((int)dust.customData / 4)), 64, 64);
-			Lighting.AddLight(dust.position, Color.OrangeRed.ToVector3()*0.5f*(32-(int)dust.customData)/32);
-			if ((int)dust.customData > 16)
+			int frame = (int)dust.customData;
+			if (frame >= 16) {
 				dust.active = false;
+				return false;
+			}
+			dust.frame = new Rectangle(64 * (frame % 4), 64 * (frame / 4), 64, 64);
+			Lighting.AddLight(dust.position, Color.OrangeRed.ToVector3() * 0.5f * (16 - frame) / 16f);
+			dust.customData = frame + 1;
 			return false;
 		}
 	}

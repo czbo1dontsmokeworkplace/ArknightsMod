@@ -60,6 +60,8 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 				.SetTex(TextureAssets.Projectile[Projectile.type].Value)
 				.SetSwingRad(MathHelper.ToRadians(270));
 			helper.SetSetoff(new Vector2(-25, 0));
+			helper.PivotOnPlayerCenter = true;
+			helper.setoff = Vector2.Zero;
 			helper.SetHandlePos(new Vector2(0, 10));
 			helper.SetSwordPos(new Vector2(70, 10));
 			helper.SetScale(new Vector2(1f,1f));
@@ -79,6 +81,9 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 		private int comboFacing = 1;
 		private float transitionStart;
 		private float transitionEnd;
+		private const float NormalSwingSize = 2f;
+
+		private int AimFacing() => Main.MouseWorld.X < player.Center.X ? -1 : 1;
 
 		private void BeginAttack(bool continueRotation)
 		{
@@ -90,18 +95,20 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 			if (continueRotation)
 				helper.SetStartRad(transitionEnd + comboFacing * helper.swingRad * 0.5f, comboFacing);
 			else {
-				comboFacing = player.direction;
+				comboFacing = AimFacing();
+				player.direction = comboFacing;
 				helper.PointMouseRad(aimAngle);
 			}
+			player.direction = comboFacing;
 			helper.SetStabRad(aimAngle);
 			helper.ResetTime(continueRotation ? 0 : 5);
 			helper.ReloadIndex();
 			helper.SetScale(new Vector2(1f, 1f));
-			helper.SetScale(mp.Skill == 0 && mp.SkillActive ? 1.2f : 1f);
+			helper.SetScale(NormalSwingSize * (mp.Skill == 0 && mp.SkillActive ? 1.2f : 1f));
 			if (mp.Skill == 0) {
 				if (mp.SkillCharge >= mp.SkillChargeMax) {
 					helper.SetScale(new Vector2(1f, 0.856f));
-					helper.SetScale(mp.SkillActive ? 1.4f : 1.3f);
+					helper.SetScale(NormalSwingSize * (mp.SkillActive ? 1.4f : 1.3f));
 					mp.SkillCharge = 0;
 					SoundEngine.PlaySound(SurtrLaevatain.SkillActiveSound, player.Center);
 				}
@@ -112,6 +119,9 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 				helper.SetScale(1.2f);
 				projMode = ProjMode.Stab;
 			}
+			helper.PivotOnPlayerCenter = projMode != ProjMode.Stab;
+			if (helper.PivotOnPlayerCenter)
+				helper.setoff = Vector2.Zero;
 			Projectile.netUpdate = true;
 		}
 
@@ -121,10 +131,22 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 			swingTransitionTimer = 0;
 			transitionStart = helper.swordRad;
 			float aimNow = (Main.MouseWorld - player.Center).ToRotation();
-			float aimDifference = MathHelper.WrapAngle(aimNow - helper.mouseRad);
-			float remainingArc = MathHelper.TwoPi - helper.swingRad;
-			float gap = MathHelper.Clamp(remainingArc + comboFacing * aimDifference,
-				MathHelper.ToRadians(12f), MathHelper.Pi);
+			int nextFacing = AimFacing();
+			float gap;
+			if (nextFacing == comboFacing) {
+				float aimDifference = MathHelper.WrapAngle(aimNow - helper.mouseRad);
+				float remainingArc = MathHelper.TwoPi - helper.swingRad;
+				gap = MathHelper.Clamp(remainingArc + comboFacing * aimDifference,
+					MathHelper.ToRadians(12f), MathHelper.Pi);
+			}
+			else {
+				// Crossed the player: turn back toward the new side before the next cut.
+				float nextStart = aimNow - nextFacing * helper.swingRad * 0.5f;
+				gap = MathHelper.Clamp(MathF.Abs(MathHelper.WrapAngle(nextStart - transitionStart)),
+					MathHelper.ToRadians(12f), MathHelper.Pi);
+			}
+			comboFacing = nextFacing;
+			player.direction = comboFacing;
 			transitionEnd = transitionStart + comboFacing * gap;
 		}
 		public override void AI() {
@@ -144,14 +166,17 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 			}
 			switch (projMode) {
 				case ProjMode.Move:
+					helper.PivotOnPlayerCenter = true;
+					helper.setoff = Vector2.Zero;
 					helper.Move();
 					if (Main.myPlayer == Projectile.owner && PlayerInput.MouseInfo.LeftButton == ButtonState.Pressed)
 						BeginAttack(false);
 					break;
 				case ProjMode.Attack:
-					if(Main.rand.NextBool(3))
-						Dust.NewDust(helper.swordPos, 0, 0, ModContent.DustType<SurtrAttack_Dust>());
-					if (helper.Swing())
+					bool swingFinished = helper.Swing();
+					if (!swingFinished)
+						SpawnSwingFire();
+					if (swingFinished)
 						BeginSwingTransition();
 					break;
 				case ProjMode.Stab:
@@ -172,6 +197,11 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 
 					break;
 				case ProjMode.Wait:
+				if (Main.myPlayer == Projectile.owner &&
+					PlayerInput.MouseInfo.LeftButton == ButtonState.Pressed && AimFacing() != comboFacing) {
+					BeginSwingTransition();
+					break;
+				}
 					swingTransitionTimer++;
 					float transitionProgress = MathHelper.Clamp(swingTransitionTimer / (float)SwingTransitionFrames, 0f, 1f);
 					helper.ContinueSwingPose(MathHelper.Lerp(transitionStart, transitionEnd,
@@ -189,6 +219,33 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 
 			}
 
+		}
+
+		private void SpawnSwingFire()
+		{
+			if (Main.dedServ || helper.swingTime <= 0)
+				return;
+
+			Vector2 blade = (helper.swordPos - helper.handlePos).SafeNormalize(Vector2.UnitX);
+			Vector2 tangent = blade.RotatedBy(comboFacing * MathHelper.PiOver2);
+			Vector2 drawOffset = helper.setoff.RotatedBy(helper.swordRot);
+			float reach = Vector2.Distance(helper.handlePos, helper.swordPos);
+			for (int i = 0; i < 3; i++) {
+				Vector2 origin = helper.handlePos + drawOffset + blade * reach * Main.rand.NextFloat(0.48f, 0.98f);
+				Vector2 shed = (tangent + blade * Main.rand.NextFloat(0.2f, 0.45f))
+					.SafeNormalize(tangent).RotatedBy(Main.rand.NextFloat(-0.22f, 0.22f));
+				Dust flame = Dust.NewDustPerfect(origin, DustID.Torch,
+					shed * Main.rand.NextFloat(4.5f, 8.5f), 65,
+					new Color(255, 100, 25), Main.rand.NextFloat(1.1f, 1.8f));
+				flame.noGravity = true;
+			}
+			if (Main.rand.NextBool(2)) {
+				Vector2 origin = helper.handlePos + drawOffset + blade * reach * Main.rand.NextFloat(0.7f, 1f);
+				Dust flare = Dust.NewDustPerfect(origin, ModContent.DustType<SurtrAttack_Dust>(),
+					tangent * Main.rand.NextFloat(3f, 5.5f) + blade * Main.rand.NextFloat(0.8f, 2f),
+					0, Color.White, Main.rand.NextFloat(0.75f, 1.2f));
+				flare.noGravity = true;
+			}
 		}
 
 		public static Effect fire = ModContent.Request<Effect>("ArknightsMod/Content/Projectiles/Guard/Laevatain/FireProcedural").Value;

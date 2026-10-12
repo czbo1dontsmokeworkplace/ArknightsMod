@@ -18,6 +18,8 @@ internal static class EvolutionVisuals
     internal const string Root = "ArknightsMod/Content/NPCs/Enemy/Evolution/Assets/";
     internal static readonly Color Blood = new(222, 24, 53);
     internal static readonly Color Core = new(255, 196, 155);
+    internal static readonly Color Sand = new(235, 184, 66);
+    internal static readonly Color SandCore = new(255, 246, 208);
     // Assets belong to tModLoader; clear references on unload, never dispose engine-owned textures.
     private static readonly Dictionary<string, Asset<Texture2D>> textures = new();
     internal static Texture2D Asset(string name)
@@ -151,16 +153,16 @@ internal static class EvolutionVisuals
         }
     }
 
-    internal static void Burst(Vector2 center, float strength = 1f, bool sound = true)
+    internal static void Burst(Vector2 center, float strength = 1f, bool sound = true, Color? color = null)
     {
         if (Main.dedServ) return;
         int count = Math.Min(30, (int)(14 * strength));
         for (int i = 0; i < count; i++)
         {
             Vector2 velocity = Main.rand.NextVector2CircularEdge(1, 1) * Main.rand.NextFloat(2, 8) * strength;
-            new DefaultParticle(center, velocity, 22, Main.rand.NextFloat(.35f, .7f), i % 4 == 0 ? Core : Blood, true)
+            new DefaultParticle(center, velocity, 22, Main.rand.NextFloat(.35f, .7f), i % 4 == 0 ? Core : color ?? Blood, true)
             { Deformation = new Vector2(.45f, 1.8f) }.Spawn();
-            if (i % 3 == 0) Dust.NewDustPerfect(center, DustID.Blood, velocity * .7f, 0, default, 1.4f);
+            if (i % 3 == 0) Dust.NewDustPerfect(center, color == Sand ? DustID.Sand : DustID.Blood, velocity * .7f, 0, default, 1.4f);
         }
         if (sound) SoundEngine.PlaySound(SoundID.NPCHit18 with { Volume = .65f, Pitch = -.3f, MaxInstances = 3 }, center);
     }

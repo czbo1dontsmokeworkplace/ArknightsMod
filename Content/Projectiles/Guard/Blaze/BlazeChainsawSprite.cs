@@ -2,6 +2,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles.Guard.Blaze;
 
@@ -9,6 +10,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Blaze;
 internal static class BlazeChainsawSprite
 {
     internal const string TexturePath = "ArknightsMod/Content/Items/Weapons/Guard/Blaze/BlazeGreatsword";
+    internal const string ExtendedTexturePath = "ArknightsMod/Content/Items/Weapons/Guard/Blaze/BlazeExtendedChainsaw";
     internal const int FrameCount = 3;
     internal const int FrameWidth = 106;
     internal const int FrameHeight = 50;
@@ -19,15 +21,23 @@ internal static class BlazeChainsawSprite
     internal static int FrameAt(int age, int ticksPerFrame)
         => Math.Max(0, age) / Math.Max(1, ticksPerFrame) % FrameCount;
 
+    internal static Texture2D GetTexture(bool extended)
+        => ModContent.Request<Texture2D>(extended ? ExtendedTexturePath : TexturePath).Value;
+
     internal static void DrawHeld(Texture2D sheet, Vector2 gripWorld, float angle,
         bool faceLeft, float reach, Color color, int frame)
     {
-        Rectangle source = new(0, Math.Clamp(frame, 0, FrameCount - 1) * FrameHeight, FrameWidth, FrameHeight);
-        Vector2 axis = Tip - Grip;
+        bool extended = sheet.Width == 198 && sheet.Height == 162;
+        int frameWidth = extended ? 198 : FrameWidth;
+        int frameHeight = extended ? 54 : FrameHeight;
+        Vector2 grip = extended ? new Vector2(78f, 32f) : Grip;
+        Vector2 tip = extended ? new Vector2(192f, 32f) : Tip;
+        Rectangle source = new(0, Math.Clamp(frame, 0, FrameCount - 1) * frameHeight, frameWidth, frameHeight);
+        Vector2 axis = tip - grip;
         float nativeAngle = axis.ToRotation();
-        Vector2 origin = Grip;
+        Vector2 origin = grip;
         if (faceLeft)
-            origin.Y = FrameHeight - origin.Y;
+            origin.Y = frameHeight - origin.Y;
         // 只调整视觉缩放，使锯尖对齐现有攻击端点，不从纹理反推或放大攻击范围。
         Main.spriteBatch.Draw(sheet, gripWorld - Main.screenPosition, source, color,
             faceLeft ? angle + nativeAngle : angle - nativeAngle, origin, reach / axis.Length(),

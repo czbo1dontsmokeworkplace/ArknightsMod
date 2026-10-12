@@ -22,14 +22,6 @@ namespace ArknightsMod.Content.Projectiles.Guard.Specter
 		private const float SawWidth = 40f;
 		private const int BiteCycleTicks = 7;
 
-		private static readonly WeaponSpriteProfile SawProfile = new(
-			grip: new Vector2(0.12f, 0.53f),
-			tip: new Vector2(0.94f, 0.47f),
-			nativeForwardAngle: 0f,
-			combatReach: Reach,
-			combatWidth: SawWidth,
-			drawScale: 1.08f);
-
 		private readonly HashSet<int> cycleTargets = [];
 		private int age;
 		private float aimAngle;
@@ -44,7 +36,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Specter
 		private Player Owner => Main.player[Projectile.owner];
 		private int SkillMode => (int)Projectile.ai[1];
 
-		public override string Texture => "Terraria/Images/Item_" + ItemID.SawtoothShark;
+		public override string Texture => "ArknightsMod/Content/Items/Weapons/Guard/Specter/SpecterBoneSaw";
 
 		public override void SetDefaults() {
 			Projectile.width = 18;
@@ -232,20 +224,33 @@ namespace ArknightsMod.Content.Projectiles.Guard.Specter
 			if (Main.dedServ)
 				return false;
 
-			Texture2D weapon = TextureAssets.Item[ItemID.SawtoothShark].Value;
+			Texture2D weapon = TextureAssets.Item[ModContent.ItemType<SpecterBoneSaw>()].Value;
 			bool faceLeft = MathF.Cos(aimAngle) < 0f;
-			BaseHeldMeleeSupport.DrawHeld(weapon, drawHandWorld, aimAngle, faceLeft,
-				SawProfile, 1f, lightColor);
+			int frame = age / 4 % 3;
+			DrawSaw(weapon, faceLeft, lightColor, frame);
 
 			BaseHeldMeleeSupport.BeginAdditive(Main.spriteBatch);
 			Color ghostLight = SkillMode == 2
 				? new Color(210, 12, 48, 105)
 				: new Color(92, 196, 220, 86);
-			BaseHeldMeleeSupport.DrawHeld(weapon, drawHandWorld, aimAngle, faceLeft,
-				SawProfile, 1f, ghostLight * (0.18f + spool * 0.18f));
+			DrawSaw(weapon, faceLeft, ghostLight * (0.18f + spool * 0.18f), frame);
 			SpecterVisuals.DrawSawCurrent(handWorld, tipWorld, spool, chainPhase, SkillMode);
 			BaseHeldMeleeSupport.EndAdditive(Main.spriteBatch);
 			return false;
+		}
+
+		private void DrawSaw(Texture2D sheet, bool faceLeft, Color color, int frame) {
+			const int frameHeight = 72;
+			Vector2 grip = new(8f, 65f);
+			Vector2 tip = new(59f, 11f);
+			float nativeAngle = (tip - grip).ToRotation();
+			if (faceLeft)
+				grip.Y = frameHeight - grip.Y;
+			Main.spriteBatch.Draw(sheet, drawHandWorld - Main.screenPosition,
+				new Rectangle(0, frame * frameHeight, 74, frameHeight), color,
+				faceLeft ? aimAngle + nativeAngle : aimAngle - nativeAngle,
+				grip, Reach / (tip - new Vector2(8f, 65f)).Length(),
+				faceLeft ? SpriteEffects.FlipVertically : SpriteEffects.None, 0f);
 		}
 
 		public override void SendExtraAI(BinaryWriter writer) {

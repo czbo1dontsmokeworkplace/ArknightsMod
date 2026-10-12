@@ -256,7 +256,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Blaze
 			if (Main.dedServ)
 				return false;
 
-			Texture2D weapon = TextureAssets.Item[ModContent.ItemType<BlazeGreatsword>()].Value;
+			Texture2D weapon = BlazeChainsawSprite.GetTexture(Extended);
 			bool faceLeft = MathF.Cos(aimAngle) < 0f;
 			int frame = BlazeChainsawSprite.FrameAt(age, Extended ? 3 : 4);
 			if (Extended)

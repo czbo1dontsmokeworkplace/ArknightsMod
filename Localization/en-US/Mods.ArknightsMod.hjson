@@ -161,6 +161,27 @@ Projectiles: {
 	NecrassSleep.DisplayName: Necrass Sleep
 	NecrassSoulBolt.DisplayName: Necrass Soul Bolt
 	LaevatainFireFlowParticle.DisplayName: Laevatain Fire Flow Particle
+	LeonhardtCore.DisplayName: Leonhardt Core
+	LeonhardtDetonation.DisplayName: Leonhardt Detonation
+	LeonhardtFocus.DisplayName: Leonhardt Focus
+	PuddingChainDischarge.DisplayName: Pudding Chain Discharge
+	PuddingFlyingDischarge.DisplayName: Pudding Flying Discharge
+	GitanoBurst.DisplayName: Gitano Burst
+	GitanoCrystal.DisplayName: Gitano Crystal
+	GitanoFocus.DisplayName: Gitano Focus
+	SkyfireFocus.DisplayName: Skyfire Focus
+	SkyfireImpact.DisplayName: Skyfire Impact
+	SkyfireMeteor.DisplayName: Skyfire Meteor
+	MeteoriteBurst.DisplayName: Meteorite Burst
+	MeteoriteFragment.DisplayName: Meteorite Fragment
+	MeteoriteShell.DisplayName: Meteorite Shell
+	SchwarzRiftLaser.DisplayName: Schwarz Rift Laser
+	MostimaChronoWave.DisplayName: Mostima Chrono Wave
+	MostimaCrossBurst.DisplayName: Mostima Cross Burst
+	MostimaFocus.DisplayName: Mostima Focus
+	MostimaSwing.DisplayName: Mostima Swing
+	MostimaTimeLock.DisplayName: Mostima Time Lock
+	MeteoriteHoldout.DisplayName: Meteorite Holdout
 }
 
 Keybinds: {

@@ -7,11 +7,12 @@ KroosAlter:
 Schwarz:
 	'''
 	Delivers slow, powerful shots
-	Black heavy arrows pierce endlessly, dealing tremendous damage
+	Black heavy arrows pierce endlessly; hits call down a black rift laser through the target
 	'''
 Pozemka:
 	'''
 	Fires rapid three-shot bursts
 	Converts wooden arrows into homing rose arrows
+	Hits call down a pink laser through the target
 	Right-click to deploy the typewriter for coordinated attacks
 	'''

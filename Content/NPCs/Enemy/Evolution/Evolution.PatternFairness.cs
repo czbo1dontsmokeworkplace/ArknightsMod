@@ -16,7 +16,7 @@ public sealed partial class Evolution
         if (PatternSerial == Serial || Main.netMode == NetmodeID.MultiplayerClient) return;
         PatternSerial = Serial; PatternStart = Timer;
         PatternOrigin = player.Center;
-        PatternDrift = ArenaActive ? Vector2.Zero : EvolutionRules.FormationDrift(player.velocity, (int)NPC.ai[2] % 2 == 0 ? 1 : -1);
+        PatternDrift = ArenaActive || CorridorActive ? Vector2.Zero : EvolutionRules.FormationDrift(player.velocity, (int)NPC.ai[2] % 2 == 0 ? 1 : -1);
         NPC.netUpdate = true;
     }
     // 保留全部扇形弹，挪开正中央那一发，形成有宽度的通路。

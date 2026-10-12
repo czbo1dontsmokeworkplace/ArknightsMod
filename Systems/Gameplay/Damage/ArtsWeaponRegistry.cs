@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using ArknightsMod.Players;
 using Terraria;
@@ -9,8 +9,13 @@ using Terraria.ModLoader;
 using ArknightsMod.Content.Items.Weapons.Caster._12F;
 using ArknightsMod.Content.Items.Weapons.Caster.Durin;
 using ArknightsMod.Content.Items.Weapons.Caster.Goldenglow;
+using ArknightsMod.Content.Items.Weapons.Caster.Gitano;
 using ArknightsMod.Content.Items.Weapons.Caster.Haze;
 using ArknightsMod.Content.Items.Weapons.Caster.Lava;
+using ArknightsMod.Content.Items.Weapons.Caster.Leonhardt;
+using ArknightsMod.Content.Items.Weapons.Caster.Pudding;
+using ArknightsMod.Content.Items.Weapons.Caster.Skyfire;
+using ArknightsMod.Content.Items.Weapons.Caster.Mostima;
 using ArknightsMod.Content.Items.Weapons.Caster.Steward;
 using ArknightsMod.Content.Items.Weapons.Caster.Valarqvin;
 using ArknightsMod.Content.Items.Weapons.Defender.Durnar;
@@ -137,9 +142,14 @@ namespace ArknightsMod.Systems.Gameplay.Damage
 			RegisterAlways<GoldenglowWand>();    // 澄闪的法杖
 			RegisterAlways<HazeMagicBook>();     // 夜烟的魔法书
 			RegisterAlways<Lava_Dagger>();       // 炎熔的匕首
+			RegisterAlways<GitanoOrb>();          // 远山的水晶球
+			RegisterAlways<LeonhardtStaff>();     // 莱恩哈特的法杖
+			RegisterAlways<MostimaStaff>();
+			RegisterAlways<SkyfireStaff>();       // 天火的法杖
+			RegisterAlways<PuddingStaff>();       // 布丁的电磁法杖
 			RegisterAlways<StewardStaff>();      // 史都华德的法杖
 			RegisterAlways<ValarqvinWeapon>();   // 凛视的法杖
-			RegisterAlways<BeanstalkOrb>();      // 远山的水晶球
+			RegisterAlways<BeanstalkOrb>();      // 豆苗的召唤武器
 			RegisterAlways<SaintBell>();         // 圣女的铃铛
 
 			// ── 术战者 / 咒愈师：同样是全部攻击都算法伤 ──

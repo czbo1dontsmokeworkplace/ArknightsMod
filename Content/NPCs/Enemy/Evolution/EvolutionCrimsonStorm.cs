@@ -19,6 +19,7 @@ public sealed class EvolutionCrimsonStorm : ModSystem
     }
     private readonly List<Wisp> wisps = new();
     private float intensity;
+    private Color stormColor = EvolutionVisuals.Sand;
     private int clock, encounter, wind = 1;
     private Effect barrier;
     private bool barrierFailed;
@@ -28,7 +29,7 @@ public sealed class EvolutionCrimsonStorm : ModSystem
 
     public override void OnWorldLoad() => ResetStorm();
     public override void OnWorldUnload() => ResetStorm();
-    private void ResetStorm() { wisps.Clear(); intensity = 0; clock = encounter = 0; wind = 1; }
+    private void ResetStorm() { wisps.Clear(); intensity = 0; stormColor = EvolutionVisuals.Sand; clock = encounter = 0; wind = 1; }
     public override void Unload()
     {
         ResetStorm();
@@ -49,6 +50,7 @@ public sealed class EvolutionCrimsonStorm : ModSystem
             encounter = nearby.Encounter;
             wind = Main.windSpeedCurrent < 0 ? -1 : 1; // 整场固定吹向，不随阶段改变。
         }
+        if (nearby != null) stormColor = Color.Lerp(stormColor, nearby.ThemeColor, .035f);
         float target = nearby == null ? 0 : StormTarget(nearby.NPC.ai[3], nearest);
         intensity = MathHelper.Clamp(intensity + Math.Clamp(target - intensity, -1f / 180, 1f / 240), 0, 1);
         if (intensity <= .001f) { wisps.Clear(); return; }
@@ -88,9 +90,9 @@ public sealed class EvolutionCrimsonStorm : ModSystem
                 {
                     float fade = MathF.Sin(MathHelper.Pi * p.Age / p.Life) * intensity;
                     if (p.Grain)
-                        EvolutionVisuals.Glow(p.Position, new Color(213, 35, 54) * (.26f * fade), new Vector2(18, 3) * p.Size, .11f * wind);
+                        EvolutionVisuals.Glow(p.Position, stormColor * (.26f * fade), new Vector2(18, 3) * p.Size, .11f * wind);
                     else
-                        DrawStormSmoke(Main.spriteBatch, smoke, p.Position - Main.screenPosition, p.Size, p.Rotation, fade);
+                        DrawStormSmoke(Main.spriteBatch, smoke, p.Position - Main.screenPosition, p.Size, p.Rotation, fade, stormColor);
                 }
             }
             finally { Main.spriteBatch.End(); }
@@ -99,8 +101,8 @@ public sealed class EvolutionCrimsonStorm : ModSystem
             if (npc.ModNPC is Evolution boss && boss.Phase == 1) DrawNestBarrier(boss);
     }
 
-    internal static void DrawStormSmoke(SpriteBatch batch, Texture2D smoke, Vector2 screenCenter, float size, float rotation, float fade) =>
-        batch.Draw(smoke, screenCenter, null, new Color(143, 21, 39, 0) * (.28f * fade),
+    internal static void DrawStormSmoke(SpriteBatch batch, Texture2D smoke, Vector2 screenCenter, float size, float rotation, float fade, Color? tint = null) =>
+        batch.Draw(smoke, screenCenter, null, ((tint ?? EvolutionVisuals.Sand) with { A = 0 }) * (.22f * fade),
             rotation, smoke.Size() * .5f, new Vector2(640, 200) * size / smoke.Size(), SpriteEffects.None, 0);
 
     private void DrawNestBarrier(Evolution boss)
@@ -112,12 +114,12 @@ public sealed class EvolutionCrimsonStorm : ModSystem
         bool begun = false;
         try
         {
-            // 蜜蜡/卡涅利安/林法杖同款双层球面材质，仅换血红色和尺寸。
+            // 沿用双层球面材质，以沙金色贴合初生形态。
             barrier ??= new Effect(device, Mod.GetFileBytes("Assets/Effects/Phalanx/PhalanxBarrier.fxc"));
             Texture2D noise = ModContent.Request<Texture2D>("ArknightsMod/Assets/Effects/Phalanx/NoiseSoft").Value;
             float opacity = MathHelper.SmoothStep(0, 1, Math.Clamp(boss.NPC.ai[3] / 75f, 0, 1));
             float beat = Math.Max(0, boss.Timer % EvolutionNestRules.RadiationInterval - 60) / 60f;
-            float charge = boss.Timer % EvolutionNestRules.RadiationInterval is >= 60 and < 124 ? Math.Clamp(beat, 0, 1) : 0;
+            float charge = boss.Timer % EvolutionNestRules.RadiationInterval is >= 60 and < 136 ? Math.Clamp(beat, 0, 1) : 0;
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp,
                 DepthStencilState.None, RasterizerState.CullNone, barrier, Main.GameViewMatrix.TransformationMatrix);
             begun = true;
@@ -135,9 +137,9 @@ public sealed class EvolutionCrimsonStorm : ModSystem
         Vector2 screenCenter, float time, float opacity, float charge)
     {
         effect.Parameters["globalTime"].SetValue(time);
-        effect.Parameters["uShieldColor"].SetValue(new Vector3(.36f, .015f, .045f));
-        effect.Parameters["uEdgeColor"].SetValue(new Vector3(1, .17f + charge * .12f, .25f));
-        effect.Parameters["uCoreColor"].SetValue(new Vector3(1, .68f, .72f));
+        effect.Parameters["uShieldColor"].SetValue(new Vector3(.32f, .21f, .035f));
+        effect.Parameters["uEdgeColor"].SetValue(new Vector3(1, .72f + charge * .12f, .24f));
+        effect.Parameters["uCoreColor"].SetValue(new Vector3(1, .96f, .78f));
         effect.Parameters["uCharge"].SetValue(opacity);
         effect.Parameters["uHitFlash"].SetValue(charge * .3f);
         effect.Parameters["uOpacity"].SetValue(opacity * .6f);

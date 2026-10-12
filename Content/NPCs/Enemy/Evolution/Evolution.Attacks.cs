@@ -11,54 +11,7 @@ public sealed partial class Evolution
     {
         DoGroundNest(player);
     }
-    private void DoEvolved(Player player)
-    {
-        PreparePattern(player);
-        int t = Timer;
-        if (Attack != 0) Hover(player, t * .011f);
-        switch (Attack)
-        {
-            case 0: DoCharges(player, false); break;
-            case 1:
-                if (t == 0) ClearBrood();
-                if (t == 45) for (int side = -1; side <= 1; side += 2) SpawnBrood(EvolutionBrood.Puppet, player.Center + new Vector2(side * 600, -280), side: side);
-                if (t >= 95 && t <= 293 && (t - 95) % 66 == 0) LaserPattern(player, (t - 95) / 66 % 5, 34);
-                if (t >= 390) NextAttack();
-                break;
-            case 2:
-                if (t == 0) ClearBrood();
-                if (t == 45)
-                {
-                    for (int i = 0; i < 4; i++) SpawnBrood(EvolutionBrood.Spider, player.Center + new Vector2(i % 2 == 0 ? -600 : 600, -180 + i * 120), side: i % 2 == 0 ? -1 : 1, formation: i);
-                    SpawnBrood(EvolutionBrood.GiantSpider, player.Center + new Vector2(600, -400), preset: EvolutionBroodPreset.Siege);
-                }
-                if (t == 125 || t == 200 || t == 275) BloodFan(player, 3);
-                if (t >= 350) NextAttack();
-                break;
-            case 3:
-                if (t == 0) ClearBrood();
-                if (t == 45) SpawnBrood(EvolutionBrood.Abomination, player.Center + new Vector2(-600, -160));
-                if (t == 100 || t == 180 || t == 260) SpiritFan(player, NPC.Center, 5, 32);
-                if (t == 145 || t == 225) ThrowBomb(NPC.Center, FormationLanding(t == 145 ? 0 : 1, 2, 340), t == 225, 84);
-                if (t == 140 || t == 230) LanceComb(PatternCenter, MathHelper.PiOver4, 4, 36);
-                if (t >= 355) NextAttack();
-                break;
-            case 4:
-                if (t == 0) ClearBrood();
-                if (t == 45) for (int i = 0; i < 3; i++)
-                {
-                    Vector2 point = player.Center + (i * MathHelper.TwoPi / 3).ToRotationVector2() * 550;
-                    SpawnBrood(EvolutionBrood.Tumor, point, 220 + i * 40, (player.Center - point).ToRotation(), preset: EvolutionBroodPreset.Siege, formation: i);
-                }
-                if (t == 135 || t == 225) Beam(player, delay: 36);
-                if (t >= 450) NextAttack();
-                break;
-            case 5:
-                if (t >= 30 && t <= 294 && (t - 30) % 66 == 0) LaserPattern(player, (t - 30) / 66, 34);
-                if (t >= 385) NextAttack();
-                break;
-        }
-    }
+    private void DoEvolved(Player player) => DoLowFlight(player);
     private void DoPerfect(Player player)
     {
         PreparePattern(player);
@@ -230,18 +183,12 @@ public sealed partial class Evolution
         NPC.dontTakeDamage = true;
         if (Phase == 2)
         {
-            NPC.Center = Anchor; NPC.velocity = Vector2.Zero;
-            if (t == 20) BloodFan(player, 7);
-            if (t == 70) for (int i = 0; i < 3; i++) Shoot(EvolutionShot.Beam, NPC.Center, FormationDirection(NPC.Center, i, 3, .4f), 1850, 36, 64);
-            if (t == 120) LaserWall(PatternCenter, MathHelper.PiOver2, 0, 36);
-            if (t == 175) LanceComb(PatternCenter, 0, 5, 36);
-            if (t == 230) SpiritFan(player, NPC.Center, 9, 36);
-            if (t == 285) LanceComb(PatternCenter, MathHelper.PiOver2, 5, 36);
-            if (t == 340) LaserWall(PatternCenter, MathHelper.PiOver4, 0, 36);
-            if (t == 395) for (int i = 0; i < 3; i++) ThrowBomb(NPC.Center, FormationLanding(i, 3, 340), i != 1, 70);
-            if (t == 450) LaserWall(PatternCenter, 0, 0, 36);
-            if (t == 505) LaserPattern(player, 4, 34);
-            if (t == 520) LaserPattern(player, 0, 30); // 延长预警后仍让整束激光在600帧转场结束前放完。
+            // 跨过80%立即起飞；第一次转场同样使用低空战斗带的纵向阵型。
+            float rise = MathHelper.SmoothStep(0, 1, Math.Clamp(t / 120f, 0, 1));
+            Vector2 destination = new(player.Center.X + (Anchor.X < player.Center.X ? -300 : 300),
+                MathHelper.Lerp(Anchor.Y, Arena.Y + 80, rise));
+            MoveTo(destination, 7, .055f);
+            if (t == 150 || t == 320 || t == 465) CorridorLaserColumns(t == 320 ? 1 : 0);
         }
         else
         {
@@ -249,7 +196,7 @@ public sealed partial class Evolution
             if (t == 30) for (int i = 0; i < 4; i++)
             {
                 Vector2 point = player.Center + (MathHelper.PiOver4 + i * MathHelper.PiOver2).ToRotationVector2() * 620;
-                SpawnBrood(EvolutionBrood.Bomb, point, 220 + i * 60, (player.Center - point).ToRotation(), preset: EvolutionBroodPreset.Minefield, formation: i);
+                ThrowBomb(point, point, fragments: false, fuse: 220 + i * 60);
             }
             if (t >= 54 && t <= 654 && (t - 54) % 48 == 0)
             {

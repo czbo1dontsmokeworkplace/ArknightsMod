@@ -21,8 +21,7 @@ namespace ArknightsMod.Content.Items.Weapons.Medic.Shining
 
 		private static SoundStyle skillSound;
 
-		// Sky Fracture (Item_3787) 没有注册物品动画，是确认过的单帧占位贴图。
-		public override string Texture => "Terraria/Images/Item_" + ItemID.SkyFracture;
+		public override string Texture => "ArknightsMod/Content/Items/Weapons/Medic/Shining/ShiningSword";
 
 		public override void SetStaticDefaults()
 		{

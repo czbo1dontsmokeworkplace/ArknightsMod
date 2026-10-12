@@ -16,7 +16,7 @@ public sealed class MagallanLaser : ModProjectile
     private bool hitTarget;
     private bool Boosted => Projectile.ai[2] > 0;
     private const int Lifetime = 18;
-    internal const float MaxLength = 15f * 16f;
+    internal const float MaxLength = 19.5f * 16f;
 
     public override void SetStaticDefaults()
     {

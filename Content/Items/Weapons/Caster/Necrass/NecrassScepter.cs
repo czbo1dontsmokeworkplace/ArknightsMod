@@ -12,7 +12,7 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Necrass;
 public sealed class NecrassScepter : ExpansionWeaponBase
 {
     protected override int[] EliteDamage => [399, 483, 578];
-    public override string Texture => "Terraria/Images/Item_" + ItemID.InfernoFork;
+    public override string Texture => "ArknightsMod/Content/Items/Weapons/Caster/Necrass/NecrassScepter";
     public override void SetStaticDefaults() => Item.staff[Type] = true;
     public override void SetDefaults()
     {

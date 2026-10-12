@@ -26,7 +26,11 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Specter
 
 		private static SoundStyle SkillActiveSfx;
 
-		public override string Texture => "Terraria/Images/Item_" + ItemID.SawtoothShark;
+		public override string Texture => "ArknightsMod/Content/Items/Weapons/Guard/Specter/SpecterBoneSaw";
+
+		public override void SetStaticDefaults() {
+			Main.RegisterItemAnimation(Type, new DrawAnimationVertical(5, 3));
+		}
 
 		public override void Load() {
 			SkillActiveSfx = new SoundStyle("ArknightsMod/Sounds/SkillActive1") {

@@ -68,6 +68,26 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 		/// <summary>锁定的世界戳刺方向。</summary>
 		public Vector2 StabDirection => lockedStabRad.ToRotationVector2();
 
+		// 普通挥舞像 BB 一样围绕玩家中心转动；突刺保留原来的手部支点。
+		public bool PivotOnPlayerCenter { get; set; }
+
+		public override void SwordAHandCon(float swordToHand, float hand, float length,
+			float handleLen, float swordlen, bool savePos = false,
+			Player.CompositeArmStretchAmount armType = Player.CompositeArmStretchAmount.Full)
+		{
+			base.SwordAHandCon(swordToHand, hand, length, handleLen, swordlen, false, armType);
+			if (PivotOnPlayerCenter) {
+				Vector2 shift = player.MountedCenter - handlePos;
+				handlePos += shift;
+				swordPos += shift;
+				swordEnd += shift;
+				swordHead += shift;
+				proj.Center = swordPos;
+			}
+			if (savePos)
+				SavePos(swordHead, swordRot, swordEnd);
+		}
+
 		/// <summary>连击间沿同一旋转方向补完剩余弧线，不触发碰撞。</summary>
 		public void ContinueSwingPose(float angle)
 		{
@@ -298,7 +318,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 				Vector2 drawOffset = setoff.RotatedBy(swordRot);
 				start = handlePos + drawOffset;
 				end = swordPos + drawOffset;
-				width = 20f;
+				width = 20f * Math.Max(1f, lenScale);
 			}
 			return Collision.CheckAABBvLineCollision(
 				targetHitbox.TopLeft(),

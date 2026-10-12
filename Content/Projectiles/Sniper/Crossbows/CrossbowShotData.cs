@@ -13,6 +13,21 @@ public sealed class CrossbowShotData : GlobalProjectile
     public override bool InstancePerEntity => true;
     public int Kind = -1;
     public int Skill;
+    private Vector2[] visualHistory;
+    public override void PostAI(Projectile projectile)
+    {
+        if (Kind < 0 || Main.dedServ || projectile.ModProjectile is CrossbowBolt) return;
+        visualHistory ??= new Vector2[28];
+        for (int i = visualHistory.Length - 1; i > 0; i--) visualHistory[i] = visualHistory[i - 1];
+        visualHistory[0] = projectile.Center;
+        CrossbowFlightVfx.Wake(projectile, (CrossbowKind)Kind);
+    }
+    public override bool PreDraw(Projectile projectile, ref Color lightColor)
+    {
+        if (Kind >= 0 && visualHistory != null && projectile.ModProjectile is not CrossbowBolt)
+            CrossbowFlightVfx.Draw(projectile, (CrossbowKind)Kind, visualHistory, false);
+        return true;
+    }
     public override void SendExtraAI(Projectile projectile, BitWriter bitWriter, BinaryWriter writer)
     {
         bitWriter.WriteBit(Kind >= 0);
@@ -31,6 +46,14 @@ public sealed class CrossbowShotData : GlobalProjectile
     }
     public override void OnHitNPC(Projectile projectile, NPC target, NPC.HitInfo hit, int damageDone)
     {
+        if (Kind == (int)CrossbowKind.Pozemka && projectile.owner == Main.myPlayer)
+        {
+            int index = Projectile.NewProjectile(projectile.GetSource_OnHit(target), target.Center, Vector2.Zero,
+                ModContent.ProjectileType<global::ArknightsMod.Content.Projectiles.Sniper.Schwarz.SchwarzRiftLaser>(),
+                System.Math.Max(1, (int)(projectile.damage * .72f)), projectile.knockBack, projectile.owner,
+                Main.rand.NextFloat(-.12f, .12f), 1f);
+            if (Main.projectile.IndexInRange(index)) Main.projectile[index].CritChance = projectile.CritChance;
+        }
         if (Kind == (int)CrossbowKind.KroosAlter && Main.rand.NextFloat() < .4f)
             target.AddBuff(BuffID.Confused, 6);
         if (Kind == (int)CrossbowKind.Schwarz)

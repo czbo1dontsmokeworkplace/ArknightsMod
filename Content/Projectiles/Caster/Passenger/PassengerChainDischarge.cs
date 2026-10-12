@@ -14,6 +14,7 @@ namespace ArknightsMod.Content.Projectiles.Caster.Passenger;
 public class PassengerChainDischarge : ModProjectile
 {
     private readonly HashSet<int> hitEnemies = new();
+    private readonly HashSet<int> hitHops = new();
     private readonly int[] targets = new int[5];
     private readonly int[] targetTypes = new int[5];
     private readonly Vector2[] endpoints = new Vector2[5];
@@ -25,6 +26,7 @@ public class PassengerChainDischarge : ModProjectile
     private bool IsStorm => Projectile.ai[2] < 0f;
     internal virtual LightningPalette Palette => LightningPalette.Passenger;
     protected virtual float VisualSize => 1f;
+    protected virtual bool AllowRepeatTargets => false;
     private float Intensity => MathHelper.Clamp(Projectile.ai[0], 1f, 1.5f) * VisualSize;
     private float Range => IsStorm ? 1280f : TargetLimit == 5 ? PassengerConductor.FocusRange : PassengerConductor.NormalRange;
     // velocity 只存固定雷暴中心相对于起点的偏移，不参与移动。
@@ -65,19 +67,25 @@ public class PassengerChainDischarge : ModProjectile
             NPC best = null;
             float nearest = hop == 0 ? 240f * 240f : PassengerConductor.JumpRange * PassengerConductor.JumpRange;
             Vector2 reference = hop == 0 ? aim : previous;
-            foreach (NPC npc in Main.ActiveNPCs)
+            for (int pass = 0; pass < (AllowRepeatTargets && hop > 1 ? 2 : 1) && best == null; pass++)
             {
-                if (!npc.CanBeChasedBy(Projectile) || selected.Contains(PassengerTargeting.EnemyIdentity(npc))
-                    || !impactTriggered && npc.Distance(owner.MountedCenter) > Range
-                    || !impactTriggered && !PassengerTargeting.ClearPath(hop == 0 && IsStorm ? StormCenter : previous, npc.Center)
-                    || IsStorm && (npc.Distance(StormCenter) > PassengerThunderstorm.Radius
-                        || !PassengerTargeting.ClearPath(StormCenter, npc.Center)))
-                    continue;
-                float distance = Vector2.DistanceSquared(reference, npc.Center);
-                if (distance >= nearest)
-                    continue;
-                nearest = distance;
-                best = npc;
+                foreach (NPC npc in Main.ActiveNPCs)
+                {
+                    int identity = PassengerTargeting.EnemyIdentity(npc);
+                    if (!npc.CanBeChasedBy(Projectile)
+                        || (pass == 0 ? selected.Contains(identity)
+                            : identity == PassengerTargeting.EnemyIdentity(Main.npc[targets[count - 1]]))
+                        || !impactTriggered && npc.Distance(owner.MountedCenter) > Range
+                        || !impactTriggered && !PassengerTargeting.ClearPath(hop == 0 && IsStorm ? StormCenter : previous, npc.Center)
+                        || IsStorm && (npc.Distance(StormCenter) > PassengerThunderstorm.Radius
+                            || !PassengerTargeting.ClearPath(StormCenter, npc.Center)))
+                        continue;
+                    float distance = Vector2.DistanceSquared(reference, npc.Center);
+                    if (distance >= nearest)
+                        continue;
+                    nearest = distance;
+                    best = npc;
+                }
             }
             if (best == null)
                 break;
@@ -153,6 +161,19 @@ public class PassengerChainDischarge : ModProjectile
     private Vector2 SegmentStart(int hop) => hop > 0 ? endpoints[hop - 1]
         : IsStorm ? endpoints[0] - Vector2.UnitY * 720f : Projectile.Center;
 
+    private int ActiveHop(NPC target)
+    {
+        if (!AllowRepeatTargets)
+            return Array.IndexOf(targets, target.whoAmI, 0, count);
+        for (int hop = 0; hop < count; hop++)
+        {
+            int localAge = Age - hop * 3;
+            if (targets[hop] == target.whoAmI && localAge is >= 3 and <= 5 && !hitHops.Contains(hop))
+                return hop;
+        }
+        return -1;
+    }
+
     public override bool ShouldUpdatePosition() => false;
     public override bool? CanDamage() => ready && Age >= 3 && Age <= 5 + (count - 1) * 3 ? null : false;
     public override bool CanHitPvp(Player target) => false;
@@ -160,10 +181,10 @@ public class PassengerChainDischarge : ModProjectile
 
     public override bool? CanHitNPC(NPC target)
     {
-        int hop = Array.IndexOf(targets, target.whoAmI, 0, count);
+        int hop = ActiveHop(target);
         if (!ready || hop < 0 || impactTriggered && hop == 0
             || target.type != targetTypes[hop] || !target.CanBeChasedBy(Projectile)
-            || hitEnemies.Contains(PassengerTargeting.EnemyIdentity(target)))
+            || (!AllowRepeatTargets && hitEnemies.Contains(PassengerTargeting.EnemyIdentity(target))))
             return false;
         int localAge = Age - hop * 3;
         Vector2 source = hop == 0 && IsStorm ? StormCenter : SegmentStart(hop);
@@ -182,6 +203,8 @@ public class PassengerChainDischarge : ModProjectile
     {
         if (!ready)
             return;
+        if (AllowRepeatTargets)
+            Projectile.localNPCHitCooldown = 1;
         Player owner = Main.player[Projectile.owner];
         if (!owner.active || owner.dead)
         {
@@ -197,42 +220,65 @@ public class PassengerChainDischarge : ModProjectile
             Vector2 start = SegmentStart(hop);
             Vector2 end = endpoints[hop];
             int seed = Projectile.identity * 397 ^ Projectile.owner ^ hop * 7919;
-            float nodeIntensity = Intensity * (hop == 0 ? 1f : 0.7f);
+            float nodeIntensity = Intensity * (hop == 0 ? 1f : 0.82f);
             bool targetNode = targets[hop] >= 0 || IsStorm;
             if (localAge == 1)
-            {
-                PassengerLightningVisuals.Fracture(start, end, Intensity, seed, 3f, 24, Palette);
-                if (targetNode)
-                    PassengerLightningVisuals.PrepareImpact(end, nodeIntensity, seed, Palette);
-            }
+                BeginHopVisuals(start, end, Intensity * (hop == 0 ? 1f : 1.1f),
+                    nodeIntensity, seed, hop, targetNode);
             if (localAge <= 3)
             {
                 float previous = MathHelper.SmoothStep(0f, 1f, (localAge - 1f) / 3f);
                 float progress = MathHelper.SmoothStep(0f, 1f, localAge / 3f);
-                PassengerLightningVisuals.EmitSpan(Vector2.Lerp(start, end, previous),
-                    Vector2.Lerp(start, end, progress), Intensity, localAge * 22 + hop * 13, Palette);
+                AdvanceHopVisuals(Vector2.Lerp(start, end, previous),
+                    Vector2.Lerp(start, end, progress), Intensity * (hop == 0 ? 1f : 1.1f),
+                    localAge * 22 + hop * 13);
             }
             if (localAge == 3 && targetNode)
-            {
-                PassengerLightningVisuals.Burst(end, nodeIntensity * 0.65f, seed, Palette);
-                PassengerLightningVisuals.Impact(end, nodeIntensity, seed, hop == 0, Palette);
-                if (impactTriggered)
-                    PassengerLightningVisuals.ElectricImpactDust(end, nodeIntensity, hop == 0, Palette);
-            }
+                ImpactHopVisuals(end, nodeIntensity, seed, hop == 0, impactTriggered);
             if (!Main.dedServ)
-                Lighting.AddLight(end, new Vector3(0.65f, 0.30f, 0.045f) * nodeIntensity);
+                Lighting.AddLight(end, Palette.Light * (nodeIntensity * 0.82f));
         }
+    }
+
+    protected virtual void BeginHopVisuals(Vector2 start, Vector2 end, float scale,
+        float nodeIntensity, int seed, int hop, bool targetNode)
+    {
+        ChainArtsVfx.Hop(start, end, scale, nodeIntensity, seed, 3, Palette, targetNode);
+        if (targetNode)
+            PassengerLightningVisuals.PrepareImpact(end, nodeIntensity, seed, Palette);
+        if (hop > 0 && targetNode)
+            PassengerLightningVisuals.JumpAccent(start, end, nodeIntensity, seed, Palette);
+    }
+
+    protected virtual void AdvanceHopVisuals(Vector2 start, Vector2 end, float scale, int phase)
+        => PassengerLightningVisuals.EmitSpan(start, end, scale, phase, Palette);
+
+    protected virtual void ImpactHopVisuals(Vector2 end, float intensity, int seed,
+        bool firstHop, bool collided)
+    {
+        ChainArtsVfx.Impact(end, intensity, 3, Palette);
+        PassengerLightningVisuals.Burst(end, intensity * 0.65f, seed, Palette);
+        PassengerLightningVisuals.Impact(end, intensity, seed, firstHop, Palette);
+        if (collided)
+            PassengerLightningVisuals.ElectricImpactDust(end, intensity, firstHop, Palette);
     }
 
     public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
     {
-        int hop = Array.IndexOf(targets, target.whoAmI, 0, count);
+        int hop = ActiveHop(target);
         modifiers.SourceDamage *= MathF.Pow(0.85f, Math.Max(0, hop));
     }
 
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
     {
-        hitEnemies.Add(PassengerTargeting.EnemyIdentity(target));
+        if (AllowRepeatTargets)
+        {
+            int hop = ActiveHop(target);
+            if (hop >= 0)
+                hitHops.Add(hop);
+        }
+        else
+            hitEnemies.Add(PassengerTargeting.EnemyIdentity(target));
         if (!target.boss && target.knockBackResist > 0f && target.realLife < 0)
             target.AddBuff(ModContent.BuffType<PassengerCurrentSlow>(), (int)Projectile.ai[1]);
     }

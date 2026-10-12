@@ -15,7 +15,7 @@ SnowHound.DisplayName: Snow Hound
 
 Evolution: {
 	DisplayName: Essence of Evolution
-	BossChecklistIntegration.SpawnInfo: After defeating all three mechanical bosses, use an Aberrant Culture. Its first phase seals a circular arena approximately 94 tiles in radius; use in an open area.
+	BossChecklistIntegration.SpawnInfo: Use the Origin of Evolution to summon this boss at any time and in any location. Above 80% health, the arena has a 75-tile radius. From 80% to 40%, combat is confined to a 50-tile-high band with no horizontal limits. Use in an open area.
 }
 
 EvolutionSpider.DisplayName: Mutant Rock Spider
@@ -23,7 +23,8 @@ EvolutionGiantSpider.DisplayName: Mutant Giant Rock Spider
 EvolutionPuppet.DisplayName: Aberrant Puppet
 EvolutionAbomination.DisplayName: Originium Abomination
 EvolutionTumor.DisplayName: Malignant Tumor
-EvolutionBomb.DisplayName: Malignant Bomb
+EvolutionBomb.DisplayName: Aberrant Excrescence
+EvolutionSupportOrb.DisplayName: Evolution Orb
 tumor1.DisplayName: tumor1
 tumor2.DisplayName: tumor2
 AcidOgSlug.DisplayName: Acid Og Slug

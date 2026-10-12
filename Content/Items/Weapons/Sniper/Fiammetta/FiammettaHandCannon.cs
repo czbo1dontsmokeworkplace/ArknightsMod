@@ -1,6 +1,7 @@
 using System;
 using ArknightsMod.Content;
 using ArknightsMod.Content.Projectiles.Sniper.Fiammetta;
+using ArknightsMod.Content.Items.Weapons.Sniper.Meteorite;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -213,7 +214,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Fiammetta
 			CreateRecipe()
 				.AddIngredient<global::ArknightsMod.Content.Items.Material.CrystallineElectronicUnit>(1)
 				.AddIngredient<global::ArknightsMod.Content.Items.Material.GrindstonePentahydrate>(2)
-				.AddIngredient(ItemID.GrenadeLauncher)
+				.AddIngredient<MeteoriteCannon>()
 				.AddIngredient(ItemID.ShroomiteBar, 16)
 				.AddIngredient(ItemID.RocketI, 50)
 				.AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>())

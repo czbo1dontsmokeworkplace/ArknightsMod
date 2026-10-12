@@ -1,6 +1,11 @@
-BurnedScar: {
+﻿BurnedScar: {
 	DisplayName: Burned Scar
 	Description: Attack damage reduced by 20%; magic damage taken increased to 138%
+}
+
+LeonhardtFracture: {
+	DisplayName: Fractured Arts Resistance
+	Description: Arts resistance reduced by 15 percentage points
 }
 
 DeepcolorMinionBuff: {
@@ -271,4 +276,9 @@ HighPressureSoak: {
 CarnelianSandBind: {
 	DisplayName: Sand Shackles
 	Description: Slowed by crimson sand
+}
+
+MostimaTemporalDrag: {
+	DisplayName: Subjective Time Dilation
+	Description: Movement slowed by 50%
 }

@@ -3597,7 +3597,7 @@ AnselClaw: {
 }
 
 BeanstalkOrb: {
-	DisplayName: 远山的水晶球
+	DisplayName: 豆苗的法球
 	// Tooltip: ""
 }
 
@@ -4045,6 +4045,15 @@ FiammettaHandCannon: {
 	Tooltip: 向天空释放炮弹，并对目标进行打击
 }
 
+MeteoriteCannon: {
+	DisplayName: 陨星的爆破炮
+	Tooltip:
+		'''
+		消耗箭矢，平射高速爆破弹
+		所有箭矢均转化为同一种弹幕；命中后爆炸并散射破片
+		'''
+}
+
 SpecterBoneSaw: {
 	DisplayName: 幽灵鲨的圆锯
 	Tooltip:
@@ -4063,18 +4072,32 @@ ShiningStaff: {
 		'''
 }
 
+LeonhardtStaff: {
+	DisplayName: 莱恩哈特的法杖
+	Tooltip: “让我甄别一下你们是金玉还是废料吧！”
+}
+
 PassengerConductor: {
 	DisplayName: 异客的电磁枢杖
-	Tooltip: 三连发闪电链，在敌人之间弹跳
+	Tooltip: 四连发金色闪电链；每发最多命中4个敌人（首次命中后弹跳3次）
 }
 
 LeiziStaff: {
 	DisplayName: 惊蛰的雷法杖
 	Tooltip:
 		'''
-		向瞄准方向发射可穿墙的绯橙金色闪电，不自动锁敌
+		向瞄准方向三连发可穿墙的紫白雷束，不自动锁敌
 		实际撞敌后爆闪并传导，最多命中4个敌人
 		每次跳跃伤害递减15%，短暂减缓普通敌人的移动
+		'''
+}
+
+PuddingStaff: {
+	DisplayName: 布丁的电磁法杖
+	Tooltip:
+		'''
+		向瞄准方向二连发蓝色电弧；每发最多命中4个敌人（首次命中后弹跳3次）
+		每次跳跃伤害递减15%，并短暂减缓普通敌人的移动
 		'''
 }
 
@@ -4332,4 +4355,23 @@ DroneCommandCore: {
 MaterialistTreasureBag: {
 	DisplayName: 宝藏袋（“物欲拮抗者”）
 	Tooltip: 右键打开，获得无人机指挥核心、叶绿锭和钱币
+}
+
+GitanoOrb: {
+	DisplayName: 远山的水晶球
+	Tooltip: “请稍候，先来占卜一下这次战斗的结果吧。”
+}
+
+SkyfireStaff: {
+	DisplayName: 天火的流星法杖
+	Tooltip: “日炎将你焚尽！”
+}
+
+MostimaStaff: {
+	DisplayName: 莫斯提马的法杖
+	Tooltip:
+		'''
+		长按左键蓄力，蓄满后松手，在鼠标位置引爆大型十字钟阵
+		最远瞄准1000像素，爆炸直径560像素
+		'''
 }
