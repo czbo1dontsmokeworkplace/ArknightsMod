@@ -20,6 +20,9 @@ namespace ArknightsMod.Content.Items.Material
 		/// </summary>
 		public virtual bool TradedWithOrundum => true;
 
+		// 野外采集物可单独定价，避免把经济价值强行绑定到提示文字的稀有度颜色。
+		public virtual int OrundumRecycleValue => GetOrundumSellPrice(Rarity);
+
 		public sealed override void SetStaticDefaults() {
 			Item.ResearchUnlockCount = 100;
 			SafeSetStaticDefaults();
@@ -47,7 +50,7 @@ namespace ArknightsMod.Content.Items.Material
 				return;
 			tooltips.Add(new TooltipLine(Mod, "OrundumRecycleHint", Language.GetTextValue(
 				"Mods.ArknightsMod.CommonTooltips.OrundumRecycleHint",
-				GetOrundumSellPrice(Rarity), $"[i:{ModContent.ItemType<Orundum>()}]")));
+				OrundumRecycleValue, $"[i:{ModContent.ItemType<Orundum>()}]")));
 		}
 
 		public static int GetRarity(int rarity) {

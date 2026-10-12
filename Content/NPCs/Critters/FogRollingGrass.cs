@@ -57,7 +57,13 @@ namespace ArknightsMod.Content.NPCs.Critters
 
 			NPC.rotation = NPC.velocity.X * 0.05f;
 
-			if (Main.rand.NextBool(6)) {
+			if (!Main.dedServ && global::ArknightsMod.Common.RareCollectibleVisuals.IsOnScreen(NPC.Hitbox)
+				&& Main.GameUpdateCount % 90 == (ulong)(NPC.whoAmI % 90)) {
+				Dust sparkle = Dust.NewDustPerfect(NPC.Center, DustID.TreasureSparkle, new Vector2(0f, -0.3f), 150, default, 1f);
+				sparkle.noGravity = true;
+			}
+
+			if (!Main.dedServ && Main.rand.NextBool(6)) {
 				Dust dust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.Smoke, 0f, 0f, 200, default, 0.6f);
 				dust.velocity *= 0.2f;
 				dust.noGravity = true;

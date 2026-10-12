@@ -58,6 +58,7 @@ namespace ArknightsMod.Systems
 				(x, y) => HasCeiling(x, y, 3, TileID.Grass, TileID.BlueMoss, TileID.GreenMoss, TileID.PurpleMoss, TileID.RedMoss, TileID.BrownMoss) && IsNearTownNPC(x, y, 2), isAmbient: true));
 			entries.Add(new Entry(ModContent.TileType<GlowingTruffle>(), 4, 2,
 				(x, y) => HasGround(x, y, 4, 2, TileID.Grass) && LanternNight.LanternsUp && IsNearTownNPC(x, y), isAmbient: true));
+			entries.AddRange(EndfieldNaturalGrowthSystem.GrowthEntries());
 		}
 
 		private static bool HasGround(int x, int y, int width, int height, params int[] validTiles) {

@@ -193,6 +193,14 @@ namespace ArknightsMod
 				case ArkMessageID.UpdateClosureShopWhenStartDay:
 					NPCShopSystem.ReadUpdateClosureShop(reader);
 					break;
+				case ArkMessageID.EndfieldGatheringRequest:
+					if (IsValidClientRequest(whoAmI))
+						global::ArknightsMod.Players.EndfieldGatheringPlayer.ReceiveRequest(reader, whoAmI);
+					break;
+				case ArkMessageID.EndfieldGatheringReply:
+					if (Main.netMode == NetmodeID.MultiplayerClient)
+						global::ArknightsMod.Players.EndfieldGatheringPlayer.ReceiveReply(reader);
+					break;
 				case ArkMessageID.UpdateCannotShop:
 					NPCShopSystem.ReadUpdateCannotShop(reader);
 					break;
@@ -287,6 +295,8 @@ namespace ArknightsMod
 			WD12Detach,
 			EvolutionAccessory,
 			FaustAndMephisto,
+			EndfieldGatheringRequest,
+			EndfieldGatheringReply,
 		}
 	}
 	//public class Ex : GlobalNPC

@@ -1,0 +1,131 @@
+Items: {
+	EndfieldNatural: {
+		LightRedColumnFungus: {
+			DisplayName: 轻红柱状菌
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		MediumRedColumnFungus: {
+			DisplayName: 中红柱状菌
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		HeavyRedColumnFungus: {
+			DisplayName: 重红柱状菌
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		BloodFungus: {
+			DisplayName: 血菌
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		StargateFungus: {
+			DisplayName: 星门菌
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		TalosFungus: {
+			DisplayName: 塔罗斯菌
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		CrystallizedMultiLeaf: {
+			DisplayName: 晶化多齿叶
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		PureCrystalMultiLeaf: {
+			DisplayName: 纯晶多齿叶
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		PerfectCrystalMultiLeaf: {
+			DisplayName: 至晶多齿叶
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		AngelicLeaf: {
+			DisplayName: 岩天使叶
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		CorrodedJadeLeaf: {
+			DisplayName: 受蚀玉化叶
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		RedSpearLeaf: {
+			DisplayName: 红矛叶
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		LightUmbralStone: {
+			DisplayName: 轻黯石
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		MediumUmbralStone: {
+			DisplayName: 中黯石
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		HeavyUmbralStone: {
+			DisplayName: 重黯石
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		IgnitedStone: {
+			DisplayName: 燎石
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		WulingStone: {
+			DisplayName: 武陵石
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		ProtocolPatternStone: {
+			DisplayName: 协议纹石
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+	}
+}
+
+Tiles: {
+	EndfieldNatural: {
+		LightRedColumnFungusTile.MapEntry: 轻红柱状菌
+		MediumRedColumnFungusTile.MapEntry: 中红柱状菌
+		HeavyRedColumnFungusTile.MapEntry: 重红柱状菌
+		BloodFungusTile.MapEntry: 血菌
+		StargateFungusTile.MapEntry: 星门菌
+		TalosFungusTile.MapEntry: 塔罗斯菌
+		CrystallizedMultiLeafTile.MapEntry: 晶化多齿叶
+		PureCrystalMultiLeafTile.MapEntry: 纯晶多齿叶
+		PerfectCrystalMultiLeafTile.MapEntry: 至晶多齿叶
+		AngelicLeafTile.MapEntry: 岩天使叶
+		CorrodedJadeLeafTile.MapEntry: 受蚀玉化叶
+		RedSpearLeafTile.MapEntry: 红矛叶
+		LightUmbralStoneTile.MapEntry: 轻黯石
+		MediumUmbralStoneTile.MapEntry: 中黯石
+		HeavyUmbralStoneTile.MapEntry: 重黯石
+		IgnitedStoneTile.MapEntry: 燎石
+		WulingStoneTile.MapEntry: 武陵石
+		ProtocolPatternStoneTile.MapEntry: 协议纹石
+	}
+}
+
+EndfieldNatural: {
+	MaterialTooltip:
+		'''
+		珍贵自然资源，可在加工站兑换合成玉，也可出售给可露希尔
+		可用于生息演算食物及实用道具的制作
+		'''
+	WorldGenMessage: 播种终末地自然资源…
+	AnyFungus: 任意终末地菌类
+	AnyLeaf: 任意终末地多齿叶或珍贵叶片
+	AnyStone: 任意终末地珍贵矿石
+	GatheringButton: 采集委托
+	GatheringRequest: 博士，我需要{0}×{1}。带来后给你{2}合成玉，另加{3}×{4}。
+	GatheringThanks: 收到这批{0}啦！{1}合成玉和{2}×{3}已经给你。下次来再接一单吧～
+}

@@ -1,0 +1,516 @@
+{
+  "source": "终末地自然材料.png（用户附件）",
+  "sourceSHA256": "8e9825333d160cb25b0e9a48f1aaf7921bea8ea75eba20cfcd84f61cb048060b",
+  "scale": 2,
+  "coordinateWidth": 16,
+  "coordinatePadding": 2,
+  "drawYOffset": 8,
+  "resources": [
+    {
+      "name": "LightRedColumnFungus",
+      "zh": "轻红柱状菌",
+      "en": "Light Red Column Fungus",
+      "row": 0,
+      "column": 0,
+      "width": 4,
+      "height": 2,
+      "orundum": 8,
+      "sourceRect": [
+        16,
+        16,
+        48,
+        32
+      ],
+      "nativeSize": [
+        32,
+        16
+      ],
+      "itemSize": [
+        56,
+        22
+      ],
+      "tileSize": [
+        70,
+        34
+      ]
+    },
+    {
+      "name": "MediumRedColumnFungus",
+      "zh": "中红柱状菌",
+      "en": "Medium Red Column Fungus",
+      "row": 0,
+      "column": 1,
+      "width": 4,
+      "height": 3,
+      "orundum": 12,
+      "sourceRect": [
+        48,
+        8,
+        80,
+        32
+      ],
+      "nativeSize": [
+        32,
+        24
+      ],
+      "itemSize": [
+        52,
+        28
+      ],
+      "tileSize": [
+        70,
+        52
+      ]
+    },
+    {
+      "name": "HeavyRedColumnFungus",
+      "zh": "重红柱状菌",
+      "en": "Heavy Red Column Fungus",
+      "row": 0,
+      "column": 2,
+      "width": 4,
+      "height": 3,
+      "orundum": 18,
+      "sourceRect": [
+        80,
+        8,
+        112,
+        32
+      ],
+      "nativeSize": [
+        32,
+        24
+      ],
+      "itemSize": [
+        56,
+        32
+      ],
+      "tileSize": [
+        70,
+        52
+      ]
+    },
+    {
+      "name": "BloodFungus",
+      "zh": "血菌",
+      "en": "Blood Fungus",
+      "row": 0,
+      "column": 3,
+      "width": 3,
+      "height": 3,
+      "orundum": 28,
+      "sourceRect": [
+        115,
+        8,
+        139,
+        32
+      ],
+      "nativeSize": [
+        24,
+        24
+      ],
+      "itemSize": [
+        36,
+        28
+      ],
+      "tileSize": [
+        52,
+        52
+      ]
+    },
+    {
+      "name": "StargateFungus",
+      "zh": "星门菌",
+      "en": "Stargate Fungus",
+      "row": 0,
+      "column": 4,
+      "width": 2,
+      "height": 3,
+      "orundum": 36,
+      "sourceRect": [
+        152,
+        8,
+        168,
+        32
+      ],
+      "nativeSize": [
+        16,
+        24
+      ],
+      "itemSize": [
+        30,
+        28
+      ],
+      "tileSize": [
+        34,
+        52
+      ]
+    },
+    {
+      "name": "TalosFungus",
+      "zh": "塔罗斯菌",
+      "en": "Talos Fungus",
+      "row": 0,
+      "column": 5,
+      "width": 2,
+      "height": 2,
+      "orundum": 45,
+      "sourceRect": [
+        183,
+        16,
+        199,
+        32
+      ],
+      "nativeSize": [
+        16,
+        16
+      ],
+      "itemSize": [
+        28,
+        24
+      ],
+      "tileSize": [
+        34,
+        34
+      ]
+    },
+    {
+      "name": "CrystallizedMultiLeaf",
+      "zh": "晶化多齿叶",
+      "en": "Crystallized Multileaf",
+      "row": 1,
+      "column": 0,
+      "width": 3,
+      "height": 2,
+      "orundum": 8,
+      "sourceRect": [
+        20,
+        48,
+        44,
+        64
+      ],
+      "nativeSize": [
+        24,
+        16
+      ],
+      "itemSize": [
+        46,
+        24
+      ],
+      "tileSize": [
+        52,
+        34
+      ]
+    },
+    {
+      "name": "PureCrystalMultiLeaf",
+      "zh": "纯晶多齿叶",
+      "en": "Pure Crystal Multileaf",
+      "row": 1,
+      "column": 1,
+      "width": 3,
+      "height": 3,
+      "orundum": 12,
+      "sourceRect": [
+        52,
+        40,
+        76,
+        64
+      ],
+      "nativeSize": [
+        24,
+        24
+      ],
+      "itemSize": [
+        42,
+        28
+      ],
+      "tileSize": [
+        52,
+        52
+      ]
+    },
+    {
+      "name": "PerfectCrystalMultiLeaf",
+      "zh": "至晶多齿叶",
+      "en": "Perfect Crystal Multileaf",
+      "row": 1,
+      "column": 2,
+      "width": 3,
+      "height": 3,
+      "orundum": 18,
+      "sourceRect": [
+        86,
+        40,
+        110,
+        64
+      ],
+      "nativeSize": [
+        24,
+        24
+      ],
+      "itemSize": [
+        48,
+        32
+      ],
+      "tileSize": [
+        52,
+        52
+      ]
+    },
+    {
+      "name": "AngelicLeaf",
+      "zh": "岩天使叶",
+      "en": "Angelic Leaf",
+      "row": 1,
+      "column": 3,
+      "width": 3,
+      "height": 3,
+      "orundum": 28,
+      "sourceRect": [
+        117,
+        40,
+        141,
+        64
+      ],
+      "nativeSize": [
+        24,
+        24
+      ],
+      "itemSize": [
+        40,
+        38
+      ],
+      "tileSize": [
+        52,
+        52
+      ]
+    },
+    {
+      "name": "CorrodedJadeLeaf",
+      "zh": "受蚀玉化叶",
+      "en": "Corroded Jade Leaf",
+      "row": 1,
+      "column": 4,
+      "width": 3,
+      "height": 3,
+      "orundum": 36,
+      "sourceRect": [
+        148,
+        40,
+        172,
+        64
+      ],
+      "nativeSize": [
+        24,
+        24
+      ],
+      "itemSize": [
+        38,
+        34
+      ],
+      "tileSize": [
+        52,
+        52
+      ]
+    },
+    {
+      "name": "RedSpearLeaf",
+      "zh": "红矛叶",
+      "en": "Red Spear Leaf",
+      "row": 1,
+      "column": 5,
+      "width": 2,
+      "height": 3,
+      "orundum": 45,
+      "sourceRect": [
+        183,
+        40,
+        199,
+        64
+      ],
+      "nativeSize": [
+        16,
+        24
+      ],
+      "itemSize": [
+        30,
+        40
+      ],
+      "tileSize": [
+        34,
+        52
+      ]
+    },
+    {
+      "name": "LightUmbralStone",
+      "zh": "轻黯石",
+      "en": "Light Umbral Stone",
+      "row": 2,
+      "column": 0,
+      "width": 3,
+      "height": 3,
+      "orundum": 10,
+      "sourceRect": [
+        21,
+        72,
+        45,
+        96
+      ],
+      "nativeSize": [
+        24,
+        24
+      ],
+      "itemSize": [
+        42,
+        34
+      ],
+      "tileSize": [
+        52,
+        52
+      ]
+    },
+    {
+      "name": "MediumUmbralStone",
+      "zh": "中黯石",
+      "en": "Medium Umbral Stone",
+      "row": 2,
+      "column": 1,
+      "width": 3,
+      "height": 3,
+      "orundum": 15,
+      "sourceRect": [
+        53,
+        72,
+        77,
+        96
+      ],
+      "nativeSize": [
+        24,
+        24
+      ],
+      "itemSize": [
+        44,
+        38
+      ],
+      "tileSize": [
+        52,
+        52
+      ]
+    },
+    {
+      "name": "HeavyUmbralStone",
+      "zh": "重黯石",
+      "en": "Heavy Umbral Stone",
+      "row": 2,
+      "column": 2,
+      "width": 3,
+      "height": 4,
+      "orundum": 20,
+      "sourceRect": [
+        86,
+        64,
+        110,
+        96
+      ],
+      "nativeSize": [
+        24,
+        32
+      ],
+      "itemSize": [
+        48,
+        42
+      ],
+      "tileSize": [
+        52,
+        70
+      ]
+    },
+    {
+      "name": "IgnitedStone",
+      "zh": "燎石",
+      "en": "Ignited Stone",
+      "row": 2,
+      "column": 3,
+      "width": 2,
+      "height": 3,
+      "orundum": 30,
+      "sourceRect": [
+        119,
+        72,
+        135,
+        96
+      ],
+      "nativeSize": [
+        16,
+        24
+      ],
+      "itemSize": [
+        30,
+        30
+      ],
+      "tileSize": [
+        34,
+        52
+      ]
+    },
+    {
+      "name": "WulingStone",
+      "zh": "武陵石",
+      "en": "Wuling Stone",
+      "row": 2,
+      "column": 4,
+      "width": 3,
+      "height": 3,
+      "orundum": 40,
+      "sourceRect": [
+        146,
+        72,
+        170,
+        96
+      ],
+      "nativeSize": [
+        24,
+        24
+      ],
+      "itemSize": [
+        34,
+        30
+      ],
+      "tileSize": [
+        52,
+        52
+      ]
+    },
+    {
+      "name": "ProtocolPatternStone",
+      "zh": "协议纹石",
+      "en": "Protocol Pattern Stone",
+      "row": 2,
+      "column": 5,
+      "width": 2,
+      "height": 3,
+      "orundum": 50,
+      "sourceRect": [
+        184,
+        72,
+        200,
+        96
+      ],
+      "nativeSize": [
+        16,
+        24
+      ],
+      "itemSize": [
+        28,
+        32
+      ],
+      "tileSize": [
+        34,
+        52
+      ]
+    }
+  ],
+  "groundFooterNativePixels": 4,
+  "groundFooterPixels": 8
+}

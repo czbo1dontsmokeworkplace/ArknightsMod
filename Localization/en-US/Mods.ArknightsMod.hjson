@@ -76,6 +76,98 @@ Items: {
 			Death is inevitable when the timer expires; unequipping or leaving the world cannot erase this debt
 			'''
 	}
+
+	EndfieldNatural: {
+		WulingStone: {
+			Tooltip: ""
+			DisplayName: Wuling Stone
+		}
+
+		TalosFungus: {
+			Tooltip: ""
+			DisplayName: Talos Fungus
+		}
+
+		StargateFungus: {
+			Tooltip: ""
+			DisplayName: Stargate Fungus
+		}
+
+		RedSpearLeaf: {
+			Tooltip: ""
+			DisplayName: Red Spear Leaf
+		}
+
+		PureCrystalMultiLeaf: {
+			Tooltip: ""
+			DisplayName: Pure Crystal Multi Leaf
+		}
+
+		ProtocolPatternStone: {
+			Tooltip: ""
+			DisplayName: Protocol Pattern Stone
+		}
+
+		PerfectCrystalMultiLeaf: {
+			Tooltip: ""
+			DisplayName: Perfect Crystal Multi Leaf
+		}
+
+		MediumUmbralStone: {
+			Tooltip: ""
+			DisplayName: Medium Umbral Stone
+		}
+
+		MediumRedColumnFungus: {
+			Tooltip: ""
+			DisplayName: Medium Red Column Fungus
+		}
+
+		LightUmbralStone: {
+			Tooltip: ""
+			DisplayName: Light Umbral Stone
+		}
+
+		LightRedColumnFungus: {
+			Tooltip: ""
+			DisplayName: Light Red Column Fungus
+		}
+
+		IgnitedStone: {
+			Tooltip: ""
+			DisplayName: Ignited Stone
+		}
+
+		HeavyUmbralStone: {
+			Tooltip: ""
+			DisplayName: Heavy Umbral Stone
+		}
+
+		HeavyRedColumnFungus: {
+			Tooltip: ""
+			DisplayName: Heavy Red Column Fungus
+		}
+
+		CrystallizedMultiLeaf: {
+			Tooltip: ""
+			DisplayName: Crystallized Multi Leaf
+		}
+
+		CorrodedJadeLeaf: {
+			Tooltip: ""
+			DisplayName: Corroded Jade Leaf
+		}
+
+		BloodFungus: {
+			Tooltip: ""
+			DisplayName: Blood Fungus
+		}
+
+		AngelicLeaf: {
+			Tooltip: ""
+			DisplayName: Angelic Leaf
+		}
+	}
 }
 
 Buffs: {
