@@ -47,7 +47,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 
 		/// <summary>
 		/// 可切换页面的本地化键，下标与 <see cref="ButtonCount"/> 一一对应：
-		/// 0 帮助 / 1~5 五个等级材料商店 / 6 时装商店 / 7 剿灭作战。
+		/// 0 帮助 / 1~5 五个等级材料商店 / 6 时装商店 / 7 剿灭作战 / 8 采集委托。
 		/// 聊天按钮的文字和「切换」菜单都从这里取名字，加/改页面只要动这一处
 		/// （注意菜单总行数 = 本表长度 + 1 行提示，别超过原版对话的 10 行上限）。
 		/// </summary>
@@ -60,6 +60,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			"Mods.ArknightsMod.NPCs.Closure.Buttons.MaterialShopGold",
 			"Mods.ArknightsMod.NPCs.Closure.Buttons.Shop2",
 			"Mods.ArknightsMod.NPCs.Closure.Buttons.Annihilation",
+			"Mods.ArknightsMod.EndfieldNatural.GatheringButton",
 		];
 
 		/// <summary>材料商店在「切换」菜单里的起始下标（1 = 白档，与 <see cref="MaterialShopNames"/> 顺序一致）。</summary>
@@ -70,6 +71,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 
 		/// <summary>剿灭作战在「切换」菜单里的下标。</summary>
 		private const int AnnihilationButton = 7;
+		private const int GatheringButton = 8;
 
 		public static int SwitchOptionCount => SwitchOptionLangKeys.Length;
 
@@ -296,6 +298,9 @@ namespace ArknightsMod.Content.NPCs.Friendly
 						break;
 					case AnnihilationButton:
 						AO();
+						break;
+					case GatheringButton:
+						Main.LocalPlayer.GetModPlayer<global::ArknightsMod.Players.EndfieldGatheringPlayer>().Interact(NPC.whoAmI);
 						break;
 				}
 				return;

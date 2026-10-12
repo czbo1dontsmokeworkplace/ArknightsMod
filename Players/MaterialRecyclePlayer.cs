@@ -26,11 +26,11 @@ namespace ArknightsMod.Players
 			if (item.ModItem is not ArknightsMaterial material || !material.TradedWithOrundum)
 				return true;
 
-			// 只收给可露希尔；卖给其他 NPC 仍按原版金币结算（金币价值见 ArknightsMaterial.GetValue）。
+			// 新增终末地采集物只交给可露希尔；原有普通材料在其他 NPC 处仍按原版金币结算。
 			if (vendor.ModNPC is not Closure)
-				return true;
+				return material is not Content.Items.Material.Endfield.EndfieldNaturalMaterial;
 
-			int unitPrice = ArknightsMaterial.GetOrundumSellPrice(material.Rarity);
+			int unitPrice = material.OrundumRecycleValue;
 			if (unitPrice <= 0 || item.stack <= 0)
 				return true;
 
