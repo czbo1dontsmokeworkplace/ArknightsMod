@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ReLogic.Content;
 using System;
+using System.Collections.Generic;
 using System.Net.Mail;
 using Terraria;
 using Terraria.Audio;
@@ -76,6 +77,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 		public ProjMode projMode = ProjMode.Move;
 		public WeaponPlayer mp => player.GetModPlayer<WeaponPlayer>();
 		private bool hitFeedbackPlayed;
+		private readonly HashSet<int> stabHitTargets = new();
 		private const int SwingTransitionFrames = 6;
 		private int swingTransitionTimer;
 		private int comboFacing = 1;
@@ -88,8 +90,12 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 		private void BeginAttack(bool continueRotation)
 		{
 			hitFeedbackPlayed = false;
+			stabHitTargets.Clear();
 			stabEffect.Reset();
 			projMode = ProjMode.Attack;
+			// 常驻剑弹幕不会重生；每次挥砍都要重新读取当前技能的武器伤害。
+			Projectile.damage = player.GetWeaponDamage(player.HeldItem);
+			Projectile.originalDamage = Projectile.damage;
 			Vector2 mousePos = Main.MouseWorld - player.Center;
 			float aimAngle = MathF.Atan2(mousePos.Y, mousePos.X);
 			if (continueRotation)
@@ -118,6 +124,13 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 			else if (mp.Skill == 1 && mp.SkillActive) {
 				helper.SetScale(1.2f);
 				projMode = ProjMode.Stab;
+			}
+			if (projMode == ProjMode.Attack && Main.myPlayer == Projectile.owner && !Main.dedServ) {
+				SoundEngine.PlaySound(SoundID.Item1 with {
+					Volume = 0.42f,
+					Pitch = continueRotation ? -0.12f : 0f,
+					MaxInstances = 3
+				}, player.Center);
 			}
 			helper.PivotOnPlayerCenter = projMode != ProjMode.Stab;
 			if (helper.PivotOnPlayerCenter)
@@ -297,7 +310,16 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 			return false;
 		}
 
+		public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) {
+			if (projMode == ProjMode.Stab &&
+				(stabHitTargets.Count == 0 ||
+				 (stabHitTargets.Count == 1 && stabHitTargets.Contains(target.whoAmI))))
+				modifiers.FinalDamage *= 1.5f;
+		}
+
 		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
+			if (projMode == ProjMode.Stab)
+				stabHitTargets.Add(target.whoAmI);
 			if (projMode == ProjMode.Stab)
 				stabEffect.OnHit(target.Center);
 			if (!hitFeedbackPlayed && !Main.dedServ) {

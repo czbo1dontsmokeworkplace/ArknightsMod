@@ -28,7 +28,7 @@ public sealed class MeteoriteCannon : ExpansionWeaponBase
         Item.DamageType = DamageClass.Ranged;
         Item.width = 54;
         Item.height = 24;
-        Item.useTime = Item.useAnimation = 50;
+        Item.useTime = Item.useAnimation = 70;
         Item.noUseGraphic = true;
         Item.useStyle = ItemUseStyleID.Shoot;
         Item.knockBack = 5f;

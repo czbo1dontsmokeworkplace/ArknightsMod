@@ -1,89 +1,137 @@
+using System;
+using System.Collections.Generic;
+using ArknightsMod.Content.Items.Weapons.Guard.Mousse;
 using ArknightsMod.Players;
+using ArknightsMod.Systems.Gameplay.Skill;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.DataStructures;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace ArknightsMod.Content.Projectiles.Guard.Mousse
+namespace ArknightsMod.Content.Projectiles.Guard.Mousse;
+
+// Timing/positioning reference: AugerHoldout, credit Azafure, LLC.
+// https://github.com/CalamityTeam/CalamityModPublic
+// Independent implementation using Terraria and ArknightsMod resources only.
+public class MousseGlovePunch : ModProjectile
 {
-	public class MousseGlovePunch : ModProjectile
-	{
-		public override string Texture =>
-			"ArknightsMod/Content/Items/Weapons/Guard/Mousse/MousseGlove_protile";
+    public override string Texture => "ArknightsMod/Content/Items/Weapons/Guard/Mousse/MousseGlove";
+    private ref float Timer => ref Projectile.ai[0];
+    private ref float SwingCount => ref Projectile.ai[1];
+    private float Unit => Math.Max(2f, Projectile.ai[2]);
+    private float bladeRotation;
+    private float bladePower;
+    private bool strikeIssued;
+    private int age;
+    private Player Owner => Main.player[Projectile.owner];
 
-		private const float MaxRange = 60f;
-		private const int PauseTicks = 12;
-		private const float PunchSpeed = 16f;
-		private const float RetractSpeed = 14f;
+    public override void SetDefaults() {
+        Projectile.width = Projectile.height = 20;
+        Projectile.friendly = true;
+        Projectile.DamageType = DamageClass.Melee;
+        Projectile.penetrate = -1;
+        Projectile.tileCollide = false;
+        Projectile.ignoreWater = true;
+        Projectile.timeLeft = 5;
+        Projectile.netImportant = true;
+    }
 
-		private ref float Phase => ref Projectile.ai[0];
-		private ref float Extension => ref Projectile.ai[1];
-		private ref float PauseTimer => ref Projectile.ai[2];
+    public override bool? CanDamage() => false;
+    public override bool ShouldUpdatePosition() => false;
 
-		public override void SetDefaults() {
-			Projectile.width = 20;
-			Projectile.height = 20;
-			Projectile.friendly = true;
-			Projectile.hostile = false;
-			Projectile.DamageType = DamageClass.Melee;
-			Projectile.penetrate = -1;
-			Projectile.tileCollide = false;
-			Projectile.timeLeft = 120;
-			Projectile.ignoreWater = true;
-		}
+    internal static float Ease(float p, float acceleration, float deceleration) {
+        p = MathHelper.Clamp(p, 0f, 1f);
+        return p < .5f ? .5f * MathF.Pow(2f * p, acceleration)
+            : 1f - .5f * MathF.Pow(2f * (1f - p), deceleration);
+    }
 
-		public override void OnSpawn(IEntitySource source) {
-			Projectile.localAI[0] = Projectile.velocity.ToRotation();
-		}
+    public override void AI() {
+        Player owner = Owner;
+        if (!owner.active || owner.dead || owner.noItems || owner.CCed || !owner.channel
+            || owner.HeldItem.type != ModContent.ItemType<MousseGlove>()) {
+            Projectile.Kill();
+            return;
+        }
+        Projectile.timeLeft = 5;
+        if (owner.whoAmI == Main.myPlayer) {
+            Vector2 aim = (Main.MouseWorld - owner.MountedCenter).SafeNormalize(new Vector2(owner.direction, 0));
+            if (Vector2.DistanceSquared(aim, Projectile.velocity) > .0009f) {
+                Projectile.velocity = aim;
+                Projectile.netUpdate = true;
+            }
+        }
+        Vector2 toMouse = Projectile.velocity.SafeNormalize(new Vector2(owner.direction, 0));
+        owner.ChangeDir(toMouse.X < 0 ? -1 : 1);
+        owner.heldProj = Projectile.whoAmI;
+        owner.itemTime = owner.itemAnimation = 2;
+        Projectile.scale = MathHelper.Clamp(owner.GetAdjustedItemScale(owner.HeldItem), .5f, 3f);
 
-		public override void AI() {
-			Player owner = Main.player[Projectile.owner];
-			Vector2 dir = Vector2.UnitX.RotatedBy(Projectile.localAI[0]);
+        bool releaseStrike = false;
+        if (Timer < 0) {
+            strikeIssued = false;
+            bool pairFinished = SwingCount >= 2;
+            float recovery = Unit * (pairFinished ? 3f : 1f);
+            float progress = Utils.GetLerpValue(-recovery, -1f, Timer + 1f, true);
+            float sign = SwingCount % 2 != 0 ? 1f : -1f;
+            bladeRotation = MathHelper.Lerp(-MathHelper.Pi * sign, -.75f * MathHelper.Pi * sign,
+                Ease(progress, 2f, 2f));
+            if (pairFinished && Timer + 1f <= -recovery * .35f)
+                bladePower = MathHelper.Lerp(bladePower, 0f, progress);
+            else {
+                float grow = Utils.GetLerpValue(-recovery * (pairFinished ? .35f : 1f), -1f, Timer + 1f, true);
+                bladePower = MathHelper.Lerp(bladePower, 1.5f, grow);
+            }
+            Timer++;
+            if (Timer >= 0) SwingCount = pairFinished ? 1 : SwingCount + 1;
+        }
+        else {
+            float progress = Utils.GetLerpValue(0, Unit - 1f, Timer, true);
+            float sign = SwingCount % 2 != 0 ? -1f : 1f;
+            bladeRotation = MathHelper.Lerp(-.75f * MathHelper.Pi * sign, MathHelper.Pi * sign,
+                Ease(progress, 5f, 3f));
+            if (progress > .5f && !strikeIssued) {
+                strikeIssued = true;
+                releaseStrike = true;
+            }
+            Timer++;
+            if (Timer >= Unit) Timer = -Unit * (SwingCount >= 2 ? 3f : 1f);
+        }
 
-			if (Phase == 0) {
-				Extension += PunchSpeed;
-				if (Extension >= MaxRange) {
-					Extension = MaxRange;
-					Projectile.friendly = false;
-					Phase = 1;
-					PauseTimer = PauseTicks;
-				}
-			} else if (Phase == 1) {
-				PauseTimer--;
-				if (PauseTimer <= 0)
-					Phase = 2;
-			} else {
-				Extension -= RetractSpeed;
-				if (Extension <= 0) {
-					Projectile.Kill();
-					return;
-				}
-			}
+        float angle = toMouse.ToRotation() + bladeRotation * owner.direction;
+        owner.itemRotation = angle + (owner.direction < 0 ? MathHelper.Pi : 0f);
+        owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, angle - MathHelper.PiOver2);
+        Vector2 hand = owner.GetFrontHandPosition(Player.CompositeArmStretchAmount.None,
+            owner.compositeFrontArm.rotation) + angle.ToRotationVector2() * 9f;
+        owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full,
+            (hand - owner.Center).ToRotation() - MathHelper.PiOver2);
+        Projectile.Center = hand;
+        Projectile.rotation = angle;
+        if (releaseStrike) {
+            if (!Main.dedServ) SoundEngine.PlaySound(SoundID.Item68 with { Volume = .7f, MaxInstances = 3 }, hand);
+            if (owner.whoAmI == Main.myPlayer) {
+                WeaponPlayer skills = owner.GetModPlayer<WeaponPlayer>();
+                bool scratch = skills.Skill == 0 && skills.SkillActive;
+                int damage = owner.GetWeaponDamage(owner.HeldItem);
+                int slash = Projectile.NewProjectile(Projectile.GetSource_FromThis(), owner.MountedCenter + toMouse * 25f * Projectile.scale,
+                    toMouse * 31.25f * Projectile.scale, ModContent.ProjectileType<MousseLightSlash>(),
+                    damage, owner.GetWeaponKnockback(owner.HeldItem, owner.HeldItem.knockBack), owner.whoAmI,
+                    SwingCount % 2 == 0 ? 1 : -1, Projectile.scale, scratch ? 1f : 0f);
+                if (Main.projectile.IndexInRange(slash)) Main.projectile[slash].CritChance = owner.GetWeaponCrit(owner.HeldItem);
+                if (scratch) skills.SkillActive = false;
+                else if (skills.Skill == 0 && skills.CurrentSkill?.ChargeType == SkillChargeType.Attack)
+                    skills.OffensiveRecovery();
+            }
+        }
+        age++;
+    }
 
-			Projectile.Center = owner.MountedCenter + dir * Extension;
-			Projectile.velocity = Vector2.Zero;
-		}
+    public override bool PreDraw(ref Color lightColor) {
+        if (age > 1)
+            MousseVisuals.DrawGlove(Projectile, Owner, bladePower, lightColor);
+        return false;
+    }
 
-		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
-			var mp = Main.player[Projectile.owner].GetModPlayer<WeaponPlayer>();
-			// S1 挠伤：命中目标施加虚弱并立即结束技能（一次性），随后自动重新充能
-			if (mp.SkillActive && mp.Skill == 0) {
-				target.AddBuff(BuffID.Weak, 5 * 60);
-				mp.SkillActive = false;
-			}
-		}
-
-		public override bool ShouldUpdatePosition() => false;
-
-		public override bool PreDraw(ref Color lightColor) {
-			Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
-			Vector2 origin = tex.Size() / 2f;
-			Vector2 pos = Projectile.Center - Main.screenPosition;
-			float rot = Projectile.localAI[0];
-			Main.spriteBatch.Draw(tex, pos, null, lightColor, rot, origin, Projectile.scale, SpriteEffects.None, 0f);
-			return false;
-		}
-	}
+    public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs,
+        List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI) => overPlayers.Add(index);
 }

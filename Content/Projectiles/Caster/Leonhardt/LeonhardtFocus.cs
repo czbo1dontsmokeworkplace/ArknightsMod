@@ -115,8 +115,7 @@ public sealed class LeonhardtFocus : ModProjectile
         Projectile.NewProjectile(Projectile.GetSource_FromThis(), Muzzle, velocity,
             ModContent.ProjectileType<LeonhardtCore>(), damage, Projectile.knockBack,
             Projectile.owner, charge);
-        SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/LeonhardtCoreRelease")
-            { Volume = .55f, MaxInstances = 3 }, Muzzle);
+        SoundEngine.PlaySound(SoundID.Item73 with { Volume = .58f }, Muzzle);
         if (!Main.dedServ)
         {
             LeonhardtVisuals.FireParticles(Muzzle, Direction);
@@ -148,7 +147,8 @@ public sealed class LeonhardtFocus : ModProjectile
             left ? SpriteEffects.FlipVertically : SpriteEffects.None, 0f);
 
         if (Projectile.ai[1] == 0f)
-            LeonhardtVisuals.DrawCharge(Muzzle, Charge, Main.GlobalTimeWrappedHourly);
+            SpreadChargeSigil.Draw(Muzzle, 106f, aimAngle, Main.GlobalTimeWrappedHourly,
+                Charge, new Color(121, 201, 241));
         ChargeCastFeedback.DrawBar(Owner, Charge, new Color(121, 201, 241));
         return false;
     }

@@ -10,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles.Caster.Pudding;
 
-/// <summary>布丁的独立电荷、分段磁弧与逐跳节点反馈；不调用惊蛰或异客的视觉入口。</summary>
+/// <summary>布丁的青色电荷、分段磁弧与逐跳节点反馈，叠加在链术士共用的完整雷弧结构上。</summary>
 internal static class PuddingVisuals
 {
     private const string Textures = "ArknightsMod/Content/Textures/";

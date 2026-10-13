@@ -3,6 +3,7 @@ using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.Projectiles.Guard.Astesia;
 using ArknightsMod.Content.Tiles.Infrastructure;
+using ArknightsMod.Content.Items.Weapons.Guard.Mousse;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -137,6 +138,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Astesia
 
 		public override void AddRecipes() {
 			CreateRecipe()
+				.AddIngredient<MousseGlove>()
 				.AddIngredient<global::ArknightsMod.Content.Items.Material.PolyesterLump>(1)
 				.AddIngredient<global::ArknightsMod.Content.Items.Material.OrironCluster>(2)
 				.AddIngredient(ItemID.Starfury)

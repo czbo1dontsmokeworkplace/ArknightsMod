@@ -40,8 +40,8 @@ public sealed class MostimaSwing : ModProjectile
         {
             if (Projectile.owner == Main.myPlayer)
             {
-                int index = Projectile.NewProjectile(Projectile.GetSource_FromThis(), owner.MountedCenter + direction * 55,
-                    direction * 15, ModContent.ProjectileType<MostimaChronoWave>(), Projectile.damage,
+                int index = Projectile.NewProjectile(Projectile.GetSource_FromThis(), owner.MountedCenter,
+                    direction, ModContent.ProjectileType<MostimaChronoWave>(), Projectile.damage,
                     Projectile.knockBack, owner.whoAmI);
                 if (Main.projectile.IndexInRange(index)) Main.projectile[index].CritChance = Projectile.CritChance;
             }
@@ -57,8 +57,10 @@ public sealed class MostimaSwing : ModProjectile
         MostimaFocus.DrawStaff(Projectile.Center, Projectile.rotation, lightColor, 1.35f);
         using var pass = MostimaVisuals.Begin();
         float fade = MathF.Sin((36 - Projectile.timeLeft) / 36f * MathHelper.Pi);
-        MostimaVisuals.Sprite("ChronoDial", Projectile.Center, new Vector2(170, 170),
-            MostimaVisuals.Blue * fade * .45f, Projectile.rotation);
+        for (int i = 2; i >= 0; i--)
+            MostimaVisuals.Sprite("ChronoCrescentV2", Projectile.Center, new Vector2(190f - i * 17f),
+                (i == 0 ? MostimaVisuals.Blue : MostimaVisuals.Violet) * fade * (i == 0 ? .65f : .25f),
+                Projectile.rotation - i * .20f * Main.player[Projectile.owner].direction);
         return false;
     }
 }

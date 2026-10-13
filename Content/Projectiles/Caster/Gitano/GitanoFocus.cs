@@ -116,7 +116,7 @@ public sealed class GitanoFocus : ModProjectile
             type, damage, Projectile.knockBack, Projectile.owner, fate ? 1f : 0f);
         if (Main.projectile.IndexInRange(index))
             Main.projectile[index].CritChance = Owner.GetWeaponCrit(Owner.HeldItem);
-        SoundEngine.PlaySound(SoundID.Item43 with { Volume = .42f, Pitch = fate ? -.25f : .2f }, Muzzle);
+        SoundEngine.PlaySound(SoundID.Item73 with { Volume = .46f, Pitch = fate ? -.25f : .2f }, Muzzle);
         if (!Main.dedServ) GitanoVisuals.FireParticles(Muzzle, Direction, fate);
     }
 
@@ -130,7 +130,8 @@ public sealed class GitanoFocus : ModProjectile
         Main.spriteBatch.Draw(orb, OrbPosition - Main.screenPosition, null, lightColor,
             rotation, orb.Size() * .5f, .82f, SpriteEffects.None, 0f);
         if (Projectile.ai[1] == 0f)
-            GitanoVisuals.DrawCharge(Muzzle, Charge, Main.GlobalTimeWrappedHourly);
+            SpreadChargeSigil.Draw(Muzzle, 80f, aimAngle, Main.GlobalTimeWrappedHourly,
+                Charge, new Color(178, 116, 234));
         ChargeCastFeedback.DrawBar(Owner, Charge, new Color(178, 116, 234));
         return false;
     }

@@ -3,6 +3,11 @@
 	Description: 攻击造成的伤害降低20%，受到的魔法伤害提高至138%
 }
 
+MousseScratch: {
+	DisplayName: 挠伤
+	Description: 攻击力降低40%
+}
+
 LeonhardtFracture: {
 	DisplayName: 解构裂隙
 	Description: 法术抗性降低15个百分点

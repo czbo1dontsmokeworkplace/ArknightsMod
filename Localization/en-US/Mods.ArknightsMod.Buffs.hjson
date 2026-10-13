@@ -3,6 +3,11 @@
 	Description: Attack damage reduced by 20%; magic damage taken increased to 138%
 }
 
+MousseScratch: {
+	DisplayName: Scratch
+	Description: Attack damage reduced by 40%
+}
+
 LeonhardtFracture: {
 	DisplayName: Fractured Arts Resistance
 	Description: Arts resistance reduced by 15 percentage points

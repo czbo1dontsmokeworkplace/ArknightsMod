@@ -19,7 +19,7 @@ AstesiaDefault: {
 }
 
 AstraSword: {
-	DisplayName: 星辉剑
+	DisplayName: 星极的星辉剑
 	Tooltip: ""
 }
 
@@ -3568,7 +3568,7 @@ MelanthasSword: {
 
 MousseGlove: {
 	DisplayName: 慕斯的手套
-	// Tooltip: ""
+	Tooltip: 长按左键，从手套尖端伸出光刃连续挥斩
 }
 
 SkadisGreatsword: {

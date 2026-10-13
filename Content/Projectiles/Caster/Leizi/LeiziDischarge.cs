@@ -15,7 +15,7 @@ public class LeiziFlyingDischarge : ModProjectile
     internal virtual float VisualSize => 0.85f;
     internal virtual int ChainProjectileType => ModContent.ProjectileType<LeiziChainDischarge>();
     internal virtual int ChainTargetLimit => ChainArtsVfx.TargetCount;
-    // 紫白双轨雷束；两个技能保持普攻视觉强度的 120% / 140%。
+    // 与布丁、异客共用完整雷束结构；两个技能保持普攻视觉强度的 120% / 140%。
     internal static float Intensity(int mode) => 0.85f * (mode == 2 ? 1.4f : mode == 1 ? 1.2f : 1f);
     public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.None;
     public override void SetStaticDefaults()
@@ -39,7 +39,7 @@ public class LeiziFlyingDischarge : ModProjectile
     public override bool CanHitPvp(Player target) => false;
     public override bool? CanCutTiles() => false;
     public override bool? CanHitNPC(NPC target) => !impactHandled && target.CanBeChasedBy(Projectile) ? null : false;
-    public override bool PreDraw(ref Color lightColor) { ChainArtsVfx.Head(Projectile, Palette, 2); return false; }
+    public override bool PreDraw(ref Color lightColor) { ChainArtsVfx.Head(Projectile, Palette, 3); return false; }
 
     public override void AI()
     {
@@ -60,7 +60,7 @@ public class LeiziFlyingDischarge : ModProjectile
 
     protected virtual void EmitFlightVisuals(Vector2 start, Vector2 end, float scale, int phase)
     {
-        ChainArtsVfx.Flight(start, end, scale, phase, Projectile.identity * 397 + phase * 13, Palette, 2);
+        ChainArtsVfx.Flight(start, end, scale, phase, Projectile.identity * 397 + phase * 13, Palette, 3);
         Lighting.AddLight(Projectile.Center, Palette.Light * (scale * 0.7f));
     }
 
@@ -85,16 +85,16 @@ public class LeiziFlyingDischarge : ModProjectile
     }
 }
 
-// 共用确定性选敌与同步；惊蛰单独绘制双轨电弧、较小节点与初雷规则。
+// 共用确定性选敌与同步；惊蛰保留较小的紫白节点与初雷规则。
 public sealed class LeiziChainDischarge : PassengerChainDischarge
 {
     internal override LightningPalette Palette => LightningPalette.Leizi;
     protected override float VisualSize => 0.85f;
     protected override void BeginHopVisuals(Vector2 start, Vector2 end, float scale, float nodeIntensity, int seed, int hop, bool targetNode)
-        => ChainArtsVfx.Hop(start, end, scale, nodeIntensity, seed, 2, Palette, targetNode);
+        => ChainArtsVfx.Hop(start, end, scale, nodeIntensity, seed, 3, Palette, targetNode);
     protected override void ImpactHopVisuals(Vector2 end, float intensity, int seed, bool firstHop, bool collided)
     {
-        ChainArtsVfx.Impact(end, intensity, 2, Palette);
+        ChainArtsVfx.Impact(end, intensity, 3, Palette);
         PassengerLightningVisuals.ElectricImpactDust(end, intensity * .7f, firstHop, Palette);
     }
     public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)

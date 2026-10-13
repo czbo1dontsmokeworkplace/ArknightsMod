@@ -2,6 +2,7 @@ using ArknightsMod.Content.Buffs;
 using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Content.Projectiles.Guard.Laevatain;
 using ArknightsMod.Content.Tiles.Infrastructure;
+using ArknightsMod.Content.Items.Weapons.Guard.Astesia;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -32,7 +33,8 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Surtr
 			Item.shoot = ModContent.ProjectileType<LaevatainProjectile_normal>();
 			Item.shootSpeed = 1f;
 			Item.rare = ItemRarityID.Red;
-			Item.UseSound = SoundID.Item1;
+			// 攻击声由对应的挥舞/突刺/砸地弹幕按动作节奏播放。
+			Item.UseSound = null;
 			Item.autoReuse = true;
 		}
 
@@ -50,7 +52,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Surtr
 			Recipe recipe = CreateRecipe()
 				.AddIngredient<global::ArknightsMod.Content.Items.Material.PolymerizationPreparation>(1)
 				.AddIngredient<global::ArknightsMod.Content.Items.Material.KetonColloid>(2)
-				.AddIngredient(ItemID.TrueNightsEdge)
+				.AddIngredient<AstraSword>()
 				.AddIngredient(ItemID.HellstoneBar, 12)
 				.AddIngredient(ItemID.LavaBucket);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
@@ -109,8 +111,6 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Surtr
 
 		public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
 		{
-			if (Main.myPlayer != player.whoAmI)
-				return;
 			var modPlayer = player.GetModPlayer<WeaponPlayer>();
 			if (modPlayer.Skill == 0 && modPlayer.SkillActive)
 				damage *= 3.1f;

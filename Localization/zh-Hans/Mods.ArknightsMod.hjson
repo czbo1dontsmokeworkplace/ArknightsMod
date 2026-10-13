@@ -274,6 +274,10 @@ Projectiles: {
 	// MostimaSwing.DisplayName: Mostima Swing
 	// MostimaTimeLock.DisplayName: Mostima Time Lock
 	// MeteoriteHoldout.DisplayName: Meteorite Holdout
+	// LavaBolt.DisplayName: Lava Bolt
+	// LavaBurst.DisplayName: Lava Burst
+	// LavaFocus.DisplayName: Lava Focus
+	// SpreadAfterfield.DisplayName: Spread Afterfield
 }
 
 Keybinds: {

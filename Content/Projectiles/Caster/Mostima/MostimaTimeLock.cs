@@ -1,5 +1,6 @@
 using System;
 using ArknightsMod.Content.Buffs;
+using ArknightsMod.Common.Particle;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -37,7 +38,13 @@ public sealed class MostimaTimeLock : ModProjectile
                     && Vector2.DistanceSquared(npc.Center, Projectile.Center) <= 300 * 300)
                     OperatorStunNPC.TryApply(npc, 31);
         if (!Main.dedServ && (int)Projectile.ai[1] % 60 == 1)
+        {
             MostimaVisuals.Particles(Projectile.Center, 18, 8);
+            if (ParticleManager.activeParticles.Count < 1500)
+                for (int i = 0; i < 12; i++)
+                    new MostimaOrbitGlyph(Projectile.Center, 280f, i * MathHelper.TwoPi / 12f,
+                        .002f, MostimaVisuals.Blue, 54).Spawn();
+        }
     }
     public override bool PreDraw(ref Color lightColor)
     {
@@ -47,9 +54,13 @@ public sealed class MostimaTimeLock : ModProjectile
         MostimaVisuals.Dial(Projectile.Center, new Vector2(600), 0, MostimaVisuals.Blue * fade * .45f);
         MostimaVisuals.Dial(Projectile.Center, new Vector2(510), 0, MostimaVisuals.Violet * fade * .2f);
         // A stepped second hand, rather than smooth rotation, communicates arrested time.
-        MostimaVisuals.Sprite("ChronoHand", Projectile.Center, new Vector2(320, 120),
-            MostimaVisuals.Blue * fade * .65f, (int)(Projectile.ai[1] / 60) * MathHelper.PiOver4);
-        MostimaVisuals.Cross(Projectile.Center, 280, fade * .3f);
+        float angle = (int)(Projectile.ai[1] / 60) * MathHelper.PiOver4;
+        MostimaVisuals.Sprite("ChronoHand", Projectile.Center + angle.ToRotationVector2() * 100f,
+            new Vector2(210, 24), MostimaVisuals.Blue * fade * .75f, angle);
+        MostimaVisuals.Sprite("TemporalSmear", Projectile.Center, new Vector2(430),
+            MostimaVisuals.Blue * fade * .14f, -Projectile.ai[1] * .004f);
+        MostimaVisuals.Sprite("TemporalStar", Projectile.Center, new Vector2(52f),
+            new Color(216, 240, 255) * fade * .7f);
         return false;
     }
 }

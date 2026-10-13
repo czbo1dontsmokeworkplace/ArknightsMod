@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.Graphics.CameraModifiers;
 using Terraria.ID;
 using Terraria.ModLoader;
+using ArknightsMod.Content.Projectiles.Caster.SpreadArts;
 
 namespace ArknightsMod.Content.Projectiles.Caster.Skyfire;
 
@@ -34,6 +35,10 @@ public sealed class SkyfireImpact : ModProjectile
         Vector2 center = Projectile.Center;
         Projectile.width = Projectile.height = Skyfall ? 470 : 340;
         Projectile.Center = center;
+        if (Projectile.owner == Main.myPlayer)
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), center, Vector2.Zero,
+                ModContent.ProjectileType<SpreadAfterfield>(), Math.Max(1, (int)(Projectile.damage * .30f)),
+                Projectile.knockBack, Projectile.owner, 3f);
     }
 
     public override bool? CanDamage() => Age <= 2f ? null : false;

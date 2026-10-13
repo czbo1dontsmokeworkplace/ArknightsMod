@@ -41,7 +41,11 @@ public sealed class CrossbowBolt : ModProjectile
     public override void OnSpawn(IEntitySource source)
     {
         Projectile.extraUpdates = Kind == CrossbowKind.Schwarz ? 3 : Kind == CrossbowKind.Pozemka ? 2 : 1;
-        if (Kind == CrossbowKind.Schwarz) Projectile.penetrate = -1;
+        if (Kind == CrossbowKind.Schwarz)
+        {
+            Projectile.penetrate = -1;
+            Projectile.tileCollide = false;
+        }
         if (Kind == CrossbowKind.Pozemka)
         {
             Projectile.penetrate = 2;

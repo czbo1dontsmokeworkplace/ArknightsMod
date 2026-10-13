@@ -22,11 +22,14 @@ public sealed class PuddingFlyingDischarge : LeiziFlyingDischarge
     }
 
     protected override void EmitFlightVisuals(Vector2 start, Vector2 end, float scale, int phase)
-        => PuddingVisuals.Flight(start, end, scale, phase);
+    {
+        ChainArtsVfx.Flight(start, end, scale, phase, Projectile.identity * 397 + phase * 13, Palette, 3);
+        PuddingVisuals.Flight(start, end, scale, phase);
+    }
 
     public override bool PreDraw(ref Color lightColor)
     {
-        ChainArtsVfx.Head(Projectile, Palette, 1);
+        ChainArtsVfx.Head(Projectile, Palette, 3);
         return false;
     }
 }
@@ -39,12 +42,28 @@ public sealed class PuddingChainDischarge : PassengerChainDischarge
 
     protected override void BeginHopVisuals(Vector2 start, Vector2 end, float scale,
         float nodeIntensity, int seed, int hop, bool targetNode)
-        => PuddingVisuals.BeginHop(start, end, scale, seed, targetNode);
+    {
+        ChainArtsVfx.Hop(start, end, scale, nodeIntensity, seed, 3, Palette, targetNode);
+        PuddingVisuals.BeginHop(start, end, scale, seed, targetNode);
+        if (targetNode)
+            PassengerLightningVisuals.PrepareImpact(end, nodeIntensity, seed, Palette);
+        if (hop > 0 && targetNode)
+            PassengerLightningVisuals.JumpAccent(start, end, nodeIntensity, seed, Palette);
+    }
 
     protected override void AdvanceHopVisuals(Vector2 start, Vector2 end, float scale, int phase)
-        => PuddingVisuals.AdvanceHop(start, end, scale, phase);
+    {
+        PassengerLightningVisuals.EmitSpan(start, end, scale, phase, Palette);
+        PuddingVisuals.AdvanceHop(start, end, scale, phase);
+    }
 
     protected override void ImpactHopVisuals(Vector2 end, float intensity, int seed,
         bool firstHop, bool collided)
-        => PuddingVisuals.Impact(end, intensity, seed, firstHop);
+    {
+        ChainArtsVfx.Impact(end, intensity, 3, Palette);
+        PassengerLightningVisuals.Burst(end, intensity * .65f, seed, Palette);
+        PuddingVisuals.Impact(end, intensity, seed, firstHop);
+        if (collided)
+            PassengerLightningVisuals.ElectricImpactDust(end, intensity, firstHop, Palette);
+    }
 }

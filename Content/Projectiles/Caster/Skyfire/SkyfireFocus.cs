@@ -132,7 +132,8 @@ public sealed class SkyfireFocus : ModProjectile
             left ? aimAngle + nativeAngle : aimAngle - nativeAngle, grip, 1f,
             left ? SpriteEffects.FlipVertically : SpriteEffects.None, 0f);
         if (Projectile.ai[1] == 0f)
-            SkyfireVisuals.DrawCharge(Muzzle, Charge, Main.GlobalTimeWrappedHourly);
+            SpreadChargeSigil.Draw(Muzzle, 128f, aimAngle, Main.GlobalTimeWrappedHourly,
+                Charge, new Color(245, 140, 83));
         ChargeCastFeedback.DrawBar(Owner, Charge, new Color(245, 140, 83));
         return false;
     }

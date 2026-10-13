@@ -1,0 +1,15 @@
+# Spread Arts VFX
+
+Generated using the built-in image generation tool with transparent backgrounds. These are original casting and lingering-field masks, tinted by weapon code. The shader animation uses local textures only.
+
+## CasterOrbitSigil.png
+
+Generate ONE original production-ready fantasy game VFX texture: an OUTER arcane casting sigil for a progression of Terraria magic weapons. A perfectly centered, perfectly front-on circular construction of two airy concentric rings, twelve tapered glass-like radial pointers, tiny broken engraved runes, carefully separated luminous filigree, and a distinctive fourfold diamond compass motif. The interior remains mostly EMPTY and transparent to make room for a separate inner sigil. Painterly smooth non-pixel fantasy art like polished Arknights combat magic, elegant crisp high-frequency detail, not a copy of any existing game artwork or Rancor symbol. Pure grayscale white and gray only, no hue or colored fringes, transparent background, no lettering or numerals, no black background, no staff/person/environment. At 1024 square, circle centered precisely and outer edge contained within 80% of canvas. Clean anti-aliased strokes, sparse diffuse glow, broad negative space. The mask will be tinted in code and dynamically projected into a tilted ellipse.
+
+## CasterCoreSigil.png
+
+Generate ONE original production-ready fantasy game VFX texture: INNER casting sigil for a progression of Terraria magic weapons. Centered precise front-on circular medallion, notably distinct from an outer compass ring: a small intricate eight-petaled crystalline flower, four mirrored crescent brackets, split-circle clockwork etchings, fine arcane lattice, a tiny diamond core. It is smooth painterly non-pixel fantasy illustration in the visual language of elegant Arknights combat VFX, NOT copied from any existing game artwork or Rancor symbol. Pure achromatic grayscale white/gray with truly transparent alpha background, absolutely no hue or color, no text, no numerals, no character, no environment. Entire pattern centered at exact midpoint, contained in 78% canvas, clean anti-aliased linework, airy negative spaces between shapes, restrained localized glow. One square transparent texture that will be tinted and shader projected in game.
+
+## CasterAfterglow.png
+
+ONE original square grayscale transparent VFX texture for a persistent magic damage field in a fantasy action game. Orthographic top-down luminous energy corona about a small empty center: four curling flame-like arcane plumes made of translucent wispy ribbons, smoky tapering tips, several sharp crystalline sparks and delicate broken radial streaks. Pure grayscale ONLY, white-to-gray brightness on transparent alpha, no colored pixels, no solid white disk, no text, no background, no character, no magic circle. Clear bold silhouette visible even when reduced to 100x100 pixels, detailed smooth non-pixel fantasy illustration, layered soft and crisp edges, perimeter within 80% canvas. Original artwork distinct from Calamity or any source texture. Designed for code tinting orange, purple, blue, or gold and smoothly pulsing for 60 frames.

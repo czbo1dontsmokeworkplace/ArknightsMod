@@ -1,7 +1,9 @@
+using System;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using ArknightsMod.Content.Projectiles.Caster.SpreadArts;
 
 namespace ArknightsMod.Content.Projectiles.Caster.Gitano;
 
@@ -28,10 +30,16 @@ public sealed class GitanoBurst : ModProjectile
 
     public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
     {
-        if (!Fate) return;
-        Vector2 center = Projectile.Center;
-        Projectile.width = Projectile.height = 1800;
-        Projectile.Center = center;
+        if (Fate)
+        {
+            Vector2 center = Projectile.Center;
+            Projectile.width = Projectile.height = 1800;
+            Projectile.Center = center;
+        }
+        if (Projectile.owner == Main.myPlayer)
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero,
+                ModContent.ProjectileType<SpreadAfterfield>(), Math.Max(1, (int)(Projectile.damage * .28f)),
+                Projectile.knockBack, Projectile.owner, 1f);
     }
 
     public override bool? CanDamage() => Age <= 2f ? null : false;

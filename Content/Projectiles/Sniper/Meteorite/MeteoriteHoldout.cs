@@ -10,12 +10,12 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Meteorite;
 
 public sealed class MeteoriteHoldout : ModProjectile
 {
-    private float Recoil => 8f * System.MathF.Pow(.78f, 50 - Projectile.timeLeft);
+    private float Recoil => 8f * System.MathF.Pow(.78f, 70 - Projectile.timeLeft);
     public override string Texture => "Terraria/Images/Item_" + ItemID.GrenadeLauncher;
     public override void SetDefaults()
     {
         Projectile.width = 64; Projectile.height = 28;
-        Projectile.timeLeft = 50; Projectile.penetrate = -1;
+        Projectile.timeLeft = 70; Projectile.penetrate = -1;
         Projectile.tileCollide = false; Projectile.ignoreWater = true;
         Projectile.netImportant = true;
     }

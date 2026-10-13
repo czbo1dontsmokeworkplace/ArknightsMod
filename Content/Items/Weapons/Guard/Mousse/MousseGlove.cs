@@ -1,12 +1,14 @@
 using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.Projectiles.Guard.Mousse;
 using ArknightsMod.Players;
-using ArknightsMod.Systems.Gameplay.Skill;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using ArknightsMod.Content;
+using ArknightsMod.Content.Tiles.Infrastructure;
+using Microsoft.Xna.Framework;
+using Terraria.DataStructures;
 
 namespace ArknightsMod.Content.Items.Weapons.Guard.Mousse
 {
@@ -25,8 +27,9 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Mousse
 			Item.DamageType = DamageClass.Melee;
 			Item.width = 44;
 			Item.height = 44;
-			Item.useTime = 22;
-			Item.useAnimation = 22;
+			// Auger 的 12 帧基准放慢至 0.75 倍攻击频率。
+			Item.useTime = 16;
+			Item.useAnimation = 16;
 			Item.knockBack = 4f;
 			Item.value = Item.sellPrice(silver: 35);
 			Item.rare = ItemRarityID.Green;
@@ -36,18 +39,29 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Mousse
 			Item.noUseGraphic = true;
 			Item.shoot = ModContent.ProjectileType<MousseGlovePunch>();
 			Item.shootSpeed = 16f;
+			Item.UseSound = null; // 每次挥刃过半时由弹幕播放一次 Item68。
+			Item.channel = true;
 			Item.crit = 4;
 		}
 
 		public override bool AltFunctionUse(Player player) => false;
 
-		public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers) {
-			var mp = player.GetModPlayer<WeaponPlayer>();
-			if (mp.SkillActive && mp.Skill == 0) {
-				// S1 挠伤：命中目标施加虚弱，技能立即结束（一次性）
-				target.AddBuff(BuffID.Weak, 5 * 60);
-				mp.SkillActive = false;
-			}
+		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position,
+			Vector2 velocity, int type, int damage, float knockback) {
+			Vector2 aim = velocity.SafeNormalize(new Vector2(player.direction, 0f));
+			if (player.whoAmI == Main.myPlayer)
+				Projectile.NewProjectile(source, player.MountedCenter, aim, type, damage, knockback,
+					player.whoAmI, -player.itemAnimationMax, 0, player.itemAnimationMax);
+			return false;
+		}
+
+		public override void AddRecipes() {
+			CreateRecipe()
+				.AddRecipeGroup(RecipeGroupID.IronBar, 12)
+				.AddIngredient(ItemID.Silk, 6)
+				.AddIngredient(ItemID.FallenStar, 3)
+				.AddTile(ModContent.TileType<FactoryTile>())
+				.Register();
 		}
 
 		public override bool CanUseItem(Player player) {
@@ -64,11 +78,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Mousse
 				return false;
 			}
 
-			// S1 挠伤：攻击充能
-			if (mp.CurrentSkill?.ChargeType == SkillChargeType.Attack && mp.Skill == 0)
-				mp.OffensiveRecovery();
-
-			return base.CanUseItem(player);
+			return player.ownedProjectileCounts[Item.shoot] == 0 && base.CanUseItem(player);
 		}
 
 		public override void ModifyWeaponDamage(Player player, ref StatModifier damage) {
@@ -81,8 +91,15 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Mousse
 		public override void HoldItem(Player player) {
 			base.HoldItem(player);
 			var mp = player.GetModPlayer<WeaponPlayer>();
+			// 持续引导不再反复进入 CanUseItem，技能键也必须能在挥舞期间响应。
+			if (ArknightsKeybinds.SkillActivatePressed(player) && mp.Skill == 1 && mp.StockCount > 0 && !mp.SkillActive) {
+				mp.SkillActive = true;
+				mp.SkillTimer = 0;
+				mp.DelStockCount();
+				SoundEngine.PlaySound(SkillActiveSfx, player.Center);
+			}
 			// S1「挠伤」改为自动释放：蓄满后下一次攻击自动变为强化（×1.75 并施加虚弱），无需手动按键。
-			// !mp.SkillActive 充当"已上膛"标记，命中后拳击弹幕 OnHitNPC 会置 false，待重新蓄满才会再次自动上膛，
+			// !mp.SkillActive 充当"已上膛"标记，发出强化斩击后会置 false，待重新蓄满才会再次自动上膛，
 			// 天然防止每帧重复触发。
 			if (mp.Skill == 0 && mp.StockCount > 0 && !mp.SkillActive) {
 				mp.SkillActive = true;
@@ -92,7 +109,8 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Mousse
 			}
 			// S2 炸毛：防御 +75%
 			if (mp.SkillActive && mp.Skill == 1)
-				player.statDefense += (int)((int)player.statDefense * 0.75f);
+				player.statDefense *= 1.75f;
 		}
 	}
+
 }

@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using ArknightsMod.Common.VisualEffects;
+using ArknightsMod.Common.Particle;
 using ArknightsMod.Content.Items.Weapons.Caster.Mostima;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -17,6 +18,7 @@ public sealed class MostimaFocus : ModProjectile
     private Vector2 target;
     private bool sawChannel;
     private int openingGrace;
+    private float visualPhase;
     private const int ChargeTicks = 90;
     public override string Texture => "ArknightsMod/Content/Items/Weapons/Caster/Mostima/MostimaStaff";
     public override void SetDefaults()
@@ -38,7 +40,15 @@ public sealed class MostimaFocus : ModProjectile
         Projectile.localAI[1]++;
         if (Projectile.owner == Main.myPlayer)
         {
-            target = MostimaStaff.Target(owner);
+            Vector2 requestedTarget = MostimaStaff.Target(owner);
+            if (Projectile.localAI[1] <= 1f)
+                target = requestedTarget;
+            else
+            {
+                float charged = MathHelper.Clamp(Projectile.ai[0] / ChargeTicks, 0f, 1f);
+                target = Vector2.Lerp(target, requestedTarget,
+                    MathHelper.Lerp(.62f, .025f, charged * charged));
+            }
             if (owner.channel) sawChannel = true;
             else if (sawChannel || ++openingGrace > 5)
             {
@@ -62,6 +72,8 @@ public sealed class MostimaFocus : ModProjectile
         owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation - MathHelper.PiOver2);
         Projectile.timeLeft = 2;
         Projectile.ai[0] = Math.Min(ChargeTicks, Projectile.ai[0] + 1);
+        float completion = Projectile.ai[0] / ChargeTicks;
+        visualPhase += MathHelper.Lerp(.13f, .008f, completion * completion);
         if (Main.dedServ) return;
         Vector2 muzzle = owner.MountedCenter + direction * 43;
         if (Projectile.ai[0] == ChargeTicks && Projectile.localAI[0] == 0)
@@ -71,10 +83,27 @@ public sealed class MostimaFocus : ModProjectile
         }
         if ((int)Projectile.localAI[1] % 6 == 0)
         {
-            float phase = Main.GlobalTimeWrappedHourly * 3;
+            float phase = visualPhase;
             Vector2 offset = phase.ToRotationVector2() * 45;
             new MostimaChronoParticle(muzzle + offset, -offset * .08f, MostimaVisuals.Blue, 24).Spawn();
         }
+        if (ParticleManager.activeParticles.Count < 1500
+            && (int)Projectile.localAI[1] % 3 == 0)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                float phase = visualPhase + i * MathHelper.Pi;
+                Vector2 offset = phase.ToRotationVector2() * (35f + 25f * completion);
+                new MostimaTemporalShard(muzzle + offset, -offset * .055f,
+                    i == 0 ? MostimaVisuals.Blue : MostimaVisuals.Violet, 24, 12f + completion * 8f).Spawn();
+            }
+        }
+        if ((int)Projectile.localAI[1] % 12 == 0
+            && ParticleManager.activeParticles.Count < 1500)
+            for (int i = 0; i < 6; i++)
+                new MostimaOrbitGlyph(target, MathHelper.Lerp(80f, 275f, completion),
+                    i * MathHelper.TwoPi / 6f + visualPhase * .2f, .009f * (1f - completion) + .001f,
+                    MostimaVisuals.Blue, 28).Spawn();
         Lighting.AddLight(muzzle, .08f, .18f, .3f);
     }
     public override void SendExtraAI(BinaryWriter writer) { writer.Write(target.X); writer.Write(target.Y); }
@@ -95,7 +124,7 @@ public sealed class MostimaFocus : ModProjectile
         float charge = Projectile.ai[0] / ChargeTicks;
         DrawStaff(owner.MountedCenter, Projectile.rotation, lightColor);
         MostimaVisuals.Charge(owner.MountedCenter + Projectile.rotation.ToRotationVector2() * 43,
-            target, charge, Main.GlobalTimeWrappedHourly);
+            target, charge, Projectile.rotation, visualPhase);
         ChargeCastFeedback.DrawBar(owner, charge, MostimaVisuals.Blue);
         return false;
     }

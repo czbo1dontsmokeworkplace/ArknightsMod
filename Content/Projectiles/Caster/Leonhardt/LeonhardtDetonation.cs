@@ -6,6 +6,7 @@ using Terraria.Graphics.CameraModifiers;
 using Terraria.ID;
 using Terraria.ModLoader;
 using ArknightsMod.Content.Buffs.Caster.Leonhardt;
+using ArknightsMod.Content.Projectiles.Caster.SpreadArts;
 
 namespace ArknightsMod.Content.Projectiles.Caster.Leonhardt;
 
@@ -38,6 +39,10 @@ public sealed class LeonhardtDetonation : ModProjectile
         Projectile.width = Projectile.height = Projectile.ai[1] > 0f
             ? 360 : (int)MathHelper.Lerp(116f, 250f, Charge);
         Projectile.Center = center;
+        if (Projectile.owner == Main.myPlayer)
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), center, Vector2.Zero,
+                ModContent.ProjectileType<SpreadAfterfield>(), Math.Max(1, (int)(Projectile.damage * .28f)),
+                Projectile.knockBack, Projectile.owner, 2f);
     }
 
     public override bool? CanDamage() => Age <= 2f ? null : false;

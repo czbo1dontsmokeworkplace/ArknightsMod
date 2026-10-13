@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.DataStructures;
 
 namespace ArknightsMod.Content.Projectiles.Caster.Gitano;
 
@@ -23,15 +24,20 @@ public sealed class GitanoCrystal : ModProjectile
         Projectile.friendly = true;
         Projectile.DamageType = DamageClass.Magic;
         Projectile.penetrate = 1;
-        Projectile.timeLeft = 50;
+        Projectile.timeLeft = 180;
         Projectile.extraUpdates = 2;
         Projectile.ignoreWater = true;
         Projectile.usesLocalNPCImmunity = true;
         Projectile.localNPCHitCooldown = -1;
     }
 
+    public override void OnSpawn(IEntitySource source) => Projectile.velocity *= .5f;
+
     public override void AI()
     {
+        if (Projectile.numUpdates == 0) Projectile.velocity *= 1.07f;
+        Projectile.localAI[1] += Projectile.velocity.Length();
+        if (Projectile.localAI[1] > 1800f) { Projectile.Kill(); return; }
         Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
         if (Main.dedServ) return;
         Lighting.AddLight(Projectile.Center, new Vector3(.31f, .13f, .48f));

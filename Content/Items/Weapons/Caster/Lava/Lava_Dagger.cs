@@ -9,6 +9,7 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using ArknightsMod.Content;
+using Terraria.DataStructures;
 
 namespace ArknightsMod.Content.Items.Weapons.Caster.Lava
 {
@@ -52,13 +53,16 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Lava
 		{
 			Item.damage = 40;
 			Item.knockBack = 3f;
-			Item.useAnimation = 87;
-			Item.useTime = 87;
-			Item.shootSpeed = 8f;
+			Item.useAnimation = Item.useTime = 20;
+			Item.shootSpeed = 12f;
 
-			Item.shoot = ModContent.ProjectileType<Lava_Dagger_Explode>();
+			Item.shoot = ModContent.ProjectileType<LavaFocus>();
 			Item.DamageType = DamageClass.Magic;
-			Item.useStyle = ItemUseStyleID.Swing;
+			Item.useStyle = ItemUseStyleID.Shoot;
+			Item.channel = true;
+			Item.autoReuse = true;
+			Item.noUseGraphic = true;
+			Item.mana = 5;
 			//Item.UseSound = SoundID.Item1;
 			//Item.rare = ItemRarityID.Green;
 			//Item.value = Item.sellPrice(silver: 5);
@@ -68,6 +72,7 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Lava
 		}
 		public override void HoldItem(Player player)
 		{
+			if (player.whoAmI != Main.myPlayer) return;
 			// 检查法书效果是否已经存在
 			bool exist = false;
 			for (int i = 0; i < Main.maxProjectiles; i++)
@@ -120,7 +125,14 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Lava
 					}
 				}
 			}
-			return base.CanUseItem(player);
+			return player.ownedProjectileCounts[Item.shoot] == 0 && base.CanUseItem(player);
+		}
+		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source,
+			Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+		{
+			if (player.whoAmI == Main.myPlayer)
+				Projectile.NewProjectile(source, player.MountedCenter, velocity, type, damage, knockback, player.whoAmI);
+			return false;
 		}
 	}
 

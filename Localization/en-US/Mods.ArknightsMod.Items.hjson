@@ -19,7 +19,7 @@ AstesiaDefault: {
 }
 
 AstraSword: {
-	DisplayName: Astra Sword
+	DisplayName: Astesia's Astral Sword
 	Tooltip: ""
 }
 
@@ -3201,7 +3201,7 @@ MelanthasSword: {
 
 MousseGlove: {
 	DisplayName: Mousse Glove
-	Tooltip: ""
+	Tooltip: Hold left click to extend a light blade from the glove and slash repeatedly
 }
 
 SkadisGreatsword: {
