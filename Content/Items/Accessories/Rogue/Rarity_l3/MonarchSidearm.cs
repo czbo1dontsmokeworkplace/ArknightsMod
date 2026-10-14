@@ -22,33 +22,21 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
 			Item.GetGlobalItem<KingsGlobalItem>().isKingItem = true;
 		}
 
-        private bool HasFallenSovereignForm(Player player)
-        {
-            for (int i = 3; i < 8 + player.extraAccessorySlots; i++) 
-            {
-                if (i < player.armor.Length)
-                {
-                    Item accessory = player.armor[i];
-             
-                    if (!accessory.IsAir && accessory.type == ModContent.ItemType<FallenSovereignForm>())
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            bool isLowHealth = (float)player.statLife / player.statLifeMax2 <= 0.3f;
-            bool hasFallenSovereign = HasFallenSovereignForm(player);
-
-
-            if (isLowHealth || hasFallenSovereign)
-            {
-                player.GetAttackSpeed(DamageClass.Generic) += 0.50f;
-            }
+            player.GetModPlayer<MonarchSidearmPlayer>().active = true;
         }
+    }
+
+    public class MonarchSidearmPlayer : ModPlayer
+    {
+        public bool active;
+
+        public override void ResetEffects() => active = false;
+
+        private bool IsActive => active && Player.statLife < Player.statLifeMax2 * 0.3f;
+
+        public override float UseTimeMultiplier(Item item) => IsActive ? 0.8f : 1f;
+        public override float UseAnimationMultiplier(Item item) => IsActive ? 0.8f : 1f;
     }
 }

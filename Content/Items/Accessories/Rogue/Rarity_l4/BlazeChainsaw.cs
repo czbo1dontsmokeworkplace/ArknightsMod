@@ -37,8 +37,8 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 			if (distance >= 650f)
 				return;
 
-			float multiplier = distance <= 100f ? 2f :
-				1f + (1f - (distance - 100f) / 550f);
+			float multiplier = distance <= 100f ? 1.2f :
+				1f + 0.2f * (1f - (distance - 100f) / 550f);
 
 			modifiers.FinalDamage *= multiplier;
 		}

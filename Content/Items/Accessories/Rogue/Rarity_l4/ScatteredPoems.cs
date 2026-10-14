@@ -19,12 +19,6 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            // 召唤伤害提升
-            player.GetDamage(DamageClass.Summon) += 0.30f;
-
-            // 召唤暴击率(无效)
-            player.GetCritChance(DamageClass.Summon) += 5;
-
             // 增加召唤栏（方舟原版为不消耗部署栏）
             player.maxMinions += 3;
         }

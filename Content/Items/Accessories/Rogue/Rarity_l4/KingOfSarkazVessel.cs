@@ -47,7 +47,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 			modPlayer.effectLevel = sarkazKingCount >= 3 ? 2 : 1;
 
 			// 直接在这里应用生命值加成
-			float healthBonus = sarkazKingCount >= 3 ? 1.2f : 0.4f;
+			float healthBonus = sarkazKingCount >= 3 ? 0.4f : 0.2f;
 			player.statLifeMax2 += (int)(player.statLifeMax2 * healthBonus);
 		}
 	}
@@ -57,55 +57,16 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 		public bool effectActive;
 		public int effectLevel;
 
-		// 恢复计时器
-		private int regenTimer = 0;
-		private const int REGEN_INTERVAL = 60; // 60帧 = 1秒
+        public override void ResetEffects()
+        {
+            effectActive = false;
+            effectLevel = 0;
+        }
 
-		private float RegenBase => effectLevel == 2 ? 9f : 3f;
-		private float RegenMax => effectLevel == 2 ? 36f : 12f;
-
-		public override void ResetEffects() {
-			effectActive = false;
-			effectLevel = 0;
-		}
-
-		public override void PostUpdate() {
-			if (!effectActive || effectLevel == 0)
-				return;
-
-			float healthPercentage = (float)Player.statLife / Player.statLifeMax2;
-			bool isAbove85 = healthPercentage >= 0.85f;
-
-			if (isAbove85 && Player.statLife < Player.statLifeMax2) {
-				// 线性插值：血量越接近100%，恢复越高
-				float t = (healthPercentage - 0.85f) / 0.15f;
-				t = Math.Clamp(t, 0f, 1f);
-
-				// 计算每秒恢复量
-				float regenPerSecond = RegenBase + (RegenMax - RegenBase) * t;
-
-				// 转换为每帧恢复量（每秒60帧）
-				float regenPerFrame = regenPerSecond / 60f;
-
-				// 累加计时器
-				regenTimer++;
-
-				// 当累计恢复值达到1点时回血
-				if (regenTimer >= 60 / regenPerSecond) {
-					Player.statLife++;
-					if (Player.statLife > Player.statLifeMax2)
-						Player.statLife = Player.statLifeMax2;
-					regenTimer = 0;
-				}
-			}
-			else {
-				// 不满足条件时重置计时器
-				regenTimer = 0;
-			}
-		}
-
-		public override void UpdateDead() {
-			regenTimer = 0;
-		}
-	}
+        public override void UpdateLifeRegen()
+        {
+            if (effectActive && effectLevel == 2 && Player.statLife > Player.statLifeMax2 * 0.85f)
+                Player.lifeRegen += 8; // 4 HP per second.
+        }
+    }
 }

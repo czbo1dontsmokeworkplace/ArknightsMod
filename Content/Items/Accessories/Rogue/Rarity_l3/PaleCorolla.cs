@@ -31,14 +31,14 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
         }
 
 
-        public float Multiplier => (float)Math.Pow(1.3, count);
+        public float Multiplier => (float)Math.Pow(1.2, count);
 
         public override void UpdateLifeRegen()
         {
             if (count > 0)
             {
  
-                Player.lifeRegen = (int)(Player.lifeRegen * Multiplier);
+                Player.lifeRegen += 4 * count;
             }
         }
 

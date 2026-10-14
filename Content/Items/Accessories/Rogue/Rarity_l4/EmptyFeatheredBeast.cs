@@ -17,29 +17,9 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            // 原有效果
-            player.GetDamage(DamageClass.Summon) += 0.30f; // 召唤伤害+30%
-            player.GetCritChance(DamageClass.Summon) += 5; 
-            player.GetModPlayer<SummonerEmblemPlayer>().whipDamageBoost = 0.60f;
-        }
-    }
-
-    public class SummonerEmblemPlayer : ModPlayer
-    {
-        public float whipDamageBoost;
-
-        public override void ResetEffects()
-        {
-            whipDamageBoost = 0f;
-        }
-
-        public override void ModifyHitNPCWithItem(Item item, NPC target, ref NPC.HitModifiers modifiers)
-        {
-            // 检测鞭子武器
-            if (item.CountsAsClass(DamageClass.SummonMeleeSpeed))
-            {
-                modifiers.FinalDamage *= 1f + whipDamageBoost;
-            }
+            player.maxMinions += 1;
+            player.whipRangeMultiplier += 0.12f;
+            player.GetAttackSpeed(DamageClass.SummonMeleeSpeed) += 0.12f;
         }
     }
 }

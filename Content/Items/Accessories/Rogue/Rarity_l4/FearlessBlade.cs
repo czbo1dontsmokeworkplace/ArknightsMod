@@ -193,7 +193,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 					// 应用新物品
 					buffedWeapon = bestWeapon;
 					originalWeaponDamage = bestWeapon.damage;
-					bestWeapon.damage = (int)(bestWeapon.damage * 1.5f);
+					bestWeapon.damage = (int)(bestWeapon.damage * 1.2f);
 					weaponIndex = GetItemIndex(bestWeapon);
 					weaponIsEquipped = IsItemEquipped(bestWeapon);
 				}
@@ -249,13 +249,6 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
                 if (IsValidWeapon(item)) weapons.Add(item);
             }
 
-            // 扫描装备栏
-            for (int i = 0; i < Player.armor.Length; i++)
-            {
-                Item item = Player.armor[i];
-                if (IsValidWeapon(item)) weapons.Add(item);
-            }
-
             return weapons;
         }
 
@@ -271,7 +264,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
             }
 
             // 扫描装备栏
-            for (int i = 0; i < Player.armor.Length; i++)
+            for (int i = 3; i < 8 + Player.extraAccessorySlots && i < Player.armor.Length; i++)
             {
                 Item item = Player.armor[i];
                 if (IsValidArmor(item)) armors.Add(item);
@@ -304,7 +297,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 
         private bool IsValidArmor(Item item)
         {
-            return item != null && !item.IsAir && item.defense > 0 && item.rare != -11;
+            return item != null && !item.IsAir && item.accessory && item.defense > 0 && item.rare != -11;
         }
 
         private int GetAdjustedRarity(Item item)

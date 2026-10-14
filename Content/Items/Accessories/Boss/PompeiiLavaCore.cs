@@ -9,9 +9,9 @@ namespace ArknightsMod.Content.Items.Accessories.Boss
 	// 庞贝的熔岩核心 —— 饰品。
 	//   - 防御力 +2
 	//   - 获得黑曜石皮药水效果（免疫岩浆与火焰块，免疫"着火了!"）
-	//   - 单次受到伤害超过 PompeiiLavaCorePlayer.ExplosionThreshold 点时，
+	//   - 受到伤害时，
 	//     以自身为中心引爆一次范围伤害，并对命中的敌人附加"着火了!"；
-	//     每次触发后有 PompeiiLavaCorePlayer.ExplosionCooldown 帧（5 秒）冷却
+	//     每次触发后有 PompeiiLavaCorePlayer.ExplosionCooldown 帧（3 秒）冷却
 	public class PompeiiLavaCore : ModItem
 	{
 		public override void SetStaticDefaults() {
@@ -41,14 +41,11 @@ namespace ArknightsMod.Content.Items.Accessories.Boss
 
 	public class PompeiiLavaCorePlayer : ModPlayer
 	{
-		// 触发爆炸所需的单次伤害阈值（点）。
-		public const int ExplosionThreshold = 40;
-
 		// 爆炸基础伤害（未计入近战加成）。
 		public const int BaseExplosionDamage = 200;
 
-		// 触发一次爆炸后的冷却时间（帧）。60 帧 = 1 秒，300 帧 = 5 秒。
-		public const int ExplosionCooldown = 60 * 5;
+		// 触发一次爆炸后的冷却时间（帧）。60 帧 = 1 秒，180 帧 = 3 秒。
+		public const int ExplosionCooldown = 60 * 3;
 
 		public bool Equipped;
 
@@ -73,13 +70,6 @@ namespace ArknightsMod.Content.Items.Accessories.Boss
 				return;
 
 			if (cooldownTimer > 0)
-				return;
-
-			// info.Damage      = 防御减免「后」实际掉的血
-			// info.SourceDamage = 防御减免「前」的原始伤害
-			// 这里按"实际受到的伤害"判定：防御越高越不容易触发，符合"被打重了才炸"的直觉。
-			// 若策划要按原始伤害判定（高防玩家也能稳定触发），把下面这行换成 info.SourceDamage 即可。
-			if (info.Damage <= ExplosionThreshold)
 				return;
 
 			cooldownTimer = ExplosionCooldown;

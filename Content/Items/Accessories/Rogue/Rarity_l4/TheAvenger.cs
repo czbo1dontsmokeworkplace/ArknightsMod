@@ -35,9 +35,9 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
         {
             if (!damageAmplifierActive) return;
 
-            if (item.DamageType == DamageClass.Melee || item.DamageType == DamageClass.Ranged)
+            if (item.CountsAsClass(DamageClass.Melee) || item.CountsAsClass(DamageClass.Ranged))
             {
-                modifiers.FinalDamage *= 1.35f;
+                modifiers.FinalDamage *= 1.20f;
             }
         }
 		public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref NPC.HitModifiers modifiers) {
@@ -45,8 +45,8 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 				return;
 
 			// 检测法术或召唤伤害
-			if (proj.DamageType == DamageClass.Melee || proj.DamageType == DamageClass.Ranged) {
-				modifiers.FinalDamage *= 1.35f;
+			if (proj.CountsAsClass(DamageClass.Melee) || proj.CountsAsClass(DamageClass.Ranged)) {
+				modifiers.FinalDamage *= 1.20f;
 			}
 		}
 

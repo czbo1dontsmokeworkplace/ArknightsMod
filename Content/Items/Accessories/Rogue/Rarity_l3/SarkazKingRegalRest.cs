@@ -30,9 +30,8 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
 
 		public override void PostUpdateEquips() {
 			// 判断生命值是否大于 85%
-			if (effectActive && Player.statLife >= Player.statLifeMax2 * 0.85f) {
-				Player.statDefense *= 1.2f;
-				Player.endurance += 0.2f;
+			if (effectActive && Player.statLife > Player.statLifeMax2 * 0.85f) {
+				Player.endurance += 0.21f;
 			}
 		}
 	}

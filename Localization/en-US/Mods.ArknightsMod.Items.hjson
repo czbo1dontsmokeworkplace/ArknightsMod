@@ -1207,7 +1207,10 @@ WisadelCannon: {
 
 BrightWeeping: {
 	DisplayName: Bright Weeping
-	Tooltip: ""
+	Tooltip:
+		'''
+		Enemies take 20% more magic and summon damage
+		'''
 }
 
 ChitinousRipper: {
@@ -1217,7 +1220,10 @@ ChitinousRipper: {
 
 EmptyFeatheredBeast: {
 	DisplayName: Empty Feathered Beast
-	Tooltip: ""
+	Tooltip:
+		'''
+		1 additional minion slot; 12% increased whip range and attack speed
+		'''
 }
 
 FirstAidMedicineKit: {
@@ -1237,12 +1243,21 @@ GoldenGinChalice: {
 
 KingsArmor: {
 	DisplayName: Kings Armor
-	Tooltip: ""
+	Tooltip:
+		'''
+		Below 30% life, each King's Armor stack grants 5 defense and 4% damage reduction
+		Starts with one stack; gains one for defeating any mechanical boss, Plantera, Golem, Lunatic Cultist, and Moon Lord
+		Up to 6 stacks, active only below 30% life
+		'''
 }
 
 KingsCrown: {
 	DisplayName: Kings Crown
-	Tooltip: ""
+	Tooltip:
+		'''
+		Below 30% life, grants 20% increased damage
+		With at least 3 King collectibles equipped, increases the bonus to 40%
+		'''
 }
 
 KingsStaff: {
@@ -1267,7 +1282,10 @@ PerfumeForTheShow: {
 
 AbyssalWyrdmask: {
 	DisplayName: Abyssal Wyrdmask
-	Tooltip: ""
+	Tooltip:
+		'''
+		Reduces incoming enemy attack damage by 7% before defense
+		'''
 }
 
 VanillaSauceSoda: {
@@ -1632,17 +1650,28 @@ RosmontissEmbrace: {
 
 OldSteamArmor: {
 	DisplayName: Old Steam Armor
-	Tooltip: ""
+	Tooltip:
+		'''
+		10 defense; loses 1% of maximum life per second through negative life regeneration
+		Burns enemies within 25 tiles every second for 25 times that life loss
+		Below 50% life, the burn multiplier increases to 50 times the life loss
+		'''
 }
 
 UnknownInstrument: {
 	DisplayName: Unknown Instrument
-	Tooltip: ""
+	Tooltip:
+		'''
+		50% increased maximum life; reduces defense by 10
+		'''
 }
 
 ScoutsScope: {
 	DisplayName: Scouts Scope
-	Tooltip: ""
+	Tooltip:
+		'''
+		Damage increases as the enemy gets farther away from you, up to 120% of its original value
+		'''
 }
 
 VieuxVanguardsBlade: {
@@ -1657,12 +1686,19 @@ CoinOperatedToy: {
 
 FatalBoltsDivineSpeed: {
 	DisplayName: Fatal Bolts Divine Speed
-	Tooltip: ""
+	Tooltip:
+		'''
+		35% increased ranged attack speed
+		'''
 }
 
 CommandersPortrait: {
 	DisplayName: Commanders Portrait
-	Tooltip: ""
+	Tooltip:
+		'''
+		5% increased damage and maximum life
+		While a boss is present, grants an additional 10% damage and maximum life
+		'''
 }
 
 Orirock: {
@@ -2187,12 +2223,18 @@ VanillaDefault: {
 
 ActiveDust: {
 	DisplayName: Active Dust
-	Tooltip: ""
+	Tooltip:
+		'''
+		Enemies take 5% more magic and summon damage
+		'''
 }
 
 CheapEdibleSalt: {
 	DisplayName: Cheap Edible Salt
-	Tooltip: ""
+	Tooltip:
+		'''
+		Enemies take 5% more melee and ranged damage
+		'''
 }
 
 FightingManual: {
@@ -2222,22 +2264,35 @@ NamelessPoetryCollection: {
 
 AsmallroundShieldOfDifferEntiron: {
 	DisplayName: Asmallround Shield Of Differ Entiron
-	Tooltip: ""
+	Tooltip:
+		'''
+		3 defense; debuffs expire twice as fast
+		'''
 }
 
 CrackedRestraintStrap: {
 	DisplayName: Cracked Restraint Strap
-	Tooltip: ""
+	Tooltip:
+		'''
+		Reduces incoming enemy attack damage by 3% before defense
+		'''
 }
 
 LiveRoses: {
 	DisplayName: Live Roses
-	Tooltip: ""
+	Tooltip:
+		'''
+		10% more healing received
+		Regenerates 1 additional HP per second
+		'''
 }
 
 RustBlades: {
 	DisplayName: Rust Blades
-	Tooltip: ""
+	Tooltip:
+		'''
+		Enemies take 10% more melee and ranged damage
+		'''
 }
 
 TheEmperorFavor: {
@@ -2257,7 +2312,10 @@ UnpleasantHemostaticAgent: {
 
 EmperorCollection: {
 	DisplayName: Emperor Collection
-	Tooltip: ""
+	Tooltip:
+		'''
+		Enemies take 15% more magic and summon damage
+		'''
 }
 
 FallenSovereignForm: {
@@ -2277,7 +2335,10 @@ FeatherBeastLiverPate: {
 
 MonarchSidearm: {
 	DisplayName: Monarch Sidearm
-	Tooltip: ""
+	Tooltip:
+		'''
+		Below 30% life, reduces weapon and tool use time by 20%
+		'''
 }
 
 NobleSwords: {
@@ -2287,7 +2348,11 @@ NobleSwords: {
 
 PaleCorolla: {
 	DisplayName: Pale Corolla
-	Tooltip: ""
+	Tooltip:
+		'''
+		20% more healing received
+		Regenerates 2 additional HP per second
+		'''
 }
 
 SilverDinnerFork: {
@@ -2297,7 +2362,10 @@ SilverDinnerFork: {
 
 StandardAntiRiotEquipment: {
 	DisplayName: Standard Anti Riot Equipment
-	Tooltip: ""
+	Tooltip:
+		'''
+		Enemies take 10% more magic and summon damage
+		'''
 }
 
 SuspendedSilkPuppet: {
@@ -2307,7 +2375,10 @@ SuspendedSilkPuppet: {
 
 TheLongWhipOfTheCoachman: {
 	DisplayName: The Long Whip Of The Coachman
-	Tooltip: ""
+	Tooltip:
+		'''
+		Enemies take 15% more melee and ranged damage
+		'''
 }
 
 ChildlikePlaythings: {
@@ -2327,7 +2398,11 @@ DreamEssence: {
 
 FearlessBlade: {
 	DisplayName: Fearless Blade
-	Tooltip: ""
+	Tooltip:
+		'''
+		The highest-rarity weapon in your inventory deals 20% more damage
+		The highest-rarity accessory granting defense in your equipment or inventory grants 50% more defense
+		'''
 }
 
 OldPalmFan: {
@@ -2337,22 +2412,35 @@ OldPalmFan: {
 
 RoundStoneAltar: {
 	DisplayName: Round Stone Altar
-	Tooltip: ""
+	Tooltip:
+		'''
+		While equipped, the first victory over each boss or event grants 1 defense and 1% damage
+		'''
+	StackTooltip: "Growth stacks: {0}"
 }
 
 ScatteredPoems: {
 	DisplayName: Scattered Poems
-	Tooltip: ""
+	Tooltip:
+		'''
+		3 additional minion slots
+		'''
 }
 
 TheAvenger: {
 	DisplayName: The Avenger
-	Tooltip: ""
+	Tooltip:
+		'''
+		Enemies take 20% more melee and ranged damage
+		'''
 }
 
 TheTokenGodmother: {
 	DisplayName: The Token Godmother
-	Tooltip: ""
+	Tooltip:
+		'''
+		Reduces incoming enemy attack damage by 10% before defense
+		'''
 }
 
 RALegmeat: {
@@ -2677,7 +2765,10 @@ PompeiiSummon: {
 
 SarkazKingRegalRest: {
 	DisplayName: SarkazKingRegalRest
-	Tooltip: ""
+	Tooltip:
+		'''
+		Above 85% life, grants 21% damage reduction
+		'''
 }
 
 SarkazKingTornBanner: {
@@ -2687,7 +2778,10 @@ SarkazKingTornBanner: {
 
 BlazeChainsaw: {
 	DisplayName: BlazeChainsaw:
-	Tooltip: ""
+	Tooltip:
+		'''
+		Damage increases as the enemy gets closer to you, up to 120% of its original value
+		'''
 }
 
 PlanterClusterItem: {
@@ -2697,7 +2791,11 @@ PlanterClusterItem: {
 
 KingOfSarkazVessel: {
 	DisplayName: King Of Sarkaz Vessel
-	Tooltip: ""
+	Tooltip:
+		'''
+		20% increased maximum life, or 40% with at least 3 Sarkaz King collectibles equipped
+		With at least 3 Sarkaz King collectibles and above 85% life, regenerates 4 additional HP per second
+		'''
 }
 
 BlackShipBridgeWallItem: {
@@ -3351,9 +3449,8 @@ PompeiiLavaCore: {
 	Tooltip:
 		'''
 		Grants the Obsidian Skin Potion effect (immunity to fire blocks and lava)
-		When taking over 40 damage from a single hit, triggers an explosion centered on you
-		dealing 200 area damage and inflicting On Fire! on enemies
-		Explosion damage benefits from melee damage bonuses
+		Taking damage triggers an explosion centered on you, dealing 200 area damage and inflicting On Fire!
+		Explosion damage benefits from melee damage bonuses; 3-second cooldown
 		'''
 }
 
