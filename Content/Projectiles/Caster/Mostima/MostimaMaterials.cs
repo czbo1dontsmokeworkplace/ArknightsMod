@@ -11,9 +11,11 @@ namespace ArknightsMod.Content.Projectiles.Caster.Mostima;
 internal sealed class MostimaMaterials : ModSystem
 {
     private static readonly Dictionary<string, Texture2D> masks = new();
+    private static readonly Dictionary<string, Texture2D> sources = new();
     internal static Texture2D Get(string name)
     {
-        Texture2D source = ModContent.Request<Texture2D>(MostimaVisuals.Assets + name).Value;
+        if (!sources.TryGetValue(name, out Texture2D source))
+            sources[name] = source = ModContent.Request<Texture2D>(MostimaVisuals.Assets + name).Value;
         if (name is not ("ChronoSigilV2" or "ChronoCrescentV2")) return source;
         if (masks.TryGetValue(name, out Texture2D result)) return result;
         Color[] pixels = new Color[source.Width * source.Height];
@@ -34,6 +36,7 @@ internal sealed class MostimaMaterials : ModSystem
         Texture2D[] textures = new Texture2D[masks.Count];
         masks.Values.CopyTo(textures, 0);
         masks.Clear();
+        sources.Clear();
         Main.QueueMainThreadAction(() => { foreach (Texture2D texture in textures) texture.Dispose(); });
     }
 }

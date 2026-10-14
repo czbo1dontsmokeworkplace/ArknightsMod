@@ -36,7 +36,7 @@ public sealed class MeteoriteShell : ModProjectile
 
     public override void AI()
     {
-        // 不施加重力；extraUpdates 只提高位移和碰撞精度，所有箭矢都是同一弹幕。
+        // 不施加重力；extraUpdates 只提高位移和碰撞精度，所有火箭弹均使用专属爆破弹。
         age++;
         Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
         if (Main.dedServ) return;

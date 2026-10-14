@@ -17,7 +17,7 @@ public class GoldenglowWand : VerticalStaffBase
     public override void AddRecipes() => CreateRecipe()
         .AddIngredient<global::ArknightsMod.Content.Items.Material.BipolarNanoflake>(1)
         .AddIngredient<global::ArknightsMod.Content.Items.Material.ManganeseTrihydrate>(2)
-        .AddIngredient<global::ArknightsMod.Content.Items.Weapons.Caster.Passenger.PassengerConductor>()
+        .AddIngredient<global::ArknightsMod.Content.Items.Weapons.Caster.Rockrock.RockrockStaff>()
         .AddIngredient(ItemID.FragmentNebula, 10)
         .AddTile(TileID.LunarCraftingStation)
         .Register();

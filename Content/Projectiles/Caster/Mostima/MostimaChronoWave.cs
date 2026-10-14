@@ -53,7 +53,7 @@ public sealed class MostimaChronoWave : ModProjectile
     public override void AI()
     {
         Projectile.rotation = Projectile.velocity.SafeNormalize(Vector2.UnitX).ToRotation();
-        if (Main.dedServ) return;
+        if (!SpreadVfxBudget.Visible(Projectile.Center, Radius + 80f)) return;
         if (Age <= 15f && ParticleManager.activeParticles.Count < 1700)
         {
             for (int i = 0; i < 12; i++)
@@ -98,21 +98,25 @@ public sealed class MostimaChronoWave : ModProjectile
                     MostimaVisuals.Blue * fade, new Color(223, 243, 255) * fade, 14f, 360f);
             }
         using var pass = MostimaVisuals.Begin();
-        for (int layer = 3; layer >= 0; layer--)
+        for (int layer = 1; layer >= 0; layer--)
         {
             float radius = RadiusAt(Math.Max(0f, Age - layer * 2.2f));
-            float brightness = layer == 0 ? .73f : .24f;
+            float brightness = layer == 0 ? .56f : .19f;
             Color color = layer == 0 ? new Color(183, 227, 255)
                 : layer % 2 == 0 ? MostimaVisuals.Blue : MostimaVisuals.Violet;
             MostimaVisuals.Sprite("ChronoCrescentV2", Projectile.Center,
                 new Vector2(radius / .425f), color * (brightness * fade), Projectile.rotation);
         }
-        for (int i = 0; i <= 12; i++)
+        for (int i = 0; i <= 30; i++)
         {
-            float angle = Projectile.rotation + MathHelper.Lerp(-1.48f, 1.48f, i / 12f);
-            Vector2 point = Projectile.Center + angle.ToRotationVector2() * Radius;
-            MostimaVisuals.Sprite("TemporalStar", point, new Vector2(i % 3 == 0 ? 32f : 17f),
-                new Color(200, 238, 255) * (.65f * fade), angle);
+            float angle = Projectile.rotation + MathHelper.Lerp(-1.48f, 1.48f, i / 30f);
+            Vector2 ray = angle.ToRotationVector2();
+            bool hour = i % 5 == 0;
+            MostimaClockwork.Line(Projectile.Center + ray * (Radius - (hour ? 27f : 10f)),
+                Projectile.Center + ray * Radius, (hour ? MostimaClockwork.Brass : MostimaVisuals.Blue) * (.65f * fade), hour ? 2.5f : 1f);
+            if (hour)
+                MostimaVisuals.Sprite("TemporalStar", Projectile.Center + ray * Radius,
+                    new Vector2(15f), MostimaClockwork.Silver * (.5f * fade), angle);
         }
         return false;
     }

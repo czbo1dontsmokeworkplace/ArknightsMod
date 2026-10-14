@@ -6,8 +6,8 @@ namespace ArknightsMod.Content.Projectiles.Caster.Skyfire;
 
 internal static class SkyfireVisuals
 {
-    internal static void DrawCharge(Vector2 muzzle, float charge, float time)
-        => SpreadArtsVfx.Charge(muzzle, charge, time, SpreadArt.Meteor);
+    internal static void DrawCharge(Vector2 muzzle, float charge, float time, Vector2 direction)
+        => SpreadArtsVfx.Charge(muzzle, charge, time, SpreadArt.Meteor, direction);
 
     internal static void DrawMeteor(Projectile projectile, bool skyfall)
         => SpreadArtsVfx.Flight(projectile, SpreadArt.Meteor, skyfall ? 1.2f : 1f);
@@ -21,9 +21,9 @@ internal static class SkyfireVisuals
     internal static void FireParticles(Vector2 muzzle, Vector2 direction)
         => SpreadArtsVfx.Release(muzzle, direction, SpreadArt.Meteor);
 
-    internal static void FlightParticles(Vector2 center, Vector2 velocity)
-        => SpreadArtsVfx.Wake(center, velocity, SpreadArt.Meteor);
+    internal static void FlightParticles(Vector2 center, Vector2 velocity, int phase)
+        => SpreadArtsVfx.Wake(center, velocity, SpreadArt.Meteor, phase);
 
     internal static void ImpactParticles(Vector2 center, bool skyfall)
-        => SpreadArtsVfx.Debris(center, SpreadArt.Meteor, skyfall ? 1.2f : 1f);
+        => SpreadArtsVfx.Debris(center, SpreadArt.Meteor, skyfall ? 235f : 170f);
 }

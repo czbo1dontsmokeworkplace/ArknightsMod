@@ -113,8 +113,6 @@ public class GoldenglowBeacon : ModProjectile
                 {
                     Projectile.ai[1] = index;
                     consecutiveHits = 0;
-                    if (selected != null)
-                        TeleportTo(OrbitPosition(selected, owner));
                     Projectile.netUpdate = true;
                 }
                 target = selected;
@@ -123,7 +121,8 @@ public class GoldenglowBeacon : ModProjectile
             else
             {
                 float radius = Math.Max(target.width, target.height) * 0.5f + 48f;
-                MoveTo(OrbitPosition(target, owner), 6f);
+                // Fly to the new lock, then settle into a slow orbit. Never jump between enemies.
+                MoveTo(OrbitPosition(target, owner), Projectile.Distance(target.Center) > radius + 100f ? 38f : 6f);
                 if (--cooldown <= 0 && Projectile.Distance(target.Center) <= radius + 100f)
                 {
                     Attack(owner, target, skill, held?.Bursting == true);
@@ -145,19 +144,6 @@ public class GoldenglowBeacon : ModProjectile
         return target.Center + new Vector2(MathF.Cos(angle), MathF.Sin(angle)) * radius;
     }
 
-    private void TeleportTo(Vector2 destination)
-    {
-        // Two synchronized visual-only pulses also show departure/arrival to remote players.
-        int effect = ModContent.ProjectileType<GoldenglowTeleportEffect>();
-        Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero,
-            effect, 0, 0f, Projectile.owner, 0f);
-        Projectile.Center = destination;
-        Projectile.velocity = Vector2.Zero;
-        Projectile.NewProjectile(Projectile.GetSource_FromThis(), destination, Vector2.Zero,
-            effect, 0, 0f, Projectile.owner, 1f);
-        Projectile.netUpdate = true;
-    }
-
     private NPC GetTarget()
     {
         int index = (int)Projectile.ai[1] - 1;
@@ -168,7 +154,7 @@ public class GoldenglowBeacon : ModProjectile
     {
         NPC best = null;
         float distance = float.MaxValue;
-        float range = skill == 1 ? 1300f : 1000f;
+        float range = (skill == 1 ? 1300f : 1000f) * 1.5f;
         foreach (NPC npc in Main.ActiveNPCs)
         {
             if (!npc.CanBeChasedBy() || (skill != 2 && npc.DistanceSQ(owner.Center) > range * range)) continue;

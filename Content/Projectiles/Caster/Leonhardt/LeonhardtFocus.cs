@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using ArknightsMod.Content.Items.Weapons.Caster.Leonhardt;
 using ArknightsMod.Common.VisualEffects;
+using ArknightsMod.Content.Projectiles.Caster.SpreadArts;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -19,6 +20,7 @@ public sealed class LeonhardtFocus : ModProjectile
 {
     private const int FullChargeTicks = 88;
     private float aimAngle;
+    private SpreadChargeVfx chargeVfx;
     private bool fired;
     private bool sawChannel;
     private int openingGrace;
@@ -69,6 +71,8 @@ public sealed class LeonhardtFocus : ModProjectile
             }
             if ((int)Projectile.ai[0] % 6 == 0)
                 Projectile.netUpdate = true;
+            if (owner.channel && !ChannelMana.Sustain(owner, Projectile))
+            { owner.itemTime = owner.itemAnimation = 0; Projectile.Kill(); return; }
         }
         owner.heldProj = Projectile.whoAmI;
         owner.itemTime = owner.itemAnimation = 2;
@@ -80,22 +84,12 @@ public sealed class LeonhardtFocus : ModProjectile
         Projectile.ai[0] = Math.Min(FullChargeTicks, Projectile.ai[0] + 1f);
 
         if (Main.dedServ) return;
+        (chargeVfx ??= new()).Tick(Projectile, Muzzle, Charge, SpreadArt.Rupture, Direction);
         Lighting.AddLight(Muzzle, new Vector3(.12f, .28f, .45f) * Charge);
         if (Charge >= 1f && Projectile.localAI[0] == 0f)
         {
             Projectile.localAI[0] = 1f;
             ChargeCastFeedback.Ready(Muzzle, new Color(121, 201, 241), DustID.GemSapphire, .48f);
-        }
-        if (Projectile.ai[0] > 8 && Main.rand.NextFloat() < .28f + Charge * .42f)
-        {
-            LeonhardtVisuals.ChargeParticles(Muzzle, Charge);
-            if (Main.rand.NextBool(4))
-            {
-                Vector2 offset = Main.rand.NextVector2CircularEdge(20f, 20f);
-                Dust dust = Dust.NewDustPerfect(Muzzle + offset, DustID.GemSapphire,
-                    -offset * .06f, 120, default, .55f);
-                dust.noGravity = true;
-            }
         }
     }
 
@@ -147,8 +141,7 @@ public sealed class LeonhardtFocus : ModProjectile
             left ? SpriteEffects.FlipVertically : SpriteEffects.None, 0f);
 
         if (Projectile.ai[1] == 0f)
-            SpreadChargeSigil.Draw(Muzzle, 106f, aimAngle, Main.GlobalTimeWrappedHourly,
-                Charge, new Color(121, 201, 241));
+            LeonhardtVisuals.DrawCharge(Muzzle, Charge, chargeVfx?.Phase ?? 0f, Direction);
         ChargeCastFeedback.DrawBar(Owner, Charge, new Color(121, 201, 241));
         return false;
     }

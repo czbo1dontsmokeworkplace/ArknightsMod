@@ -1,5 +1,6 @@
 using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.Projectiles.Guard.Mousse;
+using ArknightsMod.Content.Projectiles.Guard.ArtsFighter;
 using ArknightsMod.Players;
 using Terraria;
 using Terraria.Audio;
@@ -28,8 +29,8 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Mousse
 			Item.width = 44;
 			Item.height = 44;
 			// Auger 的 12 帧基准放慢至 0.75 倍攻击频率。
-			Item.useTime = 16;
-			Item.useAnimation = 16;
+			Item.useTime = ArtsFighterSwing.BaseUseTime;
+			Item.useAnimation = ArtsFighterSwing.BaseUseTime;
 			Item.knockBack = 4f;
 			Item.value = Item.sellPrice(silver: 35);
 			Item.rare = ItemRarityID.Green;

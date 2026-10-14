@@ -48,7 +48,7 @@ public sealed class MostimaSwing : ModProjectile
             if (!Main.dedServ)
             {
                 SoundEngine.PlaySound(SoundID.Item122 with { Volume = .62f, Pitch = -.22f }, owner.Center);
-                MostimaVisuals.Particles(owner.Center + direction * 55, 18, 7);
+                MostimaVisuals.Particles(MostimaFocus.StaffTip(owner.MountedCenter, Projectile.rotation, 1.35f), 18, 7);
             }
         }
     }

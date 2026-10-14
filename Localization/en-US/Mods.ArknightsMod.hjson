@@ -278,6 +278,17 @@ Projectiles: {
 	LavaBurst.DisplayName: Lava Burst
 	LavaFocus.DisplayName: Lava Focus
 	SpreadAfterfield.DisplayName: Spread Afterfield
+	MechAccordDrone.DisplayName: Mech Accord Drone
+	MechAccordHeldStaff.DisplayName: Mech Accord Held Staff
+	ClickDrone.DisplayName: Click's Drone
+	ClickTrackerLaser.DisplayName: Click's Tracking Laser
+	RockrockStarBolt.DisplayName: Rockrock's Vortex Bolt
+	RockrockRailPulse.DisplayName: Rockrock's Drone Laser
+	MechAccordHitFlash.DisplayName: Mech Accord Impact
+	LaevatainSlagfire.DisplayName: Laevatain Slagfire
+	AstraSwordHoldout.DisplayName: Astra Sword Holdout
+	MostimaClockHit.DisplayName: Mostima Clock Hit
+	LaevatainArtsSlash.DisplayName: Laevatain Arts Slash
 }
 
 Keybinds: {

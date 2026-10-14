@@ -6,8 +6,8 @@ namespace ArknightsMod.Content.Projectiles.Caster.Leonhardt;
 
 internal static class LeonhardtVisuals
 {
-    internal static void DrawCharge(Vector2 muzzle, float charge, float time)
-        => SpreadArtsVfx.Charge(muzzle, charge, time, SpreadArt.Rupture);
+    internal static void DrawCharge(Vector2 muzzle, float charge, float time, Vector2 direction)
+        => SpreadArtsVfx.Charge(muzzle, charge, time, SpreadArt.Rupture, direction);
 
     internal static void DrawCore(Projectile projectile, float charge)
         => SpreadArtsVfx.Flight(projectile, SpreadArt.Rupture, .85f + .25f * charge);
@@ -21,6 +21,6 @@ internal static class LeonhardtVisuals
     internal static void FireParticles(Vector2 muzzle, Vector2 direction)
         => SpreadArtsVfx.Release(muzzle, direction, SpreadArt.Rupture);
 
-    internal static void DetonationParticles(Vector2 center, float charge)
-        => SpreadArtsVfx.Debris(center, SpreadArt.Rupture, .7f + .4f * charge);
+    internal static void DetonationParticles(Vector2 center, float radius)
+        => SpreadArtsVfx.Debris(center, SpreadArt.Rupture, radius);
 }

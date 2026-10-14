@@ -41,7 +41,7 @@ public sealed class GitanoCrystal : ModProjectile
         Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
         if (Main.dedServ) return;
         Lighting.AddLight(Projectile.Center, new Vector3(.31f, .13f, .48f));
-        if (Projectile.numUpdates == 0) GitanoVisuals.FlightParticles(Projectile.Center, Projectile.velocity);
+        if (Projectile.numUpdates == 0) GitanoVisuals.FlightParticles(Projectile.Center, Projectile.velocity, (int)Projectile.localAI[0]++);
     }
 
     public override bool OnTileCollide(Vector2 oldVelocity)

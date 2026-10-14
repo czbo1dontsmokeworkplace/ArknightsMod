@@ -2,6 +2,9 @@ using ArknightsMod.Content.Dusts;
 using ArknightsMod.Content.Dusts.Fire;
 using ArknightsMod.Content.Items.Weapons.Guard.Surtr;
 using ArknightsMod.Common.VisualEffects;
+using ArknightsMod.Content.Projectiles.Guard.ArtsFighter;
+using ArknightsMod.Content.Projectiles.Guard.Mousse;
+using System.IO;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -73,41 +76,43 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 			helper.SwingUseTime = 13;
 		}
 
+		public override bool ShouldUpdatePosition() => false;
+
 		public enum ProjMode {Move,Attack,Wait,Stab}
 		public ProjMode projMode = ProjMode.Move;
 		public WeaponPlayer mp => player.GetModPlayer<WeaponPlayer>();
 		private bool hitFeedbackPlayed;
+		private int swingFlamesSpawned;
+		private const int MaxSwingFlames = 15;
 		private readonly HashSet<int> stabHitTargets = new();
-		private const int SwingTransitionFrames = 6;
-		private int swingTransitionTimer;
 		private int comboFacing = 1;
-		private float transitionStart;
-		private float transitionEnd;
+        private float normalAngle;
+        private float normalPower;
+        private int normalUnit = ArtsFighterSwing.BaseUseTime;
+        private bool normalDamageWindow;
+        private int normalDirection = -1;
+        private float NormalTimer { get => Projectile.ai[0]; set => Projectile.ai[0] = value; }
+        private float NormalCount { get => Projectile.ai[1]; set => Projectile.ai[1] = value; }
 		private const float NormalSwingSize = 2f;
 
-		private int AimFacing() => Main.MouseWorld.X < player.Center.X ? -1 : 1;
+		private int AimFacing() => Projectile.velocity.X < 0f ? -1 : 1;
 
-		private void BeginAttack(bool continueRotation)
+		private void BeginAttack()
 		{
 			hitFeedbackPlayed = false;
+			swingFlamesSpawned = 0;
 			stabHitTargets.Clear();
 			stabEffect.Reset();
 			projMode = ProjMode.Attack;
 			// 常驻剑弹幕不会重生；每次挥砍都要重新读取当前技能的武器伤害。
 			Projectile.damage = player.GetWeaponDamage(player.HeldItem);
 			Projectile.originalDamage = Projectile.damage;
-			Vector2 mousePos = Main.MouseWorld - player.Center;
-			float aimAngle = MathF.Atan2(mousePos.Y, mousePos.X);
-			if (continueRotation)
-				helper.SetStartRad(transitionEnd + comboFacing * helper.swingRad * 0.5f, comboFacing);
-			else {
-				comboFacing = AimFacing();
-				player.direction = comboFacing;
-				helper.PointMouseRad(aimAngle);
-			}
-			player.direction = comboFacing;
-			helper.SetStabRad(aimAngle);
-			helper.ResetTime(continueRotation ? 0 : 5);
+			float aimAngle = Projectile.velocity.ToRotation();
+            comboFacing = AimFacing();
+            player.direction = comboFacing;
+            helper.PointMouseRad(aimAngle);
+            helper.SetStabRad(aimAngle);
+            helper.ResetTime();
 			helper.ReloadIndex();
 			helper.SetScale(new Vector2(1f, 1f));
 			helper.SetScale(NormalSwingSize * (mp.Skill == 0 && mp.SkillActive ? 1.2f : 1f));
@@ -125,44 +130,111 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 				helper.SetScale(1.2f);
 				projMode = ProjMode.Stab;
 			}
-			if (projMode == ProjMode.Attack && Main.myPlayer == Projectile.owner && !Main.dedServ) {
-				SoundEngine.PlaySound(SoundID.Item1 with {
-					Volume = 0.42f,
-					Pitch = continueRotation ? -0.12f : 0f,
-					MaxInstances = 3
-				}, player.Center);
-			}
 			helper.PivotOnPlayerCenter = projMode != ProjMode.Stab;
 			if (helper.PivotOnPlayerCenter)
 				helper.setoff = Vector2.Zero;
 			Projectile.netUpdate = true;
 		}
 
-		private void BeginSwingTransition()
-		{
-			projMode = ProjMode.Wait;
-			swingTransitionTimer = 0;
-			transitionStart = helper.swordRad;
-			float aimNow = (Main.MouseWorld - player.Center).ToRotation();
-			int nextFacing = AimFacing();
-			float gap;
-			if (nextFacing == comboFacing) {
-				float aimDifference = MathHelper.WrapAngle(aimNow - helper.mouseRad);
-				float remainingArc = MathHelper.TwoPi - helper.swingRad;
-				gap = MathHelper.Clamp(remainingArc + comboFacing * aimDifference,
-					MathHelper.ToRadians(12f), MathHelper.Pi);
-			}
-			else {
-				// Crossed the player: turn back toward the new side before the next cut.
-				float nextStart = aimNow - nextFacing * helper.swingRad * 0.5f;
-				gap = MathHelper.Clamp(MathF.Abs(MathHelper.WrapAngle(nextStart - transitionStart)),
-					MathHelper.ToRadians(12f), MathHelper.Pi);
-			}
-			comboFacing = nextFacing;
-			player.direction = comboFacing;
-			transitionEnd = transitionStart + comboFacing * gap;
-		}
+        private void StartNormalCombo()
+        {
+            normalUnit = Math.Max(2, (int)MathF.Round(ArtsFighterSwing.BaseUseTime / player.GetAttackSpeed(DamageClass.Melee)));
+            NormalTimer = -normalUnit;
+            NormalCount = 0;
+            normalAngle = MathHelper.Pi;
+            normalPower = 0f;
+            normalDamageWindow = false;
+            helper.PivotOnPlayerCenter = true;
+            helper.SetScale(Vector2.One);
+            helper.SetScale(NormalSwingSize);
+            helper.setoff = Vector2.Zero;
+            helper.ReloadIndex();
+            projMode = ProjMode.Wait;
+            Projectile.netUpdate = true;
+        }
+
+        private void UpdateNormalCombo()
+        {
+            if (NormalTimer < 0f && Main.myPlayer == Projectile.owner &&
+                PlayerInput.MouseInfo.LeftButton != ButtonState.Pressed)
+            {
+                projMode = ProjMode.Move;
+                normalDamageWindow = false;
+                helper.SetScale(1f);
+                helper.ReloadIndex();
+                Projectile.netUpdate = true;
+                return;
+            }
+            float before = NormalTimer;
+            bool release = ArtsFighterSwing.Step(ref Projectile.ai[0], ref Projectile.ai[1], normalUnit,
+                ref normalAngle, ref normalPower);
+            normalDamageWindow = before >= 0f && before < normalUnit;
+            if (before < 0f && NormalTimer == 0f && Main.myPlayer == Projectile.owner)
+            {
+                BeginAttack();
+                if (projMode == ProjMode.Stab) return;
+                Array.Clear(Projectile.localNPCImmunity);
+            }
+            projMode = normalDamageWindow ? ProjMode.Attack : ProjMode.Wait;
+            comboFacing = AimFacing();
+            player.direction = comboFacing;
+            float aim = Projectile.velocity.ToRotation();
+            normalDirection = (NormalCount % 2f != 0f ? -1 : 1) * comboFacing;
+            float start = aim - .75f * MathHelper.Pi * normalDirection;
+            helper.PivotOnPlayerCenter = true;
+            helper.setoff = Vector2.Zero;
+            helper.PointMouseRad(aim);
+            helper.swingTime = normalDamageWindow ? (int)before + 1 : 0;
+            helper.ApplyArtsSwingPose(aim + normalAngle * comboFacing, start,
+                normalDirection * comboFacing, normalDamageWindow);
+            if (normalDamageWindow) SpawnSwingFire();
+            if (release && Main.myPlayer == Projectile.owner)
+            {
+                Vector2 axis = Projectile.velocity.SafeNormalize(Vector2.UnitX * comboFacing);
+                float visualScale = MathHelper.Clamp(Vector2.Distance(helper.handlePos, helper.swordHead) / 168.75f, .5f, 3f);
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), helper.handlePos + axis * 25f * visualScale,
+                    axis * 31.25f * visualScale, ModContent.ProjectileType<LaevatainArtsSlash>(),
+                    0, 0f, Projectile.owner, NormalCount, visualScale);
+            }
+            if (release && !Main.dedServ)
+                SoundEngine.PlaySound(SoundID.Item1 with { Volume = .42f,
+                    Pitch = NormalCount == 2f ? -.12f : 0f, MaxInstances = 3 }, player.Center);
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write((byte)projMode);
+            writer.Write(normalUnit);
+            writer.Write(normalAngle);
+            writer.Write(normalPower);
+            writer.Write(helper.scale.X);
+            writer.Write(helper.scale.Y);
+            writer.Write(helper.lenScale);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            ProjMode previous = projMode;
+            projMode = (ProjMode)reader.ReadByte();
+            normalUnit = reader.ReadInt32();
+            normalAngle = reader.ReadSingle();
+            normalPower = reader.ReadSingle();
+            helper.scale = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            helper.SetScale(reader.ReadSingle());
+            if (previous != projMode && projMode == ProjMode.Stab)
+            {
+                helper.ResetTime();
+                helper.SetStabRad(Projectile.velocity.ToRotation());
+            }
+        }
 		public override void AI() {
+            if (Main.myPlayer == Projectile.owner) {
+                Vector2 aim = (Main.MouseWorld - player.MountedCenter).SafeNormalize(new Vector2(player.direction, 0));
+                if (Vector2.DistanceSquared(aim, Projectile.velocity) > .0009f) {
+                    Projectile.velocity = aim;
+                    Projectile.netUpdate = true;
+                }
+            }
 			if (mp.Skill == 2 && mp.SkillActive) {
 				if (Main.myPlayer == Projectile.owner &&
 				    player.ownedProjectileCounts[ModContent.ProjectileType<LaevatainProjectile_3>()] == 0)
@@ -179,21 +251,19 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 			}
 			switch (projMode) {
 				case ProjMode.Move:
-					helper.PivotOnPlayerCenter = true;
 					helper.setoff = Vector2.Zero;
 					helper.Move();
-					if (Main.myPlayer == Projectile.owner && PlayerInput.MouseInfo.LeftButton == ButtonState.Pressed)
-						BeginAttack(false);
+                    if (Main.myPlayer == Projectile.owner && PlayerInput.MouseInfo.LeftButton == ButtonState.Pressed) {
+                        if (mp.Skill == 1 && mp.SkillActive) BeginAttack();
+                        else StartNormalCombo();
+                    }
 					break;
 				case ProjMode.Attack:
-					bool swingFinished = helper.Swing();
-					if (!swingFinished)
-						SpawnSwingFire();
-					if (swingFinished)
-						BeginSwingTransition();
-					break;
+                case ProjMode.Wait:
+                    UpdateNormalCombo();
+                    break;
 				case ProjMode.Stab:
-					bool stabFinished = helper.Stab(Main.MouseWorld);
+					bool stabFinished = helper.Stab(player.Center + Projectile.velocity * 200f);
 					stabEffect.Update(helper);
 					if (helper.IsStabThrustPhase)
 						SpawnStabTrail();
@@ -209,26 +279,6 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 					}
 
 					break;
-				case ProjMode.Wait:
-				if (Main.myPlayer == Projectile.owner &&
-					PlayerInput.MouseInfo.LeftButton == ButtonState.Pressed && AimFacing() != comboFacing) {
-					BeginSwingTransition();
-					break;
-				}
-					swingTransitionTimer++;
-					float transitionProgress = MathHelper.Clamp(swingTransitionTimer / (float)SwingTransitionFrames, 0f, 1f);
-					helper.ContinueSwingPose(MathHelper.Lerp(transitionStart, transitionEnd,
-						RotationHelper.EaseInOutSine(transitionProgress)));
-					if (swingTransitionTimer >= SwingTransitionFrames) {
-						if (Main.myPlayer == Projectile.owner && PlayerInput.MouseInfo.LeftButton == ButtonState.Pressed)
-							BeginAttack(true);
-						else {
-							projMode = ProjMode.Move;
-							helper.SetScale(1f);
-							helper.ReloadIndex();
-						}
-					}
-					break;
 
 			}
 
@@ -240,7 +290,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 				return;
 
 			Vector2 blade = (helper.swordPos - helper.handlePos).SafeNormalize(Vector2.UnitX);
-			Vector2 tangent = blade.RotatedBy(comboFacing * MathHelper.PiOver2);
+			Vector2 tangent = blade.RotatedBy(normalDirection * MathHelper.PiOver2);
 			Vector2 drawOffset = helper.setoff.RotatedBy(helper.swordRot);
 			float reach = Vector2.Distance(helper.handlePos, helper.swordPos);
 			for (int i = 0; i < 3; i++) {
@@ -271,6 +321,10 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 			if (projMode == ProjMode.Stab)
 				stabEffect.DrawDistortion(helper, sb);
 			helper.DrawBlade(sb);
+            if (projMode == ProjMode.Attack || projMode == ProjMode.Wait)
+                MousseVisuals.DrawEnergyColumn(helper.handlePos, (helper.swordHead - helper.handlePos).ToRotation(),
+                    normalPower, new Color(255, 104, 30),
+                    MathHelper.Clamp(Vector2.Distance(helper.handlePos, helper.swordHead) / 135f, .5f, 3.75f));
 			if (projMode == ProjMode.Stab)
 				stabEffect.DrawWindLines(helper);
 			if (projMode == ProjMode.Attack) {
@@ -291,7 +345,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 			Vector2 screenOrigin = Vector2.Transform(grip - Main.screenPosition, view);
 			Vector2 screenBlade = Vector2.TransformNormal(helper.swordPos - helper.handlePos, view);
 			float distance = screenBlade.Length() * 1.15f;
-			float sweptAngle = helper.swordRad - helper.startRad;
+			float sweptAngle = helper.swordRad - helper.ArtsSwingStart;
 			if (distance < 1f || MathF.Abs(sweptAngle) < 0.001f)
 				return;
 
@@ -299,13 +353,13 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 			var direction = sweptAngle > 0f ? RotationHelper.SwingDir.plus : RotationHelper.SwingDir.minus;
 
 			ModContent.GetInstance<RTHelper>().DrawScreen(sb, sourceRT => {
-				HeatWaveRTEffect.Draw(sb, sourceRT, helper.startRad, helper.swordRad, direction,
+				HeatWaveRTEffect.Draw(sb, sourceRT, helper.ArtsSwingStart, helper.swordRad, direction,
 					screenOrigin, distance, strength: 5f, blendState: BlendState.Opaque);
 			});
 		}
 
 		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {
-			if (projMode == ProjMode.Attack || projMode == ProjMode.Stab)
+			if ((projMode == ProjMode.Attack && normalDamageWindow) || projMode == ProjMode.Stab)
 				return helper.Colliding(targetHitbox);
 			return false;
 		}
@@ -318,6 +372,19 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 		}
 
 		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
+			if (projMode == ProjMode.Attack && Main.myPlayer == Projectile.owner && swingFlamesSpawned < MaxSwingFlames) {
+				int count = Math.Min(Main.rand.Next(2, 4), MaxSwingFlames - swingFlamesSpawned);
+				Vector2 forward = Vector2.UnitX * comboFacing;
+				Vector2 origin = target.Center + forward * Math.Min(target.width * 0.25f, 18f);
+				for (int i = 0; i < count; i++) {
+					Vector2 velocity = forward.RotatedBy(Main.rand.NextFloat(-MathHelper.ToRadians(11f), MathHelper.ToRadians(11f)))
+						* Main.rand.NextFloat(10f, 14f);
+					Projectile.NewProjectile(Projectile.GetSource_FromThis(), origin, velocity,
+						ModContent.ProjectileType<LaevatainSlagfire>(), Projectile.damage,
+						Projectile.knockBack, Projectile.owner);
+				}
+				swingFlamesSpawned += count;
+			}
 			if (projMode == ProjMode.Stab)
 				stabHitTargets.Add(target.whoAmI);
 			if (projMode == ProjMode.Stab)

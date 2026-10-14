@@ -71,7 +71,7 @@ public sealed class LeonhardtDetonation : ModProjectile
             { Volume = .29f, Pitch = .16f }, Projectile.Center);
         Main.instance.CameraModifiers.Add(new PunchCameraModifier(Projectile.Center, Vector2.UnitX,
             2f + 4f * Charge, 5f, 11));
-        LeonhardtVisuals.DetonationParticles(Projectile.Center, Charge);
+        LeonhardtVisuals.DetonationParticles(Projectile.Center, Radius);
         for (int i = 0; i < 7; i++)
         {
             Vector2 direction = (MathHelper.TwoPi * i / 7f + Main.rand.NextFloat(-.11f, .11f))

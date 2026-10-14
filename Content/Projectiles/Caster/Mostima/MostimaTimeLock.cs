@@ -51,16 +51,10 @@ public sealed class MostimaTimeLock : ModProjectile
         float fade = Math.Min(MathHelper.Clamp(Projectile.ai[1] / 15, 0, 1),
             MathHelper.Clamp((Projectile.ai[0] - Projectile.ai[1]) / 25, 0, 1));
         using var pass = MostimaVisuals.Begin();
-        MostimaVisuals.Dial(Projectile.Center, new Vector2(600), 0, MostimaVisuals.Blue * fade * .45f);
-        MostimaVisuals.Dial(Projectile.Center, new Vector2(510), 0, MostimaVisuals.Violet * fade * .2f);
-        // A stepped second hand, rather than smooth rotation, communicates arrested time.
-        float angle = (int)(Projectile.ai[1] / 60) * MathHelper.PiOver4;
-        MostimaVisuals.Sprite("ChronoHand", Projectile.Center + angle.ToRotationVector2() * 100f,
-            new Vector2(210, 24), MostimaVisuals.Blue * fade * .75f, angle);
-        MostimaVisuals.Sprite("TemporalSmear", Projectile.Center, new Vector2(430),
-            MostimaVisuals.Blue * fade * .14f, -Projectile.ai[1] * .004f);
-        MostimaVisuals.Sprite("TemporalStar", Projectile.Center, new Vector2(52f),
-            new Color(216, 240, 255) * fade * .7f);
+        MostimaClockwork.Face(Projectile.Center, 300f,
+            10f + (int)(Projectile.ai[1] / 60f) * 10f, fade * .65f, true);
+        MostimaVisuals.Sprite("TemporalSmear", Projectile.Center, new Vector2(360),
+            MostimaVisuals.Blue * fade * .08f, -Projectile.ai[1] * .004f);
         return false;
     }
 }

@@ -480,6 +480,30 @@ GoldenglowWand: {
 	}
 }
 
+ClickStaff: {
+	1: {
+		Label: Tactical Chant Beta
+		Desc: Auto recovery, manual activation, 25 seconds. Drone volley speed +25% to +47.5%; ATK +20% to +42.5%.
+	}
+
+	2: {
+		Label: Synchronized Targeting
+		Desc: Auto recovery, manual activation, 20 seconds. ATK +35% to +66.5%; both staff and drone hits each have a 20% chance to stun ordinary enemies for 0.4 seconds.
+	}
+}
+
+RockrockStaff: {
+	1: {
+		Label: Tactical Chant Gamma
+		Desc: Auto recovery, manual activation, 30 seconds. Attack speed +30% to +61.5%.
+	}
+
+	2: {
+		Label: I Carry This Burden
+		Desc: Auto recovery, manual activation, 40 seconds. Attack speed +30% to +66%; after 20 seconds, overload raises the drone's repeated-hit cap to 150% to 199.5%, with a further +20% to +56% damage.
+	}
+}
+
 MelanthasSword: {
 	1: {
 		Label: ATK Up α
@@ -1424,8 +1448,8 @@ MostimaStaff: {
 		Desc:
 			'''
 			Auto recovery, manual activation, lasts [c/3791db:4–7] seconds
-			Creates a [c/3791db:600]-pixel time-lock domain at the cursor, stunning ordinary enemies
-			Deals [c/3791db:80%–140%] ATK as Arts damage each second; bosses and segmented enemies resist the stun
+			Can activate while channeling; the clock gradually turns amber-red and its effects intensify
+			Clock damage is reduced by [c/3791db:20%]; hits freeze non-boss enemies for [c/3791db:1.5] seconds
 			'''
 	}
 
@@ -1434,8 +1458,8 @@ MostimaStaff: {
 		Desc:
 			'''
 			Auto recovery, manual activation, lasts [c/3791db:20–27] seconds
-			Increases ATK by [c/3791db:60%–170%]; attacks become staff swings releasing expanding clock waves
-			Waves pierce enemies and terrain, hit each enemy once with knockback and slow ordinary enemies for [c/3791db:2] seconds
+			Can activate while channeling; the clock expands with a nonlinear curve
+			Clock and blast radius reach [c/3791db:130%], and attack frequency reaches [c/3791db:130%]
 			'''
 	}
 }

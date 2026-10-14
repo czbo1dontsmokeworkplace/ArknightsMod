@@ -12,7 +12,7 @@ namespace ArknightsMod.Content.Buffs
 		public const int MaxDurationTicks = 60 * 5;
 
 		public static bool HasStun(NPC npc) {
-			return npc.HasBuff<StunDebuff>() || npc.HasBuff<TyphonSkillArrowStunBuff>();
+			return npc.HasBuff<StunDebuff>() || npc.HasBuff<MostimaClockStun>() || npc.HasBuff<MostimaTimeStop>() || npc.HasBuff<TyphonSkillArrowStunBuff>();
 		}
 
 		public static bool CanStun(NPC npc) {
@@ -23,14 +23,14 @@ namespace ArknightsMod.Content.Buffs
 				&& npc.lifeMax > 5;
 		}
 
-		public static void TryApply(NPC target, int durationTicks = DefaultDurationTicks) {
+		public static void TryApply(NPC target, int durationTicks = DefaultDurationTicks, bool showIndicator = true) {
 			if (Main.netMode == NetmodeID.MultiplayerClient)
 				return;
 
 			if (!CanStun(target))
 				return;
 
-			int buffType = ModContent.BuffType<StunDebuff>();
+			int buffType = showIndicator ? ModContent.BuffType<StunDebuff>() : ModContent.BuffType<MostimaClockStun>();
 			int index = target.FindBuffIndex(buffType);
 			if (index >= 0) {
 				target.buffTime[index] = Math.Min(target.buffTime[index] + durationTicks, MaxDurationTicks);

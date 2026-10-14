@@ -88,6 +88,16 @@ RARicecrabBuff: {
 	Description: Mods.ArknightsMod.Buffs.RARicecrabBuff.Description
 }
 
+MostimaClockStun: {
+	DisplayName: Temporal Stasis
+	Description: Temporarily unable to move
+}
+
+MostimaTimeStop: {
+	DisplayName: Shattered Time
+	Description: Time is frozen; movement and actions are stopped
+}
+
 StunDebuff: {
 	DisplayName: Stun Debuff
 	Description: Mods.ArknightsMod.Buffs.StunDebuff.Description

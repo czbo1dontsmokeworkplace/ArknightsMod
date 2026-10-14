@@ -26,8 +26,8 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Fiammetta
 		// 基础攻速提高 20%：原 60 帧间隔 / 1.2 = 50，物品和实际炮击共用此节拍。
 		internal const int AttackIntervalTicks = 50;
 
-		// 基础伤害翻倍，所有精英档位统一为 464。
-		protected override int[] EliteDamage => [464, 464, 464];
+		// 移至四柱时期：在原 464 的基础上提高 25%，保持各精英档位一致。
+		protected override int[] EliteDamage => [580, 580, 580];
 
 		private static SoundStyle SkillActiveSound;
 
@@ -57,7 +57,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Fiammetta
 			Item.useStyle = ItemUseStyleID.Shoot;
 			Item.knockBack = 7.5f;
 			Item.value = Item.sellPrice(gold: 1, silver: 20);
-			Item.rare = ItemRarityID.LightRed;
+			Item.rare = ItemRarityID.Red;
 			Item.autoReuse = true;
 			Item.channel = true;
 			Item.noMelee = true;
@@ -216,6 +216,8 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Fiammetta
 				.AddIngredient<global::ArknightsMod.Content.Items.Material.GrindstonePentahydrate>(2)
 				.AddIngredient<MeteoriteCannon>()
 				.AddIngredient(ItemID.ShroomiteBar, 16)
+				.AddIngredient(ItemID.FragmentVortex, 12)
+				.AddIngredient(ItemID.FragmentSolar, 12)
 				.AddIngredient(ItemID.RocketI, 50)
 				.AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>())
 				.Register();

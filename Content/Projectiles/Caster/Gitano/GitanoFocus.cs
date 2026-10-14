@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using ArknightsMod.Content.Items.Weapons.Caster.Gitano;
 using ArknightsMod.Common.VisualEffects;
+using ArknightsMod.Content.Projectiles.Caster.SpreadArts;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -20,6 +21,7 @@ public sealed class GitanoFocus : ModProjectile
     private const int BaseChargeTicks = 52;
     private static readonly float[] ChantSpeed = [.15f, .20f, .25f, .30f, .35f, .40f, .45f, .55f, .65f, .75f];
     private float aimAngle;
+    private SpreadChargeVfx chargeVfx;
     private bool fired;
     private bool sawChannel;
     private int openingGrace;
@@ -78,6 +80,8 @@ public sealed class GitanoFocus : ModProjectile
                 return;
             }
             if ((int)Projectile.ai[0] % 6 == 0) Projectile.netUpdate = true;
+            if (owner.channel && !ChannelMana.Sustain(owner, Projectile))
+            { owner.itemTime = owner.itemAnimation = 0; Projectile.Kill(); return; }
         }
         owner.heldProj = Projectile.whoAmI;
         owner.itemTime = owner.itemAnimation = 2;
@@ -86,14 +90,13 @@ public sealed class GitanoFocus : ModProjectile
         Projectile.timeLeft = 2;
         Projectile.ai[0] = Math.Min(BaseChargeTicks, Projectile.ai[0] + 1f);
         if (Main.dedServ) return;
+        (chargeVfx ??= new()).Tick(Projectile, Muzzle, Charge, SpreadArt.Crystal, Direction);
         Lighting.AddLight(Muzzle, new Vector3(.32f, .11f, .46f) * Charge);
         if (Charge >= 1f && Projectile.localAI[0] == 0f)
         {
             Projectile.localAI[0] = 1f;
             ChargeCastFeedback.Ready(Muzzle, new Color(178, 116, 234), DustID.GemAmethyst, .38f);
         }
-        if (Projectile.ai[0] > 7 && Main.rand.NextFloat() < .2f + Charge * .44f)
-            GitanoVisuals.ChargeParticles(Muzzle, Charge);
     }
 
     private void Fire()
@@ -130,8 +133,7 @@ public sealed class GitanoFocus : ModProjectile
         Main.spriteBatch.Draw(orb, OrbPosition - Main.screenPosition, null, lightColor,
             rotation, orb.Size() * .5f, .82f, SpriteEffects.None, 0f);
         if (Projectile.ai[1] == 0f)
-            SpreadChargeSigil.Draw(Muzzle, 80f, aimAngle, Main.GlobalTimeWrappedHourly,
-                Charge, new Color(178, 116, 234));
+            GitanoVisuals.DrawCharge(Muzzle, Charge, chargeVfx?.Phase ?? 0f, Direction);
         ChargeCastFeedback.DrawBar(Owner, Charge, new Color(178, 116, 234));
         return false;
     }

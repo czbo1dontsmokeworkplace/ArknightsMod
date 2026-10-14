@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using ArknightsMod.Content.Items.Weapons.Caster.Skyfire;
 using ArknightsMod.Common.VisualEffects;
+using ArknightsMod.Content.Projectiles.Caster.SpreadArts;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -18,12 +19,15 @@ public sealed class SkyfireFocus : ModProjectile
 {
     private const int FullChargeTicks = 88;
     private float aimAngle;
+    private SpreadChargeVfx chargeVfx;
     private bool fired;
     private bool sawChannel;
     private int openingGrace;
     private Player Owner => Main.player[Projectile.owner];
     private Vector2 Direction => aimAngle.ToRotationVector2();
-    private Vector2 Muzzle => Owner.MountedCenter + Direction * 43f;
+    // Vanilla MeteorStaff is 44x42. This is the distance between the exact grip/tip
+    // used below, including the mirrored draw; keep the server free of texture reads.
+    private Vector2 Muzzle => Owner.MountedCenter + Direction * 37.67618f;
     private float Charge => MathHelper.Clamp(Projectile.ai[0] / FullChargeTicks, 0f, 1f);
     public override string Texture => "Terraria/Images/Item_" + ItemID.MeteorStaff;
 
@@ -62,6 +66,8 @@ public sealed class SkyfireFocus : ModProjectile
                 return;
             }
             if ((int)Projectile.ai[0] % 6 == 0) Projectile.netUpdate = true;
+            if (owner.channel && !ChannelMana.Sustain(owner, Projectile))
+            { owner.itemTime = owner.itemAnimation = 0; Projectile.Kill(); return; }
         }
         owner.heldProj = Projectile.whoAmI;
         owner.itemTime = owner.itemAnimation = 2;
@@ -70,14 +76,13 @@ public sealed class SkyfireFocus : ModProjectile
         Projectile.timeLeft = 2;
         Projectile.ai[0] = Math.Min(FullChargeTicks, Projectile.ai[0] + 1f);
         if (Main.dedServ) return;
+        (chargeVfx ??= new()).Tick(Projectile, Muzzle, Charge, SpreadArt.Meteor, Direction);
         Lighting.AddLight(Muzzle, new Vector3(.58f, .19f, .04f) * Charge);
         if (Charge >= 1f && Projectile.localAI[0] == 0f)
         {
             Projectile.localAI[0] = 1f;
             ChargeCastFeedback.Ready(Muzzle, new Color(245, 140, 83), DustID.Torch, .22f);
         }
-        if (Projectile.ai[0] > 8 && Main.rand.NextFloat() < .22f + Charge * .43f)
-            SkyfireVisuals.ChargeParticles(Muzzle, Charge);
     }
 
     private void Fire()
@@ -132,8 +137,7 @@ public sealed class SkyfireFocus : ModProjectile
             left ? aimAngle + nativeAngle : aimAngle - nativeAngle, grip, 1f,
             left ? SpriteEffects.FlipVertically : SpriteEffects.None, 0f);
         if (Projectile.ai[1] == 0f)
-            SpreadChargeSigil.Draw(Muzzle, 128f, aimAngle, Main.GlobalTimeWrappedHourly,
-                Charge, new Color(245, 140, 83));
+            SkyfireVisuals.DrawCharge(Muzzle, Charge, chargeVfx?.Phase ?? 0f, Direction);
         ChargeCastFeedback.DrawBar(Owner, Charge, new Color(245, 140, 83));
         return false;
     }

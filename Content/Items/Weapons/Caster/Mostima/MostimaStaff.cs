@@ -52,9 +52,9 @@ public sealed class MostimaStaff : ExpansionWeaponBase
             player.GetModPlayer<MostimaStaffPlayer>().TryActivate();
             return false;
         }
-        bool wave = SkillActive(player, 2);
-        Item.channel = !wave;
-        Item.useTime = Item.useAnimation = wave ? 42 : 20;
+        if (player.ownedProjectileCounts[ModContent.ProjectileType<MostimaCrossBurst>()] > 0) return false;
+        Item.channel = true;
+        Item.useTime = Item.useAnimation = 20;
         return player.ownedProjectileCounts[ModContent.ProjectileType<MostimaFocus>()] == 0
             && player.ownedProjectileCounts[ModContent.ProjectileType<MostimaSwing>()] == 0
             && base.CanUseItem(player);
@@ -63,7 +63,6 @@ public sealed class MostimaStaff : ExpansionWeaponBase
     {
         base.ModifyWeaponDamage(player, ref damage);
         if (SkillActive(player, 0)) damage *= 1f + MathHelper.Lerp(.3f, 1f, Rank(player));
-        if (SkillActive(player, 2)) damage *= 1f + MathHelper.Lerp(.6f, 1.7f, Rank(player));
     }
     public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position,
         Vector2 velocity, int type, int damage, float knockback)
@@ -72,7 +71,7 @@ public sealed class MostimaStaff : ExpansionWeaponBase
         {
             int p = Projectile.NewProjectile(source, player.MountedCenter,
                 (Main.MouseWorld - player.MountedCenter).SafeNormalize(Vector2.UnitX),
-                SkillActive(player, 2) ? ModContent.ProjectileType<MostimaSwing>() : type,
+                ModContent.ProjectileType<MostimaFocus>(),
                 damage, knockback, player.whoAmI);
             if (Main.projectile.IndexInRange(p)) Main.projectile[p].CritChance = player.GetWeaponCrit(Item);
         }

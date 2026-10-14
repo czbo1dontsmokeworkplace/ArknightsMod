@@ -58,6 +58,6 @@ public sealed class LinStaff : PhalanxStaff
     public override void AddRecipes() => CreateRecipe()
      .AddIngredient<global::ArknightsMod.Content.Items.Material.D32Steel>(1)
      .AddIngredient<global::ArknightsMod.Content.Items.Material.CuttingFluidSolution>(2).AddIngredient<CarnelianStaff>()
-        .AddIngredient(ItemID.FragmentNebula, 12).AddIngredient(ItemID.Glass, 100).AddIngredient(ItemID.CrystalShard, 25)
+        .AddIngredient(ItemID.Ectoplasm, 12).AddIngredient(ItemID.Glass, 100).AddIngredient(ItemID.CrystalShard, 25)
         .AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>()).Register();
 }

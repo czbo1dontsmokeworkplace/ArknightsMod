@@ -38,8 +38,7 @@ public sealed class LavaBolt : ModProjectile
         if (Main.dedServ) return;
         Lighting.AddLight(Projectile.Center, .45f, .12f, .03f);
         if (Projectile.numUpdates == 0)
-            OperatorFlightVfx.Spark(Projectile.Center, -Projectile.velocity * .13f,
-                new Color(255, 153, 72), 15f, 11, 1.5f);
+            SpreadArtsVfx.Wake(Projectile.Center, Projectile.velocity, SpreadArt.Ember, (int)Projectile.localAI[0]++);
     }
     public override bool OnTileCollide(Vector2 oldVelocity) { Projectile.Kill(); return false; }
     public override void OnKill(int timeLeft)
@@ -58,9 +57,7 @@ public sealed class LavaBolt : ModProjectile
     }
     public override bool PreDraw(ref Color lightColor)
     {
-        OperatorFlightVfx.Trail(Projectile, new Color(157, 55, 26), new Color(255, 180, 79), 5f, 65f);
-        OperatorFlightVfx.Sprite("StarCore", Projectile.Center, new Vector2(23f),
-            OperatorFlightVfx.Add(new Color(255, 169, 83), .9f), Projectile.rotation);
+        SpreadArtsVfx.Flight(Projectile, SpreadArt.Ember);
         return false;
     }
 }

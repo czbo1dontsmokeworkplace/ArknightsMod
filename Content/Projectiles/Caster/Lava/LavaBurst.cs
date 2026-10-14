@@ -41,18 +41,12 @@ public sealed class LavaBurst : ModProjectile
     public override void AI()
     {
         if (Age != 0 || Main.dedServ) return;
-        OperatorFlightVfx.Ring(Projectile.Center, new Color(255, 154, 68), 115f, 17);
-        for (int i = 0; i < 14; i++)
-        {
-            Vector2 direction = (MathHelper.TwoPi * i / 14f).ToRotationVector2();
-            OperatorFlightVfx.Spark(Projectile.Center, direction * Main.rand.NextFloat(1.4f, 4f),
-                i % 3 == 0 ? Color.White : new Color(255, 154, 68), 15f, 15, 1.4f);
-        }
+        SpreadArtsVfx.Debris(Projectile.Center, SpreadArt.Ember, Projectile.width * .5f);
     }
+
     public override bool PreDraw(ref Color lightColor)
     {
-        SpreadChargeSigil.Draw(Projectile.Center, 110f, 0f, Main.GlobalTimeWrappedHourly,
-            1f - Age / 18f, new Color(255, 154, 68));
+        SpreadArtsVfx.Burst(Projectile.Center, Projectile.width, Age / 18f, SpreadArt.Ember);
         return false;
     }
 }

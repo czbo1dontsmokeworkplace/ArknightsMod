@@ -115,6 +115,16 @@ RARicecrabBuff: {
 		'''
 }
 
+MostimaClockStun: {
+	DisplayName: 时序停滞
+	Description: 暂时无法行动
+}
+
+MostimaTimeStop: {
+	DisplayName: 荒时停滞
+	Description: 时间被冻结，暂时无法移动或行动
+}
+
 StunDebuff: {
 	// DisplayName: Stun Debuff
 	// Description: Mods.ArknightsMod.Buffs.StunDebuff.Description

@@ -20,7 +20,7 @@ AstesiaDefault: {
 
 AstraSword: {
 	DisplayName: Astesia's Astral Sword
-	Tooltip: ""
+	Tooltip: Hold left click to alternate two sky-blue slashes, with a longer windup after the second
 }
 
 # Furniture
@@ -1477,7 +1477,7 @@ AdnachielCrossbow: {
 
 Lava_Dagger: {
 	DisplayName: Lava_ Dagger
-	Tooltip: ""
+	Tooltip: Consumes mana every 20 ticks while charging
 }
 
 Shirayuki_Shuriken: {
@@ -3164,6 +3164,29 @@ GoldenglowWand: {
 	BeaconCount: Drones: {0}/{1}
 }
 
+ClickStaff: {
+	DisplayName: Click's Viewfinder Staff
+	Tooltip:
+		'''
+		Hold left click and drag; release to mark and strike up to 80 enemies inside the selection
+		The selection snaps to the tile grid and covers at most 20×20 tiles
+		A drone stays beside you and fires two volleys of instant lasers at every marked target
+		Select again after the volley; switching weapons cancels remaining shots
+		'''
+}
+
+RockrockStaff: {
+	DisplayName: Rockrock's Turbine Staff
+	Tooltip:
+		'''
+		Raise the staff to form three star bolts at the cursor that curve and converge on the target
+		A drone flies to the target and supports the attack with brief laser pulses
+		Repeated hits on one target increase drone damage
+		Star bolts gain speed and homing strength over time, easing through tight turns
+		After 3 seconds of continuous attacks, unleash a 1-second vortex burst with rapid five-bolt volleys and faster drone fire
+		'''
+}
+
 BeehunterBag: {
 	DisplayName: Beehunter Bag
 	Tooltip: ""
@@ -3675,8 +3698,8 @@ MeteoriteCannon: {
 	DisplayName: Meteorite's Explosive Cannon
 	Tooltip:
 		'''
-		Consumes arrows to fire fast, straight explosive shells
-		Converts every arrow into the same projectile; impacts burst into shrapnel
+		Consumes rockets and includes their damage in fast, straight explosive shells
+		Converts every rocket into a custom explosive shell; impacts burst into shrapnel
 		'''
 }
 
@@ -3700,7 +3723,11 @@ ShiningStaff: {
 
 LeonhardtStaff: {
 	DisplayName: Leonhardt's Staff
-	Tooltip: Let's see whether you're gold or manure!
+	Tooltip:
+		'''
+		Let's see whether you're gold or manure!
+		Consumes mana every 20 ticks while charging
+		'''
 }
 
 PassengerConductor: {
@@ -3989,19 +4016,31 @@ MaterialistTreasureBag: {
 
 GitanoOrb: {
 	DisplayName: Gitano's Crystal Orb
-	Tooltip: Wait a minute, let me predict the results of this battle.
+	Tooltip:
+		'''
+		Wait a minute, let me predict the results of this battle.
+		Consumes mana every 20 ticks while charging
+		'''
 }
 
 SkyfireStaff: {
 	DisplayName: Skyfire's Meteor Staff
-	Tooltip: May the flames of the sun devour you!
+	Tooltip:
+		'''
+		May the flames of the sun devour you!
+		Consumes mana every 20 ticks while charging
+		'''
 }
 
 MostimaStaff: {
 	DisplayName: Mostima's Staff
 	Tooltip:
 		'''
-		Hold left click to charge; release at full charge to detonate a large cross-shaped clock at the cursor
-		Maximum targeting range: 1000 pixels; blast diameter: 560 pixels
+		Hold left click to immediately channel a clockwork sigil at the cursor; no charging required
+		The clock slowly follows the cursor and fades in place when released
+		Maximum placement range: 1000 pixels; clock diameter: 560 pixels; blast diameter: 1240 pixels
+		The minute hand moves one division over 12 ticks, detonates, then rests for 5 ticks; repeats while held
+		Releasing forces a 15-tick fade-out before another clock can be placed
+		Each explosion consumes 30 additional mana; activate skills directly while channeling
 		'''
 }

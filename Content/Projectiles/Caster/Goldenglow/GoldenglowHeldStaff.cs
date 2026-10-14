@@ -25,8 +25,8 @@ public sealed class GoldenglowHeldStaff : ModProjectile
         {
             Player player = Main.player[Projectile.owner];
             var mp = player.GetModPlayer<WeaponPlayer>();
-            float range = mp.SkillActive && mp.Skill == 1 ? 1300f : 1000f;
-            return FindTargetNPC(aim, player.Center, range, mp.SkillActive ? 345f : 225f);
+            float range = (mp.SkillActive && mp.Skill == 1 ? 1300f : 1000f) * 1.5f;
+            return FindTargetNPC(aim, player.Center, range, (mp.SkillActive ? 345f : 225f) * 1.5f);
         }
     }
     private Item channeledItem;
@@ -78,7 +78,7 @@ public sealed class GoldenglowHeldStaff : ModProjectile
         channeledItem ??= player.HeldItem;
         Projectile.timeLeft = 2;
         var mp = player.GetModPlayer<WeaponPlayer>();
-        float range = mp.SkillActive ? mp.Skill switch { 1 => 1300f, 2 => 1800f, _ => 1000f } : 1000f;
+        float range = (mp.SkillActive ? mp.Skill switch { 1 => 1300f, 2 => 1800f, _ => 1000f } : 1000f) * 1.5f;
         if (mp.SkillActive && mp.Skill == 2)
         {
             Projectile.Kill();

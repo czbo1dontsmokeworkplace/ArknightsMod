@@ -1,4 +1,8 @@
 ﻿Item,Index,Name,ChargeType,AutoTrigger,AutoUpdateActive,SummonSkill,SuppressReadyPulse,IsPermanent,UsesCustomCharge
+ClickStaff,0,1,1,0,1,0,0,0,0
+ClickStaff,1,2,1,0,1,0,0,0,0
+RockrockStaff,0,1,1,0,1,0,0,0,0
+RockrockStaff,1,2,1,0,1,0,0,0,0
 MagallanController,0,1,1,1,1,0,1,1,0
 MagallanController,1,2,1,1,1,0,1,1,0
 MagallanController,2,3,1,1,1,0,1,1,0

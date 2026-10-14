@@ -5,233 +5,285 @@ using Terraria.ID;
 
 namespace ArknightsMod.Common.VisualEffects;
 
-internal enum SpreadArt { Crystal, Rupture, Meteor }
+internal enum SpreadArt { Crystal, Rupture, Meteor, Ember }
 
 internal static class SpreadArtsVfx
 {
-    private static Color Body(SpreadArt art) => art switch {
-        SpreadArt.Crystal => new(137, 87, 208), SpreadArt.Rupture => new(28, 145, 183), _ => new(238, 67, 19) };
-    private static Color Edge(SpreadArt art) => art switch {
-        SpreadArt.Crystal => new(229, 204, 255), SpreadArt.Rupture => new(194, 252, 239), _ => new(255, 216, 114) };
+    internal static Color Body(SpreadArt art) => art switch {
+        SpreadArt.Crystal => new(149, 91, 223), SpreadArt.Rupture => new(47, 172, 201),
+        SpreadArt.Ember => new(237, 89, 35), _ => new(246, 74, 22) };
+    internal static Color Edge(SpreadArt art) => art switch {
+        SpreadArt.Crystal => new(227, 197, 255), SpreadArt.Rupture => new(174, 240, 234),
+        SpreadArt.Ember => new(255, 189, 92), _ => new(255, 216, 114) };
     private static Color Dark(SpreadArt art) => art switch {
-        SpreadArt.Crystal => new(23, 13, 47), SpreadArt.Rupture => new(8, 24, 38), _ => new(65, 22, 19) };
+        SpreadArt.Crystal => new(33, 18, 59), SpreadArt.Rupture => new(9, 29, 40), _ => new(65, 22, 29) };
+    private static bool Fire(SpreadArt art) => art is SpreadArt.Meteor or SpreadArt.Ember;
 
-    // Helium's sequence: inward streaks -> growing animated core -> full-charge cue -> directional release.
-    // Each school has its own silhouette; the shared head bar/one-shot ready feedback stays in the holdout.
-    internal static void Charge(Vector2 center, float charge, float time, SpreadArt art)
+    internal static void Charge(Vector2 center, float charge, float time, SpreadArt art, Vector2 direction)
     {
-        using var material = SpreadArtsMaterial.Begin();
-        charge = MathHelper.Clamp(charge, 0f, 1f);
-        if (charge < .01f) return;
-        float size = 12f + 23f * MathHelper.SmoothStep(0f, 1f, charge);
-        Core(center, Vector2.UnitX, size, time, art, true);
-        int count = art == SpreadArt.Crystal ? 3 : art == SpreadArt.Rupture ? 2 : 4;
-        for (int i = 0; i < count; i++)
+        if (!SpreadVfxBudget.Visible(center, 140f)) return;
+        Vector2 aim = direction.SafeNormalize(Vector2.UnitX);
+        float rotation = aim.ToRotation();
+        float late = MathHelper.Clamp((charge - .45f) / .55f, 0f, 1f);
+        charge = SpreadChargeVfx.Growth(charge);
+        float size = (14f + 23f * charge) * SpreadChargeVfx.ArtScale(art);
+        float breathe = 1f + .045f * MathF.Sin(time * 10f);
+        // Arc Nova: three nested ellipsoidal blooms with a directional body.
+        // Despoiler: saturated corona enclosing a darker compressed center.
+        using (SpreadArtsMaterial.Begin())
         {
-            float phase = (time * (.6f + charge * .5f) + i / (float)count) % 1f;
-            float angle = i * MathHelper.TwoPi / count + time * .9f;
-            Vector2 direction = angle.ToRotationVector2();
-            float radius = size * .5f + (1f - phase) * (24f + 18f * charge);
-            float alpha = MathF.Sin(phase * MathHelper.Pi) * (.3f + .4f * charge);
-            SpreadArtsMaterial.Sprite("LinearSpark", center + direction * radius,
-                new Vector2(2.5f, 7f + 9f * phase), OperatorFlightVfx.Add(Edge(art), alpha), angle + MathHelper.PiOver2);
+            for (int i = 0; i < 3; i++)
+                SpreadArtsMaterial.Sprite("ChargeBloom", center, new Vector2(1.3f, 1f) * size * (2.2f - i * .48f) * breathe,
+                    OperatorFlightVfx.Add(i == 2 ? Edge(art) : Body(art), (.48f + charge * .18f) * (1f - i * .16f)), rotation);
+            SpreadArtsMaterial.Sprite("OrbitSmear", center, new Vector2(size * 1.5f, size * 1.15f),
+                OperatorFlightVfx.Add(Body(art), .3f + charge * .2f), rotation + time * 1.4f);
+            if (Fire(art)) FlameBody(center, aim, size * .8f, time, art);
+            // Four short incoming streams are part of the aimed drawing, while
+            // the longer absorption trails below are independent world particles.
+            for (int i = 0; i < 4; i++)
+            {
+                float offset = (time * 1.8f + i * .25f) % 1f;
+                float side = (i % 2 == 0 ? -1 : 1) * size * (.35f + .2f * MathF.Sin(i * 1.7f));
+                Vector2 p = SpreadChargeVfx.AimPoint(center, aim, -size * (1.8f - offset), side * (1f - offset));
+                SpreadArtsMaterial.Sprite("ChargeBloom", p, new Vector2(size * .75f, size * .14f),
+                    OperatorFlightVfx.Add(Body(art), MathF.Sin(offset * MathHelper.Pi) * charge * .7f), rotation);
+            }
+        }
+        // A solid center preserves contrast against bright terrain. All dimensions
+        // are world pixels and rotate in the same aim basis as the staff/muzzle.
+        if (art != SpreadArt.Ember)
+            SpreadVfxDetail.Disc(center, size * (.18f + late * .12f), Dark(art) * (.65f + late * .25f));
+        if (art == SpreadArt.Crystal)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                float angle = i * MathHelper.TwoPi / 3 + time * 1.3f;
+                Vector2 p = SpreadChargeVfx.AimPoint(center, aim, MathF.Cos(angle) * size * .38f, MathF.Sin(angle) * size * .68f);
+                SpreadVfxDetail.Facet(p, 5f + 5f * charge, 15f + 13f * charge, rotation + MathF.Sin(angle) * .2f, Edge(art), .9f);
+            }
+        }
+        if (art == SpreadArt.Rupture)
+            for (int i = 0; i < 3; i++)
+                SpreadVfxDetail.Ellipse(SpreadChargeVfx.AimPoint(center, aim, (i - 1) * size * .4f, 0f), aim,
+                    new Vector2(size * .24f, size * (.6f + .12f * i)), time + i * 1.8f, 4.6f,
+                    OperatorFlightVfx.Add(Edge(art), .65f), 1.6f);
+        // Arc Nova's three orbiting nodes make the late stage immediately readable.
+        using (SpreadArtsMaterial.Begin())
+        {
+            if (late > 0f)
+                for (int i = 0; i < 3; i++)
+                {
+                    float angle = time * 3f + i * MathHelper.TwoPi / 3f;
+                    Vector2 point = SpreadChargeVfx.AimPoint(center, aim, MathF.Cos(angle) * size * .48f, MathF.Sin(angle) * size * .95f);
+                    SpreadArtsMaterial.Sprite("ChargeBloom", point, new Vector2(size * .46f), OperatorFlightVfx.Add(Body(art), late * .9f));
+                    SpreadArtsMaterial.Sprite("ChargeBloom", point, new Vector2(size * .18f), OperatorFlightVfx.Add(Edge(art), late));
+                }
+            SpreadArtsMaterial.Sprite("ChargeBloom", center + aim * size * .12f, new Vector2(size * .42f, size * .27f),
+                OperatorFlightVfx.Add(Edge(art), .85f), rotation);
         }
     }
 
-    private static void Core(Vector2 center, Vector2 aim, float size, float time, SpreadArt art, bool charging)
+    private static void FlameBody(Vector2 center, Vector2 aim, float size, float time, SpreadArt art)
     {
-        Color body = Body(art), edge = Edge(art);
-        float angle = aim.ToRotation();
-        if (art == SpreadArt.Crystal)
+        // The source flame points up (-Y). Rotate that tip into the flight direction.
+        float angle = aim.ToRotation() + MathHelper.PiOver2;
+        for (int i = 0; i < 3; i++)
         {
-            // Stratus-inspired glass vortex: dark recess, moving facets, orbital refraction; no opaque disk.
-            SpreadArtsMaterial.Sprite("StarCore", center, new Vector2(size * .7f), Dark(art), -time * 1.4f);
-            SpreadArtsMaterial.Sprite("CrystalVortex", center, new Vector2(size * 1.65f), body * .75f, time * 1.15f);
-            SpreadArtsMaterial.Sprite("OrbitSmear", center, new Vector2(size * 1.26f, size * .7f), OperatorFlightVfx.Add(edge, .56f), -time * 2.1f);
-            SpreadArtsMaterial.Sprite("StarCore", center, new Vector2(size * .5f), OperatorFlightVfx.Add(edge, .85f), -time);
+            float flutter = MathF.Sin(time * 16f + i * 2.2f);
+            float length = size * (2.3f - i * .45f + flutter * .12f);
+            SpreadArtsMaterial.Sprite("ForwardFlame", center - aim * length * .32f,
+                new Vector2(size * (1.05f - i * .21f), length),
+                OperatorFlightVfx.Add(i == 2 ? Edge(art) : Body(art), i == 2 ? .7f : .52f), angle + flutter * .07f);
         }
-        else if (art == SpreadArt.Rupture)
-        {
-            // Compressed void with a broken bright shell, matching the Despoiler's dark/bright separation.
-            SpreadArtsMaterial.Sprite("StarCore", center, new Vector2(size), Dark(art), time * 2f);
-            SpreadArtsMaterial.Sprite("RuptureRing", center, new Vector2(size * 1.25f), OperatorFlightVfx.Add(body, .9f), time * 3.6f);
-            SpreadArtsMaterial.Sprite("OrbitSmear", center, new Vector2(size * 1.1f, size * .55f), OperatorFlightVfx.Add(edge, .75f), -time * 2.8f);
-            SpreadArtsMaterial.Sprite("LinearSpark", center + aim * size * .23f, new Vector2(4f, size * .42f), OperatorFlightVfx.Add(edge, .9f), angle + MathHelper.PiOver2);
-        }
-        else
-        {
-            // Flame lobes flow rearward and breathe out of phase. Never tint a large circular backing plate.
-            if (!charging)
-            {
-                for (int i = 0; i < 3; i++)
-                {
-                    float flutter = MathF.Sin(time * 18f + i * 2.1f);
-                    float length = size * (2.2f + .4f * flutter - i * .32f);
-                    Vector2 at = center - aim * length * .27f;
-                    SpreadArtsMaterial.Sprite("ForwardFlame", at, new Vector2(size * (1f - i * .15f), length),
-                        OperatorFlightVfx.Add(i == 2 ? edge : body, i == 2 ? .62f : .42f), angle + MathHelper.PiOver2 + flutter * .04f);
-                }
-            }
-            SpreadArtsMaterial.Sprite("OrbitSmear", center, new Vector2(size * 1.18f), OperatorFlightVfx.Add(body, .7f), time * 4f);
-            SpreadArtsMaterial.Sprite("StarCore", center, new Vector2(size * (.68f + .055f * MathF.Sin(time * 22f))), OperatorFlightVfx.Add(edge, .9f), -time * 2.3f);
-            SpreadArtsMaterial.Sprite("StarCore", center + aim * size * .08f, new Vector2(size * .28f), OperatorFlightVfx.Add(new Color(255, 250, 210)), time * 1.4f);
-        }
+        SpreadArtsMaterial.Sprite("StarCore", center, new Vector2(size * .4f), OperatorFlightVfx.Add(Edge(art), .9f));
     }
 
     internal static void Flight(Projectile p, SpreadArt art, float power = 1f)
     {
-        using var material = SpreadArtsMaterial.Begin();
-        Vector2 aim = p.velocity.SafeNormalize(Vector2.UnitX);
-        float time = Main.GlobalTimeWrappedHourly;
-        float size = (art == SpreadArt.Crystal ? 30f : art == SpreadArt.Rupture ? 28f : 38f) * power;
-        float tail = art == SpreadArt.Crystal ? 145f : art == SpreadArt.Rupture ? 235f : 300f;
-        OperatorFlightVfx.Trail(p, Body(art), Edge(art), size * .52f, tail);
-        if (art != SpreadArt.Meteor)
-            SpreadArtsMaterial.Sprite("ForwardFlame", p.Center - aim * size * .75f,
-                new Vector2(size * .85f, size * 2.4f), OperatorFlightVfx.Add(Body(art), .36f), aim.ToRotation() + MathHelper.PiOver2);
-        Core(p.Center, aim, size, time, art, false);
-        if (art == SpreadArt.Rupture)
+        if (!SpreadVfxBudget.Visible(p.Center, 360f)) return;
+        Vector2 aim = p.velocity.SafeNormalize(Vector2.UnitX), side = aim.RotatedBy(MathHelper.PiOver2);
+        float time = Main.GlobalTimeWrappedHourly, angle = aim.ToRotation();
+        float size = (art == SpreadArt.Ember ? 20f : art == SpreadArt.Meteor ? 38f : 28f) * power;
+        OperatorFlightVfx.Trail(p, Body(art), Edge(art), size * .38f,
+            art == SpreadArt.Ember ? 100f : art == SpreadArt.Meteor ? 300f : 190f);
+        using (SpreadArtsMaterial.Begin())
         {
-            Vector2 side = aim.RotatedBy(MathHelper.PiOver2);
-            for (int i = 0; i < 7; i++)
+            if (Fire(art)) FlameBody(p.Center, aim, size, time, art);
+            else
             {
-                float phase = time * 16f - i * .8f;
-                for (int sign = -1; sign <= 1; sign += 2)
-                    SpreadArtsMaterial.Sprite("LinearSpark", p.Center - aim * (i * 10f + 6f) + side * MathF.Sin(phase) * (11f - i) * sign,
-                        new Vector2(2f, 12f), OperatorFlightVfx.Add(sign > 0 ? Edge(art) : Body(art), (1f - i / 8f) * .7f), aim.ToRotation() + MathHelper.PiOver2);
+                SpreadArtsMaterial.Sprite("OrbitSmear", p.Center - aim * 8f, new Vector2(size * 1.5f, size * .85f),
+                    OperatorFlightVfx.Add(Body(art), .38f), time * 2f);
+                SpreadArtsMaterial.Sprite("StarCore", p.Center, new Vector2(size * .65f), Dark(art));
             }
         }
+        if (art == SpreadArt.Crystal)
+        {
+            SpreadVfxDetail.Facet(p.Center, size * .5f, size * 1.35f, angle, Edge(art), 1f);
+            for (int sign = -1; sign <= 1; sign += 2)
+            {
+                Vector2 flank = p.Center - aim * 19f + side * (11f + 3f * MathF.Sin(time * 12f)) * sign;
+                SpreadVfxDetail.Facet(flank, 5f, 15f, angle + sign * .2f, Body(art), .85f);
+            }
+        }
+        else if (art == SpreadArt.Rupture)
+        {
+            // Three separated pressure fronts, each normal to the actual travel direction.
+            for (int i = 0; i < 3; i++)
+                SpreadVfxDetail.Arc(p.Center - aim * (i * 17f + 4f), 12f + i * 3f,
+                    angle - 1.05f, 2.1f, OperatorFlightVfx.Add(i == 0 ? Edge(art) : Body(art), .85f - i * .22f), 2.4f - i * .45f);
+            SpreadVfxDetail.Facet(p.Center, size * .42f, size, angle, new Color(89, 140, 161), 1f);
+        }
+        else if (art == SpreadArt.Meteor)
+            SpreadVfxDetail.Facet(p.Center, size * .56f, size * .7f, angle, new Color(91, 45, 39), 1f);
     }
 
     internal static void Gather(Vector2 center, float charge, SpreadArt art)
     {
-        if (Main.dedServ) return;
-        Vector2 outward = Main.rand.NextVector2Unit();
-        float distance = Main.rand.NextFloat(28f, 62f);
-        int life = Main.rand.Next(10, 16);
-        // Inward particles expire before crossing the core, so a held charge never sprays outward.
-        OperatorFlightVfx.Spark(center + outward * distance, -outward * (distance / life * 1.16f),
-            Main.rand.NextBool(3) ? Edge(art) : Body(art), 9f + charge * 10f, life, 2f);
-        if (Main.rand.NextBool(4))
-        {
-            Dust dust = Dust.NewDustPerfect(center + outward * distance, DustID.TintableDustLighted, -outward * 1.6f, 150, Body(art), .6f);
-            dust.noGravity = true;
-        }
+        if (!SpreadVfxBudget.Visible(center)) return;
+        Vector2 ray = Main.rand.NextVector2Unit();
+        float distance = Main.rand.NextFloat(22f, 44f);
+        if (Fire(art)) SpreadVfxDetail.Fire(center + ray * distance, -ray * 2.6f, 12f + charge * 10f, 14, distance);
+        else SpreadVfxDetail.Fragment(center + ray * distance, -ray * 2.8f, Body(art), 9f + 5f * charge, 14, distance);
+        if (Main.rand.NextBool(3)) CasterSparkles.Spawn(center + ray * distance * .4f, -ray * .5f, Edge(art), .4f, 10);
     }
 
+    // Call once per real tick, never once per extraUpdate. Interpolated emission points
+    // follow the last frame's flight segment; high speed cannot leave a dotted wake.
     internal static void Wake(Vector2 center, Vector2 velocity, SpreadArt art, int phase = 0)
     {
-        if (Main.dedServ) return;
+        if (!SpreadVfxBudget.Visible(center, 220f)) return;
         Vector2 aim = velocity.SafeNormalize(Vector2.UnitX), side = aim.RotatedBy(MathHelper.PiOver2);
-        int count = art == SpreadArt.Crystal ? 2 : 3;
+        int count = art == SpreadArt.Ember ? 3 : 5;
+        float segment = Math.Min(velocity.Length() * 3f, 72f);
         for (int i = 0; i < count; i++)
         {
-            float lateral = art == SpreadArt.Rupture ? MathF.Sin(phase * .45f + i * MathHelper.Pi) * 11f : Main.rand.NextFloat(-9f, 9f);
-            Vector2 point = center - aim * Main.rand.NextFloat(4f, 18f) + side * lateral;
-            OperatorFlightVfx.Spark(point, -aim * Main.rand.NextFloat(2f, 5f) + side * lateral * .035f,
-                i == 0 ? Edge(art) : Body(art), Main.rand.NextFloat(12f, 29f), Main.rand.Next(12, 22), art == SpreadArt.Meteor ? 4f : 2.5f);
-            if (art == SpreadArt.Meteor && i == 1)
-                OperatorFlightVfx.Flame(point, -aim * Main.rand.NextFloat(1f, 3f), Body(art), Edge(art), 24f, 17);
+            float along = (i + .5f) / count;
+            float lateral = MathF.Sin(phase * .55f + i * 2.1f) * (art == SpreadArt.Ember ? 4f : 9f);
+            Vector2 point = center - aim * segment * along + side * lateral;
+            Vector2 drift = -aim * Main.rand.NextFloat(1f, 3.5f) + side * lateral * .14f;
+            if (Fire(art))
+            {
+                SpreadVfxDetail.Fire(point, drift, art == SpreadArt.Ember ? 16f : 27f, 19, 42f);
+                if (i == 0) SpreadVfxDetail.Fire(point, drift * .35f, art == SpreadArt.Ember ? 20f : 36f, 28, 35f, true);
+            }
+            else SpreadVfxDetail.Fragment(point, drift, i % 2 == 0 ? Edge(art) : Body(art),
+                art == SpreadArt.Crystal ? 13f : 9f, 20, 44f);
+        }
+        if (phase % 3 == 0)
+        {
+            Vector2 root = center - aim * 12f;
+            CasterSparkles.Spawn(root + side * 9f, side * .6f - aim, Edge(art), .45f, 10, aim.ToRotation());
+            CasterSparkles.Spawn(root - side * 9f, -side * .6f - aim, Body(art), .35f, 10, aim.ToRotation());
+        }
+        if (phase % 4 == 0)
+        {
+            Dust dust = Dust.NewDustPerfect(center - aim * 8f, Fire(art) ? DustID.Torch : DustID.TintableDustLighted,
+                -aim * 1.8f + side * Main.rand.NextFloat(-1, 1), 110, Body(art), .8f);
+            dust.noGravity = true;
         }
     }
 
     internal static void Release(Vector2 center, Vector2 direction, SpreadArt art)
     {
-        if (Main.dedServ) return;
+        if (!SpreadVfxBudget.Visible(center)) return;
         direction = direction.SafeNormalize(Vector2.UnitX);
-        OperatorFlightVfx.Ring(center, Body(art), 42f, 13);
-        for (int i = 0; i < 10; i++)
-            OperatorFlightVfx.Spark(center, direction.RotatedByRandom(.38f) * Main.rand.NextFloat(3f, 8f),
-                i % 3 == 0 ? Edge(art) : Body(art), 15f + i, 15, 2.5f);
+        SpreadChargeVfx.Pulse(center, direction, art, true);
+        for (int i = 0; i < 9; i++)
+        {
+            Vector2 ray = direction.RotatedBy((i - 4) * .07f);
+            if (Fire(art)) SpreadVfxDetail.Fire(center, ray * Main.rand.NextFloat(3f, 5f), 18f, 15, 48f);
+            else SpreadVfxDetail.Fragment(center, ray * Main.rand.NextFloat(3f, 6f), Edge(art), 11f, 17, 55f);
+        }
+        OperatorFlightVfx.Ring(center, Body(art), 38f, 12);
     }
 
     internal static void Burst(Vector2 center, float diameter, float progress, SpreadArt art)
     {
-        using var material = SpreadArtsMaterial.Begin();
+        if (!SpreadVfxBudget.Visible(center, diameter * .6f)) return;
         progress = MathHelper.Clamp(progress, 0f, 1f);
         diameter = MathHelper.Clamp(diameter, 60f, 520f);
-        if (art == SpreadArt.Meteor)
+        float opening = 1f - MathF.Pow(1f - progress, 4f);
+        float fade = MathF.Pow(1f - progress, 1.4f);
+        float flash = MathF.Pow(MathHelper.Clamp(1f - progress * 4f, 0, 1), 2f);
+        float size = diameter * (.2f + .77f * opening);
+        using (SpreadArtsMaterial.Begin())
         {
-            MeteorBurst(center, diameter, progress);
-            return;
+            // Dark volume -> colored blast face -> short hot center; every layer is
+            // explicitly bounded by the same diameter as the projectile collision.
+            SpreadArtsMaterial.Sprite("ImpactPetals", center, new Vector2(size), Dark(art) * (fade * .7f), progress * .16f);
+            if (Fire(art))
+            {
+                SpreadArtsMaterial.Sprite("ImpactPetals", center, new Vector2(size * .94f), OperatorFlightVfx.Add(Body(art), fade * .72f), -progress * .25f);
+                for (int i = 0; i < (art == SpreadArt.Ember ? 5 : 9); i++)
+                {
+                    float a = i * 2.39996f + MathF.Sin(i * 7.1f) * .16f;
+                    Vector2 ray = a.ToRotationVector2();
+                    float lobe = .72f + .28f * MathF.Sin(i * 3.7f + progress * 3f);
+                    Vector2 root = center + ray * size * (.13f + i % 3 * .035f) - Vector2.UnitY * size * progress * .07f;
+                    SpreadArtsMaterial.Sprite("ForwardFlame", root,
+                        new Vector2(size * .25f, size * .51f * lobe), OperatorFlightVfx.Add(i % 3 == 0 ? Edge(art) : Body(art), fade * .67f), a + MathHelper.PiOver2 + progress * .24f);
+                }
+                SpreadArtsMaterial.Sprite("BlastBloom", center - Vector2.UnitY * size * .03f,
+                    new Vector2(size * .39f, size * .29f), OperatorFlightVfx.Add(Body(art), fade * .45f));
+            }
+            else
+            {
+                SpreadArtsMaterial.Sprite("CrystalVortex", center, new Vector2(size * .75f), OperatorFlightVfx.Add(Body(art), fade * .27f), progress * .4f);
+                SpreadArtsMaterial.Sprite("RuptureRing", center, new Vector2(size), OperatorFlightVfx.Add(Body(art), fade * .5f), -progress * .12f);
+            }
+            SpreadArtsMaterial.Sprite("BlastBloom", center, new Vector2(diameter * (.10f + flash * .23f)), OperatorFlightVfx.Add(Edge(art), flash * .7f));
         }
-        float opening = 1f - MathF.Pow(1f - progress, 3f), fade = MathF.Pow(1f - progress, 1.7f);
-        float flash = MathHelper.Clamp(1f - progress * 5f, 0f, 1f);
-        float size = diameter * (.28f + .8f * opening);
-        float coreFade = MathF.Pow(1f - progress, 2.3f);
-        SpreadArtsMaterial.Sprite("BlastBloom", center, new Vector2(diameter * (.16f + .36f * opening)),
-            OperatorFlightVfx.Add(Body(art), coreFade * .82f));
-        SpreadArtsMaterial.Sprite("BlastBloom", center, new Vector2(diameter * (.09f + .19f * opening)),
-            OperatorFlightVfx.Add(Edge(art), coreFade * .95f));
-        // Independent dark volume, textured wavefront and fragmented outer crown.
-        SpreadArtsMaterial.Sprite("ImpactPetals", center, new Vector2(size * .95f), Dark(art) * (fade * .78f), progress * .15f);
         if (art == SpreadArt.Crystal)
         {
-            SpreadArtsMaterial.Sprite("CrystalVortex", center, new Vector2(size), Body(art) * (fade * .75f), progress * .65f);
-            SpreadArtsMaterial.Sprite("OrbitSmear", center, new Vector2(size * .85f, size * .4f), OperatorFlightVfx.Add(Edge(art), fade * .38f), -progress);
-        }
-        else
-        {
-            int lobes = art == SpreadArt.Rupture ? 6 : 8;
-            for (int i = 0; i < lobes; i++)
+            for (int i = 0; i < 8; i++)
             {
-                float angle = i * MathHelper.TwoPi / lobes + .2f;
-                Vector2 offset = angle.ToRotationVector2() * size * (.15f + .07f * MathF.Sin(i * 7f));
-                SpreadArtsMaterial.Sprite("ForwardFlame", center + offset, new Vector2(size * .22f, size * .42f),
-                    OperatorFlightVfx.Add(i % 3 == 0 ? Edge(art) : Body(art), fade * .48f), angle + MathHelper.PiOver2);
+                float a = i * MathHelper.TwoPi / 8 + .18f;
+                Vector2 ray = a.ToRotationVector2();
+                SpreadVfxDetail.Facet(center + ray * size * .31f, size * .065f, size * .22f, a + progress * .35f,
+                    i % 2 == 0 ? Edge(art) : Body(art), fade);
             }
         }
-        SpreadArtsMaterial.Sprite("RuptureRing", center, new Vector2(size * 1.12f), OperatorFlightVfx.Add(Body(art), fade * .32f), progress * .5f);
-        SpreadArtsMaterial.Sprite("OrbitSmear", center, new Vector2(size * .72f), OperatorFlightVfx.Add(Edge(art), fade * .38f), -progress * .9f);
-        SpreadArtsMaterial.Sprite("StarCore", center, new Vector2(diameter * (.12f + flash * .25f)), OperatorFlightVfx.Add(Edge(art), flash), progress * 3f);
-    }
-
-    private static void MeteorBurst(Vector2 center, float diameter, float progress)
-    {
-        float spread = 1f - MathF.Pow(1f - progress, 3.6f);
-        float heat = MathF.Pow(1f - progress, 1.45f);
-        float flash = MathF.Pow(MathHelper.Clamp(1f - progress * 4.5f, 0f, 1f), 2f);
-        float size = diameter * (.25f + .72f * spread);
-        // The fire blast has a rolling hot body and an oblique shock front, unlike the hollow Arts rupture.
-        SpreadArtsMaterial.Sprite("ImpactPetals", center - Vector2.UnitY * size * .04f,
-            new Vector2(size * 1.8f), new Color(51, 21, 26) * (heat * .8f), progress * .24f);
-        SpreadArtsMaterial.Sprite("ImpactPetals", center, new Vector2(size * 1.65f),
-            OperatorFlightVfx.Add(new Color(255, 81, 18), heat * .82f), -progress * .17f);
-        SpreadArtsMaterial.Sprite("ImpactPetals", center - Vector2.UnitY * size * .04f, new Vector2(size * 1.18f),
-            OperatorFlightVfx.Add(new Color(255, 191, 78), heat * .72f), progress * .32f);
-        for (int i = 0; i < 7; i++)
+        else if (art == SpreadArt.Rupture)
         {
-            float angle = i * MathHelper.TwoPi / 7f + .3f;
-            Vector2 offset = angle.ToRotationVector2() * size * (.25f + .04f * MathF.Sin(i * 13f));
-            SpreadArtsMaterial.Sprite("ForwardFlame", center + offset, new Vector2(size * .16f, size * (.4f + i % 3 * .06f)),
-                OperatorFlightVfx.Add(i % 2 == 0 ? new Color(255, 167, 54) : new Color(245, 71, 17), heat * .62f), angle + MathHelper.PiOver2);
+            for (int i = 0; i < 6; i++)
+            {
+                float a = i * MathHelper.TwoPi / 6 + .2f;
+                Vector2 ray = a.ToRotationVector2(), side = ray.RotatedBy(MathHelper.PiOver2);
+                Vector2 root = center + ray * size * .10f;
+                Vector2 joint = center + ray * size * .29f + side * size * .035f;
+                Vector2 end = center + ray * size * .46f;
+                SpreadVfxDetail.Segment(root, joint, OperatorFlightVfx.Add(Body(art), fade * .75f), 3f * fade);
+                SpreadVfxDetail.Segment(joint, end, OperatorFlightVfx.Add(Edge(art), fade * .8f), 1.5f);
+                SpreadVfxDetail.Arc(center, size * .44f, a, .62f, OperatorFlightVfx.Add(Edge(art), fade * .65f), 1.8f);
+            }
         }
-        SpreadArtsMaterial.Sprite("RuptureRing", center, new Vector2(size * 1.28f, size * .48f),
-            OperatorFlightVfx.Add(new Color(255, 179, 85), heat * .65f), -.15f);
-        SpreadArtsMaterial.Sprite("StarCore", center, new Vector2(diameter * (.16f + flash * .25f)),
-            OperatorFlightVfx.Add(new Color(255, 250, 214), flash));
     }
 
-    internal static void Debris(Vector2 center, SpreadArt art, float power = 1f)
+    internal static void Debris(Vector2 center, SpreadArt art, float radius)
     {
-        if (Main.dedServ) return;
-        int count = art == SpreadArt.Crystal ? 20 : art == SpreadArt.Rupture ? 30 : 38;
+        if (!SpreadVfxBudget.Visible(center, radius + 60f)) return;
+        int count = art == SpreadArt.Ember ? 16 : art == SpreadArt.Meteor ? 36 : 24;
         for (int i = 0; i < count; i++)
         {
-            float angle = i * MathHelper.TwoPi / count + Main.rand.NextFloat(-.13f, .13f);
-            Vector2 direction = angle.ToRotationVector2();
-            OperatorFlightVfx.Spark(center + direction * 10f, direction * Main.rand.NextFloat(3f, 11f) * power,
-                i % 3 == 0 ? Edge(art) : Body(art), Main.rand.NextFloat(18f, 40f), Main.rand.Next(15, 28), i % 3 == 0 ? 4f : 2f);
-            if (art == SpreadArt.Meteor && i % 3 == 0)
-                OperatorFlightVfx.Flame(center + direction * 12f, direction * Main.rand.NextFloat(3f, 7f),
-                    Body(art), Edge(art), Main.rand.NextFloat(20f, 34f), Main.rand.Next(18, 28));
-            if (i % 3 == 0)
+            float a = i * MathHelper.TwoPi / count + Main.rand.NextFloat(-.06f, .06f);
+            Vector2 ray = a.ToRotationVector2();
+            float speed = radius * Main.rand.NextFloat(.035f, .065f);
+            Vector2 root = center + ray * radius * .1f;
+            if (Fire(art))
             {
-                Dust dust = Dust.NewDustPerfect(center, DustID.TintableDustLighted, direction * Main.rand.NextFloat(3f, 8f), 130, Body(art), .9f);
+                SpreadVfxDetail.Fire(root, ray * speed, Math.Min(54f, radius * .26f), 25, radius * .7f);
+                if (i % 3 == 0) SpreadVfxDetail.Fire(root, ray * speed * .35f, Math.Min(66f, radius * .32f), 35, radius * .55f, true);
+                if (i % 2 == 0) SpreadVfxDetail.Fragment(root, ray * speed, new Color(203, 101, 58), 10f, 30, radius * .75f, true);
+            }
+            else SpreadVfxDetail.Fragment(root, ray * speed, i % 3 == 0 ? Edge(art) : Body(art),
+                Main.rand.NextFloat(11f, 24f), 28, radius * .78f);
+            if (i % 4 == 0) CasterSparkles.Spawn(center + ray * radius * .4f, ray * 1.2f, Edge(art), .65f, 13, a);
+            if (i % 5 == 0)
+            {
+                Dust dust = Dust.NewDustPerfect(root, Fire(art) ? DustID.Torch : DustID.TintableDustLighted,
+                    ray * Math.Min(5f, speed), 110, Body(art), 1f);
                 dust.noGravity = true;
             }
         }
-        OperatorFlightVfx.Ring(center, Edge(art), 90f * power);
-        OperatorFlightVfx.Ring(center, Body(art), 170f * power, 26);
     }
 }

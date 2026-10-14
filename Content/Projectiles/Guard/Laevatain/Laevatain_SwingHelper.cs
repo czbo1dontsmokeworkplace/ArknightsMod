@@ -13,7 +13,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 	/// Laevatain 的独立重型戳刺动作。
 	/// 目标角度只在第一次调用时锁定，之后剑身始终沿锁定轴线。
 	/// </summary>
-	public class Laevatain_SwingHelper : SwingHelper.SwingHelper
+	public partial class Laevatain_SwingHelper : SwingHelper.SwingHelper
 	{
 		public const float StabAreaScale = 1.75f;
 		public const float StabBaseLineWidth = 24f;
@@ -71,6 +71,17 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 		// 普通挥舞像 BB 一样围绕玩家中心转动；突刺保留原来的手部支点。
 		public bool PivotOnPlayerCenter { get; set; }
 
+        public float ArtsSwingStart { get; private set; }
+        public void ApplyArtsSwingPose(float angle, float start, int direction, bool saveTrail)
+        {
+            ArtsSwingStart = start;
+            swordRad = angle;
+            swordDir = direction;
+            SwordAHandCon(0f, angle, texLength.Length(), handleLength.Length(), swordLength.Length(),
+                saveTrail, Player.CompositeArmStretchAmount.Full);
+            RecordNormalTrail(saveTrail);
+        }
+
 		public override void SwordAHandCon(float swordToHand, float hand, float length,
 			float handleLen, float swordlen, bool savePos = false,
 			Player.CompositeArmStretchAmount armType = Player.CompositeArmStretchAmount.Full)
@@ -101,6 +112,43 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 			: base(index, catmullScale, isBackArm)
 		{
 			StabUseTime = StabTotalFrames;
+		}
+
+		private float idlePoseBlend = 1f;
+
+		public override void Move()
+		{
+			// 待机时握点留在手上，刀刃向身体前下方自然垂落；攻击仍由上面的中心支点处理。
+			PivotOnPlayerCenter = false;
+			swordDir = 1f;
+			playerX = MathF.Abs(player.velocity.X);
+			bool standing = playerX <= 0.1f && MathF.Abs(player.velocity.Y) <= 0.01f;
+			idlePoseBlend = MathHelper.Lerp(idlePoseBlend, standing ? 1f : 0f, 0.18f);
+
+			if (standing)
+				walkPhase = 0f;
+			else if (MathF.Abs(player.velocity.Y) <= 0.01f)
+				walkPhase += 0.12f + playerX * 0.04f;
+			else
+				walkPhase = 0f;
+
+			float walkingAngle = MathHelper.ToRadians(MathHelper.Lerp(50f, -20f,
+				(MathF.Sin(walkPhase) + 1f) * 0.5f));
+			if (MathF.Abs(player.velocity.Y) > 0.01f)
+				walkingAngle = MathHelper.ToRadians(-20f);
+
+			float movingBlade = player.direction == 1 ? walkingAngle : MathF.PI - walkingAngle;
+			float movingHand = player.direction == 1
+				? walkingAngle + MathHelper.PiOver2
+				: MathHelper.PiOver2 - walkingAngle;
+			float restingBlade = MathHelper.ToRadians(player.direction == 1 ? 66f : 114f);
+			float restingHand = MathHelper.ToRadians(player.direction == 1 ? 78f : 102f);
+			float hand = movingHand + MathHelper.WrapAngle(restingHand - movingHand) * idlePoseBlend;
+			float blade = movingBlade + MathHelper.WrapAngle(restingBlade - movingBlade) * idlePoseBlend;
+
+			SwordAHandCon(blade - hand, hand, texLength.Length(), handleLength.Length(), swordLength.Length(),
+				armType: Player.CompositeArmStretchAmount.None);
+			proj.rotation = swordRot;
 		}
 
 		// BB 式短促节奏：起手迅速加速，越过中点后迅速制动，末端仍连续。

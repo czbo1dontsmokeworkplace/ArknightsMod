@@ -20,7 +20,7 @@ AstesiaDefault: {
 
 AstraSword: {
 	DisplayName: 星极的星辉剑
-	Tooltip: ""
+	Tooltip: 按住左键交替挥出天蓝色双斩，第二斩后稍作蓄势
 }
 
 # Furniture
@@ -1569,7 +1569,11 @@ AdnachielCrossbow: {
 
 Lava_Dagger: {
 	DisplayName: 炎熔的匕首
-	Tooltip: “那些家伙的灵魂，注定要被我收割”
+	Tooltip:
+		'''
+		“那些家伙的灵魂，注定要被我收割”
+		蓄力期间每20帧持续消耗魔力
+		'''
 }
 
 Shirayuki_Shuriken: {
@@ -3531,6 +3535,29 @@ GoldenglowWand: {
 	BeaconCount: 浮游单元：{0}/{1}
 }
 
+ClickStaff: {
+	DisplayName: 卡达的取景法杖
+	Tooltip:
+		'''
+		按住左键拖动框选，松开后标记并攻击框内最多80名敌人
+		取景框对齐方块网格，最大20×20格
+		浮游单元留在身边，随后对每名标记目标发射两轮瞬时激光
+		齐射结束后可再次框选；切换武器取消剩余齐射
+		'''
+}
+
+RockrockStaff: {
+	DisplayName: 洛洛的涡轮法杖
+	Tooltip:
+		'''
+		高举法杖，在鼠标位置凝聚三枚星矢，弯绕汇聚至目标
+		浮游单元迅速飞向目标，以短促激光协同攻击
+		连续命中同一敌人会逐步提高浮游单元伤害
+		星矢逐渐提升飞行速度与追踪能力，转弯时柔和收速
+		持续攻击3秒后进入1秒涡旋爆发：更密集的五重星矢与加速协同射击
+		'''
+}
+
 BeehunterBag: {
 	DisplayName: 蛇屠箱的棒球棍
 	// Tooltip: ""
@@ -4049,8 +4076,8 @@ MeteoriteCannon: {
 	DisplayName: 陨星的爆破炮
 	Tooltip:
 		'''
-		消耗箭矢，平射高速爆破弹
-		所有箭矢均转化为同一种弹幕；命中后爆炸并散射破片
+		消耗火箭弹，继承弹药伤害并平射高速爆破弹
+		所有火箭弹均转化为专属爆破弹；命中后爆炸并散射破片
 		'''
 }
 
@@ -4074,7 +4101,11 @@ ShiningStaff: {
 
 LeonhardtStaff: {
 	DisplayName: 莱恩哈特的法杖
-	Tooltip: “让我甄别一下你们是金玉还是废料吧！”
+	Tooltip:
+		'''
+		“让我甄别一下你们是金玉还是废料吧！”
+		蓄力期间每20帧持续消耗魔力
+		'''
 }
 
 PassengerConductor: {
@@ -4359,19 +4390,31 @@ MaterialistTreasureBag: {
 
 GitanoOrb: {
 	DisplayName: 远山的水晶球
-	Tooltip: “请稍候，先来占卜一下这次战斗的结果吧。”
+	Tooltip:
+		'''
+		“请稍候，先来占卜一下这次战斗的结果吧。”
+		蓄力期间每20帧持续消耗魔力
+		'''
 }
 
 SkyfireStaff: {
 	DisplayName: 天火的流星法杖
-	Tooltip: “日炎将你焚尽！”
+	Tooltip:
+		'''
+		“日炎将你焚尽！”
+		蓄力期间每20帧持续消耗魔力
+		'''
 }
 
 MostimaStaff: {
 	DisplayName: 莫斯提马的法杖
 	Tooltip:
 		'''
-		长按左键蓄力，蓄满后松手，在鼠标位置引爆大型十字钟阵
-		最远瞄准1000像素，爆炸直径560像素
+		按住左键立即在鼠标位置展开时钟法阵，持续引导，无需蓄力
+		钟盘缓慢追随鼠标，松手后停在原地淡出
+		最远放置1000像素；钟盘直径560像素，爆炸直径1240像素
+		分针用12帧走过一格并引爆，停顿5帧后继续；按住可无限循环
+		松手后强制淡出15帧，期间无法重新展开钟盘
+		每次爆炸额外消耗30魔力；引导时可直接按技能键开启技能
 		'''
 }

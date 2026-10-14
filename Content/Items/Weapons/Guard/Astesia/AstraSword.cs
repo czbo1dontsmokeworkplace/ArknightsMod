@@ -2,6 +2,7 @@ using ArknightsMod.Content;
 using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.Projectiles.Guard.Astesia;
+using ArknightsMod.Content.Projectiles.Guard.ArtsFighter;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Content.Items.Weapons.Guard.Mousse;
 using ArknightsMod.Players;
@@ -15,9 +16,8 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.Items.Weapons.Guard.Astesia
 {
 	/// <summary>
-	/// 星辉剑（AstraSword）：常态表现移植自 ASTES1A（星极）的示范武器 Taurus ——
-	/// 剑身不直接造成伤害，每次挥砍发射"Excalibur 式蓝色能量弧光"（AstraSwordSlash），
-	/// 视觉效果与 Taurus 完全一致。
+	/// 星辉剑：沿用术战者的一顺一逆双斩节拍，发射天蓝色能量弧光。
+	/// 剑身、斩击和技能范围缩放共用当前武器尺寸。
 	///
 	/// 技能：
 	///   一技能「星座守护」（Skill 0）：手动开启，技力 10/30，持续 30 秒。
@@ -41,21 +41,23 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Astesia
 		public override void Unload() => skillSound = default;
 
 		public override void SetDefaults() {
-			Item.useStyle = ItemUseStyleID.Swing;   // 挥砍动作（同 Taurus）
-			Item.useAnimation = 20;
-			Item.useTime = 20;
+			Item.useStyle = ItemUseStyleID.Shoot;
+			Item.useAnimation = ArtsFighterSwing.BaseUseTime;
+			Item.useTime = ArtsFighterSwing.BaseUseTime;
 			Item.damage = 72;
 			Item.DamageType = DamageClass.Melee;
 			Item.knockBack = 4.5f;
 			Item.width = 78;
 			Item.height = 78;
 			Item.scale = 1f;
-			Item.UseSound = SoundID.Item1;
+			Item.UseSound = null;
 			Item.rare = ItemRarityID.Lime;
 			Item.value = Item.buyPrice(gold: 23);
-			Item.shoot = ModContent.ProjectileType<AstraSwordSlash>();
-			Item.noMelee = true;            // 剑身本身不造成伤害，只由弧光弹幕承担（同 Taurus）
-			Item.shootsEveryUse = true;     // 每次挥砍都生成弹幕（自动连发按住时同样生效）
+			Item.shoot = ModContent.ProjectileType<AstraSwordHoldout>();
+			Item.shootSpeed = 1f;
+			Item.noMelee = true;
+			Item.noUseGraphic = true;
+			Item.channel = true;
 			Item.autoReuse = true;
 		}
 
@@ -79,15 +81,23 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Astesia
 				return false;
 			}
 
-			return base.CanUseItem(player);
+			return player.ownedProjectileCounts[Item.shoot] == 0 && base.CanUseItem(player);
 		}
 
 		// 二技能「星辉剑」激活期间：
-		//  · 武器模型放大到 130%（Item.scale 抬高后，Shoot 里 GetAdjustedItemScale(Item)
-		//    传给弹幕的 ai[2] 缩放同步增大 → 弧光视觉与扇形判定一并放大）；
+		//  · 武器模型放大到 130%，持握弹幕每帧读取尺寸，斩击与判定同步放大；
 		//  · 本地玩家召唤背后跟随的星辉光环（光环的消失由弹幕自行逐帧判定）。
 		public override void HoldItem(Player player) {
+			base.HoldItem(player);
 			var wp = player.GetModPlayer<WeaponPlayer>();
+			// Channelled attacks do not repeatedly enter CanUseItem.
+			if (player.whoAmI == Main.myPlayer && ArknightsKeybinds.SkillActivatePressed(player)
+				&& wp.StockCount > 0 && !wp.SkillActive) {
+				wp.SkillActive = true;
+				wp.SkillTimer = 0;
+				wp.DelStockCount();
+				if (!Main.dedServ) SoundEngine.PlaySound(skillSound, player.Center);
+			}
 			Item.scale = (wp.SkillActive && wp.Skill == 1) ? 1.3f : 1f;
 
 			if (player.whoAmI == Main.myPlayer && wp.SkillActive && wp.Skill == 1)
@@ -114,27 +124,13 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Astesia
 		}
 
 		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
-			var wp = player.GetModPlayer<WeaponPlayer>();
-
-			// ── 技能攻击分派点 ─────────────────────────────────────────────
-			// 一技能「星座守护」（Skill==0）：仅数值加成，攻击形态不变。
-			// 二技能「星辉剑」（Skill==1）：伤害加成见 ModifyWeaponDamage；
-			//       武器/弹幕 130% 缩放见 HoldItem（经 ai[2] 传导）。
-			// 如需让某技能改变弹幕形态，可在此按 wp.Skill 分支或传 mode 进弹幕。
-			// ──────────────────────────────────────────────────────────────
-
-			// 与 Taurus.Shoot 相同的发射参数协议：
-			// ai[0] = 方向（含重力翻转），ai[1] = 挥砍总时长，ai[2] = 物品缩放
-			float adjustedItemScale = player.GetAdjustedItemScale(Item);
-			Projectile.NewProjectile(source, player.MountedCenter, new Vector2(player.direction, 0f),
-				ModContent.ProjectileType<AstraSwordSlash>(), damage, knockback, player.whoAmI,
-				player.direction * player.gravDir, player.itemAnimationMax, adjustedItemScale);
-
-			// 多人模式同步使用状态（同 Taurus）
-			NetMessage.SendData(MessageID.PlayerControls, number: player.whoAmI);
-
-			return false;
-		}
+            if (player.whoAmI == Main.myPlayer) {
+                Vector2 aim = (Main.MouseWorld - player.MountedCenter).SafeNormalize(new Vector2(player.direction, 0f));
+                Projectile.NewProjectile(source, player.MountedCenter, aim, type, damage, knockback,
+                    player.whoAmI, -player.itemAnimationMax, 0f, player.itemAnimationMax);
+            }
+            return false;
+        }
 
 		public override void AddRecipes() {
 			CreateRecipe()

@@ -1,169 +1,222 @@
 using System;
 using ArknightsMod.Common.Particle;
 using ArknightsMod.Common.VisualEffects;
+using ArknightsMod.Content.Dusts;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles.Guard.Mousse;
 
-// Original grayscale masks: straight RGBA, rendered with SourceAlpha additive blending.
-// No Calamity resource loads or runtime references.
-public sealed class MousseVisuals : ModSystem
+// AugerHoldout / AugerSlash visual timing and geometry reference, credit Azafure, LLC.
+// https://github.com/CalamityTeam/CalamityModPublic
+// Dust uses explicitly premultiplied local masks. Blade/slash use straight masks + Additive.
+internal static class MousseVisuals
 {
     internal const float RangeMultiplier = 1.25f;
     internal static readonly Color Pale = new(255, 244, 172);
-    private static Texture2D blade, bloom, crescent, crescentCore;
+    internal static Color Light(Color color, float strength = 1f)
+        => new Color(color.R, color.G, color.B, 0) * strength;
 
-    public override void Load() {
-        if (Main.dedServ) return;
-        Main.QueueMainThreadAction(() => {
-            blade = Mask(128, 256, (x, y) => {
-                float height = (y + 1f) * .5f;
-                float width = .035f + .32f * MathF.Pow(height, .65f);
-                float tip = MathHelper.SmoothStep(0f, 1f, MathHelper.Clamp(height * 20f, 0, 1));
-                float baseFade = MathHelper.Clamp((1f - height) * 20f, 0, 1);
-                return MathF.Exp(-x * x / (width * width) * 3f) * tip * baseFade;
-            });
-            bloom = Mask(96, 96, (x, y) => MathF.Pow(Math.Max(0, 1f - x * x - y * y), 4f));
-            float SlashAlpha(float x, float y) {
-                float radius = MathF.Sqrt(x * x + y * y);
-                float angle = MathF.Atan2(y, x);
-                float arc = MathF.Pow(Math.Max(0, MathF.Cos(angle * .53f)), .8f);
-                float center = .66f + .012f * MathF.Sin(angle * 9f);
-                // A thin leading tip becomes a broad lower/right sweep, rather than a closed ring.
-                float thickness = .025f + .24f * MathHelper.Clamp((y + .9f) / 1.8f, 0, 1)
-                    + .12f * Math.Max(0f, MathF.Cos(angle));
-                float ridge = MathF.Exp(-MathF.Pow((radius - center) / thickness, 2f) * 2f);
-                float boundary = MathHelper.Clamp((1f - radius) * 14f, 0, 1);
-                return ridge * arc * boundary * MathHelper.Clamp((x + .94f) * 6f, 0, 1);
-            }
-            crescent = Mask(256, 256, SlashAlpha);
-            crescentCore = Mask(256, 256, (x, y) => MathF.Pow(SlashAlpha(x, y), 3f));
-        });
-    }
-
-    private static Texture2D Mask(int width, int height, Func<float, float, float> alpha) {
-        Color[] pixels = new Color[width * height];
-        for (int y = 0; y < height; y++)
-            for (int x = 0; x < width; x++)
-                pixels[y * width + x] = new Color(255, 255, 255,
-                    (int)(255f * MathHelper.Clamp(alpha(2f * x / (width - 1f) - 1f, 2f * y / (height - 1f) - 1f), 0, 1)));
-        Texture2D texture = new(Main.graphics.GraphicsDevice, width, height);
-        texture.SetData(pixels);
-        return texture;
-    }
-
-    public override void Unload() {
-        Texture2D oldBlade = blade, oldBloom = bloom, oldCrescent = crescent, oldCore = crescentCore;
-        blade = bloom = crescent = crescentCore = null;
-        if (!Main.dedServ) Main.QueueMainThreadAction(() => {
-            oldBlade?.Dispose(); oldBloom?.Dispose(); oldCrescent?.Dispose(); oldCore?.Dispose();
-        });
-    }
-
-    private static void BeginGlow() {
+    private static void BeginLayer(BlendState blend)
+    {
         Main.spriteBatch.End();
-        Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp,
+        Main.spriteBatch.Begin(SpriteSortMode.Deferred, blend, SamplerState.LinearClamp,
             DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
     }
 
-    private static void EndGlow() {
+    private static void EndGlow()
+    {
         Main.spriteBatch.End();
         Main.pixelShader.CurrentTechnique.Passes[0].Apply();
         Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState,
-            DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
     }
 
-    // size is always world pixels, never a raw SpriteBatch scale.
-    private static void DrawPixels(Texture2D texture, Vector2 position, Vector2 size, Color color,
-        float rotation, Vector2 origin, SpriteEffects flip = SpriteEffects.None) {
-        if (texture == null || size.X <= 0f || size.Y <= 0f || !float.IsFinite(size.X + size.Y)) return;
-        size = Vector2.Min(size, new Vector2(1200f));
-        Main.spriteBatch.Draw(texture, position - Main.screenPosition, null, color, rotation,
-            origin * texture.Size(), size / texture.Size(), flip, 0f);
+    internal static void DrawEnergyColumn(Vector2 root, float angle, float power, Color tint, float scale)
+    {
+        float charge = MathHelper.Clamp(power / 1.5f, 0f, 1f);
+        if (charge < .01f) return;
+        Texture2D blade = MousseMaterials.GetStraight("MousseEnergyColumn");
+        Rectangle bounds = MousseMaterials.GetVisibleBounds("MousseEnergyColumn");
+        float rotation = angle + MathHelper.PiOver2;
+        BeginLayer(BlendState.NonPremultiplied);
+        try
+        {
+            Color body = new((byte)(tint.R * .82f), (byte)(tint.G * .67f),
+                (byte)(tint.B * .5f), (byte)205);
+            DrawPixels(blade, root, new Vector2(37f * charge, 145f * charge * charge) * scale,
+                body, rotation, new Vector2(.5f, 1f), source: bounds);
+        }
+        finally { EndGlow(); }
+        BeginLayer(BlendState.Additive);
+        try
+        {
+            // Portrait Y is the long axis. Full charge reaches 135 * scale world pixels.
+            DrawPixels(blade, root, new Vector2(27f * charge, 135f * charge * charge) * scale,
+                new Color(tint.R, tint.G, tint.B, (byte)180), rotation,
+                new Vector2(.5f, 1f), source: bounds);
+            DrawPixels(blade, root, new Vector2(12f * charge, 132f * charge * charge) * scale,
+                new Color(255, 255, 245, (byte)100), rotation,
+                new Vector2(.5f, 1f), source: bounds);
+            DrawPixels(MousseMaterials.GetStraight("GlowOrb"), root,
+                new Vector2(22f * charge, 32f * charge * charge) * scale,
+                new Color(tint.R, tint.G, tint.B, (byte)95), rotation, new Vector2(.5f));
+        }
+        finally { EndGlow(); }
     }
 
-    internal static void DrawGlove(Projectile p, Player owner, float power, Color lightColor) {
+    internal static void DrawPixels(Texture2D texture, Vector2 world, Vector2 size, Color color,
+        float rotation, Vector2 origin, SpriteEffects flip = SpriteEffects.None, Rectangle? source = null)
+    {
+        if (!float.IsFinite(size.X + size.Y) || size.X <= 0f || size.Y <= 0f) return;
+        size = Vector2.Min(size, new Vector2(1000f));
+        Vector2 sourceSize = source.HasValue ? new Vector2(source.Value.Width, source.Value.Height) : texture.Size();
+        Main.EntitySpriteDraw(texture, world - Main.screenPosition, source, color,
+            rotation, origin * sourceSize, size / sourceSize, flip);
+    }
+
+    internal static void DrawHeldBlade(Projectile p, Player owner, float power, Color lightColor,
+        Color tint, bool physicalSword)
+    {
         Vector2 hand = p.Center + new Vector2(0f, owner.gfxOffY);
-        Texture2D glove = TextureAssets.Projectile[p.type].Value;
-        Main.EntitySpriteDraw(glove, hand - Main.screenPosition, null, lightColor, p.rotation + MathHelper.PiOver2,
-            new Vector2(glove.Width * .5f, glove.Height - 2f), 1f, SpriteEffects.None);
-        if (blade == null || power <= .01f) return;
+        Texture2D weapon = TextureAssets.Projectile[p.type].Value;
         power = MathHelper.Clamp(power, 0f, 1.5f);
-        Vector2 tip = hand + p.rotation.ToRotationVector2() * (glove.Height - 2f);
-        // Auger's base blade dimensions: 1960 * .014 * power by 2368 * .014 * power².
-        Vector2 size = new Vector2(27.44f * power, 33.152f * power * power) * RangeMultiplier * p.scale;
-        BeginGlow();
-        try {
-            DrawPixels(blade, tip, size, Pale * .85f, p.rotation + MathHelper.PiOver2, new Vector2(.5f, 1f));
-            DrawPixels(blade, tip, size * new Vector2(.45f, .98f), Color.White * .9f,
-                p.rotation + MathHelper.PiOver2, new Vector2(.5f, 1f));
-            DrawPixels(bloom, tip, new Vector2(32f, 18f) * power * p.scale,
-                Pale * .55f, p.rotation, new Vector2(.5f));
+        float scale = p.scale * RangeMultiplier;
+        Vector2 root = hand + p.rotation.ToRotationVector2() * (physicalSword ? 16f * p.scale : 20f);
+        float rotation = p.rotation + MathHelper.PiOver2;
+        DrawEnergyColumn(root, p.rotation, power, tint, scale);
+        if (physicalSword)
+        {
+            // The existing sword points from its lower-left grip to its upper-right tip.
+            Main.EntitySpriteDraw(weapon, hand - Main.screenPosition, null, lightColor,
+                p.rotation + MathHelper.PiOver4, new Vector2(8f, weapon.Height - 8f),
+                p.scale, SpriteEffects.None);
         }
-        finally { EndGlow(); }
+        else
+            Main.EntitySpriteDraw(weapon, hand - Main.screenPosition, null, lightColor,
+                rotation, new Vector2(weapon.Width * .5f, weapon.Height - 2f), 1f, SpriteEffects.None);
     }
 
-    internal static void DrawSlash(Projectile p) {
-        if (crescent == null) return;
-        float age = 25f - p.timeLeft;
-        float fade = MathF.Pow(MathHelper.Clamp(p.timeLeft / 25f, 0, 1), 1.5f);
-        float squeeze = MathHelper.Lerp(1f, .18f, MousseGlovePunch.Ease(age / 25f, 2, 2));
-        float unit = MousseLightSlash.Reach * p.ai[1];
+    internal static void DrawSlash(Projectile p, int age, Color tint)
+    {
+        float progress = MathHelper.Clamp(age / 25f, 0f, 1f);
+        float stretch = 1f - (1f - progress) * (1f - progress);
+        float envelope = MathF.Pow(Utils.GetLerpValue(25f, 5f, age, true), 5f);
+        if (envelope <= 0f) return;
+        float scale = p.ai[1] * RangeMultiplier;
         Vector2 aim = p.velocity.SafeNormalize(Vector2.UnitX);
-        Vector2 position = p.Center + aim * unit * .5f;
-        Vector2 size = new(unit * 2f, unit * 1.2f * squeeze);
-        SpriteEffects flip = (p.ai[0] < 0) == (aim.X >= 0) ? SpriteEffects.FlipVertically : SpriteEffects.None;
-        BeginGlow();
-        try {
-            DrawPixels(crescent, position, size, Pale * (fade * .8f), aim.ToRotation(), new Vector2(.5f), flip);
-            DrawPixels(crescentCore, position, size, Color.White * (fade * .65f),
-                aim.ToRotation(), new Vector2(.5f), flip);
+        Vector2 size = new Vector2(1f + stretch * .5f, 1.25f - stretch * 1.1f) * (156.8f * envelope * scale);
+        SpriteEffects flip = (p.ai[0] == 1f) == (aim.X >= 0f) ? SpriteEffects.FlipVertically : SpriteEffects.None;
+        BeginLayer(BlendState.NonPremultiplied);
+        try
+        {
+            DrawPixels(MousseMaterials.GetStraight("MousseCrescent"), p.Center + aim * 105f * scale,
+                size, new Color((byte)(tint.R * .82f), (byte)(tint.G * .75f),
+                    (byte)(tint.B * .63f), (byte)(200f * envelope)),
+                aim.ToRotation(), new Vector2(.85f, .5f), flip);
+        }
+        finally { EndGlow(); }
+        BeginLayer(BlendState.Additive);
+        try
+        {
+            DrawPixels(MousseMaterials.GetStraight("MousseCrescent"), p.Center + aim * 105f * scale,
+                size * new Vector2(.9f, .86f), new Color(tint.R, tint.G, tint.B, (byte)(90f * envelope)),
+                aim.ToRotation(), new Vector2(.85f, .5f), flip);
         }
         finally { EndGlow(); }
     }
 
-    internal static void EmitSlash(Vector2 center, Vector2 aim, float scale, float swing) {
-        if (Main.dedServ || Vector2.DistanceSquared(center, Main.LocalPlayer.Center) > 2400f * 2400f) return;
-        for (int i = 0; i < 30 && ParticleManager.activeParticles.Count < 1500; i++) {
-            float t = i / 29f;
-            float angle = MathHelper.Lerp(-.7f, .7f, t);
-            float radius = (70f + 80f * MathF.Pow(1f - Math.Abs(angle), 1.5f)) * RangeMultiplier * scale;
-            Vector2 direction = aim.RotatedBy(angle);
-            Vector2 place = center + direction * radius - aim * 45f * RangeMultiplier * scale;
-            Vector2 velocity = direction.RotatedBy(-angle * .6f) * Main.rand.NextFloat(2f, 5f) * scale;
-            float weight = swing < 0 ? 1f - t : t;
-            new MousseLightShard(place, velocity, Main.rand.Next(12, 23), (3f + weight * 6f) * scale,
-                Color.Lerp(Pale, Color.White, weight)).Spawn();
-            if (i % 6 == 0)
-                CasterSparkles.Spawn(place, velocity * .35f, Pale, .4f, 12, aim.ToRotation());
+    internal static void EmitSlash(Projectile p, Color tint, bool stars)
+    {
+        if (Main.dedServ || Vector2.DistanceSquared(p.Center, Main.LocalPlayer.Center) > 2400f * 2400f) return;
+        Vector2 aim = p.velocity.SafeNormalize(Vector2.UnitX);
+        float scale = p.ai[1] * RangeMultiplier;
+        Vector2 center = Main.player[p.owner].MountedCenter;
+        // Two forward-running curved streams, mirrored about the aim line. Their points
+        // stay inside the 45-degree fan and progress from the player toward the strike.
+        const int particlesPerStream = 15;
+        Vector2 sideways = new(-aim.Y, aim.X);
+        for (int stream = 0; stream < 2; stream++)
+        for (int i = 0; i < particlesPerStream; i++)
+        {
+            float side = stream == 0 ? -1f : 1f;
+            float progress = (i + (stream == 0 ? .35f : .65f)) / particlesPerStream;
+            float forward = 25f + 100f * progress;
+            float spread = 5f + 38f * progress + 5f * MathF.Sin(MathHelper.Pi * progress);
+            Vector2 origin = center + (aim * forward + sideways * side * spread) * scale
+                + sideways * Main.rand.NextFloat(-1.8f, 1.8f) * scale;
+            float slope = (38f + 5f * MathHelper.Pi * MathF.Cos(MathHelper.Pi * progress)) / 100f;
+            float tangentAngle = MathF.Min(MathF.Atan(slope), MathHelper.PiOver4 * .5f) * side;
+            Vector2 direction = aim.RotatedBy(tangentAngle + Main.rand.NextFloat(-.012f, .012f));
+            // Distant glints slow down so the two streams remain near the weapon reach.
+            Vector2 velocity = direction * Main.rand.NextFloat(2.2f, 3.2f)
+                * (1f - .68f * progress) * scale;
+            float weight = Main.rand.NextFloat(.65f, 1f);
+            Dust dust = Dust.NewDustPerfect(origin, ModContent.DustType<ArtsFighterSquashDust>(), velocity);
+            dust.scale = (.48f + weight * .48f) * scale;
+            dust.noGravity = true;
+            dust.color = Color.Lerp(tint, Color.White, weight * .35f);
+            dust.fadeIn = .15f + weight * .5f;
+            dust.rotation = direction.ToRotation() + MathHelper.PiOver2 + Main.rand.NextFloat(-.08f, .08f);
+            dust.customData = Main.rand.NextFloat(-.055f, .055f);
+            if (stars && (i + 3) % 5 == 0)
+            {
+                // Three sparkle/shard pairs travel on each curved stream.
+                CasterSparkles.Spawn(origin, velocity * .4f, tint, .55f + weight * .3f,
+                    14, direction.ToRotation() + Main.rand.NextFloat(-.1f, .1f));
+                if (ParticleManager.activeParticles.Count < 1300)
+                    new AstraLightShard(origin, velocity * .6f, tint, 16 + stream * 2 + i / 5).Spawn();
+            }
         }
     }
 
-    internal static void DrawShard(Vector2 position, Vector2 velocity, float length, Color color) {
-        if (blade == null) return;
-        DrawPixels(blade, position, new Vector2(Math.Max(2f, length * .3f), length), color,
-            velocity.ToRotation() + MathHelper.PiOver2, new Vector2(.5f));
+    internal static void EmitHit(Vector2 center, Vector2 aim, Color tint, int hitCount, bool stars)
+    {
+        if (Main.dedServ || Vector2.DistanceSquared(center, Main.LocalPlayer.Center) > 2400f * 2400f) return;
+        for (int i = 0; i < 14 - hitCount * 2; i++)
+        {
+            float angle = Main.rand.NextFloat(-.3f, .3f);
+            Dust dust = Dust.NewDustPerfect(center, ModContent.DustType<ArtsFighterSquashDust>(),
+                aim.RotatedBy(angle) * Main.rand.NextFloat(8f, 12f) * (1f - MathF.Abs(angle)));
+            dust.scale = Main.rand.NextFloat(1.6f, 1.9f) * (1f - MathF.Abs(angle));
+            dust.noGravity = true;
+            dust.color = Color.Lerp(tint, Color.White, Main.rand.NextFloat(0f, .4f));
+            dust.fadeIn = -.5f;
+            if (i % 3 != 0)
+            {
+                Dust small = Dust.NewDustPerfect(center, DustID.FireworksRGB,
+                    aim.RotatedByRandom(.6f) * Main.rand.NextFloat(5f, 10f), 0, tint, Main.rand.NextFloat(.9f, 1.4f));
+                small.noGravity = true;
+            }
+        }
+        if (stars)
+            for (int i = -1; i <= 1; i++)
+                CasterSparkles.Spawn(center + aim.RotatedBy(i * .6f) * 10f,
+                    aim.RotatedBy(i * .6f) * 1.5f, tint, .75f, 12, aim.ToRotation() + i * .6f);
     }
 }
 
-public sealed class MousseLightShard : Particle
+public sealed class AstraLightShard : Particle
 {
-    public override string TexturePath => "ArknightsMod/Common/Particle/DefaultParticle";
-    public override BlendState DrawBlendState => BlendState.Additive;
-    private readonly float length;
+    public override string TexturePath => MousseMaterials.Root + "MousseLightSplinter";
     private readonly Color tint;
-
-    public MousseLightShard(Vector2 position, Vector2 velocity, int lifetime, float length, Color tint) {
-        Position = position; Velocity = velocity; Lifetime = lifetime;
-        this.length = MathHelper.Clamp(length, 2f, 28f); this.tint = tint;
+    private readonly float spin;
+    public AstraLightShard(Vector2 position, Vector2 velocity, Color tint, int life)
+    {
+        Position = position; Velocity = velocity; this.tint = tint; Lifetime = life;
+        Rotation = velocity.ToRotation();
+        spin = Main.rand.NextFloat(-.085f, .085f);
     }
-    public override void Update() { Velocity *= .90f; }
-    public override void Draw() {
+    public override void Update() { Velocity *= .94f; Rotation += spin; }
+    public override void Draw()
+    {
         float fade = MathF.Pow(1f - LifetimeRatio, 1.5f);
-        MousseVisuals.DrawShard(Position, Velocity, length * (.6f + fade), tint * fade);
+        MousseVisuals.DrawPixels(MousseMaterials.Get("MousseLightSplinter"), Position,
+            new Vector2(14f, 5f) * (1f - LifetimeRatio * .35f), MousseVisuals.Light(tint, fade),
+            Rotation, new Vector2(.5f));
     }
 }

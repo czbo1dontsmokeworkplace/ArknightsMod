@@ -45,7 +45,7 @@ public sealed class SkyfireMeteor : ModProjectile
         Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver4;
         if (Main.dedServ) return;
         Lighting.AddLight(Projectile.Center, new Vector3(.9f, .33f, .06f));
-        if (Projectile.numUpdates == 0) SkyfireVisuals.FlightParticles(Projectile.Center, Projectile.velocity);
+        if (Projectile.numUpdates == 0) SkyfireVisuals.FlightParticles(Projectile.Center, Projectile.velocity, (int)Projectile.localAI[0]++);
     }
 
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)

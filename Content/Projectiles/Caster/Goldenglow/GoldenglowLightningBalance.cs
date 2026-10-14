@@ -14,7 +14,7 @@ internal static class GoldenglowLightningBalance
     internal const float BurstOutputMultiplier = 0.75f;
     internal const float BurstDamage = 1.8f * BurstOutputMultiplier;
     internal const float SkyDamage = 0.8f * BurstOutputMultiplier;
-    internal const float Range = 1000f;
+    internal const float Range = 1500f;
     internal const float WaterRadius = 500f;
     internal const int WaterLifetime = 48;
 

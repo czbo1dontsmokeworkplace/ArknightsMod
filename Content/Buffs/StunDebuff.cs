@@ -8,6 +8,7 @@ namespace ArknightsMod.Content.Buffs
 {
 	public class StunDebuff : ModBuff
 	{
+        protected virtual bool ShowIndicator => true;
 		public override void SetStaticDefaults() {
 			Main.pvpBuff[Type] = true;
 			Main.buffNoSave[Type] = true;
@@ -31,6 +32,7 @@ namespace ArknightsMod.Content.Buffs
 				sdgNPC.defaultSettings = (true, npc.noGravity, npc.noTileCollide, npc.damage);
 			}
 
+            if (ShowIndicator)
 			Projectile.NewProjectile(spawnSource: npc.GetSource_FromThis(),
 										position: npc.Top,
 										velocity: Vector2.Zero,

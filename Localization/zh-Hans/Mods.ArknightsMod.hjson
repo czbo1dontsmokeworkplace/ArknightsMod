@@ -278,6 +278,17 @@ Projectiles: {
 	// LavaBurst.DisplayName: Lava Burst
 	// LavaFocus.DisplayName: Lava Focus
 	// SpreadAfterfield.DisplayName: Spread Afterfield
+	MechAccordDrone.DisplayName: 驭械术师的浮游单元
+	MechAccordHeldStaff.DisplayName: 驭械术师的法杖
+	ClickDrone.DisplayName: 卡达的浮游单元
+	ClickTrackerLaser.DisplayName: 卡达的追踪镭射
+	RockrockStarBolt.DisplayName: 洛洛的涡旋星矢
+	RockrockRailPulse.DisplayName: 洛洛的浮游激光
+	MechAccordHitFlash.DisplayName: 驭械术法的命中闪光
+	// LaevatainSlagfire.DisplayName: Laevatain Slagfire
+	// AstraSwordHoldout.DisplayName: Astra Sword Holdout
+	// MostimaClockHit.DisplayName: Mostima Clock Hit
+	// LaevatainArtsSlash.DisplayName: Laevatain Arts Slash
 }
 
 Keybinds: {

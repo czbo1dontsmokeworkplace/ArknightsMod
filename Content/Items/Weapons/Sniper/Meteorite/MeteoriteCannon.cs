@@ -10,10 +10,10 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Weapons.Sniper.Meteorite;
 
-/// <summary>陨星的平射爆破弩炮；任何箭矢只提供弹药，不决定弹幕外观或效果。</summary>
+/// <summary>陨星的平射爆破弩炮；消耗火箭弹并继承弹药伤害，使用专属爆破弹。</summary>
 public sealed class MeteoriteCannon : ExpansionWeaponBase
 {
-    protected override int[] EliteDamage => [104, 119, 137];
+    protected override int[] EliteDamage => [156, 179, 206];
     private static readonly SoundStyle FireSound = new("ArknightsMod/Sounds/MeteoriteCannonFire")
     { Volume = .64f, MaxInstances = 3 };
     private static readonly SoundStyle SkillSound = new("ArknightsMod/Sounds/SkillActive1")
@@ -33,10 +33,10 @@ public sealed class MeteoriteCannon : ExpansionWeaponBase
         Item.useStyle = ItemUseStyleID.Shoot;
         Item.knockBack = 5f;
         Item.value = Item.sellPrice(gold: 1);
-        Item.rare = ItemRarityID.LightRed;
+        Item.rare = ItemRarityID.Yellow;
         Item.autoReuse = true;
         Item.noMelee = true;
-        Item.useAmmo = AmmoID.Arrow;
+        Item.useAmmo = AmmoID.Rocket;
         Item.shoot = ModContent.ProjectileType<MeteoriteShell>();
         Item.shootSpeed = 20f;
         Item.UseSound = null;
@@ -80,6 +80,8 @@ public sealed class MeteoriteCannon : ExpansionWeaponBase
         int mode = skills.SkillActive ? skills.Skill + 1 : 0;
         Vector2 direction = velocity.SafeNormalize(Vector2.UnitX * player.direction);
         float speed = MathHelper.Max(20f, velocity.Length());
+        // The normal ammo pipeline already includes the selected rocket's damage
+        // and handles consumption/conservation. Apply skill scaling exactly once.
         int shellDamage = mode switch
         {
             1 => (int)(damage * 1.45f),
@@ -108,14 +110,14 @@ public sealed class MeteoriteCannon : ExpansionWeaponBase
     {
         CreateRecipe()
             .AddIngredient(ItemID.MythrilRepeater)
-            .AddIngredient(ItemID.MythrilBar, 12)
+            .AddIngredient(ItemID.ShroomiteBar, 12)
             .AddIngredient(ItemID.SoulofNight, 8)
             .AddIngredient(ItemID.ExplosivePowder, 12)
             .AddTile(TileID.MythrilAnvil)
             .Register();
         CreateRecipe()
             .AddIngredient(ItemID.OrichalcumRepeater)
-            .AddIngredient(ItemID.OrichalcumBar, 12)
+            .AddIngredient(ItemID.ShroomiteBar, 12)
             .AddIngredient(ItemID.SoulofNight, 8)
             .AddIngredient(ItemID.ExplosivePowder, 12)
             .AddTile(TileID.MythrilAnvil)
