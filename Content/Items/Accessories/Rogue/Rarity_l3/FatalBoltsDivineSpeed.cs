@@ -16,8 +16,8 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
         }
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-			// 提升50%最大生命值
-			player.GetAttackSpeed(DamageClass.Ranged) += 0.7f;
+			// 远程攻击速度提高35%
+			player.GetAttackSpeed(DamageClass.Ranged) += 0.35f;
         }
     }
 }

@@ -28,7 +28,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
         private int CountKingItems(Player player)
         {
             int count = 0;
-            for (int i = 3; i < 8; i++) 
+            for (int i = 3; i < 8 + player.extraAccessorySlots && i < player.armor.Length; i++)
             {
                 Item accessory = player.armor[i];
                 if (!accessory.IsAir &&
@@ -42,50 +42,25 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
             return count;
         }
 
-        private bool HasFallenSovereignForm(Player player)
-        {
-            for (int i = 3; i < 8 + player.extraAccessorySlots; i++) 
-            {
-                if (i < player.armor.Length)
-                {
-                   Item accessory = player.armor[i];
-                   
-                    if (!accessory.IsAir && accessory.type == ModContent.ItemType<Rarity_l3.FallenSovereignForm>())
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            bool isLowHealth = (float)player.statLife / player.statLifeMax2 <= 0.3f;
-            bool hasFallenSovereign = HasFallenSovereignForm(player);
+            player.GetModPlayer<KingsCrownPlayer>().active = true;
+        }
 
-           
-            if (isLowHealth || hasFallenSovereign)
-            {
-                int kingCount = CountKingItems(player) + 1; 
+        internal int GetKingCount(Player player) => CountKingItems(player) + 1;
+    }
 
-                float damageBonus = 0f;
+    public class KingsCrownPlayer : ModPlayer
+    {
+        public bool active;
 
-                if (kingCount >= 3)
-                {
-                    damageBonus = 1.5f; 
-                }
-                else if (kingCount > 0) 
-                {
-                    damageBonus = 0.5f; 
-                }
-       
+        public override void ResetEffects() => active = false;
 
-                if (damageBonus > 0f)
-                {
-                    player.GetDamage(DamageClass.Generic) += damageBonus;
-                }
-            }
+        public override void PostUpdateEquips()
+        {
+            if (!active || Player.statLife >= Player.statLifeMax2 * 0.3f) return;
+            int count = ModContent.GetInstance<KingsCrown>().GetKingCount(Player);
+            Player.GetDamage(DamageClass.Generic) += count >= 3 ? 0.4f : 0.2f;
         }
     }
 }

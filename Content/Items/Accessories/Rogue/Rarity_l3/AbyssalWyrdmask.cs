@@ -35,7 +35,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
             if (hasEmblem && npc != null && !npc.friendly)
             {
 
-                modifiers.SourceDamage *= 0.88f;
+                modifiers.SourceDamage *= 0.93f;
 
 
                 
@@ -45,10 +45,10 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
         // 减少所有NPC弹幕对玩家的伤害
         public override void ModifyHitByProjectile(Projectile proj, ref Player.HurtModifiers modifiers)
         {
-            if (hasEmblem && proj != null && proj.hostile && proj.npcProj)
+            if (hasEmblem && proj != null && proj.hostile)
             {
 
-                modifiers.SourceDamage *= 0.88f;
+                modifiers.SourceDamage *= 0.93f;
 
 
                 

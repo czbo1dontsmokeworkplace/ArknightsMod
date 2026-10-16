@@ -35,8 +35,8 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 				return;
 
 			// 检测法术武器
-			if (item.DamageType == DamageClass.Magic) {
-				modifiers.FinalDamage *= 1.40f;
+			if (item.CountsAsClass(DamageClass.Magic) || item.CountsAsClass(DamageClass.Summon)) {
+				modifiers.FinalDamage *= 1.20f;
 			}
 		}
 
@@ -45,8 +45,8 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 				return;
 
 			// 检测法术或召唤伤害
-			if (proj.DamageType == DamageClass.Magic || proj.DamageType == DamageClass.Summon) {
-				modifiers.FinalDamage *= 1.40f;
+			if (proj.CountsAsClass(DamageClass.Magic) || proj.CountsAsClass(DamageClass.Summon)) {
+				modifiers.FinalDamage *= 1.20f;
 			}
 		}
 

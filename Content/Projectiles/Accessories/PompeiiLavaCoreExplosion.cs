@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles.Accessories
 {
-	// 庞贝的熔岩核心 —— 受重伤时以玩家为中心的熔岩爆炸。
+	// 庞贝的熔岩核心 —— 受伤时以玩家为中心的熔岩爆炸。
 	// 视觉全部由 Dust 构成，不绘制任何贴图（PreDraw 返回 false），
 	// 所以这个弹幕不需要配套 .png 素材。
 	// 伤害值由 PompeiiLavaCorePlayer 在生成时算好传入（已含近战加成），

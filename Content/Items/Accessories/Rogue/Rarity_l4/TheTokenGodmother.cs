@@ -38,7 +38,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
             if (hasEmblem && npc != null && !npc.friendly)
             {
 
-                modifiers.SourceDamage *= 0.83f;
+                modifiers.SourceDamage *= 0.90f;
 
 
                 
@@ -48,10 +48,10 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 
         public override void ModifyHitByProjectile(Projectile proj, ref Player.HurtModifiers modifiers)
         {
-            if (hasEmblem && proj != null && proj.hostile && proj.npcProj)
+            if (hasEmblem && proj != null && proj.hostile)
             {
 
-                modifiers.SourceDamage *= 0.83f;
+                modifiers.SourceDamage *= 0.90f;
 
 
                 

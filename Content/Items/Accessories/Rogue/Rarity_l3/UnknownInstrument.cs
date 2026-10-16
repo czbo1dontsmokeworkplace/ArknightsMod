@@ -18,6 +18,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
         {
             // 提升50%最大生命值
             player.statLifeMax2 += (int)(player.statLifeMax2 * 0.5f);
+            player.statDefense -= 10;
         }
     }
 }

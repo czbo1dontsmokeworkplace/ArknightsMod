@@ -16,12 +16,9 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
         }
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-			player.GetDamage(DamageClass.Generic) += 0.1f;
-			player.statLifeMax2 += (int)(player.statLifeMax2 * 0.1f);
-			if (IsBoss()) {
-				player.GetDamage(DamageClass.Generic) += 0.2f;
-				player.statLifeMax2 += (int)(player.statLifeMax2 * 0.2f);
-			}
+            float bonus = IsBoss() ? 0.15f : 0.05f;
+            player.GetDamage(DamageClass.Generic) += bonus;
+            player.statLifeMax2 += (int)(player.statLifeMax2 * bonus);
 		}
 		private bool IsBoss() {
 			foreach (NPC npc in Main.npc) {

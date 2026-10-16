@@ -1,29 +1,22 @@
+using System;
+using System.IO;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
-using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
-using Terraria.ModLoader.IO;
-using System.Collections.Generic;
 using Terraria.Localization;
+using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
+using Terraria.GameContent.Events;
 
 namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 {
 	public class RoundStoneAltar : ModItem
 	{
 		public override void ModifyTooltips(List<TooltipLine> tooltips) {
-			Player player = Main.LocalPlayer;
-			if (player != null) {
-				var altarPlayer = player.GetModPlayer<RoundStoneAltarPlayer>();
-				string TXT = Language.GetTextValue("Layer:");
-				tooltips.Add(new TooltipLine(Mod, "BuffStacks", $"{TXT} {altarPlayer.buffStacks}/10"));
-
-				foreach (TooltipLine line in tooltips) {
-					if (line.Mod == "Terraria" || line.Mod == Mod.Name) {
-						if (line.Name == "BuffStacks")
-							line.OverrideColor = Color.Gold;
-					}
-				}
-			}
+			var altarPlayer = Main.LocalPlayer.GetModPlayer<RoundStoneAltarPlayer>();
+			string text = Language.GetTextValue("Mods.ArknightsMod.Items.RoundStoneAltar.StackTooltip", altarPlayer.buffStacks);
+			tooltips.Add(new TooltipLine(Mod, "BuffStacks", text) { OverrideColor = Color.Gold });
 		}
 
 		public override void SetDefaults() {
@@ -42,78 +35,144 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4
 	public class RoundStoneAltarPlayer : ModPlayer
 	{
 		public bool active;
-		public int buffStacks;
-		private bool wasInEventLastFrame;
+		private int legacyStacks;
+		private readonly HashSet<string> completedEncounters = new();
+		public int buffStacks => legacyStacks + completedEncounters.Count;
 
 		public override void SaveData(TagCompound tag) {
 			tag["RoundStoneAltarStacks"] = buffStacks;
+			tag["RoundStoneAltarLegacyStacks"] = legacyStacks;
+			tag["RoundStoneAltarEncounters"] = new List<string>(completedEncounters);
 		}
 
 		public override void LoadData(TagCompound tag) {
-			buffStacks = tag.GetInt("RoundStoneAltarStacks");
+			completedEncounters.Clear();
+			if (tag.ContainsKey("RoundStoneAltarEncounters")) {
+				legacyStacks = Math.Max(0, tag.GetInt("RoundStoneAltarLegacyStacks"));
+				completedEncounters.UnionWith(tag.GetList<string>("RoundStoneAltarEncounters"));
+			}
+			else {
+				// Old saves recorded only the stack count; preserve those earned stacks.
+				legacyStacks = Math.Clamp(tag.GetInt("RoundStoneAltarStacks"), 0, 10);
+			}
 		}
+
+		public override void ResetEffects() => active = false;
 
 		public override void UpdateEquips() {
-			if (active && buffStacks > 0) {
-				Player.GetDamage(DamageClass.Generic) += 0.05f * buffStacks;
-				Player.statDefense += (int)(Player.statDefense * 0.05f * buffStacks);
-			}
+			if (!active) return;
+			Player.GetDamage(DamageClass.Generic) += 0.01f * buffStacks;
+			Player.statDefense += buffStacks;
 		}
 
-		public override void ResetEffects() {
-			active = false;
+		internal void RecordCompletion(string key) {
+			if (!active || Player.dead || !completedEncounters.Add(key)) return;
+			if (Main.netMode == NetmodeID.Server)
+				SendState();
+			else
+				ShowGrowth();
 		}
 
-		public override void PostUpdate() {
-			if (!active)
-				return;
-
-			bool isInEventNow = Main.invasionType > 0 || Main.bloodMoon || Main.eclipse ||
-							   Main.pumpkinMoon || Main.snowMoon;
-
-			if (isInEventNow && !wasInEventLastFrame) {
-				ApplyBuff();
-			}
-			wasInEventLastFrame = isInEventNow;
+		private void ShowGrowth() {
+			CombatText.NewText(Player.getRect(), Color.Blue, $"+1 ({buffStacks})");
 		}
 
-		private void ApplyBuff() {
-			if (buffStacks >= 10)
-				return;
+		public override void SyncPlayer(int toWho, int fromWho, bool newPlayer) => SendState(toWho, fromWho);
 
-			if (Main.rand.NextFloat() < 0.3f) {
-				buffStacks++;
-				string TXT1 = Language.GetTextValue("+");
-				CombatText.NewText(Player.getRect(), Color.Blue, $"{TXT1}{buffStacks}/10");
-			}
+		private void SendState(int toWho = -1, int fromWho = -1) {
+			ModPacket packet = Mod.GetPacket();
+			packet.Write((short)global::ArknightsMod.ArknightsMod.ArkMessageID.RoundStoneAltarState);
+			packet.Write((byte)Player.whoAmI);
+			packet.Write(legacyStacks);
+			packet.Write(completedEncounters.Count);
+			foreach (string key in completedEncounters) packet.Write(key);
+			packet.Send(toWho, fromWho);
 		}
 
-		public void OnBossKill() {
-			ApplyBuff();
-		}
+		internal static void ReceiveState(BinaryReader reader, int whoAmI) {
+			int playerIndex = reader.ReadByte();
+			int legacy = reader.ReadInt32();
+			int count = reader.ReadInt32();
+			if ((uint)playerIndex >= Main.maxPlayers || count < 0 || count > 4096) return;
+			if (Main.netMode == NetmodeID.Server && playerIndex != whoAmI) return;
 
-		public override void ModifyHitByNPC(NPC npc, ref Player.HurtModifiers modifiers) {
-			if (buffStacks > 0) {
-				modifiers.FinalDamage *= 1f / (1f + 0.05f * buffStacks);
-			}
+			var altarPlayer = Main.player[playerIndex].GetModPlayer<RoundStoneAltarPlayer>();
+			int previousStacks = altarPlayer.buffStacks;
+			altarPlayer.legacyStacks = Math.Clamp(legacy, 0, 10);
+			altarPlayer.completedEncounters.Clear();
+			for (int i = 0; i < count; i++) altarPlayer.completedEncounters.Add(reader.ReadString());
+			if (Main.netMode == NetmodeID.Server)
+				altarPlayer.SendState(-1, whoAmI);
+			else if (playerIndex == Main.myPlayer && altarPlayer.buffStacks > previousStacks)
+				altarPlayer.ShowGrowth();
 		}
 	}
 
 	public class RoundStoneAltarGlobalNPC : GlobalNPC
 	{
 		public override void OnKill(NPC npc) {
-			if (!npc.boss)
-				return;
+			string key = GetEncounterKey(npc);
+			if (key == null) return;
+			// Multipart bosses grant a stack only after the entire encounter is defeated.
+			foreach (NPC other in Main.ActiveNPCs)
+				if (other.whoAmI != npc.whoAmI && other.life > 0 && GetEncounterKey(other) == key) return;
+			RoundStoneAltarEventSystem.RecordCompletion(key);
+		}
 
-			for (int i = 0; i < Main.maxPlayers; i++) {
-				Player player = Main.player[i];
-				if (player != null && player.active && !player.dead) {
-					var altarPlayer = player.GetModPlayer<RoundStoneAltarPlayer>();
-					if (altarPlayer.active) {
-						altarPlayer.OnBossKill();
-					}
-				}
+		private static string GetEncounterKey(NPC npc) {
+			if (npc.type is NPCID.EaterofWorldsHead or NPCID.EaterofWorldsBody or NPCID.EaterofWorldsTail)
+				return "Boss:Terraria/EaterOfWorlds";
+			if (npc.type is NPCID.Retinazer or NPCID.Spazmatism)
+				return "Boss:Terraria/Twins";
+			if (!npc.boss) return null;
+			if (npc.ModNPC?.FullName is "ArknightsMod/Faust" or "ArknightsMod/Mephisto")
+				return "Boss:ArknightsMod/FaustAndMephisto";
+			return npc.ModNPC != null ? "Boss:" + npc.ModNPC.FullName : "Boss:Terraria/" + npc.type;
+		}
+	}
+
+	public class RoundStoneAltarEventSystem : ModSystem
+	{
+		private HashSet<string> previousEvents = new();
+		private bool initialized;
+		private bool oldOnesArmyWon;
+
+		public override void OnWorldLoad() {
+			previousEvents.Clear();
+			initialized = false;
+			oldOnesArmyWon = false;
+		}
+
+		public override void OnWorldUnload() => OnWorldLoad();
+
+		public override void PostUpdateWorld() {
+			if (Main.netMode == NetmodeID.MultiplayerClient) return;
+			HashSet<string> current = GetActiveEvents();
+			if (DD2Event.WonThisRun) oldOnesArmyWon = true;
+			if (initialized) {
+				foreach (string key in previousEvents)
+					if (!current.Contains(key) && (key != "Event:OldOnesArmy" || oldOnesArmyWon))
+						RecordCompletion(key);
 			}
+			if (!DD2Event.Ongoing) oldOnesArmyWon = false;
+			previousEvents = current;
+			initialized = true;
+		}
+
+		private static HashSet<string> GetActiveEvents() {
+			HashSet<string> events = new();
+			if (Main.invasionType > 0) events.Add("Event:Invasion/" + Main.invasionType);
+			if (Main.bloodMoon) events.Add("Event:BloodMoon");
+			if (Main.eclipse) events.Add("Event:SolarEclipse");
+			if (Main.pumpkinMoon) events.Add("Event:PumpkinMoon");
+			if (Main.snowMoon) events.Add("Event:FrostMoon");
+			if (DD2Event.Ongoing) events.Add("Event:OldOnesArmy");
+			return events;
+		}
+
+		internal static void RecordCompletion(string key) {
+			foreach (Player player in Main.ActivePlayers)
+				player.GetModPlayer<RoundStoneAltarPlayer>().RecordCompletion(key);
 		}
 	}
 }

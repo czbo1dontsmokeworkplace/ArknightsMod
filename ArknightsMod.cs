@@ -184,6 +184,9 @@ namespace ArknightsMod
 		public override void HandlePacket(BinaryReader reader, int whoAmI) {
 			short id = reader.ReadInt16();
 			switch ((ArkMessageID)id) {
+				case ArkMessageID.RoundStoneAltarState:
+					global::ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4.RoundStoneAltarPlayer.ReceiveState(reader, whoAmI);
+					break;
 				case ArkMessageID.FaustAndMephisto:
 					global::ArknightsMod.Content.NPCs.Enemy.FaustAndMephisto.DuoNet.Receive(reader);
 					break;
@@ -297,6 +300,7 @@ namespace ArknightsMod
 			FaustAndMephisto,
 			EndfieldGatheringRequest,
 			EndfieldGatheringReply,
+			RoundStoneAltarState,
 		}
 	}
 	//public class Ex : GlobalNPC

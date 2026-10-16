@@ -36,11 +36,17 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l1
 				return;
 
 			// 检测法术或召唤伤害
-			if (item.DamageType == DamageClass.Magic || item.DamageType == DamageClass.Summon) {
-				modifiers.FinalDamage *= 1.10f;
+			if (item.CountsAsClass(DamageClass.Magic) || item.CountsAsClass(DamageClass.Summon)) {
+				modifiers.FinalDamage *= 1.05f;
 			}
 		}
 
        
+        public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref NPC.HitModifiers modifiers)
+        {
+            if (damageAmplifierActive && (proj.CountsAsClass(DamageClass.Magic) || proj.CountsAsClass(DamageClass.Summon)))
+                modifiers.FinalDamage *= 1.05f;
+        }
+
     }
 }
