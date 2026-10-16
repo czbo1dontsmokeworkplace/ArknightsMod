@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using ArknightsMod.Common.Particle;
 using ArknightsMod.Common.VisualEffects;
@@ -54,7 +55,7 @@ internal static partial class HornVisuals
             Dust dust = Dust.NewDustPerfect(position, DustID.Torch, velocity, 30, default, Main.rand.NextFloat(1.2f, 1.8f));
             dust.noGravity = true;
             if (ParticleManager.activeParticles.Count < 1100)
-                new DefaultParticle(position, velocity, Main.rand.Next(22, 34), .3f,
+                new T_Streak_Particle(position, velocity, Main.rand.Next(22, 34), .3f,
                     i % 3 == 0 ? White : Gold, false) { Deformation = new Vector2(.3f, 2.6f) }.Spawn();
         }
     }

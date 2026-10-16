@@ -222,6 +222,23 @@ public class PassengerChainDischarge : ModProjectile
             int seed = Projectile.identity * 397 ^ Projectile.owner ^ hop * 7919;
             float nodeIntensity = Intensity * (hop == 0 ? 1f : 0.82f);
             bool targetNode = targets[hop] >= 0 || IsStorm;
+            // Collision-triggered chains flash across the complete span on the damage tick.
+            // Keep the existing route, hop cadence, immunity and damage falloff.
+            if (impactTriggered && !IsStorm)
+            {
+                if (localAge == 1 && targetNode)
+                    PassengerLightningVisuals.PrepareImpact(end, nodeIntensity, seed, Palette);
+                if (localAge == 3)
+                {
+                    if (hop > 0)
+                        ChainArtsVfx.Discharge(start, end, Intensity, Palette);
+                    if (targetNode)
+                        ImpactHopVisuals(end, nodeIntensity, seed, hop == 0, true);
+                }
+                if (!Main.dedServ)
+                    Lighting.AddLight(end, Palette.Light * (nodeIntensity * .82f));
+                continue;
+            }
             if (localAge == 1)
                 BeginHopVisuals(start, end, Intensity * (hop == 0 ? 1f : 1.1f),
                     nodeIntensity, seed, hop, targetNode);

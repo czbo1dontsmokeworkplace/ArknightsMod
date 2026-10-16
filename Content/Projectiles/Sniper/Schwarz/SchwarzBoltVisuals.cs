@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using ArknightsMod.Common.Particle;
 using ArknightsMod.Common.VisualEffects;
@@ -92,42 +93,10 @@ internal static class SchwarzBoltVisuals
         {
             float wave = MathF.Sin(age * .25f + i * MathHelper.PiOver2);
             Vector2 position = projectile.Center - direction * 9f + normal * i * (8f + wave * 3f);
-            new SchwarzOrbitMote(position, -direction * Main.rand.NextFloat(.7f, 1.8f)
+            new T_Smear_Particle(position, -direction * Main.rand.NextFloat(.7f, 1.8f)
                 + normal * i * .35f, Main.rand.Next(9, 15),
-                i < 0 ? Pale : Violet, Main.rand.NextFloat(11f, 18f), direction.ToRotation()).Spawn();
+                i < 0 ? Pale : Violet, Main.rand.NextFloat(11f, 18f),
+                height: 5f, damping: .88f, fadeExponent: 1.4f, rotation: direction.ToRotation()).Spawn();
         }
-    }
-}
-
-public sealed class SchwarzOrbitMote : Particle
-{
-    private readonly Color initialColor;
-    private readonly float width;
-    public override string TexturePath =>
-        "ArknightsMod/Content/Projectiles/Sniper/Schwarz/Assets/SchwarzSmear";
-    public override BlendState DrawBlendState => BlendState.Additive;
-
-    public SchwarzOrbitMote(Vector2 position, Vector2 velocity, int lifetime,
-        Color color, float width, float rotation)
-    {
-        Position = position;
-        Velocity = velocity;
-        Lifetime = lifetime;
-        initialColor = Color = color;
-        this.width = width;
-        Rotation = rotation;
-    }
-
-    public override void Update()
-    {
-        Velocity *= .88f;
-        Color = initialColor * MathF.Pow(1f - LifetimeRatio, 1.4f);
-    }
-
-    public override void Draw()
-    {
-        Main.spriteBatch.Draw(Texture, Position - Main.screenPosition, null, Color, Rotation,
-            Texture.Size() * .5f, new Vector2(width / Texture.Width, 5f / Texture.Height),
-            SpriteEffects.None, 0f);
     }
 }

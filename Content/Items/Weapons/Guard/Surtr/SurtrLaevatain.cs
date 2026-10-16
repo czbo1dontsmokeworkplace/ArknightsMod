@@ -19,7 +19,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Surtr
 
 		public override void SetDefaults()
 		{
-			Item.damage = 134;
+			Item.damage = 231;
 			Item.DamageType = DamageClass.Melee;
 			Item.width = 64;
 			Item.height = 70;
@@ -54,6 +54,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Surtr
 				.AddIngredient<global::ArknightsMod.Content.Items.Material.KetonColloid>(2)
 				.AddIngredient<AstraSword>()
 				.AddIngredient(ItemID.HellstoneBar, 12)
+				.AddIngredient(ItemID.BeetleHusk, 8)
 				.AddIngredient(ItemID.LavaBucket);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();

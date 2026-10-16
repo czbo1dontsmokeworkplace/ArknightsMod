@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using ArknightsMod.Common.Particle;
 using ArknightsMod.Content.Projectiles.BasePROJ;
@@ -74,7 +75,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Hellagur
 					Color streakColor = Main.rand.NextBool(4)
 						? new Color(255, 226, 166)
 						: new Color(224, 28, 48);
-					var streak = new DefaultParticle(
+					var streak = new T_Streak_Particle(
 						Projectile.Center + normal * Main.rand.NextFloat(-20f, 20f),
 						-Projectile.velocity * Main.rand.NextFloat(0.04f, 0.1f) + Main.rand.NextVector2Circular(0.5f, 0.5f),
 						Main.rand.Next(10, 17), Main.rand.NextFloat(0.38f, 0.7f), streakColor, true) {

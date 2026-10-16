@@ -46,6 +46,16 @@ public sealed class MechAccordHeldStaff : ModProjectile
         if (float.IsFinite(value.X) && float.IsFinite(value.Y)) aim = value;
     }
 
+    private Vector2 StaffTip(Player player, MechAccordStaffBase staff)
+    {
+        if (Main.dedServ)
+            return Projectile.Center + new Vector2(-6.6f * player.direction, -37.2f * player.gravDir);
+        Texture2D texture = TextureAssets.Item[staff.IsRockrock ? ItemID.SpectreStaff : ItemID.InfernoFork].Value;
+        float rotation = -MathHelper.PiOver4 * player.direction * player.gravDir;
+        return VerticalStaffBase.HeldStaffPoint(player, texture, Projectile.Center,
+            staff.VerticalTip, rotation, staff.VerticalOrigin, 1f);
+    }
+
     public override void AI()
     {
         Player player = Main.player[Projectile.owner];
@@ -61,7 +71,7 @@ public sealed class MechAccordHeldStaff : ModProjectile
         Projectile.Center = VerticalStaffBase.HeldStaffCenter(player, staff);
         player.heldProj = Projectile.whoAmI;
         player.itemTime = player.itemAnimation = 2;
-        Vector2 tip = Projectile.Center + new Vector2(-6.6f * player.direction, -37.2f * player.gravDir);
+        Vector2 tip = StaffTip(player, staff);
         if (!staff.IsRockrock)
         {
             if (owned)
@@ -102,10 +112,10 @@ public sealed class MechAccordHeldStaff : ModProjectile
         }
         WeaponPlayer skills = player.GetModPlayer<WeaponPlayer>();
         LockedTarget = GoldenglowHeldStaff.FindTargetNPC(aim, player.Center, staff.Reach, staff.SearchRadius);
-        if(LockedTarget!=null) attackTicks++; else attackTicks=0;
+        attackTicks++;
         bool burstStart=attackTicks%240==180;
-        if(burstStart&&!Main.dedServ) MechAccordVisuals.Emit(aim,true);
-        if(Bursting&&!Main.dedServ&&attackTicks%4==0)
+        if(burstStart&&!Main.dedServ) MechAccordVisuals.Emit(tip,true);
+        if(Bursting&&LockedTarget!=null&&!Main.dedServ&&attackTicks%4==0)
         {
             float angle=attackTicks*.14f;
             for(int i=0;i<5;i++)
@@ -115,13 +125,13 @@ public sealed class MechAccordHeldStaff : ModProjectile
                     new Vector2(-radial.Y,radial.X)*.65f,MechAccordVfx.Amber,.4f,14,angle);
             }
         }
-        if (owned && LockedTarget != null)
+        if (owned)
         {
             pulseCooldown--;
             if (pulseCooldown <= 0 || burstStart)
             {
                 int damage = player.GetWeaponDamage(player.HeldItem);
-                RockrockStarBolt.SpawnFan(Projectile.GetSource_FromThis(), aim, LockedTarget,
+                RockrockStarBolt.SpawnFan(Projectile.GetSource_FromThis(), tip, LockedTarget,
                     player.whoAmI, (int)(damage*(Bursting?1.25f:1f)), player.GetWeaponKnockback(player.HeldItem),
                     Bursting, rockrockVolley++);
                 pulseCooldown = Math.Max(4f, (Bursting?6:staff.PulseInterval) /
@@ -157,7 +167,7 @@ public sealed class MechAccordHeldStaff : ModProjectile
         float rotation = -MathHelper.PiOver4 * player.direction * player.gravDir;
         VerticalStaffBase.DrawHeldStaff(player, texture, Projectile.Center, lightColor,
             Vector2.Zero, rotation, new Vector2(.28f, .75f));
-        Vector2 tip = Projectile.Center + new Vector2(-6.6f * player.direction, -37.2f * player.gravDir);
+        Vector2 tip = StaffTip(player, staff);
         MechAccordVfx.DrawLens(tip, staff.IsRockrock, 24f, (float)Projectile.ai[0]);
         if(!staff.IsRockrock&&Projectile.owner==Main.myPlayer&&dragging)
             ClickSelection.Draw(ClickSelection.Area(dragStart,aim));

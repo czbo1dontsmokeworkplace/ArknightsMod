@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using ArknightsMod.Common.Particle;
 using ArknightsMod.Common.VisualEffects;
@@ -99,9 +100,9 @@ public sealed class SchwarzRiftLaser : ModProjectile
             float angle = MathHelper.TwoPi * i / count + Main.rand.NextFloat(-.18f, .18f);
             Vector2 direction = angle.ToRotationVector2();
             Vector2 position = Projectile.Center + direction * Main.rand.NextFloat(6f, 28f);
-            new SchwarzRiftMote(position, direction * Main.rand.NextFloat(1.2f, 5f) * power,
-                Main.rand.Next(12, 21), Main.rand.NextFloat(15f, 34f) * power,
-                i % 4 == 0 ? Pale : Violet).Spawn();
+            new T_Smear_Particle(position, direction * Main.rand.NextFloat(1.2f, 5f) * power,
+                Main.rand.Next(12, 21), width: Main.rand.NextFloat(15f, 34f) * power,
+                color: i % 4 == 0 ? Pale : Violet, height: 9f, damping: .9f, fadeExponent: 1.5f).Spawn();
         }
     }
 
@@ -167,35 +168,4 @@ public sealed class SchwarzRiftLaser : ModProjectile
         EndAdditive();
         return false;
     }
-}
-
-public sealed class SchwarzRiftMote : Particle
-{
-    private readonly Color initialColor;
-    private readonly float width;
-    public override string TexturePath =>
-        "ArknightsMod/Content/Projectiles/Sniper/Schwarz/Assets/SchwarzSmear";
-    public override BlendState DrawBlendState => BlendState.Additive;
-
-    public SchwarzRiftMote(Vector2 position, Vector2 velocity, int lifetime,
-        float width, Color color)
-    {
-        Position = position;
-        Velocity = velocity;
-        Lifetime = lifetime;
-        this.width = width;
-        initialColor = Color = color;
-        Rotation = velocity.ToRotation();
-    }
-
-    public override void Update()
-    {
-        Velocity *= .9f;
-        Color = initialColor * MathF.Pow(1f - LifetimeRatio, 1.5f);
-    }
-
-    public override void Draw()
-        => Main.spriteBatch.Draw(Texture, Position - Main.screenPosition, null, Color, Rotation,
-            Texture.Size() * .5f, new Vector2(width / Texture.Width, 9f / Texture.Height),
-            SpriteEffects.None, 0f);
 }

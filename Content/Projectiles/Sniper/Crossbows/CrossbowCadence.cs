@@ -2,11 +2,14 @@ using System;
 
 namespace ArknightsMod.Content.Projectiles.Sniper.Crossbows;
 
-public enum CrossbowKind { Kroos, KroosAlter, Schwarz, Pozemka }
+public enum CrossbowKind { Kroos, KroosAlter, Schwarz, Pozemka, BluePoison, Provence, GreyThroat, Archetto }
 
 public static class CrossbowBallistics
 {
     public static float PiercingMultiplier(int priorHits) => MathF.Pow(.98f, Math.Max(0, priorHits));
+    public static bool IsPiercing(CrossbowKind kind) => kind is CrossbowKind.BluePoison or CrossbowKind.Provence or CrossbowKind.Schwarz;
+    public static int BurstLength(CrossbowKind kind) => kind switch {
+        CrossbowKind.Archetto => 4, CrossbowKind.Pozemka => 5, _ => 3 };
 }
 
 // Gap means the time from the LAST arrow in a burst to the FIRST arrow of the next burst.
@@ -16,6 +19,11 @@ public sealed class CrossbowCadence
     public double NextShotAt { get; private set; }
     public int ShotsInBurst { get; private set; }
     public bool Ready(ulong tick) => tick + .00001d >= NextShotAt;
+    public void BeginForcedBurst(ulong tick)
+    {
+        ShotsInBurst = 0;
+        NextShotAt = tick;
+    }
 
     public void Fired(ulong tick, CrossbowKind kind, float speed = 1f, float skillInterval = 1f)
     {
@@ -25,7 +33,13 @@ public sealed class CrossbowCadence
             NextShotAt = tick + 45;
             return;
         }
-        bool last = ++ShotsInBurst == 3;
+        if (CrossbowBallistics.IsPiercing(kind))
+        {
+            ShotsInBurst = 0;
+            NextShotAt = tick + Math.Max(1, (kind == CrossbowKind.BluePoison ? 38 : 48) * skillInterval / Math.Max(.1f, speed));
+            return;
+        }
+        bool last = ++ShotsInBurst == CrossbowBallistics.BurstLength(kind);
         double interval = last ? (kind == CrossbowKind.Pozemka ? 21 : 30)
             : (kind == CrossbowKind.Kroos ? 10 : 7);
         // Preserve fractional intervals at high attack speed instead of rounding every shot.

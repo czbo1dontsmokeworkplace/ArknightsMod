@@ -1,212 +1,108 @@
-﻿using ArknightsMod.Content.Projectiles.Caster.Lava;
+using ArknightsMod.Content;
+using ArknightsMod.Content.Projectiles.Caster.Lava;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using ArknightsMod.Content;
-using Terraria.DataStructures;
 
-namespace ArknightsMod.Content.Items.Weapons.Caster.Lava
+namespace ArknightsMod.Content.Items.Weapons.Caster.Lava;
+
+public class Lava_Dagger : UpgradeWeaponBase
 {
-	public class Lava_Dagger : UpgradeWeaponBase
-	{
-		public override void AddRecipes() {
-			Recipe recipe = CreateRecipe()
-				.AddIngredient<global::ArknightsMod.Content.Items.Material.Oriron>(1)
-				.AddIngredient<global::ArknightsMod.Content.Items.Material.SugarSubstitute>(2)
-				.AddIngredient(ItemID.WandofSparking)
-				.AddIngredient(ItemID.Torch, 10);
-			recipe.AddTile(ModContent.TileType<FactoryTile>());
-			recipe.Register();
-		}
-		private static SoundStyle SkillActive1;
-		private static SoundStyle NoSound;
-		public override void Load() {
-			SkillActive1 = new SoundStyle("ArknightsMod/Sounds/SkillActive1") {
-				Volume = 0.4f,
-				MaxInstances = 4,
-			};
-			NoSound = new SoundStyle("ArknightsMod/Sounds/NoSound") {
-				Volume = 0f,
-				MaxInstances = 4,
-			};
-		}
-		public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
-		{
-			Texture2D tex = ModContent.Request<Texture2D>("ArknightsMod/Content/Items/Weapons/Caster/Lava/LavaWeapon").Value;
-			spriteBatch.Draw(tex, position, null, drawColor, 0f, tex.Size() / 2, scale, SpriteEffects.None, 0f);
-			return false;
-		}
-		public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
-		{
-			Texture2D tex = ModContent.Request<Texture2D>("ArknightsMod/Content/Items/Weapons/Caster/Lava/LavaWeapon").Value;
-			spriteBatch.Draw(tex, Item.position - tex.Size() / 2 - Main.screenPosition, null,
-				lightColor, rotation, tex.Size() / 2, scale, SpriteEffects.None, 0f);
-			return false;
-		}
-		public override void SetDefaults()
-		{
-			Item.damage = 40;
-			Item.knockBack = 3f;
-			Item.useAnimation = Item.useTime = 20;
-			Item.shootSpeed = 12f;
+    public override void SetDefaults()
+    {
+        Item.damage = 48;
+        Item.knockBack = 3f;
+        Item.useTime = Item.useAnimation = 65;
+        Item.shootSpeed = 12f;
+        Item.shoot = ModContent.ProjectileType<LavaBolt>();
+        Item.DamageType = DamageClass.Magic;
+        Item.useStyle = ItemUseStyleID.Shoot;
+        Item.autoReuse = true;
+        Item.noMelee = true;
+        Item.useTurn = true;
+        Item.mana = 5;
+        Item.UseSound = SoundID.Item73 with { Volume = .43f };
+    }
 
-			Item.shoot = ModContent.ProjectileType<LavaFocus>();
-			Item.DamageType = DamageClass.Magic;
-			Item.useStyle = ItemUseStyleID.Shoot;
-			Item.channel = true;
-			Item.autoReuse = true;
-			Item.noUseGraphic = true;
-			Item.mana = 5;
-			//Item.UseSound = SoundID.Item1;
-			//Item.rare = ItemRarityID.Green;
-			//Item.value = Item.sellPrice(silver: 5);
+    public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame,
+        Color drawColor, Color itemColor, Vector2 origin, float scale)
+    {
+        Texture2D texture = ModContent.Request<Texture2D>(
+            "ArknightsMod/Content/Items/Weapons/Caster/Lava/LavaWeapon").Value;
+        spriteBatch.Draw(texture, position, null, drawColor, 0f, texture.Size() / 2, scale,
+            SpriteEffects.None, 0f);
+        return false;
+    }
 
-			Item.noMelee = true;
-			Item.useTurn = true;
-		}
-		public override void HoldItem(Player player)
-		{
-			if (player.whoAmI != Main.myPlayer) return;
-			// 检查法书效果是否已经存在
-			bool exist = false;
-			for (int i = 0; i < Main.maxProjectiles; i++)
-			{
-				if (Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<LavaSpellbookHoldout>() && Main.projectile[i].owner == player.whoAmI)
-				{
-					exist = true;
-					break;
-				}
-			}
+    public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor,
+        ref float rotation, ref float scale, int whoAmI)
+    {
+        Texture2D texture = ModContent.Request<Texture2D>(
+            "ArknightsMod/Content/Items/Weapons/Caster/Lava/LavaWeapon").Value;
+        spriteBatch.Draw(texture, Item.position - texture.Size() / 2 - Main.screenPosition, null,
+            lightColor, rotation, texture.Size() / 2, scale, SpriteEffects.None, 0f);
+        return false;
+    }
 
-			if (!exist)
-			{
-				Projectile.NewProjectile(
-					player.GetSource_FromThis(),
-					player.Center,
-					Vector2.Zero,
-					ModContent.ProjectileType<LavaSpellbookHoldout>(),
-					0,
-					0f,
-					player.whoAmI
-				);
-			}
-		}
-		public override bool AltFunctionUse(Player player) => false;
-		public override bool CanUseItem(Player player) {
-			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
-			if (Main.myPlayer == player.whoAmI) {
-				if (ArknightsKeybinds.SkillActivatePressed(player)) {
-					if (!modPlayer.SummonMode) {
-						if (modPlayer.Skill == 0 && modPlayer.StockCount > 0 && !modPlayer.SkillActive) {
-							modPlayer.SkillActive = true;
-							modPlayer.SkillTimer = 0;
+    public override bool CanUseItem(Player player)
+    {
+        if (ArknightsKeybinds.SkillActivatePressed(player))
+        {
+            if (player.whoAmI == Main.myPlayer)
+            {
+                WeaponPlayer skills = player.GetModPlayer<WeaponPlayer>();
+                if (!skills.SummonMode && skills.Skill == 0 && skills.StockCount > 0 && !skills.SkillActive)
+                {
+                    skills.SkillActive = true;
+                    skills.SkillTimer = 0;
+                    skills.DelStockCount();
+                    SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/SkillActive1")
+                        { Volume = .4f, MaxInstances = 4 }, player.Center);
+                }
+            }
+            return false;
+        }
+        return base.CanUseItem(player);
+    }
 
-							modPlayer.DelStockCount();
-							Item.UseSound = SkillActive1;
-							SoundEngine.PlaySound(Item.UseSound.Value, player.Center);
-						}
-						else
-							return false;
-					}
-				}
-				else {
-					if (!modPlayer.SummonMode) {
-						Item.UseSound = NoSound;
-						if (modPlayer.Skill == 0 && modPlayer.SkillActive) {
-							player.GetAttackSpeed(DamageClass.Magic) += 0.5f;
-							Item.UseSound = NoSound;
-						}
-					}
-				}
-			}
-			return player.ownedProjectileCounts[Item.shoot] == 0 && base.CanUseItem(player);
-		}
-		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source,
-			Vector2 position, Vector2 velocity, int type, int damage, float knockback)
-		{
-			if (player.whoAmI == Main.myPlayer)
-				Projectile.NewProjectile(source, player.MountedCenter, velocity, type, damage, knockback, player.whoAmI);
-			return false;
-		}
-	}
+    public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
+    {
+        base.ModifyWeaponDamage(player, ref damage);
+        WeaponPlayer skills = player.GetModPlayer<WeaponPlayer>();
+        if (skills.SkillActive && skills.Skill == 0
+            && skills.CurrentSkill?.Key.Item == nameof(Lava_Dagger))
+            damage *= 1.5f;
+    }
 
-	public class LavaSpellbookHoldout : ModProjectile
-	{
-		private Vector2 pos;
+    public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source,
+        Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+    {
+        if (player.whoAmI == Main.myPlayer)
+        {
+            Vector2 direction = velocity.SafeNormalize(Vector2.UnitX * player.direction);
+            Vector2 muzzle = player.MountedCenter + direction * 36f;
+            int index = Projectile.NewProjectile(source, muzzle, direction * Item.shootSpeed,
+                type, damage, knockback, player.whoAmI);
+            if (Main.projectile.IndexInRange(index))
+                Main.projectile[index].CritChance = player.GetWeaponCrit(Item);
+            if (!Main.dedServ)
+                global::ArknightsMod.Common.VisualEffects.SpreadArtsVfx.Release(
+                    muzzle, direction, global::ArknightsMod.Common.VisualEffects.SpreadArt.Ember);
+        }
+        return false;
+    }
 
-		public override string Texture => "ArknightsMod/Content/Projectiles/Caster/Lava/Lava_Spellbook_Tex";
-
-		public override void SetDefaults()
-		{
-			Projectile.width = Projectile.height = 32;
-			Projectile.timeLeft = 2;
-			Projectile.tileCollide = false;
-			Projectile.hide = true;
-		}
-
-		public override void AI()
-		{
-			Player player = Main.player[Projectile.owner];
-
-			if (player.dead || !player.active || player.HeldItem?.type != ModContent.ItemType<Lava_Dagger>())
-			{
-				Projectile.Kill();
-				return;
-			}
-
-			Vector2 target = player.MountedCenter + new Vector2(player.direction * 24, 0);
-
-			if (Projectile.timeLeft == 2)
-			{
-				Projectile.Center = target;
-				pos = target;
-			}
-			else
-			{
-				pos = Vector2.Lerp(pos, target, 0.7f);
-				Projectile.Center = pos;
-			}
-
-			Projectile.rotation = 0f;
-			Projectile.spriteDirection = player.direction;
-
-			Projectile.timeLeft = 2;
-		}
-
-		public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
-		{
-			overPlayers.Add(index);
-		}
-
-		public override bool PreDraw(ref Color lightColor)
-		{
-			Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
-
-			Vector2 position = Projectile.Center - Main.screenPosition;
-
-			SpriteEffects spriteEffects = Projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-
-			Main.EntitySpriteDraw(
-				texture,
-				position,
-				null,
-				lightColor,
-				0f,
-				texture.Size() * 0.5f,
-				1f,
-				spriteEffects,
-				0
-			);
-
-			return false;
-		}
-
-		public override bool? CanDamage() => false;
-	}
+    public override void AddRecipes() => CreateRecipe()
+        .AddIngredient<global::ArknightsMod.Content.Items.Material.Oriron>()
+        .AddIngredient<global::ArknightsMod.Content.Items.Material.SugarSubstitute>(2)
+        .AddIngredient(ItemID.WandofSparking)
+        .AddIngredient(ItemID.Torch, 10)
+        .AddTile(ModContent.TileType<FactoryTile>())
+        .Register();
 }

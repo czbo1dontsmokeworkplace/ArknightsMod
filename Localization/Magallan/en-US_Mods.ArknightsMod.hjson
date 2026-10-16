@@ -26,8 +26,8 @@ Skills: {
 			Label: Laser Mining Module
 			Desc:
 				'''
-				Drones target enemies within 19.5 tiles and continuously fire lasers
-				Lasers reach up to 19.5 tiles and pierce every enemy in their path, but stop at terrain; this mode stays active
+				Drones target enemies within 19.5 tiles and repeatedly fire instant green lasers
+				Each laser connects directly to its locked target and hits only that enemy once; this mode stays active
 				'''
 		}
 

@@ -289,6 +289,11 @@ Projectiles: {
 	// AstraSwordHoldout.DisplayName: Astra Sword Holdout
 	// MostimaClockHit.DisplayName: Mostima Clock Hit
 	// LaevatainArtsSlash.DisplayName: Laevatain Arts Slash
+	// ChargedOperatorField.DisplayName: Charged Operator Field
+	// ChargedOperatorHoldout.DisplayName: Charged Operator Holdout
+	// ChargedOperatorImpact.DisplayName: Charged Operator Impact
+	// ChargedOperatorShot.DisplayName: Charged Operator Shot
+	// DreadnoughtFragment.DisplayName: Dreadnought Fragment
 }
 
 Keybinds: {

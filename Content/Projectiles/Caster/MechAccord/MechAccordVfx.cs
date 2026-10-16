@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using System.Collections.Generic;
 using ArknightsMod.Common.Particle;
@@ -180,14 +181,14 @@ internal static class MechAccordVisuals
         if (!MechAccordVfx.Visible(point) || ParticleManager.activeParticles.Count >= 1100) return;
         Vector2 tangent = velocity.SafeNormalize(Vector2.UnitX);
         Vector2 sideways = new(-tangent.Y, tangent.X);
-        new MechRadialParticle(point, -tangent * .7f + sideways * (age % 2 == 0 ? .65f : -.65f),
+        new T_Mech_Radial_Particle(point, -tangent * .7f + sideways * (age % 2 == 0 ? .65f : -.65f),
             age % 2 == 0 ? MechAccordVfx.Violet : MechAccordVfx.Amber, 3.5f, 18).Spawn();
     }
     internal static void Charge(Vector2 tip, bool rockrock)
     {
         if (!MechAccordVfx.Visible(tip) || ParticleManager.activeParticles.Count >= 1100) return;
         Vector2 offset = Main.rand.NextVector2Unit() * 14f;
-        new MechRadialParticle(tip + offset, -offset * .055f,
+        new T_Mech_Radial_Particle(tip + offset, -offset * .055f,
             rockrock ? MechAccordVfx.Amber : Color.White, 3.5f, 14).Spawn();
     }
     internal static void Overload(Vector2 center) => Emit(center, true, false);
@@ -198,7 +199,7 @@ internal static class MechAccordVisuals
         for (int i = 0; i < count && ParticleManager.activeParticles.Count < 1200; i++)
         {
             Vector2 direction = (MathHelper.TwoPi * i / count + Main.rand.NextFloat(-.09f, .09f)).ToRotationVector2();
-            new MechRadialParticle(center + direction * 4f, direction * Main.rand.NextFloat(.8f, 2.6f),
+            new T_Mech_Radial_Particle(center + direction * 4f, direction * Main.rand.NextFloat(.8f, 2.6f),
                 rockrock ? (i % 2 == 0 ? MechAccordVfx.Violet : MechAccordVfx.Amber) : Color.White,
                 Main.rand.NextFloat(2.5f, 5.5f), Main.rand.Next(13, 24)).Spawn();
         }
@@ -214,16 +215,3 @@ internal static class MechAccordVisuals
         }
     }
 }
-
-public sealed class MechRadialParticle : Particle
-{
-    private readonly float diameter;
-    public override string TexturePath => "ArknightsMod/Common/Particle/DefaultParticle";
-    public override BlendState DrawBlendState => BlendState.Additive;
-    internal MechRadialParticle(Vector2 point, Vector2 velocity, Color color, float diameter, int lifetime)
-    { Position = point; Velocity = velocity; Color = color; this.diameter = diameter; Lifetime = lifetime; }
-    public override void Update() { Velocity *= .88f; }
-    public override void Draw() => MechAccordVfx.Mask("Bloom", Position, new Vector2(diameter),
-        MechAccordVfx.Fade(Color, MathF.Pow(1f - LifetimeRatio, 1.4f)));
-}
-

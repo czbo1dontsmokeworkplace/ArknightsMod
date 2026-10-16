@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using ArknightsMod.Common.Particle;
 using ArknightsMod.Common.VisualEffects;
@@ -76,29 +77,16 @@ internal sealed class MostimaVisuals : IDisposable
         MostimaClockwork.Face(target, MostimaClockwork.Radius, time * 90f,
             .65f + charge * .35f, true);
     }
-    internal static void Burst(Vector2 center, float age, float fade = 1f, float scale = 1f, float gold = 0f)
+    internal static void Burst(Vector2 center, float age, float fade = 1f, float scale = 1f, float gold = 0f, float flowTime = 0f)
     {
         if (!SpreadVfxBudget.Visible(center, 680f * scale)) return;
         float face = MostimaClockwork.FaceOpacity(age) * fade;
-        MostimaClockwork.Backplate(center, .82f * face, scale, gold);
-        float strike = MostimaClockwork.BeatAge(age) < 0f ? 0f : MathHelper.Clamp(1f - MostimaClockwork.BeatAge(age) / 5f, 0f, 1f);
-        // DarkPlasma's inward flow and CosmicFire's dark/bright separation support the
-        // clock; neither is allowed to obscure its face or expand past the damage radius.
-        DrawWarpedSmear(center, 430f * scale, age * .45f, face * .52f);
-        using (Begin(BlendState.NonPremultiplied))
-            Sprite("TemporalOrb", center, new Vector2(300f * scale), Color.Lerp(new Color(5, 12, 29), new Color(50, 27, 8), gold) * (.28f * face));
-        if (age is >= 7f and <= 24f)
-            DrawChronoRibbons(center, age * .5f, 188f, face * .18f);
-        MostimaClockExplosion.Draw(center, age, fade, scale, gold);
-        MostimaGrandClockVfx.Draw(center, age, face, scale, gold);
+        // Clean translucent glass supports the dial; all the motion lives in the
+        // continuous stream system. Hands alone use the stepped attack timeline.
+        MostimaClockwork.Backplate(center, .28f * face, scale, gold);
+        MostimaGrandClockVfx.Draw(center, flowTime, face, scale, gold);
         using var pass = Begin();
-        // Brief textured implosion at the first damaging beat; its glow decays before
-        // the second pointer step. No perpetually flashing white plate over the clock.
-        Sprite("TemporalSmear", center, new Vector2((120f + 250f * strike) * scale),
-            MostimaClockwork.TimeColor(Blue, gold) * (strike * .32f * fade), -age * .025f);
-        Sprite("TemporalFlare", center, new Vector2((60f + 150f * strike) * scale),
-            MostimaClockwork.TimeColor(MostimaClockwork.Silver, gold) * (strike * .23f * fade));
-        MostimaClockwork.Face(center, MostimaClockwork.Radius * scale, age, face, false, gold);
+        MostimaClockwork.Face(center, MostimaClockwork.Radius * scale, age, face * 1.65f, false, gold);
     }
 
     private static float EaseOut(float t) => 1f - (1f - t) * (1f - t) * (1f - t);
@@ -173,63 +161,12 @@ internal sealed class MostimaVisuals : IDisposable
         for (int i = 0; i < count; i++)
         {
             float angle = i * MathHelper.TwoPi / count + Main.rand.NextFloat(-.1f, .1f);
-            new MostimaChronoParticle(center, angle.ToRotationVector2() * speed * Main.rand.NextFloat(.65f, 1.2f),
+            new T_Chrono_Particle(center, angle.ToRotationVector2() * speed * Main.rand.NextFloat(.65f, 1.2f),
                 i % 2 == 0 ? Blue : Violet, Main.rand.Next(22, 38)).Spawn();
         }
     }
 }
 
-public sealed class MostimaChronoParticle : Particle
-{
-    private readonly Color tint;
-    public override string TexturePath => MostimaVisuals.Assets + "ChronoStreak";
-    public override BlendState DrawBlendState => BlendState.Additive;
-    public MostimaChronoParticle(Vector2 center, Vector2 velocity, Color color, int lifetime)
-    {
-        Position = center; Velocity = velocity; tint = Color = color; Lifetime = lifetime;
-        Direction = 1;
-    }
-    public override void Update()
-    {
-        Velocity *= .945f;
-        Rotation = Velocity.ToRotation() - .91f;
-        // Bound each streak to 8..25 pixels instead of stretching a pixel across the scene.
-        Scale = MathHelper.Clamp(Velocity.Length() * .035f + .12f, .12f, .39f);
-        Color = tint * MathF.Pow(1 - LifetimeRatio, 1.3f);
-    }
-}
+
 
 // Moving points on the two clock tracks, independent from the static dial texture.
-public sealed class MostimaClockMote : Particle
-{
-    private readonly Vector2 center;
-    private readonly Color tint;
-    private readonly float radius;
-    private readonly int spin;
-    private float angle;
-    public override string TexturePath => MostimaVisuals.Assets + "TemporalOrb";
-    public override BlendState DrawBlendState => BlendState.Additive;
-    public MostimaClockMote(Vector2 center, float radius, float angle, int spin, Color tint)
-    {
-        Position = this.center = center;
-        this.radius = radius;
-        this.angle = angle;
-        this.spin = spin;
-        this.tint = Color = tint;
-        Lifetime = 42;
-        Direction = 1;
-    }
-    public override void Update()
-    {
-        angle += .052f * spin;
-        float swell = .88f + .12f * MathF.Sin(Time * .28f + angle);
-        Position = center + angle.ToRotationVector2() * radius * swell;
-        Color = tint * MathF.Min(1f, (Lifetime - Time) / 12f);
-    }
-    public override void Draw()
-    {
-        float diameter = spin > 0 ? 8f : 6f;
-        Main.spriteBatch.Draw(Texture, Position - Main.screenPosition, null, Color, 0f,
-            Texture.Size() * .5f, new Vector2(diameter) / Texture.Size(), SpriteEffects.None, 0f);
-    }
-}

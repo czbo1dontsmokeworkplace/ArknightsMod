@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using ArknightsMod.Content.Dusts;
 using ArknightsMod.Content.Dusts.Fire;
 using ArknightsMod.Content.Items.Weapons.Guard.Surtr;
@@ -386,11 +387,11 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 		}
 
 		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
-			Dust.NewDust(target.Center, 0, 0, ModContent.DustType<surtrDamage_Dust>(),Scale:1f);
+			Dust.NewDust(target.Center, 0, 0, ModContent.DustType<T_Flame_Damage_Particle>(),Scale:1f);
 			if(Main.rand.NextBool(2))
-				Dust.NewDust(target.Center, 0, 0, ModContent.DustType<fire_28>(),Scale:1f);
+				Dust.NewDust(target.Center, 0, 0, ModContent.DustType<T_Flame_Animated28_Particle>(),Scale:1f);
 			else {
-				Dust.NewDust(target.Center, 0, 0, ModContent.DustType<fire_03>(),Scale:1f);
+				Dust.NewDust(target.Center, 0, 0, ModContent.DustType<T_Flame_Animated03_Particle>(),Scale:1f);
 			}
 		}
 

@@ -1,6 +1,5 @@
 using System;
 using ArknightsMod.Common.VisualEffects;
-using ArknightsMod.Content.Projectiles.Caster.SpreadArts;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
@@ -48,9 +47,6 @@ public sealed class LavaBolt : ModProjectile
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero,
                 ModContent.ProjectileType<LavaBurst>(), Projectile.damage, Projectile.knockBack,
                 Projectile.owner);
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero,
-                ModContent.ProjectileType<SpreadAfterfield>(), Math.Max(1, (int)(Projectile.damage * .32f)),
-                Projectile.knockBack, Projectile.owner, 0f);
         }
         if (!Main.dedServ)
             SoundEngine.PlaySound(SoundID.Item74 with { Volume = .36f }, Projectile.Center);

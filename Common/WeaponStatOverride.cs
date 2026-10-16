@@ -73,10 +73,9 @@ namespace ArknightsMod.Common
 				Damage = 40, UseTime = 14, UseAnimation = 14, KnockBack = 7f
 			},
 
-			// HongdouLance - 红豆 - 长枪 (EliteDamage=[44,52,60])
-			// 当前值: damage=44, useTime=14, useAnimation=14, knockBack=5, shootSpeed=3
+			// 红豆重做：与先锋长枪基础值一致；实际连招时长由持握控制器管理。
 			[typeof(Content.Items.Weapons.Guard.Hongdou.HongdouLance)] = new() {
-				Damage = 44, UseTime = 14, UseAnimation = 14, KnockBack = 5f, ShootSpeed = 3f
+				Damage = 24, UseTime = 28, UseAnimation = 28, KnockBack = 4f, ShootSpeed = 1f
 			},
 
 			// LupineScarlet - 狼德 - 赤红
@@ -97,10 +96,9 @@ namespace ArknightsMod.Common
 				Damage = 67, UseTime = 22, UseAnimation = 22, KnockBack = 5f, ShootSpeed = 6f
 			},
 
-			// MousseGlove - 慕斯 - 拳套 (EliteDamage=[43,52,62])
-			// 原始值: damage=43, useTime=22, useAnimation=22, knockBack=4, shootSpeed=16
+			// MousseGlove - 慕斯 - 拳套 (EliteDamage=[34,42,50])
 			[typeof(Content.Items.Weapons.Guard.Mousse.MousseGlove)] = new() {
-				Damage = 43, UseTime = 22, UseAnimation = 22, KnockBack = 4f, ShootSpeed = 16f
+				Damage = 34, UseTime = 22, UseAnimation = 22, KnockBack = 4f, ShootSpeed = 16f
 			},
 
 			// OblivionisSword - 乌萨斯教官 - 之剑
@@ -122,9 +120,9 @@ namespace ArknightsMod.Common
 			},
 
 			// SurtrLaevatain - 史尔特尔 - 炎阳之剑
-			// 原始值: damage=134, useTime=15, useAnimation=15, knockBack=10
+			// 面板与武器本体一致；其余覆写字段沿用原配置。
 			[typeof(Content.Items.Weapons.Guard.Surtr.SurtrLaevatain)] = new() {
-				Damage = 134, UseTime = 15, UseAnimation = 15, KnockBack = 10f
+				Damage = 231, UseTime = 15, UseAnimation = 15, KnockBack = 10f
 			},
 
 			// ThornsWeapon - 棘刺 - 至高之术
@@ -162,9 +160,9 @@ namespace ArknightsMod.Common
 			},
 
 			// KroosAlterCrossbow - 克洛丝(寒芒) - 十字弩
-			// 原始值: damage=72, useTime=30, useAnimation=30, knockBack=3, shootSpeed=8
+			// 寒芒克洛丝的弩：面板提高约 5%。
 			[typeof(Content.Items.Weapons.Sniper.KroosAlter.KroosAlterCrossbow)] = new() {
-				Damage = 72, UseTime = 10, UseAnimation = 10, KnockBack = 3f, ShootSpeed = 21f
+				Damage = 76, UseTime = 10, UseAnimation = 10, KnockBack = 3f, ShootSpeed = 21f
 			},
 
 			// MeteorBow - 流星 - 弓 (EliteDamage=[35,42,51])
@@ -176,7 +174,7 @@ namespace ArknightsMod.Common
 			// PozemkaCrossbow - 帕捷契卡 - 十字弩
 			// 原始值: damage=175, useTime=48, useAnimation=48, knockBack=5, shootSpeed=20
 			[typeof(Content.Items.Weapons.Sniper.Pozemka.PozemkaCrossbow)] = new() {
-				Damage = 175, UseTime = 10, UseAnimation = 10, KnockBack = 5f, ShootSpeed = 20f
+				Damage = 51, UseTime = 10, UseAnimation = 10, KnockBack = 5f, ShootSpeed = 20f
 			},
 
 			// RangersBow - 猎人 - 弓
@@ -188,7 +186,7 @@ namespace ArknightsMod.Common
 			// SchwarzBow - 黑 - 弩
 			// 原始值: damage=168, useTime=48, useAnimation=48, knockBack=10, shootSpeed=20
 			[typeof(Content.Items.Weapons.Sniper.Schwarz.SchwarzBow)] = new() {
-				Damage = 168, UseTime = 45, UseAnimation = 45, KnockBack = 10f, ShootSpeed = 20f
+				Damage = 141, UseTime = 45, UseAnimation = 45, KnockBack = 10f, ShootSpeed = 20f
 			},
 
 			// Shirayuki_Shuriken - 白雪 - 飞镖
@@ -237,10 +235,10 @@ namespace ArknightsMod.Common
 				Damage = 50, UseTime = 48, UseAnimation = 48, KnockBack = 3f, ShootSpeed = 8f, Mana = 6
 			},
 
-			// Lava_Dagger - 炎熔 - 法杖
-			// 原始值: damage=40, useTime=87, useAnimation=87, knockBack=3, shootSpeed=8
+			// Lava_Dagger - 炎熔 - 直接施放的扩散术师武器
+			// 与物品基础值保持一致，避免开启全局覆写后恢复旧蓄力数值。
 			[typeof(Content.Items.Weapons.Caster.Lava.Lava_Dagger)] = new() {
-				Damage = 40, UseTime = 87, UseAnimation = 87, KnockBack = 3f, ShootSpeed = 8f
+				Damage = 48, UseTime = 65, UseAnimation = 65, KnockBack = 3f, ShootSpeed = 12f
 			},
 
 			// StewardStaff - 史都华德 - 法杖 (EliteDamage=[43,54])

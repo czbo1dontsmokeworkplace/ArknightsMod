@@ -82,11 +82,11 @@ Shinginzan: {
 }
 
 BagpipeSpear: {
-	DisplayName: 破城矛
+	DisplayName: 风笛的破城矛
 	Tooltip:
 		'''
-		左键点击物品栏下方技能图标以切换技能
-		'我和我的破城矛，来自维多利亚！'
+		石巨人后
+		投枪可贯穿2个敌人，末发命中引发半径76像素的爆破，造成一次投枪伤害。
 		'''
 }
 
@@ -1569,11 +1569,7 @@ AdnachielCrossbow: {
 
 Lava_Dagger: {
 	DisplayName: 炎熔的匕首
-	Tooltip:
-		'''
-		“那些家伙的灵魂，注定要被我收割”
-		蓄力期间每20帧持续消耗魔力
-		'''
+	Tooltip: “那些家伙的灵魂，注定要被我收割”
 }
 
 Shirayuki_Shuriken: {
@@ -3550,10 +3546,11 @@ RockrockStaff: {
 	DisplayName: 洛洛的涡轮法杖
 	Tooltip:
 		'''
-		高举法杖，在鼠标位置凝聚三枚星矢，弯绕汇聚至目标
+		高举法杖，从杖尖射出三枚星矢，优先追踪鼠标附近锁定的敌人
 		浮游单元迅速飞向目标，以短促激光协同攻击
 		连续命中同一敌人会逐步提高浮游单元伤害
 		星矢逐渐提升飞行速度与追踪能力，转弯时柔和收速
+		未锁定敌人时仍会发射，星矢每帧加速2%
 		持续攻击3秒后进入1秒涡旋爆发：更密集的五重星矢与加速协同射击
 		'''
 }
@@ -3580,7 +3577,12 @@ FrostleafAxe: {
 
 HongdouLance: {
 	DisplayName: 红豆的长枪
-	Tooltip: 技能2为槌音：攻击间隔增大但伤害大幅提升
+	Tooltip:
+		'''
+		困难模式前
+		天赋：每轮攻击有10%概率造成双倍伤害，技能期间提高至30%。
+		末发投枪命中引发半伤害的小范围冲击。
+		'''
 }
 
 MataimaruGlaive: {
@@ -4073,7 +4075,7 @@ FiammettaHandCannon: {
 }
 
 MeteoriteCannon: {
-	DisplayName: 陨星的爆破炮
+	DisplayName: 陨星的爆破弩
 	Tooltip:
 		'''
 		消耗火箭弹，继承弹药伤害并平射高速爆破弹
@@ -4101,11 +4103,7 @@ ShiningStaff: {
 
 LeonhardtStaff: {
 	DisplayName: 莱恩哈特的法杖
-	Tooltip:
-		'''
-		“让我甄别一下你们是金玉还是废料吧！”
-		蓄力期间每20帧持续消耗魔力
-		'''
+	Tooltip: “让我甄别一下你们是金玉还是废料吧！”
 }
 
 PassengerConductor: {
@@ -4390,20 +4388,12 @@ MaterialistTreasureBag: {
 
 GitanoOrb: {
 	DisplayName: 远山的水晶球
-	Tooltip:
-		'''
-		“请稍候，先来占卜一下这次战斗的结果吧。”
-		蓄力期间每20帧持续消耗魔力
-		'''
+	Tooltip: “请稍候，先来占卜一下这次战斗的结果吧。”
 }
 
 SkyfireStaff: {
 	DisplayName: 天火的流星法杖
-	Tooltip:
-		'''
-		“日炎将你焚尽！”
-		蓄力期间每20帧持续消耗魔力
-		'''
+	Tooltip: “日炎将你焚尽！”
 }
 
 MostimaStaff: {

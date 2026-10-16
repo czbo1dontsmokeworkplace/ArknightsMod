@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using ArknightsMod.Common.Particle;
 using Microsoft.Xna.Framework;
@@ -106,7 +107,7 @@ internal static class HoolheyakWindVisuals
         dust.noGravity = true;
         dust.noLight = true;
         if (ParticleManager.activeParticles.Count < 1100)
-            new DefaultParticle(position, velocity * .65f, 18, .18f * scale, Core, true)
+            new T_Streak_Particle(position, velocity * .65f, 18, .18f * scale, Core, true)
                 { Deformation = new Vector2(.5f, 1.7f) }.Spawn();
     }
 
@@ -119,7 +120,7 @@ internal static class HoolheyakWindVisuals
         dust.noGravity = true;
         dust.noLight = true;
         if (ParticleManager.activeParticles.Count < 1100)
-            new DefaultParticle(position, velocity, 22, .23f * scale, Core, true)
+            new T_Streak_Particle(position, velocity, 22, .23f * scale, Core, true)
                 { Deformation = new Vector2(.35f, 2.4f) }.Spawn();
     }
 

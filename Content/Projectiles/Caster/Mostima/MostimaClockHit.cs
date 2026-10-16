@@ -21,45 +21,45 @@ public sealed class MostimaClockHit : ModProjectile
         Projectile.netImportant = true;
     }
     public override bool? CanDamage() => false;
-    public override bool PreDraw(ref Color lightColor) => false;
+    public override bool PreDraw(ref Color lightColor)
+    {
+        Vector2 center = Projectile.Center;
+        if (!SpreadVfxBudget.Visible(center, 140f)) return false;
+        float age = 24f - Projectile.timeLeft;
+        float t = MathHelper.Clamp(age / 24f, 0f, 1f);
+        float size = MathHelper.Clamp(Projectile.ai[0], 16f, 64f);
+        float gold = MathHelper.Clamp(Projectile.ai[1], 0f, 1f);
+        Color blue = MostimaClockwork.TimeColor(new Color(32, 117, 250), gold);
+        Color cyan = MostimaClockwork.TimeColor(new Color(72, 213, 255), gold);
+        Color core = MostimaClockwork.TimeColor(new Color(211, 249, 255), gold);
+        float radius = (size + 32f) * (.4f + .6f * (1f - MathF.Pow(1f - t, 3f)));
+        float ringFade = MathHelper.Clamp(age / 2f, 0f, 1f) * MathF.Pow(1f - t, .8f);
+        float flash = MathF.Pow(MathF.Max(0f, 1f - age / 10f), 2f);
+        using (SpreadArtsMaterial.Begin())
+        {
+            // Original-game composition: blue aura, compact white-blue impact,
+            // one fine cyan perimeter. No opaque disk or petal-shaped explosion.
+            SpreadArtsMaterial.Sprite("ChargeBloom", center, new Vector2(radius * 1.65f),
+                OperatorFlightVfx.Add(blue, .55f * (1f - t)));
+            SpreadArtsMaterial.Sprite("ChargeBloom", center, new Vector2(size * 1.15f, size * 1.45f),
+                OperatorFlightVfx.Add(cyan, flash));
+            SpreadArtsMaterial.Sprite("ChargeBloom", center, new Vector2(size * .6f, size * .9f),
+                OperatorFlightVfx.Add(core, flash));
+        }
+        const int segments = 96;
+        for (int i = 0; i < segments; i++)
+        {
+            float angle = i * MathHelper.TwoPi / segments;
+            Vector2 a = center + angle.ToRotationVector2() * radius;
+            Vector2 b = center + (angle + MathHelper.TwoPi / segments).ToRotationVector2() * radius;
+            MostimaClockwork.Line(a, b, OperatorFlightVfx.Add(cyan, ringFade * .8f), 1.4f);
+        }
+        return false;
+    }
     public override void AI()
     {
         if (Main.dedServ || Projectile.localAI[0] != 0f) return;
         Projectile.localAI[0] = 1f;
         MostimaGrandClockVfx.Hit(Projectile.Center, Projectile.ai[0], Projectile.ai[1]);
-    }
-}
-
-public sealed class MostimaHitShard : global::ArknightsMod.Common.Particle.Particle
-{
-    private readonly Vector2 origin, ray;
-    private readonly float distance;
-    private readonly int kind;
-    private readonly float gold;
-    public override string TexturePath => "ArknightsMod/Common/Particle/DefaultParticle";
-    public override BlendState DrawBlendState => BlendState.Additive;
-    internal MostimaHitShard(Vector2 origin, float angle, float size, int kind, float gold = 0f)
-    {
-        Position = this.origin = origin; ray = angle.ToRotationVector2();
-        this.kind = kind; this.gold = gold; Rotation = angle;
-        distance = MathHelper.Clamp(size, 16f, 64f) + 48f + kind * 15f;
-        Lifetime = 18 + kind * 3;
-    }
-    private Vector2 Point(float t) => origin + ray * (8f + distance * (1f - MathF.Pow(1f - t, 3f)));
-    public override void Update()
-    {
-        Position = Point(LifetimeRatio);
-        Color = MostimaClockwork.TimeColor(kind == 1 ? MostimaVisuals.Violet : MostimaVisuals.Blue, gold)
-            * (MathHelper.Clamp(Time / 2f, 0f, 1f) * MathF.Pow(1f - LifetimeRatio, 1.4f));
-    }
-    public override void Draw()
-    {
-        if (!SpreadVfxBudget.Visible(Position, 40f)) return;
-        if (kind == 1)
-            SpreadVfxDetail.Facet(Position, 3f, 12f * (1f - LifetimeRatio * .7f), Rotation, Color, 1f);
-        else
-            MostimaClockwork.Line(Point(MathF.Max(0f, LifetimeRatio - .1f)), Position, Color, 1.8f);
-        Main.spriteBatch.Draw(Texture, Position - Main.screenPosition, null, Color * .45f, Rotation,
-            Texture.Size() * .5f, new Vector2(16f, 4f) / Texture.Size(), SpriteEffects.None, 0f);
     }
 }

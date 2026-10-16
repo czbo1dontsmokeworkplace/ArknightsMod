@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using System.Collections.Generic;
 using ArknightsMod.Common.Particle;
@@ -116,73 +117,21 @@ internal static class OperatorFlightVfx
     internal static void Spark(Vector2 position, Vector2 velocity, Color color, float length = 20f, int life = 18, float width = 3f)
     {
         if (Main.dedServ || ParticleManager.activeParticles.Count >= 1300 || !Finite(position)) return;
-        new OperatorLinearSpark(position, velocity, color, length, life, width).Spawn();
+        new T_LinearSpark_Particle(position, velocity, color, length, life, width).Spawn();
     }
     internal static void Ring(Vector2 position, Color color, float size, int life = 20)
     {
         if (Main.dedServ || ParticleManager.activeParticles.Count >= 1300) return;
-        new OperatorWaveParticle(position, color, size, life).Spawn();
+        new T_Wave_Particle(position, color, size, life).Spawn();
     }
     internal static void Flame(Vector2 position, Vector2 velocity, Color body, Color core, float size, int life)
     {
         if (Main.dedServ || ParticleManager.activeParticles.Count >= 1300 || !Finite(position)) return;
-        new OperatorFlameParticle(position, velocity, body, core, size, life).Spawn();
+        new T_Flame_Particle(position, velocity, body, core, size, life).Spawn();
     }
 }
 
 public sealed class OperatorFlightVfxSystem : ModSystem
 {
     public override void Unload() => OperatorFlightVfx.Unload();
-}
-
-public sealed class OperatorFlameParticle : global::ArknightsMod.Common.Particle.Particle
-{
-    private readonly Color body, core;
-    private readonly float size;
-    public override string TexturePath => OperatorFlightVfx.Assets + "ForwardFlame";
-    public override BlendState DrawBlendState => BlendState.Additive;
-    internal OperatorFlameParticle(Vector2 position, Vector2 velocity, Color body, Color core, float size, int life)
-    {
-        Position = position; Velocity = velocity; this.body = body; this.core = core;
-        this.size = MathHelper.Clamp(size, 8f, 38f); Lifetime = Math.Clamp(life, 8, 30);
-        Rotation = velocity.ToRotation() + MathHelper.PiOver2;
-    }
-    public override void Update()
-    {
-        Velocity *= .94f;
-        Color = Color.Lerp(core, body, LifetimeRatio) * MathF.Pow(1f - LifetimeRatio, 1.3f);
-    }
-    public override void Draw() => Main.spriteBatch.Draw(Texture, Position - Main.screenPosition, null, Color,
-        Rotation, Texture.Size() * .5f,
-        new Vector2(size * .48f * (1f - LifetimeRatio * .6f) / Texture.Width, size * (1f - LifetimeRatio * .4f) / Texture.Height), SpriteEffects.None, 0f);
-}
-
-public sealed class OperatorLinearSpark : global::ArknightsMod.Common.Particle.Particle
-{
-    private readonly float length, width;
-    private readonly Color tint;
-    public override string TexturePath => OperatorFlightVfx.Assets + "LinearSpark";
-    public override BlendState DrawBlendState => BlendState.Additive;
-    internal OperatorLinearSpark(Vector2 position, Vector2 velocity, Color tint, float length, int life, float width)
-    {
-        Position = position; Velocity = velocity; Color = this.tint = tint;
-        this.length = MathHelper.Clamp(length, 4f, 44f); this.width = MathHelper.Clamp(width, 1f, 9f);
-        Lifetime = Math.Clamp(life, 6, 30); Rotation = velocity.ToRotation() + MathHelper.PiOver2;
-    }
-    public override void Update() { Velocity *= .965f; Color = tint * MathF.Pow(1f - LifetimeRatio, 1.4f); }
-    public override void Draw() => Main.spriteBatch.Draw(Texture, Position - Main.screenPosition, null, Color,
-        Rotation, Texture.Size() * .5f, new Vector2(width / Texture.Width, length * (1f - LifetimeRatio * .65f) / Texture.Height), SpriteEffects.None, 0f);
-}
-
-public sealed class OperatorWaveParticle : global::ArknightsMod.Common.Particle.Particle
-{
-    private readonly float diameter;
-    private readonly Color tint;
-    public override string TexturePath => OperatorFlightVfx.Assets + "RuptureRing";
-    public override BlendState DrawBlendState => BlendState.Additive;
-    internal OperatorWaveParticle(Vector2 position, Color tint, float diameter, int life)
-    { Position = position; Color = this.tint = tint; this.diameter = MathHelper.Clamp(diameter, 12f, 260f); Lifetime = life; }
-    public override void Update() { Rotation += .045f; Color = tint * MathF.Pow(1f - LifetimeRatio, 1.8f); }
-    public override void Draw() => Main.spriteBatch.Draw(Texture, Position - Main.screenPosition, null, Color,
-        Rotation, Texture.Size() * .5f, new Vector2(diameter * (.2f + .8f * MathF.Sqrt(LifetimeRatio))) / Texture.Size(), SpriteEffects.None, 0f);
 }

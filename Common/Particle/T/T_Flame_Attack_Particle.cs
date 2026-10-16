@@ -1,0 +1,34 @@
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Terraria;
+using Terraria.GameContent;
+using Terraria.ModLoader;
+using ArknightsMod.Content.Dusts;
+
+namespace ArknightsMod.Common.Particle.T;
+
+public class T_Flame_Attack_Particle : ModDust
+	{
+    public override string Texture => "ArknightsMod/Content/Dusts/SurtrAttack_Dust";
+		public override void OnSpawn(Dust dust) {
+			dust.noGravity = true;
+			dust.noLight = false;
+			dust.rotation = Main.rand.NextFloat(MathHelper.TwoPi);
+			dust.customData = 0;
+		}
+
+		public override bool Update(Dust dust)
+		{
+			dust.position += dust.velocity;
+			dust.velocity *= 0.9f;
+			int frame = (int)dust.customData;
+			if (frame >= 16) {
+				dust.active = false;
+				return false;
+			}
+			dust.frame = new Rectangle(64 * (frame % 4), 64 * (frame / 4), 64, 64);
+			Lighting.AddLight(dust.position, Color.OrangeRed.ToVector3() * 0.5f * (16 - frame) / 16f);
+			dust.customData = frame + 1;
+			return false;
+		}
+	}

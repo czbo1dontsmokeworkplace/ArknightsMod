@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using ArknightsMod.Common.Particle;
 using ArknightsMod.Content.Projectiles.BasePROJ;
@@ -135,7 +136,7 @@ internal static class PhantomVisuals
     {
         if (Main.dedServ || Main.gameMenu) return;
         for (int i = 0; i < count; i++)
-            new DefaultParticle(center + Main.rand.NextVector2Circular(5, 8), Main.rand.NextVector2Circular(3, 3),
+            new T_Streak_Particle(center + Main.rand.NextVector2Circular(5, 8), Main.rand.NextVector2Circular(3, 3),
                 12 + i % 8, .24f, i % 4 == 0 ? Crimson : Silver, true)
                 { Deformation = new Vector2(.25f, 1.6f) }.Spawn();
     }

@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using ArknightsMod.Common.Particle;
 using ArknightsMod.Common.VisualEffects;
@@ -219,7 +220,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Blaze
 				Color color = Main.rand.NextBool(3)
 					? Color.Lerp(new Color(108, 0, 22), new Color(255, 28, 42), hot)
 					: Color.Lerp(new Color(225, 48, 16), new Color(255, 202, 92), hot);
-				var particle = new DefaultParticle(position + offset, velocity, Main.rand.Next(20, 34),
+				var particle = new T_Streak_Particle(position + offset, velocity, Main.rand.Next(20, 34),
 					Main.rand.NextFloat(0.3f, 0.72f + hot * 0.35f), color, true) {
 					Deformation = new Vector2(0.35f, Main.rand.NextFloat(0.9f, 1.65f))
 				};
@@ -239,7 +240,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Blaze
 				Color color = Main.rand.NextBool(3)
 					? new Color(218, 8, 35)
 					: new Color(255, 137, 36);
-				var particle = new DefaultParticle(position + Main.rand.NextVector2Circular(5f, 5f), velocity,
+				var particle = new T_Streak_Particle(position + Main.rand.NextVector2Circular(5f, 5f), velocity,
 					heavy ? 32 : 24, Main.rand.NextFloat(0.45f, heavy ? 1.15f : 0.82f), color, true) {
 					Deformation = new Vector2(0.28f, heavy ? 1.7f : 1.25f)
 				};

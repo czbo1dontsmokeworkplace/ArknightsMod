@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using ArknightsMod.Common.Particle;
 using Microsoft.Xna.Framework;
@@ -117,17 +118,17 @@ internal static class HarmonieVisuals
         {
             Vector2 velocity = Main.rand.NextVector2Circular(speed, speed) - Vector2.UnitY * .35f;
             if (i < 3)
-                new HarmonieNoteParticle(center, velocity, Main.rand.Next(4), i % 2 == 0 ? Mint : Gold).Spawn();
+                new T_Music_Note_Particle(center, velocity, Main.rand.Next(4), i % 2 == 0 ? Mint : Gold).Spawn();
             else
-                new DefaultParticle(center, velocity, Main.rand.Next(18, 28), .09f,
+                new T_Streak_Particle(center, velocity, Main.rand.Next(18, 28), .09f,
                     i % 2 == 0 ? Gold : Mint, true) { Deformation = Vector2.One }.Spawn();
         }
     }
     internal static void Muzzle(Vector2 center, Vector2 aim, bool charged)
     {
         if (Main.dedServ || ParticleManager.activeParticles.Count >= 1000) return;
-        if (charged) new HarmonieNoteParticle(center, aim * 2f, Main.rand.Next(4), Gold).Spawn();
-        new DefaultParticle(center, aim * 2f, 12, .12f, Mint, true) { Deformation = Vector2.One }.Spawn();
+        if (charged) new T_Music_Note_Particle(center, aim * 2f, Main.rand.Next(4), Gold).Spawn();
+        new T_Streak_Particle(center, aim * 2f, 12, .12f, Mint, true) { Deformation = Vector2.One }.Spawn();
     }
 
     internal static void Explosion(Vector2 center, float progress, float radius, int seed)
@@ -183,37 +184,5 @@ internal static class HarmonieVisuals
             Note(center + offset, 4.6f, age, i, 0, fade * .8f);
         }
         Staff(center, radius * 1.2f, age, fade * .25f);
-    }
-}
-
-public sealed class HarmonieNoteParticle : Particle
-{
-    private readonly int variant;
-    private readonly Color tint;
-    private readonly float tilt;
-    public override string TexturePath => HarmonieVisuals.NotePath(0);
-    public override BlendState DrawBlendState => BlendState.Additive;
-    public HarmonieNoteParticle(Vector2 position, Vector2 velocity, int variant, Color color)
-    {
-        this.variant = variant;
-        tint = color;
-        Position = position;
-        Velocity = velocity;
-        Lifetime = 28;
-        tilt = Main.rand.NextFloat(-.2f, .2f);
-    }
-    public override void Update()
-    {
-        Velocity *= .94f;
-        Velocity.Y -= .015f;
-    }
-    public override void Draw()
-    {
-        float fade = MathF.Sin(MathHelper.Clamp(LifetimeRatio, 0f, 1f) * MathHelper.Pi);
-        // 粒子管理器每个类型只缓存一张图；四种音符在绘制时从已有资源缓存选择。
-        Texture2D note = ModContent.Request<Texture2D>(HarmonieVisuals.NotePath(variant)).Value;
-        Main.spriteBatch.Draw(note, Position - Main.screenPosition, null, tint * (fade * .65f),
-            tilt + MathF.Sin(LifetimeRatio * 4f) * .1f, note.Size() * .5f,
-            8f / note.Height, SpriteEffects.None, 0f);
     }
 }

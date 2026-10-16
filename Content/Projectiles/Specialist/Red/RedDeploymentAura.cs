@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using ArknightsMod.Common.Particle;
 using ArknightsMod.Content.Items.Weapons.Specialist.Red;
@@ -43,7 +44,7 @@ public sealed class RedDeploymentAura : ModProjectile
         if (age % 6 == 0)
         {
             for (int i = 0; i < 2; i++)
-                new DefaultParticle(owner.Center + new Vector2(Main.rand.NextFloat(-15, 15), Main.rand.NextFloat(-20, 17)),
+                new T_Streak_Particle(owner.Center + new Vector2(Main.rand.NextFloat(-15, 15), Main.rand.NextFloat(-20, 17)),
                     -owner.velocity * .16f + new Vector2(Main.rand.NextFloat(-.5f, .5f), -1.1f),
                     18, .26f, i == 0 ? new Color(230, 28, 65) : new Color(255, 160, 181), true)
                     { Deformation = new Vector2(.28f, 1.7f) }.Spawn();

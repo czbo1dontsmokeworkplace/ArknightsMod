@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using ArknightsMod.Common.Particle;
 using ArknightsMod.Common.VisualEffects;
@@ -130,7 +131,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Specter
 				Color color = skillMode == 2
 					? (Main.rand.NextBool(3) ? new Color(234, 230, 218) : new Color(205, 10, 46))
 					: (Main.rand.NextBool(3) ? new Color(218, 240, 234) : new Color(54, 156, 190));
-				var mote = new DefaultParticle(position + Main.rand.NextVector2Circular(5f, 5f), velocity,
+				var mote = new T_Streak_Particle(position + Main.rand.NextVector2Circular(5f, 5f), velocity,
 					Main.rand.Next(18, 29), Main.rand.NextFloat(0.35f, 0.78f), color, true) {
 					Deformation = new Vector2(0.24f, Main.rand.NextFloat(1.1f, 1.8f))
 				};
@@ -158,7 +159,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Specter
 				Color color = skillMode == 2
 					? (i % 3 == 0 ? new Color(238, 232, 216) : new Color(206, 9, 45))
 					: (i % 3 == 0 ? new Color(226, 244, 236) : new Color(50, 155, 194));
-				var mote = new DefaultParticle(position + Main.rand.NextVector2Circular(6f, 6f), velocity,
+				var mote = new T_Streak_Particle(position + Main.rand.NextVector2Circular(6f, 6f), velocity,
 					Main.rand.Next(22, 34), Main.rand.NextFloat(0.46f, skillMode == 2 ? 1.08f : 0.82f),
 					color, true) {
 					Deformation = new Vector2(0.23f, skillMode == 2 ? 1.9f : 1.45f)
@@ -183,7 +184,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Specter
 				Color color = frenzy
 					? (i % 4 == 0 ? new Color(228, 238, 226) : new Color(194, 7, 42))
 					: (i % 4 == 0 ? new Color(226, 242, 232) : new Color(48, 151, 190));
-				var mote = new DefaultParticle(center, velocity, Main.rand.Next(26, 42),
+				var mote = new T_Streak_Particle(center, velocity, Main.rand.Next(26, 42),
 					Main.rand.NextFloat(0.55f, frenzy ? 1.25f : 0.92f), color, true) {
 					Deformation = new Vector2(0.25f, frenzy ? 1.9f : 1.55f)
 				};
@@ -200,7 +201,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Specter
 				Vector2 velocity = (center - position).SafeNormalize(Vector2.Zero)
 					* Main.rand.NextFloat(0.8f, 2.4f) + new Vector2(0f, -0.35f);
 				Color color = Main.rand.NextBool(4) ? new Color(218, 235, 226) : new Color(184, 7, 40);
-				new DefaultParticle(position, velocity, Main.rand.Next(24, 38),
+				new T_Streak_Particle(position, velocity, Main.rand.Next(24, 38),
 					Main.rand.NextFloat(0.35f, 0.78f), color, true) {
 					Deformation = new Vector2(0.32f, 1.5f)
 				}.Spawn();
@@ -220,7 +221,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Specter
 				Vector2 velocity = (center - position).SafeNormalize(Vector2.UnitY)
 					* Main.rand.NextFloat(2.4f, 5.8f);
 				Color color = i % 4 == 0 ? new Color(218, 234, 226) : new Color(76, 8, 34);
-				new DefaultParticle(position, velocity, Main.rand.Next(26, 42),
+				new T_Streak_Particle(position, velocity, Main.rand.Next(26, 42),
 					Main.rand.NextFloat(0.45f, 0.95f), color, true) {
 					Deformation = new Vector2(0.3f, 1.65f)
 				}.Spawn();
@@ -230,7 +231,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Specter
 		internal static void SpawnExhaustionMote(Vector2 position) {
 			if (Main.dedServ)
 				return;
-			new DefaultParticle(position, new Vector2(Main.rand.NextFloat(-0.35f, 0.35f),
+			new T_Streak_Particle(position, new Vector2(Main.rand.NextFloat(-0.35f, 0.35f),
 				Main.rand.NextFloat(-1.2f, -0.45f)), Main.rand.Next(24, 38),
 				Main.rand.NextFloat(0.34f, 0.62f), new Color(54, 65, 76), true) {
 				Deformation = new Vector2(0.55f, 1.15f)

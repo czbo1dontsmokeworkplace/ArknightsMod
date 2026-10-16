@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using ArknightsMod.Common.Particle;
 using ArknightsMod.Common.VisualEffects;
@@ -23,6 +24,7 @@ internal static class MostimaClockwork
     internal static float BeatAge(float age) => age < MoveTicks ? -1f : (age - MoveTicks) % BeatTicks;
     internal static readonly Color Silver = new(198, 231, 255);
     internal static readonly Color Brass = new(227, 189, 118);
+    private static readonly string[] RomanHours = { "XII", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI" };
     internal static Color TimeColor(Color normal, float gold) => Color.Lerp(normal, new Color(255, 191, 74), MathHelper.Clamp(gold, 0f, 1f));
 
     internal static float FaceOpacity(float age)
@@ -94,11 +96,12 @@ internal static class MostimaClockwork
             Line(center + ray * radius * (hour ? .84f : .915f), center + ray * radius * .947f,
                 TimeColor(hour ? Brass : MostimaVisuals.Blue, gold) * opacity * (hour ? .92f : .55f), hour ? 3f * scale : scale);
         }
-        // Upright Roman numerals at the cardinal hours: unmistakable clock structure.
-        Numeral(center + new Vector2(0, -188) * scale, "XII", scale, TimeColor(Brass, gold) * opacity);
-        Numeral(center + new Vector2(188, 0) * scale, "III", scale, TimeColor(Brass, gold) * opacity);
-        Numeral(center + new Vector2(0, 188) * scale, "VI", scale, TimeColor(Brass, gold) * opacity);
-        Numeral(center + new Vector2(-188, 0) * scale, "IX", scale, TimeColor(Brass, gold) * opacity);
+        // Twelve upright numerals belong to the stationary clock, not the moving flow.
+        for (int hour = 0; hour < RomanHours.Length; hour++)
+        {
+            Vector2 position = center + (hour * MathHelper.Pi / 6f - MathHelper.PiOver2).ToRotationVector2() * 195f * scale;
+            Numeral(position, RomanHours[hour], scale * (hour % 3 == 0 ? 1f : .8f), TimeColor(Brass, gold) * opacity);
+        }
         for (int h = 0; h < 2; h++)
         {
             float angle = preview ? -MathHelper.PiOver2 + (h == 1 ? age * .025f : .72f + age * .025f / 12f) : HandAngle(age, h == 1);
@@ -114,12 +117,6 @@ internal static class MostimaClockwork
             Line(shoulder - side * 7f * scale, center + ray * length * .54f, tint * .7f, scale);
         }
         MostimaVisuals.Sprite("TemporalOrb", center, new Vector2(18f * scale), TimeColor(Silver, gold) * opacity);
-        if (!preview && age >= MoveTicks)
-        {
-            float beat = BeatAge(age) / BeatTicks;
-            Arc(center, radius * (.14f + .81f * MathF.Sqrt(beat)), -.5f, MathHelper.TwoPi,
-                TimeColor(MostimaVisuals.Blue, gold) * ((1f - beat) * .25f * opacity), 2.5f * (1f - beat));
-        }
     }
 
     internal static void Backplate(Vector2 center, float opacity, float scale = 1f, float gold = 0f)
@@ -156,35 +153,7 @@ internal static class MostimaClockwork
         for (int i = 0; i < counts[track]; i++)
         {
             if (ParticleManager.activeParticles.Count >= 1300) return;
-            new MostimaDialPoint(center, track, i, counts[track]).Spawn();
+            new T_Dial_Point_Particle(center, track, i, counts[track]).Spawn();
         }
-    }
-}
-
-public sealed class MostimaDialPoint : Particle
-{
-    private readonly Vector2 center;
-    private readonly int track, index, count;
-    // Use the local soft light mask, not TemporalOrb (which is a textured explosion).
-    public override string TexturePath => "ArknightsMod/Common/Particle/DefaultParticle";
-    public override BlendState DrawBlendState => BlendState.Additive;
-    internal MostimaDialPoint(Vector2 center, int track, int index, int count)
-    {
-        this.center = center; this.track = track; this.index = index; this.count = count;
-        Lifetime = MostimaClockwork.Lifetime;
-        Position = center + MostimaClockwork.Point(track, index, count, 0);
-    }
-    public override void Update()
-    {
-        Position = center + MostimaClockwork.Point(track, index, count, Time);
-        float glimmer = .72f + .28f * MathF.Sin(index * 1.7f + Time * .14f);
-        Color = (track is 1 or 3 ? MostimaClockwork.Brass : track == 4 ? MostimaClockwork.Silver : MostimaVisuals.Blue)
-            * (MostimaClockwork.FaceOpacity(Time) * glimmer * (track >= 3 ? .85f : .65f));
-    }
-    public override void Draw()
-    {
-        float size = track >= 3 ? 14f : track == 2 ? 11f : 13f;
-        Main.spriteBatch.Draw(Texture, Position - Main.screenPosition, null, Color, 0,
-            Texture.Size() * .5f, new Vector2(size) / Texture.Size(), SpriteEffects.None, 0f);
     }
 }

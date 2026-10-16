@@ -1,5 +1,5 @@
+using ArknightsMod.Common.Particle.T;
 using System;
-using ArknightsMod.Common.Particle;
 using ArknightsMod.Common.VisualEffects;
 using ArknightsMod.Content.Dusts;
 using Microsoft.Xna.Framework;
@@ -130,47 +130,36 @@ internal static class MousseVisuals
         finally { EndGlow(); }
     }
 
-    internal static void EmitSlash(Projectile p, Color tint, bool stars)
+    // P-GSS: Auger slash emission reference: Azafure, LLC.
+    // https://github.com/CalamityTeam/CalamityModPublic
+    // This uses only Terraria dust and this mod's own mask; no Calamity runtime types/assets.
+    internal static void EmitAugerSlash(Projectile p, Color tint)
     {
-        if (Main.dedServ || Vector2.DistanceSquared(p.Center, Main.LocalPlayer.Center) > 2400f * 2400f) return;
+        if (Main.dedServ || Main.gameMenu || p.owner < 0 || p.owner >= Main.maxPlayers
+            || Vector2.DistanceSquared(p.Center, Main.LocalPlayer.Center) > 2400f * 2400f)
+            return;
+
+        const int dustCount = 30;
         Vector2 aim = p.velocity.SafeNormalize(Vector2.UnitX);
-        float scale = p.ai[1] * RangeMultiplier;
-        Vector2 center = Main.player[p.owner].MountedCenter;
-        // Two forward-running curved streams, mirrored about the aim line. Their points
-        // stay inside the 45-degree fan and progress from the player toward the strike.
-        const int particlesPerStream = 15;
-        Vector2 sideways = new(-aim.Y, aim.X);
-        for (int stream = 0; stream < 2; stream++)
-        for (int i = 0; i < particlesPerStream; i++)
+        float weaponScale = p.ai[1] * RangeMultiplier;
+        for (int i = 0; i < dustCount; i++)
         {
-            float side = stream == 0 ? -1f : 1f;
-            float progress = (i + (stream == 0 ? .35f : .65f)) / particlesPerStream;
-            float forward = 25f + 100f * progress;
-            float spread = 5f + 38f * progress + 5f * MathF.Sin(MathHelper.Pi * progress);
-            Vector2 origin = center + (aim * forward + sideways * side * spread) * scale
-                + sideways * Main.rand.NextFloat(-1.8f, 1.8f) * scale;
-            float slope = (38f + 5f * MathHelper.Pi * MathF.Cos(MathHelper.Pi * progress)) / 100f;
-            float tangentAngle = MathF.Min(MathF.Atan(slope), MathHelper.PiOver4 * .5f) * side;
-            Vector2 direction = aim.RotatedBy(tangentAngle + Main.rand.NextFloat(-.012f, .012f));
-            // Distant glints slow down so the two streams remain near the weapon reach.
-            Vector2 velocity = direction * Main.rand.NextFloat(2.2f, 3.2f)
-                * (1f - .68f * progress) * scale;
-            float weight = Main.rand.NextFloat(.65f, 1f);
-            Dust dust = Dust.NewDustPerfect(origin, ModContent.DustType<ArtsFighterSquashDust>(), velocity);
-            dust.scale = (.48f + weight * .48f) * scale;
+            float variance = Utils.GetLerpValue(0f, dustCount, i, true) * Main.rand.NextFloat(.9f, 1f);
+            float angle = MathHelper.Lerp(-.7f, .7f, variance) * p.direction;
+            float swingWeight = p.ai[0] == 1f ? 1f - variance : variance;
+            float particleScale = .4f + swingWeight * 2f;
+            float centerWeight = 1f - MathF.Abs(angle);
+            float centerPower = MathF.Pow(centerWeight, 1.5f);
+            Vector2 radial = aim.RotatedBy(angle)
+                * (70f + 80f * centerPower * Main.rand.NextFloat(.85f, 1f));
+            Vector2 velocity = (radial * centerPower
+                + radial.RotatedBy(-MathHelper.PiOver2 * angle) * 1.5f) * .03f;
+            Vector2 origin = p.Center + (radial - aim * 45f) * weaponScale;
+            Dust dust = Dust.NewDustPerfect(origin, ModContent.DustType<T_Squash_Particle>(), velocity);
+            dust.scale = particleScale * weaponScale;
             dust.noGravity = true;
-            dust.color = Color.Lerp(tint, Color.White, weight * .35f);
-            dust.fadeIn = .15f + weight * .5f;
-            dust.rotation = direction.ToRotation() + MathHelper.PiOver2 + Main.rand.NextFloat(-.08f, .08f);
-            dust.customData = Main.rand.NextFloat(-.055f, .055f);
-            if (stars && (i + 3) % 5 == 0)
-            {
-                // Three sparkle/shard pairs travel on each curved stream.
-                CasterSparkles.Spawn(origin, velocity * .4f, tint, .55f + weight * .3f,
-                    14, direction.ToRotation() + Main.rand.NextFloat(-.1f, .1f));
-                if (ParticleManager.activeParticles.Count < 1300)
-                    new AstraLightShard(origin, velocity * .6f, tint, 16 + stream * 2 + i / 5).Spawn();
-            }
+            dust.color = Color.Lerp(tint, Color.White, MathF.Max(0f, swingWeight - .35f));
+            dust.fadeIn = .1f + swingWeight * weaponScale;
         }
     }
 
@@ -180,7 +169,7 @@ internal static class MousseVisuals
         for (int i = 0; i < 14 - hitCount * 2; i++)
         {
             float angle = Main.rand.NextFloat(-.3f, .3f);
-            Dust dust = Dust.NewDustPerfect(center, ModContent.DustType<ArtsFighterSquashDust>(),
+            Dust dust = Dust.NewDustPerfect(center, ModContent.DustType<T_Squash_Particle>(),
                 aim.RotatedBy(angle) * Main.rand.NextFloat(8f, 12f) * (1f - MathF.Abs(angle)));
             dust.scale = Main.rand.NextFloat(1.6f, 1.9f) * (1f - MathF.Abs(angle));
             dust.noGravity = true;
@@ -197,26 +186,5 @@ internal static class MousseVisuals
             for (int i = -1; i <= 1; i++)
                 CasterSparkles.Spawn(center + aim.RotatedBy(i * .6f) * 10f,
                     aim.RotatedBy(i * .6f) * 1.5f, tint, .75f, 12, aim.ToRotation() + i * .6f);
-    }
-}
-
-public sealed class AstraLightShard : Particle
-{
-    public override string TexturePath => MousseMaterials.Root + "MousseLightSplinter";
-    private readonly Color tint;
-    private readonly float spin;
-    public AstraLightShard(Vector2 position, Vector2 velocity, Color tint, int life)
-    {
-        Position = position; Velocity = velocity; this.tint = tint; Lifetime = life;
-        Rotation = velocity.ToRotation();
-        spin = Main.rand.NextFloat(-.085f, .085f);
-    }
-    public override void Update() { Velocity *= .94f; Rotation += spin; }
-    public override void Draw()
-    {
-        float fade = MathF.Pow(1f - LifetimeRatio, 1.5f);
-        MousseVisuals.DrawPixels(MousseMaterials.Get("MousseLightSplinter"), Position,
-            new Vector2(14f, 5f) * (1f - LifetimeRatio * .35f), MousseVisuals.Light(tint, fade),
-            Rotation, new Vector2(.5f));
     }
 }

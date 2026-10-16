@@ -11,10 +11,10 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Weapons.Caster.Skyfire;
 
-/// <summary>天火：蓄满松开发射流星；二技能把落点改为鼠标处的天坠之火。</summary>
+/// <summary>天火：直接发射流星；二技能把落点改为鼠标处的天坠之火。</summary>
 public sealed class SkyfireStaff : ExpansionWeaponBase
 {
-    protected override int[] EliteDamage => [194, 222, 255];
+    protected override int[] EliteDamage => [237, 271, 311];
     private static readonly float[] AttackBonus = [.30f, .35f, .40f, .45f, .50f, .55f, .60f, .75f, .90f, 1f];
 
     // 武器本体暂用原版流星法杖；灰度自绘资源只用于陨石弹幕。
@@ -29,14 +29,13 @@ public sealed class SkyfireStaff : ExpansionWeaponBase
         Item.DamageType = DamageClass.Magic;
         Item.mana = 26;
         Item.useStyle = ItemUseStyleID.Shoot;
-        Item.useTime = Item.useAnimation = 20;
-        Item.channel = true;
+        Item.useTime = Item.useAnimation = 65;
         Item.autoReuse = true;
         Item.noMelee = true;
-        Item.noUseGraphic = true;
         Item.knockBack = 8f;
-        Item.shoot = ModContent.ProjectileType<SkyfireFocus>();
+        Item.shoot = ModContent.ProjectileType<SkyfireMeteor>();
         Item.shootSpeed = 18f;
+        Item.UseSound = SoundID.Item73 with { Volume = .58f };
         Item.rare = ItemRarityID.Yellow;
         Item.value = Item.sellPrice(gold: 8);
     }
@@ -48,7 +47,7 @@ public sealed class SkyfireStaff : ExpansionWeaponBase
             player.GetModPlayer<SkyfireStaffPlayer>().TryActivate();
             return false;
         }
-        return player.ownedProjectileCounts[Item.shoot] == 0 && base.CanUseItem(player);
+        return base.CanUseItem(player);
     }
 
     public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
@@ -65,7 +64,32 @@ public sealed class SkyfireStaff : ExpansionWeaponBase
         Vector2 position, Vector2 velocity, int type, int damage, float knockback)
     {
         if (player.whoAmI == Main.myPlayer)
-            Projectile.NewProjectile(source, player.MountedCenter, velocity, type, damage, knockback, player.whoAmI);
+        {
+            WeaponPlayer skills = player.GetModPlayer<WeaponPlayer>();
+            bool skyfall = skills.SkillActive && skills.Skill == 1
+                && skills.CurrentSkill?.Key.Item == nameof(SkyfireStaff);
+            Vector2 direction = velocity.SafeNormalize(Vector2.UnitX * player.direction);
+            Vector2 muzzle = player.MountedCenter + direction * 38f;
+            Vector2 start = muzzle;
+            Vector2 shotVelocity = direction * (Item.shootSpeed * 1.2f);
+            float multiplier = 1f;
+            if (skyfall)
+            {
+                Vector2 target = Main.MouseWorld;
+                Vector2 offset = target - player.MountedCenter;
+                if (offset.LengthSquared() > 850f * 850f)
+                    target = player.MountedCenter + offset.SafeNormalize(Vector2.UnitX) * 850f;
+                start = target + new Vector2(-230f, -520f);
+                shotVelocity = (target - start).SafeNormalize(Vector2.UnitY) * (22f * 1.2f);
+                int rank = Math.Clamp((skills.CurrentSkill.ForceReplaceLevel ?? skills.CurrentSkill.Level) - 1, 0, 9);
+                multiplier = MathHelper.Lerp(1.5f, 2.35f, rank / 9f);
+            }
+            int index = Projectile.NewProjectile(source, start, shotVelocity, type,
+                Math.Max(1, (int)(damage * multiplier)), knockback, player.whoAmI, skyfall ? 1f : 0f);
+            if (Main.projectile.IndexInRange(index))
+                Main.projectile[index].CritChance = player.GetWeaponCrit(Item);
+            if (!Main.dedServ) SkyfireVisuals.FireParticles(muzzle, direction);
+        }
         return false;
     }
 

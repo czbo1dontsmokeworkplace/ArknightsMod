@@ -16,7 +16,7 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Magallan;
 
 public sealed class MagallanController : ExpansionWeaponBase
 {
-    protected override int[] EliteDamage => [72, 80, 90];
+    protected override int[] EliteDamage => [66, 74, 83];
 
     public override void SetDefaults()
     {

@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using ArknightsMod.Common.Particle;
 using Microsoft.Xna.Framework;
@@ -410,7 +411,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 				Vector2 direction = Main.rand.NextVector2Unit();
 				float speed = Main.rand.NextFloat(2.5f, 9.5f) * (0.75f + radius / 180f);
 				Color color = Color.Lerp(new Color(226, 27, 14), new Color(255, 232, 151), Main.rand.NextFloat());
-				var particle = new DefaultParticle(center + direction * Main.rand.NextFloat(2f, radius * 0.28f),
+				var particle = new T_Streak_Particle(center + direction * Main.rand.NextFloat(2f, radius * 0.28f),
 					direction * speed, Main.rand.Next(16, 31), Main.rand.NextFloat(0.34f, 0.76f), color, true)
 				{
 					Deformation = new Vector2(Main.rand.NextFloat(0.18f, 0.38f), Main.rand.NextFloat(1.8f, 3.1f))
@@ -471,7 +472,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 				float roll = Main.rand.NextFloat();
 				Color color = roll < 0.18f ? new Color(255, 244, 211)
 					: roll < 0.56f ? new Color(255, 163, 67) : new Color(224, 36, 18);
-				var spark = new DefaultParticle(center + direction * Main.rand.NextFloat(4f, radius * 0.18f),
+				var spark = new T_Streak_Particle(center + direction * Main.rand.NextFloat(4f, radius * 0.18f),
 					direction * speed, Main.rand.Next(22, 39), Main.rand.NextFloat(0.32f, 0.7f), color, true)
 				{
 					Deformation = new Vector2(Main.rand.NextFloat(0.1f, 0.2f), Main.rand.NextFloat(3.4f, 5.4f))
@@ -503,7 +504,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 				Vector2 position = center + direction * radius * (phase == 0 ? 0.34f : 0.52f);
 				Color color = i % 4 == 0 ? new Color(255, 240, 195)
 					: phase == 0 ? new Color(255, 128, 38) : new Color(213, 31, 17);
-				var particle = new DefaultParticle(position,
+				var particle = new T_Streak_Particle(position,
 					direction * Main.rand.NextFloat(phase == 0 ? 7f : 4f, phase == 0 ? 13f : 9f),
 					Main.rand.Next(15, 25), Main.rand.NextFloat(0.28f, 0.55f), color, true)
 				{

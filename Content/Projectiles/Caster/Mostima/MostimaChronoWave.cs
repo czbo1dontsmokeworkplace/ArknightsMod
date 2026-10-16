@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using ArknightsMod.Common.Particle;
 using ArknightsMod.Common.VisualEffects;
@@ -61,7 +62,7 @@ public sealed class MostimaChronoWave : ModProjectile
                 float angle = Projectile.rotation + MathHelper.Lerp(-1.54f, 1.54f, (i + Main.rand.NextFloat(.2f, .8f)) / 12f);
                 Vector2 ray = angle.ToRotationVector2();
                 Vector2 position = Projectile.Center + ray * Radius;
-                new MostimaTemporalShard(position, ray * Main.rand.NextFloat(1.5f, 5f),
+                new T_Temporal_Shard_Particle(position, ray * Main.rand.NextFloat(1.5f, 5f),
                     i % 3 == 0 ? new Color(222, 244, 255) : MostimaVisuals.Blue,
                     Main.rand.Next(17, 30), Main.rand.NextFloat(9f, 22f)).Spawn();
                 if (i % 4 == 0)

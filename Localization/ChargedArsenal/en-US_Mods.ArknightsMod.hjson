@@ -1,0 +1,308 @@
+Items: {
+	MelanthaSword: {
+		DisplayName: Melantha's Standard Sword
+		Tooltip:
+			'''
+			Early game
+			Hold left-click for 1 second, then release for a heavy sweep; an early release makes a weak slash.
+			Heavy hits add an explosion and two fragments, up to six bursts per swing.
+			'''
+	}
+
+	MatoimaruNaginata: {
+		DisplayName: Matoimaru's Naginata
+		Tooltip:
+			'''
+			Early Hardmode
+			Hold left-click for 1 second, then release for a heavy sweep; an early release makes a weak slash.
+			Heavy hits add an explosion and two fragments, up to six bursts per swing.
+			'''
+	}
+
+	FrankaRapier: {
+		DisplayName: Franka's Thermite Rapier
+		Tooltip:
+			'''
+			Post-Plantera
+			Hold left-click for 1 second, then release for a heavy sweep; an early release makes a weak slash.
+			Heavy hits add an explosion and two fragments, up to six bursts per swing.
+			Slashes have a 25% chance to ignore defense and ignite enemies.
+			'''
+	}
+
+	NearlRadiantSword: {
+		DisplayName: Radiant Nearl's Blazing Sun Swordlance
+		Tooltip:
+			'''
+			Lunar events
+			Hold left-click for 1 second, then release for a heavy sweep; an early release makes a weak slash.
+			Heavy hits add an explosion and two fragments, up to six bursts per swing.
+			'''
+	}
+
+	AmbrielRifle: {
+		DisplayName: Ambriel's Longshot Rifle
+		Tooltip:
+			'''
+			Post-Skeletron
+			Hold left-click for 1.5 seconds; the two sights converge at full charge. Release to fire.
+			Charge increases damage, shot size and knockback; horizontal mobility falls to 12%.
+			Consumes one bullet on release, converting it to a unique shot.
+			'''
+	}
+
+	AndreanaRifle: {
+		DisplayName: Andreana's Inkshot Rifle
+		Tooltip:
+			'''
+			Early Hardmode
+			Hold left-click for 1.5 seconds; the two sights converge at full charge. Release to fire.
+			Charge increases damage, shot size and knockback; horizontal mobility falls to 12%.
+			Consumes one bullet on release, converting it to a unique shot.
+			'''
+	}
+
+	FirewatchRifle: {
+		DisplayName: Firewatch's Woodland Sniper
+		Tooltip:
+			'''
+			Post-Plantera
+			Hold left-click for 1.5 seconds; the two sights converge at full charge. Release to fire.
+			Charge increases damage, shot size and knockback; horizontal mobility falls to 12%.
+			Consumes one bullet on release, converting it to a unique shot.
+			'''
+	}
+
+	FartoothGreatbow: {
+		DisplayName: Fartooth's Feathershine Greatbow
+		Tooltip:
+			'''
+			Lunar events
+			Hold left-click for 1.5 seconds; the two sights converge at full charge. Release to fire.
+			Charge increases damage, shot size and knockback; horizontal mobility falls to 12%.
+			Consumes one bullet on release, converting it to a unique shot.
+			After 5 seconds without taking damage, feathershine shots deal 20% more damage.
+			'''
+	}
+
+	BluePoisonCrossbow: {
+		DisplayName: Blue Poison's Venom Crossbow
+		Tooltip:
+			'''
+			Mechanical bosses
+			Uses arrows, converting them to unique crossbow bolts.
+			'''
+	}
+
+	ProvenceCrossbow: {
+		DisplayName: Provence's Heavy Crossbow
+		Tooltip:
+			'''
+			Post-Plantera
+			Uses arrows, converting them to unique crossbow bolts.
+			'''
+	}
+
+	GreyThroatCrossbow: {
+		DisplayName: GreyThroat's Feather Crossbow
+		Tooltip:
+			'''
+			Mechanical bosses
+			Uses arrows, converting them to unique crossbow bolts.
+			'''
+	}
+
+	ArchettoCrossbow: {
+		DisplayName: Archetto's Landen Crossbow
+		Tooltip:
+			'''
+			Post-Plantera
+			Uses arrows, converting them to unique crossbow bolts.
+			'''
+	}
+}
+
+Skills: {
+	MelanthaSword: {
+		1: {
+			Label: ATK Up α
+			Desc: Manual: ATK +50%.
+		}
+	}
+
+	MatoimaruNaginata: {
+		1: {
+			Label: Regeneration β
+			Desc: Manual: immediately restore 50% of maximum life, then end.
+		}
+
+		2: {
+			Label: Demonic Power
+			Desc: Manual: ATK +150%; your defense becomes 0.
+		}
+	}
+
+	FrankaRapier: {
+		1: {
+			Label: Swift Strike γ
+			Desc: Manual: ATK +45%; swing recovery becomes 21 ticks. Charging still takes 1 second.
+		}
+
+		2: {
+			Label: Vorpal Edge
+			Desc: Manual: ATK +100%, your defense becomes 0; slash defense-ignore chance rises from 25% to 75%.
+		}
+	}
+
+	NearlRadiantSword: {
+		1: {
+			Label: Flaming Edge
+			Desc: Manual: ATK +70%, slash reach +15%, swing recovery 21 ticks. Charging still takes 1 second.
+		}
+
+		2: {
+			Label: Night-Scouring Gleam
+			Desc: Manual: ATK +110%; gain four shields that block incoming hits. Shields expire when switching weapons or when the skill ends.
+		}
+
+		3: {
+			Label: Blazing Sun's Obeisance
+			Desc:
+				'''
+				Manual: ATK +140%, DEF +20, slash reach +15%; slashes ignore defense.
+				Place a Blazing Sun within 480 pixels toward the cursor; it strikes and briefly stuns every second in a 120-pixel radius.
+				'''
+		}
+	}
+
+	AmbrielRifle: {
+		1: {
+			Label: Snaring Shells
+			Desc: Manual: shot hits stun for 0.6 seconds using the mod's stun rules.
+		}
+
+		2: {
+			Label: Radar Sweep
+			Desc: Manual: ATK +80%; shots pass through terrain and travel up to 3200 pixels.
+		}
+	}
+
+	AndreanaRifle: {
+		1: {
+			Label: ATK Up γ
+			Desc: Manual: ATK +100%.
+		}
+
+		2: {
+			Label: Interdictive Sniping
+			Desc: Manual: ATK +240%; only hits enemies above 50% life, stunning them for 1 second.
+		}
+	}
+
+	FirewatchRifle: {
+		1: {
+			Label: Camouflage
+			Desc: Manual: ATK +140%; reduce enemy aggression and conceal your sprite. Contact and projectile damage still apply.
+		}
+
+		2: {
+			Label: Tactical Transceiver
+			Desc:
+				'''
+				Manual: designate three positions within 1100 pixels toward the cursor; each explodes after 0.75 seconds.
+				Each blast deals 400% base weapon damage in a 130-pixel radius.
+				'''
+		}
+	}
+
+	FartoothGreatbow: {
+		1: {
+			Label: Swift Strike γ
+			Desc: Manual: ATK +45%; post-shot recovery falls from 24 to 16 ticks.
+		}
+
+		2: {
+			Label: Ally Support
+			Desc: Manual: post-shot recovery becomes 10 ticks; fully charged shots add one support arrow toward an enemy engaging a nearby allied player.
+		}
+
+		3: {
+			Label: Feathershine Arrows
+			Desc:
+				'''
+				Manual: ATK +140%, maximum travel distance 3200 pixels, armor penetration +35.
+				Damage increases by another 40% after the shot travels 800 pixels.
+				'''
+		}
+	}
+
+	BluePoisonCrossbow: {
+		1: {
+			Label: Double Shot
+			Desc: Automatic: next shot deals 180% damage and adds one arrow, preferring another target.
+		}
+
+		2: {
+			Label: Venom Spray
+			Desc: Manual: shots deal 150% damage and add two arrows, preferring other targets.
+		}
+	}
+
+	ProvenceCrossbow: {
+		1: {
+			Label: Wolf's Eye
+			Desc: Automatic: for 20 seconds, damage scales with the target's missing life, up to +60%.
+		}
+
+		2: {
+			Label: Scent of Prey
+			Desc: Manual: shots deal 240% damage, but can only hit enemies at or below 80% life.
+		}
+	}
+
+	GreyThroatCrossbow: {
+		1: {
+			Label: Flying Feather
+			Desc: Automatic: next shot fires two arrows at 140% damage each, consuming one arrow.
+		}
+
+		2: {
+			Label: Crossfire
+			Desc: Manual: ATK +40%; intervals within three-shot bursts are reduced by 35%.
+		}
+	}
+
+	ArchettoCrossbow: {
+		1: {
+			Label: Dispersing Arrows
+			Desc: Automatic: next shot deals 200% damage and adds three arrows, preferring other targets.
+		}
+
+		2: {
+			Label: Pursuing Arrows
+			Desc:
+				'''
+				Manual: fire four arrows at 140% damage; each first hit ricochets once to another target within 360 pixels for 80% damage.
+				Each shot consumes one arrow; this volley finishes after releasing the mouse.
+				'''
+		}
+
+		3: {
+			Label: Thundering Arrows
+			Desc: Manual: shots deal 130% damage, intervals are reduced by 20%, and each shot adds one arrow.
+		}
+	}
+}
+
+ChargedArsenal: {
+	SkillKey: Press [{0}] to activate the selected manual skill (rebind in Settings → Controls)
+	Unbound: Bind Skill Activate in Settings → Controls
+	Placeholder: Temporary weapon art and skill icons
+}
+
+Crossbows: {
+	BluePoison: Slow venom bolts pierce six enemies, gain 12 armor penetration and inflict Venom for 4 seconds.
+	Provence: Slow heavy bolts pierce nine enemies with 25 armor penetration.
+	GreyThroat: Hold left-click for rapid three-shot bursts.
+	Archetto: Hold left-click for rapid four-shot bursts.
+}

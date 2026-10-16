@@ -39,7 +39,7 @@ public class LeiziFlyingDischarge : ModProjectile
     public override bool CanHitPvp(Player target) => false;
     public override bool? CanCutTiles() => false;
     public override bool? CanHitNPC(NPC target) => !impactHandled && target.CanBeChasedBy(Projectile) ? null : false;
-    public override bool PreDraw(ref Color lightColor) { ChainArtsVfx.Head(Projectile, Palette, 3); return false; }
+    public override bool PreDraw(ref Color lightColor) => false;
 
     public override void AI()
     {

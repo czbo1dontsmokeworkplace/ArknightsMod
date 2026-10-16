@@ -6,13 +6,15 @@ KroosAlter:
 	'''
 Schwarz:
 	'''
+	Post-Golem
 	Delivers slow, powerful shots
 	Black heavy arrows pierce endlessly; hits call down a black rift laser through the target
 	'''
 Pozemka:
 	'''
-	Fires rapid three-shot bursts
+	Lunar Pillars tier
+	Hold left-click for rapid five-shot bursts
 	Converts wooden arrows into homing rose arrows
-	Hits call down a pink laser through the target
+	Arrow hits summon two homing star bolts nearby, each dealing 60% of the arrow's damage
 	Right-click to deploy the typewriter for coordinated attacks
 	'''

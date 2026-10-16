@@ -80,11 +80,11 @@ Shinginzan: {
 }
 
 BagpipeSpear: {
-	DisplayName: Piledriver Spear
+	DisplayName: Bagpipe's Siege Lance
 	Tooltip:
 		'''
-		Click the skill icon under the inventory to swich
-		'My spear and I hail from Victoria!'
+		Post-Golem
+		Javelins pierce 2 enemies. The final throw explodes on an enemy hit within a 76-pixel radius, dealing its damage once.
 		'''
 }
 
@@ -1477,7 +1477,7 @@ AdnachielCrossbow: {
 
 Lava_Dagger: {
 	DisplayName: Lava_ Dagger
-	Tooltip: Consumes mana every 20 ticks while charging
+	Tooltip: Fires an ember bolt on use
 }
 
 Shirayuki_Shuriken: {
@@ -3179,10 +3179,11 @@ RockrockStaff: {
 	DisplayName: Rockrock's Turbine Staff
 	Tooltip:
 		'''
-		Raise the staff to form three star bolts at the cursor that curve and converge on the target
+		Raise the staff to fire three star bolts from its tip toward the enemy locked near the cursor
 		A drone flies to the target and supports the attack with brief laser pulses
 		Repeated hits on one target increase drone damage
 		Star bolts gain speed and homing strength over time, easing through tight turns
+		Without a locked enemy, bolts still fire and accelerate by 2% each tick
 		After 3 seconds of continuous attacks, unleash a 1-second vortex burst with rapid five-bolt volleys and faster drone fire
 		'''
 }
@@ -3208,8 +3209,13 @@ FrostleafAxe: {
 }
 
 HongdouLance: {
-	DisplayName: Hongdou Lance
-	Tooltip: ""
+	DisplayName: Vigna's Lance
+	Tooltip:
+		'''
+		Pre-Hardmode
+		Talent: each attack action has a 10% chance to deal double damage, increased to 30% during skills.
+		The final javelin creates a small impact dealing half its damage on an enemy hit.
+		'''
 }
 
 MataimaruGlaive: {
@@ -3723,11 +3729,7 @@ ShiningStaff: {
 
 LeonhardtStaff: {
 	DisplayName: Leonhardt's Staff
-	Tooltip:
-		'''
-		Let's see whether you're gold or manure!
-		Consumes mana every 20 ticks while charging
-		'''
+	Tooltip: Let's see whether you're gold or manure!
 }
 
 PassengerConductor: {
@@ -4016,20 +4018,12 @@ MaterialistTreasureBag: {
 
 GitanoOrb: {
 	DisplayName: Gitano's Crystal Orb
-	Tooltip:
-		'''
-		Wait a minute, let me predict the results of this battle.
-		Consumes mana every 20 ticks while charging
-		'''
+	Tooltip: Wait a minute, let me predict the results of this battle.
 }
 
 SkyfireStaff: {
 	DisplayName: Skyfire's Meteor Staff
-	Tooltip:
-		'''
-		May the flames of the sun devour you!
-		Consumes mana every 20 ticks while charging
-		'''
+	Tooltip: May the flames of the sun devour you!
 }
 
 MostimaStaff: {

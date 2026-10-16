@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using ArknightsMod.Common.Particle;
 using ArknightsMod.Common.VisualEffects;
@@ -134,7 +135,7 @@ internal static class IndigoVisuals
         for (int i = 0; i < count; i++)
         {
             Vector2 velocity = Main.rand.NextVector2Circular(speed, speed) - Vector2.UnitY * .2f;
-            new DefaultParticle(center, velocity, Main.rand.Next(18, 30), Main.rand.NextFloat(.07f, .14f),
+            new T_Streak_Particle(center, velocity, Main.rand.Next(18, 30), Main.rand.NextFloat(.07f, .14f),
                 i % 3 == 0 ? Pearl : i % 3 == 1 ? Lilac : Blue, true)
                 { Deformation = new Vector2(.75f, 1.15f) }.Spawn();
         }

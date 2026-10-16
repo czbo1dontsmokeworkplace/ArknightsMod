@@ -40,6 +40,13 @@ public sealed class CrossbowBolt : ModProjectile
     }
     public override void OnSpawn(IEntitySource source)
     {
+        ConfigureBallistics();
+        var data = Projectile.GetGlobalProjectile<CrossbowShotData>();
+        data.Kind = (int)Kind;
+        data.Skill = (int)Projectile.ai[1];
+    }
+    internal void ConfigureBallistics()
+    {
         Projectile.extraUpdates = Kind == CrossbowKind.Schwarz ? 3 : Kind == CrossbowKind.Pozemka ? 2 : 1;
         if (Kind == CrossbowKind.Schwarz)
         {
@@ -51,9 +58,9 @@ public sealed class CrossbowBolt : ModProjectile
             Projectile.penetrate = 2;
             Projectile.localNPCHitCooldown = 30;
         }
-        var data = Projectile.GetGlobalProjectile<CrossbowShotData>();
-        data.Kind = (int)Kind;
-        data.Skill = (int)Projectile.ai[1];
+        if (Kind == CrossbowKind.BluePoison) Projectile.penetrate = 6;
+        if (Kind == CrossbowKind.Provence) Projectile.penetrate = 9;
+        if (Kind == CrossbowKind.Archetto) Projectile.penetrate = 2;
     }
     public override void AI()
     {
@@ -61,7 +68,8 @@ public sealed class CrossbowBolt : ModProjectile
         age++;
         if (Kind == CrossbowKind.Schwarz) Projectile.penetrate = -1;
         else if (Kind == CrossbowKind.Pozemka) UpdateRoseHoming();
-        else if (age >= 15) Projectile.velocity.Y = Math.Min(16f, Projectile.velocity.Y + .2f);
+        else if (age >= 15 && Kind < CrossbowKind.BluePoison) Projectile.velocity.Y = Math.Min(16f, Projectile.velocity.Y + .2f);
+        if (Kind >= CrossbowKind.BluePoison && age > 150) { Projectile.Kill(); return; }
         Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
         if (!Main.dedServ)
         {
@@ -77,7 +85,8 @@ public sealed class CrossbowBolt : ModProjectile
         }
     }
     public override bool? CanHitNPC(NPC target)
-        => Kind == CrossbowKind.Pozemka && Projectile.ai[2] < 0f ? false : null;
+        => Kind == CrossbowKind.Pozemka && Projectile.ai[2] < 0f
+            || Kind == CrossbowKind.Provence && Projectile.ai[1] == 2 && target.life > target.lifeMax * .8f ? false : null;
 
     private void UpdateRoseHoming()
     {
@@ -110,9 +119,15 @@ public sealed class CrossbowBolt : ModProjectile
     {
         if (Kind == CrossbowKind.Schwarz)
             modifiers.SourceDamage *= CrossbowBallistics.PiercingMultiplier((int)Projectile.ai[2]);
+        if (Kind is CrossbowKind.BluePoison or CrossbowKind.Provence) modifiers.ArmorPenetration += Kind == CrossbowKind.BluePoison ? 12 : 25;
+        if (Kind == CrossbowKind.Provence && Projectile.ai[1] == 1)
+            modifiers.SourceDamage *= 1f + .6f * (1f - target.life / (float)Math.Max(1, target.lifeMax));
     }
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
     {
+        if (Kind == CrossbowKind.BluePoison) target.AddBuff(BuffID.Venom, 240);
+        if (Kind == CrossbowKind.Archetto && Projectile.ai[1] == 2)
+            CrossbowBranchSkills.Ricochet(Projectile, target);
         if (Kind == CrossbowKind.KroosAlter) target.AddBuff(BuffID.Frostburn, 180);
         if (Kind == CrossbowKind.Pozemka && Projectile.penetrate == 2)
         {
@@ -145,6 +160,7 @@ public sealed class CrossbowBolt : ModProjectile
     }
     public override bool PreDraw(ref Color lightColor)
     {
+        if (Kind >= CrossbowKind.BluePoison) { CrossbowBranchSkills.Draw(Projectile, Kind); return false; }
         CrossbowVisuals.DrawBolt(Projectile, Kind, age);
         return false;
     }

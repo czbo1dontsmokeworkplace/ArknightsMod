@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using ArknightsMod.Common.Particle;
 using Microsoft.Xna.Framework;
@@ -52,11 +53,11 @@ internal static class SpreadVfxDetail
     }
     internal static void Fragment(Vector2 center, Vector2 velocity, Color tint, float size, int life, float travel, bool stone = false)
     {
-        if (SpreadVfxBudget.Take(center)) new SpreadFacetParticle(center, velocity, tint, size, life, travel, stone).Spawn();
+        if (SpreadVfxBudget.Take(center)) new T_Facet_Particle(center, velocity, tint, size, life, travel, stone).Spawn();
     }
-    internal static void Fire(Vector2 center, Vector2 velocity, float size, int life, float travel, bool smoke = false)
+    internal static void Fire(Vector2 center, Vector2 velocity, float size, int life, float travel)
     {
-        if (SpreadVfxBudget.Take(center)) new SpreadFireParticle(center, velocity, size, life, travel, smoke).Spawn();
+        if (SpreadVfxBudget.Take(center)) new T_FireSmoke_Particle(center, velocity, size, life, travel).Spawn();
     }
     internal static void Facet(Vector2 center, float width, float height, float angle, Color tint, float opacity)
     {
@@ -95,68 +96,3 @@ internal static class SpreadVfxDetail
 
 // All motion is measured from an immutable emission point and clipped before drawing.
 // These are Arknights Particle instances, registered only through Particle.Spawn().
-public sealed class SpreadFacetParticle : global::ArknightsMod.Common.Particle.Particle
-{
-    private readonly Vector2 origin, launch;
-    private readonly Color tint;
-    private readonly float size, travel, spin;
-    private readonly bool stone;
-    public override string TexturePath => OperatorFlightVfx.Assets + "StarCore";
-    public override BlendState DrawBlendState => BlendState.AlphaBlend;
-    internal SpreadFacetParticle(Vector2 center, Vector2 velocity, Color tint, float size, int life, float travel, bool stone)
-    {
-        Position = origin = center; launch = velocity; this.tint = tint;
-        this.size = MathHelper.Clamp(size, 4, 30); Lifetime = Math.Clamp(life, 8, 40);
-        this.travel = MathHelper.Clamp(travel, 6, 240); this.stone = stone;
-        Rotation = velocity.ToRotation(); spin = Main.rand.NextFloat(-.1f, .1f);
-    }
-    public override void Update()
-    {
-        Vector2 offset = launch * ((1f - MathF.Pow(.93f, Time)) / .07f);
-        if (stone) offset.Y += Time * Time * .018f;
-        if (offset.LengthSquared() > travel * travel) offset = offset.SafeNormalize(Vector2.UnitY) * travel;
-        Position = origin + offset; Rotation += spin;
-        Color = tint * MathHelper.Clamp((Lifetime - Time) / 10f, 0f, 1f);
-    }
-    public override void Draw()
-    {
-        SpreadVfxDetail.Facet(Position, size * (stone ? .8f : .4f), size, Rotation, Color, 1f);
-        if (!stone)
-            SpreadVfxDetail.Segment(Position - Rotation.ToRotationVector2() * size * .26f,
-                Position + Rotation.ToRotationVector2() * size * .34f,
-                OperatorFlightVfx.Add(tint, .6f * (1f - LifetimeRatio)), 1f);
-    }
-}
-
-public sealed class SpreadFireParticle : global::ArknightsMod.Common.Particle.Particle
-{
-    private readonly Vector2 origin, launch;
-    private readonly float size, travel, curl;
-    private readonly bool smoke;
-    public override string TexturePath => OperatorFlightVfx.Assets + "ForwardFlame";
-    public override BlendState DrawBlendState => smoke ? BlendState.NonPremultiplied : BlendState.Additive;
-    internal SpreadFireParticle(Vector2 center, Vector2 velocity, float size, int life, float travel, bool smoke)
-    {
-        Position = origin = center; launch = velocity; this.size = MathHelper.Clamp(size, 8, 70);
-        Lifetime = Math.Clamp(life, 8, 40); this.travel = MathHelper.Clamp(travel, 8, 220);
-        this.smoke = smoke; curl = Main.rand.NextFloat(-.55f, .55f);
-        Rotation = velocity.ToRotation() + MathHelper.PiOver2;
-    }
-    public override void Update()
-    {
-        float t = LifetimeRatio;
-        Vector2 offset = launch.RotatedBy(curl * t) * ((1f - MathF.Pow(.94f, Time)) / .06f) - Vector2.UnitY * Time * t * .35f;
-        if (offset.LengthSquared() > travel * travel) offset = offset.SafeNormalize(-Vector2.UnitY) * travel;
-        Position = origin + offset;
-        Rotation += curl * .025f;
-        float envelope = MathHelper.Clamp(Time / 3f, 0, 1) * MathF.Pow(1 - t, smoke ? .8f : 1.2f);
-        Color = (smoke ? new Color(47, 32, 42) : Color.Lerp(new Color(255, 218, 113), new Color(235, 49, 17), t)) * envelope;
-    }
-    public override void Draw()
-    {
-        float t = LifetimeRatio;
-        Vector2 dimensions = new(size * (.45f + .35f * t), size * (1f + t * .28f));
-        Main.spriteBatch.Draw(Texture, Position - Main.screenPosition, null, Color, Rotation,
-            Texture.Size() * .5f, dimensions / Texture.Size(), SpriteEffects.None, 0f);
-    }
-}

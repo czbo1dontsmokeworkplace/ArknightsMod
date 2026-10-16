@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using System.Collections.Generic;
 using ArknightsMod.Common.Particle;
@@ -79,7 +80,7 @@ internal static class MagallanVisuals
         float opacity = 0.55f, float lift = -0.015f)
     {
         if (!CanEmit(center)) return;
-        new MagallanHeavySmokeParticle(center, velocity, tint, diameter, lifetime, opacity, lift).Spawn();
+        new T_HeavySmoke_Particle(center, velocity, tint, diameter, lifetime, opacity, lift).Spawn();
     }
 
     public static void SwitchBurst(Vector2 center, int mode)
@@ -96,7 +97,7 @@ internal static class MagallanVisuals
     {
         if (!CanEmit(center)) return;
         for (int i = 0; i < Math.Min(count, 8); i++)
-            new DefaultParticle(center, Main.rand.NextVector2Circular(speed, speed), Main.rand.Next(12, 23),
+            new T_Streak_Particle(center, Main.rand.NextVector2Circular(speed, speed), Main.rand.Next(12, 23),
                 Main.rand.NextFloat(0.035f, 0.065f), color * 0.65f, true)
                 { Deformation = Vector2.One }.Spawn();
     }
@@ -168,7 +169,7 @@ internal static class MagallanVisuals
                 age % 4 == 0 ? new Color(115, 106, 97) : new Color(78, 83, 87),
                 Main.rand.NextFloat(21f, 32f), Main.rand.Next(25, 35), 0.48f);
         if (CanEmit(exhaust))
-            new DefaultParticle(exhaust, -direction * Main.rand.NextFloat(2f, 5f)
+            new T_Streak_Particle(exhaust, -direction * Main.rand.NextFloat(2f, 5f)
                 + Main.rand.NextVector2Circular(1f, 1f), Main.rand.Next(10, 17),
                 Main.rand.NextFloat(0.11f, 0.2f), age % 3 == 0
                     ? new Color(255, 238, 176) : new Color(255, 111, 36), true).Spawn();
@@ -186,7 +187,7 @@ internal static class MagallanVisuals
         for (int i = 0; i < 22; i++)
         {
             Vector2 direction = Main.rand.NextVector2Unit();
-            new DefaultParticle(center + direction * Main.rand.NextFloat(2f, radius * 0.35f),
+            new T_Streak_Particle(center + direction * Main.rand.NextFloat(2f, radius * 0.35f),
                 direction * Main.rand.NextFloat(3f, 9f), Main.rand.Next(15, 27),
                 Main.rand.NextFloat(0.18f, 0.36f), i % 3 == 0
                     ? new Color(255, 237, 173) : new Color(255, 102, 31), true).Spawn();
@@ -200,53 +201,7 @@ internal static class MagallanVisuals
 }
 
 // Own ParticleManager and textures, with heavy-smoke style expansion, rolling shading and finite decay.
-public sealed class MagallanHeavySmokeParticle : Particle
-{
-    public override string TexturePath => MagallanVisuals.SmokePath;
-    private readonly float diameter;
-    private readonly float opacity;
-    private readonly float lift;
-    private readonly float spin;
-    private readonly int variant;
-    private readonly Color tint;
 
-    public MagallanHeavySmokeParticle(Vector2 position, Vector2 velocity, Color tint, float diameter,
-        int lifetime, float opacity, float lift)
-    {
-        Position = position;
-        Velocity = velocity;
-        this.tint = tint;
-        this.diameter = MathHelper.Clamp(diameter, 8f, 120f);
-        this.opacity = MathHelper.Clamp(opacity, 0f, 0.65f);
-        this.lift = lift;
-        Lifetime = Math.Clamp(lifetime, 12, 60);
-        Rotation = Main.rand.NextFloat(MathHelper.TwoPi);
-        spin = Main.rand.NextFloat(-0.017f, 0.017f);
-        variant = Main.rand.Next(1, 5);
-    }
-
-    public override void Update()
-    {
-        Velocity *= 0.92f;
-        Velocity.Y += lift;
-        Rotation += spin;
-    }
-
-    public override void Draw()
-    {
-        float t = MathHelper.Clamp(LifetimeRatio, 0f, 1f);
-        float fade = MathHelper.Clamp(t * 6f, 0f, 1f) * MathF.Pow(1f - t, 1.25f) * opacity;
-        float size = diameter * (0.65f + 0.65f * MathF.Sin(t * MathHelper.Pi * 0.8f));
-        Texture2D shape = ModContent.Request<Texture2D>($"ArknightsMod/Assets/GrayScaleTexture/Smoke{variant}").Value;
-        Vector2 scale = new Vector2(size, size * (0.76f + 0.08f * MathF.Sin(t * 4f))) / shape.Size();
-        Color shadow = Color.Lerp(tint, new Color(42, 60, 72), 0.48f);
-        Main.EntitySpriteDraw(shape, Position - Main.screenPosition, null, shadow * fade,
-            Rotation, shape.Size() * 0.5f, scale, SpriteEffects.None);
-        Main.EntitySpriteDraw(Texture, Position - Main.screenPosition + new Vector2(-size * 0.05f, -size * 0.08f),
-            null, tint * (fade * 0.7f), -Rotation * 0.65f,
-            Texture.Size() * 0.5f, new Vector2(size * 0.86f, size * 0.68f) / Texture.Size(), SpriteEffects.None);
-    }
-}
 
 public sealed class MagallanVisualSystem : ModSystem
 {

@@ -48,11 +48,8 @@ public sealed class CrossbowShotData : GlobalProjectile
     {
         if (Kind == (int)CrossbowKind.Pozemka && projectile.owner == Main.myPlayer)
         {
-            int index = Projectile.NewProjectile(projectile.GetSource_OnHit(target), target.Center, Vector2.Zero,
-                ModContent.ProjectileType<global::ArknightsMod.Content.Projectiles.Sniper.Schwarz.SchwarzRiftLaser>(),
-                System.Math.Max(1, (int)(projectile.damage * .72f)), projectile.knockBack, projectile.owner,
-                Main.rand.NextFloat(-.12f, .12f), 1f);
-            if (Main.projectile.IndexInRange(index)) Main.projectile[index].CritChance = projectile.CritChance;
+            global::ArknightsMod.Content.Projectiles.Sniper.Pozemka.PozemkaStarBolt.SpawnPair(
+                projectile.GetSource_OnHit(target), projectile, target);
         }
         if (Kind == (int)CrossbowKind.KroosAlter && Main.rand.NextFloat() < .4f)
             target.AddBuff(BuffID.Confused, 6);

@@ -114,12 +114,13 @@ public sealed class MostimaCrossBurst : ModProjectile
         if (Main.dedServ) return;
         if (Projectile.localAI[0] == 0f)
         { Projectile.localAI[0] = 1f; SoundEngine.PlaySound(AppearSound, Projectile.Center); }
+        Projectile.localAI[1]++;
         if (!SpreadVfxBudget.Visible(Projectile.Center, MostimaClockwork.BlastRadius * ClockScale + 40f)) return;
-        if (Projectile.ai[1] == 0f) MostimaGrandClockVfx.Tick(Projectile.Center, Age, ClockScale, goldTransition, beatThisTick);
+        if (Projectile.ai[1] == 0f) MostimaGrandClockVfx.Tick(Projectile, (int)Projectile.localAI[1], ClockScale, goldTransition);
         if (beatThisTick)
         {
             SoundEngine.PlaySound(StrikeSound, Projectile.Center);
-            MostimaClockExplosion.Emit(Projectile.Center, Age / MostimaClockwork.BeatTicks, ClockScale, goldTransition, Mode == 2);
+            // Damage/sound mark the hand arrival; the visual stream never restarts here.
         }
         Lighting.AddLight(Projectile.Center, .1f, .3f, .5f);
     }
@@ -140,7 +141,7 @@ public sealed class MostimaCrossBurst : ModProjectile
     public override bool PreDraw(ref Color lightColor)
     {
         MostimaVisuals.Burst(Projectile.Center, Projectile.ai[0], 1f - Projectile.ai[1] / MostimaClockwork.FadeTicks,
-            ClockScale, goldTransition);
+            ClockScale, goldTransition, Projectile.localAI[1]);
         return false;
     }
 }

@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using ArknightsMod.Content.Dusts;
 using ArknightsMod.Content.Dusts.Fire;
 using ArknightsMod.Content.Items.Weapons.Guard.Surtr;
@@ -304,7 +305,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 			}
 			if (Main.rand.NextBool(2)) {
 				Vector2 origin = helper.handlePos + drawOffset + blade * reach * Main.rand.NextFloat(0.7f, 1f);
-				Dust flare = Dust.NewDustPerfect(origin, ModContent.DustType<SurtrAttack_Dust>(),
+				Dust flare = Dust.NewDustPerfect(origin, ModContent.DustType<T_Flame_Attack_Particle>(),
 					tangent * Main.rand.NextFloat(3f, 5.5f) + blade * Main.rand.NextFloat(0.8f, 2f),
 					0, Color.White, Main.rand.NextFloat(0.75f, 1.2f));
 				flare.noGravity = true;
@@ -409,16 +410,16 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 						(projMode == ProjMode.Stab ? 3f : 1.2f);
 				}
 			}
-			Dust.NewDustPerfect(target.Center, ModContent.DustType<surtrDamage_Dust>(), Vector2.Zero,
+			Dust.NewDustPerfect(target.Center, ModContent.DustType<T_Flame_Damage_Particle>(), Vector2.Zero,
 				0, Color.White, 1f);
 			if (projMode == ProjMode.Stab)
-				Dust.NewDustPerfect(target.Center, ModContent.DustType<fire_28>(), Vector2.Zero,
+				Dust.NewDustPerfect(target.Center, ModContent.DustType<T_Flame_Animated28_Particle>(), Vector2.Zero,
 					0, Color.White, 1.35f);
 			else if (Main.rand.NextBool(2))
-				Dust.NewDustPerfect(target.Center, ModContent.DustType<fire_28>(), Vector2.Zero,
+				Dust.NewDustPerfect(target.Center, ModContent.DustType<T_Flame_Animated28_Particle>(), Vector2.Zero,
 					0, Color.White, 1f);
 			else
-				Dust.NewDustPerfect(target.Center, ModContent.DustType<fire_03>(), Vector2.Zero,
+				Dust.NewDustPerfect(target.Center, ModContent.DustType<T_Flame_Animated03_Particle>(), Vector2.Zero,
 					0, Color.White, 1f);
 		}
 

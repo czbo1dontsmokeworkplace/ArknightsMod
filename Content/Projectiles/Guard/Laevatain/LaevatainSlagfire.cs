@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using ArknightsMod.Common.Particle;
 using Microsoft.Xna.Framework;
@@ -47,15 +48,15 @@ public sealed class LaevatainSlagfire : ModProjectile
             for (int i = 0; i < 3; i++) {
                 Vector2 position = Projectile.Center - Projectile.velocity * (i / 3f);
                 Vector2 velocity = -Projectile.velocity * Main.rand.NextFloat(0.005f, 0.015f);
-                new LaevatainSlagSpark(position, velocity, Main.rand.NextBool(4) ? Core : Outer,
+                new T_Slag_Spark_Particle(position, velocity, Main.rand.NextBool(4) ? Core : Outer,
                     Main.rand.NextFloat(8f, 13f) * Projectile.scale, 6).Spawn();
             }
             if (Main.rand.NextBool(8))
-                new LaevatainSlagSpark(Projectile.Center + Main.rand.NextVector2Circular(15f, 15f),
+                new T_Slag_Spark_Particle(Projectile.Center + Main.rand.NextVector2Circular(15f, 15f),
                     -Projectile.velocity * Main.rand.NextFloat(0.01f, 0.045f), Outer,
                     Main.rand.NextFloat(6f, 10f), 8).Spawn();
             if (Main.rand.NextBool(50))
-                new LaevatainSlagDrop(Projectile.Bottom + new Vector2(0f, 3f),
+                new T_Slag_Drop_Particle(Projectile.Bottom + new Vector2(0f, 3f),
                     new Vector2(Main.rand.NextFloat(-1f, 1f), 3f), Main.rand.Next(30, 50),
                     Main.rand.NextFloat(0.45f, 0.7f), Outer).Spawn();
         }
@@ -92,67 +93,10 @@ public sealed class LaevatainSlagfire : ModProjectile
                 * Main.rand.NextFloat(10f, 13f);
             int lifetime = Main.rand.Next(20, 45);
             float scale = Main.rand.NextFloat(0.3f, 0.7f);
-            new LaevatainSlagDrop(position + Main.rand.NextVector2Circular(1f, 1f),
+            new T_Slag_Drop_Particle(position + Main.rand.NextVector2Circular(1f, 1f),
                 velocity, lifetime, scale * 1.15f, Outer).Spawn();
-            new LaevatainSlagDrop(position + Main.rand.NextVector2Circular(1f, 1f),
+            new T_Slag_Drop_Particle(position + Main.rand.NextVector2Circular(1f, 1f),
                 velocity, lifetime, scale * 0.75f, Core).Spawn();
         }
-    }
-}
-
-public sealed class LaevatainSlagSpark : Particle
-{
-    public override string TexturePath => "ArknightsMod/Content/Projectiles/Guard/Mousse/Assets/MousseLightSplinter";
-    public override BlendState DrawBlendState => BlendState.Additive;
-    private readonly float length;
-
-    public LaevatainSlagSpark(Vector2 position, Vector2 velocity, Color color, float length, int lifetime)
-    {
-        Position = position;
-        Velocity = velocity;
-        Color = color;
-        this.length = length;
-        Lifetime = lifetime;
-    }
-
-    public override void Update() => Velocity *= 0.88f;
-
-    public override void Draw()
-    {
-        float fade = 1f - LifetimeRatio;
-        Vector2 scale = new Vector2(length, length * 0.4f) / Texture.Size();
-        Main.spriteBatch.Draw(Texture, Position - Main.screenPosition, null, Color * fade,
-            Velocity.LengthSquared() > 0.01f ? Velocity.ToRotation() : 0f,
-            Texture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
-    }
-}
-
-public sealed class LaevatainSlagDrop : Particle
-{
-    public override string TexturePath => "ArknightsMod/Content/ElementalImpairment/Effect/FireParticle";
-    public override BlendState DrawBlendState => BlendState.Additive;
-
-    public LaevatainSlagDrop(Vector2 position, Vector2 velocity, int lifetime, float scale, Color color)
-    {
-        Position = position;
-        Velocity = velocity;
-        Lifetime = lifetime;
-        Scale = scale;
-        Color = color;
-    }
-
-    public override void Update()
-    {
-        Velocity.X *= 0.97f;
-        Velocity.Y += 0.25f;
-        Rotation = Velocity.ToRotation() + MathHelper.PiOver2;
-    }
-
-    public override void Draw()
-    {
-        float fade = MathF.Pow(1f - LifetimeRatio, 1.3f);
-        Vector2 size = new Vector2(8f, 12f) * Scale * fade;
-        Main.spriteBatch.Draw(Texture, Position - Main.screenPosition, null, Color * fade,
-            Rotation, Texture.Size() * 0.5f, size / Texture.Size(), SpriteEffects.None, 0f);
     }
 }

@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using ArknightsMod.Common.Particle;
 using Microsoft.Xna.Framework;
@@ -27,7 +28,7 @@ internal static class MeteoriteShellVisuals
             Vector2 position = basePosition + normal * Main.rand.NextFloat(-5f, 5f);
             Vector2 velocity = -direction * Main.rand.NextFloat(.7f, 2.2f)
                 + normal * Main.rand.NextFloat(-.8f, .8f);
-            new MeteoriteEmber(position, velocity, Main.rand.Next(11, 19),
+            new T_Ember_Particle(position, velocity, Main.rand.Next(11, 19),
                 i == 0 ? Inner : Outer, Main.rand.NextFloat(13f, 24f)).Spawn();
         }
     }
@@ -68,37 +69,4 @@ internal static class MeteoriteShellVisuals
         Color tint, float rotation)
         => Main.spriteBatch.Draw(texture, center - Main.screenPosition, null, tint, rotation,
             texture.Size() * .5f, size / texture.Size(), SpriteEffects.None, 0f);
-}
-
-public sealed class MeteoriteEmber : Particle
-{
-    private readonly Color initialColor;
-    private readonly float initialSize;
-    public override string TexturePath => "ArknightsMod/Content/Textures/muzzle_02";
-    public override BlendState DrawBlendState => BlendState.Additive;
-
-    public MeteoriteEmber(Vector2 position, Vector2 velocity, int lifetime, Color color, float size)
-    {
-        Position = position;
-        Velocity = velocity;
-        Lifetime = lifetime;
-        initialColor = Color = color;
-        initialSize = size;
-        Rotation = velocity.ToRotation() - MathHelper.PiOver2;
-    }
-
-    public override void Update()
-    {
-        Velocity *= .90f;
-        Rotation += .035f;
-        Color = initialColor * MathF.Pow(1f - LifetimeRatio, 1.6f);
-    }
-
-    public override void Draw()
-    {
-        float size = initialSize * (1f - LifetimeRatio * .65f);
-        Main.spriteBatch.Draw(Texture, Position - Main.screenPosition, null, Color, Rotation,
-            Texture.Size() * .5f, new Vector2(size / Texture.Width, size * 1.4f / Texture.Height),
-            SpriteEffects.None, 0f);
-    }
 }

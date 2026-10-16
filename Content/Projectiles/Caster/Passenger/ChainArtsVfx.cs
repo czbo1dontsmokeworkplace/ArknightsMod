@@ -1,5 +1,7 @@
 using System;
 using ArknightsMod.Common.VisualEffects;
+using ArknightsMod.Common.Particle;
+using ArknightsMod.Common.Particle.T;
 using Microsoft.Xna.Framework;
 using Terraria;
 
@@ -9,48 +11,49 @@ internal static class ChainArtsVfx
 {
     internal const int TargetCount = 4; // initial collision + three hops, shared by all three staves
 
-    internal static void Head(Projectile p, LightningPalette palette, int tier)
-    {
-        Vector2 aim = p.velocity.SafeNormalize(Vector2.UnitX);
-        OperatorFlightVfx.Trail(p, palette.Body, palette.Edge, 4f + tier * 3f, 65f + tier * 48f);
-        float angle = aim.ToRotation(), time = Main.GlobalTimeWrappedHourly;
-        if (tier == 1)
-            OperatorFlightVfx.Sprite("StarCore", p.Center, new Vector2(18f), OperatorFlightVfx.Add(palette.Edge, .7f), time * 3f);
-        else
-        {
-            OperatorFlightVfx.Sprite("ForwardFlame", p.Center - aim * 17f,
-                new Vector2(18f + tier * 6f, 46f + tier * 15f), OperatorFlightVfx.Add(palette.Body, .5f), angle + MathHelper.PiOver2);
-            OperatorFlightVfx.Sprite("OrbitSmear", p.Center, new Vector2(tier == 2 ? 29f : 43f),
-                OperatorFlightVfx.Add(palette.Edge, .75f), time * (tier == 2 ? -7f : 9f));
-            if (tier == 3)
-                OperatorFlightVfx.Sprite("RuptureRing", p.Center - aim * 9f, new Vector2(42f, 23f),
-                    OperatorFlightVfx.Add(palette.Body, .65f), angle);
-        }
-        OperatorFlightVfx.Sprite("LinearSpark", p.Center + aim * 5f, new Vector2(3f + tier, 16f + tier * 5f),
-            OperatorFlightVfx.Add(palette.Core, .85f), angle + MathHelper.PiOver2);
-    }
-
     internal static void Flight(Vector2 start, Vector2 end, float scale, int phase, int seed, LightningPalette palette, int tier)
     {
         if (Main.dedServ) return;
-        Vector2 aim = (end - start).SafeNormalize(Vector2.UnitX), side = aim.RotatedBy(MathHelper.PiOver2);
-        PassengerLightningVisuals.Fracture(start, end, scale * (tier == 2 ? .75f : 1.2f), seed, .5f, tier == 2 ? 7 : 10, palette);
-        if (tier == 2)
+        // Two spatial emission steps per frame: twice the previous discharge cadence.
+        // Each step has independent roots, reach and full-circle directions.
+        for (int step = 0; step < 2; step++)
         {
-            // Two alternating rails merge at the white lightning tip.
-            float offset = MathF.Sin(phase * .8f) * 9f;
-            PassengerLightningVisuals.Fracture(start + side * offset, end, scale * .45f, seed + 91, .35f, 6, palette);
+            Vector2 a = Vector2.Lerp(start, end, step * .5f);
+            Vector2 b = Vector2.Lerp(start, end, (step + 1) * .5f);
+            PassengerLightningVisuals.Fracture(a, b, scale * .75f,
+                seed + step * 193, .25f, 7, palette);
+            for (int fork = 0; fork < 2; fork++)
+            {
+                Vector2 root = Vector2.Lerp(a, b, Main.rand.NextFloat());
+                Vector2 ray = Main.rand.NextVector2Unit();
+                PassengerLightningVisuals.Fracture(root, root + ray * Main.rand.NextFloat(12f, 29f) * scale,
+                    scale * Main.rand.NextFloat(.32f, .52f), Main.rand.Next(), .25f, 7, palette);
+            }
+            for (int i = 0; i < 3 && ParticleManager.activeParticles.Count < 1800; i++)
+            {
+                Vector2 ray = Main.rand.NextVector2Unit();
+                Vector2 point = Vector2.Lerp(a, b, Main.rand.NextFloat()) + ray * Main.rand.NextFloat(4f, 11f);
+                new T_Chain_Bolt_Particle(point, ray * Main.rand.NextFloat(2.5f, 5.5f),
+                    palette.Edge, Main.rand.NextFloat(15f, 24f) * scale, Main.rand.Next(12, 17)).Spawn();
+            }
+            for (int i = 0; i < 2; i++)
+                PassengerLightningVisuals.ColoredDust(Vector2.Lerp(a, b, Main.rand.NextFloat()),
+                    Main.rand.NextVector2Unit() * Main.rand.NextFloat(1.5f, 4f), palette.Edge,
+                    Main.rand.NextFloat(.8f, 1.2f));
         }
-        else
-        {
-            // Passenger carries a thicker leader and short, irregular outward branches.
-            for (int i = -1; i <= 1; i += 2)
-                PassengerLightningVisuals.Fracture(Vector2.Lerp(start, end, .55f), start + side * i * (18f + 6f * MathF.Sin(phase)),
-                    scale * .55f, seed + i * 37, .6f, 8, palette);
-        }
-        for (int i = 0; i < tier; i++)
-            OperatorFlightVfx.Spark(Vector2.Lerp(start, end, (i + .5f) / tier) + side * Main.rand.NextFloat(-5f, 5f),
-                -aim * Main.rand.NextFloat(2f, 5f), i == 0 ? palette.Core : palette.Edge, 13f + tier * 4f, 10 + tier * 2, 2f);
+    }
+
+    internal static void Discharge(Vector2 start, Vector2 end, float intensity, LightningPalette palette)
+    {
+        if (Main.dedServ || ParticleManager.activeParticles.Count >= 1800) return;
+        float length = Vector2.Distance(start, end);
+        if (!float.IsFinite(length) || length < 2f || length > 2400f) return;
+        new T_Chain_Beam_Particle(start, end, palette.Edge, intensity).Spawn();
+        Vector2 normal = (end - start).SafeNormalize(Vector2.UnitX).RotatedBy(MathHelper.PiOver2);
+        int count = Math.Clamp((int)(length / 65f), 1, 8);
+        for (int i = 0; i < count; i++)
+            new T_Chain_Bolt_Particle(Vector2.Lerp(start, end, (i + .5f) / count),
+                normal * Main.rand.NextFloat(-2f, 2f), palette.Edge, 18f * intensity, 8).Spawn();
     }
 
     internal static void Hop(Vector2 start, Vector2 end, float scale, float intensity, int seed, int tier, LightningPalette palette, bool target)
@@ -82,6 +85,16 @@ internal static class ChainArtsVfx
             Vector2 ray = (i * MathHelper.TwoPi / count + Main.rand.NextFloat(-.12f, .12f)).ToRotationVector2();
             OperatorFlightVfx.Spark(center + ray * 5f, ray * Main.rand.NextFloat(2f, tier == 2 ? 5f : 8f),
                 i % 3 == 0 ? palette.Core : palette.Edge, tier == 2 ? 18f : 28f, 16, tier == 2 ? 2f : 3f);
+        }
+        for (int i = 0; i < 8 && ParticleManager.activeParticles.Count < 1800; i++)
+        {
+            float angle = MathHelper.TwoPi * (i + Main.rand.NextFloat(-.2f, .2f)) / 8f;
+            Vector2 ray = angle.ToRotationVector2();
+            PassengerLightningVisuals.Fracture(center + ray * 6f,
+                center + ray * Main.rand.NextFloat(45f, 95f) * intensity,
+                intensity * .6f, Main.rand.Next(), .5f, 11, palette);
+            new T_Chain_Bolt_Particle(center + ray * 9f, ray * Main.rand.NextFloat(3f, 7f),
+                palette.Edge, Main.rand.NextFloat(17f, 27f) * intensity, 13).Spawn();
         }
     }
 }

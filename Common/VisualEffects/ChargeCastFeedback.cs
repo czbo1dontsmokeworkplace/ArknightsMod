@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using ArknightsMod.Common.Particle;
 using Microsoft.Xna.Framework;
@@ -43,7 +44,7 @@ internal static class ChargeCastFeedback
         SoundEngine.PlaySound(SoundID.Item29 with
         { Volume = .63f, Pitch = pitch, MaxInstances = 4 }, position);
         if (ParticleManager.activeParticles.Count < 1300)
-            new ChargeReadyRipple(position, color, 20, 88f).Spawn();
+            new T_Ready_Ripple_Particle(position, color, 20, 88f).Spawn();
         for (int i = 0; i < 14; i++)
         {
             Vector2 direction = (MathHelper.TwoPi * i / 14f + Main.rand.NextFloat(-.09f, .09f))
@@ -53,34 +54,5 @@ internal static class ChargeCastFeedback
                 Main.rand.NextFloat(.62f, .94f));
             dust.noGravity = true;
         }
-    }
-}
-
-public sealed class ChargeReadyRipple : global::ArknightsMod.Common.Particle.Particle
-{
-    private readonly Color initialColor;
-    private readonly float finalDiameter;
-    public override string TexturePath => "ArknightsMod/Content/Textures/circle_03";
-    public override BlendState DrawBlendState => BlendState.Additive;
-
-    public ChargeReadyRipple(Vector2 position, Color color, int lifetime, float finalDiameter)
-    {
-        Position = position;
-        initialColor = Color = color;
-        Lifetime = lifetime;
-        this.finalDiameter = finalDiameter;
-    }
-
-    public override void Update()
-    {
-        Color = initialColor * MathF.Pow(1f - LifetimeRatio, 1.35f);
-        Rotation += .045f;
-    }
-
-    public override void Draw()
-    {
-        float diameter = MathHelper.Lerp(17f, finalDiameter, 1f - MathF.Pow(1f - LifetimeRatio, 2f));
-        Main.spriteBatch.Draw(Texture, Position - Main.screenPosition, null, Color, Rotation,
-            Texture.Size() * .5f, diameter / Texture.Width, SpriteEffects.None, 0f);
     }
 }

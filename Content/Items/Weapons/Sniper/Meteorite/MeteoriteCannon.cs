@@ -13,7 +13,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Meteorite;
 /// <summary>陨星的平射爆破弩炮；消耗火箭弹并继承弹药伤害，使用专属爆破弹。</summary>
 public sealed class MeteoriteCannon : ExpansionWeaponBase
 {
-    protected override int[] EliteDamage => [156, 179, 206];
+    protected override int[] EliteDamage => [251, 288, 331];
     private static readonly SoundStyle FireSound = new("ArknightsMod/Sounds/MeteoriteCannonFire")
     { Volume = .64f, MaxInstances = 3 };
     private static readonly SoundStyle SkillSound = new("ArknightsMod/Sounds/SkillActive1")

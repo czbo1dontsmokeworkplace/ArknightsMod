@@ -1,0 +1,67 @@
+Items: {
+	GraniLance: {
+		DisplayName: Grani's Folding Lance
+		Tooltip:
+			'''
+			Early Hardmode
+			Javelins pierce 3 enemies.
+			Holding this weapon grants a 20% chance to dodge damage.
+			'''
+	}
+
+	WildManeLance: {
+		DisplayName: Wild Mane's Twin Lance
+		Tooltip:
+			'''
+			After all Mechanical Bosses
+			Mother lances pierce 2 enemies and release 2 half-damage child lances after 12 frames or on the first enemy hit.
+			Children cannot split again. Hitting terrain never releases children.
+			'''
+	}
+}
+
+Skills: {
+	GraniLance: {
+		1: {
+			Label: DEF Up γ
+			Desc: Manual. DEF +100% for 40 seconds. Initial SP: 15. Cost: 30.
+		}
+
+		2: {
+			Label: Never Retreat!
+			Desc: Manual. ATK and DEF +80%, knockback immunity, and 15% shorter left-click reach for 30 seconds. Initial SP: 20. Cost: 40.
+		}
+	}
+
+	WildManeLance: {
+		1: {
+			Label: Lance Charge
+			Desc: Activates automatically when attacking: left-click attack speed +80% for 15 seconds. Initially ready; subsequent activations cost 30 SP.
+		}
+
+		2: {
+			Label: Lance Showdown
+			Desc: Manual. ATK +80%, left-click reach +20%, and double knockback for 20 seconds. Initial SP: 10. Cost: 30.
+		}
+	}
+}
+
+VanguardSpears: {
+	Controls:
+		'''
+		Left-click combo: rising cut → falling cut → piercing thrust.
+		The reserve above your head fills in {1} seconds while held, or instantly when a direct melee hit lands on an enemy.
+		Right-click spends a full reserve to throw {0} javelins. Throws and follow-up strikes do not refill it.
+		All four lances share the reserve. Recovery pauses when unequipped; death clears it.
+		'''
+	SkillKey: Press [{0}] for manual skills; click a skill icon to select it.
+	Unbound: Bind Skill Activate under Settings → Controls → Mod Controls.
+	Placeholder: Weapon art and skill icons temporarily reuse existing mod assets.
+}
+
+Projectiles: {
+	VanguardSpearHoldout.DisplayName: Vanguard lance
+	VanguardThrownSpear.DisplayName: Vanguard lance
+	VanguardSpearImpact.DisplayName: Vanguard lance
+	VanguardFollowupStrike.DisplayName: Vanguard lance
+}

@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using ArknightsMod.Content.Dusts.Fire;
 using ArknightsMod.Common.Particle;
@@ -66,7 +67,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 				// 每根火柱爆出模组火焰，同时从底部按固定角度向上喷射原版火星。
 				for (int i = 0; i < 3; i++)
 					Dust.NewDustPerfect(bottom + new Vector2(Main.rand.NextFloat(-10f, 10f), -i * 24f),
-						ModContent.DustType<fire_28>(), Vector2.Zero, 0, Color.White, Main.rand.NextFloat(0.38f, 0.6f));
+						ModContent.DustType<T_Flame_Animated28_Particle>(), Vector2.Zero, 0, Color.White, Main.rand.NextFloat(0.38f, 0.6f));
 				for (int i = -3; i <= 3; i++)
 					SpawnTorch(bottom + new Vector2(i * 4f, -4f),
 						new Vector2(i * 0.85f, -Main.rand.NextFloat(4.5f, 6f)), Main.rand.NextFloat(1.15f, 1.8f));
@@ -83,7 +84,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 			}
 			if (live % 3 == 0)
 				Dust.NewDustPerfect(bottom + new Vector2(Main.rand.NextFloat(-15f, 15f), -Main.rand.NextFloat(8f, PillarHeight)),
-					ModContent.DustType<fire_28>(), Vector2.Zero, 0, Color.White, Main.rand.NextFloat(0.25f, 0.42f));
+					ModContent.DustType<T_Flame_Animated28_Particle>(), Vector2.Zero, 0, Color.White, Main.rand.NextFloat(0.25f, 0.42f));
 			// 无规则散射填满柱身，与底部的规律喷射形成两层运动。
 			for (int i = 0; i < 3; i++)
 				SpawnTorch(bottom + new Vector2(Main.rand.NextFloat(-22f, 22f), -Main.rand.NextFloat(0f, PillarHeight)),
@@ -97,7 +98,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 
 		private static void SpawnEmber(Vector2 position, Vector2 velocity, float scale)
 		{
-			new DefaultParticle(position, velocity, Main.rand.Next(16, 28), scale,
+			new T_Streak_Particle(position, velocity, Main.rand.Next(16, 28), scale,
 				Main.rand.NextBool(3) ? new Color(255, 224, 96) : new Color(255, 85, 16), true)
 				{ Deformation = new Vector2(0.36f, 2.1f) }.Spawn();
 		}

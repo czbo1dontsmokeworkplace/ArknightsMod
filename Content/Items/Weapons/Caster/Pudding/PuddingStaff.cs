@@ -11,10 +11,11 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Weapons.Caster.Pudding;
 
-/// <summary>骷髅王后的布丁电磁法杖；二连发链电，每发击中实体后最多再弹跳三次。</summary>
+/// <summary>骷髅王后的布丁电磁法杖；每轮三发落雷，击中后最多再弹跳三次。</summary>
 public sealed class PuddingStaff : ExpansionWeaponBase
 {
-    protected override int[] EliteDamage => [68, 74, 80];
+    private int shotIndex;
+    protected override int[] EliteDamage => [54, 59, 64];
     private static readonly float[] ChantSpeed = [.15f, .20f, .25f, .30f, .35f, .40f, .45f, .55f, .65f, .75f];
     private static readonly float[] DiffusionDamage = [.30f, .35f, .45f, .50f, .55f, .60f, .80f, .90f, 1f, 1.10f];
     public override void SetStaticDefaults() => Item.staff[Type] = true;
@@ -76,11 +77,8 @@ public sealed class PuddingStaff : ExpansionWeaponBase
         WeaponPlayer skills = player.GetModPlayer<WeaponPlayer>();
         int mode = skills.SkillActive && skills.CurrentSkill?.Key.Item == nameof(PuddingStaff)
             && skills.Skill is 0 or 1 ? skills.Skill + 1 : 0;
-        Vector2 direction = (Main.MouseWorld - position).SafeNormalize(new Vector2(player.direction, 0f));
-        int index = Projectile.NewProjectile(source, position,
-            direction * LeiziFlyingDischarge.SpeedPerUpdate, type, damage, knockback, player.whoAmI, mode);
-        if (Main.projectile.IndexInRange(index))
-            Main.projectile[index].CritChance = player.GetWeaponCrit(Item);
+        SkyChainVolley.Fire(player, source, type, damage, knockback, Main.MouseWorld,
+            LeiziFlyingDischarge.SpeedPerUpdate, shotIndex++, mode);
         return false;
     }
 

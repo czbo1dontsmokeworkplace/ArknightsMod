@@ -32,7 +32,7 @@ public abstract class ArtsFighterSlash : ModProjectile
         if (!owner.active || owner.dead || owner.HeldItem.type != WeaponType) { Projectile.Kill(); return; }
         Projectile.ai[1] = MathHelper.Clamp(Projectile.ai[1], .5f, 3f);
         if (Projectile.velocity.LengthSquared() > .01f) Projectile.velocity *= .45f;
-        if (age == 1) MousseVisuals.EmitSlash(Projectile, SlashColor, StarDetails);
+        if (age == 1) MousseVisuals.EmitAugerSlash(Projectile, SlashColor);
         if (!Main.dedServ) Lighting.AddLight(Projectile.Center, SlashColor.ToVector3() * (.7f * Projectile.ai[1]));
         age++;
     }

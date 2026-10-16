@@ -102,5 +102,5 @@ public sealed class PassengerFlyingDischarge : ModProjectile
             emissionOrigin: Projectile.Center, firstHit: target);
     }
 
-    public override bool PreDraw(ref Color lightColor) { ChainArtsVfx.Head(Projectile, LightningPalette.Passenger, 3); return false; }
+    public override bool PreDraw(ref Color lightColor) => false;
 }

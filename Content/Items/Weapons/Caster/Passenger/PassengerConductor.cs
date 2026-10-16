@@ -16,8 +16,8 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Passenger;
 public sealed class PassengerConductor : ExpansionWeaponBase
 {
     private bool stormKeyConsumed;
-    // 单体实测 923 DPS 按目标 1100 等比例调整：138 × 1100 / 923 ≈ 164。
-    protected override int[] EliteDamage => [164, 164, 164];
+    private int shotIndex;
+    protected override int[] EliteDamage => [131, 131, 131];
     internal const float NormalRange = 720f;
     internal const float FocusRange = 880f;
     internal const float JumpRange = 240f;
@@ -139,16 +139,14 @@ public sealed class PassengerConductor : ExpansionWeaponBase
 
         WeaponPlayer skills = player.GetModPlayer<WeaponPlayer>();
         bool focus = skills.SkillActive && skills.Skill == 1;
-        Vector2 direction = (Main.MouseWorld - position).SafeNormalize(new Vector2(player.direction, 0f));
+        Vector2 target = Main.MouseWorld;
         float visibleWidth = Main.screenWidth / Math.Max(0.25f, Main.GameViewMatrix.Zoom.X);
         int updates = PassengerFlyingDischarge.FlightUpdates(visibleWidth, focus);
         int rank = SkillRank(skills);
         float candidateMultiplier = skills.Skill == 0 ? (rank == 9 ? 2.5f : 1.5f + rank * 0.1f) : 1f;
-        int index = Projectile.NewProjectile(source, position, direction * PassengerFlyingDischarge.SpeedPerUpdate,
-            ModContent.ProjectileType<PassengerFlyingDischarge>(), damage, knockback, player.whoAmI,
-            updates, candidateMultiplier, ChainArtsVfx.TargetCount);
-        if (Main.projectile.IndexInRange(index))
-            Main.projectile[index].CritChance = player.GetWeaponCrit(Item);
+        SkyChainVolley.Fire(player, source, ModContent.ProjectileType<PassengerFlyingDischarge>(),
+            damage, knockback, target, PassengerFlyingDischarge.SpeedPerUpdate,
+            shotIndex++, updates, candidateMultiplier, ChainArtsVfx.TargetCount);
         return false;
     }
 

@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -876,12 +877,12 @@ namespace ArknightsMod.Content.Projectiles.Medic.Shining
 			if (age % 2 == 0)
 			{
 				float side = age % 8 == 0 ? -1f : 1f;
-				new ShiningInkParticle(tail + normal * side * Main.rand.NextFloat(1f, 4f),
+				new T_Ink_Particle(tail + normal * side * Main.rand.NextFloat(1f, 4f),
 					-forward * Main.rand.NextFloat(0.45f, 0.82f) + normal * side * 0.38f,
 					Main.rand.Next(16, 24), Main.rand.NextFloat(0.34f, 0.52f), opacity, projectile).Spawn();
 			}
 			if (age % 6 == 0)
-				new ShiningBarrierShardParticle(tail, -forward * 0.6f,
+				new T_Barrier_Shard_Particle(tail, -forward * 0.6f,
 					new Color(145, 154, 170), 16, 0.22f, projectile).Spawn();
 			if (age % 12 == 0)
 			{
@@ -897,7 +898,7 @@ namespace ArknightsMod.Content.Projectiles.Medic.Shining
 		{
 			Vector2 forward = velocity.SafeNormalize(Vector2.UnitX);
 			float strength = (mode == 3 ? 1.15f : 1f) * (finalHit ? 1.2f : 1f);
-			new ShiningInkPulseParticle(center, forward.ToRotation(), 17,
+			new T_Ink_Pulse_Particle(center, forward.ToRotation(), 17,
 				strength, finalHit ? 0.82f : 0.66f).Spawn();
 
 			int inkCount = 5 + hitCount * 2;
@@ -905,7 +906,7 @@ namespace ArknightsMod.Content.Projectiles.Medic.Shining
 			{
 				Vector2 inkVelocity = (-forward).RotatedBy(Main.rand.NextFloat(-1.15f, 1.15f))
 					* Main.rand.NextFloat(1.2f, finalHit ? 5.8f : 4.4f);
-				new ShiningInkParticle(center + Main.rand.NextVector2Circular(4f, 4f), inkVelocity,
+				new T_Ink_Particle(center + Main.rand.NextVector2Circular(4f, 4f), inkVelocity,
 					Main.rand.Next(13, 22), Main.rand.NextFloat(0.28f, 0.56f) * strength,
 					finalHit ? 1f : 0.86f).Spawn();
 			}
@@ -915,7 +916,7 @@ namespace ArknightsMod.Content.Projectiles.Medic.Shining
 			{
 				Vector2 shardVelocity = forward.RotatedBy(Main.rand.NextFloat(-1.2f, 1.2f))
 					* Main.rand.NextFloat(1.8f, finalHit ? 7f : 4.8f);
-				new ShiningBarrierShardParticle(center, shardVelocity,
+				new T_Barrier_Shard_Particle(center, shardVelocity,
 					i % 3 == 0 ? Color.White : new Color(128, 151, 178),
 					Main.rand.Next(10, 19), Main.rand.NextFloat(0.26f, 0.55f) * strength).Spawn();
 			}
@@ -924,12 +925,12 @@ namespace ArknightsMod.Content.Projectiles.Medic.Shining
 		internal static void SpawnBladeDissolveStart(Vector2 center, Vector2 velocity, int mode)
 		{
 			Vector2 forward = velocity.SafeNormalize(Vector2.UnitX);
-			new ShiningInkPulseParticle(center, forward.ToRotation(), 22,
+			new T_Ink_Pulse_Particle(center, forward.ToRotation(), 22,
 				mode == 3 ? 1.25f : 1f, 0.58f).Spawn();
 			for (int i = 0; i < 4; i++)
 			{
 				Vector2 outward = (MathHelper.PiOver4 + MathHelper.PiOver2 * i).ToRotationVector2();
-				new ShiningInkParticle(center + outward * 5f, outward * Main.rand.NextFloat(0.8f, 2.2f),
+				new T_Ink_Particle(center + outward * 5f, outward * Main.rand.NextFloat(0.8f, 2.2f),
 					Main.rand.Next(18, 27), Main.rand.NextFloat(0.30f, 0.48f), 0.74f).Spawn();
 			}
 		}
@@ -938,7 +939,7 @@ namespace ArknightsMod.Content.Projectiles.Medic.Shining
 		{
 			Vector2 direction = velocity.SafeNormalize(Main.rand.NextVector2Unit())
 				.RotatedBy(Main.rand.NextFloat(-0.9f, 0.9f));
-			new ShiningInkParticle(center + Main.rand.NextVector2Circular(5f, 5f),
+			new T_Ink_Particle(center + Main.rand.NextVector2Circular(5f, 5f),
 				direction * Main.rand.NextFloat(0.5f, 1.8f), Main.rand.Next(12, 19),
 				Main.rand.NextFloat(0.24f, 0.40f), opacity).Spawn();
 		}
@@ -951,12 +952,12 @@ namespace ArknightsMod.Content.Projectiles.Medic.Shining
 			if (age % 3 == 0)
 			{
 				float side = age % 6 == 0 ? -1f : 1f;
-				new ShiningInkParticle(tail + normal * side * 2f,
+				new T_Ink_Particle(tail + normal * side * 2f,
 					-forward * 0.35f + normal * side * 0.24f, Main.rand.Next(13, 20),
 					Main.rand.NextFloat(0.20f, 0.33f), 0.66f, projectile).Spawn();
 			}
 			if (age % 7 == 0)
-				new ShiningBarrierShardParticle(tail, -forward * 0.28f,
+				new T_Barrier_Shard_Particle(tail, -forward * 0.28f,
 					new Color(156, 198, 195), 14, 0.16f, projectile).Spawn();
 		}
 
@@ -1000,15 +1001,15 @@ namespace ArknightsMod.Content.Projectiles.Medic.Shining
 
 		internal static void SpawnHealingArrival(Vector2 center)
 		{
-			new ShiningInkPulseParticle(center, 0f, 20, 0.82f, 0.52f).Spawn();
+			new T_Ink_Pulse_Particle(center, 0f, 20, 0.82f, 0.52f).Spawn();
 			for (int i = 0; i < 8; i++)
 			{
 				Vector2 direction = (MathHelper.TwoPi * i / 8f).ToRotationVector2();
 				Vector2 position = center + direction * Main.rand.NextFloat(24f, 42f);
-				new ShiningInkParticle(position, -direction * Main.rand.NextFloat(1.8f, 3.8f),
+				new T_Ink_Particle(position, -direction * Main.rand.NextFloat(1.8f, 3.8f),
 					Main.rand.Next(13, 20), Main.rand.NextFloat(0.22f, 0.38f), 0.72f).Spawn();
 				if (i % 2 == 0)
-					new ShiningBarrierShardParticle(position, -direction * Main.rand.NextFloat(2f, 4.5f),
+					new T_Barrier_Shard_Particle(position, -direction * Main.rand.NextFloat(2f, 4.5f),
 						new Color(170, 218, 208), 16, 0.28f).Spawn();
 			}
 		}
@@ -1074,7 +1075,7 @@ namespace ArknightsMod.Content.Projectiles.Medic.Shining
 				Vector2 position = inward ? center + direction * Main.rand.NextFloat(44f, 82f) : center;
 				Vector2 velocity = direction * Main.rand.NextFloat(inward ? -4.4f : 2.6f,
 					inward ? -1.5f : 7.2f);
-				new ShiningBarrierShardParticle(position, velocity,
+				new T_Barrier_Shard_Particle(position, velocity,
 					i % 4 == 0 ? Color.White : new Color(98, 122, 158),
 					Main.rand.Next(18, 30), Main.rand.NextFloat(0.55f, 1.15f)).Spawn();
 			}
@@ -1099,7 +1100,7 @@ namespace ArknightsMod.Content.Projectiles.Medic.Shining
 			{
 				Vector2 shardVelocity = direction.RotatedBy(Main.rand.NextFloat(-1.1f, 1.1f))
 					* Main.rand.NextFloat(1.4f, 5.5f);
-				new ShiningBarrierShardParticle(center, shardVelocity,
+				new T_Barrier_Shard_Particle(center, shardVelocity,
 					i % 3 == 0 ? Color.White : new Color(90, 110, 142),
 					Main.rand.Next(12, 22), Main.rand.NextFloat(0.35f, 0.72f)).Spawn();
 			}
@@ -1112,144 +1113,17 @@ namespace ArknightsMod.Content.Projectiles.Medic.Shining
 			float angle = Main.rand.NextFloat(MathHelper.TwoPi);
 			Vector2 position = center + new Vector2(MathF.Cos(angle) * radius,
 				MathF.Sin(angle) * radius * 0.24f + 48f);
-			new ShiningBarrierShardParticle(position, new Vector2(0f, Main.rand.NextFloat(-1.8f, -0.7f)),
+			new T_Barrier_Shard_Particle(position, new Vector2(0f, Main.rand.NextFloat(-1.8f, -0.7f)),
 				Main.rand.NextBool(3) ? Color.White : new Color(85, 104, 136),
 				Main.rand.Next(26, 42), Main.rand.NextFloat(0.32f, 0.62f)).Spawn();
 		}
 	}
 
 	/// <summary>非加法混合的细墨羽：黑色不会在 Additive 下消失，复用现有单帧粒子纹理。</summary>
-	public sealed class ShiningInkParticle : Particle
-	{
-		private readonly float strength;
-		private readonly Projectile flightSource;
-		private readonly int flightIdentity;
-		public override string TexturePath => "ArknightsMod/Common/Particle/DefaultParticle";
-		public override BlendState DrawBlendState => BlendState.AlphaBlend;
 
-		public ShiningInkParticle(Vector2 position, Vector2 velocity, int lifetime, float scale,
-			float strength = 1f, Projectile flightSource = null)
-		{
-			Position = position;
-			Velocity = velocity;
-			Lifetime = lifetime;
-			Scale = scale;
-			this.strength = MathHelper.Clamp(strength, 0f, 1f);
-			this.flightSource = flightSource;
-			flightIdentity = flightSource?.identity ?? -1;
-			Color = new Color(3, 4, 9);
-			Rotation = (flightSource?.velocity ?? velocity).ToRotation() + MathHelper.PiOver2;
-		}
-
-		public override void Update()
-		{
-			Velocity *= 0.945f;
-			if (flightSource != null)
-			{
-				if (flightSource.active && flightSource.identity == flightIdentity && flightSource.velocity.LengthSquared() > 0.01f)
-					Rotation = flightSource.velocity.ToRotation() + MathHelper.PiOver2;
-			}
-			else if (Velocity.LengthSquared() > 0.01f)
-				Rotation = Velocity.ToRotation() + MathHelper.PiOver2;
-			float fadeIn = Utils.GetLerpValue(0f, 0.12f, LifetimeRatio, true);
-			Opacity = fadeIn * MathF.Pow(1f - LifetimeRatio, 1.35f) * 0.86f * strength;
-			Scale *= 0.982f;
-		}
-
-		public override void Draw()
-		{
-			Main.spriteBatch.Draw(Texture, Position - Main.screenPosition, null, Color * Opacity,
-				Rotation, Texture.Size() * 0.5f, new Vector2(0.34f, 1.90f) * Scale,
-				SpriteEffects.None, 0f);
-			Main.spriteBatch.Draw(Texture, Position - Main.screenPosition, null,
-				Color.Black * (Opacity * 0.68f), Rotation, Texture.Size() * 0.5f,
-				new Vector2(0.15f, 1.28f) * Scale,
-				SpriteEffects.None, 0f);
-		}
-	}
 
 	/// <summary>使用透明弧形贴图的黑色命中波；保持 AlphaBlend，避免黑色在加法层中消失。</summary>
-	public sealed class ShiningInkPulseParticle : Particle
-	{
-		private readonly float peakOpacity;
 
-		public override string TexturePath => "ArknightsMod/Content/Textures/slash_04";
-		public override BlendState DrawBlendState => BlendState.AlphaBlend;
 
-		public ShiningInkPulseParticle(Vector2 position, float rotation, int lifetime,
-			float scale, float opacity)
-		{
-			Position = position;
-			Rotation = rotation;
-			Lifetime = lifetime;
-			Scale = scale;
-			peakOpacity = opacity;
-			Color = new Color(2, 3, 7);
-		}
 
-		public override void Update()
-		{
-			float fade = 1f - MathHelper.SmoothStep(0f, 1f,
-				MathHelper.Clamp(LifetimeRatio, 0f, 1f));
-			Opacity = fade * peakOpacity;
-			Scale *= 1.035f;
-		}
-
-		public override void Draw()
-		{
-			Main.spriteBatch.Draw(Texture, Position - Main.screenPosition, null, Color * Opacity,
-				Rotation, Texture.Size() * 0.5f, new Vector2(0.115f, 0.075f) * Scale,
-				SpriteEffects.None, 0f);
-		}
-	}
-
-	public sealed class ShiningBarrierShardParticle : Particle
-	{
-		private readonly Color initialColor;
-		private readonly Projectile flightSource;
-		private readonly int flightIdentity;
-
-		// DefaultParticle 是本项目的一张独立单帧粒子贴图，不按精灵表切帧。
-		public override string TexturePath => "ArknightsMod/Common/Particle/DefaultParticle";
-		public override BlendState DrawBlendState => BlendState.Additive;
-
-		public ShiningBarrierShardParticle(Vector2 position, Vector2 velocity, Color color,
-			int lifetime, float scale, Projectile flightSource = null)
-		{
-			Position = position;
-			Velocity = velocity;
-			Color = color;
-			initialColor = color;
-			this.flightSource = flightSource;
-			flightIdentity = flightSource?.identity ?? -1;
-			Lifetime = lifetime;
-			Scale = scale;
-			Rotation = flightSource != null ? flightSource.velocity.ToRotation() + MathHelper.PiOver2 : velocity.ToRotation();
-		}
-
-		public override void Update()
-		{
-			Velocity *= 0.955f;
-			if (flightSource != null)
-			{
-				if (flightSource.active && flightSource.identity == flightIdentity && flightSource.velocity.LengthSquared() > 0.01f)
-					Rotation = flightSource.velocity.ToRotation() + MathHelper.PiOver2;
-			}
-			else
-				Rotation += 0.08f * Math.Sign(Velocity.X == 0f ? 1f : Velocity.X);
-			Opacity = MathF.Pow(1f - LifetimeRatio, 1.25f);
-			Color = Color.Lerp(initialColor, Color.Transparent, LifetimeRatio * LifetimeRatio);
-			Scale *= 0.985f;
-		}
-
-		public override void Draw()
-		{
-			Vector2 drawScale = new(Scale * 0.22f, Scale * 1.65f);
-			Main.spriteBatch.Draw(Texture, Position - Main.screenPosition, null, Color * Opacity,
-				Rotation, Texture.Size() * 0.5f, drawScale, SpriteEffects.None, 0f);
-			Main.spriteBatch.Draw(Texture, Position - Main.screenPosition, null, Color.White * (Opacity * 0.32f),
-				Rotation, Texture.Size() * 0.5f, drawScale * new Vector2(0.28f, 0.76f),
-				SpriteEffects.None, 0f);
-		}
-	}
 }

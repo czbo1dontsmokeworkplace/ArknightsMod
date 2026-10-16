@@ -17,7 +17,7 @@ public sealed class RockrockStarBolt : ModProjectile
     private readonly Vector2[] history = new Vector2[22];
     private int historyCount;
     private int Age => 150 - Projectile.timeLeft;
-    internal static void SpawnFan(IEntitySource source, Vector2 mouse, NPC target, int owner, int damage,
+    internal static void SpawnFan(IEntitySource source, Vector2 muzzle, NPC target, int owner, int damage,
         float knockback, bool burst = false, int volley = 0)
     {
         int type = ModContent.ProjectileType<RockrockStarBolt>();
@@ -28,16 +28,16 @@ public sealed class RockrockStarBolt : ModProjectile
         float baseAngle = -MathHelper.PiOver2 + volley * MathHelper.Pi / 20f;
         for (int slot = 0; slot < count; slot++)
         {
-            int id = Projectile.NewProjectile(source, mouse, Vector2.Zero, type,
-                damage / count + (slot < damage % count ? 1 : 0), knockback, owner, target.whoAmI, slot, burst ? 1 : 0);
+            int id = Projectile.NewProjectile(source, muzzle, Vector2.Zero, type,
+                damage / count + (slot < damage % count ? 1 : 0), knockback, owner, target?.whoAmI ?? -1, slot, burst ? 1 : 0);
             if (id >= Main.maxProjectiles) continue;
             var bolt = (RockrockStarBolt)Main.projectile[id].ModProjectile;
-            bolt.origin = mouse; bolt.destination = target.Center; bolt.ready = true;
+            bolt.origin = muzzle; bolt.destination = target?.Center ?? muzzle; bolt.ready = true;
             float angle = baseAngle + MathHelper.TwoPi * slot / count;
             bolt.Projectile.velocity = angle.ToRotationVector2() * (burst ? 8f : 6f);
             Main.projectile[id].netUpdate = true;
         }
-        SoundEngine.PlaySound(SoundID.Item9 with { MaxInstances=1 },mouse);
+        SoundEngine.PlaySound(SoundID.Item9 with { MaxInstances=1 },muzzle);
     }
     internal static Vector2 Steer(Vector2 velocity, Vector2 position, Vector2 target, Vector2 targetVelocity, int age, bool burst)
     {
@@ -67,7 +67,7 @@ public sealed class RockrockStarBolt : ModProjectile
     }
     public override bool ShouldUpdatePosition() => false;
     public override bool? CanDamage() => Age < 9 ? false : null;
-    public override bool? CanHitNPC(NPC target) => target.whoAmI == (int)Projectile.ai[0] ? null : false;
+    public override bool? CanHitNPC(NPC target) => Projectile.ai[0] < 0 || target.whoAmI == (int)Projectile.ai[0] ? null : false;
     public override void SendExtraAI(BinaryWriter writer)
     { writer.Write(ready); writer.WriteVector2(origin); writer.WriteVector2(destination); }
     public override void ReceiveExtraAI(BinaryReader reader)
@@ -80,15 +80,22 @@ public sealed class RockrockStarBolt : ModProjectile
     {
         if (!ready) return;
         int index = (int)Projectile.ai[0];
-        if (index < 0 || index >= Main.maxNPCs || !Main.npc[index].CanBeChasedBy())
-        { Projectile.Kill(); return; }
-        NPC target = Main.npc[index];
-        if (target.DistanceSQ(Main.player[Projectile.owner].Center)>2200f*2200f)
-        { Projectile.Kill();return; }
-        destination=target.Center;
+        NPC target = index >= 0 && index < Main.maxNPCs && Main.npc[index].CanBeChasedBy()
+            ? Main.npc[index] : null;
+        if (target != null && target.DistanceSQ(Main.player[Projectile.owner].Center)>2200f*2200f)
+            target = null;
         Vector2 previous=Projectile.Center;
         bool burst=Projectile.ai[2]>0;
-        Projectile.velocity=Steer(Projectile.velocity,Projectile.Center,destination,target.velocity,Age,burst);
+        if (target != null)
+        {
+            destination=target.Center;
+            Projectile.velocity=Steer(Projectile.velocity,Projectile.Center,destination,target.velocity,Age,burst);
+        }
+        else
+        {
+            Projectile.ai[0] = -1f;
+            Projectile.velocity *= 1.02f;
+        }
         Projectile.Center+=Projectile.velocity;
         Projectile.rotation=Projectile.velocity.ToRotation();
         for (int i = history.Length - 1; i > 0; i--) history[i] = history[i - 1];

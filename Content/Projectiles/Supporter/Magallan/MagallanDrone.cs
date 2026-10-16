@@ -136,11 +136,12 @@ public sealed class MagallanDrone : ModProjectile
                 type = ModContent.ProjectileType<MagallanLaser>();
                 velocity = aim;
                 a0 = Projectile.identity;
-                a1 = range;
+                a1 = target.type;
                 a2 = (target.whoAmI + 1) * (Boosted ? 1 : -1);
                 break;
             default:
-                cooldown = 40;
+                // A 47-tick interval lowers rocket output by about 15% versus the old 40 ticks.
+                cooldown = 47;
                 type = ModContent.ProjectileType<MagallanShell>();
                 velocity = MagallanShell.LaunchVelocity;
                 a0 = target.whoAmI + 1;

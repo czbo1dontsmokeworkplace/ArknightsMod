@@ -20,7 +20,7 @@ public class SchwarzBow : CrossbowWeaponBase
         Item.autoReuse = true;
         Item.value = Item.sellPrice(0, 40, 30, 0);
         Item.DamageType = DamageClass.Ranged;
-        Item.damage = 168;
+		Item.damage = 141;
         Item.knockBack = 10f;
         Item.noMelee = true;
         Item.shootSpeed = 20f;
@@ -31,8 +31,9 @@ public class SchwarzBow : CrossbowWeaponBase
         Recipe recipe = CreateRecipe()
             .AddIngredient<global::ArknightsMod.Content.Items.Material.D32Steel>(1)
             .AddIngredient<global::ArknightsMod.Content.Items.Material.OrironBlock>(2);
-        recipe.AddIngredient<global::ArknightsMod.Content.Items.Weapons.Sniper.KroosAlter.KroosAlterCrossbow>();
+        recipe.AddIngredient<global::ArknightsMod.Content.Items.Weapons.Sniper.Branches.ProvenceCrossbow>();
         recipe.AddIngredient(ItemID.ChlorophyteBar, 15);
+        recipe.AddIngredient(ItemID.BeetleHusk, 8);
         recipe.AddIngredient(ItemID.SniperScope);
         recipe.AddTile(ModContent.TileType<FactoryTile>());
         recipe.Register();

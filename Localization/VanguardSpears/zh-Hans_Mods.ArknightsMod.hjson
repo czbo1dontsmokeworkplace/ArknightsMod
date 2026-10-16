@@ -1,0 +1,67 @@
+Items: {
+	GraniLance: {
+		DisplayName: 格拉尼的折叠骑枪
+		Tooltip:
+			'''
+			困难模式初期
+			投枪可贯穿3个敌人。
+			持握时有20%概率闪避伤害。
+			'''
+	}
+
+	WildManeLance: {
+		DisplayName: 野鬃的子母骑枪
+		Tooltip:
+			'''
+			全部机械Boss后
+			母枪可贯穿2个敌人；飞行12帧或首次命中时释放2支半伤害子枪。
+			子枪不会继续分裂，撞墙不会产生子枪。
+			'''
+	}
+}
+
+Skills: {
+	GraniLance: {
+		1: {
+			Label: 防御力强化·γ型
+			Desc: 手动开启，防御力+100%，持续40秒。初始技力15，消耗30。
+		}
+
+		2: {
+			Label: 永不后退！
+			Desc: 手动开启，攻击力与防御力+80%，免疫击退，左键攻击范围缩短15%，持续30秒。初始技力20，消耗40。
+		}
+	}
+
+	WildManeLance: {
+		1: {
+			Label: 骑枪刺击
+			Desc: 攻击时自动开启，左键攻速+80%，持续15秒。首次持握即就绪；之后消耗30点技力。
+		}
+
+		2: {
+			Label: 枪锋相对
+			Desc: 手动开启，攻击力+80%，左键范围扩大20%，击退翻倍，持续20秒。初始技力10，消耗30。
+		}
+	}
+}
+
+VanguardSpears: {
+	Controls:
+		'''
+		左键循环：上挑 → 下劈 → 贯穿突刺。
+		先锋储备条位于头顶：持握{1}秒回满，左键本体命中敌人立即充满。
+		满条时右键消耗整条，连续投出{0}支长枪；投枪及追加攻击不回复储备。
+		四把长枪共用储备，切换后暂停恢复，死亡清空。
+		'''
+	SkillKey: 按[{0}]开启手动技能；点击技能图标切换技能。
+	Unbound: 请在设置 → 控制 → 模组按键中绑定“技能开启”。
+	Placeholder: 武器和技能图标暂借用本模组现有资源作为占位。
+}
+
+Projectiles: {
+	VanguardSpearHoldout.DisplayName: 先锋长枪
+	VanguardThrownSpear.DisplayName: 先锋长枪
+	VanguardSpearImpact.DisplayName: 先锋长枪
+	VanguardFollowupStrike.DisplayName: 先锋长枪
+}

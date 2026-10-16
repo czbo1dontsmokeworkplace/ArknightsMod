@@ -17,6 +17,7 @@ internal static class CrossbowVisuals
         CrossbowKind.Kroos => new Color(242, 166, 67),
         CrossbowKind.KroosAlter => new Color(73, 222, 174),
         CrossbowKind.Schwarz => new Color(168, 149, 197),
+        CrossbowKind.BluePoison or CrossbowKind.Provence or CrossbowKind.GreyThroat or CrossbowKind.Archetto => CrossbowBranchSkills.ColorFor(kind),
         _ => new Color(255, 142, 188) };
     private static Color Light(Color c, float opacity) => new Color(c.R, c.G, c.B, 0) * opacity;
     internal static void Line(Vector2 a, Vector2 b, Color color, float width)

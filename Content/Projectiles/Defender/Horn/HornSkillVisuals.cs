@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using ArknightsMod.Common.Particle;
 using ArknightsMod.Common.VisualEffects;
@@ -43,7 +44,7 @@ internal static partial class HornVisuals
         {
             Vector2 position = player.Bottom + new Vector2(Main.rand.NextFloat(-19f, 19f), -Main.rand.NextFloat(4f, 24f));
             Vector2 velocity = new(Main.rand.NextFloat(-.6f, .6f), state == 5 ? -3.5f : -2f);
-            new DefaultParticle(position, velocity + player.velocity * .15f, 22, .17f, tint, true)
+            new T_Streak_Particle(position, velocity + player.velocity * .15f, 22, .17f, tint, true)
                 { Deformation = new Vector2(.45f, 2.4f) }.Spawn();
             if ((int)age % 15 == 0)
                 OperatorTextureEffects.Puff(player.Center + new Vector2(Main.rand.NextFloat(-12f, 12f), -8f),
@@ -72,7 +73,7 @@ internal static partial class HornVisuals
         {
             Vector2 direction = (MathHelper.TwoPi * i / count + Main.rand.NextFloat(-.06f, .06f)).ToRotationVector2();
             Vector2 velocity = direction * Main.rand.NextFloat(4f, state == 5 ? 12f : 9f);
-            new DefaultParticle(center + direction * 8f, velocity, 25, .25f,
+            new T_Streak_Particle(center + direction * 8f, velocity, 25, .25f,
                 i % 3 == 0 ? White : SkillColor(state), true)
                 { Deformation = new Vector2(.35f, state is 2 or 4 ? 3.5f : 2.5f) }.Spawn();
             if (state is 3 or 5 && i % 4 == 0)

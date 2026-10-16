@@ -11,10 +11,10 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Weapons.Caster.Leonhardt;
 
-/// <summary>莱恩哈特的法杖：持续蓄力，松开后发射一枚可引发范围爆破的源石核心。</summary>
+/// <summary>莱恩哈特的法杖：发射一枚可引发范围爆破的源石核心。</summary>
 public sealed class LeonhardtStaff : ExpansionWeaponBase
 {
-    protected override int[] EliteDamage => [126, 145, 167];
+    protected override int[] EliteDamage => [158, 182, 209];
     private static readonly float[] AttackBonus = [.30f, .35f, .40f, .45f, .50f, .55f, .60f, .75f, .90f, 1f];
 
     public override void SetStaticDefaults() => Item.staff[Type] = true;
@@ -27,15 +27,14 @@ public sealed class LeonhardtStaff : ExpansionWeaponBase
         Item.DamageType = DamageClass.Magic;
         Item.mana = 18;
         Item.useStyle = ItemUseStyleID.Shoot;
-        Item.useTime = 20;
-        Item.useAnimation = 20;
-        Item.channel = true;
+        Item.useTime = 65;
+        Item.useAnimation = 65;
         Item.autoReuse = true;
         Item.noMelee = true;
-        Item.noUseGraphic = true;
         Item.knockBack = 6f;
-        Item.shoot = ModContent.ProjectileType<LeonhardtFocus>();
+        Item.shoot = ModContent.ProjectileType<LeonhardtCore>();
         Item.shootSpeed = 16f;
+        Item.UseSound = SoundID.Item73 with { Volume = .58f };
         Item.rare = ItemRarityID.Pink;
         Item.value = Item.sellPrice(gold: 3);
     }
@@ -47,7 +46,7 @@ public sealed class LeonhardtStaff : ExpansionWeaponBase
             player.GetModPlayer<LeonhardtStaffPlayer>().TryActivate();
             return false;
         }
-        return player.ownedProjectileCounts[Item.shoot] == 0 && base.CanUseItem(player);
+        return base.CanUseItem(player);
     }
 
     public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
@@ -67,7 +66,15 @@ public sealed class LeonhardtStaff : ExpansionWeaponBase
         int type, int damage, float knockback)
     {
         if (player.whoAmI == Main.myPlayer)
-            Projectile.NewProjectile(source, player.MountedCenter, velocity, type, damage, knockback, player.whoAmI);
+        {
+            Vector2 direction = velocity.SafeNormalize(Vector2.UnitX * player.direction);
+            Vector2 muzzle = player.MountedCenter + direction * 56f;
+            int index = Projectile.NewProjectile(source, muzzle, direction * (17f * 1.2f),
+                type, damage, knockback, player.whoAmI, 1f);
+            if (Main.projectile.IndexInRange(index))
+                Main.projectile[index].CritChance = player.GetWeaponCrit(Item);
+            if (!Main.dedServ) LeonhardtVisuals.FireParticles(muzzle, direction);
+        }
         return false;
     }
 

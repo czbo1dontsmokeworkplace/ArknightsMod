@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,10 +10,10 @@ using Terraria.Graphics.Shaders;
 
 namespace ArknightsMod.Common.VisualEffects;
 
-/// <summary>原版 PrettySparkleParticle 与本模组 Particle 分开注册。</summary>
+/// <summary>原版 T_Lighting_Bolts_Particle 与本模组 Particle 分开注册。</summary>
 internal static class CasterSparkles
 {
-    private static readonly ParticlePool<PrettySparkleParticle> Pool = new(256, () => new PrettySparkleParticle());
+    private static readonly ParticlePool<T_Lighting_Bolts_Particle> Pool = new(256, () => new T_Lighting_Bolts_Particle());
 
     internal static void Spawn(Vector2 position, Vector2 velocity, Color tint, float size,
         int lifetime = 16, float rotation = 0f)
@@ -25,7 +26,7 @@ internal static class CasterSparkles
             return;
         lifetime = Math.Clamp(lifetime, 4, 36);
         size = MathHelper.Clamp(size, 0.35f, 1.8f);
-        PrettySparkleParticle sparkle = Pool.RequestParticle();
+        T_Lighting_Bolts_Particle sparkle = Pool.RequestParticle();
         sparkle.LocalPosition = position;
         sparkle.Velocity = velocity;
         sparkle.ColorTint = tint;

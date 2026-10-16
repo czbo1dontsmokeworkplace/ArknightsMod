@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -10,7 +11,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Astesia;
 // pooled PrettySparkleParticles with actual velocity, never Calamity particles or Dust.
 internal static class AstraImpactSparkles
 {
-    private static readonly ParticlePool<PrettySparkleParticle> Pool = new(256, () => new PrettySparkleParticle());
+    private static readonly ParticlePool<T_Lighting_Bolts_Particle> Pool = new(256, () => new T_Lighting_Bolts_Particle());
     private const float GoldenAngle = 2.39996323f;
 
     internal static void Burst(Vector2 point, Vector2 attackDirection, Color sky, float targetRadius)
@@ -55,7 +56,7 @@ internal static class AstraImpactSparkles
     private static void Spawn(Vector2 point, Vector2 velocity, Color tint, float length,
         float width, int life, float rotation, float additive)
     {
-        PrettySparkleParticle sparkle = Pool.RequestParticle();
+        T_Lighting_Bolts_Particle sparkle = Pool.RequestParticle();
         sparkle.LocalPosition = point;
         sparkle.Velocity = velocity;
         sparkle.ColorTint = tint;

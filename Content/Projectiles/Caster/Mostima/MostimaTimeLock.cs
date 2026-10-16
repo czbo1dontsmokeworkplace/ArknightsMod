@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using ArknightsMod.Content.Buffs;
 using ArknightsMod.Common.Particle;
@@ -42,7 +43,7 @@ public sealed class MostimaTimeLock : ModProjectile
             MostimaVisuals.Particles(Projectile.Center, 18, 8);
             if (ParticleManager.activeParticles.Count < 1500)
                 for (int i = 0; i < 12; i++)
-                    new MostimaOrbitGlyph(Projectile.Center, 280f, i * MathHelper.TwoPi / 12f,
+                    new T_Orbit_Glyph_Particle(Projectile.Center, 280f, i * MathHelper.TwoPi / 12f,
                         .002f, MostimaVisuals.Blue, 54).Spawn();
         }
     }

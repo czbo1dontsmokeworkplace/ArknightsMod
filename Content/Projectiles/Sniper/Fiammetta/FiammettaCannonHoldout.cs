@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using ArknightsMod.Common.Particle;
 using ArknightsMod.Content.Items.Weapons.Sniper.Fiammetta;
@@ -197,7 +198,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 
 			Vector2 muzzle = MuzzlePosition(direction);
 			Color color = Color.Lerp(new Color(230, 38, 20), new Color(255, 211, 105), CycleAge / (float)FireFrame);
-			var particle = new DefaultParticle(muzzle + Main.rand.NextVector2Circular(13f, 13f),
+			var particle = new T_Streak_Particle(muzzle + Main.rand.NextVector2Circular(13f, 13f),
 				(muzzle - (muzzle + Main.rand.NextVector2Circular(13f, 13f))).SafeNormalize(Vector2.Zero) * 1.6f,
 				Main.rand.Next(10, 17), Main.rand.NextFloat(0.22f, 0.42f), color, true)
 			{
@@ -215,7 +216,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 			{
 				Vector2 velocity = direction.RotatedByRandom(0.46f) * Main.rand.NextFloat(3f, 9f);
 				Color color = Color.Lerp(new Color(235, 34, 18), new Color(255, 226, 130), Main.rand.NextFloat());
-				var particle = new DefaultParticle(muzzle, velocity, Main.rand.Next(12, 22),
+				var particle = new T_Streak_Particle(muzzle, velocity, Main.rand.Next(12, 22),
 					Main.rand.NextFloat(0.30f, 0.62f), color, true)
 				{
 					Deformation = new Vector2(0.28f, Main.rand.NextFloat(1.4f, 2.4f))

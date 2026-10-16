@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -19,8 +19,19 @@ internal static class SpreadArtsVfx
         SpreadArt.Crystal => new(33, 18, 59), SpreadArt.Rupture => new(9, 29, 40), _ => new(65, 22, 29) };
     private static bool Fire(SpreadArt art) => art is SpreadArt.Meteor or SpreadArt.Ember;
 
+    // Match vanilla particle identity to the element; tint cannot turn an electric
+    // sprite into fire. UltraBrightTorch is deliberately excluded from these flames.
+    internal static int ElementDust(SpreadArt art, int index) => art switch {
+        SpreadArt.Ember or SpreadArt.Meteor => index % 3 == 0 ? DustID.Lava : DustID.Torch,
+        SpreadArt.Crystal => index % 2 == 0 ? DustID.PurpleTorch : DustID.MagicMirror,
+        _ => DustID.TintableDustLighted
+    };
+    internal static Color DustTint(SpreadArt art, int index) => art == SpreadArt.Crystal
+        ? (index % 2 == 0 ? new Color(184, 120, 245) : new Color(157, 215, 255)) : Body(art);
+
     internal static void Charge(Vector2 center, float charge, float time, SpreadArt art, Vector2 direction)
     {
+        if (Fire(art)) { FireArtsVfx.Charge(center, charge, time, art, direction); return; }
         if (!SpreadVfxBudget.Visible(center, 140f)) return;
         Vector2 aim = direction.SafeNormalize(Vector2.UnitX);
         float rotation = aim.ToRotation();
@@ -100,6 +111,7 @@ internal static class SpreadArtsVfx
 
     internal static void Flight(Projectile p, SpreadArt art, float power = 1f)
     {
+        if (Fire(art)) { FireArtsVfx.Flight(p, art, power); return; }
         if (!SpreadVfxBudget.Visible(p.Center, 360f)) return;
         Vector2 aim = p.velocity.SafeNormalize(Vector2.UnitX), side = aim.RotatedBy(MathHelper.PiOver2);
         float time = Main.GlobalTimeWrappedHourly, angle = aim.ToRotation();
@@ -139,6 +151,7 @@ internal static class SpreadArtsVfx
 
     internal static void Gather(Vector2 center, float charge, SpreadArt art)
     {
+        if (Fire(art)) { FireArtsVfx.Gather(center, charge, art); return; }
         if (!SpreadVfxBudget.Visible(center)) return;
         Vector2 ray = Main.rand.NextVector2Unit();
         float distance = Main.rand.NextFloat(22f, 44f);
@@ -151,6 +164,7 @@ internal static class SpreadArtsVfx
     // follow the last frame's flight segment; high speed cannot leave a dotted wake.
     internal static void Wake(Vector2 center, Vector2 velocity, SpreadArt art, int phase = 0)
     {
+        if (Fire(art)) { FireArtsVfx.Wake(center, velocity, art, phase); return; }
         if (!SpreadVfxBudget.Visible(center, 220f)) return;
         Vector2 aim = velocity.SafeNormalize(Vector2.UnitX), side = aim.RotatedBy(MathHelper.PiOver2);
         int count = art == SpreadArt.Ember ? 3 : 5;
@@ -163,8 +177,18 @@ internal static class SpreadArtsVfx
             Vector2 drift = -aim * Main.rand.NextFloat(1f, 3.5f) + side * lateral * .14f;
             if (Fire(art))
             {
-                SpreadVfxDetail.Fire(point, drift, art == SpreadArt.Ember ? 16f : 27f, 19, 42f);
-                if (i == 0) SpreadVfxDetail.Fire(point, drift * .35f, art == SpreadArt.Ember ? 20f : 36f, 28, 35f, true);
+                // Alternate individual emission slots, not entire frames: exactly
+                // half the bright flame sprites over two ticks, with a steady wake.
+                int slot = phase * count + i;
+                if ((slot & 1) == 0)
+                    SpreadVfxDetail.Fire(point, drift, art == SpreadArt.Ember ? 16f : 27f, 19, 42f);
+                else
+                    for (int mote = 0; mote < 2; mote++)
+                    {
+                        Dust ember = Dust.NewDustPerfect(point + side * (mote == 0 ? -2f : 2f),
+                            ElementDust(art, slot + mote), drift * .8f, 80, DustTint(art, slot + mote), .95f);
+                        ember.noGravity = true;
+                    }
             }
             else SpreadVfxDetail.Fragment(point, drift, i % 2 == 0 ? Edge(art) : Body(art),
                 art == SpreadArt.Crystal ? 13f : 9f, 20, 44f);
@@ -177,14 +201,15 @@ internal static class SpreadArtsVfx
         }
         if (phase % 4 == 0)
         {
-            Dust dust = Dust.NewDustPerfect(center - aim * 8f, Fire(art) ? DustID.Torch : DustID.TintableDustLighted,
-                -aim * 1.8f + side * Main.rand.NextFloat(-1, 1), 110, Body(art), .8f);
+            Dust dust = Dust.NewDustPerfect(center - aim * 8f, ElementDust(art, phase / 4),
+                -aim * 1.8f + side * Main.rand.NextFloat(-1, 1), 110, DustTint(art, phase / 4), .8f);
             dust.noGravity = true;
         }
     }
 
     internal static void Release(Vector2 center, Vector2 direction, SpreadArt art)
     {
+        if (Fire(art)) { FireArtsVfx.Release(center, direction, art); return; }
         if (!SpreadVfxBudget.Visible(center)) return;
         direction = direction.SafeNormalize(Vector2.UnitX);
         SpreadChargeVfx.Pulse(center, direction, art, true);
@@ -199,6 +224,7 @@ internal static class SpreadArtsVfx
 
     internal static void Burst(Vector2 center, float diameter, float progress, SpreadArt art)
     {
+        if (Fire(art)) { FireArtsVfx.Burst(center, diameter, progress, art); return; }
         if (!SpreadVfxBudget.Visible(center, diameter * .6f)) return;
         progress = MathHelper.Clamp(progress, 0f, 1f);
         diameter = MathHelper.Clamp(diameter, 60f, 520f);
@@ -210,11 +236,13 @@ internal static class SpreadArtsVfx
         {
             // Dark volume -> colored blast face -> short hot center; every layer is
             // explicitly bounded by the same diameter as the projectile collision.
-            SpreadArtsMaterial.Sprite("ImpactPetals", center, new Vector2(size), Dark(art) * (fade * .7f), progress * .16f);
+            if (art != SpreadArt.Meteor)
+                SpreadArtsMaterial.Sprite("ImpactPetals", center, new Vector2(size), Dark(art) * (fade * .7f), progress * .16f);
             if (Fire(art))
             {
-                SpreadArtsMaterial.Sprite("ImpactPetals", center, new Vector2(size * .94f), OperatorFlightVfx.Add(Body(art), fade * .72f), -progress * .25f);
-                for (int i = 0; i < (art == SpreadArt.Ember ? 5 : 9); i++)
+                SpreadArtsMaterial.Sprite(art == SpreadArt.Meteor ? "ChargeBloom" : "ImpactPetals", center,
+                    new Vector2(size * .94f), OperatorFlightVfx.Add(Body(art), fade * .72f), -progress * .25f);
+                for (int i = 0; i < (art == SpreadArt.Ember ? 5 : 0); i++)
                 {
                     float a = i * 2.39996f + MathF.Sin(i * 7.1f) * .16f;
                     Vector2 ray = a.ToRotationVector2();
@@ -261,6 +289,7 @@ internal static class SpreadArtsVfx
 
     internal static void Debris(Vector2 center, SpreadArt art, float radius)
     {
+        if (Fire(art)) { FireArtsVfx.Debris(center, art, radius); return; }
         if (!SpreadVfxBudget.Visible(center, radius + 60f)) return;
         int count = art == SpreadArt.Ember ? 16 : art == SpreadArt.Meteor ? 36 : 24;
         for (int i = 0; i < count; i++)
@@ -271,8 +300,13 @@ internal static class SpreadArtsVfx
             Vector2 root = center + ray * radius * .1f;
             if (Fire(art))
             {
-                SpreadVfxDetail.Fire(root, ray * speed, Math.Min(54f, radius * .26f), 25, radius * .7f);
-                if (i % 3 == 0) SpreadVfxDetail.Fire(root, ray * speed * .35f, Math.Min(66f, radius * .32f), 35, radius * .55f, true);
+                if (art == SpreadArt.Ember)
+                    SpreadVfxDetail.Fire(root, ray * speed, Math.Min(54f, radius * .26f), 25, radius * .7f);
+                else
+                {
+                    Dust spark = Dust.NewDustPerfect(root, ElementDust(art, i), ray * speed, 70, Body(art), 1.1f);
+                    spark.noGravity = true;
+                }
                 if (i % 2 == 0) SpreadVfxDetail.Fragment(root, ray * speed, new Color(203, 101, 58), 10f, 30, radius * .75f, true);
             }
             else SpreadVfxDetail.Fragment(root, ray * speed, i % 3 == 0 ? Edge(art) : Body(art),
@@ -280,8 +314,8 @@ internal static class SpreadArtsVfx
             if (i % 4 == 0) CasterSparkles.Spawn(center + ray * radius * .4f, ray * 1.2f, Edge(art), .65f, 13, a);
             if (i % 5 == 0)
             {
-                Dust dust = Dust.NewDustPerfect(root, Fire(art) ? DustID.Torch : DustID.TintableDustLighted,
-                    ray * Math.Min(5f, speed), 110, Body(art), 1f);
+                Dust dust = Dust.NewDustPerfect(root, ElementDust(art, i / 5),
+                    ray * Math.Min(5f, speed), 110, DustTint(art, i / 5), 1f);
                 dust.noGravity = true;
             }
         }

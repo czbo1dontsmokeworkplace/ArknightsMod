@@ -12,7 +12,7 @@ public class PozemkaCrossbow : CrossbowWeaponBase
     public override void SetStaticDefaults() => Item.ResearchUnlockCount = 1;
 
     public override void SetDefaults() {
-        Item.damage = 175;
+        Item.damage = 51;
         Item.DamageType = DamageClass.Ranged;
         Item.width = 88;
         Item.height = 44;
@@ -37,9 +37,9 @@ public class PozemkaCrossbow : CrossbowWeaponBase
         Recipe recipe = CreateRecipe()
             .AddIngredient<global::ArknightsMod.Content.Items.Material.CrystallineElectronicUnit>(1)
             .AddIngredient<global::ArknightsMod.Content.Items.Material.OrirockConcentration>(2);
-        recipe.AddIngredient<global::ArknightsMod.Content.Items.Weapons.Sniper.Schwarz.SchwarzBow>();
+        recipe.AddIngredient<global::ArknightsMod.Content.Items.Weapons.Sniper.Branches.ArchettoCrossbow>();
         recipe.AddIngredient(ItemID.FragmentVortex, 10);
-        recipe.AddTile(ModContent.TileType<FactoryTile>());
+        recipe.AddTile(TileID.LunarCraftingStation);
         recipe.Register();
     }
 }

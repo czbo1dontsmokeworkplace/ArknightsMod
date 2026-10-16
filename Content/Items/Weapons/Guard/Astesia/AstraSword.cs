@@ -44,7 +44,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Astesia
 			Item.useStyle = ItemUseStyleID.Shoot;
 			Item.useAnimation = ArtsFighterSwing.BaseUseTime;
 			Item.useTime = ArtsFighterSwing.BaseUseTime;
-			Item.damage = 72;
+			Item.damage = 182;
 			Item.DamageType = DamageClass.Melee;
 			Item.knockBack = 4.5f;
 			Item.width = 78;

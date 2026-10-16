@@ -16,8 +16,8 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Leizi;
 /// <summary>五星惊蛰：机械 Boss 后的链电法杖，之后用于合成异客。</summary>
 public sealed class LeiziStaff : ExpansionWeaponBase
 {
-    // 在原面板基础上提升 15%。
-    protected override int[] EliteDamage => [166, 166, 166];
+    private int shotIndex;
+    protected override int[] EliteDamage => [133, 133, 133];
     private static readonly float[] Skill1Bonus = [0.30f, 0.35f, 0.40f, 0.45f, 0.50f, 0.55f, 0.60f, 0.75f, 0.90f, 1f];
     private static readonly float[] Skill2Bonus = [0.60f, 0.65f, 0.70f, 0.80f, 0.85f, 0.90f, 1f, 1.15f, 1.30f, 1.50f];
     public override string Texture => "Terraria/Images/Item_" + ItemID.ThunderStaff;
@@ -81,11 +81,8 @@ public sealed class LeiziStaff : ExpansionWeaponBase
         WeaponPlayer skill = player.GetModPlayer<WeaponPlayer>();
         // 生成时锁存技能状态，飞行中切技能不会改变这发链电的伤害衰减规则。
         int mode = skill.SkillActive && skill.Skill is 0 or 1 ? skill.Skill + 1 : 0;
-        Vector2 direction = (Main.MouseWorld - position).SafeNormalize(new Vector2(player.direction, 0f));
-        int index = Projectile.NewProjectile(source, position, direction * LeiziFlyingDischarge.SpeedPerUpdate,
-            type, damage, knockback, player.whoAmI, mode);
-        if (Main.projectile.IndexInRange(index))
-            Main.projectile[index].CritChance = player.GetWeaponCrit(Item);
+        SkyChainVolley.Fire(player, source, type, damage, knockback, Main.MouseWorld,
+            LeiziFlyingDischarge.SpeedPerUpdate, shotIndex++, mode);
         return false;
     }
 

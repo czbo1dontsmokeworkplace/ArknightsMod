@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using ArknightsMod.Content.Buffs;
 using ArknightsMod.Common.Particle;
@@ -70,7 +71,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Blaze
 				Color color = Main.rand.NextBool(3)
 					? new Color(255, 178, 72)
 					: new Color(226, 12, 38);
-				var particle = new DefaultParticle(
+				var particle = new T_Streak_Particle(
 					Projectile.Center - Projectile.velocity * Main.rand.NextFloat(0.05f, 0.22f),
 					-Projectile.velocity * Main.rand.NextFloat(0.015f, 0.045f),
 					Main.rand.Next(11, 19), Main.rand.NextFloat(0.2f, 0.42f) * Power, color, true) {
@@ -115,7 +116,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Blaze
 			for (int i = 0; i < 7; i++) {
 				Vector2 velocity = rebound.RotatedByRandom(1.2f) * Main.rand.NextFloat(2.4f, 7.5f);
 				Color color = i % 3 == 0 ? new Color(255, 190, 88) : new Color(232, 10, 36);
-				var particle = new DefaultParticle(Projectile.Center, velocity, Main.rand.Next(16, 29),
+				var particle = new T_Streak_Particle(Projectile.Center, velocity, Main.rand.Next(16, 29),
 					Main.rand.NextFloat(0.32f, 0.68f) * Power, color, false) {
 					Deformation = new Vector2(0.3f, Main.rand.NextFloat(1.25f, 2.2f))
 				};

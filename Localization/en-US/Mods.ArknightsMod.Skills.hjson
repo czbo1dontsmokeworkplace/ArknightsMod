@@ -13,31 +13,17 @@ AstraSword: {
 BagpipeSpear: {
 	1: {
 		Label: Swift Strike γ
-		Desc:
-			'''
-			ATK [c/3791db:+45%]
-			ASPD [c/3791db:+45]
-			'''
+		Desc: Manual. ATK +45% and left-click attack speed +45% for 35 seconds. Initial SP: 15. Cost: 33.
 	}
 
 	2: {
 		Label: High-Impact Assault
-		Desc:
-			'''
-			Next attack's ATK increased to [c/3791db:200%] and strikes an additional time
-			[c/eda128:Can be charged 3 times]
-			'''
+		Desc: Stores one charge every 4 SP, up to 3. A left-click action automatically spends one: 200% damage and one delayed equal-damage strike on hit (up to 6 targets per action). Right-click volleys neither spend nor benefit from this skill.
 	}
 
 	3: {
-		Label: Breaking Shot
-		Desc:
-			'''
-			Attack interval [c/f6643b:increased (+70%)]
-			Block [c/3791db:+1]
-			ATK and DEF [c/3791db:+120%]
-			Attacks become [c/3791db:triple strikes]
-			'''
+		Label: Locked Breech Burst
+		Desc: Manual. ATK and DEF +120%, left-click attack interval +70%, and two delayed equal-damage strikes on hit (up to 6 targets per action) for 25 seconds. Initial SP: 25. Cost: 40.
 	}
 }
 
@@ -78,7 +64,7 @@ PozemkaCrossbow: {
 		Label: Pointe
 		Desc:
 			'''
-			Press the skill key to immediately attack [c/3791db:3] times forward
+			Press the skill key to immediately attack [c/3791db:5] times forward
 			Each attack deals Physical damage equal to [c/3791db:230%] of your ATK
 			[c/EDA128:Can be charged 2 times]
 			'''
@@ -157,7 +143,7 @@ KroosAlterCrossbow: {
 Lava_Dagger: {
 	1: {
 		Label: Tactical Chant α
-		Desc: ASPD [c/3791db:+50]
+		Desc: Damage [c/3791db:+50%]
 	}
 }
 
@@ -542,17 +528,13 @@ GitanoUmbrella: {
 
 HongdouLance: {
 	1: {
-		Label: ATK Up B
-		Desc: ATK [c/3791db:+80%]
+		Label: ATK Up β
+		Desc: Manual. ATK +80% for 25 seconds. Initial SP: 10. Cost: 35.
 	}
 
 	2: {
-		Label: Hammer Tune
-		Desc:
-			'''
-			Attack interval slightly [c/f6643b:increased (+0.5s)]
-			ATK [c/3791db:+200%]
-			'''
+		Label: Hammer On
+		Desc: Manual. ATK +200%, left-click attack interval +50% for 30 seconds. Initial SP: 10. Cost: 25.
 	}
 }
 
@@ -1396,7 +1378,7 @@ GitanoOrb: {
 		Desc:
 			'''
 			Auto recovery, manual activation, lasts [c/3791db:25] seconds
-			Charge speed increases by [c/3791db:15%-75%]
+			Damage increases by [c/3791db:15%-75%]
 			'''
 	}
 
@@ -1405,7 +1387,7 @@ GitanoOrb: {
 		Desc:
 			'''
 			Auto recovery, manual activation, lasts [c/3791db:30] seconds
-			Damage increases by [c/3791db:30%-100%]; releasing a full charge hits every enemy within [c/3791db:900] pixels
+			Damage increases by [c/3791db:30%-100%]; left-click hits every enemy within [c/3791db:900] pixels
 			After the skill ends, casting stops for [c/3791db:15-10] seconds
 			'''
 	}
@@ -1417,7 +1399,7 @@ SkyfireStaff: {
 		Desc:
 			'''
 			Auto recovery, manual activation, lasts [c/3791db:30] seconds
-			Charged meteor damage increases by [c/3791db:30%-100%]
+			Meteor damage increases by [c/3791db:30%-100%]
 			'''
 	}
 
@@ -1426,7 +1408,7 @@ SkyfireStaff: {
 		Desc:
 			'''
 			Auto recovery, manual activation, lasts [c/3791db:22] seconds
-			Releasing a full charge drops a meteor from above the cursor, up to [c/3791db:850] pixels away
+			Left-click drops a meteor from above the cursor, up to [c/3791db:850] pixels away
 			Meteor damage becomes [c/3791db:150%-235%], and blast diameter grows to [c/3791db:470] pixels
 			The blast ignites and stuns enemies for [c/3791db:1] second
 			'''

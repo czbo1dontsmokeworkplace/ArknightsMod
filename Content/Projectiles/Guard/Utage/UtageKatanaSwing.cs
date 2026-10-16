@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using System.Collections.Generic;
 using ArknightsMod.Common.Particle;
@@ -111,7 +112,7 @@ internal static class UtageVisuals
         for (int i = 0; i < count; i++)
         {
             Vector2 velocity = Main.rand.NextVector2Circular(4.5f, 3.5f) * scale;
-            new DefaultParticle(center, velocity, 12 + i % 6, .45f * scale,
+            new T_Streak_Particle(center, velocity, 12 + i % 6, .45f * scale,
                 i % 5 == 0 ? Pale : i % 3 == 0 ? Lilac : Violet, true)
                 { Deformation = new Vector2(.32f, 2.1f) }.Spawn();
         }

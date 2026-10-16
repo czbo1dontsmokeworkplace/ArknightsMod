@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using ArknightsMod.Common.Particle;
 using ArknightsMod.Content.Projectiles.Guard.Hellagur;
@@ -243,7 +244,7 @@ internal static class RedDaggerVisuals
         if (Main.dedServ || Main.gameMenu)
             return;
         for (int i = 0; i < (empowered ? 8 : 5); i++)
-            new DefaultParticle(point, Main.rand.NextVector2Circular(4f, 3f), 10 + i % 4, .32f,
+            new T_Streak_Particle(point, Main.rand.NextVector2Circular(4f, 3f), 10 + i % 4, .32f,
                 i % 4 == 0 ? new Color(225, 225, 225) : (gravel ? new Color(150, 150, 150) : new Color(210, 25, 57)), true)
                 { Deformation = new Vector2(.25f, 2f) }.Spawn();
         Dust dust = Dust.NewDustPerfect(point, gravel ? DustID.Smoke : DustID.Blood, Main.rand.NextVector2Circular(2, 2), Scale: .7f);

@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using ArknightsMod.Content.Buffs;
 using System.Collections.Generic;
@@ -434,7 +435,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Hellagur
 					: roll < 0.9f ? new Color(255, 157, 72) : new Color(255, 238, 192);
 				Vector2 position = Vector2.Lerp(HandWorld, tipWorld, Main.rand.NextFloat(0.38f, 1f))
 					+ Main.rand.NextVector2Circular(5f, 5f);
-				var streak = new DefaultParticle(position,
+				var streak = new T_Streak_Particle(position,
 					tangent * Main.rand.NextFloat(2.8f, 7.2f) + Main.rand.NextVector2Circular(0.45f, 0.45f),
 					Main.rand.Next(13, 21), Main.rand.NextFloat(0.35f, 0.72f), color, true) {
 					Deformation = new Vector2(0.3f, Main.rand.NextFloat(1.7f, 2.5f))
@@ -473,7 +474,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Hellagur
 				Color color = i % 4 == 0 ? new Color(255, 205, 96) : new Color(232, 42, 45);
 				Vector2 burstVelocity = slashNormal * Main.rand.NextFloat(-6.5f, 6.5f)
 					+ slashDirection * Main.rand.NextFloat(1.2f, empowered ? 5.5f : 4.2f);
-				var glow = new DefaultParticle(center + Main.rand.NextVector2Circular(10f, 10f),
+				var glow = new T_Streak_Particle(center + Main.rand.NextVector2Circular(10f, 10f),
 					burstVelocity, empowered ? 28 : 25, Main.rand.NextFloat(0.58f, 1.08f), color, true) {
 					Deformation = new Vector2(0.46f, empowered ? 2.05f : 1.82f)
 				};

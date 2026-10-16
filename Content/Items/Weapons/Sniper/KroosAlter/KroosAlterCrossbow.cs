@@ -16,7 +16,7 @@ public class KroosAlterCrossbow : CrossbowWeaponBase
         Item.width = 52;
         Item.height = 32;
         Item.shootSpeed = 21f;
-        Item.damage = 72;
+        Item.damage = 76;
         Item.knockBack = 3f;
         Item.DamageType = DamageClass.Ranged;
         Item.useStyle = ItemUseStyleID.Shoot;

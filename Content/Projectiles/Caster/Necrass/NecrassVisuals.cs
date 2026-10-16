@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using ArknightsMod.Common.Particle;
 using Microsoft.Xna.Framework;
@@ -177,7 +178,7 @@ internal static class NecrassVisuals
         {
             Vector2 velocity = Main.rand.NextVector2Circular(speed, speed) - Vector2.UnitY * .8f;
             if (ParticleManager.activeParticles.Count < 1400)
-                new DefaultParticle(center, velocity, Main.rand.Next(24, 42), Main.rand.NextFloat(.2f, .48f),
+                new T_Streak_Particle(center, velocity, Main.rand.Next(24, 42), Main.rand.NextFloat(.2f, .48f),
                     i % 3 == 0 ? Lilac : Violet, true) { Deformation = new Vector2(.3f, 1.1f) }.Spawn();
             if (i % 3 == 0)
             {

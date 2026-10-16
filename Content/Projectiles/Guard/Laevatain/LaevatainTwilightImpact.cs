@@ -1,3 +1,4 @@
+using ArknightsMod.Common.Particle.T;
 using System;
 using ArknightsMod.Common.Particle;
 using ArknightsMod.Content.Dusts.Fire;
@@ -41,7 +42,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 			for (int i = 0; i < 9; i++)
 			{
 				Vector2 offset = Main.rand.NextVector2Circular(65f, 30f);
-				Dust.NewDustPerfect(center + offset, ModContent.DustType<fire_28>(),
+				Dust.NewDustPerfect(center + offset, ModContent.DustType<T_Flame_Animated28_Particle>(),
 					Vector2.Zero, 0, Color.White, Main.rand.NextFloat(0.75f, 1.35f));
 			}
 			for (int i = 0; i < 72; i++)
@@ -54,7 +55,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 					DustID.Torch, velocity, 60, new Color(255, 143, 27), Main.rand.NextFloat(1.35f, 2.35f));
 				spark.noGravity = true;
 				if (i % 2 == 0)
-					new DefaultParticle(center, velocity * Main.rand.NextFloat(0.8f, 1.3f),
+					new T_Streak_Particle(center, velocity * Main.rand.NextFloat(0.8f, 1.3f),
 						Main.rand.Next(20, 32), Main.rand.NextFloat(0.7f, 1.5f),
 						i % 4 == 0 ? new Color(255, 228, 92) : new Color(255, 68, 12), true)
 						{ Deformation = new Vector2(0.38f, 2.4f) }.Spawn();

@@ -29,7 +29,6 @@ public sealed class PuddingFlyingDischarge : LeiziFlyingDischarge
 
     public override bool PreDraw(ref Color lightColor)
     {
-        ChainArtsVfx.Head(Projectile, Palette, 3);
         return false;
     }
 }
