@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using ArknightsMod.Content.Projectiles.Specialist.Red;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
@@ -130,6 +130,8 @@ public sealed class RedDaggerPlayer : ModPlayer
             && !Holding && Player.HeldItem.damage > 0;
         UpdateSkillDisplay();
     }
+
+    internal void DeployFromBranchEvent() { RememberKnife(); TryDeploy(false); }
 
     internal bool TryDeploy(bool teleport)
     {

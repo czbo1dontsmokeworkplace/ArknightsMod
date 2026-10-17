@@ -151,5 +151,9 @@ internal static class ChargedOperatorVfx
 }
 public sealed class ChargedOperatorVfxSystem : ModSystem
 {
-    public override void Unload() => ChargedOperatorVfx.Unload();
+    public override void Unload()
+    {
+        ChargedOperatorVfx.Unload();
+        ChargedSniperVisuals.Unload();
+    }
 }

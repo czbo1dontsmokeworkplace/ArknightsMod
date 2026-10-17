@@ -1,7 +1,9 @@
 using System;
 using ArknightsMod.Content.Projectiles.Caster.MechAccord;
+using ArknightsMod.Content.Projectiles.Sniper.Crossbows;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ID;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
 
@@ -11,7 +13,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Pozemka;
 // Its initial target guides the flight, but never restricts which enemy it can damage.
 public sealed class PozemkaStarBolt : ModProjectile
 {
-    public override string Texture => "ArknightsMod/Common/Particle/DefaultParticle";
+    public override string Texture => ArknightsMod.noTexture;
     private readonly Vector2[] history = new Vector2[22];
     private int historyCount;
     private int Age => 150 - Projectile.timeLeft;
@@ -64,7 +66,6 @@ public sealed class PozemkaStarBolt : ModProjectile
             }
         }
 
-        Vector2 previous = Projectile.Center;
         if (target != null)
             Projectile.velocity = RockrockStarBolt.Steer(Projectile.velocity, Projectile.Center,
                 target.Center, target.velocity, Age, false);
@@ -78,8 +79,7 @@ public sealed class PozemkaStarBolt : ModProjectile
         if (!Main.dedServ)
         {
             Lighting.AddLight(Projectile.Center, .22f, .08f, .3f);
-            if (Age % 3 == 0)
-                MechAccordVisuals.Wake(Projectile.Center, Projectile.Center - previous, Age);
+            CrossbowSignatureVfx.Wake(Projectile, CrossbowKind.Pozemka);
         }
     }
 
@@ -91,15 +91,15 @@ public sealed class PozemkaStarBolt : ModProjectile
     }
 
     public override void OnKill(int timeLeft)
-        => MechAccordHitFlash.Spawn(Projectile, Projectile.Center, true, 48f);
+    {
+        CrossbowSignatureVfx.Hit(Projectile, CrossbowKind.Pozemka);
+    }
 
     public override bool PreDraw(ref Color lightColor)
     {
-        Vector2[] points = new Vector2[historyCount];
-        Array.Copy(history, points, historyCount);
         float fade = Math.Min(1f, (Age + 1) / 5f);
-        MechAccordVfx.DrawTrail(points, fade);
-        MechAccordVfx.DrawStar(Projectile.Center, Projectile.rotation, fade);
+        PozemkaSalvoTrail.Draw(history.AsSpan(0, historyCount), fade * Projectile.Opacity);
+        CrossbowSignatureVfx.DrawRoseSatellite(Projectile, history.AsSpan(0, historyCount), fade);
         return false;
     }
 }

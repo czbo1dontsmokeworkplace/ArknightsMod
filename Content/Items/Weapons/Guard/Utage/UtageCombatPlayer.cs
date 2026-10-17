@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using ArknightsMod.Content.Projectiles.Guard.Utage;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
@@ -13,7 +13,6 @@ public sealed class UtageCombatPlayer : ModPlayer
 {
     private int mode;
     private int healingClock;
-    private int hitHealCooldown;
     private bool keyWasDown;
     private int recoveryLockout;
     public int Rank { get; private set; }
@@ -69,8 +68,6 @@ public sealed class UtageCombatPlayer : ModPlayer
 
     public override void PostUpdate()
     {
-        if (hitHealCooldown > 0)
-            hitHealCooldown--;
         if (recoveryLockout > 0)
             recoveryLockout--;
         if (Player.whoAmI != Main.myPlayer)
@@ -94,16 +91,8 @@ public sealed class UtageCombatPlayer : ModPlayer
 
     internal void HealOnHit()
     {
-        if (Player.whoAmI != Main.myPlayer || !Holding || Resting || hitHealCooldown > 0
-            || Player.lifeSteal <= 0f || Player.moonLeech)
-            return;
-        int heal = Math.Min(2, (int)Player.lifeSteal);
-        int actual = HealLimited(heal);
-        if (actual > 0)
-        {
-            Player.lifeSteal -= actual;
-            hitHealCooldown = 20; // 按玩家计时，不因多目标、多个子更新或切换实例重复吸血。
-        }
+        if (Player.whoAmI == Main.myPlayer && Holding && !Resting)
+            HealLimited(2);
     }
 
     private int HealLimited(int requested)
@@ -126,7 +115,7 @@ public sealed class UtageCombatPlayer : ModPlayer
 
     public override void UpdateDead()
     {
-        mode = healingClock = hitHealCooldown = 0;
+        mode = healingClock = 0;
         keyWasDown = false;
     }
 }

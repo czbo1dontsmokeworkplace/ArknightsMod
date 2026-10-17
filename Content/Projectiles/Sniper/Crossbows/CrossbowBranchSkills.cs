@@ -1,7 +1,4 @@
-using System;
 using System.Collections.Generic;
-using ArknightsMod.Content.Items.Weapons.Charged;
-using ArknightsMod.Content.Projectiles.Charged;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
@@ -11,21 +8,24 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Crossbows;
 internal static class CrossbowBranchSkills
 {
     internal static float DamageMultiplier(CrossbowKind kind, int skill) => (kind, skill) switch {
-        (CrossbowKind.BluePoison, 1) => 1.8f, (CrossbowKind.BluePoison, 2) => 1.5f,
+        (CrossbowKind.Melanite, 1) => 2.2f, (CrossbowKind.Melanite, 2) => 1.65f,
         (CrossbowKind.Provence, 2) => 2.4f,
         (CrossbowKind.GreyThroat, 1) => 1.4f, (CrossbowKind.GreyThroat, 2) => 1.4f,
-        (CrossbowKind.Archetto, 1) => 2f, (CrossbowKind.Archetto, 2) => 1.4f,
-        (CrossbowKind.Archetto, 3) => 1.3f, _ => 1
+        (CrossbowKind.BluePoison, 1) => 1.8f, (CrossbowKind.BluePoison, 2) => 1.5f,
+        _ => 1f
     };
     internal static Color ColorFor(CrossbowKind kind) => kind switch {
-        CrossbowKind.BluePoison => new Color(98, 151, 239), CrossbowKind.Provence => new Color(177, 102, 221),
-        CrossbowKind.GreyThroat => new Color(188, 216, 227), _ => new Color(245, 205, 112)
+        CrossbowKind.Melanite => new Color(171, 99, 240), CrossbowKind.Provence => new Color(177, 102, 221),
+        CrossbowKind.GreyThroat => new Color(188, 216, 227), _ => new Color(71, 207, 191)
     };
-    internal static void ExtraShots(Player player, Item item, Projectile main, Vector2 muzzle, Vector2 direction, float speed, CrossbowKind kind, int skill)
+    internal static void ExtraShots(Player player, Item item, Projectile main, Vector2 muzzle,
+        Vector2 direction, float speed, CrossbowKind kind, int skill)
     {
-        if (kind < CrossbowKind.BluePoison || skill == 0) return;
-        int extras = (kind, skill) switch { (CrossbowKind.BluePoison, 1) => 1, (CrossbowKind.BluePoison, 2) => 2,
-            (CrossbowKind.GreyThroat, 1) => 1, (CrossbowKind.Archetto, 1) => 3, (CrossbowKind.Archetto, 3) => 1, _ => 0 };
+        int extras = (kind, skill) switch {
+            (CrossbowKind.BluePoison, 1) => 1, (CrossbowKind.BluePoison, 2) => 2,
+            (CrossbowKind.GreyThroat, 1) => 1, _ => 0 };
+        // Melanite's two light strands belong to a single damaging arrow, including both skills.
+        if (extras == 0) return;
         List<NPC> targets = new();
         foreach (NPC npc in Main.ActiveNPCs)
             if (npc.CanBeChasedBy(main) && npc.DistanceSQ(muzzle) < 800 * 800
@@ -42,28 +42,5 @@ internal static class CrossbowBranchSkills
             extra.CritChance = main.CritChance;
         }
     }
-    internal static void Ricochet(Projectile shot, NPC hit)
-    {
-        if (shot.owner != Main.myPlayer || shot.ai[2] != 0) return;
-        shot.ai[2] = 1; shot.netUpdate = true;
-        NPC best = null; float range = 360 * 360;
-        foreach (NPC npc in Main.ActiveNPCs)
-        {
-            float distance = npc.DistanceSQ(hit.Center);
-            if (npc.whoAmI == hit.whoAmI || !npc.CanBeChasedBy(shot) || distance >= range
-                || !Collision.CanHitLine(hit.Center, 1, 1, npc.position, npc.width, npc.height)) continue;
-            best = npc; range = distance;
-        }
-        if (best == null) return;
-        Projectile.NewProjectile(shot.GetSource_OnHit(hit), hit.Center, (best.Center - hit.Center).SafeNormalize(Vector2.UnitX) * 20,
-            ModContent.ProjectileType<CrossbowBolt>(), (int)(shot.damage * .8f), shot.knockBack, shot.owner, (int)CrossbowKind.Archetto, 0, 1);
-    }
-    internal static void Draw(Projectile shot, CrossbowKind kind)
-    {
-        Color color = ColorFor(kind);
-        ChargedOperatorVfx.Trail(shot, color, CrossbowBallistics.IsPiercing(kind) ? 11 : 6);
-        using var pass = new ChargedOperatorVfx.Pass(true);
-        ChargedOperatorVfx.Sprite(kind == CrossbowKind.Provence ? "CrystalVortex" : "StarCore", shot.Center,
-            new Vector2(CrossbowBallistics.IsPiercing(kind) ? 46 : 26, 14), color * .8f, shot.velocity.ToRotation());
-    }
+    internal static void Draw(Projectile shot, CrossbowKind kind) => CrossbowFlightVfx.Draw(shot, kind);
 }

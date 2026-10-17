@@ -18,9 +18,17 @@ public sealed class ChargedOperatorHoldout : ModProjectile
     public override string Texture => "Terraria/Images/MagicPixel";
     internal ChargedOperatorKind Kind => (ChargedOperatorKind)(int)Projectile.ai[0];
     private bool Melee => ChargedOperatorRules.IsMelee(Kind);
+    private bool AutomaticShot => !Melee && Projectile.ai[1] < 0;
     private int skill, secondaryHits, recovery = 26;
     private bool heavy, playedRelease;
     private float power;
+    private int VisualDuration => AutomaticShot ? ChargedOperatorRules.SniperLeftInterval + 1 : recovery;
+    // Visual recoil never changes the direction captured for the actual shot.
+    private float Recoil => Projectile.ai[2] <= 1 ? 0 : MathF.Sin(MathF.Min(1, (Projectile.ai[2] - 1) / 3f) * MathHelper.PiOver2)
+        * MathF.Pow(1 - Math.Clamp((Projectile.ai[2] - 4) / Math.Max(1, recovery - 4), 0, 1), 2);
+    private Vector2 GunAim => Projectile.velocity.SafeNormalize(Vector2.UnitX).RotatedBy(-Projectile.direction
+        * Main.player[Projectile.owner].gravDir * (heavy ? .23f : .10f) * Recoil);
+    private Vector2 GunCenter => Projectile.Center + GunAim * (14 - (heavy ? 10 : 5) * Recoil);
     private Item boundItem;
     internal float Completion => ChargedOperatorRules.Completion(Projectile.ai[1], ChargedOperatorRules.ChargeTicks(Kind));
     private float Reach => ChargedOperatorRules.Reach(Kind, heavy) * (Kind == ChargedOperatorKind.NearlRadiant && skill is 1 or 3 ? 1.15f : 1);
@@ -49,8 +57,11 @@ public sealed class ChargedOperatorHoldout : ModProjectile
         bool local = Projectile.owner == Main.myPlayer;
         if (local && boundItem != null && !ReferenceEquals(owner.HeldItem, boundItem)) { Projectile.Kill(); return; }
         boundItem ??= owner.HeldItem;
+        if (local && !Melee && Projectile.ai[2] == 0 && (!ChargedOperatorWeapon.WorldInputAllowed(owner)
+            || !AutomaticShot && owner.GetModPlayer<ChargedOperatorPlayer>().SuppressSniperRight))
+        { Projectile.Kill(); return; }
         Projectile.DamageType = Melee ? DamageClass.Melee : DamageClass.Ranged;
-        if (local && Projectile.ai[2] == 0)
+        if (local && (Projectile.ai[2] == 0 || !Melee && Projectile.ai[2] >= recovery))
         {
             Vector2 aim = (Main.MouseWorld - owner.MountedCenter).SafeNormalize(Vector2.UnitX * owner.direction);
             if (Vector2.DistanceSquared(aim, Projectile.velocity) > .0004f) { Projectile.velocity = aim; Projectile.netUpdate = true; }
@@ -60,14 +71,15 @@ public sealed class ChargedOperatorHoldout : ModProjectile
         Projectile.direction = direction.X >= 0 ? 1 : -1;
         owner.ChangeDir(Projectile.direction); owner.heldProj = Projectile.whoAmI;
         owner.itemTime = owner.itemAnimation = 2;
-        owner.itemRotation = (direction * owner.direction).ToRotation();
-        owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, (Melee ? BladeAngle : direction.ToRotation()) - MathHelper.PiOver2);
+        owner.itemRotation = ((Melee ? direction : GunAim) * owner.direction).ToRotation();
+        owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, (Melee ? BladeAngle : GunAim.ToRotation()) - MathHelper.PiOver2);
+        if (!Melee) owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.ThreeQuarters, GunAim.ToRotation() - MathHelper.PiOver2 + .15f * owner.direction);
         Projectile.timeLeft = 2;
         if (Projectile.ai[2] == 0)
         {
             // Release is evaluated BEFORE advancing the charge: a 59-tick hold cannot become heavy.
-            if (local && !owner.channel) Release(owner, weapon);
-            else
+            if (local && (Melee ? !owner.channel : AutomaticShot || !Main.mouseRight)) Release(owner, weapon);
+            else if (!AutomaticShot)
             {
                 float before = Completion;
                 Projectile.ai[1] = Math.Min(ChargedOperatorRules.ChargeTicks(Kind), Projectile.ai[1] + 1);
@@ -93,29 +105,32 @@ public sealed class ChargedOperatorHoldout : ModProjectile
             if (!playedRelease)
             {
                 playedRelease = true;
-                if (!Main.dedServ) SoundEngine.PlaySound((Melee ? SoundID.Item71 : SoundID.Item91) with { Volume = .65f, Pitch = heavy ? -.25f : .1f }, owner.Center);
-                ChargedOperatorVfx.Burst(Muzzle(owner), Kind, heavy ? 18 : 6, heavy ? 48 : 20);
+                if (!Main.dedServ) SoundEngine.PlaySound((Melee ? SoundID.Item71 : heavy
+                    ? new SoundStyle("ArknightsMod/Assets/Sounds/ChargedSniper/RailgunShoot") : SoundID.Item40)
+                    with { Volume = .65f, Pitch = heavy ? Melee ? -.25f : -.15f : .1f }, owner.Center);
+                if (Melee) ChargedOperatorVfx.Burst(Muzzle(owner), Kind, heavy ? 18 : 6, heavy ? 48 : 20);
+                else ChargedSniperVisuals.MuzzleBurst(Muzzle(owner), direction, Kind, heavy);
             }
             Projectile.ai[2]++;
-            if (Projectile.ai[2] >= recovery) Projectile.Kill();
+            if (Projectile.ai[2] >= VisualDuration) Projectile.Kill();
         }
     }
     private Vector2 Muzzle(Player player)
     {
         Vector2 offset = Melee ? BladeAngle.ToRotationVector2() * (Projectile.ai[2] == 0 ? 82 : Reach)
-            : Projectile.velocity.SafeNormalize(Vector2.UnitX) * 50;
+            : GunCenter + GunAim * 36 - player.MountedCenter;
         return player.MountedCenter + Collision.TileCollision(player.MountedCenter - new Vector2(3), offset, 6, 6, true, true);
     }
     private void Release(Player owner, ChargedOperatorWeapon weapon)
     {
         if (!weapon.ReleaseAmmo(owner, out int damage, out float knockback, out int ammo)) { Projectile.Kill(); return; }
-        power = Completion; heavy = power >= 1;
+        power = Completion; heavy = !AutomaticShot && power >= 1;
         skill = ChargedOperatorPlayer.ActiveSkill(owner);
         recovery = Melee ? 28 : 24;
         if (Kind == ChargedOperatorKind.Franka && skill == 1 || Kind == ChargedOperatorKind.NearlRadiant && skill == 1
             || Kind == ChargedOperatorKind.Fartooth && skill == 1) recovery = Melee ? 21 : 16;
         if (Kind == ChargedOperatorKind.Fartooth && skill == 2) recovery = 10;
-        Projectile.damage = Math.Max(1, (int)(damage * (Melee ? heavy ? 3f : .8f : ChargedOperatorRules.ShotMultiplier(power))
+        Projectile.damage = Math.Max(1, (int)(damage * (Melee ? heavy ? 3f : .8f : AutomaticShot ? 1f : ChargedOperatorRules.ShotMultiplier(power))
             * ChargedOperatorPlayer.DamageMultiplier(Kind, skill)));
         Projectile.knockBack = knockback * MathHelper.Lerp(.5f, 1.8f, power);
         if (Kind == ChargedOperatorKind.Fartooth && owner.GetModPlayer<ChargedOperatorPlayer>().UnhurtTicks >= 300)
@@ -125,9 +140,10 @@ public sealed class ChargedOperatorHoldout : ModProjectile
         owner.GetModPlayer<ChargedOperatorPlayer>().Recovery = recovery;
         if (!Melee)
         {
+            owner.GetModPlayer<ChargedOperatorPlayer>().NextSniperLeftShot = Main.GameUpdateCount + ChargedOperatorRules.SniperLeftInterval;
             Projectile shot = Projectile.NewProjectileDirect(owner.GetSource_ItemUse_WithPotentialAmmo(weapon.Item, ammo),
                 Muzzle(owner), Projectile.velocity.SafeNormalize(Vector2.UnitX) * MathHelper.Lerp(12, 22, power),
-                ModContent.ProjectileType<ChargedOperatorShot>(), Projectile.damage, Projectile.knockBack, owner.whoAmI,
+                heavy ? ModContent.ProjectileType<ChargedOperatorLaser>() : ModContent.ProjectileType<ChargedOperatorShot>(), Projectile.damage, Projectile.knockBack, owner.whoAmI,
                 (int)Kind, power, skill);
             shot.CritChance = Projectile.CritChance;
             if (Kind == ChargedOperatorKind.Fartooth && skill == 2 && heavy)
@@ -238,18 +254,14 @@ public sealed class ChargedOperatorHoldout : ModProjectile
         }
         else
         {
-            Main.EntitySpriteDraw(texture, Projectile.Center + aim * 14 - Main.screenPosition, null, lightColor,
-                aim.ToRotation(), texture.Size() / 2, 72f / texture.Width,
+            Main.EntitySpriteDraw(texture, GunCenter - Main.screenPosition, null, lightColor,
+                GunAim.ToRotation(), texture.Size() / 2, 72f / texture.Width,
                 Projectile.direction < 0 ? SpriteEffects.FlipVertically : SpriteEffects.None);
-            if (Projectile.ai[2] == 0)
+            if (Projectile.ai[2] == 0 && !AutomaticShot)
             {
-                using var pass = new ChargedOperatorVfx.Pass(true);
-                Vector2 muzzle = Muzzle(owner); float spread = (1 - Completion) * .18f;
-                float sightLength = 640 + Completion * 320;
-                foreach (float sign in new[] { -1f, 1f })
-                    ChargedOperatorVfx.Line(muzzle, muzzle + aim.RotatedBy(sign * spread) * sightLength, color * (.18f + Completion * .3f), 1.2f);
-                ChargedOperatorVfx.Sprite("StarCore", muzzle, new Vector2(18 + 26 * Completion, 12 + 16 * Completion), color * .6f, aim.ToRotation());
+                ChargedSniperVisuals.DrawSight(Muzzle(owner), aim, Kind, ChargedOperatorPlayer.ActiveSkill(owner), Completion);
             }
+            else ChargedSniperVisuals.DrawMuzzle(Muzzle(owner), GunAim, color, heavy, Projectile.ai[2]);
         }
         return false;
     }

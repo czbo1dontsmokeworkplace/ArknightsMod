@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using ArknightsMod.Content.Items.Weapons.Medic;
 using ArknightsMod.Content.Items.Weapons.Medic.Sussurro;
 using Microsoft.Xna.Framework;
@@ -14,7 +14,7 @@ namespace ArknightsMod.Content.Projectiles.Medic.Warfarin;
 /// <summary>紧急包扎抛出的血浆包；先越过目标，再在半秒后回转结算医疗。</summary>
 public sealed class WarfarinEmergencyDressing : ModProjectile
 {
-    public override string Texture => "Terraria/Images/Extra_98";
+    public override string Texture => "ArknightsMod/Content/Items/Weapons/WarfarinWeaponTrueExtra";
 
     public override void SetDefaults()
     {
@@ -51,21 +51,11 @@ public sealed class WarfarinEmergencyDressing : ModProjectile
             Vector2 toTarget = target.MountedCenter - Projectile.Center;
             Projectile.velocity = Vector2.Lerp(Projectile.velocity,
                 toTarget.SafeNormalize(Vector2.UnitY) * 11f, .13f);
-            if (toTarget.LengthSquared() < 24f * 24f && Projectile.owner == Main.myPlayer)
+            if (toTarget.LengthSquared() < 24f * 24f && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                int amount = MedicalTreatment.Apply(target, Math.Max(1, (int)Projectile.ai[1]));
+                int amount = MedicHealingNet.Heal(owner, target, Math.Clamp((int)Projectile.ai[1], 1, 48));
                 if (amount > 0)
                 {
-                    if (target.whoAmI == Main.myPlayer)
-                    {
-                        target.Heal(amount);
-                        if (Main.netMode == NetmodeID.MultiplayerClient)
-                            NetMessage.SendData(MessageID.PlayerLifeMana, -1, -1, null, target.whoAmI);
-                    }
-                    else if (Main.netMode == NetmodeID.MultiplayerClient)
-                    {
-                        NetMessage.SendData(MessageID.SpiritHeal, -1, -1, null, target.whoAmI, amount);
-                    }
                     Burst(target.MountedCenter, 28);
                     WarfarinPlasmaVisuals.DressingBurst(target.MountedCenter);
                     SoundEngine.PlaySound(SoundID.Item4 with { Volume = .3f, Pitch = -.1f }, target.MountedCenter);
@@ -105,14 +95,9 @@ public sealed class WarfarinEmergencyDressing : ModProjectile
 
     public override bool PreDraw(ref Color lightColor)
     {
-        Texture2D glow = TextureAssets.Extra[ExtrasID.ThePerfectGlow].Value;
-        Vector2 origin = glow.Size() * .5f;
-        Main.EntitySpriteDraw(glow, Projectile.Center - Main.screenPosition, null,
-            new Color(125, 4, 30), Projectile.rotation, origin, new Vector2(25f, 17f) / glow.Size(), SpriteEffects.None);
-        Main.EntitySpriteDraw(glow, Projectile.Center - Main.screenPosition, null,
-            new Color(255, 105, 135, 0), Projectile.rotation, origin, new Vector2(17f, 10f) / glow.Size(), SpriteEffects.None);
-        WarfarinPlasmaVisuals.DrawDressingDetails(Projectile, Projectile.localAI[0],
-            Projectile.localAI[0] >= MedicalTreatment.InitialTreatmentDelayTicks);
+        Texture2D bag = ModContent.Request<Texture2D>(Texture).Value;
+        Main.EntitySpriteDraw(bag, Projectile.Center - Main.screenPosition, null, lightColor,
+            Projectile.rotation * .15f, bag.Size() * .5f, 1f, SpriteEffects.None);
         return false;
     }
 }

@@ -10,12 +10,11 @@ Items: {
 	}
 
 	WildManeLance: {
-		DisplayName: Wild Mane's Twin Lance
+		DisplayName: Wild Mane's Charge Lance
 		Tooltip:
 			'''
 			After all Mechanical Bosses
-			Mother lances pierce 2 enemies and release 2 half-damage child lances after 12 frames or on the first enemy hit.
-			Children cannot split again. Hitting terrain never releases children.
+			Heavy javelins pierce 2 enemies and release orange lance sparks on impact. No child javelins are created.
 			'''
 	}
 }
@@ -49,10 +48,13 @@ Skills: {
 VanguardSpears: {
 	Controls:
 		'''
-		Left-click combo: rising cut → falling cut → piercing thrust.
-		The reserve above your head fills in {1} seconds while held, or instantly when a direct melee hit lands on an enemy.
-		Right-click spends a full reserve to throw {0} javelins. Throws and follow-up strikes do not refill it.
-		All four lances share the reserve. Recovery pauses when unequipped; death clears it.
+		Left-click thrusts forward and retracts at constant speed. Hits release small falling sparks that deal damage.
+		The reserve above your head fills from empty in {1} seconds while held. Each direct melee hit adds 20%.
+		Right-click spends a full reserve to throw one heavy javelin dealing {0}x damage.
+		The first heavy-javelin hit releases 6 to 9 sparks, each dealing 10% of its damage.
+		Melee hits throw 1 to 3 sparks forward at random, each dealing 18% of that thrust's damage.
+		Sparks scatter then fall, become damaging after 5 frames, and hit up to 5 times total with a 15-frame cooldown per enemy.
+		Throws, sparks and follow-up strikes do not refill the shared reserve. Recovery pauses when unequipped; death clears it.
 		'''
 	SkillKey: Press [{0}] for manual skills; click a skill icon to select it.
 	Unbound: Bind Skill Activate under Settings → Controls → Mod Controls.
@@ -63,5 +65,7 @@ Projectiles: {
 	VanguardSpearHoldout.DisplayName: Vanguard lance
 	VanguardThrownSpear.DisplayName: Vanguard lance
 	VanguardSpearImpact.DisplayName: Vanguard lance
+	VanguardSpearSpark.DisplayName: Vanguard Sparks
+	VanguardThrowPulse.DisplayName: Vanguard Throw Pulse
 	VanguardFollowupStrike.DisplayName: Vanguard lance
 }

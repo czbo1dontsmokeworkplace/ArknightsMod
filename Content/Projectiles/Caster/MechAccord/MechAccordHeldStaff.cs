@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.Items.Weapons.Caster;
@@ -18,8 +18,6 @@ public sealed class MechAccordHeldStaff : ModProjectile
     private Vector2 aim;
     private float pulseCooldown;
     private Item sourceItem;
-    private Vector2 dragStart;
-    private bool dragging;
     private int attackTicks;
     private int rockrockVolley;
     internal bool Bursting => attackTicks % 240 >= 180;
@@ -72,28 +70,6 @@ public sealed class MechAccordHeldStaff : ModProjectile
         player.heldProj = Projectile.whoAmI;
         player.itemTime = player.itemAnimation = 2;
         Vector2 tip = StaffTip(player, staff);
-        if (!staff.IsRockrock)
-        {
-            if (owned)
-            {
-                Vector2 offset = Main.MouseWorld - player.MountedCenter;
-                aim = player.MountedCenter + offset.SafeNormalize(Vector2.Zero) * Math.Min(staff.Reach, offset.Length());
-                aim = Vector2.Clamp(aim, new Vector2(16), new Vector2((Main.maxTilesX-2)*16,(Main.maxTilesY-2)*16));
-                if (!dragging) { dragging=true;dragStart=aim; }
-                ClickDrone drone = ClickDrone.Ensure(player);
-                if (!player.channel)
-                {
-                    WeaponPlayer skill = player.GetModPlayer<WeaponPlayer>();
-                    drone?.Begin(ClickSelection.Targets(ClickSelection.Area(dragStart,aim),player,staff.Reach),
-                        player.GetWeaponDamage(player.HeldItem),skill.SkillActive&&skill.Skill==1,
-                        MathHelper.Clamp(player.GetWeaponAttackSpeed(player.HeldItem),.5f,2f)*staff.AttackSpeedBonus(skill));
-                    Projectile.Kill();return;
-                }
-                player.ChangeDir(aim.X>=player.Center.X?1:-1);
-                if ((int)Projectile.ai[0]%6==0) Projectile.netUpdate=true;
-            }
-            Projectile.ai[0]++;return;
-        }
         if(owned&&!player.channel){Projectile.Kill();return;}
         if (owned)
         {
@@ -108,7 +84,8 @@ public sealed class MechAccordHeldStaff : ModProjectile
                 !player.CheckMana(player.HeldItem, -1, true))
             { player.channel = false; Projectile.Kill(); return; }
             player.manaRegenDelay = player.maxRegenDelay;
-            EnsureDrone(player, staff);
+            if (staff.IsRockrock) EnsureDrone(player, staff);
+            else ClickDrone.Ensure(player);
         }
         WeaponPlayer skills = player.GetModPlayer<WeaponPlayer>();
         LockedTarget = GoldenglowHeldStaff.FindTargetNPC(aim, player.Center, staff.Reach, staff.SearchRadius);
@@ -131,11 +108,17 @@ public sealed class MechAccordHeldStaff : ModProjectile
             if (pulseCooldown <= 0 || burstStart)
             {
                 int damage = player.GetWeaponDamage(player.HeldItem);
-                RockrockStarBolt.SpawnFan(Projectile.GetSource_FromThis(), tip, LockedTarget,
-                    player.whoAmI, (int)(damage*(Bursting?1.25f:1f)), player.GetWeaponKnockback(player.HeldItem),
-                    Bursting, rockrockVolley++);
-                pulseCooldown = Math.Max(4f, (Bursting?6:staff.PulseInterval) /
+                if (staff.IsRockrock)
+                    RockrockStarBolt.SpawnFan(Projectile.GetSource_FromThis(), tip, LockedTarget,
+                        player.whoAmI, (int)(damage*(Bursting?1.25f:1f)), player.GetWeaponKnockback(player.HeldItem),
+                        Bursting, rockrockVolley++);
+                else
+                    ClickDrone.Ensure(player)?.Begin(ClickSelection.Targets(aim, player, staff.Reach, staff.SearchRadius),
+                        Math.Max(1, (int)MathF.Round(damage * (Bursting ? 1.1f : 1f))), skills.SkillActive && skills.Skill == 1,
+                        MathHelper.Clamp(player.GetWeaponAttackSpeed(player.HeldItem), .5f, 2f) * staff.AttackSpeedBonus(skills), Bursting);
+                pulseCooldown = Math.Max(4f, (Bursting ? 6 : staff.PulseInterval) /
                     (MathHelper.Clamp(player.GetWeaponAttackSpeed(player.HeldItem), .5f, 2f) * staff.AttackSpeedBonus(skills)));
+
             }
         }
         else if (pulseCooldown > 0) pulseCooldown--;
@@ -169,8 +152,7 @@ public sealed class MechAccordHeldStaff : ModProjectile
             Vector2.Zero, rotation, new Vector2(.28f, .75f));
         Vector2 tip = StaffTip(player, staff);
         MechAccordVfx.DrawLens(tip, staff.IsRockrock, 24f, (float)Projectile.ai[0]);
-        if(!staff.IsRockrock&&Projectile.owner==Main.myPlayer&&dragging)
-            ClickSelection.Draw(ClickSelection.Area(dragStart,aim));
+
         if(staff.IsRockrock&&Bursting)
             MechAccordVfx.DrawBurst(aim,(attackTicks%60)/60f,true,96f);
         return false;

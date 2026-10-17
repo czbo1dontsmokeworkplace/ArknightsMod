@@ -14,6 +14,8 @@ public sealed class CrossbowShotData : GlobalProjectile
     public int Kind = -1;
     public int Skill;
     private Vector2[] visualHistory;
+    private CrossbowFlightEmitter flightEmitter;
+    internal CrossbowFlightEmitter FlightEmitter => flightEmitter ??= new CrossbowFlightEmitter();
     public override void PostAI(Projectile projectile)
     {
         if (Kind < 0 || Main.dedServ || projectile.ModProjectile is CrossbowBolt) return;
@@ -24,9 +26,16 @@ public sealed class CrossbowShotData : GlobalProjectile
     }
     public override bool PreDraw(Projectile projectile, ref Color lightColor)
     {
-        if (Kind >= 0 && visualHistory != null && projectile.ModProjectile is not CrossbowBolt)
+        if (Kind < 0 || projectile.ModProjectile is CrossbowBolt) return true;
+        if (CrossbowSignatureVfx.Handles((CrossbowKind)Kind))
+        {
+            CrossbowSignatureVfx.Draw(projectile, (CrossbowKind)Kind, visualHistory, true);
+            return false;
+        }
+        if (visualHistory != null)
             CrossbowFlightVfx.Draw(projectile, (CrossbowKind)Kind, visualHistory, false);
-        return true;
+        CrossbowSignatureVfx.DrawWoodenArrow(projectile);
+        return false;
     }
     public override void SendExtraAI(Projectile projectile, BitWriter bitWriter, BinaryWriter writer)
     {
@@ -46,6 +55,8 @@ public sealed class CrossbowShotData : GlobalProjectile
     }
     public override void OnHitNPC(Projectile projectile, NPC target, NPC.HitInfo hit, int damageDone)
     {
+        if (Kind >= 0 && projectile.ModProjectile is not CrossbowBolt)
+            CrossbowSignatureVfx.Hit(projectile, (CrossbowKind)Kind);
         if (Kind == (int)CrossbowKind.Pozemka && projectile.owner == Main.myPlayer)
         {
             global::ArknightsMod.Content.Projectiles.Sniper.Pozemka.PozemkaStarBolt.SpawnPair(

@@ -1,4 +1,4 @@
-using ArknightsMod.Content.Items.Weapons.Caster;
+﻿using ArknightsMod.Content.Items.Weapons.Caster;
 using ArknightsMod.Content.Items.Weapons.Caster.Click;
 using ArknightsMod.Players;
 using Terraria;
@@ -10,7 +10,7 @@ public sealed class RockrockStaff : MechAccordStaffBase
 {
     protected override int[] EliteDamage => [91, 91, 91];
     internal override bool IsRockrock => true;
-    internal override float SearchRadius => 225f * .8f * 1.5f;
+    internal override float SearchRadius => 225f * 1.5f;
     internal override float Reach => 1200f;
     internal override int PulseInterval => 17;
     // Vanilla Spectre Staff gives Rockrock its own recognizable wand silhouette.

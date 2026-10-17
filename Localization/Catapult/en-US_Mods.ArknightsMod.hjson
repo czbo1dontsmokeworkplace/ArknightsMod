@@ -1,0 +1,41 @@
+CatapultText: {
+	SkillKey: Press [{0}] to activate skill
+	Unbound: Bind the Skill Activate key in Controls
+	Placeholder: Placeholder launcher sprite from Terraria; skill icon borrowed from Meteorite
+}
+
+Items: {
+	CatapultLauncher: {
+		DisplayName: Catapult's Grenade Launcher
+		Tooltip:
+			'''
+			Lobs a grenade toward the cursor, up to 30 tiles away
+			Explodes on enemies, solid tiles, or arrival at the selected point
+			Explosions deal 25% more damage while descending; cannot destroy tiles
+			Base blast radius: 3.5 tiles; consumes no ammunition
+			Craftable after Skeletron
+			'''
+	}
+}
+
+Skills: {
+	CatapultLauncher: {
+		1: {
+			Label: Blast Range Up α
+			Desc:
+				'''
+				Auto recovery, manual activation; increases blast radius without increasing damage
+				Levels 1–3: 150% radius; levels 4–6: 175%; level 7: 200%
+				SP cost at levels 1–7: 55 / 53 / 51 / 50 / 48 / 46 / 45
+				Duration in seconds: 20 / 22 / 24 / 25 / 27 / 29 / 30
+				Level 7: 45 SP, 30 seconds, 7-tile blast radius
+				'''
+		}
+	}
+}
+
+Projectiles: {
+	CatapultHoldout.DisplayName: Catapult's Grenade Launcher
+	CatapultShell.DisplayName: Catapult Grenade
+	CatapultExplosion.DisplayName: Catapult Blast
+}

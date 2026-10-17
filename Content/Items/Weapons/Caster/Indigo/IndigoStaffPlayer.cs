@@ -1,4 +1,4 @@
-using ArknightsMod.Content.Projectiles.Caster.Indigo;
+﻿using ArknightsMod.Content.Projectiles.Caster.Indigo;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -12,6 +12,12 @@ public sealed class IndigoStaffPlayer : ModPlayer
 {
     private int charges, chargeClock, activeMode;
     private bool keyConsumed;
+    private Item storedStaff;
+    internal void ReleaseCoordinated(Item attack)
+    {
+        if (attack.ModItem is IndigoStaff || charges <= 0) return;
+        MysticCoordinatedAttack.Fire(Player, storedStaff, ReleaseCharges(), 0);
+    }
     internal bool Holding => Player.HeldItem.ModItem is IndigoStaff && !Player.dead && !Player.CCed && !Player.noItems;
     internal int Mode => Holding && Player.GetModPlayer<WeaponPlayer>().SkillActive
         && Player.GetModPlayer<WeaponPlayer>().CurrentSkill?.Key.Item == nameof(IndigoStaff)
@@ -43,13 +49,15 @@ public sealed class IndigoStaffPlayer : ModPlayer
     {
         if (!ArknightsKeybinds.SkillActivatePressed(Player)) keyConsumed = false;
         if (Player.whoAmI != Main.myPlayer) return;
-        if (!Holding) { charges = chargeClock = 0; return; }
+        if (!Holding) { chargeClock = 0; return; }
         if (ArknightsKeybinds.SkillActivatePressed(Player)) TryActivate();
         // 与黑键相同：停火累计60帧存一枚，最多三枚；一次开火取走全部储能。
-        if (Player.itemAnimation <= 0 && charges < 3 && ++chargeClock >= 60)
+        if (Player.itemAnimation > 0 || Player.controlUseItem) chargeClock = 0;
+        if (Player.itemAnimation <= 0 && !Player.controlUseItem && charges < 3 && ++chargeClock >= 60)
         {
             chargeClock = 0;
             charges++;
+            storedStaff = Player.HeldItem.Clone();
             SoundEngine.PlaySound(SoundID.Item4 with { Volume = .17f, Pitch = .15f + charges * .12f }, Player.Center);
         }
         int type = ModContent.ProjectileType<IndigoOrbit>();

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using ArknightsMod.Content.Items.Weapons.Medic.Sussurro;
 using ArknightsMod.Content.Items.Weapons.Medic;
 using Microsoft.Xna.Framework;
@@ -95,23 +95,12 @@ public sealed class SussurroHealingButterfly : ModProjectile
                 toTarget.SafeNormalize(Vector2.UnitY) * speed * movementScale, .16f * movementScale);
         }
         // 医疗弹幕前半秒穿过玩家，必须绕出后再接住，不能贴身瞬间回血。
-        if (age >= MedicalTreatment.InitialTreatmentDelayTicks && toTarget.Length() < 24f && Projectile.owner == Main.myPlayer)
+        if (age >= MedicalTreatment.InitialTreatmentDelayTicks && toTarget.Length() < 24f && Main.netMode != NetmodeID.MultiplayerClient)
         {
             int requestedAmount = Math.Clamp((int)Projectile.ai[1], 0, 12);
-            int amount = MedicalTreatment.Apply(target, requestedAmount);
+            int amount = MedicHealingNet.Heal(owner, target, requestedAmount, Projectile.ai[2] > 0f ? 30 : 60);
             if (amount > 0)
             {
-                if (target.whoAmI == Main.myPlayer)
-                {
-                    target.Heal(amount);
-                    if (Main.netMode == NetmodeID.MultiplayerClient)
-                        NetMessage.SendData(MessageID.PlayerLifeMana, -1, -1, null, target.whoAmI);
-                }
-                else if (Main.netMode == NetmodeID.MultiplayerClient)
-                {
-                    // 队友治疗只发一次原版治疗消息；不先在本地叠加再重复广播同一回血。
-                    NetMessage.SendData(MessageID.SpiritHeal, -1, -1, null, target.whoAmI, amount);
-                }
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.MountedCenter, Vector2.Zero,
                     ModContent.ProjectileType<SussurroHealingBloom>(), 0, 0f, Projectile.owner,
                     Projectile.ai[2] > 0f ? 1f : .65f, target.whoAmI);

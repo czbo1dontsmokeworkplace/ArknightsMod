@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using ArknightsMod.Content.Projectiles.Caster.Ebenholz;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
@@ -13,6 +13,12 @@ public sealed class EbenholzStaffPlayer : ModPlayer
 {
     private int charges, chargeClock, activeMode, activeRank;
     private bool keyConsumed;
+    private Item storedStaff;
+    internal void ReleaseCoordinated(Item attack)
+    {
+        if (attack.ModItem is EbenholzStaff || charges <= 0) return;
+        MysticCoordinatedAttack.Fire(Player, storedStaff, ReleaseCharges(), 2);
+    }
     internal bool Holding => Player.HeldItem.ModItem is EbenholzStaff && !Player.dead && !Player.CCed && !Player.noItems;
     internal int Mode => Holding && Player.GetModPlayer<WeaponPlayer>().SkillActive
         && Player.GetModPlayer<WeaponPlayer>().CurrentSkill?.Key.Item == nameof(EbenholzStaff)
@@ -55,7 +61,7 @@ public sealed class EbenholzStaffPlayer : ModPlayer
         if (targetIndex < 0)
             return;
         int rank = Math.Clamp((skills.CurrentSkill.ForceReplaceLevel ?? skills.CurrentSkill.Level) - 1, 0, 9);
-        int count = charges + 1;
+        int count = 1;
         int type = ModContent.ProjectileType<EbenholzRemnant>();
         int existing = Player.ownedProjectileCounts[type];
         // 同一玩家最多五个；替换旧核心不会引发额外爆炸。
@@ -69,7 +75,6 @@ public sealed class EbenholzStaffPlayer : ModPlayer
             oldest.Kill();
             existing--;
         }
-        ReleaseCharges();
         skills.DelStockCount();
         int damage = (int)MathF.Round(Player.GetWeaponDamage(Player.HeldItem) * (1.4f + rank * 1.05f / 9f));
         NPC target = Main.npc[targetIndex];
@@ -90,13 +95,15 @@ public sealed class EbenholzStaffPlayer : ModPlayer
         if (Player.whoAmI != Main.myPlayer) return;
         if (!Holding)
         {
-            charges = chargeClock = 0;
+            chargeClock = 0;
             return;
         }
-        if (Player.itemAnimation <= 0 && charges < 3 && ++chargeClock >= 60)
+        if (Player.itemAnimation > 0 || Player.controlUseItem) chargeClock = 0;
+        if (Player.itemAnimation <= 0 && !Player.controlUseItem && charges < 3 && ++chargeClock >= 60)
         {
             chargeClock = 0;
             charges++;
+            storedStaff = Player.HeldItem.Clone();
             SoundEngine.PlaySound(SoundID.Item4 with { Volume = .15f, Pitch = -.5f + charges * .12f }, Player.Center);
         }
         WeaponPlayer skills = Player.GetModPlayer<WeaponPlayer>();

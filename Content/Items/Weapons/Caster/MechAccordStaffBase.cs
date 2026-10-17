@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using ArknightsMod.Content;
 using ArknightsMod.Content.Projectiles.Caster.MechAccord;
 using ArknightsMod.Players;
@@ -61,9 +61,6 @@ public abstract class MechAccordStaffBase : VerticalStaffBase
             ActivateSkill(player);
             return false;
         }
-        if(!IsRockrock)
-            foreach(Projectile p in Main.ActiveProjectiles)
-                if(p.owner==player.whoAmI&&p.ModProjectile is ClickDrone drone&&drone.Busy)return false;
         return player.ownedProjectileCounts[ModContent.ProjectileType<MechAccordHeldStaff>()] == 0;
     }
 

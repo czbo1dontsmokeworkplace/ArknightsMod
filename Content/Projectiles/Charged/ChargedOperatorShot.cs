@@ -16,19 +16,19 @@ public sealed class ChargedOperatorShot : ModProjectile
     private ChargedOperatorKind Kind => (ChargedOperatorKind)(int)Projectile.ai[0];
     private int Skill => (int)Projectile.ai[2];
     private float distance;
-    private bool hitBurst;
     public override void SetStaticDefaults() { ProjectileID.Sets.TrailCacheLength[Type] = 24; ProjectileID.Sets.TrailingMode[Type] = 2; }
     public override void SetDefaults()
     {
         Projectile.width = Projectile.height = 8; Projectile.friendly = true; Projectile.DamageType = DamageClass.Ranged;
-        Projectile.timeLeft = 300; Projectile.extraUpdates = 2; Projectile.penetrate = 6;
+        Projectile.timeLeft = 300; Projectile.extraUpdates = 4; Projectile.penetrate = 4;
         Projectile.ignoreWater = true; Projectile.usesLocalNPCImmunity = true; Projectile.localNPCHitCooldown = -1;
     }
     public override void OnSpawn(IEntitySource source)
     {
-        Projectile.penetrate = 2 + (int)(4 * Projectile.ai[1]);
+        Projectile.velocity *= 1.2f;
+        Projectile.penetrate = 4;
         Projectile.tileCollide = !(Kind == ChargedOperatorKind.Ambriel && Skill == 2);
-        int size = (int)ChargedOperatorRules.ShotWidth(Projectile.ai[1]);
+        int size = 8;
         Vector2 center = Projectile.Center; Projectile.width = Projectile.height = size; Projectile.Center = center;
     }
     public override void AI()
@@ -40,7 +40,7 @@ public sealed class ChargedOperatorShot : ModProjectile
         {
             Color color = ChargedOperatorRules.ColorFor(Kind);
             Lighting.AddLight(Projectile.Center, color.ToVector3() * .35f);
-            if (Projectile.timeLeft % 6 == 0) ChargedOperatorVfx.Sparkle(Projectile.Center, -Projectile.velocity * .03f, color, Projectile.rotation, .7f);
+            ChargedSniperVisuals.BulletParticles(Projectile, Kind);
         }
     }
     public override bool? CanHitNPC(NPC target) => Kind == ChargedOperatorKind.Andreana && Skill == 2 && target.life <= target.lifeMax * .5f ? false : null;
@@ -48,7 +48,7 @@ public sealed class ChargedOperatorShot : ModProjectile
     {
         float point = 0;
         return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center - Projectile.velocity,
-            Projectile.Center, ChargedOperatorRules.ShotWidth(Projectile.ai[1]), ref point);
+            Projectile.Center, 8, ref point);
     }
     public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
     {
@@ -63,24 +63,12 @@ public sealed class ChargedOperatorShot : ModProjectile
     {
         if (Kind == ChargedOperatorKind.Ambriel && Skill == 1) OperatorStunNPC.TryApply(target, 36);
         if (Kind == ChargedOperatorKind.Andreana && Skill == 2) OperatorStunNPC.TryApply(target, 60);
-        ChargedOperatorVfx.Burst(target.Hitbox.ClosestPointInRect(Projectile.Center), Kind, 10, 30);
-        // One impact per shot; piercing cannot multiply the large burst without bound.
-        if (!hitBurst && Projectile.ai[1] >= 1 && Projectile.owner == Main.myPlayer)
-        {
-            hitBurst = true;
-            Projectile.NewProjectile(Projectile.GetSource_OnHit(target), Projectile.Center, Vector2.Zero,
-                ModContent.ProjectileType<ChargedOperatorImpact>(), Math.Max(1, Projectile.damage / 5), 2,
-                Projectile.owner, (int)Kind, 48);
-        }
+        ChargedSniperVisuals.HitBurst(target.Hitbox.ClosestPointInRect(Projectile.Center), Projectile.velocity.SafeNormalize(Vector2.UnitX), Kind, false, hit.Crit);
     }
     public override void OnKill(int timeLeft) => ChargedOperatorVfx.Burst(Projectile.Center, Kind, 6, 18);
     public override bool PreDraw(ref Color lightColor)
     {
-        Color color = ChargedOperatorRules.ColorFor(Kind);
-        ChargedOperatorVfx.Trail(Projectile, color, ChargedOperatorRules.ShotWidth(Projectile.ai[1]) * .65f);
-        using var pass = new ChargedOperatorVfx.Pass(true);
-        string shape = Kind switch { ChargedOperatorKind.Andreana => "CrystalVortex", ChargedOperatorKind.Firewatch => "ImpactPetals", _ => "StarCore" };
-        ChargedOperatorVfx.Sprite(shape, Projectile.Center, new Vector2(38 + 30 * Projectile.ai[1], 12 + 16 * Projectile.ai[1]), color * .85f, Projectile.rotation);
+        ChargedSniperVisuals.DrawBullet(Projectile, Kind);
         return false;
     }
 }

@@ -1,0 +1,17 @@
+BranchTraits: {
+	Artilleryman: 炮手：进行独特的跨射攻击，炮弹下落期间造成更高爆炸伤害
+	Musha: 武者：攻击可以回复自身生命值，但手持武器禁用治疗药水
+	Dreadnought: 无畏者：按住攻击键进行蓄力，满蓄力造成极高单次伤害
+	ArtsFighter: 术战者：攻击无视敌人防御力
+	MechAccord: 御械术士：只有足够接近鼠标的敌人才可被选中
+	Mystic: 秘术士：不攻击时可囤积额外弹幕一起攻击
+	Phalanx: 阵法术师：不攻击时拥有更高防御力，攻击时将会暂时取消能量护盾
+	Spreadshooter: 散射手：散射许多弹幕
+	Executor: 处决者：快速移动、冲刺、落地、复活后视为触发技能
+	Centurion: 强攻手：以极高频率攻击所有接近自己的敌人
+	Medic: 医师：向同阵营玩家攻击可进行治疗
+	ChainCaster: 链术士：闪电可在多个敌人之间弹跳
+	SplashCaster: 扩散术师：攻击能造成持续性伤害
+	Deadeye: 神射手：长按攻击键进行蓄力，蓄满力能够射出强而有力的炮弹
+	Crossbowman: 弩手：快速发射箭矢
+}

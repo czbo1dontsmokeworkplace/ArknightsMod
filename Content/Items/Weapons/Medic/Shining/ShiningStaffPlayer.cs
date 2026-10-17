@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using ArknightsMod.Content.Projectiles.Medic.Shining;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -85,8 +85,8 @@ namespace ArknightsMod.Content.Items.Weapons.Medic.Shining
 				|| attackDamage <= 0 || Player.statLife >= Player.statLifeMax2)
 				return;
 
-			// 每次命中独立回复该发弹幕攻击力的 5%，不受技能状态或治疗冷却限制。
-			int amount = Math.Max(1, (int)Math.Round(attackDamage * 0.05f));
+			// 闪灵以护盾为主；每次返回术体请求回复2点生命，抵达时由服务器共享治疗节流。
+			int amount = 2;
 			amount = Math.Min(amount, Player.statLifeMax2 - Player.statLife);
 
 			Vector2 toPlayer = (Player.MountedCenter - sourcePosition).SafeNormalize(Vector2.UnitY);
@@ -95,21 +95,6 @@ namespace ArknightsMod.Content.Items.Weapons.Medic.Shining
 			Projectile.NewProjectile(Player.GetSource_Misc("ShiningAttackHeal"), sourcePosition,
 				initialVelocity, ModContent.ProjectileType<ShiningHealingWispProjectile>(),
 				0, 0f, Player.whoAmI, amount);
-		}
-
-		public void CompletePendingHeal(int requestedAmount)
-		{
-			if (Player.whoAmI != Main.myPlayer || !Player.active || Player.dead
-				|| requestedAmount <= 0 || Player.statLife >= Player.statLifeMax2)
-				return;
-
-			int amount = Math.Min(requestedAmount, Player.statLifeMax2 - Player.statLife);
-			// Heal 自带一次治疗数字/广播；只同步最终生命值，不再额外发送可重复加血的治疗包。
-			Player.Heal(amount);
-			if (Main.netMode == NetmodeID.MultiplayerClient)
-				NetMessage.SendData(MessageID.PlayerLifeMana, -1, -1, null, Player.whoAmI);
-			if (!Main.dedServ)
-				SoundEngine.PlaySound(SoundID.Item4 with { Volume = 0.22f, Pitch = 0.42f }, Player.Center);
 		}
 
 		public override void UpdateDead()

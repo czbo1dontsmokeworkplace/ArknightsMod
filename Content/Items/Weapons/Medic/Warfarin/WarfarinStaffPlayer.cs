@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using ArknightsMod.Content.Projectiles.Medic.Warfarin;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
@@ -78,7 +78,7 @@ public sealed class WarfarinStaffPlayer : ModPlayer
         foreach (Player other in Main.ActivePlayers)
         {
             if (!other.active || other.dead || other.statLife >= other.statLifeMax2
-                || (other.whoAmI != Player.whoAmI && other.hostile && Player.hostile && other.team != Player.team))
+                || !MedicHealingNet.Allied(Player, other))
                 continue;
             float distance = other.DistanceSQ(Main.MouseWorld);
             if (distance < best)

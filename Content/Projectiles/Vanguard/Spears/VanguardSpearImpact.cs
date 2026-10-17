@@ -1,6 +1,5 @@
 using System;
 using ArknightsMod.Content.Items.Weapons.Vanguard;
-using ArknightsMod.Content.Projectiles.Charged;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
@@ -41,20 +40,9 @@ public sealed class VanguardSpearImpact : ModProjectile
                 SoundEngine.PlaySound(SoundID.Item14 with { Volume = .45f, Pitch = .35f }, Projectile.Center);
         }
     }
-    public override bool PreDraw(ref Color lightColor)
-    {
-        float progress = Projectile.ai[2] / 20f;
-        Color color = VanguardSpearRules.Tint((VanguardSpearKind)(int)Projectile.ai[0]);
-        // Diameter matches the collision radius. No full-screen white flash.
-        using (new ChargedOperatorVfx.Pass(false))
-            ChargedOperatorVfx.Sprite("ImpactPetals", Projectile.Center, new Vector2(Radius * 1.6f) * (.6f + progress * .4f), color * (.6f * (1 - progress)));
-        using (new ChargedOperatorVfx.Pass(true))
-        {
-            ChargedOperatorVfx.Sprite("RuptureRing", Projectile.Center, new Vector2(Radius * 2) * (.75f + .25f * progress), color * (1 - progress));
-            ChargedOperatorVfx.Sprite("StarCore", Projectile.Center, new Vector2(Radius * .7f) * (1 - progress), Color.Lerp(color, Color.White, .2f) * (1 - progress));
-        }
-        return false;
-    }
+    // The expanding presentation is owned by VanguardThrowPulse. This is only the compact
+    // damage carrier; drawing another centered bloom here would re-create the clustered core.
+    public override bool PreDraw(ref Color lightColor) => false;
 }
 
 // Bagpipe's S2/S3 extra strikes are bound to the hit enemy and delayed 4/8 ticks.

@@ -1,4 +1,4 @@
-using ArknightsMod.Assets.Effects;
+﻿using ArknightsMod.Assets.Effects;
 using ArknightsMod.Content.Items;
 using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.NPCs.Friendly;
@@ -184,6 +184,9 @@ namespace ArknightsMod
 		public override void HandlePacket(BinaryReader reader, int whoAmI) {
 			short id = reader.ReadInt16();
 			switch ((ArkMessageID)id) {
+                case ArkMessageID.MedicHealingGrant:
+                    global::ArknightsMod.Content.Items.Weapons.Medic.MedicHealingNet.Receive(reader);
+                    break;
 				case ArkMessageID.RoundStoneAltarState:
 					global::ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4.RoundStoneAltarPlayer.ReceiveState(reader, whoAmI);
 					break;
@@ -301,6 +304,7 @@ namespace ArknightsMod
 			EndfieldGatheringRequest,
 			EndfieldGatheringReply,
 			RoundStoneAltarState,
+            MedicHealingGrant,
 		}
 	}
 	//public class Ex : GlobalNPC

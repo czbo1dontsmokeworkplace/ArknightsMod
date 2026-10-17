@@ -37,9 +37,10 @@ public class PozemkaCrossbow : CrossbowWeaponBase
         Recipe recipe = CreateRecipe()
             .AddIngredient<global::ArknightsMod.Content.Items.Material.CrystallineElectronicUnit>(1)
             .AddIngredient<global::ArknightsMod.Content.Items.Material.OrirockConcentration>(2);
-        recipe.AddIngredient<global::ArknightsMod.Content.Items.Weapons.Sniper.Branches.ArchettoCrossbow>();
+        recipe.AddIngredient<global::ArknightsMod.Content.Items.Weapons.Sniper.Branches.BluePoisonCrossbow>();
         recipe.AddIngredient(ItemID.FragmentVortex, 10);
         recipe.AddTile(TileID.LunarCraftingStation);
         recipe.Register();
     }
 }
+

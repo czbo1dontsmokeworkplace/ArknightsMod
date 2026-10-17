@@ -20,7 +20,7 @@ public class SchwarzBow : CrossbowWeaponBase
         Item.autoReuse = true;
         Item.value = Item.sellPrice(0, 40, 30, 0);
         Item.DamageType = DamageClass.Ranged;
-		Item.damage = 141;
+        Item.damage = 162;
         Item.knockBack = 10f;
         Item.noMelee = true;
         Item.shootSpeed = 20f;

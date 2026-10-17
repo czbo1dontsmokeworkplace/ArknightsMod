@@ -27,11 +27,9 @@ public sealed class VanguardReserveLayer : PlayerDrawLayer
         Add(ref drawInfo, center, new Vector2(58, 6), new Color(38, 45, 58));
         float width = 56 * state.Reserve.Ratio;
         if (width > 0) Add(ref drawInfo, center + new Vector2((width - 56) / 2, 0), new Vector2(width, 4), color);
-        // Three / four / five pips communicate the number of throws before the player spends it.
-        int count = VanguardSpearRules.VolleyCount(weapon.Kind);
-        for (int i = 0; i < count; i++)
-            Add(ref drawInfo, center + new Vector2((i - (count - 1) / 2f) * 8, -8), new Vector2(4, 2),
-                state.Reserve.Ready ? color : new Color(70, 78, 90));
+        // Five segments show the five 20% melee charges.
+        for (int i = 1; i < 5; i++)
+            Add(ref drawInfo, center + new Vector2(-28 + i * 11.2f, 0), new Vector2(1, 4), new Color(18, 24, 35));
         if (state.ReadyFlash > 0)
             Add(ref drawInfo, center + new Vector2(0, 7), new Vector2(58, 1), color * (state.ReadyFlash / 24f));
     }

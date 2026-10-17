@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using ArknightsMod.Content;
 using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.Items.Weapons.Guard.Specter;
@@ -23,7 +23,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Blaze
 		public const float ExtensionAttackMultiplier = 2f;
 
 		// 保留普通咬合 7 帧及 S3 原有节奏；153 × 1.15 ≈ 176。
-		protected override int[] EliteDamage => [176, 176, 176];
+		protected override int[] EliteDamage => [153, 153, 153];
 
 		private static SoundStyle SkillActiveSfx;
 
@@ -127,13 +127,9 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Blaze
 
 		public override void AddRecipes() {
 			CreateRecipe()
-					.AddIngredient<global::ArknightsMod.Content.Items.Material.OptimizedDevice>(1)
-					.AddIngredient<global::ArknightsMod.Content.Items.Material.OrironCluster>(2)
 					.AddIngredient(ModContent.ItemType<SpecterBoneSaw>())
 					.AddIngredient(ItemID.HallowedBar, 10)
 					.AddIngredient(ItemID.SoulofFright)
-					.AddIngredient(ItemID.SoulofMight)
-					.AddIngredient(ItemID.SoulofSight)
 					.AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>())
 					.Register();
 		}

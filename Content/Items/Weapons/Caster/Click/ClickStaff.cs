@@ -1,4 +1,4 @@
-using ArknightsMod.Content.Items.Weapons.Caster;
+﻿using ArknightsMod.Content.Items.Weapons.Caster;
 using ArknightsMod.Players;
 using Terraria;
 using Terraria.ID;
@@ -10,7 +10,7 @@ public sealed class ClickStaff : MechAccordStaffBase
     protected override int[] EliteDamage => [52, 52, 52];
     internal override bool IsRockrock => false;
     // Goldenglow's ordinary cursor acquisition disk is 225 px.
-    internal override float SearchRadius => 225f * .7f * 1.5f;
+    internal override float SearchRadius => 225f * 1.5f;
     internal override float Reach => 1050f;
     internal override int PulseInterval => 24;
     // Vanilla Inferno Fork keeps Click visually distinct from Rockrock and Goldenglow.

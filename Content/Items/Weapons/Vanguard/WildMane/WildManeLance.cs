@@ -7,7 +7,7 @@ namespace ArknightsMod.Content.Items.Weapons.Vanguard.WildMane;
 public sealed class WildManeLance : VanguardSpearWeapon
 {
     public override VanguardSpearKind Kind => VanguardSpearKind.WildMane;
-    // Placeholder: reuse the mod's existing spear art for the mother/child silhouette.
+    // Placeholder: reuse the mod's existing spear art until dedicated Wild Mane lance art is supplied.
     public override string Texture => "ArknightsMod/Content/Items/Weapons/Guard/Hongdou/HongdouLance";
     protected override int Rarity => ItemRarityID.Pink;
     protected override int[] EliteDamage => [77, 91, 106];

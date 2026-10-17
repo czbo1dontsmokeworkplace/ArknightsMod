@@ -45,9 +45,10 @@ Items: {
 		Tooltip:
 			'''
 			Post-Skeletron
-			Hold left-click for 1.5 seconds; the two sights converge at full charge. Release to fire.
-			Charge increases damage, shot size and knockback; horizontal mobility falls to 12%.
-			Consumes one bullet on release, converting it to a unique shot.
+			Hold left-click to automatically fire one straight special bullet every 60 ticks for 100% damage.
+			Hold right-click for 1.5 seconds, then release. Full charge fires a 360% damage laser with unlimited enemy piercing.
+			Releasing right-click below full charge fires a special bullet that hits up to 4 enemies: 50% damage at 0% charge, 100% damage at 80%-99% charge.
+			Right-click bullet damage rises linearly from 0% to 80% charge. Converts all ammunition and consumes one bullet per shot. Charging does not reduce movement speed.
 			'''
 	}
 
@@ -56,9 +57,10 @@ Items: {
 		Tooltip:
 			'''
 			Early Hardmode
-			Hold left-click for 1.5 seconds; the two sights converge at full charge. Release to fire.
-			Charge increases damage, shot size and knockback; horizontal mobility falls to 12%.
-			Consumes one bullet on release, converting it to a unique shot.
+			Hold left-click to automatically fire one straight special bullet every 60 ticks for 100% damage.
+			Hold right-click for 1.5 seconds, then release. Full charge fires a 360% damage laser with unlimited enemy piercing.
+			Releasing right-click below full charge fires a special bullet that hits up to 4 enemies: 50% damage at 0% charge, 100% damage at 80%-99% charge.
+			Right-click bullet damage rises linearly from 0% to 80% charge. Converts all ammunition and consumes one bullet per shot. Charging does not reduce movement speed.
 			'''
 	}
 
@@ -67,9 +69,10 @@ Items: {
 		Tooltip:
 			'''
 			Post-Plantera
-			Hold left-click for 1.5 seconds; the two sights converge at full charge. Release to fire.
-			Charge increases damage, shot size and knockback; horizontal mobility falls to 12%.
-			Consumes one bullet on release, converting it to a unique shot.
+			Hold left-click to automatically fire one straight special bullet every 60 ticks for 100% damage.
+			Hold right-click for 1.5 seconds, then release. Full charge fires a 360% damage laser with unlimited enemy piercing.
+			Releasing right-click below full charge fires a special bullet that hits up to 4 enemies: 50% damage at 0% charge, 100% damage at 80%-99% charge.
+			Right-click bullet damage rises linearly from 0% to 80% charge. Converts all ammunition and consumes one bullet per shot. Charging does not reduce movement speed.
 			'''
 	}
 
@@ -78,19 +81,19 @@ Items: {
 		Tooltip:
 			'''
 			Lunar events
-			Hold left-click for 1.5 seconds; the two sights converge at full charge. Release to fire.
-			Charge increases damage, shot size and knockback; horizontal mobility falls to 12%.
-			Consumes one bullet on release, converting it to a unique shot.
+			Hold left-click to fire one 100% damage high-speed special bullet every 60 ticks, without recoil; hits up to 4 enemies.
+			Hold right-click to load up to 6 feathershine blades. Each costs one bullet and reduces the next loading time by 5%.
+			Blades line up in parallel around the center and launch together on release, each dealing 100% damage, piercing walls and enemies without homing or gravity.
+			Uses vanilla Terraprisma blade art for now. Loading does not slow movement; switching weapons cancels the load.
 			After 5 seconds without taking damage, feathershine shots deal 20% more damage.
 			'''
 	}
-
-	BluePoisonCrossbow: {
-		DisplayName: Blue Poison's Venom Crossbow
+	MelaniteCrossbow: {
+		DisplayName: Melanite's Helix Crossbow
 		Tooltip:
 			'''
-			Mechanical bosses
-			Uses arrows, converting them to unique crossbow bolts.
+			Mechanical Boss progression
+			Converts arrows into heavy bolts wrapped in two purple helices. Fires one piercing arrow per shot.
 			'''
 	}
 
@@ -112,12 +115,12 @@ Items: {
 			'''
 	}
 
-	ArchettoCrossbow: {
-		DisplayName: Archetto's Landen Crossbow
+	BluePoisonCrossbow: {
+		DisplayName: Blue Poison's Venom Crossbow
 		Tooltip:
 			'''
 			Post-Plantera
-			Uses arrows, converting them to unique crossbow bolts.
+			Converts arrows into venom bolts. Hold left-click for rapid four-shot bursts.
 			'''
 	}
 }
@@ -223,7 +226,7 @@ Skills: {
 
 		2: {
 			Label: Ally Support
-			Desc: Manual: post-shot recovery becomes 10 ticks; fully charged shots add one support arrow toward an enemy engaging a nearby allied player.
+			Desc: Manual: post-shot recovery becomes 10 ticks; loaded feathershine blades retain their parallel volley.
 		}
 
 		3: {
@@ -236,15 +239,15 @@ Skills: {
 		}
 	}
 
-	BluePoisonCrossbow: {
+	MelaniteCrossbow: {
 		1: {
-			Label: Double Shot
-			Desc: Automatic: next shot deals 180% damage and adds one arrow, preferring another target.
+			Label: Helix Overpressure
+			Desc: Automatic: the next single bolt deals 220% damage, retaining six-target piercing and 12 armor penetration.
 		}
 
 		2: {
-			Label: Venom Spray
-			Desc: Manual: shots deal 150% damage and add two arrows, preferring other targets.
+			Label: Penetration Unbound
+			Desc: Manual: for 20 seconds, each single bolt deals 165% damage, pierces eight enemies and gains 20 total armor penetration.
 		}
 	}
 
@@ -272,37 +275,30 @@ Skills: {
 		}
 	}
 
-	ArchettoCrossbow: {
+	BluePoisonCrossbow: {
 		1: {
-			Label: Dispersing Arrows
-			Desc: Automatic: next shot deals 200% damage and adds three arrows, preferring other targets.
+			Label: Double Shot
+			Desc: Automatic: next shot deals 180% damage and adds one arrow, preferring another target.
 		}
 
 		2: {
-			Label: Pursuing Arrows
-			Desc:
-				'''
-				Manual: fire four arrows at 140% damage; each first hit ricochets once to another target within 360 pixels for 80% damage.
-				Each shot consumes one arrow; this volley finishes after releasing the mouse.
-				'''
-		}
-
-		3: {
-			Label: Thundering Arrows
-			Desc: Manual: shots deal 130% damage, intervals are reduced by 20%, and each shot adds one arrow.
+			Label: Venom Spray
+			Desc: Manual: shots deal 150% damage and add two arrows, preferring other targets.
 		}
 	}
 }
 
 ChargedArsenal: {
+	Tick: Tick
+	Tock: Tock
 	SkillKey: Press [{0}] to activate the selected manual skill (rebind in Settings → Controls)
 	Unbound: Bind Skill Activate in Settings → Controls
 	Placeholder: Temporary weapon art and skill icons
 }
 
 Crossbows: {
-	BluePoison: Slow venom bolts pierce six enemies, gain 12 armor penetration and inflict Venom for 4 seconds.
+	Melanite: Single purple helix bolts pierce six enemies and gain 12 armor penetration.
 	Provence: Slow heavy bolts pierce nine enemies with 25 armor penetration.
 	GreyThroat: Hold left-click for rapid three-shot bursts.
-	Archetto: Hold left-click for rapid four-shot bursts.
+	BluePoison: Hold left-click for rapid four-shot bursts. Venom bolts hit up to two enemies and inflict Venom for 4 seconds.
 }

@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using ArknightsMod.Content.Items.Weapons.Vanguard;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -9,100 +8,82 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles.Vanguard.Spears;
 
-// ai[0] operator, ai[1] final throw (1) / mother spear (0) / child spear (2), ai[2] real age.
+// Exactly one physical javelin per right-click, for every operator.
 public sealed class VanguardThrownSpear : ModProjectile
 {
     public override string Texture => "Terraria/Images/MagicPixel";
     public VanguardSpearKind Kind => (VanguardSpearKind)(int)Projectile.ai[0];
-    private bool split, hitEnemy, finalImpact;
-    private Vector2 start;
-    public override void SetStaticDefaults()
-    {
-        ProjectileID.Sets.TrailCacheLength[Type] = 28;
-        ProjectileID.Sets.TrailingMode[Type] = 2;
-    }
+    private bool impactSpent;
+    private Vector2 start, previousFrame;
+    private readonly Vector2[] history = new Vector2[24];
     public override void SetDefaults()
     {
         Projectile.width = Projectile.height = 14; Projectile.friendly = true;
         Projectile.DamageType = DamageClass.Melee; Projectile.ignoreWater = true; Projectile.tileCollide = true;
         Projectile.extraUpdates = VanguardSpearRules.FlightUpdates - 1;
-        Projectile.timeLeft = 80 * VanguardSpearRules.FlightUpdates;
+        Projectile.timeLeft = 75 * VanguardSpearRules.FlightUpdates;
         Projectile.usesLocalNPCImmunity = true; Projectile.localNPCHitCooldown = -1;
     }
     public override void OnSpawn(IEntitySource source)
     {
-        start = Projectile.Center;
-        Projectile.penetrate = Projectile.ai[1] == 2 ? 1 : VanguardSpearRules.Penetration(Kind);
+        start = previousFrame = Projectile.Center;
+        Projectile.penetrate = VanguardSpearRules.Penetration(Kind);
+        VanguardSpearVfx.Throw(start, Projectile.velocity.SafeNormalize(Vector2.UnitX), Kind);
+        if (Projectile.owner == Main.myPlayer) VanguardThrowPulse.Spawn(Projectile, start, false);
     }
-    public override void SendExtraAI(BinaryWriter writer)
-    { writer.Write(split); writer.Write(finalImpact); writer.Write(start.X); writer.Write(start.Y); }
-    public override void ReceiveExtraAI(BinaryReader reader)
-    { split = reader.ReadBoolean(); finalImpact = reader.ReadBoolean(); start = new(reader.ReadSingle(), reader.ReadSingle()); }
     public override void AI()
     {
         if (!VanguardSpearRules.ValidKind((int)Kind) || !float.IsFinite(Projectile.velocity.X) || !float.IsFinite(Projectile.velocity.Y))
         { Projectile.Kill(); return; }
         Projectile.rotation = Projectile.velocity.ToRotation();
-        if (Projectile.numUpdates != 0) return;
-        Projectile.ai[2]++;
-        if (Projectile.ai[2] >= 75 || Vector2.DistanceSquared(start, Projectile.Center) > 1400 * 1400)
+        // Check the range on every substep; extra updates cannot overshoot by a full frame.
+        if (Vector2.DistanceSquared(start, Projectile.Center) > VanguardSpearRules.FlightRange * VanguardSpearRules.FlightRange)
         { Projectile.Kill(); return; }
+        if (Projectile.numUpdates != 0) return;
+        if (++Projectile.ai[2] >= 75) { Projectile.Kill(); return; }
+        // Real-frame tip history, independent of extraUpdates and frame rate.
+        Array.Copy(history, 0, history, 1, history.Length - 1); history[0] = Projectile.Center;
         Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitX);
-        VanguardSpearVfx.Flight(Projectile.Center, direction, Kind, (int)Projectile.ai[2], Projectile.ai[1] == 2);
-        // Mother spear releases its internal child after 12 frames, or immediately on impact.
-        // Children are explicitly tagged and can never split again.
-        if (Kind == VanguardSpearKind.WildMane && Projectile.ai[1] != 2 && Projectile.ai[2] == 12)
-            Split();
+        // Three bounded samples along the distance actually travelled, not three effects at one point.
+        for (int i = 1; i <= 3; i++)
+            VanguardSpearVfx.Flight(Vector2.Lerp(previousFrame, Projectile.Center, i / 3f), direction, Kind, (int)Projectile.ai[2] * 3 + i, false);
+        previousFrame = Projectile.Center;
     }
     public override bool? CanHitNPC(NPC target) => target.friendly ? false : null;
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
     {
-        // Compact leading edge plus the sub-update swept segment: the decorative shaft is not
-        // a giant damage rectangle, and high-speed throws cannot tunnel through thin enemies.
         float point = 0;
         return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(),
-            Projectile.Center - Projectile.velocity, Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitX) * 7, 12, ref point);
+            Projectile.Center - Projectile.velocity, Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitX) * 7, 14, ref point);
     }
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
     {
-        hitEnemy = true;
-        VanguardSpearVfx.Impact(Projectile.Center, Projectile.velocity.SafeNormalize(Vector2.UnitX), Kind, Projectile.ai[1] == 1);
+        Vector2 point = target.Hitbox.ClosestPointInRect(Projectile.Center);
+        VanguardSpearVfx.Impact(point, Projectile.velocity.SafeNormalize(Vector2.UnitX), Kind, true);
         if (Projectile.owner != Main.myPlayer) return;
-        if (Kind == VanguardSpearKind.WildMane && Projectile.ai[1] != 2) Split();
-        if (!finalImpact && Projectile.ai[1] == 1)
+        if (!impactSpent)
         {
-            finalImpact = true; Projectile.netUpdate = true;
+            impactSpent = true;
+            VanguardSpearSpark.Release(Projectile, point, Kind, true);
+            VanguardThrowPulse.Spawn(Projectile, point, true);
             float radius = Kind == VanguardSpearKind.Bagpipe ? 76 : Kind == VanguardSpearKind.Vigna ? 40 : 52;
             int blastDamage = Kind == VanguardSpearKind.Bagpipe ? Projectile.damage : Kind == VanguardSpearKind.Vigna ? Projectile.damage / 2 : 0;
-            VanguardSpearImpact.Spawn(Projectile, Projectile.Center, Kind, blastDamage, radius);
+            VanguardSpearImpact.Spawn(Projectile, point, Kind, blastDamage, radius);
         }
-        // Deliberately no Reserve.FillFromMelee here, on children, or on impact projectiles.
     }
-    private void Split()
+    public override bool OnTileCollide(Vector2 oldVelocity)
     {
-        if (split || Projectile.owner != Main.myPlayer) return;
-        split = true; Projectile.netUpdate = true;
-        Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitX);
-        for (int i = -1; i <= 1; i += 2)
-        {
-            Projectile child = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center,
-                direction.RotatedBy(i * .11f) * VanguardSpearRules.FlightSpeed(Kind) * 1.12f / VanguardSpearRules.FlightUpdates,
-                Type, Math.Max(1, Projectile.damage / 2), Projectile.knockBack * .6f, Projectile.owner, (int)Kind, 2);
-            child.CritChance = Projectile.CritChance;
-        }
-        VanguardSpearVfx.Impact(Projectile.Center, direction, Kind, false);
+        VanguardSpearVfx.Impact(Projectile.Center, oldVelocity.SafeNormalize(Vector2.UnitX), Kind, false);
+        if (Projectile.owner == Main.myPlayer) VanguardThrowPulse.Spawn(Projectile, Projectile.Center, false);
+        return true;
     }
-    public override void OnKill(int timeLeft)
-    {
-        // Wall/lifetime expiry is only a quiet visual fizzle, never an explosion or a split.
-        if (!hitEnemy) VanguardSpearVfx.Fizzle(Projectile.Center, Kind);
-    }
+    public override void OnKill(int timeLeft) => VanguardSpearVfx.Fizzle(Projectile.Center, Kind);
     public override bool PreDraw(ref Color lightColor)
     {
-        VanguardSpearVfx.FlightRibbon(Projectile, Kind);
+        VanguardSpearVfx.FlightTrails(Projectile.Center, history, Kind, Projectile.ai[2]);
         Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitX);
-        float length = Projectile.ai[1] == 2 ? 42 : 62 + (int)Kind * 5;
-        VanguardSpearVfx.DrawSpear(Projectile.Center - direction * length * .78f, Projectile.Center, Kind, lightColor, Projectile.ai[1] == 1);
+        float length = 98 + (int)Kind * 10;
+        VanguardSpearVfx.DrawSpear(Projectile.Center - direction * length * .78f, Projectile.Center, Kind, lightColor, true, true, Projectile.ai[2]);
         return false;
     }
 }

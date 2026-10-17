@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,22 +9,14 @@ namespace ArknightsMod.Content.Projectiles.Caster.MechAccord;
 
 internal static class ClickSelection
 {
-    internal const int MaxTargets = 80;
-    internal static Rectangle Area(Vector2 start, Vector2 end)
-    {
-        Point a = start.ToTileCoordinates(), b = end.ToTileCoordinates();
-        b.X = Math.Clamp(b.X, a.X - 19, a.X + 19);
-        b.Y = Math.Clamp(b.Y, a.Y - 19, a.Y + 19);
-        return new Rectangle(Math.Min(a.X, b.X) * 16, Math.Min(a.Y, b.Y) * 16,
-            (Math.Abs(a.X - b.X) + 1) * 16, (Math.Abs(a.Y - b.Y) + 1) * 16);
-    }
-    internal static List<NPC> Targets(Rectangle area, Player player, float reach)
+    internal const int MaxTargets = 3;
+    internal static List<NPC> Targets(Vector2 cursor, Player player, float reach, float radius)
     {
         List<NPC> result = new();
         foreach (NPC npc in Main.ActiveNPCs)
-            if (npc.CanBeChasedBy() && area.Intersects(npc.Hitbox) && npc.DistanceSQ(player.Center) <= reach * reach)
+            if (npc.CanBeChasedBy() && npc.DistanceSQ(cursor) <= radius * radius && npc.DistanceSQ(player.Center) <= reach * reach)
                 result.Add(npc);
-        result.Sort((a,b) => a.DistanceSQ(area.Center.ToVector2()).CompareTo(b.DistanceSQ(area.Center.ToVector2())));
+        result.Sort((a,b) => a.DistanceSQ(cursor).CompareTo(b.DistanceSQ(cursor)));
         if (result.Count > MaxTargets) result.RemoveRange(MaxTargets, result.Count - MaxTargets);
         return result;
     }

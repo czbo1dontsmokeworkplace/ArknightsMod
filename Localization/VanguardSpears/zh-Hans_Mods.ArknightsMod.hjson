@@ -10,12 +10,11 @@ Items: {
 	}
 
 	WildManeLance: {
-		DisplayName: 野鬃的子母骑枪
+		DisplayName: 野鬃的冲锋骑枪
 		Tooltip:
 			'''
 			全部机械Boss后
-			母枪可贯穿2个敌人；飞行12帧或首次命中时释放2支半伤害子枪。
-			子枪不会继续分裂，撞墙不会产生子枪。
+			重投标枪可贯穿2个敌人，命中释放橙色枪锋火花；不再分裂子枪。
 			'''
 	}
 }
@@ -49,10 +48,13 @@ Skills: {
 VanguardSpears: {
 	Controls:
 		'''
-		左键循环：上挑 → 下劈 → 贯穿突刺。
-		先锋储备条位于头顶：持握{1}秒回满，左键本体命中敌人立即充满。
-		满条时右键消耗整条，连续投出{0}支长枪；投枪及追加攻击不回复储备。
-		四把长枪共用储备，切换后暂停恢复，死亡清空。
+		左键匀速刺出并收回，命中释放少量可造成伤害的下落火花。
+		先锋储备条位于头顶：持握{1}秒从空回满，左键本体每次命中敌人额外充能20%。
+		满条时右键消耗整条，投出1支重型标枪，造成{0}倍伤害。
+		重投首次命中释放6至9枚火花，每枚造成标枪10%的伤害。
+		左键命中随机向前抛出1至3枚火花，每枚造成该次刺击18%的伤害。
+		火花先散射再下落，5帧后可造成伤害；同一敌人每15帧至多命中一次，总计至多5次。
+		投枪、火花和追加攻击不回复储备；四把长枪共用储备，切换后暂停恢复，死亡清空。
 		'''
 	SkillKey: 按[{0}]开启手动技能；点击技能图标切换技能。
 	Unbound: 请在设置 → 控制 → 模组按键中绑定“技能开启”。
@@ -63,5 +65,7 @@ Projectiles: {
 	VanguardSpearHoldout.DisplayName: 先锋长枪
 	VanguardThrownSpear.DisplayName: 先锋长枪
 	VanguardSpearImpact.DisplayName: 先锋长枪
+	VanguardSpearSpark.DisplayName: 先锋余烬
+	VanguardThrowPulse.DisplayName: 先锋重投冲击
 	VanguardFollowupStrike.DisplayName: 先锋长枪
 }

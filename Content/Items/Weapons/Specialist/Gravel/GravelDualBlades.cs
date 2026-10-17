@@ -1,4 +1,4 @@
-using ArknightsMod.Content.Items.Weapons;
+﻿using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.Projectiles.Specialist.Gravel;
 using ArknightsMod.Content.Projectiles.Specialist.Red;
 using ArknightsMod.Players;
@@ -50,34 +50,32 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.Gravel
 
 		public override bool AltFunctionUse(Player player) => false;
 
-		public override bool CanUseItem(Player player) {
-			var mp = player.GetModPlayer<WeaponPlayer>();
+		internal void TryActivateSkill(Player player) {
+            if (player.whoAmI != Main.myPlayer || player.dead || player.CCed || player.noItems) return;
+            var mp = player.GetModPlayer<WeaponPlayer>();
+            if (mp.CurrentSkill?.Key.Item != Name || mp.StockCount <= 0 || mp.SkillActive) return;
+            mp.SkillActive = true;
+            mp.SkillTimer = 0;
+            mp.DelStockCount();
+            SoundEngine.PlaySound(SkillActiveSfx, player.Center);
+            if (mp.Skill == 1) {
+                var shield = player.GetModPlayer<GravelShieldPlayer>();
+                shield.ShieldMax = (int)(player.statLifeMax2 * 1.5f);
+                shield.ShieldHp = shield.ShieldMax;
+                if (player.ownedProjectileCounts[ModContent.ProjectileType<GravelShieldVfx>()] <= 0)
+                    Projectile.NewProjectile(player.GetSource_FromThis(), player.Center, Vector2.Zero,
+                        ModContent.ProjectileType<GravelShieldVfx>(), 0, 0f, player.whoAmI);
+            }
+        }
 
-			if (ArknightsKeybinds.SkillActivatePressed(player)) {
-				if (mp.StockCount > 0 && !mp.SkillActive) {
-					mp.SkillActive = true;
-					mp.SkillTimer = 0;
-					mp.DelStockCount();
-					SoundEngine.PlaySound(SkillActiveSfx, player.Center);
-
-					if (mp.Skill == 1) {
-						// S2 激活：初始化护盾值
-						var sp = player.GetModPlayer<GravelShieldPlayer>();
-						sp.ShieldMax = (int)(player.statLifeMax * 1.5f);
-						sp.ShieldHp = sp.ShieldMax;
-
-						// 生成护盾 VFX
-						if (player.ownedProjectileCounts[ModContent.ProjectileType<GravelShieldVfx>()] <= 0)
-							Projectile.NewProjectile(player.GetSource_FromThis(), player.Center, Vector2.Zero,
-								ModContent.ProjectileType<GravelShieldVfx>(), 0, 0f, player.whoAmI);
-					}
-				}
-				return false;
-			}
-
-			return player.ownedProjectileCounts[ModContent.ProjectileType<RedDaggerHoldout>()] <= 0
-				&& base.CanUseItem(player);
-		}
+        public override bool CanUseItem(Player player) {
+            if (ArknightsKeybinds.SkillActivatePressed(player)) {
+                TryActivateSkill(player);
+                return false;
+            }
+            return player.ownedProjectileCounts[ModContent.ProjectileType<RedDaggerHoldout>()] <= 0
+                && base.CanUseItem(player);
+        }
 
 		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
 			// 与红的匕首保持同一联机生成路径：只由拥有者客户端创建持握体，
@@ -104,13 +102,13 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.Gravel
 				var sp = player.GetModPlayer<GravelShieldPlayer>();
 				float duration = (mp.CurrentSkill?.CurrentLevelData.ActiveTime ?? 10f) * 60f;
 				float remaining = 1f - System.Math.Min(mp.SkillTimer / duration, 1f);
-				int shieldCap = (int)(sp.ShieldMax * remaining);
+				int shieldCap = (int)(player.statLifeMax2 * 1.5f * remaining);
 
 				// 护盾值只能随时间或伤害减少，不回升
 				if (sp.ShieldHp > shieldCap) sp.ShieldHp = shieldCap;
 
 				// 让 ResetEffects 不会清零（每帧写入 ShieldMax）
-				sp.ShieldMax = (int)(player.statLifeMax * 1.5f);
+				sp.ShieldMax = (int)(player.statLifeMax2 * 1.5f);
 			}
 		}
 	}

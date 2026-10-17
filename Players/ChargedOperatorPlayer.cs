@@ -13,6 +13,8 @@ namespace ArknightsMod.Players;
 public sealed class ChargedOperatorPlayer : ModPlayer
 {
     internal int Recovery;
+    internal ulong NextSniperLeftShot;
+    internal bool SuppressSniperRight;
     internal float AimCharge;
     private bool keyDown;
     private int shields;
@@ -69,9 +71,6 @@ public sealed class ChargedOperatorPlayer : ModPlayer
         foreach (Projectile p in Main.ActiveProjectiles)
             if (p.owner == Player.whoAmI && p.ModProjectile is ChargedOperatorHoldout hold && p.ai[2] == 0)
             { AimCharge = hold.Completion; break; }
-        float factor = ChargedOperatorRules.MovementMultiplier(AimCharge);
-        Player.maxRunSpeed *= factor; Player.accRunSpeed *= factor; Player.runAcceleration *= factor;
-        Player.velocity.X *= MathHelper.Lerp(1f, .78f, AimCharge);
     }
     public override void PostUpdateEquips()
     {

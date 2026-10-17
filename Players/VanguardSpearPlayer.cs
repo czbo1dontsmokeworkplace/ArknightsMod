@@ -11,23 +11,20 @@ namespace ArknightsMod.Players;
 public sealed class VanguardSpearPlayer : ModPlayer
 {
     public VanguardReserve Reserve { get; private set; } = new();
-    private VanguardSpearKind comboKind;
-    private int combo, comboAge;
     private bool skillKeyDown, wasReady;
     internal int ReadyFlash;
     public override void Initialize() => Reserve = new();
     public override void UpdateDead()
     {
-        Reserve.Clear(); combo = comboAge = ReadyFlash = 0;
+        Reserve.Clear(); ReadyFlash = 0;
         skillKeyDown = wasReady = false;
     }
     public override void PostUpdate()
     {
         if (Player.whoAmI != Main.myPlayer || Player.dead) return;
         if (ReadyFlash > 0) ReadyFlash--;
-        if (++comboAge > VanguardSpearRules.ComboTimeout) combo = 0;
         if (Player.HeldItem.ModItem is not VanguardSpearWeapon weapon)
-        { combo = 0; skillKeyDown = false; return; }
+        { skillKeyDown = false; return; }
         Reserve.Tick(true);
         if (Reserve.Ready && !wasReady)
         {
@@ -44,13 +41,6 @@ public sealed class VanguardSpearPlayer : ModPlayer
         }
         skillKeyDown = pressed;
     }
-    public int TakeCombo(VanguardSpearKind kind)
-    {
-        if (kind != comboKind || comboAge > VanguardSpearRules.ComboTimeout) combo = 0;
-        comboKind = kind; comboAge = 0;
-        int stage = combo; combo = (combo + 1) % 3; return stage;
-    }
-    internal void KeepComboAlive() => comboAge = 0;
     // Snapshot skill state at the start of an action. Changing the skill slot cannot mutate
     // already released spears or steal a charge for a volley which was refused.
     internal int AttackSkill(VanguardSpearKind kind, bool volley)

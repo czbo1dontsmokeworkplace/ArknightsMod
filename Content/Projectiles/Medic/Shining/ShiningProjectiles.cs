@@ -1,4 +1,4 @@
-using ArknightsMod.Common.Particle.T;
+﻿using ArknightsMod.Common.Particle.T;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -398,9 +398,9 @@ namespace ArknightsMod.Content.Projectiles.Medic.Shining
 				Projectile.localAI[0] = 1f;
 				ShiningVisuals.SpawnHealingArrival(destination);
 			}
-			if (Projectile.owner == Main.myPlayer)
+			if (Main.netMode != NetmodeID.MultiplayerClient)
 			{
-				owner.GetModPlayer<ShiningStaffPlayer>().CompletePendingHeal(HealAmount);
+				global::ArknightsMod.Content.Items.Weapons.Medic.MedicHealingNet.Heal(owner, owner, 2);
 				Projectile.netUpdate = true;
 			}
 		}

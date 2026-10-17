@@ -69,7 +69,12 @@ public sealed class CrossbowHoldout : ModProjectile
         if (Projectile.ai[2] != lastShotSerial)
         {
             lastShotSerial = Projectile.ai[2];
-            recoil = Kind == CrossbowKind.Schwarz ? 8f : 4f;
+            recoil = Kind switch {
+                CrossbowKind.Melanite => 6f,
+                CrossbowKind.Provence => 8f,
+                CrossbowKind.Schwarz => 10f,
+                CrossbowKind.GreyThroat or CrossbowKind.BluePoison or CrossbowKind.Pozemka => 3.5f,
+                _ => 4f };
             if (!Main.dedServ)
                 SoundEngine.PlaySound(new SoundStyle(SoundPath()) { Volume = Kind == CrossbowKind.Schwarz ? .65f : .4f,
                     MaxInstances = 4, PitchVariance = .08f }, Projectile.Center);
@@ -106,7 +111,12 @@ public sealed class CrossbowHoldout : ModProjectile
         Main.EntitySpriteDraw(texture, position - Main.screenPosition, null, lightColor, Projectile.rotation,
             texture.Size() * .5f, scale, flip);
         if (recoil > .4f)
-            CrossbowVisuals.DrawMuzzle(position + aim * width * .4f, aim, Kind, recoil / 8f);
+        {
+            // Match Fire's tile-clamped projectile origin, independent of item art and recoil.
+            Vector2 origin = player.MountedCenter;
+            Vector2 muzzle = origin + Collision.TileCollision(origin - new Vector2(4f), aim * 30f, 8, 8, true, true);
+            CrossbowVisuals.DrawMuzzle(muzzle, aim, Kind, recoil / 8f);
+        }
         return false;
     }
 }

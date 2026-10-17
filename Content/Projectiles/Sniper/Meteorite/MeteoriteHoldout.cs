@@ -1,4 +1,4 @@
-using ArknightsMod.Content.Items.Weapons.Sniper.Meteorite;
+﻿using ArknightsMod.Content.Items.Weapons.Sniper.Meteorite;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -28,7 +28,8 @@ public sealed class MeteoriteHoldout : ModProjectile
         { Projectile.Kill(); return; }
         if (Projectile.owner == Main.myPlayer)
         {
-            Vector2 aim = (Main.MouseWorld - player.MountedCenter).SafeNormalize(Vector2.UnitX * player.direction);
+            Vector2 anchor = new(MathHelper.Lerp(Main.MouseWorld.X, player.Center.X, .55f), player.Center.Y - 500f * player.gravDir);
+            Vector2 aim = (anchor - player.Center).SafeNormalize(-Vector2.UnitY * player.gravDir);
             if (Vector2.DistanceSquared(aim, Projectile.velocity) > .0001f)
             { Projectile.velocity = aim; Projectile.netUpdate = true; }
         }

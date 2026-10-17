@@ -294,6 +294,8 @@ Projectiles: {
 	// ChargedOperatorImpact.DisplayName: Charged Operator Impact
 	// ChargedOperatorShot.DisplayName: Charged Operator Shot
 	// DreadnoughtFragment.DisplayName: Dreadnought Fragment
+	// ChargedOperatorLaser.DisplayName: Charged Operator Laser
+	// PozemkaStarBolt.DisplayName: Pozemka Star Bolt
 }
 
 Keybinds: {

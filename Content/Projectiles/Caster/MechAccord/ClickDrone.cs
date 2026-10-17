@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using ArknightsMod.Content.Items.Weapons.Caster.Click;
@@ -19,10 +19,10 @@ public sealed class ClickDrone : ModProjectile
     private readonly List<(int Index,int Type)> targets = new();
     private int age = -1, batchDamage;
     private float spacing = 12;
-    private bool stun;
+    private bool stun, empowered;
     internal bool Busy => age >= 0;
     internal static bool VolleyDue(int tick,float interval) =>
-        tick==(int)MathF.Ceiling(interval)||tick==(int)MathF.Ceiling(interval*2);
+        tick == 15 || tick == 15 + (int)MathF.Ceiling(interval);
     public override void SetDefaults()
     {
         Projectile.width=14; Projectile.height=24; Projectile.timeLeft=120;
@@ -38,12 +38,12 @@ public sealed class ClickDrone : ModProjectile
             ModContent.ProjectileType<ClickDrone>(),0,0,player.whoAmI);
         return id<Main.maxProjectiles ? Main.projectile[id].ModProjectile as ClickDrone : null;
     }
-    internal void Begin(List<NPC> selected,int damage,bool applyStun,float speed)
+    internal void Begin(List<NPC> selected,int damage,bool applyStun,float speed,bool burst)
     {
         if(Busy || selected.Count==0) return;
         targets.Clear(); foreach(NPC npc in selected) targets.Add((npc.whoAmI,npc.type));
-        age=0;spacing=Math.Max(5,12f/speed);batchDamage=damage;stun=applyStun;
-        Fire(false); Projectile.netUpdate=true;
+        age=0;spacing=Math.Max(2,(burst ? 3f : 9f)/speed);batchDamage=damage;stun=applyStun;empowered=burst;
+        Projectile.netUpdate=true;
     }
     private bool Valid((int Index,int Type) entry,out NPC npc)
     {
@@ -57,7 +57,7 @@ public sealed class ClickDrone : ModProjectile
         foreach(var target in targets)
             if(Valid(target,out NPC npc))
             {
-                ClickTrackerLaser.Spawn(Projectile,npc,batchDamage,laser,stun,targets.Count);
+                ClickTrackerLaser.Spawn(Projectile,npc,batchDamage,laser,stun,targets.Count,empowered);
                 fired++;
             }
         if(laser&&fired>0)
@@ -65,13 +65,13 @@ public sealed class ClickDrone : ModProjectile
     }
     public override void SendExtraAI(BinaryWriter w)
     {
-        w.Write(age);w.Write(spacing);w.Write((byte)targets.Count);
+        w.Write(age);w.Write(spacing);w.Write(empowered);w.Write((byte)targets.Count);
         foreach(var t in targets){w.Write((short)t.Index);w.Write(t.Type);}
     }
     public override void ReceiveExtraAI(BinaryReader r)
     {
-        age=r.ReadInt32();spacing=Math.Clamp(r.ReadSingle(),5,24);int count=r.ReadByte();targets.Clear();
-        for(int i=0;i<count;i++){int index=r.ReadInt16(),type=r.ReadInt32();if(i<80)targets.Add((index,type));}
+        age=r.ReadInt32();spacing=Math.Clamp(r.ReadSingle(),2,24);empowered=r.ReadBoolean();int count=r.ReadByte();targets.Clear();
+        for(int i=0;i<count;i++){int index=r.ReadInt16(),type=r.ReadInt32();if(i<ClickSelection.MaxTargets)targets.Add((index,type));}
     }
     public override void AI()
     {
@@ -89,7 +89,7 @@ public sealed class ClickDrone : ModProjectile
             if(!Main.dedServ && age%12==0)
                 foreach(var t in targets) if(Valid(t,out NPC npc))
                     CasterSparkles.Spawn(npc.Top-new Vector2(0,5),Vector2.Zero,Color.White,.35f,14);
-            if(age>spacing*2+15){age=-1;targets.Clear();Projectile.netUpdate=true;}
+            if(age>=15+MathF.Ceiling(spacing)){age=-1;targets.Clear();Projectile.netUpdate=true;}
         }
         if(Projectile.owner==Main.myPlayer&&Main.GameUpdateCount%6==0)Projectile.netUpdate=true;
     }
@@ -99,9 +99,19 @@ public sealed class ClickDrone : ModProjectile
         Main.EntitySpriteDraw(texture,Projectile.Center-Main.screenPosition,null,lightColor,
             Projectile.rotation,texture.Size()*.5f,1,SpriteEffects.None);
         MechAccordVfx.DrawLens(Projectile.Center,false,14,age);
-        if(age>=0)
+        if (age >= 0 && age < 15)
+            foreach (var t in targets) if (Valid(t, out NPC npc))
+            {
+                Rectangle box = npc.Hitbox;
+                box.Inflate(8, 8);
+                float progress = (age + 1) / 15f;
+                box.Width = Math.Max(2, (int)(box.Width * progress));
+                box.Height = Math.Max(2, (int)(box.Height * progress));
+                ClickSelection.Draw(box);
+            }
+        if(age>=15)
         {
-            int since=age-(int)MathF.Ceiling(age>=MathF.Ceiling(spacing*2)?spacing*2:spacing);
+            int since = age - 15;
             if(since>=0&&since<15)
             {
                 using var light=new MechAccordVfx.Pass(BlendState.Additive);

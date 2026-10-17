@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using ArknightsMod.Content.Projectiles.Medic.Sussurro;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
@@ -89,9 +89,7 @@ public sealed class SussurroStaffPlayer : ModPlayer
         return true;
     }
 
-    internal static bool CanTreat(Player healer, Player target) => target.active && !target.dead
-        && (target.whoAmI == healer.whoAmI || (!healer.hostile && !target.hostile)
-            || (healer.team != 0 && healer.team == target.team))
+    internal static bool CanTreat(Player healer, Player target) => MedicHealingNet.Allied(healer, target)
         && target.DistanceSQ(healer.Center) <= 600f * 600f;
 
     internal static bool AllPlayersHealthy()
@@ -120,26 +118,6 @@ public sealed class SussurroStaffPlayer : ModPlayer
         return target;
     }
 
-    internal void ReleaseButterflies(Vector2 start, Vector2 aim)
-    {
-        RegisterCast(true);
-        int target = FindPatient(Player, Main.MouseWorld);
-        int heal = HealAmount(TreatmentActive ? mode : 0, rank);
-        // 仅右键按实测 2600 → 目标 600 缩放，不改左键面板和治疗量。
-        int damage = Math.Max(1, (int)MathF.Round(Player.GetWeaponDamage(Player.HeldItem) * (2f * 600f / 2600f)));
-        int count = Main.rand.Next(2, 4);
-        for (int i = 0; i < count; i++)
-        {
-            float spread = MathHelper.ToRadians(-5f + 10f * i / (count - 1f));
-            Vector2 velocity = aim.RotatedBy(spread) * 3.5f;
-            int index = Projectile.NewProjectile(Player.GetSource_ItemUse(Player.HeldItem), start, velocity,
-                ModContent.ProjectileType<SussurroHealingButterfly>(), damage, 1f, Player.whoAmI,
-                target, heal, DeepTreatment ? 1f : 0f);
-            if (Main.projectile.IndexInRange(index))
-                Main.projectile[index].CritChance = Player.GetWeaponCrit(Player.HeldItem);
-        }
-    }
-
     public override void PostUpdate()
     {
         if (skillLockout > 0)
@@ -156,12 +134,6 @@ public sealed class SussurroStaffPlayer : ModPlayer
             return;
         }
         castGrace--;
-        // 右键由手持弹幕管理三连发；不再叠加左键的被动治疗蝴蝶。
-        if (Player.ownedProjectileCounts[ModContent.ProjectileType<SussurroStaffHoldout>()] > 0)
-        {
-            healingClock = 0;
-            return;
-        }
         if (++healingClock < HealInterval(DeepTreatment))
             return;
         healingClock = 0;

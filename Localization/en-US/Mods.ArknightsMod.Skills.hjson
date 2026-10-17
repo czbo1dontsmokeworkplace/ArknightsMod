@@ -18,7 +18,7 @@ BagpipeSpear: {
 
 	2: {
 		Label: High-Impact Assault
-		Desc: Stores one charge every 4 SP, up to 3. A left-click action automatically spends one: 200% damage and one delayed equal-damage strike on hit (up to 6 targets per action). Right-click volleys neither spend nor benefit from this skill.
+		Desc: Stores one charge every 4 SP, up to 3. A left-click action automatically spends one: 200% damage and one delayed equal-damage strike on hit (up to 6 targets per action). Right-click throws neither spend nor benefit from this skill.
 	}
 
 	3: {

@@ -107,10 +107,9 @@ public abstract class CrossbowWeaponBase : UpgradeWeaponBase
         var skills = player.GetModPlayer<WeaponPlayer>();
         if (Kind == CrossbowKind.Kroos || (Kind != CrossbowKind.KroosAlter && skills.Skill == 0)
             || skills.SkillActive || skills.StockCount <= 0 || skills.SummonMode) return;
-        if ((Kind == CrossbowKind.Pozemka || Kind == CrossbowKind.Archetto) && skills.Skill == 1 && !player.HasAmmo(Item)) return;
+        if (Kind == CrossbowKind.Pozemka && skills.Skill == 1 && !player.HasAmmo(Item)) return;
         Activate(skills);
         if (Kind == CrossbowKind.Pozemka && skills.Skill == 1) ForcedShots = 5;
-        if (Kind == CrossbowKind.Archetto && skills.Skill == 1) ForcedShots = 4;
         if (ForcedShots > 0) Cadence.BeginForcedBurst(Main.GameUpdateCount);
     }
 
@@ -158,7 +157,7 @@ public abstract class CrossbowWeaponBase : UpgradeWeaponBase
         multiplier *= CrossbowBranchSkills.DamageMultiplier(Kind, skill);
 
         // 黑及新增分支统一转换；已有克洛丝/寒芒克洛丝/鸿雪保留木箭转换规则。
-        bool converted = Kind == CrossbowKind.Schwarz || Kind >= CrossbowKind.BluePoison || type == ProjectileID.WoodenArrowFriendly;
+        bool converted = Kind == CrossbowKind.Schwarz || Kind >= CrossbowKind.Melanite || type == ProjectileID.WoodenArrowFriendly;
         if (converted) type = ModContent.ProjectileType<CrossbowBolt>();
         var shot = Projectile.NewProjectileDirect(player.GetSource_ItemUse_WithPotentialAmmo(Item, ammo),
             muzzle, direction * speed, type, Math.Max(1, (int)(damage * multiplier)), knockback,
@@ -175,8 +174,6 @@ public abstract class CrossbowWeaponBase : UpgradeWeaponBase
             interval = skill == 2 && SkillShots >= 32 ? .25f : .5f;
         if (Kind == CrossbowKind.Pozemka && skill == 3) interval = 2f / 3f;
         if (Kind == CrossbowKind.GreyThroat && skill == 2) interval = .65f;
-        if (Kind == CrossbowKind.Archetto && skill == 3) interval = .8f;
-        if (Kind == CrossbowKind.Archetto && ForcedShots > 0) interval = .6f;
         float attackSpeed = player.GetTotalAttackSpeed(DamageClass.Ranged);
         if (kroosSkillShot)
             Cadence.FiredKroosSkill(Main.GameUpdateCount, attackSpeed, ForcedShots == 1);
@@ -187,10 +184,9 @@ public abstract class CrossbowWeaponBase : UpgradeWeaponBase
         {
             ForcedShots--;
             if (kroosSkillShot && ForcedShots == 0) skills.SkillActive = false;
-            if (Kind == CrossbowKind.Archetto && ForcedShots == 0) skills.SkillActive = false;
         }
         if (skills.Skill == 0 && skill == 0 && !skills.SkillActive) skills.OffensiveRecovery();
-        if (skill == 1 && Kind is CrossbowKind.BluePoison or CrossbowKind.GreyThroat or CrossbowKind.Archetto)
+        if (skill == 1 && Kind is CrossbowKind.Melanite or CrossbowKind.GreyThroat or CrossbowKind.BluePoison)
             skills.SkillActive = false;
         CrossbowVisuals.SpawnPulse(shot.GetSource_FromThis(), muzzle, direction, Kind, true);
         return true;

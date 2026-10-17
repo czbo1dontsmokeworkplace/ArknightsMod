@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using ArknightsMod.Content.Projectiles.Medic.Shining;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
@@ -193,7 +193,7 @@ namespace ArknightsMod.Content.Items.Weapons.Medic.Shining
 			CreateRecipe()
 				.AddIngredient<global::ArknightsMod.Content.Items.Material.BipolarNanoflake>(1)
 				.AddIngredient<global::ArknightsMod.Content.Items.Material.OrironBlock>(2)
-				.AddIngredient(ItemID.SpectreStaff)
+				.AddIngredient<global::ArknightsMod.Content.Items.Weapons.Medic.Sussurro.SussurroStaff>()
 				.AddIngredient(ItemID.SpectreBar, 16)
 				.AddIngredient(ItemID.CrystalShard, 20)
 				.AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>())

@@ -1,4 +1,5 @@
-﻿Item,Index,Name,ChargeType,AutoTrigger,AutoUpdateActive,SummonSkill,SuppressReadyPulse,IsPermanent,UsesCustomCharge
+Item,Index,Name,ChargeType,AutoTrigger,AutoUpdateActive,SummonSkill,SuppressReadyPulse,IsPermanent,UsesCustomCharge
+CatapultLauncher,0,1,1,0,1,0,0,0,0
 ClickStaff,0,1,1,0,1,0,0,0,0
 ClickStaff,1,2,1,0,1,0,0,0,0
 RockrockStaff,0,1,1,0,1,0,0,0,0
@@ -212,9 +213,8 @@ ProvenceCrossbow,0,1,2,1,1,0,0,0,0
 ProvenceCrossbow,1,2,1,0,1,0,0,0,0
 GreyThroatCrossbow,0,1,2,1,1,0,0,0,0
 GreyThroatCrossbow,1,2,1,0,1,0,0,0,0
-ArchettoCrossbow,0,1,2,1,1,0,0,0,0
-ArchettoCrossbow,1,2,1,0,1,0,0,0,0
-ArchettoCrossbow,2,3,1,0,1,0,0,0,0
+MelaniteCrossbow,0,1,2,1,1,0,0,0,0
+MelaniteCrossbow,1,2,1,0,1,0,0,0,0
 GraniLance,0,1,1,0,1,0,0,0,0
 GraniLance,1,2,1,0,1,0,0,0,0
 WildManeLance,0,1,1,1,1,0,0,0,0

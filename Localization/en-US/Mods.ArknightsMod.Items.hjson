@@ -1,4 +1,4 @@
-AstesiaHead: {
+﻿AstesiaHead: {
 	DisplayName: Astesia Head
 	Tooltip: ""
 }
@@ -84,7 +84,7 @@ BagpipeSpear: {
 	Tooltip:
 		'''
 		Post-Golem
-		Javelins pierce 2 enemies. The final throw explodes on an enemy hit within a 76-pixel radius, dealing its damage once.
+		Javelins pierce 2 enemies. The first javelin hit explodes on an enemy hit within a 76-pixel radius, dealing its damage once.
 		'''
 }
 
@@ -1207,10 +1207,7 @@ WisadelCannon: {
 
 BrightWeeping: {
 	DisplayName: Bright Weeping
-	Tooltip:
-		'''
-		Enemies take 20% more magic and summon damage
-		'''
+	Tooltip: Enemies take 20% more magic and summon damage
 }
 
 ChitinousRipper: {
@@ -1220,10 +1217,7 @@ ChitinousRipper: {
 
 EmptyFeatheredBeast: {
 	DisplayName: Empty Feathered Beast
-	Tooltip:
-		'''
-		1 additional minion slot; 12% increased whip range and attack speed
-		'''
+	Tooltip: 1 additional minion slot; 12% increased whip range and attack speed
 }
 
 FirstAidMedicineKit: {
@@ -1282,10 +1276,7 @@ PerfumeForTheShow: {
 
 AbyssalWyrdmask: {
 	DisplayName: Abyssal Wyrdmask
-	Tooltip:
-		'''
-		Reduces incoming enemy attack damage by 7% before defense
-		'''
+	Tooltip: Reduces incoming enemy attack damage by 7% before defense
 }
 
 VanillaSauceSoda: {
@@ -1660,18 +1651,12 @@ OldSteamArmor: {
 
 UnknownInstrument: {
 	DisplayName: Unknown Instrument
-	Tooltip:
-		'''
-		50% increased maximum life; reduces defense by 10
-		'''
+	Tooltip: 50% increased maximum life; reduces defense by 10
 }
 
 ScoutsScope: {
 	DisplayName: Scouts Scope
-	Tooltip:
-		'''
-		Damage increases as the enemy gets farther away from you, up to 120% of its original value
-		'''
+	Tooltip: Damage increases as the enemy gets farther away from you, up to 120% of its original value
 }
 
 VieuxVanguardsBlade: {
@@ -1686,10 +1671,7 @@ CoinOperatedToy: {
 
 FatalBoltsDivineSpeed: {
 	DisplayName: Fatal Bolts Divine Speed
-	Tooltip:
-		'''
-		35% increased ranged attack speed
-		'''
+	Tooltip: 35% increased ranged attack speed
 }
 
 CommandersPortrait: {
@@ -2223,18 +2205,12 @@ VanillaDefault: {
 
 ActiveDust: {
 	DisplayName: Active Dust
-	Tooltip:
-		'''
-		Enemies take 5% more magic and summon damage
-		'''
+	Tooltip: Enemies take 5% more magic and summon damage
 }
 
 CheapEdibleSalt: {
 	DisplayName: Cheap Edible Salt
-	Tooltip:
-		'''
-		Enemies take 5% more melee and ranged damage
-		'''
+	Tooltip: Enemies take 5% more melee and ranged damage
 }
 
 FightingManual: {
@@ -2264,18 +2240,12 @@ NamelessPoetryCollection: {
 
 AsmallroundShieldOfDifferEntiron: {
 	DisplayName: Asmallround Shield Of Differ Entiron
-	Tooltip:
-		'''
-		3 defense; debuffs expire twice as fast
-		'''
+	Tooltip: 3 defense; debuffs expire twice as fast
 }
 
 CrackedRestraintStrap: {
 	DisplayName: Cracked Restraint Strap
-	Tooltip:
-		'''
-		Reduces incoming enemy attack damage by 3% before defense
-		'''
+	Tooltip: Reduces incoming enemy attack damage by 3% before defense
 }
 
 LiveRoses: {
@@ -2289,10 +2259,7 @@ LiveRoses: {
 
 RustBlades: {
 	DisplayName: Rust Blades
-	Tooltip:
-		'''
-		Enemies take 10% more melee and ranged damage
-		'''
+	Tooltip: Enemies take 10% more melee and ranged damage
 }
 
 TheEmperorFavor: {
@@ -2312,10 +2279,7 @@ UnpleasantHemostaticAgent: {
 
 EmperorCollection: {
 	DisplayName: Emperor Collection
-	Tooltip:
-		'''
-		Enemies take 15% more magic and summon damage
-		'''
+	Tooltip: Enemies take 15% more magic and summon damage
 }
 
 FallenSovereignForm: {
@@ -2335,10 +2299,7 @@ FeatherBeastLiverPate: {
 
 MonarchSidearm: {
 	DisplayName: Monarch Sidearm
-	Tooltip:
-		'''
-		Below 30% life, reduces weapon and tool use time by 20%
-		'''
+	Tooltip: Below 30% life, reduces weapon and tool use time by 20%
 }
 
 NobleSwords: {
@@ -2362,10 +2323,7 @@ SilverDinnerFork: {
 
 StandardAntiRiotEquipment: {
 	DisplayName: Standard Anti Riot Equipment
-	Tooltip:
-		'''
-		Enemies take 10% more magic and summon damage
-		'''
+	Tooltip: Enemies take 10% more magic and summon damage
 }
 
 SuspendedSilkPuppet: {
@@ -2375,10 +2333,7 @@ SuspendedSilkPuppet: {
 
 TheLongWhipOfTheCoachman: {
 	DisplayName: The Long Whip Of The Coachman
-	Tooltip:
-		'''
-		Enemies take 15% more melee and ranged damage
-		'''
+	Tooltip: Enemies take 15% more melee and ranged damage
 }
 
 ChildlikePlaythings: {
@@ -2412,35 +2367,23 @@ OldPalmFan: {
 
 RoundStoneAltar: {
 	DisplayName: Round Stone Altar
-	Tooltip:
-		'''
-		While equipped, the first victory over each boss or event grants 1 defense and 1% damage
-		'''
-	StackTooltip: "Growth stacks: {0}"
+	Tooltip: While equipped, the first victory over each boss or event grants 1 defense and 1% damage
+	StackTooltip: Growth stacks: {0}
 }
 
 ScatteredPoems: {
 	DisplayName: Scattered Poems
-	Tooltip:
-		'''
-		3 additional minion slots
-		'''
+	Tooltip: 3 additional minion slots
 }
 
 TheAvenger: {
 	DisplayName: The Avenger
-	Tooltip:
-		'''
-		Enemies take 20% more melee and ranged damage
-		'''
+	Tooltip: Enemies take 20% more melee and ranged damage
 }
 
 TheTokenGodmother: {
 	DisplayName: The Token Godmother
-	Tooltip:
-		'''
-		Reduces incoming enemy attack damage by 10% before defense
-		'''
+	Tooltip: Reduces incoming enemy attack damage by 10% before defense
 }
 
 RALegmeat: {
@@ -2765,10 +2708,7 @@ PompeiiSummon: {
 
 SarkazKingRegalRest: {
 	DisplayName: SarkazKingRegalRest
-	Tooltip:
-		'''
-		Above 85% life, grants 21% damage reduction
-		'''
+	Tooltip: Above 85% life, grants 21% damage reduction
 }
 
 SarkazKingTornBanner: {
@@ -2778,10 +2718,7 @@ SarkazKingTornBanner: {
 
 BlazeChainsaw: {
 	DisplayName: BlazeChainsaw:
-	Tooltip:
-		'''
-		Damage increases as the enemy gets closer to you, up to 120% of its original value
-		'''
+	Tooltip: Damage increases as the enemy gets closer to you, up to 120% of its original value
 }
 
 PlanterClusterItem: {
@@ -3266,10 +3203,9 @@ ClickStaff: {
 	DisplayName: Click's Viewfinder Staff
 	Tooltip:
 		'''
-		Hold left click and drag; release to mark and strike up to 80 enemies inside the selection
-		The selection snaps to the tile grid and covers at most 20×20 tiles
-		A drone stays beside you and fires two volleys of instant lasers at every marked target
-		Select again after the volley; switching weapons cancels remaining shots
+		Hold left-click to automatically select up to 3 enemies nearest the cursor
+		A frame expands from top-left to bottom-right over 15 ticks, followed by two laser attacks
+		After 3 seconds of sustained fire, gain 1 second of thicker, faster lasers dealing 1.1x damage
 		'''
 }
 
@@ -3312,7 +3248,7 @@ HongdouLance: {
 		'''
 		Pre-Hardmode
 		Talent: each attack action has a 10% chance to deal double damage, increased to 30% during skills.
-		The final javelin creates a small impact dealing half its damage on an enemy hit.
+		The first heavy-javelin hit creates a small impact dealing half its damage on an enemy hit.
 		'''
 }
 
@@ -3780,6 +3716,7 @@ HellagurOdachi: {
 		'''
 		Lower health grants faster attacks, and attacks restore health
 		“He is the General”
+		Holding this weapon refreshes 10 seconds of Potion Sickness, which persists after switching weapons
 		'''
 }
 
@@ -3787,8 +3724,10 @@ BlazeGreatsword: {
 	DisplayName: Blaze's Chainsaw Greatsword
 	Tooltip:
 		'''
-		Attacks every enemy it touches
-		“Blood boils”
+		Available after Skeletron Prime
+		Attacks all enemies in contact
+		Chops trees as quickly as the Butcher's Chainsaw
+		"Burning with enthusiasm"
 		'''
 }
 
@@ -3801,8 +3740,8 @@ MeteoriteCannon: {
 	DisplayName: Meteorite's Explosive Cannon
 	Tooltip:
 		'''
-		Consumes rockets and includes their damage in fast, straight explosive shells
-		Converts every rocket into a custom explosive shell; impacts burst into shrapnel
+		Consumes rockets and inherits their damage to launch mortar shells into the sky
+		Shells descend from above the target and explode into fragments
 		'''
 }
 
@@ -3819,8 +3758,9 @@ ShiningStaff: {
 	DisplayName: Shining's Staff
 	Tooltip:
 		'''
-		Fires black-and-white Arts blades at enemies
-		Each enemy hit restores life equal to 5% of the attack's damage; skills provide a personal barrier and defensive field
+		Fires black and white Arts blades that damage enemies and heal allies they hit
+		Wisps returning after enemy hits restore 2 life, less than Sussurro
+		Skills provide a personal barrier and defensive field
 		'''
 }
 
@@ -3863,6 +3803,7 @@ UtageKatana: {
 		'''
 		Swings faster at low life; valid hits restore a small amount of life
 		Cuts with deep violet trails and pale lilac edges
+		Holding this weapon refreshes 10 seconds of Potion Sickness, which persists after switching weapons
 		'''
 }
 
@@ -3889,9 +3830,9 @@ SussurroStaff: {
 	DisplayName: Sussurro's Medical Staff
 	Tooltip:
 		'''
-		Fires swift healing rays that damage enemies
-		Repeated attacks provide additional healing
-		Right-click to release powerful homing healing butterflies
+		Left-click fires fast medical rays that damage enemies and heal allies they hit
+		Sustained left-click attacks release healing butterflies that restore your own life
+		Right-click attack is disabled
 		'''
 }
 
@@ -3901,6 +3842,7 @@ EbenholzStaff: {
 		'''
 		Releases homing black sonata cubes
 		Stores multiple echoes to release together
+		While held and idle, store 1 shot per second up to 3; switching weapons preserves them until your next left-click attack
 		'''
 }
 
@@ -3946,6 +3888,7 @@ IndigoStaff: {
 		'''
 		Fires homing waterlights; stores up to three while idle and releases them with the next attack
 		Unleash the lighthouse's light or bind enemies in lilac tides
+		While held and idle, store 1 shot per second up to 3; switching weapons preserves them until your next left-click attack
 		'''
 }
 
@@ -3955,6 +3898,7 @@ HarmonieStaff: {
 		'''
 		Fires homing notes; stores up to three while idle and plays them with the next attack
 		Envelop enemies in flowing scores and resonant waters
+		While held and idle, store 1 shot per second up to 3; switching weapons preserves them until your next left-click attack
 		'''
 }
 

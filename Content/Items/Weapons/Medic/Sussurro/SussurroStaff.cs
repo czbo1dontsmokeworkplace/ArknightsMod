@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using ArknightsMod.Content.Items.Weapons.Medic;
 using ArknightsMod.Content.Projectiles.Medic.Sussurro;
 using ArknightsMod.Players;
@@ -19,7 +19,6 @@ public sealed class SussurroStaff : ExpansionWeaponBase
     public override void SetStaticDefaults()
     {
         Item.staff[Type] = true;
-        ItemID.Sets.ItemsThatAllowRepeatedRightClick[Type] = true;
     }
     public override void SetDefaults()
     {
@@ -42,30 +41,16 @@ public sealed class SussurroStaff : ExpansionWeaponBase
         Item.shootSpeed = 12f;
     }
 
-    public override bool AltFunctionUse(Player player) => true;
-    internal static bool CanHoldRightClick(Player player) => Main.mouseRight && !Main.gameMenu
-        && !Main.mapFullscreen && !Main.blockMouse && !Main.playerInventory && !player.mouseInterface
-        && player.chest == -1 && player.TalkNPC == null && !player.sleeping.isSleeping
-        && !player.dead && !player.CCed && !player.noItems;
+    public override bool AltFunctionUse(Player player) => false;
 
     public override void HoldItem(Player player)
     {
         base.HoldItem(player);
-        int holdoutType = ModContent.ProjectileType<SussurroStaffHoldout>();
-        Item.noUseGraphic = player.ownedProjectileCounts[holdoutType] > 0;
+        Item.noUseGraphic = false;
         if (player.whoAmI != Main.myPlayer)
             return;
         if (ArknightsKeybinds.SkillActivatePressed(player))
             player.GetModPlayer<SussurroStaffPlayer>().TryActivate();
-        // 与 SHPC 一样直接读取右键状态；原版 altFunctionUse 只负责阻止左键射击管线。
-        if (!CanHoldRightClick(player) || player.itemAnimation > 0
-            || player.ownedProjectileCounts[holdoutType] > 0
-            || Main.SmartInteractX != -1 || Main.SmartInteractY != -1 || Main.SmartInteractProj != -1
-            || !player.CheckMana(Item, pay: false))
-            return;
-        Vector2 aim = (Main.MouseWorld - player.MountedCenter).SafeNormalize(Vector2.UnitX * player.direction);
-        Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.MountedCenter, aim,
-            holdoutType, 0, 0f, player.whoAmI);
     }
 
     public override bool CanUseItem(Player player)
@@ -75,9 +60,7 @@ public sealed class SussurroStaff : ExpansionWeaponBase
             player.GetModPlayer<SussurroStaffPlayer>().TryActivate();
             return false;
         }
-        return player.altFunctionUse != 2
-            && player.ownedProjectileCounts[ModContent.ProjectileType<SussurroStaffHoldout>()] == 0
-            && base.CanUseItem(player);
+        return player.altFunctionUse != 2 && base.CanUseItem(player);
     }
     public override float UseSpeedMultiplier(Player player) => 1f;
 
@@ -112,7 +95,7 @@ public sealed class SussurroStaff : ExpansionWeaponBase
     {
         CreateRecipe()
             .AddIngredient<global::ArknightsMod.Content.Items.Material.RMA7012>(1)
-            .AddIngredient<global::ArknightsMod.Content.Items.Material.Device>(2).AddIngredient(ItemID.IceRod)
+            .AddIngredient<global::ArknightsMod.Content.Items.Material.Device>(2).AddIngredient<global::ArknightsMod.Content.Items.Weapons.Medic.Warfarin.WarfarinStaff>()
             .AddIngredient(ItemID.HealingPotion, 100)
             .AddRecipeGroup(OperatorWeaponRecipeGroups.AnyVanillaTombstone, 2)
             .AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>()).Register();

@@ -13,10 +13,12 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Crossbows;
 // ai[2]=Schwarz penetration count. No rendering reads the local player's current weapon/skill.
 public sealed class CrossbowBolt : ModProjectile
 {
-    public override string Texture => "ArknightsMod/Content/Projectiles/Sniper/KroosAlter/KroosAlterCrossbow_Arrow";
+    // The rendered core is selected per shot in CrossbowSignatureVfx (Schwarz/Pozemka use native art).
+    public override string Texture => "Terraria/Images/MagicPixel";
     internal CrossbowKind Kind => (CrossbowKind)(int)Projectile.ai[0];
     private int age;
     private int returnTarget = -1;
+    private ulong lastVisualHitTick = ulong.MaxValue;
     public override void SendExtraAI(BinaryWriter writer) => writer.Write(returnTarget);
     public override void ReceiveExtraAI(BinaryReader reader) => returnTarget = reader.ReadInt32();
     public override void SetStaticDefaults()
@@ -58,9 +60,9 @@ public sealed class CrossbowBolt : ModProjectile
             Projectile.penetrate = 2;
             Projectile.localNPCHitCooldown = 30;
         }
-        if (Kind == CrossbowKind.BluePoison) Projectile.penetrate = 6;
+        if (Kind == CrossbowKind.Melanite) Projectile.penetrate = Projectile.ai[1] == 2 ? 8 : 6;
         if (Kind == CrossbowKind.Provence) Projectile.penetrate = 9;
-        if (Kind == CrossbowKind.Archetto) Projectile.penetrate = 2;
+        if (Kind == CrossbowKind.BluePoison) Projectile.penetrate = 2;
     }
     public override void AI()
     {
@@ -68,19 +70,13 @@ public sealed class CrossbowBolt : ModProjectile
         age++;
         if (Kind == CrossbowKind.Schwarz) Projectile.penetrate = -1;
         else if (Kind == CrossbowKind.Pozemka) UpdateRoseHoming();
-        else if (age >= 15 && Kind < CrossbowKind.BluePoison) Projectile.velocity.Y = Math.Min(16f, Projectile.velocity.Y + .2f);
-        if (Kind >= CrossbowKind.BluePoison && age > 150) { Projectile.Kill(); return; }
+        else if (age >= 15 && Kind < CrossbowKind.Melanite) Projectile.velocity.Y = Math.Min(16f, Projectile.velocity.Y + .2f);
+        if (Kind >= CrossbowKind.Melanite && age > 150) { Projectile.Kill(); return; }
         Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
         if (!Main.dedServ)
         {
             Color color = CrossbowVisuals.ColorFor(Kind);
-            Lighting.AddLight(Projectile.Center, color.ToVector3() * .45f);
-            if (age % 2 == 0)
-            {
-                var dust = Dust.NewDustPerfect(Projectile.Center, DustID.TintableDustLighted,
-                    -Projectile.velocity * .12f + Main.rand.NextVector2Circular(1.4f, 1.4f), 60, color, .85f);
-                dust.noGravity = true;
-            }
+            Lighting.AddLight(Projectile.Center, color.ToVector3() * .16f);
             CrossbowFlightVfx.Wake(Projectile, Kind);
         }
     }
@@ -119,23 +115,23 @@ public sealed class CrossbowBolt : ModProjectile
     {
         if (Kind == CrossbowKind.Schwarz)
             modifiers.SourceDamage *= CrossbowBallistics.PiercingMultiplier((int)Projectile.ai[2]);
-        if (Kind is CrossbowKind.BluePoison or CrossbowKind.Provence) modifiers.ArmorPenetration += Kind == CrossbowKind.BluePoison ? 12 : 25;
+        if (Kind == CrossbowKind.Melanite) modifiers.ArmorPenetration += Projectile.ai[1] == 2 ? 20 : 12;
+        if (Kind == CrossbowKind.Provence) modifiers.ArmorPenetration += 25;
         if (Kind == CrossbowKind.Provence && Projectile.ai[1] == 1)
             modifiers.SourceDamage *= 1f + .6f * (1f - target.life / (float)Math.Max(1, target.lifeMax));
     }
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
     {
+        // Local contact feedback also runs on piercing hits. It cannot deal damage or spawn arrows.
+        CrossbowSignatureVfx.Hit(Projectile, Kind);
+        lastVisualHitTick = Main.GameUpdateCount;
         if (Kind == CrossbowKind.BluePoison) target.AddBuff(BuffID.Venom, 240);
-        if (Kind == CrossbowKind.Archetto && Projectile.ai[1] == 2)
-            CrossbowBranchSkills.Ricochet(Projectile, target);
         if (Kind == CrossbowKind.KroosAlter) target.AddBuff(BuffID.Frostburn, 180);
         if (Kind == CrossbowKind.Pozemka && Projectile.penetrate == 2)
         {
             returnTarget = target.whoAmI;
             Projectile.ai[2] = -30f;
             Projectile.netUpdate = true;
-            CrossbowVisuals.SpawnPulse(Projectile.GetSource_FromThis(), Projectile.Center,
-                Projectile.velocity.SafeNormalize(Vector2.UnitX), Kind, false);
         }
         if (Kind == CrossbowKind.Schwarz)
         {
@@ -154,13 +150,13 @@ public sealed class CrossbowBolt : ModProjectile
     }
     public override void OnKill(int timeLeft)
     {
-        if (Kind != CrossbowKind.Schwarz)
+        if (Kind != CrossbowKind.Schwarz && lastVisualHitTick != Main.GameUpdateCount)
             CrossbowVisuals.SpawnPulse(Projectile.GetSource_Death(), Projectile.Center,
                 Projectile.velocity.SafeNormalize(Vector2.UnitX), Kind, false);
     }
     public override bool PreDraw(ref Color lightColor)
     {
-        if (Kind >= CrossbowKind.BluePoison) { CrossbowBranchSkills.Draw(Projectile, Kind); return false; }
+        if (Kind >= CrossbowKind.Melanite) { CrossbowBranchSkills.Draw(Projectile, Kind); return false; }
         CrossbowVisuals.DrawBolt(Projectile, Kind, age);
         return false;
     }

@@ -27,7 +27,8 @@ public abstract class ChargedOperatorWeapon : ExpansionWeaponBase
         Item.DamageType = Melee ? DamageClass.Melee : DamageClass.Ranged;
         Item.useStyle = ItemUseStyleID.Shoot;
         Item.useTime = Item.useAnimation = 2;
-        Item.noMelee = Item.noUseGraphic = Item.channel = true;
+        Item.noMelee = Item.noUseGraphic = true;
+        Item.channel = Melee;
         Item.autoReuse = false;
         Item.knockBack = Melee ? 6f : 4f;
         Item.shootSpeed = 16f;
@@ -43,7 +44,35 @@ public abstract class ChargedOperatorWeapon : ExpansionWeaponBase
         return clone;
     }
     public override bool CanConsumeAmmo(Item ammo, Player player) => consumingAmmo;
-    public override bool AltFunctionUse(Player player) => false;
+    public override bool AltFunctionUse(Player player) => !Melee;
+    internal static bool WorldInputAllowed(Player player) => Main.hasFocus && !Main.gameMenu && !Main.playerInventory
+        && !Main.blockInput && !Main.drawingPlayerChat && !player.mouseInterface && player.talkNPC < 0
+        && player.sign < 0 && player.chest == -1 && !player.dead && !player.noItems && !player.CCed;
+    public override void HoldItem(Player player)
+    {
+        base.HoldItem(player);
+        if (Melee || player.whoAmI != Main.myPlayer) return;
+        var state = player.GetModPlayer<ChargedOperatorPlayer>();
+        bool world = WorldInputAllowed(player);
+        if (!Main.mouseRight) state.SuppressSniperRight = false;
+        else if (!world || player.tileInteractionHappened) state.SuppressSniperRight = true;
+        if (!world || state.Recovery > 0 || ArknightsKeybinds.SkillActivatePressed(player)) return;
+        bool right = Main.mouseRight && !state.SuppressSniperRight;
+        bool left = ChargedOperatorRules.SniperLeftReady(Main.mouseLeft, Main.mouseRight, Main.GameUpdateCount, state.NextSniperLeftShot);
+        if ((!right && !left) || !player.HasAmmo(Item)) return;
+        int holdoutType = Kind == ChargedOperatorKind.Fartooth ? ModContent.ProjectileType<FartoothHoldout>() : ModContent.ProjectileType<ChargedOperatorHoldout>();
+        foreach (Projectile held in Main.ActiveProjectiles)
+        {
+            if (held.owner != player.whoAmI || held.type != holdoutType) continue;
+            if (held.ModProjectile is ChargedOperatorHoldout && held.ai[2] > 0
+                || held.ModProjectile is FartoothHoldout && held.ai[0] == 2) held.Kill();
+            else return;
+        }
+        Vector2 aim = (Main.MouseWorld - player.MountedCenter).SafeNormalize(Vector2.UnitX * player.direction);
+        Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.MountedCenter, aim,
+            holdoutType, player.GetWeaponDamage(Item), player.GetWeaponKnockback(Item),
+            player.whoAmI, Kind == ChargedOperatorKind.Fartooth ? right ? 1 : 0 : (int)Kind, right ? 0 : -1);
+    }
     public override string GetSkillActivateKeyHint() => string.IsNullOrEmpty(ArknightsKeybinds.SkillActivateKeyDisplay)
         ? Language.GetTextValue("Mods.ArknightsMod.ChargedArsenal.Unbound")
         : Language.GetTextValue("Mods.ArknightsMod.ChargedArsenal.SkillKey", ArknightsKeybinds.SkillActivateKeyDisplay);
@@ -53,7 +82,8 @@ public abstract class ChargedOperatorWeapon : ExpansionWeaponBase
         tooltips.Add(new TooltipLine(Mod, "ChargedSkillKey", GetSkillActivateKeyHint()));
         tooltips.Add(new TooltipLine(Mod, "ChargedPlaceholder", Language.GetTextValue("Mods.ArknightsMod.ChargedArsenal.Placeholder")));
     }
-    public override bool CanUseItem(Player player) => !ArknightsKeybinds.SkillActivatePressed(player)
+    // Sniper inputs are polled in HoldItem; vanilla channel only drives the melee branch.
+    public override bool CanUseItem(Player player) => Melee && !ArknightsKeybinds.SkillActivatePressed(player)
         && player.GetModPlayer<ChargedOperatorPlayer>().Recovery == 0
         && player.ownedProjectileCounts[ModContent.ProjectileType<ChargedOperatorHoldout>()] == 0;
     public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position,

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -13,7 +13,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 	/// 菲亚梅塔的曲射炮弹：先按炮口方向自然减速升空，到达最高点后才搜索落点附近的敌人，
 	/// 只会轻微追踪鼠标十五格内且位于初始下落锥角中的目标；无敌人时落向开火时记录的鼠标位置。
 	/// </summary>
-	public sealed class FiammettaMortarShell : ModProjectile
+	public class FiammettaMortarShell : ModProjectile
 	{
 		private const float AscentDrag = 0.995f;
 		private const float TargetSearchRadius = 15f * 16f;
@@ -100,6 +100,12 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 		private void UpdateAscent() {
 			Projectile.Center += Projectile.velocity;
 			Projectile.velocity *= AscentDrag;
+            if (Projectile.localAI[0] > 6) {
+                bool hit = Collision.SolidCollision(Projectile.position, Projectile.width, Projectile.height);
+                foreach (NPC npc in Main.ActiveNPCs)
+                    if (npc.CanBeChasedBy(Projectile) && npc.Hitbox.Intersects(Projectile.Hitbox)) { hit = true; break; }
+                if (hit) { Detonate(); return; }
+            }
 
 			if (Projectile.localAI[0] >= AscentUpdates)
 				BeginDescent();
@@ -162,6 +168,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 		}
 
 		private void LockNearestTarget() {
+            if (Projectile.owner != Main.myPlayer) return;
 			NPC closest = null;
 			float bestDistance = TargetSearchRadius;
 			Vector2 intendedDirection = (MouseTarget - Projectile.Center).SafeNormalize(Vector2.UnitY);
@@ -195,7 +202,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 		}
 
 		private void Detonate() {
-			if (detonating)
+			if (Projectile.owner != Main.myPlayer || detonating)
 				return;
 			detonating = true;
 			Projectile.netUpdate = true;
@@ -216,9 +223,12 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 
 		public override void OnKill(int timeLeft) {
 			if (detonating && Projectile.owner == Main.myPlayer)
-				FiammettaExplosion.Spawn(Projectile.GetSource_FromThis(), Projectile.Center,
-					Projectile.damage, Projectile.knockBack, Projectile.owner, Mode, Projectile.CritChance);
+				SpawnExplosion(Math.Max(1, (int)MathF.Round(Projectile.damage * (Projectile.velocity.Y > 0f ? 1.25f : 1f))));
 		}
+
+        protected virtual void SpawnExplosion(int damage) =>
+            FiammettaExplosion.Spawn(Projectile.GetSource_FromThis(), Projectile.Center,
+                damage, Projectile.knockBack, Projectile.owner, Mode, Projectile.CritChance);
 
 		public override bool PreDraw(ref Color lightColor) {
 			FiammettaVisuals.DrawShellTrail(Projectile, new Color(255, 43, 20),
@@ -232,6 +242,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 		}
 
 		public override void SendExtraAI(BinaryWriter writer) {
+			writer.Write(Projectile.localAI[0]);
 			writer.Write(descending);
 			writer.Write(detonating);
 			writer.Write((short)lockedTargetIndex);
@@ -240,6 +251,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 		}
 
 		public override void ReceiveExtraAI(BinaryReader reader) {
+			Projectile.localAI[0] = reader.ReadSingle();
 			descending = reader.ReadBoolean();
 			detonating = reader.ReadBoolean();
 			lockedTargetIndex = reader.ReadInt16();
