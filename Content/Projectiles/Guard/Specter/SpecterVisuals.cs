@@ -228,14 +228,24 @@ namespace ArknightsMod.Content.Projectiles.Guard.Specter
 			}
 		}
 
-		internal static void SpawnExhaustionMote(Vector2 position) {
+		internal static void SpawnExhaustionMotes(Player player, int timeLeft) {
 			if (Main.dedServ)
 				return;
-			new T_Streak_Particle(position, new Vector2(Main.rand.NextFloat(-0.35f, 0.35f),
-				Main.rand.NextFloat(-1.2f, -0.45f)), Main.rand.Next(24, 38),
-				Main.rand.NextFloat(0.34f, 0.62f), new Color(54, 65, 76), true) {
-				Deformation = new Vector2(0.55f, 1.15f)
-			}.Spawn();
+			// 冷白碎骨与暗红余烬围住身体，随步伐飘散；最后一秒逐渐收淡。
+			float fade = MathHelper.Clamp(timeLeft / 60f, 0f, 1f);
+			float phase = timeLeft * 0.045f;
+			for (int i = 0; i < 3; i++) {
+				float angle = phase + MathHelper.TwoPi * i / 3f;
+				Vector2 radial = angle.ToRotationVector2();
+				Vector2 position = player.Center + radial * new Vector2(20f, 29f);
+				Vector2 velocity = new Vector2(-radial.Y, radial.X) * 0.65f
+					+ new Vector2(0f, -0.75f) + player.velocity * 0.18f;
+				Color color = (i == 0 ? new Color(172, 220, 226) : new Color(176, 25, 63)) * fade;
+				new T_Streak_Particle(position, velocity, Main.rand.Next(26, 40),
+					Main.rand.NextFloat(0.38f, 0.65f), color, true) {
+					Deformation = new Vector2(0.38f, 1.55f)
+				}.Spawn();
+			}
 		}
 
 		internal static void AddShake(Player player, int time, float strength) {

@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
@@ -36,6 +37,34 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
         private const float NormalGravity     = 0.15f;
         private const float AiS3RainHoming = 3f;
         private const float AiS3RainColumn = 3.25f;
+        private const float AiS3RainScatter = 3.5f;
+        public const int RainBatchSize = 3;
+        private int rainLeaderIdentity = -1;
+        private bool rainClaimed;
+        private TyphonArrow RainLeader()
+        {
+            foreach (Projectile p in Main.ActiveProjectiles)
+                if (p.owner == Projectile.owner && p.identity == rainLeaderIdentity && p.ModProjectile is TyphonArrow leader)
+                    return leader;
+            return null;
+        }
+        private bool RainBudgetSpent => rainLeaderIdentity >= 0 && (RainLeader() is not { } leader || leader.rainClaimed);
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(rainLeaderIdentity); writer.Write(rainClaimed); writer.Write((int)Projectile.localAI[0]);
+            writer.Write(Stuck);
+            if (Stuck) { writer.Write(StuckNpcIndex); writer.Write(StuckOffset.X); writer.Write(StuckOffset.Y); }
+        }
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            rainLeaderIdentity = reader.ReadInt32(); rainClaimed = reader.ReadBoolean(); Projectile.localAI[0] = reader.ReadInt32();
+            Stuck = reader.ReadBoolean();
+            if (Stuck)
+            {
+                StuckNpcIndex = reader.ReadInt32(); StuckOffset = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+                Projectile.extraUpdates = 0; Projectile.velocity = Vector2.Zero;
+            }
+        }
 
         private const int S3RainVanity2DurationTicks = 120;
 
@@ -148,6 +177,13 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
             }
             if (IsS3RainMode())
             {
+                if (Projectile.ai[2] == AiS3RainScatter)
+                {
+                    // The extra swords scatter ballistically; the shared hit budget prevents extra damage.
+                    Projectile.position += Projectile.velocity;
+                    Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+                    return false;
+                }
                 if (IsS3RainColumnMode() || Projectile.localAI[1] == 1f)
                 {
                     float spd = Projectile.velocity.Length();
@@ -356,10 +392,11 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
 
         public override bool? CanDamage()
         {
-            if (Vanity || Stuck)
+            if (Vanity || Vanity2 || Stuck || RainBudgetSpent)
                 return false;
             return base.CanDamage();
         }
+        public override bool? CanHitNPC(NPC target) => RainBudgetSpent ? false : null;
 
         public override Color? GetAlpha(Color lightColor)
         {
@@ -503,6 +540,12 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (Vanity || Stuck) return;
+            if (IsS3RainMode() && rainLeaderIdentity >= 0)
+            {
+                TyphonArrow leader = RainLeader();
+                if (leader == null || leader.rainClaimed) return;
+                leader.rainClaimed = true; leader.Projectile.netUpdate = true;
+            }
 
             if (Projectile.owner >= 0 && Projectile.owner < Main.maxPlayers)
                 TyphonSkillArrowStun.TryApply(target, Main.player[Projectile.owner], Projectile);
@@ -571,7 +614,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
                 Projectile.tileCollide = true;
                 return;
             }
-            if (mode == AiS3RainHoming || mode == AiS3RainColumn)
+            if (mode == AiS3RainHoming || mode == AiS3RainColumn || mode == AiS3RainScatter)
             {
                 Projectile.penetrate = -1;
                 SkillTrailSpawnSpeed = Math.Max(Projectile.velocity.Length(), 6f);
@@ -650,50 +693,30 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
 
         private static void SpawnS3RainArrow(IEntitySource source, int ownerWho, Vector2 markerReticleAi01, float refSpeed, int damage, float knockback, int lockedNpcWhoPlusOne = 0)
         {
+            if (Main.myPlayer != ownerWho) return;
             bool hasLockedNpc = TryGetLockedRainTarget(lockedNpcWhoPlusOne, out NPC? lockedNpc);
-            Vector2 zoneCenter;
-            if (lockedNpcWhoPlusOne > 0)
+            Vector2? liveAnchor = TyphonAimReticle.GetCurrentPos(ownerWho);
+            Vector2 zoneCenter = liveAnchor ?? (hasLockedNpc ? lockedNpc.Center : markerReticleAi01);
+            NPC? columnNpc = FindS3RainColumnTarget(ownerWho, zoneCenter, TyphonAimReticle.ReticleAreaRadius);
+            if (!liveAnchor.HasValue && columnNpc == null && hasLockedNpc) columnNpc = lockedNpc;
+
+            Vector2 center = columnNpc?.Center ?? zoneCenter;
+            int leaderIdentity = -1;
+            for (int i = 0; i < RainBatchSize; i++)
             {
-                if (hasLockedNpc && lockedNpc != null)
-                    zoneCenter = lockedNpc.Center;
-                else
-                    zoneCenter = markerReticleAi01;
-            }
-            else
-            {
-                zoneCenter = TyphonAimReticle.GetCurrentPos(ownerWho) ?? markerReticleAi01;
-            }
-
-            NPC? columnNpc = hasLockedNpc && lockedNpc != null
-                ? lockedNpc
-                : FindS3RainColumnTarget(ownerWho, zoneCenter, TyphonAimReticle.ReticleAreaRadius);
-
-            float yDrop = 1000f;
-            Vector2 spawnPos;
-            if (columnNpc != null && columnNpc.active)
-                spawnPos = new Vector2(columnNpc.Center.X, columnNpc.Center.Y - yDrop);
-            else
-                spawnPos = new Vector2(zoneCenter.X, zoneCenter.Y - yDrop);
-
-            float spd = Math.Max(refSpeed, 4f) * Main.rand.NextFloat(0.95f, 1.05f) * 0.5f;
-            Vector2 vel = new Vector2(0f, Math.Abs(spd));
-
-            int projIdx = Projectile.NewProjectile(
-                source,
-                spawnPos,
-                vel,
-                ModContent.ProjectileType<TyphonArrow>(),
-                damage,
-                knockback,
-                ownerWho,
-                markerReticleAi01.X,
-                markerReticleAi01.Y,
-                AiS3RainColumn);
-
-            if (lockedNpcWhoPlusOne > 0 && projIdx >= 0 && projIdx < Main.maxProjectiles)
-            {
-                Main.projectile[projIdx].localAI[0] = lockedNpcWhoPlusOne;
-                Main.projectile[projIdx].netUpdate = true;
+                float side = i == 1 ? -1 : 1;
+                float x = i == 0 ? Main.rand.NextFloat(-48, 48) : side * Main.rand.NextFloat(140, 300);
+                Vector2 spawn = center + new Vector2(x, -Main.rand.NextFloat(900, 1100));
+                Vector2 landing = center + new Vector2(i == 0 ? 0 : side * Main.rand.NextFloat(80, 240), Main.rand.NextFloat(-24, 24));
+                float speed = Math.Max(S3LockedRainMinSpeed, refSpeed) * Main.rand.NextFloat(.95f, 1.15f);
+                Projectile p = Projectile.NewProjectileDirect(source, spawn, (landing - spawn).SafeNormalize(Vector2.UnitY) * speed,
+                    ModContent.ProjectileType<TyphonArrow>(), damage, knockback, ownerWho, center.X, center.Y,
+                    i == 0 ? AiS3RainColumn : AiS3RainScatter);
+                if (p.ModProjectile is not TyphonArrow arrow) continue;
+                if (i == 0) leaderIdentity = p.identity;
+                arrow.rainLeaderIdentity = leaderIdentity;
+                p.localAI[0] = i == 0 ? columnNpc?.whoAmI + 1 ?? lockedNpcWhoPlusOne : 0;
+                p.netUpdate = true;
             }
         }
 
@@ -735,7 +758,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
         }
 
         private bool IsS3RainMode() =>
-            Projectile.ai[2] == AiS3RainHoming || Projectile.ai[2] == AiS3RainColumn;
+            Projectile.ai[2] == AiS3RainHoming || Projectile.ai[2] == AiS3RainColumn || Projectile.ai[2] == AiS3RainScatter;
 
         private bool IsS3RainColumnMode() => Projectile.ai[2] == AiS3RainColumn;
 

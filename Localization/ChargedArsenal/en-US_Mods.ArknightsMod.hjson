@@ -1,47 +1,59 @@
 Items: {
-	MelanthaSword: {
-		DisplayName: Melantha's Standard Sword
+	MelanthasSword: {
+		DisplayName: Standard Sword [Melantha]
 		Tooltip:
 			'''
 			Early game
-			Hold left-click for 1 second, then release for a heavy sweep; an early release makes a weak slash.
-			Heavy hits add an explosion and two fragments, up to six bursts per swing.
+			Hold left-click to continuously repeat individual full-circle slashes. Each slash accelerates sharply across the front and slows behind you; turning reverses rotation.
+			The blade deals damage on contact. Each turn hits its first enemy for 300% damage, 300% knockback and a guaranteed critical strike; subsequent enemies take 100% damage.
+			Successful hits gradually increase attack frequency and weapon damage, both up to 150% of base. The overhead bar shows the buildup.
+			While held, bonuses decay normally after 1 second without attacking. Switching away drains them 3 times faster; the overhead bar fades out after reaching zero.
+			The first hit of each turn triggers the powerful impact sound and effects at the actual blade contact.
 			'''
 	}
 
-	MatoimaruNaginata: {
-		DisplayName: Matoimaru's Naginata
+	MataimaruGlaive: {
+		DisplayName: Naginata [Matoimaru]
 		Tooltip:
 			'''
 			Early Hardmode
-			Hold left-click for 1 second, then release for a heavy sweep; an early release makes a weak slash.
-			Heavy hits add an explosion and two fragments, up to six bursts per swing.
+			Hold left-click to continuously repeat individual full-circle slashes. Each slash accelerates sharply across the front and slows behind you; turning reverses rotation.
+			The blade deals damage on contact. Each turn hits its first enemy for 300% damage, 300% knockback and a guaranteed critical strike; subsequent enemies take 100% damage.
+			Successful hits gradually increase attack frequency and weapon damage, both up to 150% of base. The overhead bar shows the buildup.
+			While held, bonuses decay normally after 1 second without attacking. Switching away drains them 3 times faster; the overhead bar fades out after reaching zero.
+			The first hit of each turn triggers the powerful impact sound and effects at the actual blade contact.
 			'''
 	}
 
 	FrankaRapier: {
-		DisplayName: Franka's Thermite Rapier
+		DisplayName: Thermite Rapier [Franka]
 		Tooltip:
 			'''
 			Post-Plantera
-			Hold left-click for 1 second, then release for a heavy sweep; an early release makes a weak slash.
-			Heavy hits add an explosion and two fragments, up to six bursts per swing.
+			Hold left-click to continuously repeat individual full-circle slashes. Each slash accelerates sharply across the front and slows behind you; turning reverses rotation.
+			The blade deals damage on contact. Each turn hits its first enemy for 300% damage, 300% knockback and a guaranteed critical strike; subsequent enemies take 100% damage.
+			Successful hits gradually increase attack frequency and weapon damage, both up to 150% of base. The overhead bar shows the buildup.
+			While held, bonuses decay normally after 1 second without attacking. Switching away drains them 3 times faster; the overhead bar fades out after reaching zero.
+			The first hit of each turn triggers the powerful impact sound and effects at the actual blade contact.
 			Slashes have a 25% chance to ignore defense and ignite enemies.
 			'''
 	}
 
 	NearlRadiantSword: {
-		DisplayName: Radiant Nearl's Blazing Sun Swordlance
+		DisplayName: Blazing Sun Swordlance [Radiant Nearl]
 		Tooltip:
 			'''
 			Lunar events
-			Hold left-click for 1 second, then release for a heavy sweep; an early release makes a weak slash.
-			Heavy hits add an explosion and two fragments, up to six bursts per swing.
+			Hold left-click to continuously repeat individual full-circle slashes. Each slash accelerates sharply across the front and slows behind you; turning reverses rotation.
+			The blade deals damage on contact. Each turn hits its first enemy for 300% damage, 300% knockback and a guaranteed critical strike; subsequent enemies take 100% damage.
+			Successful hits gradually increase attack frequency and weapon damage, both up to 150% of base. The overhead bar shows the buildup.
+			While held, bonuses decay normally after 1 second without attacking. Switching away drains them 3 times faster; the overhead bar fades out after reaching zero.
+			The first hit of each turn triggers the powerful impact sound and effects at the actual blade contact.
 			'''
 	}
 
 	AmbrielRifle: {
-		DisplayName: Ambriel's Longshot Rifle
+		DisplayName: Longshot Rifle [Ambriel]
 		Tooltip:
 			'''
 			Post-Skeletron
@@ -53,7 +65,7 @@ Items: {
 	}
 
 	AndreanaRifle: {
-		DisplayName: Andreana's Inkshot Rifle
+		DisplayName: Inkshot Rifle [Andreana]
 		Tooltip:
 			'''
 			Early Hardmode
@@ -65,7 +77,7 @@ Items: {
 	}
 
 	FirewatchRifle: {
-		DisplayName: Firewatch's Woodland Sniper
+		DisplayName: Woodland Sniper [Firewatch]
 		Tooltip:
 			'''
 			Post-Plantera
@@ -76,20 +88,8 @@ Items: {
 			'''
 	}
 
-	FartoothGreatbow: {
-		DisplayName: Fartooth's Feathershine Greatbow
-		Tooltip:
-			'''
-			Lunar events
-			Hold left-click to fire one 100% damage high-speed special bullet every 60 ticks, without recoil; hits up to 4 enemies.
-			Hold right-click to load up to 6 feathershine blades. Each costs one bullet and reduces the next loading time by 5%.
-			Blades line up in parallel around the center and launch together on release, each dealing 100% damage, piercing walls and enemies without homing or gravity.
-			Uses vanilla Terraprisma blade art for now. Loading does not slow movement; switching weapons cancels the load.
-			After 5 seconds without taking damage, feathershine shots deal 20% more damage.
-			'''
-	}
 	MelaniteCrossbow: {
-		DisplayName: Melanite's Helix Crossbow
+		DisplayName: Helix Crossbow [Melanite]
 		Tooltip:
 			'''
 			Mechanical Boss progression
@@ -98,7 +98,7 @@ Items: {
 	}
 
 	ProvenceCrossbow: {
-		DisplayName: Provence's Heavy Crossbow
+		DisplayName: Heavy Crossbow [Provence]
 		Tooltip:
 			'''
 			Post-Plantera
@@ -107,7 +107,7 @@ Items: {
 	}
 
 	GreyThroatCrossbow: {
-		DisplayName: GreyThroat's Feather Crossbow
+		DisplayName: Feather Crossbow [GreyThroat]
 		Tooltip:
 			'''
 			Mechanical bosses
@@ -116,7 +116,7 @@ Items: {
 	}
 
 	BluePoisonCrossbow: {
-		DisplayName: Blue Poison's Venom Crossbow
+		DisplayName: Venom Crossbow [Blue Poison]
 		Tooltip:
 			'''
 			Post-Plantera
@@ -126,14 +126,14 @@ Items: {
 }
 
 Skills: {
-	MelanthaSword: {
+	MelanthasSword: {
 		1: {
 			Label: ATK Up α
 			Desc: Manual: ATK +50%.
 		}
 	}
 
-	MatoimaruNaginata: {
+	MataimaruGlaive: {
 		1: {
 			Label: Regeneration β
 			Desc: Manual: immediately restore 50% of maximum life, then end.
@@ -148,7 +148,7 @@ Skills: {
 	FrankaRapier: {
 		1: {
 			Label: Swift Strike γ
-			Desc: Manual: ATK +45%; swing recovery becomes 21 ticks. Charging still takes 1 second.
+			Desc: Manual: ATK +45%; base rotation time becomes 21 ticks.
 		}
 
 		2: {
@@ -160,7 +160,7 @@ Skills: {
 	NearlRadiantSword: {
 		1: {
 			Label: Flaming Edge
-			Desc: Manual: ATK +70%, slash reach +15%, swing recovery 21 ticks. Charging still takes 1 second.
+			Desc: Manual: ATK +70%, slash reach +15%, base rotation time becomes 21 ticks.
 		}
 
 		2: {
@@ -214,27 +214,6 @@ Skills: {
 				'''
 				Manual: designate three positions within 1100 pixels toward the cursor; each explodes after 0.75 seconds.
 				Each blast deals 400% base weapon damage in a 130-pixel radius.
-				'''
-		}
-	}
-
-	FartoothGreatbow: {
-		1: {
-			Label: Swift Strike γ
-			Desc: Manual: ATK +45%; post-shot recovery falls from 24 to 16 ticks.
-		}
-
-		2: {
-			Label: Ally Support
-			Desc: Manual: post-shot recovery becomes 10 ticks; loaded feathershine blades retain their parallel volley.
-		}
-
-		3: {
-			Label: Feathershine Arrows
-			Desc:
-				'''
-				Manual: ATK +140%, maximum travel distance 3200 pixels, armor penetration +35.
-				Damage increases by another 40% after the shot travels 800 pixels.
 				'''
 		}
 	}

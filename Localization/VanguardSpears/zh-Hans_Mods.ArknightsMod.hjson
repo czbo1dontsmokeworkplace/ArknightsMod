@@ -1,6 +1,6 @@
 Items: {
 	GraniLance: {
-		DisplayName: 格拉尼的折叠骑枪
+		DisplayName: 折叠骑枪 [格拉尼]
 		Tooltip:
 			'''
 			困难模式初期
@@ -10,7 +10,7 @@ Items: {
 	}
 
 	WildManeLance: {
-		DisplayName: 野鬃的冲锋骑枪
+		DisplayName: 冲锋骑枪 [野鬃]
 		Tooltip:
 			'''
 			全部机械Boss后

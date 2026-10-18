@@ -84,16 +84,16 @@ namespace ArknightsMod.Common
 				Damage = 60, UseTime = 30, UseAnimation = 30, KnockBack = 6f
 			},
 
-			// MataimaruGlaive - 真陀 - 长戟 (EliteDamage=[60,72,87])
-			// 原始值: damage=60, useTime=28, useAnimation=28, knockBack=6
+			// 缠丸重做：无畏者路线，EliteDamage=[67,79,92]
+			// 每圈时长由 DreadnoughtSwing 管理。
 			[typeof(Content.Items.Weapons.Guard.Matoimaru.MataimaruGlaive)] = new() {
-				Damage = 60, UseTime = 28, UseAnimation = 28, KnockBack = 6f
+				Damage = 67, UseTime = 28, UseAnimation = 28, KnockBack = 6f
 			},
 
-			// MelanthasSword - 玛莉兰塔 - 剑 (EliteDamage=[67,83])
-			// 原始值: damage=67, useTime=22, useAnimation=22, knockBack=5, shootSpeed=6
+			// 玫兰莎重做：开局无畏者，EliteDamage=[24,29]
+			// 每圈时长由 DreadnoughtSwing 管理。
 			[typeof(Content.Items.Weapons.Guard.Melantha.MelanthasSword)] = new() {
-				Damage = 67, UseTime = 22, UseAnimation = 22, KnockBack = 5f, ShootSpeed = 6f
+				Damage = 24, UseTime = 28, UseAnimation = 28, KnockBack = 6f, ShootSpeed = 16f
 			},
 
 			// MousseGlove - 慕斯 - 拳套 (EliteDamage=[34,42,50])
@@ -198,7 +198,7 @@ namespace ArknightsMod.Common
 			// TyphonBow - 提丰 - 弓
 			// 原始值: damage=209, useTime=72, useAnimation=72, knockBack=6, shootSpeed=8
 			[typeof(Content.Items.Weapons.Sniper.Typhon.TyphonBow)] = new() {
-				Damage = 209, UseTime = 72, UseAnimation = 72, KnockBack = 6f, ShootSpeed = 8f
+				Damage = 816, UseTime = 60, UseAnimation = 60, KnockBack = 6f, ShootSpeed = 20f
 			},
 
 			// WisadelCannon - 维什戴尔 - 祖宗发射器(炮台)

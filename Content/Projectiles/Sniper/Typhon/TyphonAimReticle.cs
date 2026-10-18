@@ -3,6 +3,7 @@ using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ModLoader;
@@ -51,16 +52,16 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
                 return;
             }
 
-            NPC? target = FindNearestEnemy(Main.MouseWorld, MouseSearchRadius);
-            if (target != null)
+            if (Projectile.owner == Main.myPlayer)
             {
-                Projectile.Center = target.Center;
-                Projectile.alpha  = 0;
-            }
-            else
-            {
-                Projectile.Center = Main.MouseWorld;
-                Projectile.alpha  = 140;
+                NPC? target = FindNearestEnemy(Main.MouseWorld, MouseSearchRadius);
+                Vector2 point = target?.Center ?? Main.MouseWorld;
+                int alpha = target != null ? 0 : 140;
+                if (Vector2.DistanceSquared(Projectile.Center, point) > 1 || Projectile.alpha != alpha)
+                    Projectile.netUpdate = true;
+                Projectile.Center = point;
+                Projectile.alpha = alpha;
+                Projectile.ai[0] = target?.whoAmI + 1 ?? 0;
             }
 
             if (++Projectile.frameCounter >= 5)
@@ -68,6 +69,14 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
                 Projectile.frameCounter = 0;
                 Projectile.frame = (Projectile.frame + 1) % FrameCount;
             }
+        }
+        public override void SendExtraAI(BinaryWriter writer) => writer.Write((byte)Projectile.alpha);
+        public override void ReceiveExtraAI(BinaryReader reader) => Projectile.alpha = reader.ReadByte();
+        public static Vector2 ResolveAimPoint(Player owner)
+        {
+            if (owner.whoAmI == Main.myPlayer)
+                return FindNearestEnemy(Main.MouseWorld, MouseSearchRadius)?.Center ?? Main.MouseWorld;
+            return GetCurrentPos(owner.whoAmI) ?? owner.Center + new Vector2(owner.direction * 400, 0);
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -172,7 +181,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
             float bestDistSq = range * range;
             foreach (NPC npc in Main.ActiveNPCs)
             {
-                if (npc.friendly || npc.life <= 0 || npc.dontTakeDamage) continue;
+                if (!npc.CanBeChasedBy() || npc.friendly || npc.life <= 0 || npc.dontTakeDamage) continue;
                 float d = Vector2.DistanceSquared(npc.Center, origin);
                 if (d < bestDistSq)
                 {

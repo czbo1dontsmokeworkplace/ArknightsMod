@@ -1,0 +1,411 @@
+Items: {
+	AnselStaff: {
+		DisplayName: Medical Staff [Ansel]
+		Tooltip:
+			'''
+			Lob a condensed life orb, shedding luminous motes on flight and collection
+			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			'''
+	}
+
+	MyrrhStaff: {
+		DisplayName: Remedy Staff [Myrrh]
+		Tooltip:
+			'''
+			Lob a condensed life orb, shedding luminous motes on flight and collection
+			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			'''
+	}
+
+	SussurroStaff: {
+		DisplayName: Medical Staff [Sussurro]
+		Tooltip:
+			'''
+			Lob a condensed life orb, shedding luminous motes on flight and collection
+			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			'''
+	}
+
+	SilenceStaff: {
+		DisplayName: Medical Staff [Silence]
+		Tooltip:
+			'''
+			Lob a condensed life orb, shedding luminous motes on flight and collection
+			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			'''
+	}
+
+	TuyeStaff: {
+		DisplayName: First Aid Staff [Tuye]
+		Tooltip:
+			'''
+			Lob a condensed life orb, shedding luminous motes on flight and collection
+			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			'''
+	}
+
+	ShiningStaff: {
+		DisplayName: Staff [Shining]
+		Tooltip:
+			'''
+			Lob a condensed life orb, shedding luminous motes on flight and collection
+			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			'''
+	}
+
+	PurestreamStaff: {
+		DisplayName: Water Staff [Purestream]
+		Tooltip:
+			'''
+			Lob a falling water wisp that homes towards nearby injured allies after arming
+			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			'''
+	}
+
+	CeylonStaff: {
+		DisplayName: Dew Staff [Ceylon]
+		Tooltip:
+			'''
+			Lob a falling water wisp that homes towards nearby injured allies after arming
+			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			'''
+	}
+
+	WhisperainStaff: {
+		DisplayName: Mist Staff [Whisperain]
+		Tooltip:
+			'''
+			Lob a falling water wisp that homes towards nearby injured allies after arming
+			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			'''
+	}
+
+	LumenStaff: {
+		DisplayName: Guiding Light [Lumen]
+		Tooltip:
+			'''
+			Lob a falling water wisp that homes towards nearby injured allies after arming
+			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			'''
+	}
+
+	PerfumerStaff: {
+		DisplayName: Fragrance Staff [Perfumer]
+		Tooltip:
+			'''
+			Lob a heavy energy seed that opens a stationary healing field on landing or contact
+			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			'''
+	}
+
+	BreezeStaff: {
+		DisplayName: Healing Staff [Breeze]
+		Tooltip:
+			'''
+			Lob a heavy energy seed that opens a stationary healing field on landing or contact
+			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			'''
+	}
+
+	PtilopsisStaff: {
+		DisplayName: Medical Staff [Ptilopsis]
+		Tooltip:
+			'''
+			Lob a heavy energy seed that opens a stationary healing field on landing or contact
+			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			'''
+	}
+
+	NightingaleStaff: {
+		DisplayName: Sanctuary Staff [Nightingale]
+		Tooltip:
+			'''
+			Lob a heavy energy seed that opens a stationary healing field on landing or contact
+			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			'''
+	}
+
+	PapyrusStaff: {
+		DisplayName: Weaving Staff [Papyrus]
+		Tooltip:
+			'''
+			Lob woven life threads; successful healing grants independently expiring regeneration stacks
+			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			'''
+	}
+
+	PaprikaStaff: {
+		DisplayName: Renewal Staff [Paprika]
+		Tooltip:
+			'''
+			Lob woven life threads; successful healing grants independently expiring regeneration stacks
+			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			'''
+	}
+
+	Mon3trCore: {
+		DisplayName: Symbiotic Core [Mon3tr]
+		Tooltip:
+			'''
+			Lob woven life threads; successful healing grants independently expiring regeneration stacks
+			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			'''
+	}
+
+	ChestnutStaff: {
+		DisplayName: Cleansing Staff [Chestnut]
+		Tooltip:
+			'''
+			Lob a cleansing ribbon; each removable combat debuff cleansed increases healing by 35%
+			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			'''
+	}
+
+	HoneyberryStaff: {
+		DisplayName: Herbal Staff [Honeyberry]
+		Tooltip:
+			'''
+			Lob a cleansing ribbon; each removable combat debuff cleansed increases healing by 35%
+			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			'''
+	}
+
+	MulberryStaff: {
+		DisplayName: Purification Staff [Mulberry]
+		Tooltip:
+			'''
+			Lob a cleansing ribbon; each removable combat debuff cleansed increases healing by 35%
+			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			'''
+	}
+
+	EyjafjallaAlterStaff: {
+		DisplayName: Spring Staff [Eyjafjalla the Hvit Aska]
+		Tooltip:
+			'''
+			Lob a cleansing ribbon; each removable combat debuff cleansed increases healing by 35%
+			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			'''
+	}
+
+	WarfarinStaff: {
+		DisplayName: Plasma Staff [Warfarin]
+		Tooltip:
+			'''
+			Lob a condensed life orb, shedding luminous motes on flight and collection
+			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			'''
+	}
+}
+
+Skills: {
+	AnselStaff: {
+		1: {
+			Label: Healing Focus
+			Desc: Manual activation for 20 seconds. Medical arts restore 40%-58% more life. Arts must still arm and be collected; medication resistance remains active.
+		}
+	}
+
+	MyrrhStaff: {
+		1: {
+			Label: Healing Focus
+			Desc: Manual activation for 20 seconds. Medical arts restore 40%-58% more life. Arts must still arm and be collected; medication resistance remains active.
+		}
+	}
+
+	SussurroStaff: {
+		1: {
+			Label: Healing Up β
+			Desc: Manual activation for 20 seconds. Medical arts restore 40%-58% more life. Arts must still arm and be collected; medication resistance remains active.
+		}
+
+		2: {
+			Label: Deep Healing
+			Desc: Manual activation for 10 seconds. Medical arts restore 80%-98% more life. Arts must still arm and be collected; medication resistance remains active. Casting speed additionally increases by 35%.
+		}
+	}
+
+	SilenceStaff: {
+		1: {
+			Label: Healing Focus
+			Desc: Manual activation for 20 seconds. Medical arts restore 40%-58% more life. Arts must still arm and be collected; medication resistance remains active.
+		}
+	}
+
+	TuyeStaff: {
+		1: {
+			Label: Healing Focus
+			Desc: Manual activation for 20 seconds. Medical arts restore 40%-58% more life. Arts must still arm and be collected; medication resistance remains active.
+		}
+	}
+
+	ShiningStaff: {
+		1: {
+			Label: Creed
+			Desc: Manual activation for 20 seconds. Medical arts restore 80%-98% more life. Arts must still arm and be collected; medication resistance remains active.
+		}
+
+		2: {
+			Label: Protective Cover
+			Desc: Manual activation for 15 seconds. Medical arts restore 40%-58% more life. Arts must still arm and be collected; medication resistance remains active. Grants a shield equal to 15% of maximum life on activation.
+		}
+
+		3: {
+			Label: Creed Field
+			Desc: Manual activation for 20 seconds. Medical arts restore 40%-58% more life. Arts must still arm and be collected; medication resistance remains active. While held, gain 30 defense and 12% damage reduction.
+		}
+	}
+
+	PurestreamStaff: {
+		1: {
+			Label: Guiding Waters
+			Desc: Manual activation for 20 seconds. Medical arts restore 40%-58% more life. Arts must still arm and be collected; medication resistance remains active.
+		}
+	}
+
+	CeylonStaff: {
+		1: {
+			Label: Guiding Waters
+			Desc: Manual activation for 20 seconds. Medical arts restore 40%-58% more life. Arts must still arm and be collected; medication resistance remains active.
+		}
+	}
+
+	WhisperainStaff: {
+		1: {
+			Label: Guiding Waters
+			Desc: Manual activation for 20 seconds. Medical arts restore 40%-58% more life. Arts must still arm and be collected; medication resistance remains active.
+		}
+	}
+
+	LumenStaff: {
+		1: {
+			Label: Guiding Waters
+			Desc: Manual activation for 20 seconds. Medical arts restore 40%-58% more life. Arts must still arm and be collected; medication resistance remains active.
+		}
+	}
+
+	PerfumerStaff: {
+		1: {
+			Label: Blooming Sanctuary
+			Desc: Manual activation for 20 seconds. Medical arts restore 40%-58% more life. Arts must still arm and be collected; medication resistance remains active.
+		}
+	}
+
+	BreezeStaff: {
+		1: {
+			Label: Blooming Sanctuary
+			Desc: Manual activation for 20 seconds. Medical arts restore 40%-58% more life. Arts must still arm and be collected; medication resistance remains active.
+		}
+	}
+
+	PtilopsisStaff: {
+		1: {
+			Label: Blooming Sanctuary
+			Desc: Manual activation for 20 seconds. Medical arts restore 40%-58% more life. Arts must still arm and be collected; medication resistance remains active.
+		}
+	}
+
+	NightingaleStaff: {
+		1: {
+			Label: Blooming Sanctuary
+			Desc: Manual activation for 20 seconds. Medical arts restore 40%-58% more life. Arts must still arm and be collected; medication resistance remains active.
+		}
+	}
+
+	PapyrusStaff: {
+		1: {
+			Label: Life Weave
+			Desc: Manual activation for 20 seconds. Medical arts restore 40%-58% more life; Chain Medic regeneration per stack also increases. Arts must still arm and be collected; medication resistance remains active.
+		}
+	}
+
+	PaprikaStaff: {
+		1: {
+			Label: Life Weave
+			Desc: Manual activation for 20 seconds. Medical arts restore 40%-58% more life; Chain Medic regeneration per stack also increases. Arts must still arm and be collected; medication resistance remains active.
+		}
+	}
+
+	Mon3trCore: {
+		1: {
+			Label: Life Weave
+			Desc: Manual activation for 20 seconds. Medical arts restore 40%-58% more life; Chain Medic regeneration per stack also increases. Arts must still arm and be collected; medication resistance remains active.
+		}
+	}
+
+	ChestnutStaff: {
+		1: {
+			Label: Purifying Focus
+			Desc: Manual activation for 20 seconds. Medical arts restore 40%-58% more life. Arts must still arm and be collected; medication resistance remains active.
+		}
+	}
+
+	HoneyberryStaff: {
+		1: {
+			Label: Purifying Focus
+			Desc: Manual activation for 20 seconds. Medical arts restore 40%-58% more life. Arts must still arm and be collected; medication resistance remains active.
+		}
+	}
+
+	MulberryStaff: {
+		1: {
+			Label: Purifying Focus
+			Desc: Manual activation for 20 seconds. Medical arts restore 40%-58% more life. Arts must still arm and be collected; medication resistance remains active.
+		}
+	}
+
+	EyjafjallaAlterStaff: {
+		1: {
+			Label: Purifying Focus
+			Desc: Manual activation for 20 seconds. Medical arts restore 40%-58% more life. Arts must still arm and be collected; medication resistance remains active.
+		}
+	}
+
+	WarfarinStaff: {
+		1: {
+			Label: Healing Focus
+			Desc: Manual activation for 20 seconds. Medical arts restore 40%-58% more life. Arts must still arm and be collected; medication resistance remains active.
+		}
+
+		2: {
+			Label: Healing Focus
+			Desc: Manual activation for 20 seconds. Medical arts restore 40%-58% more life. Arts must still arm and be collected; medication resistance remains active.
+		}
+	}
+}
+
+BranchTraits: {
+	MedicProfession: Medic: These weapons efficiently heal allies, at the cost of being unable to damage enemies
+	MedicTherapist: Therapist: Medical arts home towards injured allies, but restore less health
+	MedicMultiTarget: Multi-target Medic: Landing or contact creates a persistent healing field for allied players inside
+	MedicChain: Chain Medic: Successful healing adds independently expiring stacks of life regeneration
+	MedicWandering: Wandering Medic: Cleanse removable debuffs; each debuff removed increases healing
+}
+
+MedicalArts: {
+	Numbers:
+		'''
+		Base healing: {0}; cast interval: {1:0.##}s; arming delay: {2:0.##}s
+		Successful healing applies {3:0.##}s of {4:0}% medication resistance; failed contacts do not refresh it
+		'''
+	Regen: Up to {0} stacks; each restores {1:0.##} life/s for {2}s independently; existing regeneration continues during resistance
+	Cleanse: Cleanses up to {0} common combat debuffs; cannot remove medication resistance, potion cooldowns or encounter mechanics
+	Gate1: After defeating the Eater of Worlds or Brain of Cthulhu
+	Gate2: In Hardmode
+	Gate3: After defeating any mechanical boss
+	Gate4: After defeating all three mechanical bosses
+	Gate5: After defeating Plantera
+	Gate6: After defeating the Lunatic Cultist
+}
+
+Buffs: {
+	MedicationSickness: {
+		DisplayName: Medication Resistance
+		Description: Direct healing from medical operator weapons is reduced; existing regeneration continues
+	}
+
+	MedicalRejuvenation: {
+		DisplayName: Woven Life
+		Description: Stacking medical life regeneration; each layer expires independently
+	}
+}

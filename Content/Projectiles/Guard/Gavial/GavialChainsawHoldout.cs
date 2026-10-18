@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using ArknightsMod.Content.Items.Weapons.Guard.Gavial;
 using ArknightsMod.Content.Projectiles.BasePROJ;
+using ArknightsMod.Content.Projectiles.Guard.Blaze;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -101,14 +102,15 @@ public sealed class GavialChainsawHoldout : ModProjectile
 
         if (!Main.dedServ)
         {
+            GavialVisuals.SawParticles(hand, tip, age, spool, Mode);
             if (age % 6 == 0)
                 SoundEngine.PlaySound(GavialVisuals.MotorSound with
                 {
                     Volume = 0.38f, Pitch = Mode == 3 ? 0.24f : -0.18f, MaxInstances = 3
                 }, hand);
-            if (age % (Mode == 3 ? 2 : 4) == 0 && spool > 0.4f)
+            if (age % (Mode is 2 or 3 ? 2 : 4) == 0 && spool > 0.4f)
                 GavialVisuals.Chips(Vector2.Lerp(hand, tip, Main.rand.NextFloat(0.45f, 0.98f)),
-                    -direction + normal * Main.rand.NextFloat(-0.8f, 0.8f), 1, false);
+                    -direction + normal * Main.rand.NextFloat(-0.8f, 0.8f), Mode == 2 ? 2 : 1, false);
             Lighting.AddLight(tip, new Vector3(0.12f, 0.15f, 0.06f) * spool);
             for (int i = 0; i < marks.Length; i++)
                 if (marks[i].Time > 0) marks[i].Time--;
@@ -160,6 +162,7 @@ public sealed class GavialChainsawHoldout : ModProjectile
         if (Main.dedServ || impactCooldown > 0) return;
         impactCooldown = 4;
         Vector2 contact = target.Hitbox.ClosestPointInRect(Vector2.Lerp(hand, tip, 0.75f));
+        GavialVisuals.SawImpactParticles(contact, aimAngle.ToRotationVector2(), Mode);
         GavialVisuals.Chips(contact, -aimAngle.ToRotationVector2(), Mode == 3 ? 7 : 5, true);
         marks[nextMark] = new GavialVisuals.CutMark
         {
@@ -168,7 +171,8 @@ public sealed class GavialChainsawHoldout : ModProjectile
         };
         nextMark = (nextMark + 1) % marks.Length;
         SoundEngine.PlaySound(SoundID.NPCHit18 with { Volume = 0.48f, Pitch = -0.3f, MaxInstances = 3 }, contact);
-        GavialVisuals.Shake(Owner, Mode == 3 ? 2.4f : 1.5f);
+        if (Owner.whoAmI == Main.myPlayer)
+            Owner.GetModPlayer<BlazeImpactShakePlayer>().AddImpact(4, Mode == 3 ? 2.4f : 1.5f);
     }
 
     public override bool PreDraw(ref Color lightColor)
@@ -176,10 +180,8 @@ public sealed class GavialChainsawHoldout : ModProjectile
         if (Main.dedServ) return false;
         Main.instance.LoadItem(ItemID.ButchersChainsaw);
         Texture2D weapon = TextureAssets.Item[ItemID.ButchersChainsaw].Value;
-        if (Mode == 2)
-            GavialVisuals.DrawAssaultBlade(drawHand, aimAngle, (age / 6) % 3, lightColor);
-        else
-            GavialVisuals.DrawWeapon(weapon, drawHand, aimAngle, Reach, lightColor);
+        GavialVisuals.DrawOutline(weapon, drawHand, aimAngle, Reach, spool, Mode);
+        GavialVisuals.DrawWeapon(weapon, drawHand, aimAngle, Reach, lightColor);
         BaseHeldMeleeSupport.BeginAdditive(Main.spriteBatch);
         GavialVisuals.DrawChain(hand, tip, age, spool, Mode);
         foreach (var mark in marks) GavialVisuals.DrawCut(mark);

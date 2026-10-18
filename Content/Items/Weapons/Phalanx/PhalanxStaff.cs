@@ -9,6 +9,7 @@ public abstract class PhalanxStaff : VerticalStaffBase
 {
     public abstract int Tier { get; }
     public override string Texture => "Terraria/Images/Item_" + new[] { ItemID.AmberStaff, ItemID.RubyStaff, ItemID.AmethystStaff }[Tier];
+    internal virtual string HeldTexture => Texture;
     public override void SetDefaults()
     {
         Item.width = 42; Item.height = 58;
@@ -42,6 +43,9 @@ public sealed class BeeswaxStaff : PhalanxStaff
 
 public sealed class CarnelianStaff : PhalanxStaff
 {
+    public override string Texture => "ArknightsMod/Content/Items/Weapons/Phalanx/CarnelianStaff";
+    internal override string HeldTexture => "ArknightsMod/Content/Items/Weapons/Phalanx/CarnelianStaff_Held";
+    protected override Microsoft.Xna.Framework.Vector2 VerticalStaffTip => new(57.5f / 58f, .5f / 58f);
     public override int Tier => 1;
     protected override int[] EliteDamage => [168, 194, 224];
     public override void AddRecipes() => CreateRecipe()

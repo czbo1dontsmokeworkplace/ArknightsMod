@@ -1,4 +1,4 @@
-﻿AstesiaHead: {
+AstesiaHead: {
 	DisplayName: 星极的头套
 	// Tooltip: ""
 }
@@ -19,7 +19,7 @@ AstesiaDefault: {
 }
 
 AstraSword: {
-	DisplayName: 星极的星辉剑
+	DisplayName: 星辉剑 [星极]
 	Tooltip: 按住左键交替挥出天蓝色双斩，第二斩后稍作蓄势
 }
 
@@ -31,7 +31,7 @@ AutoDoorItem: {
 
 # Weapons
 YatoKatana: {
-	DisplayName: 夜刀的武士刀
+	DisplayName: 武士刀 [夜刀]
 	Tooltip:
 		'''
 		手持武器时：
@@ -42,7 +42,7 @@ YatoKatana: {
 }
 
 NoirShield: {
-	DisplayName: 黑角的盾
+	DisplayName: 盾 [黑角]
 	Tooltip:
 		'''
 		手持武器时：
@@ -53,22 +53,22 @@ NoirShield: {
 }
 
 DurinWand: {
-	DisplayName: 杜林的法杖
+	DisplayName: 法杖 [杜林]
 	Tooltip: 她看起来十分困乏
 }
 
 _12FWand: {
-	DisplayName: 12F的法杖
+	DisplayName: 法杖 [12F]
 	Tooltip: 终末地的我，再强大也不是海猫亲生的
 }
 
 RangersBow: {
-	DisplayName: 巡林者的弩
+	DisplayName: 弩 [巡林者]
 	Tooltip: 没想到您居然好这口
 }
 
 KroosCrossbow: {
-	DisplayName: 克洛丝的弩
+	DisplayName: 弩 [克洛丝]
 	Tooltip: "'在~这~里~哦'"
 }
 
@@ -82,7 +82,7 @@ Shinginzan: {
 }
 
 BagpipeSpear: {
-	DisplayName: 风笛的破城矛
+	DisplayName: 破城矛 [风笛]
 	Tooltip:
 		'''
 		石巨人后
@@ -101,7 +101,7 @@ ThornsSword: {
 }
 
 PozemkaCrossbow: {
-	DisplayName: 鸿雪的弩
+	DisplayName: 弩 [鸿雪]
 	Tooltip: "'只要在地上生活，就一定会有拿起武器的那一天，我知道'"
 }
 
@@ -1122,7 +1122,7 @@ TacticalBattleRecord: {
 }
 
 NianWeapon: {
-	DisplayName: 年的剑
+	DisplayName: 剑 [年]
 	Tooltip: ""
 }
 
@@ -1167,7 +1167,7 @@ SpicyCandy: {
 }
 
 ExusiaiVector: {
-	DisplayName: 能天使的维克托
+	DisplayName: 维克托 [能天使]
 	Tooltip: “愿我的弹雨能熄灭你们的苦痛”
 }
 
@@ -1177,27 +1177,27 @@ ExusiaiVector_Ammo: {
 }
 
 FangSpear: {
-	DisplayName: 芬的长枪
+	DisplayName: 长枪 [芬]
 	Tooltip: '''"刺穿"'''
 }
 
 KroosAlterCrossbow: {
-	DisplayName: 寒芒克洛丝的弩
+	DisplayName: 弩 [寒芒克洛丝]
 	Tooltip: '''"嘘，别再出声了哦"'''
 }
 
 OrchidUmbrellla: {
-	DisplayName: 梓兰的伞
+	DisplayName: 伞 [梓兰]
 	Tooltip: '''"预备行动组A6的组长，梓兰，前来报到"'''
 }
 
 ShawAxe: {
-	DisplayName: 阿消的消防斧
+	DisplayName: 消防斧 [阿消]
 	// Tooltip: ""
 }
 
 ShawWaterCannon: {
-	DisplayName: 阿消的水炮
+	DisplayName: 水炮 [阿消]
 	// Tooltip: ""
 }
 
@@ -1222,7 +1222,7 @@ SakiSword: {
 }
 
 WisadelCannon: {
-	DisplayName: 维什戴尔的祖宗发射器
+	DisplayName: 祖宗发射器 [维什戴尔]
 	Tooltip: '''"把我派到这里，就是你费劲想出来的万全计划？"'''
 }
 
@@ -1466,22 +1466,22 @@ WisdelDefault: {
 }
 
 ArtsBlade: {
-	DisplayName: 德克萨斯的剑
+	DisplayName: 剑 [德克萨斯]
 	Tooltip: “我们的工作是搬运生命和死亡”
 }
 
 Blueberry: {
-	DisplayName: 蓝莓
+	DisplayName: 蓝莓 [缄默德克萨斯]
 	// Tooltip: ""
 }
 
 BlueberryDarkChocolate: {
-	DisplayName: 缄默德克萨斯的蓝莓与黑巧
+	DisplayName: 蓝莓与黑巧 [缄默德克萨斯]
 	Tooltip: “遗言转述？我不受理”
 }
 
 DarkChocolate: {
-	DisplayName: 黑巧
+	DisplayName: 黑巧 [缄默德克萨斯]
 	// Tooltip: ""
 }
 
@@ -1496,7 +1496,7 @@ PozyBow: {
 }
 
 SchwarzBow: {
-	DisplayName: 黑的弩
+	DisplayName: 弩 [黑]
 	Tooltip: “小姐有仁慈之心，我没有”
 }
 
@@ -1506,7 +1506,7 @@ PozyomkaBow: {
 }
 
 BeagleWeapon: {
-	DisplayName: 米格鲁的剑盾
+	DisplayName: 剑盾 [米格鲁]
 	Tooltip:
 		'''
 		按住右键使用盾牌进行格挡，格挡时防御力增加1.5倍
@@ -1515,8 +1515,17 @@ BeagleWeapon: {
 }
 
 TyphonBow: {
-	DisplayName: 提丰的弓
-	Tooltip: “从我家里出去！”
+	DisplayName: 弓 [提丰]
+	Tooltip:
+		'''
+		四柱时期
+		按住左键每60帧发射一枚大型星晶弹，无限贯穿；箭矢统一转化。
+		按住右键逐发装填，最多6枚；首发需18帧，每发消耗1支箭，后续装填时间逐发乘以0.85。
+		星晶弹在弓前等角度扇形排列，松手立即全部射出。
+		右键箭矢为左键的70%大小，附白色描边与光学染色；发射立即造成伤害，只命中一次。
+		右键箭矢射出后立即加速并强制追踪敌人。
+		装填期间无伤害、不减速；切换武器取消本轮装填。
+		'''
 }
 
 TyphonDefault: {
@@ -1560,22 +1569,22 @@ FactoryItem: {
 }
 
 AdnachielCrossbow: {
-	DisplayName: 安德切尔的弩
+	DisplayName: 弩 [安德切尔]
 	Tooltip: “锁定！”
 }
 
 Lava_Dagger: {
-	DisplayName: 炎熔的匕首
+	DisplayName: 匕首 [炎熔]
 	Tooltip: “那些家伙的灵魂，注定要被我收割”
 }
 
 Shirayuki_Shuriken: {
-	DisplayName: 白雪的手里剑
+	DisplayName: 手里剑 [白雪]
 	Tooltip: “无人生还，大胜”
 }
 
 ThornsWeapon: {
-	DisplayName: 棘刺的剑
+	DisplayName: 剑 [棘刺]
 	Tooltip: “看仔细，这才是伊比利亚的至高之术！”
 }
 
@@ -1842,12 +1851,12 @@ HoundproBanner: {
 }
 
 SurtrLaevatain: {
-	DisplayName: 史尔特尔的莱万汀
+	DisplayName: 莱万汀 [史尔特尔]
 	Tooltip: “我一个人就够了。”
 }
 
 SilverAshWeapon: {
-	DisplayName: 银灰的手杖
+	DisplayName: 手杖 [银灰]
 	Tooltip: “银灰，你的盟友，前来助力你不会让我失望的，对吗”
 }
 
@@ -1972,7 +1981,7 @@ MizukiDefault: {
 }
 
 ChenSword_Item: {
-	DisplayName: 陈的赤霄
+	DisplayName: 赤霄 [陈]
 	// Tooltip: ""
 }
 
@@ -2903,7 +2912,7 @@ TheFirstToTalkSummon: {
 }
 
 OblivionisSword: {
-	DisplayName: 旋律之主双剑
+	DisplayName: 旋律之主双剑 [丰川祥子]
 	// Tooltip: ""
 }
 
@@ -3211,7 +3220,7 @@ ArmorUtageLegs: {
 
 ValarqvinWeapon: {
 	// Tooltip: ""
-	DisplayName: 凛视的法杖
+	DisplayName: 法杖 [凛视]
 }
 
 ArmorExusiaiBody: {
@@ -3250,17 +3259,17 @@ PipeBlueLightBlock: {
 }
 
 HazeMagicBook: {
-	DisplayName: 夜烟的魔法书
+	DisplayName: 魔法书 [夜烟]
 	// Tooltip: ""
 }
 
 ReedFlameShadowStaff: {
-	DisplayName: 焰影苇草的法杖
+	DisplayName: 法杖 [焰影苇草]
 	Tooltip: 命中时有30%概率施加持续8秒的灼痕
 }
 
 DN_Weapon: {
-	DisplayName: 坚雷的剑盾
+	DisplayName: 剑盾 [坚雷]
 	// Tooltip: ""
 }
 
@@ -3300,12 +3309,12 @@ SolidifiedFiberBoard: {
 }
 
 SaintBell: {
-	DisplayName: 圣女的铃铛
+	DisplayName: 铃铛 [初雪]
 	// Tooltip: ""
 }
 
 DeepcolorSketch: {
-	DisplayName: 深海色的速写
+	DisplayName: 速写 [深海色]
 	Tooltip:
 		'''
 		召唤触手协助作战
@@ -3316,7 +3325,7 @@ DeepcolorSketch: {
 }
 
 SceneCamera: {
-	DisplayName: 稀音的摄像机
+	DisplayName: 摄像机 [稀音]
 	Tooltip:
 		'''
 		左键释放魔法攻击
@@ -3503,7 +3512,7 @@ TexasDefault: {
 }
 
 StewardStaff: {
-	DisplayName: 史都华德的法杖
+	DisplayName: 法杖 [史都华德]
 	Tooltip:
 		'''
 		连续攻击蓄力，下一击射出强化追踪法弹
@@ -3512,7 +3521,7 @@ StewardStaff: {
 }
 
 GoldenglowWand: {
-	DisplayName: 澄闪的法杖
+	DisplayName: 法杖 [澄闪]
 	Tooltip:
 		'''
 		高举法杖对鼠标位置的敌人进行持续的放电
@@ -3523,7 +3532,7 @@ GoldenglowWand: {
 }
 
 ClickStaff: {
-	DisplayName: 卡达的取景法杖
+	DisplayName: 取景法杖 [卡达]
 	Tooltip:
 		'''
 		按住左键，自动锁定鼠标附近最近的至多3名敌人
@@ -3533,7 +3542,7 @@ ClickStaff: {
 }
 
 RockrockStaff: {
-	DisplayName: 洛洛的涡轮法杖
+	DisplayName: 涡轮法杖 [洛洛]
 	Tooltip:
 		'''
 		高举法杖，从杖尖射出三枚星矢，优先追踪鼠标附近锁定的敌人
@@ -3546,27 +3555,27 @@ RockrockStaff: {
 }
 
 BeehunterBag: {
-	DisplayName: 蛇屠箱的棒球棍
+	DisplayName: 棒球棍 [蛇屠箱]
 	// Tooltip: ""
 }
 
 DobermannWhip: {
-	DisplayName: 杜宾的鞭子
+	DisplayName: 鞭子 [杜宾]
 	Tooltip: 技能1为强力击·B（攻击充能），技能2大幅提升攻击力
 }
 
 EstelleGlove: {
-	DisplayName: 艾丝黛尔的手套
+	DisplayName: 手套 [艾丝黛尔]
 	// Tooltip: ""
 }
 
 FrostleafAxe: {
-	DisplayName: 霜叶的巨斧
+	DisplayName: 巨斧 [霜叶]
 	// Tooltip: ""
 }
 
 HongdouLance: {
-	DisplayName: 红豆的长枪
+	DisplayName: 长枪 [红豆]
 	Tooltip:
 		'''
 		困难模式前
@@ -3575,38 +3584,28 @@ HongdouLance: {
 		'''
 }
 
-MataimaruGlaive: {
-	DisplayName: 缠丸的薙刀
-	Tooltip: 技能2为恶鬼之力：防御归零，攻击力大幅提升
-}
-
-MelanthasSword: {
-	DisplayName: 玫兰莎的剑
-	// Tooltip: ""
-}
-
 MousseGlove: {
-	DisplayName: 慕斯的手套
+	DisplayName: 手套 [慕斯]
 	Tooltip: 长按左键，从手套尖端伸出光刃连续挥斩
 }
 
 SkadisGreatsword: {
-	DisplayName: 斯卡蒂的巨剑
+	DisplayName: 巨剑 [斯卡蒂]
 	Tooltip: 精英2可解锁涌潮悲歌
 }
 
 JessicaGun: {
-	DisplayName: 杰西卡的枪
+	DisplayName: 枪 [杰西卡]
 	// Tooltip: ""
 }
 
 MeteorBow: {
-	DisplayName: 流星的弓
+	DisplayName: 弓 [流星]
 	// Tooltip: ""
 }
 
 GravelDualBlades: {
-	DisplayName: 砾的双刀
+	DisplayName: 双刀 [砾]
 	Tooltip: 技能开局即满，技能1防御大幅提升
 }
 
@@ -3616,22 +3615,22 @@ AnselClaw: {
 }
 
 BeanstalkOrb: {
-	DisplayName: 豆苗的法球
+	DisplayName: 法球 [豆苗]
 	// Tooltip: ""
 }
 
 EarthspiritWand: {
-	DisplayName: 地灵的法杖
+	DisplayName: 法杖 [地灵]
 	// Tooltip: ""
 }
 
 PlumePike: {
-	DisplayName: 翎羽的戈
+	DisplayName: 戈 [翎羽]
 	Tooltip: 技能激活时攻击速度大幅提升
 }
 
 VanillaAxe: {
-	DisplayName: 香草的巨斧
+	DisplayName: 巨斧 [香草]
 	// Tooltip: ""
 }
 
@@ -3649,7 +3648,7 @@ OriginiumCore: {
 }
 
 LupineScarlet: {
-	DisplayName: 狼之绯
+	DisplayName: 狼之绯 [洛茜]
 	Tooltip:
 		'''
 		左键：三段绯紫连斩
@@ -3658,12 +3657,12 @@ LupineScarlet: {
 }
 
 CuoraWeapon: {
-	DisplayName: 蛇屠箱的盾牌
+	DisplayName: 盾牌 [蛇屠箱]
 	// Tooltip: ""
 }
 
 ClosureScanGun: {
-	DisplayName: 工程部特制扫描枪
+	DisplayName: 工程部特制扫描枪 [可露希尔]
 	// Tooltip: ""
 }
 
@@ -3688,17 +3687,17 @@ KaltsitLegs: {
 }
 
 CardiWeapon: {
-	DisplayName: 卡缇的盾牌
+	DisplayName: 盾牌 [卡缇]
 	Tooltip: 技能激活时立即恢复最大生命40%
 }
 
 EntelechiaScythe: {
-	DisplayName: 隐德莱希的巨镰
+	DisplayName: 巨镰 [隐德莱希]
 	// Tooltip: ""
 }
 
 RopeClaw: {
-	DisplayName: 暗锁的钩爪
+	DisplayName: 钩爪 [暗锁]
 	// Tooltip: ""
 }
 
@@ -3946,7 +3945,7 @@ TragodiaDefault: {
 }
 
 Tragodia: {
-	DisplayName: 酒神的权杖
+	DisplayName: 权杖 [酒神]
 	// Tooltip: ""
 }
 
@@ -4037,12 +4036,12 @@ GlowingTruffle: {
 }
 
 Vulcan_Weapon: {
-	DisplayName: 火神的锤盾
+	DisplayName: 锤盾 [火神]
 	// Tooltip: ""
 }
 
 HellagurOdachi: {
-	DisplayName: 赫拉格的大太刀
+	DisplayName: 大太刀 [赫拉格]
 	Tooltip:
 		'''
 		生命值越低攻速越快，攻击可以回复生命值
@@ -4052,7 +4051,7 @@ HellagurOdachi: {
 }
 
 BlazeGreatsword: {
-	DisplayName: 煌的链锯大剑
+	DisplayName: 链锯大剑 [煌]
 	Tooltip:
 		'''
 		机械骷髅王后
@@ -4063,12 +4062,12 @@ BlazeGreatsword: {
 }
 
 FiammettaHandCannon: {
-	DisplayName: 菲亚梅塔的手炮
+	DisplayName: 手炮 [菲亚梅塔]
 	Tooltip: 向天空释放炮弹，并对目标进行打击
 }
 
 MeteoriteCannon: {
-	DisplayName: 陨星的爆破弩
+	DisplayName: 爆破弩 [陨星]
 	Tooltip:
 		'''
 		消耗火箭弹并继承弹药伤害，向高空发射跨射爆破弹
@@ -4077,7 +4076,7 @@ MeteoriteCannon: {
 }
 
 SpecterBoneSaw: {
-	DisplayName: 幽灵鲨的圆锯
+	DisplayName: 圆锯 [幽灵鲨]
 	Tooltip:
 		'''
 		攻击所有与之接触的敌人
@@ -4085,28 +4084,18 @@ SpecterBoneSaw: {
 		'''
 }
 
-ShiningStaff: {
-	DisplayName: 闪灵的法杖
-	Tooltip:
-		'''
-		发射黑白剑形源石技艺攻击敌人，也可治疗被击中的友方玩家
-		命中敌人后飞回的治疗术体回复2点生命，治疗量低于苏苏洛
-		技能提供自身屏障与防护领域
-		'''
-}
-
 LeonhardtStaff: {
-	DisplayName: 莱恩哈特的法杖
+	DisplayName: 法杖 [莱恩哈特]
 	Tooltip: “让我甄别一下你们是金玉还是废料吧！”
 }
 
 PassengerConductor: {
-	DisplayName: 异客的电磁枢杖
+	DisplayName: 电磁枢杖 [异客]
 	Tooltip: 四连发金色闪电链；每发最多命中4个敌人（首次命中后弹跳3次）
 }
 
 LeiziStaff: {
-	DisplayName: 惊蛰的雷法杖
+	DisplayName: 雷法杖 [惊蛰]
 	Tooltip:
 		'''
 		向瞄准方向三连发可穿墙的紫白雷束，不自动锁敌
@@ -4116,7 +4105,7 @@ LeiziStaff: {
 }
 
 PuddingStaff: {
-	DisplayName: 布丁的电磁法杖
+	DisplayName: 电磁法杖 [布丁]
 	Tooltip:
 		'''
 		向瞄准方向二连发蓝色电弧；每发最多命中4个敌人（首次命中后弹跳3次）
@@ -4129,7 +4118,7 @@ PuddingStaff: {
 // RopeLegsSet.Tooltip: ""
 
 UtageKatana: {
-	DisplayName: 宴的太刀
+	DisplayName: 太刀 [宴]
 	Tooltip:
 		'''
 		生命值越低，挥刀越快；有效命中可以回复少量生命
@@ -4139,7 +4128,7 @@ UtageKatana: {
 }
 
 RedDagger: {
-	DisplayName: 红的匕首
+	DisplayName: 匕首 [红]
 	Tooltip:
 		'''
 		进行极高速的近战攻击
@@ -4149,7 +4138,7 @@ RedDagger: {
 }
 
 HoolheyakWindArts: {
-	DisplayName: 霍尔海雅的御风羽饰
+	DisplayName: 御风羽饰 [霍尔海雅]
 	Tooltip:
 		'''
 		抬手释放风弹，命中后形成追踪风旋
@@ -4157,18 +4146,8 @@ HoolheyakWindArts: {
 		'''
 }
 
-SussurroStaff: {
-	DisplayName: 苏苏洛的医疗法杖
-	Tooltip:
-		'''
-		仅使用左键发射高速治疗光线，命中友方玩家可进行治疗
-		持续左键攻击时释放治疗蝴蝶，为自身回复生命
-		右键攻击已取消
-		'''
-}
-
 EbenholzStaff: {
-	DisplayName: 黑键的奏鸣法杖
+	DisplayName: 奏鸣法杖 [黑键]
 	Tooltip:
 		'''
 		释放追踪黑色奏鸣块
@@ -4178,7 +4157,7 @@ EbenholzStaff: {
 }
 
 EthanYoyo: {
-	DisplayName: 伊桑的悠悠球
+	DisplayName: 悠悠球 [伊桑]
 	Tooltip:
 		'''
 		小概率束缚住小怪
@@ -4188,7 +4167,7 @@ EthanYoyo: {
 }
 
 HornGrenadeLauncher: {
-	DisplayName: 号角的榴弹炮盾
+	DisplayName: 榴弹炮盾 [号角]
 	Tooltip:
 		'''
 		手持时自动举盾，冷却结束后自动恢复；左键始终发射榴弹
@@ -4200,17 +4179,8 @@ HornGrenadeLauncher: {
 // AstesiaHeadSet.Tooltip: ""
 // AstesiaLegsSet.Tooltip: ""
 
-WarfarinStaff: {
-	DisplayName: 华法琳的血浆法杖
-	Tooltip:
-		'''
-		发射血液穿透敌人
-		技能期间为召唤物提供强力增益
-		'''
-}
-
 IndigoStaff: {
-	DisplayName: 深靛的灯塔法杖
+	DisplayName: 灯塔法杖 [深靛]
 	Tooltip:
 		'''
 		发射追踪水光，停火时储存至多三枚，随下次攻击一同释放
@@ -4220,7 +4190,7 @@ IndigoStaff: {
 }
 
 HarmonieStaff: {
-	DisplayName: 和弦的协奏法杖
+	DisplayName: 协奏法杖 [和弦]
 	Tooltip:
 		'''
 		发射追踪音符，停火时储存至多三枚，随下次攻击一同奏响
@@ -4251,7 +4221,7 @@ RhodesIslandEmergencyChargeManual: {
 }
 
 GavialChainsaw: {
-	DisplayName: 百炼嘉维尔的链锯战斧
+	DisplayName: 链锯战斧 [百炼嘉维尔]
 	Tooltip:
 		'''
 		按住攻击维持电锯，锯刃跟随鼠标并切割接触到的所有敌人
@@ -4263,7 +4233,7 @@ GavialChainsaw: {
 }
 
 NecrassScepter: {
-	DisplayName: 死芒的复燃权杖
+	DisplayName: 复燃权杖 [死芒]
 	Tooltip:
 		'''
 		从身边连发一至两道朝向鼠标的紫焰，沿曲线加速并延迟追踪敌人
@@ -4273,7 +4243,7 @@ NecrassScepter: {
 }
 
 PhantomDaggers: {
-	DisplayName: 傀影的镜中双刃
+	DisplayName: 镜中双刃 [傀影]
 	Tooltip:
 		'''
 		以银蓝刀光进行高速交替连切
@@ -4288,7 +4258,7 @@ PhantomDaggers: {
 }
 
 BeeswaxStaff: {
-	DisplayName: 蜜蜡的守砂法杖
+	DisplayName: 守砂法杖 [蜜蜡]
 	Tooltip:
 		'''
 		默认展开砂金护盾，抵挡3次攻击
@@ -4302,7 +4272,7 @@ BeeswaxStaff: {
 }
 
 CarnelianStaff: {
-	DisplayName: 卡涅利安的赤砂法杖
+	DisplayName: 赤砂法杖 [卡涅利安]
 	Tooltip:
 		'''
 		默认展开赤金护盾，抵挡4次攻击
@@ -4316,7 +4286,7 @@ CarnelianStaff: {
 }
 
 LinStaff: {
-	DisplayName: 林的琉璃法杖
+	DisplayName: 琉璃法杖 [林]
 	Tooltip:
 		'''
 		默认展开琉璃护盾，抵挡5次攻击
@@ -4331,7 +4301,7 @@ LinStaff: {
 }
 
 PineconeNailgun: {
-	DisplayName: 松果的射钉枪
+	DisplayName: 射钉枪 [松果]
 	Tooltip:
 		'''
 		消耗一发子弹射出5枚钢钉
@@ -4341,7 +4311,7 @@ PineconeNailgun: {
 }
 
 ExecutorShotgun: {
-	DisplayName: 送葬人的霰弹枪
+	DisplayName: 霰弹枪 [送葬人]
 	Tooltip:
 		'''
 		快速喷射两轮可穿透敌人的霰弹
@@ -4351,7 +4321,7 @@ ExecutorShotgun: {
 }
 
 ChalterWatergun: {
-	DisplayName: 假日威龙陈的高压水枪
+	DisplayName: 高压水枪 [假日威龙陈]
 	Tooltip:
 		'''
 		喷射可贯穿5名敌人的散射水滴
@@ -4385,17 +4355,17 @@ MaterialistTreasureBag: {
 }
 
 GitanoOrb: {
-	DisplayName: 远山的水晶球
+	DisplayName: 水晶球 [远山]
 	Tooltip: “请稍候，先来占卜一下这次战斗的结果吧。”
 }
 
 SkyfireStaff: {
-	DisplayName: 天火的流星法杖
+	DisplayName: 流星法杖 [天火]
 	Tooltip: “日炎将你焚尽！”
 }
 
 MostimaStaff: {
-	DisplayName: 莫斯提马的法杖
+	DisplayName: 法杖 [莫斯提马]
 	Tooltip:
 		'''
 		按住左键立即在鼠标位置展开时钟法阵，持续引导，无需蓄力

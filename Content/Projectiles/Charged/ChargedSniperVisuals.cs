@@ -19,6 +19,7 @@ internal static class ChargedSniperVisuals
     private const string Textures = "ArknightsMod/Content/Textures/ChargedSniper/";
     private static readonly Dictionary<string, Texture2D> textures = new();
     private static Effect spreadShader, lineShader;
+    private static Texture2D neutralBullet;
     private static Texture2D Texture(string name)
     {
         if (!textures.TryGetValue(name, out Texture2D texture))
@@ -29,6 +30,8 @@ internal static class ChargedSniperVisuals
     {
         // These assets belong to tML; only discard our references.
         textures.Clear(); spreadShader = lineShader = null;
+        Texture2D owned = neutralBullet; neutralBullet = null;
+        if (owned != null) Main.QueueMainThreadAction(owned.Dispose);
     }
 
     internal static float ScanLength(Vector2 start, Vector2 aim, ChargedOperatorKind kind, int skill)
@@ -188,6 +191,15 @@ internal static class ChargedSniperVisuals
             ChargedOperatorVfx.Sparkle(center, aim.RotatedByRandom(.5f) * Main.rand.NextFloat(2, heavy ? 12 : 7),
                 color, aim.ToRotation(), heavy ? 1 : .55f);
     }
+    internal static void MuzzleSmoke(Vector2 center, Vector2 aim, ChargedOperatorKind kind, int count)
+    {
+        if (!ChargedOperatorVfx.Visible(center) || ParticleManager.activeParticles.Count > 950) return;
+        Color tint = Color.Lerp(new Color(105, 109, 118), ChargedOperatorRules.ColorFor(kind), .12f);
+        for (int i = 0; i < count; i++)
+            new T_Sniper_Impact_Cloud(center + Main.rand.NextVector2Circular(2, 2),
+                aim * Main.rand.NextFloat(.12f, .35f) + new Vector2(Main.rand.NextFloat(-.18f, .18f), -Main.rand.NextFloat(.6f, 1.1f)),
+                tint, Main.rand.NextFloat(14, 23), Main.rand.Next(32, 46), Main.rand.NextFloat(MathHelper.TwoPi)).Spawn();
+    }
     internal static void HitBurst(Vector2 center, Vector2 aim, ChargedOperatorKind kind, bool heavy, bool critical)
     {
         // Gameplay hooks only enqueue particles. All drawing stays in Particle.Draw.
@@ -225,15 +237,52 @@ internal static class ChargedSniperVisuals
 
     internal static void BulletParticles(Projectile p, ChargedOperatorKind kind)
     {
-        if (!ChargedOperatorVfx.Visible(p.Center)) return;
-        Color color = ChargedOperatorRules.ColorFor(kind);
-        if (kind == ChargedOperatorKind.Andreana)
+        if (!ChargedOperatorVfx.Visible(p.Center) || ParticleManager.activeParticles.Count > 950) return;
+        BulletLineParticles(p, kind);
+        new T_Sniper_Flight_Wisp(p.Center - p.velocity * Main.rand.NextFloat(1, p.MaxUpdates),
+            -p.velocity * .025f, p.velocity.ToRotation(), kind, Main.rand.NextFloat()).Spawn();
+    }
+    internal static void BulletLineParticles(Projectile p, ChargedOperatorKind kind)
+    {
+        if (!ChargedOperatorVfx.Visible(p.Center) || ParticleManager.activeParticles.Count > 950) return;
+        Color theme = ChargedOperatorRules.ColorFor(kind), dark = Color.Lerp(Color.Black, theme, .1f);
+        float rotation = p.velocity.ToRotation();
+        // Dark material is visible against daylight; the restrained themed glint remains visible at night.
+        new T_Nitro_Flight_Spark(p.Center - p.velocity * .6f,
+            -p.velocity * .05f, dark * .8f, .75f, rotation).Spawn();
+        new T_Nitro_Flight_Spark(p.Center, -p.velocity * .05f, theme * .22f, .5f, rotation).Spawn();
+    }
+    internal static void BulletLaunchParticles(Projectile p, ChargedOperatorKind kind)
+    {
+        if (!ChargedOperatorVfx.Visible(p.Center) || ParticleManager.activeParticles.Count > 950) return;
+        Color theme = ChargedOperatorRules.ColorFor(kind);
+        for (int i = 0; i < 12; i++)
+            new T_Nitro_Flight_Spark(p.Center, p.velocity * Main.rand.NextFloat(.08f, .4f),
+                i % 2 == 0 ? Color.Lerp(Color.Black, theme, .1f) * .7f : theme * .25f, Main.rand.NextFloat(.4f, .75f), p.velocity.ToRotation()).Spawn();
+    }
+    internal static void DrawThemedBullet(Projectile p, ChargedOperatorKind kind)
+    {
+        if (neutralBullet == null)
         {
-            Dust ink = Dust.NewDustPerfect(p.Center, DustID.TintableDustLighted, -p.velocity * .08f, 130, color * .45f, .7f);
-            ink.noGravity = true;
+            // Retain Nitro's exact silhouette/alpha and brightness; remove its baked-in yellow at runtime.
+            Texture2D source = Texture("NitroShot");
+            Color[] pixels = new Color[source.Width * source.Height]; source.GetData(pixels);
+            for (int i = 0; i < pixels.Length; i++)
+            {
+                Color pixel = pixels[i]; byte value = Math.Max(pixel.R, Math.Max(pixel.G, pixel.B));
+                pixels[i] = new Color(value, value, value, pixel.A);
+            }
+            neutralBullet = new Texture2D(Main.spriteBatch.GraphicsDevice, source.Width, source.Height);
+            neutralBullet.SetData(pixels);
         }
-        else if (p.timeLeft % 8 == 0)
-            ChargedOperatorVfx.Sparkle(p.Center, -p.velocity * .02f, color, p.rotation + (kind == ChargedOperatorKind.Firewatch ? .6f : 0), .45f);
+        Color theme = ChargedOperatorRules.ColorFor(kind);
+        float opacity = 1 - p.alpha / 255f;
+        Vector2 position = p.Center - Main.screenPosition;
+        float rotation = p.velocity.ToRotation() + MathHelper.PiOver2;
+        Main.EntitySpriteDraw(neutralBullet, position, null, Color.Lerp(Color.Black, theme, .12f) * opacity * .8f,
+            rotation, neutralBullet.Size() / 2, new Vector2(2.4f, 1.4f), SpriteEffects.None);
+        Main.EntitySpriteDraw(neutralBullet, position, null, theme * opacity,
+            rotation, neutralBullet.Size() / 2, 1.38f, SpriteEffects.None);
     }
     internal static void DrawBullet(Projectile p, ChargedOperatorKind kind)
     {

@@ -31,6 +31,7 @@ public sealed class GoldenglowHeldStaff : ModProjectile
     }
     private Item channeledItem;
     internal bool Bursting => GoldenglowLightningBalance.IsBurst((int)Projectile.ai[0]);
+    internal float CycleProgress { get; private set; }
     internal Vector2 Aim => aim;
     // Jewel center in the existing 72px sprite, transformed by the same -45-degree upright rotation.
     internal Vector2 Tip => Projectile.Center + new Vector2(-6.6f * Projectile.spriteDirection,
@@ -115,6 +116,11 @@ public sealed class GoldenglowHeldStaff : ModProjectile
         // ItemUseStyleID.HoldUp supplies the raised arm, as in TeslaCoil; do not override it with a shooting arm.
 
         bool burst = Bursting;
+        int phase = tick % (GoldenglowLightningBalance.ChargeTicks + GoldenglowLightningBalance.BurstTicks);
+        CycleProgress = burst
+            ? (GoldenglowLightningBalance.ChargeTicks + GoldenglowLightningBalance.BurstTicks - phase)
+                / (float)GoldenglowLightningBalance.BurstTicks
+            : phase / (float)GoldenglowLightningBalance.ChargeTicks;
         bool burstStart = tick % (GoldenglowLightningBalance.ChargeTicks + GoldenglowLightningBalance.BurstTicks)
             == GoldenglowLightningBalance.ChargeTicks;
         if (owned)

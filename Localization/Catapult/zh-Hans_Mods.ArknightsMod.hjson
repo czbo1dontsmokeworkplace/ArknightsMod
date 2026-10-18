@@ -6,7 +6,7 @@ CatapultText: {
 
 Items: {
 	CatapultLauncher: {
-		DisplayName: 空爆的榴弹发射器
+		DisplayName: 榴弹发射器 [空爆]
 		Tooltip:
 			'''
 			向鼠标位置曲射一枚榴弹，最远30格

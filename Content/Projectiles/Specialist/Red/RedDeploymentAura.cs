@@ -1,10 +1,8 @@
-using ArknightsMod.Common.Particle.T;
 using System;
-using ArknightsMod.Common.Particle;
+using ArknightsMod.Common.VisualEffects;
 using ArknightsMod.Content.Items.Weapons.Specialist.Red;
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles.Specialist.Red;
@@ -41,21 +39,15 @@ public sealed class RedDeploymentAura : ModProjectile
         if (Main.dedServ || owner.HeldItem.ModItem is not RedDagger)
             return;
         Lighting.AddLight(owner.Center, new Vector3(.24f, .012f, .028f) * Math.Min(1, remaining / 30f));
-        if (age % 6 == 0)
-        {
-            for (int i = 0; i < 2; i++)
-                new T_Streak_Particle(owner.Center + new Vector2(Main.rand.NextFloat(-15, 15), Main.rand.NextFloat(-20, 17)),
-                    -owner.velocity * .16f + new Vector2(Main.rand.NextFloat(-.5f, .5f), -1.1f),
-                    18, .26f, i == 0 ? new Color(230, 28, 65) : new Color(255, 160, 181), true)
-                    { Deformation = new Vector2(.28f, 1.7f) }.Spawn();
-        }
-        if (age % 24 == 0)
-        {
-            Dust dust = Dust.NewDustPerfect(owner.Center + Main.rand.NextVector2Circular(12, 20),
-                DustID.Blood, -owner.velocity * .1f + new Vector2(0, -.6f), Scale: .6f);
-            dust.noGravity = true;
-        }
+        ExecutorStatusVisuals.Emit(Projectile, age, ExecutorStatusVisuals.Red, Math.Min(1f, remaining / 24f));
     }
-    // 持续状态只保留周身短粒子与 dust，两个技能均不绘制刀幕。
-    public override bool PreDraw(ref Color lightColor) => false;
+    public override bool PreDraw(ref Color lightColor)
+    {
+        Player owner = Main.player[Projectile.owner];
+        if (owner.HeldItem.ModItem is not RedDagger) return false;
+        int age = (int)Projectile.ai[0];
+        float fade = Math.Min(1f, Math.Min(age / 12f, (RedDeploymentState.Duration - age) / 24f));
+        ExecutorStatusVisuals.Draw(Projectile.Center, age, ExecutorStatusVisuals.Red, fade, owner.gravDir);
+        return false;
+    }
 }

@@ -6,7 +6,7 @@ CatapultText: {
 
 Items: {
 	CatapultLauncher: {
-		DisplayName: Catapult's Grenade Launcher
+		DisplayName: Grenade Launcher [Catapult]
 		Tooltip:
 			'''
 			Lobs a grenade toward the cursor, up to 30 tiles away

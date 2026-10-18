@@ -5,6 +5,7 @@ namespace ArknightsMod.Content.Items.Weapons.Charged;
 
 public sealed class FirewatchRifle : ChargedOperatorWeapon
 {
+    public override string Texture => "ArknightsMod/Content/Items/Weapons/Sniper/Firewatch/FirewatchRifle";
     public override ChargedOperatorKind Kind => ChargedOperatorKind.Firewatch;
     protected override int PlaceholderItem => ItemID.SniperRifle;
     protected override int Rarity => ItemRarityID.Lime;

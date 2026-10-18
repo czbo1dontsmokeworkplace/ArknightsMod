@@ -94,7 +94,9 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
         private int normalDirection = -1;
         private float NormalTimer { get => Projectile.ai[0]; set => Projectile.ai[0] = value; }
         private float NormalCount { get => Projectile.ai[1]; set => Projectile.ai[1] = value; }
-		private const float NormalSwingSize = 2f;
+		public const float NormalSwingSize = 1f;
+        private Vector2 lastGrip, lastTip, previousGrip, previousTip;
+        private bool hasNormalPose;
 
 		private int AimFacing() => Projectile.velocity.X < 0f ? -1 : 1;
 
@@ -139,6 +141,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 
         private void StartNormalCombo()
         {
+            hasNormalPose = false;
             normalUnit = Math.Max(2, (int)MathF.Round(ArtsFighterSwing.BaseUseTime / player.GetAttackSpeed(DamageClass.Melee)));
             NormalTimer = -normalUnit;
             NormalCount = 0;
@@ -188,6 +191,11 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
             helper.swingTime = normalDamageWindow ? (int)before + 1 : 0;
             helper.ApplyArtsSwingPose(aim + normalAngle * comboFacing, start,
                 normalDirection * comboFacing, normalDamageWindow);
+            Vector2 offset = helper.setoff.RotatedBy(helper.swordRot);
+            Vector2 grip = helper.handlePos + offset, tip = helper.swordPos + offset;
+            previousGrip = hasNormalPose ? lastGrip : grip;
+            previousTip = hasNormalPose ? lastTip : tip;
+            lastGrip = grip; lastTip = tip; hasNormalPose = true;
             if (normalDamageWindow) SpawnSwingFire();
             if (release && Main.myPlayer == Projectile.owner)
             {
@@ -312,7 +320,6 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 			}
 		}
 
-		public static Effect fire = ModContent.Request<Effect>("ArknightsMod/Content/Projectiles/Guard/Laevatain/FireProcedural").Value;
 		private int timer = 0;
 		public override bool PreDraw(ref Color lightColor) {
 
@@ -360,10 +367,32 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 		}
 
 		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {
-			if ((projMode == ProjMode.Attack && normalDamageWindow) || projMode == ProjMode.Stab)
+            if (projMode == ProjMode.Attack && normalDamageWindow && hasNormalPose)
+                return SweptBladeCollision(targetHitbox, previousGrip, previousTip, lastGrip, lastTip, 20f * helper.lenScale);
+			if (projMode == ProjMode.Stab)
 				return helper.Colliding(targetHitbox);
 			return false;
 		}
+
+        // Sample the actual drawn grip-to-tip arc between AI frames, including fast swings.
+        // Never read draw-only vertices: collision must work on a dedicated server too.
+        public static bool SweptBladeCollision(Rectangle target, Vector2 oldGrip, Vector2 oldTip,
+            Vector2 grip, Vector2 tip, float width)
+        {
+            Vector2 oldBlade = oldTip - oldGrip, blade = tip - grip;
+            float rotation = MathHelper.WrapAngle(blade.ToRotation() - oldBlade.ToRotation());
+            float reach = Math.Max(oldBlade.Length(), blade.Length());
+            int samples = Math.Clamp((int)MathF.Ceiling((MathF.Abs(rotation) * reach + Vector2.Distance(oldGrip, grip)) / 6f), 1, 512);
+            for (int i = 0; i <= samples; i++)
+            {
+                float t = i / (float)samples, point = 0;
+                Vector2 start = Vector2.Lerp(oldGrip, grip, t);
+                Vector2 end = start + (oldBlade.ToRotation() + rotation * t).ToRotationVector2()
+                    * MathHelper.Lerp(oldBlade.Length(), blade.Length(), t);
+                if (Collision.CheckAABBvLineCollision(target.TopLeft(), target.Size(), start, end, width, ref point)) return true;
+            }
+            return false;
+        }
 
 		public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) {
 			if (projMode == ProjMode.Stab &&

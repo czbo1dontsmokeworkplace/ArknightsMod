@@ -8,6 +8,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using ArknightsMod.Content.Items.Weapons.Sniper.Typhon;
 
 namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
 {
@@ -17,6 +18,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
         private int TotalTicks;
         private int StarLifeTicks;
         private const float ForwardOffset = 60f;
+        private bool cancelled;
 
         private readonly TyphonS3StarChargeEffects.ChargeSmokeRingInstance[] _smokeRings =
             new TyphonS3StarChargeEffects.ChargeSmokeRingInstance[TyphonS3StarChargeEffects.SmokeRingMaxConcurrent];
@@ -60,13 +62,27 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
         }
 
         public override bool? CanDamage() => false;
+        public override bool ShouldUpdatePosition() => false;
+        private void UpdateLiveAim(Player owner)
+        {
+            if (Projectile.owner == Main.myPlayer)
+            {
+                Vector2 target = TyphonAimReticle.ResolveAimPoint(owner);
+                float angle = TyphonBow.MortarDirection(owner, target).ToRotation();
+                if (Vector2.DistanceSquared(target, new Vector2(Projectile.ai[0], Projectile.ai[1])) > 1
+                    || Math.Abs(MathHelper.WrapAngle(angle - Projectile.ai[2])) > .001f)
+                    Projectile.netUpdate = true;
+                Projectile.ai[0] = target.X; Projectile.ai[1] = target.Y; Projectile.ai[2] = angle;
+            }
+            Projectile.Center = owner.MountedCenter + Projectile.ai[2].ToRotationVector2() * ForwardOffset;
+        }
 
         public override void AI()
         {
             Player owner = Main.player[Projectile.owner];
-            Vector2 forwardUp = new Vector2(owner.direction, -1f);
-            forwardUp = forwardUp.SafeNormalize(Vector2.UnitX);
-            Projectile.Center   = owner.MountedCenter + forwardUp * ForwardOffset;
+            if (!owner.active || owner.dead || owner.HeldItem.ModItem is not TyphonBow)
+            { cancelled = true; Projectile.Kill(); return; }
+            UpdateLiveAim(owner);
 
             int elapsed = TotalTicks - Projectile.timeLeft;
             if (elapsed < DelayTicks)
@@ -130,17 +146,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
             TotalTicks    = Math.Max(8, (int)(interval * StarLifetimeFractionOfSwing));
             StarLifeTicks = Math.Max(1, TotalTicks - DelayTicks);
 
-            if (TyphonAimReticle.TryGetSnappedChaseNpc(owner.whoAmI, out NPC snappedTarget))
-            {
-                Projectile.localAI[0] = snappedTarget.whoAmI + 1f;
-                Projectile.ai[0] = snappedTarget.Center.X;
-                Projectile.ai[1] = snappedTarget.Center.Y;
-            }
-            else
-            {
-                Projectile.localAI[0] = 0f;
-            }
-
+            UpdateLiveAim(owner);
             Projectile.timeLeft = TotalTicks;
             TyphonS3StarChargeEffects.ResetChargeSmokeRingQueue(ref _smokeRingCount, ref _smokeRingSpawnAccumulatorSeconds);
         }
@@ -149,32 +155,17 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
 
         public override void OnKill(int timeLeft)
         {
+            if (cancelled) return;
             Player owner = Main.player[Projectile.owner];
             NPC lockedTarget = null;
-            int lockedNpcWhoPlusOne = (int)Projectile.localAI[0];
-            Vector2 target = new Vector2(Projectile.ai[0], Projectile.ai[1]);
-            if (lockedNpcWhoPlusOne > 0)
-            {
-                int idx = lockedNpcWhoPlusOne - 1;
-                if (idx >= 0 && idx < Main.maxNPCs)
-                {
-                    NPC snappedTarget = Main.npc[idx];
-                    if (snappedTarget.active && !snappedTarget.friendly && snappedTarget.life > 0 && !snappedTarget.dontTakeDamage)
-                    {
-                        lockedTarget = snappedTarget;
-                        target = snappedTarget.Center;
-                    }
-                }
-            }
-            else
-            {
-                target = TyphonAimReticle.GetCurrentPos(owner.whoAmI) ?? target;
-            }
-
-            Vector2 aimDir = Vector2.UnitX.RotatedBy(Projectile.ai[2]);
+            Vector2 target = TyphonAimReticle.GetCurrentPos(owner.whoAmI) ?? new Vector2(Projectile.ai[0], Projectile.ai[1]);
+            if (TyphonAimReticle.TryGetSnappedChaseNpc(owner.whoAmI, out NPC snappedTarget))
+            { lockedTarget = snappedTarget; target = snappedTarget.Center; }
+            Vector2 aimDir = TyphonBow.MortarDirection(owner, target);
 
             if (!Main.dedServ)
             {
+                SoundEngine.PlaySound(TyphonBow.FireSound, Projectile.Center);
                 int burstIdx = Projectile.NewProjectile(
                     Projectile.GetSource_FromThis(),
                     Projectile.Center,
@@ -197,13 +188,11 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon
             if (Main.myPlayer != Projectile.owner)
                 return;
 
-            SoundEngine.PlaySound(SoundID.Item5, owner.Center);
-
             Vector2 dir = aimDir;
             Vector2 vel = dir * 16f;
             int rainArrowIdx = Projectile.NewProjectile(
                 owner.GetSource_FromThis(),
-                owner.Center,
+                Projectile.Center,
                 vel,
                 ModContent.ProjectileType<TyphonArrow>(),
                 Projectile.damage,

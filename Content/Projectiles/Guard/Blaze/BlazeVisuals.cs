@@ -251,7 +251,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Blaze
 
 		internal static void AddImpactShake(Player player, int time, float strength) {
 			if (!Main.dedServ && player.whoAmI == Main.myPlayer)
-				player.GetModPlayer<BlazeImpactShakePlayer>().Add(time, strength);
+				player.GetModPlayer<BlazeImpactShakePlayer>().AddImpact(time, strength);
 		}
 
 		internal static void AddShake(Player player, int time, float strength) {

@@ -12,7 +12,7 @@ namespace ArknightsMod.Content.Projectiles.Charged;
 
 public sealed class ChargedOperatorShot : ModProjectile
 {
-    public override string Texture => "Terraria/Images/MagicPixel";
+    public override string Texture => "ArknightsMod/Content/Textures/ChargedSniper/NitroShot";
     private ChargedOperatorKind Kind => (ChargedOperatorKind)(int)Projectile.ai[0];
     private int Skill => (int)Projectile.ai[2];
     private float distance;
@@ -25,6 +25,7 @@ public sealed class ChargedOperatorShot : ModProjectile
     }
     public override void OnSpawn(IEntitySource source)
     {
+        Projectile.alpha = 255;
         Projectile.velocity *= 1.2f;
         Projectile.penetrate = 4;
         Projectile.tileCollide = !(Kind == ChargedOperatorKind.Ambriel && Skill == 2);
@@ -33,6 +34,8 @@ public sealed class ChargedOperatorShot : ModProjectile
     }
     public override void AI()
     {
+        Projectile.alpha = Math.Max(0, Projectile.alpha - (int)(Projectile.velocity.Length() * .9f));
+        if (!Main.dedServ && Projectile.timeLeft == 297) ChargedSniperVisuals.BulletLaunchParticles(Projectile, Kind);
         distance += Projectile.velocity.Length();
         if (distance >= ChargedOperatorRules.ShotRange(Kind, Skill)) { Projectile.Kill(); return; }
         Projectile.rotation = Projectile.velocity.ToRotation();
@@ -42,6 +45,9 @@ public sealed class ChargedOperatorShot : ModProjectile
             Lighting.AddLight(Projectile.Center, color.ToVector3() * .35f);
             ChargedSniperVisuals.BulletParticles(Projectile, Kind);
         }
+        else if (!Main.dedServ && Projectile.ai[1] == 0 && Projectile.numUpdates % 2 == 0
+            && Kind is ChargedOperatorKind.Ambriel or ChargedOperatorKind.Andreana or ChargedOperatorKind.Firewatch)
+            ChargedSniperVisuals.BulletLineParticles(Projectile, Kind);
     }
     public override bool? CanHitNPC(NPC target) => Kind == ChargedOperatorKind.Andreana && Skill == 2 && target.life <= target.lifeMax * .5f ? false : null;
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
@@ -68,7 +74,7 @@ public sealed class ChargedOperatorShot : ModProjectile
     public override void OnKill(int timeLeft) => ChargedOperatorVfx.Burst(Projectile.Center, Kind, 6, 18);
     public override bool PreDraw(ref Color lightColor)
     {
-        ChargedSniperVisuals.DrawBullet(Projectile, Kind);
+        ChargedSniperVisuals.DrawThemedBullet(Projectile, Kind);
         return false;
     }
 }

@@ -21,6 +21,9 @@ public sealed class MechAccordHeldStaff : ModProjectile
     private int attackTicks;
     private int rockrockVolley;
     internal bool Bursting => attackTicks % 240 >= 180;
+    internal float CycleProgress => Bursting
+        ? (240 - attackTicks % 240) / 60f
+        : attackTicks % 240 / 180f;
     internal NPC LockedTarget { get; private set; }
     internal Vector2 Aim => aim;
     // Fallback texture; PreDraw selects the matching vanilla staff for the held weapon.

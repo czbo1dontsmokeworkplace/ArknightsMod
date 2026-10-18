@@ -5,6 +5,7 @@ namespace ArknightsMod.Content.Items.Weapons.Charged;
 
 public sealed class AmbrielRifle : ChargedOperatorWeapon
 {
+    public override string Texture => "ArknightsMod/Content/Items/Weapons/Sniper/Ambriel/AmbrielRifle";
     public override ChargedOperatorKind Kind => ChargedOperatorKind.Ambriel;
     protected override int PlaceholderItem => ItemID.Musket;
     protected override int Rarity => ItemRarityID.Orange;

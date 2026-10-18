@@ -36,11 +36,10 @@ namespace ArknightsMod.Common.Particle
 				return;
 			}
 			Main.spriteBatch.End();
-			foreach (IGrouping<BlendState, Particle> blendGroup in from p in ParticleManager.activeParticles
-			group p by p.DrawBlendState)
+			foreach (var blendGroup in ParticleManager.activeParticles.GroupBy(p => (p.DrawBlendState, p.DrawSamplerState)))
 			{
 				RasterizerState screenCull = Main.Rasterizer;
-				Main.spriteBatch.Begin(0, blendGroup.First().DrawBlendState, Main.DefaultSamplerState, DepthStencilState.None, screenCull, null, Main.GameViewMatrix.TransformationMatrix);
+				Main.spriteBatch.Begin(0, blendGroup.Key.DrawBlendState, blendGroup.Key.DrawSamplerState, DepthStencilState.None, screenCull, null, Main.GameViewMatrix.TransformationMatrix);
 				foreach (Particle particle in blendGroup)
 				{
 					particle.Draw();

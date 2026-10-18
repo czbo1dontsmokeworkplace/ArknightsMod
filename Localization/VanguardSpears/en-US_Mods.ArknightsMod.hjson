@@ -1,6 +1,6 @@
 Items: {
 	GraniLance: {
-		DisplayName: Grani's Folding Lance
+		DisplayName: Folding Lance [Grani]
 		Tooltip:
 			'''
 			Early Hardmode
@@ -10,7 +10,7 @@ Items: {
 	}
 
 	WildManeLance: {
-		DisplayName: Wild Mane's Charge Lance
+		DisplayName: Charge Lance [Wild Mane]
 		Tooltip:
 			'''
 			After all Mechanical Bosses

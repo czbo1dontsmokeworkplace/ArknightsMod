@@ -184,6 +184,9 @@ namespace ArknightsMod
 		public override void HandlePacket(BinaryReader reader, int whoAmI) {
 			short id = reader.ReadInt16();
 			switch ((ArkMessageID)id) {
+                case ArkMessageID.MedicalTreatmentState:
+                    global::ArknightsMod.Content.Items.Weapons.Medic.MedicalTreatmentPlayer.Receive(reader);
+                    break;
                 case ArkMessageID.MedicHealingGrant:
                     global::ArknightsMod.Content.Items.Weapons.Medic.MedicHealingNet.Receive(reader);
                     break;
@@ -305,6 +308,7 @@ namespace ArknightsMod
 			EndfieldGatheringReply,
 			RoundStoneAltarState,
             MedicHealingGrant,
+            MedicalTreatmentState,
 		}
 	}
 	//public class Ex : GlobalNPC

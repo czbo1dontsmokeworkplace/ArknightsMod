@@ -65,7 +65,7 @@ internal static class PhantomVisuals
     private static void Line(Vector2 from, Vector2 to, Color color, float width)
     {
         Vector2 delta = to - from;
-        Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, from - Main.screenPosition, null,
+        Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, from - Main.screenPosition, new Rectangle(0, 0, 1, 1),
             color, delta.ToRotation(), new Vector2(0, .5f), new Vector2(delta.Length(), width), SpriteEffects.None, 0);
     }
     internal static void DrawEcho(Vector2 center, float aim, int age, float fade)
@@ -92,28 +92,6 @@ internal static class PhantomVisuals
             Vector2 hand = center + (arm + MathHelper.PiOver2).ToRotationVector2() * 18;
             Line(center + new Vector2(side * 5, -6), hand, Shadow * fade, 5);
             DrawKnife(hand, arm, fade * .75f);
-        }
-    }
-    internal static void DrawVeil(Vector2 center, int age, float fade)
-    {
-        for (int i = 0; i < 32; i++)
-        {
-            if (i % 8 == 0) continue;
-            float a = i * MathHelper.TwoPi / 32 + MathF.Sin(age * .025f) * .08f;
-            Vector2 p = new Vector2(MathF.Cos(a) * 25, MathF.Sin(a) * 35);
-            float b = a + MathHelper.TwoPi / 32;
-            Vector2 q = new Vector2(MathF.Cos(b) * 25, MathF.Sin(b) * 35);
-            Line(center + p, center + q, Silver * (fade * .4f), 1.3f);
-        }
-    }
-    internal static void DrawNotes(Vector2 center, int layers, int age, float fade)
-    {
-        for (int i = 0; i < layers; i++)
-        {
-            float a = -MathHelper.Pi + (i + .5f) * MathHelper.Pi / 10f;
-            Vector2 p = center + new Vector2(MathF.Cos(a) * 34, MathF.Sin(a) * 35 - 5);
-            Line(p, p + new Vector2(2, -5), Crimson * fade, 2.5f);
-            Line(p + new Vector2(2, -5), p + new Vector2(5, -4), Silver * (fade * .65f), 1);
         }
     }
     internal static void DrawCurtain(Vector2 center, float progress)

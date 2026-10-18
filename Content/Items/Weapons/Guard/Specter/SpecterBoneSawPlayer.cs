@@ -11,7 +11,7 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.Items.Weapons.Guard.Specter
 {
 	/// <summary>
-	/// 幽灵鲨的角色态：天赋再生、两个定时技能，以及二技能结束后的十秒失能。
+	/// 幽灵鲨的角色态：天赋再生、两个定时技能，以及二技能结束后的十秒三倍易伤。
 	/// 状态属于武器自己，不向共享 WeaponPlayer 塞入新的角色字段。
 	/// </summary>
 	public sealed class SpecterBoneSawPlayer : ModPlayer
@@ -47,21 +47,10 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Specter
 			Player.statLifeMax2 += Math.Max(1, (int)MathF.Round(Player.statLifeMax2 * 0.10f));
 		}
 
-		public override void PreUpdateMovement() {
-			if (ExhaustionTimeLeft <= 0)
-				return;
-
-			Player.controlLeft = false;
-			Player.controlRight = false;
-			Player.controlUp = false;
-			Player.controlDown = false;
-			Player.controlJump = false;
-			Player.controlUseItem = false;
-			Player.controlUseTile = false;
-			Player.noItems = true;
-			Player.velocity.X *= 0.72f;
-			if (MathF.Abs(Player.velocity.X) < 0.08f)
-				Player.velocity.X = 0f;
+		public override void ModifyHurt(ref Player.HurtModifiers modifiers) {
+			// 切换武器也不会绕过后摇；在防御与减伤结算后承受三倍伤害。
+			if (ExhaustionTimeLeft > 0)
+				modifiers.FinalDamage *= 3f;
 		}
 
 		public override bool FreeDodge(Player.HurtInfo info) {
@@ -87,11 +76,8 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Specter
 
 			if (ExhaustionTimeLeft > 0) {
 				ExhaustionTimeLeft--;
-				Player.controlUseItem = false;
-				Player.controlUseTile = false;
-				Player.noItems = true;
-				if (!Main.dedServ && ExhaustionTimeLeft % 14 == 0)
-					SpecterVisuals.SpawnExhaustionMote(Player.Center + Main.rand.NextVector2Circular(18f, 24f));
+				if (!Main.dedServ && ExhaustionTimeLeft > 0 && ExhaustionTimeLeft % 6 == 0)
+					SpecterVisuals.SpawnExhaustionMotes(Player, ExhaustionTimeLeft);
 			}
 
 			if (Player.whoAmI == Main.myPlayer) {
@@ -164,8 +150,6 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Specter
 				return;
 
 			ExhaustionTimeLeft = ExhaustionDuration;
-			Player.channel = false;
-			Player.noItems = true;
 			if (!Main.dedServ && endedMode == 2) {
 				SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 0.48f, Pitch = -0.42f }, Player.Center);
 				SpecterVisuals.SpawnFrenzyCollapse(Player.Center);

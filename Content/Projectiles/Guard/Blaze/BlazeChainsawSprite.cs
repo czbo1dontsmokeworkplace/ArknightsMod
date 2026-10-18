@@ -30,8 +30,9 @@ internal static class BlazeChainsawSprite
         bool extended = sheet.Width == 198 && sheet.Height == 162;
         int frameWidth = extended ? 198 : FrameWidth;
         int frameHeight = extended ? 54 : FrameHeight;
-        Vector2 grip = extended ? new Vector2(78f, 32f) : Grip;
-        Vector2 tip = extended ? new Vector2(192f, 32f) : Tip;
+        // 延伸模块握住后端 20% 的长柄，不再抓在机身处。
+        Vector2 grip = extended ? new Vector2(frameWidth * 0.2f, 12f) : Grip;
+        Vector2 tip = extended ? new Vector2(192f, 20f) : Tip;
         Rectangle source = new(0, Math.Clamp(frame, 0, FrameCount - 1) * frameHeight, frameWidth, frameHeight);
         Vector2 axis = tip - grip;
         float nativeAngle = axis.ToRotation();

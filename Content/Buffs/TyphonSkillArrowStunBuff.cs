@@ -68,6 +68,8 @@ namespace ArknightsMod.Content.Buffs
 		{
 			if (proj.ModProjectile is TyphonS2Arrow)
 				return true;
+			if (proj.ModProjectile is TyphonAstralShot crystal && crystal.SkillTwo)
+				return true;
 
 			if (proj.ModProjectile is not TyphonArrow)
 				return false;
@@ -76,7 +78,7 @@ namespace ArknightsMod.Content.Buffs
 			return m == 2f
 				|| m == 4f
 				|| m == AiS3RainHoming
-				|| m == AiS3RainColumn;
+				|| m == AiS3RainColumn || m == 3.5f;
 		}
 
 		private static bool CanStunNpc(NPC npc, Player owner)

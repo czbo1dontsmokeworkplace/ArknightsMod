@@ -504,9 +504,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Hellagur
 			}, target.Center);
 			if (Main.LocalPlayer.active
 				&& Vector2.DistanceSquared(Main.LocalPlayer.Center, target.Center) < 900f * 900f) {
-				ShakeEffectPlayer shake = Main.LocalPlayer.GetModPlayer<ShakeEffectPlayer>();
-				shake.screenShakeTime = Math.Max(shake.screenShakeTime, empowered ? 4 : 2);
-				shake.screenShakeVelocity = slashDirection * (empowered ? 2.2f : 1.25f);
+				Main.LocalPlayer.GetModPlayer<MushaHitShakePlayer>().Play(slashDirection, empowered);
 			}
 		}
 

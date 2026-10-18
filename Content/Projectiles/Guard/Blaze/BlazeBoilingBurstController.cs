@@ -345,8 +345,17 @@ namespace ArknightsMod.Content.Projectiles.Guard.Blaze
 			Texture2D glow = TextureAssets.Extra[ExtrasID.ThePerfectGlow].Value;
 			bool faceLeft = MathF.Cos(sawAngle) < 0f;
 			int frame = BlazeChainsawSprite.FrameAt(age, 2);
-			if (age < DetonationTick)
+			if (age < DetonationTick) {
+				BaseHeldMeleeSupport.BeginAdditive(Main.spriteBatch);
+				Color edge = new Color(244, 12, 35, 150) * (0.58f + Ramp * 0.24f) * Spool;
+				for (int i = 0; i < 8; i++) {
+					Vector2 offset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * (1.8f + Ramp * 0.6f);
+					BlazeChainsawSprite.DrawHeld(weapon, handWorld + offset, sawAngle, faceLeft,
+						CuttingReach, edge, frame);
+				}
+				BaseHeldMeleeSupport.EndAdditive(Main.spriteBatch);
 				BlazeChainsawSprite.DrawHeld(weapon, handWorld, sawAngle, faceLeft, CuttingReach, lightColor, frame);
+			}
 
 			BaseHeldMeleeSupport.BeginAdditive(Main.spriteBatch);
 			if (age < DetonationTick) {

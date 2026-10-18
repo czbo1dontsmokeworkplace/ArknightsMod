@@ -19,6 +19,8 @@ namespace ArknightsMod.Common.Particle
 
 		public abstract string TexturePath { get; }
 
+		public virtual SamplerState DrawSamplerState => Main.DefaultSamplerState;
+
 		public virtual int FrameCount
 		{
 			get

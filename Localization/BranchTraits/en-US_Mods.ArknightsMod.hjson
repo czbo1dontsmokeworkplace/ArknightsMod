@@ -1,7 +1,7 @@
 BranchTraits: {
 	Artilleryman: Artilleryman: Fires in a distinctive mortar arc; shells deal increased explosion damage while descending
 	Musha: Musha: Attacks restore life, but holding this weapon disables healing potions
-	Dreadnought: Dreadnought: Hold attack to charge; a full charge deals massive single-hit damage
+	Dreadnought: Dreadnought: Deals massive damage to a single enemy and grows stronger through battle
 	ArtsFighter: Arts Fighter: Attacks ignore enemy defense
 	MechAccord: Mech-Accord Caster: Only enemies close enough to the cursor can be selected
 	Mystic: Mystic: Store additional projectiles while not attacking and release them together
@@ -9,7 +9,7 @@ BranchTraits: {
 	Spreadshooter: Spreadshooter: Fires many projectiles in a spread
 	Executor: Executor: Moving quickly, dashing, landing, or respawning counts as triggering a skill
 	Centurion: Centurion: Attacks all nearby enemies at an extremely high frequency
-	Medic: Medic: Attacking allied players heals them
+	Medic: Physician: Lob gravity-affected medical arts to heal allied players
 	ChainCaster: Chain Caster: Lightning can bounce between multiple enemies
 	SplashCaster: Splash Caster: Attacks deal sustained damage over time
 	Deadeye: Deadeye: Hold the attack button to charge; a full charge fires a powerful shell

@@ -62,10 +62,11 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.Gravel
                 var shield = player.GetModPlayer<GravelShieldPlayer>();
                 shield.ShieldMax = (int)(player.statLifeMax2 * 1.5f);
                 shield.ShieldHp = shield.ShieldMax;
-                if (player.ownedProjectileCounts[ModContent.ProjectileType<GravelShieldVfx>()] <= 0)
-                    Projectile.NewProjectile(player.GetSource_FromThis(), player.Center, Vector2.Zero,
-                        ModContent.ProjectileType<GravelShieldVfx>(), 0, 0f, player.whoAmI);
             }
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<GravelShieldVfx>()] <= 0)
+                Projectile.NewProjectile(player.GetSource_FromThis(), player.Center, Vector2.Zero,
+                    ModContent.ProjectileType<GravelShieldVfx>(), 0, 0f, player.whoAmI, mp.Skill, 0f,
+                    MathHelper.Max(1f, (mp.CurrentSkill?.CurrentLevelData.ActiveTime ?? (mp.Skill == 1 ? 10f : 12f)) * 60f));
         }
 
         public override bool CanUseItem(Player player) {

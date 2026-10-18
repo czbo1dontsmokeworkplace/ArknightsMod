@@ -259,8 +259,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Blaze
 			Texture2D weapon = BlazeChainsawSprite.GetTexture(Extended);
 			bool faceLeft = MathF.Cos(aimAngle) < 0f;
 			int frame = BlazeChainsawSprite.FrameAt(age, Extended ? 3 : 4);
-			if (Extended)
-				DrawExtensionOutline(weapon, faceLeft, frame);
+			DrawSawOutline(weapon, faceLeft, frame);
 			BlazeChainsawSprite.DrawHeld(weapon, drawHandWorld, aimAngle, faceLeft, Reach, lightColor, frame);
 
 			BaseHeldMeleeSupport.BeginAdditive(Main.spriteBatch);
@@ -272,12 +271,12 @@ namespace ArknightsMod.Content.Projectiles.Guard.Blaze
 			return false;
 		}
 
-		private void DrawExtensionOutline(Texture2D weapon, bool faceLeft, int frame) {
+		private void DrawSawOutline(Texture2D weapon, bool faceLeft, int frame) {
 			BaseHeldMeleeSupport.BeginAdditive(Main.spriteBatch);
 			float pulse = 0.9f + MathF.Sin((float)Main.GlobalTimeWrappedHourly * 7f) * 0.1f;
-			Color outline = new Color(244, 12, 35, 105) * (0.72f * pulse);
+			Color outline = new Color(244, 12, 35, 150) * ((Extended ? 0.82f : 0.58f) * spool * pulse);
 			for (int i = 0; i < 8; i++) {
-				Vector2 offset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 2.4f;
+				Vector2 offset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * (Extended ? 2.4f : 1.8f);
 				BlazeChainsawSprite.DrawHeld(weapon, drawHandWorld + offset, aimAngle, faceLeft,
 					Reach, outline, frame);
 			}

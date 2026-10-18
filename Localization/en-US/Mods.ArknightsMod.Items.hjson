@@ -1,4 +1,4 @@
-﻿AstesiaHead: {
+AstesiaHead: {
 	DisplayName: Astesia Head
 	Tooltip: ""
 }
@@ -19,7 +19,7 @@ AstesiaDefault: {
 }
 
 AstraSword: {
-	DisplayName: Astesia's Astral Sword
+	DisplayName: Astral Sword [Astesia]
 	Tooltip: Hold left click to alternate two sky-blue slashes, with a longer windup after the second
 }
 
@@ -31,7 +31,7 @@ AutoDoorItem: {
 
 # Weapons
 YatoKatana: {
-	DisplayName: Yato's Katana
+	DisplayName: Katana [Yato]
 	Tooltip:
 		'''
 		holding this weapon provides 20% movespeed
@@ -41,7 +41,7 @@ YatoKatana: {
 }
 
 NoirShield: {
-	DisplayName: Noir's Shield
+	DisplayName: Shield [Noir]
 	Tooltip:
 		'''
 		holding this shield provides 5 defense
@@ -51,22 +51,22 @@ NoirShield: {
 }
 
 DurinWand: {
-	DisplayName: Durin's wand
+	DisplayName: wand [Durin]
 	Tooltip: She looks quite sleepy.
 }
 
 _12FWand: {
-	DisplayName: 12F's wand
+	DisplayName: wand [12F]
 	Tooltip: So, when can I get a skin.
 }
 
 RangersBow: {
-	DisplayName: Rangers' Bow
+	DisplayName: Bow [Rangers]
 	Tooltip: You like me that much, huh? Weird taste, I gotta say.
 }
 
 KroosCrossbow: {
-	DisplayName: Kroos' Crossbow
+	DisplayName: Crossbow [Kroos]
 	Tooltip: "'KO- KO- DA- YO-'"
 }
 
@@ -80,7 +80,7 @@ Shinginzan: {
 }
 
 BagpipeSpear: {
-	DisplayName: Bagpipe's Siege Lance
+	DisplayName: Siege Lance [Bagpipe]
 	Tooltip:
 		'''
 		Post-Golem
@@ -99,7 +99,7 @@ ThornsSword: {
 }
 
 PozemkaCrossbow: {
-	DisplayName: Pozemka's Crossbow
+	DisplayName: Crossbow [Pozemka]
 	Tooltip: "'To live on the surface inevitably means to raise a weapon at some point. So I'm well aware.'"
 }
 
@@ -1101,7 +1101,7 @@ TacticalBattleRecord: {
 }
 
 NianWeapon: {
-	DisplayName: Nian Weapon
+	DisplayName: Sword [Nian]
 	Tooltip: ""
 }
 
@@ -1146,7 +1146,7 @@ SpicyCandy: {
 }
 
 ExusiaiVector: {
-	DisplayName: Exusiai Vector
+	DisplayName: Vector [Exusiai]
 	Tooltip: ""
 }
 
@@ -1156,27 +1156,27 @@ ExusiaiVector_Ammo: {
 }
 
 FangSpear: {
-	DisplayName: Fang Spear
+	DisplayName: Spear [Fang]
 	Tooltip: ""
 }
 
 KroosAlterCrossbow: {
-	DisplayName: Kroos Alter Crossbow
+	DisplayName: Crossbow [Kroos the Keen Glint]
 	Tooltip: ""
 }
 
 OrchidUmbrellla: {
-	DisplayName: Orchid Umbrellla
+	DisplayName: Umbrella [Orchid]
 	Tooltip: ""
 }
 
 ShawAxe: {
-	DisplayName: Shaw Axe
+	DisplayName: Axe [Shaw]
 	Tooltip: ""
 }
 
 ShawWaterCannon: {
-	DisplayName: Shaw Water Cannon
+	DisplayName: Water Cannon [Shaw]
 	Tooltip: ""
 }
 
@@ -1201,7 +1201,7 @@ SakiSword: {
 }
 
 WisadelCannon: {
-	DisplayName: Wisadel Cannon
+	DisplayName: Cannon [Wisadel]
 	Tooltip: ""
 }
 
@@ -1390,22 +1390,22 @@ WisdelDefault: {
 }
 
 ArtsBlade: {
-	DisplayName: Arts Blade
+	DisplayName: Arts Blade [Texas]
 	Tooltip: ""
 }
 
 Blueberry: {
-	DisplayName: Blueberry
+	DisplayName: Blueberry [Texas the Omertosa]
 	Tooltip: ""
 }
 
 BlueberryDarkChocolate: {
-	DisplayName: Blueberry Dark Chocolate
+	DisplayName: Blueberry Dark Chocolate [Texas the Omertosa]
 	Tooltip: ""
 }
 
 DarkChocolate: {
-	DisplayName: Dark Chocolate
+	DisplayName: Dark Chocolate [Texas the Omertosa]
 	Tooltip: ""
 }
 
@@ -1420,7 +1420,7 @@ PozyBow: {
 }
 
 SchwarzBow: {
-	DisplayName: Schwarz Bow
+	DisplayName: Bow [Schwarz]
 	Tooltip: ""
 }
 
@@ -1430,13 +1430,22 @@ PozyomkaBow: {
 }
 
 BeagleWeapon: {
-	DisplayName: Beagle Weapon
+	DisplayName: Sword and Shield [Beagle]
 	Tooltip: ""
 }
 
 TyphonBow: {
-	DisplayName: Typhon Bow
-	Tooltip: ""
+	DisplayName: Bow [Typhon]
+	Tooltip:
+		'''
+		Lunar Events
+		Hold left click to fire a large, infinitely piercing astral crystal every 60 ticks; converts all arrows.
+		Hold right click to load up to 6 crystals, consuming one arrow each. The first takes 18 ticks; each subsequent loading time is multiplied by 0.85.
+		Crystals form an evenly spaced fan in front of the bow. Release to fire them all immediately.
+		Right-click arrows use the same sprite at 70% size, with a white outline and optical tint. They damage immediately and hit once.
+		Right-click arrows accelerate immediately upon launch and lock directly onto enemies.
+		Stored crystals deal no damage; loading does not slow movement. Switching weapons cancels loading.
+		'''
 }
 
 TyphonDefault: {
@@ -1480,22 +1489,22 @@ FactoryItem: {
 }
 
 AdnachielCrossbow: {
-	DisplayName: Adnachiel Crossbow
+	DisplayName: Crossbow [Adnachiel]
 	Tooltip: ""
 }
 
 Lava_Dagger: {
-	DisplayName: Lava_ Dagger
+	DisplayName: Dagger [Lava]
 	Tooltip: Fires an ember bolt on use
 }
 
 Shirayuki_Shuriken: {
-	DisplayName: Shirayuki_ Shuriken
+	DisplayName: Shuriken [Shirayuki]
 	Tooltip: ""
 }
 
 ThornsWeapon: {
-	DisplayName: Thorns Sword
+	DisplayName: Sword [Thorns]
 	Tooltip: ""
 }
 
@@ -1724,12 +1733,12 @@ HoundproBanner: {
 }
 
 SurtrLaevatain: {
-	DisplayName: Surtr Laevatain
+	DisplayName: Laevatain [Surtr]
 	Tooltip: '''"I alone am enough."'''
 }
 
 SilverAshWeapon: {
-	DisplayName: SilverAsh Weapon
+	DisplayName: Cane [SilverAsh]
 	Tooltip: ""
 }
 
@@ -1854,7 +1863,7 @@ MizukiDefault: {
 }
 
 ChenSword_Item: {
-	DisplayName: Chen Sword
+	DisplayName: Chi Xiao [Ch'en]
 	Tooltip: ""
 }
 
@@ -2632,7 +2641,7 @@ TheFirstToTalkSummon: {
 }
 
 OblivionisSword: {
-	DisplayName: Oblivionis Sword
+	DisplayName: Melody Master Twin Swords [Togawa Sakiko]
 	Tooltip: ""
 }
 
@@ -2892,7 +2901,7 @@ ArmorUtageLegs: {
 
 ValarqvinWeapon: {
 	Tooltip: ""
-	DisplayName: Valarqvin Weapon
+	DisplayName: Staff [Valarqvin]
 }
 
 ArmorExusiaiBody: {
@@ -2931,17 +2940,17 @@ PipeBlueLightBlock: {
 }
 
 HazeMagicBook: {
-	DisplayName: Haze Magic Book
+	DisplayName: Magic Book [Haze]
 	Tooltip: ""
 }
 
 ReedFlameShadowStaff: {
-	DisplayName: Reed the Flame Shadow's Staff
+	DisplayName: Staff [Reed the Flame Shadow]
 	Tooltip: Hits have a 30% chance to inflict Burned Scar for 8 seconds
 }
 
 DN_Weapon: {
-	DisplayName: D N_ Weapon
+	DisplayName: Sword and Shield [Durnar]
 	Tooltip: ""
 }
 
@@ -2981,12 +2990,12 @@ SolidifiedFiberBoard: {
 }
 
 SaintBell: {
-	DisplayName: Saint's Bell
+	DisplayName: Bell [Pramanix]
 	Tooltip: ""
 }
 
 DeepcolorSketch: {
-	DisplayName: Deepcolor's Sketch
+	DisplayName: Sketch [Deepcolor]
 	Tooltip:
 		'''
 		Summons tentacles to fight for you.
@@ -2997,7 +3006,7 @@ DeepcolorSketch: {
 }
 
 SceneCamera: {
-	DisplayName: Scene's Camera
+	DisplayName: Camera [Scene]
 	Tooltip:
 		'''
 		Left click: cast magic attack.
@@ -3184,12 +3193,12 @@ TexasDefault: {
 }
 
 StewardStaff: {
-	DisplayName: Steward Staff
+	DisplayName: Staff [Steward]
 	Tooltip: ""
 }
 
 GoldenglowWand: {
-	DisplayName: Goldenglow Wand
+	DisplayName: Wand [Goldenglow]
 	Tooltip:
 		'''
 		Raise the staff to continuously discharge lightning at enemies near the cursor
@@ -3200,7 +3209,7 @@ GoldenglowWand: {
 }
 
 ClickStaff: {
-	DisplayName: Click's Viewfinder Staff
+	DisplayName: Viewfinder Staff [Click]
 	Tooltip:
 		'''
 		Hold left-click to automatically select up to 3 enemies nearest the cursor
@@ -3210,7 +3219,7 @@ ClickStaff: {
 }
 
 RockrockStaff: {
-	DisplayName: Rockrock's Turbine Staff
+	DisplayName: Turbine Staff [Rockrock]
 	Tooltip:
 		'''
 		Raise the staff to fire three star bolts from its tip toward the enemy locked near the cursor
@@ -3223,27 +3232,27 @@ RockrockStaff: {
 }
 
 BeehunterBag: {
-	DisplayName: Beehunter Bag
+	DisplayName: Baseball Bat [Cuora]
 	Tooltip: ""
 }
 
 DobermannWhip: {
-	DisplayName: Dobermann Whip
+	DisplayName: Whip [Dobermann]
 	Tooltip: ""
 }
 
 EstelleGlove: {
-	DisplayName: Estelle Glove
+	DisplayName: Glove [Estelle]
 	Tooltip: ""
 }
 
 FrostleafAxe: {
-	DisplayName: Frostleaf Axe
+	DisplayName: Axe [Frostleaf]
 	Tooltip: ""
 }
 
 HongdouLance: {
-	DisplayName: Vigna's Lance
+	DisplayName: Lance [Vigna]
 	Tooltip:
 		'''
 		Pre-Hardmode
@@ -3252,38 +3261,28 @@ HongdouLance: {
 		'''
 }
 
-MataimaruGlaive: {
-	DisplayName: Mataimaru Glaive
-	Tooltip: ""
-}
-
-MelanthasSword: {
-	DisplayName: Melanthas Sword
-	Tooltip: ""
-}
-
 MousseGlove: {
-	DisplayName: Mousse Glove
+	DisplayName: Glove [Mousse]
 	Tooltip: Hold left click to extend a light blade from the glove and slash repeatedly
 }
 
 SkadisGreatsword: {
-	DisplayName: Skadis Greatsword
+	DisplayName: Greatsword [Skadi]
 	Tooltip: ""
 }
 
 JessicaGun: {
-	DisplayName: Jessica Gun
+	DisplayName: Gun [Jessica]
 	Tooltip: ""
 }
 
 MeteorBow: {
-	DisplayName: Meteor Bow
+	DisplayName: Bow [Meteor]
 	Tooltip: ""
 }
 
 GravelDualBlades: {
-	DisplayName: Gravel Dual Blades
+	DisplayName: Dual Blades [Gravel]
 	Tooltip: ""
 }
 
@@ -3293,22 +3292,22 @@ AnselClaw: {
 }
 
 BeanstalkOrb: {
-	DisplayName: Beanstalk Orb
+	DisplayName: Orb [Beanstalk]
 	Tooltip: ""
 }
 
 EarthspiritWand: {
-	DisplayName: Earthspirit Wand
+	DisplayName: Wand [Earthspirit]
 	Tooltip: ""
 }
 
 PlumePike: {
-	DisplayName: Plume Pike
+	DisplayName: Pike [Plume]
 	Tooltip: ""
 }
 
 VanillaAxe: {
-	DisplayName: Vanilla Axe
+	DisplayName: Axe [Vanilla]
 	Tooltip: ""
 }
 
@@ -3326,17 +3325,17 @@ OriginiumCore: {
 }
 
 LupineScarlet: {
-	DisplayName: Lupine Scarlet
+	DisplayName: Lupine Scarlet [Rossi]
 	Tooltip: ""
 }
 
 CuoraWeapon: {
-	DisplayName: Cuora Weapon
+	DisplayName: Shield [Cuora]
 	Tooltip: ""
 }
 
 ClosureScanGun: {
-	DisplayName: Engineering Scanner Gun
+	DisplayName: Engineering Scanner Gun [Closure]
 	Tooltip: ""
 }
 
@@ -3361,17 +3360,17 @@ KaltsitLegs: {
 }
 
 CardiWeapon: {
-	DisplayName: Cardi Weapon
+	DisplayName: Shield [Cardigan]
 	Tooltip: Restores 40% of Max Life instantly when activated
 }
 
 EntelechiaScythe: {
-	DisplayName: Entelechia Scythe
+	DisplayName: Scythe [Entelechia]
 	Tooltip: ""
 }
 
 RopeClaw: {
-	DisplayName: Rope Claw
+	DisplayName: Claw [Rope]
 	Tooltip: ""
 }
 
@@ -3615,7 +3614,7 @@ TragodiaDefault: {
 }
 
 Tragodia: {
-	DisplayName: Tragodia
+	DisplayName: Scepter [Tragodia]
 	Tooltip: ""
 }
 
@@ -3706,12 +3705,12 @@ GlowingTruffle: {
 }
 
 Vulcan_Weapon: {
-	DisplayName: Vulcan_ Weapon
+	DisplayName: Hammer and Shield [Vulcan]
 	Tooltip: ""
 }
 
 HellagurOdachi: {
-	DisplayName: Hellagur's Odachi
+	DisplayName: Odachi [Hellagur]
 	Tooltip:
 		'''
 		Lower health grants faster attacks, and attacks restore health
@@ -3721,7 +3720,7 @@ HellagurOdachi: {
 }
 
 BlazeGreatsword: {
-	DisplayName: Blaze's Chainsaw Greatsword
+	DisplayName: Chainsaw Greatsword [Blaze]
 	Tooltip:
 		'''
 		Available after Skeletron Prime
@@ -3732,12 +3731,12 @@ BlazeGreatsword: {
 }
 
 FiammettaHandCannon: {
-	DisplayName: Fiammetta's Hand Cannon
+	DisplayName: Hand Cannon [Fiammetta]
 	Tooltip: Fires shells into the sky to strike the target
 }
 
 MeteoriteCannon: {
-	DisplayName: Meteorite's Explosive Cannon
+	DisplayName: Explosive Cannon [Meteorite]
 	Tooltip:
 		'''
 		Consumes rockets and inherits their damage to launch mortar shells into the sky
@@ -3746,7 +3745,7 @@ MeteoriteCannon: {
 }
 
 SpecterBoneSaw: {
-	DisplayName: Specter's Bone Saw
+	DisplayName: Bone Saw [Specter]
 	Tooltip:
 		'''
 		Attacks every enemy it touches
@@ -3754,28 +3753,18 @@ SpecterBoneSaw: {
 		'''
 }
 
-ShiningStaff: {
-	DisplayName: Shining's Staff
-	Tooltip:
-		'''
-		Fires black and white Arts blades that damage enemies and heal allies they hit
-		Wisps returning after enemy hits restore 2 life, less than Sussurro
-		Skills provide a personal barrier and defensive field
-		'''
-}
-
 LeonhardtStaff: {
-	DisplayName: Leonhardt's Staff
+	DisplayName: Staff [Leonhardt]
 	Tooltip: Let's see whether you're gold or manure!
 }
 
 PassengerConductor: {
-	DisplayName: Passenger's Electromagnetic Conductor
+	DisplayName: Electromagnetic Conductor [Passenger]
 	Tooltip: Fires four-round bursts of golden chain lightning; each shot hits up to 4 enemies (3 jumps after the first hit)
 }
 
 LeiziStaff: {
-	DisplayName: Leizi's Thunder Staff
+	DisplayName: Thunder Staff [Leizi]
 	Tooltip:
 		'''
 		Fires three-round bursts of non-homing violet-white lightning through blocks
@@ -3785,7 +3774,7 @@ LeiziStaff: {
 }
 
 PuddingStaff: {
-	DisplayName: Pudding's Electromagnetic Staff
+	DisplayName: Electromagnetic Staff [Pudding]
 	Tooltip:
 		'''
 		Fires two-round bursts of blue arcs; each shot hits up to 4 enemies (3 jumps after the first hit)
@@ -3798,7 +3787,7 @@ RopeHeadSet.Tooltip: ""
 RopeLegsSet.Tooltip: ""
 
 UtageKatana: {
-	DisplayName: Utage's Katana
+	DisplayName: Katana [Utage]
 	Tooltip:
 		'''
 		Swings faster at low life; valid hits restore a small amount of life
@@ -3808,7 +3797,7 @@ UtageKatana: {
 }
 
 RedDagger: {
-	DisplayName: Projekt Red's Dagger
+	DisplayName: Dagger [Projekt Red]
 	Tooltip:
 		'''
 		Performs extremely fast melee attacks
@@ -3818,7 +3807,7 @@ RedDagger: {
 }
 
 HoolheyakWindArts: {
-	DisplayName: Ho'olheyak's Windfeather
+	DisplayName: Windfeather [Ho'olheyak]
 	Tooltip:
 		'''
 		Cast wind bolts by hand, forming homing vortices on impact
@@ -3826,18 +3815,8 @@ HoolheyakWindArts: {
 		'''
 }
 
-SussurroStaff: {
-	DisplayName: Sussurro's Medical Staff
-	Tooltip:
-		'''
-		Left-click fires fast medical rays that damage enemies and heal allies they hit
-		Sustained left-click attacks release healing butterflies that restore your own life
-		Right-click attack is disabled
-		'''
-}
-
 EbenholzStaff: {
-	DisplayName: Ebenholz's Sonata Staff
+	DisplayName: Sonata Staff [Ebenholz]
 	Tooltip:
 		'''
 		Releases homing black sonata cubes
@@ -3847,7 +3826,7 @@ EbenholzStaff: {
 }
 
 EthanYoyo: {
-	DisplayName: Ethan's Yoyo
+	DisplayName: Yoyo [Ethan]
 	Tooltip:
 		'''
 		Has a small chance to bind ordinary enemies
@@ -3857,7 +3836,7 @@ EthanYoyo: {
 }
 
 HornGrenadeLauncher: {
-	DisplayName: Horn's Grenade Shield
+	DisplayName: Grenade Shield [Horn]
 	Tooltip:
 		'''
 		Automatically guards while held and raises the shield again when its cooldown ends; left-click always fires grenades
@@ -3869,21 +3848,8 @@ AstesiaBodySet.Tooltip: ""
 AstesiaHeadSet.Tooltip: ""
 AstesiaLegsSet.Tooltip: ""
 
-WarfarinStaff: {
-	DisplayName: Warfarin's Plasma Staff
-	Tooltip:
-		'''
-		Fires five blood bolts in a burst; each follows gravity, hits up to twice and vanishes on terrain
-		Deals summon damage without consuming mana or minion slots
-		Press the skill activation key for Unstable Plasma: summons deal 30% more damage and release blood bolts on hit
-		Lasts 15 seconds; 30 SP with automatic recovery; summons share a 0.25-second blood bolt cooldown
-		Only active while holding this staff; additional bolts deal this staff's current damage
-		Dropped by Zombie Mermen and Wandering Eye Fish
-		'''
-}
-
 IndigoStaff: {
-	DisplayName: Indigo's Lighthouse Staff
+	DisplayName: Lighthouse Staff [Indigo]
 	Tooltip:
 		'''
 		Fires homing waterlights; stores up to three while idle and releases them with the next attack
@@ -3893,7 +3859,7 @@ IndigoStaff: {
 }
 
 HarmonieStaff: {
-	DisplayName: Harmonie's Concerto Staff
+	DisplayName: Concerto Staff [Harmonie]
 	Tooltip:
 		'''
 		Fires homing notes; stores up to three while idle and plays them with the next attack
@@ -3924,7 +3890,7 @@ RhodesIslandEmergencyChargeManual: {
 }
 
 GavialChainsaw: {
-	DisplayName: Gavial the Invincible's Chainsaw Greataxe
+	DisplayName: Chainsaw Greataxe [Gavial the Invincible]
 	Tooltip:
 		'''
 		Hold attack to aim the spinning saw and cut every enemy touching its blade
@@ -3936,7 +3902,7 @@ GavialChainsaw: {
 }
 
 NecrassScepter: {
-	DisplayName: Necrass's Rekindling Scepter
+	DisplayName: Rekindling Scepter [Necrass]
 	Tooltip:
 		'''
 		Rapidly fires one or two violet flames from around you toward the cursor, accelerating along curved paths before homing
@@ -3946,7 +3912,7 @@ NecrassScepter: {
 }
 
 PhantomDaggers: {
-	DisplayName: Phantom's Mirror Blades
+	DisplayName: Mirror Blades [Phantom]
 	Tooltip:
 		'''
 		Alternate rapid cuts with silver-blue blade trails
@@ -3961,7 +3927,7 @@ PhantomDaggers: {
 }
 
 BeeswaxStaff: {
-	DisplayName: Beeswax's Sandward Staff
+	DisplayName: Sandward Staff [Beeswax]
 	Tooltip:
 		'''
 		Passively raises a golden barrier that blocks 3 hits
@@ -3975,7 +3941,7 @@ BeeswaxStaff: {
 }
 
 CarnelianStaff: {
-	DisplayName: Carnelian's Crimson Sand Staff
+	DisplayName: Crimson Sand Staff [Carnelian]
 	Tooltip:
 		'''
 		Passively raises a crimson barrier that blocks 4 hits
@@ -3989,7 +3955,7 @@ CarnelianStaff: {
 }
 
 LinStaff: {
-	DisplayName: Lin's Prismatic Staff
+	DisplayName: Prismatic Staff [Lin]
 	Tooltip:
 		'''
 		Passively raises a glass barrier that blocks 5 hits
@@ -4004,7 +3970,7 @@ LinStaff: {
 }
 
 PineconeNailgun: {
-	DisplayName: Pinecone's Nailgun
+	DisplayName: Nailgun [Pinecone]
 	Tooltip:
 		'''
 		Fires 5 steel nails per bullet
@@ -4014,7 +3980,7 @@ PineconeNailgun: {
 }
 
 ExecutorShotgun: {
-	DisplayName: Executor's Shotgun
+	DisplayName: Shotgun [Executor]
 	Tooltip:
 		'''
 		Rapidly fires two volleys of piercing buckshot
@@ -4024,7 +3990,7 @@ ExecutorShotgun: {
 }
 
 ChalterWatergun: {
-	DisplayName: Ch'en the Holungday's Pressure Washer
+	DisplayName: Pressure Washer [Ch'en the Holungday]
 	Tooltip:
 		'''
 		Sprays water droplets that pierce up to 5 enemies
@@ -4058,17 +4024,17 @@ MaterialistTreasureBag: {
 }
 
 GitanoOrb: {
-	DisplayName: Gitano's Crystal Orb
+	DisplayName: Crystal Orb [Gitano]
 	Tooltip: Wait a minute, let me predict the results of this battle.
 }
 
 SkyfireStaff: {
-	DisplayName: Skyfire's Meteor Staff
+	DisplayName: Meteor Staff [Skyfire]
 	Tooltip: May the flames of the sun devour you!
 }
 
 MostimaStaff: {
-	DisplayName: Mostima's Staff
+	DisplayName: Staff [Mostima]
 	Tooltip:
 		'''
 		Hold left click to immediately channel a clockwork sigil at the cursor; no charging required

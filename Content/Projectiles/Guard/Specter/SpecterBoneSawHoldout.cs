@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using ArknightsMod.Content.Items.Weapons.Guard.Specter;
+using ArknightsMod.Content.Projectiles.Guard.Blaze;
 using ArknightsMod.Content.Projectiles.BasePROJ;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -216,7 +217,9 @@ namespace ArknightsMod.Content.Projectiles.Guard.Specter
 					Pitch = SkillMode == 2 ? -0.32f : -0.02f,
 					MaxInstances = 6
 				}, target.Center);
-				SpecterVisuals.AddShake(Owner, SkillMode == 2 ? 5 : 3, SkillMode == 2 ? 3.9f : 2.1f);
+				if (Owner.whoAmI == Main.myPlayer)
+					Owner.GetModPlayer<BlazeImpactShakePlayer>().AddImpact(
+						SkillMode == 2 ? 5 : 3, SkillMode == 2 ? 3.9f : 2.1f, specter: true);
 			}
 		}
 
@@ -227,6 +230,14 @@ namespace ArknightsMod.Content.Projectiles.Guard.Specter
 			Texture2D weapon = TextureAssets.Item[ModContent.ItemType<SpecterBoneSaw>()].Value;
 			bool faceLeft = MathF.Cos(aimAngle) < 0f;
 			int frame = age / 4 % 3;
+			BaseHeldMeleeSupport.BeginAdditive(Main.spriteBatch);
+			Color edge = SkillMode == 2 ? new Color(218, 20, 60, 155) : new Color(92, 196, 220, 145);
+			float pulse = 0.9f + MathF.Sin((float)Main.GlobalTimeWrappedHourly * 7f) * 0.1f;
+			for (int i = 0; i < 8; i++) {
+				Vector2 offset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * (SkillMode == 2 ? 2.4f : 1.8f);
+				DrawSaw(weapon, faceLeft, edge * (0.65f * spool * pulse), frame, offset);
+			}
+			BaseHeldMeleeSupport.EndAdditive(Main.spriteBatch);
 			DrawSaw(weapon, faceLeft, lightColor, frame);
 
 			BaseHeldMeleeSupport.BeginAdditive(Main.spriteBatch);
@@ -239,14 +250,14 @@ namespace ArknightsMod.Content.Projectiles.Guard.Specter
 			return false;
 		}
 
-		private void DrawSaw(Texture2D sheet, bool faceLeft, Color color, int frame) {
+		private void DrawSaw(Texture2D sheet, bool faceLeft, Color color, int frame, Vector2 offset = default) {
 			const int frameHeight = 72;
 			Vector2 grip = new(8f, 65f);
 			Vector2 tip = new(59f, 11f);
 			float nativeAngle = (tip - grip).ToRotation();
 			if (faceLeft)
 				grip.Y = frameHeight - grip.Y;
-			Main.spriteBatch.Draw(sheet, drawHandWorld - Main.screenPosition,
+			Main.spriteBatch.Draw(sheet, drawHandWorld + offset - Main.screenPosition,
 				new Rectangle(0, frame * frameHeight, 74, frameHeight), color,
 				faceLeft ? aimAngle + nativeAngle : aimAngle - nativeAngle,
 				grip, Reach / (tip - new Vector2(8f, 65f)).Length(),

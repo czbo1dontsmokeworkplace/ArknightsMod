@@ -95,7 +95,7 @@ public sealed class PhalanxFocus : ModProjectile
         Vector2 focus = Vector2.Zero;
         if (HoldingForDraw(player) && player.HeldItem.ModItem is PhalanxStaff staff)
         {
-            var texture = TextureAssets.Item[player.HeldItem.type].Value;
+            var texture = ModContent.Request<Microsoft.Xna.Framework.Graphics.Texture2D>(staff.HeldTexture).Value;
             float scale = 58f / System.Math.Max(texture.Width, texture.Height);
             float rotation = staff.VerticalRotation * player.direction * player.gravDir;
             Vector2 center = VerticalStaffBase.HeldStaffCenter(player, staff);

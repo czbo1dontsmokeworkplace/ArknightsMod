@@ -7,14 +7,22 @@ using Terraria.ID;
 
 namespace ArknightsMod.Common.GlobalItems;
 
-// Keep the branch rule after the item's own description and upgrade information.
+// Only the documented weapons receive traits. Only medical weapons show a parent profession.
 public sealed class OperatorBranchTraits : GlobalItem
 {
-    internal static string Branch(Item item) => item.ModItem?.Name switch
+    internal static string Branch(Item item) => item.ModItem?.Mod.Name == "ArknightsMod"
+        ? item.ModItem.Name switch
     {
-        "CatapultLauncher" or "MeteoriteCannon" or "FiammettaHandCannon" => "Artilleryman",
+        "AnselStaff" or "MyrrhStaff" or "WarfarinStaff" or "SussurroStaff" or "SilenceStaff"
+            or "TuyeStaff" or "ShiningStaff" => "Medic",
+        "PurestreamStaff" or "CeylonStaff" or "WhisperainStaff" or "LumenStaff" => "MedicTherapist",
+        "PerfumerStaff" or "BreezeStaff" or "PtilopsisStaff" or "NightingaleStaff" => "MedicMultiTarget",
+        "PapyrusStaff" or "PaprikaStaff" or "Mon3trCore" => "MedicChain",
+        "ChestnutStaff" or "HoneyberryStaff" or "MulberryStaff" or "EyjafjallaAlterStaff" => "MedicWandering",
+        "HongdouLance" or "GraniLance" or "WildManeLance" or "BagpipeSpear" => "Charger",
+        "MeteoriteCannon" or "FiammettaHandCannon" => "Artilleryman",
         "UtageKatana" or "HellagurOdachi" => "Musha",
-        "MelanthaSword" or "MatoimaruNaginata" or "FrankaRapier" or "NearlRadiantSword" => "Dreadnought",
+        "MelanthasSword" or "MataimaruGlaive" or "FrankaRapier" or "NearlRadiantSword" => "Dreadnought",
         "MousseGlove" or "AstraSword" or "SurtrLaevatain" => "ArtsFighter",
         "ClickStaff" or "RockrockStaff" or "GoldenglowWand" => "MechAccord",
         "IndigoStaff" or "HarmonieStaff" or "EbenholzStaff" => "Mystic",
@@ -22,19 +30,45 @@ public sealed class OperatorBranchTraits : GlobalItem
         "PineconeNailgun" or "ExecutorShotgun" or "ChalterWatergun" => "Spreadshooter",
         "GravelDualBlades" or "RedDagger" or "PhantomDaggers" => "Executor",
         "SpecterBoneSaw" or "BlazeGreatsword" or "GavialChainsaw" => "Centurion",
-        "WarfarinStaff" or "SussurroStaff" or "ShiningStaff" => "Medic",
         "PuddingStaff" or "LeiziStaff" or "PassengerConductor" => "ChainCaster",
+        "CorroserumFlamethrower" or "IfritFlamethrower" or "AphrissaProjector" => "BlastCaster",
         "Lava_Dagger" or "GitanoOrb" or "LeonhardtStaff" or "SkyfireStaff" or "MostimaStaff" => "SplashCaster",
-        "AmbrielRifle" or "AndreanaRifle" or "FirewatchRifle" or "FartoothGreatbow" => "Deadeye",
+        "AmbrielRifle" or "AndreanaRifle" or "FirewatchRifle" or "TyphonBow" => "Deadeye",
+        "HoolheyakWindArts" => "CoreCaster",
+        "NecrassScepter" => "PrimalCaster",
+        "HornGrenadeLauncher" => "Fortress",
+        "EthanYoyo" => "Ambusher",
+        "MagallanController" => "Summoner",
         "KroosCrossbow" or "KroosAlterCrossbow" or "MelaniteCrossbow" or "ProvenceCrossbow"
             or "SchwarzBow" or "GreyThroatCrossbow" or "BluePoisonCrossbow" or "PozemkaCrossbow" => "Crossbowman",
+        _ => null
+    } : null;
+
+    internal static string Profession(string branch) => branch switch
+    {
+        "Mystic" or "ChainCaster" or "MechAccord" or "SplashCaster" or "Phalanx"
+            or "CoreCaster" or "PrimalCaster" or "BlastCaster" => "Caster",
+        "ArtsFighter" or "Dreadnought" or "Musha" or "Centurion" => "Guard",
+        "Artilleryman" or "Deadeye" or "Crossbowman" or "Spreadshooter" => "Sniper",
+        "Executor" or "Ambusher" => "Specialist",
+        "Charger" => "Vanguard",
+        "Medic" or "MedicTherapist" or "MedicMultiTarget" or "MedicChain" or "MedicWandering" => "Medic",
+        "Fortress" => "Defender",
+        "Summoner" => "Supporter",
         _ => null
     };
 
     public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
     {
         if (Branch(item) is string branch)
+        {
+            string profession = Profession(branch);
+            if (profession == "Medic")
+            {
+                tooltips.Add(new TooltipLine(Mod, "OperatorClass", Language.GetTextValue("Mods.ArknightsMod.BranchTraits.MedicProfession")));
+            }
             tooltips.Add(new TooltipLine(Mod, "OperatorBranch", Language.GetTextValue("Mods.ArknightsMod.BranchTraits." + branch)));
+        }
     }
 
     public override void HoldItem(Item item, Player player)

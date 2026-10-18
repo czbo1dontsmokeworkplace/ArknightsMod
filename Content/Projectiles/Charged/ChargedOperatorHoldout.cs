@@ -15,6 +15,7 @@ namespace ArknightsMod.Content.Projectiles.Charged;
 // ai[0] operator; ai[1] charge ticks; ai[2] release age (zero while charging).
 public sealed class ChargedOperatorHoldout : ModProjectile
 {
+    public const int SniperReleaseHoldTicks = 10;
     public override string Texture => "Terraria/Images/MagicPixel";
     internal ChargedOperatorKind Kind => (ChargedOperatorKind)(int)Projectile.ai[0];
     private bool Melee => ChargedOperatorRules.IsMelee(Kind);
@@ -22,10 +23,12 @@ public sealed class ChargedOperatorHoldout : ModProjectile
     private int skill, secondaryHits, recovery = 26;
     private bool heavy, playedRelease;
     private float power;
-    private int VisualDuration => AutomaticShot ? ChargedOperatorRules.SniperLeftInterval + 1 : recovery;
+    private int VisualDuration => AutomaticShot ? ChargedOperatorRules.SniperLeftInterval + 1
+        : Melee ? recovery : SniperReleaseHoldTicks + 1;
+    private int RecoilDuration => !Melee && !AutomaticShot ? SniperReleaseHoldTicks : recovery;
     // Visual recoil never changes the direction captured for the actual shot.
     private float Recoil => Projectile.ai[2] <= 1 ? 0 : MathF.Sin(MathF.Min(1, (Projectile.ai[2] - 1) / 3f) * MathHelper.PiOver2)
-        * MathF.Pow(1 - Math.Clamp((Projectile.ai[2] - 4) / Math.Max(1, recovery - 4), 0, 1), 2);
+        * MathF.Pow(1 - Math.Clamp((Projectile.ai[2] - 4) / Math.Max(1, RecoilDuration - 4), 0, 1), 2);
     private Vector2 GunAim => Projectile.velocity.SafeNormalize(Vector2.UnitX).RotatedBy(-Projectile.direction
         * Main.player[Projectile.owner].gravDir * (heavy ? .23f : .10f) * Recoil);
     private Vector2 GunCenter => Projectile.Center + GunAim * (14 - (heavy ? 10 : 5) * Recoil);
@@ -71,9 +74,12 @@ public sealed class ChargedOperatorHoldout : ModProjectile
         Projectile.direction = direction.X >= 0 ? 1 : -1;
         owner.ChangeDir(Projectile.direction); owner.heldProj = Projectile.whoAmI;
         owner.itemTime = owner.itemAnimation = 2;
-        owner.itemRotation = ((Melee ? direction : GunAim) * owner.direction).ToRotation();
-        owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, (Melee ? BladeAngle : GunAim.ToRotation()) - MathHelper.PiOver2);
-        if (!Melee) owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.ThreeQuarters, GunAim.ToRotation() - MathHelper.PiOver2 + .15f * owner.direction);
+        if (Melee)
+        {
+            owner.itemRotation = (direction * owner.direction).ToRotation();
+            owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, BladeAngle - MathHelper.PiOver2);
+        }
+        else PoseRifle(owner);
         Projectile.timeLeft = 2;
         if (Projectile.ai[2] == 0)
         {
@@ -102,18 +108,29 @@ public sealed class ChargedOperatorHoldout : ModProjectile
         }
         else
         {
-            if (!playedRelease)
-            {
-                playedRelease = true;
-                if (!Main.dedServ) SoundEngine.PlaySound((Melee ? SoundID.Item71 : heavy
-                    ? new SoundStyle("ArknightsMod/Assets/Sounds/ChargedSniper/RailgunShoot") : SoundID.Item40)
-                    with { Volume = .65f, Pitch = heavy ? Melee ? -.25f : -.15f : .1f }, owner.Center);
-                if (Melee) ChargedOperatorVfx.Burst(Muzzle(owner), Kind, heavy ? 18 : 6, heavy ? 48 : 20);
-                else ChargedSniperVisuals.MuzzleBurst(Muzzle(owner), direction, Kind, heavy);
-            }
+            if (!playedRelease) PlayReleaseEffects(owner);
             Projectile.ai[2]++;
-            if (Projectile.ai[2] >= VisualDuration) Projectile.Kill();
+            if (!Melee && !AutomaticShot && Projectile.ai[2] < VisualDuration && (int)Projectile.ai[2] % 3 == 0)
+                ChargedSniperVisuals.MuzzleSmoke(Muzzle(owner), GunAim, Kind, 1);
+            if (Projectile.ai[2] >= VisualDuration)
+            {
+                if (!Melee && !AutomaticShot)
+                {
+                    owner.heldProj = -1;
+                    owner.itemTime = owner.itemAnimation = 0;
+                    weapon.Item.noUseGraphic = false;
+                }
+                Projectile.Kill();
+            }
         }
+        if (Projectile.active && !Melee && !AutomaticShot && Projectile.ai[2] > 0) PoseRifle(owner);
+    }
+    private void PoseRifle(Player owner)
+    {
+        // Match the same recoil age used by PreDraw, including the frame the shot is released.
+        owner.itemRotation = (GunAim * owner.direction).ToRotation();
+        owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, GunAim.ToRotation() - MathHelper.PiOver2);
+        owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.ThreeQuarters, GunAim.ToRotation() - MathHelper.PiOver2 + .15f * owner.direction);
     }
     private Vector2 Muzzle(Player player)
     {
@@ -159,6 +176,34 @@ public sealed class ChargedOperatorHoldout : ModProjectile
             }
         }
         Projectile.netUpdate = true;
+        if (!Melee && !AutomaticShot)
+        {
+            // Keep the same sprite and grip through the short recoil; do not hand off to native drawing.
+            weapon.Item.noUseGraphic = true;
+            PlayReleaseEffects(owner);
+        }
+    }
+    private void PlayReleaseEffects(Player owner)
+    {
+        playedRelease = true;
+        if (!Main.dedServ)
+        {
+            if (!Melee && !AutomaticShot)
+            {
+                // Match native left fire, with the charged railgun report layered over it.
+                SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Assets/Sounds/ChargedSniper/NitroFire") { Volume = .55f }, owner.Center);
+                if (heavy) SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Assets/Sounds/ChargedSniper/RailgunShoot") { Volume = .65f }, owner.Center);
+            }
+            else SoundEngine.PlaySound((Melee ? SoundID.Item71 : heavy
+                ? new SoundStyle("ArknightsMod/Assets/Sounds/ChargedSniper/RailgunShoot") : SoundID.Item40)
+                with { Volume = .65f, Pitch = heavy ? Melee ? -.25f : -.15f : .1f }, owner.Center);
+        }
+        if (Melee) ChargedOperatorVfx.Burst(Muzzle(owner), Kind, heavy ? 18 : 6, heavy ? 48 : 20);
+        else
+        {
+            ChargedSniperVisuals.MuzzleBurst(Muzzle(owner), Projectile.velocity.SafeNormalize(Vector2.UnitX), Kind, heavy);
+            if (!AutomaticShot) ChargedSniperVisuals.MuzzleSmoke(Muzzle(owner), GunAim, Kind, 3);
+        }
     }
     private NPC FindSupportTarget(Player owner)
     {

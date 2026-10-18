@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using ArknightsMod.Common.VisualEffects;
 using ArknightsMod.Content.Items.Weapons.Specialist.Phantom;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -117,8 +118,7 @@ public sealed class PhantomPerformer : ModProjectile
             }
             else attackTimer = Math.Max(0, attackTimer);
         }
-        if (!Main.dedServ && Age % 12 == 0 && (IsEcho || Skill == 0))
-            PhantomVisuals.Burst(Projectile.Center + Main.rand.NextVector2Circular(12, 20), 1);
+        ExecutorStatusVisuals.Emit(Projectile, Age, StatusTint, StatusStrength);
         if (Projectile.owner == Main.myPlayer && Age % 60 == 0) Projectile.netUpdate = true;
         Age++;
     }
@@ -126,9 +126,17 @@ public sealed class PhantomPerformer : ModProjectile
     {
         float fade = Math.Min(1f, Math.Min(Age / 12f, (PhantomBalance.Duration - Age) / 24f));
         if (IsEcho) PhantomVisuals.DrawEcho(Projectile.Center, aim, Age, fade);
-        if (Skill == 0 && Shield > 0) PhantomVisuals.DrawVeil(Projectile.Center, Age, fade);
-        if (Skill == 1 && Layers > 0) PhantomVisuals.DrawNotes(Projectile.Center, Layers, Age, fade);
+        ExecutorStatusVisuals.Draw(Projectile.Center, Age, StatusTint, fade * StatusStrength,
+            IsEcho ? 1f : Owner.gravDir);
         return false;
     }
+    private Color StatusTint => Skill == 1
+        ? new Color(166, 118, 188) : ExecutorStatusVisuals.Phantom;
+    private float StatusStrength => Skill switch
+    {
+        0 => Shield > 0 ? .8f : .25f,
+        1 => .25f + .65f * Layers / PhantomBalance.Layers(Rank),
+        _ => .45f
+    };
     public override void OnKill(int timeLeft) => PhantomVisuals.Burst(Projectile.Center, IsEcho ? 18 : 8);
 }

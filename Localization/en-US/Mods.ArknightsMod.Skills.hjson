@@ -490,13 +490,6 @@ RockrockStaff: {
 	}
 }
 
-MelanthasSword: {
-	1: {
-		Label: ATK Up α
-		Desc: ATK [c/3791db:+50%]
-	}
-}
-
 VanillaAxe: {
 	1: {
 		Label: Charge: Reinforcements
@@ -600,22 +593,6 @@ DobermannWhip: {
 	2: {
 		Label: Whip
 		Desc: ATK [c/3791db:+100%]
-	}
-}
-
-MataimaruGlaive: {
-	1: {
-		Label: HP Recovery B
-		Desc: Instantly restores [c/3791db:50%] of Max HP
-	}
-
-	2: {
-		Label: Oni Power
-		Desc:
-			'''
-			DEF [c/f6643b:reduced to 0]
-			ATK [c/3791db:+150%]
-			'''
 	}
 }
 
@@ -1003,7 +980,7 @@ SpecterBoneSaw: {
 
 	2: {
 		Label: Bone Fracture
-		Desc: Manual. For 15 seconds, raises ATK by 160% and prevents life from falling below 1; becomes incapacitated for 10 seconds afterward
+		Desc: Manual. For 15 seconds, raises ATK by 160% and prevents life from falling below 1; takes 3 times damage for 10 seconds afterward while remaining free to act
 	}
 }
 
@@ -1021,23 +998,6 @@ ReedFlameShadowStaff: {
 	3: {
 		Label: Living Spark
 		Desc: Manual activation, lasts 30 seconds. ATK +60%; basic attacks fork into two streams that each deal full damage and always inflict Burned Scar (an existing scar is taken over rather than stacked, and lasts until the skill ends). Scarred enemies lose 60% of your ATK as life per second and explode on death within a 320-pixel radius, dealing 140% of your ATK to every enemy in range and inflicting Burned Scar
-	}
-}
-
-ShiningStaff: {
-	1: {
-		Label: Creed
-		Desc: Manual. Raises ATK by 35% and attack speed by 55%
-	}
-
-	2: {
-		Label: Auto Protect
-		Desc: Auto trigger. Grants the wielder an 8-second barrier equal to 15% of maximum life; repeated barriers do not stack
-	}
-
-	3: {
-		Label: Creed Field
-		Desc: Manual. Raises ATK by 50% and defense by 30, reduces damage taken by 18%, and unfolds a large black-and-white defensive field
 	}
 }
 
@@ -1155,18 +1115,6 @@ HoolheyakWindArts: {
 	}
 }
 
-SussurroStaff: {
-	1: {
-		Label: Healing Up β
-		Desc: Activate for 20 seconds. Continuous casting releases medical butterflies that heal 6-9 life each second. Medical projectiles only take effect after 0.5 seconds. Successful treatment causes medication sickness, reducing further treatment by 100% for 11.4 seconds. Both skills share a minimum cooldown that switching cannot reset
-	}
-
-	2: {
-		Label: Deep Healing
-		Desc: Activate for 8-10 seconds. Releases medical butterflies that heal 9-12 life every half second while casting. Medical projectiles only take effect after 0.5 seconds. Successful treatment causes medication sickness, reducing further treatment by 100% for 11.4 seconds; every third attack fires an empowered compression laser. Healing stops when casting stops. Minimum cooldown after the skill ends is 45 seconds
-	}
-}
-
 EbenholzStaff: {
 	1: {
 		Label: Adagio into Allegro
@@ -1210,18 +1158,6 @@ HornGrenadeLauncher: {
 	3: {
 		Label: Ultimate Line of Defense
 		Desc: Activate for 24 seconds with an approximately 21% shorter attack interval. Gain 10%–70% ATK in the first half and 20%–140% in the second; the second half progressively drains up to 12% maximum life per second. Reactivate to end early. Stops automatically at 1 life
-	}
-}
-
-WarfarinStaff: {
-	1: {
-		Label: Emergency Dressing
-		Desc: Auto recovery, manual activation. Throws a plasma bag toward the injured ally nearest the cursor. It can heal 30-48 life after 0.5 seconds; medical treatment then causes medication sickness, reducing further treatment by 100% for 11.4 seconds
-	}
-
-	2: {
-		Label: Unstable Plasma
-		Desc: Auto recovery, manual activation. Costs 30 SP and lasts 15 seconds. While holding the staff, your minions, sentries and their projectiles deal 30% more damage. Hits release one blood bolt dealing the staff's current damage, with a shared 0.25-second cooldown. Blood bolts hit up to twice and cannot trigger further bolts. Ends when switching away or dying
 	}
 }
 

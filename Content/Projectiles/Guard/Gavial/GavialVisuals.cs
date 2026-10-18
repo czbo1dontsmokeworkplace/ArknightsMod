@@ -1,4 +1,5 @@
 using System;
+using ArknightsMod.Common.Particle.T;
 using ArknightsMod.Content.Projectiles.BasePROJ;
 using ArknightsMod.Content.Projectiles.Guard.Blaze;
 using Microsoft.Xna.Framework;
@@ -16,8 +17,6 @@ internal static class GavialVisuals
     internal static readonly Color Olive = new(92, 111, 54);
     private static readonly Color Steel = new(181, 183, 132);
     internal static SoundStyle MotorSound => BlazeVisuals.ButcherMotorSound;
-    private static Texture2D AssaultBlade => ModContent.Request<Texture2D>(
-        "ArknightsMod/Content/Items/Weapons/Guard/Gavial/GavialChainsawSkill2").Value;
 
     internal struct CutMark
     {
@@ -38,21 +37,18 @@ internal static class GavialVisuals
             profile, scale, Color.Lerp(light, light.MultiplyRGBA(new Color(165, 179, 137)), 0.32f));
     }
 
-    internal static void DrawAssaultBlade(Vector2 hand, float angle, int frame, Color light)
+    internal static void DrawOutline(Texture2D texture, Vector2 hand, float angle, float reach, float spool, int mode)
     {
-        Texture2D texture = AssaultBlade;
-        int frameHeight = texture.Height / 3;
-        Rectangle source = new(0, frame * frameHeight, texture.Width, frameHeight);
-        // 三帧纵向排列；手柄左侧接近 (8, 13)，锯尖靠近右边缘。
-        Vector2 grip = new(9f, 13f);
-        Vector2 tip = new(texture.Width - 4f, 24f);
-        float nativeAngle = (tip - grip).ToRotation();
-        SpriteEffects effects = MathF.Cos(angle) < 0f ? SpriteEffects.FlipVertically : SpriteEffects.None;
-        float rotation = MathF.Cos(angle) < 0f ? angle + nativeAngle : angle - nativeAngle;
-        if (effects == SpriteEffects.FlipVertically) grip.Y = frameHeight - grip.Y;
-        Vector2 origin = grip;
-        Main.spriteBatch.Draw(texture, hand - Main.screenPosition, source, light, rotation,
-            origin, 1f, effects, 0f);
+        BaseHeldMeleeSupport.BeginAdditive(Main.spriteBatch);
+        float pulse = 0.9f + MathF.Sin((float)Main.GlobalTimeWrappedHourly * 8f) * 0.1f;
+        Color edge = (mode == 2 ? new Color(172, 228, 78, 170) : new Color(112, 172, 62, 140))
+            * (spool * pulse * (mode == 2 ? 0.85f : 0.6f));
+        for (int i = 0; i < 8; i++)
+        {
+            Vector2 offset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * (mode == 2 ? 2.8f : 1.8f);
+            DrawWeapon(texture, hand + offset, angle, reach, edge);
+        }
+        BaseHeldMeleeSupport.EndAdditive(Main.spriteBatch);
     }
 
     internal static void DrawChain(Vector2 hand, Vector2 tip, int age, float spool, int mode)
@@ -61,8 +57,8 @@ internal static class GavialVisuals
         Vector2 direction = axis.SafeNormalize(Vector2.UnitX);
         Vector2 normal = new(-direction.Y, direction.X);
         float angle = direction.ToRotation();
-        float phase = age * (mode == 3 ? 0.15f : 0.085f);
-        int teeth = mode == 2 ? 11 : 8;
+        float phase = age * (mode == 2 ? 0.18f : mode == 3 ? 0.15f : 0.085f);
+        int teeth = mode == 2 ? 14 : 8;
         // 短而分离的齿尖沿两侧反向运动；低亮度军绿金属边，不铺整条发光带。
         for (int i = 0; i < teeth; i++)
         {
@@ -73,13 +69,15 @@ internal static class GavialVisuals
                 float along = side < 0 ? 1f - u : u;
                 Vector2 point = Vector2.Lerp(hand, tip, 0.3f + along * 0.67f) + normal * side * 9f;
                 BaseHeldMeleeSupport.DrawSharpTear(point, angle + side * 0.3f,
-                    i % 3 == 0 ? Steel : Olive, mode == 3 ? 12f : 8f, 2.2f, spool * 0.5f);
+                    i % 3 == 0 ? Steel : Olive, mode == 2 ? 16f : mode == 3 ? 12f : 8f,
+                    mode == 2 ? 3.2f : 2.2f, spool * (mode == 2 ? 0.85f : 0.5f));
             }
         }
         // 加长模式表现为紧贴实体锯刃的机械切割划痕。
         if (mode == 2 || mode == 3)
             BaseHeldMeleeSupport.DrawSharpTear(Vector2.Lerp(hand, tip, 0.8f), angle,
-                Olive, mode == 2 ? 44f : 32f, 6f, 0.28f * spool);
+                mode == 2 ? new Color(172, 228, 78) : Olive,
+                mode == 2 ? 54f : 32f, mode == 2 ? 8f : 6f, (mode == 2 ? 0.48f : 0.28f) * spool);
     }
 
     internal static void DrawCut(CutMark mark)
@@ -113,6 +111,46 @@ internal static class GavialVisuals
                 150, new Color(69, 75, 55), 0.75f);
             smoke.noLight = true;
         }
+    }
+
+    internal static void SawParticles(Vector2 hand, Vector2 tip, int age, float spool, int mode)
+    {
+        if (Main.dedServ || spool < 0.4f || age % (mode is 2 or 3 ? 3 : 4) != 0) return;
+        Vector2 direction = (tip - hand).SafeNormalize(Vector2.UnitX);
+        Vector2 normal = new(-direction.Y, direction.X);
+        for (int side = -1; side <= 1; side += 2)
+        {
+            Vector2 position = Vector2.Lerp(hand, tip, Main.rand.NextFloat(0.48f, 0.98f))
+                + normal * side * 10f;
+            // 两侧锯链反向流动，火花脱离锯身后自然卷曲散开。
+            Vector2 velocity = direction * (side * Main.rand.NextFloat(2.4f, 4.2f))
+                + normal * side * Main.rand.NextFloat(0.6f, 1.4f);
+            Color color = side < 0 ? new Color(173, 205, 81) : new Color(225, 219, 144);
+            new T_Gavial_Saw_Spark_Particle(position, velocity, color,
+                Main.rand.NextFloat(11f, mode == 2 ? 22f : 17f), side * 0.075f,
+                Main.rand.Next(16, 24)).Spawn();
+        }
+    }
+
+    internal static void SawImpactParticles(Vector2 position, Vector2 direction, int mode)
+    {
+        if (Main.dedServ) return;
+        Vector2 axis = direction.SafeNormalize(Vector2.UnitX);
+        Vector2 normal = new(-axis.Y, axis.X);
+        int count = mode == 2 ? 10 : 7;
+        for (int i = 0; i < count; i++)
+        {
+            int side = (i & 1) == 0 ? 1 : -1;
+            Vector2 velocity = (-axis * Main.rand.NextFloat(1.5f, 4f)
+                + normal * side * Main.rand.NextFloat(2f, 6f)).RotatedByRandom(0.4f);
+            Color color = i % 3 == 0 ? new Color(231, 232, 172) : new Color(137, 192, 62);
+            new T_Gavial_Saw_Spark_Particle(position + Main.rand.NextVector2Circular(4f, 4f),
+                velocity, color, Main.rand.NextFloat(14f, 24f), side * 0.09f,
+                Main.rand.Next(18, 27)).Spawn();
+        }
+        if (Main.rand.NextBool(3))
+            new T_SoftSmoke_Particle(position, -axis * 0.6f - Vector2.UnitY * 0.4f,
+                new Color(77, 91, 56), 14f, 20).Spawn();
     }
 
     internal static void Activate(Player player, int mode)

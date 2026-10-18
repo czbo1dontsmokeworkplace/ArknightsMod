@@ -296,6 +296,15 @@ Projectiles: {
 	DreadnoughtFragment.DisplayName: Dreadnought Fragment
 	ChargedOperatorLaser.DisplayName: Charged Operator Laser
 	PozemkaStarBolt.DisplayName: Pozemka Star Bolt
+	FartoothBlade.DisplayName: Fartooth Blade
+	FartoothHoldout.DisplayName: Fartooth Holdout
+	TyphonMagazine.DisplayName: Typhon Magazine
+	TyphonAstralShot.DisplayName: Typhon Astral Shot
+	DreadnoughtSwing.DisplayName: Dreadnought Swing
+	DreadnoughtSoloImpact.DisplayName: Dreadnought Solo Impact
+	DreadnoughtHeavyImpact.DisplayName: Dreadnought Heavy Impact
+	MedicArt.DisplayName: Medic Art
+	MedicHealingField.DisplayName: Medic Healing Field
 }
 
 Keybinds: {
