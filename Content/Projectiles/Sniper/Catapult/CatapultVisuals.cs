@@ -1,5 +1,6 @@
 using System;
 using ArknightsMod.Common.Particle.T;
+using ArknightsMod.Content.Projectiles.Sniper.Artillery;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -46,20 +47,23 @@ internal static class CatapultVisuals
     internal static void Impact(Vector2 center, float radius)
     {
         if (!Visible(center, radius)) return;
-        // 每次爆炸固定12片：6枚短命余火、6枚暗色弹壳；没有额外伤害判定。
-        for (int i = 0; i < 12; i++)
+        // Only impact particles are intensified; muzzle and flight visuals keep their cadence.
+        int count = ArtilleryImpactVisuals.BoostCount(12);
+        for (int i = 0; i < count; i++)
         {
-            Vector2 direction = (MathHelper.TwoPi * i / 12f + Main.rand.NextFloat(-.13f, .13f)).ToRotationVector2();
+            Vector2 direction = (MathHelper.TwoPi * i / count + Main.rand.NextFloat(-.13f, .13f)).ToRotationVector2();
             bool ember = i % 2 == 0;
-            new T_Catapult_Debris(center + direction * radius * .1f, direction * radius * Main.rand.NextFloat(.035f, .065f),
+            new T_Catapult_Debris(center + direction * radius * .1f,
+                direction * radius * Main.rand.NextFloat(.035f, .065f) * ArtilleryImpactVisuals.ParticleIntensity,
                 ember ? Amber : new Color(92, 74, 55), ember ? 2.3f : 3.5f,
                 ember ? 18 : 26, center, radius * .88f, ember).Spawn();
         }
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < ArtilleryImpactVisuals.BoostCount(8); i++)
         {
             Vector2 offset = Main.rand.NextVector2Circular(radius * .22f, radius * .22f);
             Dust dust = Dust.NewDustPerfect(center + offset, i % 2 == 0 ? DustID.Smoke : DustID.Torch,
-                offset.SafeNormalize(Vector2.UnitY) * Main.rand.NextFloat(.8f, 2.2f), 120, Amber, .8f);
+                offset.SafeNormalize(Vector2.UnitY) * Main.rand.NextFloat(.8f, 2.2f)
+                    * ArtilleryImpactVisuals.ParticleIntensity, 120, Amber, .8f);
             dust.noGravity = true;
         }
     }

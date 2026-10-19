@@ -31,9 +31,9 @@ public static class MedicCatalog
         new("SilenceStaff", MedicBranch.Physician, 3, 3, 80, 50, 7f, .14f, new(241, 153, 75), new(255, 247, 220), 2),
         new("TuyeStaff", MedicBranch.Physician, 4, 5, 78, 66, 7.2f, .145f, new(219, 179, 96), new(205, 250, 247), 3),
         new("ShiningStaff", MedicBranch.Physician, 5, 6, 72, 88, 7.3f, .15f, new(161, 189, 234), new(255, 255, 247), 4),
-        new("PurestreamStaff", MedicBranch.Therapist, 1, 1, 96, 14, 5.6f, .10f, new(82, 198, 217), new(226, 255, 244), 1),
+        new("PurestreamStaff", MedicBranch.Therapist, 1, 1, 96, 14, 5.6f, .10f, new(82, 198, 217), new(226, 255, 244), 22),
         new("CeylonStaff", MedicBranch.Therapist, 2, 2, 90, 24, 5.8f, .105f, new(102, 184, 230), new(241, 247, 255), 6),
-        new("WhisperainStaff", MedicBranch.Therapist, 4, 5, 84, 40, 6.1f, .11f, new(136, 172, 219), new(234, 242, 255), 7),
+        new("WhisperainStaff", MedicBranch.Therapist, 4, 5, 84, 40, 6.1f, .11f, new(136, 172, 219), new(234, 242, 255), 23),
         new("LumenStaff", MedicBranch.Therapist, 5, 6, 78, 54, 6.3f, .115f, new(84, 173, 223), new(255, 236, 174), 8),
         new("PerfumerStaff", MedicBranch.MultiTarget, 1, 1, 240, 25, 4.1f, .17f, new(169, 199, 115), new(255, 242, 189), 1, FieldRadius: 100),
         new("BreezeStaff", MedicBranch.MultiTarget, 2, 2, 252, 42, 4.3f, .18f, new(110, 205, 170), new(231, 255, 223), 10, FieldRadius: 126),
@@ -47,7 +47,10 @@ public static class MedicCatalog
         new("MulberryStaff", MedicBranch.Wandering, 4, 5, 84, 34, 6.5f, .14f, new(119, 181, 214), new(245, 248, 255), 18, CleanseLimit: 3),
         new("EyjafjallaAlterStaff", MedicBranch.Wandering, 5, 6, 78, 46, 6.7f, .145f, new(242, 160, 181), new(255, 244, 215), 19, CleanseLimit: 6),
         // Kept for old inventories; the new tree begins with Ansel, and no recipe consumes Warfarin.
-        new("WarfarinStaff", MedicBranch.Physician, 1, 0, 96, 16, 6.2f, .13f, new(205, 66, 93), new(255, 212, 202))
+        new("WarfarinStaff", MedicBranch.Physician, 1, 0, 96, 16, 6.2f, .13f, new(205, 66, 93), new(255, 212, 202)),
+        // Append new profiles to preserve the existing projectile/regen profile identities.
+        new("HibiscusStaff", MedicBranch.Physician, 0, 0, 96, 14, 6.2f, .13f, new(223, 128, 179), new(255, 231, 242)),
+        new("NowellStaff", MedicBranch.Therapist, 3, 3, 87, 32, 6f, .108f, new(102, 181, 196), new(248, 245, 218), 7)
     ];
 
     public static MedicProfile Get(int id) => Profiles[Math.Clamp(id, 0, Profiles.Length - 1)];

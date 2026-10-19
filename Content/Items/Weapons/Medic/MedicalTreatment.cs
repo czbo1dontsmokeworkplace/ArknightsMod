@@ -42,7 +42,8 @@ public sealed class MedicalTreatmentPlayer : ModPlayer
     {
         if (Main.netMode == NetmodeID.Server) SendState(toWho);
     }
-    internal void SendState(int toWho = -1, int heal = 0, int profile = -1, int[] removed = null)
+    internal void SendState(int toWho = -1, int heal = 0, int profile = -1, int[] removed = null,
+        (int Type, int Remaining)[] shortened = null)
     {
         if (Main.netMode != NetmodeID.Server) return;
         var packet = Mod.GetPacket();
@@ -57,6 +58,8 @@ public sealed class MedicalTreatmentPlayer : ModPlayer
         }
         packet.Write((byte)(removed?.Length ?? 0));
         if (removed != null) foreach (int type in removed) packet.Write(type);
+        packet.Write((byte)(shortened?.Length ?? 0));
+        if (shortened != null) foreach (var buff in shortened) { packet.Write(buff.Type); packet.Write(buff.Remaining); }
         packet.Send(toWho);
     }
     internal static void Receive(BinaryReader reader)
@@ -80,6 +83,13 @@ public sealed class MedicalTreatmentPlayer : ModPlayer
             int type = reader.ReadInt32(); int slot = player.FindBuffIndex(type);
             if (slot >= 0) player.DelBuff(slot);
         }
+        int shortenedCount = reader.ReadByte();
+        for (int i = 0; i < shortenedCount; i++)
+        {
+            int type = reader.ReadInt32(), remaining = reader.ReadInt32();
+            int slot = player.FindBuffIndex(type);
+            if (slot >= 0) player.buffTime[slot] = Math.Min(player.buffTime[slot], Math.Clamp(remaining, 0, 3600000));
+        }
         if (index == Main.myPlayer && player.active && !player.dead && heal != 0)
         {
             // Negative values carry full-health floating text without authorizing any life gain.
@@ -94,8 +104,8 @@ public sealed class MedicalTreatmentPlayer : ModPlayer
         }
         if (profile >= 0)
         {
-            MedicArtsAudio.Treatment(player, profile, removedCount);
-            MedicArtsVfx.Treatment(player.Center, profile, removedCount);
+            MedicArtsAudio.Treatment(player, profile, removedCount + shortenedCount);
+            MedicArtsVfx.Treatment(player.Center, profile, removedCount + shortenedCount);
         }
     }
 }

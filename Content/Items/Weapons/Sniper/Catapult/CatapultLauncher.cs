@@ -1,6 +1,8 @@
 using System;
 using ArknightsMod.Content;
 using ArknightsMod.Content.Projectiles.Sniper.Catapult;
+using ArknightsMod.Content.Projectiles.Sniper.Artillery;
+using ArknightsMod.Content.Items.Weapons.Sniper.Fiammetta;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -16,8 +18,8 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Catapult;
 public sealed class CatapultLauncher : ExpansionWeaponBase
 {
     internal const int AttackInterval = 64;
-    internal const float MaximumRange = 480f;
-    internal const float BlastRadius = 56f;
+    internal const float MaximumRange = ArtilleryBallistics.MaximumRange;
+    internal const float BlastRadius = ArtilleryBlast.Radius;
     protected override int[] EliteDamage => [46, 56];
     // TODO: 正式空爆武器贴图；手持绘制与物品使用同一原版占位图。
     public override string Texture => "Terraria/Images/Item_" + ItemID.GrenadeLauncher;
@@ -47,7 +49,8 @@ public sealed class CatapultLauncher : ExpansionWeaponBase
         Item.rare = ItemRarityID.Orange;
         Item.value = Item.sellPrice(silver: 80);
         Item.shoot = ModContent.ProjectileType<CatapultShell>();
-        Item.shootSpeed = 10f;
+        Item.shootSpeed = ArtilleryBallistics.LaunchSpeed;
+        Item.useAmmo = AmmoID.None;
     }
 
     public override bool CanUseItem(Player player)
@@ -71,14 +74,11 @@ public sealed class CatapultLauncher : ExpansionWeaponBase
         Vector2 position, Vector2 velocity, int type, int damage, float knockback)
     {
         if (player.whoAmI != Main.myPlayer) return false;
-        Vector2 offset = Main.MouseWorld - player.MountedCenter;
-        if (offset.LengthSquared() > MaximumRange * MaximumRange)
-            offset = offset.SafeNormalize(Vector2.UnitX * player.direction) * MaximumRange;
-        Vector2 target = player.MountedCenter + offset;
+        Vector2 target = FiammettaHandCannon.ClampTarget(player, Main.MouseWorld, MaximumRange);
         target = Vector2.Clamp(target, new Vector2(16f), new Vector2(Main.maxTilesX * 16f - 16f, Main.maxTilesY * 16f - 16f));
-        Vector2 aim = CatapultShell.LaunchVelocity(player.MountedCenter, target, player.gravDir).SafeNormalize(-Vector2.UnitY * player.gravDir);
+        Vector2 aim = ArtilleryBallistics.LaunchDirection(player, target);
         Vector2 muzzle = CatapultHoldout.Muzzle(player, aim);
-        velocity = CatapultShell.LaunchVelocity(muzzle, target, player.gravDir);
+        velocity = aim * ArtilleryBallistics.LaunchSpeed;
         WeaponPlayer skills = player.GetModPlayer<WeaponPlayer>();
         int level = skills.CurrentSkill?.ForceReplaceLevel ?? skills.CurrentSkill?.Level ?? 1;
         float radius = BlastRadius * (skills.SkillActive ? RangeMultiplier(level) : 1f);
@@ -87,10 +87,9 @@ public sealed class CatapultLauncher : ExpansionWeaponBase
         Projectile.NewProjectile(source, player.MountedCenter, velocity.SafeNormalize(aim),
             ModContent.ProjectileType<CatapultHoldout>(), 0, 0f, player.whoAmI);
         int shell = Projectile.NewProjectile(source, muzzle, velocity, ModContent.ProjectileType<CatapultShell>(),
-            damage, knockback, player.whoAmI, CatapultShell.FlightUpdates, player.gravDir, radius);
+            damage, knockback, player.whoAmI, target.X, target.Y, radius);
         if (Main.projectile.IndexInRange(shell)) Main.projectile[shell].CritChance = player.GetWeaponCrit(Item);
         SoundEngine.PlaySound(SoundID.Item61 with { Volume = .55f, Pitch = -.15f, MaxInstances = 3 }, muzzle);
-        CatapultVisuals.MuzzleFlash(muzzle, aim);
         return false;
     }
 

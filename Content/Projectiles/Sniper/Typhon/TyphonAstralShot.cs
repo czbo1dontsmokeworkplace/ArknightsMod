@@ -20,13 +20,27 @@ public sealed class TyphonAstralShot : ModProjectile
     public int Age => (int)Projectile.ai[2];
     public const int WanderFrames = 0;
     public const float LeftScale = 1.7f, RightScale = LeftScale * .7f, LaunchSpeed = 9f;
-    public static float HomingStrength(float age) => 1f;
+    public const float RightTargetRange = 512f;
+    private NPC guidedTarget;
+    // PrecisionBolt uses two updates per tick: normalize its turn and recalibration to real time.
+    public static float HomingStrength(float age) => MathF.Pow(Math.Clamp((119 - age * 2 - 40) / 120f, 0, 1), 4);
     public static Vector2 PursuitVelocity(Vector2 velocity, Vector2 toTarget, float age, int updates)
     {
+        updates = Math.Max(1, updates);
         float speed = MathHelper.Lerp(MathF.Max(3, velocity.Length()), 18, 1 - MathF.Pow(.74f, 1f / updates));
-        Vector2 targetDirection = toTarget.SafeNormalize(velocity.SafeNormalize(Vector2.UnitX));
-        // Right-click arrows lock directly onto the target, without a turn limit or wandering phase.
-        return targetDirection * speed;
+        float direction = velocity.SafeNormalize(Vector2.UnitX).ToRotation();
+        if (toTarget.LengthSquared() < .0001f) return direction.ToRotationVector2() * speed;
+        float ideal = toTarget.ToRotation();
+        direction = direction.AngleTowards(ideal, MathHelper.ToRadians(5f) / updates);
+        int step = (int)MathF.Round(MathF.Max(0, age) * updates);
+        // Like Clockwork Bow: periodically choose a left/right correction, then damp it rapidly.
+        if (step > 0 && step % (updates * 3) == 0)
+        {
+            float correction = MathHelper.ToRadians(75f) * HomingStrength(age);
+            float left = direction - correction, right = direction + correction;
+            direction = MathF.Abs(MathHelper.WrapAngle(left - ideal)) < MathF.Abs(MathHelper.WrapAngle(right - ideal)) ? left : right;
+        }
+        return direction.ToRotationVector2() * speed;
     }
     public override void SetStaticDefaults()
     {
@@ -53,8 +67,17 @@ public sealed class TyphonAstralShot : ModProjectile
     public override bool? CanDamage() => null;
     public override void AI()
     {
+        float guidanceAge = Age + (Projectile.extraUpdates - Projectile.numUpdates) / (float)Projectile.MaxUpdates;
         if (Projectile.numUpdates == 0) Projectile.ai[2]++;
-        if (Guided || SkillTwo)
+        if (Guided)
+        {
+            if (guidedTarget == null || !guidedTarget.CanBeChasedBy(Projectile)
+                || Vector2.DistanceSquared(Projectile.Center, guidedTarget.Center) > RightTargetRange * RightTargetRange)
+                guidedTarget = Projectile.FindTargetWithinRange(RightTargetRange, false);
+            Projectile.velocity = PursuitVelocity(Projectile.velocity,
+                guidedTarget == null ? Vector2.Zero : guidedTarget.Center - Projectile.Center, guidanceAge, Projectile.MaxUpdates);
+        }
+        else if (SkillTwo)
         {
             NPC target = null;
             int pinned = (int)Projectile.ai[1] - 1;
@@ -62,9 +85,7 @@ public sealed class TyphonAstralShot : ModProjectile
                 target = Main.npc[pinned];
             target ??= Projectile.FindTargetWithinRange(1400, false);
             Vector2 toTarget = target != null ? target.Center - Projectile.Center : Projectile.velocity;
-            Projectile.velocity = SkillTwo
-                ? toTarget.SafeNormalize(Projectile.velocity.SafeNormalize(Vector2.UnitX)) * Projectile.velocity.Length()
-                : PursuitVelocity(Projectile.velocity, toTarget, Age, Projectile.MaxUpdates);
+            Projectile.velocity = toTarget.SafeNormalize(Projectile.velocity.SafeNormalize(Vector2.UnitX)) * Projectile.velocity.Length();
         }
         Projectile.rotation = Projectile.velocity.ToRotation();
         if (Projectile.numUpdates == 0 && !Main.dedServ) TyphonAstralVisuals.Flight(Projectile);

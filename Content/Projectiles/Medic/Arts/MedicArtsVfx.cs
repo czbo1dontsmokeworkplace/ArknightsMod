@@ -147,7 +147,7 @@ internal static class MedicArtsVfx
                     if ((int)art.Age % 3 == 0)
                         Mote(projectile.Center - axis * 7 + side * Main.rand.NextFloat(-5, 5),
                             -axis * Main.rand.NextFloat(.7f, 1.4f), art.ProfileId, MedicalMoteKind.Purity, 6, 16);
-                    if (art.Age < p.ArmingDelay + 1)
+                    if (art.Age < art.HomingStartAge + 1)
                         for (int spark = 0; spark < 8; spark++)
                             Mote(projectile.Center, (spark * MathHelper.TwoPi / 8).ToRotationVector2() * 1.5f,
                                 art.ProfileId, MedicalMoteKind.Purity, 8, 24, spark);

@@ -15,15 +15,14 @@ namespace ArknightsMod.Content.Projectiles.Vanguard.Spears;
 internal static class VanguardSpearVfx
 {
     private static BasicEffect shader;
-    private static Texture2D flowTexture;
     private static readonly Dictionary<string, Texture2D> spearArt = new();
     internal static bool Visible(Vector2 point) => ChargedOperatorVfx.Visible(point);
     internal static Texture2D SmokeTexture => Art("ArknightsMod/Common/Particle/DefaultParticle");
     internal static void Unload()
     {
         Texture2D[] old = new Texture2D[spearArt.Count]; spearArt.Values.CopyTo(old, 0); spearArt.Clear();
-        BasicEffect oldShader = shader; Texture2D oldFlow = flowTexture; shader = null; flowTexture = null;
-        Main.QueueMainThreadAction(() => { oldShader?.Dispose(); oldFlow?.Dispose(); });
+        BasicEffect oldShader = shader; shader = null;
+        Main.QueueMainThreadAction(() => { oldShader?.Dispose(); });
         Main.QueueMainThreadAction(() => { foreach (Texture2D texture in old) texture.Dispose(); });
     }
     private static Texture2D Art(string path)
@@ -31,7 +30,7 @@ internal static class VanguardSpearVfx
         if (spearArt.TryGetValue(path, out Texture2D texture)) return texture;
         Texture2D source = ModContent.Request<Texture2D>(path).Value;
         Color[] data = new Color[source.Width * source.Height]; source.GetData(data);
-        // The three source spear PNGs are inspected offline too. Normalize the loaded copy
+        // The source spear PNGs are inspected offline too. Normalize the loaded copy
         // to straight RGBA and use NonPremultiplied for its body, true Additive for glow.
         bool straight = false;
         foreach (Color c in data) if (c.A > 0 && c.A < 255 && Math.Max(c.R, Math.Max(c.G, c.B)) > c.A + 4) { straight = true; break; }
@@ -45,18 +44,19 @@ internal static class VanguardSpearVfx
         texture = new Texture2D(Main.graphics.GraphicsDevice, source.Width, source.Height);
         texture.SetData(data); spearArt.Add(path, texture); return texture;
     }
-    internal static void DrawSpear(Vector2 grip, Vector2 tip, VanguardSpearKind kind, Color light, bool accent, bool thrown = false, float age = 0)
+    internal static void DrawSpear(Vector2 grip, Vector2 tip, VanguardSpearKind kind, Color light, bool accent, bool charging = false, float age = 0)
     {
         if (!Visible(grip) || !float.IsFinite(tip.X) || !float.IsFinite(tip.Y)) return;
         string path = kind switch {
+            VanguardSpearKind.Vigna => "ArknightsMod/Content/Projectiles/Vanguard/Spears/VignaLongLance",
             VanguardSpearKind.Grani => "ArknightsMod/Content/Items/Weapons/Vanguard/Fang/FangSpear",
             VanguardSpearKind.Bagpipe => "ArknightsMod/Content/Projectiles/Vanguard/Bagpipe/BagpipeProj",
-            _ => "ArknightsMod/Content/Items/Weapons/Guard/Hongdou/HongdouLance_protile"
+            _ => "ArknightsMod/Content/Items/Weapons/Guard/Hongdou/HongdouLance"
         };
         Texture2D texture = Art(path);
         // Measured opaque endpoints, not PNG rectangle corners (Bagpipe has transparent padding).
-        Vector2 tail = kind switch { VanguardSpearKind.Grani => new(0, 55), VanguardSpearKind.Bagpipe => new(0, 91), _ => new(0, 15) };
-        Vector2 head = kind switch { VanguardSpearKind.Grani => new(55, 0), VanguardSpearKind.Bagpipe => new(81, 12), _ => new(111, 15) };
+        Vector2 tail = kind switch { VanguardSpearKind.Vigna => new(1, 102), VanguardSpearKind.Grani => new(0, 55), VanguardSpearKind.Bagpipe => new(0, 91), _ => new(1, 81) };
+        Vector2 head = kind switch { VanguardSpearKind.Vigna => new(98, 1), VanguardSpearKind.Grani => new(55, 0), VanguardSpearKind.Bagpipe => new(81, 12), _ => new(79, 2) };
         Vector2 sourceGrip = Vector2.Lerp(tail, head, .22f);
         Vector2 localBlade = head - sourceGrip;
         Vector2 blade = tip - grip;
@@ -66,7 +66,7 @@ internal static class VanguardSpearVfx
         using (new ChargedOperatorVfx.Pass(false))
             Main.EntitySpriteDraw(texture, grip - Main.screenPosition, null, Color.Lerp(light, Color.White, .32f),
                 rotation, sourceGrip, scale, SpriteEffects.None);
-        if (thrown)
+        if (charging)
         {
             DrawSpearRim(texture, path, grip, sourceGrip, scale, rotation, kind, age);
             using (new ChargedOperatorVfx.Pass(true))
@@ -143,90 +143,10 @@ internal static class VanguardSpearVfx
                 DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
         }
     }
-    internal static void Ribbon(Vector2 head, Vector2[] history, VanguardSpearKind kind, float width, Color? customTint = null)
-    {
-        if (!Visible(head)) return;
-        List<Vector2> path = new() { head }; float length = 0;
-        foreach (Vector2 point in history)
-        {
-            if (point == Vector2.Zero) break;
-            float distance = Vector2.Distance(point, path[^1]);
-            if (!float.IsFinite(distance) || distance > 192 || length + distance > VanguardSpearRules.TrailLength) break;
-            if (distance < .5f) continue;
-            length += distance; path.Add(point);
-        }
-        if (path.Count < 3) return;
-        Color color = customTint ?? VanguardSpearRules.Tint(kind);
-        GraphicsDevice device = Main.instance.GraphicsDevice;
-        // A local GPU effect samples a flowing grayscale material over continuous trail geometry.
-        shader ??= new BasicEffect(device) { TextureEnabled = true, VertexColorEnabled = true };
-        if (flowTexture == null)
-        {
-            const int w = 128, h = 32;
-            Color[] texels = new Color[w * h];
-            for (int x = 0; x < w; x++) for (int y = 0; y < h; y++)
-            {
-                float u = x / (float)w, v = y / (float)(h - 1) * 2 - 1;
-                float filaments = .4f + .6f * MathF.Pow(.5f + .5f * MathF.Sin(u * MathHelper.TwoPi * 3 + v * 9), 2);
-                byte alpha = (byte)(255 * MathF.Pow(Math.Max(0, 1 - Math.Abs(v)), 1.5f) * filaments);
-                texels[y * w + x] = new Color(255, 255, 255, alpha);
-            }
-            flowTexture = new Texture2D(device, w, h); flowTexture.SetData(texels);
-        }
-        var vertices = new VertexPositionColorTexture[path.Count * 2];
-        for (int i = 0; i < path.Count; i++)
-        {
-            float t = i / (float)(path.Count - 1);
-            Vector2 tangent = (path[Math.Max(0, i - 1)] - path[Math.Min(path.Count - 1, i + 1)]).SafeNormalize(Vector2.UnitX);
-            Vector2 normal = tangent.RotatedBy(MathHelper.PiOver2);
-            float half = Math.Clamp(width, 2, 32) * (.3f + .7f * MathF.Sin(MathHelper.Pi * t)) * (1 - t);
-            Vector2 point = path[i] - Main.screenPosition;
-            Color tint = Color.Lerp(color, Color.Lerp(color, Color.White, .18f), 1 - t) * (.8f * MathF.Pow(1 - t, .8f));
-            float flow = t * 2 - Main.GlobalTimeWrappedHourly * 1.8f;
-            vertices[i * 2] = new(new Vector3(point + normal * half, 0), tint, new(flow, 0));
-            vertices[i * 2 + 1] = new(new Vector3(point - normal * half, 0), tint, new(flow, 1));
-        }
-        DrawGeometry(vertices, flowTexture, true);
-    }
     internal static Color Accent(VanguardSpearKind kind) => kind switch {
         VanguardSpearKind.Vigna => new(174, 75, 224), VanguardSpearKind.Grani => new(168, 244, 232),
         VanguardSpearKind.WildMane => new(255, 203, 88), _ => new(255, 107, 48)
     };
-    internal static void FlightTrails(Vector2 head, Vector2[] history, VanguardSpearKind kind, float age)
-    {
-        List<Vector2> centerline = new() { head };
-        float travelled = 0;
-        Vector2 previous = head;
-        foreach (Vector2 point in history)
-        {
-            if (point == Vector2.Zero) break;
-            float span = Vector2.Distance(previous, point);
-            if (!float.IsFinite(span) || span > 192) break;
-            if (span < .5f) continue;
-            float available = Math.Min(span, VanguardSpearRules.TrailLength - travelled);
-            int samples = Math.Max(1, (int)MathF.Ceiling(available / 8));
-            for (int j = 1; j <= samples; j++) centerline.Add(Vector2.Lerp(previous, point, j / (float)samples * available / span));
-            travelled += available; previous = point;
-            if (travelled >= VanguardSpearRules.TrailLength) break;
-        }
-        if (centerline.Count < 3) return;
-        Vector2[] centers = centerline.ToArray();
-        Ribbon(head, centers, kind, 5 + (int)kind);
-        for (int sign = -1; sign <= 1; sign += 2)
-        {
-            Vector2[] strand = new Vector2[centers.Length];
-            float distance = 0;
-            for (int i = 0; i < centers.Length; i++)
-            {
-                if (i > 0) distance += Vector2.Distance(centers[i - 1], centers[i]);
-                Vector2 tangent = (centers[Math.Max(0, i - 1)] - centers[Math.Min(centers.Length - 1, i + 1)]).SafeNormalize(Vector2.UnitX);
-                float radius = (26 + (int)kind * 2) * Math.Min(1, distance / 24);
-                float offset = MathF.Sin(distance * MathHelper.TwoPi / 132 - age * .8f) * radius * sign;
-                strand[i] = centers[i] + tangent.RotatedBy(MathHelper.PiOver2) * offset;
-            }
-            Ribbon(head, strand, kind, 3.5f + (int)kind * .4f, sign < 0 ? Accent(kind) : VanguardSpearRules.Tint(kind));
-        }
-    }
     private static void Atmosphere(Vector2 point, Vector2 velocity, VanguardSpearKind kind, int mode, float radius, int life)
     {
         if (Visible(point) && ParticleManager.activeParticles.Count < 1400)
@@ -321,12 +241,12 @@ internal static class VanguardSpearVfx
         if (!Visible(point) || ParticleManager.activeParticles.Count >= 1200) return;
         new T_Vanguard_Fragment_Particle(point, velocity, kind, life).Spawn();
     }
-    internal static void Throw(Vector2 hand, Vector2 direction, VanguardSpearKind kind)
+    internal static void ChargeStart(Vector2 hand, Vector2 direction, VanguardSpearKind kind)
     {
         if (!Visible(hand)) return;
         for (int i = -2; i <= 2; i++) Motif(hand, -direction.RotatedBy(i * .22f) * (3 + Math.Abs(i)), kind, 8, 20);
     }
-    internal static void Flight(Vector2 point, Vector2 direction, VanguardSpearKind kind, int tick, bool child)
+    internal static void ChargeWake(Vector2 point, Vector2 direction, VanguardSpearKind kind, int tick)
     {
         if (!Visible(point)) return;
         Color color = VanguardSpearRules.Tint(kind);
@@ -392,5 +312,5 @@ internal static class VanguardSpearVfx
 
 public sealed class VanguardSpearVfxSystem : ModSystem
 {
-    public override void Unload() => VanguardSpearVfx.Unload();
+    public override void Unload() { VanguardSpearVfx.Unload(); VanguardChargeTrail.Unload(); }
 }

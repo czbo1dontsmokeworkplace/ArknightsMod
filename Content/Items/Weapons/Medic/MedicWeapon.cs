@@ -15,7 +15,7 @@ public abstract class MedicWeapon : ExpansionWeaponBase
 {
     public abstract int ProfileId { get; }
     public MedicProfile Profile => MedicCatalog.Get(ProfileId);
-    public override int EliteStageMax => ProfileId == 0 ? 1 : 2;
+    public override int EliteStageMax => ProfileId is 0 or 22 ? 1 : 2;
     protected override int[] EliteDamage => [0, 0, 0];
     // Existing staff art is retained until dedicated inventory/held artwork is supplied.
     public override string Texture => Profile.Branch == MedicBranch.Physician && Profile.Tier == 5
@@ -92,6 +92,8 @@ public abstract class MedicWeapon : ExpansionWeaponBase
                 Profile.StackLimit, Profile.RegenPerStack, Profile.StackDuration / 60)));
         if (Profile.Branch == MedicBranch.Wandering)
             tooltips.Add(new TooltipLine(Mod, "MedicalCleanse", Language.GetTextValue("Mods.ArknightsMod.MedicalArts.Cleanse", Profile.CleanseLimit)));
+        if (Profile.Branch == MedicBranch.Therapist)
+            tooltips.Add(new TooltipLine(Mod, "MedicalShorten", Language.GetTextValue("Mods.ArknightsMod.MedicalArts.Shorten", Profile.Healing * .1f)));
         tooltips.Add(new TooltipLine(Mod, "MedicalSkillKey", GetSkillActivateKeyHint()));
     }
     public override string GetSkillActivateKeyHint() => string.IsNullOrEmpty(ArknightsKeybinds.SkillActivateKeyDisplay)
@@ -145,6 +147,8 @@ public abstract class MedicWeapon : ExpansionWeaponBase
 
 public sealed class AnselStaff : MedicWeapon { public override int ProfileId => 0; }
 public sealed class MyrrhStaff : MedicWeapon { public override int ProfileId => 1; }
+public sealed class HibiscusStaff : MedicWeapon { public override int ProfileId => 22; }
+public sealed class NowellStaff : MedicWeapon { public override int ProfileId => 23; }
 public sealed class SilenceStaff : MedicWeapon { public override int ProfileId => 3; }
 public sealed class TuyeStaff : MedicWeapon { public override int ProfileId => 4; }
 public sealed class PurestreamStaff : MedicWeapon { public override int ProfileId => 6; }

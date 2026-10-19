@@ -139,7 +139,14 @@ namespace ArknightsMod.Content.Projectiles.Defender
 			bool guarding = ShieldGuardRules.IsRaised(Player);
 			if(guarding)
 			{
-				Player.statDefense *= 1.2f;
+				if (Player.HeldItem.ModItem is Items.Weapons.Defender.Horn.HornGrenadeLauncher)
+				{
+					Player.statDefense += 40;
+					Player.endurance += 0.5f;
+					Player.GetDamage(DamageClass.Generic) *= 0.7f;
+				}
+				else
+					Player.statDefense *= 1.2f;
 				Player.noKnockback = true;
 				Player.moveSpeed *= 0.4f;
 				ShieldMode = true;

@@ -10,13 +10,25 @@ internal static class BlastCasterRules
 {
     internal const int OpticalUpdates = 16;
     internal const float OpticalStep = 12f;
-    internal const int OpticalHistory = 40;
+    internal const int OpticalHistory = 24;
+    // PhasedGodRay's 20px contact/body scale, enlarged by the requested 1.5.
+    internal const float FluxScale = 1.5f;
+    internal const float FluxContactRadius = 10f * FluxScale;
+    internal const float FluxAfterglow = 7f;
     internal const float RelayPlacementRange = 560f;
     internal const float RelayTetherRange = 720f;
     internal const int RelayLife = 1200;
     internal static int Interval(BlastCasterKind kind) => kind switch
     { BlastCasterKind.Corroserum => 4, BlastCasterKind.Ifrit => 3, _ => 2 };
     internal static float Range(int mode) => mode == 1 ? 1680f : 1248f;
+    internal static float FlightRange(BlastCasterKind kind, int mode)
+        => kind == BlastCasterKind.Aphrissa ? Range(mode) : kind == BlastCasterKind.Ifrit ? 752f : 547f;
+    internal static int Updates(BlastCasterKind kind) => kind == BlastCasterKind.Aphrissa ? OpticalUpdates : 3;
+    internal static float Step(BlastCasterKind kind) => kind == BlastCasterKind.Aphrissa ? OpticalStep : 11f;
+    internal static float SizeMultiplier(BlastCasterKind kind) => kind switch
+    { BlastCasterKind.Ifrit => 1.2f, BlastCasterKind.Aphrissa => 1.5f, _ => 1f };
+    internal static Color FluxAccent(BlastCasterKind kind) => kind switch
+    { BlastCasterKind.Corroserum => new(238, 205, 72), BlastCasterKind.Ifrit => new(255, 206, 91), _ => new(240, 201, 92) };
     internal static bool ConsumesGel(int volley) => volley % 3 == 0;
     internal static float RankScale(int rank) => (Math.Clamp(rank, 1, 10) - 1) / 9f;
     internal static float DamageMultiplier(BlastCasterKind kind, int mode, int rank)
@@ -59,13 +71,5 @@ internal static class BlastCasterRules
         local.Y *= facing;
         float c = MathF.Cos(angle), s = MathF.Sin(angle);
         return new Vector2(local.X * c - local.Y * s, local.X * s + local.Y * c);
-    }
-    // Marker only on our vanilla flames. ai[0]/ai[1] remain owned by vanilla fire.
-    internal static int FlameMarker(BlastCasterKind kind, int mode) => 4100 + (int)kind * 10 + mode;
-    internal static bool DecodeFlame(float marker, out BlastCasterKind kind, out int mode)
-    {
-        int value = (int)marker - 4100;
-        kind = (BlastCasterKind)(value / 10); mode = value % 10;
-        return marker == (int)marker && value >= 0 && value <= 13 && mode >= 0 && mode <= 3;
     }
 }

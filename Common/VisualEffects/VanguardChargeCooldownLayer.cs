@@ -11,7 +11,7 @@ namespace ArknightsMod.Common.VisualEffects;
 
 // Owner-only world-space HUD. Player draw transforms handle zoom and gravity; no UI-scale
 // coordinates are mixed into the world position. Shadows/portraits must not duplicate the bar.
-public sealed class VanguardReserveLayer : PlayerDrawLayer
+public sealed class VanguardChargeCooldownLayer : PlayerDrawLayer
 {
     public override Position GetDefaultPosition() => PlayerDrawLayers.AfterLastVanillaLayer;
     protected override void Draw(ref PlayerDrawSet drawInfo)
@@ -25,11 +25,8 @@ public sealed class VanguardReserveLayer : PlayerDrawLayer
         Color color = VanguardSpearRules.Tint(weapon.Kind);
         Add(ref drawInfo, center, new Vector2(62, 10), new Color(10, 14, 24, 225));
         Add(ref drawInfo, center, new Vector2(58, 6), new Color(38, 45, 58));
-        float width = 56 * state.Reserve.Ratio;
+        float width = 56 * state.Cooldown.Ratio;
         if (width > 0) Add(ref drawInfo, center + new Vector2((width - 56) / 2, 0), new Vector2(width, 4), color);
-        // Five segments show the five 20% melee charges.
-        for (int i = 1; i < 5; i++)
-            Add(ref drawInfo, center + new Vector2(-28 + i * 11.2f, 0), new Vector2(1, 4), new Color(18, 24, 35));
         if (state.ReadyFlash > 0)
             Add(ref drawInfo, center + new Vector2(0, 7), new Vector2(58, 1), color * (state.ReadyFlash / 24f));
     }

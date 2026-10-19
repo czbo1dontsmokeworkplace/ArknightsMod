@@ -36,6 +36,8 @@ public sealed class GavialChainsaw : ExpansionWeaponBase
 
     public override bool AltFunctionUse(Player player) => false;
 
+    public override float UseSpeedMultiplier(Player player) => GavialBalance.AttackSpeedMultiplier;
+
     public override bool CanUseItem(Player player)
     {
         if (ArknightsKeybinds.SkillActivatePressed(player))

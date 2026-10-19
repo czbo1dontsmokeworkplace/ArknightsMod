@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using ArknightsMod.Content.Projectiles.Sniper.Artillery;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -14,7 +15,7 @@ public sealed class CatapultExplosion : ModProjectile
     public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.Grenade;
     public override void SetDefaults()
     {
-        Projectile.width = Projectile.height = 112;
+        Projectile.width = Projectile.height = ArtilleryBlast.Diameter;
         Projectile.friendly = true;
         Projectile.DamageType = DamageClass.Ranged;
         Projectile.penetrate = -1;
@@ -27,7 +28,8 @@ public sealed class CatapultExplosion : ModProjectile
     public override void OnSpawn(IEntitySource source)
     {
         Vector2 center = Projectile.Center;
-        Projectile.width = Projectile.height = (int)(MathHelper.Clamp(Projectile.ai[0], 56f, 112f) * 2f);
+        Projectile.width = Projectile.height = (int)(MathHelper.Clamp(Projectile.ai[0],
+            ArtilleryBlast.Radius, ArtilleryBlast.Radius * 2f) * 2f);
         Projectile.Center = center;
     }
     public override bool? CanDamage() => Age <= 2 ? null : false;
@@ -39,6 +41,7 @@ public sealed class CatapultExplosion : ModProjectile
     public override void AI()
     {
         if (Main.dedServ || Age != 0) return;
+        ArtilleryImpactVisuals.Spawn(Projectile);
         CatapultVisuals.Impact(Projectile.Center, Projectile.width * .5f);
         SoundEngine.PlaySound(SoundID.Item14 with { Volume = .50f, Pitch = .18f, MaxInstances = 4 }, Projectile.Center);
     }

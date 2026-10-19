@@ -1,8 +1,10 @@
 ﻿using ArknightsMod.Content.Items.Weapons.Sniper.Meteorite;
 using Microsoft.Xna.Framework;
+using ArknightsMod.Content.Projectiles.Sniper.Artillery;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -20,6 +22,14 @@ public sealed class MeteoriteHoldout : ModProjectile
         Projectile.netImportant = true;
     }
     public override bool? CanDamage() => false;
+    public override void OnSpawn(IEntitySource source)
+    {
+        Player owner = Main.player[Projectile.owner];
+        Vector2 aim = Projectile.velocity.SafeNormalize(-Vector2.UnitY * owner.gravDir);
+        Vector2 muzzle = owner.MountedCenter + Collision.TileCollision(owner.MountedCenter - new Vector2(4f),
+            aim * 30f, 8, 8, true, true);
+        ArtilleryMuzzleVisuals.Emit(muzzle, aim, 1);
+    }
     public override bool ShouldUpdatePosition() => false;
     public override void AI()
     {

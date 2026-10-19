@@ -9,10 +9,10 @@ Items: {
 		DisplayName: Grenade Launcher [Catapult]
 		Tooltip:
 			'''
-			Lobs a grenade toward the cursor, up to 30 tiles away
+			Launches a rocket high into the sky, then strikes the cursor from above; range: 650 pixels
 			Explodes on enemies, solid tiles, or arrival at the selected point
 			Explosions deal 25% more damage while descending; cannot destroy tiles
-			Base blast radius: 3.5 tiles; consumes no ammunition
+			Base blast radius: 140 pixels; consumes no ammunition
 			Craftable after Skeletron
 			'''
 	}
@@ -28,7 +28,7 @@ Skills: {
 				Levels 1–3: 150% radius; levels 4–6: 175%; level 7: 200%
 				SP cost at levels 1–7: 55 / 53 / 51 / 50 / 48 / 46 / 45
 				Duration in seconds: 20 / 22 / 24 / 25 / 27 / 29 / 30
-				Level 7: 45 SP, 30 seconds, 7-tile blast radius
+				Level 7: 45 SP, 30 seconds, 280-pixel blast radius
 				'''
 		}
 	}

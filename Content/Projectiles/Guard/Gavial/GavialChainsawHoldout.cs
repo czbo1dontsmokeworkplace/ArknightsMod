@@ -15,8 +15,8 @@ namespace ArknightsMod.Content.Projectiles.Guard.Gavial;
 
 public sealed class GavialChainsawHoldout : ModProjectile
 {
-    private int age, biteTimer, impactCooldown, visualMode;
-    private float aimAngle, spool;
+    private int age, impactCooldown, visualMode;
+    private float aimAngle, spool, biteTimer;
     private Vector2 hand, drawHand, tip;
     private readonly GavialVisuals.CutMark[] marks = new GavialVisuals.CutMark[24];
     private int nextMark;
@@ -93,9 +93,11 @@ public sealed class GavialChainsawHoldout : ModProjectile
         player.itemRotation = aimAngle + (direction.X < 0f ? MathHelper.Pi : 0f);
         BaseHeldMeleeSupport.HoldAndPose(player, Projectile, hand, direction.X < 0f);
 
-        if (--biteTimer <= 0)
+        // 保留不足一帧的余量，避免把 7 / 1.3 向下取整而变成 40% 加速。
+        biteTimer -= GavialBalance.AttackSpeedMultiplier;
+        if (biteTimer <= 0f)
         {
-            biteTimer = Mode == 3 ? GavialBalance.SoulBiteTicks : GavialBalance.NormalBiteTicks;
+            biteTimer += Mode == 3 ? GavialBalance.SoulBiteTicks : GavialBalance.NormalBiteTicks;
             Projectile.ResetLocalNPCHitImmunity();
         }
         if (Mode == 2 && age % 7 == 0) PullTargets();
@@ -159,6 +161,12 @@ public sealed class GavialChainsawHoldout : ModProjectile
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
     {
         Owner.GetModPlayer<GavialChainsawPlayer>().HealFromSaw(target, damageDone);
+        // 每个被锯刃实际命中的目标各触发一次，不受下方纯视觉节流影响。
+        // 由持有者创建；爆炸是独立弹幕，不会递归触发新的锯刃爆炸。
+        if (damageDone > 0 && Projectile.owner == Main.myPlayer)
+            Projectile.NewProjectile(Projectile.GetSource_OnHit(target), target.Center, Vector2.Zero,
+                ModContent.ProjectileType<GavialChainsawExplosion>(), Projectile.damage,
+                Projectile.knockBack, Projectile.owner);
         if (Main.dedServ || impactCooldown > 0) return;
         impactCooldown = 4;
         Vector2 contact = target.Hitbox.ClosestPointInRect(Vector2.Lerp(hand, tip, 0.75f));

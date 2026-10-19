@@ -4,7 +4,7 @@ Items: {
 		Tooltip:
 			'''
 			困难模式初期
-			投枪可贯穿3个敌人。
+			冲锋可穿过多个敌人，每个敌人受到一次直接伤害。
 			持握时有20%概率闪避伤害。
 			'''
 	}
@@ -14,7 +14,7 @@ Items: {
 		Tooltip:
 			'''
 			全部机械Boss后
-			重投标枪可贯穿2个敌人，命中释放橙色枪锋火花；不再分裂子枪。
+			冲锋穿过敌人时释放橙色枪锋与撕流火花。
 			'''
 	}
 }
@@ -48,13 +48,13 @@ Skills: {
 VanguardSpears: {
 	Controls:
 		'''
-		左键匀速刺出并收回，命中释放少量可造成伤害的下落火花。
-		先锋储备条位于头顶：持握{1}秒从空回满，左键本体每次命中敌人额外充能20%。
-		满条时右键消耗整条，投出1支重型标枪，造成{0}倍伤害。
-		重投首次命中释放6至9枚火花，每枚造成标枪10%的伤害。
-		左键命中随机向前抛出1至3枚火花，每枚造成该次刺击18%的伤害。
-		火花先散射再下落，5帧后可造成伤害；同一敌人每15帧至多命中一次，总计至多5次。
-		投枪、火花和追加攻击不回复储备；四把长枪共用储备，切换后暂停恢复，死亡清空。
+		左键沿瞄准方向戳刺，命中向前抛出1至3枚下落火花，每枚造成该次刺击18%的伤害。
+		右键向瞄准方向进行长距离骑枪冲锋，造成{0}倍伤害，每个敌人每次冲锋至多直接命中一次。
+		冲锋持续28帧，完整距离约{2}像素；撞墙停止，冲锋期间免疫接触伤害。
+		四把武器共用{1}秒固定冷却，切换后继续计时；近战命中不会缩短冷却。
+		首次冲锋命中释放6至9枚下落火花，每枚造成冲锋10%的伤害。
+		火花5帧后可伤害，同一敌人每15帧至多命中一次，总计至多5次。
+		坐骑或钩爪使用期间无法发起冲锋。
 		'''
 	SkillKey: 按[{0}]开启手动技能；点击技能图标切换技能。
 	Unbound: 请在设置 → 控制 → 模组按键中绑定“技能开启”。
@@ -63,9 +63,9 @@ VanguardSpears: {
 
 Projectiles: {
 	VanguardSpearHoldout.DisplayName: 先锋长枪
-	VanguardThrownSpear.DisplayName: 先锋长枪
+	VanguardLanceCharge.DisplayName: 骑枪冲锋
 	VanguardSpearImpact.DisplayName: 先锋长枪
 	VanguardSpearSpark.DisplayName: 先锋余烬
-	VanguardThrowPulse.DisplayName: 先锋重投冲击
+	VanguardChargePulse.DisplayName: 骑枪冲击
 	VanguardFollowupStrike.DisplayName: 先锋长枪
 }

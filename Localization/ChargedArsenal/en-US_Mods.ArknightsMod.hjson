@@ -58,7 +58,7 @@ Items: {
 			'''
 			Post-Skeletron
 			Hold left-click to automatically fire one straight special bullet every 60 ticks for 100% damage.
-			Hold right-click for 1.5 seconds, then release. Full charge fires a 360% damage laser with unlimited enemy piercing.
+			Hold right-click for 1.5 seconds, then release. Full charge fires a 180% damage laser with unlimited enemy piercing.
 			Releasing right-click below full charge fires a special bullet that hits up to 4 enemies: 50% damage at 0% charge, 100% damage at 80%-99% charge.
 			Right-click bullet damage rises linearly from 0% to 80% charge. Converts all ammunition and consumes one bullet per shot. Charging does not reduce movement speed.
 			'''
@@ -70,7 +70,7 @@ Items: {
 			'''
 			Early Hardmode
 			Hold left-click to automatically fire one straight special bullet every 60 ticks for 100% damage.
-			Hold right-click for 1.5 seconds, then release. Full charge fires a 360% damage laser with unlimited enemy piercing.
+			Hold right-click for 1.5 seconds, then release. Full charge fires a 180% damage laser with unlimited enemy piercing.
 			Releasing right-click below full charge fires a special bullet that hits up to 4 enemies: 50% damage at 0% charge, 100% damage at 80%-99% charge.
 			Right-click bullet damage rises linearly from 0% to 80% charge. Converts all ammunition and consumes one bullet per shot. Charging does not reduce movement speed.
 			'''
@@ -82,7 +82,7 @@ Items: {
 			'''
 			Post-Plantera
 			Hold left-click to automatically fire one straight special bullet every 60 ticks for 100% damage.
-			Hold right-click for 1.5 seconds, then release. Full charge fires a 360% damage laser with unlimited enemy piercing.
+			Hold right-click for 1.5 seconds, then release. Full charge fires a 180% damage laser with unlimited enemy piercing.
 			Releasing right-click below full charge fires a special bullet that hits up to 4 enemies: 50% damage at 0% charge, 100% damage at 80%-99% charge.
 			Right-click bullet damage rises linearly from 0% to 80% charge. Converts all ammunition and consumes one bullet per shot. Charging does not reduce movement speed.
 			'''

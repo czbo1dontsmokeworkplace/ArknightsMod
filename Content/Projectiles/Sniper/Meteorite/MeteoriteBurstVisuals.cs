@@ -1,4 +1,5 @@
 using System;
+using ArknightsMod.Content.Projectiles.Sniper.Artillery;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -14,10 +15,11 @@ internal static class MeteoriteBurstVisuals
     internal static void DustBurst(Vector2 center, float radius)
     {
         if (Main.dedServ) return;
-        for (int i = 0; i < 62; i++)
+        int count = ArtilleryImpactVisuals.BoostCount(62);
+        for (int i = 0; i < count; i++)
         {
-            Vector2 direction = (i * MathHelper.TwoPi / 62f + Main.rand.NextFloat(-.12f, .12f)).ToRotationVector2();
-            Vector2 velocity = direction * Main.rand.NextFloat(3f, 11f);
+            Vector2 direction = (i * MathHelper.TwoPi / count + Main.rand.NextFloat(-.12f, .12f)).ToRotationVector2();
+            Vector2 velocity = direction * Main.rand.NextFloat(3f, 11f) * ArtilleryImpactVisuals.ParticleIntensity;
             Dust dust = Dust.NewDustPerfect(center + direction * Main.rand.NextFloat(5f, radius * .42f),
                 i % 4 == 0 ? DustID.Dirt : DustID.Sand, velocity, 65, i % 3 == 0 ? Sand : Ochre,
                 Main.rand.NextFloat(1.1f, 1.9f));

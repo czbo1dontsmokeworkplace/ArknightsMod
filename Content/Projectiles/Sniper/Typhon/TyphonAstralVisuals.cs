@@ -56,11 +56,11 @@ internal static class TyphonAstralVisuals
     }
     internal static Color Tint(float phase) => Color.Lerp(new Color(246, 189, 104), new Color(190, 124, 244), .5f + MathF.Sin(phase) * .5f);
     internal static Color DarkTint(float amount) => Color.Lerp(new Color(78, 24, 112), new Color(7, 3, 13), Math.Clamp(amount, 0, 1));
-    internal static void DrawHead(Vector2 center, float rotation, float scale, float phase)
+    internal static void DrawHead(Vector2 center, float rotation, float scale, float phase, float opacity = 1, float flash = 0)
     {
-        DrawArrow(center, rotation, scale, phase, true);
+        DrawArrow(center, rotation, scale, phase, true, opacity, flash);
     }
-    internal static void DrawArrow(Vector2 center, float rotation, float scale, float phase, bool outlined)
+    internal static void DrawArrow(Vector2 center, float rotation, float scale, float phase, bool outlined, float opacity = 1, float flash = 0)
     {
         Texture2D arrow = Texture("OriginalArrow");
         Vector2 position = center - Main.screenPosition, origin = arrow.Size() / 2;
@@ -78,10 +78,12 @@ internal static class TyphonAstralVisuals
             }
             for (int i = 0; i < 8; i++)
                 Main.EntitySpriteDraw(arrowSilhouette, position + (MathHelper.TwoPi * i / 8).ToRotationVector2() * 1.4f,
-                    null, Color.White, angle, origin, scale, SpriteEffects.None);
+                    null, Color.White * opacity, angle, origin, scale, SpriteEffects.None);
         }
         Color tint = outlined ? Color.Lerp(Tint(Main.GlobalTimeWrappedHourly * 2 + phase), Color.White, .3f) : new Color(177, 141, 204);
-        Main.EntitySpriteDraw(arrow, position, null, tint, angle, origin, scale, SpriteEffects.None);
+        Main.EntitySpriteDraw(arrow, position, null, Color.Lerp(tint, Color.White, flash) * opacity, angle, origin, scale, SpriteEffects.None);
+        if (outlined && flash > 0)
+            Main.EntitySpriteDraw(arrowSilhouette, position, null, Color.White * (flash * opacity * .65f), angle, origin, scale, SpriteEffects.None);
     }
     internal static void DrawShot(Projectile projectile)
     {

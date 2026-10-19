@@ -2,6 +2,7 @@ using ArknightsMod.Common.Particle.T;
 using System;
 using ArknightsMod.Common.Particle;
 using ArknightsMod.Content.Items.Weapons.Sniper.Fiammetta;
+using ArknightsMod.Content.Projectiles.Sniper.Artillery;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -20,7 +21,6 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 	/// </summary>
 	public sealed class FiammettaCannonHoldout : ModProjectile
 	{
-		private const int FireFrame = 16;
 		// 54 / 1.2 = 45，必须早于下一次 50 帧炮击结束，否则 S3 会隔次漏发。
 		private const int OneShotLifetime = 45;
 		private const int FireInterval = FiammettaHandCannon.AttackIntervalTicks;
@@ -56,7 +56,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 
 		public override void AI()
 		{
-			if (!Owner.active || Owner.dead || Owner.HeldItem.ModItem is not FiammettaHandCannon)
+			if (!Owner.active || Owner.dead || Owner.noItems || Owner.CCed || Owner.HeldItem.ModItem is not FiammettaHandCannon)
 			{
 				Projectile.Kill();
 				return;
@@ -64,19 +64,42 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 			// 普攻和 S1 按住时保持同一把炮；S2/S3 仍然采用一次性举炮。
 			if (IsContinuousFire)
 			{
-				if (!Owner.channel)
+				// Releasing the button keeps the post-shot recovery; quick clicks cannot bypass it.
+				if (!Owner.channel && fired && CycleAge >= FireInterval)
 				{
 					Projectile.Kill();
 					return;
 				}
 				Projectile.timeLeft = 2;
-				Owner.itemTime = Owner.itemAnimation = 2;
 			}
 
+			UpdatePose(out Vector2 aimDirection, out Vector2 targetDirection);
+			if (!fired || (IsContinuousFire && Owner.channel && CycleAge >= FireInterval))
+				FireImmediately();
+			if (IsContinuousFire)
+				Owner.itemTime = Owner.itemAnimation = Math.Max(2, FireInterval - CycleAge);
+			Projectile.localAI[0]++;
+			if (RecoilAge > 0 && RecoilAge < RecoilLifetime)
+				Projectile.localAI[1]++;
+		}
+
+		internal void FireImmediately()
+		{
+			if (fired && (!IsContinuousFire || CycleAge < FireInterval)) return;
+			UpdatePose(out Vector2 aimDirection, out Vector2 targetDirection);
+			Fire(aimDirection, targetDirection);
+			fired = true;
+			Projectile.localAI[0] = 0f;
+			Projectile.localAI[1] = 1f;
+			if (IsContinuousFire)
+				Owner.itemTime = Owner.itemAnimation = FireInterval;
+		}
+
+		private void UpdatePose(out Vector2 aimDirection, out Vector2 targetDirection)
+		{
 			UpdateLiveAimTarget();
-			Vector2 targetDirection = (Target - Owner.MountedCenter)
+			targetDirection = (Target - Owner.MountedCenter)
 				.SafeNormalize(new Vector2(Owner.direction, 0f));
-			Vector2 aimDirection;
 			if (Mode == 2)
 			{
 				// “你须愧悔”是沿正面射出的灼痕弹，不借普通迫击炮曲线偷换动作。
@@ -85,10 +108,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 			else
 			{
 				// SHPC 迫击炮的举枪质感：炮口始终指向高空，鼠标只改变天空锚点的横向位置。
-				Vector2 skyAnchor = new(MathHelper.Lerp(Target.X, Owner.Center.X, 0.55f),
-					Owner.Center.Y - 500f * Owner.gravDir);
-				aimDirection = (skyAnchor - Owner.Center)
-					.SafeNormalize(-Vector2.UnitY * Owner.gravDir);
+				aimDirection = ArtilleryBallistics.LaunchDirection(Owner, Target);
 			}
 
 			float recoil = RecoilAge <= 0
@@ -107,28 +127,12 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 			Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Quarter,
 				armRotation - 0.12f * Owner.direction);
 
-			if (!fired && CycleAge >= FireFrame)
-			{
-				Fire(aimDirection, targetDirection);
-				fired = true;
-				Projectile.localAI[1] = 1f;
-				if (IsContinuousFire)
-				{
-					Projectile.localAI[0] = FireFrame - FireInterval;
-					fired = false;
-				}
-			}
-
-			EmitChargeMotes(aimDirection);
-			Projectile.localAI[0]++;
-			if (RecoilAge > 0 && RecoilAge < RecoilLifetime)
-				Projectile.localAI[1]++;
 		}
 
 		private void UpdateLiveAimTarget()
 		{
 			// S3 必须守住开启时选定的固定落点；S2 仅在发射前锁定，普攻/S1 则全程跟随鼠标。
-			if (Projectile.owner != Main.myPlayer || Mode == 3 || (Mode == 2 && CycleAge > FireFrame))
+			if (Projectile.owner != Main.myPlayer || Mode == 3 || (Mode == 2 && fired))
 				return;
 
 			float maximumRange = Mode switch
@@ -143,7 +147,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 
 			Projectile.ai[0] = target.X;
 			Projectile.ai[1] = target.Y;
-			if (CycleAge % 4 == 0 || CycleAge == FireFrame)
+			if (CycleAge % 4 == 0 || !fired)
 				Projectile.netUpdate = true;
 		}
 
@@ -169,7 +173,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 					if (Mode == 3)
 						damage = Math.Max(1, (int)(damage * 1.05f));
 					// Blissful Bombardier 的迫击炮离膛速度是其 24 速的 90%，即 21.6。
-					velocity = holdDirection.RotatedByRandom(MathHelper.ToRadians(3f)) * 21.6f;
+					velocity = holdDirection.RotatedByRandom(MathHelper.ToRadians(3f)) * ArtilleryBallistics.LaunchSpeed;
 				}
 
 				int index = Projectile.NewProjectile(Projectile.GetSource_FromThis(), muzzle, velocity,
@@ -181,6 +185,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 					Owner.GetModPlayer<WeaponPlayer>().OffensiveRecovery();
 			}
 
+			if (Main.dedServ) return;
 			SoundEngine.PlaySound(SoundID.Item61 with
 			{
 				Volume = Mode == 2 ? 0.82f : 0.72f,
@@ -191,48 +196,8 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 			SpawnMuzzleBurst(muzzle, Mode == 2 ? targetDirection : holdDirection);
 		}
 
-		private void EmitChargeMotes(Vector2 direction)
-		{
-			if (Main.dedServ || CycleAge < 0 || CycleAge >= FireFrame || !Main.rand.NextBool(2))
-				return;
-
-			Vector2 muzzle = MuzzlePosition(direction);
-			Color color = Color.Lerp(new Color(230, 38, 20), new Color(255, 211, 105), CycleAge / (float)FireFrame);
-			var particle = new T_Streak_Particle(muzzle + Main.rand.NextVector2Circular(13f, 13f),
-				(muzzle - (muzzle + Main.rand.NextVector2Circular(13f, 13f))).SafeNormalize(Vector2.Zero) * 1.6f,
-				Main.rand.Next(10, 17), Main.rand.NextFloat(0.22f, 0.42f), color, true)
-			{
-				Deformation = new Vector2(0.3f, 1.8f)
-			};
-			particle.Spawn();
-		}
-
 		private static void SpawnMuzzleBurst(Vector2 muzzle, Vector2 direction)
-		{
-			if (Main.dedServ)
-				return;
-
-			for (int i = 0; i < 12; i++)
-			{
-				Vector2 velocity = direction.RotatedByRandom(0.46f) * Main.rand.NextFloat(3f, 9f);
-				Color color = Color.Lerp(new Color(235, 34, 18), new Color(255, 226, 130), Main.rand.NextFloat());
-				var particle = new T_Streak_Particle(muzzle, velocity, Main.rand.Next(12, 22),
-					Main.rand.NextFloat(0.30f, 0.62f), color, true)
-				{
-					Deformation = new Vector2(0.28f, Main.rand.NextFloat(1.4f, 2.4f))
-				};
-				particle.Spawn();
-			}
-
-			for (int i = 0; i < 10; i++)
-			{
-				Dust dust = Dust.NewDustPerfect(muzzle, i % 3 == 0 ? DustID.GoldFlame : DustID.Torch,
-					direction.RotatedByRandom(0.62f) * Main.rand.NextFloat(2.5f, 8.5f),
-					30, new Color(255, 110, 40), Main.rand.NextFloat(0.9f, 1.35f));
-				dust.noGravity = true;
-			}
-		}
-
+			=> ArtilleryMuzzleVisuals.Emit(muzzle, direction, 2);
 		public override bool PreDraw(ref Color lightColor)
 		{
 			Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;

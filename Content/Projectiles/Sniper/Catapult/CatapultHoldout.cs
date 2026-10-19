@@ -1,9 +1,12 @@
 using System;
 using ArknightsMod.Content.Items.Weapons.Sniper.Catapult;
+using ArknightsMod.Content.Items.Weapons.Sniper.Fiammetta;
+using ArknightsMod.Content.Projectiles.Sniper.Artillery;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -22,14 +25,31 @@ public sealed class CatapultHoldout : ModProjectile
         Projectile.penetrate = -1;
         Projectile.tileCollide = false;
         Projectile.ignoreWater = true;
+        Projectile.netImportant = true;
     }
     public override bool? CanDamage() => false;
+    public override void OnSpawn(IEntitySource source)
+    {
+        Player owner = Main.player[Projectile.owner];
+        Vector2 aim = Projectile.velocity.SafeNormalize(-Vector2.UnitY * owner.gravDir);
+        ArtilleryMuzzleVisuals.Emit(Muzzle(owner, aim), aim, 0);
+    }
     public override bool ShouldUpdatePosition() => false;
     public override void AI()
     {
         Player owner = Main.player[Projectile.owner];
         if (!owner.active || owner.dead || owner.noItems || owner.CCed || owner.HeldItem.ModItem is not CatapultLauncher)
         { Projectile.Kill(); return; }
+        if (Projectile.owner == Main.myPlayer)
+        {
+            Vector2 target = FiammettaHandCannon.ClampTarget(owner, Main.MouseWorld, CatapultLauncher.MaximumRange);
+            Vector2 direction = ArtilleryBallistics.LaunchDirection(owner, target);
+            if (Vector2.DistanceSquared(direction, Projectile.velocity) > .0001f)
+            {
+                Projectile.velocity = direction;
+                Projectile.netUpdate = true;
+            }
+        }
         Vector2 aim = Projectile.velocity.SafeNormalize(Vector2.UnitX * owner.direction);
         Projectile.Center = owner.MountedCenter;
         Projectile.rotation = aim.ToRotation();

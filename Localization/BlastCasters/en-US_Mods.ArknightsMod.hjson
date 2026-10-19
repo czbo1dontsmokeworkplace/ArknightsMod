@@ -4,7 +4,7 @@ Items: {
 		Tooltip:
 			'''
 			Early Hardmode
-			Hold left-click to spray block-piercing flames with unlimited enemy piercing, inflicting Hellfire and Cursed Inferno for 20 seconds
+			Hold left-click to spray a single straight lightflame stream through blocks and unlimited enemies, inflicting Hellfire and Cursed Inferno for 20 seconds
 			Uses gel; attempts to consume one gel per 3 emissions and benefits from ammo conservation
 			Scales with ranged equipment; counts as Arts damage in this mod's resistance system
 			'''
@@ -15,7 +15,7 @@ Items: {
 		Tooltip:
 			'''
 			Post-Plantera
-			Hold left-click to spray block-piercing hot flames with unlimited enemy piercing, inflicting Hellfire for 20 seconds
+			Hold left-click to spray a single straight searing lightflame stream through blocks and unlimited enemies, inflicting Hellfire for 20 seconds
 			Uses gel; attempts to consume one gel per 3 emissions and benefits from ammo conservation
 			Scales with ranged equipment; counts as Arts damage in this mod's resistance system
 			'''
@@ -26,7 +26,7 @@ Items: {
 		Tooltip:
 			'''
 			Lunar events
-			Hold left-click to spray high-speed optical packets with unlimited enemy piercing, inflicting Hellfire for 5 seconds
+			Hold left-click to spray a single straight high-speed lightflame stream with unlimited enemy piercing, inflicting Hellfire for 5 seconds
 			Packets physically travel through blocks, with a base total range of 1248 pixels; reaching that range stops damage and dissolves the trail
 			Right-click to place or move one relay at the cursor; right-click the relay to remove it
 			With a valid relay, the gun fires toward it; arriving packets turn toward the cursor position captured when fired, gaining 320 pixels of total range
@@ -42,12 +42,12 @@ BlastCasterText: {
 	Placeholder: Weapon art and skill icons temporarily reuse existing repository artwork; skills are adapted for Terraria combat
 }
 
-BranchTraits.BlastCaster: Blast Caster: Sprays flames with unlimited enemy piercing
+BranchTraits.BlastCaster: Blast Caster: Sprays lightflames with unlimited enemy piercing
 
 Projectiles: {
 	BlastCasterHoldout.DisplayName: Blast Projector
 	BlastCasterHeat.DisplayName: Ifrit's Embers
-	AphrissaOpticalPacket.DisplayName: Aphrissa's Optical Packet
+	BlastCasterFluxPacket.DisplayName: Blast Lightflame
 	AphrissaRelay.DisplayName: Aphrissa's Relay
 }
 
@@ -72,12 +72,12 @@ Skills: {
 
 		2: {
 			Label: Flame Burst
-			Desc: Automatically empowers the next emission to deal 220% to 300% damage. The first impact creates a 96-pixel-diameter explosion dealing 50% of that flame's damage. Stores up to 3 charges.
+			Desc: Automatically empowers the next emission to deal 220% to 300% damage. The first impact creates a 96-pixel-diameter explosion dealing 50% of that emission's damage. Stores up to 3 charges.
 		}
 
 		3: {
 			Label: Scorched Earth
-			Desc: Manual. Increases spray damage by 50% to 110%. Hits inflict Oiled for 3 seconds and leave a 2-second ember patch, at least 20 ticks apart. Each 48-pixel-radius patch deals one third of that flame's damage every 30 ticks.
+			Desc: Manual. Increases spray damage by 50% to 110%. Hits inflict Oiled for 3 seconds and leave a 2-second ember patch, at least 20 ticks apart. Each 48-pixel-radius patch deals one third of that emission's damage every 30 ticks.
 		}
 	}
 

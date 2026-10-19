@@ -347,7 +347,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Blaze
 			int frame = BlazeChainsawSprite.FrameAt(age, 2);
 			if (age < DetonationTick) {
 				BaseHeldMeleeSupport.BeginAdditive(Main.spriteBatch);
-				Color edge = new Color(244, 12, 35, 150) * (0.58f + Ramp * 0.24f) * Spool;
+				Color edge = new Color(244, 12, 35, 150) * (0.58f + Ramp * 0.24f) * Spool * 1.5f;
 				for (int i = 0; i < 8; i++) {
 					Vector2 offset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * (1.8f + Ramp * 0.6f);
 					BlazeChainsawSprite.DrawHeld(weapon, handWorld + offset, sawAngle, faceLeft,

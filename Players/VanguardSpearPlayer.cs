@@ -10,29 +10,35 @@ namespace ArknightsMod.Players;
 
 public sealed class VanguardSpearPlayer : ModPlayer
 {
-    public VanguardReserve Reserve { get; private set; } = new();
+    public VanguardChargeCooldown Cooldown { get; private set; } = new();
+    internal VanguardLanceCharge ActiveCharge { get; set; }
+    public override void PreUpdateMovement()
+    {
+        if (Player.whoAmI == Main.myPlayer) ActiveCharge?.ApplyMovement(Player);
+    }
+    public override bool CanBeHitByNPC(NPC npc, ref int cooldownSlot) => ActiveCharge?.ProtectsContact != true;
     private bool skillKeyDown, wasReady;
     internal int ReadyFlash;
-    public override void Initialize() => Reserve = new();
+    public override void Initialize() => Cooldown = new();
     public override void UpdateDead()
     {
-        Reserve.Clear(); ReadyFlash = 0;
+        Cooldown.Tick(); ReadyFlash = 0;
         skillKeyDown = wasReady = false;
     }
     public override void PostUpdate()
     {
         if (Player.whoAmI != Main.myPlayer || Player.dead) return;
+        Cooldown.Tick();
         if (ReadyFlash > 0) ReadyFlash--;
         if (Player.HeldItem.ModItem is not VanguardSpearWeapon weapon)
         { skillKeyDown = false; return; }
-        Reserve.Tick(true);
-        if (Reserve.Ready && !wasReady)
+        if (Cooldown.Ready && !wasReady)
         {
             ReadyFlash = 24;
             SoundEngine.PlaySound(SoundID.MaxMana with { Volume = .32f, Pitch = .35f }, Player.Center);
             VanguardSpearVfx.Ready(Player, weapon.Kind);
         }
-        wasReady = Reserve.Ready;
+        wasReady = Cooldown.Ready;
         bool pressed = ArknightsKeybinds.SkillActivatePressed(Player);
         if (pressed && !skillKeyDown && !Player.CCed && !Player.noItems)
         {
@@ -42,13 +48,13 @@ public sealed class VanguardSpearPlayer : ModPlayer
         skillKeyDown = pressed;
     }
     // Snapshot skill state at the start of an action. Changing the skill slot cannot mutate
-    // already released spears or steal a charge for a volley which was refused.
-    internal int AttackSkill(VanguardSpearKind kind, bool volley)
+    // an active charge or consume S2 stock when a charge was refused.
+    internal int AttackSkill(VanguardSpearKind kind, bool charge)
     {
         WeaponPlayer skills = Player.GetModPlayer<WeaponPlayer>();
         if (kind == VanguardSpearKind.Bagpipe && skills.Skill == 1)
         {
-            if (volley || skills.StockCount <= 0) return 0;
+            if (charge || skills.StockCount <= 0) return 0;
             skills.DelStockCount(); // one stored S2 charge per melee action, never per enemy
             return 2;
         }

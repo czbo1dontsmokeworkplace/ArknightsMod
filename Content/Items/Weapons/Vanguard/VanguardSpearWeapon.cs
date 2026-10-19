@@ -5,7 +5,6 @@ using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
-using Terraria.Audio;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -39,41 +38,33 @@ public abstract class VanguardSpearWeapon : ExpansionWeaponBase
     public override bool CanUseItem(Player player)
     {
         if (ArknightsKeybinds.SkillActivatePressed(player) || player.dead || player.CCed || player.noItems) return false;
-        if (player.ownedProjectileCounts[ModContent.ProjectileType<VanguardSpearHoldout>()] != 0) return false;
-        Item.useStyle = player.altFunctionUse == 2 ? ItemUseStyleID.Swing : ItemUseStyleID.Shoot;
+        if (player.ownedProjectileCounts[ModContent.ProjectileType<VanguardSpearHoldout>()] != 0
+            || player.ownedProjectileCounts[ModContent.ProjectileType<VanguardLanceCharge>()] != 0) return false;
+        Item.useStyle = ItemUseStyleID.Shoot;
         Item.noUseGraphic = true;
-        return player.altFunctionUse != 2 || player.GetModPlayer<VanguardSpearPlayer>().Reserve.Ready;
+        return player.altFunctionUse != 2 || (!player.mount.Active && player.grapCount == 0
+            && player.GetModPlayer<VanguardSpearPlayer>().Cooldown.Ready);
     }
     public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position,
         Vector2 velocity, int type, int damage, float knockback)
     {
         if (player.whoAmI != Main.myPlayer) return false;
         VanguardSpearPlayer state = player.GetModPlayer<VanguardSpearPlayer>();
-        bool volley = player.altFunctionUse == 2;
-        if (volley && !state.Reserve.TrySpend()) return false;
-        int skill = state.AttackSkill(Kind, volley);
+        bool charge = player.altFunctionUse == 2;
+        if (charge && !state.Cooldown.TryStart()) return false;
+        int skill = state.AttackSkill(Kind, charge);
         float power = VanguardSpearRules.AttackMultiplier(Kind, skill);
         // One talent roll per action, rather than a different strength on every target.
         bool accented = Kind == VanguardSpearKind.Vigna && Main.rand.NextFloat() < (skill > 0 ? .3f : .1f);
         if (accented) power *= 2;
         Vector2 aim = (Main.MouseWorld - player.MountedCenter).SafeNormalize(Vector2.UnitX * player.direction);
-        Vector2 origin = player.MountedCenter;
-        if (volley)
-        {
-            player.ChangeDir(aim.X < 0 ? -1 : 1);
-            // Native Swing animation owns the throwing arm. No held projectile is created.
-            Vector2 hand = player.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full,
-                aim.ToRotation() - MathHelper.PiOver2);
-            Vector2 offset = hand - origin + aim * 10;
-            origin += Collision.TileCollision(origin - new Vector2(3), offset, 6, 6);
-            type = ModContent.ProjectileType<VanguardThrownSpear>();
-            if (!Main.dedServ) SoundEngine.PlaySound(SoundID.DD2_JavelinThrowersAttack with { Volume = .85f, Pitch = -.3f }, origin);
-        }
-        Projectile p = Projectile.NewProjectileDirect(source, origin,
-            volley ? aim * VanguardSpearRules.FlightSpeed(Kind) / VanguardSpearRules.FlightUpdates : aim, type,
-            Math.Max(1, (int)(damage * power * (volley ? VanguardSpearRules.ThrowDamage(Kind) : 1f))),
-            knockback * (Kind == VanguardSpearKind.WildMane && skill == 2 ? 2 : 1), player.whoAmI, (int)Kind, volley ? 1 : 0);
+        int projectileType = charge ? ModContent.ProjectileType<VanguardLanceCharge>()
+            : ModContent.ProjectileType<VanguardSpearHoldout>();
+        Projectile p = Projectile.NewProjectileDirect(source, player.MountedCenter, aim, projectileType,
+            Math.Max(1, (int)(damage * power * (charge ? VanguardSpearRules.ChargeDamage(Kind) : 1f))),
+            knockback * (Kind == VanguardSpearKind.WildMane && skill == 2 ? 2 : 1), player.whoAmI, (int)Kind);
         if (p.ModProjectile is VanguardSpearHoldout holdout) holdout.Configure(player, Item, skill, accented);
+        if (p.ModProjectile is VanguardLanceCharge lance) lance.Configure(player, Item, accented);
         p.CritChance = player.GetWeaponCrit(Item); p.netUpdate = true;
         return false;
     }
@@ -84,7 +75,8 @@ public abstract class VanguardSpearWeapon : ExpansionWeaponBase
     {
         base.ModifyTooltips(tooltips);
         tooltips.Add(new TooltipLine(Mod, "VanguardControls", Language.GetTextValue("Mods.ArknightsMod.VanguardSpears.Controls",
-            VanguardSpearRules.ThrowDamage(Kind), VanguardReserve.Capacity / 60)));
+            VanguardSpearRules.ChargeDamage(Kind), VanguardChargeCooldown.Duration / 60,
+            (int)VanguardSpearRules.ChargeRange(Kind))));
         tooltips.Add(new TooltipLine(Mod, "VanguardSkill", GetSkillActivateKeyHint()));
         if (Kind is VanguardSpearKind.Grani or VanguardSpearKind.WildMane)
             tooltips.Add(new TooltipLine(Mod, "VanguardPlaceholder", Language.GetTextValue("Mods.ArknightsMod.VanguardSpears.Placeholder")));

@@ -1,5 +1,6 @@
 using System;
 using ArknightsMod.Content.Projectiles.Sniper.Fiammetta;
+using ArknightsMod.Content.Projectiles.Sniper.Artillery;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
@@ -20,7 +21,7 @@ public sealed class MeteoriteBurst : ModProjectile
 
     public override void SetDefaults()
     {
-        Projectile.width = Projectile.height = 172;
+        Projectile.width = Projectile.height = ArtilleryBlast.Diameter;
         Projectile.friendly = true;
         Projectile.DamageType = DamageClass.Ranged;
         Projectile.penetrate = -1;
@@ -34,7 +35,7 @@ public sealed class MeteoriteBurst : ModProjectile
     public override void OnSpawn(IEntitySource source)
     {
         Vector2 center = Projectile.Center;
-        Projectile.width = Projectile.height = Mode switch { 1 => 340, 2 => 420, _ => 280 };
+        Projectile.width = Projectile.height = Mode switch { 1 => 340, 2 => 420, _ => ArtilleryBlast.Diameter };
         Projectile.Center = center;
     }
 
@@ -50,6 +51,7 @@ public sealed class MeteoriteBurst : ModProjectile
     public override void AI()
     {
         if (Age != 0 || Main.dedServ) return;
+        ArtilleryImpactVisuals.Spawn(Projectile);
         MeteoriteBurstVisuals.DustBurst(Projectile.Center, Radius);
         SoundEngine.PlaySound(SoundID.Item14 with
         { Volume = Mode == 2 ? .77f : .58f, Pitch = Mode == 2 ? -.25f : -.04f,

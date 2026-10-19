@@ -4,7 +4,7 @@ Items: {
 		Tooltip:
 			'''
 			Early Hardmode
-			Javelins pierce 3 enemies.
+			Charges pierce enemies, dealing direct damage once per enemy.
 			Holding this weapon grants a 20% chance to dodge damage.
 			'''
 	}
@@ -14,7 +14,7 @@ Items: {
 		Tooltip:
 			'''
 			After all Mechanical Bosses
-			Heavy javelins pierce 2 enemies and release orange lance sparks on impact. No child javelins are created.
+			Charging through enemies releases orange lance bursts and tearing sparks.
 			'''
 	}
 }
@@ -48,13 +48,13 @@ Skills: {
 VanguardSpears: {
 	Controls:
 		'''
-		Left-click thrusts forward and retracts at constant speed. Hits release small falling sparks that deal damage.
-		The reserve above your head fills from empty in {1} seconds while held. Each direct melee hit adds 20%.
-		Right-click spends a full reserve to throw one heavy javelin dealing {0}x damage.
-		The first heavy-javelin hit releases 6 to 9 sparks, each dealing 10% of its damage.
-		Melee hits throw 1 to 3 sparks forward at random, each dealing 18% of that thrust's damage.
-		Sparks scatter then fall, become damaging after 5 frames, and hit up to 5 times total with a 15-frame cooldown per enemy.
-		Throws, sparks and follow-up strikes do not refill the shared reserve. Recovery pauses when unequipped; death clears it.
+		Left-click thrusts toward the cursor. Hits scatter 1 to 3 falling sparks, each dealing 18% of that thrust's damage.
+		Right-click charges toward the cursor for {0}x damage, directly hitting each enemy at most once per charge.
+		Charges last 28 frames and travel about {2} pixels, stop at tiles, and prevent contact damage while moving.
+		All four weapons share a fixed {1}-second cooldown that continues while unequipped. Melee hits do not reduce it.
+		The first charge hit releases 6 to 9 falling sparks, each dealing 10% of the charge's damage.
+		Sparks deal damage after 5 frames, hitting up to 5 times total with a 15-frame cooldown per enemy.
+		Charges cannot start while mounted or using a grappling hook.
 		'''
 	SkillKey: Press [{0}] for manual skills; click a skill icon to select it.
 	Unbound: Bind Skill Activate under Settings → Controls → Mod Controls.
@@ -63,9 +63,9 @@ VanguardSpears: {
 
 Projectiles: {
 	VanguardSpearHoldout.DisplayName: Vanguard lance
-	VanguardThrownSpear.DisplayName: Vanguard lance
+	VanguardLanceCharge.DisplayName: Lance Charge
 	VanguardSpearImpact.DisplayName: Vanguard lance
 	VanguardSpearSpark.DisplayName: Vanguard Sparks
-	VanguardThrowPulse.DisplayName: Vanguard Throw Pulse
+	VanguardChargePulse.DisplayName: Lance Impact
 	VanguardFollowupStrike.DisplayName: Vanguard lance
 }

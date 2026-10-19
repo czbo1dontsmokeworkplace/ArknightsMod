@@ -84,7 +84,7 @@ BagpipeSpear: {
 	Tooltip:
 		'''
 		Post-Golem
-		Javelins pierce 2 enemies. The first javelin hit explodes on an enemy hit within a 76-pixel radius, dealing its damage once.
+		The first charge hit triggers a 76-pixel-radius explosion dealing the charge's damage.
 		'''
 }
 
@@ -1442,8 +1442,9 @@ TyphonBow: {
 		Hold left click to fire a large, infinitely piercing astral crystal every 60 ticks; converts all arrows.
 		Hold right click to load up to 6 crystals, consuming one arrow each. The first takes 18 ticks; each subsequent loading time is multiplied by 0.85.
 		Crystals form an evenly spaced fan in front of the bow. Release to fire them all immediately.
-		Right-click arrows use the same sprite at 70% size, with a white outline and optical tint. They damage immediately and hit once.
-		Right-click arrows accelerate immediately upon launch and lock directly onto enemies.
+		Crystals slide into place as the fan spreads, alternating Tick/Tock text and loading sounds; a flash and chime mark a full load.
+		Each right-click crystal deals 50% damage (300% total with six loaded), using the same sprite at 70% size with a white outline and optical tint. They damage immediately and hit once.
+		Right-click arrows accelerate immediately and turn gradually toward enemies within 512 pixels, with periodic course corrections that weaken over time.
 		Stored crystals deal no damage; loading does not slow movement. Switching weapons cancels loading.
 		'''
 }
@@ -3257,7 +3258,7 @@ HongdouLance: {
 		'''
 		Pre-Hardmode
 		Talent: each attack action has a 10% chance to deal double damage, increased to 30% during skills.
-		The first heavy-javelin hit creates a small impact dealing half its damage on an enemy hit.
+		The first charge hit creates a small impact dealing half its damage.
 		'''
 }
 
@@ -3732,15 +3733,21 @@ BlazeGreatsword: {
 
 FiammettaHandCannon: {
 	DisplayName: Hand Cannon [Fiammetta]
-	Tooltip: Fires shells into the sky to strike the target
+	Tooltip:
+		'''
+		Fires rockets into the sky to strike the target; normal range: 650 pixels
+		Explosions deal 25% more damage while descending
+		Requires and consumes no ammunition
+		'''
 }
 
 MeteoriteCannon: {
 	DisplayName: Explosive Cannon [Meteorite]
 	Tooltip:
 		'''
-		Consumes rockets and inherits their damage to launch mortar shells into the sky
+		Launches rockets high into the sky without requiring or consuming ammunition; range: 650 pixels
 		Shells descend from above the target and explode into fragments
+		Explosions deal 25% more damage while descending
 		'''
 }
 
@@ -3839,7 +3846,8 @@ HornGrenadeLauncher: {
 	DisplayName: Grenade Shield [Horn]
 	Tooltip:
 		'''
-		Automatically guards while held and raises the shield again when its cooldown ends; left-click always fires grenades
+		Hold right-click to raise the shield and guard; release to return it to your back. Left-click still fires grenades while guarding
+		While guarding, movement speed is reduced by 60%; gain an additional 50% damage reduction and 40 defense, but deal 30% less damage
 		A successful block doubles your next shell within 5 seconds
 		'''
 }
@@ -3894,7 +3902,8 @@ GavialChainsaw: {
 	Tooltip:
 		'''
 		Hold attack to aim the spinning saw and cut every enemy touching its blade
-		Normal cuts occur every 7 ticks; olive teeth mark the blade's reach
+		Cuts 30% faster, averaging 5.38 ticks per normal cut; olive teeth mark the blade's reach
+		Blade hits trigger grenade-like explosions on enemies, dealing 100% ATK as additional melee area damage
 		Precise Thwacking heals on hit; Chainsaw Assault extends the blade and pulls enemies
 		Soul of the Jungle accelerates cutting and postpones half of incoming hit damage
 		Switching weapons or skills ends the bonus, but deferred damage must still be repaid

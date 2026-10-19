@@ -40,13 +40,13 @@ public sealed class VanguardSpearImpact : ModProjectile
                 SoundEngine.PlaySound(SoundID.Item14 with { Volume = .45f, Pitch = .35f }, Projectile.Center);
         }
     }
-    // The expanding presentation is owned by VanguardThrowPulse. This is only the compact
+    // The expanding presentation is owned by VanguardChargePulse. This is only the compact
     // damage carrier; drawing another centered bloom here would re-create the clustered core.
     public override bool PreDraw(ref Color lightColor) => false;
 }
 
 // Bagpipe's S2/S3 extra strikes are bound to the hit enemy and delayed 4/8 ticks.
-// They neither spread across an area nor regenerate the throwing reserve.
+// They neither spread across an area nor shorten the charge cooldown.
 public sealed class VanguardFollowupStrike : ModProjectile
 {
     public override string Texture => "Terraria/Images/MagicPixel";

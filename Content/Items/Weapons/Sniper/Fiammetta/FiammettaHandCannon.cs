@@ -1,6 +1,7 @@
 using System;
 using ArknightsMod.Content;
 using ArknightsMod.Content.Projectiles.Sniper.Fiammetta;
+using ArknightsMod.Content.Projectiles.Sniper.Artillery;
 using ArknightsMod.Content.Items.Weapons.Sniper.Meteorite;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
@@ -19,7 +20,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Fiammetta
 	/// </summary>
 	public sealed class FiammettaHandCannon : ExpansionWeaponBase
 	{
-		internal const float NormalMaximumRange = 650f;
+		internal const float NormalMaximumRange = ArtilleryBallistics.MaximumRange;
 		internal const float ProvocateMaximumRange = 790f;
 		internal const float PaeniteteMaximumRange = 590f;
 		internal const float ReponiteMaximumRange = 720f;
@@ -64,6 +65,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Fiammetta
 			Item.noUseGraphic = true;
 			Item.shoot = ModContent.ProjectileType<FiammettaCannonHoldout>();
 			Item.shootSpeed = 1f;
+			Item.useAmmo = AmmoID.None;
 			Item.crit = 6;
 			Item.UseSound = null;
 		}
@@ -188,9 +190,16 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Fiammetta
 		internal static int SpawnHoldout(IEntitySource source, Player player, Vector2 target,
 			int damage, float knockback, int mode)
 		{
-			return Projectile.NewProjectile(source, player.MountedCenter, Vector2.Zero,
+			int index = Projectile.NewProjectile(source, player.MountedCenter, Vector2.Zero,
 				ModContent.ProjectileType<FiammettaCannonHoldout>(), damage, knockback, player.whoAmI,
 				target.X, target.Y, mode);
+			if (Main.projectile.IndexInRange(index))
+			{
+				Projectile held = Main.projectile[index];
+				held.CritChance = player.GetWeaponCrit(player.HeldItem);
+				((FiammettaCannonHoldout)held.ModProjectile).FireImmediately();
+			}
+			return index;
 		}
 
 		internal static Vector2 ClampTarget(Player player, Vector2 requestedTarget, float maximumRange)

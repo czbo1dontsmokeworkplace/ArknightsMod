@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using ArknightsMod.Content.Projectiles.Sniper.Artillery;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -30,9 +31,13 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 		private int descentAge;
 		private int lockedTargetIndex = -1;
 		private float ballisticDiveHeading;
+		private float gravityDirection = 1f;
 
 		private Vector2 MouseTarget => new(Projectile.ai[0], Projectile.ai[1]);
-		private int Mode => Math.Clamp((int)Projectile.ai[2], 0, 3);
+		protected virtual int FlightMode => Math.Clamp((int)Projectile.ai[2], 0, 3);
+		protected virtual Color TrailOuter => new(255, 55, 20);
+		protected virtual Color TrailInner => new(255, 233, 160);
+		protected virtual float TrailWidth => FlightMode == 3 ? 26f : 23f;
 		private NPC LockedTarget {
 			get {
 				if (!Main.npc.IndexInRange(lockedTargetIndex))
@@ -50,7 +55,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 		public override string Texture => $"Terraria/Images/Projectile_{ProjectileID.RocketI}";
 
 		public override void SetStaticDefaults() {
-			ProjectileID.Sets.TrailCacheLength[Type] = 22;
+			ProjectileID.Sets.TrailCacheLength[Type] = 36;
 			ProjectileID.Sets.TrailingMode[Type] = 2;
 		}
 
@@ -93,8 +98,9 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 
 		private void Initialize() {
 			initialized = true;
+			gravityDirection = Main.player[Projectile.owner].gravDir < 0f ? -1f : 1f;
 			if (Projectile.velocity.LengthSquared() < 0.01f)
-				Projectile.velocity = -Vector2.UnitY * 12f;
+				Projectile.velocity = -Vector2.UnitY * gravityDirection * ArtilleryBallistics.LaunchSpeed;
 		}
 
 		private void UpdateAscent() {
@@ -117,18 +123,18 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 			// 这不是普通抛物线折返：炮弹先冲入高空，再从鼠标 X 坐标正上方的天幕压下来。
 			// 清空旧轨迹，避免跨越整张屏幕的历史拖尾把“高空转入”画成错误的斜线。
 			Player owner = Main.player[Projectile.owner];
-			Projectile.Center = new Vector2(MouseTarget.X, owner.Center.Y - SkyAnchorHeight * owner.gravDir);
+			Projectile.Center = new Vector2(MouseTarget.X, owner.Center.Y - SkyAnchorHeight * gravityDirection);
 			Array.Fill(Projectile.oldPos, Projectile.position);
 			ballisticDiveHeading = (MouseTarget - Projectile.Center)
 				.SafeNormalize(Vector2.UnitY).ToRotation();
 			LockNearestTarget();
 
 			Vector2 desiredDirection = GetConstrainedDiveDirection(StrikePoint);
-			Vector2 fallingStart = new(Projectile.velocity.X * 0.35f, 2.6f);
+			Vector2 fallingStart = new(Projectile.velocity.X * 0.35f, 2.6f * gravityDirection);
 			Projectile.velocity = Vector2.Lerp(fallingStart,
 				desiredDirection * MinimumDiveSpeed, 0.22f);
-			if (Projectile.velocity.Y < 1.5f)
-				Projectile.velocity.Y = 1.5f;
+			if (Projectile.velocity.Y * gravityDirection < 1.5f)
+				Projectile.velocity.Y = 1.5f * gravityDirection;
 			Projectile.netUpdate = true;
 		}
 
@@ -210,29 +216,20 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 		}
 
 		private void SpawnFlightDust() {
-			// 保持原来的每 tick 粒子密度，只让弹道更新与位移翻倍。
-			if (Main.dedServ || Projectile.numUpdates != 0 || !Main.rand.NextBool(2))
-				return;
-
-			Dust dust = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(4f, 4f),
-				Main.rand.NextBool(3) ? DustID.GoldFlame : DustID.Torch,
-				-Projectile.velocity * 0.08f + Main.rand.NextVector2Circular(0.8f, 0.8f), 40,
-				new Color(255, 91, 31), Main.rand.NextFloat(0.8f, 1.25f));
-			dust.noGravity = true;
+			ArtilleryFlightVisuals.Emit(Projectile, TrailOuter, TrailInner);
 		}
 
 		public override void OnKill(int timeLeft) {
 			if (detonating && Projectile.owner == Main.myPlayer)
-				SpawnExplosion(Math.Max(1, (int)MathF.Round(Projectile.damage * (Projectile.velocity.Y > 0f ? 1.25f : 1f))));
+				SpawnExplosion(Math.Max(1, (int)MathF.Round(Projectile.damage * (Projectile.velocity.Y * gravityDirection > 0f ? 1.25f : 1f))));
 		}
 
         protected virtual void SpawnExplosion(int damage) =>
             FiammettaExplosion.Spawn(Projectile.GetSource_FromThis(), Projectile.Center,
-                damage, Projectile.knockBack, Projectile.owner, Mode, Projectile.CritChance);
+                damage, Projectile.knockBack, Projectile.owner, FlightMode, Projectile.CritChance);
 
 		public override bool PreDraw(ref Color lightColor) {
-			FiammettaVisuals.DrawShellTrail(Projectile, new Color(255, 43, 20),
-				new Color(255, 216, 112), Mode == 3 ? 30f : 24f);
+			ArtilleryFlightVisuals.Draw(Projectile, TrailOuter, TrailInner, TrailWidth);
 
 			Texture2D texture = TextureAssets.Projectile[ProjectileID.RocketI].Value;
 			Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null,
@@ -248,15 +245,20 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 			writer.Write((short)lockedTargetIndex);
 			writer.Write((short)Math.Clamp(descentAge, 0, short.MaxValue));
 			writer.Write(ballisticDiveHeading);
+			writer.Write(gravityDirection);
 		}
 
 		public override void ReceiveExtraAI(BinaryReader reader) {
+			bool wasDescending = descending;
 			Projectile.localAI[0] = reader.ReadSingle();
 			descending = reader.ReadBoolean();
 			detonating = reader.ReadBoolean();
 			lockedTargetIndex = reader.ReadInt16();
 			descentAge = reader.ReadInt16();
 			ballisticDiveHeading = reader.ReadSingle();
+			gravityDirection = reader.ReadSingle() < 0f ? -1f : 1f;
+			if (descending != wasDescending)
+				Array.Fill(Projectile.oldPos, Projectile.position);
 			initialized = true;
 		}
 	}

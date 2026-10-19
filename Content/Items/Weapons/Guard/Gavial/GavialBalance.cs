@@ -10,6 +10,7 @@ internal static class GavialBalance
     internal const float Width = 42f;
     internal const int NormalBiteTicks = 7;
     internal const int SoulBiteTicks = 4;
+    internal const float AttackSpeedMultiplier = 1.3f;
     internal const int HealCooldownTicks = 30;
     internal const int HealCap = 6;
     internal const int RepaymentTicks = 20 * 60;

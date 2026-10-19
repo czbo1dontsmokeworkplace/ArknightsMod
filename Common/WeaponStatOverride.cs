@@ -198,7 +198,7 @@ namespace ArknightsMod.Common
 			// TyphonBow - 提丰 - 弓
 			// 原始值: damage=209, useTime=72, useAnimation=72, knockBack=6, shootSpeed=8
 			[typeof(Content.Items.Weapons.Sniper.Typhon.TyphonBow)] = new() {
-				Damage = 816, UseTime = 60, UseAnimation = 60, KnockBack = 6f, ShootSpeed = 20f
+				Damage = 571, UseTime = 60, UseAnimation = 60, KnockBack = 6f, ShootSpeed = 20f
 			},
 
 			// WisadelCannon - 维什戴尔 - 祖宗发射器(炮台)

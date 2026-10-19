@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using ArknightsMod.Content.Items.Weapons.Medic;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -16,11 +17,20 @@ public sealed class MedicArt : ModProjectile
     private bool deployed;
     private bool grounded;
     private Vector2 previous;
+    private bool initialized;
+    internal float HomingStartAge = -1;
     internal Rectangle PatientHitbox => Utils.CenteredRectangle(Projectile.Center, new Vector2(Profile.PatientContactSize));
     internal bool CanTreatPlayers => Age > Profile.ArmingDelay;
     internal float Armed => MathHelper.Clamp((Age - Profile.ArmingDelay + 8) / 8f, 0, 1);
-    internal float HomingStrength => Profile.Branch == MedicBranch.Therapist && Age >= Profile.ArmingDelay
-        ? .35f + .65f * Utils.GetLerpValue(Profile.ArmingDelay, Profile.ArmingDelay + 24f, Age, true) : 0f;
+    internal float HomingStrength => Profile.Branch == MedicBranch.Therapist && HomingStartAge >= 0
+        ? .35f + .65f * Utils.GetLerpValue(HomingStartAge, HomingStartAge + 24f, Age, true) : 0f;
+    public override void SendExtraAI(BinaryWriter writer) { writer.Write(Age); writer.Write(HomingStartAge); }
+    public override void ReceiveExtraAI(BinaryReader reader)
+    {
+        float age = reader.ReadSingle(), start = reader.ReadSingle();
+        Age = float.IsFinite(age) ? Math.Clamp(age, 0, 3600) : 0;
+        HomingStartAge = float.IsFinite(start) && start >= 0 ? Math.Min(start, Age) : -1;
+    }
     public override void SetStaticDefaults()
     {
         ProjectileID.Sets.TrailCacheLength[Type] = 24;
@@ -45,8 +55,9 @@ public sealed class MedicArt : ModProjectile
     public override void AI()
     {
         float step = 1f / Projectile.MaxUpdates;
-        if (Age == 0)
+        if (!initialized)
         {
+            initialized = true;
             // First AI runs on every observing client; Shoot only runs for the owner.
             MedicArtsAudio.Play(Projectile.Center, ProfileId, MedicSoundCue.Cast);
             previous = Projectile.Center;
@@ -63,8 +74,16 @@ public sealed class MedicArt : ModProjectile
         // Actual gravity remains present even during therapist steering.
         Projectile.velocity.Y = Math.Min(10, Projectile.velocity.Y + Profile.Gravity * step);
         if (Age > 18) Projectile.velocity.X *= MathF.Pow(.995f, step);
-        if (Profile.Branch == MedicBranch.Therapist && Age >= Profile.ArmingDelay)
-            HomeTowardPatient(step);
+        if (Profile.Branch == MedicBranch.Therapist)
+        {
+            // The whole downward half-plane qualifies, including diagonal motion.
+            if (HomingStartAge < 0 && Projectile.velocity.Y > 0)
+            {
+                HomingStartAge = Age;
+                if (Projectile.owner == Main.myPlayer) Projectile.netUpdate = true;
+            }
+            if (HomingStartAge >= 0) HomeTowardPatient(step);
+        }
         Projectile.rotation = Projectile.velocity.ToRotation();
         if (Projectile.numUpdates == 0)
         {
@@ -100,7 +119,7 @@ public sealed class MedicArt : ModProjectile
             return;
         }
         Vector2 direction = (target.Center - Projectile.Center).SafeNormalize(Vector2.UnitY);
-        float warmup = Utils.GetLerpValue(Profile.ArmingDelay, Profile.ArmingDelay + 36f, Age, true);
+        float warmup = Utils.GetLerpValue(HomingStartAge, HomingStartAge + 36f, Age, true);
         float close = Utils.GetLerpValue(360f, 70f, Projectile.Distance(target.Center), true);
         float pull = MathHelper.Lerp(.35f, 1f, Math.Max(warmup, close * .75f));
         Vector2 desired = direction * Profile.Speed * MathHelper.Lerp(.65f, .88f, pull);
@@ -121,7 +140,8 @@ public sealed class MedicArt : ModProjectile
         float best = 640 * 640;
         foreach (Player player in Main.ActivePlayers)
         {
-            if (!MedicHealingNet.Allied(owner, player) || player.statLife >= player.statLifeMax2) continue;
+            if (!MedicHealingNet.Allied(owner, player)
+                || player.statLife >= player.statLifeMax2 && !MedicTreatment.HasCurableDebuff(player)) continue;
             float distance = player.DistanceSQ(Projectile.Center);
             if (distance < best) { best = distance; result = player; }
         }

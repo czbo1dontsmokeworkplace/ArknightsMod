@@ -10,14 +10,14 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.Projectiles.Vanguard.Spears;
 
 // Finite, non-damaging release/impact geometry. All sizes are world-space pixels.
-public sealed class VanguardThrowPulse : ModProjectile
+public sealed class VanguardChargePulse : ModProjectile
 {
     public override string Texture => "Terraria/Images/MagicPixel";
     public static void Spawn(Projectile source, Vector2 point, bool impact)
     {
         if (source.owner != Main.myPlayer) return;
         Projectile.NewProjectile(source.GetSource_FromThis(), point, Vector2.Zero,
-            ModContent.ProjectileType<VanguardThrowPulse>(), 0, 0, source.owner,
+            ModContent.ProjectileType<VanguardChargePulse>(), 0, 0, source.owner,
             source.ai[0], impact ? 1 : 0, source.velocity.ToRotation());
     }
     public override void SetDefaults()

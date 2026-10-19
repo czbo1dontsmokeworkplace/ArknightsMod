@@ -11,17 +11,9 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Meteorite;
 public sealed class MeteoriteShell : FiammettaMortarShell
 {
     private int Mode => Math.Clamp((int)Projectile.ai[2], 0, 2);
-    public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.ElectrosphereMissile;
-    public override void SetStaticDefaults()
-    {
-        ProjectileID.Sets.TrailCacheLength[Type] = 8;
-        ProjectileID.Sets.TrailingMode[Type] = 2;
-    }
-    public override bool PreDraw(ref Color lightColor)
-    {
-        MeteoriteShellVisuals.DrawTrail(Projectile);
-        return true;
-    }
+    protected override Color TrailOuter => new(244, 70, 28);
+    protected override Color TrailInner => new(255, 222, 132);
+    protected override float TrailWidth => 20f;
     protected override void SpawnExplosion(int damage)
     {
         int burstDamage = Math.Max(1, (int)(damage * (Mode == 2 ? .9f : .68f)));

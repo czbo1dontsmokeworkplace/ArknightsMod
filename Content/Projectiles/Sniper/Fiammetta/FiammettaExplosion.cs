@@ -1,5 +1,6 @@
 using ArknightsMod.Common.Particle.T;
 using System;
+using ArknightsMod.Content.Projectiles.Sniper.Artillery;
 using ArknightsMod.Common.Particle;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -35,8 +36,8 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 
 		public override void SetDefaults()
 		{
-			Projectile.width = 132;
-			Projectile.height = 132;
+			Projectile.width = ArtilleryBlast.Diameter;
+			Projectile.height = ArtilleryBlast.Diameter;
 			Projectile.friendly = true;
 			Projectile.hostile = false;
 			Projectile.tileCollide = false;
@@ -50,14 +51,8 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 
 		public override void OnSpawn(IEntitySource source)
 		{
-			int size = Mode switch
-			{
-				1 => 154,
-				2 => 196,
-				3 => 216,
-				4 => 100,
-				_ => 136
-			};
+			// Main impacts share Meteorite's footprint; S2's five auxiliary scorch marks stay small.
+			int size = Mode == 4 ? 100 : ArtilleryBlast.Diameter;
 			Vector2 center = Projectile.Center;
 			Projectile.width = size;
 			Projectile.height = size;
@@ -78,6 +73,8 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 		{
 			if (Projectile.localAI[0] == 0f)
 			{
+				if (Mode != 4)
+					ArtilleryImpactVisuals.Spawn(Projectile);
 				FiammettaVisuals.SpawnExplosionParticles(Projectile.Center, Radius, Mode);
 				if (!Main.dedServ)
 				{
@@ -405,11 +402,13 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 			if (Main.dedServ)
 				return;
 
-			int count = mode switch { 2 => 48, 3 => 56, 4 => 18, _ => 34 };
+			int baseCount = mode switch { 2 => 48, 3 => 56, 4 => 18, _ => 34 };
+			int count = ArtilleryImpactVisuals.BoostCount(baseCount);
 			for (int i = 0; i < count; i++)
 			{
 				Vector2 direction = Main.rand.NextVector2Unit();
-				float speed = Main.rand.NextFloat(2.5f, 9.5f) * (0.75f + radius / 180f);
+				float speed = Main.rand.NextFloat(2.5f, 9.5f) * (0.75f + radius / 180f)
+					* ArtilleryImpactVisuals.ParticleIntensity;
 				Color color = Color.Lerp(new Color(226, 27, 14), new Color(255, 232, 151), Main.rand.NextFloat());
 				var particle = new T_Streak_Particle(center + direction * Main.rand.NextFloat(2f, radius * 0.28f),
 					direction * speed, Main.rand.Next(16, 31), Main.rand.NextFloat(0.34f, 0.76f), color, true)
@@ -419,9 +418,10 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 				particle.Spawn();
 			}
 
-			for (int i = 0; i < count / 2; i++)
+			for (int i = 0; i < ArtilleryImpactVisuals.BoostCount(baseCount / 2); i++)
 			{
-				Vector2 velocity = Main.rand.NextVector2CircularEdge(1f, 1f) * Main.rand.NextFloat(2.2f, 8.2f);
+				Vector2 velocity = Main.rand.NextVector2CircularEdge(1f, 1f) * Main.rand.NextFloat(2.2f, 8.2f)
+					* ArtilleryImpactVisuals.ParticleIntensity;
 				Dust dust = Dust.NewDustPerfect(center + Main.rand.NextVector2Circular(radius * 0.15f, radius * 0.15f),
 					i % 3 == 0 ? DustID.GoldFlame : DustID.Torch, velocity, 35,
 					new Color(255, 74, 24), Main.rand.NextFloat(0.9f, 1.55f));
@@ -438,25 +438,27 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 		private static void SpawnNormalVanillaFireDust(Vector2 center, float radius)
 		{
 			// 较粗的火焰尘埃贴着爆心冲出，和细长的项目粒子形成两种不同轮廓。
-			for (int i = 0; i < 14; i++)
+			for (int i = 0; i < ArtilleryImpactVisuals.BoostCount(14); i++)
 			{
 				Vector2 direction = Main.rand.NextVector2Unit();
 				int dustType = i % 5 == 0 ? DustID.SolarFlare
 					: i % 3 == 0 ? DustID.GoldFlame : DustID.Torch;
 				Dust flame = Dust.NewDustPerfect(
 					center + direction * Main.rand.NextFloat(3f, radius * 0.22f), dustType,
-					direction * Main.rand.NextFloat(3.6f, 8.8f) + Main.rand.NextVector2Circular(0.7f, 0.7f),
+					(direction * Main.rand.NextFloat(3.6f, 8.8f) + Main.rand.NextVector2Circular(0.7f, 0.7f))
+						* ArtilleryImpactVisuals.ParticleIntensity,
 					Main.rand.Next(20, 55), new Color(255, 101, 29), Main.rand.NextFloat(1.05f, 1.72f));
 				flame.noGravity = true;
 				flame.fadeIn = Main.rand.NextFloat(0.35f, 0.75f);
 			}
 
 			// 少量慢余烬负责收尾；保留重力，避免所有火粒子都像同一圈放射线。
-			for (int i = 0; i < 8; i++)
+			for (int i = 0; i < ArtilleryImpactVisuals.BoostCount(8); i++)
 			{
 				Vector2 velocity = new(Main.rand.NextFloat(-3.1f, 3.1f), Main.rand.NextFloat(-5.2f, -1.4f));
 				Dust ember = Dust.NewDustPerfect(center + Main.rand.NextVector2Circular(radius * 0.18f,
-					radius * 0.12f), i % 3 == 0 ? DustID.GoldFlame : DustID.Torch, velocity,
+					radius * 0.12f), i % 3 == 0 ? DustID.GoldFlame : DustID.Torch,
+					velocity * ArtilleryImpactVisuals.ParticleIntensity,
 					Main.rand.Next(55, 95), new Color(255, 62, 18), Main.rand.NextFloat(0.72f, 1.12f));
 				ember.noGravity = false;
 			}
@@ -465,10 +467,11 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 		private static void SpawnReponiteSupernovaBurst(Vector2 center, float radius)
 		{
 			// 高速长火星提供爆炸的第一拍，暗红烟尘提供慢一拍的体积；两者速度区间刻意分离。
-			for (int i = 0; i < 42; i++)
+			for (int i = 0; i < ArtilleryImpactVisuals.BoostCount(42); i++)
 			{
 				Vector2 direction = Main.rand.NextVector2Unit();
-				float speed = Main.rand.NextFloat(10f, 25f) * (0.85f + radius / 260f);
+				float speed = Main.rand.NextFloat(10f, 25f) * (0.85f + radius / 260f)
+					* ArtilleryImpactVisuals.ParticleIntensity;
 				float roll = Main.rand.NextFloat();
 				Color color = roll < 0.18f ? new Color(255, 244, 211)
 					: roll < 0.56f ? new Color(255, 163, 67) : new Color(224, 36, 18);
@@ -480,10 +483,10 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 				spark.Spawn();
 			}
 
-			for (int i = 0; i < 34; i++)
+			for (int i = 0; i < ArtilleryImpactVisuals.BoostCount(34); i++)
 			{
 				Vector2 direction = Main.rand.NextVector2Unit();
-				Vector2 velocity = direction * Main.rand.NextFloat(1.4f, 5.8f);
+				Vector2 velocity = direction * Main.rand.NextFloat(1.4f, 5.8f) * ArtilleryImpactVisuals.ParticleIntensity;
 				Dust smoke = Dust.NewDustPerfect(center + direction * Main.rand.NextFloat(4f, radius * 0.34f),
 					DustID.Smoke, velocity, Main.rand.Next(65, 125), new Color(82, 16, 10),
 					Main.rand.NextFloat(1.35f, 2.35f));
@@ -496,7 +499,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 			if (Main.dedServ)
 				return;
 
-			int count = phase == 0 ? 24 : 16;
+			int count = ArtilleryImpactVisuals.BoostCount(phase == 0 ? 24 : 16);
 			float angularOffset = Main.rand.NextFloat(MathHelper.TwoPi);
 			for (int i = 0; i < count; i++)
 			{
@@ -505,7 +508,8 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 				Color color = i % 4 == 0 ? new Color(255, 240, 195)
 					: phase == 0 ? new Color(255, 128, 38) : new Color(213, 31, 17);
 				var particle = new T_Streak_Particle(position,
-					direction * Main.rand.NextFloat(phase == 0 ? 7f : 4f, phase == 0 ? 13f : 9f),
+					direction * Main.rand.NextFloat(phase == 0 ? 7f : 4f, phase == 0 ? 13f : 9f)
+						* ArtilleryImpactVisuals.ParticleIntensity,
 					Main.rand.Next(15, 25), Main.rand.NextFloat(0.28f, 0.55f), color, true)
 				{
 					Deformation = new Vector2(0.14f, phase == 0 ? 3.6f : 2.7f)

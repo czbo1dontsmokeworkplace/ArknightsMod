@@ -305,6 +305,7 @@ Projectiles: {
 	DreadnoughtHeavyImpact.DisplayName: Dreadnought Heavy Impact
 	MedicArt.DisplayName: Medic Art
 	MedicHealingField.DisplayName: Medic Healing Field
+	GavialChainsawExplosion.DisplayName: Gavial Chainsaw Explosion
 }
 
 Keybinds: {

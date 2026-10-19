@@ -94,26 +94,12 @@ public sealed class BlastCasterHoldout : ModProjectile
         { mode = 2; skills.DelStockCount(); }
         damage = Math.Max(1, (int)(damage * BlastCasterRules.DamageMultiplier(Kind, mode, rank)));
         var source = owner.GetSource_ItemUse_WithPotentialAmmo(weapon.Item, ammo);
-        Projectile shot;
-        if (Kind != BlastCasterKind.Aphrissa)
-        {
-            float spread = mode == 3 ? .045f : .025f;
-            shot = Projectile.NewProjectileDirect(source, muzzle, aim.RotatedByRandom(spread) * weapon.Item.shootSpeed,
-                ProjectileID.Flames, damage, knockback, owner.whoAmI,
-                0, 0, BlastCasterRules.FlameMarker(Kind, mode));
-            shot.penetrate = shot.maxPenetrate = -1; // Unlimited enemy piercing, including vanilla's penetration snapshot.
-            shot.ArmorPenetration = 0; // Do not inherit vanilla Flamethrower's hidden 15 AP.
-            shot.netUpdate = true;
-        }
-        else
-        {
-            Projectile relay = AphrissaRelay.Find(owner);
-            float destinationX = relay?.Center.X ?? -1, destinationY = relay?.Center.Y ?? -1;
-            shot = Projectile.NewProjectileDirect(source, muzzle, aim * BlastCasterRules.OpticalStep,
-                ModContent.ProjectileType<AphrissaOpticalPacket>(), damage, knockback, owner.whoAmI, mode, destinationX, destinationY);
-            if (shot.ModProjectile is AphrissaOpticalPacket packet)
-                packet.Configure(Main.MouseWorld, relay?.identity ?? -1, volley * .071f);
-        }
+        Projectile relay = Kind == BlastCasterKind.Aphrissa ? AphrissaRelay.Find(owner) : null;
+        Projectile shot = Projectile.NewProjectileDirect(source, muzzle, aim * BlastCasterRules.Step(Kind),
+            ModContent.ProjectileType<BlastCasterFluxPacket>(), damage, knockback, owner.whoAmI,
+            mode, relay?.Center.X ?? -1, relay?.Center.Y ?? -1);
+        if (shot.ModProjectile is BlastCasterFluxPacket packet)
+            packet.Configure(Kind, Main.MouseWorld, relay?.identity ?? -1);
         shot.CritChance = owner.GetWeaponCrit(weapon.Item);
     }
     public override bool PreDraw(ref Color lightColor)

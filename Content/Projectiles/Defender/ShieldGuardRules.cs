@@ -1,5 +1,7 @@
 using System;
 using Terraria;
+using Terraria.ModLoader;
+using ArknightsMod.Content.Projectiles.Defender.Horn;
 
 namespace ArknightsMod.Content.Projectiles.Defender;
 
@@ -15,9 +17,17 @@ internal static class ShieldGuardRules
     {
         if (!Supports(player.HeldItem) || !player.active || player.dead || player.CCed || player.noItems)
             return false;
-        // 号角是自动炮盾：手持且冷却就绪即举盾，不依赖左右键，冷却结束后自动恢复。
-        if (player.HeldItem.ModItem is Items.Weapons.Defender.Horn.HornGrenadeLauncher)
-            return player.GetModPlayer<Defender_Player>().CD == 0;
+        // Horn synchronizes the held right-button state through its persistent visual projectile.
+        // The parry cooldown only limits successful blocks, not the held guarding stance.
+        if (player.HeldItem.ModItem is Items.Weapons.Defender.Horn.HornGrenadeLauncher
+            && player.whoAmI != Main.myPlayer)
+        {
+            int type = ModContent.ProjectileType<HornGuard>();
+            foreach (Projectile projectile in Main.ActiveProjectiles)
+                if (projectile.owner == player.whoAmI && projectile.type == type)
+                    return projectile.ai[1] == 1f;
+            return false;
+        }
         return player.whoAmI == Main.myPlayer && Main.mouseRight && !player.mouseInterface;
     }
 

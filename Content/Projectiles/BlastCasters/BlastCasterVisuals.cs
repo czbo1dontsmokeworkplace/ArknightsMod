@@ -1,12 +1,10 @@
 using System;
 using ArknightsMod.Common.Particle;
 using ArknightsMod.Common.Particle.T;
-using ArknightsMod.Common.VisualEffects;
 using ArknightsMod.Content.Items.Weapons.BlastCasters;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles.BlastCasters;
@@ -32,29 +30,27 @@ internal static class BlastCasterVisuals
     { if (Budget(at)) new T_BlastCasterEmber(at, velocity, color, Math.Clamp(size, 2, 24), Math.Clamp(life, 6, 28), optical).Spawn(); }
     private static void Soot(Vector2 at, Vector2 velocity, float size)
     { if (Budget(at)) new T_BlastCasterSoot(at, velocity, Math.Clamp(size, 8, 38)).Spawn(); }
+    private static void Bloom(Vector2 at, Vector2 velocity, Color color, Vector2 size, int life, bool contact = false)
+    { if (Budget(at)) new T_BlastCasterFluxBloom(at, velocity, color, size, life, contact).Spawn(); }
+    private static void Shard(Vector2 at, Vector2 velocity, Color color, float size, int life)
+    { if (Budget(at)) new T_BlastCasterFluxShard(at, velocity, color, size, life).Spawn(); }
     internal static void Muzzle(Vector2 at, Vector2 aim, BlastCasterKind kind, int tick)
     {
-        Color color = kind == BlastCasterKind.Aphrissa ? BlastCasterRules.Spectrum(tick * .008f) : BlastCasterRules.Tint(kind);
-        if (kind == BlastCasterKind.Aphrissa)
-        { Ember(at, aim.RotatedByRandom(.14f) * 2.5f, color, 6, 9, true); return; }
+        Color color = BlastCasterRules.Tint(kind);
+        Bloom(at, aim * 1.2f, color, new Vector2(62, 40), 6);
         Vector2 side = new(-aim.Y, aim.X);
         for (int i = -1; i <= 1; i += 2)
-            Ember(at + side * i * 2, aim.RotatedBy(i * .18f) * Main.rand.NextFloat(3.3f, 4.7f),
-                i < 0 ? Color.Lerp(color, new Color(255, 199, 95), .45f) : color, 12, 13);
+            Shard(at + side * i * 10, aim.RotatedBy(i * .17f) * Main.rand.NextFloat(2.5f, 4),
+                Color.Lerp(color, BlastCasterRules.FluxAccent(kind), .3f), 9, 12);
     }
-    internal static void FlameWake(Projectile p, BlastCasterKind kind)
+    internal static void FluxWake(Vector2 at, Vector2 velocity, BlastCasterKind kind)
     {
-        Vector2 axis = p.velocity.SafeNormalize(Vector2.UnitX), side = new(-axis.Y, axis.X);
-        float spread = MathHelper.Lerp(3, 13, Math.Clamp(p.localAI[0] / 72f, 0, 1));
-        Color tint = BlastCasterRules.Tint(kind);
-        for (int i = -1; i <= 1; i += 2)
-            Ember(p.Center + side * i * spread, p.velocity * .17f + side * i * .8f - Vector2.UnitY * .5f,
-                i < 0 ? tint : Color.Lerp(tint, new Color(255, 179, 73), .35f), kind == BlastCasterKind.Ifrit ? 14 : 12, 16);
-        if ((int)p.localAI[0] > 45 && (int)p.localAI[0] % 18 == 0) Soot(p.Center, p.velocity * .08f, 20);
+        Vector2 axis = velocity.SafeNormalize(Vector2.UnitX), side = new(-axis.Y, axis.X);
+        int sign = Main.rand.NextBool() ? -1 : 1;
+        float size = BlastCasterRules.SizeMultiplier(kind);
+        Shard(at + side * (sign * 4 * size), axis * .8f + side * sign * .65f,
+            Color.Lerp(BlastCasterRules.Tint(kind), BlastCasterRules.FluxAccent(kind), Main.rand.NextFloat()), 7 * size, 13);
     }
-    internal static void OpticalWake(Vector2 at, Vector2 velocity, float phase)
-        => Ember(at + Main.rand.NextVector2Circular(4, 4), velocity * .08f + Main.rand.NextVector2Circular(.6f, .6f),
-            BlastCasterRules.Spectrum(phase), Main.rand.NextFloat(5, 9), 12, true);
     internal static void Hit(Projectile p, NPC target, Vector2 at, BlastCasterKind kind)
     {
         if (!Visible(at)) return;
@@ -67,26 +63,19 @@ internal static class BlastCasterVisuals
     internal static void ImpactParticles(Vector2 at, Vector2 aim, BlastCasterKind kind)
     {
         Color color = BlastCasterRules.Tint(kind);
-        bool optical = kind == BlastCasterKind.Aphrissa;
-        for (int i = 0; i < (optical ? 4 : 6); i++)
-            Ember(at, (-aim * Main.rand.NextFloat(1, optical ? 3 : 4) + Main.rand.NextVector2Circular(2, optical ? 2 : 3)) - Vector2.UnitY,
-                i < (optical ? 1 : 2) ? (optical ? new Color(255, 221, 146) : Color.Lerp(color, new Color(255, 221, 146), .7f)) : color,
-                optical ? 6 : 14, optical ? 16 : 19, optical);
-        if (kind != BlastCasterKind.Aphrissa)
+        Color accent = BlastCasterRules.FluxAccent(kind);
+        // Two soft volumes echo the reference hit; asymmetric drifting shards
+        // and the operator's palette give this branch its own contact signature.
+        Bloom(at, -aim * .2f, color, new Vector2(150, 135), 20, true);
+        Bloom(at + aim * 3, aim * .35f, accent, new Vector2(105, 120), 15, true);
+        Vector2 side = new(-aim.Y, aim.X);
+        for (int i = 0; i < 6; i++)
         {
-            Vector2 side = new(-aim.Y, aim.X);
-            for (int i = -1; i <= 1; i += 2)
-                Ember(at + side * i * 4, side * i * 2.2f - aim * 1.3f, color, 18, 15);
-            Soot(at, -Vector2.UnitY * 1.5f, 26);
-            if (Budget(at))
-            {
-                Dust d = Dust.NewDustPerfect(at, kind == BlastCasterKind.Corroserum ? DustID.CursedTorch : DustID.Torch,
-                    -aim + Main.rand.NextVector2Circular(1, 1), 80, default, .85f);
-                d.noGravity = true;
-            }
+            float sign = i % 2 == 0 ? -1 : 1;
+            Vector2 velocity = side * sign * Main.rand.NextFloat(1.7f, 3.6f) - aim * Main.rand.NextFloat(.4f, 2.8f);
+            Shard(at + side * sign * 3, velocity, i < 2 ? accent : color, i < 2 ? 13 : 9, Main.rand.Next(13, 21));
         }
-        else if (Budget(at))
-            CasterSparkles.Spawn(at, -aim * .6f, color, .5f, 10, aim.ToRotation());
+        if (kind != BlastCasterKind.Aphrissa) Soot(at, -Vector2.UnitY * .6f, 20);
     }
     internal static void Skill(Vector2 at, BlastCasterKind kind)
     {
@@ -122,8 +111,6 @@ internal static class BlastCasterVisuals
             Ember(at + axis * 20, axis.RotatedBy(MathHelper.PiOver2) * .6f, new Color(84, 220, 200), 5, 14, true);
         }
     }
-    internal static void PacketEnd(Vector2 at, Vector2 velocity)
-        => Ember(at, -velocity.SafeNormalize(Vector2.UnitX) * .6f, new Color(115, 221, 188), 4, 8, true);
     internal static void DrawRelay(Vector2 at, float rotation, float opacity)
     {
         if (!Visible(at)) return;

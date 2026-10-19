@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -42,7 +43,7 @@ internal static class GavialVisuals
         BaseHeldMeleeSupport.BeginAdditive(Main.spriteBatch);
         float pulse = 0.9f + MathF.Sin((float)Main.GlobalTimeWrappedHourly * 8f) * 0.1f;
         Color edge = (mode == 2 ? new Color(172, 228, 78, 170) : new Color(112, 172, 62, 140))
-            * (spool * pulse * (mode == 2 ? 0.85f : 0.6f));
+            * (spool * pulse * (mode == 2 ? 0.85f : 0.6f) * 1.5f);
         for (int i = 0; i < 8; i++)
         {
             Vector2 offset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * (mode == 2 ? 2.8f : 1.8f);
@@ -115,21 +116,32 @@ internal static class GavialVisuals
 
     internal static void SawParticles(Vector2 hand, Vector2 tip, int age, float spool, int mode)
     {
-        if (Main.dedServ || spool < 0.4f || age % (mode is 2 or 3 ? 3 : 4) != 0) return;
+        if (Main.dedServ || spool < 0.4f) return;
         Vector2 direction = (tip - hand).SafeNormalize(Vector2.UnitX);
         Vector2 normal = new(-direction.Y, direction.X);
-        for (int side = -1; side <= 1; side += 2)
+        if (age % (mode is 2 or 3 ? 3 : 4) == 0)
         {
-            Vector2 position = Vector2.Lerp(hand, tip, Main.rand.NextFloat(0.48f, 0.98f))
-                + normal * side * 10f;
-            // 两侧锯链反向流动，火花脱离锯身后自然卷曲散开。
-            Vector2 velocity = direction * (side * Main.rand.NextFloat(2.4f, 4.2f))
-                + normal * side * Main.rand.NextFloat(0.6f, 1.4f);
-            Color color = side < 0 ? new Color(173, 205, 81) : new Color(225, 219, 144);
-            new T_Gavial_Saw_Spark_Particle(position, velocity, color,
-                Main.rand.NextFloat(11f, mode == 2 ? 22f : 17f), side * 0.075f,
-                Main.rand.Next(16, 24)).Spawn();
+            for (int side = -1; side <= 1; side += 2)
+            {
+                Vector2 position = Vector2.Lerp(hand, tip, Main.rand.NextFloat(0.48f, 0.98f))
+                    + normal * side * 10f;
+                // 两侧锯链反向流动，火花脱离锯身后自然卷曲散开。
+                Vector2 velocity = direction * (side * Main.rand.NextFloat(2.4f, 4.2f))
+                    + normal * side * Main.rand.NextFloat(0.6f, 1.4f);
+                Color color = side < 0 ? new Color(173, 205, 81) : new Color(225, 219, 144);
+                new T_Gavial_Saw_Spark_Particle(position, velocity, color,
+                    Main.rand.NextFloat(11f, mode == 2 ? 22f : 17f), side * 0.075f,
+                    Main.rand.Next(16, 24)).Spawn();
+            }
         }
+        // 参考持续喷屑、命中再加一层反馈的节奏；使用本模组自己的粒子与配色。
+        if (age % (mode == 2 ? 4 : 6) != 0) return;
+        for (int i = 0; i < 2; i++)
+            new T_Gavial_Saw_Spark_Particle(
+                Vector2.Lerp(hand, tip, 0.88f) + Main.rand.NextVector2Circular(5f, 5f),
+                direction.RotatedByRandom(0.25f) * Main.rand.NextFloat(5f, 8f)
+                    - Vector2.UnitY * Main.rand.NextFloat(0.3f, 1.2f),
+                i == 0 ? new Color(157, 205, 70) : Steel, 17f, Main.rand.NextFloat(-0.06f, 0.06f), 18).Spawn();
     }
 
     internal static void SawImpactParticles(Vector2 position, Vector2 direction, int mode)
@@ -160,6 +172,33 @@ internal static class GavialVisuals
         SoundEngine.PlaySound(MotorSound with { Volume = 0.65f, Pitch = mode == 3 ? 0.35f : -0.28f }, player.Center);
         Chips(player.MountedCenter, new Vector2(player.direction, -0.2f), 14, true);
         Shake(player, 2.8f);
+    }
+
+    internal static void GrenadeExplosion(IEntitySource source, Vector2 center)
+    {
+        if (Main.dedServ) return;
+        // 与原版 Grenade.Kill 相同的 22x22 发射区、烟尘/火焰数量、速度和四片烟块。
+        Vector2 position = center - new Vector2(11f);
+        SoundEngine.PlaySound(SoundID.Item14, center);
+        for (int i = 0; i < 20; i++)
+        {
+            Dust smoke = Dust.NewDustDirect(position, 22, 22, DustID.Smoke, 0f, 0f, 100, default, 1.5f);
+            smoke.velocity *= 1.4f;
+        }
+        for (int i = 0; i < 10; i++)
+        {
+            Dust fire = Dust.NewDustDirect(position, 22, 22, DustID.Torch, 0f, 0f, 100, default, 2.5f);
+            fire.noGravity = true;
+            fire.velocity *= 5f;
+            Dust ember = Dust.NewDustDirect(position, 22, 22, DustID.Torch, 0f, 0f, 100, default, 1.5f);
+            ember.velocity *= 3f;
+        }
+        for (int i = 0; i < 4; i++)
+        {
+            Gore smoke = Gore.NewGoreDirect(source, position, Vector2.Zero, Main.rand.Next(61, 64));
+            smoke.velocity *= 0.4f;
+            smoke.velocity += new Vector2((i & 1) == 0 ? 1f : -1f, i < 2 ? 1f : -1f);
+        }
     }
 
     internal static void Shake(Player player, float strength)

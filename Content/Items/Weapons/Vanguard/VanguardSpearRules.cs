@@ -6,33 +6,28 @@ namespace ArknightsMod.Content.Items.Weapons.Vanguard;
 
 public enum VanguardSpearKind { Vigna, Grani, WildMane, Bagpipe }
 
-// Player-wide reserve: swapping or cloning weapons cannot manufacture a second volley.
-// Deliberately independent of operator skill SP; only held spears recover it over time.
-public sealed class VanguardReserve
+// One fixed cooldown across the route, independent of items, melee hits and skill SP.
+public sealed class VanguardChargeCooldown
 {
-    public const int Capacity = 300;
-    public int Ticks { get; private set; }
-    public float Ratio => Ticks / (float)Capacity;
-    public bool Ready => Ticks == Capacity;
-    public void Tick(bool equipped) { if (equipped && Ticks < Capacity) Ticks++; }
-    public void ChargeFromMelee() => Ticks = Math.Min(Capacity, Ticks + Capacity / 5);
-    public bool TrySpend() { if (!Ready) return false; Ticks = 0; return true; }
-    public void Clear() => Ticks = 0;
+    public const int Duration = 300;
+    public int Remaining { get; private set; }
+    public float Ratio => 1 - Remaining / (float)Duration;
+    public bool Ready => Remaining == 0;
+    public void Tick() { if (Remaining > 0) Remaining--; }
+    public bool TryStart() { if (!Ready) return false; Remaining = Duration; return true; }
 }
 
 public static class VanguardSpearRules
 {
-    public const int FlightUpdates = 6;
-    public const float FlightRange = 1400;
-    public const float TrailLength = 480;
+    public const int ChargeDuration = 28;
     public const int PulseLifetime = 36;
     public static bool ValidKind(int kind) => kind >= 0 && kind <= 3;
-    public static float ThrowDamage(VanguardSpearKind kind) => kind switch {
+    public static float ChargeDamage(VanguardSpearKind kind) => kind switch {
         VanguardSpearKind.Vigna => 4f, VanguardSpearKind.Grani => 4.5f,
         VanguardSpearKind.WildMane => 5f, _ => 6f
     };
-    public static int Penetration(VanguardSpearKind kind) => kind == VanguardSpearKind.Grani ? 3 : kind == VanguardSpearKind.Vigna ? 1 : 2;
-    public static float FlightSpeed(VanguardSpearKind kind) => (25 + (int)kind * 3) * 4;
+    public static float ChargeSpeed(VanguardSpearKind kind) => 24 + (int)kind * 2;
+    public static float ChargeRange(VanguardSpearKind kind) => ChargeSpeed(kind) * ChargeDuration;
     public static float Length(VanguardSpearKind kind) => 104 + (int)kind * 10;
     // Independent random rolls control emission count, cone angle, speed and lift.
     // Even a downward/inverted-gravity thrust retains forward momentum.

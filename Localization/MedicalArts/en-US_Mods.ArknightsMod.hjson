@@ -1,10 +1,20 @@
 Items: {
+	HibiscusStaff: {
+		DisplayName: Life Staff [Hibiscus]
+		Tooltip: Lob a condensed life orb; it passes through players without healing for the first 10 frames
+	}
+
+	NowellStaff: {
+		DisplayName: Clarity Staff [Nowell]
+		Tooltip: Medical arts begin inertial homing on first descending; contact shortens removable debuffs
+	}
+
 	AnselStaff: {
 		DisplayName: Medical Staff [Ansel]
 		Tooltip:
 			'''
 			Lob a condensed life orb, shedding luminous motes on flight and collection
-			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
 			'''
 	}
 
@@ -13,7 +23,7 @@ Items: {
 		Tooltip:
 			'''
 			Lob a condensed life orb, shedding luminous motes on flight and collection
-			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
 			'''
 	}
 
@@ -22,7 +32,7 @@ Items: {
 		Tooltip:
 			'''
 			Lob a condensed life orb, shedding luminous motes on flight and collection
-			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
 			'''
 	}
 
@@ -31,7 +41,7 @@ Items: {
 		Tooltip:
 			'''
 			Lob a condensed life orb, shedding luminous motes on flight and collection
-			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
 			'''
 	}
 
@@ -40,7 +50,7 @@ Items: {
 		Tooltip:
 			'''
 			Lob a condensed life orb, shedding luminous motes on flight and collection
-			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
 			'''
 	}
 
@@ -49,7 +59,7 @@ Items: {
 		Tooltip:
 			'''
 			Lob a condensed life orb, shedding luminous motes on flight and collection
-			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
 			'''
 	}
 
@@ -57,8 +67,8 @@ Items: {
 		DisplayName: Water Staff [Purestream]
 		Tooltip:
 			'''
-			Lob a falling water wisp that homes towards nearby injured allies after arming
-			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			Lob a water wisp that begins inertial homing towards allies on its first descent
+			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
 			'''
 	}
 
@@ -66,8 +76,8 @@ Items: {
 		DisplayName: Dew Staff [Ceylon]
 		Tooltip:
 			'''
-			Lob a falling water wisp that homes towards nearby injured allies after arming
-			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			Lob a water wisp that begins inertial homing towards allies on its first descent
+			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
 			'''
 	}
 
@@ -75,8 +85,8 @@ Items: {
 		DisplayName: Mist Staff [Whisperain]
 		Tooltip:
 			'''
-			Lob a falling water wisp that homes towards nearby injured allies after arming
-			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			Lob a water wisp that begins inertial homing towards allies on its first descent
+			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
 			'''
 	}
 
@@ -84,8 +94,8 @@ Items: {
 		DisplayName: Guiding Light [Lumen]
 		Tooltip:
 			'''
-			Lob a falling water wisp that homes towards nearby injured allies after arming
-			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			Lob a water wisp that begins inertial homing towards allies on its first descent
+			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
 			'''
 	}
 
@@ -94,7 +104,7 @@ Items: {
 		Tooltip:
 			'''
 			Lob a heavy energy seed that opens a stationary healing field on landing or contact
-			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
 			'''
 	}
 
@@ -103,7 +113,7 @@ Items: {
 		Tooltip:
 			'''
 			Lob a heavy energy seed that opens a stationary healing field on landing or contact
-			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
 			'''
 	}
 
@@ -112,7 +122,7 @@ Items: {
 		Tooltip:
 			'''
 			Lob a heavy energy seed that opens a stationary healing field on landing or contact
-			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
 			'''
 	}
 
@@ -121,7 +131,7 @@ Items: {
 		Tooltip:
 			'''
 			Lob a heavy energy seed that opens a stationary healing field on landing or contact
-			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
 			'''
 	}
 
@@ -130,7 +140,7 @@ Items: {
 		Tooltip:
 			'''
 			Lob woven life threads; successful healing grants independently expiring regeneration stacks
-			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
 			'''
 	}
 
@@ -139,7 +149,7 @@ Items: {
 		Tooltip:
 			'''
 			Lob woven life threads; successful healing grants independently expiring regeneration stacks
-			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
 			'''
 	}
 
@@ -148,7 +158,7 @@ Items: {
 		Tooltip:
 			'''
 			Lob woven life threads; successful healing grants independently expiring regeneration stacks
-			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
 			'''
 	}
 
@@ -157,7 +167,7 @@ Items: {
 		Tooltip:
 			'''
 			Lob a cleansing ribbon; each removable combat debuff cleansed increases healing by 35%
-			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
 			'''
 	}
 
@@ -166,7 +176,7 @@ Items: {
 		Tooltip:
 			'''
 			Lob a cleansing ribbon; each removable combat debuff cleansed increases healing by 35%
-			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
 			'''
 	}
 
@@ -175,7 +185,7 @@ Items: {
 		Tooltip:
 			'''
 			Lob a cleansing ribbon; each removable combat debuff cleansed increases healing by 35%
-			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
 			'''
 	}
 
@@ -184,7 +194,7 @@ Items: {
 		Tooltip:
 			'''
 			Lob a cleansing ribbon; each removable combat debuff cleansed increases healing by 35%
-			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
 			'''
 	}
 
@@ -193,12 +203,26 @@ Items: {
 		Tooltip:
 			'''
 			Lob a condensed life orb, shedding luminous motes on flight and collection
-			Medical arts pass through players for the first 0.5 seconds; lob them upwards and move to collect
+			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
 			'''
 	}
 }
 
 Skills: {
+	HibiscusStaff: {
+		1: {
+			Label: Healing Boost
+			Desc: Manual activation for 20 seconds. Medical arts restore 40%-58% more life; medication resistance remains active.
+		}
+	}
+
+	NowellStaff: {
+		1: {
+			Label: Clear Guidance
+			Desc: Manual activation for 20 seconds. Medical attack power increases by 40%-58%, strengthening healing and debuff shortening; medication resistance remains active.
+		}
+	}
+
 	AnselStaff: {
 		1: {
 			Label: Healing Focus
@@ -376,13 +400,14 @@ Skills: {
 
 BranchTraits: {
 	MedicProfession: Medic: These weapons efficiently heal allies, at the cost of being unable to damage enemies
-	MedicTherapist: Therapist: Medical arts home towards injured allies, but restore less health
+	MedicTherapist: Therapist: Medical arts begin inertial homing on first descending and heal less; each hit shortens removable debuffs by 10% of medical attack power in seconds
 	MedicMultiTarget: Multi-target Medic: Landing or contact creates a persistent healing field for allied players inside
 	MedicChain: Chain Medic: Successful healing adds independently expiring stacks of life regeneration
 	MedicWandering: Wandering Medic: Cleanse removable debuffs; each debuff removed increases healing
 }
 
 MedicalArts: {
+	Shorten: Each hit shortens every removable debuff; base reduction {0:0.##}s, scaling with medical attack power; excludes potion cooldowns, medication resistance and encounter mechanics
 	Numbers:
 		'''
 		Base healing: {0}; cast interval: {1:0.##}s; arming delay: {2:0.##}s

@@ -235,7 +235,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Specter
 			float pulse = 0.9f + MathF.Sin((float)Main.GlobalTimeWrappedHourly * 7f) * 0.1f;
 			for (int i = 0; i < 8; i++) {
 				Vector2 offset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * (SkillMode == 2 ? 2.4f : 1.8f);
-				DrawSaw(weapon, faceLeft, edge * (0.65f * spool * pulse), frame, offset);
+				DrawSaw(weapon, faceLeft, edge * (0.65f * spool * pulse * 1.5f), frame, offset);
 			}
 			BaseHeldMeleeSupport.EndAdditive(Main.spriteBatch);
 			DrawSaw(weapon, faceLeft, lightColor, frame);

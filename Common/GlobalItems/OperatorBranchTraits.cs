@@ -13,14 +13,14 @@ public sealed class OperatorBranchTraits : GlobalItem
     internal static string Branch(Item item) => item.ModItem?.Mod.Name == "ArknightsMod"
         ? item.ModItem.Name switch
     {
-        "AnselStaff" or "MyrrhStaff" or "WarfarinStaff" or "SussurroStaff" or "SilenceStaff"
+        "AnselStaff" or "HibiscusStaff" or "MyrrhStaff" or "WarfarinStaff" or "SussurroStaff" or "SilenceStaff"
             or "TuyeStaff" or "ShiningStaff" => "Medic",
-        "PurestreamStaff" or "CeylonStaff" or "WhisperainStaff" or "LumenStaff" => "MedicTherapist",
+        "PurestreamStaff" or "CeylonStaff" or "NowellStaff" or "WhisperainStaff" or "LumenStaff" => "MedicTherapist",
         "PerfumerStaff" or "BreezeStaff" or "PtilopsisStaff" or "NightingaleStaff" => "MedicMultiTarget",
         "PapyrusStaff" or "PaprikaStaff" or "Mon3trCore" => "MedicChain",
         "ChestnutStaff" or "HoneyberryStaff" or "MulberryStaff" or "EyjafjallaAlterStaff" => "MedicWandering",
         "HongdouLance" or "GraniLance" or "WildManeLance" or "BagpipeSpear" => "Charger",
-        "MeteoriteCannon" or "FiammettaHandCannon" => "Artilleryman",
+        "CatapultLauncher" or "MeteoriteCannon" or "FiammettaHandCannon" => "Artilleryman",
         "UtageKatana" or "HellagurOdachi" => "Musha",
         "MelanthasSword" or "MataimaruGlaive" or "FrankaRapier" or "NearlRadiantSword" => "Dreadnought",
         "MousseGlove" or "AstraSword" or "SurtrLaevatain" => "ArtsFighter",

@@ -19,6 +19,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 		public const float StabBaseLineWidth = 24f;
 		public const float StabLineWidth = StabBaseLineWidth * StabAreaScale;
 		private const float StabTipExtension = 28f;
+		private const float StabForwardTravelScale = 0.5f;
 		public const int StabWindupFrames = 7;
 		public const int StabHoldFrames = 2;
 		public const int StabThrustFrames = 4;
@@ -81,6 +82,22 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
                 saveTrail, Player.CompositeArmStretchAmount.Full);
             RecordNormalTrail(saveTrail);
         }
+
+		// The sweep geometry drives the shader trail, particles and collision. Shrink only
+		// the four blade texture vertices while drawing, then restore the gameplay tip.
+		public void DrawBladeAtScale(SpriteBatch sb, float visualScale)
+		{
+			Vector2 fullSizeTip = swordPos;
+			try
+			{
+				swordPos = handlePos + (fullSizeTip - handlePos) * visualScale;
+				DrawBlade(sb);
+			}
+			finally
+			{
+				swordPos = fullSizeTip;
+			}
+		}
 
 		public override void SwordAHandCon(float swordToHand, float hand, float length,
 			float handleLen, float swordlen, bool savePos = false,
@@ -230,7 +247,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 				StabEffectOpacity = 0.35f + 0.65f * MathF.Sin(MathHelper.Clamp(p, 0f, 1f) * MathF.PI);
 				desiredHandRad = LerpAngle(lockedStabRad + MathHelper.ToRadians(34f), lockedStabRad, burst);
 				desiredSwordRad = lockedStabRad;
-				travel = MathHelper.Lerp(-20f, 88f, burst);
+				travel = MathHelper.Lerp(-20f, 88f * StabForwardTravelScale, burst);
 			}
 			else if (t < windupFrames + holdFrames + thrustFrames + impactFrames)
 			{
@@ -238,7 +255,8 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 				StabEffectOpacity = 0.65f * (1f - SmoothStep(p));
 				desiredHandRad = lockedStabRad;
 				desiredSwordRad = lockedStabRad;
-				travel = MathHelper.Lerp(88f, 76f, SmoothStep(p));
+				travel = MathHelper.Lerp(88f * StabForwardTravelScale,
+					76f * StabForwardTravelScale, SmoothStep(p));
 			}
 			else
 			{
@@ -247,7 +265,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 				float eased = SmoothStep(MathHelper.Clamp(p, 0f, 1f));
 				desiredHandRad = LerpAngle(lockedStabRad, initialHandRad, eased);
 				desiredSwordRad = LerpAngle(lockedStabRad, initialSwordRad, eased);
-				travel = MathHelper.Lerp(76f, 0f, eased);
+				travel = MathHelper.Lerp(76f * StabForwardTravelScale, 0f, eased);
 			}
 
 			stabRad_hand = desiredHandRad;

@@ -274,7 +274,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Blaze
 		private void DrawSawOutline(Texture2D weapon, bool faceLeft, int frame) {
 			BaseHeldMeleeSupport.BeginAdditive(Main.spriteBatch);
 			float pulse = 0.9f + MathF.Sin((float)Main.GlobalTimeWrappedHourly * 7f) * 0.1f;
-			Color outline = new Color(244, 12, 35, 150) * ((Extended ? 0.82f : 0.58f) * spool * pulse);
+			Color outline = new Color(244, 12, 35, 150) * ((Extended ? 0.82f : 0.58f) * spool * pulse * 1.5f);
 			for (int i = 0; i < 8; i++) {
 				Vector2 offset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * (Extended ? 2.4f : 1.8f);
 				BlazeChainsawSprite.DrawHeld(weapon, drawHandWorld + offset, aimAngle, faceLeft,

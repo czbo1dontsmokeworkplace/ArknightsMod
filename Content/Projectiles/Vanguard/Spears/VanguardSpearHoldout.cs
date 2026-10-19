@@ -10,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles.Vanguard.Spears;
 
-// Left-click only. Right-click directly creates VanguardThrownSpear from the item.
+// Left-click only. Right-click creates a player-bound lance charge.
 public sealed class VanguardSpearHoldout : ModProjectile
 {
     public override string Texture => "Terraria/Images/MagicPixel";
@@ -102,8 +102,6 @@ public sealed class VanguardSpearHoldout : ModProjectile
         Vector2 impact = target.Hitbox.ClosestPointInRect(tip);
         VanguardSpearVfx.Impact(impact, (tip - grip).SafeNormalize(Vector2.UnitX), Kind, false);
         if (Projectile.owner != Main.myPlayer) return;
-        if (target.type != NPCID.TargetDummy)
-            Main.player[Projectile.owner].GetModPlayer<VanguardSpearPlayer>().Reserve.ChargeFromMelee();
         VanguardSpearSpark.Release(Projectile, impact, Kind, false);
         if (Kind == VanguardSpearKind.Bagpipe && skill is 2 or 3 && echoTargets++ < 6)
         {

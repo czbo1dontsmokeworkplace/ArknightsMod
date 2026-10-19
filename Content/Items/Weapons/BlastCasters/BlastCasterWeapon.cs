@@ -29,7 +29,7 @@ public abstract class BlastCasterWeapon : ExpansionWeaponBase
         Item.noMelee = Item.noUseGraphic = Item.channel = Item.autoReuse = true;
         Item.useAmmo = AmmoID.Gel;
         Item.shoot = ModContent.ProjectileType<BlastCasterHoldout>();
-        Item.shootSpeed = Kind == BlastCasterKind.Corroserum ? 8f : Kind == BlastCasterKind.Ifrit ? 11f : BlastCasterRules.OpticalStep;
+        Item.shootSpeed = BlastCasterRules.Step(Kind);
         Item.knockBack = Kind == BlastCasterKind.Corroserum ? .8f : 1.5f;
         Item.rare = Kind == BlastCasterKind.Corroserum ? ItemRarityID.LightRed : Kind == BlastCasterKind.Ifrit ? ItemRarityID.Yellow : ItemRarityID.Red;
         Item.value = Item.sellPrice(gold: 3 + (int)Kind * 5);

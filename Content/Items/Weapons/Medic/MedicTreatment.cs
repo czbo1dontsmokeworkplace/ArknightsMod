@@ -39,11 +39,25 @@ internal static class MedicTreatment
         var state = patient.GetModPlayer<MedicalTreatmentPlayer>();
         float emergency = profileId == 4 && patient.statLife < patient.statLifeMax2 * .4f ? 1.4f : 1f;
         int requested = Math.Clamp((int)MathF.Round(profile.Healing * power * emergency * (1 + removed.Count * .35f)), 1, 400);
+        List<(int Type, int Remaining)> shortened = [];
+        if (profile.Branch == MedicBranch.Therapist)
+        {
+            // Medical attack power is the healing snapshot, not Item.damage (all medical damage is disabled).
+            int reductionTicks = requested * 6; // 10% attack power in seconds, at 60 real ticks per second.
+            for (int i = patient.buffType.Length - 1; i >= 0; i--)
+            {
+                int type = patient.buffType[i];
+                if (!Cleanseable.Contains(type) || patient.buffTime[i] <= 0) continue;
+                int remaining = Math.Max(0, patient.buffTime[i] - reductionTicks);
+                if (remaining == 0) { removed.Add(type); patient.DelBuff(i); }
+                else { patient.buffTime[i] = remaining; shortened.Add((type, remaining)); }
+            }
+        }
         bool fullHealth = patient.statLife >= patient.statLifeMax2;
         int amount = Math.Min(state.Resistance.Scale(requested), Math.Max(0, patient.statLifeMax2 - patient.statLife));
         // A full-health ally still catches the art, but an overheal cannot commit resistance or regeneration.
         int displayed = fullHealth ? state.Resistance.Scale(requested) : amount;
-        if (!fullHealth && amount <= 0 && removed.Count == 0) return false;
+        if (!fullHealth && amount <= 0 && removed.Count == 0 && shortened.Count == 0) return false;
         if (amount > 0)
         {
             state.Resistance.Commit(interval, profile.ResistanceDurationMultiplier, profile.ResistanceReduction);
@@ -54,11 +68,12 @@ internal static class MedicTreatment
         }
         else if (fullHealth && Main.netMode == NetmodeID.SinglePlayer && !Main.dedServ) patient.HealEffect(displayed);
         // Negative grants are presentation only: damage taken during transit cannot turn an overheal into real healing.
-        if (Main.netMode == NetmodeID.Server) state.SendState(heal: fullHealth ? -displayed : amount, profile: profileId, removed: removed.ToArray());
+        if (Main.netMode == NetmodeID.Server) state.SendState(heal: fullHealth ? -displayed : amount, profile: profileId,
+            removed: removed.ToArray(), shortened: shortened.ToArray());
         else
         {
-            MedicArtsAudio.Treatment(patient, profileId, removed.Count);
-            MedicArtsVfx.Treatment(patient.Center, profileId, removed.Count);
+            MedicArtsAudio.Treatment(patient, profileId, removed.Count + shortened.Count);
+            MedicArtsVfx.Treatment(patient.Center, profileId, removed.Count + shortened.Count);
         }
         return true;
     }

@@ -1,5 +1,6 @@
 ﻿using ArknightsMod.Content;
 using ArknightsMod.Content.Projectiles.Sniper.Meteorite;
+using ArknightsMod.Content.Projectiles.Sniper.Artillery;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -10,7 +11,7 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Weapons.Sniper.Meteorite;
 
-/// <summary>陨星的跨射爆破弩炮；消耗火箭弹并继承弹药伤害，使用专属爆破弹。</summary>
+/// <summary>陨星的跨射爆破弩炮；无需弹药，使用专属爆破弹。</summary>
 public sealed class MeteoriteCannon : ExpansionWeaponBase
 {
     protected override int[] EliteDamage => [251, 288, 331];
@@ -36,9 +37,9 @@ public sealed class MeteoriteCannon : ExpansionWeaponBase
         Item.rare = ItemRarityID.Yellow;
         Item.autoReuse = true;
         Item.noMelee = true;
-        Item.useAmmo = AmmoID.Rocket;
+        Item.useAmmo = AmmoID.None;
         Item.shoot = ModContent.ProjectileType<MeteoriteShell>();
-        Item.shootSpeed = 20f;
+        Item.shootSpeed = ArtilleryBallistics.LaunchSpeed;
         Item.UseSound = null;
     }
 
@@ -80,11 +81,8 @@ public sealed class MeteoriteCannon : ExpansionWeaponBase
         int mode = skills.SkillActive ? skills.Skill + 1 : 0;
         Vector2 target = global::ArknightsMod.Content.Items.Weapons.Sniper.Fiammetta.FiammettaHandCannon.ClampTarget(player, Main.MouseWorld,
             global::ArknightsMod.Content.Items.Weapons.Sniper.Fiammetta.FiammettaHandCannon.NormalMaximumRange);
-        Vector2 anchor = new(MathHelper.Lerp(target.X, player.Center.X, .55f), player.Center.Y - 500f * player.gravDir);
-        Vector2 direction = (anchor - player.Center).SafeNormalize(-Vector2.UnitY * player.gravDir);
-        float speed = 21.6f;
-        // The normal ammo pipeline already includes the selected rocket's damage
-        // and handles consumption/conservation. Apply skill scaling exactly once.
+        Vector2 direction = ArtilleryBallistics.LaunchDirection(player, target);
+        // No ammunition damage or consumption; apply the weapon's skill multiplier once.
         int shellDamage = mode switch
         {
             1 => (int)(damage * 1.45f),
@@ -95,9 +93,10 @@ public sealed class MeteoriteCannon : ExpansionWeaponBase
             if (old.owner == player.whoAmI && old.type == ModContent.ProjectileType<MeteoriteHoldout>()) old.Kill();
         Projectile.NewProjectile(source, player.MountedCenter, direction, ModContent.ProjectileType<MeteoriteHoldout>(), 0, 0f, player.whoAmI);
         Vector2 muzzle = player.MountedCenter + Collision.TileCollision(player.MountedCenter - new Vector2(4f), direction * 30f, 8, 8, true, true);
-        Projectile.NewProjectile(source, muzzle, direction * speed,
+        int shell = Projectile.NewProjectile(source, muzzle, direction * ArtilleryBallistics.LaunchSpeed,
             ModContent.ProjectileType<MeteoriteShell>(), shellDamage, knockback,
             player.whoAmI, target.X, target.Y, mode);
+        if (Main.projectile.IndexInRange(shell)) Main.projectile[shell].CritChance = player.GetWeaponCrit(Item);
         if (!Main.dedServ)
             SoundEngine.PlaySound(FireSound, player.Center);
         skills.OffensiveRecovery();

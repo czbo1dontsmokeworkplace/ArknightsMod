@@ -94,9 +94,13 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
         private int normalDirection = -1;
         private float NormalTimer { get => Projectile.ai[0]; set => Projectile.ai[0] = value; }
         private float NormalCount { get => Projectile.ai[1]; set => Projectile.ai[1] = value; }
-		public const float NormalSwingSize = 1f;
+		// Keep the previous large sweep and hit reach; only the blade artwork is drawn smaller.
+		public const float NormalSwingSize = 2f;
+		private const float NormalBladeVisualScale = 0.5f;
         private Vector2 lastGrip, lastTip, previousGrip, previousTip;
+        private Vector2 lastBladeHead, previousBladeHead;
         private bool hasNormalPose;
+        private float lastSwingPoseAngle;
 
 		private int AimFacing() => Projectile.velocity.X < 0f ? -1 : 1;
 
@@ -185,25 +189,27 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
             float aim = Projectile.velocity.ToRotation();
             normalDirection = (NormalCount % 2f != 0f ? -1 : 1) * comboFacing;
             float start = aim - .75f * MathHelper.Pi * normalDirection;
+            float poseAngle = aim + normalAngle * comboFacing;
+            float priorPoseAngle = hasNormalPose ? lastSwingPoseAngle : start;
             helper.PivotOnPlayerCenter = true;
             helper.setoff = Vector2.Zero;
             helper.PointMouseRad(aim);
             helper.swingTime = normalDamageWindow ? (int)before + 1 : 0;
-            helper.ApplyArtsSwingPose(aim + normalAngle * comboFacing, start,
+            helper.ApplyArtsSwingPose(poseAngle, start,
                 normalDirection * comboFacing, normalDamageWindow);
             Vector2 offset = helper.setoff.RotatedBy(helper.swordRot);
             Vector2 grip = helper.handlePos + offset, tip = helper.swordPos + offset;
+            Vector2 bladeHead = helper.swordHead + offset;
             previousGrip = hasNormalPose ? lastGrip : grip;
-            previousTip = hasNormalPose ? lastTip : tip;
-            lastGrip = grip; lastTip = tip; hasNormalPose = true;
-            if (normalDamageWindow) SpawnSwingFire();
-            if (release && Main.myPlayer == Projectile.owner)
+            previousTip = hasNormalPose ? lastTip : grip + start.ToRotationVector2() * Vector2.Distance(grip, tip);
+            previousBladeHead = hasNormalPose ? lastBladeHead
+                : grip + start.ToRotationVector2() * Vector2.Distance(grip, bladeHead);
+            lastGrip = grip; lastTip = tip; lastBladeHead = bladeHead;
+            lastSwingPoseAngle = poseAngle; hasNormalPose = true;
+            if (normalDamageWindow)
             {
-                Vector2 axis = Projectile.velocity.SafeNormalize(Vector2.UnitX * comboFacing);
-                float visualScale = MathHelper.Clamp(Vector2.Distance(helper.handlePos, helper.swordHead) / 168.75f, .5f, 3f);
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), helper.handlePos + axis * 25f * visualScale,
-                    axis * 31.25f * visualScale, ModContent.ProjectileType<LaevatainArtsSlash>(),
-                    0, 0f, Projectile.owner, NormalCount, visualScale);
+                SpawnSwingFire();
+                SpawnSweptSlashDust(priorPoseAngle, poseAngle);
             }
             if (release && !Main.dedServ)
                 SoundEngine.PlaySound(SoundID.Item1 with { Volume = .42f,
@@ -320,6 +326,43 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 			}
 		}
 
+        // Release the shared colored slash particles at the actual blade edge as it
+        // travels through the sweep. The trail shader uses the same sword poses.
+        private void SpawnSweptSlashDust(float fromAngle, float toAngle)
+        {
+            if (Main.dedServ || Main.gameMenu || !hasNormalPose ||
+                Vector2.DistanceSquared(player.MountedCenter, Main.LocalPlayer.Center) > 2400f * 2400f)
+                return;
+
+            float sweep = toAngle - fromAngle;
+            if (MathF.Abs(sweep) < .005f) return;
+            float reach = MathF.Max(Vector2.Distance(previousGrip, previousBladeHead),
+                Vector2.Distance(lastGrip, lastBladeHead));
+            int samples = Math.Clamp((int)MathF.Ceiling(MathF.Abs(sweep) * reach / 12f), 1, 80);
+            Vector2 forward = Projectile.velocity.SafeNormalize(Vector2.UnitX * comboFacing);
+            float sign = MathF.Sign(sweep);
+            float bladeStartAngle = (previousBladeHead - previousGrip).ToRotation();
+            for (int i = 0; i < samples; i++)
+            {
+                float t = (i + Main.rand.NextFloat(.15f, .85f)) / samples;
+                Vector2 grip = Vector2.Lerp(previousGrip, lastGrip, t);
+                Vector2 radial = (bladeStartAngle + sweep * t).ToRotationVector2();
+                float radius = MathHelper.Lerp(Vector2.Distance(previousGrip, previousBladeHead),
+                    Vector2.Distance(lastGrip, lastBladeHead), t) * Main.rand.NextFloat(.88f, 1f);
+                Vector2 origin = grip + radial * radius;
+                Vector2 tangent = radial.RotatedBy(sign * MathHelper.PiOver2);
+                Vector2 direction = (forward * .75f + tangent * .42f + radial * .32f)
+                    .SafeNormalize(tangent).RotatedBy(Main.rand.NextFloat(-.09f, .09f));
+                Dust spark = Dust.NewDustPerfect(origin, ModContent.DustType<T_Squash_Particle>(),
+                    direction * Main.rand.NextFloat(3.8f, 6.5f));
+                spark.scale = Main.rand.NextFloat(.65f, 1.15f);
+                spark.noGravity = true;
+                spark.color = Color.Lerp(new Color(255, 104, 30), Color.White,
+                    Main.rand.NextFloat(.04f, .22f));
+                spark.fadeIn = Main.rand.NextFloat(.12f, .28f);
+            }
+        }
+
 		private int timer = 0;
 		public override bool PreDraw(ref Color lightColor) {
 
@@ -328,7 +371,8 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 				DrawHeatWave(sb);
 			if (projMode == ProjMode.Stab)
 				stabEffect.DrawDistortion(helper, sb);
-			helper.DrawBlade(sb);
+			helper.DrawBladeAtScale(sb,
+				projMode == ProjMode.Attack || projMode == ProjMode.Wait ? NormalBladeVisualScale : 1f);
             if (projMode == ProjMode.Attack || projMode == ProjMode.Wait)
                 MousseVisuals.DrawEnergyColumn(helper.handlePos, (helper.swordHead - helper.handlePos).ToRotation(),
                     normalPower, new Color(255, 104, 30),

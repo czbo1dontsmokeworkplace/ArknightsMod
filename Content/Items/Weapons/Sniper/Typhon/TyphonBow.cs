@@ -38,7 +38,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
         }
         private const int OriginalSkillUseTime = 72;
         private static readonly SoundStyle SkillActiveSound = new("ArknightsMod/Sounds/SkillActive1") { Volume = .4f, MaxInstances = 4 };
-        protected override int[] EliteDamage => [816, 960, 1120];
+        protected override int[] EliteDamage => [571, 672, 784];
         private bool consuming;
         public override void SetDefaults()
         {
