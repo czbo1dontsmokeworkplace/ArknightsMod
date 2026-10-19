@@ -187,7 +187,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 			NPC.value = Item.buyPrice(gold: 2);
 			NPC.HitSound = SoundID.NPCHit1;
 			NPC.DeathSound = SoundID.NPCDeath1;
-			Music = MusicID.Boss1; //占位曲目，待专属 BGM
+			Music = MusicLoader.GetMusicSlot(Mod, "Sounds/Music/WBossStage1"); //一阶段：熄灭
 			NPC.ai[2] = 1;         //初始一阶段
 		}
 
@@ -249,6 +249,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 		}
 
 		public override void AI() {
+			// 二阶段换曲：故土（Music 在服务端不生效，客户端各自按同步过来的阶段切）
+			if (!Main.dedServ)
+				Music = MusicLoader.GetMusicSlot(Mod, Phase >= 2 ? "Sounds/Music/WBossStage2" : "Sounds/Music/WBossStage1");
 			// 目标维护（先于状态机构建：登场状态的 OnEnter 要用目标位置算落点）
 			if (NPC.target < 0 || NPC.target >= Main.maxPlayers || Main.player[NPC.target].dead || !Main.player[NPC.target].active)
 				NPC.TargetClosest();
