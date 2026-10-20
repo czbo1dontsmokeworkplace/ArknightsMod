@@ -20,9 +20,10 @@ public sealed partial class Evolution
     private void DoHemalAxis(Player player)
     {
         const int setup = EvolutionRules.AxisSetupTicks;
-        int fire = EvolutionRules.FireTime(EvolutionShot.Beam, EvolutionRules.LaserWarning(EvolutionRules.AxisChargeTicks));
+        int fire = EvolutionRules.FireTime(EvolutionShot.Beam, EvolutionRules.ProjectileWarning(EvolutionShot.Beam, EvolutionRules.AxisChargeTicks, true));
         if (Timer == 0)
         {
+            BeginAxisCycle();
             ClearBrood();
             lastAxisReflection = -1000;
             if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -93,6 +94,8 @@ public sealed partial class EvolutionHazard
         Projectile.Center = boss.NPC.Center;
         Projectile.velocity = AxisDirection;
         int active = Age - FireAge;
+        if (active >= 0 && active < EvolutionRules.AxisActiveTicks && boss.NPC.HasValidTarget)
+            boss.RecordAxisEscape(boss.NPC.Distance(Main.player[boss.NPC.target].Center), Parameter * .9f);
         if (active == 0)
         {
             EvolutionVisuals.Burst(Projectile.Center, 1.5f);

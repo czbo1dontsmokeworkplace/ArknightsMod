@@ -6,8 +6,8 @@ internal static class DreadnoughtRules
 {
     internal const int BaseSwingTicks = 28;
     internal const float WeaponScale = .5f;
-    internal const float MaxMomentum = .5f;
-    internal const float MomentumPerSwing = .025f;
+    internal const float MaxMomentum = 2f;
+    internal const float MomentumPerSwing = .2f;
     internal const int IdleGraceTicks = 60;
     internal const float MomentumDecay = MaxMomentum / 240f;
 
@@ -29,6 +29,7 @@ internal static class DreadnoughtRules
     internal static float TrailIntensity(float progress) => Math.Clamp((TurnSpeed(progress) - .1f) / 2.4f, 0, 1);
 
     internal static bool OpeningHit(int previousTargets) => previousTargets == 0;
+    internal static bool CanStrike(int previousTargets) => previousTargets == 0;
     internal static float Gain(float momentum) => Math.Min(MaxMomentum, momentum + MomentumPerSwing);
     internal static float Decay(float momentum, bool switchedAway = false) =>
         Math.Max(0, momentum - MomentumDecay * (switchedAway ? 3f : 1f));

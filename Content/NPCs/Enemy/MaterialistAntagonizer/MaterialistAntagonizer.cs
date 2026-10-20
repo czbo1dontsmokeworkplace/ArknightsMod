@@ -18,18 +18,35 @@ public sealed partial class MaterialistAntagonizer : ModNPC
     private static int encounterSequence;
     internal static bool Authority => Main.netMode != NetmodeID.MultiplayerClient;
     internal int Encounter, Shield, ShieldMax, Wave, Revision;
+    internal int CoreExposure;
+    internal bool EscortsReleased;
+    internal bool FinalStand;
+    // Shared phase-clear gate: phase 1/2 hold their threshold, phase 3 holds one HP.
+    internal int LockedPhaseLife => Phase < 3 ? MaterialistRules.Threshold(NPC.lifeMax, Phase) : 1;
+    internal int RaptorNextSlot = 8, RaptorHandoffTicks;
     internal Vector2 Anchor, Aim, DashDirection;
+    internal Vector2 FormationCenter;
+    internal float ExitAngle;
+    internal uint ScoutMoves, ScoutOffsets;
+    internal WingPattern ScoutFormation;
+    internal int ScoutRevision;
+    internal bool ScoutReady => Phase == 1 && Order == FlightOrder.Command && ScoutRevision > 0;
+    internal ScoutMove ScoutAttack(int slot) => slot is >= 0 and < 6 ? (ScoutMove)((ScoutMoves >> (slot * 4)) & 15) : ScoutMove.None;
+    internal int ScoutOffset(int slot) => (int)((ScoutOffsets >> (slot * 2)) & 3) * 4;
+    internal WingPattern Pattern => ScoutReady ? ScoutFormation : MaterialistRules.Pattern(Phase, Cycle);
+    internal int OrderDuration => Order == FlightOrder.Command ? MaterialistRules.PatternDuration(Pattern) : MaterialistRules.Duration(Order);
     internal int Phase => (int)NPC.ai[0];
     internal FlightOrder Order => (FlightOrder)(int)NPC.ai[1];
     internal int Timer => (int)NPC.ai[2];
     internal int Cycle => (int)NPC.ai[3];
     internal bool Paused => Order is FlightOrder.Arrival or FlightOrder.Transition or FlightOrder.Death or FlightOrder.Recover;
-    internal bool EscortFire => lostTargetTime == 0 && (Order is FlightOrder.Command or FlightOrder.Bombard);
-    internal bool Charging => Order == FlightOrder.Ram && Timer >= 84 && Timer < 114;
+    internal bool EscortFire => lostTargetTime == 0 && (Order is FlightOrder.Command or FlightOrder.Bombard or FlightOrder.Ram or FlightOrder.Deploy);
+    internal bool DeploymentProtection => !EscortsReleased && Order is FlightOrder.Deploy or FlightOrder.Command;
+    internal bool Charging => Order == FlightOrder.Ram && Timer >= 170 && Timer < 200;
     private int lostTargetTime;
     private int observedLife;
-    private bool raptorDeployed;
     private int visualRevision = -1, lastVisualTimer;
+    private int visualCoreExposure;
 
     public override void SetStaticDefaults()
     {
@@ -66,6 +83,7 @@ public sealed partial class MaterialistAntagonizer : ModNPC
         NPC.TargetClosest(false);
         if (NPC.HasValidTarget) NPC.Center = Main.player[NPC.target].Center + new Vector2(0, -340);
         Anchor = NPC.Center; Aim = NPC.Center + Vector2.UnitY;
+        ExitAngle = MathHelper.PiOver2;
         NPC.ai[0] = 1;
         Enter(FlightOrder.Arrival);
     }
@@ -74,26 +92,42 @@ public sealed partial class MaterialistAntagonizer : ModNPC
     public override bool CanHitPlayer(Player target, ref int cooldownSlot)
     {
         cooldownSlot = ImmunityCooldownID.Bosses;
-        return Charging;
+        return false;
     }
     public override void ModifyIncomingHit(ref NPC.HitModifiers modifiers)
     {
-        if (Shield > 0) modifiers.FinalDamage *= .60f;
-        if (Order == FlightOrder.Recover) modifiers.FinalDamage *= 1.20f;
+        if (DeploymentProtection) modifiers.FinalDamage *= .10f;
+        else
+        {
+            if (Shield > 0) modifiers.FinalDamage *= .60f;
+            if (Order == FlightOrder.Recover || CoreExposure > 0) modifiers.FinalDamage *= 1.20f;
+        }
         int threshold = MaterialistRules.Threshold(NPC.lifeMax, Phase);
         if (threshold > 0) modifiers.SetMaxDamage(Math.Max(1, NPC.life - threshold));
+    }
+    public override void UpdateLifeRegen(ref int damage)
+    {
+        if (FinalStand)
+        {
+            NPC.lifeRegen = NPC.lifeRegenCount = damage = 0;
+            return;
+        }
+        if (!DeploymentProtection || NPC.lifeRegen >= 0) return;
+        NPC.lifeRegen = (int)(NPC.lifeRegen * .10f);
+        damage = Math.Max(1, (int)Math.Ceiling(damage * .10f));
     }
     private void DamageShield(int damage)
     {
         if (!Authority || Shield <= 0) return;
         Shield = Math.Max(0, Shield - damage);
-        if (Shield == 0) { ClearHazards(); NPC.ai[3] = -1; Enter(FlightOrder.Recover); }
+        if (Shield == 0) CoreExposure = 180;
         NPC.netUpdate = true;
     }
     internal void EscortDestroyed()
     {
         if (!Authority || Paused) return;
         DamageShield(Math.Max(1, ShieldMax / 3));
+        if (FinalStand && WingCount() == 0) { FinishFinalStand(); return; }
         if (!Paused && WingCount() == 0) { ClearHazards(); NPC.ai[3] = -1; Enter(FlightOrder.Recover); }
     }
     public override bool CheckDead()
@@ -102,6 +136,12 @@ public sealed partial class MaterialistAntagonizer : ModNPC
         if (Order is FlightOrder.Death or FlightOrder.Transition)
         {
             NPC.life = Math.Max(1, NPC.life);
+            return false;
+        }
+        if (WingCount() > 0)
+        {
+            NPC.life = LockedPhaseLife;
+            if (Authority) BeginPhaseWait();
             return false;
         }
         NPC.life = Math.Max(1, MaterialistRules.Threshold(NPC.lifeMax, Phase));
@@ -115,6 +155,9 @@ public sealed partial class MaterialistAntagonizer : ModNPC
     public override void AI()
     {
         if (Encounter == 0) return;
+        if (Authority && FinalStand && Order != FlightOrder.Death && WingCount() == 0) FinishFinalStand();
+        if (FinalStand && Order is not (FlightOrder.Death or FlightOrder.Transition)) NPC.life = LockedPhaseLife;
+        if (CoreExposure > 0) CoreExposure--;
         // Player-owned hit hooks run on the attacking client. Observe synchronized life on the authority
         // instead so direct attacks and damage-over-time drain the same finite shield in multiplayer.
         if (Authority)
@@ -122,8 +165,9 @@ public sealed partial class MaterialistAntagonizer : ModNPC
             if (observedLife > NPC.life) DamageShield(observedLife - NPC.life);
             observedLife = NPC.life;
         }
-        NPC.damage = Charging ? (Main.masterMode ? 175 : Main.expertMode ? 150 : 105) : 0;
-        NPC.dontTakeDamage = Order is FlightOrder.Arrival or FlightOrder.Transition or FlightOrder.Death;
+        NPC.damage = 0;
+        if (RaptorHandoffTicks > 0) RaptorHandoffTicks--;
+        NPC.dontTakeDamage = FinalStand || Order is FlightOrder.Arrival or FlightOrder.Transition or FlightOrder.Death;
         if (Order == FlightOrder.Death)
         {
             NPC.velocity *= .92f;
@@ -143,9 +187,20 @@ public sealed partial class MaterialistAntagonizer : ModNPC
             return;
         }
         lostTargetTime = 0;
-        if (Authority && Order != FlightOrder.Transition && Phase < 3 && NPC.life <= MaterialistRules.Threshold(NPC.lifeMax, Phase))
-            ChangePhase();
+        if (Authority && !FinalStand && Order != FlightOrder.Transition && Phase < 3 && NPC.life <= LockedPhaseLife)
+        {
+            if (WingCount() > 0) BeginPhaseWait();
+            else ChangePhase();
+        }
         Player target = Main.player[NPC.target];
+        if (Authority && !EscortsReleased && Order == FlightOrder.Command &&
+            MaterialistTactics.Active(Timer) && DeploymentReady())
+        {
+            EscortsReleased = true;
+            NPC.netUpdate = true;
+        }
+        UpdateCombatFrame(target);
+        UpdateSupport();
         RunOrder(target);
         NPC.rotation = MathHelper.Lerp(NPC.rotation, MathHelper.Clamp(NPC.velocity.X * .011f, -.19f, .19f), .10f);
         NPC.ai[2]++;
@@ -154,32 +209,57 @@ public sealed partial class MaterialistAntagonizer : ModNPC
     }
     private void ChangePhase()
     {
+        FinalStand = false;
         ClearHazards(); RecallWing(); Shield = 0; ShieldMax = 0;
+        CoreExposure = 0;
         NPC.ai[0]++; NPC.ai[3] = 0;
         Enter(FlightOrder.Transition);
     }
     private void Enter(FlightOrder order)
     {
         if (!Authority) return;
+        ClearHazards();
         NPC.ai[1] = (int)order; NPC.ai[2] = 0;
+        if (order is FlightOrder.Arrival or FlightOrder.Transition or FlightOrder.Death or FlightOrder.Recover)
+        { SupportMode = SupportAge = 0; SupportTarget = SupportSlot = -1; }
         Anchor = NPC.Center; Revision++;
-        NPC.dontTakeDamage = order is FlightOrder.Arrival or FlightOrder.Transition or FlightOrder.Death;
-        if (order is FlightOrder.Ram or FlightOrder.Sweep or FlightOrder.Overload or FlightOrder.Recover) ClearHazards();
+        if (Phase == 1 && order == FlightOrder.Command) MaterialistScoutPlanner.Roll(this);
+        if (NPC.HasValidTarget)
+        {
+            Player target = Main.player[NPC.target];
+            if (!frameReady) UpdateCombatFrame(target);
+        }
+        NPC.dontTakeDamage = FinalStand || order is FlightOrder.Arrival or FlightOrder.Transition or FlightOrder.Death;
         if (order == FlightOrder.Recover) Shield = 0;
+        if (order == FlightOrder.Deploy)
+        {
+            NPC.ai[3] = 0;
+            EscortsReleased = false;
+            RaptorNextSlot = 8; RaptorHandoffTicks = 0;
+        }
         NPC.netUpdate = true;
     }
     private void NextOrder()
     {
         if (!Authority) return;
         NPC.ai[3]++;
+        if (FinalStand) { Enter(FlightOrder.Command); return; }
         Enter(MaterialistRules.Order(Phase, Cycle));
     }
-    private void MoveTo(Vector2 destination, float speed = 12)
+    private void FinishFinalStand()
     {
-        destination.X = MathHelper.Clamp(destination.X, 180, Main.maxTilesX * 16 - 180);
-        destination.Y = MathHelper.Clamp(destination.Y, 160, Main.maxTilesY * 16 - 200);
-        Vector2 delta = destination - NPC.Center;
-        NPC.velocity = Vector2.Lerp(NPC.velocity, delta.SafeNormalize(Vector2.UnitY) * Math.Min(speed, delta.Length() * .045f), .075f);
+        if (Phase < 3) { ChangePhase(); return; }
+        ClearHazards();
+        Shield = ShieldMax = 0;
+        Enter(FlightOrder.Death);
+    }
+    private void BeginPhaseWait()
+    {
+        if (!Authority) return;
+        FinalStand = true;
+        NPC.life = LockedPhaseLife;
+        NPC.dontTakeDamage = true;
+        NPC.netUpdate = true;
     }
     internal static MaterialistAntagonizer Owner(int index, int encounter) => index >= 0 && index < Main.maxNPCs &&
         Main.npc[index].active && Main.npc[index].ModNPC is MaterialistAntagonizer boss && boss.Encounter == encounter ? boss : null;
@@ -191,17 +271,40 @@ public sealed partial class MaterialistAntagonizer : ModNPC
     }
     public override void SendExtraAI(BinaryWriter w)
     {
-        w.Write(Encounter); w.Write(Shield); w.Write(ShieldMax); w.Write(Wave); w.Write(Revision); w.Write(raptorDeployed);
+        w.Write(Encounter); w.Write(Shield); w.Write(ShieldMax); w.Write(Wave); w.Write(Revision);
         w.WriteVector2(Anchor); w.WriteVector2(Aim); w.WriteVector2(DashDirection);
+        w.WriteVector2(FormationCenter); w.Write(ExitAngle);
+        w.Write(CoreExposure);
+        w.WriteVector2(CoreAim); w.WriteVector2(CoreSpreadAim);
+        w.Write(ScoutMoves); w.Write(ScoutOffsets); w.Write((int)ScoutFormation); w.Write(ScoutRevision);
+        w.WriteVector2(FormationVelocity); w.WriteVector2(TrackingVelocity);
+        w.Write(SupportMode); w.Write(SupportAge); w.Write(SupportTarget); w.Write(SupportSlot); w.WriteVector2(SupportOrigin); w.Write(SuppressedCoreRound);
+        w.Write(EscortsReleased); w.Write(RaptorNextSlot); w.Write(RaptorHandoffTicks);
+        w.Write(FinalStand);
     }
     public override void ReceiveExtraAI(BinaryReader r)
     {
-        Encounter = r.ReadInt32(); Shield = r.ReadInt32(); ShieldMax = r.ReadInt32(); Wave = r.ReadInt32(); Revision = r.ReadInt32(); raptorDeployed = r.ReadBoolean();
+        Encounter = r.ReadInt32(); Shield = r.ReadInt32(); ShieldMax = r.ReadInt32(); Wave = r.ReadInt32(); Revision = r.ReadInt32();
         Anchor = r.ReadVector2(); Aim = r.ReadVector2(); DashDirection = r.ReadVector2();
+        Vector2 receivedFrame = r.ReadVector2(); float receivedExit = r.ReadSingle();
+        if (!frameReady) { FormationCenter = receivedFrame; ExitAngle = receivedExit; frameReady = true; }
+        else
+        {
+            frameCorrection = receivedFrame - FormationCenter;
+            ExitAngle += MathHelper.WrapAngle(receivedExit - ExitAngle) * .2f;
+        }
+        CoreExposure = r.ReadInt32();
+        CoreAim = r.ReadVector2(); CoreSpreadAim = r.ReadVector2();
+        ScoutMoves = r.ReadUInt32(); ScoutOffsets = r.ReadUInt32(); ScoutFormation = (WingPattern)r.ReadInt32(); ScoutRevision = r.ReadInt32();
+        FormationVelocity = Vector2.Lerp(FormationVelocity, r.ReadVector2(), .35f);
+        TrackingVelocity = Vector2.Lerp(TrackingVelocity, r.ReadVector2(), .35f);
+        SupportMode = r.ReadInt32(); SupportAge = r.ReadInt32(); SupportTarget = r.ReadInt32(); SupportSlot = r.ReadInt32(); SupportOrigin = r.ReadVector2(); SuppressedCoreRound = r.ReadInt32();
+        EscortsReleased = r.ReadBoolean(); RaptorNextSlot = r.ReadInt32(); RaptorHandoffTicks = r.ReadInt32();
+        FinalStand = r.ReadBoolean();
     }
     public override void ModifyNPCLoot(NPCLoot loot)
     {
-        loot.Add(ItemDropRule.BossBag(ModContent.ItemType<MaterialistTreasureBag>()));
+        // Rewards are unfinished. Keep the bag content registered for later, but do not drop it.
         var normal = new LeadingConditionRule(new Conditions.NotExpert());
         normal.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DroneCommandCore>()));
         normal.OnSuccess(ItemDropRule.Common(ItemID.ChlorophyteBar, 1, 12, 18));
@@ -221,6 +324,12 @@ public sealed partial class MaterialistAntagonizer : ModNPC
     private void UpdateVisuals()
     {
         if (Main.dedServ) return;
+        if (CoreExposure > 0 && visualCoreExposure == 0)
+        {
+            MaterialistVisuals.Burst(NPC.Center, MaterialistVisuals.Cyan, 1.4f);
+            MaterialistEffects.Pulse(NPC.Center, 260, MaterialistVisuals.Cyan, 2);
+        }
+        visualCoreExposure = CoreExposure;
         if (visualRevision != Revision) { visualRevision = Revision; lastVisualTimer = -1; }
         MaterialistVisuals.UpdateBoss(this, lastVisualTimer);
         lastVisualTimer = Timer;

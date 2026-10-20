@@ -17,6 +17,7 @@ public abstract partial class EvolutionBroodNPC : ModNPC
     internal EvolutionBroodPreset Preset;
     internal int Formation;
     private bool charging;
+    private bool deathSmokeEmitted;
     private float warning;
     internal int Age => (int)NPC.ai[1];
     internal bool Retiring => NPC.ai[3] < 0;
@@ -56,8 +57,8 @@ public abstract partial class EvolutionBroodNPC : ModNPC
     public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position) => SupportOnly ? false : null;
     public override bool CanHitNPC(NPC target) => false;
     public override bool PreKill() => !Retiring;
-    public override void SendExtraAI(BinaryWriter w) { w.Write(Encounter); w.Write(Fuse); w.Write(Gap); w.WriteVector2(FlightAnchor); w.WriteVector2(FlightDirection); w.Write((byte)Preset); w.Write(Formation); }
-    public override void ReceiveExtraAI(BinaryReader r) { Encounter = r.ReadInt32(); Fuse = r.ReadInt32(); Gap = r.ReadSingle(); FlightAnchor = r.ReadVector2(); FlightDirection = r.ReadVector2(); Preset = (EvolutionBroodPreset)r.ReadByte(); Formation = r.ReadInt32(); }
+    public override void SendExtraAI(BinaryWriter w) { w.Write(Encounter); w.Write(Fuse); w.Write(Gap); w.WriteVector2(FlightAnchor); w.WriteVector2(FlightDirection); w.Write((byte)Preset); w.Write(Formation); w.Write(Molting); }
+    public override void ReceiveExtraAI(BinaryReader r) { Encounter = r.ReadInt32(); Fuse = r.ReadInt32(); Gap = r.ReadSingle(); FlightAnchor = r.ReadVector2(); FlightDirection = r.ReadVector2(); Preset = (EvolutionBroodPreset)r.ReadByte(); Formation = r.ReadInt32(); Molting = r.ReadBoolean(); }
     public override void AI()
     {
         Evolution boss = Parent;
@@ -70,6 +71,8 @@ public abstract partial class EvolutionBroodNPC : ModNPC
         Player player = Main.player[NPC.target];
         NPC.ai[1]++;
         NPC.timeLeft = 750;
+        RetireDistantBrood(boss);
+        if (Retiring && Molting) { DoBroodMolt(); return; }
         if (Retiring)
         {
             NPC.dontTakeDamage = true;
@@ -185,9 +188,15 @@ public abstract partial class EvolutionBroodNPC : ModNPC
         Vector2 delta = point - NPC.Center;
         NPC.velocity = Vector2.Lerp(NPC.velocity, delta.SafeNormalize(Vector2.UnitY) * Math.Min(speed, delta.Length() * .1f), .15f);
     }
+    public override void HitEffect(NPC.HitInfo hit)
+    {
+        // HitEffect也会在远端客户端收到死亡时执行；OnKill仅负责服务端的分裂。
+        if (NPC.life > 0 || Main.dedServ || Retiring || SupportOnly || deathSmokeEmitted) return;
+        deathSmokeEmitted = true;
+        EvolutionBroodDeathVisuals.Emit(NPC.Center, NPC.Size, Parent?.ThemeColor ?? EvolutionVisuals.Blood);
+    }
     public override void OnKill()
     {
-        EvolutionVisuals.Burst(NPC.Center, .7f, color: Parent?.ThemeColor);
         if (Retiring || SupportOnly || Parent is not Evolution boss || boss.Transitioning || boss.Phase >= 4) return;
         // 岩蛛死亡后分裂幼体；沿用总上限与单种上限，幼体不再递归分裂。
         int offspring = Kind switch

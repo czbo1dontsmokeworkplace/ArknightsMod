@@ -54,6 +54,7 @@ internal static class EvolutionCinematics
     internal static void DrawBackdrop(EvolutionCinematicFrame f, bool reduced)
     {
         float visibility = f.Entrance * f.Fade * (reduced ? .55f : 1f);
+        if (!f.Perfect) visibility *= EvolutionCinematicFrame.Smooth(110, 300, f.Time);
         if (visibility <= .001f) return;
         float preBurst = 1 - EvolutionCinematicFrame.Smooth(EvolutionCinematicFrame.BurstTime, 592, f.Time);
         EvolutionVisuals.Glow(f.Center, Wine * ((.32f + f.Charge * .25f) * visibility), new Vector2(760, 600) * f.Scale);
@@ -221,13 +222,13 @@ internal static class EvolutionCinematics
             Vector2 offset = (i * MathHelper.TwoPi / 6).ToRotationVector2() * radius;
             if (boss.Phase == 4) EvolutionVisuals.DrawEvolved(Main.spriteBatch, boss.NPC.Center + offset - Main.screenPosition,
                 (Rose with { A = 0 }) * brightness, boss.NPC.rotation, scale, flip);
-            else Main.spriteBatch.Draw(texture, boss.NPC.Center + offset - Main.screenPosition, null, (Rose with { A = 0 }) * brightness,
+            else Main.spriteBatch.Draw(texture, boss.NPC.Center + offset - Main.screenPosition, null, (boss.ThemeColor with { A = 0 }) * brightness,
                     boss.NPC.rotation, origin, scale, flip, 0);
         }
     }
 
-    internal static float BodyDissolve(Evolution boss) => boss.Transitioning ? EvolutionCinematicFrame.Smooth(EvolutionCinematicFrame.BurstTime, 583, EvolutionRules.CinematicTime(boss.Phase, boss.Timer)) : 0;
-    internal static float BodyReveal(Evolution boss) => boss.Transitioning ? EvolutionCinematicFrame.Smooth(580, 600, EvolutionRules.CinematicTime(boss.Phase, boss.Timer)) : 0;
+    internal static float BodyDissolve(Evolution boss) => boss.Phase == 2 ? EvolutionCinematicFrame.Smooth(390, 585, boss.Timer) : boss.Transitioning ? EvolutionCinematicFrame.Smooth(EvolutionCinematicFrame.BurstTime, 583, EvolutionRules.CinematicTime(boss.Phase, boss.Timer)) : 0;
+    internal static float BodyReveal(Evolution boss) => boss.Phase == 2 ? EvolutionCinematicFrame.Smooth(390, 590, boss.Timer) : boss.Transitioning ? EvolutionCinematicFrame.Smooth(580, 600, EvolutionRules.CinematicTime(boss.Phase, boss.Timer)) : 0;
 
     internal static void DrawRevealedBody(Evolution boss, SpriteBatch batch, Vector2 screenPosition, Vector2 scale, SpriteEffects flip, float opacity)
     {

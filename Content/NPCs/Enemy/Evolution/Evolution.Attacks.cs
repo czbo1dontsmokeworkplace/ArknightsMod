@@ -18,10 +18,11 @@ public sealed partial class Evolution
         int t = Timer;
         if (Attack == 0) { DoCharges(player, true); return; }
         if (Attack == 6) { DoHemalAxis(player); return; }
+        if (Attack == 7) { DoWhirlingBombs(player); return; }
         if (t == 0) ClearBrood();
         if (Attack == 1 && t == 18) SpawnBrood(EvolutionBrood.Puppet, player.Center + new Vector2(-620, -280));
         Hover(player, t * .019f);
-        int interval = EvolutionRules.VolleyInterval(Desperate ? 42 : 48);
+        int interval = (int)MathF.Round(EvolutionRules.VolleyInterval(Desperate ? 42 : 48) / CycleBoost);
         if (t >= 28 && t <= 28 + interval * 5 && (t - 28) % interval == 0)
         {
             int wave = (t - 28) / interval;
@@ -55,9 +56,10 @@ public sealed partial class Evolution
     }
     private void DoCharges(Player player, bool perfect)
     {
-        const int lockTime = EvolutionRules.ChargeLockTicks;
-        int warning = perfect ? 26 : 30;
-        int launch = lockTime + warning + 4, end = launch + EvolutionRules.ChargeActiveTicks(perfect);
+        int lockTime = (int)MathF.Round(EvolutionRules.ChargeLockTicks / CycleBoost);
+        int reaction = EvolutionRules.ReactionTime((perfect ? 26 : 30) + 4, perfect, CycleBoost);
+        int warning = Math.Max(1, reaction - 4);
+        int launch = lockTime + reaction, end = launch + EvolutionRules.ChargeActiveTicks(perfect);
         int stride = EvolutionRules.ChargeStride(end + (perfect ? 24 : 30), end);
         int cycle = Timer / stride, t = Timer % stride;
         if (cycle >= 3)
@@ -70,7 +72,7 @@ public sealed partial class Evolution
         // 每组三连各出现一次；下一次冲刺招式轮换起始变体。
         int variant = EvolutionRules.ChargeVariant(cycle, (int)NPC.ai[2]);
         DashVariant = variant;
-        if (t < lockTime) MoveTo(player.Center + new Vector2((cycle % 2 == 0 ? -1 : 1) * (perfect ? 1280 : 1120), -80), perfect ? 34 : 30, .18f);
+        if (t < lockTime) MoveTo(player.Center + new Vector2((cycle % 2 == 0 ? -1 : 1) * (perfect ? 1280 : 1120) * CycleBoost, -80), perfect ? 34 : 30, .18f);
         if (t == lockTime)
         {
             NPC.velocity = Vector2.Zero;
@@ -91,17 +93,18 @@ public sealed partial class Evolution
         {
             Charging = true;
             float momentum = perfect ? EvolutionRules.PerfectChargePower((t - launch) / (float)(end - launch - 1)) : 1;
-            NPC.velocity = DashDirection * (perfect ? 36 : 32) * EvolutionRules.Aggression(Phase) * (Desperate ? 1.1f : 1) * momentum;
+            NPC.velocity = DashDirection * (perfect ? 36 : 32) * EvolutionRules.Aggression(Phase) * (Desperate ? 1.1f : 1) * momentum * CycleBoost;
             if (perfect && !Main.dedServ && (t - launch) % 3 == 0)
                 EvolutionVisuals.ChargeWake(NPC.Center, DashDirection, (t - launch) / (float)(end - launch));
             int dashAge = t - launch;
-            if (variant == 0 && (dashAge == (end - launch) / 3 || dashAge == (end - launch) * 2 / 3))
+            int emit = EvolutionRules.DashEmissionCount(dashAge, end - launch, variant, perfect, CycleEnraged);
+            if (variant == 0 && emit > 0)
                 DashRing(NPC.Center, DashDirection);
-            else if (variant == 1 && (dashAge == (end - launch) / 3 || dashAge == (end - launch) * 2 / 3))
+            else if (variant == 1 && emit > 0)
                 DashResidue(NPC.Center, DashDirection);
             else if (variant == 2)
             {
-                if (dashAge >= 8 && dashAge % 9 == 8) DashMistBurst(NPC.Center, DashDirection);
+                if (emit > 0) DashMistBurst(NPC.Center, DashDirection);
                 if (!Main.dedServ && dashAge % 3 == 0) EvolutionVisuals.ChargeMist(NPC.Center, DashDirection);
             }
         }
@@ -184,11 +187,12 @@ public sealed partial class Evolution
         if (Phase == 2)
         {
             // 跨过80%立即起飞；第一次转场同样使用低空战斗带的纵向阵型。
-            float rise = MathHelper.SmoothStep(0, 1, Math.Clamp(t / 120f, 0, 1));
+            float rise = EvolutionCinematicFrame.Smooth(120, 360, t);
             Vector2 destination = new(player.Center.X + (Anchor.X < player.Center.X ? -300 : 300),
                 MathHelper.Lerp(Anchor.Y, Arena.Y + 80, rise));
-            MoveTo(destination, 7, .055f);
-            if (t == 150 || t == 320 || t == 465) CorridorLaserColumns(t == 320 ? 1 : 0);
+            if (t < 120) NPC.velocity *= .82f;
+            else MoveTo(destination, 7, .055f);
+            if (t == 465) CorridorLaserColumns(0);
         }
         else
         {

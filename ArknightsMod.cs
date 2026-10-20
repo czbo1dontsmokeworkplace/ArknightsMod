@@ -184,6 +184,9 @@ namespace ArknightsMod
 		public override void HandlePacket(BinaryReader reader, int whoAmI) {
 			short id = reader.ReadInt16();
 			switch ((ArkMessageID)id) {
+                case ArkMessageID.EvolutionCrashCapture:
+                    global::ArknightsMod.Content.NPCs.Enemy.Evolution.EvolutionCrashPlayer.ReceiveCapture(reader, whoAmI);
+                    break;
                 case ArkMessageID.MedicalTreatmentState:
                     global::ArknightsMod.Content.Items.Weapons.Medic.MedicalTreatmentPlayer.Receive(reader);
                     break;
@@ -309,6 +312,7 @@ namespace ArknightsMod
 			RoundStoneAltarState,
             MedicHealingGrant,
             MedicalTreatmentState,
+            EvolutionCrashCapture,
 		}
 	}
 	//public class Ex : GlobalNPC

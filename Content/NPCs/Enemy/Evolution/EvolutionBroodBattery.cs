@@ -25,7 +25,7 @@ public abstract partial class EvolutionBroodNPC
         NPC.velocity = Vector2.Lerp(NPC.velocity, drift, .07f);
         NPC.rotation = FlightDirection.ToRotation();
         // 六连发，然后休息；每发都有渐入/渐出的独立预瞄，枪口可移动但射角永不追踪。
-        int beat = (Age - 60) % 174;
+        int beat = (int)((Age - 60)*boss.CycleBoost) % 174;
         if (beat >= 20 && beat <= 110 && (beat - 20) % 18 == 0)
             boss.Shoot(EvolutionShot.Beam, NPC.Center, FlightDirection, 1750, 28, 58, beamStyle: EvolutionBeamStyle.Pulse);
     }

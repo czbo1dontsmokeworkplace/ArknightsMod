@@ -17,7 +17,7 @@ public sealed class EvolutionArenaPlayer : ModPlayer
         foreach (NPC n in Main.ActiveNPCs)
             if (n.ModNPC is Evolution boss && (boss.ArenaActive || boss.CorridorActive) && boss.Encounter != 0) { arenaBoss = boss; break; }
         if (arenaBoss == null) { encounter = 0; return; }
-        if (arenaBoss.CorridorActive) { ConstrainCorridor(arenaBoss); return; }
+        if (arenaBoss.CorridorActive) { if (arenaBoss.CorridorEnforced) ConstrainCorridor(arenaBoss); return; }
         float radius = EvolutionRules.ArenaRadius - 40;
         float distance = Player.Distance(arenaBoss.Arena);
         if (encounter != arenaBoss.Encounter)
@@ -99,13 +99,16 @@ public sealed class EvolutionArenaSystem : ModSystem
         float fade = MathHelper.Clamp(boss.NPC.ai[3] / 75f, 0, 1);
         if (boss.CorridorActive)
         {
+            if (boss.Phase == 2)
+                EvolutionVisuals.Ring(boss.Anchor - new Vector2(0, 220), EvolutionRules.ArenaRadius, 0,
+                    EvolutionVisuals.Sand * (.65f * (1 - EvolutionCinematicFrame.Smooth(0, 160, boss.Timer))), 8, false);
             float halfWidth = Main.screenWidth / Main.GameViewMatrix.Zoom.X * .5f + 100;
             float x = Main.screenPosition.X + Main.screenWidth * .5f;
             foreach (float y in new[] { boss.CorridorTop, boss.CorridorBottom })
             {
                 Vector2 left = new(x - halfWidth, y), right = new(x + halfWidth, y);
-                EvolutionVisuals.Line(left, right, EvolutionVisuals.Blood * .7f, 3);
-                EvolutionVisuals.Line(left, right, EvolutionVisuals.Core * .55f, 1, false);
+                EvolutionVisuals.Line(left, right, boss.ThemeColor * (.7f * boss.CorridorVisibility), 3);
+                EvolutionVisuals.Line(left, right, EvolutionVisuals.Core * (.55f * boss.CorridorVisibility), 1, false);
             }
             Main.spriteBatch.End();
             return;

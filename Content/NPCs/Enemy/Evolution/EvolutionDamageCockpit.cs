@@ -5,6 +5,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution;
 /// <summary>进化的本质——伤害驾驶舱。调整伤害只改下面各行最后的整数。</summary>
 internal static class EvolutionDamageCockpit
 {
+    internal const int CrashContactDamage = 0; // 走廊下砸无接触伤害，不裹挟玩家；伤害来自之后的激光。
     // 【使用说明】
     // 1. 每行依次为：代码标识、中文名、英文名、伤害。只调整最后的整数即可。
     // 2. 同种弹幕只有一行；本体、仆从、炸弹分裂、所有阶段和所有招式共用此值。
@@ -36,6 +37,15 @@ internal static class EvolutionDamageCockpit
         (EvolutionShot.Eruption,    "血色喷柱",   "Blood Eruption",      39), // 从地面/平台向上喷发的柱体。
         (EvolutionShot.Radiation,   "育生闪耀激光", "Brood Flash Laser",     31), // 第一阶段五向瞬发激光；预警无伤害，亮起后8帧生效。
         (EvolutionShot.Reflection,  "反射血刃",   "Reflected Blood Blade", 30), // 光轴护盾吞入玩家射弹后弹回；固定伤害，不继承玩家武器伤害。
+        (EvolutionShot.CrashFan,    "坠生扇形光束", "Broodfall Fan",        40),
+        (EvolutionShot.Flame,       "育生喷焰",     "Brood Flame",          29),
+        (EvolutionShot.BroodRocket, "育生火箭",     "Brood Rocket",         34),
+        (EvolutionShot.GravityFlare,"重力焰核",     "Gravity Flare",        31),
+        (EvolutionShot.Serpent,     "蜿蜒辐射流",   "Serpentine Radiation", 32),
+        (EvolutionShot.BroodSpit,   "育生尘焰",     "Brood Dust Spit",      25),
+        (EvolutionShot.SpinBomb,    "旋舞育生炸弹", "Whirling Brood Bomb",  36),
+        (EvolutionShot.Barrage,     "育生弹幕",     "Brood Barrage",        29),
+        (EvolutionShot.Ricochet,    "走廊弹球",     "Corridor Ricochet",    29),
     };
 
     // 普通表已经逐项乘以90%并向下取整（伤害只能是整数）；提示弹幕仍为0。

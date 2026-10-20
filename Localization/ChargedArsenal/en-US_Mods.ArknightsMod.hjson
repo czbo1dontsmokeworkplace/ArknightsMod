@@ -5,9 +5,9 @@ Items: {
 			'''
 			Early game
 			Hold left-click to continuously repeat individual full-circle slashes. Each slash accelerates sharply across the front and slows behind you; turning reverses rotation.
-			The blade deals damage on contact. Each turn hits its first enemy for 300% damage, 300% knockback and a guaranteed critical strike; subsequent enemies take 100% damage.
-			Successful hits gradually increase attack frequency and weapon damage, both up to 150% of base. The overhead bar shows the buildup.
-			While held, bonuses decay normally after 1 second without attacking. Switching away drains them 3 times faster; the overhead bar fades out after reaching zero.
+			The blade deals damage on contact. Each turn can hit only one enemy for 300% damage, 300% knockback and a guaranteed critical strike, then stops dealing damage until the next turn.
+			Each successful hit grants +20% weapon damage, up to 10 stacks and 300% of base damage. Attack speed does not increase. The overhead bar shows the buildup.
+			Hits on different enemies also build stacks. Missed swings preserve stacks. While held, bonuses decay after 1 second without attacking; switching away drains them 3 times faster. The bar fades out at zero.
 			The first hit of each turn triggers the powerful impact sound and effects at the actual blade contact.
 			'''
 	}
@@ -18,9 +18,9 @@ Items: {
 			'''
 			Early Hardmode
 			Hold left-click to continuously repeat individual full-circle slashes. Each slash accelerates sharply across the front and slows behind you; turning reverses rotation.
-			The blade deals damage on contact. Each turn hits its first enemy for 300% damage, 300% knockback and a guaranteed critical strike; subsequent enemies take 100% damage.
-			Successful hits gradually increase attack frequency and weapon damage, both up to 150% of base. The overhead bar shows the buildup.
-			While held, bonuses decay normally after 1 second without attacking. Switching away drains them 3 times faster; the overhead bar fades out after reaching zero.
+			The blade deals damage on contact. Each turn can hit only one enemy for 300% damage, 300% knockback and a guaranteed critical strike, then stops dealing damage until the next turn.
+			Each successful hit grants +20% weapon damage, up to 10 stacks and 300% of base damage. Attack speed does not increase. The overhead bar shows the buildup.
+			Hits on different enemies also build stacks. Missed swings preserve stacks. While held, bonuses decay after 1 second without attacking; switching away drains them 3 times faster. The bar fades out at zero.
 			The first hit of each turn triggers the powerful impact sound and effects at the actual blade contact.
 			'''
 	}
@@ -31,9 +31,9 @@ Items: {
 			'''
 			Post-Plantera
 			Hold left-click to continuously repeat individual full-circle slashes. Each slash accelerates sharply across the front and slows behind you; turning reverses rotation.
-			The blade deals damage on contact. Each turn hits its first enemy for 300% damage, 300% knockback and a guaranteed critical strike; subsequent enemies take 100% damage.
-			Successful hits gradually increase attack frequency and weapon damage, both up to 150% of base. The overhead bar shows the buildup.
-			While held, bonuses decay normally after 1 second without attacking. Switching away drains them 3 times faster; the overhead bar fades out after reaching zero.
+			The blade deals damage on contact. Each turn can hit only one enemy for 300% damage, 300% knockback and a guaranteed critical strike, then stops dealing damage until the next turn.
+			Each successful hit grants +20% weapon damage, up to 10 stacks and 300% of base damage. Attack speed does not increase. The overhead bar shows the buildup.
+			Hits on different enemies also build stacks. Missed swings preserve stacks. While held, bonuses decay after 1 second without attacking; switching away drains them 3 times faster. The bar fades out at zero.
 			The first hit of each turn triggers the powerful impact sound and effects at the actual blade contact.
 			Slashes have a 25% chance to ignore defense and ignite enemies.
 			'''
@@ -45,9 +45,9 @@ Items: {
 			'''
 			Lunar events
 			Hold left-click to continuously repeat individual full-circle slashes. Each slash accelerates sharply across the front and slows behind you; turning reverses rotation.
-			The blade deals damage on contact. Each turn hits its first enemy for 300% damage, 300% knockback and a guaranteed critical strike; subsequent enemies take 100% damage.
-			Successful hits gradually increase attack frequency and weapon damage, both up to 150% of base. The overhead bar shows the buildup.
-			While held, bonuses decay normally after 1 second without attacking. Switching away drains them 3 times faster; the overhead bar fades out after reaching zero.
+			The blade deals damage on contact. Each turn can hit only one enemy for 300% damage, 300% knockback and a guaranteed critical strike, then stops dealing damage until the next turn.
+			Each successful hit grants +20% weapon damage, up to 10 stacks and 300% of base damage. Attack speed does not increase. The overhead bar shows the buildup.
+			Hits on different enemies also build stacks. Missed swings preserve stacks. While held, bonuses decay after 1 second without attacking; switching away drains them 3 times faster. The bar fades out at zero.
 			The first hit of each turn triggers the powerful impact sound and effects at the actual blade contact.
 			'''
 	}

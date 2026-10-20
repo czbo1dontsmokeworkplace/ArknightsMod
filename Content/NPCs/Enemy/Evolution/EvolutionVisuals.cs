@@ -40,10 +40,11 @@ internal static class EvolutionVisuals
     {
         foreach (string name in new[] { "Newborn", "Evolved", "EvolvedHead", "EvolvedBody", "Perfect", "Shield", "ShieldCracked", "ShieldPerfect",
             "BloodClot", "BloodRock", "ShellFragment", "Tumor", "Excrescence",
-            "Heart", "WhiteShell", "Tentacle", "Bloom", "CinematicRing" }) Asset(name);
+            "Heart", "WhiteShell", "Tentacle", "Bloom", "CinematicRing", "ArsenalFlame", "ArsenalSmoke", "ArsenalMist",
+            "ArsenalSpark", "ArsenalBurst", "EvolutionGravityFlare" }) Asset(name);
         foreach (var region in EvolutionProjectileVisuals.Regions) Asset(region.Name);
     }
-    internal static void Unload() => textures.Clear();
+    internal static void Unload() { EvolutionBroodOutlineVisuals.Unload(); textures.Clear(); }
     internal static void AimLine(Vector2 start, Vector2 end, float progress)
     {
         float pulse = .4f + .6f * MathF.Abs(MathF.Sin(progress * MathHelper.Pi * 2));

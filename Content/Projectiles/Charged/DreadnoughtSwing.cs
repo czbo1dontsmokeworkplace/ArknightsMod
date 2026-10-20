@@ -15,7 +15,7 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.Projectiles.Charged;
 
 // Stellar Striker timing: a live swept blade deals damage on contact. Each full
-// rotation resets hit immunity; the first enemy receives the heavy opening hit.
+// rotation permits exactly one enemy hit, then keeps animating without damage.
 public sealed class DreadnoughtSwing : ModProjectile
 {
     public override string Texture => "Terraria/Images/MagicPixel";
@@ -23,10 +23,9 @@ public sealed class DreadnoughtSwing : ModProjectile
     private float Age { get => Projectile.ai[1]; set => Projectile.ai[1] = value; }
     private float duration = DreadnoughtRules.BaseSwingTicks;
     private int facing = 1, skill;
-    private bool initialized, gainedMomentum;
+    private bool initialized;
     private int targetsHit;
     private Item boundItem;
-    private readonly HashSet<NPC> hitRoots = new();
     private float sweepStartAngle, sweepEndAngle;
     private Vector2 sweepStartCenter, sweepEndCenter;
     private float previousAngle;
@@ -54,10 +53,9 @@ public sealed class DreadnoughtSwing : ModProjectile
     }
 
     public override bool ShouldUpdatePosition() => false;
-    public override bool? CanDamage() => initialized;
+    public override bool? CanDamage() => initialized && DreadnoughtRules.CanStrike(targetsHit);
     public override bool CanHitPvp(Player target) => false;
-    private static NPC Root(NPC npc) => npc.realLife >= 0 && Main.npc[npc.realLife].active ? Main.npc[npc.realLife] : npc;
-    public override bool? CanHitNPC(NPC target) => hitRoots.Contains(Root(target)) ? false : null;
+    public override bool? CanHitNPC(NPC target) => DreadnoughtRules.CanStrike(targetsHit) ? null : false;
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) =>
         TryBladeContact(targetHitbox, out _, out _);
 
@@ -65,12 +63,14 @@ public sealed class DreadnoughtSwing : ModProjectile
     {
         writer.Write(initialized); writer.Write(duration); writer.Write(facing); writer.Write(skill);
         writer.Write(Projectile.damage); writer.Write(Projectile.knockBack); writer.Write(Projectile.CritChance);
+        writer.Write(targetsHit);
     }
 
     public override void ReceiveExtraAI(BinaryReader reader)
     {
         initialized = reader.ReadBoolean(); duration = reader.ReadSingle(); facing = reader.ReadInt32(); skill = reader.ReadInt32();
         Projectile.damage = reader.ReadInt32(); Projectile.knockBack = reader.ReadSingle(); Projectile.CritChance = reader.ReadInt32();
+        targetsHit = reader.ReadInt32();
         previousAngle = Angle;
         Player owner = Main.player[Projectile.owner];
         previousCenter = owner.MountedCenter + new Vector2(0, owner.gfxOffY);
@@ -81,19 +81,17 @@ public sealed class DreadnoughtSwing : ModProjectile
     {
         initialized = true;
         Age = 0;
-        hitRoots.Clear();
         targetsHit = 0;
         bladeHistory.Clear();
         Array.Clear(Projectile.localNPCImmunity);
         Projectile.numHits = 0;
-        gainedMomentum = false;
         skill = ChargedOperatorPlayer.ActiveSkill(owner);
         Vector2 aim = (Main.MouseWorld - owner.MountedCenter).SafeNormalize(Vector2.UnitX * owner.direction);
         Projectile.velocity = aim;
         facing = (aim.X < 0 ? -1 : 1) * (int)owner.gravDir;
         bool swift = Kind == ChargedOperatorKind.Franka && skill == 1 || Kind == ChargedOperatorKind.NearlRadiant && skill == 1;
         var momentum = owner.GetModPlayer<DreadnoughtPlayer>();
-        duration = DreadnoughtRules.SwingTicks(owner.GetAttackSpeed(DamageClass.Melee) * momentum.Multiplier, swift);
+        duration = DreadnoughtRules.SwingTicks(owner.GetAttackSpeed(DamageClass.Melee), swift);
         momentum.Attacking(weapon.Item);
         Projectile.damage = Math.Max(1, (int)(owner.GetWeaponDamage(weapon.Item) * ChargedOperatorPlayer.DamageMultiplier(Kind, skill)));
         Projectile.originalDamage = Projectile.damage;
@@ -199,22 +197,16 @@ public sealed class DreadnoughtSwing : ModProjectile
 
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
     {
-        if (damageDone <= 0) return;
-        bool opening = DreadnoughtRules.OpeningHit(targetsHit);
-        hitRoots.Add(Root(target));
+        if (!DreadnoughtRules.CanStrike(targetsHit)) return;
         targetsHit++;
-        if (!gainedMomentum)
-        {
-            Main.player[Projectile.owner].GetModPlayer<DreadnoughtPlayer>().RegisterHit();
-            gainedMomentum = true;
-        }
+        Projectile.netUpdate = true;
+        if (damageDone <= 0) return;
+        Main.player[Projectile.owner].GetModPlayer<DreadnoughtPlayer>().RegisterHit();
         if (Kind == ChargedOperatorKind.Franka) target.AddBuff(BuffID.OnFire3, 180);
         if (Projectile.owner == Main.myPlayer && TryBladeContact(target.Hitbox, out Vector2 point, out Vector2 tangent))
         {
-            if (opening)
-                Projectile.NewProjectile(Projectile.GetSource_OnHit(target), point, tangent,
-                    ModContent.ProjectileType<DreadnoughtHeavyImpact>(), 0, 0, Projectile.owner, (int)Kind);
-            else ChargedOperatorVfx.Sparkle(point, tangent * 2, ChargedOperatorRules.ColorFor(Kind), tangent.ToRotation(), .55f);
+            Projectile.NewProjectile(Projectile.GetSource_OnHit(target), point, tangent,
+                ModContent.ProjectileType<DreadnoughtHeavyImpact>(), 0, 0, Projectile.owner, (int)Kind);
         }
     }
 

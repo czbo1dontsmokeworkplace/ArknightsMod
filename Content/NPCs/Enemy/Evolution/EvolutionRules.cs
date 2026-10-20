@@ -18,17 +18,54 @@ internal static class EvolutionRules
     // 节奏调整独立于伤害；冲刺通过延长行程扩大范围，最高速度不变。
     public const float StraightShotSpeedMultiplier = .85f * .9f;
     public const float HomingTurnMultiplier = .4f;
-    // 女皇式读招：普通激光至少64帧后才有伤害；这是调校目标，不是难度等价公式。
+    // 基础激光预警56帧，伤害时钟另加淡出中点8帧；三阶段再整体压缩至80%。
     public static int LaserWarning(int ticks) => Math.Max(56, (int)Math.Ceiling(ticks * 1.15));
     public const int LaserFadeTicks = 16;
     public const int AxisActiveTicks = 16 * 60;
     public const int AxisRayCount = 3;
-    public const float AxisPeakSpeed = .00126f * 4;
+    public const float AxisPeakSpeed = .00126f * 4 * 1.3f;
+    public const float LaserReachMultiplier = 1.3f;
+    public const float AxisReach = 1750 * LaserReachMultiplier;
+    public const float AxisDamageReach = AxisReach * .9f;
+    public const int SpinBombSetup = 72, SpinBombDuration = 210;
+    public const float EnrageMultiplier = 1.3f;
+    public static int ReactionTime(int ticks, bool perfect, float boost = 1) =>
+        Math.Max(1, (int)MathF.Round(ticks * (perfect ? .8f : 1) / boost));
+    public static int ProjectileWarning(EvolutionShot kind, int ticks, bool perfect, float boost = 1)
+    {
+        int original = IsLaser(kind) ? LaserWarning(ticks) + LaserFadeTicks / 2 : ticks;
+        int result = ReactionTime(original, perfect, boost);
+        return IsLaser(kind) ? Math.Max(1, result - LaserFadeTicks / 2) : result;
+    }
+    public static float BeamEnvelope(int age, int active, int fade, bool instant = false)
+    {
+        if (age < 0) return 0;
+        float grow = instant ? 1 : MathHelper.SmoothStep(0, 1, Math.Clamp((age + 1) / 7f, 0, 1));
+        float tail = 1 - MathHelper.SmoothStep(0, 1, Math.Clamp((age - active) / (float)fade, 0, 1));
+        return grow * tail;
+    }
+    public static float SpinBombAngle(int active) => Math.Clamp(active / (float)(SpinBombDuration - 1), 0, 1) * MathHelper.TwoPi * 2;
+    public static bool SpinBombEmission(int active,bool enraged)
+    {
+        if(active<0||active>=SpinBombDuration)return false;
+        int count=enraged?39:30;
+        return (active+1)*count/SpinBombDuration>active*count/SpinBombDuration;
+    }
+    public static int DashEmissionCount(int age, int duration, int variant, bool perfect, bool enraged)
+    {
+        if (!perfect) return variant == 2 ? (age >= 8 && age % 9 == 8 ? 1 : 0) :
+            (age == duration / 3 || age == duration * 2 / 3 ? 1 : 0);
+        int events = variant == 2 ? 6 : 3; // 原4次赤雾→6次；原2处裂环/残刃→3处，均为150%。
+        if (enraged) events = (int)MathF.Round(events * EnrageMultiplier);
+        int count = 0;
+        for (int i = 0; i < events; i++) if (age == (i + 1) * duration / (events + 1)) count++;
+        return count;
+    }
     public const int AxisChargeTicks = 90;
     public const int AxisSetupTicks = 60;
     public const float AxisVisualWidth = 450;
     public const float AxisCollisionWidth = 120;
-    public static int AxisLockEnd => AxisSetupTicks + FireTime(EvolutionShot.Beam, LaserWarning(AxisChargeTicks)) + AxisActiveTicks;
+    public static int AxisLockEnd => AxisSetupTicks + FireTime(EvolutionShot.Beam, ProjectileWarning(EvolutionShot.Beam,AxisChargeTicks,true)) + AxisActiveTicks;
     // 光轴侧射每84帧一阵：前35帧六对依次由内向外发射，之后留49帧空档。
     public const int AxisBladeBurstTicks = 84;
     public static int AxisBladePair(int activeAge)
@@ -113,15 +150,16 @@ internal static class EvolutionRules
     public static int NewbornDuration(int attack) => attack switch { 1 => 390, 2 or 6 => 480, 3 or 5 => 450, _ => 420 };
     // Emit dangerous central lanes first; distant scenery-like shots may use only the remaining budget.
     public static int Column(int index) => index == 0 ? 0 : (index + 1) / 2 * (index % 2 == 0 ? -1 : 1);
-    private static readonly int[] EvolvedCycle = { 0, 1, 2, 0, 3, 1 };
-    private static readonly int[] PerfectCycle = { 6, 0, 1, 2, 5, 3, 0, 4, 5 };
-    private static readonly int[] DesperateCycle = { 0, 6, 1, 5 };
+    private static readonly int[] EvolvedCycle = { 8, 14, 19, 15, 9, 14, 16, 15, 10, 14, 20, 15,
+        11, 14, 22, 15, 12, 14, 17, 15, 13, 14, 21, 15, 18, 14, 4, 15, 9, 14, 5, 15 };
+    private static readonly int[] PerfectCycle = { 6, 0, 1, 7, 2, 5, 3, 0, 4, 5 };
+    private static readonly int[] DesperateCycle = { 0, 6, 1, 7, 5 };
     public static int Attack(int phase, int cycle, bool desperate)
     {
         int[] attacks = desperate ? DesperateCycle : phase == 1 ? NewbornCycle : phase == 3 ? EvolvedCycle : PerfectCycle;
         return attacks[Math.Abs(cycle % attacks.Length)];
     }
-    public static int MinionCap(int phase) => phase >= 4 ? 4 : phase == 3 ? 14 : 12;
+    public static int MinionCap(int phase) => phase >= 4 ? 4 : phase == 3 ? 10 : 12;
     public static int Threshold(int maximum, int phase) => phase == 1 ? (int)Math.Ceiling(maximum * .8) : phase == 3 ? (int)Math.Ceiling(maximum * .4) : 0;
     public static bool InGap(float angle, float gapDirection, float halfWidth = .75f)
     {
@@ -132,8 +170,8 @@ internal static class EvolutionRules
     public static int ContactDamage(int phase, bool charge, bool desperate = false) => EvolutionDamageCockpit.BossContactDamage(phase, charge, desperate);
 }
 
-internal enum EvolutionShot { Blood, Spirit, Beam, Rock, Tentacle, Pulse, Core, Spike, Fragment, DashMarker, Lance, CrimsonBomb, Eruption, Radiation, Reflection }
-internal enum EvolutionBeamStyle : byte { Standard, Pulse, Axis }
+internal enum EvolutionShot { Blood, Spirit, Beam, Rock, Tentacle, Pulse, Core, Spike, Fragment, DashMarker, Lance, CrimsonBomb, Eruption, Radiation, Reflection, CrashFan, Flame, BroodRocket, GravityFlare, Serpent, BroodSpit, SpinBomb, Barrage, Ricochet }
+internal enum EvolutionBeamStyle : byte { Standard, Pulse, Axis, Piano, PianoStaccato, Refracted }
 internal enum EvolutionBrood { Spider, GiantSpider, Puppet, Abomination, Tumor, Bomb }
 internal enum EvolutionBroodPreset : byte { Hunter, Rain, Siege, Minefield, Weaver, Ambush, Seeder, Artillery, Conductor }
 internal readonly record struct EvolutionBroodGroup(EvolutionBrood Kind, EvolutionBroodPreset Preset, int Count);

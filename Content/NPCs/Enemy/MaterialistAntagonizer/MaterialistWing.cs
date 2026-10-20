@@ -13,7 +13,7 @@ using Terraria.ModLoader.IO;
 namespace ArknightsMod.Content.NPCs.Enemy.MaterialistAntagonizer;
 
 // Only instances explicitly bound by the commander receive formation AI. Wild NPCs keep their own AI, loot and art.
-public sealed class MaterialistWing : GlobalNPC
+public sealed partial class MaterialistWing : GlobalNPC
 {
     public override bool InstancePerEntity => true;
     public override bool AppliesToEntity(NPC entity, bool lateInstantiation) => entity.ModNPC is Drone or DroneII or ArtsMasterDrone or RaptorDrone;
@@ -31,6 +31,16 @@ public sealed class MaterialistWing : GlobalNPC
     };
     internal static Vector2 Muzzle(NPC npc) => npc.ModNPC is ArtsMasterDrone arts ? arts.Muzzle :
         npc.Center + new Vector2((npc.ModNPC is RaptorDrone ? 27 : 12) * npc.spriteDirection, 12).RotatedBy(npc.rotation);
+    internal static (Texture2D Texture, Rectangle Frame) Sprite(NPC npc, int age)
+    {
+        if (Role(npc) == WingRole.Raptor)
+        {
+            var texture = MaterialistVisuals.Asset("ArknightsMod/Content/NPCs/Enemy/ThroughChapter4/RaptorDrone/RaptorDrone_" + (1 + age / 6 % 5));
+            return (texture, texture.Bounds);
+        }
+        var body = TextureAssets.Npc[npc.type].Value;
+        return (body, body.Frame(1, npc.ModNPC is ArtsMasterDrone ? 8 : 2, 0, age / 6 % (npc.ModNPC is ArtsMasterDrone ? 8 : 2)));
+    }
     internal void Bind(NPC npc, MaterialistAntagonizer boss, int slot)
     {
         OwnerIndex = boss.NPC.whoAmI; Encounter = boss.Encounter; Slot = slot;
@@ -56,7 +66,8 @@ public sealed class MaterialistWing : GlobalNPC
             npc.velocity *= .9f;
             return false;
         }
-        if (boss == null || boss.Order == FlightOrder.Death || Age > MaterialistRules.EscortLifetime) Retreating = true;
+        if (boss == null || boss.Order == FlightOrder.Death ||
+            !boss.FinalStand && Role(npc) != WingRole.Raptor && Age > MaterialistRules.EscortLifetime) Retreating = true;
         if (Retreating)
         {
             npc.dontTakeDamage = true;
@@ -65,52 +76,35 @@ public sealed class MaterialistWing : GlobalNPC
             if (retreatTime >= 45) MaterialistAntagonizer.Remove(npc);
             return false;
         }
-        npc.dontTakeDamage = Age < MaterialistRules.EscortGrace;
+        npc.dontTakeDamage = Age < MaterialistRules.EscortGrace || !boss.EscortsReleased || boss.Order == FlightOrder.Deploy;
         if (!boss.NPC.HasValidTarget) return false;
         Player target = Main.player[boss.NPC.target];
         npc.target = target.whoAmI;
-        WingRole role = Role(npc);
-        int beat = boss.Timer % 96;
-        bool ownBeat = boss.Timer / 96 % MaterialistRules.WingCap(boss.Phase) == Slot;
-        bool firing = boss.EscortFire && ownBeat && Age >= MaterialistRules.EscortGrace &&
-            (boss.Order != FlightOrder.Bombard || role is WingRole.Drone or WingRole.MkII);
-        float side = Slot % 2 == 0 ? -1 : 1;
-        Vector2 station = target.Center + new Vector2(side * (250 + Slot / 2 * 125), -140 - Slot % 3 * 75);
-        if (role == WingRole.Raptor) station = target.Center + new Vector2(-460, -170);
-        if (boss.Paused) station = boss.NPC.Center + new Vector2(side * (160 + Slot * 28), 80);
-        Vector2 delta = station - npc.Center;
-        Vector2 motion = delta.SafeNormalize(Vector2.UnitY) * Math.Min(10, delta.Length() * .035f);
-        npc.velocity = Vector2.Lerp(npc.velocity, firing ? Vector2.Zero : motion, .10f);
-        npc.direction = npc.spriteDirection = target.Center.X < npc.Center.X ? -1 : 1;
-        npc.rotation = MathHelper.Lerp(npc.rotation, npc.velocity.X * .012f, .1f);
-        if (firing)
-        {
-            if (beat <= 38) aimAngle = (target.Center - Muzzle(npc)).ToRotation();
-            if (MaterialistAntagonizer.Authority)
-            {
-                if (role == WingRole.ArtsA2 && beat == 1)
-                    boss.Shoot(DroneShot.Beam, Muzzle(npc), (target.Center - Muzzle(npc)).SafeNormalize(Vector2.UnitY),
-                        MaterialistRules.LaserWarning, 32, npc.whoAmI, side * .20f);
-                else if (role == WingRole.Raptor && beat >= 48 && beat <= 88 && beat % 8 == 0)
-                    boss.Shoot(DroneShot.Bolt, Muzzle(npc), (aimAngle + MathHelper.Lerp(-.42f, .42f, (beat - 48) / 40f)).ToRotationVector2() * 10, shooter: npc.whoAmI);
-                else if (role == WingRole.ArtsA1 && beat == 52)
-                    boss.Shoot(DroneShot.Bolt, Muzzle(npc), aimAngle.ToRotationVector2() * 17, shooter: npc.whoAmI);
-                else if (role == WingRole.MkII && beat is 48 or 62 or 76)
-                    boss.Shoot(DroneShot.Bolt, Muzzle(npc), aimAngle.ToRotationVector2() * 11, shooter: npc.whoAmI);
-                else if (role == WingRole.Drone && beat == 54)
-                    boss.Shoot(DroneShot.Missile, Muzzle(npc), aimAngle.ToRotationVector2() * 7, shooter: npc.whoAmI);
-            }
-        }
-        if (MaterialistAntagonizer.Authority && (Age % 90 == 0 || firing && beat == 38)) npc.netUpdate = true;
+        FlyFormation(npc, boss);
+        if (MaterialistAntagonizer.Authority && Age % 45 == 0) npc.netUpdate = true;
         if (!Main.dedServ && !boundVisual)
         {
             boundVisual = true;
             MaterialistVisuals.Burst(npc.Center, MaterialistVisuals.Cyan, .65f);
-            MaterialistEffects.Pulse(npc.Center, 100, MaterialistVisuals.Cyan);
         }
         return false;
     }
-    public override bool CanHitPlayer(NPC npc, Player target, ref int cooldownSlot) => !Bound;
+    public override void UpdateLifeRegen(NPC npc, ref int damage)
+    {
+        if (!Bound || !npc.dontTakeDamage) return;
+        npc.lifeRegen = Math.Max(0, npc.lifeRegen);
+        npc.lifeRegenCount = Math.Max(0, npc.lifeRegenCount);
+        damage = 0;
+    }
+    public override bool CanHitPlayer(NPC npc, Player target, ref int cooldownSlot)
+    {
+        if (!Bound) return true;
+        cooldownSlot = ImmunityCooldownID.Bosses;
+        var boss = MaterialistAntagonizer.Owner(OwnerIndex, Encounter);
+        return Role(npc) != WingRole.Raptor && !Retreating && Age >= MaterialistRules.EscortGrace && boss != null && boss.EscortsReleased && !boss.ArtilleryActive && boss.EscortFire && boss.Order != FlightOrder.Deploy &&
+            (boss.ScoutReady ? MaterialistScoutPlanner.Diving(boss.ScoutAttack(Slot), MaterialistScoutPlanner.LocalBeat(boss, Slot)) :
+                MaterialistTactics.Diving(boss.Pattern, boss.Timer, Slot, MaterialistRules.WingCap(boss.Phase)));
+    }
     public override bool CheckActive(NPC npc) => !Bound;
     public override bool PreKill(NPC npc)
     {
@@ -133,13 +127,16 @@ public sealed class MaterialistWing : GlobalNPC
     public override bool PreDraw(NPC npc, SpriteBatch batch, Vector2 screenPos, Color drawColor)
     {
         if (!Bound) return true;
-        float alpha = (1 - npc.alpha / 255f) * MathHelper.Clamp(Age / 35f, 0, 1);
+        float alpha = 1 - npc.alpha / 255f;
         var role = Role(npc);
         Texture2D texture;
         Rectangle frame;
         if (role == WingRole.Raptor)
         {
-            texture = ModContent.Request<Texture2D>("ArknightsMod/Content/NPCs/Enemy/ThroughChapter4/RaptorDrone/RaptorDrone_" + (1 + Age / 6 % 13)).Value;
+            var owner = MaterialistAntagonizer.Owner(OwnerIndex, Encounter);
+            int animation = owner != null && Age >= MaterialistRules.EscortGrace && RaptorWindow(owner) ?
+                RaptorShot(owner) ? 12 : 13 : 1 + Age / 6 % 5;
+            texture = ModContent.Request<Texture2D>("ArknightsMod/Content/NPCs/Enemy/ThroughChapter4/RaptorDrone/RaptorDrone_" + animation).Value;
             frame = texture.Bounds;
         }
         else
@@ -150,19 +147,18 @@ public sealed class MaterialistWing : GlobalNPC
             npc.frame = frame;
         }
         var boss = MaterialistAntagonizer.Owner(OwnerIndex, Encounter);
-        bool firing = boss != null && boss.EscortFire && boss.Timer / 96 % MaterialistRules.WingCap(boss.Phase) == Slot && Age >= MaterialistRules.EscortGrace;
-        int beat = boss?.Timer % 96 ?? 0;
-        Color accent = role is WingRole.ArtsA1 or WingRole.ArtsA2 ? MaterialistVisuals.Violet : MaterialistVisuals.Amber;
+        Color accent = boss != null ? DutyColor(MaterialistRules.Duty(boss.Phase, Slot)) : MaterialistVisuals.Cyan;
+        if (role == WingRole.Raptor) DrawRaptorFlight(npc, alpha);
         MaterialistVisuals.Glow(npc.Center, accent * (.24f * alpha), new Vector2(frame.Width * 1.8f, frame.Height * 1.3f));
-        batch.Draw(texture, npc.Center - screenPos, frame, Color.Lerp(drawColor, Color.White, .45f) * alpha,
-            npc.rotation, frame.Size() * .5f, npc.scale, npc.spriteDirection < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0);
-        if (Age < MaterialistRules.EscortGrace) MaterialistVisuals.Ring(npc.Center, 55 - Age * .3f, MaterialistVisuals.Cyan * alpha, Age * .04f, 2);
-        if (firing && beat is >= 8 and < 48 && role != WingRole.ArtsA2)
-        {
-            Vector2 start = Muzzle(npc);
-            MaterialistVisuals.Line(start, start + aimAngle.ToRotationVector2() * 650, accent * .5f, 1.5f);
-            MaterialistVisuals.Glow(start, accent * .75f, new Vector2(16 + beat * .55f));
-        }
+        if (!MaterialistVisuals.Reduced && npc.velocity.LengthSquared() > 100)
+            for (int i = 1; i <= 3; i++) batch.Draw(texture, npc.Center - npc.velocity * i * 1.4f - screenPos, frame,
+                (accent with { A = 0 }) * ((1 - i / 4f) * .28f * alpha), npc.rotation, frame.Size() * .5f, npc.scale,
+                npc.spriteDirection < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0);
+        if (Age >= 42 || !MaterialistTechRenderer.HullActive)
+            batch.Draw(texture, npc.Center - screenPos, frame, Color.Lerp(drawColor, Color.White, .45f) * alpha,
+            npc.rotation, frame.Size() * .5f, npc.scale * MathHelper.Lerp(.3f, 1, MaterialistFormation.Smooth(Age / 38f)),
+            npc.spriteDirection < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0);
+        DrawFlightWarning(npc, boss, accent);
         return false;
     }
     public override void SendExtraAI(NPC npc, BitWriter bitWriter, BinaryWriter w)
@@ -170,12 +166,22 @@ public sealed class MaterialistWing : GlobalNPC
         w.Write(Encounter);
         if (!Bound) return;
         w.Write(OwnerIndex); w.Write(Slot); w.Write(Age); w.Write(ScaledLife); w.Write(Retreating); w.Write(aimAngle);
+        w.Write(planRevision); w.WriteVector2(planStart); w.WriteVector2(launchOrigin);
+        if (Role(npc) == WingRole.Raptor) WriteRaptorAI(w);
+        w.Write(scoutSeenRevision); w.WriteVector2(scoutAim);
+        w.Write(flightRoute); w.Write(blendAge); w.WriteVector2(blendStart); w.WriteVector2(lastFlightGoal); w.WriteVector2(goalVelocity);
+        w.Write(goalReady); w.Write(maneuverLocked); w.WriteVector2(maneuverCenter); w.Write(maneuverExit);
     }
     public override void ReceiveExtraAI(NPC npc, BitReader bitReader, BinaryReader r)
     {
         Encounter = r.ReadInt32();
         if (!Bound) return;
         OwnerIndex = r.ReadInt32(); Slot = r.ReadInt32(); Age = r.ReadInt32(); ScaledLife = r.ReadInt32(); Retreating = r.ReadBoolean(); aimAngle = r.ReadSingle();
+        planRevision = r.ReadInt32(); planStart = r.ReadVector2(); launchOrigin = r.ReadVector2();
+        if (Role(npc) == WingRole.Raptor) ReadRaptorAI(r);
+        scoutSeenRevision = r.ReadInt32(); scoutAim = r.ReadVector2();
+        flightRoute = r.ReadInt32(); blendAge = r.ReadInt32(); blendStart = r.ReadVector2(); lastFlightGoal = r.ReadVector2(); goalVelocity = r.ReadVector2();
+        goalReady = r.ReadBoolean(); maneuverLocked = r.ReadBoolean(); maneuverCenter = r.ReadVector2(); maneuverExit = r.ReadSingle();
         npc.lifeMax = ScaledLife;
     }
 }

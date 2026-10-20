@@ -119,16 +119,16 @@ internal static class MechAccordVfx
         Mask("Bloom", center, new Vector2(diameter * .32f), Fade(Color.White, MathF.Pow(1f - progress, 3f) * .95f));
     }
 
-    internal static void DrawStar(Vector2 center, float angle, float fade)
+    internal static void DrawStar(Vector2 center, float angle, float fade, float visualScale = 1)
     {
         using var light = new Pass(BlendState.Additive);
-        Mask("Bloom", center, new Vector2(42f, 27f), Fade(Violet, .65f * fade), angle);
-        Mask("Arrow", center, new Vector2(15f, 34f), Fade(Amber, .95f * fade), angle + MathHelper.PiOver2);
-        Mask("Arrow", center, new Vector2(5f, 24f), Fade(Color.White, fade), angle + MathHelper.PiOver2);
+        Mask("Bloom", center, new Vector2(42f, 27f) * visualScale, Fade(Violet, .65f * fade), angle);
+        Mask("Arrow", center, new Vector2(15f, 34f) * visualScale, Fade(Amber, .95f * fade), angle + MathHelper.PiOver2);
+        Mask("Arrow", center, new Vector2(5f, 24f) * visualScale, Fade(Color.White, fade), angle + MathHelper.PiOver2);
     }
 
     // Samples are real flight-history points; the rotations below are path tangents, not sprite angles.
-    internal static void DrawTrail(Vector2[] points, float opacity)
+    internal static void DrawTrail(Vector2[] points, float opacity, float visualScale = 1)
     {
         if (points.Length < 3) return;
         float[] tangents = new float[points.Length];
@@ -145,7 +145,7 @@ internal static class MechAccordVfx
             VertexStrip strip = new();
             strip.PrepareStrip(points, tangents,
                 t => Color.Lerp(Amber, Violet, Math.Clamp(t * 1.5f, 0f, 1f)) * (opacity * MathF.Pow(1f - t, 1.2f)),
-                t => 9f * MathF.Pow(1f - t, .8f), -Main.screenPosition);
+                t => 9f * visualScale * MathF.Pow(1f - t, .8f), -Main.screenPosition);
             strip.DrawTrail();
         }
         finally
