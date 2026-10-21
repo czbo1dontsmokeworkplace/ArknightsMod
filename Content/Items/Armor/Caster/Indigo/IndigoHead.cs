@@ -5,7 +5,7 @@ using ArknightsMod.Content.Items.Material;
 namespace ArknightsMod.Content.Items.Armor.Caster.Indigo
 {
 	[AutoloadEquip(EquipType.Head)]
-	public class IndigoHead : NeoArmorReforgeVanityHead
+	public class IndigoHead : CasterArmorHead
 	{
 		public override int Rarity => 4;
 

@@ -5,7 +5,7 @@ using ArknightsMod.Content.Items.Material;
 namespace ArknightsMod.Content.Items.Armor.Caster.Haze
 {
 	[AutoloadEquip(EquipType.Head)]
-	public class HazeHead : NeoArmorReforgeVanityHead
+	public class HazeHead : CasterArmorHead
 	{
 		public override int Rarity => 4;
 

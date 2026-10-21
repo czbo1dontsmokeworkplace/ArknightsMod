@@ -69,7 +69,7 @@ namespace ArknightsMod.Content.Items.Armor.Caster.Haze
 			if (target.friendly || target.lifeMax <= 5 || target.dontTakeDamage)
 				return;
 
-			target.AddBuff(ModContent.BuffType<HazeMagicFragileDebuff>(), 60);
+			target.AddBuff(ModContent.BuffType<HazeMagicFragileDebuff>(), HazeMagicFragileDebuff.DurationTicks);
 		}
 	}
 }

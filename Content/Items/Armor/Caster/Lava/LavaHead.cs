@@ -5,7 +5,7 @@ using ArknightsMod.Content.Items.Material;
 namespace ArknightsMod.Content.Items.Armor.Caster.Lava
 {
 	[AutoloadEquip(EquipType.Head)]
-	public class LavaHead : NeoArmorReforgeVanityHead
+	public class LavaHead : CasterArmorHead
 	{
 		public override int Rarity => 3;
 

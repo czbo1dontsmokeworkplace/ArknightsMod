@@ -1,4 +1,5 @@
 using ArknightsMod.Content.Items.Weapons;
+using ArknightsMod.Content.Items.Armor.Caster.Steward;
 using ArknightsMod.Players;
 using ArknightsMod.Systems.Gameplay.Skill;
 using Microsoft.Xna.Framework;
@@ -111,6 +112,10 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Steward
 				dust3.noGravity = true;
 				dust3.position = Projectile.Center;
 			}
+
+			// 穿套装时由全局PostAI统一选择最高防目标，避免两套追踪互相拉扯。
+			if (Main.player[Projectile.owner].GetModPlayer<StewardSetPlayer>().StewardSetActive)
+				return;
 
 			// 优先追踪 200 像素内防御力最高的敌人
 			NPC target = null;

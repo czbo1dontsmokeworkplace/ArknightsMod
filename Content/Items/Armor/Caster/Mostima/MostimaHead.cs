@@ -10,7 +10,7 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.Items.Armor.Caster.Mostima
 {
 	[AutoloadEquip(EquipType.Head)]
-	public class MostimaHead : NeoArmorReforgeVanityHead
+	public class MostimaHead : CasterArmorHead
 	{
 		public override int Rarity => 6;
 

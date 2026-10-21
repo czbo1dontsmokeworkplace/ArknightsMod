@@ -5,7 +5,7 @@ using ArknightsMod.Content.Items.Material;
 namespace ArknightsMod.Content.Items.Armor.Caster.Mornia
 {
 	[AutoloadEquip(EquipType.Head)]
-	public class MorniaHead : NeoArmorReforgeVanityHead
+	public class MorniaHead : CasterArmorHead
 	{
 		public override int Rarity => 4;
 

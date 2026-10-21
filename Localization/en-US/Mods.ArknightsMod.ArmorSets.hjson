@@ -29,7 +29,7 @@ Utage: {
 
 Haze: {
 	HeadName: Haze's Helmet
-	HelmetEffect: "[c/beebff:Helmet]: Magic hits reduce target magic resist 20% for 1s"
+	HelmetEffect: "[c/beebff:Helmet]: Magic hits multiply the target's current Arts Resistance by 0.8 for 2s; repeated hits refresh the duration without stacking"
 	SetEffect: "[c/beebff:Set]: +50 max mana, +6% magic crit; doubled at night"
 	SetBonus: +50 mana, +6% magic crit; doubled at night
 }
@@ -71,7 +71,7 @@ Exusiai: {
 
 Mostima: {
 	HeadName: Mostima's Helmet
-	HelmetEffect: "[c/beebff:Helmet]: Hits slow enemies 15%"
+	HelmetEffect: "[c/beebff:Helmet]: Dealing damage reduces enemy movement speed by 15% for 2s; repeated hits refresh the duration without stacking"
 	SetEffect: "[c/beebff:Set]: +0.4 SP regen/s; shared with other full caster-set operators"
 	SetBonus: +0.4 SP/s; shared with caster operators
 }
@@ -106,7 +106,7 @@ Indigo: {
 
 Lava: {
 	HeadName: Lava's Helmet
-	HelmetEffect: "[c/beebff:Helmet]: +15 SP on deploy and redeploy"
+	HelmetEffect: "[c/beebff:Helmet]: Gain 15 SP the first time you hold a weapon from this mod while wearing the helmet after equipping or respawning; triggers immediately if already holding one. Only one attempt per life, even if charging fails; re-equipping does not reset it"
 	SetEffect: "[c/beebff:Set]: Inferno potion effect while skill active"
 	SetBonus: Inferno during skill
 }
@@ -114,7 +114,7 @@ Lava: {
 Steward: {
 	HeadName: Steward's Helmet
 	HelmetEffect: "[c/beebff:Helmet]: Magic damage 104%"
-	SetEffect: "[c/beebff:Set]: Magic attacks home toward highest-defense enemy"
+	SetEffect: "[c/beebff:Set]: Flying magic/Arts projectiles gently home toward the highest-defense visible enemy within 600 pixels of the projectile, preferring the nearest on ties; projectile speed is preserved"
 	SetBonus: Magic homing to highest-defense enemy
 }
 
@@ -425,6 +425,13 @@ Mornia: {
 	HelmetEffect: "[c/beebff:Helmet]: Magic damage 106%"
 	SetEffect: "[c/beebff:Set]: 8% magic crit; arcane bolts seek nearby enemies"
 	SetBonus: 8% magic crit, arcane bolts seek enemies
+}
+
+Necrass: {
+	HeadName: Necrass's Helmet
+	HelmetEffect: "[c/beebff:Helmet]: On enemy kill, summon a Lamenting Servant if absent; otherwise multiply its current attack by 1.8, defense by 1.4 and maximum life by 1.8, then heal 20% of its new maximum life. Up to 6 enhancement stacks; kills still heal at the cap"
+	SetEffect: "[c/beebff:Set]: Equipping the full set or respawning summons one Lamenting Servant without using minion slots. Starts with 1000 life, 30 base summon damage and 25 defense; attacks scale with summon damage bonuses. Enemies and hostile projectiles can kill it; it does not automatically revive. Removing the helmet or dying dismisses it"
+	SetBonus: Equip/respawn summons a Lamenting Servant; kills summon or compound its stats, up to 6 stacks
 }
 
 Kaltsit: {

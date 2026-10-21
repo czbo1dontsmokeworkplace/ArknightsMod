@@ -80,8 +80,7 @@ namespace ArknightsMod.Players
 		/// 只影响"技力条恢复的快慢"（自然回复/受击回复/攻击回复/饰品加速），不影响任何数值——
 		/// 技能所需技力、技力上限等仍按 CSV/武器数据里 1 倍速的原始数值走，
 		/// 部署费用吸收、套装/技能直接赠送技力等"技力返还"效果同样不受这个倍率影响
-		/// （它们不经过这里，直接改 SP 或 SkillCharge，参见 <see cref="AbsorbDeploymentCost"/>
-		/// 与 OperatorSPHelper.TryGainSP）。
+		/// （统一通过 <see cref="TryAddSP"/> 推进实际充能，不乘自然回复倍率）。
 		/// </summary>
 		public static int GlobalSPRegenSpeedMultiplier =>
 			ModContent.GetInstance<Common.Configs.SkillChargeConfig>().DoubleSPRegenSpeed ? 2 : 1;
@@ -218,6 +217,7 @@ namespace ArknightsMod.Players
 		}
 		//=======================================================================
 		public void InitSkill(bool giveCharge) {
+			AccessoriesChargeFraction = 0d;
 			SkillData skill = CurrentSkill;
 
 			if (skill == null) {
@@ -273,6 +273,7 @@ namespace ArknightsMod.Players
 		}
 
 		private void ClearSkillRuntime() {
+			AccessoriesChargeFraction = 0d;
 			SkillCharge = 0;
 			SkillChargeMax = 0;
 			SkillActive = false;
@@ -345,45 +346,53 @@ namespace ArknightsMod.Players
 		}
 
 		/// <summary>
-		/// 部署费用是否可以被当前玩家吸收：必须手持本模组的（有技力系统的）武器，
-		/// 且当前技能未处于开启状态（技力自然回复时）。技能开启期间、或手持其它武器/无技能武器时不可吸收；
-		/// 另外——技力已满（技能就绪、无处可加）时也不吸收，让部署费用继续环绕等待。
+		/// 当前技能是否可以接受外部赠送的技力。专属充能技能由武器自己维护，
+		/// 不写公共充能条；技能期间、充能冻结或库存已满时也不接受。
 		/// </summary>
-		public bool CanAbsorbDeploymentCost() {
-			if (!Player.active || Player.dead || Player.HeldItem.ModItem is not UpgradeWeaponBase
-				|| CurrentSkill == null || SkillActive)
-				return false;
-			// 已攒满一个可用技能（技力满）：不再吸收，否则会白白吞掉部署费用
-			if (StockCount >= CurrentSkill.CurrentLevelData.MaxStack)
-				return false;
-			return true;
-		}
-
-		/// <summary>
-		/// 吸收部署费用：直接把充能加到当前技能的技力条上（不以物品形式出现在背包）。
-		/// 沿用 Div 的换算关系——Div 单位的 SkillCharge 对应 1 点可见技力（与 <see cref="AutoCharge"/> 等一致）。
-		/// </summary>
-		public bool AbsorbDeploymentCost(int points) {
-			if (!CanAbsorbDeploymentCost())
+		private bool CanAddSP() {
+			if (!Player.active || Player.dead || SkillActive
+				|| Skill < 0 || Skill >= SkillData.Length
+				|| CurrentSkill == null || CurrentSkill.UsesCustomCharge
+				|| CurrentSkill.ChargeType == SkillChargeType.None
+				|| Div <= 0 || SkillChargeMax <= 0
+				|| SceneCameraSkills.BlocksSkillCharge(Player))
 				return false;
 
 			SkillLevelData data = CurrentSkill.CurrentLevelData;
-			if (StockCount >= data.MaxStack)
+			return data.MaxSP > 0 && data.MaxStack > 0 && StockCount >= 0 && StockCount < data.MaxStack;
+		}
+
+		/// <summary>
+		/// 为当前技能增加可见技力，同时更新实际充能、技能库存与显示值。
+		/// 自然回复技能 Div=60，攻击/受击回复技能 Div=1；跨过充能上限时保留
+		/// 下一层的余量，库存全满后丢弃溢出。成功增加资源时返回 true。
+		/// </summary>
+		public bool TryAddSP(int points) {
+			if (points <= 0 || !CanAddSP())
 				return false;
 
-			SkillCharge += points * Div;
-			while (SkillCharge >= SkillChargeMax && StockCount < data.MaxStack) {
-				SkillCharge -= SkillChargeMax;
-				StockCount++;
-			}
+			SkillLevelData data = CurrentSkill.CurrentLevelData;
+			long charge = Math.Max(0, SkillCharge) + (long)points * Div;
+			int gainedStock = (int)Math.Min(charge / SkillChargeMax, data.MaxStack - StockCount);
+			StockCount += gainedStock;
+			SkillCharge = StockCount >= data.MaxStack ? 0 : (int)(charge % SkillChargeMax);
 			SP = StockCount >= data.MaxStack ? data.MaxSP : SkillCharge / Div;
-			if (StockCount >= data.MaxStack)
-				SkillCharge = 0;
 			return true;
+		}
+
+		/// <summary>没有可用充能空间时不吸收部署费用，让费用继续环绕等待。</summary>
+		public bool CanAbsorbDeploymentCost() {
+			return Player.HeldItem.ModItem is UpgradeWeaponBase && CanAddSP();
+		}
+
+		/// <summary>部署费用与套装赠送技力共用同一个资源结算入口。</summary>
+		public bool AbsorbDeploymentCost(int points) {
+			return CanAbsorbDeploymentCost() && TryAddSP(points);
 		}
 
 		public void SetSkill(int skill) {
 			if (SkillInitialize) {
+				AccessoriesChargeFraction = 0d;
 				Skill = skill;
 				if (ChargeTypeIsPerSecond[Skill])
 					Div = 60;
@@ -412,7 +421,6 @@ namespace ArknightsMod.Players
 
 			defenseBonus = 0;
 			SPRegenMultiplier = 1f; // 重置SP恢复倍率（修改后的）
-			AccessoriesChargeFraction = 0f; // 新添加，用于重置技力藏的加成
 
 			// 更新武器状态
 			HoldBagpipeSpear = Player.HeldItem.ModItem is BagpipeSpear;
@@ -664,76 +672,43 @@ namespace ArknightsMod.Players
 			}
 		}
 		//============================================================================
-		private float AccessoriesChargeFraction;
+		private double AccessoriesChargeFraction;
 		public void AccessoriesAutoCharge() {
+			if (Skill < 0 || Skill >= SkillData.Length || Player.dead || SkillActive
+				|| Div <= 0 || SkillChargeMax <= 0
+				|| (CurrentSkill != null && (CurrentSkill.ChargeType != SkillChargeType.Auto
+					|| CurrentSkill.UsesCustomCharge))) {
+				AccessoriesChargeFraction = 0d;
+				return;
+			}
 
-			if (SceneCameraSkills.BlocksSkillCharge(Player)) // 稀音技能持续期间冻结充能
+			int maxStock = CurrentSkill?.CurrentLevelData.MaxStack ?? StockMax[Skill];
+			int maxSp = CurrentSkill?.CurrentLevelData.MaxSP ?? MaxSP[Skill] ?? 0;
+			double extraCharge = Math.Max(0d, (double)SPRegenMultiplier - 1d) * GlobalSPRegenSpeedMultiplier;
+			if (maxStock <= 0 || StockCount >= maxStock || extraCharge <= 0d) {
+				AccessoriesChargeFraction = 0d;
+				return;
+			}
+
+			if (SceneCameraSkills.BlocksSkillCharge(Player) || (chargeOpen && !hasNearbyEnemy))
 				return;
 
-			if (chargeOpen && !hasNearbyEnemy)
+			// 每帧只重置回复倍率，小数余量保留到后续帧；Div=60 时，
+			// 每帧多0.4充能单位即每秒多0.4点技力，不会在每帧ResetEffects中丢失。
+			AccessoriesChargeFraction += extraCharge;
+			// SPRegenMultiplier 是 float，容忍1.4f转为double后的微小误差。
+			int gain = (int)Math.Floor(AccessoriesChargeFraction + 0.00001d);
+			if (gain <= 0)
 				return;
 
-
-
-			if (CurrentSkill != null) {
-				SkillLevelData data = CurrentSkill.CurrentLevelData;
-				if (!SkillActive && StockCount < data.MaxStack) {
-
-					// 饰品/套装给的额外回复速度加成也按同一倍率放大，保持"相对加成比例不变，
-					// 只是整体更快"——这里 while 循环每次只消耗掉整数 1 点 AccessoriesChargeFraction、
-					// SkillCharge 每次只 +1，不受倍率影响，所以内部判满逻辑不需要改。
-					float extraCharge = (SPRegenMultiplier - 1f) * GlobalSPRegenSpeedMultiplier;
-					AccessoriesChargeFraction += extraCharge;
-
-
-					while (AccessoriesChargeFraction >= 1f) {
-						AccessoriesChargeFraction -= 1f;
-
-
-						SkillCharge++;
-						if (SkillCharge % 60 == 0) {
-							SP++;
-						}
-
-
-						if (SkillCharge >= SkillChargeMax) {
-							SkillCharge = 0;
-							StockCount++;
-							SP = StockCount == data.MaxStack ? data.MaxSP : 0;
-
-							if (StockCount >= data.MaxStack) {
-								break;
-							}
-						}
-					}
-				}
-			}
-			else {
-				// 旧版武器支持
-				if (!SkillActive && StockCount < StockMax[Skill]) {
-					float extraCharge = (SPRegenMultiplier - 1f) * GlobalSPRegenSpeedMultiplier;
-					AccessoriesChargeFraction += extraCharge;
-
-					while (AccessoriesChargeFraction >= 1f) {
-						AccessoriesChargeFraction -= 1f;
-
-						SkillCharge++;
-						if (SkillCharge % 60 == 0) {
-							SP++;
-						}
-
-						if (SkillCharge >= SkillChargeMax) {
-							SkillCharge = 0;
-							StockCount++;
-							SP = StockCount == StockMax[Skill] ? (int)MaxSP[Skill] : 0;
-
-							if (StockCount >= StockMax[Skill]) {
-								break;
-							}
-						}
-					}
-				}
-			}
+			AccessoriesChargeFraction = Math.Max(0d, AccessoriesChargeFraction - gain);
+			long charge = (long)SkillCharge + gain;
+			int gainedStock = (int)Math.Min(charge / SkillChargeMax, maxStock - StockCount);
+			StockCount += gainedStock;
+			SkillCharge = StockCount >= maxStock ? 0 : (int)(charge % SkillChargeMax);
+			SP = StockCount >= maxStock ? maxSp : SkillCharge / Div;
+			if (StockCount >= maxStock)
+				AccessoriesChargeFraction = 0d;
 		}
 		//===============================================================================
 		public void OffensiveRecovery() {
