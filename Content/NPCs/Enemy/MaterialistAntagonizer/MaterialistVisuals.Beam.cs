@@ -13,7 +13,7 @@ internal static partial class MaterialistVisuals
     {
         Vector2 origin = h.Projectile.Center, direction = h.BeamDirection;
         float reach = h.Reach;
-        Brackets(origin, new Vector2(18), color, .7f);
+        if (h.Kind != DroneShot.PincerBeam) Brackets(origin, new Vector2(18), color, .7f);
         if (h.Age < h.Delay)
         {
             if (h.Sweep != 0)
@@ -23,6 +23,13 @@ internal static partial class MaterialistVisuals
                     Line(origin, origin + axis * MaterialistHazard.TraceBeam(origin, axis, h.Width), color * .20f, 1);
                 }
             Line(origin, origin + direction * reach, color * .65f, 2);
+            if (h.Kind == DroneShot.PincerBeam)
+            {
+                Vector2 closing = h.PincerClosingDirection;
+                float stop = Math.Min(1600, MaterialistHazard.TraceBeam(origin, closing, h.Width));
+                for (float along = 0; along < stop; along += 48)
+                    Line(origin + closing * along, origin + closing * Math.Min(stop, along + 17), color * .25f, 1);
+            }
             Glow(origin, color * .7f, new Vector2(20 + h.Age * .5f));
             return;
         }
@@ -37,23 +44,44 @@ internal static partial class MaterialistVisuals
         {
             if (!Reduced)
                 DrawBeamLayer(h, start, middle, end, h.Width * strength * 1.85f,
-                    new Color(125, 42, 235) * (.23f * strength * layerOpacity));
+                    (h.Kind == DroneShot.PincerBeam ? Color.Lerp(color, Color.Black, .35f) : new Color(125, 42, 235)) * (.23f * strength * layerOpacity));
             DrawBeamLayer(h, start, middle, end, h.Width * strength * 1.15f,
                 color * (.88f * strength * layerOpacity));
             DrawBeamLayer(h, start, middle, end, h.Width * strength * .46f,
-                new Color(244, 217, 255) * (.92f * strength * layerOpacity));
+                (h.Kind == DroneShot.PincerBeam ? Color.Lerp(color, Color.White, .85f) : new Color(244, 217, 255)) * (.92f * strength * layerOpacity));
         });
-        Glow(origin, new Color(235, 207, 255) * (.8f * strength), new Vector2(42));
+        Glow(origin, (h.Kind == DroneShot.PincerBeam ? Color.Lerp(color, Color.White, .8f) : new Color(235, 207, 255)) * (.8f * strength), new Vector2(42));
         Glow(origin + direction * reach, color * (.65f * strength), new Vector2(30));
     }
 
     private static void DrawBeamLayer(MaterialistHazard h, Texture2D start, Texture2D middle, Texture2D end,
         float width, Color tint)
+        => DrawBeamLayer(h.Projectile.Center, h.BeamDirection, h.Reach, h.Width, h.Age, start, middle, end, width, tint);
+
+    internal static void DrawFriendlyLaser(Vector2 origin, Vector2 direction, float length, float width, float strength, int age)
     {
-        Vector2 origin = h.Projectile.Center, direction = h.BeamDirection;
+        if (length <= .5f || strength <= 0) return;
+        Main.instance.LoadProjectile(ProjectileID.PhantasmalDeathray);
+        Texture2D start = TextureAssets.Projectile[ProjectileID.PhantasmalDeathray].Value;
+        Texture2D middle = TextureAssets.Extra[21].Value, end = TextureAssets.Extra[22].Value;
+        MaterialistTechRenderer.NativeLaser(() =>
+        {
+            if (!Reduced)
+                DrawBeamLayer(origin, direction, length, width, age, start, middle, end, width * strength * 2,
+                    new Color(125, 42, 235) * (.28f * strength));
+            DrawBeamLayer(origin, direction, length, width, age, start, middle, end, width * strength * 1.2f, Violet * (.95f * strength));
+            DrawBeamLayer(origin, direction, length, width, age, start, middle, end, width * strength * .45f,
+                new Color(247, 226, 255) * strength);
+        });
+        Glow(origin, new Color(235, 207, 255) * strength, new Vector2(54));
+        Glow(origin + direction * length, Violet * (.75f * strength), new Vector2(42));
+    }
+
+    private static void DrawBeamLayer(Vector2 origin, Vector2 direction, float length, float solidWidth, int age,
+        Texture2D start, Texture2D middle, Texture2D end, float width, Color tint)
+    {
         float angle = direction.ToRotation() - MathHelper.PiOver2;
-        float length = h.Reach;
-        float scaleY = Math.Max(.5f, h.Width / (float)middle.Width);
+        float scaleY = Math.Max(.5f, solidWidth / (float)middle.Width);
         float startLength = Math.Min(start.Height * scaleY, length * .35f);
         float endLength = Math.Min(end.Height * scaleY, length * .35f);
         float bodyEnd = length - endLength;
@@ -76,7 +104,7 @@ internal static partial class MaterialistVisuals
                 float along = startLength + i * segmentLength;
                 if (along >= bodyEnd || along > visibleEnd) break;
                 float partLength = Math.Min(segmentLength, bodyEnd - along);
-                Rectangle frame = new(0, ((h.Age / 3 + i) % frames) * 16, middle.Width,
+                Rectangle frame = new(0, ((age / 3 + i) % frames) * 16, middle.Width,
                     Math.Max(1, (int)MathF.Ceiling(partLength / scaleY)));
                 DrawBeamPiece(middle, frame, origin + direction * along, angle, width, partLength, tint);
             }

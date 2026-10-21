@@ -1,10 +1,11 @@
 using System;
+using ArknightsMod.Content.Projectiles.Charged;
 
 namespace ArknightsMod.Content.Items.Weapons.Charged;
 
 internal static class DreadnoughtRules
 {
-    internal const int BaseSwingTicks = 28;
+    internal const int BaseSwingTicks = BladeSwingTemplate.BaseTicks;
     internal const float WeaponScale = .5f;
     internal const float MaxMomentum = 2f;
     internal const float MomentumPerSwing = .2f;
@@ -15,9 +16,7 @@ internal static class DreadnoughtRules
     // stays positive at the rear, connecting each turn directly to the next.
     internal static float Turn(float progress)
     {
-        float t = Math.Clamp(progress, 0, 1);
-        return t - .6f * MathF.Sin(2f * MathF.PI * t) / MathF.PI
-            + .075f * MathF.Sin(4f * MathF.PI * t) / MathF.PI;
+        return BladeSwingTemplate.Turn(progress);
     }
 
     internal static float TurnSpeed(float progress)
@@ -34,5 +33,5 @@ internal static class DreadnoughtRules
     internal static float Decay(float momentum, bool switchedAway = false) =>
         Math.Max(0, momentum - MomentumDecay * (switchedAway ? 3f : 1f));
     internal static float SwingTicks(float attackSpeed, bool swiftSkill) =>
-        Math.Max(8, (swiftSkill ? 21f : BaseSwingTicks) / Math.Max(.1f, attackSpeed));
+        BladeSwingTemplate.Duration(attackSpeed, swiftSkill);
 }

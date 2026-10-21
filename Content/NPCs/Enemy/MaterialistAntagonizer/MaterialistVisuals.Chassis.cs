@@ -35,6 +35,9 @@ internal static partial class MaterialistVisuals
     private static void DrawCoreTelegraph(MaterialistAntagonizer boss)
     {
         if (boss.CoreSuppressed || !boss.EscortFire || !MaterialistTactics.Active(boss.Timer) || boss.Order == FlightOrder.Ram && boss.Timer >= 114) return;
+        if (boss.CorePincerRound) return; // The two projection nodes draw the real beam warning and closing limits.
+        if (boss.PincerInProgress) return;
+        if (boss.CoreSaucerRound) { DrawSaucerBattery(boss); return; }
         if (boss.ArtilleryActive) { DrawArtilleryBattery(boss); return; }
         int beat = MaterialistTactics.Beat(boss.Timer);
         Vector2 origin = boss.CoreMuzzle;

@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Collections.Generic;
 using ArknightsMod.Content.Items.Evolution;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -37,8 +36,9 @@ public sealed partial class Evolution : ModNPC
         Color.Lerp(EvolutionVisuals.Sand, EvolutionVisuals.Blood, EvolutionPresentationRules.MorphColor(Timer)) : EvolutionVisuals.Blood;
     internal float CorridorVisibility => Phase == 2 ? EvolutionPresentationRules.BoundaryFade(Timer) : 1;
     internal bool CorridorEnforced => Phase == 3 || Phase == 2 && Timer >= EvolutionPresentationRules.BoundaryReady;
-    private int noPlayerTime, visualPulse, lastAxisReflection = -1000;
-    private readonly List<Projectile> axisReflectionCandidates = new(12);
+    private int noPlayerTime, visualPulse;
+    private bool PhaseInvulnerable => Transitioning || Phase == 6 || Timer < -36 || AxisHealthLocked || CrashOpeningActive;
+    internal bool Intangible => NPC.dontTakeDamage || PhaseInvulnerable;
     private int lastVisualPhase = -1;
     private bool lastVisualDesperate;
     public override string Texture => EvolutionVisuals.Root + "Newborn";
@@ -102,6 +102,9 @@ public sealed partial class Evolution : ModNPC
     }
     public override bool CheckActive() => false;
     public override bool CanHitNPC(NPC target) => false;
+    // Veto the hit itself: invulnerability must never consume penetration or trigger impact effects.
+    public override bool? CanBeHitByProjectile(Projectile projectile) => Intangible ? false : null;
+    public override bool? CanBeHitByItem(Player player, Item item) => Intangible ? false : null;
     public override bool CanHitPlayer(Player target, ref int cooldownSlot)
     {
         cooldownSlot = ImmunityCooldownID.Bosses;
@@ -130,7 +133,7 @@ public sealed partial class Evolution : ModNPC
     {
         if (Phase == 0) return;
         Charging = false; DashWarning = 0; DashVariant = -1; NPC.damage = 0;
-        NPC.dontTakeDamage = Transitioning || Phase == 6 || Timer < -36 || AxisHealthLocked || CrashOpeningActive;
+        NPC.dontTakeDamage = PhaseInvulnerable;
         if (!NPC.HasValidTarget || !Main.player[NPC.target].active || Main.player[NPC.target].dead) NPC.TargetClosest(false);
         if (!NPC.HasValidTarget || NPC.Distance(Main.player[NPC.target].Center) > 7000)
         {
@@ -168,11 +171,6 @@ public sealed partial class Evolution : ModNPC
         else if (Timer < 0) NPC.velocity *= .94f;
         else if (Transitioning) DoTransition(target);
         else if (Phase == 1) DoNewborn(target);
-        else if (Phase == 5 && Attack != 6 && Attack != 7 && NPC.Distance(target.Center) > 1300 && Timer < 25)
-        {
-            MoveTo(target.Center + new Vector2(NPC.Center.X < target.Center.X ? -480 : 480, -180), 34, .07f);
-            NPC.ai[1] = 0;
-        }
         else if (Phase == 3) DoEvolved(target);
         else DoPerfect(target);
         if (CorridorEnforced) ConstrainLowFlight();
@@ -193,9 +191,10 @@ public sealed partial class Evolution : ModNPC
         if (phase != 5) CycleEnraged = AxisEscapeRecorded = false;
         if (phase == 2)
         {
-            // 固定世界高度的800像素战斗带：下沿略低于育生核心所在的地面。
-            Arena.Y = MathHelper.Clamp(NPC.Bottom.Y + 96 - EvolutionRules.CorridorHeight * .5f,
+            float defaultCenter = MathHelper.Clamp(NPC.Bottom.Y + 96 - EvolutionRules.CorridorHeight * .5f,
                 EvolutionRules.CorridorHeight * .5f + 32, Main.maxTilesY * 16 - EvolutionRules.CorridorHeight * .5f - 32);
+            // Server selects once; both boundaries share the same bounded lift and are synced.
+            Arena.Y = EvolutionCorridorPlacement.SelectCenter(defaultCenter, Main.player[NPC.target].Center.X);
         }
         ClearBrood(phase == 2); ClearHazards(); Serial++;
         NPC.ai[0] = phase; NPC.ai[1] = 0; NPC.ai[2] = 0;
@@ -223,19 +222,34 @@ public sealed partial class Evolution : ModNPC
         bool quietLaunch = false)
     {
         if (Main.netMode == NetmodeID.MultiplayerClient) return;
+        SpawnHazard(kind, origin, velocity, parameter, delay, lifetime, peripheral, beamStyle, blade, gentleHoming, stagedSpirit, quietLaunch);
+        if (Phase != 3 || kind is EvolutionShot.CrashFan or EvolutionShot.Core or EvolutionShot.DashMarker) return;
+        if (corridorDensitySerial != Serial) { corridorDensitySerial = Serial; corridorDensityOrdinal = 0; }
+        if (!EvolutionCorridorPressureRules.ExtraShot(++corridorDensityOrdinal)) return;
+        Vector2 offset = EvolutionCorridorPressureRules.CompanionOffset(origin, velocity, PatternOrigin, CorridorTop, CorridorBottom);
+        SpawnHazard(kind, origin + offset, velocity, parameter, delay, lifetime, peripheral, beamStyle, blade, gentleHoming, stagedSpirit, quietLaunch);
+    }
+    private int corridorDensitySerial = -1, corridorDensityOrdinal;
+    private void SpawnHazard(EvolutionShot kind, Vector2 origin, Vector2 velocity, float parameter, int delay, int lifetime, bool peripheral,
+        EvolutionBeamStyle beamStyle, bool blade, bool gentleHoming, bool stagedSpirit, bool quietLaunch)
+    {
+        if (Main.netMode == NetmodeID.MultiplayerClient) return;
         int count = 0;
         foreach (Projectile p in Main.ActiveProjectiles) if (p.ModProjectile is EvolutionHazard h && h.Encounter == Encounter) count++;
         if (count >= EvolutionRules.HazardCap - (peripheral ? EvolutionRules.PeripheralReserve : 0)) return;
-        int damage = EvolutionDamageCockpit.ProjectileDamage(kind, beamStyle);
-        if (CorridorActive) damage = (int)(damage * EvolutionRules.EvolvedProjectileMultiplier);
-        damage = (int)(damage * CycleBoost);
+        int damage = EvolutionDamageCockpit.SpawnDamage(kind, beamStyle, CorridorActive, CycleBoost, Main.masterMode);
         if (EvolutionRules.IsLaser(kind) && parameter > 0) parameter *= EvolutionRules.LaserReachMultiplier;
+        if (Phase == 3 && kind == EvolutionShot.BroodRocket) parameter = Math.Max(1, (int)MathF.Round(parameter / EvolutionCorridorPressureRules.Speed));
         if (kind is EvolutionShot.Lance or EvolutionShot.Tentacle && parameter > 0) parameter *= EvolutionRules.LaserReachMultiplier;
         velocity = EvolutionRules.ShotVelocity(kind, velocity);
+        if (Phase == 3 && kind is not (EvolutionShot.Beam or EvolutionShot.Spike or EvolutionShot.Eruption or EvolutionShot.Tentacle or EvolutionShot.CrashFan))
+            velocity *= EvolutionCorridorPressureRules.Speed;
         if (kind is not (EvolutionShot.Beam or EvolutionShot.Spike or EvolutionShot.Eruption or EvolutionShot.Tentacle or EvolutionShot.CrashFan))
             velocity *= CycleBoost;
         int originalDelay = delay;
         delay = EvolutionRules.ProjectileWarning(kind, delay, Phase == 5, CycleBoost);
+        if (Phase == 3 && kind == EvolutionShot.CrashFan)
+            delay = EvolutionCorridorPressureRules.FanDelay(delay);
         lifetime += delay - originalDelay;
         if (kind == EvolutionShot.Ricochet && CorridorActive)
             lifetime = EvolutionRicochetRules.Lifetime(origin, velocity, delay, CorridorTop, CorridorBottom);
@@ -253,7 +267,8 @@ public sealed partial class Evolution : ModNPC
         if (Main.projectile.IndexInRange(index) && Main.projectile[index].ModProjectile is EvolutionHazard hazard)
         {
             hazard.Encounter = Encounter; hazard.Serial = Serial; hazard.Target = NPC.target; hazard.ArsenalOrigin = origin;
-            hazard.Parameter = parameter; hazard.Delay = delay; hazard.Lifetime = lifetime; hazard.PowerScale = CycleBoost; hazard.Projectile.netUpdate = true;
+            hazard.Parameter = parameter; hazard.Delay = delay; hazard.Lifetime = lifetime;
+            hazard.PowerScale = CycleBoost * (Phase == 3 ? EvolutionCorridorPressureRules.Speed : 1); hazard.Projectile.netUpdate = true;
             hazard.BeamStyle = beamStyle; hazard.Blade = blade; hazard.GentleHoming = gentleHoming; hazard.StagedSpirit = stagedSpirit;
             hazard.QuietLaunch = quietLaunch;
             hazard.BurstAngle = (PatternCenter - origin).ToRotation() + MathHelper.Pi / 12;
@@ -349,6 +364,7 @@ public sealed partial class Evolution : ModNPC
     private void UpdateVisuals()
     {
         UpdateCycleVisuals();
+        UpdateBloodSpectacle();
         EvolutionCinematics.Update(this);
         Lighting.AddLight(NPC.Center, ThemeColor.ToVector3() * (Phase == 5 ? .95f : .65f));
         if (lastVisualPhase != Phase)

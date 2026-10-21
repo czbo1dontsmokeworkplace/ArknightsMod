@@ -28,6 +28,10 @@ internal static class VanguardSpearVfx
     private static Texture2D Art(string path)
     {
         if (spearArt.TryGetValue(path, out Texture2D texture)) return texture;
+        // Opaque weapon art stays in the native asset lifecycle. Only soft smoke needs
+        // a private straight-alpha copy; never read back and cache a second spear body.
+        if (path != "ArknightsMod/Common/Particle/DefaultParticle")
+            return ModContent.Request<Texture2D>(path, ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         Texture2D source = ModContent.Request<Texture2D>(path).Value;
         Color[] data = new Color[source.Width * source.Height]; source.GetData(data);
         // The source spear PNGs are inspected offline too. Normalize the loaded copy
@@ -63,9 +67,10 @@ internal static class VanguardSpearVfx
         float scale = Math.Clamp(blade.Length() / localBlade.Length(), .15f, 4);
         float rotation = blade.ToRotation() - localBlade.ToRotation();
         Color tint = VanguardSpearRules.Tint(kind);
+        // Submit the body directly within the held projectile's own render pass.
         using (new ChargedOperatorVfx.Pass(false))
-            Main.EntitySpriteDraw(texture, grip - Main.screenPosition, null, Color.Lerp(light, Color.White, .32f),
-                rotation, sourceGrip, scale, SpriteEffects.None);
+            Main.spriteBatch.Draw(texture, grip - Main.screenPosition, null, Color.Lerp(light, Color.White, .32f),
+                rotation, sourceGrip, scale, SpriteEffects.None, 0f);
         if (charging)
         {
             DrawSpearRim(texture, path, grip, sourceGrip, scale, rotation, kind, age);
@@ -160,13 +165,32 @@ internal static class VanguardSpearVfx
     internal static void Spark(Vector2 point, Vector2 velocity, VanguardSpearKind kind, int age)
     {
         if (!Visible(point)) return;
-        Motif(point, -velocity * .12f, kind, 5, 10);
+        Color tint = VanguardSpearRules.Tint(kind);
+        if (age % 2 == 0 && ParticleManager.activeParticles.Count < 1400)
+            new T_Vanguard_HitFlare(point, -velocity * .08f, tint, Main.rand.NextFloat(7, 12), 10).Spawn();
+        if (age % 3 == 0) Motif(point, -velocity * .12f, kind, 5, 10);
         if (age % 4 == 0)
             ChargedOperatorVfx.Sparkle(point, -velocity * .15f, VanguardSpearRules.Tint(kind), velocity.ToRotation(), .32f);
-        if (age % 6 == 0)
+        if (age % 3 == 0)
         {
             Dust d = Dust.NewDustPerfect(point, DustID.TintableDustLighted, -velocity * .12f, 110, VanguardSpearRules.Tint(kind), .55f);
             d.noGravity = true;
+        }
+    }
+    internal static IEnumerable<global::ArknightsMod.Common.Particle.Particle> HitParticles(Vector2 point, Vector2 direction, VanguardSpearKind kind, bool strong)
+    {
+        direction = direction.SafeNormalize(Vector2.UnitX);
+        Color color = VanguardSpearRules.Tint(kind);
+        yield return new T_Vanguard_HitFlare(point, direction * .4f, color, strong ? 44 : 26, strong ? 12 : 8, true);
+        int count = strong ? 12 : 5;
+        for (int i = 0; i < count; i++)
+        {
+            // A forward fan with a few backward ricochets, rather than a uniform circle.
+            Vector2 speed = direction.RotatedBy(Main.rand.NextFloat(-.85f, .85f))
+                * Main.rand.NextFloat(strong ? 4 : 2, strong ? 10 : 6);
+            if (i % 4 == 0) speed *= -.6f;
+            yield return new T_Vanguard_HitFlare(point, speed, i % 2 == 0 ? color : Accent(kind),
+                Main.rand.NextFloat(8, strong ? 22 : 14), Main.rand.Next(10, 19));
         }
     }
     // Kept separate from registration so the exact moving burst can also be raster-checked offline.
@@ -284,6 +308,12 @@ internal static class VanguardSpearVfx
     internal static void Impact(Vector2 point, Vector2 direction, VanguardSpearKind kind, bool strong)
     {
         if (!Visible(point)) return;
+        foreach (var particle in HitParticles(point, direction, kind, strong))
+        {
+            if (ParticleManager.activeParticles.Count >= 1400) break;
+            particle.Spawn();
+        }
+        Lighting.AddLight(point, VanguardSpearRules.Tint(kind).ToVector3() * (strong ? .65f : .3f));
         int count = strong ? 36 : 6;
         Color color = VanguardSpearRules.Tint(kind);
         for (int i = 0; i < count; i++)
@@ -293,10 +323,17 @@ internal static class VanguardSpearVfx
             Motif(point, ray * (strong ? Main.rand.NextFloat(8, 14) : Main.rand.NextFloat(1.8f, 3)), kind, strong ? 10 : 5, 16 + i % 10);
             if (i % 3 == 0) ChargedOperatorVfx.Sparkle(point + ray * (strong ? 16 : 8), ray * .5f, color, angle, strong ? .8f : .5f);
         }
-        for (int i = 0; i < (strong ? 3 : 1); i++)
+        for (int i = 0; i < (strong ? 10 : 4); i++)
         {
-            Dust dust = Dust.NewDustPerfect(point, DustID.TintableDustLighted, direction.RotatedByRandom(.6f) * 2, 90, color, .65f);
+            Dust dust = Dust.NewDustPerfect(point, DustID.TintableDustLighted,
+                direction.RotatedByRandom(1.1f) * Main.rand.NextFloat(1.5f, strong ? 7 : 4), 90, color, Main.rand.NextFloat(.5f, .9f));
             dust.noGravity = true;
+            if (i % 3 == 0)
+            {
+                Dust debris = Dust.NewDustPerfect(point, DustID.Smoke, Main.rand.NextVector2Circular(2, 2),
+                    170, Color.Lerp(color, Color.Gray, .65f), .45f);
+                debris.noGravity = false;
+            }
         }
     }
     internal static void Fizzle(Vector2 point, VanguardSpearKind kind)

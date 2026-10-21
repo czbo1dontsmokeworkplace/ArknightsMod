@@ -1,7 +1,7 @@
 CatapultText: {
-	SkillKey: 按[{0}]开启技能
+	SkillKey: 按[{0}]开启选中的手动技能
 	Unbound: 请在控制设置中绑定“技能开启”键
-	Placeholder: 武器贴图暂借原版榴弹发射器，技能图标暂借陨星
+	Placeholder: 武器外观与技能图标暂用现有贴图
 }
 
 Items: {
@@ -9,11 +9,8 @@ Items: {
 		DisplayName: 榴弹发射器 [空爆]
 		Tooltip:
 			'''
-			向高空发射火箭弹，再从鼠标上方落下，最远650像素
-			炮弹碰到敌人、实心方块或抵达落点时爆炸
-			下落阶段爆炸伤害提高25%，不会破坏地形
-			基础爆炸半径140像素，不消耗弹药
-			骷髅王后可制作
+			向高空发射榴弹，从目标上方落下并爆炸
+			不消耗弹药，不会破坏地形
 			'''
 	}
 }
@@ -38,4 +35,10 @@ Projectiles: {
 	CatapultHoldout.DisplayName: 空爆的榴弹发射器
 	CatapultShell.DisplayName: 空爆榴弹
 	CatapultExplosion.DisplayName: 空爆爆破
+	// CrusherAnchorCast.DisplayName: Crusher Anchor Cast
+	// CrusherAnchorCrash.DisplayName: Crusher Anchor Crash
+	// CrusherAura.DisplayName: Crusher Aura
+	// CrusherHeldBlade.DisplayName: Crusher Held Blade
+	// CrusherImpact.DisplayName: Crusher Impact
+	// SurtrFlameWave.DisplayName: Surtr Flame Wave
 }

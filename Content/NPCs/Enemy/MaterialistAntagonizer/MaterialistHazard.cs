@@ -20,10 +20,10 @@ public sealed partial class MaterialistHazard : ModProjectile
     internal bool VerticalSlide, DenseBallistics;
     private float beamSlideSpeed;
     private float terrainLength;
-    internal bool IsBeam => Kind is DroneShot.Beam or DroneShot.ChaseBeam;
-    internal bool Moving => Kind is DroneShot.Bolt or DroneShot.Missile or DroneShot.Prism or DroneShot.Seeker or DroneShot.ArcSpark or DroneShot.Petal or DroneShot.Lattice or DroneShot.CoreLance or DroneShot.ClusterOrb or DroneShot.OrbitSpark or DroneShot.Needle or DroneShot.RailSlug or DroneShot.MachineRound or DroneShot.GravityOrb or DroneShot.DropMissile or DroneShot.CommandRocket or DroneShot.CannonShell or DroneShot.ScoutPulse or DroneShot.ArtsOrb;
+    internal bool IsBeam => Kind is DroneShot.Beam or DroneShot.ChaseBeam or DroneShot.PincerBeam;
+    internal bool Moving => Kind is DroneShot.Bolt or DroneShot.Missile or DroneShot.Prism or DroneShot.Seeker or DroneShot.ArcSpark or DroneShot.Petal or DroneShot.Lattice or DroneShot.CoreLance or DroneShot.ClusterOrb or DroneShot.OrbitSpark or DroneShot.Needle or DroneShot.RailSlug or DroneShot.MachineRound or DroneShot.GravityOrb or DroneShot.DropMissile or DroneShot.CommandRocket or DroneShot.CannonShell or DroneShot.ScoutPulse or DroneShot.ArtsOrb or DroneShot.SaucerRound or DroneShot.RaptorRocket;
     internal float Reach => IsBeam ? terrainLength : Length;
-    internal float Width => Style == FireStyle.Containment && IsBeam ? 30 : Kind == DroneShot.ChaseBeam ? 14 : Style == FireStyle.Precision ? 10 : MaterialistRules.BeamWidth;
+    internal float Width => Kind == DroneShot.PincerBeam ? 24 : Style == FireStyle.Containment && IsBeam ? 30 : Kind == DroneShot.ChaseBeam ? 14 : Style == FireStyle.Precision ? 10 : MaterialistRules.BeamWidth;
     internal DroneShot Kind => (DroneShot)(int)Projectile.ai[2];
     internal MaterialistAntagonizer Boss => MaterialistAntagonizer.Owner((int)Projectile.ai[0] - 1, (int)Projectile.ai[1]);
     private bool firedVisual;
@@ -58,6 +58,12 @@ public sealed partial class MaterialistHazard : ModProjectile
     {
         get
         {
+            if (Kind == DroneShot.PincerBeam)
+            {
+                float close = MaterialistFormation.Smooth((Age - Delay) / (float)Math.Max(1, MaterialistAntagonizer.PincerSweepTicks));
+                float half = MathHelper.Lerp(.80f, PincerFinalHalfAngle, close);
+                return Projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(-Bend * half);
+            }
             float t = MathHelper.Clamp((Age - Delay) / (float)Math.Max(1, Duration), 0, 1);
             return Projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedBy((t - .5f) * Sweep);
         }
@@ -102,6 +108,11 @@ public sealed partial class MaterialistHazard : ModProjectile
                 Projectile.Center = center;
             }
         }
+        if (Kind == DroneShot.SaucerRound)
+        {
+            Projectile.tileCollide = true;
+            Projectile.penetrate = 1;
+        }
         int flight = Age - Delay;
         if (!UpdatePayload(boss, flight)) return;
         if (!UpdateArtillery(boss, flight)) return;
@@ -142,6 +153,7 @@ public sealed partial class MaterialistHazard : ModProjectile
             }
         }
         if (IsBeam) Projectile.Center = Anchor;
+        if (Kind == DroneShot.PincerBeam) UpdatePincerAim();
         if (Kind == DroneShot.ChaseBeam && !VerticalSlide)
         {
             if (flight >= 0 && Target >= 0 && Target < Main.maxPlayers && Main.player[Target].active && !Main.player[Target].dead)
@@ -187,11 +199,14 @@ public sealed partial class MaterialistHazard : ModProjectile
                 {
                     bool mine = Kind is DroneShot.FluxMine or DroneShot.TrailBomb;
                     MaterialistVisuals.Burst(Projectile.Center, accent, IsBeam ? 1 : 1.4f);
-                    MaterialistEffects.Pulse(Projectile.Center, mine ? MineRadius : IsBeam ? 100 : Kind == DroneShot.ArtilleryBlast ? Length : 180, accent, IsBeam ? 1 : .7f);
-                    SoundEngine.PlaySound((IsBeam ? SoundID.Item33 : SoundID.Item14) with { Volume = .65f, MaxInstances = 3 }, Projectile.Center);
+                    if (!IsBeam || Shooter >= 0)
+                        MaterialistEffects.Pulse(Projectile.Center, mine ? MineRadius : IsBeam ? 100 : Kind == DroneShot.ArtilleryBlast ? Length : 180, accent, IsBeam ? 1 : .7f);
+                    SoundEngine.PlaySound((Kind == DroneShot.PincerBeam ? SoundID.Zombie104 : IsBeam ? SoundID.Item158 : SoundID.Item14)
+                        with { Volume = IsBeam ? .5f : .65f, MaxInstances = 3 }, Projectile.Center);
                 }
-                else if (Kind == DroneShot.CommandRocket || Kind == DroneShot.CannonShell)
-                    SoundEngine.PlaySound((Kind == DroneShot.CannonShell ? SoundID.Item61 : SoundID.Item62) with { Volume = .5f, Pitch = -.2f, MaxInstances = 3 }, Projectile.Center);
+                else if (Kind is DroneShot.CommandRocket or DroneShot.RaptorRocket or DroneShot.DropMissile or DroneShot.Missile or DroneShot.CannonShell)
+                    SoundEngine.PlaySound((Kind == DroneShot.CannonShell ? SoundID.Item61 : SoundID.Item39) with { Volume = .5f, Pitch = -.2f, MaxInstances = 3 }, Projectile.Center);
+                else if (Kind == DroneShot.SaucerRound) PlaySaucerSound();
                 else if (Kind == DroneShot.MachineRound)
                     SoundEngine.PlaySound(SoundID.Item40 with { Volume = .45f, Pitch = -.25f, PitchVariance = .08f, MaxInstances = 4 }, Anchor);
                 else SoundEngine.PlaySound(SoundID.Item33 with { Volume = .28f, Pitch = Kind is DroneShot.CoreLance or DroneShot.ClusterOrb ? -.15f : .35f, MaxInstances = 3 }, Projectile.Center);
@@ -204,7 +219,7 @@ public sealed partial class MaterialistHazard : ModProjectile
         var boss = Boss;
         if (HarmlessRetirement || boss == null || boss.Paused || Age < Delay || Age >= Delay + Duration) return false;
         if (Kind == DroneShot.Beacon) return false;
-        if (Kind == DroneShot.CommandRocket && Age - Delay < 28) return false;
+        if (Kind is DroneShot.CommandRocket or DroneShot.RaptorRocket && Age - Delay < 28) return false;
         if (Kind == DroneShot.CannonShell && Age - Delay < 12) return false;
         if (Kind == DroneShot.ArtilleryBlast && Age >= Delay + 10) return false;
         if (IsBeam && (!ShooterValid || BeamStrength < .3f || Reach < 1)) return false;
@@ -217,6 +232,7 @@ public sealed partial class MaterialistHazard : ModProjectile
     public override void OnHitPlayer(Player target, Player.HurtInfo info)
     {
         hitPlayers[target.whoAmI] = true;
+        if (Kind == DroneShot.SaucerRound) SaucerImpact();
         if (Kind == DroneShot.MachineRound) MaterialistBallistics.Impact(Projectile.Center, -Projectile.velocity.SafeNormalize(Vector2.UnitY), false, true);
         if (Kind is DroneShot.ScoutPulse or DroneShot.ArtsOrb && !Main.dedServ)
             MaterialistEffects.Pulse(Projectile.Center, Kind == DroneShot.ArtsOrb ? 36 : 22, MaterialistVisuals.AmmoColor(this));
@@ -242,7 +258,10 @@ public sealed partial class MaterialistHazard : ModProjectile
         {
             MaterialistVisuals.Burst(Projectile.Center, MaterialistVisuals.AmmoColor(this), Kind == DroneShot.DropMissile ? 1.25f : .75f);
             MaterialistEffects.Pulse(Projectile.Center, Kind == DroneShot.DropMissile ? 78 : 44, MaterialistVisuals.AmmoColor(this), .6f);
+            if (Kind == DroneShot.DropMissile)
+                SoundEngine.PlaySound(SoundID.Item14 with { Volume = .55f, MaxInstances = 3 }, Projectile.Center);
         }
+        if (Kind == DroneShot.SaucerRound) SaucerImpact();
         return true;
     }
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
@@ -273,7 +292,7 @@ public sealed partial class MaterialistHazard : ModProjectile
                 return Vector2.DistanceSquared(closest, Projectile.Center) <= radius * radius;
             }
             return projHitbox.Intersects(targetHitbox) || Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), previous,
-                Projectile.Center, Kind is DroneShot.RailSlug or DroneShot.MachineRound ? 6 : 10, ref distance);
+                Projectile.Center, Kind == DroneShot.SaucerRound ? 8 : Kind is DroneShot.RailSlug or DroneShot.MachineRound ? 6 : 10, ref distance);
         }
         if (IsBeam)
         {
@@ -300,6 +319,7 @@ public sealed partial class MaterialistHazard : ModProjectile
             Projectile.extraUpdates = MaterialistRules.MachineUpdates - 1;
         }
         if (Kind == DroneShot.ArtsOrb) Projectile.width = Projectile.height = 26;
+        if (Kind == DroneShot.SaucerRound) Projectile.width = Projectile.height = 8;
     }
     public override bool PreDraw(ref Color lightColor)
     {

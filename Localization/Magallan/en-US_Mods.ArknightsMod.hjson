@@ -3,9 +3,8 @@ Items: {
 		DisplayName: Soaring Dragon Controller [Magallan]
 		Tooltip:
 			'''
-			Summons a “Soaring Dragon” drone to fight alongside you
-			The drone always follows you in flight
-			It equips a different module for each skill
+			Summons a Long-Teng drone that follows you through the air
+			The selected skill determines its cooling, laser, or missile module
 			'''
 		CurrentModule: Current module: “{0}”
 	}

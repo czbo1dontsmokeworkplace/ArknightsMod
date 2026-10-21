@@ -8,12 +8,17 @@ EvolutionCinematicConfig: {
 
 	ScreenShake: {
 		Label: Boss战斗震屏
-		Tooltip: 只影响本机视角；不会锁定镜头或移动角色
+		Tooltip: 仅控制本机震屏，不移动角色；临界自爆镜头由独立选项控制
 	}
 
 	ScreenFilters: {
 		Label: 转场明暗滤镜
 		Tooltip: 蓄势时短暂压暗、蜕变时柔和白闪并快速恢复；减弱演出也会关闭此效果
+	}
+
+	DeathCamera: {
+		Label: 临界自爆镜头
+		Tooltip: 自爆时将本机镜头平滑转向Boss，余波结束后回到角色当前位置；不移动角色，不改变缩放
 	}
 }
 

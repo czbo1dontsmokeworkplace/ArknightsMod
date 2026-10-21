@@ -20,8 +20,9 @@ public sealed class ChargedOperatorHoldout : ModProjectile
     internal ChargedOperatorKind Kind => (ChargedOperatorKind)(int)Projectile.ai[0];
     private bool Melee => ChargedOperatorRules.IsMelee(Kind);
     private bool AutomaticShot => !Melee && Projectile.ai[1] < 0;
+    private bool RequiresFullSniperCharge => Kind is ChargedOperatorKind.Ambriel or ChargedOperatorKind.Andreana or ChargedOperatorKind.Firewatch;
     private int skill, secondaryHits, recovery = 26;
-    private bool heavy, playedRelease;
+    private bool heavy, playedRelease, playedChargeReady;
     private float power;
     private int VisualDuration => AutomaticShot ? ChargedOperatorRules.SniperLeftInterval + 1
         : Melee ? recovery : SniperReleaseHoldTicks + 1;
@@ -87,13 +88,15 @@ public sealed class ChargedOperatorHoldout : ModProjectile
             if (local && (Melee ? !owner.channel : AutomaticShot || !Main.mouseRight)) Release(owner, weapon);
             else if (!AutomaticShot)
             {
-                float before = Completion;
                 Projectile.ai[1] = Math.Min(ChargedOperatorRules.ChargeTicks(Kind), Projectile.ai[1] + 1);
                 if (local && (int)Projectile.ai[1] % 6 == 0 && Completion < 1) Projectile.netUpdate = true;
-                if (before < 1 && Completion >= 1)
+                if (!playedChargeReady && Completion >= 1)
                 {
+                    playedChargeReady = true;
                     Projectile.netUpdate = local;
-                    if (!Main.dedServ) SoundEngine.PlaySound(SoundID.MaxMana with { Volume = .55f }, owner.Center);
+                    // Vanilla gun-cocking cue for the three charged sniper rifles.
+                    if (!Main.dedServ) SoundEngine.PlaySound((RequiresFullSniperCharge ? SoundID.Item149 : SoundID.MaxMana)
+                        with { Volume = RequiresFullSniperCharge ? .75f : .55f }, owner.Center);
                     ChargedOperatorVfx.Burst(Muzzle(owner), Kind, 12, 28);
                 }
                 if (!Main.dedServ && Main.GameUpdateCount % 8 == 0)
@@ -140,6 +143,16 @@ public sealed class ChargedOperatorHoldout : ModProjectile
     }
     private void Release(Player owner, ChargedOperatorWeapon weapon)
     {
+        if (RequiresFullSniperCharge && !AutomaticShot && Completion < 1)
+        {
+            // Cancel before picking ammo or entering any firing/recoil/cooldown path.
+            owner.heldProj = -1;
+            owner.itemTime = owner.itemAnimation = 0;
+            owner.SetCompositeArmFront(false, Player.CompositeArmStretchAmount.Full, 0);
+            owner.SetCompositeArmBack(false, Player.CompositeArmStretchAmount.Full, 0);
+            weapon.Item.noUseGraphic = false;
+            Projectile.Kill(); return;
+        }
         if (!weapon.ReleaseAmmo(owner, out int damage, out float knockback, out int ammo)) { Projectile.Kill(); return; }
         power = Completion; heavy = !AutomaticShot && power >= 1;
         skill = ChargedOperatorPlayer.ActiveSkill(owner);

@@ -13,6 +13,7 @@ internal static partial class MaterialistVisuals
     {
         Projectile p = h.Projectile;
         if (DrawEscortAmmo(h)) return true;
+        if (h.Kind == DroneShot.SaucerRound) { DrawSaucerRound(h); return true; }
         if (h.Kind == DroneShot.Missile) { DrawVanillaRocket(h, color); return true; }
         Vector2 axis = p.velocity.SafeNormalize(Vector2.UnitY), n = axis.RotatedBy(MathHelper.PiOver2);
         if (h.Kind == DroneShot.MachineRound) { MaterialistBallistics.DrawRound(h); return true; }

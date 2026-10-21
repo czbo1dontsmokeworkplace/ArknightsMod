@@ -1,66 +1,35 @@
 Items: {
 	MelanthasSword: {
 		DisplayName: Standard Sword [Melantha]
-		Tooltip:
-			'''
-			Early game
-			Hold left-click to continuously repeat individual full-circle slashes. Each slash accelerates sharply across the front and slows behind you; turning reverses rotation.
-			The blade deals damage on contact. Each turn can hit only one enemy for 300% damage, 300% knockback and a guaranteed critical strike, then stops dealing damage until the next turn.
-			Each successful hit grants +20% weapon damage, up to 10 stacks and 300% of base damage. Attack speed does not increase. The overhead bar shows the buildup.
-			Hits on different enemies also build stacks. Missed swings preserve stacks. While held, bonuses decay after 1 second without attacking; switching away drains them 3 times faster. The bar fades out at zero.
-			The first hit of each turn triggers the powerful impact sound and effects at the actual blade contact.
-			'''
+		Tooltip: Hold left-click to chain slashes with the sword
 	}
 
 	MataimaruGlaive: {
 		DisplayName: Naginata [Matoimaru]
-		Tooltip:
-			'''
-			Early Hardmode
-			Hold left-click to continuously repeat individual full-circle slashes. Each slash accelerates sharply across the front and slows behind you; turning reverses rotation.
-			The blade deals damage on contact. Each turn can hit only one enemy for 300% damage, 300% knockback and a guaranteed critical strike, then stops dealing damage until the next turn.
-			Each successful hit grants +20% weapon damage, up to 10 stacks and 300% of base damage. Attack speed does not increase. The overhead bar shows the buildup.
-			Hits on different enemies also build stacks. Missed swings preserve stacks. While held, bonuses decay after 1 second without attacking; switching away drains them 3 times faster. The bar fades out at zero.
-			The first hit of each turn triggers the powerful impact sound and effects at the actual blade contact.
-			'''
+		Tooltip: Hold left-click to chain slashes with the naginata
 	}
 
 	FrankaRapier: {
 		DisplayName: Thermite Rapier [Franka]
 		Tooltip:
 			'''
-			Post-Plantera
-			Hold left-click to continuously repeat individual full-circle slashes. Each slash accelerates sharply across the front and slows behind you; turning reverses rotation.
-			The blade deals damage on contact. Each turn can hit only one enemy for 300% damage, 300% knockback and a guaranteed critical strike, then stops dealing damage until the next turn.
-			Each successful hit grants +20% weapon damage, up to 10 stacks and 300% of base damage. Attack speed does not increase. The overhead bar shows the buildup.
-			Hits on different enemies also build stacks. Missed swings preserve stacks. While held, bonuses decay after 1 second without attacking; switching away drains them 3 times faster. The bar fades out at zero.
-			The first hit of each turn triggers the powerful impact sound and effects at the actual blade contact.
-			Slashes have a 25% chance to ignore defense and ignite enemies.
+			Hold left-click to chain slashes with the thermite blade
+			Slashes have a 25% chance to ignore defense and set enemies ablaze
 			'''
 	}
 
 	NearlRadiantSword: {
 		DisplayName: Blazing Sun Swordlance [Radiant Nearl]
-		Tooltip:
-			'''
-			Lunar events
-			Hold left-click to continuously repeat individual full-circle slashes. Each slash accelerates sharply across the front and slows behind you; turning reverses rotation.
-			The blade deals damage on contact. Each turn can hit only one enemy for 300% damage, 300% knockback and a guaranteed critical strike, then stops dealing damage until the next turn.
-			Each successful hit grants +20% weapon damage, up to 10 stacks and 300% of base damage. Attack speed does not increase. The overhead bar shows the buildup.
-			Hits on different enemies also build stacks. Missed swings preserve stacks. While held, bonuses decay after 1 second without attacking; switching away drains them 3 times faster. The bar fades out at zero.
-			The first hit of each turn triggers the powerful impact sound and effects at the actual blade contact.
-			'''
+		Tooltip: Hold left-click to chain slashes with the swordlance
 	}
 
 	AmbrielRifle: {
 		DisplayName: Longshot Rifle [Ambriel]
 		Tooltip:
 			'''
-			Post-Skeletron
-			Hold left-click to automatically fire one straight special bullet every 60 ticks for 100% damage.
-			Hold right-click for 1.5 seconds, then release. Full charge fires a 180% damage laser with unlimited enemy piercing.
-			Releasing right-click below full charge fires a special bullet that hits up to 4 enemies: 50% damage at 0% charge, 100% damage at 80%-99% charge.
-			Right-click bullet damage rises linearly from 0% to 80% charge. Converts all ammunition and consumes one bullet per shot. Charging does not reduce movement speed.
+			Converts bullets into straight-flying special rounds
+			Release right-click after a full charge to fire a powerful piercing laser; releasing early cancels the shot
+			Each shot consumes 1 bullet; charging does not reduce movement speed
 			'''
 	}
 
@@ -68,11 +37,9 @@ Items: {
 		DisplayName: Inkshot Rifle [Andreana]
 		Tooltip:
 			'''
-			Early Hardmode
-			Hold left-click to automatically fire one straight special bullet every 60 ticks for 100% damage.
-			Hold right-click for 1.5 seconds, then release. Full charge fires a 180% damage laser with unlimited enemy piercing.
-			Releasing right-click below full charge fires a special bullet that hits up to 4 enemies: 50% damage at 0% charge, 100% damage at 80%-99% charge.
-			Right-click bullet damage rises linearly from 0% to 80% charge. Converts all ammunition and consumes one bullet per shot. Charging does not reduce movement speed.
+			Converts bullets into straight-flying special rounds
+			Release right-click after a full charge to fire a powerful piercing laser; releasing early cancels the shot
+			Each shot consumes 1 bullet; charging does not reduce movement speed
 			'''
 	}
 
@@ -80,11 +47,9 @@ Items: {
 		DisplayName: Woodland Sniper [Firewatch]
 		Tooltip:
 			'''
-			Post-Plantera
-			Hold left-click to automatically fire one straight special bullet every 60 ticks for 100% damage.
-			Hold right-click for 1.5 seconds, then release. Full charge fires a 180% damage laser with unlimited enemy piercing.
-			Releasing right-click below full charge fires a special bullet that hits up to 4 enemies: 50% damage at 0% charge, 100% damage at 80%-99% charge.
-			Right-click bullet damage rises linearly from 0% to 80% charge. Converts all ammunition and consumes one bullet per shot. Charging does not reduce movement speed.
+			Converts bullets into straight-flying special rounds
+			Release right-click after a full charge to fire a powerful piercing laser; releasing early cancels the shot
+			Each shot consumes 1 bullet; charging does not reduce movement speed
 			'''
 	}
 
@@ -92,8 +57,8 @@ Items: {
 		DisplayName: Helix Crossbow [Melanite]
 		Tooltip:
 			'''
-			Mechanical Boss progression
-			Converts arrows into heavy bolts wrapped in two purple helices. Fires one piercing arrow per shot.
+			Converts arrows into spiral bolts that pierce up to 6 enemies
+			Grants 12 armor penetration
 			'''
 	}
 
@@ -101,26 +66,22 @@ Items: {
 		DisplayName: Heavy Crossbow [Provence]
 		Tooltip:
 			'''
-			Post-Plantera
-			Uses arrows, converting them to unique crossbow bolts.
+			Converts arrows into slow-firing heavy bolts that pierce up to 9 enemies
+			Grants 25 armor penetration
 			'''
 	}
 
 	GreyThroatCrossbow: {
 		DisplayName: Feather Crossbow [GreyThroat]
-		Tooltip:
-			'''
-			Mechanical bosses
-			Uses arrows, converting them to unique crossbow bolts.
-			'''
+		Tooltip: Converts arrows into special bolts fired in rapid three-shot bursts
 	}
 
 	BluePoisonCrossbow: {
 		DisplayName: Venom Crossbow [Blue Poison]
 		Tooltip:
 			'''
-			Post-Plantera
-			Converts arrows into venom bolts. Hold left-click for rapid four-shot bursts.
+			Converts arrows into venom bolts fired in rapid four-shot bursts
+			Bolts hit up to 2 enemies and inflict Venom
 			'''
 	}
 }
@@ -272,7 +233,7 @@ ChargedArsenal: {
 	Tock: Tock
 	SkillKey: Press [{0}] to activate the selected manual skill (rebind in Settings → Controls)
 	Unbound: Bind Skill Activate in Settings → Controls
-	Placeholder: Temporary weapon art and skill icons
+	Placeholder: Weapon art and skill icons use temporary sprites
 }
 
 Crossbows: {

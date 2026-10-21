@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.MaterialistAntagonizer;
 
 public sealed partial class MaterialistWing
 {
-    private enum RaptorLeg : byte { Waiting, Depart, Scan, Strafe, Egress }
+    private enum RaptorLeg : byte { Waiting, Depart, Scan, Strafe, Egress, Support }
     private const int RaptorScanTicks = 84, RaptorStrafeTicks = 210, RaptorEgressTicks = 90;
     private RaptorLeg raptorLeg;
     private int raptorLegAge, raptorSortie, raptorHeading = 1;
@@ -21,14 +21,15 @@ public sealed partial class MaterialistWing
     private ulong raptorLastShot = ulong.MaxValue;
     private static readonly Color RaptorGold = new(255, 196, 66);
     private bool RaptorFinal => MaterialistAntagonizer.Owner(OwnerIndex, Encounter)?.Phase == 3;
-    private float RaptorEntryPitch => RaptorFinal ? MathHelper.ToRadians(65) : MathHelper.PiOver4;
+    private bool RaptorHorizontal => RaptorFinal && Slot == 9;
+    private float RaptorEntryPitch => RaptorHorizontal ? 0 : RaptorFinal ? MathHelper.ToRadians(65) : MathHelper.PiOver4;
 
     private bool RaptorWindow(MaterialistAntagonizer boss) => boss != null && !Retreating && Age >= MaterialistRules.EscortGrace &&
         boss.EscortFire && boss.Order != FlightOrder.Deploy && !boss.Paused &&
         raptorLeg == RaptorLeg.Strafe && (boss.Phase == 3 ? raptorRearCountdown != 0 : raptorLegAge < RaptorStrafeTicks);
     private bool RaptorShot(MaterialistAntagonizer boss) => RaptorWindow(boss) &&
         (boss.Phase == 3 || raptorLegAge % (raptorLegAge < 24 ? 4 : 2) == 0);
-    private float RaptorPitch => RaptorFinal ? MathHelper.ToRadians(65) : MathHelper.ToRadians(MathHelper.Lerp(45, 70,
+    private float RaptorPitch => RaptorHorizontal ? 0 : RaptorFinal ? MathHelper.ToRadians(65) : MathHelper.ToRadians(MathHelper.Lerp(45, 70,
         MaterialistFormation.Smooth(raptorLegAge / (float)RaptorStrafeTicks)));
     // Terraria's Y axis points down: (+cos65,+sin65) is the user's right/-65 degrees;
     // (-cos65,+sin65) is left/245 degrees in the usual Y-up angle convention.
@@ -36,13 +37,13 @@ public sealed partial class MaterialistWing
 
     private bool CanBeginRaptorPass(MaterialistAntagonizer boss)
     {
-        if (!boss.EscortsReleased || boss.Paused || boss.RaptorHandoffTicks > 0) return false;
+        if (!boss.EscortsReleased || boss.Paused) return false;
         bool nextAlive = false;
         foreach (NPC escort in Main.ActiveNPCs)
         {
             if (!escort.TryGetGlobalNPC<MaterialistWing>(out var wing) || !wing.BelongsTo(boss) ||
                 wing.Retreating || Role(escort) != WingRole.Raptor) continue;
-            // This includes a pass on its final tick: no overlap due to NPC update order.
+            // The relief aircraft prepares during the other's two-second tail; actual fire still waits for handoff.
             if (wing.raptorLeg == RaptorLeg.Strafe) return false;
             if (wing.Slot == boss.RaptorNextSlot) nextAlive = true;
         }
@@ -52,6 +53,26 @@ public sealed partial class MaterialistWing
     private void FlyRaptorSortie(NPC npc, MaterialistAntagonizer boss)
     {
         npc.damage = 0;
+        if (raptorRelayAge >= 0) raptorRelayAge++;
+        var partner = FiringRaptorPartner(npc, boss);
+        if (MaterialistAntagonizer.Authority && boss.Phase == 3 && !boss.Paused && boss.EscortsReleased &&
+            raptorLeg != RaptorLeg.Strafe && partner != null && partner.raptorRearCountdown < 0 && raptorRelayAge < 0 &&
+            raptorLeg != RaptorLeg.Support)
+            SetRaptorLeg(npc, RaptorLeg.Support);
+        if (raptorLeg == RaptorLeg.Support && !boss.Paused)
+        {
+            FlyRaptorSupport(npc, boss);
+            if (MaterialistAntagonizer.Authority && (partner == null || partner.raptorRearCountdown >= 0))
+            {
+                BeginRaptorSortie(npc, boss);
+                raptorRelayAge = 0;
+                npc.netUpdate = true;
+            }
+            FireRaptorSupport(npc, boss, partner);
+            raptorLegAge++;
+            UpdateRaptorAirframe(npc);
+            return;
+        }
         if (raptorLeg == RaptorLeg.Waiting)
         {
             // Launch as two staggered aircraft, without inheriting the carrier's future formation goals.
@@ -72,10 +93,13 @@ public sealed partial class MaterialistWing
         switch (raptorLeg)
         {
             case RaptorLeg.Depart:
-                MoveRaptorTo(npc, raptorRunStart, 8.5f, .17f);
+                // Relief preparation overlaps the outgoing stream, with a bounded smooth approach.
+                MoveRaptorTo(npc, raptorRunStart, raptorRelayAge >= 0 ? 16 : 8.5f, raptorRelayAge >= 0 ? .32f : .17f);
                 TurnRaptorGun(RaptorDirection(RaptorEntryPitch), .008f);
                 if (MaterialistAntagonizer.Authority && npc.Distance(raptorRunStart) < 52 && npc.velocity.LengthSquared() < 5)
-                    SetRaptorLeg(npc, RaptorLeg.Scan);
+                    CommitRaptorScan(npc, boss);
+                else if (MaterialistAntagonizer.Authority && boss.Phase == 3 && raptorLegAge >= 240)
+                    CommitRaptorScan(npc, boss);
                 // If the player left the selected area, still finish the old route. Only an unreachable approach is replanned.
                 else if (MaterialistAntagonizer.Authority && raptorLegAge > 420) BeginRaptorSortie(npc, boss);
                 break;
@@ -84,22 +108,12 @@ public sealed partial class MaterialistWing
                 TurnRaptorGun(RaptorDirection(RaptorEntryPitch), .006f);
                 if (!Main.dedServ && raptorLegAge == 1)
                     SoundEngine.PlaySound(SoundID.Item93 with { Volume = .45f, Pitch = -.55f, MaxInstances = 2 }, npc.Center);
-                if (MaterialistAntagonizer.Authority && raptorLegAge >= RaptorScanTicks && boss.Order != FlightOrder.Deploy &&
-                    npc.Distance(raptorRunStart) < 70 && (boss.Phase != 3 || Math.Abs(npc.Center.Y - raptorRunStart.Y) < 1.5f) &&
-                    Math.Abs(MathHelper.WrapAngle(aimAngle - RaptorDirection(RaptorEntryPitch).ToRotation())) < .025f)
+                if (MaterialistAntagonizer.Authority && RaptorScanReady && boss.Order != FlightOrder.Deploy &&
+                    (boss.Phase == 3 || npc.Distance(raptorRunStart) < 70 &&
+                    Math.Abs(MathHelper.WrapAngle(aimAngle - RaptorDirection(RaptorEntryPitch).ToRotation())) < .025f))
                 {
                     if (CanBeginRaptorPass(boss))
-                    {
-                        float forward = (Main.player[boss.NPC.target].Center.X - npc.Center.X) * raptorHeading;
-                        if (boss.Phase == 3 && (forward < 180 || forward > 1000))
-                        {
-                            // The target crossed the old runway during approach/scan/waiting for our turn.
-                            // Re-approach and scan the correct side; never start by firing away from the target.
-                            BeginRaptorSortie(npc, boss);
-                            break;
-                        }
                         SetRaptorLeg(npc, RaptorLeg.Strafe);
-                    }
                 }
                 break;
             case RaptorLeg.Strafe:
@@ -112,6 +126,7 @@ public sealed partial class MaterialistWing
                             {
                                 // First rear-half-plane detection commits the stop. No continuous occupancy requirement.
                                 raptorRearCountdown = 120;
+                                PrepareRaptorRelief(npc, boss);
                                 npc.netUpdate = true;
                                 break;
                             }
@@ -121,8 +136,11 @@ public sealed partial class MaterialistWing
                         SetRaptorLeg(npc, RaptorLeg.Egress);
                         break;
                     }
-                    npc.Center = new Vector2(npc.Center.X, raptorCruiseY);
-                    npc.velocity.Y = 0;
+                    if (!RaptorHorizontal)
+                    {
+                        npc.Center = new Vector2(npc.Center.X, raptorCruiseY);
+                        npc.velocity.Y = 0;
+                    }
                 }
                 // A slow ground-attack pass in world coordinates: neither this velocity nor the gun reads the player.
                 float progress = raptorLegAge / (float)RaptorStrafeTicks;
@@ -130,7 +148,14 @@ public sealed partial class MaterialistWing
                     3.6f + MathF.Sin(progress * MathHelper.Pi) * .65f;
                 // Preserve the entire acceleration profile, with 1.5x speed and acceleration while strafing.
                 float multiplier = boss.Phase == 3 ? 1.5f : 1;
-                CoastRaptor(npc, new Vector2(raptorHeading * speed, boss.Phase == 3 ? 0 : .12f) * multiplier, .095f * multiplier);
+                if (RaptorHorizontal)
+                {
+                    Player target = Main.player[boss.NPC.target];
+                    // Horizontal gun axis stays fixed. The airframe can only rise slowly towards a higher target.
+                    float rise = MathHelper.Clamp((target.Center.Y - npc.Center.Y) * .01f, -1.5f, 0);
+                    CoastRaptor(npc, new Vector2(raptorHeading * .6f, rise), .055f);
+                }
+                else CoastRaptor(npc, new Vector2(raptorHeading * speed, boss.Phase == 3 ? 0 : .12f) * multiplier, .095f * multiplier);
                 if (boss.Phase == 3) aimAngle = RaptorDirection(RaptorPitch).ToRotation();
                 else TurnRaptorGun(RaptorDirection(RaptorPitch), .004f);
                 if (MaterialistAntagonizer.Authority) FireRaptor(npc, boss);
@@ -141,12 +166,14 @@ public sealed partial class MaterialistWing
                 if (MaterialistAntagonizer.Authority && raptorLegAge >= RaptorEgressTicks) BeginRaptorSortie(npc, boss);
                 break;
         }
+        FireRaptorSupport(npc, boss, partner);
         raptorLegAge++;
         UpdateRaptorAirframe(npc);
     }
     private void BeginRaptorSortie(NPC npc, MaterialistAntagonizer boss)
     {
-        // The only player-position sample in the entire sortie. Every later position/angle uses this locked ground sector.
+        // Ground attacks sample altitude only here. Horizontal attacks may slowly rise after firing, without turning.
+        bool relief = raptorRelayAge >= 0;
         Player player = Main.player[boss.NPC.target];
         Vector2 sample = player.Center;
         raptorHeading = boss.Phase == 3 ? (npc.Center.X < sample.X ? 1 : -1) :
@@ -174,11 +201,13 @@ public sealed partial class MaterialistWing
         }
         raptorGround = new Vector2(centerX, (top + bottom) * .5f);
         raptorScanSize = new Vector2(1120, Math.Max(150, bottom - top + 100));
-        float cruiseY = boss.Phase == 3 ? sample.Y - Main.rand.NextFloat(10 * 16 + 2, 20 * 16 - 2) : top - 420 - (Slot - 8) * 55;
+        float cruiseY = RaptorHorizontal ? sample.Y : boss.Phase == 3 ?
+            sample.Y - Main.rand.NextFloat(10 * 16 + 2, 20 * 16 - 2) : top - 420 - (Slot - 8) * 55;
         float runX = boss.Phase == 3 ? sample.X - raptorHeading * 520 : centerX - raptorHeading * 520;
         raptorRunStart = new Vector2(MathHelper.Clamp(runX, 64, Main.maxTilesX * 16 - 64),
             MathHelper.Clamp(cruiseY, 64, Main.maxTilesY * 16 - 64));
         SetRaptorLeg(npc, RaptorLeg.Depart);
+        if (relief) raptorRelayAge = 0;
     }
     private void SetRaptorLeg(NPC npc, RaptorLeg leg)
     {
@@ -188,7 +217,7 @@ public sealed partial class MaterialistWing
             if (boss != null)
             {
                 boss.RaptorNextSlot = Slot == 8 ? 9 : 8;
-                boss.RaptorHandoffTicks = 24;
+                boss.RaptorHandoffTicks = 0;
                 boss.NPC.netUpdate = true;
             }
         }
@@ -197,6 +226,7 @@ public sealed partial class MaterialistWing
         {
             raptorCruiseY = npc.Center.Y;
             raptorRearCountdown = -1;
+            raptorRelayAge = -1;
         }
         npc.netUpdate = true;
     }
@@ -225,67 +255,66 @@ public sealed partial class MaterialistWing
         Vector2 direction = aimAngle.ToRotationVector2();
         Vector2 normal = direction.RotatedBy(MathHelper.PiOver2);
         Vector2 muzzle = Muzzle(npc) + normal * Main.rand.NextFloat(-4, 4);
-        float pitch = boss.Phase == 3 ? MathHelper.ToRadians(65) :
+        float pitch = boss.Phase == 3 ? RaptorPitch :
             MathHelper.Clamp(RaptorPitch + Main.rand.NextFloat(-.045f, .045f), MathHelper.PiOver4, MathHelper.ToRadians(70));
         boss.Shoot(DroneShot.MachineRound, muzzle, RaptorDirection(pitch) * 15,
             duration: 24, shooter: npc.whoAmI, style: FireStyle.Suppression);
     }
     private void DrawRaptorWarning(NPC npc, MaterialistAntagonizer boss)
     {
-        if (raptorLeg is RaptorLeg.Waiting or RaptorLeg.Egress) return;
+        if (raptorLeg is RaptorLeg.Waiting or RaptorLeg.Egress or RaptorLeg.Support) return;
         Vector2 muzzle = Muzzle(npc), direction = aimAngle.ToRotationVector2();
-        if (raptorLeg == RaptorLeg.Depart)
+        if (raptorLeg == RaptorLeg.Depart) return;
+        if (RaptorHorizontal)
         {
-            MaterialistVisuals.Brackets(raptorRunStart, new Vector2(68, 38), RaptorGold, .65f);
-            return;
-        }
-        Vector2 half = raptorScanSize * .5f;
-        float alpha = raptorLeg == RaptorLeg.Scan ? .8f : .35f;
-        MaterialistVisuals.Brackets(raptorGround, raptorScanSize, RaptorGold, alpha);
-        for (int i = 1; i < raptorGroundProfile.Length; i++)
-            MaterialistVisuals.Line(raptorGroundProfile[i - 1], raptorGroundProfile[i], RaptorGold * (alpha * .65f), 2);
-        if (raptorLeg == RaptorLeg.Scan)
-        {
-            float scan = MathHelper.Clamp(raptorLegAge / (float)RaptorScanTicks, 0, 1);
-            float x = MathHelper.Lerp(-half.X, half.X, raptorHeading > 0 ? scan : 1 - scan);
-            Vector2 stripe = raptorGround + new Vector2(x, 0);
-            MaterialistVisuals.Line(stripe - Vector2.UnitY * half.Y, stripe + Vector2.UnitY * half.Y, MaterialistVisuals.White * .85f, 3);
-            MaterialistVisuals.Glow(stripe, RaptorGold * .3f, new Vector2(30, raptorScanSize.Y));
-            for (int edge = 0; edge < (boss.Phase == 3 ? 1 : 2); edge++)
+            if (raptorLeg == RaptorLeg.Scan)
             {
-                Vector2 ray = RaptorDirection(boss.Phase == 3 ? MathHelper.ToRadians(65) : MathHelper.ToRadians(edge == 0 ? 45 : 70));
-                float reach = MathHelper.Clamp((raptorGround.Y - muzzle.Y) / Math.Max(.1f, ray.Y), 160, 1500);
-                for (float d = 0; d < reach; d += 60)
-                    MaterialistVisuals.Line(muzzle + ray * d, muzzle + ray * Math.Min(reach, d + 24), RaptorGold * .25f, 1);
+                Vector2 end = muzzle + new Vector2(raptorHeading * 1200, 0);
+                for (float distance = 0; distance < 1200; distance += 52)
+                    MaterialistVisuals.Line(muzzle + new Vector2(raptorHeading * distance, 0),
+                        muzzle + new Vector2(raptorHeading * Math.Min(1200, distance + 22), 0), RaptorGold * .6f, 2);
+                MaterialistVisuals.Line(muzzle - Vector2.UnitY * 15, end - Vector2.UnitY * 15, RaptorGold * .18f, 1);
+                MaterialistVisuals.Line(muzzle + Vector2.UnitY * 15, end + Vector2.UnitY * 15, RaptorGold * .18f, 1);
+
             }
-            MaterialistVisuals.Ring(muzzle, 20 + MathF.Sin(raptorLegAge * .12f) * 3, RaptorGold, -raptorLegAge * .025f, 2, .65f, 12);
+        }
+        else
+        {
+            Vector2 half = raptorScanSize * .5f;
+            float alpha = raptorLeg == RaptorLeg.Scan ? .8f : .35f;
+            MaterialistVisuals.Brackets(raptorGround, raptorScanSize, RaptorGold, alpha);
+            for (int i = 1; i < raptorGroundProfile.Length; i++)
+                MaterialistVisuals.Line(raptorGroundProfile[i - 1], raptorGroundProfile[i], RaptorGold * (alpha * .65f), 2);
+            if (raptorLeg == RaptorLeg.Scan)
+            {
+                float scan = MathHelper.Clamp(raptorLegAge / (float)RaptorScanTicks, 0, 1);
+                float x = MathHelper.Lerp(-half.X, half.X, raptorHeading > 0 ? scan : 1 - scan);
+                Vector2 stripe = raptorGround + new Vector2(x, 0);
+                MaterialistVisuals.Line(stripe - Vector2.UnitY * half.Y, stripe + Vector2.UnitY * half.Y, MaterialistVisuals.White * .85f, 3);
+                MaterialistVisuals.Glow(stripe, RaptorGold * .3f, new Vector2(30, raptorScanSize.Y));
+                for (int edge = 0; edge < (boss.Phase == 3 ? 1 : 2); edge++)
+                {
+                    Vector2 ray = RaptorDirection(boss.Phase == 3 ? MathHelper.ToRadians(65) : MathHelper.ToRadians(edge == 0 ? 45 : 70));
+                    float reach = MathHelper.Clamp((raptorGround.Y - muzzle.Y) / Math.Max(.1f, ray.Y), 160, 1500);
+                    for (float d = 0; d < reach; d += 60)
+                        MaterialistVisuals.Line(muzzle + ray * d, muzzle + ray * Math.Min(reach, d + 24), RaptorGold * .25f, 1);
+                }
+
+            }
         }
         if (RaptorWindow(boss))
         {
             float flash = RaptorShot(boss) ? 1 : .55f;
             MaterialistVisuals.Glow(muzzle + direction * 16, RaptorGold * flash, new Vector2(88, 37), aimAngle);
             MaterialistVisuals.Glow(muzzle + direction * 10, MaterialistVisuals.White * (.8f * flash), new Vector2(44, 17), aimAngle);
-            MaterialistVisuals.Line(muzzle, muzzle + direction * 48, (RaptorGold with { A = 0 }) * flash, 9);
-            MaterialistVisuals.Line(muzzle, muzzle + direction * 33, MaterialistVisuals.White with { A = 0 }, 3);
-            for (int side = -1; side <= 1; side += 2)
-                MaterialistVisuals.Line(muzzle, muzzle + direction.RotatedBy(side * .32f) * 30, RaptorGold * (.75f * flash), 4);
-        }
-    }
-    private void DrawRaptorFlight(NPC npc, float alpha)
-    {
-        int heading = npc.spriteDirection;
-        // Raptor has aerodynamic wing wakes only; engine flames belong exclusively to the carrier.
-        Vector2 axis = new Vector2(heading, .1f).RotatedBy(npc.rotation);
-        for (int wing = -1; wing <= 1; wing += 2)
-        {
-            Vector2 wake = npc.Center + new Vector2(-heading * 18, wing * 23).RotatedBy(npc.rotation);
-            MaterialistVisuals.Line(wake, wake - axis * 48, new Color(196, 218, 222, 0) * (.22f * alpha), 3);
         }
     }
     private void WriteRaptorAI(BinaryWriter w)
     {
         w.Write((byte)raptorLeg); w.Write(raptorLegAge); w.Write(raptorSortie); w.Write(raptorHeading);
         w.Write(raptorRearCountdown); w.Write(raptorCruiseY);
+        w.Write(raptorRelayAge);
+        w.Write(raptorSupportClock);
         w.WriteVector2(raptorRunStart); w.WriteVector2(raptorGround); w.WriteVector2(raptorScanSize);
         foreach (Vector2 point in raptorGroundProfile) w.WriteVector2(point);
     }
@@ -293,6 +322,8 @@ public sealed partial class MaterialistWing
     {
         raptorLeg = (RaptorLeg)r.ReadByte(); raptorLegAge = r.ReadInt32(); raptorSortie = r.ReadInt32(); raptorHeading = r.ReadInt32();
         raptorRearCountdown = r.ReadInt32(); raptorCruiseY = r.ReadSingle();
+        raptorRelayAge = r.ReadInt32();
+        raptorSupportClock = r.ReadInt32();
         raptorRunStart = r.ReadVector2(); raptorGround = r.ReadVector2(); raptorScanSize = r.ReadVector2();
         for (int i = 0; i < raptorGroundProfile.Length; i++) raptorGroundProfile[i] = r.ReadVector2();
     }

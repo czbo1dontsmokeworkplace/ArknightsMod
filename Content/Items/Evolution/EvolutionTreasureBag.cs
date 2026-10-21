@@ -1,4 +1,5 @@
 using ArknightsMod.Content.NPCs.Enemy.Evolution;
+using ArknightsMod.Content.Items.Evolution.Arsenal;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -12,7 +13,7 @@ public sealed class EvolutionTreasureBag : ModItem
     {
         Item.ResearchUnlockCount = 3;
         ItemID.Sets.BossBag[Type] = true;
-        // Deliberately suppress automatic developer armor: this bag contains ONLY the two accessories.
+        // Every bag guarantees both accessories and all four weapons.
         ItemID.Sets.PreHardmodeLikeBossBag[Type] = true;
     }
     public override void SetDefaults()
@@ -26,5 +27,9 @@ public sealed class EvolutionTreasureBag : ModItem
     {
         itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<EvolutionOrigin>()));
         itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<EvolutionTerminus>()));
+        itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<TerminusLight>()));
+        itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<OriginSever>()));
+        itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<NestOfLife>()));
+        itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<RushingEnd>()));
     }
 }

@@ -11,6 +11,8 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Necrass;
 
 public sealed class NecrassScepter : ExpansionWeaponBase
 {
+    private const int BurstCount = 4;
+    private int burstShot;
     protected override int[] EliteDamage => [399, 483, 578];
     public override string Texture => "ArknightsMod/Content/Items/Weapons/Caster/Necrass/NecrassScepter";
     public override void SetStaticDefaults() => Item.staff[Type] = true;
@@ -21,8 +23,11 @@ public sealed class NecrassScepter : ExpansionWeaponBase
         Item.DamageType = DamageClass.Magic;
         Item.mana = 9;
         Item.useStyle = ItemUseStyleID.Shoot;
-        Item.useTime = 18;
-        Item.useAnimation = 18;
+        // Match Vivid Clarity's cadence, with four summons instead of five.
+        Item.useTime = 4;
+        Item.useAnimation = 20;
+        Item.reuseDelay = 20;
+        Item.useLimitPerAnimation = BurstCount;
         Item.noMelee = Item.autoReuse = true;
         Item.knockBack = 3f;
         Item.shootSpeed = 13f;
@@ -39,8 +44,23 @@ public sealed class NecrassScepter : ExpansionWeaponBase
             state.TryActivate();
             return false;
         }
-        Item.mana = player.altFunctionUse == 2 ? 40 : 9;
+        if (player.itemAnimation <= 0)
+        {
+            bool seed = player.altFunctionUse == 2;
+            Item.mana = seed ? 40 : 9;
+            Item.useTime = seed ? 18 : 4;
+            Item.useAnimation = seed ? 18 : 20;
+            Item.reuseDelay = seed ? 0 : 20;
+            Item.useLimitPerAnimation = seed ? 1 : BurstCount;
+            burstShot = 0;
+        }
         return player.altFunctionUse != 2 || (state.SeedCooldown == 0 && NecrassCourt.Servants(player.whoAmI).Count == 0);
+    }
+    public override void ModifyManaCost(Player player, ref float reduce, ref float mult)
+    {
+        // A normal burst still costs nine mana total; subsequent summons are prepaid.
+        if (player.altFunctionUse != 2 && player.itemAnimation > 0 && burstShot > 0)
+            mult = 0f;
     }
     public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position,
         Vector2 velocity, int type, int damage, float knockback)
@@ -55,30 +75,27 @@ public sealed class NecrassScepter : ExpansionWeaponBase
             state.Command(0, NecrassCourt.SafePosition(player, Main.MouseWorld));
             return false;
         }
-        // Fire one six-bolt volley every 18 frames; the volley shares one use's damage.
+        // One summon per useTime tick; the four summons share one use's damage.
         Vector2 center = player.RotatedRelativePoint(player.MountedCenter, true);
         float startAngle = Main.rand.NextFloat(MathHelper.TwoPi);
-        for (int i = 0; i < 6; i++)
+        int shot = burstShot++;
+        position = center;
+        for (int attempt = 0; attempt < 16; attempt++)
         {
-            // Distribute the six bolts around the player, each aimed at the cursor.
-            position = center;
-            for (int attempt = 0; attempt < 16; attempt++)
-            {
-                Vector2 offset = (startAngle + i * MathHelper.TwoPi / 6 + Main.rand.NextFloat(-.22f, .22f))
-                    .ToRotationVector2() * Main.rand.NextFloat(24, 60);
-                Vector2 candidate = center + offset;
-                if (!Collision.CanHitLine(center, 1, 1, candidate + offset.SafeNormalize(Vector2.UnitX) * 8, 1, 1)
-                    || Collision.SolidCollision(candidate - new Vector2(7), 14, 14)) continue;
-                position = candidate;
-                break;
-            }
-            Vector2 direction = (Main.MouseWorld - position).SafeNormalize(new Vector2(player.direction, 0));
-            int shotDamage = damage / 6 + (i < damage % 6 ? 1 : 0);
-            int index = Projectile.NewProjectile(source, position, direction * 2.4f, type, shotDamage, knockback,
-                player.whoAmI, 2, direction.ToRotation(), Main.rand.NextFloat(MathHelper.TwoPi));
-            if (Main.projectile.IndexInRange(index)) Main.projectile[index].CritChance = player.GetWeaponCrit(Item);
-            NecrassVisuals.SoulAsh(position, direction * Item.shootSpeed, 2);
+            Vector2 offset = (startAngle + Main.rand.NextFloat(-.22f, .22f))
+                .ToRotationVector2() * Main.rand.NextFloat(24, 60);
+            Vector2 candidate = center + offset;
+            if (!Collision.CanHitLine(center, 1, 1, candidate + offset.SafeNormalize(Vector2.UnitX) * 8, 1, 1)
+                || Collision.SolidCollision(candidate - new Vector2(7), 14, 14)) continue;
+            position = candidate;
+            break;
         }
+        Vector2 direction = (Main.MouseWorld - position).SafeNormalize(new Vector2(player.direction, 0));
+        int shotDamage = damage / BurstCount + (shot < damage % BurstCount ? 1 : 0);
+        int index = Projectile.NewProjectile(source, position, direction * 2.4f, type, shotDamage, knockback,
+            player.whoAmI, 2, direction.ToRotation(), Main.rand.NextFloat(MathHelper.TwoPi));
+        if (Main.projectile.IndexInRange(index)) Main.projectile[index].CritChance = player.GetWeaponCrit(Item);
+        NecrassVisuals.SoulAsh(position, direction * Item.shootSpeed, 2);
         SoundEngine.PlaySound(SoundID.Item20 with { Volume = .42f, Pitch = -.65f, MaxInstances = 3 }, position);
         return false;
     }

@@ -20,7 +20,7 @@ AstesiaDefault: {
 
 AstraSword: {
 	DisplayName: Astral Sword [Astesia]
-	Tooltip: Hold left click to alternate two sky-blue slashes, with a longer windup after the second
+	Tooltip: Chains three alternating slashes, then briefly pauses before striking again
 }
 
 # Furniture
@@ -67,7 +67,8 @@ RangersBow: {
 
 KroosCrossbow: {
 	DisplayName: Crossbow [Kroos]
-	Tooltip: "'KO- KO- DA- YO-'"
+	Tooltip: Fires three-shot bursts from a held crossbow
+	FlavorText: '''"KO- KO- DA- YO-"'''
 }
 
 Shinginzan: {
@@ -75,7 +76,7 @@ Shinginzan: {
 	Tooltip:
 		'''
 		[c/FF0000:(unfinished item!)]
-		'I, SilverAsh, have joined your cause as a sworn ally.'                            
+		'I, SilverAsh, have joined your cause as a sworn ally.'
 		'''
 }
 
@@ -83,8 +84,8 @@ BagpipeSpear: {
 	DisplayName: Siege Lance [Bagpipe]
 	Tooltip:
 		'''
-		Post-Golem
-		The first charge hit triggers a 76-pixel-radius explosion dealing the charge's damage.
+		Thrusts forward, scattering damaging sparks on hit
+		The first hit of a charge explodes, dealing additional area damage
 		'''
 }
 
@@ -100,7 +101,13 @@ ThornsSword: {
 
 PozemkaCrossbow: {
 	DisplayName: Crossbow [Pozemka]
-	Tooltip: "'To live on the surface inevitably means to raise a weapon at some point. So I'm well aware.'"
+	Tooltip:
+		'''
+		Converts wooden arrows into homing rose arrows for rapid automatic fire
+		Rose arrow hits summon two homing star bolts
+		Right-click to deploy a typewriter for supporting fire
+		'''
+	FlavorText: '''"To live on the surface inevitably means to raise a weapon at some point. So I'm well aware."'''
 }
 
 # Instanced Space
@@ -1162,7 +1169,12 @@ FangSpear: {
 
 KroosAlterCrossbow: {
 	DisplayName: Crossbow [Kroos the Keen Glint]
-	Tooltip: ""
+	Tooltip:
+		'''
+		Fires three-shot bursts from a held crossbow
+		Converts wooden arrows into frost arrows
+		'''
+	FlavorText: '''"Shh, not another sound."'''
 }
 
 OrchidUmbrellla: {
@@ -1421,7 +1433,12 @@ PozyBow: {
 
 SchwarzBow: {
 	DisplayName: Bow [Schwarz]
-	Tooltip: ""
+	Tooltip:
+		'''
+		Converts arrows into endlessly piercing black bolts
+		Hits call down a rift laser through the target
+		'''
+	FlavorText: '''"The young lady has a kind heart. I do not."'''
 }
 
 PozyomkaBow: {
@@ -1438,14 +1455,9 @@ TyphonBow: {
 	DisplayName: Bow [Typhon]
 	Tooltip:
 		'''
-		Lunar Events
-		Hold left click to fire a large, infinitely piercing astral crystal every 60 ticks; converts all arrows.
-		Hold right click to load up to 6 crystals, consuming one arrow each. The first takes 18 ticks; each subsequent loading time is multiplied by 0.85.
-		Crystals form an evenly spaced fan in front of the bow. Release to fire them all immediately.
-		Crystals slide into place as the fan spreads, alternating Tick/Tock text and loading sounds; a flash and chime mark a full load.
-		Each right-click crystal deals 50% damage (300% total with six loaded), using the same sprite at 70% size with a white outline and optical tint. They damage immediately and hit once.
-		Right-click arrows accelerate immediately and turn gradually toward enemies within 512 pixels, with periodic course corrections that weaken over time.
-		Stored crystals deal no damage; loading does not slow movement. Switching weapons cancels loading.
+		Converts arrows into endlessly piercing astral shots
+		Hold right-click to load up to 6 shots, then release a homing volley
+		Loading consumes arrows; switching weapons cancels the loaded volley
 		'''
 }
 
@@ -1496,7 +1508,8 @@ AdnachielCrossbow: {
 
 Lava_Dagger: {
 	DisplayName: Dagger [Lava]
-	Tooltip: Fires an ember bolt on use
+	Tooltip: Fires an ember that erupts into flames on impact
+	FlavorText: '''"Their souls are mine to reap."'''
 }
 
 Shirayuki_Shuriken: {
@@ -1735,7 +1748,8 @@ HoundproBanner: {
 
 SurtrLaevatain: {
 	DisplayName: Laevatain [Surtr]
-	Tooltip: '''"I alone am enough."'''
+	Tooltip: Chains three blazing greatsword slashes, then briefly pauses before striking again
+	FlavorText: '''"I alone am enough."'''
 }
 
 SilverAshWeapon: {
@@ -2997,26 +3011,17 @@ SaintBell: {
 
 DeepcolorSketch: {
 	DisplayName: Sketch [Deepcolor]
-	Tooltip:
-		'''
-		Summons tentacles to fight for you.
-		Left click: LOGO attack
-		Right click: deploy tentacle
-		'''
+	Tooltip: Left-click to cast a spell; right-click to deploy supporting tentacles
 	SkillActivateKey: "[c/AAA8AA:{0}] to activate skill"
 }
 
 SceneCamera: {
 	DisplayName: Camera [Scene]
-	Tooltip:
-		'''
-		Left click: cast magic attack.
-		Right click: summon a Mobile Camera Truck.
-		'Smile for the camera.'
-		'''
+	Tooltip: Left-click to cast a spell; right-click to deploy supporting Mobile Camera Trucks
 	SkillActivateKey: "[c/AAA8AA:{0}] to activate the selected skill"
 	DeployInfo: Camera Trucks: {0}/{1} deployed (can deploy {2})
 	DeploySlotNote: Other minions are using {0} minion slot(s)
+	FlavorText: '''"Smile for the camera."'''
 }
 
 Elevator: {
@@ -3202,9 +3207,8 @@ GoldenglowWand: {
 	DisplayName: Wand [Goldenglow]
 	Tooltip:
 		'''
-		Raise the staff to continuously discharge lightning at enemies near the cursor
-		Every 2.5 seconds, enter 0.6 seconds of powerful discharge
-		Drones provide coordinated attacks
+		Channels electricity into enemies near the cursor with support from floating units
+		Sustained casting periodically unleashes stronger discharges
 		'''
 	BeaconCount: Drones: {0}/{1}
 }
@@ -3213,9 +3217,8 @@ ClickStaff: {
 	DisplayName: Viewfinder Staff [Click]
 	Tooltip:
 		'''
-		Hold left-click to automatically select up to 3 enemies nearest the cursor
-		A frame expands from top-left to bottom-right over 15 ticks, followed by two laser attacks
-		After 3 seconds of sustained fire, gain 1 second of thicker, faster lasers dealing 1.1x damage
+		Locks onto up to 3 enemies near the cursor and fires repeated lasers after framing them
+		Sustained fire briefly increases laser damage and attack speed
 		'''
 }
 
@@ -3223,12 +3226,9 @@ RockrockStaff: {
 	DisplayName: Turbine Staff [Rockrock]
 	Tooltip:
 		'''
-		Raise the staff to fire three star bolts from its tip toward the enemy locked near the cursor
-		A drone flies to the target and supports the attack with brief laser pulses
-		Repeated hits on one target increase drone damage
-		Star bolts gain speed and homing strength over time, easing through tight turns
-		Without a locked enemy, bolts still fire and accelerate by 2% each tick
-		After 3 seconds of continuous attacks, unleash a 1-second vortex burst with rapid five-bolt volleys and faster drone fire
+		Fires homing star bolts while a drone provides supporting laser fire
+		Repeated attacks on the same target increase drone damage
+		Sustained fire briefly releases more star bolts and speeds up supporting attacks
 		'''
 }
 
@@ -3256,15 +3256,15 @@ HongdouLance: {
 	DisplayName: Lance [Vigna]
 	Tooltip:
 		'''
-		Pre-Hardmode
-		Talent: each attack action has a 10% chance to deal double damage, increased to 30% during skills.
-		The first charge hit creates a small impact dealing half its damage.
+		Thrusts forward, scattering damaging sparks on hit
+		Each attack cycle has a 10% chance to deal double damage, increased to 30% during skills
+		The first hit of a charge releases a small shockwave
 		'''
 }
 
 MousseGlove: {
 	DisplayName: Glove [Mousse]
-	Tooltip: Hold left click to extend a light blade from the glove and slash repeatedly
+	Tooltip: Hold left-click to chain three light-blade slashes, then briefly pause and repeat
 }
 
 SkadisGreatsword: {
@@ -3284,7 +3284,11 @@ MeteorBow: {
 
 GravelDualBlades: {
 	DisplayName: Dual Blades [Gravel]
-	Tooltip: ""
+	Tooltip:
+		'''
+		Alternates rapid slashes with twin blades
+		Skills grant increased defense or a gradually decaying shield
+		'''
 }
 
 AnselClaw: {
@@ -3366,8 +3370,12 @@ CardiWeapon: {
 }
 
 EntelechiaScythe: {
-	DisplayName: Scythe [Entelechia]
-	Tooltip: ""
+	DisplayName: Entelechia's Great Scythe
+	Tooltip:
+		'''
+		Swings a scythe to release a crescent that passes through terrain and slows to a stop in midair
+		Crescents hit up to 7 enemies, losing speed and damage with each hit
+		'''
 }
 
 RopeClaw: {
@@ -3714,40 +3722,37 @@ HellagurOdachi: {
 	DisplayName: Odachi [Hellagur]
 	Tooltip:
 		'''
-		Lower health grants faster attacks, and attacks restore health
-		“He is the General”
+		Chains slashes with an odachi; lower health grants faster attacks
 		Holding this weapon refreshes 10 seconds of Potion Sickness, which persists after switching weapons
 		'''
+	FlavorText: '''"He is the General"'''
 }
 
 BlazeGreatsword: {
 	DisplayName: Chainsaw Greatsword [Blaze]
 	Tooltip:
 		'''
-		Available after Skeletron Prime
-		Attacks all enemies in contact
-		Chops trees as quickly as the Butcher's Chainsaw
-		"Burning with enthusiasm"
+		Hold left-click to cut continuously with a chainsaw greatsword
+		Can rapidly chop down trees
 		'''
+	FlavorText: '''"Burning with enthusiasm"'''
 }
 
 FiammettaHandCannon: {
 	DisplayName: Hand Cannon [Fiammetta]
 	Tooltip:
 		'''
-		Fires rockets into the sky to strike the target; normal range: 650 pixels
-		Explosions deal 25% more damage while descending
-		Requires and consumes no ammunition
+		Launches rockets high into the air to fall and explode over the target
+		Requires no ammunition
 		'''
 }
 
 MeteoriteCannon: {
-	DisplayName: Explosive Cannon [Meteorite]
+	DisplayName: Grenade Crossbow [Meteorite]
 	Tooltip:
 		'''
-		Launches rockets high into the sky without requiring or consuming ammunition; range: 650 pixels
-		Shells descend from above the target and explode into fragments
-		Explosions deal 25% more damage while descending
+		Lobs explosive shells high into the air to fall over the target
+		Shells scatter fragments on detonation and require no ammunition
 		'''
 }
 
@@ -3755,28 +3760,33 @@ SpecterBoneSaw: {
 	DisplayName: Bone Saw [Specter]
 	Tooltip:
 		'''
-		Attacks every enemy it touches
-		While held, raises max life by 10% and restores 2% of max life each second
+		Hold left-click to cut continuously with a circular saw
+		Can rapidly chop down trees
+		Grants 10% increased maximum life and restores 2% of maximum life per second while held
 		'''
 }
 
 LeonhardtStaff: {
 	DisplayName: Staff [Leonhardt]
-	Tooltip: Let's see whether you're gold or manure!
+	Tooltip: Fires compressed Originium fragments that detonate on impact or at the end of their range
+	FlavorText: '''"Let's see whether you're gold or manure!"'''
 }
 
 PassengerConductor: {
 	DisplayName: Electromagnetic Conductor [Passenger]
-	Tooltip: Fires four-round bursts of golden chain lightning; each shot hits up to 4 enemies (3 jumps after the first hit)
+	Tooltip:
+		'''
+		Calls down alternating volleys of one or two bolts of golden lightning above the cursor
+		Hits chain to nearby enemies and briefly slow ordinary enemies
+		'''
 }
 
 LeiziStaff: {
 	DisplayName: Thunder Staff [Leizi]
 	Tooltip:
 		'''
-		Fires three-round bursts of non-homing violet-white lightning through blocks
-		A direct hit triggers an impact burst and chains between up to 4 enemies
-		Each jump loses 15% damage and briefly slows ordinary enemies
+		Calls down alternating volleys of one or two bolts of violet lightning above the cursor
+		Hits chain to nearby enemies and briefly slow ordinary enemies
 		'''
 }
 
@@ -3784,8 +3794,8 @@ PuddingStaff: {
 	DisplayName: Electromagnetic Staff [Pudding]
 	Tooltip:
 		'''
-		Fires two-round bursts of blue arcs; each shot hits up to 4 enemies (3 jumps after the first hit)
-		Each jump loses 15% damage and briefly slows ordinary enemies
+		Calls down alternating volleys of one or two bolts of blue arcs above the cursor
+		Hits chain to nearby enemies and briefly slow ordinary enemies
 		'''
 }
 
@@ -3797,8 +3807,7 @@ UtageKatana: {
 	DisplayName: Katana [Utage]
 	Tooltip:
 		'''
-		Swings faster at low life; valid hits restore a small amount of life
-		Cuts with deep violet trails and pale lilac edges
+		Chains slashes with a katana; lower health grants faster attacks
 		Holding this weapon refreshes 10 seconds of Potion Sickness, which persists after switching weapons
 		'''
 }
@@ -3807,8 +3816,7 @@ RedDagger: {
 	DisplayName: Dagger [Projekt Red]
 	Tooltip:
 		'''
-		Performs extremely fast melee attacks
-		Quick teleports or dashes trigger "Redeployment"
+		Strikes rapidly with a dagger
 		Increases movement and jump speed while held
 		'''
 }
@@ -3817,8 +3825,8 @@ HoolheyakWindArts: {
 	DisplayName: Windfeather [Ho'olheyak]
 	Tooltip:
 		'''
-		Cast wind bolts by hand, forming homing vortices on impact
-		Draws in and lifts small enemies, but cannot lift bosses
+		Fires a wind bolt that creates a homing vortex on hit
+		Vortices pull in and lift ordinary enemies, but cannot lift bosses
 		'''
 }
 
@@ -3826,9 +3834,9 @@ EbenholzStaff: {
 	DisplayName: Sonata Staff [Ebenholz]
 	Tooltip:
 		'''
-		Releases homing black sonata cubes
-		Stores multiple echoes to release together
-		While held and idle, store 1 shot per second up to 3; switching weapons preserves them until your next left-click attack
+		Fires homing sonata fragments that pursue enemies
+		Stores 1 extra shot per second while held without firing, up to 3
+		Stored shots persist after switching weapons and join the next valid attack
 		'''
 }
 
@@ -3836,9 +3844,8 @@ EthanYoyo: {
 	DisplayName: Yoyo [Ethan]
 	Tooltip:
 		'''
-		Has a small chance to bind ordinary enemies
-		Reduces player aggro while in use
-		Has a 10% chance to dodge damage
+		Controls a yo-yo that repeatedly strikes enemies and may bind ordinary enemies
+		Reduces aggro and grants a 10% chance to dodge damage while in use
 		'''
 }
 
@@ -3846,9 +3853,9 @@ HornGrenadeLauncher: {
 	DisplayName: Grenade Shield [Horn]
 	Tooltip:
 		'''
-		Hold right-click to raise the shield and guard; release to return it to your back. Left-click still fires grenades while guarding
-		While guarding, movement speed is reduced by 60%; gain an additional 50% damage reduction and 40 defense, but deal 30% less damage
-		A successful block doubles your next shell within 5 seconds
+		Bombards enemies with grenades; hold right-click to raise the shield while continuing to fire
+		Guarding grants 40 defense and 50% damage reduction, but reduces movement speed by 60% and attack damage by 30%
+		After a successful block, the next shot within 5 seconds deals double damage
 		'''
 }
 
@@ -3860,9 +3867,9 @@ IndigoStaff: {
 	DisplayName: Lighthouse Staff [Indigo]
 	Tooltip:
 		'''
-		Fires homing waterlights; stores up to three while idle and releases them with the next attack
-		Unleash the lighthouse's light or bind enemies in lilac tides
-		While held and idle, store 1 shot per second up to 3; switching weapons preserves them until your next left-click attack
+		Fires homing globes of water that pursue enemies
+		Stores 1 extra shot per second while held without firing, up to 3
+		Stored shots persist after switching weapons and join the next valid attack
 		'''
 }
 
@@ -3870,9 +3877,9 @@ HarmonieStaff: {
 	DisplayName: Concerto Staff [Harmonie]
 	Tooltip:
 		'''
-		Fires homing notes; stores up to three while idle and plays them with the next attack
-		Envelop enemies in flowing scores and resonant waters
-		While held and idle, store 1 shot per second up to 3; switching weapons preserves them until your next left-click attack
+		Fires homing musical notes that pursue enemies
+		Stores 1 extra shot per second while held without firing, up to 3
+		Stored shots persist after switching weapons and join the next valid attack
 		'''
 }
 
@@ -3901,12 +3908,10 @@ GavialChainsaw: {
 	DisplayName: Chainsaw Greataxe [Gavial the Invincible]
 	Tooltip:
 		'''
-		Hold attack to aim the spinning saw and cut every enemy touching its blade
-		Cuts 30% faster, averaging 5.38 ticks per normal cut; olive teeth mark the blade's reach
-		Blade hits trigger grenade-like explosions on enemies, dealing 100% ATK as additional melee area damage
-		Precise Thwacking heals on hit; Chainsaw Assault extends the blade and pulls enemies
-		Soul of the Jungle accelerates cutting and postpones half of incoming hit damage
-		Switching weapons or skills ends the bonus, but deferred damage must still be repaid
+		Hold left-click to cut continuously with a chainsaw battleaxe
+		Can rapidly chop down trees
+		Hits explode for additional melee area damage equal to 100% of attack power
+		Damage deferred by skills must still be repaid after the skill ends
 		'''
 }
 
@@ -3914,9 +3919,8 @@ NecrassScepter: {
 	DisplayName: Rekindling Scepter [Necrass]
 	Tooltip:
 		'''
-		Rapidly fires one or two violet flames from around you toward the cursor, accelerating along curved paths before homing
-		Six flames share one attack cycle's damage; nearby enemy deaths create Lamenting Servants
-		Servants inherit this weapon's magic damage, use no minion slots, have their own health and dissolve when the weapon is put away
+		Fires volleys of homing violet flames; nearby enemy deaths create allied servants
+		Servants inherit this weapon's magic damage, use no minion slots, and vanish when you switch weapons
 		'''
 }
 
@@ -3924,14 +3928,10 @@ PhantomDaggers: {
 	DisplayName: Mirror Blades [Phantom]
 	Tooltip:
 		'''
-		Alternate rapid cuts with silver-blue blade trails
-		Increases movement and jump speed by 15% while held
-		Deploy using the skill key, a dash start, a fast landing, or switching from another hotbar weapon
-		Combat teleports while holding the blades also deploy; body redeployment cooldown: 12 seconds
-		Right-click to place one stationary phantom for 10 seconds; independent cooldown: 25 seconds
-		The phantom has 65% base attack, copies the selected deployment skill, and attacks nearby enemies
-		Place within about 14 tiles with clear line of sight; switching away or moving over 32 tiles away dismisses it
-		Switching skills or items and dying do not reset cooldowns
+		Chains rapid twin-blade slashes; grants 15% increased movement and jump speed while held
+		Right-click to deploy a phantom that attacks with 65% base damage and uses the skill selected on deployment
+		The phantom lasts 10 seconds and vanishes if you switch weapons or move too far away
+		You and the phantom have separate redeployment cooldowns; switching items does not reset them
 		'''
 }
 
@@ -3939,13 +3939,9 @@ BeeswaxStaff: {
 	DisplayName: Sandward Staff [Beeswax]
 	Tooltip:
 		'''
-		Passively raises a golden barrier that blocks 3 hits
-		Hold left click to lower the barrier and charge a powerful shockwave for 90 frames
-		Releasing or switching weapons cancels the charge; keep holding to repeat
-		Barrier fades smoothly and blocks hits regardless of damage
-		Breaking releases a 250% damage shockwave
-		After 5 seconds without damage, restores one charge every 2 seconds
-		All three phalanx staves share shield debt, preserved through switches and relogs
+		Hold left-click to lower the shield and repeatedly charge shockwaves; release to cancel charging
+		The shield blocks 3 hits and releases an empowered shockwave when broken
+		After 5 seconds without taking damage, restores a layer every 2 seconds; switching staves or rejoining does not refill shields
 		'''
 }
 
@@ -3953,13 +3949,9 @@ CarnelianStaff: {
 	DisplayName: Crimson Sand Staff [Carnelian]
 	Tooltip:
 		'''
-		Passively raises a crimson barrier that blocks 4 hits
-		Hold left click to lower the barrier and charge a powerful shockwave for 90 frames
-		Releasing or switching weapons cancels the charge; keep holding to repeat
-		Barrier fades smoothly and blocks hits regardless of damage
-		Breaking releases a 250% damage shockwave
-		After 5 seconds without damage, restores one charge every 2 seconds
-		All three phalanx staves share shield debt, preserved through switches and relogs
+		Hold left-click to lower the shield and repeatedly charge shockwaves; release to cancel charging
+		The shield blocks 4 hits and releases an empowered shockwave when broken
+		After 5 seconds without taking damage, restores a layer every 2 seconds; switching staves or rejoining does not refill shields
 		'''
 }
 
@@ -3967,14 +3959,9 @@ LinStaff: {
 	DisplayName: Prismatic Staff [Lin]
 	Tooltip:
 		'''
-		Passively raises a glass barrier that blocks 5 hits
-		Hold left click to lower the barrier and charge a powerful shockwave for 90 frames
-		Releasing or switching weapons cancels the charge; keep holding to repeat
-		A broken barrier also scatters twelve glass shards
-		Barrier fades smoothly and blocks hits regardless of damage
-		Breaking releases a 250% damage shockwave
-		After 5 seconds without damage, restores one charge every 2 seconds
-		All three phalanx staves share shield debt, preserved through switches and relogs
+		Hold left-click to lower the shield and repeatedly charge shockwaves; release to cancel charging
+		The shield blocks 5 hits and releases an empowered shockwave when broken and scatters glass shards
+		After 5 seconds without taking damage, restores a layer every 2 seconds; switching staves or rejoining does not refill shields
 		'''
 }
 
@@ -3982,37 +3969,26 @@ PineconeNailgun: {
 	DisplayName: Nailgun [Pinecone]
 	Tooltip:
 		'''
-		Fires 5 steel nails per bullet
-		Nails stick to enemies and explode after a delay
-		Lower movement speed tightens the total spread from 20 to 5 degrees; movement does not change damage
+		Fires 5 nails for each bullet consumed
+		Nails embed in enemies and explode after a short delay
 		'''
 }
 
 ExecutorShotgun: {
 	DisplayName: Shotgun [Executor]
-	Tooltip:
-		'''
-		Rapidly fires two volleys of piercing buckshot
-		Greater stopping power and armor penetration at close range
-		Lower movement speed tightens the total spread from 20 to 5 degrees; movement does not change damage
-		'''
+	Tooltip: Fires two successive blasts of piercing pellets
 }
 
 ChalterWatergun: {
 	DisplayName: Pressure Washer [Ch'en the Holungday]
-	Tooltip:
-		'''
-		Sprays water droplets that pierce up to 5 enemies
-		Deals greater damage at close range
-		Lower movement speed tightens the total spread from 20 to 5 degrees; movement does not change damage
-		'''
+	Tooltip: Fires a spread of water droplets, each piercing up to 5 enemies
 }
 
 MaterialistUplink: {
 	DisplayName: Construction Uplink
 	Tooltip:
 		'''
-		Summons the Materialist Antagonizer on the surface or in the sky after Plantera has been defeated
+		Summons the Materialist Antagonizer only on the surface at night after Plantera has been defeated
 		Not consumed
 		'''
 }
@@ -4029,28 +4005,27 @@ DroneCommandCore: {
 
 MaterialistTreasureBag: {
 	DisplayName: Treasure Bag (Materialist Antagonizer)
-	Tooltip: Right click to open for a Drone Command Core, Chlorophyte Bars and coins
+	Tooltip: Right click to always receive all four command-network weapons, a Drone Command Core, 18-24 Chlorophyte Bars and coins
 }
 
 GitanoOrb: {
 	DisplayName: Crystal Orb [Gitano]
-	Tooltip: Wait a minute, let me predict the results of this battle.
+	Tooltip: Fires an accelerating crystal that releases an area spell when shattered
+	FlavorText: '''"Wait a minute, let me predict the results of this battle."'''
 }
 
 SkyfireStaff: {
 	DisplayName: Meteor Staff [Skyfire]
-	Tooltip: May the flames of the sun devour you!
+	Tooltip: Fires a burning meteor that explodes on impact
+	FlavorText: '''"May the flames of the sun devour you!"'''
 }
 
 MostimaStaff: {
 	DisplayName: Staff [Mostima]
 	Tooltip:
 		'''
-		Hold left click to immediately channel a clockwork sigil at the cursor; no charging required
-		The clock slowly follows the cursor and fades in place when released
-		Maximum placement range: 1000 pixels; clock diameter: 560 pixels; blast diameter: 1240 pixels
-		The minute hand moves one division over 12 ticks, detonates, then rests for 5 ticks; repeats while held
-		Releasing forces a 15-tick fade-out before another clock can be placed
-		Each explosion consumes 30 additional mana; activate skills directly while channeling
+		Hold left-click to create a clockwork circle at the cursor that repeatedly causes area explosions
+		The circle slowly follows the cursor and fades when released
+		Each explosion costs an additional 30 mana
 		'''
 }

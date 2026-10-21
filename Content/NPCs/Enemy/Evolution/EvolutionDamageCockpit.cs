@@ -16,43 +16,45 @@ internal static class EvolutionDamageCockpit
     // 5. 不改变伤害判定时间、碰撞范围或预警机制；纯提示弹幕仍不能造成伤害。
 
     // ==================== 弹幕伤害 ====================
-    // 对标本地炼狱四场战斗：普通弹幕靠近克隆体/世纪之花，重型攻击不照搬石巨人重炮。
-    // 本表直接传给 Projectile.NewProjectile；专家模式下基础威力约为此值 ×4（防御前）。
-    // 炼狱 NewProjectileBetter 会先除以4，切勿把其130～260直接填入本表！
-    // 二阶段及其入场转场在读取后乘以0.85；普通/大师难度保留游戏难度倍率。
+    // 以用户给出的大师世纪之花面板为准：轻弹114～180、重力焰核约185、重弹210；光轴600。
+    // 下表存引擎基础值，大师标称伤害为整数×6（防御/伤害浮动前），因此185近似为186。
+    // 大师走廊阶段不额外乘0.85，确保整场处于同一伤害档；普通/专家保留0.85。
+    // 激怒普通弹保留×1.3；光轴独立读取，不再乘额外阶段/激怒伤害倍率。
     internal static readonly (EvolutionShot Kind, string ChineseName, string EnglishName, int Damage)[] ProjectileDamages =
     {
-        (EvolutionShot.Blood,       "血液",       "Blood Droplet",       31), // 重力抛射水滴，包括仆从吐出的血液、天降血雨。
-        (EvolutionShot.Spirit,      "血灵",       "Blood Spirit",        31), // 阵列焰核与核心分裂的轻追踪焰核共用。
-        (EvolutionShot.Beam,        "血色激光",   "Blood Laser",         40), // 横/竖/斜激光墙、十字、扇形及仆从射线共用。
-        (EvolutionShot.Rock,        "血岩",       "Blood Boulder",       39), // 抛射、空中落石、落地滚动、平台滚石共用。
-        (EvolutionShot.Tentacle,    "血色触手",   "Blood Tentacle",      36), // 触手伸出后的攻击段。
-        (EvolutionShot.Pulse,       "血色脉冲环", "Blood Pulse Ring",    31), // 仆从爆发的扩散圆环。
+        (EvolutionShot.Bloodglow,   "赤色追踪血光", "Homing Bloodglow",    26), // 大师标称156；激怒沿用普通弹幕倍率。
+        (EvolutionShot.Blood,       "血液",       "Blood Droplet",       24), // 重力抛射水滴，包括仆从吐出的血液、天降血雨。
+        (EvolutionShot.Spirit,      "血灵",       "Blood Spirit",        25), // 阵列焰核与核心分裂的轻追踪焰核共用。
+        (EvolutionShot.Beam,        "血色激光",   "Blood Laser",         27), // 横/竖/斜激光墙、十字、扇形及仆从射线共用。
+        (EvolutionShot.Rock,        "血岩",       "Blood Boulder",       35), // 抛射、空中落石、落地滚动、平台滚石共用。
+        (EvolutionShot.Tentacle,    "血色触手",   "Blood Tentacle",      30), // 触手伸出后的攻击段。
+        (EvolutionShot.Pulse,       "血色脉冲环", "Blood Pulse Ring",    27), // 仆从爆发的扩散圆环。
         (EvolutionShot.Core,        "育生核心",   "Brood Core",           0), // 不直接伤人；分裂的血灵读取 Blood Spirit 一行。
-        (EvolutionShot.Spike,       "血色尖刺",   "Blood Spike",         33), // 浮空炸弹释放的定向长尖刺。
-        (EvolutionShot.Fragment,    "血色碎片",   "Blood Fragment",      30), // 炸弹分裂的小型弹幕。
+        (EvolutionShot.Spike,       "血色尖刺",   "Blood Spike",         27), // 浮空炸弹释放的定向长尖刺。
+        (EvolutionShot.Fragment,    "血色碎片",   "Blood Fragment",      22), // 炸弹分裂的小型弹幕。
         (EvolutionShot.DashMarker,  "冲刺预瞄",   "Dash Telegraph",       0), // 纯提示，无伤害；不要通过此项尝试启用伤害。
-        (EvolutionShot.Lance,       "血喷",       "Blood Lance",         36), // 高速移动尖梭，包括横排/竖排血喷、光轴侧刃与仆从齐射。
-        (EvolutionShot.CrimsonBomb, "深红炸弹",   "Crimson Bomb",        41), // 仅范围爆炸型使用此伤害；分裂型只由碎片伤人。
-        (EvolutionShot.Eruption,    "血色喷柱",   "Blood Eruption",      39), // 从地面/平台向上喷发的柱体。
-        (EvolutionShot.Radiation,   "育生闪耀激光", "Brood Flash Laser",     31), // 第一阶段五向瞬发激光；预警无伤害，亮起后8帧生效。
-        (EvolutionShot.Reflection,  "反射血刃",   "Reflected Blood Blade", 30), // 光轴护盾吞入玩家射弹后弹回；固定伤害，不继承玩家武器伤害。
-        (EvolutionShot.CrashFan,    "坠生扇形光束", "Broodfall Fan",        40),
-        (EvolutionShot.Flame,       "育生喷焰",     "Brood Flame",          29),
-        (EvolutionShot.BroodRocket, "育生火箭",     "Brood Rocket",         34),
+        (EvolutionShot.Lance,       "血喷",       "Blood Lance",         30), // 高速移动尖梭，包括横排/竖排血喷、光轴侧刃与仆从齐射。
+        (EvolutionShot.CrimsonBomb, "深红炸弹",   "Crimson Bomb",        35), // 仅范围爆炸型使用此伤害；分裂型只由碎片伤人。
+        (EvolutionShot.Eruption,    "血色喷柱",   "Blood Eruption",      30), // 从地面/平台向上喷发的柱体。
+        (EvolutionShot.Radiation,   "育生闪耀激光", "Brood Flash Laser",     27), // 第一阶段五向瞬发激光；预警无伤害，亮起后8帧生效。
+        (EvolutionShot.Reflection,  "反射血刃",   "Reflected Blood Blade", 30), // 保留旧弹幕类型兼容；光轴护盾已改为虚化，不再吞弹或反击。
+        (EvolutionShot.CrashFan,    "坠生扇形光束", "Broodfall Fan",        27),
+        (EvolutionShot.Flame,       "育生喷焰",     "Brood Flame",          19),
+        (EvolutionShot.BroodRocket, "育生火箭",     "Brood Rocket",         35),
         (EvolutionShot.GravityFlare,"重力焰核",     "Gravity Flare",        31),
-        (EvolutionShot.Serpent,     "蜿蜒辐射流",   "Serpentine Radiation", 32),
-        (EvolutionShot.BroodSpit,   "育生尘焰",     "Brood Dust Spit",      25),
-        (EvolutionShot.SpinBomb,    "旋舞育生炸弹", "Whirling Brood Bomb",  36),
-        (EvolutionShot.Barrage,     "育生弹幕",     "Brood Barrage",        29),
-        (EvolutionShot.Ricochet,    "走廊弹球",     "Corridor Ricochet",    29),
+        (EvolutionShot.Serpent,     "蜿蜒辐射流",   "Serpentine Radiation", 28),
+        (EvolutionShot.BroodSpit,   "育生尘焰",     "Brood Dust Spit",      23),
+        (EvolutionShot.SpinBomb,    "旋舞育生炸弹", "Whirling Brood Bomb",  35),
+        (EvolutionShot.Barrage,     "育生弹幕",     "Brood Barrage",        24),
+        (EvolutionShot.Ricochet,    "走廊弹球",     "Corridor Ricochet",    27),
+        (EvolutionShot.ScoreSeed,   "赤色曲籽",     "Scarlet Score Seed",   25),
     };
 
-    // 普通表已经逐项乘以90%并向下取整（伤害只能是整数）；提示弹幕仍为0。
-    // 此处9999同样是基础伤害，仍受游戏难度和玩家防御规则影响，并非强制处决。
+    // 光轴独立配置：大师标称600；提示弹幕仍为0。
+    // 基础100 → 普通200、专家400、大师600；不绕过防御、减伤或普通无敌。
     internal static readonly (EvolutionShot Kind, EvolutionBeamStyle Style, string ChineseName, string EnglishName, int Damage)[] SpecialProjectileDamages =
     {
-        (EvolutionShot.Beam, EvolutionBeamStyle.Axis, "终末血色光轴", "Final Hemal Axis", 9999),
+        (EvolutionShot.Beam, EvolutionBeamStyle.Axis, "终末血色光轴", "Final Hemal Axis", 100),
     };
 
     // ==================== 本体分阶段碰撞伤害 ====================
@@ -93,6 +95,15 @@ internal static class EvolutionDamageCockpit
         foreach (var row in ProjectileDamages)
             if (row.Kind == kind) return Math.Max(0, row.Damage);
         throw new ArgumentOutOfRangeException(nameof(kind), kind, "驾驶舱缺少此弹幕的伤害配置");
+    }
+
+    // 所有实际发射都走这里，避免不同阶段和仆从继承旧倍率。
+    internal static int SpawnDamage(EvolutionShot kind, EvolutionBeamStyle style, bool corridor, float cycleBoost, bool master)
+    {
+        int damage = ProjectileDamage(kind, style);
+        if (kind == EvolutionShot.Beam && style == EvolutionBeamStyle.Axis) return damage;
+        if (corridor && !master) damage = (int)(damage * EvolutionRules.EvolvedProjectileMultiplier);
+        return (int)(damage * cycleBoost);
     }
 
     internal static int BossContactDamage(int phase, bool charging, bool desperate = false)

@@ -41,7 +41,7 @@ StatusMessage: {
 Items: {
 	EvolutionTreasureBag: {
 		DisplayName: 宝藏袋（进化的本质）
-		Tooltip: 右键打开，获得“进化的起点”和“进化的终点”
+		Tooltip: 右键打开，必定获得“进化的起点”“进化的终点”“终末光”“起源斩”“生之巢”和“血光之灾”各一件
 	}
 
 	EvolutionSummon: {
@@ -50,6 +50,8 @@ Items: {
 			'''
 			地球人类对源石技术那不应该存在的窥测的起点，亦是其终点
 			召唤 进化的本质
+			仅可在夜晚地表使用
+			击败全部机械三王后方可召唤
 			'''
 	}
 

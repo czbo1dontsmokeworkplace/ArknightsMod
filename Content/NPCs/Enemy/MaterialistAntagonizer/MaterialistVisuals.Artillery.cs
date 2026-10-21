@@ -38,14 +38,14 @@ internal static partial class MaterialistVisuals
             }
             return true;
         }
-        if (h.Kind is not (DroneShot.CommandRocket or DroneShot.CannonShell)) return false;
+        if (h.Kind is not (DroneShot.CommandRocket or DroneShot.RaptorRocket or DroneShot.CannonShell)) return false;
         Vector2 axisForward = p.velocity.SafeNormalize(Vector2.UnitY), normal = axisForward.RotatedBy(MathHelper.PiOver2);
         for (int i = p.oldPos.Length - 1; i > 0; i--)
             if (p.oldPos[i] != Vector2.Zero && p.oldPos[i - 1] != Vector2.Zero)
             {
                 float fade = 1 - i / (float)p.oldPos.Length;
                 Line(p.oldPos[i] + p.Size * .5f, p.oldPos[i - 1] + p.Size * .5f,
-                    (color with { A = 0 }) * (fade * .55f), (h.Kind == DroneShot.CommandRocket ? 5 : 3) * fade);
+                    (color with { A = 0 }) * (fade * .55f), (h.Kind is DroneShot.CommandRocket or DroneShot.RaptorRocket ? 5 : 3) * fade);
             }
         if (h.Kind == DroneShot.CannonShell)
         {
@@ -101,8 +101,6 @@ internal static partial class MaterialistVisuals
                 for (int b = beat; b <= beat + 22 && b < 180; b++)
                     if (boss.CannonBeat(b)) { next = b; break; }
                 float charge = next < 0 ? 0 : 1 - (next - beat) / 23f;
-                Ring(cannon, 18, Amber * .7f, boss.NPC.rotation, 2, .7f, 8);
-                Ring(cannon, 29 - charge * 11, Cyan * (.3f + charge * .5f), -beat * .05f, 1, .7f, 12);
                 Glow(cannon, Amber * (charge * .7f), new Vector2(25 + charge * 20));
             }
         }

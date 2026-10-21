@@ -8,12 +8,17 @@ EvolutionCinematicConfig: {
 
 	ScreenShake: {
 		Label: Boss combat screen shake
-		Tooltip: Affects only your view. Never locks the camera or moves your character.
+		Tooltip: Controls local screen shake without moving your character. The terminal explosion camera has its own setting.
 	}
 
 	ScreenFilters: {
 		Label: Transition exposure filters
 		Tooltip: Brief dimming, a soft white flash and quick recovery. Reduced effects also disables this filter.
+	}
+
+	DeathCamera: {
+		Label: Terminal explosion camera
+		Tooltip: Smoothly focuses your view on the boss during its final explosion, then returns to your character's current position after the aftershock. Does not move your character or change zoom.
 	}
 }
 

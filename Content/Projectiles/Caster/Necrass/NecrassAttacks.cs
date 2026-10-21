@@ -75,7 +75,10 @@ public sealed class NecrassSoulBolt : NecrassAttack
         {
             Vector2 delta = Main.npc[normalTarget].Center - Projectile.Center;
             float turn = MathHelper.WrapAngle(delta.ToRotation() - Projectile.ai[1]);
-            Projectile.ai[1] += Math.Clamp(turn, -.0305f, .0305f);
+            // age counts sub-updates: widen by one degree per two actual game frames.
+            float extraDegrees = MathF.Floor(age / (Projectile.MaxUpdates * 2f));
+            float turnLimit = Math.Min(MathHelper.Pi, .0305f + MathHelper.ToRadians(extraDegrees));
+            Projectile.ai[1] += Math.Clamp(turn, -turnLimit, turnLimit);
         }
         float speed = MathHelper.Lerp(2.4f, 6f, MathHelper.Clamp(age / 76f, 0, 1));
         float wave = MathF.Sin(age * MathHelper.TwoPi / 69f + Projectile.ai[2]) * .20f

@@ -24,7 +24,8 @@ public abstract class BranchCrossbowWeapon : CrossbowWeaponBase
     {
         base.ModifyTooltips(tooltips);
         tooltips.Add(new TooltipLine(Mod, "BranchSkillKey", GetSkillActivateKeyHint()));
-        tooltips.Add(new TooltipLine(Mod, "BranchPlaceholder", Language.GetTextValue("Mods.ArknightsMod.ChargedArsenal.Placeholder")));
+        if (Kind != CrossbowKind.Provence)
+            tooltips.Add(new TooltipLine(Mod, "BranchPlaceholder", Language.GetTextValue("Mods.ArknightsMod.ChargedArsenal.Placeholder")));
     }
     public override void SetDefaults()
     {

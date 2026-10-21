@@ -15,4 +15,7 @@ public sealed class EvolutionCinematicConfig : ModConfig
 
     [DefaultValue(true)]
     public bool ScreenFilters { get; set; } = true;
+
+    [DefaultValue(true)]
+    public bool DeathCamera { get; set; } = true;
 }

@@ -87,7 +87,7 @@ internal static class MousseVisuals
         power = MathHelper.Clamp(power, 0f, 1.5f);
         float scale = p.scale * RangeMultiplier;
         Vector2 root = hand + p.rotation.ToRotationVector2() * (physicalSword ? 16f * p.scale : 20f);
-        float rotation = p.rotation + MathHelper.PiOver2;
+        // Glove artwork runs from the upper-left wrist toward the lower-right fingertips.
         DrawEnergyColumn(root, p.rotation, power, tint, scale);
         if (physicalSword)
         {
@@ -98,7 +98,7 @@ internal static class MousseVisuals
         }
         else
             Main.EntitySpriteDraw(weapon, hand - Main.screenPosition, null, lightColor,
-                rotation, new Vector2(weapon.Width * .5f, weapon.Height - 2f), 1f, SpriteEffects.None);
+                p.rotation - MathHelper.PiOver4, new Vector2(10f, 9f), 1f, SpriteEffects.None);
     }
 
     internal static void DrawSlash(Projectile p, int age, Color tint)
@@ -110,7 +110,7 @@ internal static class MousseVisuals
         float scale = p.ai[1] * RangeMultiplier;
         Vector2 aim = p.velocity.SafeNormalize(Vector2.UnitX);
         Vector2 size = new Vector2(1f + stretch * .5f, 1.25f - stretch * 1.1f) * (156.8f * envelope * scale);
-        SpriteEffects flip = (p.ai[0] == 1f) == (aim.X >= 0f) ? SpriteEffects.FlipVertically : SpriteEffects.None;
+        SpriteEffects flip = (p.ai[0] % 2f != 0f) == (aim.X >= 0f) ? SpriteEffects.FlipVertically : SpriteEffects.None;
         BeginLayer(BlendState.NonPremultiplied);
         try
         {
@@ -146,7 +146,7 @@ internal static class MousseVisuals
         {
             float variance = Utils.GetLerpValue(0f, dustCount, i, true) * Main.rand.NextFloat(.9f, 1f);
             float angle = MathHelper.Lerp(-.7f, .7f, variance) * p.direction;
-            float swingWeight = p.ai[0] == 1f ? 1f - variance : variance;
+            float swingWeight = p.ai[0] % 2f != 0f ? 1f - variance : variance;
             float particleScale = .4f + swingWeight * 2f;
             float centerWeight = 1f - MathF.Abs(angle);
             float centerPower = MathF.Pow(centerWeight, 1.5f);

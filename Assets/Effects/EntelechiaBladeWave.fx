@@ -14,6 +14,7 @@ float  uProgress;       // 白色核心淡入淡出进度（先出现、后消�
 float  uRedProgress;    // 红色辉光/拖尾淡入淡出进度（后出现、先消失）
 float  uIntensity;
 float  uTime;
+float  uGrayscale;      // Optional neutral palette for the shared Reaper crescent.
 
 static const float PI = 3.14159265358979323846;
 
@@ -174,6 +175,7 @@ float4 PS(float2 coords : TEXCOORD0) : COLOR0
     //  - 弱处(coverage 小) → 近似加性，保留夜间柔和辉光；
     //  - 强处(coverage→1) → 不透明覆盖背景，白天/亮背景下也能显示本色（拖尾不再被冲淡）。
     float coverage = saturate(max(rgb.r, max(rgb.g, rgb.b)));
+    rgb = lerp(rgb, dot(rgb, float3(0.2126, 0.7152, 0.0722)).xxx, saturate(uGrayscale));
     return float4(rgb, coverage); // 预乘 Alpha 混合（BlendState.AlphaBlend）
 }
 

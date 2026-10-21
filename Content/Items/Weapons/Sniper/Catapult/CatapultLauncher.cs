@@ -20,7 +20,7 @@ public sealed class CatapultLauncher : ExpansionWeaponBase
     internal const int AttackInterval = 64;
     internal const float MaximumRange = ArtilleryBallistics.MaximumRange;
     internal const float BlastRadius = ArtilleryBlast.Radius;
-    protected override int[] EliteDamage => [46, 56];
+    protected override int[] EliteDamage => [51, 62]; // +10%, rounded to the nearest integer
     // TODO: 正式空爆武器贴图；手持绘制与物品使用同一原版占位图。
     public override string Texture => "Terraria/Images/Item_" + ItemID.GrenadeLauncher;
 

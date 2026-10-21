@@ -160,13 +160,6 @@ namespace ArknightsMod.Content.Projectiles.Guard.Blaze
 			ejectaSpawnedThisCycle = false;
 			Projectile.ResetLocalNPCHitImmunity();
 
-			if (Extended && spool >= 0.5f && age > 0) {
-				ejectaSpawnedThisCycle = true;
-				BlazeScarletEjecta.SpawnCone(Projectile.GetSource_FromThis(), EffectMuzzle,
-					aimAngle.ToRotationVector2(), 1, MathHelper.ToRadians(16f), 7.5f, 11f,
-					Math.Max(1, (int)MathF.Round(Projectile.damage * 0.18f)),
-					Projectile.knockBack * 0.18f, Projectile.owner, 0.9f);
-			}
 		}
 
 		private void UpdateMotorEffects(Vector2 direction, Vector2 normal) {
@@ -226,6 +219,9 @@ namespace ArknightsMod.Content.Projectiles.Guard.Blaze
 
 		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
 			if (damageDone > 0)
+				CenturionHitVisuals.BloodSpray(target, aimAngle.ToRotationVector2(),
+					CenturionHitVisuals.BlazeIntensity, cycleTargets.Count, CenturionHitVisuals.BlazeColor);
+			if (damageDone > 0)
 				target.AddBuff(ModContent.BuffType<WeaponBleedingDebuff>(), 180);
 			cycleTargets.Add(target.whoAmI);
 			if (SelectedSkill == 0 && !powerStrikeCycle && !creditedThisCycle) {
@@ -234,14 +230,11 @@ namespace ArknightsMod.Content.Projectiles.Guard.Blaze
 			}
 
 			Vector2 direction = aimAngle.ToRotationVector2();
-			if (!Extended && !ejectaSpawnedThisCycle) {
+			if (damageDone > 0 && !ejectaSpawnedThisCycle) {
 				ejectaSpawnedThisCycle = true;
-				BlazeScarletEjecta.SpawnCone(Projectile.GetSource_OnHit(target), EffectMuzzle,
-					direction, 1, MathHelper.ToRadians(21f), 8f, 12.5f,
-					Math.Max(1, (int)MathF.Round(Projectile.damage * 0.24f)),
-					Projectile.knockBack * 0.22f, Projectile.owner, powerStrikeCycle ? 1.25f : 1f);
+				CenturionHitVisuals.SawEjecta(Projectile, EffectMuzzle, direction,
+					Extended ? 0.18f : 0.24f, powerStrikeCycle ? 1.25f : 1f);
 			}
-			BlazeVisuals.SpawnImpactBurst(target.Center, direction, powerStrikeCycle, spool);
 			if (!Main.dedServ) {
 				SoundEngine.PlaySound(SoundID.NPCHit18 with {
 					Volume = powerStrikeCycle ? 0.78f : 0.48f,

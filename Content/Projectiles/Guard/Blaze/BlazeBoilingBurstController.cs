@@ -34,6 +34,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Blaze
 		private int pulseDamageTicks;
 		private int finalDamageTicks;
 		private int pulseIndex;
+		private int bloodHitsThisPulse;
 		private int pulseVisualTicks;
 		private int pulseVisualDuration;
 		private float currentCutMultiplier = 1f;
@@ -163,6 +164,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Blaze
 					pulseVisualTicks = pulseVisualDuration;
 					pulseImpactTriggered = false;
 					Projectile.ResetLocalNPCHitImmunity();
+					bloodHitsThisPulse = 0;
 					SpawnCutPulseEffects(cutInterval);
 					cutCooldown = cutInterval;
 				}
@@ -173,6 +175,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Blaze
 				finalDamageTicks = FinalDamageWindow;
 				pulseImpactTriggered = false;
 				Projectile.ResetLocalNPCHitImmunity();
+				bloodHitsThisPulse = 0;
 				PaySelfCost();
 				SpawnFinalEffects();
 			}
@@ -237,10 +240,17 @@ namespace ArknightsMod.Content.Projectiles.Guard.Blaze
 		}
 
 		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
+			if (damageDone > 0 && !InFinalDamageWindow) {
+				if (bloodHitsThisPulse == 0)
+					CenturionHitVisuals.SawEjecta(Projectile, EffectMuzzle, AimDirection);
+				CenturionHitVisuals.BloodSpray(target, AimDirection,
+					CenturionHitVisuals.BlazeIntensity, bloodHitsThisPulse++, CenturionHitVisuals.BlazeColor);
+			}
 			if (damageDone > 0)
 				target.AddBuff(ModContent.BuffType<WeaponBleedingDebuff>(), 180);
 			bool final = InFinalDamageWindow;
-			BlazeVisuals.SpawnImpactBurst(target.Center, target.Center - Owner.Center, final, final ? 1f : Ramp);
+			if (final)
+				BlazeVisuals.SpawnImpactBurst(target.Center, target.Center - Owner.Center, true, 1f);
 			if (!pulseImpactTriggered && !Main.dedServ) {
 				pulseImpactTriggered = true;
 				SoundEngine.PlaySound(SoundID.Tink with {

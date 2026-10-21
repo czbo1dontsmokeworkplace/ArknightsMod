@@ -20,10 +20,11 @@ public sealed class VanguardLanceCharge : ModProjectile
     private bool configured, accent, started, stopped, impactSpent, movementEnded, moved;
     private float size = 1;
     private Item boundItem;
-    private Vector2 grip, tip, previousCenter, start;
+    private Vector2 grip, tip, previousGrip, previousTip, previousCenter, start;
     private readonly Vector2[] history = new Vector2[24];
     internal bool ProtectsContact => Projectile.active && started && moved && !movementEnded && configured
-        && Projectile.ai[1] >= 1 && Projectile.ai[1] <= VanguardSpearRules.ChargeDuration + 1;
+        && Projectile.ai[1] >= 1 && Projectile.ai[1] <= VanguardSpearRules.ChargeDuration + 1
+        && (Projectile.owner != Main.myPlayer || Main.player[Projectile.owner].GetModPlayer<VanguardSpearPlayer>().ChargeHeld);
     private Vector2 Aim => Projectile.velocity.SafeNormalize(Vector2.UnitX);
     public override void SetDefaults()
     {
@@ -52,7 +53,7 @@ public sealed class VanguardLanceCharge : ModProjectile
         accent = reader.ReadBoolean(); stopped = reader.ReadBoolean();
     }
     public override bool ShouldUpdatePosition() => false;
-    public override bool? CanDamage() => configured && started && Projectile.ai[1] > 1
+    public override bool? CanDamage() => Projectile.active && !movementEnded && configured && started && Projectile.ai[1] > 1
         && Projectile.ai[1] <= VanguardSpearRules.ChargeDuration + 1 ? null : false;
     private bool ValidOwner(Player owner) => owner.active && !owner.dead && !owner.CCed && !owner.noItems
         && !owner.mount.Active && owner.grapCount == 0 && owner.selectedItem == slot
@@ -62,18 +63,29 @@ public sealed class VanguardLanceCharge : ModProjectile
     // Called before native player movement, after movement accessories have updated.
     internal void ApplyMovement(Player owner)
     {
+        if (Projectile.owner != Main.myPlayer) return;
         if (!Projectile.active || !configured || !ValidOwner(owner) || stopped
-            || Projectile.ai[1] > VanguardSpearRules.ChargeDuration)
-        { EndMovement(owner); return; }
+            || Projectile.ai[1] > VanguardSpearRules.ChargeDuration
+            || !owner.GetModPlayer<VanguardSpearPlayer>().ChargeHeld)
+        {
+            EndMovement(owner);
+            if (Projectile.active) Projectile.Kill();
+            return;
+        }
         if (Projectile.ai[1] < 1) return;
+        Vector2 previousAim = Aim;
+        Vector2 cursorAim = (Main.MouseWorld - owner.MountedCenter).SafeNormalize(previousAim);
+        Projectile.velocity = previousAim.ToRotation().AngleTowards(cursorAim.ToRotation(),
+            VanguardSpearRules.ChargeTurnRate).ToRotationVector2();
+        bool turning = Vector2.DistanceSquared(previousAim, Aim) > .000001f;
         Vector2 requested = Aim * VanguardSpearRules.ChargeSpeed(Kind);
         Vector2 safe = Collision.TileCollision(owner.position, requested, owner.width, owner.height, false, false, (int)owner.gravDir);
         // Never slide around a wall at charge speed or teleport to the mouse.
         stopped = Vector2.DistanceSquared(safe, requested) > .25f;
-        if (stopped) Projectile.netUpdate = true;
+        if (stopped || turning || (int)Projectile.ai[1] % 6 == 1) Projectile.netUpdate = true;
         owner.velocity = safe;
         moved = safe.LengthSquared() > .01f;
-        if (Main.netMode == NetmodeID.MultiplayerClient && (int)Projectile.ai[1] % 6 == 1)
+        if (Main.netMode == NetmodeID.MultiplayerClient && (turning || (int)Projectile.ai[1] % 6 == 1))
             NetMessage.SendData(MessageID.PlayerControls, number: owner.whoAmI);
         owner.fallStart = (int)(owner.position.Y / 16f);
         // Avoid contact damage while passing through an enemy; no immunity is granted at rest.
@@ -85,7 +97,18 @@ public sealed class VanguardLanceCharge : ModProjectile
         movementEnded = true;
         if (Projectile.owner == Main.myPlayer)
         {
-            owner.velocity *= .25f;
+            if (moved)
+            {
+                owner.velocity *= .1f;
+                float speed = owner.velocity.Length();
+                if (speed > VanguardSpearRules.ChargeEndSpeed)
+                    owner.velocity *= VanguardSpearRules.ChargeEndSpeed / speed;
+            }
+            if (owner.heldProj == Projectile.whoAmI)
+            {
+                owner.heldProj = -1;
+                owner.itemTime = owner.itemAnimation = 0;
+            }
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 NetMessage.SendData(MessageID.PlayerControls, number: owner.whoAmI);
         }
@@ -96,7 +119,8 @@ public sealed class VanguardLanceCharge : ModProjectile
         if (!VanguardSpearRules.ValidKind((int)Kind) || !float.IsFinite(Projectile.velocity.X)
             || !float.IsFinite(Projectile.velocity.Y)) { Projectile.Kill(); return; }
         if (!configured) return;
-        if (!ValidOwner(owner) || Projectile.ai[1] > VanguardSpearRules.ChargeDuration
+        if (!ValidOwner(owner) || movementEnded || Projectile.ai[1] > VanguardSpearRules.ChargeDuration
+            || (Projectile.owner == Main.myPlayer && !owner.GetModPlayer<VanguardSpearPlayer>().ChargeHeld)
             || (started && Vector2.DistanceSquared(owner.MountedCenter, start) > 1100 * 1100))
         { Projectile.Kill(); return; }
         if (!started)
@@ -121,8 +145,10 @@ public sealed class VanguardLanceCharge : ModProjectile
         owner.itemRotation = (Aim * owner.direction).ToRotation();
         owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Aim.ToRotation() - MathHelper.PiOver2);
         Vector2 hand = owner.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, Aim.ToRotation() - MathHelper.PiOver2);
+        previousGrip = grip; previousTip = tip;
         grip = hand + Aim * 8;
         tip = grip + Aim * VanguardSpearRules.Length(Kind) * size * .78f;
+        if (Projectile.ai[1] == 0) { previousGrip = grip; previousTip = tip; }
         Array.Copy(history, 0, history, 1, history.Length - 1); history[0] = Projectile.Center;
         if (Projectile.ai[1] % 2 == 0 && Projectile.ai[1] > 0)
             VanguardSpearVfx.ChargeWake(Vector2.Lerp(previousCenter, Projectile.Center, .5f), Aim, Kind, (int)Projectile.ai[1]);
@@ -141,9 +167,10 @@ public sealed class VanguardLanceCharge : ModProjectile
             Projectile.Center, 24, ref point)) return true;
         for (int i = 0; i <= 3; i++)
         {
-            Vector2 offset = travel * (i / 3f);
+            float progress = i / 3f;
             if (Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(),
-                grip - offset, tip - offset, 12 * size, ref point)) return true;
+                Vector2.Lerp(grip, previousGrip, progress), Vector2.Lerp(tip, previousTip, progress),
+                12 * size, ref point)) return true;
         }
         return false;
     }

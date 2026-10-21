@@ -7,6 +7,18 @@ namespace ArknightsMod.Content.NPCs.Enemy.MaterialistAntagonizer;
 
 public sealed partial class MaterialistHazard
 {
+    internal float PincerFinalHalfAngle => MathF.Atan(85 / Math.Max(180, Length));
+    internal Vector2 PincerClosingDirection => Projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(-Bend * PincerFinalHalfAngle);
+    private void UpdatePincerAim()
+    {
+        // Warning is 1.5x longer, including its final fixed window; acquisition is 20% slower.
+        if (Age >= Delay - 27 || Target < 0 || Target >= Main.maxPlayers || !Main.player[Target].active || Main.player[Target].dead) return;
+        Vector2 delta = Main.player[Target].Center - Anchor;
+        float turn = MathHelper.Clamp(MathHelper.WrapAngle(delta.ToRotation() - Projectile.velocity.ToRotation()), -.0096f, .0096f);
+        Projectile.velocity = Projectile.velocity.RotatedBy(turn).SafeNormalize(Vector2.UnitY);
+        Length = Math.Max(180, delta.Length());
+        if (MaterialistAntagonizer.Authority && Age % 12 == 0) Projectile.netUpdate = true;
+    }
     // Three rays keep the damaging core clear of terrain. No artificial firing-distance limit:
     // an unobstructed ray reaches the world boundary, while platforms/actuated tiles are ignored.
     internal static float TraceBeam(Vector2 origin, Vector2 direction, float width)

@@ -143,7 +143,7 @@ public sealed partial class EvolutionHazard
         {
             int fired=Age-Delay;
             float envelope=EvolutionRules.BeamEnvelope(fired,EvolutionBroodfallRules.FanActive,EvolutionBroodfallRules.FanFade);
-            for(int ray=0;ray<6;ray++)
+            for(int ray=0;ray<EvolutionBroodfallRules.FanRayCount;ray++)
             {
                 Vector2 direction=EvolutionBroodfallRules.FanDirection(ray);
                 DrawRayBody(RayPath(Projectile.Center+direction*75,direction,EvolutionBroodfallRules.FanReach-75),

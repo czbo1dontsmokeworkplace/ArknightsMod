@@ -24,7 +24,7 @@ internal static partial class MaterialistVisuals
                 frame, accent * (.7f * h.Visibility), angle, origin, scale, SpriteEffects.None, 0);
         Main.spriteBatch.Draw(texture, center, frame, Color.White * h.Visibility, angle, origin, scale, SpriteEffects.None, 0);
         Vector2 axis = p.velocity.SafeNormalize(Vector2.UnitY), rear = p.Center - axis * frame.Height * scale * .35f;
-        bool ignited = h.Kind != DroneShot.CommandRocket || h.Age - h.Delay >= 20;
+        bool ignited = h.Kind is not (DroneShot.CommandRocket or DroneShot.RaptorRocket) || h.Age - h.Delay >= 20;
         float flame = ignited ? 24 + MathF.Sin(h.Age * .6f) * 5 : 8;
         Glow(rear - axis * flame * .4f, accent * (ignited ? .55f : .2f), new Vector2(flame * 1.7f, 16), p.rotation);
         Glow(rear - axis * flame * .2f, White * (ignited ? .65f : .25f), new Vector2(flame, 7), p.rotation);

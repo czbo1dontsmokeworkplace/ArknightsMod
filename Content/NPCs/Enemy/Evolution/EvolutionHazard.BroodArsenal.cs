@@ -37,13 +37,13 @@ public sealed partial class EvolutionHazard
         }
         if (Kind == EvolutionShot.GravityFlare && t >= 0)
         {
-            Projectile.velocity.X *= .995f;
-            Projectile.velocity.Y = Math.Min(17, Projectile.velocity.Y + EvolutionBroodfallRules.Gravity);
+            Projectile.velocity.X *= MathF.Pow(.995f, KineticScale);
+            Projectile.velocity.Y = Math.Min(17 * KineticScale, Projectile.velocity.Y + EvolutionBroodfallRules.Gravity * KineticScale * KineticScale);
             Projectile.tileCollide = t > 7 && !Collision.SolidCollision(Projectile.position, Projectile.width, Projectile.height);
         }
         if (Kind == EvolutionShot.BroodRocket && t >= 0 && Age < RocketStop)
         {
-            float speed = MathHelper.Lerp(2, 8, Math.Clamp((t + 1f) / 10, 0, 1));
+            float speed = MathHelper.Lerp(2, 8, Math.Clamp((t + 1f) * KineticScale / 10, 0, 1)) * KineticScale;
             Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY) * speed;
         }
         if (Kind != EvolutionShot.CrashFan && Kind != EvolutionShot.Serpent)
@@ -70,7 +70,7 @@ public sealed partial class EvolutionHazard
     {
         if (Kind == EvolutionShot.CrashFan)
         {
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < EvolutionBroodfallRules.FanRayCount; i++)
             {
                 Vector2 direction = EvolutionBroodfallRules.FanDirection(i);
                 // 近端75像素是亮核；释放玩家时不让交汇点变成六束共同命中的陷阱。
@@ -103,7 +103,7 @@ public sealed partial class EvolutionHazard
         {
             int fired = Age - Delay;
             float opacity = EvolutionRules.BeamEnvelope(fired,EvolutionBroodfallRules.FanActive,EvolutionBroodfallRules.FanFade);
-            for (int ray = 0; ray < 6; ray++)
+            for (int ray = 0; ray < EvolutionBroodfallRules.FanRayCount; ray++)
             {
                 Vector2 d = EvolutionBroodfallRules.FanDirection(ray);
                 Vector2 start = Projectile.Center + d * 75, end = Projectile.Center + d * EvolutionBroodfallRules.FanReach;
@@ -186,7 +186,7 @@ public sealed partial class EvolutionHazard
         Vector2 point = ArsenalOrigin, velocity = Projectile.velocity;
         for (int i = 0; i < 75; i++)
         {
-            velocity.X *= .995f; velocity.Y = Math.Min(17, velocity.Y + EvolutionBroodfallRules.Gravity);
+            velocity.X *= MathF.Pow(.995f, KineticScale); velocity.Y = Math.Min(17 * KineticScale, velocity.Y + EvolutionBroodfallRules.Gravity * KineticScale * KineticScale);
             Vector2 next = point + velocity;
             if (i % 8 < 3) EvolutionVisuals.Line(point, next, EvolutionVisuals.Core * (.36f * opacity), 1, false);
             point = next;

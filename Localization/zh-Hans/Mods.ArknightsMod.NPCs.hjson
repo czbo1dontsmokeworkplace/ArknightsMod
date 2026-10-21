@@ -15,7 +15,7 @@ SnowHound.DisplayName: 霜牙
 
 Evolution: {
 	DisplayName: “进化的本质”
-	BossChecklistIntegration.SpawnInfo: 持有进化的原点即可在任意时间、任意地点召唤。80%血量以上为半径75格的圆形场地；80%至40%限制在上下相隔50格、横向不限的区域。建议在开阔场地使用。
+	BossChecklistIntegration.SpawnInfo: 击败全部机械三王后，在夜晚地表使用进化的原点召唤；合成需要力量、视域与恐惧之魂。80%血量以上为半径75格的圆形场地；80%至40%限制在上下相隔62.5格、横向不限的区域。建议在开阔场地使用。
 }
 
 EvolutionSpider.DisplayName: 变异岩蛛

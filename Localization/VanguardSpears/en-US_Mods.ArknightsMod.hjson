@@ -3,9 +3,8 @@ Items: {
 		DisplayName: Folding Lance [Grani]
 		Tooltip:
 			'''
-			Early Hardmode
-			Charges pierce enemies, dealing direct damage once per enemy.
-			Holding this weapon grants a 20% chance to dodge damage.
+			Thrusts forward, scattering damaging sparks on hit
+			Grants a 20% chance to dodge damage while held
 			'''
 	}
 
@@ -13,8 +12,8 @@ Items: {
 		DisplayName: Charge Lance [Wild Mane]
 		Tooltip:
 			'''
-			After all Mechanical Bosses
-			Charging through enemies releases orange lance bursts and tearing sparks.
+			Thrusts forward, scattering damaging sparks on hit
+			Charges can pass through multiple enemies
 			'''
 	}
 }
@@ -48,17 +47,12 @@ Skills: {
 VanguardSpears: {
 	Controls:
 		'''
-		Left-click thrusts toward the cursor. Hits scatter 1 to 3 falling sparks, each dealing 18% of that thrust's damage.
-		Right-click charges toward the cursor for {0}x damage, directly hitting each enemy at most once per charge.
-		Charges last 28 frames and travel about {2} pixels, stop at tiles, and prevent contact damage while moving.
-		All four weapons share a fixed {1}-second cooldown that continues while unequipped. Melee hits do not reduce it.
-		The first charge hit releases 6 to 9 falling sparks, each dealing 10% of the charge's damage.
-		Sparks deal damage after 5 frames, hitting up to 5 times total with a 15-frame cooldown per enemy.
-		Charges cannot start while mounted or using a grappling hook.
+		Charges deal {0}x damage and share a {1}-second cooldown; release or hit terrain to stop
+		Charging prevents enemy contact damage, but not projectile damage; cannot charge while mounted or using a grappling hook
 		'''
-	SkillKey: Press [{0}] for manual skills; click a skill icon to select it.
+	SkillKey: Press [{0}] to activate the selected manual skill
 	Unbound: Bind Skill Activate under Settings → Controls → Mod Controls.
-	Placeholder: Weapon art and skill icons temporarily reuse existing mod assets.
+	Placeholder: Weapon art and skill icons use temporary sprites
 }
 
 Projectiles: {

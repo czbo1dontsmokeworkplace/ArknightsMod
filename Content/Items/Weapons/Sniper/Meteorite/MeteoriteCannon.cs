@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content;
+using ArknightsMod.Content;
 using ArknightsMod.Content.Projectiles.Sniper.Meteorite;
 using ArknightsMod.Content.Projectiles.Sniper.Artillery;
 using ArknightsMod.Players;
@@ -14,14 +14,14 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Meteorite;
 /// <summary>陨星的跨射爆破弩炮；无需弹药，使用专属爆破弹。</summary>
 public sealed class MeteoriteCannon : ExpansionWeaponBase
 {
-    protected override int[] EliteDamage => [251, 288, 331];
+    protected override int[] EliteDamage => [276, 317, 364]; // +10%, rounded to the nearest integer
     private static readonly SoundStyle FireSound = new("ArknightsMod/Sounds/MeteoriteCannonFire")
     { Volume = .64f, MaxInstances = 3 };
     private static readonly SoundStyle SkillSound = new("ArknightsMod/Sounds/SkillActive1")
     { Volume = .46f, MaxInstances = 3 };
 
-    // 武器本体仍等待正式贴图；原版榴弹发射器只充当物品占位图。
-    public override string Texture => "Terraria/Images/Item_" + ItemID.GrenadeLauncher;
+    // 专属榴弹弩贴图也供手持弹幕使用。
+    public override string Texture => "ArknightsMod/Content/Items/Weapons/Sniper/Meteorite/MeteoriteCannon";
 
     public override void SetDefaults()
     {

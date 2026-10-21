@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Mousse;
 
 public class MousseGlovePunch : ArtsFighterHoldout
 {
-    public override string Texture => "ArknightsMod/Content/Items/Weapons/Guard/Mousse/MousseGlove";
+    public override string Texture => "ArknightsMod/Content/Projectiles/Guard/Mousse/MousseGlovePunch";
     protected override int WeaponType => ModContent.ItemType<MousseGlove>();
     protected override int SlashType => ModContent.ProjectileType<MousseLightSlash>();
     protected override Color BladeColor => MousseVisuals.Pale;

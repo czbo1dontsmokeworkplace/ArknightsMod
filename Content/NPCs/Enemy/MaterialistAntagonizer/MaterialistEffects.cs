@@ -13,6 +13,7 @@ public sealed class MaterialistVisualConfig : ModConfig
     public override ConfigScope Mode => ConfigScope.ClientSide;
     [DefaultValue(false)] public bool ReducedEffects { get; set; }
     [DefaultValue(true)] public bool ScreenShake { get; set; } = true;
+    [DefaultValue(true)] public bool DeathCamera { get; set; } = true;
 }
 
 public sealed class MaterialistEffects : ModSystem
@@ -37,13 +38,17 @@ public sealed class MaterialistEffects : ModSystem
             if (now - muzzleTimes[source] < 5) return;
             muzzleTimes[source] = now;
         }
-        waves[cursor++ % waves.Length] = new Wave { Position = point, Radius = 68 * power, Color = color,
-            Age = 1, Life = 18, Squash = .38f, Angle = angle + MathHelper.PiOver2 };
+        bool bodyRing = source >= 0 && source < Main.maxNPCs && Main.npc[source].active &&
+            (Main.npc[source].ModNPC is MaterialistAntagonizer ||
+                Main.npc[source].TryGetGlobalNPC<MaterialistWing>(out var wing) && wing.Bound && MaterialistWing.Role(Main.npc[source]) == WingRole.Raptor);
+        if (!bodyRing)
+            waves[cursor++ % waves.Length] = new Wave { Position = point, Radius = 68 * power, Color = color,
+                Age = 1, Life = 18, Squash = .38f, Angle = angle + MathHelper.PiOver2 };
         for (int i = 0; i < (MaterialistVisuals.Reduced ? 3 : 9); i++)
             MaterialistVisuals.Nano(point, (angle + Main.rand.NextFloat(-.7f, .7f)).ToRotationVector2() * Main.rand.NextFloat(3, 9) * power,
                 i % 3 == 0 ? MaterialistVisuals.White : color, .7f + power * .35f, 18);
     }
-    public override void OnWorldUnload() { Array.Clear(waves); Array.Clear(muzzleTimes); MaterialistBallistics.Reset(); cursor = clock = 0; shake = 0; }
+    public override void OnWorldUnload() { Array.Clear(waves); Array.Clear(muzzleTimes); MaterialistBallistics.Reset(); MaterialistHazard.ResetSaucerAudio(); cursor = clock = 0; shake = 0; }
     public override void Unload() { OnWorldUnload(); MaterialistVisuals.Unload(); }
     public override void PostUpdateEverything()
     {
@@ -54,7 +59,7 @@ public sealed class MaterialistEffects : ModSystem
     }
     public override void ModifyScreenPosition()
     {
-        if (Main.dedServ || Main.gameMenu || MaterialistVisuals.Reduced || !ModContent.GetInstance<MaterialistVisualConfig>().ScreenShake) return;
+        if (Main.dedServ || Main.gameMenu || MaterialistDeathSystem.PresentationActive || MaterialistVisuals.Reduced || !ModContent.GetInstance<MaterialistVisualConfig>().ScreenShake) return;
         Main.screenPosition += new Vector2(MathF.Sin(clock * 2.3f), MathF.Cos(clock * 1.8f)) * Math.Min(6, shake);
     }
     public override void PostDrawTiles()
@@ -63,7 +68,7 @@ public sealed class MaterialistEffects : ModSystem
         MaterialistAntagonizer boss = null;
         foreach (NPC npc in Main.ActiveNPCs)
             if (npc.ModNPC is MaterialistAntagonizer b && npc.Distance(Main.LocalPlayer.Center) < 2400) { boss = b; break; }
-        bool any = boss != null;
+        bool any = boss != null || MaterialistBallistics.HasVisuals;
         foreach (var wave in waves) if (wave.Age > 0) any = true;
         if (!any) return;
         Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp,

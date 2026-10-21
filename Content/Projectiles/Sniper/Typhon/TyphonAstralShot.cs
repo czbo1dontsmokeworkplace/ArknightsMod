@@ -20,7 +20,7 @@ public sealed class TyphonAstralShot : ModProjectile
     public int Age => (int)Projectile.ai[2];
     public const int WanderFrames = 0;
     public const float LeftScale = 1.7f, RightScale = LeftScale * .7f, LaunchSpeed = 9f;
-    public const float RightTargetRange = 512f;
+    public const float RightTargetRange = 1024f;
     private NPC guidedTarget;
     // PrecisionBolt uses two updates per tick: normalize its turn and recalibration to real time.
     public static float HomingStrength(float age) => MathF.Pow(Math.Clamp((119 - age * 2 - 40) / 120f, 0, 1), 4);
@@ -31,12 +31,12 @@ public sealed class TyphonAstralShot : ModProjectile
         float direction = velocity.SafeNormalize(Vector2.UnitX).ToRotation();
         if (toTarget.LengthSquared() < .0001f) return direction.ToRotationVector2() * speed;
         float ideal = toTarget.ToRotation();
-        direction = direction.AngleTowards(ideal, MathHelper.ToRadians(5f) / updates);
+        direction = direction.AngleTowards(ideal, MathHelper.ToRadians(10f) / updates);
         int step = (int)MathF.Round(MathF.Max(0, age) * updates);
         // Like Clockwork Bow: periodically choose a left/right correction, then damp it rapidly.
         if (step > 0 && step % (updates * 3) == 0)
         {
-            float correction = MathHelper.ToRadians(75f) * HomingStrength(age);
+            float correction = MathHelper.ToRadians(150f) * HomingStrength(age);
             float left = direction - correction, right = direction + correction;
             direction = MathF.Abs(MathHelper.WrapAngle(left - ideal)) < MathF.Abs(MathHelper.WrapAngle(right - ideal)) ? left : right;
         }

@@ -219,7 +219,8 @@ namespace ArknightsMod.Content.Projectiles.Guard.Entelechia
 			// ── Ortho 投影矩阵（屏幕空间 → 裁剪空间），传给 shader 的 VS ─────
 			Matrix matrix = Matrix.CreateOrthographicOffCenter(
 				0, Main.screenWidth, Main.screenHeight, 0, -1f, 1f);
-			eff.Parameters["MatrixTransform"]?.SetValue(matrix);
+			eff.Parameters["uGrayscale"]?.SetValue(0f);
+            eff.Parameters["MatrixTransform"]?.SetValue(matrix);
 			eff.Parameters["uColor"]?.SetValue(new Vector3(0.95f, 0.10f, 0.08f));  // 外发光：红
 			eff.Parameters["uSecondaryColor"]?.SetValue(new Vector3(1.0f, 1.0f, 1.0f)); // 核心：白
 			eff.Parameters["uProgress"]?.SetValue(whiteProgress);

@@ -155,6 +155,7 @@ public sealed partial class MaterialistAntagonizer : ModNPC
     public override void AI()
     {
         if (Encounter == 0) return;
+        UpdateLockShield();
         if (Authority && FinalStand && Order != FlightOrder.Death && WingCount() == 0) FinishFinalStand();
         if (FinalStand && Order is not (FlightOrder.Death or FlightOrder.Transition)) NPC.life = LockedPhaseLife;
         if (CoreExposure > 0) CoreExposure--;
@@ -172,6 +173,7 @@ public sealed partial class MaterialistAntagonizer : ModNPC
         {
             NPC.velocity *= .92f;
             UpdateVisuals();
+            if (Authority && Timer % 30 == 0) NPC.netUpdate = true;
             if (Authority && Timer >= MaterialistRules.DeathTicks) { NPC.life = 0; NPC.checkDead(); }
             NPC.ai[2]++;
             return;
@@ -304,8 +306,12 @@ public sealed partial class MaterialistAntagonizer : ModNPC
     }
     public override void ModifyNPCLoot(NPCLoot loot)
     {
-        // Rewards are unfinished. Keep the bag content registered for later, but do not drop it.
+        loot.Add(ItemDropRule.BossBag(ModContent.ItemType<MaterialistTreasureBag>()));
         var normal = new LeadingConditionRule(new Conditions.NotExpert());
+        normal.OnSuccess(ItemDropRule.Common(ModContent.ItemType<global::ArknightsMod.Content.Items.MaterialistArsenal.FighterDispatchTerminal>(), 1));
+        normal.OnSuccess(ItemDropRule.Common(ModContent.ItemType<global::ArknightsMod.Content.Items.MaterialistArsenal.MiniGatling>(), 1));
+        normal.OnSuccess(ItemDropRule.Common(ModContent.ItemType<global::ArknightsMod.Content.Items.MaterialistArsenal.OrbitalLaser>(), 1));
+        normal.OnSuccess(ItemDropRule.Common(ModContent.ItemType<global::ArknightsMod.Content.Items.MaterialistArsenal.RotorBladeCraft>(), 1));
         normal.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DroneCommandCore>()));
         normal.OnSuccess(ItemDropRule.Common(ItemID.ChlorophyteBar, 1, 12, 18));
         loot.Add(normal);

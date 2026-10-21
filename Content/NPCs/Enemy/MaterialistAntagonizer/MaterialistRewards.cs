@@ -5,6 +5,7 @@ using Terraria.Audio;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using ArknightsMod.Content.Items.MaterialistArsenal;
 
 namespace ArknightsMod.Content.NPCs.Enemy.MaterialistAntagonizer;
 
@@ -23,10 +24,11 @@ public sealed class MaterialistUplink : ModItem
         Item.scale = .18f;
         Item.useTime = Item.useAnimation = 45; Item.consumable = false;
     }
-    public override bool CanUseItem(Player player) => NPC.downedPlantBoss &&
-        (player.ZoneOverworldHeight || player.ZoneSkyHeight) && !NPC.AnyNPCs(ModContent.NPCType<MaterialistAntagonizer>());
+    public override bool CanUseItem(Player player) => NPC.downedPlantBoss && !Main.dayTime &&
+        player.ZoneOverworldHeight && !NPC.AnyNPCs(ModContent.NPCType<MaterialistAntagonizer>());
     public override bool? UseItem(Player player)
     {
+        if (!CanUseItem(player)) return false;
         if (player.whoAmI != Main.myPlayer) return true;
         SoundEngine.PlaySound(SoundID.Item93, player.Center);
         if (Main.netMode == NetmodeID.MultiplayerClient)
@@ -86,6 +88,8 @@ public sealed class MaterialistTreasureBag : ModItem
     {
         Item.ResearchUnlockCount = 3;
         ItemID.Sets.BossBag[Type] = true;
+        // Only the declared guaranteed contents; do not append a random developer-armor roll.
+        ItemID.Sets.PreHardmodeLikeBossBag[Type] = true;
     }
     public override void SetDefaults()
     {
@@ -95,8 +99,13 @@ public sealed class MaterialistTreasureBag : ModItem
     public override bool CanRightClick() => true;
     public override void ModifyItemLoot(ItemLoot loot)
     {
-        loot.Add(ItemDropRule.Common(ModContent.ItemType<DroneCommandCore>()));
-        loot.Add(ItemDropRule.Common(ItemID.ChlorophyteBar, 1, 18, 24));
+        // Separate guaranteed rules: every bag awards every weapon, never one random choice.
+        loot.Add(ItemDropRule.Common(ModContent.ItemType<FighterDispatchTerminal>(), chanceDenominator: 1));
+        loot.Add(ItemDropRule.Common(ModContent.ItemType<MiniGatling>(), chanceDenominator: 1));
+        loot.Add(ItemDropRule.Common(ModContent.ItemType<OrbitalLaser>(), chanceDenominator: 1));
+        loot.Add(ItemDropRule.Common(ModContent.ItemType<RotorBladeCraft>(), chanceDenominator: 1));
+        loot.Add(ItemDropRule.Common(ModContent.ItemType<DroneCommandCore>(), chanceDenominator: 1));
+        loot.Add(ItemDropRule.Common(ItemID.ChlorophyteBar, chanceDenominator: 1, minimumDropped: 18, maximumDropped: 24));
         loot.Add(ItemDropRule.CoinsBasedOnNPCValue(ModContent.NPCType<MaterialistAntagonizer>()));
     }
 }

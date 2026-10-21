@@ -20,6 +20,9 @@ public sealed class VanguardChargeCooldown
 public static class VanguardSpearRules
 {
     public const int ChargeDuration = 28;
+    public const int ThrustHoldFrames = 5;
+    public const float ChargeTurnRate = MathHelper.Pi / 180f; // one degree per movement tick
+    public const float ChargeEndSpeed = 2f;
     public const int PulseLifetime = 36;
     public static bool ValidKind(int kind) => kind >= 0 && kind <= 3;
     public static float ChargeDamage(VanguardSpearKind kind) => kind switch {
@@ -59,15 +62,25 @@ public static class VanguardSpearRules
         if (kind == VanguardSpearKind.Bagpipe && skill == 3) interval *= 1.7f;
         // Half of the former duration, including its speed limits and skill modifiers.
         int previous = (int)Math.Clamp(MathF.Ceiling(interval / Math.Clamp(speed, .5f, 3f)), 12, 110);
-        return (previous + 1) / 2;
+        return Math.Max(11, (previous + 1) / 2);
     }
     public static bool Active(float progress) => progress >= .2f && progress < .8f;
-    // One straight extension and retraction along the original aim. No sweep or combo.
+    public static float ThrustExtension(float age, int duration)
+    {
+        duration = Math.Max(11, duration);
+        int forward = (duration - ThrustHoldFrames) / 2;
+        if (age < forward) return Math.Clamp(age / forward, 0, 1);
+        if (age < forward + ThrustHoldFrames) return 1;
+        float retract = Math.Clamp((age - forward - ThrustHoldFrames + 1)
+            / (duration - forward - ThrustHoldFrames), 0, 1);
+        return 1 - retract * retract * (3 - 2 * retract);
+    }
+    // Linear extension, exactly five ticks at the tip, then a smooth curved return.
     public static void ThrustPose(Vector2 hand, Vector2 aim, float progress, float length,
-        out Vector2 grip, out Vector2 tip)
+        out Vector2 grip, out Vector2 tip, int duration = 14)
     {
         float p = Math.Clamp(progress, 0, 1);
-        float extension = (p <= .5f ? p * 2 : (1 - p) * 2) * 52;
+        float extension = ThrustExtension(p * duration, duration) * 52;
         grip = hand + aim * (extension - 18);
         tip = grip + aim * Math.Clamp(length, 60, 220) * .78f;
     }

@@ -2,7 +2,6 @@ using System;
 using ArknightsMod.Content.Buffs;
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.Graphics.CameraModifiers;
 using Terraria.ID;
 using Terraria.ModLoader;
 using ArknightsMod.Content.Projectiles.Caster.SpreadArts;
@@ -59,8 +58,6 @@ public sealed class SkyfireImpact : ModProjectile
     public override void AI()
     {
         if (Projectile.localAI[0]++ != 0f || Main.dedServ) return;
-        Main.instance.CameraModifiers.Add(new PunchCameraModifier(Projectile.Center, Vector2.UnitY,
-            Skyfall ? 8f : 5f, 5f, 11));
         SkyfireVisuals.ImpactParticles(Projectile.Center, Skyfall);
     }
 

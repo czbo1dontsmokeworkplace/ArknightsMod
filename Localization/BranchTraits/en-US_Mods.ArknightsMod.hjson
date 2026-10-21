@@ -1,17 +1,19 @@
 BranchTraits: {
-	Artilleryman: Artilleryman: Fires in a distinctive mortar arc; shells deal increased explosion damage while descending
-	Musha: Musha: Attacks restore life, but holding this weapon disables healing potions
-	Dreadnought: Dreadnought: Deals massive damage to a single enemy and grows stronger through battle
-	ArtsFighter: Arts Fighter: Attacks ignore enemy defense
-	MechAccord: Mech-Accord Caster: Only enemies close enough to the cursor can be selected
-	Mystic: Mystic: Store additional projectiles while not attacking and release them together
-	Phalanx: Phalanx Caster: Gain higher defense while not attacking; attacking temporarily disables the energy shield
-	Spreadshooter: Spreadshooter: Fires many projectiles in a spread
-	Executor: Executor: Moving quickly, dashing, landing, or respawning counts as triggering a skill
-	Centurion: Centurion: Attacks all nearby enemies at an extremely high frequency
-	Medic: Physician: Lob gravity-affected medical arts to heal allied players
-	ChainCaster: Chain Caster: Lightning can bounce between multiple enemies
-	SplashCaster: Splash Caster: Attacks deal sustained damage over time
-	Deadeye: Deadeye: Hold the attack button to charge; a full charge fires a powerful shell
-	Crossbowman: Crossbowman: Rapidly fires arrows
+	Artilleryman: Artilleryman:  Fires in a distinctive mortar arc; descending shells deal 1.25x explosion damage (+25%)
+	Crusher: Crusher:  While held, defense becomes zero; maximum life, life regeneration and healing from potions are increased by 30%
+	Reaper: Reaper:  Left click cuts and releases a gray crescent; only physical cuts steal life. Hold right click to spin and radiate light motes that scatter before rapidly seeking enemies; release to stop spinning. Neither right-click attacks nor motes heal
+	Musha: Musha:  Attacks restore life, but holding this weapon disables healing potions
+	Dreadnought: Dreadnought:  Can hit only one enemy, but deals increasingly higher, stacking damage
+	ArtsFighter: Arts Fighter:  Attacks ignore enemy defense
+	MechAccord: Mech-Accord Caster:  Only enemies close enough to the cursor can be selected
+	Mystic: Mystic:  Store additional projectiles while not attacking and release them together
+	Phalanx: Phalanx Caster:  Gain higher defense while not attacking; attacking temporarily disables the energy shield
+	Spreadshooter: Spreadshooter:  Standing still improves spread accuracy; deals increased damage at close range
+	Executor: Executor:  Moving quickly, dashing, landing, or respawning counts as triggering a skill
+	Centurion: Centurion:  Attacks all nearby enemies at an extremely high frequency
+	Medic: Physician:  Lob gravity-affected medical arts to heal allied players
+	ChainCaster: Chain Caster:  Lightning can bounce between multiple enemies
+	SplashCaster: Splash Caster:  Attacks deal sustained damage over time
+	Deadeye: Deadeye:  Hold the attack button to charge; a full charge fires a powerful shell
+	Crossbowman: Crossbowman:  Rapidly fires arrows
 }

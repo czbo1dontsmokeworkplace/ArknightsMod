@@ -46,7 +46,7 @@ public sealed class VanguardSpearHoldout : ModProjectile
     public override void ReceiveExtraAI(BinaryReader reader)
     {
         configured = reader.ReadBoolean(); skill = Math.Clamp((int)reader.ReadByte(), 0, 3);
-        duration = Math.Clamp((int)reader.ReadInt16(), 6, 55); slot = reader.ReadInt16();
+        duration = Math.Clamp((int)reader.ReadInt16(), 11, 55); slot = reader.ReadInt16();
         float received = reader.ReadSingle(); size = float.IsFinite(received) ? Math.Clamp(received, .5f, 1.92f) : 1;
         accent = reader.ReadBoolean();
     }
@@ -81,7 +81,7 @@ public sealed class VanguardSpearHoldout : ModProjectile
     {
         Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitX);
         Vector2 anchor = owner.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, direction.ToRotation() - MathHelper.PiOver2);
-        VanguardSpearRules.ThrustPose(anchor, direction, progress, VanguardSpearRules.Length(Kind) * size, out hand, out head);
+        VanguardSpearRules.ThrustPose(anchor, direction, progress, VanguardSpearRules.Length(Kind) * size, out hand, out head, duration);
     }
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
     {

@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Mousse
 {
 	public class MousseGlove : ExpansionWeaponBase
 	{
-		protected override int[] EliteDamage => [51, 63, 75];
+		protected override int[] EliteDamage => [58, 72, 86];
 
 		private static SoundStyle SkillActiveSfx;
 

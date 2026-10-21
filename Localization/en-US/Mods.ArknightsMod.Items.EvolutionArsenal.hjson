@@ -1,0 +1,42 @@
+TerminusLight: {
+	DisplayName: Terminus Light
+	Tooltip:
+		'''
+		Forms a heart and eight orbiting cores at the cursor, repeatedly damaging enemies they touch
+		Once charged, the cores fire lasers at nearby enemies before the heart erupts
+		Lasers cannot pierce enemies
+		'''
+	FlavorText: '''"Every possibility converges here."'''
+}
+
+OriginSever: {
+	DisplayName: Origin Sever
+	Tooltip:
+		'''
+		Chains a downswing, a returning slash, and a thrust, leaving damaging crimson mist
+		The first enemy struck by each swing summons homing bloodlights from above and below it
+		The final strike deals increased damage and briefly binds ordinary enemies; bosses only take the damage over time
+		'''
+	FlavorText: '''"The first fracture marks the path of growth."'''
+}
+
+RushingEnd: {
+	DisplayName: Bloodlight Calamity
+	Tooltip:
+		'''
+		Consumes gel to spray origin crystal powder that expands and slows to a drift
+		Fires three randomly directed streams of powder that repeatedly pierce enemies and pass through terrain
+		'''
+	FlavorText: '''"Bloodlight surges, and life meets its end."'''
+}
+
+NestOfLife: {
+	DisplayName: Nest of Life
+	Tooltip:
+		'''
+		Summons an Originium Abomination, using 2 minion slots
+		The abomination alternates close-range slashes, charges, and homing spores
+		Right-click to designate a priority target
+		'''
+	FlavorText: '''"From the wreckage of destruction, a guardian is born."'''
+}

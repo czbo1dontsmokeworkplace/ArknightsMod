@@ -36,16 +36,22 @@ internal static class DreadnoughtArcTrail
 
     internal static void Draw(Vector2 center, float aimAngle, int facing, float progress, float reach, ChargedOperatorKind kind)
     {
+        (Color body, Color shadow, Color edge) = Palette(kind);
+        Draw(center, aimAngle, facing, progress, reach, body, shadow, edge);
+    }
+    internal static void Draw(Vector2 center, float aimAngle, int facing, float progress, float reach,
+        Color body, Color shadow, Color edge, float opacity = 1)
+    {
         if (!ChargedOperatorVfx.Visible(center) || progress < .16f || progress >= 1) return;
         shader ??= ModContent.Request<Effect>("ArknightsMod/Assets/Effects/DreadnoughtArcTrail", AssetRequestMode.ImmediateLoad).Value;
         float tail = Math.Max(0, progress - .30f);
         float speed = DreadnoughtRules.TrailIntensity(progress);
-        float alpha = (.35f + .65f * speed) * Math.Clamp((1 - progress) / .12f, 0, 1);
+        float alpha = (.35f + .65f * speed) * Math.Clamp((1 - progress) / .12f, 0, 1) * opacity;
         for (int i = 0; i < Samples; i++)
         {
             float t = i / (float)(Samples - 1);
             float sample = MathHelper.Lerp(progress, tail, t);
-            float angle = aimAngle + MathHelper.Lerp(-MathHelper.Pi, MathHelper.Pi, DreadnoughtRules.Turn(sample)) * facing;
+            float angle = BladeSwingTemplate.Angle(aimAngle, facing, sample);
             Vector2 axis = angle.ToRotationVector2();
             Color color = Color.White * (alpha * MathF.Pow(1 - t, .3f));
             // The bright outside edge ends at the visible blade tip, not 45 degrees
@@ -54,7 +60,6 @@ internal static class DreadnoughtArcTrail
             vertices[i * 2 + 1] = new SlashVertex(center + axis * reach * .4f - Main.screenPosition, color, new Vector2(t, 1));
         }
 
-        (Color body, Color shadow, Color edge) = Palette(kind);
         shader.Parameters["BodyTint"].SetValue(body.ToVector3());
         shader.Parameters["ShadowTint"].SetValue(shadow.ToVector3());
         shader.Parameters["EdgeTint"].SetValue(edge.ToVector3());

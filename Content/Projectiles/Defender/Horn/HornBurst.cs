@@ -8,12 +8,11 @@ namespace ArknightsMod.Content.Projectiles.Defender.Horn;
 
 public sealed class HornBurst : ModProjectile
 {
-    private readonly System.Collections.Generic.HashSet<int> hitGroups = new();
     private bool emitted;
     public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.Grenade;
     public override void SetDefaults()
     {
-        Projectile.width = Projectile.height = 2;
+        Projectile.width = Projectile.height = 75;
         Projectile.friendly = true;
         Projectile.DamageType = DamageClass.Ranged;
         Projectile.penetrate = -1;
@@ -33,13 +32,11 @@ public sealed class HornBurst : ModProjectile
         Projectile.GetGlobalProjectile<ArtsProjectileMarker>().IsArtsDamage = Projectile.ai[1] == 1;
         Lighting.AddLight(Projectile.Center, .9f * Projectile.timeLeft / 28f, .55f * Projectile.timeLeft / 28f, .15f);
     }
-    public override bool? CanDamage() => Projectile.timeLeft >= 27;
-    public override bool? CanHitNPC(NPC target) => hitGroups.Contains(target.realLife >= 0 ? target.realLife : target.whoAmI) ? false : null;
-    public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
-        => hitGroups.Add(target.realLife >= 0 ? target.realLife : target.whoAmI);
+    public override bool ShouldUpdatePosition() => false;
+    // Only the first update deals damage; the remaining lifetime is visual only.
+    public override bool? CanDamage() => Projectile.timeLeft == 28;
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-        => HornCombat.InCircle(Projectile.Center, Projectile.ai[0], targetHitbox)
-            && HornCombat.Clear(Projectile.Center, targetHitbox.Center.ToVector2());
+        => projHitbox.Intersects(targetHitbox);
     public override bool PreDraw(ref Color lightColor)
     {
         if (Projectile.ai[1] == 0)

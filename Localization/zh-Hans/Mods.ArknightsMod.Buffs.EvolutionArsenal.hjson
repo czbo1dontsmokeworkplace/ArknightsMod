@@ -1,0 +1,9 @@
+NestGuardianBuff: {
+	DisplayName: 生之巢
+	Description: 源石畸变体正守护着你
+}
+
+OriginBind: {
+	DisplayName: 源生束缚
+	Description: 被源生组织缠绕，持续失去生命
+}

@@ -3,10 +3,8 @@ Items: {
 		DisplayName: Purification Flamethrower [Corroserum]
 		Tooltip:
 			'''
-			Early Hardmode
-			Hold left-click to spray a single straight lightflame stream through blocks and unlimited enemies, inflicting Hellfire and Cursed Inferno for 20 seconds
-			Uses gel; attempts to consume one gel per 3 emissions and benefits from ammo conservation
-			Scales with ranged equipment; counts as Arts damage in this mod's resistance system
+			Sprays a continuous flame that passes through terrain and inflicts Hellfire and Cursed Inferno
+			Uses gel; scales with ranged damage and counts as Arts damage against resistances
 			'''
 	}
 
@@ -14,10 +12,8 @@ Items: {
 		DisplayName: Incineration Flamethrower [Ifrit]
 		Tooltip:
 			'''
-			Post-Plantera
-			Hold left-click to spray a single straight searing lightflame stream through blocks and unlimited enemies, inflicting Hellfire for 20 seconds
-			Uses gel; attempts to consume one gel per 3 emissions and benefits from ammo conservation
-			Scales with ranged equipment; counts as Arts damage in this mod's resistance system
+			Sprays a continuous high-temperature flame that passes through terrain and inflicts Hellfire
+			Uses gel; scales with ranged damage and counts as Arts damage against resistances
 			'''
 	}
 
@@ -25,30 +21,31 @@ Items: {
 		DisplayName: Refraction Projector [Aphrissa]
 		Tooltip:
 			'''
-			Lunar events
-			Hold left-click to spray a single straight high-speed lightflame stream with unlimited enemy piercing, inflicting Hellfire for 5 seconds
-			Packets physically travel through blocks, with a base total range of 1248 pixels; reaching that range stops damage and dissolves the trail
-			Right-click to place or move one relay at the cursor; right-click the relay to remove it
-			With a valid relay, the gun fires toward it; arriving packets turn toward the cursor position captured when fired, gaining 320 pixels of total range
-			Place in open space within 560 pixels, including beyond walls; lasts 20 seconds and vanishes beyond 720 pixels, on weapon switch or death
-			Uses gel; attempts to consume one gel per 3 emissions and benefits from ammo conservation
-			Scales with ranged equipment; counts as Arts damage in this mod's resistance system
+			Sprays swift flames that pass through terrain and inflict Hellfire
+			Right-click to place or move a relay that redirects flames toward the cursor and extends their range; right-click the relay to recall it
+			The relay lasts 20 seconds and vanishes if you move too far away or switch weapons
+			Uses gel; scales with ranged damage and counts as Arts damage against resistances
 			'''
 	}
 }
 
 BlastCasterText: {
-	SkillKey: Skill key: {0}; skill ranges show ranks 1 through 10. See the skill panel for SP and duration
-	Placeholder: Weapon art and skill icons temporarily reuse existing repository artwork; skills are adapted for Terraria combat
+	SkillKey: Press [{0}] to activate the selected manual skill
+	Placeholder: Weapon art and skill icons use temporary sprites
 }
 
-BranchTraits.BlastCaster: Blast Caster: Sprays lightflames with unlimited enemy piercing
+BranchTraits.BlastCaster: Blast Caster:  Sprays lightflames with unlimited enemy piercing
 
 Projectiles: {
 	BlastCasterHoldout.DisplayName: Blast Projector
 	BlastCasterHeat.DisplayName: Ifrit's Embers
 	BlastCasterFluxPacket.DisplayName: Blast Lightflame
 	AphrissaRelay.DisplayName: Aphrissa's Relay
+	EarthshakerHeldHammer.DisplayName: Earthshaker Held Hammer
+	EarthshakerImpact.DisplayName: Earthshaker Impact
+	ReaperBloodOrbit.DisplayName: Reaper Blood Orbit
+	ReaperSpin.DisplayName: Reaper Spin
+	ReaperWave.DisplayName: Reaper Wave
 }
 
 Skills: {

@@ -16,17 +16,18 @@ internal static class ArtsFighterSwing
         return p < .5f ? .5f * MathF.Pow(p * 2f, accelerate)
             : 1f - .5f * MathF.Pow((1f - p) * 2f, brake);
     }
-    // Two opposite cuts, a short recovery between them, then a three-unit recovery.
+    private const int ComboLength = 3;
+    // Three alternating cuts, short recovery between cuts, then a three-unit recovery.
     internal static bool Step(ref float timer, ref float count, float unit,
         ref float angle, ref float bladePower)
     {
         unit = Math.Max(2f, unit);
-        float cooldown = -unit * (count >= 2f ? 3f : 1f);
+        float cooldown = -unit * (count >= ComboLength ? 3f : 1f);
         if (timer < 0f)
         {
-            if (count >= 2f && timer == -1f) count = 0f;
+            if (count >= ComboLength && timer == -1f) count = 0f;
             timer++;
-            bool longRecovery = count >= 2f;
+            bool longRecovery = count >= ComboLength;
             float progress = Utils.GetLerpValue(cooldown, -1f, timer, true);
             if (longRecovery && timer <= cooldown * .35f)
                 bladePower = MathHelper.Lerp(bladePower, 0f, progress);

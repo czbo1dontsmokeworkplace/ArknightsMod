@@ -1,20 +1,28 @@
 Items: {
 	HibiscusStaff: {
 		DisplayName: Life Staff [Hibiscus]
-		Tooltip: Lob a condensed life orb; it passes through players without healing for the first 10 frames
+		Tooltip:
+			'''
+			Lobs a globe of vital energy that heals the allied player who catches it
+			Throw it upward to catch it yourself; globes take a brief moment to become active
+			'''
 	}
 
 	NowellStaff: {
 		DisplayName: Clarity Staff [Nowell]
-		Tooltip: Medical arts begin inertial homing on first descending; contact shortens removable debuffs
+		Tooltip:
+			'''
+			Lobs a globe of water that seeks nearby allied players once it starts falling
+			Healing also shortens the duration of cleansable debuffs
+			'''
 	}
 
 	AnselStaff: {
 		DisplayName: Medical Staff [Ansel]
 		Tooltip:
 			'''
-			Lob a condensed life orb, shedding luminous motes on flight and collection
-			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
+			Lobs a globe of vital energy that heals the allied player who catches it
+			Throw it upward to catch it yourself; globes take a brief moment to become active
 			'''
 	}
 
@@ -22,8 +30,8 @@ Items: {
 		DisplayName: Remedy Staff [Myrrh]
 		Tooltip:
 			'''
-			Lob a condensed life orb, shedding luminous motes on flight and collection
-			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
+			Lobs a globe of vital energy that heals the allied player who catches it
+			Throw it upward to catch it yourself; globes take a brief moment to become active
 			'''
 	}
 
@@ -31,8 +39,8 @@ Items: {
 		DisplayName: Medical Staff [Sussurro]
 		Tooltip:
 			'''
-			Lob a condensed life orb, shedding luminous motes on flight and collection
-			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
+			Lobs a globe of vital energy that heals the allied player who catches it
+			Throw it upward to catch it yourself; globes take a brief moment to become active
 			'''
 	}
 
@@ -40,8 +48,8 @@ Items: {
 		DisplayName: Medical Staff [Silence]
 		Tooltip:
 			'''
-			Lob a condensed life orb, shedding luminous motes on flight and collection
-			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
+			Lobs a globe of vital energy that heals the allied player who catches it
+			Throw it upward to catch it yourself; globes take a brief moment to become active
 			'''
 	}
 
@@ -49,8 +57,8 @@ Items: {
 		DisplayName: First Aid Staff [Tuye]
 		Tooltip:
 			'''
-			Lob a condensed life orb, shedding luminous motes on flight and collection
-			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
+			Lobs a globe of vital energy that heals the allied player who catches it
+			Throw it upward to catch it yourself; globes take a brief moment to become active
 			'''
 	}
 
@@ -58,8 +66,8 @@ Items: {
 		DisplayName: Staff [Shining]
 		Tooltip:
 			'''
-			Lob a condensed life orb, shedding luminous motes on flight and collection
-			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
+			Lobs a globe of vital energy that heals the allied player who catches it
+			Throw it upward to catch it yourself; globes take a brief moment to become active
 			'''
 	}
 
@@ -67,8 +75,8 @@ Items: {
 		DisplayName: Water Staff [Purestream]
 		Tooltip:
 			'''
-			Lob a water wisp that begins inertial homing towards allies on its first descent
-			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
+			Lobs a globe of water that seeks nearby allied players once it starts falling
+			Healing also shortens the duration of cleansable debuffs
 			'''
 	}
 
@@ -76,8 +84,8 @@ Items: {
 		DisplayName: Dew Staff [Ceylon]
 		Tooltip:
 			'''
-			Lob a water wisp that begins inertial homing towards allies on its first descent
-			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
+			Lobs a globe of water that seeks nearby allied players once it starts falling
+			Healing also shortens the duration of cleansable debuffs
 			'''
 	}
 
@@ -85,8 +93,8 @@ Items: {
 		DisplayName: Mist Staff [Whisperain]
 		Tooltip:
 			'''
-			Lob a water wisp that begins inertial homing towards allies on its first descent
-			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
+			Lobs a globe of water that seeks nearby allied players once it starts falling
+			Healing also shortens the duration of cleansable debuffs
 			'''
 	}
 
@@ -94,8 +102,8 @@ Items: {
 		DisplayName: Guiding Light [Lumen]
 		Tooltip:
 			'''
-			Lob a water wisp that begins inertial homing towards allies on its first descent
-			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
+			Lobs a globe of water that seeks nearby allied players once it starts falling
+			Healing also shortens the duration of cleansable debuffs
 			'''
 	}
 
@@ -103,8 +111,8 @@ Items: {
 		DisplayName: Fragrance Staff [Perfumer]
 		Tooltip:
 			'''
-			Lob a heavy energy seed that opens a stationary healing field on landing or contact
-			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
+			Lobs a slowly falling seed of life that creates a healing field on landing or touching an allied player
+			The field repeatedly heals allied players within it
 			'''
 	}
 
@@ -112,8 +120,8 @@ Items: {
 		DisplayName: Healing Staff [Breeze]
 		Tooltip:
 			'''
-			Lob a heavy energy seed that opens a stationary healing field on landing or contact
-			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
+			Lobs a slowly falling seed of life that creates a healing field on landing or touching an allied player
+			The field repeatedly heals allied players within it
 			'''
 	}
 
@@ -121,8 +129,8 @@ Items: {
 		DisplayName: Medical Staff [Ptilopsis]
 		Tooltip:
 			'''
-			Lob a heavy energy seed that opens a stationary healing field on landing or contact
-			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
+			Lobs a slowly falling seed of life that creates a healing field on landing or touching an allied player
+			The field repeatedly heals allied players within it
 			'''
 	}
 
@@ -130,8 +138,8 @@ Items: {
 		DisplayName: Sanctuary Staff [Nightingale]
 		Tooltip:
 			'''
-			Lob a heavy energy seed that opens a stationary healing field on landing or contact
-			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
+			Lobs a slowly falling seed of life that creates a healing field on landing or touching an allied player
+			The field repeatedly heals allied players within it
 			'''
 	}
 
@@ -139,8 +147,8 @@ Items: {
 		DisplayName: Weaving Staff [Papyrus]
 		Tooltip:
 			'''
-			Lob woven life threads; successful healing grants independently expiring regeneration stacks
-			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
+			Lobs interwoven strands of life that heal the allied player who catches them
+			Healing adds stackable regeneration, with a separate duration for each stack
 			'''
 	}
 
@@ -148,8 +156,8 @@ Items: {
 		DisplayName: Renewal Staff [Paprika]
 		Tooltip:
 			'''
-			Lob woven life threads; successful healing grants independently expiring regeneration stacks
-			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
+			Lobs interwoven strands of life that heal the allied player who catches them
+			Healing adds stackable regeneration, with a separate duration for each stack
 			'''
 	}
 
@@ -157,8 +165,8 @@ Items: {
 		DisplayName: Symbiotic Core [Mon3tr]
 		Tooltip:
 			'''
-			Lob woven life threads; successful healing grants independently expiring regeneration stacks
-			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
+			Lobs interwoven strands of life that heal the allied player who catches them
+			Healing adds stackable regeneration, with a separate duration for each stack
 			'''
 	}
 
@@ -166,8 +174,8 @@ Items: {
 		DisplayName: Cleansing Staff [Chestnut]
 		Tooltip:
 			'''
-			Lob a cleansing ribbon; each removable combat debuff cleansed increases healing by 35%
-			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
+			Lobs a cleansing ribbon that heals the allied player who catches it and removes combat debuffs
+			Each debuff removed increases that heal by 35%
 			'''
 	}
 
@@ -175,8 +183,8 @@ Items: {
 		DisplayName: Herbal Staff [Honeyberry]
 		Tooltip:
 			'''
-			Lob a cleansing ribbon; each removable combat debuff cleansed increases healing by 35%
-			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
+			Lobs a cleansing ribbon that heals the allied player who catches it and removes combat debuffs
+			Each debuff removed increases that heal by 35%
 			'''
 	}
 
@@ -184,8 +192,8 @@ Items: {
 		DisplayName: Purification Staff [Mulberry]
 		Tooltip:
 			'''
-			Lob a cleansing ribbon; each removable combat debuff cleansed increases healing by 35%
-			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
+			Lobs a cleansing ribbon that heals the allied player who catches it and removes combat debuffs
+			Each debuff removed increases that heal by 35%
 			'''
 	}
 
@@ -193,8 +201,8 @@ Items: {
 		DisplayName: Spring Staff [Eyjafjalla the Hvit Aska]
 		Tooltip:
 			'''
-			Lob a cleansing ribbon; each removable combat debuff cleansed increases healing by 35%
-			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
+			Lobs a cleansing ribbon that heals the allied player who catches it and removes combat debuffs
+			Each debuff removed increases that heal by 35%
 			'''
 	}
 
@@ -399,11 +407,11 @@ Skills: {
 }
 
 BranchTraits: {
-	MedicProfession: Medic: These weapons efficiently heal allies, at the cost of being unable to damage enemies
-	MedicTherapist: Therapist: Medical arts begin inertial homing on first descending and heal less; each hit shortens removable debuffs by 10% of medical attack power in seconds
-	MedicMultiTarget: Multi-target Medic: Landing or contact creates a persistent healing field for allied players inside
-	MedicChain: Chain Medic: Successful healing adds independently expiring stacks of life regeneration
-	MedicWandering: Wandering Medic: Cleanse removable debuffs; each debuff removed increases healing
+	MedicProfession: Medic:  These weapons efficiently heal allies, at the cost of being unable to damage enemies
+	MedicTherapist: Therapist:  Medical arts begin inertial homing on first descending and heal less; each hit shortens removable debuffs by 10% of medical attack power in seconds
+	MedicMultiTarget: Multi-target Medic:  Landing or contact creates a persistent healing field for allied players inside
+	MedicChain: Chain Medic:  Successful healing adds independently expiring stacks of life regeneration
+	MedicWandering: Wandering Medic:  Cleanse removable debuffs; each debuff removed increases healing
 }
 
 MedicalArts: {

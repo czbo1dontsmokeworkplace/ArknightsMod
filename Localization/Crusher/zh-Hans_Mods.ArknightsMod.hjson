@@ -1,0 +1,110 @@
+Items: {
+	QuartzGreatsword: {
+		DisplayName: 石英的重剑
+		Tooltip:
+			'''
+			以重剑连续挥击两次，短暂停顿后再次连击
+			每次重斩释放贯穿光波，沿途散出追踪念核
+			'''
+	}
+
+	WindChimesHeavyBlade: {
+		DisplayName: 铎铃的重刀
+		Tooltip:
+			'''
+			以重刀连续挥击两次，短暂停顿后再次连击
+			每次重斩释放贯穿光波，沿途散出追踪念核
+			'''
+	}
+
+	HoedererGreatsword: {
+		DisplayName: 赫德雷的重剑
+		Tooltip:
+			'''
+			以重剑连续挥击两次，短暂停顿后再次连击
+			每次重斩释放贯穿光波，沿途散出追踪念核
+			对已眩晕的敌人造成的伤害提高20%
+			'''
+	}
+
+	UlpianusAnchor: {
+		DisplayName: 乌尔比安的船锚
+		Tooltip:
+			'''
+			以船锚连续挥击两次，短暂停顿后再次连击
+			每次重斩释放贯穿光波，沿途散出追踪念核
+			'''
+	}
+}
+
+Skills: {
+	QuartzGreatsword: {
+		1: {
+			Label: 攻击力强化·β型
+			Desc: 25秒内攻击力提高20%～80%，随技能等级提升。
+		}
+
+		2: {
+			Label: 全力相搏
+			Desc: 持续20秒，攻击速度提高35%～80%，每击造成80%～120%伤害，自身受到的伤害提高25%；每个目标有25%概率眩晕2秒。首领及不可击退的敌人免疫此眩晕。
+		}
+	}
+
+	WindChimesHeavyBlade: {
+		1: {
+			Label: 攻击力强化·γ型
+			Desc: 30秒内攻击力提高30%～100%，随技能等级提升。
+		}
+
+		2: {
+			Label: 乡心无改
+			Desc: 停止普攻并蓄势5秒，受到伤害降低20%～35%；结束时向准星方向释放重斩，造成140%～300%伤害，蓄满进一步提高50%，使普通可击退敌人眩晕1秒。可再次按技能键提前释放。
+		}
+	}
+
+	HoedererGreatsword: {
+		1: {
+			Label: 重锋不熄
+			Desc: 攻击回复技力，充满后下次重斩造成160%～260%伤害，首次命中有效敌人时回复10%～25%最大生命。同一轮群攻只回复一次。
+		}
+
+		2: {
+			Label: 余烬重荷
+			Desc: 选择此技能时攻击力提高4%～40%。发动后攻击间隔增加20%，命中使普通可击退敌人眩晕1秒。可再次按技能键关闭，切换武器或技能时结束。
+		}
+
+		3: {
+			Label: 死境硝烟
+			Desc: 持续70秒，攻击距离提高20%，最大生命提高15%～60%，攻击力提高30%～120%。每秒流失1%最大生命，每轮首次命中有效敌人回复5%最大生命；接触过的敌人每秒受到20～40点持续伤害，直到技能结束。命中有25%概率眩晕普通可击退敌人2～5秒。
+		}
+	}
+
+	UlpianusAnchor: {
+		1: {
+			Label: 必须促成的接触
+			Desc: 自动回复技力，充满后的下次挥动额外向准星掷出船锚，对至多两名敌人造成170%～270%伤害，将普通可击退敌人拖向自己。
+		}
+
+		2: {
+			Label: 必须维系的界限
+			Desc: 技力充满后自动发动：攻击力提高100%～160%，最大生命提高20%～60%，额外获得每秒2～4点生命回复（再享受重剑手的回复提高30%）。持续至切换武器、技能或死亡。提高生命上限不直接治疗。
+		}
+
+		3: {
+			Label: 必须开辟的通路
+			Desc: 持续25秒，攻击力提高170%～260%，最大生命提高20%～80%。掷出船锚，在碰撞或最远距离引发130%～160%伤害的冲击，使普通可击退敌人眩晕5秒；若落点安全，立即移动。再次按技能键或结束时尝试返回原位。
+		}
+	}
+}
+
+CrusherStrainDeath: "{0}沉没在尚未熄灭的余烬中。"
+
+Projectiles: {
+	CrusherAnchorFeedback.DisplayName: 深海锚击余波
+	CrusherWave.DisplayName: 重剑光波
+	CrusherWaveCore.DisplayName: 追光念核
+	// EarthshakerFlameLine.DisplayName: Earthshaker Flame Line
+	// EarthshakerFlintFlame.DisplayName: Earthshaker Flint Flame
+	// EarthshakerFlintSlash.DisplayName: Earthshaker Flint Slash
+	// ReaperSwing.DisplayName: Reaper Swing
+}

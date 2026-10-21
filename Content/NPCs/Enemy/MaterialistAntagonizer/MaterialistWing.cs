@@ -111,6 +111,8 @@ public sealed partial class MaterialistWing : GlobalNPC
         if (!Bound) return true;
         if (!defeatReported)
         {
+            if (!Retreating && npc.life <= 0 && Role(npc) == WingRole.Raptor && MaterialistAntagonizer.Authority)
+                MaterialistRaptorDeathBomb.Spawn(npc);
             defeatReported = true; Retreating = true;
             MaterialistAntagonizer.Owner(OwnerIndex, Encounter)?.EscortDestroyed();
         }
@@ -148,13 +150,22 @@ public sealed partial class MaterialistWing : GlobalNPC
         }
         var boss = MaterialistAntagonizer.Owner(OwnerIndex, Encounter);
         Color accent = boss != null ? DutyColor(MaterialistRules.Duty(boss.Phase, Slot)) : MaterialistVisuals.Cyan;
-        if (role == WingRole.Raptor) DrawRaptorFlight(npc, alpha);
-        MaterialistVisuals.Glow(npc.Center, accent * (.24f * alpha), new Vector2(frame.Width * 1.8f, frame.Height * 1.3f));
-        if (!MaterialistVisuals.Reduced && npc.velocity.LengthSquared() > 100)
+        if (role == WingRole.Raptor)
+        {
+            SpriteEffects flip = npc.spriteDirection < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            float rimScale = npc.scale * MathHelper.Lerp(.3f, 1, MaterialistFormation.Smooth(Age / 38f));
+            if (!MaterialistTechRenderer.ChassisMaterial(texture, npc.Center, frame, npc.rotation, new Vector2(rimScale * 1.025f),
+                flip, accent * (.95f * alpha), 4))
+                for (int i = 0; i < 8; i++)
+                    batch.Draw(texture, npc.Center - screenPos + (i * MathHelper.TwoPi / 8).ToRotationVector2() * 2,
+                        frame, (accent with { A = 0 }) * (.85f * alpha), npc.rotation, frame.Size() * .5f, rimScale, flip, 0);
+        }
+        else MaterialistVisuals.Glow(npc.Center, accent * (.24f * alpha), new Vector2(frame.Width * 1.8f, frame.Height * 1.3f));
+        if (role != WingRole.Raptor && !MaterialistVisuals.Reduced && npc.velocity.LengthSquared() > 100)
             for (int i = 1; i <= 3; i++) batch.Draw(texture, npc.Center - npc.velocity * i * 1.4f - screenPos, frame,
                 (accent with { A = 0 }) * ((1 - i / 4f) * .28f * alpha), npc.rotation, frame.Size() * .5f, npc.scale,
                 npc.spriteDirection < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0);
-        if (Age >= 42 || !MaterialistTechRenderer.HullActive)
+        if (role == WingRole.Raptor || Age >= 42 || !MaterialistTechRenderer.HullActive)
             batch.Draw(texture, npc.Center - screenPos, frame, Color.Lerp(drawColor, Color.White, .45f) * alpha,
             npc.rotation, frame.Size() * .5f, npc.scale * MathHelper.Lerp(.3f, 1, MaterialistFormation.Smooth(Age / 38f)),
             npc.spriteDirection < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0);

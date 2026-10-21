@@ -10,6 +10,7 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles.Guard.Entelechia
 {
+	[Autoload(false)] // Reaper input now owns the single physical scythe.
 	public class EntelechiaScythe_Player : ModPlayer
 	{
 		public override void PostUpdate()

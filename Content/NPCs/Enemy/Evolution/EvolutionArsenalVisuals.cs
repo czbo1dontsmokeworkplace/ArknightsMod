@@ -45,13 +45,13 @@ internal static class EvolutionArsenalVisuals
             delta.ToRotation() + MathHelper.PiOver2, spark.Size() * .5f,
             new Vector2(width * 4, delta.Length() + width) / spark.Size(), SpriteEffects.None, 0);
     }
-    internal static void Burst(Vector2 center, float power)
+    internal static void Burst(Vector2 center, float power, float spatialScale = 1)
     {
         if (Main.dedServ) return;
         for (int i = 0; i < (EvolutionCinematics.Reduced ? 4 : 10); i++)
-            Smoke(center, Main.rand.NextVector2Circular(5, 4) * power - Vector2.UnitY,
-                (55 + Main.rand.NextFloat(30)) * power, 34, i % 3 == 0);
-        EvolutionVisuals.Burst(center, power, false);
+            Smoke(center, (Main.rand.NextVector2Circular(5, 4) * power - Vector2.UnitY) * spatialScale,
+                (55 + Main.rand.NextFloat(30)) * power * spatialScale, 34, i % 3 == 0);
+        EvolutionVisuals.Burst(center, power, false, spatialScale: spatialScale);
     }
     internal static void Blast(Vector2 center, int age, float radius, Color? theme = null)
     {

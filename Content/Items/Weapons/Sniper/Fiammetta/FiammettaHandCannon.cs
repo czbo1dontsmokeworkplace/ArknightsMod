@@ -27,8 +27,8 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Fiammetta
 		// 基础攻速提高 20%：原 60 帧间隔 / 1.2 = 50，物品和实际炮击共用此节拍。
 		internal const int AttackIntervalTicks = 50;
 
-		// 面板伤害提高约 13%，保持各精英档位一致。
-		protected override int[] EliteDamage => [655, 655, 655];
+		// 在现有面板上提高10%，四舍五入，保持各精英档位一致。
+		protected override int[] EliteDamage => [721, 721, 721];
 
 		private static SoundStyle SkillActiveSound;
 

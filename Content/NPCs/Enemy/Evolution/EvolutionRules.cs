@@ -9,7 +9,7 @@ internal static class EvolutionRules
 {
     public const int TransitionTicks = 600;
     public const float ArenaRadius = 1200f;
-    public const float CorridorHeight = 50 * 16;
+    public const float CorridorHeight = 50 * 16 * 1.25f;
     public const float EvolvedProjectileMultiplier = .85f;
     public const int HazardCap = 180;
     public const int PeripheralReserve = 32;
@@ -123,7 +123,7 @@ internal static class EvolutionRules
         kind is EvolutionShot.Lance or EvolutionShot.Fragment ? velocity * StraightShotSpeedMultiplier : velocity;
     public static int TransitionDuration(int phase) => phase == 4 ? 720 : TransitionTicks;
     public static int CinematicTime(int phase, int timer) => phase == 4 ? timer * TransitionTicks / 720 : timer;
-    public static float Aggression(int phase) => phase >= 5 ? 2.2f : phase >= 3 ? 1.6f : 1.3f;
+    public static float Aggression(int phase) => phase >= 5 ? 2.2f : phase == 3 ? 1.6f * EvolutionCorridorPressureRules.Speed : phase >= 3 ? 1.6f : 1.3f;
     public static Vector2 TransitionVelocity(Vector2 position, Vector2 velocity, Vector2 target, Vector2 targetVelocity)
     {
         Vector2 offset = position - target;
@@ -150,8 +150,8 @@ internal static class EvolutionRules
     public static int NewbornDuration(int attack) => attack switch { 1 => 390, 2 or 6 => 480, 3 or 5 => 450, _ => 420 };
     // Emit dangerous central lanes first; distant scenery-like shots may use only the remaining budget.
     public static int Column(int index) => index == 0 ? 0 : (index + 1) / 2 * (index % 2 == 0 ? -1 : 1);
-    private static readonly int[] EvolvedCycle = { 8, 14, 19, 15, 9, 14, 16, 15, 10, 14, 20, 15,
-        11, 14, 22, 15, 12, 14, 17, 15, 13, 14, 21, 15, 18, 14, 4, 15, 9, 14, 5, 15 };
+    private static readonly int[] EvolvedCycle = { 8, 27, 14, 19, 15, 9, 28, 14, 16, 15, 10, 29, 14, 20, 15,
+        11, 30, 14, 22, 15, 23, 12, 31, 14, 17, 15, 25, 13, 32, 14, 21, 15, 24, 18, 14, 4, 15, 26, 9, 14, 5, 15 };
     private static readonly int[] PerfectCycle = { 6, 0, 1, 7, 2, 5, 3, 0, 4, 5 };
     private static readonly int[] DesperateCycle = { 0, 6, 1, 7, 5 };
     public static int Attack(int phase, int cycle, bool desperate)
@@ -170,7 +170,7 @@ internal static class EvolutionRules
     public static int ContactDamage(int phase, bool charge, bool desperate = false) => EvolutionDamageCockpit.BossContactDamage(phase, charge, desperate);
 }
 
-internal enum EvolutionShot { Blood, Spirit, Beam, Rock, Tentacle, Pulse, Core, Spike, Fragment, DashMarker, Lance, CrimsonBomb, Eruption, Radiation, Reflection, CrashFan, Flame, BroodRocket, GravityFlare, Serpent, BroodSpit, SpinBomb, Barrage, Ricochet }
+internal enum EvolutionShot { Blood, Spirit, Beam, Rock, Tentacle, Pulse, Core, Spike, Fragment, DashMarker, Lance, CrimsonBomb, Eruption, Radiation, Reflection, CrashFan, Flame, BroodRocket, GravityFlare, Serpent, BroodSpit, SpinBomb, Barrage, Ricochet, ScoreSeed, Bloodglow }
 internal enum EvolutionBeamStyle : byte { Standard, Pulse, Axis, Piano, PianoStaccato, Refracted }
 internal enum EvolutionBrood { Spider, GiantSpider, Puppet, Abomination, Tumor, Bomb }
 internal enum EvolutionBroodPreset : byte { Hunter, Rain, Siege, Minefield, Weaver, Ambush, Seeder, Artillery, Conductor }

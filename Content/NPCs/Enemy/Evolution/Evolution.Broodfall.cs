@@ -11,13 +11,15 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution;
 
 internal static class EvolutionBroodfallRules
 {
-    internal const int Lock = 0, Launch = 30, Impact = 48;
-    internal const int Escape = 36, FirstFan = Impact + Escape, SecondFan = FirstFan + 104;
+    internal const int Lock = 0, Launch = 15, Impact = 24;
+    internal const int Escape = 28, FirstFan = Impact + Escape, SecondFan = FirstFan + 104;
     internal const int Birth = SecondFan + 120, Duration = Birth + 172;
     internal const int FanWarning = 48, FanActive = 18, FanFade = 36;
     internal const float FanReach = 1100 * EvolutionRules.LaserReachMultiplier, FanWidth = 48, Gravity = .24f;
+    internal const int FanRayCount = 9;
+    private static readonly float[] fanAngles = { -66, -55, -44, -33, -22, 22, 44, 55, 66 };
     internal static Vector2 FanDirection(int ray) =>
-        (-MathHelper.PiOver2 + (ray < 3 ? ray - 3 : ray - 2) * MathHelper.ToRadians(22)).ToRotationVector2();
+        (-MathHelper.PiOver2 + MathHelper.ToRadians(fanAngles[ray])).ToRotationVector2();
     internal static bool Diving(int timer) => timer >= Launch && timer < Impact;
     internal static Vector2 DivePoint(int timer, Vector2 start, Vector2 ground)
     {
@@ -133,11 +135,14 @@ public sealed partial class Evolution
     }
     internal void LobGravityFlare(Vector2 origin, Vector2 destination, int flight)
     {
-        // X阻力0.995，Y每帧加重力，发射速度按同一离散公式反解。
-        float travel = .995f * (1 - MathF.Pow(.995f, flight)) / .005f;
+        float speed = Phase == 3 ? EvolutionCorridorPressureRules.Speed : 1;
+        flight = Math.Max(1, (int)MathF.Round(flight / speed));
+        float drag = MathF.Pow(.995f, speed), gravity = EvolutionBroodfallRules.Gravity * speed * speed;
+        // Resolve the same destination with the faster discrete gravity/drag clock.
+        float travel = drag * (1 - MathF.Pow(drag, flight)) / (1 - drag);
         Vector2 velocity = new((destination.X - origin.X) / travel,
-            (destination.Y - origin.Y) / flight - EvolutionBroodfallRules.Gravity * (flight + 1) * .5f);
-        Shoot(EvolutionShot.GravityFlare, origin, velocity, delay: 24, lifetime: flight + 90);
+            (destination.Y - origin.Y) / flight - gravity * (flight + 1) * .5f);
+        Shoot(EvolutionShot.GravityFlare, origin, velocity / speed, delay: 24, lifetime: flight + 90);
     }
     internal void FireBroodRocket(Vector2 origin, Vector2 destination)
     {

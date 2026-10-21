@@ -26,6 +26,7 @@ public sealed partial class Evolution
         if (t >= 28 && t <= 28 + interval * 5 && (t - 28) % interval == 0)
         {
             int wave = (t - 28) / interval;
+            if (Attack is 1 or 4 && wave is 1 or 4) ReleaseBloodglow(player, 2);
             switch (Attack)
             {
                 case 1: LaserWall(PatternCenter, MathHelper.PiOver2, 0, 28); break;
@@ -72,7 +73,14 @@ public sealed partial class Evolution
         // 每组三连各出现一次；下一次冲刺招式轮换起始变体。
         int variant = EvolutionRules.ChargeVariant(cycle, (int)NPC.ai[2]);
         DashVariant = variant;
-        if (t < lockTime) MoveTo(player.Center + new Vector2((cycle % 2 == 0 ? -1 : 1) * (perfect ? 1280 : 1120) * CycleBoost, -80), perfect ? 34 : 30, .18f);
+        if (t < lockTime)
+        {
+            Vector2 point = player.Center + new Vector2((cycle % 2 == 0 ? -1 : 1) * (perfect ? 1280 : 1120) * CycleBoost, -80);
+            if (perfect && EvolutionCorridorPressureRules.ShouldApproach(t, NPC.Distance(player.Center)))
+                point = player.Center + new Vector2(NPC.Center.X < player.Center.X ? -480 : 480, -180);
+            // Approach and approximate alignment share this fixed clock; never restart it.
+            MoveTo(point, perfect ? 34 : 30, .18f);
+        }
         if (t == lockTime)
         {
             NPC.velocity = Vector2.Zero;

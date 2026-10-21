@@ -114,3 +114,69 @@ technique MaterialistLaser
 {
     pass LaserPass { PixelShader = compile ps_3_0 LaserPixel(); }
 }
+
+// Phase-wait envelope: curved shell, metric lattice and a travelling assembly/disassembly front.
+float4 LockShieldPixel(float4 tint : COLOR0, float2 uv : TEXCOORD0) : COLOR0
+{
+    float2 local = uv * 2.0 - 1.0;
+    float radius = length(local);
+    float shell = 1.0 - smoothstep(.96, 1.0, radius);
+    float rim = pow(saturate(1.0 - abs(radius - .955) * 32.0), 1.5);
+    float reveal = 1.0 - smoothstep(uReveal - .025, uReveal + .025, uv.y);
+    float front = pow(saturate(1.0 - abs(uv.y - uReveal) * 28.0), 2.0);
+    float2 cell = frac(uv * uSize / float2(26.0, 20.0));
+    float grid = max(1.0 - step(.035, cell.x), 1.0 - step(.045, cell.y));
+    float scan = pow(saturate(1.0 - abs(uv.y - frac(uTime * .23)) * 24.0), 3.0);
+    float rows = .65 + .35 * step(.45, frac(uv.y * uSize.y * .28 + uTime * 1.2));
+    float energy = .018 + grid * .16 + rim * .55 + front * .6 + scan * .22;
+    float alpha = saturate(energy * shell * reveal * tint.a);
+    float3 rgb = lerp(tint.rgb, float3(.8, .95, 1.0), saturate(rim * .45 + front * .3));
+    return float4(rgb * alpha * rows, alpha * .65);
+}
+technique MaterialistLockShield
+{
+    pass ShieldPass { PixelShader = compile ps_3_0 LockShieldPixel(); }
+}
+
+// Carrier destruction: cell-addressed scan failure and spectral edges follow the real chassis alpha.
+float4 DisassemblyPixel(float4 tint : COLOR0, float2 uv : TEXCOORD0) : COLOR0
+{
+    float2 local = (uv - uUvBounds.xy) / max(uUvBounds.zw, .001);
+    float2 cell = floor(local * float2(28.0, 14.0));
+    float fault = Hash(cell + floor(uTime * 18.0));
+    float threshold = Hash(cell);
+    float intact = 1.0 - smoothstep(threshold + .20, threshold + .32, uReveal);
+    float scan = pow(saturate(1.0 - abs(frac(local.y * 8.0 - uTime * 2.5) - .5) * 2.0), 10.0);
+    float shift = (fault - .5) * .04 * uReveal;
+    float4 source = tex2D(uTexture, uv + float2(shift, 0));
+    float rows = .45 + .55 * step(.4, frac(local.y * uSize.y * .35));
+    float edge = abs(tex2D(uTexture, uv + float2(.007, 0)).a - tex2D(uTexture, uv - float2(.007, 0)).a);
+    float3 spectral = lerp(float3(.1, .9, 1), float3(1, .28, .08), step(.55, fault));
+    float alpha = source.a * intact * tint.a;
+    float3 color = source.rgb * .2 + spectral * (scan * .6 + rows * .25 + edge * 1.5);
+    return float4(color * alpha, alpha * .55);
+}
+technique MaterialistDisassembly
+{
+    pass DisassemblyPass { PixelShader = compile ps_3_0 DisassemblyPixel(); }
+}
+
+// Photonic cuts have a tapered luminous blade and a trailing broken packet sheath.
+float4 SeverancePixel(float4 tint : COLOR0, float2 uv : TEXCOORD0) : COLOR0
+{
+    float x = uv.x * 2.0 - 1.0;
+    float taper = pow(saturate(1.0 - abs(x)), .6);
+    float bend = sin(uv.x * 3.14159265) * (.18 - uReveal * .15);
+    float across = abs(uv.y - .5 + bend);
+    float blade = exp(-across * 110.0 / max(.2, taper));
+    float halo = exp(-across * 14.0) * taper;
+    float2 cell = floor(uv * uSize / float2(13, 4));
+    float packets = step(.65, Hash(cell + floor(uTime * 18))) * halo * .35;
+    float spine = blade * (1.0 - smoothstep(.88, 1.0, abs(x)));
+    float3 color = tint.rgb * (halo * .55 + packets) + lerp(tint.rgb, float3(1, 1, 1), .88) * spine * 1.4;
+    return float4(color * tint.a, 0);
+}
+technique MaterialistSeverance
+{
+    pass SeverancePass { PixelShader = compile ps_3_0 SeverancePixel(); }
+}

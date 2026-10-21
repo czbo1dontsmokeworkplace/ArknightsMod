@@ -1,0 +1,9 @@
+NestGuardianBuff: {
+	DisplayName: Nest of Life
+	Description: An Originium Abomination guards you
+}
+
+OriginBind: {
+	DisplayName: Origin Bind
+	Description: Entangled in living growth and steadily losing life
+}

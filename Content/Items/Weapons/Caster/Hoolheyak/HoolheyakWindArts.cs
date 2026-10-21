@@ -12,10 +12,10 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.Items.Weapons.Caster.Hoolheyak;
 
 // By T
-/// <summary>原版神秘物品作为图标占位；沿用投掷武器的空手动作，实际释放魔法风弹。</summary>
+/// <summary>使用专属法杖贴图，瞄准施法释放魔法风弹。</summary>
 public sealed class HoolheyakWindArts : ExpansionWeaponBase
 {
-    public override string Texture => "Terraria/Images/Item_" + ItemID.SpiritFlame;
+    public override string Texture => "ArknightsMod/Content/Items/Weapons/Caster/Hoolheyak/HoolheyakWindArts";
     protected override int[] EliteDamage => [116, 131, 148]; // 原面板提高 7%，取整。
     private int barrageShot;
     private bool skillKeyConsumed;
@@ -25,13 +25,17 @@ public sealed class HoolheyakWindArts : ExpansionWeaponBase
     internal static readonly float[] CycloneDamage = [3.2f, 3.3f, 3.4f, 3.5f, 3.6f, 3.7f, 3.8f, 4f, 4.1f, 4.2f];
     internal static readonly int[] SeekingLift = [120, 120, 120, 150, 150, 150, 180, 210, 210, 240];
 
+    public override void SetStaticDefaults() => Item.staff[Type] = true;
+
+    public override float UseSpeedMultiplier(Player player) => base.UseSpeedMultiplier(player) * 1.2f;
+
     public override void SetDefaults()
     {
         Item.damage = EliteDamage[0];
         Item.DamageType = DamageClass.Magic;
         Item.width = Item.height = 40;
-        Item.useStyle = ItemUseStyleID.Swing;
-        Item.noUseGraphic = true;
+        Item.useStyle = ItemUseStyleID.Shoot;
+        Item.noUseGraphic = false;
         Item.noMelee = true;
         Item.autoReuse = true;
         Item.useTime = Item.useAnimation = 26;

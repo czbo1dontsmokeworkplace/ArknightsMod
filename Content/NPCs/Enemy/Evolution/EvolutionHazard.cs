@@ -19,6 +19,7 @@ public sealed partial class EvolutionHazard : ModProjectile
     internal int Encounter, Serial, Target, Delay = 42, Lifetime = 240;
     internal float Parameter, BurstAngle;
     internal float PowerScale = 1;
+    internal float KineticScale => Parent?.Phase == 3 ? PowerScale : 1;
     internal Vector2 ArsenalOrigin;
     private bool impact;
     public override string Texture => EvolutionVisuals.Root + "BloodClot";
@@ -58,7 +59,7 @@ public sealed partial class EvolutionHazard : ModProjectile
         ArsenalOrigin = r.ReadVector2();
         PowerScale = r.ReadSingle();
     }
-    public override bool ShouldUpdatePosition() => ArsenalMoves || Kind is EvolutionShot.BroodSpit or EvolutionShot.Barrage && Age >= Delay ||
+    public override bool ShouldUpdatePosition() => Kind == EvolutionShot.Bloodglow ? Age >= Delay : ArsenalMoves || Kind is EvolutionShot.BroodSpit or EvolutionShot.Barrage && Age >= Delay ||
         Kind == EvolutionShot.SpinBomb && Age < Delay - 24 || Kind is EvolutionShot.Blood or EvolutionShot.Core or EvolutionShot.Fragment ||
         Kind == EvolutionShot.Spirit && (!StagedSpirit || Age >= Delay) || Kind == EvolutionShot.Reflection && Age >= Delay ||
         Kind == EvolutionShot.Rock && (Parameter <= 0 || Age >= FireAge) ||
@@ -71,8 +72,9 @@ public sealed partial class EvolutionHazard : ModProjectile
         if (IsAxis) return Age >= FireAge && Age < FireAge + EvolutionRules.AxisActiveTicks ? null : false;
         return Kind switch
         {
+            EvolutionShot.Bloodglow => Age >= Delay ? null : false,
             EvolutionShot.BroodSpit => Age >= Delay ? null : false,
-            EvolutionShot.Barrage => Age >= Delay ? null : false,
+            EvolutionShot.Barrage or EvolutionShot.ScoreSeed => Age >= Delay ? null : false,
             EvolutionShot.Ricochet => Age >= Delay && !RicochetState.Finished ? null : false,
             EvolutionShot.SpinBomb => Age >= Delay && Age < Delay + 8 ? null : false,
             EvolutionShot.DashMarker or EvolutionShot.Core => false,
@@ -99,8 +101,15 @@ public sealed partial class EvolutionHazard : ModProjectile
             return;
         }
         Projectile.ai[1]++;
+        UpdateLaunchSpectacle(boss);
+        if (Kind == EvolutionShot.Bloodglow) { UpdateBloodglow(); return; }
         if (Kind == EvolutionShot.Ricochet) { UpdateRicochet(boss); return; }
-        if (Kind == EvolutionShot.Barrage) return;
+        if (Kind == EvolutionShot.ScoreSeed) { UpdateScoreSeed(boss); return; }
+        if (Kind == EvolutionShot.Barrage)
+        {
+            if (Parameter > 0 && Age == Delay) EvolutionPianoVisuals.Strike(Projectile.Center, ScorePitch(boss));
+            return;
+        }
         if (Kind == EvolutionShot.BroodSpit) { UpdateBroodSpit(boss); return; }
         if (Kind == EvolutionShot.SpinBomb) { UpdateSpinBomb(); return; }
         if (Kind == EvolutionShot.Radiation) { UpdateRadiation(boss); return; }
@@ -112,7 +121,7 @@ public sealed partial class EvolutionHazard : ModProjectile
         switch (Kind)
         {
             case EvolutionShot.Blood:
-                if (Age > 7) Projectile.velocity.Y = Math.Min(17, Projectile.velocity.Y + .21f);
+                if (Age > 7) Projectile.velocity.Y = Math.Min(17 * KineticScale, Projectile.velocity.Y + .21f * KineticScale * KineticScale);
                 Projectile.tileCollide = Age > 24 && !Collision.SolidCollision(Projectile.position, Projectile.width, Projectile.height);
                 break;
             case EvolutionShot.Spirit:
@@ -135,7 +144,7 @@ public sealed partial class EvolutionHazard : ModProjectile
             case EvolutionShot.Rock:
                 if (Projectile.width != 48) Projectile.Resize(48, 48);
                 if (Parameter > 0 && Age < FireAge) { Projectile.tileCollide = false; break; }
-                Projectile.velocity.Y = Math.Min(19, Projectile.velocity.Y + .3f);
+                Projectile.velocity.Y = Math.Min(19 * KineticScale, Projectile.velocity.Y + .3f * KineticScale * KineticScale);
                 Projectile.tileCollide = !Collision.SolidCollision(Projectile.position, Projectile.width, Projectile.height);
                 if (impact) Projectile.velocity.X = Math.Sign(Projectile.velocity.X) * Math.Min(13, Math.Abs(Projectile.velocity.X) + .045f);
                 Projectile.rotation += Projectile.velocity.X * .018f;
@@ -212,6 +221,20 @@ public sealed partial class EvolutionHazard : ModProjectile
     }
     public override bool? Colliding(Rectangle projHitbox, Rectangle box)
     {
+        if (Kind == EvolutionShot.Bloodglow)
+        {
+            float distance = 0;
+            return Collision.CheckAABBvLineCollision(box.TopLeft(), box.Size(),
+                bloodglowSweep ? bloodglowPrevious : Projectile.Center, Projectile.Center, 14, ref distance);
+        }
+        if (Kind == EvolutionShot.ScoreSeed)
+        {
+            Vector2 head = ScorePoint(Age - Delay);
+            Vector2 nearest = new(Math.Clamp(head.X, box.Left, box.Right), Math.Clamp(head.Y, box.Top, box.Bottom));
+            if (Vector2.DistanceSquared(head, nearest) <= 36) return true;
+            float hit = 0;
+            return Collision.CheckAABBvLineCollision(box.TopLeft(), box.Size(), ScorePoint(Age - Delay - 1), head, 12, ref hit);
+        }
         if (Kind == EvolutionShot.Ricochet)
         {
             Vector2 center = RicochetState.Center;
@@ -286,8 +309,21 @@ public sealed partial class EvolutionHazard : ModProjectile
     }
     public override bool PreDraw(ref Color lightColor)
     {
+        if (Kind == EvolutionShot.Bloodglow)
+        {
+            float bloodglowFade = Math.Clamp((Lifetime - Age) / 12f, 0, 1);
+            if (Age < Delay)
+            {
+                float charge = Age / (float)Math.Max(1, Delay);
+                EvolutionVisuals.Ring(Projectile.Center, 24 - charge * 10, 0, EvolutionVisuals.Blood * (.25f + charge * .4f), 2);
+                EvolutionBloodglowVisuals.Draw(Projectile, (.15f + charge * .25f) * bloodglowFade, .65f);
+            }
+            else EvolutionBloodglowVisuals.Draw(Projectile, bloodglowFade);
+            return false;
+        }
         if (Kind == EvolutionShot.Ricochet) { DrawRicochet(); return false; }
         if (Kind == EvolutionShot.Barrage) { DrawFleetBolt(); return false; }
+        if (Kind == EvolutionShot.ScoreSeed) { DrawScoreSeed(); return false; }
         if (Kind == EvolutionShot.BroodSpit) return false; // 纯Dust，绝不画火球贴图或精灵拖尾。
         if (Kind == EvolutionShot.SpinBomb) { DrawSpinBomb(); return false; }
         if (IsBroodArsenal) { DrawBroodArsenal(); return false; }
@@ -388,7 +424,7 @@ public sealed partial class EvolutionHazard : ModProjectile
                     Vector2 point = center, velocity = Projectile.velocity;
                     for (int step = 0; step < 54; step++)
                     {
-                        velocity.Y = Math.Min(19, velocity.Y + .3f);
+                        velocity.Y = Math.Min(19 * KineticScale, velocity.Y + .3f * KineticScale * KineticScale);
                         Vector2 next = point + velocity;
                         if (step % 6 < 3) EvolutionVisuals.Line(point, next, EvolutionVisuals.Core * .6f, 1.5f, false);
                         point = next;

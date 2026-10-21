@@ -3,6 +3,7 @@ using ArknightsMod.Content.Items.Weapons.Vanguard;
 using ArknightsMod.Content.Projectiles.Vanguard.Spears;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -12,6 +13,10 @@ public sealed class VanguardSpearPlayer : ModPlayer
 {
     public VanguardChargeCooldown Cooldown { get; private set; } = new();
     internal VanguardLanceCharge ActiveCharge { get; set; }
+    // Read the held input before movement, independently of native alternate-use timers.
+    // Only the owning client reads its controls; remote charges follow projectile/player sync.
+    internal bool ChargeHeld => Player.whoAmI == Main.myPlayer && PlayerInput.Triggers.Current.MouseRight
+        && !Main.gameMenu && !Main.blockMouse && !Player.mouseInterface;
     public override void PreUpdateMovement()
     {
         if (Player.whoAmI == Main.myPlayer) ActiveCharge?.ApplyMovement(Player);

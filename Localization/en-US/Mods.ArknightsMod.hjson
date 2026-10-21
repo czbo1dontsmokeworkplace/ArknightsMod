@@ -41,7 +41,7 @@ StatusMessage: {
 Items: {
 	EvolutionTreasureBag: {
 		DisplayName: Treasure Bag (Essence of Evolution)
-		Tooltip: Right click to receive Evolution's Origin and Evolution's Terminus
+		Tooltip: Right click to receive one each of Origin of Evolution, Terminus of Evolution, Terminus Light, Origin Sever, Nest of Life, and Bloodlight Calamity
 	}
 
 	EvolutionSummon: {
@@ -50,6 +50,8 @@ Items: {
 			'''
 			The beginning of Earth's humanity's forbidden glimpse into Originium technology—and its end
 			Summons the Essence of Evolution
+			Can only be used on the surface at night
+			Requires defeating all three mechanical bosses
 			'''
 	}
 

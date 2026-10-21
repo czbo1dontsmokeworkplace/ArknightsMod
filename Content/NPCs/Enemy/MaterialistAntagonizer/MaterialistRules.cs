@@ -3,7 +3,7 @@ using System;
 namespace ArknightsMod.Content.NPCs.Enemy.MaterialistAntagonizer;
 
 internal enum FlightOrder { Arrival, Deploy, Command, Bombard, Sweep, Ram, Recover, Transition, Overload, Death }
-internal enum DroneShot { Bolt, Missile, Bombardment, Beam, Prism, Seeker, FluxMine, RailSlug, TrailBomb, ChaseBeam, ArcSpark, Petal, Lattice, CoreLance, ClusterOrb, OrbitSpark, Needle, MachineRound, GravityOrb, ScanBurst, Beacon, DropMissile, CommandRocket, CannonShell, ArtilleryBlast, ScoutPulse, ArtsOrb }
+internal enum DroneShot { Bolt, Missile, Bombardment, Beam, Prism, Seeker, FluxMine, RailSlug, TrailBomb, ChaseBeam, ArcSpark, Petal, Lattice, CoreLance, ClusterOrb, OrbitSpark, Needle, MachineRound, GravityOrb, ScanBurst, Beacon, DropMissile, CommandRocket, CannonShell, ArtilleryBlast, ScoutPulse, ArtsOrb, PincerBeam, SaucerRound, RaptorRocket }
 internal enum WingRole { Drone, MkII, ArtsA1, ArtsA2, Raptor }
 internal enum WingDuty { Containment, Precision, Scatter, Interceptor, Heavy }
 internal enum FireStyle { Standard, Containment, Precision, Suppression, CoreSpread, CoreFocus }
@@ -19,7 +19,7 @@ internal static class MaterialistRules
     internal const int HazardCap = 192;
     internal const int TransitionTicks = 150;
     internal const int ArrivalTicks = 210;
-    internal const int DeathTicks = 120;
+    internal const int DeathTicks = MaterialistDeathRules.Duration;
     internal const int EscortLifetime = 5400;
     internal const int EscortGrace = 72;
     internal const int LaserWarning = 60;
@@ -63,14 +63,16 @@ internal static class MaterialistRules
         FlightOrder.Overload => 270, FlightOrder.Recover => 180,
         FlightOrder.Transition => TransitionTicks, FlightOrder.Death => DeathTicks, _ => 180
     };
+    // Local Calamity reference: Aureus laser25/crystal30, Anahita24~30, Leviathan boulder40.
+    internal const int ContainmentDamage = 30;
     internal static int Damage(DroneShot shot) => shot switch {
-        DroneShot.Bolt => 30, DroneShot.Missile => 34, DroneShot.Bombardment => 42, DroneShot.Beam => 38,
-        DroneShot.Prism => 32, DroneShot.Seeker => 34, DroneShot.FluxMine => 32, DroneShot.RailSlug => 30,
-        DroneShot.TrailBomb => 36, DroneShot.ChaseBeam => 38, DroneShot.ArcSpark => 32, DroneShot.Petal => 32,
-        DroneShot.Lattice => 32, DroneShot.CoreLance => 38, DroneShot.ClusterOrb => 36, DroneShot.OrbitSpark => 32, DroneShot.Needle => 34,
-        DroneShot.MachineRound => 28, DroneShot.GravityOrb => 34, DroneShot.ScanBurst => 40, DroneShot.DropMissile => 38,
-        DroneShot.CommandRocket => 36, DroneShot.CannonShell => 38, DroneShot.ArtilleryBlast => 40,
-        DroneShot.ScoutPulse => 28, DroneShot.ArtsOrb => 34, _ => 0
+        DroneShot.Bolt => 32, DroneShot.Missile => 37, DroneShot.Bombardment => 40, DroneShot.Beam => 26,
+        DroneShot.Prism => 32, DroneShot.Seeker => 33, DroneShot.FluxMine => 36, DroneShot.RailSlug => 34,
+        DroneShot.TrailBomb => 38, DroneShot.ChaseBeam => 28, DroneShot.ArcSpark => 32, DroneShot.Petal => 32,
+        DroneShot.Lattice => 32, DroneShot.CoreLance => 36, DroneShot.ClusterOrb => 38, DroneShot.OrbitSpark => 32, DroneShot.Needle => 33,
+        DroneShot.MachineRound => 30, DroneShot.GravityOrb => 36, DroneShot.ScanBurst => 30, DroneShot.DropMissile => 38,
+        DroneShot.CommandRocket => 38, DroneShot.CannonShell => 39, DroneShot.ArtilleryBlast => 40,
+        DroneShot.ScoutPulse => 30, DroneShot.ArtsOrb => 33, DroneShot.PincerBeam => 26, DroneShot.SaucerRound => 30, DroneShot.RaptorRocket => 38, _ => 0
     };
     internal static int WingLife(WingRole role) => role switch {
         WingRole.Drone => 1400, WingRole.MkII => 1800, WingRole.ArtsA1 => 3300,

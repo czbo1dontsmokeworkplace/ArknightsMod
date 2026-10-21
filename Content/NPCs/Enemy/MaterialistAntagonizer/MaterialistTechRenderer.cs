@@ -48,6 +48,7 @@ public sealed class MaterialistTechRenderer : ModSystem
             foreach (NPC npc in Main.ActiveNPCs)
             {
                 if (!npc.TryGetGlobalNPC<MaterialistWing>(out var wing) || !wing.BelongsTo(boss) || wing.Retreating) continue;
+                if (MaterialistWing.Role(npc) == WingRole.Raptor) continue;
                 Color dutyColor = MaterialistWing.DutyColor(MaterialistRules.Duty(boss.Phase, wing.Slot));
                 DrawPanel(shader, npc.Center, new Vector2(npc.width + 38, npc.height + 30), dutyColor * (wing.Age < 72 ? .7f : .20f));
                 // A second, scanning hull layer is visible during launch without replacing the chassis.
@@ -103,30 +104,85 @@ public sealed class MaterialistTechRenderer : ModSystem
     {
         if (shader != null) shader.Parameters["uImage"].SetValue(texture);
     }
+    internal static bool LockShieldMaterial(Vector2 center, Vector2 size, float rotation, float progress, Color tint)
+    {
+        EnsureShader();
+        if (!HullActive) return false;
+        Main.spriteBatch.End();
+        try
+        {
+            shader.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly);
+            shader.Parameters["uSize"].SetValue(size);
+            shader.Parameters["uReveal"].SetValue(progress);
+            shader.CurrentTechnique = shader.Techniques["MaterialistLockShield"];
+            Texture2D texture = TextureAssets.MagicPixel.Value;
+            shader.Parameters["uImage"].SetValue(texture);
+            BeginMaterial(shader);
+            try
+            {
+                Main.spriteBatch.Draw(texture, center - Main.screenPosition, null, tint, rotation,
+                    texture.Size() * .5f, size / texture.Size(), SpriteEffects.None, 0);
+            }
+            finally { Main.spriteBatch.End(); }
+        }
+        finally
+        {
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState,
+                DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+        }
+        return true;
+    }
     internal static void Configure(Effect effect, float time, Vector2 size, float mode, float reveal)
     {
         effect.Parameters["uTime"].SetValue(time);
         effect.Parameters["uSize"].SetValue(size);
-        effect.CurrentTechnique = effect.Techniques[mode > 3.5f ? "MaterialistOutline" : mode > 2.5f ? "MaterialistEnergy" : mode > 1.5f ? "MaterialistOverclock" : mode > .5f ? "MaterialistHull" : "MaterialistTech"];
+        effect.CurrentTechnique = effect.Techniques[mode > 5.5f ? "MaterialistSeverance" : mode > 4.5f ? "MaterialistDisassembly" :
+            mode > 3.5f ? "MaterialistOutline" : mode > 2.5f ? "MaterialistEnergy" : mode > 1.5f ? "MaterialistOverclock" : mode > .5f ? "MaterialistHull" : "MaterialistTech"];
         effect.Parameters["uUvBounds"].SetValue(new Vector4(0, 0, 1, 1));
         effect.Parameters["uReveal"].SetValue(reveal);
     }
     internal static void OverclockChassis(Texture2D texture, Vector2 position, Rectangle? frame, float angle, Vector2 scale, SpriteEffects flip, float opacity)
         => ChassisMaterial(texture, position, frame, angle, scale, flip, Color.White * opacity, 2);
     internal static bool ChassisMaterial(Texture2D texture, Vector2 position, Rectangle? frame, float angle, Vector2 scale,
-        SpriteEffects flip, Color tint, float mode, float reveal = 1)
+        SpriteEffects flip, Color tint, float mode, float reveal = 1, float? materialTime = null)
     {
-        if (!HullActive || tint.A == 0) return false;
+        EnsureShader();
+        if (shader == null || failed || MaterialistVisuals.Reduced && mode != 4 || tint.A == 0) return false;
         Rectangle source = frame ?? texture.Bounds;
         Main.spriteBatch.End();
         try
         {
-            Configure(shader, Main.GlobalTimeWrappedHourly, source.Size(), mode, reveal);
+            Configure(shader, materialTime ?? Main.GlobalTimeWrappedHourly, source.Size(), mode, reveal);
             shader.Parameters["uImage"].SetValue(texture);
             shader.Parameters["uUvBounds"].SetValue(new Vector4(source.X / (float)texture.Width, source.Y / (float)texture.Height,
                 source.Width / (float)texture.Width, source.Height / (float)texture.Height));
             BeginMaterial(shader);
             try { Main.spriteBatch.Draw(texture, position - Main.screenPosition, source, tint, angle, source.Size() * .5f, scale, flip, 0); }
+            finally { Main.spriteBatch.End(); }
+        }
+        finally
+        {
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState,
+                DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+        }
+        return true;
+    }
+    internal static bool DeathCut(Vector2 center, Vector2 size, float rotation, Color tint, float progress, float time)
+    {
+        EnsureShader();
+        if (!HullActive || tint.A == 0) return false;
+        Main.spriteBatch.End();
+        try
+        {
+            Configure(shader, time, size, 6, progress);
+            Texture2D pixel = TextureAssets.MagicPixel.Value;
+            shader.Parameters["uImage"].SetValue(pixel);
+            BeginMaterial(shader);
+            try
+            {
+                Main.spriteBatch.Draw(pixel, center - Main.screenPosition, null, tint, rotation,
+                    new Vector2(.5f), size, SpriteEffects.None, 0);
+            }
             finally { Main.spriteBatch.End(); }
         }
         finally

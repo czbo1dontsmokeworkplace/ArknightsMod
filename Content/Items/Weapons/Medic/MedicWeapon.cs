@@ -17,8 +17,10 @@ public abstract class MedicWeapon : ExpansionWeaponBase
     public MedicProfile Profile => MedicCatalog.Get(ProfileId);
     public override int EliteStageMax => ProfileId is 0 or 22 ? 1 : 2;
     protected override int[] EliteDamage => [0, 0, 0];
-    // Existing staff art is retained until dedicated inventory/held artwork is supplied.
-    public override string Texture => Profile.Branch == MedicBranch.Physician && Profile.Tier == 5
+    // Dedicated bag artwork for Ansel and Myrrh; other medics retain their existing staff art.
+    public override string Texture => ProfileId is 0 or 1
+        ? "ArknightsMod/Content/Items/Weapons/Medic/" + Name
+        : Profile.Branch == MedicBranch.Physician && Profile.Tier == 5
         ? "ArknightsMod/Content/Items/Weapons/Medic/Shining/ShiningSword"
         : "ArknightsMod/Content/Items/Weapons/Medic/Sussurro/SussurroStaff";
     public override void SetStaticDefaults() => Item.staff[Type] = true;

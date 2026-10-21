@@ -2,7 +2,6 @@ using System;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
-using Terraria.Graphics.CameraModifiers;
 using Terraria.ID;
 using Terraria.ModLoader;
 using ArknightsMod.Content.Buffs.Caster.Leonhardt;
@@ -69,8 +68,6 @@ public sealed class LeonhardtDetonation : ModProjectile
             { Volume = .62f, Pitch = -.24f, MaxInstances = 3 }, Projectile.Center);
         SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with
             { Volume = .29f, Pitch = .16f }, Projectile.Center);
-        Main.instance.CameraModifiers.Add(new PunchCameraModifier(Projectile.Center, Vector2.UnitX,
-            2f + 4f * Charge, 5f, 11));
         LeonhardtVisuals.DetonationParticles(Projectile.Center, Radius);
         for (int i = 0; i < 7; i++)
         {

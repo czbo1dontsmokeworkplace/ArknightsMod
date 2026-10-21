@@ -1,0 +1,87 @@
+NPCs: {
+	Isharmla: {
+		DisplayName: 伊莎玛拉，腐化之心
+		// BossChecklistIntegration.EntryName: Isharmla
+	}
+
+	IsharmlaDragon.DisplayName: 伊莎玛拉，溟海之躯
+	IsharmlaSegment.DisplayName: 溟海之躯
+	IsharmlaSeaborn.DisplayName: 潮生海嗣
+}
+
+Items: {
+	CallOfTheTides: {
+		DisplayName: 归溟之唤
+		Tooltip:
+			'''
+			在击败月亮领主后，于海洋召唤伊莎玛拉
+			不会消耗
+			开场歌声会抑制飞行；多段跳、跳跃增益与钩爪仍可使用
+			'''
+	}
+
+	AbyssalSpine: {
+		DisplayName: 溟海脊索
+		Tooltip:
+			'''
+			挥舞海龙骨骼构成的链枷
+			按住左键旋转，松开抛出，再次按下将其收回
+			'''
+	}
+
+	HeavensDeluge: {
+		DisplayName: 天洪
+		Tooltip: 消耗凝胶，持续喷射可贯穿敌人的高压水流
+	}
+
+	FinalTideFlute: {
+		DisplayName: 终潮之笛
+		Tooltip: 吹奏潮音，释放三股交织前进的螺旋水流
+	}
+
+	TidebornStaff: {
+		DisplayName: 潮生之杖
+		Tooltip: 召唤潮生海嗣，以水流协同攻击敌人
+	}
+
+	HeartOfTheTides: {
+		DisplayName: 归溟之心
+		Tooltip:
+			'''
+			增加60点生命上限与6%全职业伤害
+			连续10秒未受伤后凝聚水膜，使下一次受击伤害降低20%
+			'''
+	}
+
+	IsharmlaTreasureBag: {
+		DisplayName: 宝藏袋（伊莎玛拉）
+		Tooltip: 右键打开
+	}
+}
+
+Projectiles: {
+	IsharmlaHazard.DisplayName: 归溟之潮
+	TideSpine.DisplayName: 溟海脊索
+	TideBolt.DisplayName: 潮流
+	TidebornMinion.DisplayName: 潮生海嗣
+}
+
+Buffs: {
+	TidebornBuff: {
+		DisplayName: 潮生海嗣
+		Description: 潮生海嗣为你作战
+	}
+}
+
+IsharmlaText: {
+	Bestiary: 歌声仍从海面传来。你终于明白，海水之下的庞然躯体也在随之呼吸。
+	SpawnInfo: 击败月亮领主后，在海洋使用归溟之唤。开场禁用翅膀，召龙后解除。
+	Stage1: 第一乐章 · 无风之歌
+	Stage2: 第二乐章 · 深海来客
+	Stage3: 第三乐章 · 天海合唱
+	Stage4: 第四乐章 · 归溟独舞
+	Stage5: 第五乐章 · 怒潮之躯
+	Stage6: 终曲 · 万物归溟
+	Arrival: 海龙即将升起 · {0}
+	FinaleTime: 终曲剩余 {0} 秒
+}

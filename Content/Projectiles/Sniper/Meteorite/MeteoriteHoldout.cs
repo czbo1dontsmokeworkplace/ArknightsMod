@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Weapons.Sniper.Meteorite;
+using ArknightsMod.Content.Items.Weapons.Sniper.Meteorite;
 using Microsoft.Xna.Framework;
 using ArknightsMod.Content.Projectiles.Sniper.Artillery;
 using Microsoft.Xna.Framework.Graphics;
@@ -13,7 +13,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Meteorite;
 public sealed class MeteoriteHoldout : ModProjectile
 {
     private float Recoil => 8f * System.MathF.Pow(.78f, 70 - Projectile.timeLeft);
-    public override string Texture => "Terraria/Images/Item_" + ItemID.GrenadeLauncher;
+    public override string Texture => "ArknightsMod/Content/Items/Weapons/Sniper/Meteorite/MeteoriteCannon";
     public override void SetDefaults()
     {
         Projectile.width = 64; Projectile.height = 28;
@@ -54,7 +54,7 @@ public sealed class MeteoriteHoldout : ModProjectile
     }
     public override bool PreDraw(ref Color lightColor)
     {
-        Texture2D texture = TextureAssets.Item[ItemID.GrenadeLauncher].Value;
+        Texture2D texture = TextureAssets.Projectile[Type].Value;
         Vector2 aim = Projectile.velocity.SafeNormalize(Vector2.UnitX);
         Vector2 position = Projectile.Center + aim * (12f - Recoil);
         Main.EntitySpriteDraw(texture, position - Main.screenPosition, null, lightColor, Projectile.rotation,

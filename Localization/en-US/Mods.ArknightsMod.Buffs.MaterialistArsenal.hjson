@@ -1,0 +1,4 @@
+DispatchDroneBuff: {
+	DisplayName: Fighter Dispatch Network
+	Description: Coordinated drones are active and require bullets to fire
+}

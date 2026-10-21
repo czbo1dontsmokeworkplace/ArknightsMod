@@ -192,11 +192,4 @@ public abstract class CrossbowWeaponBase : UpgradeWeaponBase
         return true;
     }
 
-    public override void ModifyTooltips(System.Collections.Generic.List<TooltipLine> tooltips)
-    {
-        base.ModifyTooltips(tooltips);
-        string text = Language.GetTextValue("Mods.ArknightsMod.Crossbows." + Kind);
-        int quote = tooltips.FindIndex(line => line.Mod == "Terraria" && line.Name == "Tooltip0");
-        tooltips.Insert(quote >= 0 ? quote + 1 : tooltips.Count, new TooltipLine(Mod, "CrossbowMechanics", text));
-    }
 }

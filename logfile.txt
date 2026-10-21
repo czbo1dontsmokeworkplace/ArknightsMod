@@ -1,0 +1,1 @@
+Error at 2026/10/21 6:38:22: Error loading pipeline assembly "C:\Windows\SysWOW64\WindowsPowerShell\v1.0\Microsoft.Xna.Framework.dll".

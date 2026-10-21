@@ -8,10 +8,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution;
 
 internal static class EvolutionFleetRules
 {
-    internal const int SlamLock = 0, SlamLaunch = 26, SlamImpact = 44, SlamFan = 80;
+    internal const int SlamLock = 0, SlamLaunch = 13, SlamImpact = 22, SlamFan = SlamImpact + EvolutionBroodfallRules.Escape;
     internal const int ZigStride = 68, ZigLock = 18, ZigLaunch = 38, ZigEnd = 60;
     internal static bool IsMotion(int attack) => attack is 14 or 15;
-    internal static int Duration(int attack) => attack is >= 19 and <= 22 ? EvolutionRicochetRules.Duration : IsMotion(attack) ? 216 : EvolutionPianoRules.Duration;
+    internal static int Duration(int attack) => EvolutionRecitalRules.IsFigure(attack) ? EvolutionRecitalRules.Duration :
+        EvolutionBloodSurgeRules.IsFigure(attack) ? EvolutionBloodSurgeRules.Duration :
+        attack is >= 19 and <= 22 ? EvolutionRicochetRules.Duration : IsMotion(attack) ? 216 : EvolutionPianoRules.Duration;
     internal static int CurtainGap(int wave, int cycle) => cycle % 3 - 2 + (wave is 1 or 2 ? 1 : 0);
     internal static Vector2 ZigTarget(Vector2 center, int leg) => center + new Vector2(leg % 2 == 0 ? 420 : -420, leg % 2 == 0 ? -150 : 150);
     internal static bool DashEmission(int age) => age is 5 or 12 or 19;
@@ -22,6 +24,7 @@ public sealed partial class Evolution
     private void DoFleetAttack(Player player)
     {
         int t = Timer;
+        if (EvolutionCorridorPressureRules.IsFigure(Attack)) { DoHorizontalPressure(); return; }
         if (Attack >= 19) { DoRicochetPattern(); return; }
         if (Attack == 14) { DoQuickSlam(player); return; }
         if (Attack == 15) { DoLowZigzag(player); return; }
@@ -98,7 +101,7 @@ public sealed partial class Evolution
         if (t >= EvolutionFleetRules.ZigLock && t < EvolutionFleetRules.ZigLaunch) NPC.velocity *= .35f;
         if (t >= EvolutionFleetRules.ZigLaunch && t < EvolutionFleetRules.ZigEnd)
         {
-            Charging = true; NPC.velocity = DashDirection * 44;
+            Charging = true; NPC.velocity = DashDirection * (44 * EvolutionCorridorPressureRules.Speed);
             int age = t - EvolutionFleetRules.ZigLaunch;
             if (EvolutionFleetRules.DashEmission(age))
                 for (int flank = -1; flank <= 1; flank += 2)
@@ -120,7 +123,7 @@ public sealed partial class Evolution
         }
         int t = Timer % EvolutionFleetRules.ZigStride;
         if (Attack == 15 && Timer / EvolutionFleetRules.ZigStride < 3 && t >= EvolutionFleetRules.ZigLock && t < EvolutionFleetRules.ZigLaunch)
-            EvolutionVisuals.AimLine(NPC.Center, NPC.Center + DashDirection * (44 * (EvolutionFleetRules.ZigEnd - EvolutionFleetRules.ZigLaunch)),
+            EvolutionVisuals.AimLine(NPC.Center, NPC.Center + DashDirection * (44 * EvolutionCorridorPressureRules.Speed * (EvolutionFleetRules.ZigEnd - EvolutionFleetRules.ZigLaunch)),
                 (t - EvolutionFleetRules.ZigLock + 1f) / (EvolutionFleetRules.ZigLaunch - EvolutionFleetRules.ZigLock));
     }
 }
@@ -135,7 +138,21 @@ public sealed partial class EvolutionHazard
         {
             float warning = Math.Clamp(Age / 8f, 0, 1);
             EvolutionVisuals.Glow(Projectile.Center, EvolutionVisuals.Blood * (.35f * warning), new Vector2(18));
-            EvolutionVisuals.Line(Projectile.Center, Projectile.Center + d * 90, EvolutionVisuals.Core * (.45f * warning), 1, false);
+            EvolutionVisuals.Line(Projectile.Center, Projectile.Center + d * (Parameter > 0 ? Projectile.velocity.Length() * (Lifetime - Delay - 12) : 90),
+                (Parameter > 0 ? Color.Lerp(EvolutionVisuals.Blood, Color.White, .3f) : EvolutionVisuals.Core) * ((Parameter > 0 ? .24f : .45f) * warning), 1, false);
+            return;
+        }
+        if (Parameter > 0)
+        {
+            Vector2 normal = d.RotatedBy(MathHelper.PiOver2), tip = Projectile.Center + d * 8;
+            EvolutionVisuals.Glow(Projectile.Center, EvolutionVisuals.Blood * (.65f * opacity), new Vector2(30, 12), d.ToRotation());
+            for (int side = -1; side <= 1; side += 2)
+            {
+                Vector2 shoulder = Projectile.Center - d * 4 + normal * (side * 4);
+                EvolutionVisuals.Line(tip, shoulder, EvolutionVisuals.Blood * opacity, 1.5f, false);
+                EvolutionVisuals.Line(shoulder, Projectile.Center - d * 20, EvolutionVisuals.Blood * (.35f * opacity), 1, false);
+            }
+            EvolutionVisuals.Line(Projectile.Center - d * 3, tip, new Color(255, 215, 223) * opacity, 1.6f, false);
             return;
         }
         EvolutionVisuals.Glow(Projectile.Center, EvolutionVisuals.Blood * (.8f * opacity), new Vector2(24, 12), d.ToRotation());

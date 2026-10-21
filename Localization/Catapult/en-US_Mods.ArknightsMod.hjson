@@ -1,7 +1,7 @@
 CatapultText: {
-	SkillKey: Press [{0}] to activate skill
+	SkillKey: Press [{0}] to activate the selected manual skill
 	Unbound: Bind the Skill Activate key in Controls
-	Placeholder: Placeholder launcher sprite from Terraria; skill icon borrowed from Meteorite
+	Placeholder: Weapon art and skill icons use temporary sprites
 }
 
 Items: {
@@ -9,11 +9,8 @@ Items: {
 		DisplayName: Grenade Launcher [Catapult]
 		Tooltip:
 			'''
-			Launches a rocket high into the sky, then strikes the cursor from above; range: 650 pixels
-			Explodes on enemies, solid tiles, or arrival at the selected point
-			Explosions deal 25% more damage while descending; cannot destroy tiles
-			Base blast radius: 140 pixels; consumes no ammunition
-			Craftable after Skeletron
+			Launches grenades high into the air to fall and explode over the target
+			Requires no ammunition and does not destroy terrain
 			'''
 	}
 }
@@ -38,4 +35,10 @@ Projectiles: {
 	CatapultHoldout.DisplayName: Catapult's Grenade Launcher
 	CatapultShell.DisplayName: Catapult Grenade
 	CatapultExplosion.DisplayName: Catapult Blast
+	CrusherAnchorCast.DisplayName: Crusher Anchor Cast
+	CrusherAnchorCrash.DisplayName: Crusher Anchor Crash
+	CrusherAura.DisplayName: Crusher Aura
+	CrusherHeldBlade.DisplayName: Crusher Held Blade
+	CrusherImpact.DisplayName: Crusher Impact
+	SurtrFlameWave.DisplayName: Surtr Flame Wave
 }

@@ -171,6 +171,11 @@ public sealed partial class MaterialistWing
         if (boss == null || Retreating) return;
         WingDuty duty = MaterialistRules.Duty(boss.Phase, Slot);
         Color accent = DutyColor(duty);
+        if (Role(npc) == WingRole.Raptor)
+        {
+            if (Age >= MaterialistRules.EscortGrace && boss.EscortFire) DrawRaptorWarning(npc, boss);
+            return;
+        }
         if (Age < 72)
         {
             MaterialistVisuals.Brackets(npc.Center, new Vector2(npc.width + 20, npc.height + 18), accent, .85f);
@@ -179,7 +184,6 @@ public sealed partial class MaterialistWing
         if (!boss.EscortFire) return;
         if (boss.ArtilleryActive && Role(npc) != WingRole.Raptor) { DrawArtilleryEscort(npc, boss); return; }
         if (boss.ScoutReady && Slot < 6) { DrawScoutWarning(npc, boss); return; }
-        if (Role(npc) == WingRole.Raptor) { DrawRaptorWarning(npc, boss); return; }
         int beat = MaterialistTactics.Beat(boss.Timer), cap = MaterialistRules.WingCap(boss.Phase);
         if (boss.Order == FlightOrder.Ram && boss.Timer >= 114) return;
         bool bomber = boss.Pattern == WingPattern.BombRun && MaterialistTactics.Bomber(duty, Slot);

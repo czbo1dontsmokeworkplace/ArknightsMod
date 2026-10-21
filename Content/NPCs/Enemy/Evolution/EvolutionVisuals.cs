@@ -26,6 +26,7 @@ internal static class EvolutionVisuals
     {
         if (!textures.TryGetValue(name, out Asset<Texture2D> texture))
             textures[name] = texture = ModContent.Request<Texture2D>(name switch {
+                "BloodGleam" => "ArknightsMod/Content/Textures/flare_01",
                 "Bloom" => "ArknightsMod/Common/Particle/DefaultParticle",
                 "CinematicRing" => "ArknightsMod/Content/Textures/circle_03",
                 "EnergyNoise" => "ArknightsMod/Content/Projectiles/Medic/Shining/NoiseSoft",
@@ -154,13 +155,13 @@ internal static class EvolutionVisuals
         }
     }
 
-    internal static void Burst(Vector2 center, float strength = 1f, bool sound = true, Color? color = null)
+    internal static void Burst(Vector2 center, float strength = 1f, bool sound = true, Color? color = null, float spatialScale = 1)
     {
         if (Main.dedServ) return;
         int count = Math.Min(30, (int)(14 * strength));
         for (int i = 0; i < count; i++)
         {
-            Vector2 velocity = Main.rand.NextVector2CircularEdge(1, 1) * Main.rand.NextFloat(2, 8) * strength;
+            Vector2 velocity = Main.rand.NextVector2CircularEdge(1, 1) * Main.rand.NextFloat(2, 8) * strength * spatialScale;
             new DefaultParticle(center, velocity, 22, Main.rand.NextFloat(.35f, .7f), i % 4 == 0 ? Core : color ?? Blood, true)
             { Deformation = new Vector2(.45f, 1.8f) }.Spawn();
             if (i % 3 == 0) Dust.NewDustPerfect(center, color == Sand ? DustID.Sand : DustID.Blood, velocity * .7f, 0, default, 1.4f);

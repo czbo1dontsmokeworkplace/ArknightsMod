@@ -30,14 +30,15 @@ public sealed class OperatorBranchTraits : GlobalItem
         "PineconeNailgun" or "ExecutorShotgun" or "ChalterWatergun" => "Spreadshooter",
         "GravelDualBlades" or "RedDagger" or "PhantomDaggers" => "Executor",
         "SpecterBoneSaw" or "BlazeGreatsword" or "GavialChainsaw" => "Centurion",
+        "QuartzGreatsword" or "WindChimesHeavyBlade" or "HoedererGreatsword" or "UlpianusAnchor" => "Crusher",
+        "HumusScythe" or "LaPlumaScythe" or "EntelechiaScythe" => "Reaper",
+        "OddaHammer" or "ZimaFuryHammer" or "PepeHammer" => "Earthshaker",
         "PuddingStaff" or "LeiziStaff" or "PassengerConductor" => "ChainCaster",
         "CorroserumFlamethrower" or "IfritFlamethrower" or "AphrissaProjector" => "BlastCaster",
         "Lava_Dagger" or "GitanoOrb" or "LeonhardtStaff" or "SkyfireStaff" or "MostimaStaff" => "SplashCaster",
         "AmbrielRifle" or "AndreanaRifle" or "FirewatchRifle" or "TyphonBow" => "Deadeye",
-        "HoolheyakWindArts" => "CoreCaster",
         "NecrassScepter" => "PrimalCaster",
         "HornGrenadeLauncher" => "Fortress",
-        "EthanYoyo" => "Ambusher",
         "MagallanController" => "Summoner",
         "KroosCrossbow" or "KroosAlterCrossbow" or "MelaniteCrossbow" or "ProvenceCrossbow"
             or "SchwarzBow" or "GreyThroatCrossbow" or "BluePoisonCrossbow" or "PozemkaCrossbow" => "Crossbowman",
@@ -47,10 +48,10 @@ public sealed class OperatorBranchTraits : GlobalItem
     internal static string Profession(string branch) => branch switch
     {
         "Mystic" or "ChainCaster" or "MechAccord" or "SplashCaster" or "Phalanx"
-            or "CoreCaster" or "PrimalCaster" or "BlastCaster" => "Caster",
-        "ArtsFighter" or "Dreadnought" or "Musha" or "Centurion" => "Guard",
+            or "PrimalCaster" or "BlastCaster" => "Caster",
+        "ArtsFighter" or "Dreadnought" or "Musha" or "Centurion" or "Crusher" or "Reaper" or "Earthshaker" => "Guard",
         "Artilleryman" or "Deadeye" or "Crossbowman" or "Spreadshooter" => "Sniper",
-        "Executor" or "Ambusher" => "Specialist",
+        "Executor" => "Specialist",
         "Charger" => "Vanguard",
         "Medic" or "MedicTherapist" or "MedicMultiTarget" or "MedicChain" or "MedicWandering" => "Medic",
         "Fortress" => "Defender",
@@ -60,6 +61,14 @@ public sealed class OperatorBranchTraits : GlobalItem
 
     public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
     {
+        // Flavor follows all item-specific controls and numbers, immediately before
+        // the final profession block (two lines for medical weapons).
+        if (item.ModItem?.Mod.Name == "ArknightsMod")
+        {
+            string flavorKey = "Mods.ArknightsMod." + item.ModItem.LocalizationCategory + "." + item.ModItem.Name + ".FlavorText";
+            if (Language.Exists(flavorKey))
+                tooltips.Add(new TooltipLine(Mod, "WeaponFlavor", Language.GetTextValue(flavorKey)));
+        }
         if (Branch(item) is string branch)
         {
             string profession = Profession(branch);
@@ -86,7 +95,8 @@ public sealed class OperatorBranchTraits : GlobalItem
     {
         if (Branch(item) != "Centurion") return;
         Item saw = new(ItemID.ButchersChainsaw);
-        item.axe = saw.axe;
+        // Axe power is enabled only while holding right-click, before ItemCheck.
+        item.axe = 0;
         item.useTime = saw.useTime;
     }
 }

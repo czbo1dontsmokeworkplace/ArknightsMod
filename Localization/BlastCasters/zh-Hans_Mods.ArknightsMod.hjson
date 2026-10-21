@@ -3,10 +3,8 @@ Items: {
 		DisplayName: 净浊喷火器 [蚀清]
 		Tooltip:
 			'''
-			困难模式初期
-			按住左键持续喷射单股直线光焰，可穿透方块并无限贯穿敌人，命中施加20秒狱炎与诅咒狱火
-			使用凝胶；每3次喷射尝试消耗1个凝胶，并享受弹药节省效果
-			受射手装备加成，在本模组的抗性系统中视为法术伤害
+			持续喷射可穿墙的光焰，命中施加狱炎与诅咒狱火
+			消耗凝胶；受射手伤害加成，在抗性判定中视为法术攻击
 			'''
 	}
 
@@ -14,10 +12,8 @@ Items: {
 		DisplayName: 焚灭喷火器 [伊芙利特]
 		Tooltip:
 			'''
-			世纪之花后
-			按住左键持续喷射单股直线高热光焰，可穿透方块并无限贯穿敌人，命中施加20秒狱炎
-			使用凝胶；每3次喷射尝试消耗1个凝胶，并享受弹药节省效果
-			受射手装备加成，在本模组的抗性系统中视为法术伤害
+			持续喷射可穿墙的高热光焰，命中施加狱炎
+			消耗凝胶；受射手伤害加成，在抗性判定中视为法术攻击
 			'''
 	}
 
@@ -25,30 +21,31 @@ Items: {
 		DisplayName: 折光喷射器 [谬因]
 		Tooltip:
 			'''
-			四柱时期
-			按住左键持续喷射单股直线高速光焰，无限贯穿敌人并施加5秒狱炎
-			弹幕沿路径飞行并穿透方块，基础总射程1248像素；达到总射程后停止伤害并消散
-			右键在光标处放置或移动一个中继器，再右键中继器可将其撤回
-			有有效中继器时，枪口朝其喷射，光学弹幕抵达后转向发射时的光标位置，并延长320像素总射程
-			中继器可在560像素内的空地放置并隔墙连接，持续20秒；超过720像素、切换武器或死亡后消失
-			使用凝胶；每3次喷射尝试消耗1个凝胶，并享受弹药节省效果
-			受射手装备加成，在本模组的抗性系统中视为法术伤害
+			喷射可穿墙的高速光焰，命中施加狱炎
+			右键放置或移动中继器，使光焰转向鼠标并延长射程；右键中继器将其撤回
+			中继器持续20秒，离开过远或切换武器后消失
+			消耗凝胶；受射手伤害加成，在抗性判定中视为法术攻击
 			'''
 	}
 }
 
 BlastCasterText: {
-	SkillKey: 技能键：{0}；技能数值区间对应等级1至10，技力与持续时间见技能面板
-	Placeholder: 武器外观与技能图标暂借用仓库内现有贴图，后续替换；技能为泰拉战斗改编
+	SkillKey: 按[{0}]开启选中的手动技能
+	Placeholder: 武器外观与技能图标暂用现有贴图
 }
 
-BranchTraits.BlastCaster: 轰击术师：喷射无限贯穿的光焰
+BranchTraits.BlastCaster: 轰击术师：  喷射无限贯穿的光焰
 
 Projectiles: {
 	BlastCasterHoldout.DisplayName: 轰击喷射器
 	BlastCasterHeat.DisplayName: 伊芙利特的余焰
 	BlastCasterFluxPacket.DisplayName: 轰击光焰
 	AphrissaRelay.DisplayName: 谬因的中继器
+	// EarthshakerHeldHammer.DisplayName: Earthshaker Held Hammer
+	// EarthshakerImpact.DisplayName: Earthshaker Impact
+	// ReaperBloodOrbit.DisplayName: Reaper Blood Orbit
+	// ReaperSpin.DisplayName: Reaper Spin
+	// ReaperWave.DisplayName: Reaper Wave
 }
 
 Skills: {

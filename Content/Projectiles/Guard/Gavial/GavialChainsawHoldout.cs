@@ -15,11 +15,12 @@ namespace ArknightsMod.Content.Projectiles.Guard.Gavial;
 
 public sealed class GavialChainsawHoldout : ModProjectile
 {
-    private int age, impactCooldown, visualMode;
+    private int age, impactCooldown, visualMode, bloodHitsThisCycle;
     private float aimAngle, spool, biteTimer;
     private Vector2 hand, drawHand, tip;
     private readonly GavialVisuals.CutMark[] marks = new GavialVisuals.CutMark[24];
     private int nextMark;
+    private bool ejectaSpawnedThisCycle;
     private Player Owner => Main.player[Projectile.owner];
     private int Mode => (int)Projectile.ai[1];
     private float Reach => Mode == 2 ? GavialBalance.AssaultReach : GavialBalance.Reach;
@@ -98,6 +99,8 @@ public sealed class GavialChainsawHoldout : ModProjectile
         if (biteTimer <= 0f)
         {
             biteTimer += Mode == 3 ? GavialBalance.SoulBiteTicks : GavialBalance.NormalBiteTicks;
+            bloodHitsThisCycle = 0;
+            ejectaSpawnedThisCycle = false;
             Projectile.ResetLocalNPCHitImmunity();
         }
         if (Mode == 2 && age % 7 == 0) PullTargets();
@@ -160,7 +163,15 @@ public sealed class GavialChainsawHoldout : ModProjectile
 
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
     {
+        if (damageDone > 0)
+            CenturionHitVisuals.BloodSpray(target, aimAngle.ToRotationVector2(),
+                CenturionHitVisuals.GavialIntensity, bloodHitsThisCycle++, CenturionHitVisuals.GavialColor);
         Owner.GetModPlayer<GavialChainsawPlayer>().HealFromSaw(target, damageDone);
+        if (damageDone > 0 && !ejectaSpawnedThisCycle)
+        {
+            ejectaSpawnedThisCycle = true;
+            CenturionHitVisuals.SawEjecta(Projectile, Vector2.Lerp(hand, tip, 0.82f), aimAngle.ToRotationVector2());
+        }
         // 每个被锯刃实际命中的目标各触发一次，不受下方纯视觉节流影响。
         // 由持有者创建；爆炸是独立弹幕，不会递归触发新的锯刃爆炸。
         if (damageDone > 0 && Projectile.owner == Main.myPlayer)
@@ -170,8 +181,6 @@ public sealed class GavialChainsawHoldout : ModProjectile
         if (Main.dedServ || impactCooldown > 0) return;
         impactCooldown = 4;
         Vector2 contact = target.Hitbox.ClosestPointInRect(Vector2.Lerp(hand, tip, 0.75f));
-        GavialVisuals.SawImpactParticles(contact, aimAngle.ToRotationVector2(), Mode);
-        GavialVisuals.Chips(contact, -aimAngle.ToRotationVector2(), Mode == 3 ? 7 : 5, true);
         marks[nextMark] = new GavialVisuals.CutMark
         {
             Position = contact, Angle = aimAngle + Main.rand.NextFloat(-0.45f, 0.45f),

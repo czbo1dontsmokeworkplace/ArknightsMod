@@ -10,7 +10,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.MaterialistAntagonizer;
 internal static class MaterialistBallistics
 {
     private struct Fragment { internal Vector2 Position, Velocity; internal Color Color; internal int Age, Life; internal bool Chip; internal float Scale; }
-    private struct Mark { internal Vector2 Position, Normal; internal int Age; internal bool Heavy; }
+    private struct Mark { internal Vector2 Position, Normal; internal int Age; internal bool Heavy, Directional; }
     private struct Tracer { internal Vector2 Position, Drift; internal float Angle, Length; internal int Age; internal Color Color; }
     private static readonly Fragment[] fragments = new Fragment[384];
     private static readonly Mark[] marks = new Mark[48];
@@ -18,6 +18,16 @@ internal static class MaterialistBallistics
     private static int tracerCursor;
     private static int fragmentCursor, markCursor;
     private static readonly ulong[] muzzleFrames = new ulong[Main.maxNPCs];
+    internal static bool HasVisuals
+    {
+        get
+        {
+            foreach (Fragment f in fragments) if (f.Age > 0) return true;
+            foreach (Mark m in marks) if (m.Age > 0) return true;
+            foreach (Tracer t in tracers) if (t.Age > 0) return true;
+            return false;
+        }
+    }
     internal static void Reset() { Array.Clear(fragments); Array.Clear(marks); Array.Clear(tracers); Array.Clear(muzzleFrames); fragmentCursor = markCursor = tracerCursor = 0; }
     internal static void AirWake(NPC npc, bool firing)
     {
@@ -52,11 +62,12 @@ internal static class MaterialistBallistics
             smoke.noGravity = true;
         }
     }
-    internal static void Wake(Projectile p, bool dense = false)
+    internal static void Wake(Projectile p, bool dense = false, Vector2? launch = null)
     {
         if (Main.gameMenu || Vector2.DistanceSquared(p.Center, Main.LocalPlayer.Center) > 2400 * 2400) return;
         Vector2 normal = p.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2);
-        float travel = dense && p.ModProjectile is MaterialistHazard h ? Vector2.Distance(p.Center, h.Anchor) : float.MaxValue;
+        float travel = launch.HasValue ? Vector2.Distance(p.Center, launch.Value) :
+            dense && p.ModProjectile is MaterialistHazard h ? Vector2.Distance(p.Center, h.Anchor) : float.MaxValue;
         for (int i = 0; i < (MaterialistVisuals.Reduced ? 1 : dense ? 3 : 2); i++)
             tracers[tracerCursor++ % tracers.Length] = new Tracer {
                 Position = p.Center + normal * Main.rand.NextFloat(-15, 15), Drift = -p.velocity * Main.rand.NextFloat(.1f, .35f),
@@ -64,22 +75,47 @@ internal static class MaterialistBallistics
                 Color = Color.Lerp(new Color(184, 107, 24), new Color(255, 232, 143), Main.rand.NextFloat())
             };
     }
-    internal static void Impact(Vector2 point, Vector2 normal, bool ground, bool heavy = false)
+    internal static void Impact(Vector2 point, Vector2 normal, bool ground, bool heavy = false, bool directional = false)
     {
         if (Main.dedServ || Main.gameMenu || Vector2.DistanceSquared(point, Main.LocalPlayer.Center) > 2400 * 2400) return;
-        marks[markCursor++ % marks.Length] = new Mark { Position = point, Normal = normal, Age = 1, Heavy = heavy };
+        marks[markCursor++ % marks.Length] = new Mark { Position = point, Normal = normal, Age = 1, Heavy = heavy, Directional = directional };
         Vector2 tangent = normal.RotatedBy(MathHelper.PiOver2);
-        int count = MaterialistVisuals.Reduced ? 4 : heavy && ground ? 16 : ground ? 10 : 6;
+        int count = directional ? MaterialistVisuals.Reduced ? 8 : Main.rand.Next(26, 37) :
+            MaterialistVisuals.Reduced ? 4 : heavy && ground ? 16 : ground ? 10 : 6;
+        float burstBias = directional ? Main.rand.NextFloat(-.25f, .25f) : 0;
         for (int i = 0; i < count; i++)
         {
-            bool chip = ground && i % 4 == 0;
+            bool chip = ground && (directional ? Main.rand.NextBool(4) : i % 4 == 0);
             fragments[fragmentCursor++ % fragments.Length] = new Fragment {
-                Position = point, Velocity = normal * Main.rand.NextFloat(2, heavy ? 10 : 7) + tangent * Main.rand.NextFloat(heavy ? -10 : -7, heavy ? 10 : 7),
+                Position = directional ? point + normal * Main.rand.NextFloat(0, 4) + Main.rand.NextVector2Circular(3, 3) : point,
+                Velocity = directional
+                    ? normal.RotatedBy(burstBias + Main.rand.NextFloat(-1.05f, 1.05f)) *
+                        (2 + MathF.Pow(Main.rand.NextFloat(), 1.6f) * 13)
+                    : normal * Main.rand.NextFloat(2, heavy ? 10 : 7) + tangent * Main.rand.NextFloat(heavy ? -10 : -7, heavy ? 10 : 7),
                 Color = chip ? new Color(155, 144, 124) : i % 3 == 0 ? new Color(255, 245, 196) : new Color(255, 184, 44),
-                Age = 1, Life = Main.rand.Next(10, heavy ? 25 : 20), Chip = chip, Scale = heavy ? 1.65f : 1
+                Age = 1, Life = Main.rand.Next(directional ? 7 : 10, heavy ? 25 : 20), Chip = chip,
+                Scale = directional ? Main.rand.NextFloat(.65f, 1.8f) : heavy ? 1.65f : 1
             };
         }
-        if (ground && !MaterialistVisuals.Reduced && Main.rand.NextBool(heavy ? 2 : 3))
+        if (directional)
+        {
+            int dustCount = MaterialistVisuals.Reduced ? 3 : Main.rand.Next(10, 17);
+            for (int i = 0; i < dustCount; i++)
+            {
+                bool smoke = Main.rand.NextBool(5);
+                bool stone = !smoke && Main.rand.NextBool(4);
+                Vector2 velocity = normal.RotatedBy(burstBias + Main.rand.NextFloat(-1.1f, 1.1f)) *
+                    Main.rand.NextFloat(smoke ? .6f : 1.8f, smoke ? 2.5f : 9.5f);
+                Dust dust = Dust.NewDustPerfect(point + normal * Main.rand.NextFloat(1, 5) +
+                    Main.rand.NextVector2Circular(4, 4), smoke ? DustID.Smoke : stone ? DustID.Stone : DustID.Torch,
+                    velocity, smoke ? 155 : Main.rand.Next(20, 100),
+                    smoke || stone ? new Color(135, 120, 94) : new Color(255, 209, 104),
+                    Main.rand.NextFloat(smoke ? .6f : .45f, smoke ? 1.15f : 1.1f));
+                dust.noGravity = smoke || !stone;
+                dust.fadeIn = 0;
+            }
+        }
+        if (!directional && ground && !MaterialistVisuals.Reduced && Main.rand.NextBool(heavy ? 2 : 3))
             Dust.NewDustPerfect(point, DustID.Smoke, normal * (heavy ? 1.2f : .7f), 140, new Color(115, 105, 87), heavy ? 1.25f : .55f);
     }
     internal static void Update()
@@ -119,10 +155,12 @@ internal static class MaterialistBallistics
             if (m.Age == 0) continue;
             float fade = 1 - m.Age / 14f;
             Vector2 tangent = m.Normal.RotatedBy(MathHelper.PiOver2);
-            MaterialistVisuals.Line(m.Position - tangent * (4 + m.Age * 1.6f), m.Position + tangent * (4 + m.Age * 1.6f),
-                new Color(255, 195, 75, 0) * fade, (m.Heavy ? 4 : 2) * fade + .5f);
+            if (!m.Directional)
+                MaterialistVisuals.Line(m.Position - tangent * (4 + m.Age * 1.6f), m.Position + tangent * (4 + m.Age * 1.6f),
+                    new Color(255, 195, 75, 0) * fade, (m.Heavy ? 4 : 2) * fade + .5f);
             MaterialistVisuals.Glow(m.Position, new Color(255, 215, 131) * (fade * (m.Heavy ? .8f : .55f)),
-                new Vector2((m.Heavy ? 60 : 32) * fade + 6, m.Heavy ? 23 : 12), tangent.ToRotation());
+                new Vector2((m.Heavy ? 60 : 32) * fade + 6, m.Heavy ? 23 : 12),
+                m.Directional ? m.Normal.ToRotation() : tangent.ToRotation());
         }
         foreach (Fragment f in fragments)
         {
@@ -139,21 +177,21 @@ internal static class MaterialistBallistics
         return (n & 0xffff) / 65535f;
     }
     internal static void DrawRound(MaterialistHazard h)
+        => DrawRound(h.Projectile, h.Anchor, h.DenseBallistics);
+    internal static void DrawRound(Projectile p, Vector2 origin, bool dense, float packetStretch = 1)
     {
-        Projectile p = h.Projectile;
         Vector2 axis = p.velocity.SafeNormalize(Vector2.UnitY), normal = axis.RotatedBy(MathHelper.PiOver2);
         // Each packet has parallel strokes with independent offsets and lengths, never bent homing ribbons.
-        bool dense = h.DenseBallistics;
         int lines = MaterialistVisuals.Reduced ? dense ? 10 : 4 : dense ? 28 : 9;
-        float travel = Vector2.Distance(p.Center, h.Anchor);
+        float travel = Vector2.Distance(p.Center, origin);
         for (int i = 0; i < lines; i++)
         {
             float a = RandomLane(p.identity, i * 3), b = RandomLane(p.identity, i * 3 + 1), c = RandomLane(p.identity, i * 3 + 2);
-            float offset = dense ? Math.Min(travel, b * 110) : b * 72;
+            float offset = dense ? Math.Min(travel, b * 110 * packetStretch) : b * 72;
             Vector2 head = p.Center - axis * offset + normal * ((a - .5f) * (dense ? 25 : 18));
             // At 240 px/tick and one shot per tick, 250-360 px packets overlap along the firing lane.
             // Clamp to the travelled path so no bright tail appears behind the gun before launch.
-            float length = dense ? Math.Min(Math.Max(0, travel - offset), 140 + c * 110) : 16 + c * 45;
+            float length = dense ? Math.Min(Math.Max(0, travel - offset), (140 + c * 110) * packetStretch) : 16 + c * 45;
             Color color = Color.Lerp(new Color(178, 100, 20), new Color(255, 229, 132), c) with { A = 0 };
             MaterialistVisuals.Line(head - axis * length, head, color * ((dense ? .32f : .45f) + (dense ? .32f : .45f) * b), 1.8f + c * 1.2f);
         }

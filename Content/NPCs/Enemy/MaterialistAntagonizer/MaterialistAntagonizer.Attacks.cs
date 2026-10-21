@@ -103,7 +103,7 @@ public sealed partial class MaterialistAntagonizer
     {
         if (Authority && Timer is 60 or 240)
         {
-            ClearHazards();
+            ClearHazards(preservePincer: true);
             if (Phase == 1 && Timer == 240) MaterialistScoutPlanner.Roll(this);
             NPC.netUpdate = true;
         }
@@ -112,7 +112,7 @@ public sealed partial class MaterialistAntagonizer
         if (!Authority) return;
         int beat = MaterialistTactics.Beat(Timer);
         // Strike the rear of the shared corridor; the exit stays available while escorts converge.
-        if (!CoreSuppressed && !ArtilleryActive && MaterialistTactics.Active(Timer) && beat == 36 && Pattern is WingPattern.ArcPincer or WingPattern.Gate or WingPattern.HeavyHunt)
+        if (!CoreSuppressed && !CorePincerRound && !CoreSaucerRound && !PincerInProgress && !ArtilleryActive && MaterialistTactics.Active(Timer) && beat == 36 && Pattern is WingPattern.ArcPincer or WingPattern.Gate or WingPattern.HeavyHunt)
             Shoot(DroneShot.Bombardment, FormationCenter - ExitAngle.ToRotationVector2() * 190, Vector2.Zero, 72, 18);
     }
 
@@ -198,7 +198,7 @@ public sealed partial class MaterialistAntagonizer
         // Keep space for the two sustained gunships during dense core/escort combinations.
         if (Phase == 3 && kind != DroneShot.MachineRound && count - ballisticCount >= MaterialistRules.HazardCap - 72) return;
         int index = Projectile.NewProjectile(NPC.GetSource_FromAI(), origin, velocity,
-            ModContent.ProjectileType<MaterialistHazard>(), style == FireStyle.Containment ? 24 : MaterialistRules.Damage(kind), 0, Main.myPlayer,
+            ModContent.ProjectileType<MaterialistHazard>(), style == FireStyle.Containment ? MaterialistRules.ContainmentDamage : MaterialistRules.Damage(kind), 0, Main.myPlayer,
             NPC.whoAmI + 1, Encounter, (int)kind);
         if (index >= 0 && index < Main.maxProjectiles && Main.projectile[index].ModProjectile is MaterialistHazard hazard)
         {
@@ -213,6 +213,13 @@ public sealed partial class MaterialistAntagonizer
             {
                 hazard.Projectile.width = hazard.Projectile.height = 26;
                 hazard.Projectile.Center = origin;
+            }
+            if (kind == DroneShot.SaucerRound)
+            {
+                hazard.Projectile.width = hazard.Projectile.height = 8;
+                hazard.Projectile.Center = origin;
+                hazard.Projectile.penetrate = 1;
+                hazard.Projectile.tileCollide = true;
             }
             if (kind == DroneShot.MachineRound)
             {
@@ -231,11 +238,12 @@ public sealed partial class MaterialistAntagonizer
             hazard.Projectile.netUpdate = true;
         }
     }
-    private void ClearHazards()
+    private void ClearHazards(bool preservePincer = false)
     {
         if (!Authority) return;
         foreach (Projectile p in Main.ActiveProjectiles)
-            if (p.ModProjectile is MaterialistHazard h && h.BelongsTo(this)) h.Retire();
+            if (p.ModProjectile is MaterialistHazard h && h.BelongsTo(this) &&
+                (!preservePincer || h.Kind != DroneShot.PincerBeam)) h.Retire();
     }
     private void RecallWing()
     {

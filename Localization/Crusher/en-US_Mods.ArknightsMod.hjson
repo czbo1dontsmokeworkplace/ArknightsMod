@@ -1,0 +1,110 @@
+Items: {
+	QuartzGreatsword: {
+		DisplayName: Quartz's Greatsword
+		Tooltip:
+			'''
+			Chains two swings with a greatsword, then briefly pauses before striking again
+			Each heavy slash releases a piercing wave that sheds homing cores
+			'''
+	}
+
+	WindChimesHeavyBlade: {
+		DisplayName: Wind Chimes' Heavy Blade
+		Tooltip:
+			'''
+			Chains two swings with a heavy blade, then briefly pauses before striking again
+			Each heavy slash releases a piercing wave that sheds homing cores
+			'''
+	}
+
+	HoedererGreatsword: {
+		DisplayName: Hoederer's Greatsword
+		Tooltip:
+			'''
+			Chains two swings with a greatsword, then briefly pauses before striking again
+			Each heavy slash releases a piercing wave that sheds homing cores
+			Deals 20% increased damage to stunned enemies
+			'''
+	}
+
+	UlpianusAnchor: {
+		DisplayName: Ulpianus's Anchor
+		Tooltip:
+			'''
+			Chains two swings with a anchor, then briefly pauses before striking again
+			Each heavy slash releases a piercing wave that sheds homing cores
+			'''
+	}
+}
+
+Skills: {
+	QuartzGreatsword: {
+		1: {
+			Label: ATK Up β
+			Desc: Gain 20%-80% attack damage for 25 seconds, scaling with skill level.
+		}
+
+		2: {
+			Label: All-Out Effort
+			Desc: For 20 seconds, gain 35%-80% attack speed and deal 80%-120% damage per hit, but take 25% more damage. Each target has a 25% chance to be stunned for 2 seconds. Bosses and enemies immune to knockback resist this stun.
+		}
+	}
+
+	WindChimesHeavyBlade: {
+		1: {
+			Label: ATK Up γ
+			Desc: Gain 30%-100% attack damage for 30 seconds, scaling with skill level.
+		}
+
+		2: {
+			Label: Unchanging Homeland
+			Desc: Stop normal attacks and prepare for 5 seconds with 20%-35% damage reduction. Release a heavy aimed cut for 140%-300% damage, increasing by another 50% at full charge, and stun ordinary knockback-vulnerable enemies for 1 second. Press the skill key again to release early.
+		}
+	}
+
+	HoedererGreatsword: {
+		1: {
+			Label: Unquenchable Edge
+			Desc: Recover SP by attacking. At full SP, the next sweep deals 160%-260% damage and its first valid hit heals 10%-25% of maximum life. Group hits heal only once per swing.
+		}
+
+		2: {
+			Label: Ember's Burden
+			Desc: While selected, gain 4%-40% attack damage. Activate to increase attack interval by 20% and stun ordinary knockback-vulnerable enemies for 1 second on a hit. Press again to end; switching weapons or skills also ends it.
+		}
+
+		3: {
+			Label: Dying Smoke
+			Desc: For 70 seconds, gain 20% reach, 15%-60% maximum life and 30%-120% attack damage. Lose 1% maximum life each second; the first valid hit per swing heals 5% maximum life. Enemies you contact take 20-40 damage per second until the skill ends. Hits have a 25% chance to stun ordinary knockback-vulnerable enemies for 2-5 seconds.
+		}
+	}
+
+	UlpianusAnchor: {
+		1: {
+			Label: Contact That Must Be Made
+			Desc: Recover SP over time. At full SP, the next swing throws an extra anchor toward the cursor, dealing 170%-270% damage to up to two enemies and dragging ordinary knockback-vulnerable enemies toward you.
+		}
+
+		2: {
+			Label: Boundary That Must Be Maintained
+			Desc: Automatically activates at full SP: gain 100%-160% attack damage, 20%-60% maximum life and an extra 2-4 life regeneration per second (also increased by 30% by the Crusher trait). Lasts until switching weapons or skills or dying. Maximum-life increases do not heal.
+		}
+
+		3: {
+			Label: Path That Must Be Opened
+			Desc: For 25 seconds, gain 170%-260% attack damage and 20%-80% maximum life. Throw an anchor; on impact or at maximum range it causes a 130%-160% damage shockwave, stuns ordinary knockback-vulnerable enemies for 5 seconds and moves you to the landing point if safe. Press again or let it end to try returning.
+		}
+	}
+}
+
+CrusherStrainDeath: "{0} sank beneath the unquenched embers."
+
+Projectiles: {
+	CrusherAnchorFeedback.DisplayName: Abyssal Anchor Impact
+	CrusherWave.DisplayName: Crusher Wave
+	CrusherWaveCore.DisplayName: Guided Light Core
+	EarthshakerFlameLine.DisplayName: Earthshaker Flame Line
+	EarthshakerFlintFlame.DisplayName: Earthshaker Flint Flame
+	EarthshakerFlintSlash.DisplayName: Earthshaker Flint Slash
+	ReaperSwing.DisplayName: Reaper Swing
+}

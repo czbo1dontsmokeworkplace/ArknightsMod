@@ -1,0 +1,85 @@
+BranchTraits.Earthshaker: Earthshaker:  Hold left click to raise and charge the hammer, release to slam; a full charge erupts flames along the ground. Right click uses a normal wall hammer
+
+Items: {
+	OddaHammer: {
+		DisplayName: Odda's Forge Hammer
+		Tooltip:
+			'''
+			Raises the hammer for a crushing slam; fully charged strikes unleash a chain of fire pillars
+			Fire pillars follow the terrain to strike enemies ahead
+			'''
+	}
+
+	ZimaFuryHammer: {
+		DisplayName: Zima the Raging Tide's Quake Hammer
+		Tooltip:
+			'''
+			Raises the hammer for a crushing slam; fully charged strikes unleash a chain of fire pillars
+			Fire pillars follow the terrain to strike enemies ahead
+			'''
+	}
+
+	PepeHammer: {
+		DisplayName: Pepe's Chrono Hammer
+		Tooltip:
+			'''
+			Raises the hammer for a crushing slam; fully charged strikes unleash a chain of fire pillars
+			Fire pillars follow the terrain to strike enemies ahead
+			'''
+	}
+}
+
+Buffs: {
+	EarthshakerStagger: {
+		DisplayName: Seismic Stagger
+		Description: Ground flames hinder movement
+	}
+}
+
+Skills: {
+	OddaHammer: {
+		1: {
+			Label: Spark Splash
+			Desc: Melee and ground-flame hits recover SP. At full stock, the next left click deals 140%-240% damage with 35% wider ground flames. Right-click tool swings are unchanged.
+		}
+
+		2: {
+			Label: Forge's Might
+			Desc: For 18 seconds, gain 10%-100% left-click ATK and DEF. Slams launch susceptible small enemies; bosses and knockback-immune targets cannot be launched.
+		}
+	}
+
+	ZimaFuryHammer: {
+		1: {
+			Label: Never Bow
+			Desc: For 30 seconds, gain 25%-50% left-click ATK, faster hammer charging and 10% wider ground flames. Susceptible enemies are briefly slowed.
+		}
+
+		2: {
+			Label: Never Relent
+			Desc: For 30 seconds, gain 45%-90% left-click ATK, 30%-60% DEF and 10% wider ground flames. Susceptible enemies are briefly slowed.
+		}
+
+		3: {
+			Label: Unstoppable
+			Desc: For 12 seconds, gain 50%-120% left-click ATK, plus 20% per slam. Fully charged slams produce five waves of 35% wider ground flames, each later pulse gaining another 10% damage.
+		}
+	}
+
+	PepeHammer: {
+		1: {
+			Label: Stamp It!
+			Desc: At full stock, the next left click deals 160%-290% damage with 35% wider ground flames. Right-click tool swings are unchanged.
+		}
+
+		2: {
+			Label: Disorderly Hammer
+			Desc: For 18 seconds, gain 50%-90% left-click ATK, 15% wider ground flames and faster hammer charging. Repeated activations further shorten preparation, stacking twice.
+		}
+
+		3: {
+			Label: Chronoquake
+			Desc: For 40 seconds, gain 120%-240% left-click ATK. Each slam adds 10%-25% ATK and 18% ground-flame size, stacking four times. Ground flames briefly slow susceptible small enemies; bosses resist the control.
+		}
+	}
+}

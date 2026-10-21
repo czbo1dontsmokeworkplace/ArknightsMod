@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -18,18 +19,20 @@ public abstract class ArtsMasterDrone : ModNPC
     private const int FrameCount = 8;
     private const int WarningA1 = 32;
     private const int WarningA2 = 24;
+    private const int LockedAimDelay = 27; // 0.45 seconds to move away from the recorded target position.
     private const float EdgeDistance = 600f;
     private const float SearchRange = 1000f;
     // Measured from the eight source frames: one pixel beyond the lower energy tube's front edge.
     private static readonly float[] A1MuzzleX = [11f, 11f, 11f, 11f, 9f, 5f, 5f, 7f];
     private static readonly float[] A1MuzzleY = [15.5f, 15.5f, 15.5f, 15.5f, 15.5f, 15.5f, 13.5f, 13.5f];
     private static readonly float[] A2MuzzleX = [23f, 23f, 23f, 23f, 21f, 19f, 21f, 23f];
-    private enum FlightState { Cruise, Warning, Sweep, FlyPast, Recovery }
+    private enum FlightState { Cruise, Warning, Sweep, FlyPast, Recovery, Locked }
     private FlightState State { get => (FlightState)(int)NPC.ai[0]; set => NPC.ai[0] = (float)value; }
     private int Timer { get => (int)NPC.ai[1]; set => NPC.ai[1] = value; }
     protected abstract bool IsSweep { get; }
     private int FlightDirection { get => NPC.ai[3] >= 0f ? 1 : -1; set => NPC.ai[3] = value; }
     private float aimAngle;
+    private Vector2 lockedTarget;
     private float patrolCenterX;
     private float patrolAltitudeY;
 
@@ -116,7 +119,16 @@ public abstract class ArtsMasterDrone : ModNPC
                 if (valid) aimAngle = (player.Center - Muzzle).ToRotation();
                 Timer++;
                 if (Main.netMode != NetmodeID.MultiplayerClient && Timer >= (IsSweep ? WarningA2 : WarningA1)) {
-                    Vector2 direction = (player.Center - Muzzle).SafeNormalize(new Vector2(FlightDirection, 0f));
+                    lockedTarget = player.Center;
+                    ChangeState(FlightState.Locked);
+                }
+                break;
+            case FlightState.Locked:
+                NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, IsSweep ? 0f : FlightDirection * 1.1f, .14f);
+                Timer++;
+                if (Main.netMode != NetmodeID.MultiplayerClient && Timer >= LockedAimDelay) {
+                    // Aim at the recorded world position even if the player has since moved.
+                    Vector2 direction = (lockedTarget - Muzzle).SafeNormalize(new Vector2(FlightDirection, 0f));
                     if (IsSweep) {
                         Projectile.NewProjectile(NPC.GetSource_FromAI(), Muzzle, direction,
                             ModContent.ProjectileType<ArtsMasterBeam>(), 18, 0f, Main.myPlayer, NPC.whoAmI);
@@ -208,6 +220,17 @@ public abstract class ArtsMasterDrone : ModNPC
         NPC.netUpdate = true;
     }
 
+    public override void SendExtraAI(BinaryWriter writer)
+    {
+        writer.Write(lockedTarget.X);
+        writer.Write(lockedTarget.Y);
+    }
+
+    public override void ReceiveExtraAI(BinaryReader reader)
+    {
+        lockedTarget = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+    }
+
     public override void FindFrame(int frameHeight)
     {
         NPC.frameCounter++;
@@ -216,10 +239,14 @@ public abstract class ArtsMasterDrone : ModNPC
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
     {
-        if (State == FlightState.Warning) {
-            Vector2 direction = aimAngle.ToRotationVector2();
+        if (State is FlightState.Warning or FlightState.Locked) {
+            Vector2 direction = State == FlightState.Locked
+                ? (lockedTarget - Muzzle).SafeNormalize(new Vector2(FlightDirection, 0f))
+                : aimAngle.ToRotationVector2();
             float length = ArtsMasterBeam.TraceLength(Muzzle, direction);
-            ArtsMasterBeam.DrawLine(Muzzle, Muzzle + direction * length, new Color(210, 80, 255), 2f, .35f + .35f * Timer / (IsSweep ? WarningA2 : WarningA1));
+            float opacity = State == FlightState.Locked ? .7f
+                : .35f + .35f * Timer / (IsSweep ? WarningA2 : WarningA1);
+            ArtsMasterBeam.DrawLine(Muzzle, Muzzle + direction * length, new Color(210, 80, 255), 2f, opacity);
         }
         Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
         Main.EntitySpriteDraw(texture, NPC.Center - screenPos, NPC.frame, NPC.GetAlpha(drawColor), NPC.rotation,

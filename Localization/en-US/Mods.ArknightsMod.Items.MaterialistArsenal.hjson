@@ -1,0 +1,37 @@
+FighterDispatchTerminal: {
+	DisplayName: Fighter Dispatch Terminal
+	Tooltip:
+		'''
+		Summons a Yokai drone, using 1 minion slot
+		The drone consumes bullets from your inventory and preserves their ammunition effects; it cannot fire without bullets
+		The drone and its ammunition deal summon damage; right-click to designate a priority target
+		'''
+}
+
+MiniGatling: {
+	DisplayName: Mini Gatling
+	Tooltip:
+		'''
+		Spins up briefly, then pours sustained machine-gun fire toward the cursor
+		Converts bullets into fast, straight-flying tracer rounds that do not home
+		'''
+}
+
+OrbitalLaser: {
+	DisplayName: Orbital Laser
+	Tooltip:
+		'''
+		Marks the cursor and calls down three lasers after a brief charge
+		Lasers pierce enemies along their paths but are blocked by solid terrain
+		'''
+}
+
+RotorBladeCraft: {
+	DisplayName: Rotorblade Aircraft
+	Tooltip:
+		'''
+		Throws a returning blade disc that repeatedly fires lasers at nearby enemies
+		The disc and its lasers pass through terrain; the disc deals no contact damage
+		Fires a melee laser at nearby enemies every 8 ticks; does not fire without a target
+		'''
+}

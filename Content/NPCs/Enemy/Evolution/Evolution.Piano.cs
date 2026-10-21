@@ -93,10 +93,10 @@ public sealed partial class Evolution
 internal static class EvolutionPianoVisuals
 {
     private static ulong lastStrike = ulong.MaxValue;
-    internal static void Strike(Vector2 center)
+    internal static void Strike(Vector2 center, float pitch = -.25f)
     {
         if (Main.dedServ || lastStrike == Main.GameUpdateCount) return;
         lastStrike = Main.GameUpdateCount;
-        SoundEngine.PlaySound(SoundID.Item33 with { Volume = .36f, Pitch = -.25f, MaxInstances = 2 }, center);
+        SoundEngine.PlaySound(SoundID.Item33 with { Volume = .36f, Pitch = pitch, MaxInstances = 2 }, center);
     }
 }

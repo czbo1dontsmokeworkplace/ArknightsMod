@@ -16,8 +16,9 @@ public sealed partial class MaterialistHazard
 
     private bool UpdateArtillery(MaterialistAntagonizer boss, int flight)
     {
-        if (Kind == DroneShot.CommandRocket && flight >= 0)
+        if (Kind is DroneShot.CommandRocket or DroneShot.RaptorRocket && flight >= 0)
         {
+            bool raptor = Kind == DroneShot.RaptorRocket;
             Projectile.penetrate = 1;
             Projectile.tileCollide = flight >= 20;
             if (flight < 20)
@@ -33,11 +34,13 @@ public sealed partial class MaterialistHazard
                     Projectile.netUpdate = true;
                 }
                 float speed = MathHelper.Lerp(5.2f, 11.6f + boss.Phase * .45f, MathHelper.Clamp((flight - 20) / 62f, 0, 1));
+                if (raptor) speed *= 1.25f;
                 if (!RocketCommitted && flight < 104 && valid)
                 {
                     Player player = Main.player[Target];
                     Vector2 aim = player.Center + Vector2.Clamp(player.velocity * 5, new Vector2(-70), new Vector2(70));
-                    float turn = MathHelper.Clamp(MathHelper.WrapAngle((aim - Projectile.Center).ToRotation() - Projectile.velocity.ToRotation()), -.062f, .062f);
+                    float turnCap = raptor ? .045f : .062f;
+                    float turn = MathHelper.Clamp(MathHelper.WrapAngle((aim - Projectile.Center).ToRotation() - Projectile.velocity.ToRotation()), -turnCap, turnCap);
                     Projectile.velocity = Projectile.velocity.RotatedBy(turn);
                     if (MaterialistAntagonizer.Authority && flight % 15 == 0) Projectile.netUpdate = true;
                 }
@@ -78,7 +81,7 @@ public sealed partial class MaterialistHazard
     }
     public override void OnKill(int timeLeft)
     {
-        if (Retiring || Main.dedServ || Kind != DroneShot.CommandRocket) return;
+        if (Retiring || Main.dedServ || Kind is not (DroneShot.CommandRocket or DroneShot.RaptorRocket)) return;
         // Rocket impact is a visual pop, not an unannounced second area-damage hitbox.
         MaterialistVisuals.Burst(Projectile.Center, MaterialistVisuals.Amber, .9f);
         MaterialistEffects.Pulse(Projectile.Center, 58, MaterialistVisuals.Cyan, .5f);

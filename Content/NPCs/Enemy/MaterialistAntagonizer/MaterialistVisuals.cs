@@ -20,6 +20,8 @@ internal static partial class MaterialistVisuals
     internal static readonly Color Violet = new(195, 120, 255);
     internal static readonly Color White = new(255, 235, 191);
     internal static Color AmmoColor(MaterialistHazard h) => h.Kind switch {
+        DroneShot.PincerBeam => new Color(106, 244, 218),
+        DroneShot.SaucerRound => new Color(255, 232, 112),
         DroneShot.Beam or DroneShot.ChaseBeam or DroneShot.ArtsOrb => Violet,
         DroneShot.ScoutPulse => new Color(255, 179, 94),
         DroneShot.Prism => Color.Lerp(Cyan, new Color(175, 255, 77), .5f + .5f * MathF.Sin((float)Main.GlobalTimeWrappedHourly * 2 + h.Projectile.identity * .37f)),
@@ -40,6 +42,7 @@ internal static partial class MaterialistVisuals
         DroneShot.Beacon => h.Bend > .5f ? new Color(255, 163, 74) : Cyan,
         DroneShot.DropMissile => new Color(157, 244, 222),
         DroneShot.CommandRocket => Cyan,
+        DroneShot.RaptorRocket => new Color(255, 201, 77),
         DroneShot.CannonShell or DroneShot.ArtilleryBlast => new Color(255, 176, 71),
         _ => h.Style == FireStyle.Containment ? Cyan : h.IsBeam ? Violet : Amber
     };
@@ -164,6 +167,7 @@ internal static partial class MaterialistVisuals
     }
     internal static void UpdateBoss(MaterialistAntagonizer boss, int lastTimer)
     {
+        if (boss.Order == FlightOrder.Death) return; // The persistent local death timeline owns all terminal cues.
         var npc = boss.NPC;
         int t = boss.Timer;
         Lighting.AddLight(npc.Center, .55f, boss.Phase == 3 ? .09f : .28f, .08f);
@@ -188,16 +192,6 @@ internal static partial class MaterialistVisuals
             MaterialistEffects.Pulse(npc.Center, 460, Amber, 4);
             SoundEngine.PlaySound(SoundID.Roar with { Volume = .55f, Pitch = .35f }, npc.Center);
         }
-        if (boss.Order == FlightOrder.Death)
-        {
-            if (t % 12 == 0) Burst(npc.Center + Main.rand.NextVector2Circular(115, 42), Amber, .65f);
-            if (lastTimer < 104 && t >= 104)
-            {
-                Burst(npc.Center, Amber, 3);
-                MaterialistEffects.Pulse(npc.Center, 650, Amber, 6);
-                SoundEngine.PlaySound(SoundID.Item14 with { Volume = .9f, Pitch = -.4f }, npc.Center);
-            }
-        }
         if (boss.Order == FlightOrder.Overload && lastTimer < 112 && t >= 112)
         {
             MaterialistEffects.Pulse(npc.Center, 300, Amber, 3);
@@ -216,9 +210,14 @@ internal static partial class MaterialistVisuals
     {
         NPC npc = boss.NPC;
         Texture2D body = Asset(MaterialistAntagonizer.AssetRoot + "MaterialistAntagonizer");
+        if (boss.Order == FlightOrder.Death)
+        {
+            DrawDeathChassis(boss, body, batch, screenPos, drawColor);
+            DrawLockShield(boss);
+            return;
+        }
         float time = (float)Main.GlobalTimeWrappedHourly * 60;
-        float opacity = boss.Order == FlightOrder.Death ? MathHelper.Clamp((120 - boss.Timer) / 20f, 0, 1) :
-            boss.Order == FlightOrder.Arrival ? MaterialistFormation.Smooth((boss.Timer - 105) / 65f) : 1;
+        float opacity = boss.Order == FlightOrder.Arrival ? MaterialistFormation.Smooth((boss.Timer - 105) / 65f) : 1;
         float engineOpacity = boss.Order == FlightOrder.Arrival ? MaterialistFormation.Smooth((boss.Timer - 164) / 46f) : opacity;
         float rimOpacity = boss.Order == FlightOrder.Arrival ? MaterialistFormation.Smooth((boss.Timer - 140) / 48f) : opacity;
         Color hullTint = EngineColor(boss.Phase, boss.CoreExposure > 0 ? FlightOrder.Recover : boss.Order, boss.Shield);
@@ -226,7 +225,6 @@ internal static partial class MaterialistVisuals
         float scale = 1.45f;
         Vector2 position = npc.Center;
         Vector2 core = position + new Vector2(4, 31).RotatedBy(npc.rotation) * scale;
-        if (boss.Order == FlightOrder.Death) position += new Vector2(MathF.Sin(time * 2.3f) * 4, MathF.Cos(time * 3.1f) * 3);
         Glow(position, accent * (.23f * opacity), new Vector2(360, 200));
         if (boss.Charging && !Reduced)
             for (int i = npc.oldPos.Length - 1; i > 0; i--)
@@ -253,6 +251,7 @@ internal static partial class MaterialistVisuals
         Glow(core, (boss.Order == FlightOrder.Recover ? Cyan : Amber) * (.8f * opacity), new Vector2(34 + MathF.Sin(time * .10f) * 5));
         DrawCoreTelegraph(boss);
         DrawSupport(boss);
+        DrawLockShield(boss);
         if (boss.Shield > 0)
         {
             float strength = boss.Shield / (float)Math.Max(1, boss.ShieldMax);

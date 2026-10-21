@@ -32,8 +32,7 @@ public sealed class DreadnoughtSwing : ModProjectile
     private Vector2 previousCenter;
     private readonly List<(float Angle, Vector2 Center, float Age)> bladeHistory = new();
     private float Progress => Math.Clamp(Age / duration, 0, 1);
-    private float Angle => Projectile.velocity.ToRotation()
-        + MathHelper.Lerp(-MathHelper.Pi, MathHelper.Pi, DreadnoughtRules.Turn(Progress)) * facing;
+    private float Angle => BladeSwingTemplate.Angle(Projectile.velocity.ToRotation(), facing, Progress);
     private float Reach => ChargedOperatorRules.Reach(Kind, true) * DreadnoughtRules.WeaponScale
         * (Kind == ChargedOperatorKind.NearlRadiant && skill is 1 or 3 ? 1.15f : 1f);
 
@@ -131,13 +130,12 @@ public sealed class DreadnoughtSwing : ModProjectile
         owner.heldProj = Projectile.whoAmI;
         owner.itemTime = owner.itemAnimation = 2;
         float before = Progress;
-        Age = Math.Min(duration, Age + 1f / (Projectile.extraUpdates + 1));
+        Age = BladeSwingTemplate.Advance(Age, duration, Projectile.extraUpdates);
         sweepStartAngle = previousAngle;
         sweepEndAngle = Angle;
         sweepStartCenter = previousCenter;
         sweepEndCenter = Projectile.Center;
-        owner.itemRotation = Angle;
-        owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Angle - MathHelper.PiOver2);
+        BladeSwingTemplate.Pose(owner, Angle);
         if (local) owner.GetModPlayer<DreadnoughtPlayer>().Attacking(weapon.Item);
         if (before < .36f && Progress >= .36f && !Main.dedServ)
             SoundEngine.PlaySound(SoundID.Item71 with { Volume = .45f, Pitch = .1f + (int)Kind * -.04f }, owner.Center);
@@ -162,24 +160,9 @@ public sealed class DreadnoughtSwing : ModProjectile
     // so a fast blade cannot tunnel through small enemies between projectile updates.
     private bool TryBladeContact(Rectangle box, out Vector2 point, out Vector2 tangent)
     {
-        float delta = sweepEndAngle - sweepStartAngle;
-        int steps = Math.Max(1, (int)MathF.Ceiling(Math.Abs(delta) / .04f));
-        for (int i = 0; i <= steps; i++)
-        {
-            float t = i / (float)steps, distance = 0;
-            float angle = MathHelper.Lerp(sweepStartAngle, sweepEndAngle, t);
-            Vector2 start = Vector2.Lerp(sweepStartCenter, sweepEndCenter, t);
-            Vector2 axis = angle.ToRotationVector2();
-            if (!Collision.CheckAABBvLineCollision(box.TopLeft(), box.Size(), start, start + axis * Reach,
-                24 * DreadnoughtRules.WeaponScale, ref distance)
-                || !Collision.CanHitLine(start, 1, 1, box.TopLeft(), box.Width, box.Height)) continue;
-            point = box.ClosestPointInRect(start + axis * Math.Clamp(distance, 0, Reach));
-            tangent = axis.RotatedBy(facing * MathHelper.PiOver2);
-            return true;
-        }
-        point = default;
-        tangent = default;
-        return false;
+        return BladeSwingTemplate.Contact(box, sweepStartAngle, sweepEndAngle,
+            sweepStartCenter, sweepEndCenter, Reach, 24 * DreadnoughtRules.WeaponScale,
+            facing, out point, out tangent);
     }
 
     public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)

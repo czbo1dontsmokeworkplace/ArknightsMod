@@ -18,6 +18,9 @@ public sealed partial class MaterialistAntagonizer
         if (!Authority || CoreSuppressed || !MaterialistTactics.Active(Timer)) return;
         int beat = MaterialistTactics.Beat(Timer);
         int round = Math.Max(0, (Timer - 60) / 180);
+        if (!CorePincerRound && PincerInProgress) return;
+        if (RunPincerBattery(beat)) return;
+        if (RunSaucerBattery(beat)) return;
         if (beat == 18 && (Cycle + round + Phase) % 3 == 0) FireAreaScan(Main.player[NPC.target]);
         if (RunArtilleryBattery(beat)) return;
         RunPayloadBattery(beat);

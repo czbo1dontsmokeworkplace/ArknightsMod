@@ -1,0 +1,47 @@
+Items: {
+	HumusScythe: {
+		DisplayName: Humus's Cutting Scythe
+		Tooltip:
+			'''
+			Swings a scythe to release a crescent that passes through terrain and slows to a stop in midair
+			Crescents hit up to 7 enemies, losing speed and damage with each hit
+			'''
+	}
+
+	LaPlumaScythe: {
+		DisplayName: La Pluma's Scythe
+		Tooltip:
+			'''
+			Swings a scythe to release a crescent that passes through terrain and slows to a stop in midair
+			Crescents hit up to 7 enemies, losing speed and damage with each hit
+			'''
+	}
+}
+
+Projectiles.ReaperWisp.DisplayName: Reaper Wisp
+
+Skills: {
+	HumusScythe: {
+		1: {
+			Label: Solid Waste Cutting
+			Desc: Melee hits recover SP. At full SP, the next attack cycle deals 160%-260% damage and doubles its left-click life steal. Right-click melee and flying scythes still cannot heal.
+		}
+
+		2: {
+			Label: Efficient Processing
+			Desc: For 30 seconds, gain 21%-50% attack damage above 50% life; double this bonus above 80% life.
+		}
+	}
+
+	LaPlumaScythe: {
+		1: {
+			Label: High-Speed Cutting
+			Desc: Melee hits recover SP. At full SP, the next cycle deals 130%-165% damage. Crescents and right-click rotation cannot heal.
+		}
+
+		2: {
+			Label: Reap
+			Desc: For 25 seconds, gain 50%-100% attack speed and 10%-50% attack damage. Melee cuts deal another 30% damage to enemies below half life.
+		}
+	}
+}

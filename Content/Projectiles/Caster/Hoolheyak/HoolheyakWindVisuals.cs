@@ -15,6 +15,8 @@ internal static class HoolheyakWindVisuals
     private static readonly Color Mint = new(137, 220, 192);
     private static readonly Color Core = new(224, 250, 229);
     private static readonly Color Shade = new(29, 66, 66);
+    private static readonly Color DeepTeal = new(12, 39, 48);
+    private const float EffectDensity = 1.3f;
     private static readonly Rectangle Pixel = new(0, 0, 1, 1);
 
     // MagicPixel 原图并非 1×1；必须显式截取一个像素，避免长度再次乘上贴图宽度。
@@ -43,9 +45,13 @@ internal static class HoolheyakWindVisuals
                 Vector2 point = center + forward * ((t - .75f) * 56f * scale) + side * MathF.Sin(angle) * radius;
                 if (i > 0)
                 {
-                    float alpha = MathF.Sin(t * MathHelper.Pi) * (.48f + .25f * MathF.Cos(angle));
-                    Segment(previous, point, Shade * alpha, 3.5f * scale);
-                    Segment(previous, point, Color.Lerp(Mint, Core, t) * alpha, 1.7f * scale);
+                    float depth = (MathF.Cos(angle) + 1f) * .5f;
+                    float alpha = MathF.Sin(t * MathHelper.Pi) * (.38f + .35f * depth);
+                    float width = MathHelper.Lerp(.8f, 1.7f, depth) * scale * EffectDensity;
+                    Segment(previous, point, DeepTeal * alpha, width + 2.2f * scale);
+                    Segment(previous, point, Color.Lerp(Shade, Mint, .4f + depth * .6f) * alpha, width);
+                    if (depth > .65f)
+                        Segment(previous, point, Core * (alpha * (depth - .65f) * 1.8f), .55f * scale);
                 }
                 previous = point;
             }
@@ -74,10 +80,18 @@ internal static class HoolheyakWindVisuals
                     if (i > 0 && (depth >= 0 ? 1 : 0) == front)
                     {
                         float edge = MathF.Pow(MathF.Sin(t * MathHelper.Pi), .6f);
-                        float alpha = edge * opacity * (front == 0 ? .24f : .8f);
-                        float width = (1.2f + t * 2.5f) * scale;
-                        Segment(previous, point, Shade * alpha * .75f, width + 1.8f);
-                        Segment(previous, point, Color.Lerp(Mint, Core, (depth + 1f) * .5f) * alpha, width);
+                        float facing = (depth + 1f) * .5f;
+                        float alpha = edge * opacity * (front == 0 ? .30f : .8f);
+                        float width = (1.2f + t * 2.5f) * scale * EffectDensity
+                            * MathHelper.Lerp(.65f, 1f, facing);
+                        Segment(previous, point, DeepTeal * alpha, width + 2.4f * scale);
+                        Segment(previous, point, Color.Lerp(Shade, Mint, .25f + facing * .75f) * alpha, width);
+                        if (front == 1)
+                        {
+                            Vector2 highlight = new Vector2(0f, -.85f * scale);
+                            Segment(previous + highlight, point + highlight,
+                                Core * (alpha * facing * .65f), .65f * scale);
+                        }
                     }
                     previous = point;
                 }
@@ -103,25 +117,36 @@ internal static class HoolheyakWindVisuals
     {
         if (Main.dedServ)
             return;
-        Dust dust = Dust.NewDustPerfect(position, DustID.Cloud, velocity, 150, Mint, scale);
-        dust.noGravity = true;
-        dust.noLight = true;
-        if (ParticleManager.activeParticles.Count < 1100)
-            new T_Streak_Particle(position, velocity * .65f, 18, .18f * scale, Core, true)
-                { Deformation = new Vector2(.5f, 1.7f) }.Spawn();
+        // 每次保留原粒子，30% 概率补一组，平均密度提高 30%。
+        int count = Main.rand.NextFloat() < EffectDensity - 1f ? 2 : 1;
+        for (int i = 0; i < count; i++)
+        {
+            Vector2 point = position + (i == 0 ? Vector2.Zero : Main.rand.NextVector2Circular(3f, 3f));
+            Dust dust = Dust.NewDustPerfect(point, DustID.Cloud, velocity, 150, Mint, scale);
+            dust.noGravity = true;
+            dust.noLight = true;
+            if (ParticleManager.activeParticles.Count < 1100)
+                new T_Streak_Particle(point, velocity * .65f, 18, .18f * scale, Core, true)
+                    { Deformation = new Vector2(.5f, 1.7f) }.Spawn();
+        }
     }
 
-    // 小颗粒沿风带切线逸出；只补粒子，不改变原有风带与云尘的绘制。
+    // 小颗粒沿风带切线逸出，与云尘使用同一密度倍率。
     internal static void WindSpark(Vector2 position, Vector2 velocity, float scale)
     {
         if (Main.dedServ)
             return;
-        Dust dust = Dust.NewDustPerfect(position, DustID.TintableDustLighted, velocity, 100, Mint, scale);
-        dust.noGravity = true;
-        dust.noLight = true;
-        if (ParticleManager.activeParticles.Count < 1100)
-            new T_Streak_Particle(position, velocity, 22, .23f * scale, Core, true)
-                { Deformation = new Vector2(.35f, 2.4f) }.Spawn();
+        int count = Main.rand.NextFloat() < EffectDensity - 1f ? 2 : 1;
+        for (int i = 0; i < count; i++)
+        {
+            Vector2 point = position + (i == 0 ? Vector2.Zero : Main.rand.NextVector2Circular(3f, 3f));
+            Dust dust = Dust.NewDustPerfect(point, DustID.TintableDustLighted, velocity, 100, Mint, scale);
+            dust.noGravity = true;
+            dust.noLight = true;
+            if (ParticleManager.activeParticles.Count < 1100)
+                new T_Streak_Particle(point, velocity, 22, .23f * scale, Core, true)
+                    { Deformation = new Vector2(.35f, 2.4f) }.Spawn();
+        }
     }
 
     internal static void Burst(Vector2 center, Vector2 velocity, int count)

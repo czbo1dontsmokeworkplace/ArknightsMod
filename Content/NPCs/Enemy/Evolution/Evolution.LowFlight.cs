@@ -31,6 +31,7 @@ public sealed partial class Evolution
         PreparePattern(player);
         if (!EvolutionFleetRules.IsMotion(Attack)) HoverLow(player);
         int t = Timer;
+        if (t == 48 && Attack is 2 or 5) ReleaseBloodglow(player, 4);
         // 存活小怪跨招式保留；有限补员，避免每招清场造成“光球弹幕”的旧节奏。
         if (t == 0 && Main.netMode != NetmodeID.MultiplayerClient)
         {
@@ -43,7 +44,9 @@ public sealed partial class Evolution
             BirthLowBrood(EvolutionBrood.Tumor, player, 3);
             BirthLowBrood(EvolutionBrood.Bomb, player, 4);
         }
-        if (EvolutionPianoRules.IsFigure(Attack)) DoPianoFigure();
+        if (EvolutionRecitalRules.IsFigure(Attack)) DoRecital();
+        else if (EvolutionBloodSurgeRules.IsFigure(Attack)) DoBloodSurge();
+        else if (EvolutionPianoRules.IsFigure(Attack)) DoPianoFigure();
         else if (Attack >= 14) DoFleetAttack(player);
         else switch (Attack)
         {
@@ -52,7 +55,7 @@ public sealed partial class Evolution
                     for (int side = -1; side <= 1; side += 2)
                         Lob(EvolutionShot.Blood, NPC.Center, PatternCenter + new Vector2(side * 240, 80), 85);
                 break;
-            case 1: // 竖直光束沿横向排布；相邻束间保留宽通路，不横扫800像素战斗带。
+            case 1: // 竖直光束沿横向排布；相邻束间保留宽通路，不横扫整条战斗带。
                 if (t == 12 || t == 80) CorridorLaserColumns(t == 12 ? 0 : 1);
                 break;
             case 2: // 仅在通道两侧留下慢速血灵，方向在预警时锁定。

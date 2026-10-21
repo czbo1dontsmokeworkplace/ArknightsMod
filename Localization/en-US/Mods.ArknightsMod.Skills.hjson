@@ -656,30 +656,17 @@ RopeClaw: {
 EntelechiaScythe: {
 	1: {
 		Label: Rose Shadow Tracking
-		Desc:
-			'''
-			Increases the next attack's damage to [c/3791db:175%]
-			and attacks [c/3791db:twice] in succession
-			'''
+		Desc: At full SP, the next attack deals 175% damage. Only physical left-click cuts steal life; crescents and right-click rotation cannot heal.
 	}
 
 	2: {
 		Label: Crimson Coalescence
-		Desc:
-			'''
-			Stops attacking and summons blood scythes at self and cursor
-			to slash all surrounding enemies
-			dealing physical damage equal to [c/3791db:195%] ATK every [c/3791db:0.5]s
-			'''
+		Desc: For 12 seconds, suspend normal attacks and maintain rotating blood circles at yourself and at the cursor within 600 pixels. They deal 195% attack damage every 0.5 seconds and never heal.
 	}
 
 	3: {
 		Label: Parting of Soul and Desire
-		Desc:
-			'''
-			Attack range expanded, ATK [c/3791db:+135%]
-			and attack speed increased
-			'''
+		Desc: For 20 seconds, gain 135% attack damage, 40% attack speed and 30% left-click melee reach. Only left-click physical cuts steal life; right click cannot heal.
 	}
 }
 

@@ -16,7 +16,7 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.Items.Weapons.Guard.Astesia
 {
 	/// <summary>
-	/// 星辉剑：沿用术战者的一顺一逆双斩节拍，发射天蓝色能量弧光。
+	/// 星辉剑：沿用术战者顺逆交替的三连斩节拍，发射天蓝色能量弧光。
 	/// 剑身、斩击和技能范围缩放共用当前武器尺寸。
 	///
 	/// 技能：
@@ -44,7 +44,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Astesia
 			Item.useStyle = ItemUseStyleID.Shoot;
 			Item.useAnimation = ArtsFighterSwing.BaseUseTime;
 			Item.useTime = ArtsFighterSwing.BaseUseTime;
-			Item.damage = 273;
+			Item.damage = 312;
 			Item.DamageType = DamageClass.Melee;
 			Item.knockBack = 4.5f;
 			Item.width = 78;

@@ -1,8 +1,6 @@
 BranchTraits: {
-	Charger: Charger: Left-click to thrust; right-click for a long-distance charge with a cooldown
-	CoreCaster: Core Caster: Continuously fire magical projectiles to focus attacks on enemies
-	PrimalCaster: Primal Caster: Release homing violet flames and create allied servants when nearby enemies die
-	Fortress: Fortress: Bombard distant enemies with grenades and use a shield to guard and counterattack
-	Ambusher: Ambusher: Control a yo-yo for sustained attacks; skills can bind enemies
-	Summoner: Summoner: Deploy drones and switch modules for different attacks and control effects
+	Charger: Charger:  Left-click to thrust; right-click for a long-distance charge with a cooldown
+	PrimalCaster: Primal Caster:  Release homing violet flames and create allied servants when nearby enemies die
+	Fortress: Fortress:  Bombard distant enemies with grenades and use a shield to guard and counterattack
+	Summoner: Summoner:  Deploy drones and switch modules for different attacks and control effects
 }

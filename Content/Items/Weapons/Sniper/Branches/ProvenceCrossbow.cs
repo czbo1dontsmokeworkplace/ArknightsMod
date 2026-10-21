@@ -6,6 +6,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Branches;
 
 public sealed class ProvenceCrossbow : BranchCrossbowWeapon
 {
+    public override string Texture => "ArknightsMod/Content/Items/Weapons/Sniper/Branches/ProvenceCrossbow";
     public override CrossbowKind Kind => CrossbowKind.Provence;
     protected override int PlaceholderItem => ItemID.AdamantiteRepeater;
     protected override int Rarity => ItemRarityID.LightPurple;

@@ -16,6 +16,11 @@ public sealed partial class MaterialistWing
         WingRole role = Role(npc);
         if (role == WingRole.Raptor)
         {
+            if (kind == DroneShot.RaptorRocket)
+            {
+                duration = 180;
+                return boss.Phase == 3 && !RaptorWindow(boss) && FiringRaptorPartner(npc, boss) != null && boss.EscortFire && !boss.Paused;
+            }
             if (kind != DroneShot.MachineRound || !RaptorWindow(boss)) return false;
             velocity = velocity.SafeNormalize(Vector2.UnitY) * 15; // Kingsbane AuricBullet: 15 * 16 updates.
             duration = 24;

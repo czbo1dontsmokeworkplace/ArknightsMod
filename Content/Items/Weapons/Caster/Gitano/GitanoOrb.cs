@@ -17,7 +17,7 @@ public sealed class GitanoOrb : ExpansionWeaponBase
     protected override int[] EliteDamage => [200, 228, 263];
     private static readonly float[] ChantBonus = [.15f, .20f, .25f, .30f, .35f, .40f, .45f, .55f, .65f, .75f];
     private static readonly float[] FateBonus = [.3f, .35f, .4f, .45f, .5f, .55f, .7f, .8f, .9f, 1f];
-    public override string Texture => "Terraria/Images/Item_" + ItemID.CrystalBall;
+    public override string Texture => "ArknightsMod/Content/Items/Weapons/Supporter/Beanstalk/BeanstalkOrb";
 
     public override void SetDefaults()
     {

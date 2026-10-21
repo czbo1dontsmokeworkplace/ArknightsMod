@@ -1,0 +1,87 @@
+NPCs: {
+	Isharmla: {
+		DisplayName: Isharmla, Heart of Corruption
+		BossChecklistIntegration.EntryName: Isharmla
+	}
+
+	IsharmlaDragon.DisplayName: Isharmla, Body of the Deep
+	IsharmlaSegment.DisplayName: Body of the Deep
+	IsharmlaSeaborn.DisplayName: Tideborn Seaborn
+}
+
+Items: {
+	CallOfTheTides: {
+		DisplayName: Call of the Tides
+		Tooltip:
+			'''
+			Summons Isharmla at the Ocean after defeating the Moon Lord
+			Not consumed
+			The opening song suppresses flight; extra jumps, jump boosts and grappling hooks remain usable
+			'''
+	}
+
+	AbyssalSpine: {
+		DisplayName: Abyssal Spine
+		Tooltip:
+			'''
+			Swings a flail formed from a sea dragon's bones
+			Hold left-click to spin, release to throw, and press again to recall it
+			'''
+	}
+
+	HeavensDeluge: {
+		DisplayName: Heaven's Deluge
+		Tooltip: Consumes gel to spray a continuous stream of high-pressure water that pierces enemies
+	}
+
+	FinalTideFlute: {
+		DisplayName: Final Tide Flute
+		Tooltip: Plays a tidal melody that releases three interweaving spirals of water
+	}
+
+	TidebornStaff: {
+		DisplayName: Tideborn Staff
+		Tooltip: Summons a Tideborn Seaborn that attacks enemies with water
+	}
+
+	HeartOfTheTides: {
+		DisplayName: Heart of the Tides
+		Tooltip:
+			'''
+			Increases maximum life by 60 and all damage by 6%
+			After 10 seconds without taking damage, forms a membrane that reduces the next hit's damage by 20%
+			'''
+	}
+
+	IsharmlaTreasureBag: {
+		DisplayName: Treasure Bag (Isharmla)
+		Tooltip: Right click to open
+	}
+}
+
+Projectiles: {
+	IsharmlaHazard.DisplayName: Tide of the Deep
+	TideSpine.DisplayName: Abyssal Spine
+	TideBolt.DisplayName: Tide Jet
+	TidebornMinion.DisplayName: Tideborn Seaborn
+}
+
+Buffs: {
+	TidebornBuff: {
+		DisplayName: Tideborn Seaborn
+		Description: A tideborn seaborn fights for you
+	}
+}
+
+IsharmlaText: {
+	Bestiary: The song still rises from the sea. At last you realize that the immense body beneath the waves breathes in time with it.
+	SpawnInfo: Use the Call of the Tides at the Ocean after defeating the Moon Lord. Wings are suppressed only during the opening song.
+	Stage1: I · SONG WITHOUT WIND
+	Stage2: II · VISITOR FROM THE DEEP
+	Stage3: III · COVENANT OF SEA AND SKY
+	Stage4: IV · THE LAST DANCE
+	Stage5: V · BODY OF THE RAGING TIDE
+	Stage6: FINALE · ALL RETURN TO THE SEA
+	Arrival: The dragon rises · {0}
+	FinaleTime: Finale: {0}s remaining
+}
