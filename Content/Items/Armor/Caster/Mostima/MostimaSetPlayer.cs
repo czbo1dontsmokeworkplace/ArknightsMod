@@ -81,7 +81,7 @@ namespace ArknightsMod.Content.Items.Armor.Caster.Mostima
 			if (target.friendly || target.lifeMax <= 5 || target.dontTakeDamage)
 				return;
 
-			target.AddBuff(ModContent.BuffType<MostimaSlowDebuff>(), 120);
+			target.AddBuff(ModContent.BuffType<MostimaSlowDebuff>(), MostimaSlowDebuff.DurationTicks);
 		}
 	}
 }

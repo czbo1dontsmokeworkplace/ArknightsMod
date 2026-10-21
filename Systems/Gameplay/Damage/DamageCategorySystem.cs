@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using ArknightsMod.Content.Buffs.ArmorSets;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
@@ -26,15 +27,23 @@ namespace ArknightsMod.Systems.Gameplay.Damage
 		/// 按 FinalDamage *= (1 - artsResistance) 直接扣减（和 WeaknessSystem 里的减益写法同一套公式）。</summary>
 		public float artsResistance;
 
+		// 仅在本次伤害结算中降低法抗，不改基础字段；重复命中只刷新 Buff，
+		// 不累计减抗。Buff 到期后自动按原法抗结算。
+		private float GetEffectiveArtsResistance(NPC npc) {
+			return npc.HasBuff<HazeMagicFragileDebuff>()
+				? artsResistance * HazeMagicFragileDebuff.ResistanceMultiplier
+				: artsResistance;
+		}
+
 		public override void ModifyHitByItem(NPC npc, Player player, Item item, ref NPC.HitModifiers modifiers) {
 			if (artsResistance > 0f && IsArtsItemHit(player, item))
-				modifiers.FinalDamage *= (1f - artsResistance);
+				modifiers.FinalDamage *= (1f - GetEffectiveArtsResistance(npc));
 		}
 
 		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers) {
 			// 弹幕算不算法伤，在它生成那一刻就判定好并记在 ArtsProjectileMarker 上了，这里只是读结果。
 			if (artsResistance > 0f && projectile.GetGlobalProjectile<ArtsProjectileMarker>().IsArtsDamage)
-				modifiers.FinalDamage *= (1f - artsResistance);
+				modifiers.FinalDamage *= (1f - GetEffectiveArtsResistance(npc));
 		}
 
 		/// <summary>物品直接命中（近战挥砍/戳刺）算不算法伤：原版武器查固定表，模组武器走带条件的规则。</summary>

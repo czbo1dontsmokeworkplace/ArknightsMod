@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Terraria.ModLoader;
 
-namespace ArknightsMod.Content.Items.Armor.Caster.Tragodia
+namespace ArknightsMod.Content.Items.Armor.Supporter.Tragodia
 {
 	public class TragodiaDefault : ArknightsVanityBag
 	{

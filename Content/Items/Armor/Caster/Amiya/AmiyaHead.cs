@@ -5,7 +5,7 @@ using ArknightsMod.Content.Items.Material;
 namespace ArknightsMod.Content.Items.Armor.Caster.Amiya
 {
 	[AutoloadEquip(EquipType.Head)]
-	public class AmiyaHead : NeoArmorReforgeVanityHead
+	public class AmiyaHead : CasterArmorHead
 	{
 		public override int Rarity => 5;
 

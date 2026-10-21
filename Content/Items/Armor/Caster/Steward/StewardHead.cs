@@ -5,7 +5,7 @@ using ArknightsMod.Content.Items.Material;
 namespace ArknightsMod.Content.Items.Armor.Caster.Steward
 {
 	[AutoloadEquip(EquipType.Head)]
-	public class StewardHead : NeoArmorReforgeVanityHead
+	public class StewardHead : CasterArmorHead
 	{
 		public override int Rarity => 3;
 
