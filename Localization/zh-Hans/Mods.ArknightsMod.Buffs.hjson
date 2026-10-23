@@ -205,8 +205,8 @@ IndigoBindDebuff: {
 }
 
 LapplandSilenceDebuff: {
-	// DisplayName: Lappland Silence Debuff
-	// Description: Mods.ArknightsMod.Buffs.LapplandSilenceDebuff.Description
+	DisplayName: 沉默
+	Description: 无法生成敌对弹幕
 }
 
 MostimaSlowDebuff: {

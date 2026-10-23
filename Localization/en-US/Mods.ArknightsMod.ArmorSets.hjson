@@ -163,8 +163,8 @@ LaPluma: {
 Lappland: {
 	HeadName: Lappland's Helmet
 	HelmetEffect: "[c/beebff:Helmet]: Melee adds 10% attack as magic damage"
-	SetEffect: "[c/beebff:Set]: Attacks silence enemy specials 5s; Cross Necklace effect"
-	SetBonus: Silence specials 5s; Cross Necklace effect
+	SetEffect: "[c/beebff:Set]: Attacks silence enemies for 5s, preventing hostile projectile spawns (including bosses); each enemy then becomes immune to silence for 10s; hits cannot refresh the cycle; Cross Necklace effect"
+	SetBonus: Silence enemies for 5s to prevent hostile projectile spawns (including bosses); each enemy then becomes immune to silence for 10s; hits cannot refresh the cycle; Cross Necklace effect
 }
 
 Midnight: {

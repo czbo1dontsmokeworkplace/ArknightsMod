@@ -25,13 +25,11 @@ namespace ArknightsMod.Content.Items.Armor.Guard.LaPluma
 			LaPlumaSetActive = LaPlumaHelmetActive
 				&& Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<LaPlumaBody>()
 				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<LaPlumaLegs>();
-		}
 
-		public override float UseSpeedMultiplier(Item item) {
-			if (LaPlumaSetActive && item.DamageType.CountsAsClass(DamageClass.Melee))
-				return 1f + 0.03f * KillSpeedStacks;
-
-			return 1f;
+			// Held melee projectiles and PRTS read the player's attack-speed stat,
+			// not the item's UseSpeedMultiplier. Apply once here for both paths.
+			if (LaPlumaSetActive)
+				Player.GetAttackSpeed(DamageClass.Melee) += 0.03f * KillSpeedStacks;
 		}
 
 		public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone) {

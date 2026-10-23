@@ -29,7 +29,7 @@ namespace ArknightsMod.Systems.Gameplay.Damage
 
 		// 仅在本次伤害结算中降低法抗，不改基础字段；重复命中只刷新 Buff，
 		// 不累计减抗。Buff 到期后自动按原法抗结算。
-		private float GetEffectiveArtsResistance(NPC npc) {
+		internal float GetEffectiveArtsResistance(NPC npc) {
 			return npc.HasBuff<HazeMagicFragileDebuff>()
 				? artsResistance * HazeMagicFragileDebuff.ResistanceMultiplier
 				: artsResistance;

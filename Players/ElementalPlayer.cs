@@ -16,19 +16,29 @@ namespace ArknightsMod.Players
 		private int _updatedDmg;
 		private int _playerWhoAmI;
 		private IEntitySource playerSource;
+		private bool elementalRegistered;
 		
 		public override void OnEnterWorld() {
-			_playerWhoAmI = Main.myPlayer;
-			
-			playerElementalData = ElementalSystem.RegisterEntityElemental(_playerWhoAmI, EntityType.Player);
+			elementalRegistered = false;
+			EnsureElementalRegistered();
 			playerSource = Player.GetSource_FromThis();
 
-			Santable.Visible = true;
+			if (!Main.dedServ && Player.whoAmI == Main.myPlayer) Santable.Visible = true;
 		
 		}
 		public override void PreUpdate() {
+			// OnEnterWorld only initializes the local client. Server and remote
+			// instances also run PreUpdate and need their own actual player index.
+			EnsureElementalRegistered();
 			CheckNearbyEnemies();
 			ElementalSystem.RegenerateElemental(_playerWhoAmI);
+		}
+
+		private void EnsureElementalRegistered() {
+			if (elementalRegistered && _playerWhoAmI == Player.whoAmI) return;
+			_playerWhoAmI = Player.whoAmI;
+			playerElementalData = ElementalSystem.RegisterEntityElemental(_playerWhoAmI, EntityType.Player);
+			elementalRegistered = true;
 		}
 
 

@@ -52,6 +52,7 @@ namespace ArknightsMod.Systems.Gameplay.Elemental
 				ref var elementalRecord = ref elementalRecords[i];
 				if (elementalRecord.elementalData.IsActive)
 					elementalRecord.elementalData.UpdateStatus();
+				elementalRecord.isDirty = 0;
 			}
 			changedNum = 0;
 		}
@@ -61,21 +62,26 @@ namespace ArknightsMod.Systems.Gameplay.Elemental
 			for (int i = 0; i < changedNum; i++) {
 			    ref var elementalRecord =ref elementalRecords[changedWhoAmI[i]];
 				elementalRecord.elementalData.UpdateStatus();
+				elementalRecord.isDirty = 0;
 				if (!elementalRecord.elementalData.IsFull & (byte)elementalRecord.entityType < 2) { }
 					//add to healPriority
 			}
 			changedNum = 0;
 		}
 		public static void MarkChanges(int WhoAmI) { //脏标记，不会出现重复实体
-			if (WhoAmI < 0 || WhoAmI >= MaxEntities)
+			if (WhoAmI < 0 || WhoAmI >= MaxEntities || changedWhoAmI == null
+				|| elementalRecords[WhoAmI].isDirty != 0)
 				return;
-			changedWhoAmI[changedNum += (byte)(1 - (elementalRecords[WhoAmI].isDirty =(byte)(1 - elementalRecords[WhoAmI].isDirty * 0)))] = WhoAmI;
+			elementalRecords[WhoAmI].isDirty = 1;
+			changedWhoAmI[changedNum++] = WhoAmI;
 		}
 
 		// 注册实体元素条
 		public static ElementalData RegisterEntityElemental(int WhoAmI, EntityType entityType) {
+			elementalRecords[WhoAmI].elementalData = new ElementalData(entityType,(ushort)WhoAmI);
+			elementalRecords[WhoAmI].entityType = entityType;
 			MarkChanges(WhoAmI);
-			return elementalRecords[WhoAmI].elementalData = new ElementalData(entityType,(ushort)WhoAmI);
+			return elementalRecords[WhoAmI].elementalData;
 			
 		}
 

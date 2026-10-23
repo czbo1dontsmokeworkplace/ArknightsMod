@@ -174,8 +174,8 @@ IndigoBindDebuff: {
 }
 
 LapplandSilenceDebuff: {
-	DisplayName: Lappland Silence Debuff
-	Description: Mods.ArknightsMod.Buffs.LapplandSilenceDebuff.Description
+	DisplayName: Silence
+	Description: Cannot spawn hostile projectiles
 }
 
 MostimaSlowDebuff: {

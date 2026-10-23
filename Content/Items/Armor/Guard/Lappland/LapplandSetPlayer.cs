@@ -1,6 +1,7 @@
 ﻿using ArknightsMod.Content.Buffs.ArmorSets;
 using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
+using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -25,6 +26,9 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Lappland
 			LapplandSetActive = LapplandHelmetActive
 				&& Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<LapplandBody>()
 				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<LapplandLegs>();
+
+			if (LapplandSetActive)
+				Player.longInvince = true;
 		}
 
 		public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone) {
@@ -69,13 +73,46 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Lappland
 			if (!LapplandSetActive || damageDone <= 0)
 				return;
 
-			if (Main.netMode == NetmodeID.MultiplayerClient)
+			// Hit hooks run on the attacking client; the server owns each NPC's cycle.
+			if (Player.whoAmI != Main.myPlayer)
 				return;
 
 			if (target.friendly || target.lifeMax <= 5 || target.dontTakeDamage)
 				return;
 
-			target.AddBuff(ModContent.BuffType<LapplandSilenceDebuff>(), 5 * 60);
+			// Hitting a shared-life boss segment silences the boss, not just that segment.
+			if (target.realLife >= 0 && target.realLife < Main.maxNPCs
+				&& Main.npc[target.realLife].active)
+				target = Main.npc[target.realLife];
+
+			if (!target.GetGlobalNPC<LapplandSilenceNPC>().CanReceiveSilence)
+				return;
+
+			if (Main.netMode == NetmodeID.MultiplayerClient) {
+				var packet = Mod.GetPacket();
+				packet.Write((short)ArknightsMod.ArkMessageID.LapplandSilenceRequest);
+				packet.Write((short)target.whoAmI);
+				packet.Send();
+			}
+			else
+				target.GetGlobalNPC<LapplandSilenceNPC>().TryApplySilence(target);
+		}
+
+		internal static void ReceiveSilenceRequest(BinaryReader reader, int whoAmI) {
+			int index = reader.ReadInt16();
+			if (Main.netMode != NetmodeID.Server || whoAmI < 0 || whoAmI >= Main.maxPlayers
+				|| index < 0 || index >= Main.maxNPCs)
+				return;
+			Player player = Main.player[whoAmI];
+			if (!player.active || player.dead
+				|| player.armor[0].type != NeoArmorReforgeSetLoader.GetSetType<LapplandHead>()
+				|| player.armor[1].type != NeoArmorReforgeSetLoader.GetSetType<LapplandBody>()
+				|| player.armor[2].type != NeoArmorReforgeSetLoader.GetSetType<LapplandLegs>())
+				return;
+			NPC target = Main.npc[index];
+			if (target.realLife >= 0 && target.realLife < Main.maxNPCs && Main.npc[target.realLife].active)
+				target = Main.npc[target.realLife];
+			target.GetGlobalNPC<LapplandSilenceNPC>().TryApplySilence(target);
 		}
 	}
 }

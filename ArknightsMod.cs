@@ -200,6 +200,9 @@ namespace ArknightsMod
 		public override void HandlePacket(BinaryReader reader, int whoAmI) {
 			short id = reader.ReadInt16();
 			switch ((ArkMessageID)id) {
+                case ArkMessageID.LapplandSilenceRequest:
+                    Content.Items.Armor.Guard.Lappland.LapplandSetPlayer.ReceiveSilenceRequest(reader, whoAmI);
+                    break;
                 case ArkMessageID.CrusherHit:
                     global::ArknightsMod.Content.Projectiles.Guard.Crusher.CrusherCombatNet.Receive(reader, whoAmI);
                     break;
@@ -214,6 +217,9 @@ namespace ArknightsMod
                     break;
                 case ArkMessageID.SpotHealDodgeGrant:
                     global::ArknightsMod.Content.Items.Armor.Defender.Spot.SpotHealingHelper.ReceiveGrant(reader);
+                    break;
+                case ArkMessageID.ChenSkillPointGrant:
+                    global::ArknightsMod.Content.Items.Armor.Guard.Chen.ChenSetPlayer.ReceiveGrant(reader);
                     break;
                 case ArkMessageID.SariaHealingSPGrant:
                     global::ArknightsMod.Content.Items.Armor.Defender.Saria.SariaHealingHelper.ReceiveGrant();
@@ -348,7 +354,9 @@ namespace ArknightsMod
             SariaHealingSPGrant,
             SariaExternalHealRequest,
             SpotHealDodgeGrant,
+            ChenSkillPointGrant,
             DroneCoreHealingGrant,
+            LapplandSilenceRequest,
 		}
 	}
 	//public class Ex : GlobalNPC

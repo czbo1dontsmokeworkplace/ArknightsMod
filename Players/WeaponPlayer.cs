@@ -357,11 +357,18 @@ namespace ArknightsMod.Players
 				return false;
 
 			SkillLevelData data = CurrentSkill.CurrentLevelData;
+			long availableCharge = ((long)data.MaxStack - StockCount) * SkillChargeMax - Math.Max(0, SkillCharge);
+			long acceptedCharge = Math.Min((long)points * Div, availableCharge);
 			long charge = Math.Max(0, SkillCharge) + (long)points * Div;
 			int gainedStock = (int)Math.Min(charge / SkillChargeMax, data.MaxStack - StockCount);
 			StockCount += gainedStock;
 			SkillCharge = StockCount >= data.MaxStack ? 0 : (int)(charge % SkillChargeMax);
 			SP = StockCount >= data.MaxStack ? data.MaxSP : SkillCharge / Div;
+			if (acceptedCharge > 0 && !Main.dedServ && Main.netMode != Terraria.ID.NetmodeID.Server) {
+				string amount = (acceptedCharge / (double)Div).ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
+				CombatText.NewText(Player.Hitbox.Modified(0, -24, 0, 0),
+					new Microsoft.Xna.Framework.Color(80, 160, 255), "+" + amount);
+			}
 			return true;
 		}
 

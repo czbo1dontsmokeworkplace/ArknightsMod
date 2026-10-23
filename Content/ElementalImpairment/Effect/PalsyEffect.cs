@@ -137,27 +137,27 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 			SpriteBatch sb = Main.spriteBatch;
 			var drawData = new List<(Texture2D tex, Vector2 pos, float scale)>();
 
-			// »º´æ NPC Êý×é³¤¶È£¬±ÜÃâ±éÀúÊ±±ä»¯
+			// ï¿½ï¿½ï¿½ï¿½ NPC ï¿½ï¿½ï¿½é³¤ï¿½È£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ä»¯
 			int npcCount = Main.npc.Length;
 			for (int i = 0; i < npcCount; i++) {
-				// È·±£Ë÷ÒýÔÚÓÐÐ§·¶Î§ÄÚ£¨·ÀÖ¹Êý×éÔÚ±éÀúÊ±ÊÕËõ£©
+				// È·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½Î§ï¿½Ú£ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½ï¿½Ú±ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				if (i >= Main.npc.Length)
 					break;
 
 				NPC npc = Main.npc[i];
 
-				// ÑÏ¸ñ¼ì²é NPC ÓÐÐ§ÐÔ
+				// ï¿½Ï¸ï¿½ï¿½ï¿½ NPC ï¿½ï¿½Ð§ï¿½ï¿½
 				if (npc == null || !npc.active || npc.whoAmI != i)
 					continue;
 
-				// °²È«»ñÈ¡ GlobalNPC£¬²¶»ñ¿ÉÄÜµÄÒì³£
+				// ï¿½ï¿½È«ï¿½ï¿½È¡ GlobalNPCï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Üµï¿½ï¿½ì³£
 				PalsyGlobalNPC palsyNPC = null;
 				try {
 					if (npc.TryGetGlobalNPC<PalsyGlobalNPC>(out var pnpc))
 						palsyNPC = pnpc;
 				}
 				catch {
-					// Èç¹û»ñÈ¡Ê§°Ü£¬Ìø¹ý¸Ã NPC
+					// ï¿½ï¿½ï¿½ï¿½ï¿½È¡Ê§ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ NPC
 					continue;
 				}
 
@@ -169,7 +169,7 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 				if (string.IsNullOrEmpty(texPath))
 					continue;
 
-				// ¼ì²éÎÆÀíÊÇ·ñ´æÔÚ
+				// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½
 				if (!ModContent.HasAsset(texPath))
 					continue;
 

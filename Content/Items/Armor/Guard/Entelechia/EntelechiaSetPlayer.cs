@@ -73,13 +73,12 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Entelechia
 		}
 
 		private static void ApplyBleed(NPC target) {
-			if (Main.netMode == NetmodeID.MultiplayerClient)
-				return;
-
 			if (target.friendly || target.lifeMax <= 5 || target.dontTakeDamage)
 				return;
 
-			target.AddBuff(ModContent.BuffType<EntelechiaBleedDebuff>(), 5 * 60);
+			// Owner-client hit hooks use vanilla AddNPCBuff synchronization to
+			// deliver the debuff to the server, which settles NPC life loss.
+			target.AddBuff(ModContent.BuffType<EntelechiaBleedDebuff>(), EntelechiaBleedDebuff.DurationTicks);
 		}
 
 		private void ApplyLifeSteal(NPC target) {
