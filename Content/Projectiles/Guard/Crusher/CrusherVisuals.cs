@@ -111,7 +111,8 @@ internal static class CrusherVisuals
             ChargedOperatorVfx.Sparkle(point + ray * 15, ray * 1.2f, CrusherRules.Edge(kind), ray.ToRotation(), .7f * strength);
         }
         for (int i = 0; i < 4; i++) { Dust d = Dust.NewDustPerfect(point, DustID.TintableDustLighted, Main.rand.NextVector2Circular(4, 4), 80, CrusherRules.Tint(kind), 1); d.noGravity = true; }
-        SoundEngine.PlaySound(SoundID.Item14 with { Volume = .38f * strength, Pitch = -.48f, MaxInstances = 3 }, point);
+        SoundEngine.PlaySound(SoundID.Item14 with { Volume = .6f * strength, Pitch = -.58f, MaxInstances = 3 }, point);
+        SoundEngine.PlaySound(SoundID.DD2_MonkStaffGroundImpact with { Volume = .5f * strength, Pitch = -.4f, MaxInstances = 3 }, point);
     }
     internal static void Activate(Player owner, CrusherKind kind)
     {

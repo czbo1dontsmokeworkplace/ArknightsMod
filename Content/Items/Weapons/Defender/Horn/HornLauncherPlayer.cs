@@ -13,7 +13,7 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Horn;
 
 public sealed class HornLauncherPlayer : ModPlayer
 {
-    private int activeMode, activeRank, ammunition, counterTime, dumpCount, dumpClock, dumpDamage;
+    private int activeMode, activeRank, ammunition, dumpCount, dumpClock, dumpDamage;
     private bool keyConsumed;
     private float healthDebt;
     internal bool Holding => Player.HeldItem.ModItem is HornGrenadeLauncher && !Player.dead && !Player.CCed && !Player.noItems;
@@ -25,13 +25,6 @@ public sealed class HornLauncherPlayer : ModPlayer
         : Mode == 2 ? (byte)2 : Overdrive ? (byte)5 : Mode == 3 ? (byte)3 : (byte)0;
     private int Rank => Math.Clamp((Skills.CurrentSkill.ForceReplaceLevel ?? Skills.CurrentSkill.Level) - 1, 0, 9);
     private bool Overdrive => Mode == 3 && Skills.SkillTimer >= 12 * 60 * WeaponPlayer.ActiveDurationMultiplier;
-    internal void CounterReady()
-    {
-        if (!Holding || Player.whoAmI != Main.myPlayer) return;
-        counterTime = 300;
-        HornVisuals.Sparks(Player.Center, 26, 6f);
-        SoundEngine.PlaySound(SoundID.Item37 with { Volume = .6f, Pitch = .2f }, Player.Center);
-    }
     internal void TryActivate()
     {
         if (!Selected || keyConsumed || Player.whoAmI != Main.myPlayer || Dumping) return;
@@ -75,6 +68,8 @@ public sealed class HornLauncherPlayer : ModPlayer
     internal void Fire(IEntitySource source, int baseDamage, float knockback, bool release = false)
     {
         if (!Holding || Player.whoAmI != Main.myPlayer || (Dumping && !release)) return;
+        // Manual overload volleys bypass ItemCheck, so each round must select and consume its own rocket.
+        if (release && !Player.PickAmmo(Player.HeldItem, out _, out _, out baseDamage, out knockback, out _)) return;
         Vector2 aim = (Main.MouseWorld - Player.MountedCenter).SafeNormalize(new Vector2(Player.direction, 0));
         Player.ChangeDir(aim.X >= 0f ? 1 : -1);
         byte visualState = release ? (byte)4 : VisualState; // Snapshot before the last round ends S2.
@@ -100,10 +95,8 @@ public sealed class HornLauncherPlayer : ModPlayer
             radius = 130f;
             flare = (Rank < 6 ? 5 : Rank < 9 ? 6 : 8) * 60;
         }
-        float counter = counterTime > 0 ? 2f : 1f;
-        counterTime = 0;
-        int hit = Math.Max(1, (int)MathF.Round(baseDamage * physical * counter));
-        int artsHit = (int)MathF.Round(baseDamage * arts * counter);
+        int hit = Math.Max(1, (int)MathF.Round(baseDamage * physical));
+        int artsHit = (int)MathF.Round(baseDamage * arts);
         Vector2 origin = Player.MountedCenter;
         if (HornCombat.Clear(origin, origin + aim * 43f)) origin += aim * 43f;
         int index = Projectile.NewProjectile(source, origin, aim * 17f,
@@ -115,12 +108,9 @@ public sealed class HornLauncherPlayer : ModPlayer
             ((HornGrenade)Main.projectile[index].ModProjectile).VisualState = visualState;
             Main.projectile[index].netUpdate = true;
         }
-        HornVisuals.Muzzle(origin, aim, counter > 1f);
+        HornVisuals.Muzzle(origin, aim, false);
         SoundEngine.PlaySound(SoundID.Item61 with { Volume = .55f, Pitch = -.3f, MaxInstances = 4 }, origin);
         Player.velocity -= aim * .65f;
-        int guardType = ModContent.ProjectileType<HornGuard>();
-        foreach (Projectile p in Main.ActiveProjectiles)
-            if (p.owner == Player.whoAmI && p.type == guardType) { p.ai[2] = 10; p.netUpdate = true; }
     }
     public override void PostUpdate()
     {
@@ -128,11 +118,10 @@ public sealed class HornLauncherPlayer : ModPlayer
         if (Player.whoAmI != Main.myPlayer) return;
         if (!Holding)
         {
-            counterTime = dumpCount = ammunition = 0;
+            dumpCount = ammunition = 0;
             healthDebt = 0;
             return;
         }
-        if (counterTime > 0) counterTime--;
         if (ArknightsKeybinds.SkillActivatePressed(Player)) TryActivate();
         if (Dumping)
         {
@@ -158,9 +147,7 @@ public sealed class HornLauncherPlayer : ModPlayer
             }
         }
         else healthDebt = 0f;
-        int type = ModContent.ProjectileType<HornGuard>();
-        if (Player.ownedProjectileCounts[type] == 0)
-            Projectile.NewProjectile(Player.GetSource_ItemUse(Player.HeldItem), Player.Center, Vector2.Zero, type, 0, 0f, Player.whoAmI);
+        DefenderHoldout.Ensure(Player);
     }
-    public override void UpdateDead() => counterTime = dumpCount = ammunition = activeMode = 0;
+    public override void UpdateDead() => dumpCount = ammunition = activeMode = 0;
 }

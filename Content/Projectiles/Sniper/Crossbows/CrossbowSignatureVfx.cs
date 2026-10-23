@@ -68,6 +68,7 @@ internal static class CrossbowSignatureVfx
         Sprite(texture, p.Center, size, Color.Lerp(Color.White, style.Edge, .16f) * opacity, angle);
         Sprite(texture, p.Center, size, Light(style.Edge, opacity * .14f), angle);
     }
+    internal static void DrawNativeCore(Projectile p, CrossbowKind kind) => DrawCore(p, kind, 1f);
     internal static void DrawWoodenArrow(Projectile p, float opacity = 1f)
     {
         if (!Main.dedServ) DrawCore(p, CrossbowKind.Kroos, opacity);
@@ -160,17 +161,21 @@ internal static class CrossbowSignatureVfx
         if (drawArrow) DrawCore(p, kind, opacity);
     }
     internal static void Draw(Projectile p, CrossbowKind kind, Vector2[] history, bool drawArrow)
-        => DrawFlight(p, kind, history ?? p.oldPos, history == null ? p.Size * .5f : Vector2.Zero, drawArrow);
+    {
+        if (KroosLegacyVfx.Handles(kind)) KroosLegacyVfx.Draw(p, kind, history, drawArrow);
+        else DrawFlight(p, kind, history ?? p.oldPos, history == null ? p.Size * .5f : Vector2.Zero, drawArrow);
+    }
     internal static void DrawRoseSatellite(Projectile p, ReadOnlySpan<Vector2> history, float opacity)
         => DrawFlight(p, CrossbowKind.Pozemka, history, Vector2.Zero, true, opacity, false);
     internal static void Wake(Projectile p, CrossbowKind kind)
     {
+        if (KroosLegacyVfx.Handles(kind)) { KroosLegacyVfx.Wake(p, kind); return; }
         if (!Main.dedServ && p.numUpdates == 0)
             p.GetGlobalProjectile<CrossbowShotData>().FlightEmitter.Tick(p, kind);
     }
     internal static void DrawMuzzle(Vector2 center, Vector2 aim, CrossbowKind kind, float strength)
     {
-        if (Main.dedServ || strength <= 0f) return;
+        if (Main.dedServ || strength <= 0f || KroosLegacyVfx.Handles(kind)) return;
         FlightStyle style = Style(kind);
         strength = MathHelper.Clamp(strength, 0f, 1f);
         using var pass = new CrossbowMaterialPass();
@@ -182,6 +187,7 @@ internal static class CrossbowSignatureVfx
     }
     internal static void Pulse(Projectile p, CrossbowKind kind, bool muzzle)
     {
+        if (KroosLegacyVfx.Handles(kind)) { KroosLegacyVfx.Burst(p, kind, muzzle); return; }
         if (!muzzle) { Hit(p, kind, .65f); return; }
         Vector2 aim = p.velocity.SafeNormalize(Vector2.UnitX);
         FlightStyle style = Style(kind);
@@ -202,6 +208,7 @@ internal static class CrossbowSignatureVfx
     internal static void Hit(Projectile p, CrossbowKind kind, float strength = 1f)
     {
         if (Main.dedServ || !Handles(kind)) return;
+        if (KroosLegacyVfx.Handles(kind)) { KroosLegacyVfx.Burst(p, kind, false); return; }
         CrossbowParticleCompositions.Impact(p, kind, strength);
     }
 }

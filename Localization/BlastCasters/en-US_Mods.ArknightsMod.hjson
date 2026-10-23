@@ -46,6 +46,14 @@ Projectiles: {
 	ReaperBloodOrbit.DisplayName: Reaper Blood Orbit
 	ReaperSpin.DisplayName: Reaper Spin
 	ReaperWave.DisplayName: Reaper Wave
+	IfritSurfaceFlame.DisplayName: Ifrit Surface Flame
+	DefenderElectron.DisplayName: Defender Electron
+	DefenderHoldout.DisplayName: Defender Holdout
+	DefenderPulse.DisplayName: Defender Pulse
+	EunectesDash.DisplayName: Eunectes Dash
+	StandardBearerHoldout.DisplayName: Standard Bearer Holdout
+	StandardBearerSkill.DisplayName: Standard Bearer Skill
+	ManagedSkillBodyController.DisplayName: Managed Skill Body Controller
 }
 
 Skills: {
@@ -69,29 +77,29 @@ Skills: {
 
 		2: {
 			Label: Flame Burst
-			Desc: Automatically empowers the next emission to deal 220% to 300% damage. The first impact creates a 96-pixel-diameter explosion dealing 50% of that emission's damage. Stores up to 3 charges.
+			Desc: Automatically empowers the next emission to deal 220% to 300% damage, with flame size, flight speed, and collision dimensions increased to 150%. The first impact creates a 96-pixel-diameter explosion dealing 50% of that emission's damage. Stores up to 3 charges.
 		}
 
 		3: {
 			Label: Scorched Earth
-			Desc: Manual. Increases spray damage by 50% to 110%. Hits inflict Oiled for 3 seconds and leave a 2-second ember patch, at least 20 ticks apart. Each 48-pixel-radius patch deals one third of that emission's damage every 30 ticks.
+			Desc: Manual. Increases spray damage by 50% to 110%. Hits inflict Oiled for 3 seconds. Flames stop at blocks and attach to the struck surface for 1 second; repeated hits refresh the same surface. Each 48-pixel-radius patch deals one third of that emission's damage every 30 ticks.
 		}
 	}
 
 	AphrissaProjector: {
 		1: {
 			Label: Continuous Mapping
-			Desc: Manual. Increases optical packet damage by 30% to 70% and base total range from 1248 to 1680 pixels.
+			Desc: Manual. Increases flame damage by 30% to 70% and base total range from 1248 to 1680 pixels.
 		}
 
 		2: {
 			Label: Refractive Pulse
-			Desc: Automatically empowers the next emission to deal 200% to 300% damage with a wider optical packet. Stores up to 3 charges.
+			Desc: Automatically empowers the next emission to deal 200% to 300% damage with a wider flame. Stores up to 3 charges.
 		}
 
 		3: {
 			Label: The Nature of Chaos
-			Desc: Manual. Increases optical packet damage by 50% to 100% and emission rate by 50%. Passing through the relay increases damage by another 25%. Hits also inflict Ichor for 3 seconds.
+			Desc: Manual. Increases flame damage by 50% to 100% and emission rate by 50%. Passing through the relay increases damage by another 25%. Hits also inflict Ichor for 3 seconds.
 		}
 	}
 }

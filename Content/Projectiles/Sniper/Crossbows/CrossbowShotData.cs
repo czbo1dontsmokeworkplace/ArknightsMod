@@ -15,6 +15,7 @@ public sealed class CrossbowShotData : GlobalProjectile
     public int Skill;
     private Vector2[] visualHistory;
     private CrossbowFlightEmitter flightEmitter;
+    private bool legacyHit;
     internal CrossbowFlightEmitter FlightEmitter => flightEmitter ??= new CrossbowFlightEmitter();
     public override void PostAI(Projectile projectile)
     {
@@ -56,7 +57,10 @@ public sealed class CrossbowShotData : GlobalProjectile
     public override void OnHitNPC(Projectile projectile, NPC target, NPC.HitInfo hit, int damageDone)
     {
         if (Kind >= 0 && projectile.ModProjectile is not CrossbowBolt)
+        {
             CrossbowSignatureVfx.Hit(projectile, (CrossbowKind)Kind);
+            if (KroosLegacyVfx.Handles((CrossbowKind)Kind)) legacyHit = true;
+        }
         if (Kind == (int)CrossbowKind.Pozemka && projectile.owner == Main.myPlayer)
         {
             global::ArknightsMod.Content.Projectiles.Sniper.Pozemka.PozemkaStarBolt.SpawnPair(
@@ -69,5 +73,12 @@ public sealed class CrossbowShotData : GlobalProjectile
             float chance = Skill switch { 1 => .8f, 2 => .5f, 3 => 1f, _ => .2f };
             if (Main.rand.NextFloat() < chance) target.AddBuff(BuffID.BrokenArmor, 300);
         }
+    }
+
+    public override void OnKill(Projectile projectile, int timeLeft)
+    {
+        if (Kind >= 0 && projectile.ModProjectile is not CrossbowBolt && !legacyHit
+            && KroosLegacyVfx.Handles((CrossbowKind)Kind))
+            KroosLegacyVfx.Burst(projectile, (CrossbowKind)Kind, false);
     }
 }

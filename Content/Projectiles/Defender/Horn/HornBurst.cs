@@ -23,6 +23,8 @@ public sealed class HornBurst : ModProjectile
     }
     public override void AI()
     {
+        // Firewhistle S2: a larger ranged blast with burning, never a magic damage conversion.
+        if (Projectile.ai[2] == 6 && Projectile.width != 130) Projectile.Resize(130, 130);
         if (!emitted && Projectile.ai[1] == 0)
         {
             emitted = true;
@@ -33,6 +35,10 @@ public sealed class HornBurst : ModProjectile
         Lighting.AddLight(Projectile.Center, .9f * Projectile.timeLeft / 28f, .55f * Projectile.timeLeft / 28f, .15f);
     }
     public override bool ShouldUpdatePosition() => false;
+    public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+    {
+        if (Projectile.ai[2] == 6) target.AddBuff(BuffID.OnFire3, 180);
+    }
     // Only the first update deals damage; the remaining lifetime is visual only.
     public override bool? CanDamage() => Projectile.timeLeft == 28;
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

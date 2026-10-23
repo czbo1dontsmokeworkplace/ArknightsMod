@@ -145,11 +145,8 @@ public sealed class CrusherPlayer : ModPlayer
         level = SkillLevel;
         if (ActiveMode == 0 && shared.StockCount > 0 && shared.Skill == 0 && (Kind == CrusherKind.Hoederer || Kind == CrusherKind.Ulpianus)) {
             shared.DelStockCount(); special = Kind == CrusherKind.Hoederer ? 1 : 2;
-            if (special == 2) {
-                Vector2 aim = (Main.MouseWorld - Player.MountedCenter).SafeNormalize(new Vector2(Player.direction, 0));
-                Projectile.NewProjectile(Player.GetSource_ItemUse(Player.HeldItem), Player.MountedCenter, aim * 17,
-                    ModContent.ProjectileType<CrusherAnchorCast>(), (int)(Player.GetWeaponDamage(Player.HeldItem) * L(1.7f, 2.7f)), 10, Player.whoAmI, 0, Player.selectedItem, level);
-            }
+            // Contact That Must Be Made now empowers the on-contact rising anchor.
+            // Preparing a swing must never emit a projectile on a miss.
         }
         return DamageMultiplier * (special == 1 ? L(1.6f, 2.6f) : 1);
     }

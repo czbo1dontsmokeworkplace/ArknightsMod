@@ -45,8 +45,6 @@ namespace ArknightsMod.Content.Projectiles.Defender
 		{
 			parryTimer = 0;
 			openEffect = true;
-			if (Player.whoAmI == Main.myPlayer && Player.HeldItem.ModItem is IShieldGuardWeapon weapon)
-				weapon.OnGuardSuccess(Player);
 		}
 		/// <summary>
 		/// 画盾（纯贴图 sb.Draw + 消融 shader，effect 交给 spriteBatch 管理）
@@ -110,60 +108,39 @@ namespace ArknightsMod.Content.Projectiles.Defender
 		}
 		#endregion
 
-		public override void ModifyHitByNPC(NPC npc, ref Player.HurtModifiers modifiers) {
-			if (ShieldMode&&CD==0) {
-				if (ShieldGuardRules.IsFront(Player, npc.Center.X)||npc.Center.Distance(Player.Center) <= 3) {
-					modifiers.FinalDamage *= 0.5f;
-					Player.AddBuff(BuffID.ParryDamageBuff,5*60);
-					TriggerParry();
-				}
-				CD = 10 * 60;
-			}
-		}
-
-		public override void ModifyHitByProjectile(Projectile proj, ref Player.HurtModifiers modifiers) {
-			if (ShieldMode&&CD==0) {
-				if (ShieldGuardRules.IsFront(Player, proj.Center.X)) {
-					modifiers.FinalDamage *= 0.5f;
-					Player.AddBuff(BuffID.ParryDamageBuff,5*60);
-					TriggerParry();
-				}
-				CD = 10 * 60;
-			}
-		}
-
-		public override void UpdateEquips()
-		{
-			// Permission comes from the held weapon, not a global right-click flag.
-			OpenDefender = ShieldGuardRules.Supports(Player.HeldItem);
-			bool guarding = ShieldGuardRules.IsRaised(Player);
-			if(guarding)
-			{
-				if (Player.HeldItem.ModItem is Items.Weapons.Defender.Horn.HornGrenadeLauncher)
-				{
-					Player.statDefense += 40;
-					Player.endurance += 0.5f;
-					Player.GetDamage(DamageClass.Generic) *= 0.7f;
-				}
-				else
-					Player.statDefense *= 1.2f;
-				Player.noKnockback = true;
-				Player.moveSpeed *= 0.4f;
-				ShieldMode = true;
-			}
-
-			if (ShieldMode && !guarding) {
-				ShieldMode = false;
-				if (CD == 0)
-					CD = 5 * 60;
-			}
-			if(CD >0)
-				CD--;
-		}
-
-		public override void ResetEffects() {
-			OpenDefender = false;
-		}
-	}
-
+		public override void ModifyHitByNPC(NPC npc, ref Player.HurtModifiers modifiers)
+        {
+            if (!ShieldGuardRules.IsRaised(Player) || CD > 0) return;
+            if (!ShieldGuardRules.IsFront(Player, npc.Center.X) && npc.Distance(Player.Center) > 3f) return;
+            modifiers.FinalDamage *= .5f;
+            Player.AddBuff(BuffID.ParryDamageBuff, 300);
+            TriggerParry();
+            CD = 600;
+        }
+        public override void ModifyHitByProjectile(Projectile proj, ref Player.HurtModifiers modifiers)
+        {
+            if (!ShieldGuardRules.IsRaised(Player) || CD > 0 || !ShieldGuardRules.IsFront(Player, proj.Center.X)) return;
+            modifiers.FinalDamage *= .5f;
+            Player.AddBuff(BuffID.ParryDamageBuff, 300);
+            TriggerParry();
+            CD = 600;
+        }
+        public override void UpdateEquips()
+        {
+            OpenDefender = ShieldGuardRules.Supports(Player.HeldItem);
+            bool guarding = ShieldGuardRules.IsRaised(Player);
+            if (ShieldMode && !guarding && CD == 0) CD = 300;
+            ShieldMode = guarding;
+            if (CD > 0) CD--;
+        }
+        public override void PostUpdateEquips()
+        {
+            if (!ShieldGuardRules.IsRaised(Player)) return;
+            Player.statDefense *= 1.5f;
+            Player.endurance += .5f;
+            Player.noKnockback = true;
+            Player.moveSpeed *= .4f;
+        }
+        public override void ResetEffects() => OpenDefender = false;
+    }
 }

@@ -8,7 +8,7 @@ public enum CrusherKind { Quartz, WindChimes, Hoederer, Ulpianus }
 
 internal static class CrusherRules
 {
-    internal const int IdleTicks = 100, FadeTicks = 55;
+    internal const int IdleTicks = 0, FadeTicks = 8;
     // Two shared 28-tick swings, then one equally long rest: 84 ticks per pair.
     internal static int Interval(CrusherKind kind) => BladeSwingTemplate.BaseTicks * 3;
     internal static float Reach(CrusherKind kind) => Vector2.Distance(Grip(kind), Head(kind));

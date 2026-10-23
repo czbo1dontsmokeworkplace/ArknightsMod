@@ -1,0 +1,89 @@
+Items: {
+	MyrtleStandard: {
+		DisplayName: Pole Standard [Myrtle]
+		Tooltip: ""
+	}
+
+	ElysiumStandard: {
+		DisplayName: Pole Standard [Elysium]
+		Tooltip: ""
+	}
+
+	JacintStandard: {
+		DisplayName: Pole Standard [Jacint]
+		Tooltip: ""
+	}
+
+	SaileachStandard: {
+		DisplayName: Pole Standard [Saileach]
+		Tooltip: ""
+	}
+}
+
+BranchTraits.StandardBearer: Standard Bearer:  Takes no damage during skills, but cannot deal damage
+
+StandardBearers: {
+	Aura: While held, grants you and allies within 800 pixels +{0}% movement speed, +{1} defense, +1 life regeneration per second and +{2}% summon damage (strongest aura applies)
+	Controls:
+		'''
+		Holds the pole upright; left-click to turn toward the cursor, thrust at close range and return
+		Phasing allows movement but stops your projectiles and minions from dealing damage; switching items or skills ends it
+		Deployment Cost appears as green orbs: 1 Cost restores 1 SP to the currently held weapon; expires after about 10 seconds
+		'''
+	SkillKey: Press [{0}] to activate the selected skill
+}
+
+Skills: {
+	MyrtleStandard: {
+		1: {
+			Label: Support β
+			Desc: Phase for 8 seconds, gradually producing 14 Deployment Cost. Initial SP 13, cost 22 SP.
+		}
+
+		2: {
+			Label: Healing Wings
+			Desc: Phase for 16 seconds, gradually producing 16 Deployment Cost. Restores 3 life each second to the ally with the lowest health percentage in the aura. Initial SP 10, cost 24 SP.
+		}
+	}
+
+	ElysiumStandard: {
+		1: {
+			Label: Support γ
+			Desc: Phase for 8 seconds, gradually producing 18 Deployment Cost. Initial SP 15, cost 26 SP.
+		}
+
+		2: {
+			Label: Monitor
+			Desc: Phase for 15 seconds, gradually producing 20 Deployment Cost. Reduces defense of up to 4 enemies in the aura by 35% and slows knockback-susceptible non-boss enemies. Initial SP 16, cost 30 SP.
+		}
+	}
+
+	JacintStandard: {
+		1: {
+			Label: Support γ
+			Desc: Phase for 8 seconds, gradually producing 18 Deployment Cost. Initial SP 15, cost 26 SP.
+		}
+
+		2: {
+			Label: Under the Shade
+			Desc: Phase for 30 seconds, gradually producing 27 Deployment Cost. The aura grants an extra 6% damage reduction and restores 5 life each second to its lowest-health ally. Initial SP 15, cost 30 SP.
+		}
+	}
+
+	SaileachStandard: {
+		1: {
+			Label: Support γ
+			Desc: Phase for 8 seconds, gradually producing 18 Deployment Cost. Initial SP 15, cost 26 SP.
+		}
+
+		2: {
+			Label: Inheritance of Faith
+			Desc: Phase for 15 seconds, gradually producing 20 Deployment Cost. The aura grants an extra 6% damage reduction and restores 5 life each second to its lowest-health ally. Initial SP 15, cost 29 SP.
+		}
+
+		3: {
+			Label: Glorious Banner
+			Desc: Phase for 10 seconds and immediately produce 10 Deployment Cost. Enemies in the aura take 30% more damage; knockback-susceptible non-boss enemies are slowed. Does not deal the original banner impact damage while phased. Initial SP 7, cost 20 SP.
+		}
+	}
+}

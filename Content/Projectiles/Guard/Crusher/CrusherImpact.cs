@@ -3,6 +3,7 @@ using ArknightsMod.Content.Projectiles.Charged;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
+using Terraria.Graphics.CameraModifiers;
 
 namespace ArknightsMod.Content.Projectiles.Guard.Crusher;
 
@@ -14,7 +15,12 @@ public sealed class CrusherImpact : ModProjectile
     public override bool? CanDamage() => false;
     public override void AI()
     {
-        if (Projectile.localAI[0]++ == 0) CrusherVisuals.Impact(Projectile.Center, Projectile.velocity.SafeNormalize(Vector2.UnitX), (CrusherKind)(int)Projectile.ai[0], Projectile.ai[1]);
+        if (Projectile.localAI[0]++ == 0) {
+            CrusherVisuals.Impact(Projectile.Center, Projectile.velocity.SafeNormalize(Vector2.UnitX), (CrusherKind)(int)Projectile.ai[0], Projectile.ai[1]);
+            if (!Main.dedServ && Projectile.owner == Main.myPlayer && Projectile.ai[1] >= 1.3f)
+                Main.instance?.CameraModifiers?.Add(new PunchCameraModifier(Projectile.Center,
+                    Projectile.velocity.SafeNormalize(-Vector2.UnitY), 4 * Projectile.ai[1], 7, 9, 850, "CrusherContact"));
+        }
     }
     public override bool PreDraw(ref Color lightColor)
     {
@@ -26,6 +32,13 @@ public sealed class CrusherImpact : ModProjectile
         CrusherMaterial.DrawImpact(point, Projectile.velocity.SafeNormalize(Vector2.UnitX), kind, progress, strength);
         if (!CrusherVisuals.Visible(point)) return false;
         using (new ChargedOperatorVfx.Pass(true)) {
+            float flash = System.Math.Clamp(1 - progress * 5, 0, 1);
+            ChargedOperatorVfx.Sprite("RuptureRing", point, new Vector2(38 + progress * 205, 28 + progress * 140) * strength,
+                CrusherRules.Edge(kind) * (fade * .95f), rotation);
+            ChargedOperatorVfx.Sprite("LinearSpark", point, new Vector2(165, 24) * strength,
+                Color.White * flash, rotation + MathHelper.PiOver2);
+            ChargedOperatorVfx.Sprite("StarCore", point, new Vector2(88, 55) * strength,
+                Color.White * flash, rotation);
             // A short dense impact face opens into a colored tear; the later ring remains soft.
             ChargedOperatorVfx.Sprite("ImpactPetals", point, new Vector2(110, 88) * strength * (.65f + progress),
                 CrusherRules.Tint(kind) * (fade * .8f), rotation + progress * .4f);

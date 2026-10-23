@@ -11,7 +11,6 @@ namespace ArknightsMod.Content.SwingHelper
     public sealed class ShieldHelper
     {
         private readonly Vertex[] vertices = new Vertex[6];
-        private float walkPhase;
         public Defender_Player mp;
         public void SetDefaults(Projectile projectile, int localNpcHitCooldown = 0)
         {
@@ -29,48 +28,49 @@ namespace ArknightsMod.Content.SwingHelper
 
         public void UpdateMovePose(Projectile projectile, Player player)
         {
-            float speedX = Math.Abs(player.velocity.X);
-            float targetOffsetDegrees;
-
-            if (Math.Abs(player.velocity.Y) > 0.01f)
-            {
-                walkPhase = 0f;
-                targetOffsetDegrees = 20f;
-            }
-            else if (speedX > 0.1f)
-            {
-                walkPhase += 0.12f + speedX * 0.04f;
-                float progress = (MathF.Sin(walkPhase) + 1f) * 0.5f;
-                targetOffsetDegrees = player.direction == 1
-                    ? MathHelper.Lerp(50f, -20f, progress)
-                    : MathHelper.Lerp(-20f, 50f, progress);
-            }
-            else
-            {
-                walkPhase = 0f;
-                targetOffsetDegrees = 0f;
-            }
-
             mp = player.GetModPlayer<Defender_Player>();
             player.heldProj = projectile.whoAmI;
-            float targetRotation = MathHelper.ToRadians(targetOffsetDegrees);
-            float armRotation = targetRotation * -player.direction;
+            // Keep the shield anchored to the same relaxed arm pose at every movement speed.
+            const float armRotation = 0f;
             player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, armRotation);
             projectile.rotation = armRotation;
             projectile.Center = player.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, armRotation);
         }
 
-        public void UpdateDefenderPose(Projectile projectile, Player player)
+        public void UpdateDefenderPose(Projectile projectile, Player player, float? synchronizedAim = null)
         {
 	        mp = player.GetModPlayer<Defender_Player>();
 	        mp.OpenDefender = true;
             player.heldProj = projectile.whoAmI;
-            player.direction = Main.MouseWorld.X >= player.MountedCenter.X ? 1 : -1;
-            float mouseRotation = (Main.MouseWorld - player.MountedCenter).ToRotation();
+            float mouseRotation = synchronizedAim ?? (Main.MouseWorld - player.MountedCenter).ToRotation();
+            player.direction = MathF.Cos(mouseRotation) >= 0 ? 1 : -1;
             projectile.rotation = mouseRotation - MathHelper.PiOver2 + MathHelper.PiOver2 * player.direction;
             player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, projectile.rotation);
             projectile.Center = player.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, projectile.rotation)
                 + new Vector2(20f, 0f).RotatedBy(projectile.rotation) * player.direction;
+        }
+
+        public void DrawMainWeapon(Player player, Texture2D texture, Vector2 handPosition, float rotation, Color color, float? weaponLength = null)
+        {
+            // Cardigan's diagonal weapon mesh and 12px grip offset, shared by every melee defender.
+            float length = weaponLength ?? texture.Size().Length();
+            if (texture.Height > texture.Width * 2)
+            {
+                // Nian's vertical sprite has its grip at the top: preserve its aspect ratio.
+                Main.EntitySpriteDraw(texture, handPosition - Main.screenPosition, null, color,
+                    rotation - MathHelper.PiOver2, new Vector2(texture.Width * .5f, 8f), length / texture.Height,
+                    player.direction < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None);
+                return;
+            }
+            Vector2 start = handPosition - new Vector2(12f, 0f).RotatedBy(rotation) - Main.screenPosition;
+            Vector2 half = rotation.ToRotationVector2() * length * .5f;
+            Vector2 across = new Vector2(-half.Y, half.X) * player.direction;
+            vertices[0] = new Vertex(start + half - across, new Vector3(0, 0, 1), color);
+            vertices[1] = vertices[5] = new Vertex(start + half * 2f, new Vector3(1, 0, 1), color);
+            vertices[2] = vertices[4] = new Vertex(start, new Vector3(0, 1, 1), color);
+            vertices[3] = new Vertex(start + half + across, new Vector3(1, 1, 1), color);
+            Main.graphics.GraphicsDevice.Textures[0] = texture;
+            Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices, 0, vertices.Length / 3);
         }
 
         public void DrawShield(Projectile projectile, Player player, Texture2D texture, bool defending)

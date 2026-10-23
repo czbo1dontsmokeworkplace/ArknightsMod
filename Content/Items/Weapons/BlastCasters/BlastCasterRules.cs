@@ -25,6 +25,11 @@ internal static class BlastCasterRules
         => kind == BlastCasterKind.Aphrissa ? Range(mode) : kind == BlastCasterKind.Ifrit ? 752f : 547f;
     internal static int Updates(BlastCasterKind kind) => kind == BlastCasterKind.Aphrissa ? OpticalUpdates : 3;
     internal static float Step(BlastCasterKind kind) => kind == BlastCasterKind.Aphrissa ? OpticalStep : 11f;
+    internal static float ShotStep(BlastCasterKind kind, int mode)
+        => Step(kind) * (kind == BlastCasterKind.Ifrit && mode == 2 ? 1.5f : 1f);
+    internal static float ShotSize(BlastCasterKind kind, int mode)
+        => SizeMultiplier(kind) * (kind == BlastCasterKind.Ifrit && mode == 2 ? 1.5f
+            : kind == BlastCasterKind.Aphrissa && mode == 2 ? 1.4f : 1f);
     internal static float SizeMultiplier(BlastCasterKind kind) => kind switch
     { BlastCasterKind.Ifrit => 1.2f, BlastCasterKind.Aphrissa => 1.5f, _ => 1f };
     internal static Color FluxAccent(BlastCasterKind kind) => kind switch

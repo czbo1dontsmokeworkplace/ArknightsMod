@@ -61,13 +61,13 @@ public sealed class BlastCasterFluxPacket : ModProjectile
         if (fading) { Projectile.friendly = false; Projectile.velocity = Vector2.Zero; Projectile.timeLeft = Math.Min(7, Projectile.timeLeft); }
     }
     private float FlightRange => BlastCasterRules.FlightRange(kind, (int)Projectile.ai[0]) + (redirected ? 320 : 0);
-    private float WidthScale => BlastCasterRules.SizeMultiplier(kind)
-        * (kind == BlastCasterKind.Aphrissa && Projectile.ai[0] == 2 ? 1.4f : 1f);
+    private float WidthScale => BlastCasterRules.ShotSize(kind, (int)Projectile.ai[0]);
     private void ApplySize()
     {
         Vector2 center = Projectile.Center;
         Projectile.width = Projectile.height = (int)MathF.Ceiling(BlastCasterRules.FluxContactRadius * 2 * WidthScale);
         Projectile.Center = center;
+        Projectile.tileCollide = kind == BlastCasterKind.Ifrit && Projectile.ai[0] == 3 && !fading;
     }
     public override bool? CanDamage() => fading ? false : null;
     public override bool ShouldUpdatePosition() => !fading;
@@ -75,6 +75,7 @@ public sealed class BlastCasterFluxPacket : ModProjectile
     {
         if (fading) return;
         fading = true; Projectile.friendly = false; Projectile.extraUpdates = 0;
+        Projectile.tileCollide = false;
         Projectile.numUpdates = -1; Projectile.timeLeft = 7; Projectile.velocity = Vector2.Zero;
         if (Projectile.owner == Main.myPlayer) Projectile.netUpdate = true;
     }
@@ -123,6 +124,9 @@ public sealed class BlastCasterFluxPacket : ModProjectile
     }
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
     {
+        if (kind == BlastCasterKind.Ifrit && Projectile.ai[0] == 3
+            && !Collision.CanHitLine(Projectile.Center, 1, 1,
+                targetHitbox.TopLeft(), targetHitbox.Width, targetHitbox.Height)) return false;
         float radius = BlastCasterRules.FluxContactRadius * WidthScale;
         float contact = 0;
         return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(),
@@ -145,16 +149,19 @@ public sealed class BlastCasterFluxPacket : ModProjectile
             exploded = true;
             SpawnHeat(point, Math.Max(1, Projectile.damage / 2), 0);
         }
-        if (mode == 3)
-        {
-            Player owner = Main.player[Projectile.owner];
-            var runtime = owner.GetModPlayer<BlastCasterPlayer>();
-            if (Main.GameUpdateCount >= runtime.NextScorch && owner.ownedProjectileCounts[ModContent.ProjectileType<BlastCasterHeat>()] < 7)
-            {
-                runtime.NextScorch = Main.GameUpdateCount + 20;
-                SpawnHeat(point, Math.Max(1, Projectile.damage / 3), 1);
-            }
-        }
+    }
+    public override bool OnTileCollide(Vector2 oldVelocity)
+    {
+        if (kind != BlastCasterKind.Ifrit || Projectile.ai[0] != 3) return true;
+        Vector2 normal;
+        if (Projectile.velocity.X != oldVelocity.X && (Projectile.velocity.Y == oldVelocity.Y
+            || Math.Abs(oldVelocity.X) >= Math.Abs(oldVelocity.Y)))
+            normal = new Vector2(-Math.Sign(oldVelocity.X), 0);
+        else normal = new Vector2(0, -Math.Sign(oldVelocity.Y));
+        Vector2 contact = Projectile.Center - normal * (Projectile.width * .5f);
+        IfritSurfaceFlame.Attach(Projectile, contact, normal);
+        Fade();
+        return false;
     }
     private void SpawnHeat(Vector2 point, int damage, int mode)
     {

@@ -134,7 +134,7 @@ public sealed class GatlingPhysicalRound : ModProjectile
     public override string Texture => "Terraria/Images/MagicPixel";
     public override void SetDefaults()
     {
-        Projectile.width = Projectile.height = 6; Projectile.friendly = true;
+        Projectile.width = Projectile.height = 32; Projectile.friendly = true;
         Projectile.DamageType = DamageClass.Ranged; Projectile.penetrate = 1;
         Projectile.tileCollide = true; Projectile.ignoreWater = true;
         Projectile.extraUpdates = 15; Projectile.timeLeft = 18 * 16;

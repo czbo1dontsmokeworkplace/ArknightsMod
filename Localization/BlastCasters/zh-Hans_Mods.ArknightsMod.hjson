@@ -46,6 +46,14 @@ Projectiles: {
 	// ReaperBloodOrbit.DisplayName: Reaper Blood Orbit
 	// ReaperSpin.DisplayName: Reaper Spin
 	// ReaperWave.DisplayName: Reaper Wave
+	// IfritSurfaceFlame.DisplayName: Ifrit Surface Flame
+	// DefenderElectron.DisplayName: Defender Electron
+	// DefenderHoldout.DisplayName: Defender Holdout
+	// DefenderPulse.DisplayName: Defender Pulse
+	// EunectesDash.DisplayName: Eunectes Dash
+	// StandardBearerHoldout.DisplayName: Standard Bearer Holdout
+	// StandardBearerSkill.DisplayName: Standard Bearer Skill
+	// ManagedSkillBodyController.DisplayName: Managed Skill Body Controller
 }
 
 Skills: {
@@ -69,29 +77,29 @@ Skills: {
 
 		2: {
 			Label: 炎爆
-			Desc: 自动强化下一次喷射，造成220%至300%伤害，并在首个命中点引爆一次直径96像素的火团，爆炸造成该次喷射50%的伤害。可储存3次。
+			Desc: 自动强化下一次喷射，造成220%至300%伤害；火焰大小、飞行速度与碰撞尺寸提高至150%。首个命中点引爆直径96像素的火团，造成该次喷射50%的伤害。可储存3次。
 		}
 
 		3: {
 			Label: 灼地
-			Desc: 手动开启，喷射伤害提高50%至110%，命中施加3秒涂油，并每隔至少20帧留下一团持续2秒的余焰；余焰半径48像素，每30帧造成该次喷射三分之一的伤害。
+			Desc: 手动开启，喷射伤害提高50%至110%，命中施加3秒涂油。火焰无法穿透方块，撞击后在方块表面附着持续1秒的火焰；同一表面重复命中刷新持续时间。附着火焰半径48像素，每30帧造成该次喷射三分之一的伤害。
 		}
 	}
 
 	AphrissaProjector: {
 		1: {
 			Label: 连续映射
-			Desc: 手动开启，光学弹幕伤害提高30%至70%，基础总射程由1248像素提高至1680像素。
+			Desc: 手动开启，火焰伤害提高30%至70%，基础总射程由1248像素提高至1680像素。
 		}
 
 		2: {
 			Label: 折光脉冲
-			Desc: 自动强化下一次喷射，造成200%至300%伤害，并扩大光学弹幕宽度。可储存3次。
+			Desc: 自动强化下一次喷射，造成200%至300%伤害，并扩大火焰宽度。可储存3次。
 		}
 
 		3: {
 			Label: 混沌的本质
-			Desc: 手动开启，光学弹幕伤害提高50%至100%，喷射频率提高50%；经过中继器后的伤害再提高25%，命中额外施加3秒灵液。
+			Desc: 手动开启，火焰伤害提高50%至100%，喷射频率提高50%；经过中继器后的伤害再提高25%，命中额外施加3秒灵液。
 		}
 	}
 }

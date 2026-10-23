@@ -1,5 +1,4 @@
 using ArknightsMod.Content.Items.Weapons.Guard.Entelechia;
-using ArknightsMod.Content.Projectiles.Defender.Durnar;
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

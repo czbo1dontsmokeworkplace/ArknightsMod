@@ -10,7 +10,7 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.Items.Weapons.Defender.Horn;
 
 // By T
-public sealed class HornGrenadeLauncher : ExpansionWeaponBase, IShieldGuardWeapon
+public sealed class HornGrenadeLauncher : ExpansionWeaponBase
 {
     protected override int[] EliteDamage => [388, 462, 554]; // 原面板 × 850 / 230，取整。
     public override string Texture => "ArknightsMod/Content/Items/Weapons/Defender/Horn/HornMortar";
@@ -26,6 +26,7 @@ public sealed class HornGrenadeLauncher : ExpansionWeaponBase, IShieldGuardWeapo
         Item.knockBack = 7f;
         Item.shootSpeed = 17f;
         Item.shoot = ModContent.ProjectileType<HornGrenade>();
+        Item.useAmmo = AmmoID.Rocket;
         Item.rare = ItemRarityID.Pink;
         Item.value = Item.sellPrice(gold: 6);
     }
@@ -43,8 +44,8 @@ public sealed class HornGrenadeLauncher : ExpansionWeaponBase, IShieldGuardWeapo
             player.GetModPlayer<HornLauncherPlayer>().Fire(source, damage, knockback);
         return false;
     }
-    public void OnGuardSuccess(Player player) => player.GetModPlayer<HornLauncherPlayer>().CounterReady();
     public override void AddRecipes() => CreateRecipe()
+     .AddIngredient<global::ArknightsMod.Content.Items.Weapons.Defender.FirewhistleLauncher>()
      .AddIngredient<global::ArknightsMod.Content.Items.Material.D32Steel>(1)
      .AddIngredient<global::ArknightsMod.Content.Items.Material.OrironBlock>(2).AddIngredient(ItemID.ObsidianShield)
         .AddIngredient(ItemID.GrenadeLauncher).AddIngredient(ItemID.ChlorophyteBar, 15)

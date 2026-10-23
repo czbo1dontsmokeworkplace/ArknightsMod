@@ -21,7 +21,7 @@ public sealed class CrusherHeldBlade : ModProjectile
     private float aim, attackAim, radius, power = 1, previousAngle, sweepStartAngle, sweepEndAngle;
     private int facing = 1, baseDamage;
     private float baseKnockback;
-    private bool appeared, waveReleased, singleStrike;
+    private bool appeared, pursuitReleased, singleStrike;
     private Item boundItem;
     private Vector2 grip, tip, previousTip, previousCenter, sweepStartCenter, sweepEndCenter;
     private readonly bool[] effectHits = new bool[Main.maxNPCs];
@@ -64,7 +64,7 @@ public sealed class CrusherHeldBlade : ModProjectile
         radius = CrusherRules.Reach(Kind) * state.ReachMultiplier * (forcedSpecial == 3 ? 1.22f : 1) * owner.GetAdjustedItemScale(owner.HeldItem);
         attackAim = (Main.MouseWorld - owner.MountedCenter).SafeNormalize(new Vector2(owner.direction, 0)).ToRotation();
         aim = attackAim; facing = (MathF.Cos(aim) >= 0 ? 1 : -1) * (owner.gravDir < 0 ? -1 : 1);
-        age = 0; idle = hitCount = 0; sequence++; waveReleased = false;
+        age = 0; idle = hitCount = 0; sequence++; pursuitReleased = false;
         Projectile.damage = Math.Max(1, (int)(baseDamage * power)); Projectile.originalDamage = Projectile.damage;
         Projectile.knockBack = baseKnockback; Projectile.CritChance = owner.GetWeaponCrit(owner.HeldItem);
         Array.Clear(Projectile.localNPCImmunity); Array.Clear(effectHits); Projectile.numHits = 0;
@@ -88,10 +88,10 @@ public sealed class CrusherHeldBlade : ModProjectile
         var state = owner.GetModPlayer<CrusherPlayer>();
         if (state.Charging) StopForCharge();
         else {
-            // A click commits a pair. Releasing input never truncates its second stroke.
-            // Peers wait for the owner to start each stroke, so no duplicate waves/skill use.
+            // Finish the current cut on release, but never queue another cut without input.
+            // Only the owner advances strokes and consumes skill resources.
             if (age >= length && local) {
-                if (!singleStrike && stroke == 0) { stroke = 1; BeginStroke(owner); }
+                if (!singleStrike && stroke == 0 && HoldingAttack(owner)) { stroke = 1; BeginStroke(owner); }
                 else { age = -1; recovery = length; Projectile.netUpdate = true; }
             }
             if (recovery > 0) recovery = Math.Max(0, recovery - 1f / (Projectile.extraUpdates + 1));
@@ -107,17 +107,6 @@ public sealed class CrusherHeldBlade : ModProjectile
             if (before < .36f && Progress >= .36f && !Main.dedServ) {
                 SoundEngine.PlaySound(SoundID.Item71 with { Pitch = -.3f + (int)Kind * .05f, Volume = .75f, MaxInstances = 4 }, grip);
             }
-            if (!waveReleased && Progress >= .4f) {
-                waveReleased = true;
-                if (local) {
-                    Vector2 forward = attackAim.ToRotationVector2();
-                    int id = Projectile.NewProjectile(Projectile.GetSource_FromThis(), owner.MountedCenter + forward * 28,
-                        forward * 60, ModContent.ProjectileType<CrusherWave>(), Math.Max(1, (int)(Projectile.damage * .65f)),
-                        Projectile.knockBack * .6f, Projectile.owner, (int)Kind, facing, owner.GetAdjustedItemScale(w.Item) * (1.35f + (int)Kind * .08f));
-                    if (id < Main.maxProjectiles) Main.projectile[id].netUpdate = true;
-                }
-                Projectile.netUpdate = true;
-            }
             if (Projectile.numUpdates == 0 && Progress > .3f && Progress < .7f) CrusherVisuals.Shed(grip, tip, previousTip, Kind, manifestAge);
             idle = 0;
         }
@@ -130,7 +119,7 @@ public sealed class CrusherHeldBlade : ModProjectile
                 }
             }
             UpdatePose(owner);
-            if (Busy || state.Charging) idle = 0;
+            if (state.Charging || HoldingAttack(owner)) idle = 0;
             else if (Projectile.numUpdates == 0 && ++idle >= CrusherRules.IdleTicks + CrusherRules.FadeTicks) { Projectile.Kill(); return; }
             if (Projectile.numUpdates == 0 && manifestAge % 4 == 0) CrusherVisuals.IdleMotes(grip, tip, Kind, Opacity);
         }
@@ -161,10 +150,15 @@ public sealed class CrusherHeldBlade : ModProjectile
         var owner = Main.player[Projectile.owner];
         owner.GetModPlayer<CrusherPlayer>().Hit(target, first, special, skillMode);
         CrusherCombatNet.Hit(Projectile, target);
+        if (Main.myPlayer == Projectile.owner && !pursuitReleased) {
+            pursuitReleased = true;
+            CrusherUpheaval.Release(Projectile, target, Kind, special, skillLevel);
+            Projectile.netUpdate = true;
+        }
         if (Main.myPlayer == Projectile.owner && hitCount <= 5) {
             Vector2 point = target.Hitbox.ClosestPointInRect(tip);
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), point, (tip - previousTip).SafeNormalize((tip - grip).SafeNormalize(Vector2.UnitX)),
-                ModContent.ProjectileType<CrusherImpact>(), 0, 0, Projectile.owner, (int)Kind, first ? 1 : .55f, hitCount);
+                ModContent.ProjectileType<CrusherImpact>(), 0, 0, Projectile.owner, (int)Kind, first ? 1.35f : .7f, hitCount);
         }
     }
     internal void ApplyHitEffects(NPC target)
@@ -186,7 +180,7 @@ public sealed class CrusherHeldBlade : ModProjectile
     {
         w.Write(age); w.Write(length); w.Write(recovery); w.Write(idle); w.Write(sequence); w.Write(stroke); w.Write(singleStrike);
         w.Write(special); w.Write(skillMode); w.Write(aim); w.Write(attackAim); w.Write(radius); w.Write(facing); w.Write(power); w.Write(skillLevel);
-        w.Write(manifestAge); w.Write(waveReleased); w.Write(Projectile.damage); w.Write(Projectile.knockBack); w.Write(Projectile.CritChance);
+        w.Write(manifestAge); w.Write(pursuitReleased); w.Write(Projectile.damage); w.Write(Projectile.knockBack); w.Write(Projectile.CritChance);
     }
     public override void ReceiveExtraAI(BinaryReader r)
     {
@@ -195,7 +189,7 @@ public sealed class CrusherHeldBlade : ModProjectile
         idle = r.ReadInt32(); sequence = r.ReadInt32(); stroke = Math.Clamp(r.ReadInt32(), 0, 1); singleStrike = r.ReadBoolean();
         special = r.ReadInt32(); skillMode = r.ReadInt32(); aim = r.ReadSingle(); attackAim = r.ReadSingle(); radius = Math.Clamp(r.ReadSingle(), 1, 1200);
         facing = r.ReadInt32() >= 0 ? 1 : -1; power = r.ReadSingle(); skillLevel = Math.Clamp(r.ReadInt32(), 1, 10);
-        manifestAge = Math.Clamp(r.ReadInt32(), 0, 1000000); waveReleased = r.ReadBoolean();
+        manifestAge = Math.Clamp(r.ReadInt32(), 0, 1000000); pursuitReleased = r.ReadBoolean();
         Projectile.damage = r.ReadInt32(); Projectile.knockBack = r.ReadSingle(); Projectile.CritChance = r.ReadInt32();
         if (sequence != old) { Array.Clear(Projectile.localNPCImmunity); Array.Clear(effectHits); hitCount = 0; }
         UpdatePose(Main.player[Projectile.owner]); previousAngle = sweepStartAngle = sweepEndAngle = Angle;

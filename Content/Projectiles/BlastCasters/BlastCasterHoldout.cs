@@ -95,7 +95,13 @@ public sealed class BlastCasterHoldout : ModProjectile
         damage = Math.Max(1, (int)(damage * BlastCasterRules.DamageMultiplier(Kind, mode, rank)));
         var source = owner.GetSource_ItemUse_WithPotentialAmmo(weapon.Item, ammo);
         Projectile relay = Kind == BlastCasterKind.Aphrissa ? AphrissaRelay.Find(owner) : null;
-        Projectile shot = Projectile.NewProjectileDirect(source, muzzle, aim * BlastCasterRules.Step(Kind),
+        if (Kind == BlastCasterKind.Ifrit && mode == 3)
+        {
+            int size = (int)MathF.Ceiling(BlastCasterRules.FluxContactRadius * 2 * BlastCasterRules.ShotSize(Kind, mode));
+            muzzle = owner.MountedCenter + Collision.TileCollision(owner.MountedCenter - new Vector2(size * .5f),
+                muzzle - owner.MountedCenter, size, size, true, true);
+        }
+        Projectile shot = Projectile.NewProjectileDirect(source, muzzle, aim * BlastCasterRules.ShotStep(Kind, mode),
             ModContent.ProjectileType<BlastCasterFluxPacket>(), damage, knockback, owner.whoAmI,
             mode, relay?.Center.X ?? -1, relay?.Center.Y ?? -1);
         if (shot.ModProjectile is BlastCasterFluxPacket packet)
@@ -115,7 +121,8 @@ public sealed class BlastCasterHoldout : ModProjectile
             DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
         Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, lightColor,
             Projectile.rotation, origin, BlastCasterRules.GunWidth(Kind) / texture.Width,
-            facing < 0 ? SpriteEffects.FlipVertically : SpriteEffects.None, 0);
+            (facing < 0 ? SpriteEffects.FlipVertically : SpriteEffects.None)
+                | (Kind == BlastCasterKind.Ifrit ? SpriteEffects.FlipHorizontally : SpriteEffects.None), 0);
         BlastCasterVisuals.RestoreBatch();
         return false;
     }

@@ -4,7 +4,7 @@ Items: {
 		Tooltip:
 			'''
 			Chains two swings with a greatsword, then briefly pauses before striking again
-			Each heavy slash releases a piercing wave that sheds homing cores
+			Physical blade hits call a piercing golden crystal from below
 			'''
 	}
 
@@ -13,7 +13,7 @@ Items: {
 		Tooltip:
 			'''
 			Chains two swings with a heavy blade, then briefly pauses before striking again
-			Each heavy slash releases a piercing wave that sheds homing cores
+			Physical blade hits call two rising wind blades from below
 			'''
 	}
 
@@ -22,7 +22,7 @@ Items: {
 		Tooltip:
 			'''
 			Chains two swings with a greatsword, then briefly pauses before striking again
-			Each heavy slash releases a piercing wave that sheds homing cores
+			Physical blade hits erupt into three piercing flames from below
 			Deals 20% increased damage to stunned enemies
 			'''
 	}
@@ -31,8 +31,8 @@ Items: {
 		DisplayName: Ulpianus's Anchor
 		Tooltip:
 			'''
-			Chains two swings with a anchor, then briefly pauses before striking again
-			Each heavy slash releases a piercing wave that sheds homing cores
+			Chains two swings with an anchor, then briefly pauses before striking again
+			Physical anchor hits call a heavy anchor straight up from below with unlimited piercing
 			'''
 	}
 }
@@ -82,7 +82,7 @@ Skills: {
 	UlpianusAnchor: {
 		1: {
 			Label: Contact That Must Be Made
-			Desc: Recover SP over time. At full SP, the next swing throws an extra anchor toward the cursor, dealing 170%-270% damage to up to two enemies and dragging ordinary knockback-vulnerable enemies toward you.
+			Desc: Recover SP over time. At full SP, the next physical swing hit calls an anchor straight up from below, dealing 170%-270% damage with unlimited piercing and dragging the first two ordinary knockback-vulnerable enemies toward you.
 		}
 
 		2: {
@@ -100,6 +100,7 @@ Skills: {
 CrusherStrainDeath: "{0} sank beneath the unquenched embers."
 
 Projectiles: {
+	CrusherUpheaval.DisplayName: Rising Crusher Strike
 	CrusherAnchorFeedback.DisplayName: Abyssal Anchor Impact
 	CrusherWave.DisplayName: Crusher Wave
 	CrusherWaveCore.DisplayName: Guided Light Core

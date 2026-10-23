@@ -49,6 +49,14 @@ public class LeiziFlyingDischarge : ModProjectile
             Projectile.Kill();
             return;
         }
+        // Sky-spawned lightning passes through ceilings. At the owner's height it
+        // permanently becomes tile-colliding, including when it is still inside solid tiles.
+        Projectile.tileCollide |= Projectile.Center.Y >= owner.Center.Y;
+        if (Projectile.tileCollide && Collision.SolidCollision(Projectile.position, Projectile.width, Projectile.height))
+        {
+            Projectile.Kill();
+            return;
+        }
         if (Main.dedServ || Projectile.numUpdates != 0)
             return;
         int phase = (int)Projectile.localAI[0]++;

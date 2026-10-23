@@ -43,13 +43,7 @@ YatoKatana: {
 
 NoirShield: {
 	DisplayName: 盾 [黑角]
-	Tooltip:
-		'''
-		手持武器时：
-		防御力[c/3791db:+5]
-		按住右键额外[c/3791db:+10]
-		没伤害？击退就完事了
-		'''
+	Tooltip: 左键用盾牌推击敌人
 }
 
 DurinWand: {
@@ -1129,8 +1123,12 @@ TacticalBattleRecord: {
 }
 
 NianWeapon: {
-	DisplayName: 剑 [年]
-	Tooltip: ""
+	DisplayName: 剑盾 [年]
+	Tooltip:
+		'''
+		左键挥刀攻击，挥刀与举盾无法同时进行
+		锡灼强化法术斩击，铜印固守反震，铁御强化攻击并保护附近队友
+		'''
 }
 
 WMusicBox: {
@@ -1524,11 +1522,8 @@ PozyomkaBow: {
 
 BeagleWeapon: {
 	DisplayName: 剑盾 [米格鲁]
-	Tooltip:
-		'''
-		按住右键使用盾牌进行格挡，格挡时防御力增加1.5倍
-		“保护大家是我的使命！不管有什么困难，这个信念都不会动摇！”
-		'''
+	FlavorText: “保护大家是我的使命！不管有什么困难，这个信念都不会动摇！”
+	Tooltip: 左键挥剑攻击；技能期间防御力提高25%
 }
 
 TyphonBow: {
@@ -3663,7 +3658,11 @@ LupineScarlet: {
 
 CuoraWeapon: {
 	DisplayName: 盾牌 [蛇屠箱]
-	// Tooltip: ""
+	Tooltip:
+		'''
+		左键挥动球棒攻击，按住右键举盾；挥击与举盾无法同时进行
+		一技能提高防御力；二技能停止攻击、持续举盾并回复生命
+		'''
 }
 
 ClosureScanGun: {
@@ -4184,9 +4183,8 @@ HornGrenadeLauncher: {
 	DisplayName: 榴弹炮盾 [号角]
 	Tooltip:
 		'''
-		发射榴弹轰击敌人；按住右键举盾，举盾时仍可开火
-		格挡时获得40点防御与50%伤害减免，移速降低60%，攻击伤害降低30%
-		成功格挡后5秒内，下一次炮击伤害翻倍
+		消耗火箭弹发射榴弹，造成远程范围伤害
+		举盾时防御力与伤害减免各加50%，仍可正常开火
 		'''
 }
 
@@ -4250,7 +4248,7 @@ NecrassScepter: {
 	DisplayName: 复燃权杖 [死芒]
 	Tooltip:
 		'''
-		连发追踪紫焰，附近敌人死亡时召来仆役协同攻击
+		连发紫焰，附近敌人死亡时召来仆役协同攻击
 		仆役继承本武器的魔法伤害，不占用仆从栏，切换武器后消散
 		'''
 }

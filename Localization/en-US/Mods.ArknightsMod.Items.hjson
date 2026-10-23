@@ -41,13 +41,8 @@ YatoKatana: {
 }
 
 NoirShield: {
-	DisplayName: Shield [Noir]
-	Tooltip:
-		'''
-		holding this shield provides 5 defense
-		rightclick to provide 10 extra defense
-		No damage? Knockback is fine.
-		'''
+	DisplayName: Shield [Noir Corne]
+	Tooltip: Left-click to strike enemies with the shield
 }
 
 DurinWand: {
@@ -1108,8 +1103,12 @@ TacticalBattleRecord: {
 }
 
 NianWeapon: {
-	DisplayName: Sword [Nian]
-	Tooltip: ""
+	DisplayName: Sword and Shield [Nian]
+	Tooltip:
+		'''
+		Slash with left-click; slashing and guarding are mutually exclusive
+		Tin Burning empowers Arts slashes, Copper Seal retaliates, and Iron Defense protects nearby allies
+		'''
 }
 
 WMusicBox: {
@@ -1448,7 +1447,8 @@ PozyomkaBow: {
 
 BeagleWeapon: {
 	DisplayName: Sword and Shield [Beagle]
-	Tooltip: ""
+	FlavorText: Protecting everyone is my mission! No matter the hardship, that conviction will never waver!
+	Tooltip: Left-click to slash; the skill grants 25% DEF
 }
 
 TyphonBow: {
@@ -3336,7 +3336,11 @@ LupineScarlet: {
 
 CuoraWeapon: {
 	DisplayName: Shield [Cuora]
-	Tooltip: ""
+	Tooltip:
+		'''
+		Left-click to swing the bat; hold right-click to guard. Attacking and guarding are mutually exclusive
+		Skill 1 increases defense; skill 2 stops attacks, keeps the shield raised and regenerates life
+		'''
 }
 
 ClosureScanGun: {
@@ -3853,9 +3857,8 @@ HornGrenadeLauncher: {
 	DisplayName: Grenade Shield [Horn]
 	Tooltip:
 		'''
-		Bombards enemies with grenades; hold right-click to raise the shield while continuing to fire
-		Guarding grants 40 defense and 50% damage reduction, but reduces movement speed by 60% and attack damage by 30%
-		After a successful block, the next shot within 5 seconds deals double damage
+		Consumes rockets to bombard enemies with ranged area damage
+		Guarding grants 50% DEF and 50% damage reduction while allowing fire
 		'''
 }
 
@@ -3919,7 +3922,7 @@ NecrassScepter: {
 	DisplayName: Rekindling Scepter [Necrass]
 	Tooltip:
 		'''
-		Fires volleys of homing violet flames; nearby enemy deaths create allied servants
+		Fires volleys of violet flames; nearby enemy deaths create allied servants
 		Servants inherit this weapon's magic damage, use no minion slots, and vanish when you switch weapons
 		'''
 }
