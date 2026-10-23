@@ -80,94 +80,94 @@ Items: {
 	}
 
 	EndfieldNatural: {
-		WulingStone: {
-			Tooltip: ""
-			DisplayName: Wuling Stone
-		}
-
-		TalosFungus: {
-			Tooltip: ""
-			DisplayName: Talos Fungus
-		}
-
-		StargateFungus: {
-			Tooltip: ""
-			DisplayName: Stargate Fungus
-		}
-
-		RedSpearLeaf: {
-			Tooltip: ""
-			DisplayName: Red Spear Leaf
-		}
-
-		PureCrystalMultiLeaf: {
-			Tooltip: ""
-			DisplayName: Pure Crystal Multi Leaf
-		}
-
-		ProtocolPatternStone: {
-			Tooltip: ""
-			DisplayName: Protocol Pattern Stone
-		}
-
-		PerfectCrystalMultiLeaf: {
-			Tooltip: ""
-			DisplayName: Perfect Crystal Multi Leaf
-		}
-
-		MediumUmbralStone: {
-			Tooltip: ""
-			DisplayName: Medium Umbral Stone
+		LightRedColumnFungus: {
+			DisplayName: Light Red Column Fungus
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
 		}
 
 		MediumRedColumnFungus: {
-			Tooltip: ""
 			DisplayName: Medium Red Column Fungus
-		}
-
-		LightUmbralStone: {
-			Tooltip: ""
-			DisplayName: Light Umbral Stone
-		}
-
-		LightRedColumnFungus: {
-			Tooltip: ""
-			DisplayName: Light Red Column Fungus
-		}
-
-		IgnitedStone: {
-			Tooltip: ""
-			DisplayName: Ignited Stone
-		}
-
-		HeavyUmbralStone: {
-			Tooltip: ""
-			DisplayName: Heavy Umbral Stone
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
 		}
 
 		HeavyRedColumnFungus: {
-			Tooltip: ""
 			DisplayName: Heavy Red Column Fungus
-		}
-
-		CrystallizedMultiLeaf: {
-			Tooltip: ""
-			DisplayName: Crystallized Multi Leaf
-		}
-
-		CorrodedJadeLeaf: {
-			Tooltip: ""
-			DisplayName: Corroded Jade Leaf
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
 		}
 
 		BloodFungus: {
-			Tooltip: ""
 			DisplayName: Blood Fungus
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		StargateFungus: {
+			DisplayName: Stargate Fungus
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		TalosFungus: {
+			DisplayName: Talos Fungus
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		CrystallizedMultiLeaf: {
+			DisplayName: Crystallized Multileaf
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		PureCrystalMultiLeaf: {
+			DisplayName: Pure Crystal Multileaf
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		PerfectCrystalMultiLeaf: {
+			DisplayName: Perfect Crystal Multileaf
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
 		}
 
 		AngelicLeaf: {
-			Tooltip: ""
 			DisplayName: Angelic Leaf
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		CorrodedJadeLeaf: {
+			DisplayName: Corroded Jade Leaf
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		RedSpearLeaf: {
+			DisplayName: Red Spear Leaf
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		LightUmbralStone: {
+			DisplayName: Light Umbral Stone
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		MediumUmbralStone: {
+			DisplayName: Medium Umbral Stone
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		HeavyUmbralStone: {
+			DisplayName: Heavy Umbral Stone
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		IgnitedStone: {
+			DisplayName: Ignited Stone
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		WulingStone: {
+			DisplayName: Wuling Stone
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		ProtocolPatternStone: {
+			DisplayName: Protocol Pattern Stone
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
 		}
 	}
 }
@@ -235,6 +235,27 @@ Tiles: {
 	RMA7012Tile.MapEntry: R M A7012 Tile
 	FactoryPlusTile.MapEntry: Factory Plus Tile
 	FogRollingGrass.MapEntry: 雾滚草
+
+	EndfieldNatural: {
+		LightRedColumnFungusTile.MapEntry: Light Red Column Fungus
+		MediumRedColumnFungusTile.MapEntry: Medium Red Column Fungus
+		HeavyRedColumnFungusTile.MapEntry: Heavy Red Column Fungus
+		BloodFungusTile.MapEntry: Blood Fungus
+		StargateFungusTile.MapEntry: Stargate Fungus
+		TalosFungusTile.MapEntry: Talos Fungus
+		CrystallizedMultiLeafTile.MapEntry: Crystallized Multileaf
+		PureCrystalMultiLeafTile.MapEntry: Pure Crystal Multileaf
+		PerfectCrystalMultiLeafTile.MapEntry: Perfect Crystal Multileaf
+		AngelicLeafTile.MapEntry: Angelic Leaf
+		CorrodedJadeLeafTile.MapEntry: Corroded Jade Leaf
+		RedSpearLeafTile.MapEntry: Red Spear Leaf
+		LightUmbralStoneTile.MapEntry: Light Umbral Stone
+		MediumUmbralStoneTile.MapEntry: Medium Umbral Stone
+		HeavyUmbralStoneTile.MapEntry: Heavy Umbral Stone
+		IgnitedStoneTile.MapEntry: Ignited Stone
+		WulingStoneTile.MapEntry: Wuling Stone
+		ProtocolPatternStoneTile.MapEntry: Protocol Pattern Stone
+	}
 }
 
 Projectiles: {
