@@ -50,7 +50,7 @@ Items: {
 			'''
 			地球人类对源石技术那不应该存在的窥测的起点，亦是其终点
 			召唤 进化的本质
-			仅可在夜晚地表使用
+			可在任意时间的地表使用
 			击败全部机械三王后方可召唤
 			'''
 	}
@@ -80,94 +80,94 @@ Items: {
 	}
 
 	EndfieldNatural: {
-		WulingStone: {
-			// Tooltip: ""
-			// DisplayName: Wuling Stone
-		}
-
-		TalosFungus: {
-			// Tooltip: ""
-			// DisplayName: Talos Fungus
-		}
-
-		StargateFungus: {
-			// Tooltip: ""
-			// DisplayName: Stargate Fungus
-		}
-
-		RedSpearLeaf: {
-			// Tooltip: ""
-			// DisplayName: Red Spear Leaf
-		}
-
-		PureCrystalMultiLeaf: {
-			// Tooltip: ""
-			// DisplayName: Pure Crystal Multi Leaf
-		}
-
-		ProtocolPatternStone: {
-			// Tooltip: ""
-			// DisplayName: Protocol Pattern Stone
-		}
-
-		PerfectCrystalMultiLeaf: {
-			// Tooltip: ""
-			// DisplayName: Perfect Crystal Multi Leaf
-		}
-
-		MediumUmbralStone: {
-			// Tooltip: ""
-			// DisplayName: Medium Umbral Stone
+		LightRedColumnFungus: {
+			DisplayName: 轻红柱状菌
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
 		}
 
 		MediumRedColumnFungus: {
-			// Tooltip: ""
-			// DisplayName: Medium Red Column Fungus
-		}
-
-		LightUmbralStone: {
-			// Tooltip: ""
-			// DisplayName: Light Umbral Stone
-		}
-
-		LightRedColumnFungus: {
-			// Tooltip: ""
-			// DisplayName: Light Red Column Fungus
-		}
-
-		IgnitedStone: {
-			// Tooltip: ""
-			// DisplayName: Ignited Stone
-		}
-
-		HeavyUmbralStone: {
-			// Tooltip: ""
-			// DisplayName: Heavy Umbral Stone
+			DisplayName: 中红柱状菌
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
 		}
 
 		HeavyRedColumnFungus: {
-			// Tooltip: ""
-			// DisplayName: Heavy Red Column Fungus
-		}
-
-		CrystallizedMultiLeaf: {
-			// Tooltip: ""
-			// DisplayName: Crystallized Multi Leaf
-		}
-
-		CorrodedJadeLeaf: {
-			// Tooltip: ""
-			// DisplayName: Corroded Jade Leaf
+			DisplayName: 重红柱状菌
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
 		}
 
 		BloodFungus: {
-			// Tooltip: ""
-			// DisplayName: Blood Fungus
+			DisplayName: 血菌
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		StargateFungus: {
+			DisplayName: 星门菌
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		TalosFungus: {
+			DisplayName: 塔罗斯菌
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		CrystallizedMultiLeaf: {
+			DisplayName: 晶化多齿叶
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		PureCrystalMultiLeaf: {
+			DisplayName: 纯晶多齿叶
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		PerfectCrystalMultiLeaf: {
+			DisplayName: 至晶多齿叶
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
 		}
 
 		AngelicLeaf: {
-			// Tooltip: ""
-			// DisplayName: Angelic Leaf
+			DisplayName: 岩天使叶
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		CorrodedJadeLeaf: {
+			DisplayName: 受蚀玉化叶
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		RedSpearLeaf: {
+			DisplayName: 红矛叶
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		LightUmbralStone: {
+			DisplayName: 轻黯石
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		MediumUmbralStone: {
+			DisplayName: 中黯石
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		HeavyUmbralStone: {
+			DisplayName: 重黯石
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		IgnitedStone: {
+			DisplayName: 燎石
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		WulingStone: {
+			DisplayName: 武陵石
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
+		}
+
+		ProtocolPatternStone: {
+			DisplayName: 协议纹石
+			Tooltip: "{$Mods.ArknightsMod.EndfieldNatural.MaterialTooltip}"
 		}
 	}
 }
@@ -235,6 +235,27 @@ Tiles: {
 	// RMA7012Tile.MapEntry: R M A7012 Tile
 	// FactoryPlusTile.MapEntry: Factory Plus Tile
 	FogRollingGrass.MapEntry: 雾滚草
+
+	EndfieldNatural: {
+		LightRedColumnFungusTile.MapEntry: 轻红柱状菌
+		MediumRedColumnFungusTile.MapEntry: 中红柱状菌
+		HeavyRedColumnFungusTile.MapEntry: 重红柱状菌
+		BloodFungusTile.MapEntry: 血菌
+		StargateFungusTile.MapEntry: 星门菌
+		TalosFungusTile.MapEntry: 塔罗斯菌
+		CrystallizedMultiLeafTile.MapEntry: 晶化多齿叶
+		PureCrystalMultiLeafTile.MapEntry: 纯晶多齿叶
+		PerfectCrystalMultiLeafTile.MapEntry: 至晶多齿叶
+		AngelicLeafTile.MapEntry: 岩天使叶
+		CorrodedJadeLeafTile.MapEntry: 受蚀玉化叶
+		RedSpearLeafTile.MapEntry: 红矛叶
+		LightUmbralStoneTile.MapEntry: 轻黯石
+		MediumUmbralStoneTile.MapEntry: 中黯石
+		HeavyUmbralStoneTile.MapEntry: 重黯石
+		IgnitedStoneTile.MapEntry: 燎石
+		WulingStoneTile.MapEntry: 武陵石
+		ProtocolPatternStoneTile.MapEntry: 协议纹石
+	}
 }
 
 Projectiles: {

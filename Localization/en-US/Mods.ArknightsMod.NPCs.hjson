@@ -15,7 +15,7 @@ SnowHound.DisplayName: Snow Hound
 
 Evolution: {
 	DisplayName: Essence of Evolution
-	BossChecklistIntegration.SpawnInfo: After defeating all three mechanical bosses, use the Origin of Evolution on the surface at night. Crafting requires Souls of Might, Sight, and Fright. Above 80% health, the arena has a 75-tile radius. From 80% to 40%, combat is confined to a 62.5-tile-high band with no horizontal limits. Use in an open area.
+	BossChecklistIntegration.SpawnInfo: After defeating all three mechanical bosses, use the Origin of Evolution on the surface at any time. Crafting requires Souls of Might, Sight, and Fright. Above 80% health, the arena has a 75-tile radius. From 80% to 40%, combat is confined to a 62.5-tile-high band with no horizontal limits. Use in an open area.
 }
 
 EvolutionSpider.DisplayName: Mutant Rock Spider

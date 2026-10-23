@@ -6,11 +6,11 @@ namespace ArknightsMod.Content.NPCs.Enemy.MaterialistAntagonizer;
 
 public sealed partial class MaterialistAntagonizer
 {
-    private void RunPayloadBattery(int beat)
+    private void RunPayloadBattery(int beat, int forcedPayload = -1)
     {
         if (!Authority || Order == FlightOrder.Ram) return;
-        int round = Math.Max(0, (Timer - 60) / 180);
-        int payload = Math.Abs(Cycle + round + Wave + Phase) % 3;
+        int round = CoreSerial;
+        int payload = forcedPayload >= 0 ? forcedPayload : Math.Abs(Cycle + round + Wave + Phase) % 3;
         Player player = Main.player[NPC.target];
         if (payload == 0 && beat is 30 or 60)
         {

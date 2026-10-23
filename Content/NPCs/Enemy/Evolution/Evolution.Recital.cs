@@ -30,7 +30,7 @@ internal static class EvolutionRecitalRules
         {
             int group = index / 5, step = index % 5, side = group % 2 == 0 ? -1 : 1;
             float height = .5f + MathF.Sin((group + variation) * .72f) * .34f;
-            Vector2 velocity = (-side * Vector2.UnitX).RotatedBy((step - 2) * .09f) * (9 + group % 3);
+            Vector2 velocity = (-side * Vector2.UnitX).RotatedBy(EvolutionCorridorPressureRules.SideFanAngle(step - 2, .09f)) * (9 + group % 3);
             return new(12 + group * 14, side * 900, height, velocity, EvolutionShot.Barrage, 1400, 42, 172);
         }
         if (attack == 29) // Two voices: top and bottom enter eighteen ticks apart, sharing a gap.
@@ -64,7 +64,7 @@ internal static class EvolutionRecitalRules
             return new(tick + 8, (pulse % 2 == 0 ? -1 : 1) * (360 + pulse % 3 * 180), 0,
                 Vector2.UnitY, EvolutionShot.Beam, EvolutionRules.CorridorHeight - 160, 40, 124, EvolutionBeamStyle.PianoStaccato);
         return new(tick, wing * 850, .25f + pulse % 3 * .25f,
-            (-wing * Vector2.UnitX).RotatedBy((note - 1) * .19f) * (9 + pulse % 3),
+            (-wing * Vector2.UnitX).RotatedBy(EvolutionCorridorPressureRules.SideFanAngle(note - 1, .19f)) * (9 + pulse % 3),
             EvolutionShot.ScoreSeed, 22, 36, 166);
     }
 

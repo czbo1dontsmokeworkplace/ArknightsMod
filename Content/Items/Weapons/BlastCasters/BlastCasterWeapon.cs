@@ -67,7 +67,8 @@ public abstract class BlastCasterWeapon : ExpansionWeaponBase
     {
         base.ModifyTooltips(tooltips);
         tooltips.Add(new TooltipLine(Mod, "BlastSkillKey", GetSkillActivateKeyHint()));
-        tooltips.Add(new TooltipLine(Mod, "BlastPlaceholder", Language.GetTextValue("Mods.ArknightsMod.BlastCasterText.Placeholder")));
+        if (Kind != BlastCasterKind.Ifrit)
+            tooltips.Add(new TooltipLine(Mod, "BlastPlaceholder", Language.GetTextValue("Mods.ArknightsMod.BlastCasterText.Placeholder")));
     }
 }
 
@@ -85,6 +86,7 @@ public sealed class CorroserumFlamethrower : BlastCasterWeapon
 }
 public sealed class IfritFlamethrower : BlastCasterWeapon
 {
+    public override string Texture => "ArknightsMod/Content/Items/Weapons/BlastCasters/IfritFlamethrower";
     public override BlastCasterKind Kind => BlastCasterKind.Ifrit;
     protected override int[] EliteDamage => [55, 65, 75];
     public override void AddRecipes() => CreateRecipe().AddIngredient<CorroserumFlamethrower>()

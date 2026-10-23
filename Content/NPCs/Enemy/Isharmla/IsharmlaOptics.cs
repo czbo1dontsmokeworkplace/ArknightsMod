@@ -89,7 +89,7 @@ public sealed partial class IsharmlaVisuals
     {
         float rotation = direction.ToRotation();
         Vector2 size = IsharmlaRules.BoltSize(kind);
-        if (kind != TideShot.Rain) DrawWaterMaterial(center - direction.SafeNormalize(Vector2.UnitX) * 20, center, 7, Cyan * (.3f * opacity));
+        Orb(center, size * 1.1f, Cyan * (.3f * opacity));
         DrawField(center, size, rotation + (kind == TideShot.Rain ? -MathHelper.PiOver2 : 0), Color.White * opacity, "Lens");
     }
     public static void HazardParticles(IsharmlaHazard h)
@@ -150,6 +150,14 @@ public sealed partial class IsharmlaVisuals
         else if (h.Kind == TideShot.RainCloud && h.Age % 9 == 0)
             TidalParticles.Emit(TideParticle.Mist, h.Projectile.Center + Main.rand.NextVector2Circular(h.Width * .4f, 12), new Vector2(.3f, -.15f),
                 new Vector2(28, 15), Cyan, 55);
+        else if (h.Kind is TideShot.Note or TideShot.CharmNote && h.Age >= h.Delay && h.Age % 7 == 0)
+            TidalParticles.Emit(TideParticle.Note, h.Projectile.Center, -axis * .6f, new Vector2(8, 11),
+                h.Kind == TideShot.CharmNote ? new Color(135, 65, 250) : Cyan, 20);
+        else if (h.Kind == TideShot.StormSpark && h.Age >= h.Delay && h.Age % 5 == 0)
+            TidalParticles.Emit(TideParticle.Prism, h.Projectile.Center, -axis, new Vector2(5), Crest, 16);
+        else if (h.Kind == TideShot.MistField && h.Age % 8 == 0)
+            TidalParticles.Emit(TideParticle.Mist, h.Projectile.Center + Main.rand.NextVector2Circular(h.Width * .65f, h.Width * .65f),
+                new Vector2(.3f, -.3f), new Vector2(22), Azure, 28);
     }
     public static void DragonWake(Vector2 center, Vector2 velocity, float size, int seed, bool bright)
     {

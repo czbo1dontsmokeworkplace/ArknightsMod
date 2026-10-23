@@ -5,7 +5,8 @@ using Terraria;
 namespace ArknightsMod.Content.NPCs.Enemy.Isharmla;
 
 public enum TideStage { Cantor = 1, Leviathan, Covenant, LastSong, LastTide, Finale }
-public enum TideShot { Pearl, Seeker, Column, RainCloud, Rain, Wave, Breath, Gate, Lattice, Mine }
+public enum TideShot { Pearl, Seeker, Column, RainCloud, Rain, Wave, Breath, Gate, Lattice, Mine, Bubble, Typhoon, Tornado, Shark,
+    Note, CharmNote, StormSpark, Bomb, MistField }
 
 // All progression and geometry rules are independent of rendering and networking.
 public static class IsharmlaRules
@@ -22,12 +23,13 @@ public static class IsharmlaRules
     public static float SegmentDistance(int order)
     {
         float distance = 58;
-        for (int i = 1; i <= order; i++) distance += (SegmentSpan(i - 1) + SegmentSpan(i)) * .5f - 52;
+        for (int i = 1; i <= order; i++) distance += (SegmentSpan(i - 1) + SegmentSpan(i)) * .5f - 72;
         return distance;
     }
     public static Vector2 BoltSize(TideShot kind) => kind switch
     {
         TideShot.Rain => new Vector2(9, 23), TideShot.Seeker => new Vector2(20, 24),
+        TideShot.Note or TideShot.CharmNote => new Vector2(22, 26), TideShot.StormSpark => new Vector2(26),
         _ => new Vector2(18, 18)
     };
     public static int HumanFloor(int maximum, TideStage stage) => stage switch
@@ -49,5 +51,24 @@ public static class IsharmlaRules
         joint - (artAnchor - origin).RotatedBy(angle) * scale;
     public static float Smooth(float v) => MathHelper.SmoothStep(0, 1, MathHelper.Clamp(v, 0, 1));
     public static int FinalePattern(int timer) => Math.Clamp(timer / 540, 0, 3);
+    public static bool IsLineShot(TideShot kind) => kind is TideShot.Column or TideShot.Breath or TideShot.Gate or TideShot.Lattice;
+    public static bool AllowsLineShot(int total, int lines) => (lines + 1) * 5 <= total + 1;
+    public static float FinaleOpacity(int timer, int transition) =>
+        1 - Smooth((transition > 0 ? 180 - transition : 180 + timer) / 300f);
+    // Offsets are frozen around the target when a phrase begins. No zone follows the player.
+    public static Vector2[] FinaleOffsets(int pattern, int wave)
+    {
+        float turn = wave * MathHelper.PiOver2;
+        if (pattern == 0) return new[] { new Vector2(-430, -300), new Vector2(430, -300), new Vector2(-430, 300), new Vector2(430, 300) };
+        if (pattern == 1) return new[] { new Vector2(380, -270).RotatedBy(turn), new Vector2(520, 50).RotatedBy(turn),
+            new Vector2(380, 270).RotatedBy(turn) };
+        if (pattern == 2)
+        {
+            var result = new Vector2[6];
+            for (int i = 0; i < result.Length; i++) result[i] = (turn + (i + 1.5f) * MathHelper.TwoPi / 8).ToRotationVector2() * 510;
+            return result;
+        }
+        return new[] { new Vector2(-600, -260), new Vector2(-300, 260), new Vector2(300, -260), new Vector2(600, 260) };
+    }
     public static int HitLimit(int life, int floor) => Math.Max(1, life - floor);
 }

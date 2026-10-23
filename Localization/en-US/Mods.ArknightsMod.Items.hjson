@@ -3988,7 +3988,7 @@ MaterialistUplink: {
 	DisplayName: Construction Uplink
 	Tooltip:
 		'''
-		Summons the Materialist Antagonizer only on the surface at night after Plantera has been defeated
+		Summons the Materialist Antagonizer on the surface at any time after Plantera has been defeated
 		Not consumed
 		'''
 }
@@ -4000,6 +4000,8 @@ DroneCommandCore: {
 		Increases your max number of minions by 1
 		Increases summon damage by 8% and defense by 4
 		A mechanical core recovered from a runaway command network
+		Summons a friendly Arts Master A2 without using a minion slot
+		When injured, its green laser restores up to 120 life, with a 15-second healing cooldown
 		'''
 }
 

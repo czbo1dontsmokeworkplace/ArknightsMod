@@ -24,7 +24,7 @@ public sealed class MaterialistUplink : ModItem
         Item.scale = .18f;
         Item.useTime = Item.useAnimation = 45; Item.consumable = false;
     }
-    public override bool CanUseItem(Player player) => NPC.downedPlantBoss && !Main.dayTime &&
+    public override bool CanUseItem(Player player) => NPC.downedPlantBoss &&
         player.ZoneOverworldHeight && !NPC.AnyNPCs(ModContent.NPCType<MaterialistAntagonizer>());
     public override bool? UseItem(Player player)
     {
@@ -68,6 +68,7 @@ public sealed class DroneCommandCore : ModItem
         player.maxMinions++;
         player.GetDamage(DamageClass.Summon) += .08f;
         player.statDefense += 4;
+        player.GetModPlayer<DroneCoreMedicPlayer>().Equipped = true;
     }
     public override bool PreDrawInInventory(SpriteBatch batch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
     {

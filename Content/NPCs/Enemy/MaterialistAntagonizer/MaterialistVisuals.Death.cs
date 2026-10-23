@@ -93,7 +93,7 @@ internal static partial class MaterialistVisuals
             Vector2 point = center + new Vector2(MathF.Cos(angle) * radius, MathF.Sin(angle) * radius * .65f);
             float fade = MathF.Sin(time * MathHelper.Pi) * build * .55f;
             Texture2D pixel = TextureAssets.MagicPixel.Value;
-            Main.spriteBatch.Draw(pixel, point - Main.screenPosition, null,
+            Main.spriteBatch.Draw(pixel, point - Main.screenPosition, new Rectangle(0, 0, 1, 1),
                 (MaterialistDeathRules.Tint(i) with { A = 0 }) * fade, 0, new Vector2(.5f),
                 new Vector2(2 + i % 4), SpriteEffects.None, 0);
         }
@@ -108,25 +108,25 @@ internal static partial class MaterialistVisuals
         // Native textured beam layers, not hostile beam entities; the whole batch shares one material pass.
         MaterialistTechRenderer.NativeLaser(() =>
         {
-            for (int birth = 48; birth < MaterialistDeathRules.Finale; birth += 14)
+            for (int birth = 48; birth < MaterialistDeathRules.Finale; birth += 32)
             {
                 int elapsed = age - birth;
-                if (elapsed < 0 || elapsed >= 42) continue;
-                int count = Reduced ? 1 : birth >= 156 ? 5 : birth >= 90 ? 3 : 2;
-                float fade = 1 - MaterialistDeathRules.Smooth(24, 42, elapsed);
+                if (elapsed < 0 || elapsed >= 28) continue;
+                int count = Reduced ? 1 : 2;
+                float fade = 1 - MaterialistDeathRules.Smooth(14, 28, elapsed);
                 float grow = MaterialistDeathRules.Smooth(6, 18, elapsed);
                 for (int i = 0; i < count; i++)
                 {
                     float angle = MaterialistDeathRules.Hash(birth * 13 + i * 7) * MathHelper.TwoPi + rotation;
                     Vector2 axis = angle.ToRotationVector2();
                     Vector2 origin = center + axis * (38 + i * 16);
-                    float length = (620 + MaterialistDeathRules.Hash(birth + i) * 480) * grow;
-                    float width = (12 + birth * .10f) * grow * fade;
+                    float length = (140 + MaterialistDeathRules.Hash(birth + i) * 120) * grow;
+                    float width = (6 + birth * .025f) * grow * fade;
                     Color tint = MaterialistDeathRules.Tint(i + birth / 14);
                     if (length < 1) continue;
                     if (!Reduced) DrawTerminalBeamLayer(start, middle, end, origin, axis, length, width * 2, tint * (.2f * fade), age);
-                    DrawTerminalBeamLayer(start, middle, end, origin, axis, length, width, tint * (.9f * fade), age);
-                    DrawTerminalBeamLayer(start, middle, end, origin, axis, length, width * .33f, Color.White * (.9f * fade), age);
+                    DrawTerminalBeamLayer(start, middle, end, origin, axis, length, width, tint * (.40f * fade), age);
+                    DrawTerminalBeamLayer(start, middle, end, origin, axis, length, width * .33f, Color.White * (.40f * fade), age);
                 }
             }
         });
@@ -148,7 +148,7 @@ internal static partial class MaterialistVisuals
 
     private static void DrawTerminalCuts(Vector2 center, int age)
     {
-        for (int birth = 72; birth < MaterialistDeathRules.Finale; birth += Reduced ? 22 : 11)
+        for (int birth = 72; birth < MaterialistDeathRules.Finale; birth += Reduced ? 40 : 28)
         {
             int elapsed = age - birth;
             if (elapsed < 0 || elapsed >= 28) continue;
@@ -157,7 +157,7 @@ internal static partial class MaterialistVisuals
             Vector2 axis = angle.ToRotationVector2(), normal = axis.RotatedBy(MathHelper.PiOver2);
             Vector2 point = center + normal * MathHelper.Lerp(-95, 95, MaterialistDeathRules.Smooth(0, 20, elapsed));
             Color tint = MaterialistDeathRules.Tint(birth / 11);
-            float length = 420 + birth * 2;
+            float length = 190 + birth * .45f;
             if (!MaterialistTechRenderer.DeathCut(point, new Vector2(length, 42 + birth * .15f), angle, tint * fade, t, age / 60f))
             {
                 Glow(point, tint * (.35f * fade), new Vector2(length, 32), angle);
@@ -172,19 +172,19 @@ internal static partial class MaterialistVisuals
         float fade = MathF.Pow(Math.Max(0, 1 - t), 1.5f);
         if (fade <= 0) return;
         float expand = MathF.Sqrt(t);
-        int layers = Reduced ? 2 : 4;
+        int layers = Reduced ? 1 : 2;
         for (int i = 0; i < layers; i++)
-            DrawSquareWave(center, (95 + expand * 650) * (1 - i * .12f),
+            DrawSquareWave(center, (65 + expand * 210) * (1 - i * .12f),
                 MaterialistDeathRules.Tint(i) * (fade * .6f), MathHelper.PiOver4 + i * .06f, 2 + fade * 4);
-        Glow(center, Cyan * (fade * .6f), new Vector2(300 + expand * 700, 170 + expand * 300));
-        Glow(center, White * (fade * .8f), new Vector2(640 + expand * 300, 12 + fade * 42));
+        Glow(center, Cyan * (fade * .6f), new Vector2(150 + expand * 210, 100 + expand * 100));
+        Glow(center, White * (fade * .8f), new Vector2(180 + expand * 140, 8 + fade * 18));
         Glow(center, Color.White * (fade * .6f), new Vector2(70 + expand * 150));
-        int rays = Reduced ? 6 : 24;
+        int rays = Reduced ? 4 : 8;
         for (int i = 0; i < rays; i++)
         {
             Vector2 axis = (i * MathHelper.TwoPi / rays + .15f).ToRotationVector2();
-            Vector2 point = center + axis * (80 + expand * 580);
-            Glow(point, MaterialistDeathRules.Tint(i) * (.45f * fade), new Vector2(65 + fade * 140, 3 + fade * 8), axis.ToRotation());
+            Vector2 point = center + axis * (50 + expand * 230);
+            Glow(point, MaterialistDeathRules.Tint(i) * (.45f * fade), new Vector2(24 + fade * 40, 2 + fade * 3), axis.ToRotation());
         }
     }
     private static void DrawSquareWave(Vector2 point, float radius, Color tint, float angle, float width)

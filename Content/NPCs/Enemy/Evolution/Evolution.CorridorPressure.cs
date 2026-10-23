@@ -7,6 +7,19 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution;
 internal static class EvolutionCorridorPressureRules
 {
     internal const float Speed = 1.3f;
+    // A shared stationary passage survives every horizontal voice and its density copies.
+    internal const float LaserGapHalfHeight = 64;
+    internal static bool IsHorizontalLaser(EvolutionShot kind, Vector2 velocity) =>
+        kind is EvolutionShot.Beam or EvolutionShot.Spike && Math.Abs(velocity.X) >= .001f && Math.Abs(velocity.Y) <= Math.Abs(velocity.X) * .001f;
+    internal static float LaserGapCenter(float snapshotY, float top, float bottom) =>
+        Math.Clamp(snapshotY, top + LaserGapHalfHeight + 96, bottom - LaserGapHalfHeight - 96);
+    internal static bool LaserLaneAllowed(EvolutionShot kind, Vector2 origin, Vector2 velocity, Vector2 snapshot,
+        float top, float bottom, float collisionWidth)
+    {
+        if (!IsHorizontalLaser(kind, velocity)) return true;
+        return Math.Abs(origin.Y - LaserGapCenter(snapshot.Y, top, bottom)) > LaserGapHalfHeight + collisionWidth * .5f;
+    }
+    internal static float SideFanAngle(float slot, float spacing) => slot * spacing * 1.2f;
     internal const int ApproachLimit = 25;
     internal static bool ShouldApproach(int time, float distance) => time >= 0 && time < ApproachLimit && distance > 1300;
     internal static bool ExtraShot(int ordinal) => ordinal > 0 && ordinal % 2 == 0;

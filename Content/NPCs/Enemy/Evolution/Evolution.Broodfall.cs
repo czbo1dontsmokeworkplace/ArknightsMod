@@ -12,8 +12,13 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution;
 internal static class EvolutionBroodfallRules
 {
     internal const int Lock = 0, Launch = 15, Impact = 24;
-    internal const int Escape = 28, FirstFan = Impact + Escape, SecondFan = FirstFan + 104;
-    internal const int Birth = SecondFan + 120, Duration = Birth + 172;
+    internal const int Escape = 28, FirstFan = Impact + Escape, MirrorPause = 42;
+    internal static int FanWindow => EvolutionCorridorPressureRules.FanDelay(FanWarning) + FanActive + FanFade;
+    internal static int CeilingFirst => FirstFan + FanWindow + MirrorPause;
+    internal static int SecondFan => CeilingFirst + FanWindow + MirrorPause;
+    internal static int CeilingSecond => SecondFan + FanWindow + MirrorPause;
+    internal static int Birth => CeilingSecond + FanWindow + 24;
+    internal static int Duration => Birth + 172;
     internal const int FanWarning = 48, FanActive = 18, FanFade = 36;
     internal const float FanReach = 1100 * EvolutionRules.LaserReachMultiplier, FanWidth = 48, Gravity = .24f;
     internal const int FanRayCount = 9;
@@ -63,7 +68,7 @@ public sealed partial class Evolution
         }
         if (t >= EvolutionBroodfallRules.Impact)
         {
-            if (t < EvolutionBroodfallRules.Birth + 72) { NPC.Center = CrashGround; NPC.velocity = Vector2.Zero; }
+            if (t < EvolutionBroodfallRules.Birth + 72) { NPC.Center = t >= EvolutionBroodfallRules.CeilingFirst && t < EvolutionBroodfallRules.SecondFan || t >= EvolutionBroodfallRules.CeilingSecond && t < EvolutionBroodfallRules.Birth ? CrashCeiling : CrashGround; NPC.velocity = Vector2.Zero; }
             else HoverLow(player);
             ReleaseCrashPassenger();
         }
@@ -72,6 +77,12 @@ public sealed partial class Evolution
                 delay: EvolutionBroodfallRules.FanWarning,
                 lifetime: EvolutionBroodfallRules.FanWarning + EvolutionBroodfallRules.FanActive + EvolutionBroodfallRules.FanFade + 16,
                 beamStyle: EvolutionBeamStyle.Refracted);
+        if (t == EvolutionBroodfallRules.CeilingFirst || t == EvolutionBroodfallRules.CeilingSecond)
+        {
+            CeilingImpact();
+            Shoot(EvolutionShot.CrashFan, CeilingSlamMuzzle, -Vector2.UnitY,
+                delay: EvolutionBroodfallRules.FanWarning, lifetime: 128, beamStyle: EvolutionBeamStyle.Refracted);
+        }
         if (t >= EvolutionBroodfallRules.Birth && t <= EvolutionBroodfallRules.Birth + 54 &&
             (t - EvolutionBroodfallRules.Birth) % 18 == 0)
         {

@@ -12,13 +12,34 @@ namespace ArknightsMod.Content.Projectiles.Guard.Reaper;
 public sealed class ReaperWave : ModProjectile
 {
     private int age,hits;
+    // Integrate the previous flight curve and stretch its timeline by 1.5 / 1.3.
+    // This independently guarantees +30% launch speed and +50% no-hit travel distance.
+    private const float TimeStretch = 1.5f / 1.3f;
+    private static readonly float[] referenceDistance = BuildReferenceDistance();
+    private static float[] BuildReferenceDistance()
+    {
+        float[] result = new float[91];
+        float speed = 14;
+        for (int i = 0; i < 90; i++) {
+            speed *= i < 12 ? 1.02f : .9f;
+            if (speed < .12f) speed = 0;
+            result[i + 1] = result[i] + speed;
+        }
+        return result;
+    }
+    private static float DistanceAt(float time)
+    {
+        float t = Math.Clamp(time, 0, 90);
+        int i = Math.Min((int)t, 89);
+        return MathHelper.Lerp(referenceDistance[i], referenceDistance[i + 1], t - i);
+    }
     public override string Texture => "Terraria/Images/MagicPixel";
     internal static int Spawn(Player owner, IEntitySource source, Vector2 point, Vector2 velocity, int damage, float knockback, ReaperKind kind)
         => Projectile.NewProjectile(source, point, velocity, ModContent.ProjectileType<ReaperWave>(), Math.Max(1, damage), knockback, owner.whoAmI, (int)kind, owner.selectedItem);
     public override void SetDefaults()
     {
         Projectile.width=Projectile.height=100;Projectile.friendly=true;Projectile.DamageType=DamageClass.Melee;
-        Projectile.tileCollide=false;Projectile.ignoreWater=true;Projectile.timeLeft=90;Projectile.penetrate=7;
+        Projectile.tileCollide=false;Projectile.ignoreWater=true;Projectile.timeLeft=104;Projectile.penetrate=7;
         Projectile.usesLocalNPCImmunity=true;Projectile.localNPCHitCooldown=-1;
     }
     public override void OnSpawn(IEntitySource source){Projectile.rotation=Projectile.velocity.ToRotation();}
@@ -26,10 +47,11 @@ public sealed class ReaperWave : ModProjectile
     public override void AI()
     {
         // Fixed heading, no target searches. Accelerate briefly, then brake to a stop.
-        if(age++<12)Projectile.velocity*=1.02f;else Projectile.velocity*=.9f;
-        if(Projectile.velocity.LengthSquared()<.12f*.12f)Projectile.velocity=Vector2.Zero;
+        float distance = (DistanceAt((age + 1) / TimeStretch) - DistanceAt(age / TimeStretch)) * 1.5f;
+        Projectile.velocity = Projectile.rotation.ToRotationVector2() * (distance * MathF.Pow(.9f, hits));
+        age++;
         Projectile.Opacity=Math.Min(1,age/4f)*Math.Min(1,Projectile.timeLeft/18f);
-        if(age%4==0)ReaperVisuals.Shed(Projectile.Center,-Projectile.rotation.ToRotationVector2(),(ReaperKind)(int)Projectile.ai[0]);
+        if(age%3==0)ReaperVisuals.WaveMotes(Projectile);
     }
     public override bool? Colliding(Rectangle a,Rectangle b)
     {

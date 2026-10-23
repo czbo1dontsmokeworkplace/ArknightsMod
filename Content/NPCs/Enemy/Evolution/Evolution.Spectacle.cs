@@ -14,7 +14,7 @@ public sealed partial class Evolution
         bool newTurn = spectacleSerial != Serial || spectaclePhase != Phase;
         int previous = newTurn ? Timer - 1 : spectacleTimer;
         bool Crossed(int tick) => previous < tick && Timer >= tick && Timer - tick < 5;
-        if (spectaclePhase != Phase && spectaclePhase >= 0 && Phase >= 2)
+        if (spectaclePhase != Phase && spectaclePhase >= 0 && Phase >= 2 && Phase != 6)
             EvolutionBloodSpectacleSystem.Emit(NPC.Center, -Vector2.UnitY,
                 Phase == 6 ? EvolutionBloodCue.Rupture : EvolutionBloodCue.Echo, ThemeColor, Phase >= 4 ? 1.8f : 1.3f,
                 Phase == 6 ? EvolutionPresentationRules.DeathExpansionScale : 1);
@@ -35,18 +35,20 @@ public sealed partial class Evolution
         {
             int fire = EvolutionRules.AxisSetupTicks + EvolutionRules.FireTime(EvolutionShot.Beam,
                 EvolutionRules.ProjectileWarning(EvolutionShot.Beam, EvolutionRules.AxisChargeTicks, true));
-            if (Crossed(fire)) EvolutionBloodSpectacleSystem.Emit(NPC.Center, -Vector2.UnitY, EvolutionBloodCue.Axis, ThemeColor, 2);
+            if (Crossed(fire)) EvolutionBloodSpectacleSystem.Emit(NPC.Center, -Vector2.UnitY, EvolutionBloodCue.Axis, ThemeColor, 2, follow: this);
             if (Timer > fire && Timer < fire + EvolutionRules.AxisActiveTicks && (Timer - fire) % 84 == 0 && Timer != previous)
-                EvolutionBloodSpectacleSystem.Emit(NPC.Center, -Vector2.UnitY, EvolutionBloodCue.Echo, ThemeColor, 1.15f);
+                EvolutionBloodSpectacleSystem.Emit(NPC.Center, -Vector2.UnitY, EvolutionBloodCue.Echo, ThemeColor, 1.15f, follow: this);
         }
         if (Phase == 6)
         {
             if (Crossed(EvolutionPresentationRules.DeathFinale))
                 EvolutionBloodSpectacleSystem.Emit(NPC.Center, -Vector2.UnitY, EvolutionBloodCue.Finale, ThemeColor, 2.2f,
-                    EvolutionPresentationRules.DeathExpansionScale);
-            else if (Timer < EvolutionPresentationRules.DeathFinale && Timer % 10 == 0 && Timer != previous)
+                    EvolutionPresentationRules.DeathExpansionScale, density: EvolutionPresentationRules.DeathDensity,
+                    opacity: EvolutionPresentationRules.DeathOpacity, intensity: EvolutionPresentationRules.DeathIntensity);
+            else if (Timer < EvolutionPresentationRules.DeathFinale && EvolutionPresentationRules.DeathBurst(Timer) && Timer != previous)
                 EvolutionBloodSpectacleSystem.Emit(EvolutionPresentationRules.DeathPoint(NPC.Center, Timer, 0),
-                    -Vector2.UnitY, EvolutionBloodCue.Rupture, ThemeColor, 1 + Timer / 180f, EvolutionPresentationRules.DeathExpansionScale);
+                    -Vector2.UnitY, EvolutionBloodCue.Rupture, ThemeColor, 1 + Timer / 180f, EvolutionPresentationRules.DeathExpansionScale,
+                    density: EvolutionPresentationRules.DeathDensity, opacity: EvolutionPresentationRules.DeathOpacity, intensity: EvolutionPresentationRules.DeathIntensity);
         }
         spectaclePhase = Phase; spectacleSerial = Serial; spectacleTimer = Timer; spectacleCharging = Charging;
     }

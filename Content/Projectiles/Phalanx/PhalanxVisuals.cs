@@ -65,7 +65,11 @@ public sealed class PhalanxVisuals : ModSystem
         if (!DrawSurface(center, tier, opacity, flash, rotation))
             Glow(center - Main.screenPosition, new Vector2(232), Palette(tier) * (opacity * .2f));
     }
-    private static bool DrawSurface(Vector2 center, int tier, float opacity, float flash, float rotation)
+    internal static bool ShieldSurface(Vector2 center, Vector2 size, Color color, float opacity)
+        => DrawSurface(center, 0, opacity, 0, Main.GlobalTimeWrappedHourly * .22f, size, color);
+
+    private static bool DrawSurface(Vector2 center, int tier, float opacity, float flash, float rotation,
+        Vector2? requestedSize = null, Color? requestedColor = null)
     {
         if (failed) return false;
         GraphicsDevice device = Main.instance.GraphicsDevice;
@@ -78,7 +82,7 @@ public sealed class PhalanxVisuals : ModSystem
             // Keep the compiled effect local: no dependency on Fran or Luminance.
             barrier ??= new Effect(device, ModContent.GetInstance<global::ArknightsMod.ArknightsMod>()
                 .GetFileBytes("Assets/Effects/Phalanx/PhalanxBarrier.fxc"));
-            Color color = Palette(tier);
+            Color color = requestedColor ?? Palette(tier);
             barrier.Parameters["globalTime"].SetValue(Main.GlobalTimeWrappedHourly);
             barrier.Parameters["uShieldColor"].SetValue((color * .55f).ToVector3());
             barrier.Parameters["uEdgeColor"].SetValue(Color.Lerp(color, Color.White, flash * .75f).ToVector3());
@@ -99,7 +103,7 @@ public sealed class PhalanxVisuals : ModSystem
                 barrier.Parameters["uLayer"].SetValue((float)layer);
                 barrier.CurrentTechnique.Passes[0].Apply();
                 Main.spriteBatch.Draw(noise, center - Main.screenPosition, null, Color.White, 0,
-                    noise.Size() / 2, new Vector2(diameter * (1 + layer * .025f)) / noise.Size(), SpriteEffects.None, 0);
+                    noise.Size() / 2, (requestedSize ?? new Vector2(diameter)) * (1 + layer * .025f) / noise.Size(), SpriteEffects.None, 0);
             }
             return true;
         }

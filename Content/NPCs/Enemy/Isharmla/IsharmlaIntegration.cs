@@ -42,16 +42,6 @@ public sealed class IsharmlaWorld : ModSystem
         int i = NPC.FindFirstNPC(ModContent.NPCType<Isharmla>());
         return i >= 0 ? Main.npc[i].ModNPC as Isharmla : null;
     }
-    public override void PostDrawInterface(SpriteBatch batch)
-    {
-        if (ActiveBoss() is not { Initialized: true } boss) return;
-        if (boss.Transition > 0 && boss.Stage == TideStage.Leviathan)
-            Utils.DrawBorderString(batch, Language.GetTextValue("Mods.ArknightsMod.IsharmlaText.Arrival", (boss.Transition + 59) / 60),
-                new Vector2(Main.screenWidth / 2, Main.screenHeight * .27f), Color.Gold, 1.1f, .5f);
-        if (boss.Stage == TideStage.Finale)
-            Utils.DrawBorderString(batch, Language.GetTextValue("Mods.ArknightsMod.IsharmlaText.FinaleTime", Math.Max(0, (IsharmlaRules.FinaleTime - boss.Timer + 59) / 60)),
-                new Vector2(Main.screenWidth / 2, Main.screenHeight * .20f), IsharmlaVisuals.Cyan, .8f, .5f);
-    }
 }
 
 public sealed class IsharmlaPlayer : ModPlayer

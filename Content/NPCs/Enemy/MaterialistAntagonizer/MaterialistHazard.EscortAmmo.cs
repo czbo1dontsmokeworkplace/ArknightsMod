@@ -11,18 +11,15 @@ public sealed partial class MaterialistHazard
         if (Kind is DroneShot.ScoutPulse or DroneShot.ArtsOrb) Projectile.penetrate = 1;
         if (Kind != DroneShot.ArtsOrb || flight < 0) return;
         bool valid = Target >= 0 && Target < Main.maxPlayers && Main.player[Target].active && !Main.player[Target].dead;
-        if (MaterialistAntagonizer.Authority && !RocketCommitted &&
-            (flight >= 72 || !valid || Vector2.DistanceSquared(Projectile.Center, Main.player[Target].Center) < 110 * 110))
+        if (valid && flight >= 8)
         {
-            RocketCommitted = true;
-            Projectile.netUpdate = true;
-        }
-        if (!RocketCommitted && valid && flight is >= 18 and < 72)
-        {
-            float desired = (Main.player[Target].Center - Projectile.Center).ToRotation();
-            float maximumTurn = MathHelper.ToRadians(1);
+            Vector2 delta = Main.player[Target].Center - Projectile.Center;
+            float desired = delta.ToRotation();
+            float distanceFactor = MathHelper.Clamp((delta.Length() - 80) / 520f, 0, 1);
+            float maximumTurn = MathHelper.ToRadians(MathHelper.Lerp(.08f, 5, distanceFactor * distanceFactor));
             float turn = MathHelper.Clamp(MathHelper.WrapAngle(desired - Projectile.velocity.ToRotation()), -maximumTurn, maximumTurn);
-            Projectile.velocity = Projectile.velocity.RotatedBy(turn).SafeNormalize(Vector2.UnitY) * MaterialistRules.ArtsOrbSpeed;
+            Projectile.velocity = Projectile.velocity.RotatedBy(turn).SafeNormalize(Vector2.UnitY) *
+                (MaterialistRules.ArtsOrbSpeed / MaterialistRules.ArtsOrbUpdates);
             if (MaterialistAntagonizer.Authority && flight % 18 == 0) Projectile.netUpdate = true;
         }
         if (!Main.dedServ)

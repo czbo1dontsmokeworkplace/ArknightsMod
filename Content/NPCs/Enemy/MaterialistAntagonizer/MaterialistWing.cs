@@ -66,8 +66,7 @@ public sealed partial class MaterialistWing : GlobalNPC
             npc.velocity *= .9f;
             return false;
         }
-        if (boss == null || boss.Order == FlightOrder.Death ||
-            !boss.FinalStand && Role(npc) != WingRole.Raptor && Age > MaterialistRules.EscortLifetime) Retreating = true;
+        if (boss == null || boss.Order == FlightOrder.Death) Retreating = true;
         if (Retreating)
         {
             npc.dontTakeDamage = true;

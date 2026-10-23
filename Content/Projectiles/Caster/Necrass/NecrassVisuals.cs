@@ -109,6 +109,15 @@ internal static class NecrassVisuals
             dust.noGravity = true;
         }
     }
+    internal static void LingeringWake(Vector2 center,Vector2 velocity)
+    {
+        if(Main.dedServ||ParticleManager.activeParticles.Count>=1050||Vector2.DistanceSquared(center,
+            Main.screenPosition+new Vector2(Main.screenWidth,Main.screenHeight)*.5f)>1800*1800)return;
+        Vector2 side=velocity.SafeNormalize(Vector2.UnitX).RotatedBy(MathHelper.PiOver2);
+        Vector2 point=center+side*Main.rand.NextFloat(-11,11);
+        Vector2 drift=Main.rand.NextVector2Circular(.22f,.22f)-Vector2.UnitY*Main.rand.NextFloat(.03f,.16f);
+        new T_Lingering_MagicMote(point,drift,Violet,Lilac,Main.rand.Next(50,77),Main.rand.NextFloat(7,12)).Spawn();
+    }
     internal static void Bolt(Projectile projectile)
     {
         for (int i = projectile.oldPos.Length - 1; i > 0; i--)

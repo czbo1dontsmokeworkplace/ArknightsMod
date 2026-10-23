@@ -78,7 +78,7 @@ internal static partial class MaterialistVisuals
     }
     private static void DrawArtilleryBattery(MaterialistAntagonizer boss)
     {
-        int beat = MaterialistTactics.Beat(boss.Timer);
+        int beat = boss.CoreBeat;
         for (int side = -1; side <= 1; side += 2)
         {
             Vector2 port = boss.RocketPort(side);

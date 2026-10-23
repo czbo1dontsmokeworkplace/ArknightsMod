@@ -21,7 +21,8 @@ public sealed partial class MaterialistHazard
         Projectile.tileCollide = false;
         // Disable damage before exposing the retirement state to any visual/movement code.
         RetirementAge = 0;
-        Projectile.timeLeft = (RetirementTicks + 5) * (Kind == DroneShot.MachineRound ? MaterialistRules.MachineUpdates : 1);
+        Projectile.timeLeft = (RetirementTicks + 5) * (Kind == DroneShot.MachineRound ? MaterialistRules.MachineUpdates :
+            Kind == DroneShot.ArtsOrb ? MaterialistRules.ArtsOrbUpdates : 1);
         // A cancelled dormant shot departs as a harmless tracer, without executing its launch effects.
         if (Moving && Projectile.velocity.LengthSquared() < 1)
             Projectile.velocity = Projectile.rotation.ToRotationVector2() * 3;

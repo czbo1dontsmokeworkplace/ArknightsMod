@@ -20,7 +20,7 @@ public sealed partial class MaterialistWing
     private void FlyRaptorSupport(NPC npc, MaterialistAntagonizer boss)
     {
         Player target = Main.player[boss.NPC.target];
-        Vector2 station = target.Center + new Vector2(Slot == 8 ? -430 : 430, -270);
+        Vector2 station = target.Center + new Vector2(Slot == 8 ? -430 : 430, -270) * 1.20f;
         station = Vector2.Clamp(station, new Vector2(64), new Vector2(Main.maxTilesX * 16 - 64, Main.maxTilesY * 16 - 64));
         MoveRaptorTo(npc, station, 2.6f, .055f);
     }

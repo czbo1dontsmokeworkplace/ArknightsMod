@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
+using Terraria.Localization;
 
 namespace ArknightsMod.Content.NPCs.Enemy.Evolution;
 
@@ -13,6 +14,7 @@ public sealed partial class Evolution
     internal bool CycleEnraged, AxisEscapeRecorded;
     private int axisCycleSerial = -1;
     private bool visualCycleEnraged;
+    internal bool EnrageDamageReduction => Phase == 5 && CycleEnraged && Attack != 6;
     internal float CycleBoost => Phase == 5 && CycleEnraged && Attack != 6 ? EvolutionRules.EnrageMultiplier : 1;
     internal bool SpinAttackLocked => Phase == 5 && Attack == 7 && Timer >= EvolutionRules.SpinBombSetup &&
         Timer < EvolutionRules.SpinBombSetup + EvolutionRules.SpinBombDuration;
@@ -43,7 +45,8 @@ public sealed partial class Evolution
         if (CycleEnraged && !visualCycleEnraged)
         {
             // 与召唤物同一声原版Roar；状态边沿只播放一次。
-            SoundEngine.PlaySound(SoundID.Roar, NPC.Center);
+            SoundEngine.PlaySound(SoundID.Roar, Main.LocalPlayer.Center);
+            CombatText.NewText(Main.LocalPlayer.Hitbox, new Color(255, 65, 80), Language.GetTextValue("Mods.ArknightsMod.EvolutionText.EscapeTaunt"), dramatic: true);
             EvolutionImpactSystem.Emit(NPC.Center, 800, 6, false, 36);
         }
         visualCycleEnraged = CycleEnraged;
@@ -92,7 +95,7 @@ public sealed partial class Evolution
                 NPC.netUpdate = true;
             }
             float angle = EvolutionRules.SpinBombAngle(active);
-            // 自转严格两圈/210帧；中心仍持续接近玩家，不把转圈误做成原地站桩。
+            // 自转严格两圈/105帧；中心仍持续接近玩家，不把转圈误做成原地站桩。
             Vector2 toward = (player.Center - NPC.Center).SafeNormalize(DashDirection);
             float distance = NPC.Distance(player.Center);
             Vector2 desired = toward * MathHelper.Clamp((distance - 230) * .025f, 1.5f, 7) * CycleBoost;
@@ -102,8 +105,8 @@ public sealed partial class Evolution
             if (EvolutionRules.SpinBombEmission(active,CycleEnraged))
             {
                 Vector2 outward = (DashDirection.ToRotation() + angle).ToRotationVector2();
-                Shoot(EvolutionShot.SpinBomb, NPC.Center + outward * 75, outward * 9 + NPC.velocity * .25f,
-                    parameter: 90, delay: 50, lifetime: 94, quietLaunch: true);
+                Shoot(EvolutionShot.SpinBomb, NPC.Center + outward * 75, (outward * 9 + NPC.velocity * .25f) * 3,
+                    parameter: 180, delay: 50, lifetime: 94, quietLaunch: true);
                 if (!Main.dedServ)
                     SoundEngine.PlaySound(SoundID.Item61 with { Volume = .24f, Pitch = -.45f, MaxInstances = 2 }, NPC.Center);
             }

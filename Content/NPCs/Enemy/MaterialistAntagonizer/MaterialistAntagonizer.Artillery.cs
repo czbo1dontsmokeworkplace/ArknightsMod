@@ -8,14 +8,14 @@ public sealed partial class MaterialistAntagonizer
 {
     // Shared by carrier and escorts, so a heavy salvo changes everyone's assignment in the same round.
     // The other two rounds retain the existing geometry/payload battery and independent scout plans.
-    internal ArtilleryPattern ArtilleryPlan => Order != FlightOrder.Command ? ArtilleryPattern.None :
-        Math.Abs((Cycle + Wave * 2 + Phase + Math.Max(0, (Timer - 60) / 180)) % 5) switch {
-            2 => ArtilleryPattern.RocketRelay, 3 => ArtilleryPattern.WalkingBarrage,
-            4 => ArtilleryPattern.Crossfire, _ => ArtilleryPattern.None
+    internal ArtilleryPattern ArtilleryPlan => !CoreSequenceActive ? ArtilleryPattern.None :
+        CoreAttack switch {
+            RocketAttack => ArtilleryPattern.RocketRelay, CannonAttack => ArtilleryPattern.WalkingBarrage,
+            CrossfireAttack => ArtilleryPattern.Crossfire, _ => ArtilleryPattern.None
         };
-    internal bool ArtilleryActive => ArtilleryPlan != ArtilleryPattern.None && MaterialistTactics.Active(Timer);
-    internal bool ArtilleryFormation => ArtilleryPlan != ArtilleryPattern.None && Timer < 420;
-    internal int ArtilleryDirection => (Cycle + Math.Max(0, (Timer - 60) / 180) + Wave) % 2 == 0 ? -1 : 1;
+    internal bool ArtilleryActive => ArtilleryPlan != ArtilleryPattern.None;
+    internal bool ArtilleryFormation => ArtilleryActive;
+    internal int ArtilleryDirection => (CoreSerial + Wave) % 2 == 0 ? -1 : 1;
     internal Vector2 RocketPort(int side) => NPC.Center + new Vector2(side * 62, -27).RotatedBy(NPC.rotation) * 1.45f;
     internal Vector2 CannonPort(int side) => NPC.Center + new Vector2(side * 34, 31).RotatedBy(NPC.rotation) * 1.45f;
     internal int RocketCount => ArtilleryPlan == ArtilleryPattern.Crossfire ? 2 + Phase * 2 : 4 + Phase * 2;
@@ -77,7 +77,7 @@ public sealed partial class MaterialistAntagonizer
     private Vector2 ArtilleryBodyOffset()
     {
         if (!ArtilleryFormation) return new Vector2(MathF.Sin(Timer * .012f) * 140, -290);
-        int beat = Math.Max(0, MaterialistTactics.Beat(Timer));
+        int beat = Math.Max(0, CoreBeat);
         float side = ArtilleryDirection;
         Vector2 offset = ArtilleryPlan switch {
             ArtilleryPattern.RocketRelay => new Vector2(side * MathF.Sin(beat / 180f * MathHelper.Pi) * 185, -330),

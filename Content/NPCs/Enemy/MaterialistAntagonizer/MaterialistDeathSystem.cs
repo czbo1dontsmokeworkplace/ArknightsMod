@@ -56,7 +56,8 @@ public sealed partial class MaterialistDeathSystem : ModSystem
         else if (age >= 0) age++;
         PresentationActive = encounter >= 0 && age < MaterialistDeathRules.VisualEnd;
         bool allowCamera = !Main.LocalPlayer.dead && ModContent.GetInstance<MaterialistVisualConfig>().DeathCamera;
-        camera.Update(selected != null && allowCamera, center, age, cancel: !allowCamera);
+        camera.Update(selected != null && allowCamera, center, age, cancel: !allowCamera,
+            finale: MaterialistDeathRules.Finale, visualEnd: MaterialistDeathRules.VisualEnd);
         if (PresentationActive)
         {
             // Small packet corrections cannot duplicate event emission or fill the screen with catch-up effects.
@@ -77,16 +78,16 @@ public sealed partial class MaterialistDeathSystem : ModSystem
             int count = MaterialistDeathRules.BurstCount(tick, reduced);
             float power = MathHelper.Lerp(1.7f, 3.6f, tick / (float)MaterialistDeathRules.Duration);
             for (int i = 0; i < count; i++)
-                EmitFragments(MaterialistDeathRules.FaultPoint(center, tick, i), reduced ? 3 : 12, power, tick * 37 + i, false);
+                EmitFragments(MaterialistDeathRules.FaultPoint(center, tick, i), reduced ? 2 : 6, power, tick * 37 + i, false);
             if (tick % 12 == 0)
                 SoundEngine.PlaySound(SoundID.Item14 with { Volume = .65f, Pitch = -.5f, MaxInstances = 3 }, center);
-            if (tick % 24 == 0) Kick(3);
+            if (tick % 24 == 0) Kick(.7f);
         }
         if (tick < MaterialistDeathRules.Finale && tick % 10 == 0)
         {
-            EmitFragments(MaterialistDeathRules.FaultPoint(center, tick, 0), reduced ? 14 : 40,
+            EmitFragments(MaterialistDeathRules.FaultPoint(center, tick, 0), reduced ? 6 : 16,
                 1 + tick / 180f, tick + 619, true);
-            Kick(3);
+            Kick(.7f);
         }
         if (tick >= 48 && tick < MaterialistDeathRules.Finale && (tick - 48) % 14 == 0)
             SoundEngine.PlaySound(SoundID.Item158 with { Volume = .43f, Pitch = tick / 260f, MaxInstances = 3 }, center);
@@ -94,8 +95,8 @@ public sealed partial class MaterialistDeathSystem : ModSystem
             SoundEngine.PlaySound(SoundID.Item62 with { Volume = .55f, Pitch = tick / 240f, MaxInstances = 2 }, center);
         if (tick == MaterialistDeathRules.Finale)
         {
-            EmitFragments(center, reduced ? 40 : 220, 2.2f, 907, true);
-            Kick(9);
+            EmitFragments(center, reduced ? 16 : 64, 2.2f, 907, true);
+            Kick(2);
             SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = .8f, Pitch = -.6f, MaxInstances = 1 }, center);
             SoundEngine.PlaySound(SoundID.Zombie104 with { Volume = .6f, Pitch = -.4f, MaxInstances = 1 }, center);
         }
@@ -113,7 +114,7 @@ public sealed partial class MaterialistDeathSystem : ModSystem
             Main.screenPosition = camera.Apply(Main.screenPosition, new Vector2(Main.screenWidth, Main.screenHeight),
                 new Vector2(Main.maxTilesX * 16, Main.maxTilesY * 16));
         if (MaterialistVisuals.Reduced || !ModContent.GetInstance<MaterialistVisualConfig>().ScreenShake) return;
-        float force = MaterialistDeathRules.CameraForce(camera.LastAge) * camera.Weight;
+        float force = MaterialistDeathRules.CameraForce(camera.LastAge) * camera.Weight * .22f;
         Main.screenPosition += new Vector2(MathF.Sin(camera.LastAge * 2.43f), MathF.Cos(camera.LastAge * 1.83f)) * force;
         float clock = Main.GameUpdateCount;
         Main.screenPosition += new Vector2(MathF.Sin(clock * 2.43f), MathF.Cos(clock * 1.83f)) * impactShake;

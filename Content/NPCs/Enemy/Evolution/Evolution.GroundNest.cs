@@ -156,7 +156,8 @@ public abstract partial class EvolutionBroodNPC
         groundWasAirborne = !grounded;
         charging = true;
         NPC.damage = (int)(EvolutionDamageCockpit.BroodContactDamage(Kind) * (evolved ? 1.1f : 1f));
-        float direction = GroundTravelDirection(player);
+        float direction = evolved && EvolutionBroodRangedRules.IsHatchling(Kind)
+            ? Math.Clamp((player.Center.X - NPC.Center.X) / 36, -1, 1) : GroundTravelDirection(player);
         float speed = Kind switch
         {
             EvolutionBrood.Spider => evolved ? 4.1f : 2.8f,
@@ -205,7 +206,7 @@ public abstract partial class EvolutionBroodNPC
                 if (beat == 105)
                 {
                     NPC.direction = NPC.spriteDirection = FlightAnchor.X >= NPC.Center.X ? 1 : -1;
-                    boss.LobBroodDust(GroundMuzzle, FlightAnchor, evolved ? 70 : 80);
+                    if (!evolved) boss.LobBroodDust(GroundMuzzle, FlightAnchor, 80);
                 }
                 break;
             case EvolutionBrood.Abomination:
@@ -216,6 +217,11 @@ public abstract partial class EvolutionBroodNPC
                 break;
             case EvolutionBrood.Tumor:
             case EvolutionBrood.Bomb:
+                if (evolved)
+                {
+                    if (UpdateEvolvedHatchling(boss, player, Age - 35 + 45)) return;
+                    break;
+                }
                 if (beat >= 45 && beat < 60 && grounded) { NPC.velocity.X *= .7f; warning = (beat - 44) / 15f; }
                 if (beat == 60 && grounded)
                 {
@@ -226,6 +232,7 @@ public abstract partial class EvolutionBroodNPC
                 }
                 break;
         }
+        if (evolved) UpdateEvolvedRangedAttack(boss, player, beat);
         NavigateGroundObstacle(boss, player, grounded, wallCrawler, evolved);
         wallSide = GroundClimbing ? Math.Sign(NPC.ai[2]) : 0;
         if (NPC.rotation == 0)
@@ -288,7 +295,7 @@ public abstract partial class EvolutionBroodNPC
             {
                 float flight = Parent?.Phase == 3 ? 65 : 75;
                 bool evolved = Parent?.Phase == 3;
-                flight = evolved ? 70 : 80;
+                flight = evolved ? EvolutionBroodRangedRules.FlightTicks(70, 1.3f) : 80;
                 float gravity = .22f;
                 for (int lane = 0; lane < 1; lane++)
                 {

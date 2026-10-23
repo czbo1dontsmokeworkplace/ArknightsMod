@@ -16,8 +16,9 @@ public sealed partial class MaterialistHazard : ModProjectile
     internal float Length = MaterialistRules.BeamLength;
     internal FireStyle Style;
     internal float Acceleration = 1, Bend;
+    internal float MachineRange;
     internal Vector2 Anchor;
-    internal bool VerticalSlide, DenseBallistics;
+    internal bool VerticalSlide, DenseBallistics, FixedLeftTurn, GoldenFan;
     private float beamSlideSpeed;
     private float terrainLength;
     internal bool IsBeam => Kind is DroneShot.Beam or DroneShot.ChaseBeam or DroneShot.PincerBeam;
@@ -73,8 +74,20 @@ public sealed partial class MaterialistHazard : ModProjectile
         Main.npc[Shooter].TryGetGlobalNPC<MaterialistWing>(out var wing) && Boss != null && wing.BelongsTo(Boss) && !wing.Retreating;
     public override void AI()
     {
+        if (Kind == DroneShot.ArtsOrb)
+        {
+            Projectile.extraUpdates = MaterialistRules.ArtsOrbUpdates - 1;
+            // Only motion/collision are substepped; warnings, guidance and fade remain game-tick based.
+            if (Projectile.numUpdates != 0) return;
+        }
         if (Kind == DroneShot.MachineRound)
         {
+            if (MachineRange > 0 && Vector2.DistanceSquared(Anchor, Projectile.Center + Projectile.velocity) > MachineRange * MachineRange)
+            {
+                Projectile.hostile = false; Projectile.damage = 0;
+                Projectile.Kill();
+                return;
+            }
             Projectile.extraUpdates = MaterialistRules.MachineUpdates - 1;
             if (!Retiring && !Main.dedServ && Projectile.numUpdates % (MaterialistVisuals.Reduced ? 8 : 2) == 0)
                 MaterialistBallistics.Wake(Projectile, DenseBallistics);
@@ -119,10 +132,11 @@ public sealed partial class MaterialistHazard : ModProjectile
         UpdateEscortAmmo(flight);
         if (flight >= 0 && Moving && Acceleration != 1) Projectile.velocity *= Acceleration;
         if (flight >= 0 && Kind == DroneShot.ArcSpark && flight < 52) Projectile.velocity = Projectile.velocity.RotatedBy(Bend);
-        if (flight >= 0 && Kind == DroneShot.Petal) Projectile.velocity = Projectile.velocity.RotatedBy(MathF.Sin(flight * .115f) * Bend);
+        if (flight >= 0 && Kind == DroneShot.Petal) Projectile.velocity = Projectile.velocity.RotatedBy(
+            FixedLeftTurn ? -MathHelper.ToRadians(1) : MathF.Sin(flight * .115f) * Bend);
         if (Kind == DroneShot.OrbitSpark && Age < Delay)
             Projectile.Center = Anchor + Projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(Age * .115f) * (MathF.Sin(Age / (float)Math.Max(1, Delay) * MathHelper.Pi) * 42);
-        if (Kind == DroneShot.ClusterOrb && flight == 44 && MaterialistAntagonizer.Authority)
+        if (Kind == DroneShot.ClusterOrb && flight == 58 && MaterialistAntagonizer.Authority)
         {
             // Burst in the original flight direction, never into a newly sampled player position.
             float axis = Projectile.velocity.ToRotation();
@@ -146,8 +160,8 @@ public sealed partial class MaterialistHazard : ModProjectile
             if (flight >= 0)
             {
                 float desired = Target >= 0 && Target < Main.maxPlayers && Main.player[Target].active && !Main.player[Target].dead
-                    ? MathHelper.Clamp((Main.player[Target].Center.X - Anchor.X) * .012f, -1.6f, 1.6f) : 0;
-                beamSlideSpeed += MathHelper.Clamp(desired - beamSlideSpeed, -.04f, .04f);
+                    ? MathHelper.Clamp((Main.player[Target].Center.X - Anchor.X) * .012f, -1.6f, 1.6f) * .70f : 0;
+                beamSlideSpeed += MathHelper.Clamp(desired - beamSlideSpeed, -.028f, .028f);
                 Anchor.X = MathHelper.Clamp(Anchor.X + beamSlideSpeed, 32, Main.maxTilesX * 16 - 32);
                 if (MaterialistAntagonizer.Authority && Age % 15 == 0) Projectile.netUpdate = true;
             }
@@ -174,7 +188,7 @@ public sealed partial class MaterialistHazard : ModProjectile
         if (!Main.dedServ)
         {
             Color accent = MaterialistVisuals.AmmoColor(this);
-            if (Kind == DroneShot.ClusterOrb && flight == 43)
+            if (Kind == DroneShot.ClusterOrb && flight == 57)
             {
                 MaterialistVisuals.Burst(Projectile.Center, accent, 1);
                 MaterialistEffects.Pulse(Projectile.Center, 60, accent, .4f);
@@ -219,6 +233,8 @@ public sealed partial class MaterialistHazard : ModProjectile
         var boss = Boss;
         if (HarmlessRetirement || boss == null || boss.Paused || Age < Delay || Age >= Delay + Duration) return false;
         if (Kind == DroneShot.Beacon) return false;
+        if (Kind == DroneShot.ClusterOrb) return false;
+        if (FixedLeftTurn && Age - Delay < 10) return false;
         if (Kind is DroneShot.CommandRocket or DroneShot.RaptorRocket && Age - Delay < 28) return false;
         if (Kind == DroneShot.CannonShell && Age - Delay < 12) return false;
         if (Kind == DroneShot.ArtilleryBlast && Age >= Delay + 10) return false;
@@ -233,7 +249,11 @@ public sealed partial class MaterialistHazard : ModProjectile
     {
         hitPlayers[target.whoAmI] = true;
         if (Kind == DroneShot.SaucerRound) SaucerImpact();
-        if (Kind == DroneShot.MachineRound) MaterialistBallistics.Impact(Projectile.Center, -Projectile.velocity.SafeNormalize(Vector2.UnitY), false, true);
+        if (Kind == DroneShot.MachineRound)
+        {
+            MaterialistBallistics.Impact(Projectile.Center, -Projectile.velocity.SafeNormalize(Vector2.UnitY), false, true);
+            MaterialistImpactJets.Emit(Projectile.Center, Projectile.velocity);
+        }
         if (Kind is DroneShot.ScoutPulse or DroneShot.ArtsOrb && !Main.dedServ)
             MaterialistEffects.Pulse(Projectile.Center, Kind == DroneShot.ArtsOrb ? 36 : 22, MaterialistVisuals.AmmoColor(this));
     }
@@ -253,6 +273,7 @@ public sealed partial class MaterialistHazard : ModProjectile
             if (Math.Abs(Projectile.velocity.Y - oldVelocity.Y) > .01f) normal.Y = -Math.Sign(oldVelocity.Y);
             MaterialistBallistics.Impact(Projectile.Center + oldVelocity.SafeNormalize(Vector2.UnitY) * 3,
                 normal.SafeNormalize(-oldVelocity.SafeNormalize(Vector2.UnitY)), true, true);
+            MaterialistImpactJets.Emit(Projectile.Center, oldVelocity);
         }
         if (Kind is DroneShot.GravityOrb or DroneShot.DropMissile && !Main.dedServ)
         {
@@ -267,6 +288,7 @@ public sealed partial class MaterialistHazard : ModProjectile
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
     {
         if (HarmlessRetirement) return false;
+        if (Kind == DroneShot.ClusterOrb) return false;
         if (Kind == DroneShot.ScanBurst)
         {
             Vector2 size = ScanSize;
@@ -303,14 +325,14 @@ public sealed partial class MaterialistHazard : ModProjectile
         return null;
     }
     public override void SendExtraAI(BinaryWriter w)
-    { w.Write(Age); w.Write(Delay); w.Write(Duration); w.Write(Target); w.Write(Shooter); w.Write(Sweep); w.Write(Length); w.Write((int)Style); w.Write(Acceleration); w.Write(Bend); w.WriteVector2(Anchor); w.Write(RetirementAge); w.WriteVector2(LaunchVelocity); w.Write(RocketCommitted); w.Write(terrainLength); w.Write(VerticalSlide); w.Write(DenseBallistics); w.Write(beamSlideSpeed); }
+    { w.Write(Age); w.Write(Delay); w.Write(Duration); w.Write(Target); w.Write(Shooter); w.Write(Sweep); w.Write(Length); w.Write((int)Style); w.Write(Acceleration); w.Write(Bend); w.WriteVector2(Anchor); w.Write(RetirementAge); w.WriteVector2(LaunchVelocity); w.Write(RocketCommitted); w.Write(terrainLength); w.Write(VerticalSlide); w.Write(DenseBallistics); w.Write(beamSlideSpeed); w.Write(FixedLeftTurn); w.Write(MachineRange); w.Write(GoldenFan); }
     public override void ReceiveExtraAI(BinaryReader r)
     {
         Age = r.ReadInt32(); Delay = r.ReadInt32(); Duration = r.ReadInt32(); Target = r.ReadInt32(); Shooter = r.ReadInt32(); Sweep = r.ReadSingle(); Length = r.ReadSingle(); Style = (FireStyle)r.ReadInt32(); Acceleration = r.ReadSingle(); Bend = r.ReadSingle(); Anchor = r.ReadVector2();
         RetirementAge = r.ReadInt32();
         LaunchVelocity = r.ReadVector2(); RocketCommitted = r.ReadBoolean();
         terrainLength = r.ReadSingle();
-        VerticalSlide = r.ReadBoolean(); DenseBallistics = r.ReadBoolean(); beamSlideSpeed = r.ReadSingle();
+        VerticalSlide = r.ReadBoolean(); DenseBallistics = r.ReadBoolean(); beamSlideSpeed = r.ReadSingle(); FixedLeftTurn = r.ReadBoolean(); MachineRange = r.ReadSingle(); GoldenFan = r.ReadBoolean();
         if (Retiring) { Projectile.hostile = Projectile.friendly = false; Projectile.damage = 0; Projectile.tileCollide = false; }
         // The synced position is already the server's six-pixel hitbox top-left.
         if (Kind == DroneShot.MachineRound)
@@ -318,7 +340,7 @@ public sealed partial class MaterialistHazard : ModProjectile
             Projectile.width = Projectile.height = 6;
             Projectile.extraUpdates = MaterialistRules.MachineUpdates - 1;
         }
-        if (Kind == DroneShot.ArtsOrb) Projectile.width = Projectile.height = 26;
+        if (Kind == DroneShot.ArtsOrb) { Projectile.width = Projectile.height = 26; Projectile.extraUpdates = MaterialistRules.ArtsOrbUpdates - 1; }
         if (Kind == DroneShot.SaucerRound) Projectile.width = Projectile.height = 8;
     }
     public override bool PreDraw(ref Color lightColor)

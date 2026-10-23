@@ -26,7 +26,7 @@ public sealed class DispatchDroneBuff : ModBuff
 public sealed class DispatchDrone : ModProjectile
 {
     private Item ammoWeapon;
-    private int age, targetType, shotSerial, visualSerial;
+    private int age, targetType, shotSerial, visualSerial, followUpAge;
     private Vector2 shotDirection = Vector2.UnitX;
     private float muzzleFlash;
     public override string LocalizationCategory => "Projectiles.MaterialistArsenal";
@@ -97,14 +97,21 @@ public sealed class DispatchDrone : ModProjectile
         if (authority && Projectile.Distance(owner.Center) > 2000)
         {
             Projectile.Center = idle; Projectile.velocity = Vector2.Zero; Projectile.ai[0] = 0;
+            followUpAge = 0;
             Projectile.netUpdate = true;
         }
         Projectile.velocity = Vector2.Lerp(Projectile.velocity, MaterialistArsenalRules.Limit((goal - Projectile.Center) * .075f, enemy == null ? 18 : 16), .10f);
         Projectile.rotation = MathHelper.Lerp(Projectile.rotation, MathHelper.Clamp(Projectile.velocity.X * .018f, -.22f, .22f), .12f);
         int interval = mode == 1 ? 30 : mode == 2 ? 32 : 24;
+        if (authority && followUpAge > 0 && age >= followUpAge)
+        {
+            followUpAge = 0;
+            if (enemy != null && Projectile.Distance(enemy.Center) < 850 &&
+                Collision.CanHitLine(Muzzle, 1, 1, enemy.position, enemy.width, enemy.height)) Fire(owner, enemy);
+        }
         if (authority && enemy != null && age >= 36 && (cycle + slot * 7) % interval == 0 &&
             Projectile.Distance(enemy.Center) < 850 && Collision.CanHitLine(Muzzle, 1, 1, enemy.position, enemy.width, enemy.height))
-            Fire(owner, enemy);
+            if (Fire(owner, enemy)) followUpAge = age + 5;
         muzzleFlash *= .73f;
         if (visualSerial != shotSerial)
         {
@@ -118,14 +125,14 @@ public sealed class DispatchDrone : ModProjectile
         }
         if (!Main.dedServ) Lighting.AddLight(Projectile.Center, .06f, .18f, .22f);
     }
-    private void Fire(Player player, NPC enemy)
+    private bool Fire(Player player, NPC enemy)
     {
         ammoWeapon ??= new Item(ModContent.ItemType<FighterDispatchTerminal>());
         ammoWeapon.useAmmo = AmmoID.Bullet; ammoWeapon.shoot = ProjectileID.Bullet;
         Item selected = player.ChooseAmmo(ammoWeapon);
-        if (selected == null || selected.IsAir) return;
+        if (selected == null || selected.IsAir) return false;
         int ammoDamage = selected.damage;
-        if (!player.PickAmmo(ammoWeapon, out int type, out float speed, out _, out float knockback, out _)) return;
+        if (!player.PickAmmo(ammoWeapon, out int type, out float speed, out _, out float knockback, out _)) return false;
         // PickAmmo owns ammo hooks/conservation, but its ranged ammo damage must not leak into this summon.
         StatModifier ammoModifier = player.GetTotalDamage(DamageClass.Summon);
         // The minion's current damage already includes flat/base bonuses; add only scaled ammunition damage.
@@ -142,6 +149,7 @@ public sealed class DispatchDrone : ModProjectile
             shot.netUpdate = true;
         }
         shotSerial++; Projectile.netUpdate = true;
+        return true;
     }
     public override void SendExtraAI(BinaryWriter writer)
     { writer.Write(targetType); writer.Write(shotSerial); writer.Write(shotDirection.X); writer.Write(shotDirection.Y); }

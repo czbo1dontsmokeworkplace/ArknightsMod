@@ -8,7 +8,7 @@ public sealed partial class MaterialistAntagonizer
 {
     // Client presentation follows the synchronized phase-wait flag. Never gates damage or phase changes.
     internal float LockShieldProgress { get; private set; }
-    internal Vector2 LockShieldSize => new Vector2(470, 270) * MathHelper.Lerp(.88f, 1,
+    internal Vector2 LockShieldSize => new Vector2(500) * MathHelper.Lerp(.88f, 1,
         MaterialistFormation.Smooth(LockShieldProgress));
 
     private void UpdateLockShield()

@@ -112,8 +112,15 @@ public sealed partial class Evolution : ModNPC
     }
     public override void ModifyIncomingHit(ref NPC.HitModifiers modifiers)
     {
+        if (EnrageDamageReduction) modifiers.FinalDamage *= .7f;
         int threshold = EvolutionRules.Threshold(NPC.lifeMax, Phase);
         if (threshold > 0) modifiers.SetMaxDamage(Math.Max(1, NPC.life - threshold));
+    }
+    public override void UpdateLifeRegen(ref int damage)
+    {
+        if (!EnrageDamageReduction || NPC.lifeRegen >= 0) return;
+        NPC.lifeRegen = (int)(NPC.lifeRegen * .7f);
+        damage = Math.Max(1, (int)(damage * .7f));
     }
     public override bool CheckDead()
     {
@@ -223,7 +230,9 @@ public sealed partial class Evolution : ModNPC
     {
         if (Main.netMode == NetmodeID.MultiplayerClient) return;
         SpawnHazard(kind, origin, velocity, parameter, delay, lifetime, peripheral, beamStyle, blade, gentleHoming, stagedSpirit, quietLaunch);
-        if (Phase != 3 || kind is EvolutionShot.CrashFan or EvolutionShot.Core or EvolutionShot.DashMarker) return;
+        if (Phase != 3 || kind is EvolutionShot.CrashFan or EvolutionShot.Core or EvolutionShot.DashMarker or EvolutionShot.Ricochet) return;
+        // Adjacent horizontal score rows already have a playable gap; density copies must not split it.
+        if (EvolutionCorridorPressureRules.IsHorizontalLaser(kind, velocity)) return;
         if (corridorDensitySerial != Serial) { corridorDensitySerial = Serial; corridorDensityOrdinal = 0; }
         if (!EvolutionCorridorPressureRules.ExtraShot(++corridorDensityOrdinal)) return;
         Vector2 offset = EvolutionCorridorPressureRules.CompanionOffset(origin, velocity, PatternOrigin, CorridorTop, CorridorBottom);
@@ -234,6 +243,8 @@ public sealed partial class Evolution : ModNPC
         EvolutionBeamStyle beamStyle, bool blade, bool gentleHoming, bool stagedSpirit, bool quietLaunch)
     {
         if (Main.netMode == NetmodeID.MultiplayerClient) return;
+        if (Phase == 3 && !EvolutionCorridorPressureRules.LaserLaneAllowed(kind, origin, velocity, PatternOrigin,
+            CorridorTop, CorridorBottom, EvolutionLaserVisuals.CollisionWidth(beamStyle, true))) return;
         int count = 0;
         foreach (Projectile p in Main.ActiveProjectiles) if (p.ModProjectile is EvolutionHazard h && h.Encounter == Encounter) count++;
         if (count >= EvolutionRules.HazardCap - (peripheral ? EvolutionRules.PeripheralReserve : 0)) return;
@@ -268,6 +279,7 @@ public sealed partial class Evolution : ModNPC
         {
             hazard.Encounter = Encounter; hazard.Serial = Serial; hazard.Target = NPC.target; hazard.ArsenalOrigin = origin;
             hazard.Parameter = parameter; hazard.Delay = delay; hazard.Lifetime = lifetime;
+            if (hazard.IsBloodglowCompanion) { hazard.Projectile.hostile = false; hazard.Projectile.damage = 0; }
             hazard.PowerScale = CycleBoost * (Phase == 3 ? EvolutionCorridorPressureRules.Speed : 1); hazard.Projectile.netUpdate = true;
             hazard.BeamStyle = beamStyle; hazard.Blade = blade; hazard.GentleHoming = gentleHoming; hazard.StagedSpirit = stagedSpirit;
             hazard.QuietLaunch = quietLaunch;
@@ -318,7 +330,7 @@ public sealed partial class Evolution : ModNPC
     }
     internal bool CanSpawnBrood(EvolutionBrood kind)
     {
-        if (Main.netMode == NetmodeID.MultiplayerClient || Desperate) return false;
+        if (Main.netMode == NetmodeID.MultiplayerClient || Desperate && !(Phase == 5 && kind == EvolutionBrood.Puppet)) return false;
         // 完美形态只允许独立的辅助光球类型，不能重新生出地面敌人。
         if (Phase >= 4 && kind != EvolutionBrood.Puppet) return false;
         int count = 0, same = 0;
@@ -360,7 +372,8 @@ public sealed partial class Evolution : ModNPC
         loot.Add(ItemDropRule.BossBag(ModContent.ItemType<EvolutionTreasureBag>()));
         loot.Add(ItemDropRule.ByCondition(new Conditions.NotExpert(), ModContent.ItemType<EvolutionTreasureBag>()));
     }
-    public override void OnKill() { ReleaseCrashPassenger(); ClearBrood(); ClearHazards(); EvolutionVisuals.Burst(NPC.Center, 2); }
+    public override void OnKill() { ReleaseCrashPassenger(); ClearBrood(); ClearHazards(); EvolutionVisuals.Burst(NPC.Center, 2,
+        density: EvolutionPresentationRules.DeathDensity, opacity: EvolutionPresentationRules.DeathOpacity, intensity: EvolutionPresentationRules.DeathIntensity); }
     private void UpdateVisuals()
     {
         UpdateCycleVisuals();
@@ -371,9 +384,9 @@ public sealed partial class Evolution : ModNPC
         {
             lastVisualPhase = Phase;
             bool emerging = Phase == 2 || Phase is 3 or 5 && Cinema.ExitStyle != 0;
-            visualPulse = emerging ? 0 : 45;
+            visualPulse = emerging || Phase == 6 ? 0 : 45;
             // The morph already culminates in a roar before its exit; do not double-play it.
-            if (!emerging)
+            if (!emerging && Phase != 6)
             {
                 EvolutionImpactSystem.Emit(NPC.Center, 360, Transitioning ? 3 : 4);
                 EvolutionVisuals.Burst(NPC.Center, Transitioning ? 1.8f : 1f, color: ThemeColor);
@@ -399,7 +412,7 @@ public sealed partial class Evolution : ModNPC
         float charge = Transitioning ? new EvolutionCinematicFrame(Phase, cinematicTime, NPC.Center).Charge : 0;
         float breathingPhase = Transitioning ? cinematicTime * .065f + 14 * EvolutionCinematicFrame.Smooth(360, 568, cinematicTime) : time * (Phase >= 5 ? .13f : .065f);
         float breathe = 1 + MathF.Sin(breathingPhase) * (.025f + charge * .018f);
-        float opacity = Phase == 6 ? 1 - EvolutionCinematicFrame.Smooth(70, EvolutionPresentationRules.DeathDuration, Timer) : MathHelper.Clamp((NPC.ai[3]) / 60f, .1f, 1);
+        float opacity = Phase == 6 ? 1 - EvolutionCinematicFrame.Smooth(70 + EvolutionPresentationRules.DeathLead, EvolutionPresentationRules.DeathDuration, Timer) : MathHelper.Clamp((NPC.ai[3]) / 60f, .1f, 1);
         Vector2 origin = name == "Perfect" ? new Vector2(119, 112) : name == "Evolved" ? new Vector2(95, 108) : new Vector2(85, 107);
         if (Phase == 1) origin.Y = texture.Height - 8;
         float liftBlend = Phase == 2 ? EvolutionCinematicFrame.Smooth(0, 180, Timer) : 1;

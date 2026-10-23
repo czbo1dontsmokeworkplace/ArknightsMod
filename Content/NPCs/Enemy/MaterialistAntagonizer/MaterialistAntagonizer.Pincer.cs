@@ -18,8 +18,7 @@ public sealed partial class MaterialistAntagonizer
         }
     }
     // A dedicated carrier instrument replaces one quarter of core openings; escorts continue their own roles.
-    internal bool CorePincerRound => Order == FlightOrder.Command &&
-        Math.Abs(Cycle + Wave + Phase + Math.Max(0, (Timer - 60) / 180)) % 4 == 1;
+    internal bool CorePincerRound => CoreSequenceActive && CoreAttack == PincerAttack;
 
     private bool RunPincerBattery(int beat)
     {

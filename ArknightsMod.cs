@@ -221,6 +221,8 @@ namespace ArknightsMod
                 case ArkMessageID.SariaExternalHealRequest:
                     // Legacy client-reported healing is no longer accepted.
                     // ASTES1A now reports confirmed recipient receipts on the server.
+                case ArkMessageID.DroneCoreHealingGrant:
+                    global::ArknightsMod.Content.NPCs.Enemy.MaterialistAntagonizer.DroneCoreMedicPlayer.ReceiveHealing(reader);
                     break;
 				case ArkMessageID.RoundStoneAltarState:
 					global::ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4.RoundStoneAltarPlayer.ReceiveState(reader, whoAmI);
@@ -346,6 +348,7 @@ namespace ArknightsMod
             SariaHealingSPGrant,
             SariaExternalHealRequest,
             SpotHealDodgeGrant,
+            DroneCoreHealingGrant,
 		}
 	}
 	//public class Ex : GlobalNPC

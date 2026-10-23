@@ -9,7 +9,7 @@ public sealed partial class MaterialistWing
     private void PlanArtilleryEscort(NPC npc, MaterialistAntagonizer boss, ref Vector2 desired)
     {
         if (!boss.ArtilleryFormation || Role(npc) == WingRole.Raptor) return;
-        int beat = Math.Max(0, MaterialistTactics.Beat(boss.Timer));
+        int beat = Math.Max(0, boss.CoreBeat);
         WingDuty duty = MaterialistRules.Duty(boss.Phase, Slot);
         float side = Slot % 2 == 0 ? -1 : 1;
         Vector2 f = boss.ExitAngle.ToRotationVector2(), n = f.RotatedBy(-MathHelper.PiOver2);
@@ -32,7 +32,7 @@ public sealed partial class MaterialistWing
         if (!boss.ArtilleryActive) return false;
         // The two physical gunships retain their independent, alternating ground/aimed gun streams.
         if (Role(npc) == WingRole.Raptor) { FireRaptor(npc, boss); return true; }
-        int beat = MaterialistTactics.Beat(boss.Timer);
+        int beat = boss.CoreBeat;
         WingDuty duty = MaterialistRules.Duty(boss.Phase, Slot);
         Vector2 muzzle = Muzzle(npc), f = boss.ExitAngle.ToRotationVector2();
         Player player = Main.player[boss.NPC.target];
@@ -97,7 +97,7 @@ public sealed partial class MaterialistWing
     }
     private void DrawArtilleryEscort(NPC npc, MaterialistAntagonizer boss)
     {
-        int beat = MaterialistTactics.Beat(boss.Timer);
+        int beat = boss.CoreBeat;
         WingDuty duty = MaterialistRules.Duty(boss.Phase, Slot);
         Color color = DutyColor(duty);
         MaterialistVisuals.Brackets(npc.Center, new Vector2(npc.width + 18, npc.height + 14), color, .55f);

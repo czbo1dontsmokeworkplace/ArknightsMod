@@ -12,6 +12,7 @@ internal static partial class MaterialistVisuals
     private static bool DrawSpecialAmmo(MaterialistHazard h, Color color)
     {
         Projectile p = h.Projectile;
+        if (h.GoldenFan) { DrawGoldenFan(h); return true; }
         if (DrawEscortAmmo(h)) return true;
         if (h.Kind == DroneShot.SaucerRound) { DrawSaucerRound(h); return true; }
         if (h.Kind == DroneShot.Missile) { DrawVanillaRocket(h, color); return true; }

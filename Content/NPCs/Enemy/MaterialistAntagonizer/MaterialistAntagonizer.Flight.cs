@@ -40,6 +40,11 @@ public sealed partial class MaterialistAntagonizer
     }
     private void MoveTo(Vector2 destination, float speed = 12)
     {
+        if (NPC.HasValidTarget)
+        {
+            Vector2 player = Main.player[NPC.target].Center;
+            destination = player + (destination - player) * 1.10f;
+        }
         destination = Vector2.Clamp(destination, new Vector2(180, 160), new Vector2(Main.maxTilesX * 16 - 180, Main.maxTilesY * 16 - 200));
         float targetSpeed = TrackingVelocity.Length();
         float maximumSpeed = MathHelper.Clamp(targetSpeed * 1.16f + 32, 34, 150);

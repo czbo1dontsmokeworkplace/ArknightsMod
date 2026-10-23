@@ -23,7 +23,7 @@ public sealed class EvolutionSummon : ModItem
         Item.useStyle = ItemUseStyleID.HoldUp;
         Item.consumable = false;
     }
-    internal static bool EnvironmentAllows(bool daytime, bool surface) => !daytime && surface;
+    internal static bool EnvironmentAllows(bool daytime, bool surface) => surface;
     internal static bool ProgressionAllows(bool destroyer, bool twins, bool prime) => destroyer && twins && prime;
     public override bool CanUseItem(Player player) => EnvironmentAllows(Main.dayTime, player.ZoneOverworldHeight) &&
         ProgressionAllows(NPC.downedMechBoss1, NPC.downedMechBoss2, NPC.downedMechBoss3) && !NPC.AnyNPCs(ModContent.NPCType<Boss>());

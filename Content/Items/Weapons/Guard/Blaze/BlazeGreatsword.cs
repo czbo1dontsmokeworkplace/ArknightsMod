@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using ArknightsMod.Content;
 using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.Items.Weapons.Guard.Specter;
@@ -44,6 +44,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Blaze
 
 		public override void SetDefaults() {
 			Item.damage = EliteDamage[0];
+            Item.axe = new Item(ItemID.ButchersChainsaw).axe;
 			Item.DamageType = DamageClass.Melee;
 			Item.width = 54;
 			Item.height = 24;

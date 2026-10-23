@@ -27,7 +27,7 @@ internal static class EvolutionRules
     public const float LaserReachMultiplier = 1.3f;
     public const float AxisReach = 1750 * LaserReachMultiplier;
     public const float AxisDamageReach = AxisReach * .9f;
-    public const int SpinBombSetup = 72, SpinBombDuration = 210;
+    public const int SpinBombSetup = 72, SpinBombDuration = 105;
     public const float EnrageMultiplier = 1.3f;
     public static int ReactionTime(int ticks, bool perfect, float boost = 1) =>
         Math.Max(1, (int)MathF.Round(ticks * (perfect ? .8f : 1) / boost));

@@ -43,6 +43,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Specter
 
 		public override void SetDefaults() {
 			Item.damage = EliteDamage[0];
+            Item.axe = new Item(ItemID.ButchersChainsaw).axe;
 			Item.DamageType = DamageClass.Melee;
 			Item.width = 46;
 			Item.height = 28;

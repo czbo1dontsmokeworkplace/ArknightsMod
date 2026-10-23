@@ -7,7 +7,8 @@ public enum ReaperKind { Humus, LaPluma, Entelechia }
 
 internal static class ReaperRules
 {
-    internal const int SwingTicks = 54;
+    internal const float SwingTicks = 54 * .8f;
+    internal const float WaveSpeed = 14 * 1.3f;
     internal const float LeftScale = 1f;
     internal const float SpinStep = MathHelper.TwoPi * 2 / 50 * 1.3f;
     internal const int WispInterval = 8;

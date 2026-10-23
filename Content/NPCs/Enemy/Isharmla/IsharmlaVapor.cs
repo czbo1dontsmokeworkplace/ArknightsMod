@@ -167,7 +167,11 @@ public sealed class IsharmlaVapor : ModSystem
         }
         Flush(batch);
     }
-    private static float HumanVisibility(Isharmla boss) => boss.Stage==TideStage.Covenant && boss.Dragon is { } mount ? mount.Visibility : 1;
+    private static float HumanVisibility(Isharmla boss)
+    {
+        float opacity = (boss.Stage is TideStage.Covenant or TideStage.LastTide) && boss.Dragon is { } mount ? mount.Visibility : 1;
+        return boss.Stage == TideStage.Finale ? opacity * IsharmlaRules.FinaleOpacity(boss.Timer, boss.Transition) : opacity;
+    }
     private static void HumanCurrents(Vector2 center,float opacity)
     {
         if(opacity<=.001f)return;
