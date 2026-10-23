@@ -12,8 +12,11 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Hellagur
 	/// 赫拉格专属的武者状态。这里只维护武器自己的命中充能、短时技能、招架和脱战恢复，
 	/// 不把角色语义塞进全局 WeaponPlayer。
 	/// </summary>
-	public sealed class HellagurCombatPlayer : ModPlayer
+	public sealed class HellagurCombatPlayer : ModPlayer, global::ArknightsMod.Players.IProbabilityDodgeSource
 	{
+    public string DodgeName => "赫拉格·弦月";
+    public double DodgeChance => HoldingOdachi && activeSkillMode == HellagurSkillBridge.Skill2 && activeSkillTimer > 0 ? Skill2ParryChance : 0;
+
 		internal const int Skill1HitsRequired = 2;
 		internal const int Skill2DurationTicks = 13 * 60;
 		internal const int Skill3DurationTicks = 15 * 60;
@@ -40,17 +43,8 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Hellagur
 
 		public override void OnHurt(Player.HurtInfo info) => MarkCombat(CombatRegenDelayTicks);
 
-		public override bool FreeDodge(Player.HurtInfo info) {
-			if (Player.whoAmI != Main.myPlayer || !HoldingOdachi || activeSkillMode != HellagurSkillBridge.Skill2
-				|| activeSkillTimer <= 0)
-				return false;
-			// 泰拉瑞亚没有“物理/法术伤害”标签：只对 NPC / 弹幕造成的战斗伤害判定，排除坠落、溺水等环境伤害。
-			if (!info.DamageSource.TryGetCausingEntity(out Entity causingEntity)
-				|| (causingEntity is not NPC && causingEntity is not Projectile)
-				|| Main.rand.NextFloat() >= Skill2ParryChance) {
-				return false;
-			}
-
+		public void OnProbabilityDodge(Player.HurtInfo info)
+    {
 			MarkCombat(CombatRegenDelayTicks);
 
 			if (!Main.dedServ) {
@@ -62,7 +56,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Hellagur
 					dust.noGravity = true;
 				}
 			}
-			return true;
+
 		}
 
 		public override void PostUpdate() {

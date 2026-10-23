@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria;
@@ -6,8 +6,13 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Guard.Surtr
 {
-	internal class SurtrSetPlayer : ArknightsArmorPlayer
+	internal class SurtrSetPlayer : ArknightsArmorPlayer, global::ArknightsMod.Players.IGuaranteedAvoidanceSource
 	{
+    public global::ArknightsMod.Players.GuaranteedAvoidanceState? GuaranteedAvoidance => !SurtrSetActive ? null
+        : new("史尔特尔套装·不死", undyingCooldown <= 0 || undyingIFrameTimer > 0,
+            undyingIFrameTimer > 0 ? $"不死保护剩余 {undyingIFrameTimer / 60d:0.0} 秒"
+            : undyingCooldown > 0 ? $"冷却剩余 {undyingCooldown / 60d:0.0} 秒" : "仅致命伤害触发；触发后保护8秒");
+
 		public bool SurtrHelmetActive;
 		public bool SurtrSetActive;
 
@@ -47,7 +52,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Surtr
 			return 1f;
 		}
 
-		public override bool FreeDodge(Player.HurtInfo info) {
+		public override bool ConsumableDodge(Player.HurtInfo info) {
 			if (!SurtrSetActive || undyingCooldown > 0)
 				return false;
 

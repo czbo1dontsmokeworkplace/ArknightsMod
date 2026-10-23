@@ -5,7 +5,7 @@ using ArknightsMod.Content.Items.Material;
 namespace ArknightsMod.Content.Items.Armor.Defender.Nian
 {
 	[AutoloadEquip(EquipType.Head)]
-	public class NianHead : NeoArmorReforgeVanityHead
+	public class NianHead : DefenderArmorHead
 	{
 		public override int Rarity => 6;
 

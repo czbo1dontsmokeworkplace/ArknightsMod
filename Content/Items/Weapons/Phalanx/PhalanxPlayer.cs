@@ -11,8 +11,12 @@ using Terraria.ModLoader.IO;
 
 namespace ArknightsMod.Content.Items.Weapons.Phalanx;
 
-public sealed class PhalanxPlayer : ModPlayer
+public sealed class PhalanxPlayer : ModPlayer, global::ArknightsMod.Players.IGuaranteedAvoidanceSource
 {
+    public global::ArknightsMod.Players.GuaranteedAvoidanceState? GuaranteedAvoidance => Staff == null ? null
+        : new("阵法术师·护盾", Opacity >= .08f && (Shield.Remaining(Staff.Tier) > 0 || immunity > 0),
+            $"剩余 {Shield.Remaining(Staff.Tier)} 层；由护盾入口阻挡，支持不可闪避攻击");
+
     public readonly PhalanxShieldState Shield = new();
     private readonly PhalanxCycle cycle = new();
     internal float Opacity;

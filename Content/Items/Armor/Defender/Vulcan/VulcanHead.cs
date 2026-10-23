@@ -5,7 +5,7 @@ using ArknightsMod.Content.Items.Material;
 namespace ArknightsMod.Content.Items.Armor.Defender.Vulcan
 {
 	[AutoloadEquip(EquipType.Head)]
-	public class VulcanHead : NeoArmorReforgeVanityHead
+	public class VulcanHead : DefenderArmorHead
 	{
 		public override int Rarity => 5;
 

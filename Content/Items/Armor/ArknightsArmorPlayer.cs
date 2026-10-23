@@ -31,7 +31,9 @@ namespace ArknightsMod.Content.Items.Armor
 			LifeCrystalAndFruitEffectReduction = 0f;
 		}
 
-		public override void UpdateLifeRegen()
+		// 装备的生命加成已在 UpdateEquip 中写入；在 PostUpdateEquips 的
+		// 卡缇等生命转防御效果之前完成水晶/生命果削减，避免用到削减前的生命上限。
+		public override void UpdateEquips()
 		{
 			if (LifeCrystalAndFruitEffectReduction > 0)
 			{

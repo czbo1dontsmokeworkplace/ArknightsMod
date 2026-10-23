@@ -36,7 +36,7 @@ Haze: {
 
 Saria: {
 	HeadName: Saria's Helmet
-	HelmetEffect: "[c/beebff:Helmet]: Skill heals on allies grant them 2 SP"
+	HelmetEffect: "[c/beebff:Helmet]: Each direct heal from this mod or ASTES1A's Living Spark grants the healed ally 2 SP, including yourself; life regeneration does not trigger this effect"
 	SetEffect: "[c/beebff:Set]: While a boss is active, every 10s gain a stack: +5% damage, +4% defense, max 5 stacks"
 	SetBonus: +5% dmg/+4% def per stack while boss active, max 5
 }
@@ -134,16 +134,16 @@ Nian: {
 
 Spot: {
 	HeadName: Spot's Helmet
-	HelmetEffect: "[c/beebff:Helmet]: Heal output 104%"
+	HelmetEffect: "[c/beebff:Helmet]: Increases outgoing direct healing to 104% of the original amount"
 	SetEffect: "[c/beebff:Set]: After healing an ally, grant 17% physical dodge for 3s"
-	SetBonus: Heal 104%; post-heal 17% dodge 3s
+	SetBonus: After healing an ally, grant 17% dodge for 3s
 }
 
 Vulcan: {
 	HeadName: Vulcan's Helmet
-	HelmetEffect: "[c/beebff:Helmet]: During skill, 25% melee dodge and 25% collision dodge"
+	HelmetEffect: "[c/beebff:Helmet]: During skill, 25% NPC contact dodge"
 	SetEffect: "[c/beebff:Set]: During skill, regen 2% max life per second"
-	SetBonus: Skill: 25% melee/collision dodge; 2% max life/s regen
+	SetBonus: Skill: 25% NPC contact dodge; 2% max life/s regen
 }
 
 Chen: {

@@ -5,8 +5,11 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Supporter.Deepcolor
 {
-	internal class DeepcolorSetPlayer : ArknightsArmorPlayer
+	internal class DeepcolorSetPlayer : ArknightsArmorPlayer, global::ArknightsMod.Players.IProbabilityDodgeSource
 	{
+    public string DodgeName => "深海色头盔";
+    public double DodgeChance => DeepcolorHelmetActive ? .07 : 0;
+
 		public bool DeepcolorHelmetActive;
 		public bool DeepcolorSetActive;
 
@@ -30,12 +33,6 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.Deepcolor
 				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<DeepcolorLegs>();
 		}
 
-		public override void ModifyHurt(ref Player.HurtModifiers modifiers) {
-			if (!DeepcolorHelmetActive)
-				return;
 
-			if (Main.rand.NextFloat() < 0.07f)
-				modifiers.Cancel();
-		}
 	}
 }

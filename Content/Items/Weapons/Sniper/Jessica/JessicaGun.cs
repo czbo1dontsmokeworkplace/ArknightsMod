@@ -95,10 +95,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Jessica
 			if (Main.myPlayer != player.whoAmI)
 				return;
 
-			var mp = player.GetModPlayer<WeaponPlayer>();
-			// S2 掩护烟幕：75% 伤害减免（近似闪避效果）
-			if (mp.SkillActive && mp.Skill == 1)
-				player.endurance += 0.75f;
+			// S2 probability is supplied by JessicaDodgePlayer to the unified dodge pool.
 		}
 	}
 }

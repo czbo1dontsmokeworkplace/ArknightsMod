@@ -294,6 +294,10 @@ namespace ArknightsMod.Players
 		/// 这里只推进当前手持武器的当前技能，不改变技能持续时间，也不会凭空重复填满多层库存。
 		/// </summary>
 		internal void ApplyEmergencyOneSecondCharge() {
+			if (Player.GetModPlayer<Content.Items.Accessories.Developer.RecoverySuppressionPlayer>().Equipped) {
+				emergencyChargeFraction = 0f;
+				return;
+			}
 			bool isArknightsSkillWeapon = Player.HeldItem.ModItem?.Mod == Mod
 				&& (CurrentSkill != null || HowManySkills > 0 || SkillCount > 0);
 			if (!isArknightsSkillWeapon || SkillActive || SkillChargeMax <= 0) {
@@ -616,6 +620,8 @@ namespace ArknightsMod.Players
 			TryHurtCharge();
 		}
 		public void AutoCharge() {
+			if (Player.GetModPlayer<Content.Items.Accessories.Developer.RecoverySuppressionPlayer>().Equipped)
+				return;
 			if (SceneCameraSkills.BlocksSkillCharge(Player)) // 稀音技能持续期间冻结充能
 				return;
 			// 自然回复类型 Div=60（SkillCharge 每 60 tick = 1 点可见技力）。倍率 x2 时每 tick
@@ -655,6 +661,10 @@ namespace ArknightsMod.Players
 		//============================================================================
 		private double AccessoriesChargeFraction;
 		public void AccessoriesAutoCharge() {
+			if (Player.GetModPlayer<Content.Items.Accessories.Developer.RecoverySuppressionPlayer>().Equipped) {
+				AccessoriesChargeFraction = 0d;
+				return;
+			}
 			if (Skill < 0 || Skill >= SkillData.Length || Player.dead || SkillActive
 				|| Div <= 0 || SkillChargeMax <= 0
 				|| (CurrentSkill != null && (CurrentSkill.ChargeType != SkillChargeType.Auto

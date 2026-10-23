@@ -6,8 +6,11 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Weapons.Supporter.Deepcolor
 {
-	public class DeepcolorSketchPlayer : ModPlayer
+	public class DeepcolorSketchPlayer : ModPlayer, global::ArknightsMod.Players.IProbabilityDodgeSource
 	{
+    public string DodgeName => "深海色·视觉陷阱";
+    public double DodgeChance => DeepcolorSketchSkills.IsOwnerInAnyTentacleAttackRange(Player) ? DeepcolorSketchSkills.VisualTrapDodgeChance : 0;
+
 		public const int RedeployCooldownMax = 300;
 
 		public int RedeployCooldown;
@@ -65,14 +68,6 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Deepcolor
 			|| Main.LocalPlayer.talkNPC >= 0
 			|| Main.LocalPlayer.chest != -1;
 
-		public override void ModifyHurt(ref Player.HurtModifiers modifiers) {
-			if (!DeepcolorSketchSkills.IsOwnerInAnyTentacleAttackRange(Player))
-				return;
 
-			if (Main.rand.NextFloat() >= DeepcolorSketchSkills.VisualTrapDodgeChance)
-				return;
-
-			modifiers.Cancel();
-		}
 	}
 }

@@ -9,8 +9,11 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Weapons.Specialist.Ethan;
 
-public sealed class EthanYoyoPlayer : ModPlayer
+public sealed class EthanYoyoPlayer : ModPlayer, global::ArknightsMod.Players.IProbabilityDodgeSource
 {
+    public string DodgeName => "伊桑悠悠球";
+    public double DodgeChance => Holding && Player.ownedProjectileCounts[ModContent.ProjectileType<EthanSpinningYoyo>()] > 0 ? .10 : 0;
+
     private bool keyConsumed;
     internal bool Holding => Player.HeldItem.ModItem is EthanYoyo && !Player.dead && !Player.CCed && !Player.noItems;
     private WeaponPlayer Skills => Player.GetModPlayer<WeaponPlayer>();
@@ -43,15 +46,11 @@ public sealed class EthanYoyoPlayer : ModPlayer
         if (Player.ownedProjectileCounts[ModContent.ProjectileType<EthanSpinningYoyo>()] > 0)
             Player.aggro -= 400;
     }
-    public override bool FreeDodge(Player.HurtInfo info)
+    public void OnProbabilityDodge(Player.HurtInfo info)
     {
-        if (Player.whoAmI != Main.myPlayer || !Holding
-            || Player.ownedProjectileCounts[ModContent.ProjectileType<EthanSpinningYoyo>()] == 0
-            || (info.DamageSource.SourceNPCIndex < 0 && info.DamageSource.SourceProjectileLocalIndex < 0)
-            || Main.rand.NextFloat() >= .1f) return false;
         Player.immune = true;
         Player.immuneTime = Math.Max(Player.immuneTime, 20);
         EthanVisuals.Scatter(Player.Center, 20, 4f);
-        return true;
+
     }
 }

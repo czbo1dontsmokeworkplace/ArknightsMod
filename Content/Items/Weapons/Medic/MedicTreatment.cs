@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using ArknightsMod.Content.Items.Armor.Defender.Saria;
+using ArknightsMod.Content.Items.Armor.Defender.Spot;
 using ArknightsMod.Content.Projectiles.Medic.Arts;
 using Terraria;
 using Terraria.ID;
@@ -54,9 +56,10 @@ internal static class MedicTreatment
             }
         }
         bool fullHealth = patient.statLife >= patient.statLifeMax2;
-        int amount = Math.Min(state.Resistance.Scale(requested), Math.Max(0, patient.statLifeMax2 - patient.statLife));
+        int healing = SpotHealingHelper.ModifyOutgoingHeal(healer, requested);
+        int amount = Math.Min(state.Resistance.Scale(healing), Math.Max(0, patient.statLifeMax2 - patient.statLife));
         // A full-health ally still catches the art, but an overheal cannot commit resistance or regeneration.
-        int displayed = fullHealth ? state.Resistance.Scale(requested) : amount;
+        int displayed = fullHealth ? state.Resistance.Scale(healing) : amount;
         if (!fullHealth && amount <= 0 && removed.Count == 0 && shortened.Count == 0) return false;
         if (amount > 0)
         {
@@ -65,6 +68,7 @@ internal static class MedicTreatment
                 state.Regeneration.Add(profile.StackDuration, profile.RegenPerStack * power, profile.StackLimit, profileId);
             if (Main.netMode == NetmodeID.SinglePlayer) patient.Heal(amount);
             else patient.statLife = Math.Min(patient.statLifeMax2, patient.statLife + amount);
+            global::ArknightsMod.Content.Items.Armor.DirectHealingEffects.OnDirectHeal(healer, patient, amount);
         }
         else if (fullHealth && Main.netMode == NetmodeID.SinglePlayer && !Main.dedServ) patient.HealEffect(displayed);
         // Negative grants are presentation only: damage taken during transit cannot turn an overheal into real healing.

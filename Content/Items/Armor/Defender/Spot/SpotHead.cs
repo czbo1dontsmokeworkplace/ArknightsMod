@@ -5,7 +5,7 @@ using ArknightsMod.Content.Items.Material;
 namespace ArknightsMod.Content.Items.Armor.Defender.Spot
 {
 	[AutoloadEquip(EquipType.Head)]
-	public class SpotHead : NeoArmorReforgeVanityHead
+	public class SpotHead : DefenderArmorHead
 	{
 		public override int Rarity => 3;
 

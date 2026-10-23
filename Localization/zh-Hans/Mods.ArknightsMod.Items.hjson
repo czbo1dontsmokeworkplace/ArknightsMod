@@ -4345,6 +4345,17 @@ GitanoOrb: {
 	FlavorText: “请稍候，先来占卜一下这次战斗的结果吧。”
 }
 
+RecoverySuppressorTest: {
+	DisplayName: 回复抑制器（测试）
+	Tooltip:
+		'''
+		禁用自动生命恢复（包括恢复增益）与自动魔力回复
+		禁用本模组公共技力条的自然回复及饰品自动回复加成
+		保留直接治疗、药水、攻击/受击回复及效果赠送的技力
+		测试用品：一个泥土即可徒手合成
+		'''
+}
+
 SkyfireStaff: {
 	DisplayName: 流星法杖 [天火]
 	Tooltip: 发射燃烧的流星，命中后引发范围爆炸

@@ -45,8 +45,6 @@ namespace ArknightsMod.Common.UI
 			area.Top.Set(70, 0f); // Placing it just a bit below the top of the screen.
 			area.Width.Set(139, 0f); // We will be placing the following 2 UIElements within this 182x60 area.
 			area.Height.Set(20, 0f);
-			area.VAlign = 0.5f;
-			area.HAlign = 0.5f;
 
 			barFrame = new UIImage(ModContent.Request<Texture2D>("ArknightsMod/Common/UI/SkillGaugeFrame")); // Frame of our resource bar
 			barFrame.Left.Set(10, 0f);
@@ -74,7 +72,20 @@ namespace ArknightsMod.Common.UI
 			// This prevents drawing unless we are using an ExampleCustomResourceWeapon
 			if (Main.LocalPlayer.HeldItem.ModItem is not UpgradeWeaponBase)
 				return;
+
+			Vector2 playerPosition = GetPlayerUIPosition();
+			area.Left.Set(playerPosition.X - area.Width.Pixels / 2f, 0f);
+			area.Top.Set(playerPosition.Y + 70f, 0f);
+			area.Recalculate();
 			base.Draw(spriteBatch);
+		}
+
+		private static Vector2 GetPlayerUIPosition() {
+			// 先应用游戏镜头（包括缩放），再转换到 UI 坐标，避免世界边缘和 UI 缩放造成错位。
+			Vector2 screenPosition = Vector2.Transform(
+				Main.LocalPlayer.Center - Main.screenPosition,
+				Main.GameViewMatrix.TransformationMatrix);
+			return Vector2.Transform(screenPosition, Matrix.Invert(Main.UIScaleMatrix));
 		}
 
 		// Here we draw our UI
@@ -124,7 +135,8 @@ namespace ArknightsMod.Common.UI
 			hitbox.Y += 2;
 			hitbox.Height -= 2;
 
-			var aboveHead = new Rectangle(Main.screenWidth / 2 - 12, Main.screenHeight / 2 - 65, 22, 22);
+			Vector2 playerPosition = GetPlayerUIPosition();
+			var aboveHead = new Rectangle((int)playerPosition.X - 12, (int)playerPosition.Y - 65, 22, 22);
 
 			int left = hitbox.Left;
 			int right = hitbox.Right;

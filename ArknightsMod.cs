@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Assets.Effects;
+using ArknightsMod.Assets.Effects;
 using ArknightsMod.Content.Items;
 using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.NPCs.Friendly;
@@ -181,6 +181,22 @@ namespace ArknightsMod
 				Logger.Error("天空纹理加载失败！");
 		}
 
+		// Optional direct-healing integration. The caller supplies the actual source,
+		// recipient and restored life, rather than a generic Heal() notification.
+		public override object Call(params object[] args) {
+			if (args.Length == 2 && args[0] is string dodgeCommand && dodgeCommand == "GetDodgeStats"
+				&& args[1] is Terraria.Player dodgePlayer)
+				return dodgePlayer.GetModPlayer<Players.DodgePlayer>().Snapshot();
+			if (args.Length == 3 && args[0] is string healCommand && healCommand == "ModifyOutgoingHeal"
+				&& args[1] is Terraria.Player sourcePlayer && args[2] is int baseHeal)
+				return Content.Items.Armor.Defender.Spot.SpotHealingHelper.ModifyOutgoingHeal(sourcePlayer, baseHeal);
+			if (args.Length == 5 && args[0] is string command && command == "NotifyDirectHeal"
+				&& args[1] is Terraria.Player healer && args[2] is Terraria.Player patient
+				&& args[3] is int actualAmount && args[4] is string source)
+				return Content.Items.Armor.DirectHealingEffects.NotifyExternalHeal(healer, patient, actualAmount, source);
+			return base.Call(args);
+		}
+
 		public override void HandlePacket(BinaryReader reader, int whoAmI) {
 			short id = reader.ReadInt16();
 			switch ((ArkMessageID)id) {
@@ -195,6 +211,16 @@ namespace ArknightsMod
                     break;
                 case ArkMessageID.MedicHealingGrant:
                     global::ArknightsMod.Content.Items.Weapons.Medic.MedicHealingNet.Receive(reader);
+                    break;
+                case ArkMessageID.SpotHealDodgeGrant:
+                    global::ArknightsMod.Content.Items.Armor.Defender.Spot.SpotHealingHelper.ReceiveGrant(reader);
+                    break;
+                case ArkMessageID.SariaHealingSPGrant:
+                    global::ArknightsMod.Content.Items.Armor.Defender.Saria.SariaHealingHelper.ReceiveGrant();
+                    break;
+                case ArkMessageID.SariaExternalHealRequest:
+                    // Legacy client-reported healing is no longer accepted.
+                    // ASTES1A now reports confirmed recipient receipts on the server.
                     break;
 				case ArkMessageID.RoundStoneAltarState:
 					global::ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4.RoundStoneAltarPlayer.ReceiveState(reader, whoAmI);
@@ -317,6 +343,9 @@ namespace ArknightsMod
             MedicalTreatmentState,
             EvolutionCrashCapture,
             CrusherHit,
+            SariaHealingSPGrant,
+            SariaExternalHealRequest,
+            SpotHealDodgeGrant,
 		}
 	}
 	//public class Ex : GlobalNPC

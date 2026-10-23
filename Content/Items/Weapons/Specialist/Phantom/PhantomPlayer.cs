@@ -8,8 +8,21 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Weapons.Specialist.Phantom;
 
-public sealed class PhantomPlayer : ModPlayer
+public sealed class PhantomPlayer : ModPlayer, global::ArknightsMod.Players.IProbabilityDodgeSource, global::ArknightsMod.Players.IGuaranteedAvoidanceSource
 {
+    public global::ArknightsMod.Players.GuaranteedAvoidanceState? GuaranteedAvoidance
+    {
+        get {
+            if (!Holding) return null;
+            PhantomPerformer guard = Guard() ?? Guard(false);
+            return guard == null ? null : new("傀影·护盾吸收", guard.Shield > 0,
+                $"护盾 {guard.Shield}；仅在盾值足够时完全规避，否则部分吸收");
+        }
+    }
+
+    public string DodgeName => "傀影·一技能防护";
+    public double DodgeChance => Holding && Guard(false) is PhantomPerformer guard ? PhantomBalance.Dodge(guard.Rank) : 0;
+
     internal int DeployCooldown { get; private set; }
     internal int EchoCooldown { get; private set; }
     private int previousSlot = -1;
@@ -140,15 +153,12 @@ public sealed class PhantomPlayer : ModPlayer
         return guard?.Skill == 0 && (!requireShield || guard.Shield > 0)
             && Vector2.DistanceSquared(guard.Projectile.Center, Player.Center) <= 240f * 240f ? guard : null;
     }
-    public override bool FreeDodge(Player.HurtInfo info)
+    public void OnProbabilityDodge(Player.HurtInfo info)
     {
-        if (Player.whoAmI != Main.myPlayer || !Holding || !IsCombatHit(info)) return false;
-        PhantomPerformer guard = Guard(false);
-        if (guard == null || Main.rand.NextFloat() >= PhantomBalance.Dodge(guard.Rank)) return false;
         Player.immune = true;
         Player.immuneTime = Math.Max(Player.immuneTime, 20);
         PhantomVisuals.Burst(Player.Center, 10);
-        return true;
+
     }
     private static bool IsCombatHit(Player.HurtInfo info) =>
         info.DamageSource != null && (info.DamageSource.SourceNPCIndex >= 0 || info.DamageSource.SourceProjectileLocalIndex >= 0);

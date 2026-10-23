@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Buffs.ArmorSets;
+using ArknightsMod.Content.Buffs.ArmorSets;
 using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria;
@@ -6,8 +6,12 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Defender.Spot
 {
-	internal class SpotSetPlayer : ArknightsArmorPlayer
+	internal class SpotSetPlayer : ArknightsArmorPlayer, global::ArknightsMod.Players.IProbabilityDodgeSource
 	{
+    public string DodgeName => "斑点治疗闪避增益";
+    public double DodgeChance => Player.HasBuff<SpotHealDodgeBuff>() ? .17 : 0;
+    public int DodgeBuffIcon => ModContent.BuffType<SpotHealDodgeBuff>();
+
 		public bool SpotHelmetActive;
 		public bool SpotSetActive;
 
@@ -26,12 +30,6 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Spot
 				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<SpotLegs>();
 		}
 
-		public override void ModifyHurt(ref Player.HurtModifiers modifiers) {
-			if (!Player.HasBuff<SpotHealDodgeBuff>())
-				return;
 
-			if (Main.rand.NextFloat() < 0.17f)
-				modifiers.Cancel();
-		}
 	}
 }

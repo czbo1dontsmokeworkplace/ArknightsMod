@@ -40,16 +40,24 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Nian
 		}
 
 		public static bool ShouldReceiveNianLifeBonus(Player player) {
+			if (!player.active || player.dead)
+				return false;
+
+			// ModifyMaxStats 早于本帧 PostUpdateEquips；直接查装备，避免光环
+			// 受其他玩家更新次序或上一帧头盔标记影响。佩戴者不需要额外队友。
+			int nianHelmet = NeoArmorReforgeSetLoader.GetSetType<NianHead>();
+			if (player.armor[0].type == nianHelmet)
+				return true;
+
 			if (!OperatorDefenderSetHelper.WearsFullDefenderSet(player))
 				return false;
 
 			for (int i = 0; i < Main.maxPlayers; i++) {
 				Player other = Main.player[i];
-				if (!other.active || other.dead)
+				if (!other.active || other.dead || other.whoAmI == player.whoAmI)
 					continue;
 
-				NianSetPlayer nian = other.GetModPlayer<NianSetPlayer>();
-				if (nian.NianHelmetActive && OperatorTeammateHelper.HasTeammates(other))
+				if (other.armor[0].type == nianHelmet)
 					return true;
 			}
 

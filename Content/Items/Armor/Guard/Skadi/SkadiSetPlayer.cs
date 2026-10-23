@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria;
@@ -7,8 +7,12 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Guard.Skadi
 {
-	internal class SkadiSetPlayer : ArknightsArmorPlayer
+	internal class SkadiSetPlayer : ArknightsArmorPlayer, global::ArknightsMod.Players.IGuaranteedAvoidanceSource
 	{
+    public global::ArknightsMod.Players.GuaranteedAvoidanceState? GuaranteedAvoidance => !SkadiSetActive ? null
+        : new("斯卡蒂套装·致命保护", !UndyingTriggered && OperatorSetBossHelper.AnyBossActive(),
+            UndyingTriggered ? "本次部署已消耗" : "仅首领在场时抵挡致命伤害");
+
 		public bool SkadiHelmetActive;
 		public bool SkadiSetActive;
 
@@ -75,7 +79,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Skadi
 			}
 		}
 
-		public override bool FreeDodge(Player.HurtInfo info) {
+		public override bool ConsumableDodge(Player.HurtInfo info) {
 			if (!SkadiSetActive || UndyingTriggered || !OperatorSetBossHelper.AnyBossActive())
 				return false;
 

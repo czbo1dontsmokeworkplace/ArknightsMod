@@ -5,7 +5,7 @@ using ArknightsMod.Content.Items.Material;
 namespace ArknightsMod.Content.Items.Armor.Defender.Cardigan
 {
 	[AutoloadEquip(EquipType.Head)]
-	public class CardiganHead : NeoArmorReforgeVanityHead
+	public class CardiganHead : DefenderArmorHead
 	{
 		public override int Rarity => 3;
 

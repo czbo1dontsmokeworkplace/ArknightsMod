@@ -10,8 +10,13 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Players;
 
-public sealed class ChargedOperatorPlayer : ModPlayer
+public sealed class ChargedOperatorPlayer : ModPlayer, global::ArknightsMod.Players.IGuaranteedAvoidanceSource
 {
+    public global::ArknightsMod.Players.GuaranteedAvoidanceState? GuaranteedAvoidance =>
+        Player.HeldItem.ModItem is ChargedOperatorWeapon { Kind: ChargedOperatorKind.NearlRadiant }
+        && Player.GetModPlayer<WeaponPlayer>().Skill == 1
+        ? new("耀骑士临光·四层护盾", shields > 0 && ActiveSkill(Player) == 2, $"剩余 {shields} 层；每层抵挡一次可规避伤害") : null;
+
     internal int Recovery;
     internal ulong NextSniperLeftShot;
     internal bool SuppressSniperRight;
@@ -83,7 +88,7 @@ public sealed class ChargedOperatorPlayer : ModPlayer
         if (weapon.Kind == ChargedOperatorKind.NearlRadiant && skill == 3) Player.statDefense += 20;
         if (weapon.Kind == ChargedOperatorKind.Firewatch && skill == 1) { Player.aggro -= 1200; Player.invis = true; }
     }
-    public override bool FreeDodge(Player.HurtInfo info)
+    public override bool ConsumableDodge(Player.HurtInfo info)
     {
         if (shields <= 0 || Player.HeldItem.ModItem is not ChargedOperatorWeapon weapon
             || weapon.Kind != ChargedOperatorKind.NearlRadiant || ActiveSkill(Player) != 2) return false;

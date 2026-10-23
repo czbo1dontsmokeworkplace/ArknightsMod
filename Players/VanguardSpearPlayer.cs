@@ -9,8 +9,14 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Players;
 
-public sealed class VanguardSpearPlayer : ModPlayer
+public sealed class VanguardSpearPlayer : ModPlayer, global::ArknightsMod.Players.IProbabilityDodgeSource, global::ArknightsMod.Players.IGuaranteedAvoidanceSource
 {
+    public global::ArknightsMod.Players.GuaranteedAvoidanceState? GuaranteedAvoidance => ActiveCharge == null ? null
+        : new("先锋长枪·冲锋保护", ActiveCharge.ProtectsContact, "仅有效冲锋阶段免疫敌怪碰撞");
+
+    public string DodgeName => "格拉尼长枪";
+    public double DodgeChance => Player.HeldItem.ModItem is VanguardSpearWeapon { Kind: VanguardSpearKind.Grani } ? .20 : 0;
+
     public VanguardChargeCooldown Cooldown { get; private set; } = new();
     internal VanguardLanceCharge ActiveCharge { get; set; }
     // Read the held input before movement, independently of native alternate-use timers.
@@ -87,12 +93,10 @@ public sealed class VanguardSpearPlayer : ModPlayer
         else if (weapon.Kind == VanguardSpearKind.Bagpipe && skills.Skill == 2)
             Player.statDefense *= 2.2f;
     }
-    public override bool FreeDodge(Player.HurtInfo info)
+    public void OnProbabilityDodge(Player.HurtInfo info)
     {
-        if (Player.HeldItem.ModItem is not VanguardSpearWeapon { Kind: VanguardSpearKind.Grani }
-            || !Main.rand.NextBool(5)) return false;
         Player.immune = true; Player.immuneTime = 30;
         VanguardSpearVfx.Ready(Player, VanguardSpearKind.Grani);
-        return true;
+
     }
 }

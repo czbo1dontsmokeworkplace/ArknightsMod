@@ -7,7 +7,7 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Mudrock
 	// （右键触发、图标替换、穿戴贴图替换、提示文案）就由框架自动提供，时装和它
 	// 对应的套装件（MudrockHeadSet）都会获得同样的切换能力。
 	[AutoloadEquip(EquipType.Head)]
-	internal class MudrockHead : NeoArmorReforgeVanityHead
+	internal class MudrockHead : DefenderArmorHead
 	{
 		public override int Rarity => 6;
 

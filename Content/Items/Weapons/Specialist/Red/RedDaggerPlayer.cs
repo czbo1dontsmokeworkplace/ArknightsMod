@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using ArknightsMod.Content.Projectiles.Specialist.Red;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
@@ -10,8 +10,11 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.Items.Weapons.Specialist.Red;
 
 // 部署由快速移动或快捷栏切入触发，不是自动定时施法；切物品不会刷新已有冷却。
-public sealed class RedDaggerPlayer : ModPlayer
+public sealed class RedDaggerPlayer : ModPlayer, global::ArknightsMod.Players.IProbabilityDodgeSource
 {
+    public string DodgeName => "红·快速部署";
+    public double DodgeChance => ExecutionActive ? .1 + Rank / 90d : 0;
+
     internal readonly RedDeploymentState Deployment = new();
     private Item armedKnife;
     private int armedSlot = -1;
@@ -188,16 +191,12 @@ public sealed class RedDaggerPlayer : ModPlayer
             Deployment.ReduceCooldown((int)MathF.Ceiling(RedDeploymentState.Duration / 60f));
     }
 
-    public override bool FreeDodge(Player.HurtInfo info)
+    public void OnProbabilityDodge(Player.HurtInfo info)
     {
-        if (Player.whoAmI != Main.myPlayer || !ExecutionActive
-            || (info.DamageSource.SourceNPCIndex < 0 && info.DamageSource.SourceProjectileLocalIndex < 0)
-            || Main.rand.NextFloat() >= .1f + Rank / 90f)
-            return false;
         Player.immune = true;
         Player.immuneTime = Math.Max(Player.immuneTime, 20);
         RedDaggerVisuals.Hit(Player.Center, true);
-        return true;
+
     }
 
     public override void UpdateDead()

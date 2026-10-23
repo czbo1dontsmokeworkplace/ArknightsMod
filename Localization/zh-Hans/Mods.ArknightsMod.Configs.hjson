@@ -105,7 +105,7 @@ Dropconfig: {
 	}
 
 	DropOriginiumSlugBetaPercent: {
-		Label: 源石虫Beta的全新装置掉落率（%）
+		Label: 源石虫Beta的固源岩掉落率（%）
 		Tooltip: 输入百分比：0 为不掉落，100 为必定掉落；支持小数，保存后生效
 	}
 

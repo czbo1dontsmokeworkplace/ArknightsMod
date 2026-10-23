@@ -1,12 +1,15 @@
-﻿using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Specialist.Manticore
 {
-	internal class ManticoreSetPlayer : ArknightsArmorPlayer
+	internal class ManticoreSetPlayer : ArknightsArmorPlayer, global::ArknightsMod.Players.IProbabilityDodgeSource
 	{
+    public string DodgeName => "狮蝎头盔";
+    public double DodgeChance => ManticoreHelmetActive ? .10 : 0;
+
 		public bool ManticoreHelmetActive;
 		public bool ManticoreSetActive;
 
@@ -29,10 +32,7 @@ namespace ArknightsMod.Content.Items.Armor.Specialist.Manticore
 				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<ManticoreLegs>();
 		}
 
-		public override void ModifyHurt(ref Player.HurtModifiers modifiers) {
-			if (ManticoreHelmetActive && Main.rand.NextFloat() < 0.1f)
-				modifiers.Cancel();
-		}
+
 
 		public override void PostUpdate() {
 			if (!ManticoreSetActive)

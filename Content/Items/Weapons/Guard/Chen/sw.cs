@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Tiles.Infrastructure;
+using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -14,7 +14,7 @@ using Terraria.ModLoader;
 using ArknightsMod.Content;
 
 namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
-{ 
+{
 	public enum ChenSword_Style {
 		Normal = 0,
 		Skill_1 = 1,
@@ -44,7 +44,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
             Item.noMelee = true;
         }
 		/// <summary>
-		/// 这个是生成手持弹幕的代码，如果只是要设置使用的技能，就不用动后面的其他屎山了-只需要填第一个参数就能选择你使用的技能  使用样例看下面shoot函数 
+		/// 这个是生成手持弹幕的代码，如果只是要设置使用的技能，就不用动后面的其他屎山了-只需要填第一个参数就能选择你使用的技能  使用样例看下面shoot函数
 		/// </summary>
 		/// <param name="st"></param>
 		static void CreatProj(ChenSword_Style st,Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
@@ -121,7 +121,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 
 			//CreatProj(ChenSword_Style.Normal, player, source, position, velocity, type, (int)(damage * 5), knockback);
 
-			
+
 			SoundStyle NS = new SoundStyle("ArknightsMod/Sounds/ChenSwordNoSkill") {
 				MaxInstances = 4
 			};
@@ -146,7 +146,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 					CreatProj(ChenSword_Style.Normal, player, source, position, velocity, type, damage, knockback);
 				}
 			}
-			
+
 			return false;
 			//return base.Shoot(player, source, position, velocity, type, damage, knockback);
 		}
@@ -200,8 +200,11 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
             return false;
         }
     }
-    public class Skill_2_Player : ModPlayer
+    public class Skill_2_Player : ModPlayer, global::ArknightsMod.Players.IGuaranteedAvoidanceSource
     {
+        public global::ArknightsMod.Players.GuaranteedAvoidanceState? GuaranteedAvoidance => CanBeDamaged ? null
+            : new("陈·连续斩击保护", true, "斩击阶段规避一次伤害，武器动画继续时重新提供保护");
+
         private Vector2 NowPos = Vector2.Zero;
         private Vector2 ToVec = Vector2.Zero;
         private float LerpStep = 0;
@@ -667,11 +670,11 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 					SoundEngine.PlaySound(S2, player.position);
 					Projectile.timeLeft = 35;
                     Dust.NewDustPerfect(player.Center - Projectile.velocity * 40, ModContent.DustType<Skill_2_Release_Dust_1>(), Projectile.velocity * 50);
-					
+
 					//222黄
                     //219红
                     //for (int ii = 0; ii < 3; ii++)
-					
+
                     {
                         for (int i = 0; i < 14; i++)
                         {
@@ -700,7 +703,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
                         }
 
                     }
-					
+
                 }
                 if (Projectile.ai[1] == 6)
                 {
@@ -1024,7 +1027,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
             {
                 Projectile.rotation = MathHelper.Lerp(Projectile.rotation, Projectile.ai[1] + 2.3f * player.direction, 0.22f);
             }
-            else 
+            else
             {
                 if (Projectile.ai[0] == 39)
                 {
@@ -1107,7 +1110,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 
 
                     }
-                    if (vertices.Count >= 3)    
+                    if (vertices.Count >= 3)
                     {
                         //Main.NewText(Color.Red.ToVector3());
                         gd.Textures[0] = SwordLightTex;
@@ -1160,7 +1163,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
                 var scale = new Vector2(0.6f, 1 +  time);
                 if (time > 0)
                     scale = new Vector2(0.6f * (1f - time), 1);
-                
+
                 scale *= new Vector2(0.1f,1);
                 scale *= 0.9f;
                 var c = Color.DarkRed;
@@ -1343,9 +1346,9 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
             }
             public override bool PreDraw(Dust dust)
             {
-                var sb = Main.spriteBatch; 
+                var sb = Main.spriteBatch;
                 var c = dust.color;
-                c.A = 0; 
+                c.A = 0;
                 sb.Draw(LightCircle_1, dust.position - Main.screenPosition, null, c * (dust.alpha / 255f), MathHelper.PiOver4, LightCircle_1.Size() / 2f, dust.scale * 0.2f, default, 0);
 
                 Main.spriteBatch.End();
@@ -1391,7 +1394,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
                 var sb = Main.spriteBatch;
                 for (int i = 0; i < 2; i++)
                     sb.Draw(t1, dust.position - Main.screenPosition, null, dust.color * (dust.alpha / 135f), MathHelper.PiOver4, t1.Size() / 2f, dust.scale, default, 0);
-               
+
                 for (int i = 0; i < 4; i++)
                     sb.Draw(t1, dust.position - Main.screenPosition, null, Color.White * (dust.alpha / 255f), 0, t1.Size() / 2f, dust.scale, default, 0);
 
@@ -1445,7 +1448,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
                             var player = Main.player[Projectile.owner];
                             if(player != null)
                             {
-                                if (!Main.mouseRight) 
+                                if (!Main.mouseRight)
                                 {
                                     if (Projectile.ai[1] == 0 && p.ai[0] > 80)
                                     {
@@ -1533,7 +1536,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
                     {
                     Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-                
+
                     List<Vertex> vertices = [];
                     var i = 0f;
                     var count = RecordPos.Count + 1;
@@ -1896,7 +1899,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
                             u.velocity = new Vector2(10 * dustC / (float)(Math.Abs(dustC) + 1), 0).RotatedByRandom(0.6) * 2 * rand.NextFloat(0.5f, 1.5f);
                             u.fadeIn = 0.4f;
                             u.scale = 0.6f;
-                        }                               
+                        }
                         //刀锋切割
                         {
                             var d = Dust.NewDustPerfect(AttackPos, ModContent.DustType<Skill_3_Dust_2>());

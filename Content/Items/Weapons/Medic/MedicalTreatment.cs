@@ -93,7 +93,8 @@ public sealed class MedicalTreatmentPlayer : ModPlayer
         if (index == Main.myPlayer && player.active && !player.dead && heal != 0)
         {
             // Negative values carry full-health floating text without authorizing any life gain.
-            int displayed = Math.Clamp(Math.Abs(heal), 0, 400);
+            int displayed = Math.Clamp(Math.Abs(heal), 0,
+                Armor.Defender.Spot.SpotHealingHelper.MaximumAmount(400));
             int actual = heal > 0 ? Math.Min(displayed, Math.Max(0, player.statLifeMax2 - player.statLife)) : 0;
             if (actual > 0)
             {

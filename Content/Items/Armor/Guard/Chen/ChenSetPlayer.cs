@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Players;
 using Terraria;
@@ -6,8 +6,11 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Guard.Chen
 {
-	internal class ChenSetPlayer : ArknightsArmorPlayer
+	internal class ChenSetPlayer : ArknightsArmorPlayer, global::ArknightsMod.Players.IProbabilityDodgeSource
 	{
+    public string DodgeName => "陈头盔";
+    public double DodgeChance => ChenHelmetActive ? .10 : 0;
+
 		public bool ChenHelmetActive;
 		public bool ChenSetActive;
 
@@ -33,13 +36,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Chen
 			}
 		}
 
-		public override void ModifyHurt(ref Player.HurtModifiers modifiers) {
-			if (!ChenHelmetActive)
-				return;
 
-			if (Main.rand.NextFloat() < 0.1f)
-				modifiers.Cancel();
-		}
 
 		public override void PostUpdate() {
 			if (!ShouldReceiveChenSp(Player))

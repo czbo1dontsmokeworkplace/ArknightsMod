@@ -5,7 +5,7 @@ using ArknightsMod.Content.Items.Material;
 namespace ArknightsMod.Content.Items.Armor.Defender.Saria
 {
 	[AutoloadEquip(EquipType.Head)]
-	public class SariaHead : NeoArmorReforgeVanityHead
+	public class SariaHead : DefenderArmorHead
 	{
 		public override int Rarity => 6;
 

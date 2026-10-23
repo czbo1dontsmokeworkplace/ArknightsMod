@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using ArknightsMod.Content.Items.Armor.Defender.Saria;
+using ArknightsMod.Content.Items.Armor.Defender.Spot;
 using ArknightsMod.Content.Projectiles.Medic.Warfarin;
 using ArknightsMod.Content.Projectiles.Medic.Sussurro;
 using ArknightsMod.Content.Projectiles.Medic.Shining;
@@ -23,7 +25,8 @@ internal static class MedicHealingNet
             || patient.statLife >= patient.statLifeMax2) return 0;
         MedicHealingPlayer state = patient.GetModPlayer<MedicHealingPlayer>();
         if (state.Cooldown > 0) return 0;
-        int amount = Math.Min(Math.Clamp(requested, 0, 48), patient.statLifeMax2 - patient.statLife);
+        int healing = SpotHealingHelper.ModifyOutgoingHeal(healer, Math.Clamp(requested, 0, 48));
+        int amount = Math.Min(healing, patient.statLifeMax2 - patient.statLife);
         if (amount <= 0) return 0;
         state.Cooldown = Math.Max(1, interval);
         if (Main.netMode == NetmodeID.SinglePlayer) patient.Heal(amount);
@@ -36,13 +39,15 @@ internal static class MedicHealingNet
             packet.Write((short)amount);
             packet.Send(patient.whoAmI);
         }
+        global::ArknightsMod.Content.Items.Armor.DirectHealingEffects.OnDirectHeal(healer, patient, amount);
         return amount;
     }
 
     internal static void Receive(BinaryReader reader)
     {
         int patient = reader.ReadByte(), amount = reader.ReadInt16();
-        if (Main.netMode != NetmodeID.MultiplayerClient || patient != Main.myPlayer || amount is <= 0 or > 48) return;
+        if (Main.netMode != NetmodeID.MultiplayerClient || patient != Main.myPlayer
+            || amount <= 0 || amount > SpotHealingHelper.MaximumAmount(48)) return;
         Player player = Main.LocalPlayer;
         if (player.dead || !player.active) return;
         player.Heal(Math.Min(amount, Math.Max(0, player.statLifeMax2 - player.statLife)));

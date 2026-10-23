@@ -4014,6 +4014,17 @@ GitanoOrb: {
 	FlavorText: '''"Wait a minute, let me predict the results of this battle."'''
 }
 
+RecoverySuppressorTest: {
+	DisplayName: Recovery Suppressor (Test)
+	Tooltip:
+		'''
+		Disables automatic life regeneration (including regeneration buffs) and mana regeneration
+		Disables natural regeneration and accessory regeneration bonuses for this mod's shared SP gauge
+		Preserves direct healing, potions, attack/defensive SP recovery and SP grants
+		Test item: craft by hand with one Dirt Block
+		'''
+}
+
 SkyfireStaff: {
 	DisplayName: Meteor Staff [Skyfire]
 	Tooltip: Fires a burning meteor that explodes on impact

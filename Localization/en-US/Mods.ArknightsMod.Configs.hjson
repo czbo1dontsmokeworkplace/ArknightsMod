@@ -105,7 +105,7 @@ Dropconfig: {
 	}
 
 	DropOriginiumSlugBetaPercent: {
-		Label: Originium Slug Beta Integrated Device chance (%)
+		Label: Originium Slug Beta Orirock Cube chance (%)
 		Tooltip: Enter a percentage: 0 disables the drop, 100 guarantees it. Decimals are supported; changes apply when saved.
 	}
 

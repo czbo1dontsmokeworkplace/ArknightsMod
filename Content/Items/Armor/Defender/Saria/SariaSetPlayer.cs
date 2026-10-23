@@ -29,7 +29,9 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Saria
 
 			if (SariaSetActive && GuardStacks > 0) {
 				Player.GetDamage(DamageClass.Generic) += 0.05f * GuardStacks;
-				extraDefenseBonus += 0.04f * GuardStacks;
+				// Use the engine's percentage modifier so later flat defense is included;
+				// this override does not run ArknightsArmorPlayer's legacy field settlement.
+				Player.statDefense.AdditiveBonus += 0.04f * GuardStacks;
 			}
 		}
 

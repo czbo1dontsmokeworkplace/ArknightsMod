@@ -26,10 +26,6 @@ namespace ArknightsMod.Content.Items.Armor
 				multiplier = 1.25f;
 
 			if (healer != null) {
-				SpotSetPlayer spot = healer.GetModPlayer<SpotSetPlayer>();
-				if (spot.SpotHelmetActive)
-					multiplier *= 1.04f;
-
 				AnselSetPlayer ansel = healer.GetModPlayer<AnselSetPlayer>();
 				if (ansel.AnselHelmetActive)
 					multiplier *= 1.04f;
@@ -39,7 +35,8 @@ namespace ArknightsMod.Content.Items.Armor
 					multiplier *= 1.04f;
 			}
 
-			int finalAmount = (int)(baseAmount * multiplier);
+			int lifeBefore = target.statLife;
+			int finalAmount = SpotHealingHelper.ModifyOutgoingHeal(healer, (int)(baseAmount * multiplier));
 			target.Heal(finalAmount);
 
 			CivilightEternaSetPlayer civilight = healer?.GetModPlayer<CivilightEternaSetPlayer>();
@@ -54,13 +51,7 @@ namespace ArknightsMod.Content.Items.Armor
 			}
 
 			if (healer != null) {
-				SariaSetPlayer saria = healer.GetModPlayer<SariaSetPlayer>();
-				if (saria.SariaHelmetActive)
-					OperatorSPHelper.TryGainSP(target, 2);
-
-				SpotSetPlayer spotSet = healer.GetModPlayer<SpotSetPlayer>();
-				if (spotSet.SpotSetActive && healer.whoAmI != target.whoAmI)
-					target.AddBuff(ModContent.BuffType<SpotHealDodgeBuff>(), SpotHealDodgeBuff.DurationTicks);
+				global::ArknightsMod.Content.Items.Armor.DirectHealingEffects.OnDirectHeal(healer, target, target.statLife - lifeBefore);
 
 				AnselSetPlayer anselSet = healer.GetModPlayer<AnselSetPlayer>();
 				if (anselSet.AnselSetActive && healer.whoAmI != target.whoAmI)
@@ -81,8 +72,10 @@ namespace ArknightsMod.Content.Items.Armor
 			if (chainTarget == null)
 				return;
 
+			int lifeBefore = chainTarget.statLife;
 			chainTarget.Heal(Math.Max(1, healAmount / 2));
 			chainTarget.HealEffect(Math.Max(1, healAmount / 2));
+			global::ArknightsMod.Content.Items.Armor.DirectHealingEffects.OnDirectHeal(healer, chainTarget, chainTarget.statLife - lifeBefore);
 		}
 
 		private static Player FindRandomNearbyAlly(Player healer, Player exclude) {

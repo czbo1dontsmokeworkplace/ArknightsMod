@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Buffs;
+using ArknightsMod.Content.Buffs;
 using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria;
@@ -6,8 +6,11 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Sniper.W
 {
-	internal class WSetPlayer : ArknightsArmorPlayer
+	internal class WSetPlayer : ArknightsArmorPlayer, global::ArknightsMod.Players.IProbabilityDodgeSource
 	{
+    public string DodgeName => "W套装";
+    public double DodgeChance => WSetActive ? .17 : 0;
+
 		public bool WHelmetActive;
 		public bool WSetActive;
 
@@ -42,13 +45,7 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.W
 				modifiers.SourceDamage *= 1.3f;
 		}
 
-		public override void ModifyHurt(ref Player.HurtModifiers modifiers) {
-			if (!WSetActive)
-				return;
 
-			if (Main.rand.NextFloat() < 0.17f)
-				modifiers.Cancel();
-		}
 
 		public override void PostUpdate() {
 			if (WSetActive)

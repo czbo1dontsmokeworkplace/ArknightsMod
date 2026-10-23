@@ -5,7 +5,7 @@ using ArknightsMod.Content.Items.Material;
 namespace ArknightsMod.Content.Items.Armor.Defender.Beagle
 {
 	[AutoloadEquip(EquipType.Head)]
-	public class BeagleHead : NeoArmorReforgeVanityHead
+	public class BeagleHead : DefenderArmorHead
 	{
 		public override int Rarity => 3;
 

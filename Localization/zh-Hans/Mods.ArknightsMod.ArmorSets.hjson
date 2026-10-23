@@ -36,7 +36,7 @@ Haze: {
 
 Saria: {
 	HeadName: 塞雷娅的头盔
-	HelmetEffect: "[c/beebff:头盔效果]：使用技能治疗友方单位时，为其恢复2点技力"
+	HelmetEffect: "[c/beebff:头盔效果]：本模组的直接治疗或星极模组的生命火花每次实际治疗友方，为其恢复2点技力（可对自身生效；持续生命恢复不触发）"
 	SetEffect: "[c/beebff:套装效果]：场上存在敌方首领时，每10秒获得一层增益，提高5%攻击力与4%防御力，最多可叠加5层；持续到敌方首领退场或自身退场"
 	SetBonus: 有首领时每10秒叠层，+5%攻/+4%防，最多5层
 }
@@ -134,16 +134,16 @@ Nian: {
 
 Spot: {
 	HeadName: 斑点的头盔
-	HelmetEffect: "[c/beebff:头盔效果]：治疗输出104%"
+	HelmetEffect: "[c/beebff:头盔效果]：造成的直接治疗效果提升至原本的104%"
 	SetEffect: "[c/beebff:套装效果]：治疗友方后，为其提供17%物理闪避，持续3秒"
 	SetBonus: 治疗友方后17%物理闪避3秒
 }
 
 Vulcan: {
 	HeadName: 火神的头盔
-	HelmetEffect: "[c/beebff:头盔效果]：技能期间获得25%近战闪避与25%碰撞闪避"
+	HelmetEffect: "[c/beebff:头盔效果]：技能期间获得25%碰撞闪避"
 	SetEffect: "[c/beebff:套装效果]：技能期间每秒恢复2%最大生命值"
-	SetBonus: 技能期间25%近战/碰撞闪避；每秒恢复2%最大生命
+	SetBonus: 技能期间25%碰撞闪避；每秒恢复2%最大生命
 }
 
 Chen: {

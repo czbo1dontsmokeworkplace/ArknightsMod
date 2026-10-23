@@ -24,16 +24,15 @@ namespace ArknightsMod.Content.Items.Armor.Defender.Beagle
 				&& Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<BeagleBody>()
 				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<BeagleLegs>();
 
+			// 必须在本帧碰撞/受伤前设置；PostUpdate已晚于玩家的NPC碰撞结算。
+			if (BeagleHelmetActive)
+				Player.noKnockback = true;
+
 			if (BeagleSetActive) {
 				int emptySlots = CountEmptyAccessorySlots();
 				int bonusSlots = System.Math.Min(emptySlots, 3);
 				Player.statDefense += 6 + bonusSlots * 6;
 			}
-		}
-
-		public override void PostUpdate() {
-			if (BeagleHelmetActive)
-				Player.noKnockback = true;
 		}
 
 		private int CountEmptyAccessorySlots() {
