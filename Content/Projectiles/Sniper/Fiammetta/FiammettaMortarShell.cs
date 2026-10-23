@@ -104,17 +104,33 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 		}
 
 		private void UpdateAscent() {
-			Projectile.Center += Projectile.velocity;
+			// Movement is manual (ShouldUpdatePosition=false), so sweep the whole ascent step.
+			// Short substeps prevent fast shells from skipping thin walls or enemies.
+			int steps = Math.Max(1, (int)MathF.Ceiling(Projectile.velocity.Length() / 4f));
+			Vector2 step = Projectile.velocity / steps;
+			for (int i = 0; i < steps; i++) {
+				Vector2 nextPosition = Projectile.position + step;
+				if (Collision.SolidCollision(nextPosition, Projectile.width, Projectile.height)) {
+					Detonate();
+					return;
+				}
+				Projectile.position = nextPosition;
+				if (TouchesEnemy()) {
+					Detonate();
+					return;
+				}
+			}
 			Projectile.velocity *= AscentDrag;
-            if (Projectile.localAI[0] > 6) {
-                bool hit = Collision.SolidCollision(Projectile.position, Projectile.width, Projectile.height);
-                foreach (NPC npc in Main.ActiveNPCs)
-                    if (npc.CanBeChasedBy(Projectile) && npc.Hitbox.Intersects(Projectile.Hitbox)) { hit = true; break; }
-                if (hit) { Detonate(); return; }
-            }
 
 			if (Projectile.localAI[0] >= AscentUpdates)
 				BeginDescent();
+		}
+
+		private bool TouchesEnemy() {
+			foreach (NPC npc in Main.ActiveNPCs)
+				if (npc.CanBeChasedBy(Projectile) && npc.Hitbox.Intersects(Projectile.Hitbox))
+					return true;
+			return false;
 		}
 
 		private void BeginDescent() {
@@ -155,16 +171,10 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Fiammetta
 			Projectile.velocity = angle.ToRotationVector2() * speed;
 
 			Vector2 nextCenter = Projectile.Center + Projectile.velocity;
-			if (Collision.SolidCollision(nextCenter - Projectile.Size * 0.5f,
-				Projectile.width, Projectile.height)) {
-				Projectile.Center = nextCenter;
-				Detonate();
-				return;
-			}
-
 			Projectile.Center = nextCenter;
+			// Descending shells ignore terrain, but still detonate on enemies along the way.
+			bool reachedEnemy = TouchesEnemy();
 			NPC target = LockedTarget;
-			bool reachedEnemy = target != null && target.Hitbox.Intersects(Projectile.Hitbox);
 			float distance = Vector2.Distance(Projectile.Center, strikePoint);
 			bool reachedPoint = target == null && distance <= 26f;
 			bool passedClosePoint = distance <= 74f

@@ -196,6 +196,9 @@ namespace ArknightsMod
                 case ArkMessageID.MedicHealingGrant:
                     global::ArknightsMod.Content.Items.Weapons.Medic.MedicHealingNet.Receive(reader);
                     break;
+                case ArkMessageID.DroneCoreHealingGrant:
+                    global::ArknightsMod.Content.NPCs.Enemy.MaterialistAntagonizer.DroneCoreMedicPlayer.ReceiveHealing(reader);
+                    break;
 				case ArkMessageID.RoundStoneAltarState:
 					global::ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4.RoundStoneAltarPlayer.ReceiveState(reader, whoAmI);
 					break;
@@ -317,6 +320,7 @@ namespace ArknightsMod
             MedicalTreatmentState,
             EvolutionCrashCapture,
             CrusherHit,
+            DroneCoreHealingGrant,
 		}
 	}
 	//public class Ex : GlobalNPC

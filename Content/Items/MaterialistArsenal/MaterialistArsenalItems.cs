@@ -48,6 +48,7 @@ public sealed class MiniGatling : ModItem
     public override void SetDefaults()
     {
         Item.width = 56; Item.height = 24; Item.damage = 27; Item.DamageType = DamageClass.Ranged;
+        Item.ArmorPenetration = 20;
         Item.useTime = Item.useAnimation = 2; Item.useStyle = ItemUseStyleID.Shoot;
         Item.noMelee = Item.noUseGraphic = true; Item.channel = true; Item.autoReuse = true;
         Item.useAmmo = AmmoID.Bullet; Item.shootSpeed = 15; Item.knockBack = 1.5f;

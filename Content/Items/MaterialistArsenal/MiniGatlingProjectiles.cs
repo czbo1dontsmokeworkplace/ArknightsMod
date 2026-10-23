@@ -146,12 +146,16 @@ public sealed class GatlingPhysicalRound : ModProjectile
         if (!Main.dedServ && Projectile.numUpdates % (MaterialistVisuals.Reduced ? 8 : 4) == 0)
             MaterialistBallistics.Wake(Projectile, true, launch);
     }
-    public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) =>
+    public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+    {
         MaterialistBallistics.Impact(Projectile.Center, -Projectile.velocity.SafeNormalize(Vector2.UnitY), false, true);
+        MaterialistImpactJets.Emit(Projectile.Center, Projectile.velocity);
+    }
     public override bool OnTileCollide(Vector2 oldVelocity)
     {
         MaterialistBallistics.Impact(Projectile.Center, -oldVelocity.SafeNormalize(Vector2.UnitY),
             true, true, directional: true);
+        MaterialistImpactJets.Emit(Projectile.Center, oldVelocity);
         return true;
     }
     public override void SendExtraAI(BinaryWriter writer) { writer.Write(launch.X); writer.Write(launch.Y); }

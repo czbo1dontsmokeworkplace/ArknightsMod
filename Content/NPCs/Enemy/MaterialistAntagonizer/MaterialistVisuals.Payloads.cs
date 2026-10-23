@@ -93,19 +93,7 @@ internal static partial class MaterialistVisuals
             Brackets(p.Center, new Vector2(30, 48), color, .8f);
             return true;
         }
-        for (int i = 1; i < p.oldPos.Length; i++)
-            if (p.oldPos[i] != Vector2.Zero && p.oldPos[i - 1] != Vector2.Zero)
-            {
-                float fade = 1 - i / (float)p.oldPos.Length;
-                Line(p.oldPos[i] + p.Size * .5f, p.oldPos[i - 1] + p.Size * .5f, (color with { A = 0 }) * (fade * .7f), 5 * fade);
-            }
-        if (h.Kind == DroneShot.GravityOrb)
-        {
-            Glow(p.Center, color * .65f, new Vector2(32));
-            Glow(p.Center, new Color(246, 255, 243) * .95f, new Vector2(14));
-            Ring(p.Center, 8.5f, color, h.Age * .04f, 2, .8f, 12);
-            Line(p.Center - axis * 13, p.Center, White with { A = 0 }, 2);
-        }
+        DrawGravityStreak(h);
         return true;
     }
 }

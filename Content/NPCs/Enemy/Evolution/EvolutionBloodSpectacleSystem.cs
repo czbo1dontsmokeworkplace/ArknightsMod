@@ -14,7 +14,9 @@ internal static class EvolutionBloodSpectacleRules
     internal const int ParticleCapacity = 1152, SplatCapacity = 80, WaveCapacity = 24;
     internal static bool Terminal(EvolutionBloodCue cue) => cue is EvolutionBloodCue.Finale or EvolutionBloodCue.Rupture;
     internal static int ParticleLimit(bool reduced, bool terminal = false) => terminal ? reduced ? 224 : ParticleCapacity : reduced ? 112 : 768;
-    internal static int DecorationCount(int phase, bool reduced) => phase == 6 ? reduced ? 32 : 256 : reduced ? 16 : phase >= 4 ? 128 : 80;
+    internal static int DecorationCount(int phase, bool reduced) => phase == 6 ? (int)MathF.Round((reduced ? 32 : 256) * EvolutionPresentationRules.DeathDensity) : reduced ? 16 : phase >= 4 ? 128 : 80;
+    internal static Vector2 BarrageCenter(Evolution boss) => boss.AxisHealthLocked || boss.Transitioning || boss.Phase == 6 || boss.PatternSerial != boss.Serial ?
+        boss.NPC.Center : boss.PatternCenter;
     internal static int EmissionCount(EvolutionBloodCue cue, bool reduced) => reduced ? Terminal(cue) ? 14 : 6 : cue switch
     {
         EvolutionBloodCue.Finale => 220, EvolutionBloodCue.Rupture => 40,
@@ -31,6 +33,24 @@ internal static class EvolutionBloodSpectacleRules
     };
 }
 
+// Attached axis effects retain their own motion, while their origin follows the body even after a teleport.
+internal struct EvolutionEffectAnchor
+{
+    private int slotPlusOne, encounter, serial;
+    private Vector2 previous;
+    internal EvolutionEffectAnchor(Evolution boss)
+    { slotPlusOne = boss.NPC.whoAmI + 1; encounter = boss.Encounter; serial = boss.Serial; previous = boss.NPC.Center; }
+    internal bool Follow(ref Vector2 position)
+    {
+        if (slotPlusOne == 0) return true;
+        int slot = slotPlusOne - 1;
+        if (!Main.npc.IndexInRange(slot) || !Main.npc[slot].active || Main.npc[slot].ModNPC is not Evolution boss ||
+            boss.Encounter != encounter || boss.Serial != serial || boss.Phase != 5 || boss.Attack != 6) return false;
+        position += boss.NPC.Center - previous; previous = boss.NPC.Center;
+        return true;
+    }
+}
+
 // Local-only scenery: none of these objects is a Projectile, NPC or a collision shape.
 // Liquid flecks use drag and gravity, then settle into short-lived surface stains.
 // Dark liquid bodies, highlights and embers share Evolution's existing local materials.
@@ -40,17 +60,19 @@ public sealed class EvolutionBloodSpectacleSystem : ModSystem
     {
         internal Vector2 Position, Velocity;
         internal Color Theme;
-        internal float Size, Rotation, Spin, SpatialScale;
+        internal float Size, Rotation, Spin, SpatialScale, Opacity;
+        internal EvolutionEffectAnchor Anchor;
         internal int Age, Life;
         internal byte Kind; // 0 liquid, 1 ember, 2 smoke, 3 blade afterimage
     }
-    private struct Splat { internal Vector2 Position; internal Color Theme; internal float Size, Rotation; internal int Age, Life; }
+    private struct Splat { internal Vector2 Position; internal Color Theme; internal float Size, Rotation, Opacity; internal int Age, Life; }
     private struct Wave
     {
         internal Vector2 Center, Direction;
         internal Color Theme;
         internal EvolutionBloodCue Cue;
-        internal float Power, SpatialScale;
+        internal float Power, SpatialScale, Density, Opacity;
+        internal EvolutionEffectAnchor Anchor;
         internal int Age, Life;
     }
     private static readonly Fleck[] flecks = new Fleck[EvolutionBloodSpectacleRules.ParticleCapacity];
@@ -64,19 +86,21 @@ public sealed class EvolutionBloodSpectacleSystem : ModSystem
     {
         get { int count = 0; foreach (var p in flecks) if (p.Life > 0) count++; return count; }
     }
-    internal static void Emit(Vector2 center, Vector2 direction, EvolutionBloodCue cue, Color theme, float power = 1, float spatialScale = 1)
+    internal static void Emit(Vector2 center, Vector2 direction, EvolutionBloodCue cue, Color theme, float power = 1, float spatialScale = 1,
+        Evolution follow = null, float density = 1, float opacity = 1, float intensity = 1)
     {
         if (Main.dedServ || Main.gameMenu || Vector2.DistanceSquared(Main.LocalPlayer.Center, center) > 3000 * 3000) return;
         if (emissionTick != Main.GameUpdateCount) { emissionTick = Main.GameUpdateCount; emissionCount = 0; }
         if (++emissionCount > 4) return;
         direction = direction.SafeNormalize(Vector2.UnitY);
-        power = Math.Clamp(power, .3f, 2.2f);
+        power = Math.Clamp(power, .3f, 2.2f) * intensity;
         spatialScale = Math.Clamp(spatialScale, 1, 2);
         bool terminal = EvolutionBloodSpectacleRules.Terminal(cue);
         int life = cue == EvolutionBloodCue.Finale ? EvolutionBloodSpectacleRules.FinaleLife : cue == EvolutionBloodCue.Morph ? 76 : cue == EvolutionBloodCue.Volley ? 26 : 48;
-        waves[waveCursor++ % waves.Length] = new Wave { Center = center, Direction = direction, Theme = theme, Cue = cue, Power = power, Life = life, SpatialScale = spatialScale };
+        EvolutionEffectAnchor anchor = follow == null ? default : new EvolutionEffectAnchor(follow);
+        waves[waveCursor++ % waves.Length] = new Wave { Center = center, Direction = direction, Theme = theme, Cue = cue, Power = power, Life = life, SpatialScale = spatialScale, Anchor = anchor, Density = density, Opacity = opacity };
         bool reduced = EvolutionCinematics.Reduced;
-        int count = EvolutionBloodSpectacleRules.EmissionCount(cue, reduced);
+        int count = (int)MathF.Round(EvolutionBloodSpectacleRules.EmissionCount(cue, reduced) * density);
         for (int i = 0; i < count; i++)
         {
             bool radial = cue is EvolutionBloodCue.Morph or EvolutionBloodCue.Echo || terminal;
@@ -90,11 +114,11 @@ public sealed class EvolutionBloodSpectacleSystem : ModSystem
             {
                 Position = center + travel * ((terminal ? random.NextFloat(6, 48) : 18 + i % 3 * 14) * spatialScale), Velocity = travel * speed,
                 Theme = theme, Kind = kind, Size = random.NextFloat(terminal ? .8f : .85f, terminal ? 1.9f : 1.35f) * power, SpatialScale = spatialScale,
-                Rotation = travel.ToRotation(), Spin = random.NextFloat(-.025f, .025f), Life = kind == 2 ? 60 : random.Next(26, 65)
+                Rotation = travel.ToRotation(), Spin = random.NextFloat(-.025f, .025f), Life = kind == 2 ? 60 : random.Next(26, 65), Anchor = anchor, Opacity = opacity
             };
         }
         float shake = EvolutionBloodSpectacleRules.Shake(cue);
-        if (shake > 0) EvolutionImpactSystem.Emit(center, (cue == EvolutionBloodCue.Finale ? 1250 : 540 * power) * spatialScale, shake, false, 30);
+        if (shake > 0) EvolutionImpactSystem.Emit(center, (cue == EvolutionBloodCue.Finale ? 1250 : 540 * power) * spatialScale, shake * intensity, false, 30);
     }
     public override void PostUpdateEverything()
     {
@@ -107,6 +131,7 @@ public sealed class EvolutionBloodSpectacleSystem : ModSystem
         {
             ref Fleck p = ref flecks[i];
             if (i >= limit || p.Life <= 0) { p.Life = 0; continue; }
+            if (!p.Anchor.Follow(ref p.Position)) { p.Life = 0; continue; }
             if (++p.Age >= p.Life) { p.Life = 0; continue; }
             Vector2 oldPosition = p.Position;
             p.Velocity *= p.Kind == 2 ? .94f : p.Kind == 3 ? .97f : .982f;
@@ -120,13 +145,14 @@ public sealed class EvolutionBloodSpectacleSystem : ModSystem
                 splats[splatCursor++ % (reduced ? 12 : splats.Length)] = new Splat
                 {
                     Position = oldPosition, Size = p.Size * (1 + Math.Min(p.Velocity.Length() * .05f, .8f)),
-                    Rotation = Math.Clamp(p.Velocity.X * .03f, -.3f, .3f), Theme = p.Theme, Life = random.Next(80, 140)
+                    Rotation = Math.Clamp(p.Velocity.X * .03f, -.3f, .3f), Theme = p.Theme, Life = random.Next(80, 140), Opacity = p.Opacity
                 };
                 p.Life = 0;
             }
         }
         for (int i = 0; i < splats.Length; i++) if (splats[i].Life > 0 && ++splats[i].Age >= splats[i].Life) splats[i].Life = 0;
-        for (int i = 0; i < waves.Length; i++) if (waves[i].Life > 0 && ++waves[i].Age >= waves[i].Life) waves[i].Life = 0;
+        for (int i = 0; i < waves.Length; i++)
+            if (waves[i].Life > 0 && (!waves[i].Anchor.Follow(ref waves[i].Center) || ++waves[i].Age >= waves[i].Life)) waves[i].Life = 0;
     }
     public override void PostDrawTiles()
     {
@@ -159,8 +185,9 @@ public sealed class EvolutionBloodSpectacleSystem : ModSystem
     }
     private static void DrawFleck(Fleck p)
     {
+        if (!p.Anchor.Follow(ref p.Position)) return;
         if (!Visible(p.Position)) return;
-        float fade = EvolutionBloodSpectacleRules.Envelope(p.Age, p.Life);
+        float fade = EvolutionBloodSpectacleRules.Envelope(p.Age, p.Life) * p.Opacity;
         // Decorative liquid is dimmer than the bright cores that signal real damage.
         fade *= MathHelper.Lerp(.22f, 1, EvolutionBloodSpectacleRules.ClearPlayer(Vector2.Distance(p.Position, Main.LocalPlayer.Center)));
         Color dark = Color.Lerp(new Color(32, 0, 7), p.Theme, .32f);
@@ -191,20 +218,22 @@ public sealed class EvolutionBloodSpectacleSystem : ModSystem
     private static void DrawSplat(Splat p)
     {
         if (!Visible(p.Position)) return;
-        float fade = EvolutionBloodSpectacleRules.Envelope(p.Age, p.Life);
+        float fade = EvolutionBloodSpectacleRules.Envelope(p.Age, p.Life) * p.Opacity;
         Blob(p.Position, new Vector2(38, 11) * p.Size, new Color(25, 0, 6) * (.6f * fade), p.Rotation);
         Blob(p.Position, new Vector2(30, 8) * p.Size, Color.Lerp(new Color(40, 0, 6), p.Theme, .32f) * (.65f * fade), p.Rotation);
         EvolutionVisuals.Glow(p.Position + new Vector2(-2, -1), p.Theme * (.18f * fade), new Vector2(10, 2) * p.Size);
     }
     private static void DrawWave(Wave p)
     {
+        if (!p.Anchor.Follow(ref p.Center)) return;
         float u = p.Age / (float)p.Life, fade = MathF.Pow(1 - u, 2);
         bool terminal = EvolutionBloodSpectacleRules.Terminal(p.Cue);
         float reach = (p.Cue == EvolutionBloodCue.Finale ? 1550 : p.Cue == EvolutionBloodCue.Morph ? 1100 : p.Cue == EvolutionBloodCue.Axis ? 900 : 540) * p.Power;
         float radius = (35 + reach * (1 - MathF.Pow(1 - u, 3))) * .7f * p.SpatialScale;
         Texture2D ring = EvolutionVisuals.Asset("CinematicRing");
-        float alpha = fade * (EvolutionCinematics.Reduced ? .22f : terminal ? .66f : .58f);
+        float alpha = fade * p.Opacity * (EvolutionCinematics.Reduced ? .22f : terminal ? .66f : .58f);
         int rings = p.Cue is EvolutionBloodCue.Dash or EvolutionBloodCue.Volley ? 1 : terminal ? 4 : 2;
+        rings = Math.Max(1, (int)MathF.Round(rings * p.Density));
         Vector2 ringShape = p.Cue == EvolutionBloodCue.Dash ? new Vector2(2.8f, .65f) :
             p.Cue == EvolutionBloodCue.Impact ? new Vector2(2.6f, .5f) : new Vector2(2, 1.6f);
         float ringAngle = p.Cue == EvolutionBloodCue.Impact ? 0 : p.Direction.ToRotation();
@@ -213,7 +242,7 @@ public sealed class EvolutionBloodSpectacleSystem : ModSystem
                 ringAngle + (rings == 1 ? 0 : u * (i % 2 == 0 ? .6f : -.4f)), ring.Size() * .5f,
                 ringShape * radius * (1 + i * .12f) / ring.Size(), SpriteEffects.None, 0);
         if (p.Cue == EvolutionBloodCue.Volley) return;
-        int count = EvolutionBloodSpectacleRules.Filaments(p.Cue, EvolutionCinematics.Reduced);
+        int count = Math.Max(2, (int)MathF.Round(EvolutionBloodSpectacleRules.Filaments(p.Cue, EvolutionCinematics.Reduced) * p.Density));
         for (int i = 0; i < count; i++)
         {
             float angle = i * MathHelper.TwoPi / count + p.Direction.ToRotation();
@@ -240,13 +269,13 @@ public sealed class EvolutionBloodSpectacleSystem : ModSystem
     }
     private static void DrawBarrage(Evolution boss)
     {
-        if (boss.Phase < 2 || boss.Timer < 0) return;
+        if (boss.Phase < 2 || boss.Timer < 0 || boss.Phase == 6 && boss.Timer < EvolutionPresentationRules.DeathLead) return;
         float clock = boss.NPC.ai[3];
         float intensity = boss.Transitioning ? .65f : boss.Phase == 6 ? 1.2f : boss.Charging || boss.AxisHealthLocked ? .7f : .34f;
         intensity *= EvolutionCinematics.Reduced ? .35f : 1;
         if (boss.Phase == 2) intensity *= EvolutionPresentationRules.MorphColor(boss.Timer);
-        Vector2 center = boss.PatternSerial == boss.Serial ? boss.PatternCenter : boss.NPC.Center;
-        if (boss.Transitioning || boss.Phase == 6) center = boss.NPC.Center;
+        Vector2 center = EvolutionBloodSpectacleRules.BarrageCenter(boss);
+        if (boss.Phase == 6) intensity *= EvolutionPresentationRules.DeathIntensity * EvolutionPresentationRules.DeathOpacity;
         int count = EvolutionBloodSpectacleRules.DecorationCount(boss.Phase, EvolutionCinematics.Reduced);
         // Deterministic world-space streams: no player tracking and no hostile-projectile slots.
         for (int i = 0; i < count; i++)

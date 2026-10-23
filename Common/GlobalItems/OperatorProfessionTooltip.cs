@@ -24,9 +24,21 @@ namespace ArknightsMod.Common.GlobalItems
 
         private static void DrawCrystalWarning(DrawableTooltipLine line)
         {
-            float time = Main.GlobalTimeWrappedHourly;
             Vector2 position = new(line.X, line.Y);
-            Vector2 size = line.Font.MeasureString(line.Text) * line.BaseScale;
+            // HJSON multiline descriptions already contain real newlines. Each row
+            // needs its own glyph origin and crystal frame; never draw '\n' as a glyph.
+            foreach (string row in line.Text.Replace("\r", "").Split('\n'))
+            {
+                if (row.Length > 0)
+                    DrawCrystalRow(line, row, position);
+                position.Y += line.Font.LineSpacing * line.BaseScale.Y;
+            }
+        }
+
+        private static void DrawCrystalRow(DrawableTooltipLine line, string text, Vector2 position)
+        {
+            float time = Main.GlobalTimeWrappedHourly;
+            Vector2 size = line.Font.MeasureString(text) * line.BaseScale;
             Rectangle frame = new(
                 (int)position.X - 5,
                 (int)position.Y - 2,
@@ -64,9 +76,9 @@ namespace ArknightsMod.Common.GlobalItems
 
             // Individual glyphs shimmer at different phases; the warning remains legible at all times.
             float advance = 0f;
-            for (int index = 0; index < line.Text.Length; index++)
+            for (int index = 0; index < text.Length; index++)
             {
-                string glyph = line.Text[index].ToString();
+                string glyph = text[index].ToString();
                 Vector2 glyphPosition = position + Vector2.UnitX * advance;
                 float wave = 0.5f + 0.5f * MathF.Sin(time * 3.8f - index * 0.52f);
                 Color glow = Color.Lerp(new Color(38, 229, 255, 0), new Color(206, 105, 255, 0), wave) * 0.32f;

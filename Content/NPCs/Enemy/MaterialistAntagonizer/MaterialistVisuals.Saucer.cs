@@ -30,7 +30,7 @@ internal static partial class MaterialistVisuals
 
     private static void DrawSaucerBattery(MaterialistAntagonizer boss)
     {
-        int beat = MaterialistTactics.Beat(boss.Timer);
+        int beat = boss.CoreBeat;
         if (beat < 8 || beat > 132) return;
         float charge = MathHelper.Clamp((beat - 8) / 40f, 0, 1);
         Color tint = new(255, 232, 112);

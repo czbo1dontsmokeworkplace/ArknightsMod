@@ -177,7 +177,7 @@ public sealed class IsharmlaDragon : ModNPC
             case 4: Dive(boss, p, final); break;
             case 5: Breath(boss, p); break;
         }
-        Face(); WaterEvents(boss, p);
+        AttackPressure(boss, p, final); Face(); WaterEvents(boss, p);
         if (!Main.dedServ) IsharmlaVisuals.DragonWake(NPC.Center, NPC.velocity, 85, 0, boss.Stage == TideStage.LastTide);
         if (Authority && LocalTimer % 60 == 0) NPC.netUpdate = true;
     }
@@ -248,7 +248,9 @@ public sealed class IsharmlaDragon : ModNPC
         {
             // Fifth solo move: a gliding broadside with mouth-fired water fans.
             Steer(Aim + new Vector2(AttackSide * (760 - LocalTimer * 5), -280), 19, .026f);
-            if (LocalTimer is >= 80 and <= 200 && LocalTimer % 40 == 0) boss.Fan(Muzzle, p.Center, 9, 1.7f, 11);
+            if (LocalTimer == 65) boss.SpawnShot(TideShot.Tornado, new Vector2(Aim.X + AttackSide * 430, boss.Anchor.Y - 150), Vector2.Zero, 105, 65, 0, 90, 210);
+            if (LocalTimer is >= 80 and <= 200 && LocalTimer % 40 == 0)
+                for (int i = -2; i <= 2; i++) boss.SpawnShot(TideShot.Bubble, Muzzle, (p.Center - Muzzle).SafeNormalize(Vector2.UnitY).RotatedBy(i * .19f) * 8, 85, 24);
             return;
         }
         if (LocalTimer <= 1 && Authority)
@@ -342,6 +344,59 @@ public sealed class IsharmlaDragon : ModNPC
         }
         wasAbove = above;
     }
+    private void AttackPressure(Isharmla boss, Player p, bool final)
+    {
+        int t = LocalTimer;
+        switch (Pattern)
+        {
+            case 0:
+                if (t is >= 66 and <= 176 && t % (final ? 22 : 33) == 0)
+                    for (int i = -1; i <= 1; i++)
+                        boss.SpawnShot(TideShot.Bubble, Muzzle, (p.Center - Muzzle).SafeNormalize(Direction).RotatedBy(i * .34f) * 9, 100, 26);
+                if (t == 130)
+                    for (int side = -1; side <= 1; side += 2)
+                        boss.SpawnShot(TideShot.Shark, Aim + new Vector2(side * 620, 260), new Vector2(-side * 10, -4), 110, 55);
+                break;
+            case 1:
+                if (t == 75 || final && t == 155)
+                    for (int i = -2; i <= 2; i++)
+                        if (i != 0) boss.SpawnShot(TideShot.StormSpark, p.Center + new Vector2(i * 165, -510), new Vector2(0, 11), 105, 55);
+                if (t == 125)
+                    for (int side = -1; side <= 1; side += 2)
+                        boss.SpawnShot(TideShot.Typhoon, Muzzle, (p.Center - Muzzle).SafeNormalize(Direction).RotatedBy(side * .65f) * 8, 105, 32);
+                break;
+            case 2:
+                if (t == 170) boss.BubbleRing(Muzzle, final ? 16 : 12, 7, FacingAngle);
+                if (final && t == 95)
+                    for (int i = -1; i <= 1; i += 2)
+                        boss.SpawnShot(TideShot.Bomb, p.Center + new Vector2(i * 420, 240), Vector2.Zero, 115, 70, 0, 80, 24);
+                break;
+            case 3:
+                if (PortalOpen && PortalCrossed && t == PortalExitTimer + 12)
+                    boss.BubbleRing(PortalExit, final ? 14 : 10, 7, FacingAngle);
+                if (PortalOpen && PortalCrossed && t == PortalExitTimer + 30)
+                    for (int side = -1; side <= 1; side += 2)
+                        boss.SpawnShot(TideShot.Shark, PortalExit, PortalOutgoing.RotatedBy(side * .55f) * 13, 110, 30);
+                break;
+            case 4:
+                if (t == 75)
+                    for (int side = -1; side <= 1; side += 2)
+                        boss.SpawnShot(TideShot.Typhoon, Muzzle, new Vector2(side * 8, 3), 110, 32);
+                if (t == 150)
+                    boss.SpawnShot(TideShot.Tornado, new Vector2(Aim.X + AttackSide * 440, boss.Anchor.Y - 160), Vector2.Zero, 115, 60, 0, 90, final ? 170 : 135);
+                break;
+            case 5:
+                // Bubble punctuation first also reserves ample room for the single signature ray.
+                if (t == 50) boss.BubbleRing(Muzzle, 12, 5, FacingAngle);
+                if (t == 90)
+                    for (int side = -1; side <= 1; side += 2)
+                        boss.SpawnShot(TideShot.Tornado, p.Center + new Vector2(side * 620, 80), Vector2.Zero, 115, 70, 0, 90, 145);
+                if (t is >= 160 and <= 240 && t % 40 == 0)
+                    for (int side = -1; side <= 1; side += 2)
+                        boss.SpawnShot(TideShot.Bubble, Muzzle, Direction.RotatedBy(side * .9f) * 7, 100, 28);
+                break;
+        }
+    }
     public override bool PreDraw(SpriteBatch batch, Vector2 screenPos, Color drawColor)
     {
         if (Boss is not { } boss) return false;
@@ -349,18 +404,23 @@ public sealed class IsharmlaDragon : ModNPC
         {
             IsharmlaVisuals.PortalField(PortalEntrance, PortalIncoming, 145, Math.Min(1, LocalTimer / 45f), PortalCrossed);
             IsharmlaVisuals.PortalField(PortalExit, PortalOutgoing, 145, Math.Min(1, LocalTimer / 60f), PortalCrossed);
-            if (!PortalCrossed) IsharmlaVisuals.Line(PortalExit, PortalExit + PortalOutgoing * 1600, IsharmlaVisuals.Gold * .4f, 2);
         }
         // One ordered draw pass: rear scales under front scales, head over the neck.
         Array.Clear(drawSegments);
         foreach (NPC n in Main.ActiveNPCs)
             if (n.ModNPC is IsharmlaSegment part && part.HeadIndex == NPC.whoAmI && part.Encounter == Encounter && part.Order is >= 0 and < IsharmlaRules.DragonSegments)
                 drawSegments[part.Order] = part;
+        // Re-pose from one current trail snapshot; individual NPC position packets must not split the visible chain.
+        for (int i = 0; i < drawSegments.Length; i++) drawSegments[i]?.Follow(this);
         for (int i = drawSegments.Length - 1; i >= 0; i--) drawSegments[i]?.DrawPart(batch, screenPos);
         IsharmlaVisuals.DrawDragonPart(batch, "Head", NPC.Center, new Vector2(220, 220), NPC.rotation,
             IsharmlaRules.DragonScale, boss.Stage, (Dying > 0 ? 1 - Dying / 215f : 1) * Visibility, screenPos);
         if (Dying == 0 && boss.Transition == 0 && LocalTimer is >= 40 and < 65 && Pattern is 0 or 1 or 4)
-            IsharmlaVisuals.Line(Muzzle, Main.player[NPC.target].Center, IsharmlaVisuals.Gold * .35f, 2);
+        {
+            float charge = (LocalTimer - 40) / 25f;
+            IsharmlaVisuals.PortalField(Muzzle, Direction, 24 + charge * 20, charge, false);
+            IsharmlaVisuals.Orb(Muzzle, new Vector2(9 + charge * 9), IsharmlaVisuals.Cyan * .75f);
+        }
         if (Pattern == 5 && LocalTimer is >= 85 and < 155) IsharmlaVisuals.Ring(Muzzle, 35 + (155 - LocalTimer) * .45f, IsharmlaVisuals.Cyan * .8f, 3);
         return false;
     }
@@ -398,6 +458,13 @@ public sealed class IsharmlaSegment : ModNPC
             (front.Position - rear.Position).SafeNormalize(pose.Forward) : pose.Forward;
         NPC.rotation = tangent.ToRotation() - NativeAngle;
         NPC.Center = pose.Position;
+        if (Order > 0 && PreviousIndex >= 0 && PreviousIndex < Main.maxNPCs && Main.npc[PreviousIndex].ModNPC is IsharmlaSegment previous &&
+            head.Spine.Sample(IsharmlaRules.SegmentDistance(Order - 1)).Leg == pose.Leg)
+        {
+            float spacing = IsharmlaRules.SegmentDistance(Order) - IsharmlaRules.SegmentDistance(Order - 1);
+            Vector2 delta = NPC.Center - previous.NPC.Center;
+            if (delta.LengthSquared() > spacing * spacing) NPC.Center = previous.NPC.Center + delta.SafeNormalize(-tangent) * spacing;
+        }
         Visibility = head.Spine.Visibility(behind);
         NPC.velocity = Vector2.Zero;
     }
@@ -438,6 +505,7 @@ public sealed class IsharmlaSegment : ModNPC
             Player target = Main.player[head.NPC.target];
             if (Vector2.Dot(normal, target.Center - NPC.Center) < 0) normal = -normal;
             boss.Fan(NPC.Center + normal * 64, target.Center, boss.Stage == TideStage.LastTide ? 5 : 3, .7f, 10);
+            boss.SpawnShot(TideShot.Typhoon, NPC.Center + normal * 70, normal * 7, 95, 30);
         }
         if (!Main.dedServ && Visibility > .7f && Order % 3 == 0) IsharmlaVisuals.DragonWake(NPC.Center, head.NPC.velocity, 63, Order, head.Boss?.Stage == TideStage.LastTide);
         if (!Main.dedServ && head.Boss is { Transition: > 0 } && Order % 3 == 0)

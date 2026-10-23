@@ -6,16 +6,16 @@ namespace ArknightsMod.Content.NPCs.Enemy.MaterialistAntagonizer;
 
 internal static class MaterialistDeathRules
 {
-    // One source of truth for the two bosses' timing, density ramp and camera envelope.
-    internal const int Duration = EvolutionPresentationRules.DeathDuration;
-    internal const int Finale = EvolutionPresentationRules.DeathFinale;
+    // Keep its existing independent timeline, with bounded local presentation budgets.
+    internal const int Duration = 200;
+    internal const int Finale = 180;
     internal const int Aftermath = EvolutionBloodSpectacleRules.FinaleLife;
-    internal const int VisualEnd = EvolutionDeathCameraRules.VisualEnd;
-    internal const int ParticleCapacity = EvolutionBloodSpectacleRules.ParticleCapacity;
+    internal const int VisualEnd = Finale + Aftermath;
+    internal const int ParticleCapacity = 384;
     internal static float Smooth(float from, float to, float age) => EvolutionCinematicFrame.Smooth(from, to, age);
-    internal static bool Burst(int age) => EvolutionPresentationRules.DeathBurst(age);
-    internal static int BurstCount(int age, bool reduced) => EvolutionPresentationRules.DeathBurstCount(age, reduced);
-    internal static int PacketCount(bool reduced) => EvolutionBloodSpectacleRules.DecorationCount(6, reduced);
+    internal static bool Burst(int age) => age >= 0 && age < Duration && (age < 120 ? age % 5 == 0 : age % 2 == 0);
+    internal static int BurstCount(int age, bool reduced) => reduced ? 1 : age >= 156 ? 3 : age >= 90 ? 2 : 1;
+    internal static int PacketCount(bool reduced) => reduced ? 16 : 64;
     internal static float CameraForce(float age) => age < Finale ? MathHelper.Lerp(1, 5, Math.Clamp(age / 180f, 0, 1)) :
         9 * (1 - Smooth(Finale, VisualEnd, age));
     internal static Vector2 FaultPoint(Vector2 center, int age, int index) => center +

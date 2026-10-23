@@ -11,8 +11,8 @@ public sealed partial class MaterialistAntagonizer
     internal int SupportMode, SupportAge, SupportTarget = -1, SupportSlot = -1;
     internal Vector2 SupportOrigin;
     internal int SuppressedCoreRound = -1;
-    internal bool CoreSuppressed => SupportMode != 0 || SuppressedCoreRound == Revision * 4 + Math.Max(0, (Timer - 60) / 180);
-    private int supportClock, supportSequence, healedSlots;
+    internal bool CoreSuppressed => SupportMode != 0;
+    private int supportSequence, healedSlots;
     internal NPC RepairTarget => SupportTarget >= 0 && SupportTarget < Main.maxNPCs &&
         Main.npc[SupportTarget].active && Main.npc[SupportTarget].TryGetGlobalNPC<MaterialistWing>(out var wing) &&
         wing.BelongsTo(this) && !wing.Retreating && wing.Slot == SupportSlot ? Main.npc[SupportTarget] : null;
@@ -24,22 +24,6 @@ public sealed partial class MaterialistAntagonizer
         {
             if (SupportMode != 0) { SupportMode = SupportAge = 0; SupportTarget = SupportSlot = -1; if (Authority) NPC.netUpdate = true; }
             return;
-        }
-        if (Authority && SupportMode == 0 && ++supportClock >= (supportSequence == 0 ? 540 : 900))
-        {
-            NPC lowest = null;
-            foreach (NPC escort in Main.ActiveNPCs)
-                if (escort.TryGetGlobalNPC<MaterialistWing>(out var wing) && wing.BelongsTo(this) && !wing.Retreating &&
-                    wing.Age >= MaterialistRules.EscortGrace && escort.life < escort.lifeMax &&
-                    (lowest == null || escort.life < lowest.life)) lowest = escort;
-            if (lowest != null)
-            {
-                SupportMode = supportSequence++ % 2 == 0 ? 1 : 2;
-                SupportTarget = lowest.whoAmI; SupportSlot = lowest.GetGlobalNPC<MaterialistWing>().Slot;
-                SupportAge = supportClock = healedSlots = 0;
-                SupportOrigin = NPC.Center;
-                NPC.netUpdate = true;
-            }
         }
         if (SupportMode == 0) return;
         SuppressedCoreRound = Revision * 4 + Math.Max(0, (Timer - 60) / 180);
@@ -74,6 +58,20 @@ public sealed partial class MaterialistAntagonizer
             SupportMode = SupportAge = 0; SupportTarget = SupportSlot = -1;
             if (Authority) NPC.netUpdate = true;
         }
+    }
+    private bool BeginScheduledRepair()
+    {
+        NPC lowest = null;
+        foreach (NPC escort in Main.ActiveNPCs)
+            if (escort.TryGetGlobalNPC<MaterialistWing>(out var wing) && wing.BelongsTo(this) && !wing.Retreating &&
+                wing.Age >= MaterialistRules.EscortGrace && (lowest == null || escort.life < lowest.life)) lowest = escort;
+        if (lowest == null) return false;
+        SupportMode = supportSequence++ % 2 == 0 ? 1 : 2;
+        SupportTarget = lowest.whoAmI; SupportSlot = lowest.GetGlobalNPC<MaterialistWing>().Slot;
+        SupportAge = healedSlots = 0;
+        SupportOrigin = NPC.Center;
+        NPC.netUpdate = true;
+        return true;
     }
     private void RestoreEscort(NPC escort, int amount)
     {

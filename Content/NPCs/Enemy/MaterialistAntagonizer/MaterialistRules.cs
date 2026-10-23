@@ -31,7 +31,8 @@ internal static class MaterialistRules
     internal const int ScanWarning = 59; // Previously 84: 30% shorter, rounded to a whole tick.
     internal const int ScoutLifetime = 144;
     internal const int ArtsOrbLifetime = 156;
-    internal const float ArtsOrbSpeed = 7.6f;
+    internal const float ArtsOrbSpeed = 7.6f * 1.20f;
+    internal const int ArtsOrbUpdates = 2;
     internal const float SpreadSpacing = 1.2f;
     internal static int SpreadRingCount(int count) => Math.Max(1, (int)Math.Floor(count / SpreadSpacing));
     internal const int MachineUpdates = 16;

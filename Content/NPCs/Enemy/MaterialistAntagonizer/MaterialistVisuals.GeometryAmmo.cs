@@ -61,7 +61,7 @@ internal static partial class MaterialistVisuals
                 Glow(p.Center, White * .7f, new Vector2(9));
                 break;
             case DroneShot.ClusterOrb:
-                float charge = MathHelper.Clamp((h.Age - h.Delay - 24) / 20f, 0, 1);
+                float charge = MathHelper.Clamp((h.Age - h.Delay - 38) / 20f, 0, 1);
                 Ring(p.Center, 14 + MathF.Sin(h.Age * .15f) * 2, color, -h.Age * .05f, 2, 1, 6);
                 Glow(p.Center, color * .7f, new Vector2(34));
                 Glow(p.Center, White * .9f, new Vector2(13));

@@ -23,7 +23,7 @@ internal struct EvolutionDeathCameraPlayback
     private int entrance, tail, returning;
     private float releaseWeight;
     private bool following;
-    internal void Update(bool active, Vector2 center, int age, bool cancel = false)
+    internal void Update(bool active, Vector2 center, int age, bool cancel = false, int finale = EvolutionPresentationRules.DeathFinale, int visualEnd = EvolutionDeathCameraRules.VisualEnd)
     {
         if (cancel) { this = default; return; }
         if (active)
@@ -36,7 +36,7 @@ internal struct EvolutionDeathCameraPlayback
         if (following)
         {
             following = false; releaseWeight = Weight;
-            tail = LastAge >= EvolutionPresentationRules.DeathFinale ? Math.Max(0, EvolutionDeathCameraRules.VisualEnd - LastAge) : 0;
+            tail = LastAge >= finale ? Math.Max(0, visualEnd - LastAge) : 0;
             returning = 0;
         }
         if (tail > 0)
@@ -83,9 +83,9 @@ public sealed class EvolutionDeathCameraSystem : ModSystem
         if (!EvolutionCinematics.Reduced && EvolutionCinematics.ShakeEnabled)
         {
             float age = playback.LastAge;
-            float force = age < EvolutionPresentationRules.DeathFinale ? MathHelper.Lerp(1, 5, Math.Clamp(age / 180f, 0, 1)) :
+            float force = age < EvolutionPresentationRules.DeathLead ? 0 : age < EvolutionPresentationRules.DeathFinale ? MathHelper.Lerp(1, 5, Math.Clamp((age - EvolutionPresentationRules.DeathLead) / 180f, 0, 1)) :
                 9 * (1 - EvolutionCinematicFrame.Smooth(EvolutionPresentationRules.DeathFinale, EvolutionDeathCameraRules.VisualEnd, age));
-            Main.screenPosition += new Vector2(MathF.Sin(age * 2.43f), MathF.Cos(age * 1.83f)) * (force * playback.Weight);
+            Main.screenPosition += new Vector2(MathF.Sin(age * 2.43f), MathF.Cos(age * 1.83f)) * (force * playback.Weight * EvolutionPresentationRules.DeathIntensity);
         }
     }
     public override void OnWorldUnload() { playback = default; encounter = -1; }

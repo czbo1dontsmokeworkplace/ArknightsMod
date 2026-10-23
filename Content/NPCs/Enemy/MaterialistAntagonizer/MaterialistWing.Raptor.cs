@@ -151,8 +151,8 @@ public sealed partial class MaterialistWing
                 if (RaptorHorizontal)
                 {
                     Player target = Main.player[boss.NPC.target];
-                    // Horizontal gun axis stays fixed. The airframe can only rise slowly towards a higher target.
-                    float rise = MathHelper.Clamp((target.Center.Y - npc.Center.Y) * .01f, -1.5f, 0);
+                    // Gun axis stays horizontal while vertical tracking retains its signed direction.
+                    float rise = MathHelper.Clamp((target.Center.Y - npc.Center.Y) * .01f, -1.5f, 1.5f) * 1.70f;
                     CoastRaptor(npc, new Vector2(raptorHeading * .6f, rise), .055f);
                 }
                 else CoastRaptor(npc, new Vector2(raptorHeading * speed, boss.Phase == 3 ? 0 : .12f) * multiplier, .095f * multiplier);
@@ -204,6 +204,8 @@ public sealed partial class MaterialistWing
         float cruiseY = RaptorHorizontal ? sample.Y : boss.Phase == 3 ?
             sample.Y - Main.rand.NextFloat(10 * 16 + 2, 20 * 16 - 2) : top - 420 - (Slot - 8) * 55;
         float runX = boss.Phase == 3 ? sample.X - raptorHeading * 520 : centerX - raptorHeading * 520;
+        runX = sample.X + (runX - sample.X) * 1.20f;
+        cruiseY = sample.Y + (cruiseY - sample.Y) * 1.20f;
         raptorRunStart = new Vector2(MathHelper.Clamp(runX, 64, Main.maxTilesX * 16 - 64),
             MathHelper.Clamp(cruiseY, 64, Main.maxTilesY * 16 - 64));
         SetRaptorLeg(npc, RaptorLeg.Depart);

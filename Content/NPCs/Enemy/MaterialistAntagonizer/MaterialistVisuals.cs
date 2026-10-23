@@ -20,6 +20,7 @@ internal static partial class MaterialistVisuals
     internal static readonly Color Violet = new(195, 120, 255);
     internal static readonly Color White = new(255, 235, 191);
     internal static Color AmmoColor(MaterialistHazard h) => h.Kind switch {
+        _ when h.GoldenFan => new Color(255, 202, 88),
         DroneShot.PincerBeam => new Color(106, 244, 218),
         DroneShot.SaucerRound => new Color(255, 232, 112),
         DroneShot.Beam or DroneShot.ChaseBeam or DroneShot.ArtsOrb => Violet,

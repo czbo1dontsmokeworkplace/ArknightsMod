@@ -17,10 +17,10 @@ public abstract class ReaperWeapon : ExpansionWeaponBase
     {
         Item.damage = EliteDamage[0]; Item.DamageType = DamageClass.Melee;
         Item.width = Item.height = 70; Item.knockBack = 5 + (int)Kind;
-        Item.useTime = Item.useAnimation = ReaperRules.SwingTicks;
+        Item.useTime = Item.useAnimation = (int)ReaperRules.SwingTicks;
         Item.value = Item.sellPrice(silver: 300 + 250 * (int)Kind);
         Item.rare = Kind switch { ReaperKind.Humus => ItemRarityID.LightRed, ReaperKind.LaPluma => ItemRarityID.Lime, _ => ItemRarityID.Red };
-        Item.shootSpeed = 14; Item.shoot = ModContent.ProjectileType<ReaperSwing>();
+        Item.shootSpeed = ReaperRules.WaveSpeed; Item.shoot = ModContent.ProjectileType<ReaperSwing>();
         Item.useStyle = ItemUseStyleID.Shoot; Item.noMelee = Item.noUseGraphic = true;
         Item.autoReuse = true; Item.channel = false;
     }

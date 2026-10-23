@@ -67,6 +67,12 @@ public sealed partial class MaterialistWing
     }
     private void MoveEscort(NPC npc, MaterialistAntagonizer boss, Vector2 goal, float baseSpeed)
     {
+        if (Age >= MaterialistRules.EscortGrace && boss.EscortsReleased)
+        {
+            Vector2 player = Main.player[boss.NPC.target].Center;
+            goal = Vector2.Clamp(player + (goal - player) * 1.20f, new Vector2(64),
+                new Vector2(Main.maxTilesX * 16 - 64, Main.maxTilesY * 16 - 64));
+        }
         Vector2 rawVelocity = goalReady ? goal - lastFlightGoal : boss.NPC.velocity;
         lastFlightGoal = goal;
         goalReady = true;

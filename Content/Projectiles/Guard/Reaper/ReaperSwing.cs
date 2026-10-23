@@ -14,7 +14,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Reaper;
 
 public sealed class ReaperSwing : ModProjectile
 {
-    private float age, duration = ReaperRules.SwingTicks, aim, radius, previousAngle, fromAngle, toAngle;
+    private float age, duration = ReaperRules.SwingTicks, aim, radius, previousAngle, fromAngle, toAngle, startOffset;
     private int facing = 1, sequence;
     private bool started, released;
     private Item boundItem;
@@ -25,16 +25,19 @@ public sealed class ReaperSwing : ModProjectile
     internal float Progress => Math.Clamp(age / duration, 0, 1);
     // Nine timed poses from the supplied 9 x 100ms reference: a deliberate windup,
     // rapid front cut and decelerating follow-through. Never draw the reference GIF.
-    private static readonly float[] poses = [-2.35f, -2.22f, -2.06f, -1.74f, -.15f, 1.16f, 2.15f, 2.67f, 2.87f];
+    // The final recovery completes the circle back to the windup pose, rather than
+    // teleporting across the missing arc when Begin resets the cycle.
+    private static readonly float[] poses = [-2.35f, -2.22f, -2.06f, -1.74f, -.15f, 1.16f, 2.15f, 3.45f, -2.35f + MathHelper.TwoPi];
     internal static float Turn(float t)
     {
         float p = Math.Clamp(t, 0, 1) * 8; int i = Math.Min(7, (int)p); float u = p - i;
         float a = poses[i], b = poses[i + 1];
         float m0 = i == 0 ? b-a : (b-poses[i-1])*.5f;
-        float m1 = i == 7 ? b-a : (poses[i+2]-a)*.5f;
+        float m1 = i == 7 ? poses[1]-poses[0] : (poses[i+2]-a)*.5f;
         return (2*u*u*u-3*u*u+1)*a+(u*u*u-2*u*u+u)*m0+(-2*u*u*u+3*u*u)*b+(u*u*u-u*u)*m1;
     }
-    private float Angle => aim + Turn(Progress) * facing;
+    private float Angle => aim + Turn(Progress) * facing
+        + startOffset * (1 - MathHelper.SmoothStep(0, 1, Math.Clamp(Progress / .3f, 0, 1)));
     public override string Texture => "Terraria/Images/MagicPixel";
     public static ReaperSwing Find(Player p)
     {
@@ -51,11 +54,12 @@ public sealed class ReaperSwing : ModProjectile
     private void Begin(Player p)
     {
         var state=p.GetModPlayer<ReaperPlayer>();state.BeginAttack();
-        duration=Math.Max(12,ReaperRules.SwingTicks/(p.GetTotalAttackSpeed(DamageClass.Melee)*state.AttackSpeed));
+        duration=Math.Max(9.6f,ReaperRules.SwingTicks/(p.GetTotalAttackSpeed(DamageClass.Melee)*state.AttackSpeed));
         radius=ReaperRules.Reach(Kind)*state.ReachMultiplier*p.GetAdjustedItemScale(p.HeldItem);
         aim=(Main.MouseWorld-p.MountedCenter).SafeNormalize(new Vector2(p.direction,0)).ToRotation();
         facing=(MathF.Cos(aim)>=0?1:-1)*(p.gravDir<0?-1:1);
-        age=0;samples=0;released=false;started=true;sequence++;Array.Clear(Projectile.localNPCImmunity);
+        startOffset=started?MathHelper.WrapAngle(previousAngle-(aim+Turn(0)*facing)):0;
+        age=0;released=false;started=true;sequence++;Array.Clear(Projectile.localNPCImmunity);
         Projectile.damage=Math.Max(1,(int)(p.GetWeaponDamage(p.HeldItem)*state.AttackPower));Projectile.CritChance=p.GetWeaponCrit(p.HeldItem);
         previousAngle=fromAngle=toAngle=Angle;previousCenter=fromCenter=toCenter=p.MountedCenter;Projectile.netUpdate=true;
     }
@@ -79,7 +83,7 @@ public sealed class ReaperSwing : ModProjectile
         p.ChangeDir(MathF.Cos(aim)>=0?1:-1);p.heldProj=Projectile.whoAmI;p.itemTime=p.itemAnimation=2;BladeSwingTemplate.Pose(p,Angle);
         if(before<.43f&&Progress>=.43f&&!Main.dedServ)SoundEngine.PlaySound(SoundID.Item71 with{Volume=.6f,Pitch=.1f},grip);
         if(!released&&Progress>=.51f){released=true;if(local){ReaperWave.Spawn(p,Projectile.GetSource_FromThis(),grip+aim.ToRotationVector2()*30,
-            aim.ToRotationVector2()*14,Math.Max(1,(int)(Projectile.damage*.65f)),Projectile.knockBack*.6f,Kind);Projectile.netUpdate=true;}}
+            aim.ToRotationVector2()*ReaperRules.WaveSpeed,Math.Max(1,(int)(Projectile.damage*.65f)),Projectile.knockBack*.6f,Kind);Projectile.netUpdate=true;}}
         if(Projectile.numUpdates==0&&Progress>.3f&&Progress<.82f)ReaperVisuals.CutMotes(grip,tip,(Angle+facing*MathHelper.PiOver2).ToRotationVector2(),Kind);
         previousAngle=Angle;previousCenter=grip;
     }
@@ -97,9 +101,9 @@ public sealed class ReaperSwing : ModProjectile
         if(!started)return false;
         float glow=Math.Clamp((Progress-.3f)/.1f,0,1)*Math.Clamp((.94f-Progress)/.2f,0,1);
         ReaperMaterial.Trail(grip,history,samples,Kind,glow);
-        ReaperVisuals.Blade(grip,tip,Kind,1);return false;
+        ReaperVisuals.Blade(grip,tip,Kind,1,facing);return false;
     }
-    public override void SendExtraAI(BinaryWriter w){w.Write(started);w.Write(age);w.Write(duration);w.Write(aim);w.Write(radius);w.Write(facing);w.Write(released);w.Write(Projectile.damage);w.Write(sequence);}
-    public override void ReceiveExtraAI(BinaryReader r){started=r.ReadBoolean();age=r.ReadSingle();duration=Math.Clamp(r.ReadSingle(),12,600);aim=r.ReadSingle();radius=Math.Clamp(r.ReadSingle(),1,500);facing=r.ReadInt32();released=r.ReadBoolean();Projectile.damage=r.ReadInt32();int next=r.ReadInt32();if(next!=sequence)Array.Clear(Projectile.localNPCImmunity);sequence=next;
+    public override void SendExtraAI(BinaryWriter w){w.Write(started);w.Write(age);w.Write(duration);w.Write(aim);w.Write(radius);w.Write(facing);w.Write(released);w.Write(Projectile.damage);w.Write(sequence);w.Write(startOffset);}
+    public override void ReceiveExtraAI(BinaryReader r){started=r.ReadBoolean();age=r.ReadSingle();duration=Math.Clamp(r.ReadSingle(),9.6f,600);aim=r.ReadSingle();radius=Math.Clamp(r.ReadSingle(),1,500);facing=r.ReadInt32();released=r.ReadBoolean();Projectile.damage=r.ReadInt32();int next=r.ReadInt32();if(next!=sequence)Array.Clear(Projectile.localNPCImmunity);sequence=next;startOffset=r.ReadSingle();
         samples=0;previousAngle=fromAngle=toAngle=Angle;previousCenter=fromCenter=toCenter=Main.player[Projectile.owner].MountedCenter;}
 }

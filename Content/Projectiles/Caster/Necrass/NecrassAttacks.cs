@@ -20,6 +20,7 @@ public sealed class NecrassSoulBolt : NecrassAttack
 {
     private int normalTarget = -1;
     private float particleDistance;
+    private float lingeringDistance;
     public override void SetStaticDefaults()
     {
         ProjectileID.Sets.TrailCacheLength[Type] = 36;
@@ -54,6 +55,7 @@ public sealed class NecrassSoulBolt : NecrassAttack
         }
         if (!Main.dedServ)
         {
+            DepositWake();
             Lighting.AddLight(Projectile.Center, .32f, .08f, .48f);
             if (Projectile.localAI[0] % 3 == 0) NecrassVisuals.Embers(Projectile.Center, 1, .8f);
         }
@@ -86,6 +88,7 @@ public sealed class NecrassSoulBolt : NecrassAttack
         Projectile.velocity = (Projectile.ai[1] + wave).ToRotationVector2() * speed;
         Projectile.rotation = Projectile.velocity.ToRotation();
         if (Main.dedServ) return;
+        DepositWake();
         particleDistance += speed;
         if (particleDistance >= 30)
         {
@@ -97,6 +100,14 @@ public sealed class NecrassSoulBolt : NecrassAttack
             Lighting.AddLight(Projectile.Center, .32f, .08f, .48f);
             NecrassVisuals.SoulAsh(Projectile.Center, Projectile.velocity);
         }
+    }
+    private void DepositWake()
+    {
+        // Count world distance, not AI calls: mode 2 runs twenty sub-updates per frame.
+        lingeringDistance+=Projectile.velocity.Length();
+        if(lingeringDistance<22)return;
+        lingeringDistance%=22;
+        NecrassVisuals.LingeringWake(Projectile.Center,Projectile.velocity);
     }
     public override void OnKill(int timeLeft)
     {

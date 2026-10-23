@@ -47,7 +47,8 @@ internal static class FireArtsVfx
     internal static void Flight(Projectile p, SpreadArt art, float power)
     {
         if (!SpreadVfxBudget.Visible(p.Center, 240f)) return;
-        float size = (Large(art) ? 30f : 15f) * MathHelper.Clamp(power, .5f, 1.5f);
+        float size = (Large(art) ? 30f : 15f) * MathHelper.Clamp(power, .5f, 1.5f)
+            * (art == SpreadArt.Meteor ? p.scale : 1f);
         Vector2 aim = p.velocity.SafeNormalize(Vector2.UnitX);
         OperatorFlightVfx.Trail(p, SpreadArtsVfx.Body(art), SpreadArtsVfx.Edge(art), size * .24f, Large(art) ? 210f : 95f);
         using (SpreadArtsMaterial.Begin())

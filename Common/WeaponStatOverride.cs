@@ -138,7 +138,7 @@ namespace ArknightsMod.Common
 			// AdnachielCrossbow - 安德切尔 - 十字弩
 			// 原始值: damage=19, useTime=30, useAnimation=30, knockBack=2, shootSpeed=15
 			[typeof(Content.Items.Weapons.Sniper.Adnachiel.AdnachielCrossbow)] = new() {
-				Damage = 19, UseTime = 30, UseAnimation = 30, KnockBack = 2f, ShootSpeed = 15f
+				Damage = 28, UseTime = 30, UseAnimation = 30, KnockBack = 2f, ShootSpeed = 15f
 			},
 
 			// ExusiaiVector - 能天使 - Vector冲锋枪

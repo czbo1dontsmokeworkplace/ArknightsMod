@@ -1,4 +1,8 @@
-BranchTraits.Earthshaker: 撼地者：  按住左键举锤蓄力，松开猛砸；蓄满后沿地面喷出火柱，右键作为普通锤子拆墙
+BranchTraits.Earthshaker:
+	'''
+	撼地者：  按住左键举锤蓄力，松开猛砸；蓄满后沿地面喷出火柱
+	右键算作正常锤
+	'''
 
 Items: {
 	OddaHammer: {

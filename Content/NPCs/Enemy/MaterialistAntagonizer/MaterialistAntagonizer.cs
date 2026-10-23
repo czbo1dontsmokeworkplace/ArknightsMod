@@ -33,8 +33,8 @@ public sealed partial class MaterialistAntagonizer : ModNPC
     internal bool ScoutReady => Phase == 1 && Order == FlightOrder.Command && ScoutRevision > 0;
     internal ScoutMove ScoutAttack(int slot) => slot is >= 0 and < 6 ? (ScoutMove)((ScoutMoves >> (slot * 4)) & 15) : ScoutMove.None;
     internal int ScoutOffset(int slot) => (int)((ScoutOffsets >> (slot * 2)) & 3) * 4;
-    internal WingPattern Pattern => ScoutReady ? ScoutFormation : MaterialistRules.Pattern(Phase, Cycle);
-    internal int OrderDuration => Order == FlightOrder.Command ? MaterialistRules.PatternDuration(Pattern) : MaterialistRules.Duration(Order);
+    internal WingPattern Pattern => ScoutReady ? ScoutFormation : Order == FlightOrder.Command ? ContinuousWingPlan : MaterialistRules.Pattern(Phase, Cycle);
+    internal int OrderDuration => Order == FlightOrder.Command ? 420 : MaterialistRules.Duration(Order);
     internal int Phase => (int)NPC.ai[0];
     internal FlightOrder Order => (FlightOrder)(int)NPC.ai[1];
     internal int Timer => (int)NPC.ai[2];
@@ -189,6 +189,7 @@ public sealed partial class MaterialistAntagonizer : ModNPC
             return;
         }
         lostTargetTime = 0;
+        if (UpdatePhaseClock()) return;
         if (Authority && !FinalStand && Order != FlightOrder.Transition && Phase < 3 && NPC.life <= LockedPhaseLife)
         {
             if (WingCount() > 0) BeginPhaseWait();
@@ -211,6 +212,7 @@ public sealed partial class MaterialistAntagonizer : ModNPC
     }
     private void ChangePhase()
     {
+        PhaseAge = 0;
         FinalStand = false;
         ClearHazards(); RecallWing(); Shield = 0; ShieldMax = 0;
         CoreExposure = 0;
@@ -220,8 +222,14 @@ public sealed partial class MaterialistAntagonizer : ModNPC
     private void Enter(FlightOrder order)
     {
         if (!Authority) return;
-        ClearHazards();
+        if (order != FlightOrder.Command) ClearHazards();
         NPC.ai[1] = (int)order; NPC.ai[2] = 0;
+        if (order == FlightOrder.Command)
+        {
+            if (EscortsReleased) NPC.ai[2] = 60;
+            ContinuousWingPlan = MaterialistRules.Pattern(Phase, Main.rand.Next(1, 1000));
+        }
+        else ResetCoreSequence();
         if (order is FlightOrder.Arrival or FlightOrder.Transition or FlightOrder.Death or FlightOrder.Recover)
         { SupportMode = SupportAge = 0; SupportTarget = SupportSlot = -1; }
         Anchor = NPC.Center; Revision++;
@@ -245,8 +253,8 @@ public sealed partial class MaterialistAntagonizer : ModNPC
     {
         if (!Authority) return;
         NPC.ai[3]++;
-        if (FinalStand) { Enter(FlightOrder.Command); return; }
-        Enter(MaterialistRules.Order(Phase, Cycle));
+        if (Order == FlightOrder.Deploy || WingCount() > 0 || FinalStand) Enter(FlightOrder.Command);
+        else Enter(FlightOrder.Deploy);
     }
     private void FinishFinalStand()
     {
@@ -283,6 +291,9 @@ public sealed partial class MaterialistAntagonizer : ModNPC
         w.Write(SupportMode); w.Write(SupportAge); w.Write(SupportTarget); w.Write(SupportSlot); w.WriteVector2(SupportOrigin); w.Write(SuppressedCoreRound);
         w.Write(EscortsReleased); w.Write(RaptorNextSlot); w.Write(RaptorHandoffTicks);
         w.Write(FinalStand);
+        w.Write(CoreAttack); w.Write(CoreAttackAge); w.Write(CoreSerial); w.Write(AttacksSinceRepair);
+        w.Write((int)ContinuousWingPlan); w.WriteVector2(PulseEmitter);
+        w.Write(PhaseAge); w.Write(CoreWaiting); w.Write(CoreCooldownRemaining);
     }
     public override void ReceiveExtraAI(BinaryReader r)
     {
@@ -303,6 +314,9 @@ public sealed partial class MaterialistAntagonizer : ModNPC
         SupportMode = r.ReadInt32(); SupportAge = r.ReadInt32(); SupportTarget = r.ReadInt32(); SupportSlot = r.ReadInt32(); SupportOrigin = r.ReadVector2(); SuppressedCoreRound = r.ReadInt32();
         EscortsReleased = r.ReadBoolean(); RaptorNextSlot = r.ReadInt32(); RaptorHandoffTicks = r.ReadInt32();
         FinalStand = r.ReadBoolean();
+        CoreAttack = r.ReadInt32(); CoreAttackAge = r.ReadInt32(); CoreSerial = r.ReadInt32(); AttacksSinceRepair = r.ReadInt32();
+        ContinuousWingPlan = (WingPattern)r.ReadInt32(); PulseEmitter = r.ReadVector2();
+        PhaseAge = r.ReadInt32(); CoreWaiting = r.ReadBoolean(); CoreCooldownRemaining = r.ReadInt32();
     }
     public override void ModifyNPCLoot(NPCLoot loot)
     {

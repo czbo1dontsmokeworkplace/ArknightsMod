@@ -28,7 +28,7 @@ public sealed class BlastCasterHoldout : ModProjectile
     public override bool ShouldUpdatePosition() => false;
     internal static Vector2 GripPosition(Player owner, Vector2 aim) => owner.RotatedRelativePoint(owner.MountedCenter) + aim * 8f;
     internal static Vector2 Muzzle(Player owner, Vector2 aim, BlastCasterKind kind)
-        => GripPosition(owner, aim) + BlastCasterRules.MuzzleOffset(new Vector2(72, 24), kind,
+        => GripPosition(owner, aim) + BlastCasterRules.MuzzleOffset(kind == BlastCasterKind.Ifrit ? new Vector2(108, 24) : new Vector2(72, 24), kind,
             aim.ToRotation(), aim.X >= 0 ? 1 : -1);
     public override void AI()
     {
@@ -104,7 +104,9 @@ public sealed class BlastCasterHoldout : ModProjectile
     }
     public override bool PreDraw(ref Color lightColor)
     {
-        Texture2D texture = TextureAssets.Projectile[Type].Value;
+        Texture2D texture = Kind == BlastCasterKind.Ifrit
+            ? TextureAssets.Item[ModContent.ItemType<IfritFlamethrower>()].Value
+            : TextureAssets.Projectile[Type].Value;
         int facing = Projectile.direction;
         Vector2 origin = BlastCasterRules.Grip * texture.Size();
         if (facing < 0) origin.Y = texture.Height - origin.Y;

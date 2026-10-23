@@ -9,11 +9,14 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution;
 internal static class EvolutionFleetRules
 {
     internal const int SlamLock = 0, SlamLaunch = 13, SlamImpact = 22, SlamFan = SlamImpact + EvolutionBroodfallRules.Escape;
+    internal static int CeilingSlam => SlamFan + EvolutionBroodfallRules.FanWindow + EvolutionBroodfallRules.MirrorPause;
+    internal static int CeilingFan => CeilingSlam;
+    internal static int SlamRelease => CeilingFan + EvolutionBroodfallRules.FanWindow + 16;
     internal const int ZigStride = 68, ZigLock = 18, ZigLaunch = 38, ZigEnd = 60;
     internal static bool IsMotion(int attack) => attack is 14 or 15;
     internal static int Duration(int attack) => EvolutionRecitalRules.IsFigure(attack) ? EvolutionRecitalRules.Duration :
         EvolutionBloodSurgeRules.IsFigure(attack) ? EvolutionBloodSurgeRules.Duration :
-        attack is >= 19 and <= 22 ? EvolutionRicochetRules.Duration : IsMotion(attack) ? 216 : EvolutionPianoRules.Duration;
+        attack is >= 19 and <= 22 ? EvolutionRicochetRules.Duration : attack == 14 ? SlamRelease + 16 : IsMotion(attack) ? 216 : EvolutionPianoRules.Duration;
     internal static int CurtainGap(int wave, int cycle) => cycle % 3 - 2 + (wave is 1 or 2 ? 1 : 0);
     internal static Vector2 ZigTarget(Vector2 center, int leg) => center + new Vector2(leg % 2 == 0 ? 420 : -420, leg % 2 == 0 ? -150 : 150);
     internal static bool DashEmission(int age) => age is 5 or 12 or 19;
@@ -34,7 +37,7 @@ public sealed partial class Evolution
             Vector2 source = new(PatternOrigin.X + side * 570, Math.Clamp(PatternOrigin.Y + (wave - 1) * 140, CorridorTop + 100, CorridorBottom - 100));
             Vector2 direction = (PatternOrigin - source).SafeNormalize(-side * Vector2.UnitX);
             for (int i = 0; i < 8; i++)
-                FleetBolt(source, direction.RotatedBy(EvolutionRules.FanSlot(i, 8) * .15f) * 9, 24, 100);
+                FleetBolt(source, direction.RotatedBy(EvolutionCorridorPressureRules.SideFanAngle(EvolutionRules.FanSlot(i, 8), .15f)) * 9, 24, 100);
         }
         if (Attack == 17 && t >= 12 && t <= 120 && (t - 12) % 36 == 0)
         {
@@ -72,7 +75,7 @@ public sealed partial class Evolution
             NPC.velocity = Vector2.Lerp(CrashStart, CrashGround, u * u) - NPC.Center;
             if (!Main.dedServ && t % 3 == 0) EvolutionArsenalVisuals.Smoke(NPC.Center, -NPC.velocity * .12f, 42, 20, true);
         }
-        if (t >= EvolutionFleetRules.SlamImpact && t < 148) { NPC.Center = CrashGround; NPC.velocity = Vector2.Zero; }
+        if (t >= EvolutionFleetRules.SlamImpact && t < EvolutionFleetRules.SlamRelease) { NPC.Center = t < EvolutionFleetRules.CeilingSlam ? CrashGround : CrashCeiling; NPC.velocity = Vector2.Zero; }
         if (t == EvolutionFleetRules.SlamImpact && !Main.dedServ)
         {
             EvolutionImpactSystem.Emit(CrashGround, 430, 5, false, 24);
@@ -82,7 +85,10 @@ public sealed partial class Evolution
         if (t == EvolutionFleetRules.SlamFan)
             Shoot(EvolutionShot.CrashFan, CorridorSlamMuzzle, Vector2.Zero,
                 delay: 48, lifetime: 128, beamStyle: EvolutionBeamStyle.Refracted);
-        if (t >= 148) HoverLow(player);
+        if (t == EvolutionFleetRules.CeilingSlam) CeilingImpact();
+        if (t == EvolutionFleetRules.CeilingFan)
+            Shoot(EvolutionShot.CrashFan, CeilingSlamMuzzle, -Vector2.UnitY, delay: 48, lifetime: 128, beamStyle: EvolutionBeamStyle.Refracted);
+        if (t >= EvolutionFleetRules.SlamRelease) HoverLow(player);
     }
     private void DoLowZigzag(Player player)
     {

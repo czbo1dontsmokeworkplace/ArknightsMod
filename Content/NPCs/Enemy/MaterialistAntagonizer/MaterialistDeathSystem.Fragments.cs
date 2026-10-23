@@ -57,6 +57,7 @@ public sealed partial class MaterialistDeathSystem
             p.Velocity *= p.Plate ? .982f : .96f;
             p.Velocity.Y += p.Plate ? .18f : -.015f;
             p.Position += p.Velocity;
+            if (Vector2.DistanceSquared(p.Position, center) > 520 * 520) { p.Life = 0; continue; }
             p.Rotation += p.Spin;
         }
     }
@@ -80,9 +81,9 @@ public sealed partial class MaterialistDeathSystem
                 Vector2 size = new(2 + p.Size * 1.6f);
                 if (!MaterialistVisuals.Reduced && p.Age % 3 == 0)
                     MaterialistVisuals.Glow(p.Position, p.Tint * (fade * .22f), size * 5);
-                Main.spriteBatch.Draw(pixel, point, null, (p.Tint with { A = 0 }) * fade,
+                Main.spriteBatch.Draw(pixel, point, new Rectangle(0, 0, 1, 1), (p.Tint with { A = 0 }) * fade,
                     p.Rotation, new Vector2(.5f), size, SpriteEffects.None, 0);
-                Main.spriteBatch.Draw(pixel, point, null, (Color.White with { A = 0 }) * (.8f * fade),
+                Main.spriteBatch.Draw(pixel, point, new Rectangle(0, 0, 1, 1), (Color.White with { A = 0 }) * (.8f * fade),
                     p.Rotation, new Vector2(.5f), size * .4f, SpriteEffects.None, 0);
                 if (!MaterialistVisuals.Reduced && p.Velocity.LengthSquared() > 36)
                     MaterialistVisuals.Glow(p.Position - p.Velocity * .5f, p.Tint * (.25f * fade),

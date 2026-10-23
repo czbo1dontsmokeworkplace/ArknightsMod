@@ -67,6 +67,7 @@ public sealed partial class EvolutionHazard : ModProjectile
     public override bool? CanCutTiles() => false;
     public override bool? CanDamage()
     {
+        if (IsBloodglowCompanion) return false;
         if (Parent == null || Parent.Serial != Serial || Age >= Lifetime - 12) return false;
         if (IsBroodArsenal) return ArsenalCanDamage() ? null : false;
         if (IsAxis) return Age >= FireAge && Age < FireAge + EvolutionRules.AxisActiveTicks ? null : false;
@@ -312,6 +313,12 @@ public sealed partial class EvolutionHazard : ModProjectile
         if (Kind == EvolutionShot.Bloodglow)
         {
             float bloodglowFade = Math.Clamp((Lifetime - Age) / 12f, 0, 1);
+            if (IsBloodglowCompanion)
+            {
+                float charge = Age < Delay ? .25f + .25f * Age / Math.Max(1f, Delay) : 1;
+                EvolutionBloodglowVisuals.Draw(Projectile, bloodglowFade * .28f * charge, .7f, decoy: true);
+                return false;
+            }
             if (Age < Delay)
             {
                 float charge = Age / (float)Math.Max(1, Delay);
@@ -319,6 +326,12 @@ public sealed partial class EvolutionHazard : ModProjectile
                 EvolutionBloodglowVisuals.Draw(Projectile, (.15f + charge * .25f) * bloodglowFade, .65f);
             }
             else EvolutionBloodglowVisuals.Draw(Projectile, bloodglowFade);
+            return false;
+        }
+        if (Parent?.Phase >= 4 && Kind is EvolutionShot.Blood or EvolutionShot.Spirit)
+        {
+            float opacity = Math.Clamp(Age / 12f, 0, 1) * Math.Clamp((Lifetime - Age) / 15f, 0, 1);
+            EvolutionBloodglowVisuals.Draw(Projectile, opacity, .85f);
             return false;
         }
         if (Kind == EvolutionShot.Ricochet) { DrawRicochet(); return false; }

@@ -20,7 +20,7 @@ public sealed partial class Evolution
         if (Attack == 6) { DoHemalAxis(player); return; }
         if (Attack == 7) { DoWhirlingBombs(player); return; }
         if (t == 0) ClearBrood();
-        if (Attack == 1 && t == 18) SpawnBrood(EvolutionBrood.Puppet, player.Center + new Vector2(-620, -280));
+        if (Attack == 1 && t == 18) SpawnQuadrantBatteries(player);
         Hover(player, t * .019f);
         int interval = (int)MathF.Round(EvolutionRules.VolleyInterval(Desperate ? 42 : 48) / CycleBoost);
         if (t >= 28 && t <= 28 + interval * 5 && (t - 28) % interval == 0)
@@ -36,8 +36,7 @@ public sealed partial class Evolution
                     break;
                 case 3:
                     LaserPattern(player, wave % 2 == 0 ? 0 : 4, 28);
-                    if (wave % 2 == 0) for (int side = -1; side <= 1; side += 2)
-                        ThrowBomb(PatternCenter + new Vector2(side * 600, -300), PatternCenter + new Vector2(side * 360, 40), wave == 2, 74);
+                    if (wave % 2 == 0) ThrowQuadrantBombs(PatternCenter);
                     break;
                 case 4:
                     LaserWall(PatternCenter, MathHelper.PiOver2, 0, 30);
@@ -51,7 +50,7 @@ public sealed partial class Evolution
                     if (wave % 2 == 1) LanceComb(PatternCenter, MathHelper.PiOver2, 5, 32);
                     break;
             }
-            if (Attack != 4 && wave % 2 == 0) SpiritFan(player, NPC.Center, 7, 36);
+            if (Attack != 4 && wave % 2 == 0) SpiritFan(player, NPC.Center, CycleEnraged ? 9 : 7, 36);
         }
         if (t >= 28 + interval * 5 + 125) NextAttack();
     }

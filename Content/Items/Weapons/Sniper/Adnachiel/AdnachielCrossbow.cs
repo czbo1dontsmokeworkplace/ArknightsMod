@@ -30,7 +30,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Adnachiel
 		}
 
 		public override void SetDefaults() {
-			Item.damage = 19;
+			Item.damage = 28;
 			Item.DamageType = DamageClass.Ranged;
 			Item.width = 120;
 			Item.height = 60;

@@ -1,8 +1,9 @@
 FighterDispatchTerminal: {
-	DisplayName: Fighter Dispatch Terminal
+	DisplayName: Drone Dispatch Terminal
 	Tooltip:
 		'''
 		Summons a Yokai drone, using 1 minion slot
+		Fires two-shot bursts, 5 ticks apart, with the same interval between rounds
 		The drone consumes bullets from your inventory and preserves their ammunition effects; it cannot fire without bullets
 		The drone and its ammunition deal summon damage; right-click to designate a priority target
 		'''
@@ -14,6 +15,7 @@ MiniGatling: {
 		'''
 		Spins up briefly, then pours sustained machine-gun fire toward the cursor
 		Converts bullets into fast, straight-flying tracer rounds that do not home
+		Has 20 armor penetration
 		'''
 }
 

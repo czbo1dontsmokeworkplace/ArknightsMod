@@ -78,6 +78,8 @@ public sealed class CrossbowBolt : ModProjectile
             Color color = CrossbowVisuals.ColorFor(Kind);
             Lighting.AddLight(Projectile.Center, color.ToVector3() * .16f);
             CrossbowFlightVfx.Wake(Projectile, Kind);
+            if (Kind == CrossbowKind.Schwarz && Projectile.ai[1] == 3 && Projectile.numUpdates == 0)
+                SchwarzTerminalFlight.Emit(Projectile);
         }
     }
     public override bool? CanHitNPC(NPC target)
@@ -156,6 +158,11 @@ public sealed class CrossbowBolt : ModProjectile
     }
     public override bool PreDraw(ref Color lightColor)
     {
+        if (Kind == CrossbowKind.Schwarz && Projectile.ai[1] == 3)
+        {
+            SchwarzTerminalFlight.Draw(Projectile);
+            return false;
+        }
         if (Kind >= CrossbowKind.Melanite) { CrossbowBranchSkills.Draw(Projectile, Kind); return false; }
         CrossbowVisuals.DrawBolt(Projectile, Kind, age);
         return false;

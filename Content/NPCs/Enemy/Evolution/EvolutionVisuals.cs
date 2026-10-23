@@ -155,16 +155,17 @@ internal static class EvolutionVisuals
         }
     }
 
-    internal static void Burst(Vector2 center, float strength = 1f, bool sound = true, Color? color = null, float spatialScale = 1)
+    internal static void Burst(Vector2 center, float strength = 1f, bool sound = true, Color? color = null, float spatialScale = 1,
+        float density = 1, float opacity = 1, float intensity = 1)
     {
         if (Main.dedServ) return;
-        int count = Math.Min(30, (int)(14 * strength));
+        int count = (int)MathF.Round(Math.Min(30, (int)(14 * strength)) * density);
         for (int i = 0; i < count; i++)
         {
-            Vector2 velocity = Main.rand.NextVector2CircularEdge(1, 1) * Main.rand.NextFloat(2, 8) * strength * spatialScale;
-            new DefaultParticle(center, velocity, 22, Main.rand.NextFloat(.35f, .7f), i % 4 == 0 ? Core : color ?? Blood, true)
+            Vector2 velocity = Main.rand.NextVector2CircularEdge(1, 1) * Main.rand.NextFloat(2, 8) * strength * spatialScale * intensity;
+            new DefaultParticle(center, velocity, 22, Main.rand.NextFloat(.35f, .7f) * intensity, (i % 4 == 0 ? Core : color ?? Blood) * opacity, true)
             { Deformation = new Vector2(.45f, 1.8f) }.Spawn();
-            if (i % 3 == 0) Dust.NewDustPerfect(center, color == Sand ? DustID.Sand : DustID.Blood, velocity * .7f, 0, default, 1.4f);
+            if (i % 3 == 0) Dust.NewDustPerfect(center, color == Sand ? DustID.Sand : DustID.Blood, velocity * .7f, (int)(255 * (1 - opacity)), default, 1.4f * intensity);
         }
         if (sound) SoundEngine.PlaySound(SoundID.NPCHit18 with { Volume = .65f, Pitch = -.3f, MaxInstances = 3 }, center);
     }

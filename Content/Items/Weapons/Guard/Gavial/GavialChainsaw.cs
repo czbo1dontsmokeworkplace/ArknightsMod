@@ -18,6 +18,7 @@ public sealed class GavialChainsaw : ExpansionWeaponBase
     public override void SetDefaults()
     {
         Item.damage = EliteDamage[0];
+            Item.axe = new Item(ItemID.ButchersChainsaw).axe;
         Item.DamageType = DamageClass.Melee;
         Item.width = 60;
         Item.height = 32;

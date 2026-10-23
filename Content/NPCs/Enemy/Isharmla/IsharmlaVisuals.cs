@@ -89,7 +89,8 @@ public sealed partial class IsharmlaVisuals : ModSystem
     {
         Vector2 center = boss.NPC.Center; bool ghost = boss.NPC.dontTakeDamage;
         Color tint = ghost ? Gold : Cyan;
-        float visibility = boss.Stage == TideStage.Covenant && boss.Dragon is { } mount ? mount.Visibility : 1;
+        float visibility = (boss.Stage is TideStage.Covenant or TideStage.LastTide) && boss.Dragon is { } mount ? mount.Visibility : 1;
+        if (boss.Stage == TideStage.Finale) visibility *= IsharmlaRules.FinaleOpacity(boss.Timer, boss.Transition);
         if (visibility <= .001f) return;
         tint *= visibility;
         float time = Clock;

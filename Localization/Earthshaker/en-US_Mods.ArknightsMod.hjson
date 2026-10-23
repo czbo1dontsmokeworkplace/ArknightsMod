@@ -1,4 +1,8 @@
-BranchTraits.Earthshaker: Earthshaker:  Hold left click to raise and charge the hammer, release to slam; a full charge erupts flames along the ground. Right click uses a normal wall hammer
+BranchTraits.Earthshaker:
+	'''
+	Earthshaker:  Hold left click to raise and charge the hammer, release to slam; a full charge erupts flames along the ground
+	Right click functions as a normal hammer
+	'''
 
 Items: {
 	OddaHammer: {

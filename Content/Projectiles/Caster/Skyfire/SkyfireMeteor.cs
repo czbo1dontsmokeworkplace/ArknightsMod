@@ -35,7 +35,17 @@ public sealed class SkyfireMeteor : ModProjectile
         Projectile.localNPCHitCooldown = -1;
     }
 
-    public override void OnSpawn(IEntitySource source) => Projectile.velocity *= .5f;
+    public override void OnSpawn(IEntitySource source)
+    {
+        Projectile.velocity *= .5f;
+        if (Skyfall)
+        {
+            Projectile.scale = 2f;
+            Vector2 center = Projectile.Center;
+            Projectile.width = Projectile.height = 68;
+            Projectile.Center = center;
+        }
+    }
 
     public override void AI()
     {

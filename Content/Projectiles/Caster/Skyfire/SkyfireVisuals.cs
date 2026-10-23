@@ -10,7 +10,7 @@ internal static class SkyfireVisuals
         => SpreadArtsVfx.Charge(muzzle, charge, time, SpreadArt.Meteor, direction);
 
     internal static void DrawMeteor(Projectile projectile, bool skyfall)
-        => SpreadArtsVfx.Flight(projectile, SpreadArt.Meteor, skyfall ? 1.2f : 1f);
+        => SpreadArtsVfx.Flight(projectile, SpreadArt.Meteor, 1f);
 
     internal static void DrawImpact(Vector2 worldCenter, float diameter, float progress)
         => SpreadArtsVfx.Burst(worldCenter, diameter, progress, SpreadArt.Meteor);

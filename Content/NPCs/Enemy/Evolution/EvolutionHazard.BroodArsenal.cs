@@ -8,6 +8,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution;
 
 public sealed partial class EvolutionHazard
 {
+    internal Vector2 CrashFanDirection(int ray) => EvolutionBroodfallRules.FanDirection(ray) * (Projectile.velocity.Y < 0 ? -1 : 1);
     internal bool IsBroodArsenal => Kind is EvolutionShot.CrashFan or EvolutionShot.Flame or
         EvolutionShot.BroodRocket or EvolutionShot.GravityFlare or EvolutionShot.Serpent;
     private int RocketStop => Delay + (int)Parameter;
@@ -72,7 +73,7 @@ public sealed partial class EvolutionHazard
         {
             for (int i = 0; i < EvolutionBroodfallRules.FanRayCount; i++)
             {
-                Vector2 direction = EvolutionBroodfallRules.FanDirection(i);
+                Vector2 direction = CrashFanDirection(i);
                 // 近端75像素是亮核；释放玩家时不让交汇点变成六束共同命中的陷阱。
                 if (RayPath(Projectile.Center + direction * 75, direction, EvolutionBroodfallRules.FanReach - 75)
                     .Collides(box, EvolutionBroodfallRules.FanWidth)) return true;
@@ -105,7 +106,7 @@ public sealed partial class EvolutionHazard
             float opacity = EvolutionRules.BeamEnvelope(fired,EvolutionBroodfallRules.FanActive,EvolutionBroodfallRules.FanFade);
             for (int ray = 0; ray < EvolutionBroodfallRules.FanRayCount; ray++)
             {
-                Vector2 d = EvolutionBroodfallRules.FanDirection(ray);
+                Vector2 d = CrashFanDirection(ray);
                 Vector2 start = Projectile.Center + d * 75, end = Projectile.Center + d * EvolutionBroodfallRules.FanReach;
                 if (fired >= 0 && BeamStyle == EvolutionBeamStyle.Refracted)
                     DrawRayContacts(RayPath(start, d, EvolutionBroodfallRules.FanReach - 75), opacity, EvolutionBroodfallRules.FanWidth);

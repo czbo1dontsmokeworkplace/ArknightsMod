@@ -10,7 +10,8 @@ public sealed class CenturionInputPlayer : ModPlayer
 {
     private bool rightHeld;
     private bool previousRightHeld;
-    private static int SawAxePower => ContentSamples.ItemsByType[ItemID.ButchersChainsaw].axe;
+    private Item preparedItem;
+    private int preparedAxe;
 
     public override void SetControls()
     {
@@ -35,7 +36,17 @@ public sealed class CenturionInputPlayer : ModPlayer
     public override bool PreItemCheck()
     {
         if (OperatorBranchTraits.Branch(Player.HeldItem) == "Centurion")
-            Player.HeldItem.axe = rightHeld ? SawAxePower : 0;
+        {
+            preparedItem = Player.HeldItem;
+            preparedAxe = preparedItem.axe;
+            if (!rightHeld) preparedItem.axe = 0;
+        }
         return true;
+    }
+
+    public override void PostItemCheck()
+    {
+        if (preparedItem != null) preparedItem.axe = preparedAxe;
+        preparedItem = null;
     }
 }

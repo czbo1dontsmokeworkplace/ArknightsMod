@@ -95,8 +95,6 @@ public sealed class OperatorBranchTraits : GlobalItem
     {
         if (Branch(item) != "Centurion") return;
         Item saw = new(ItemID.ButchersChainsaw);
-        // Axe power is enabled only while holding right-click, before ItemCheck.
-        item.axe = 0;
         item.useTime = saw.useTime;
     }
 }

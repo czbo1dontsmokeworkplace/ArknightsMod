@@ -10,10 +10,10 @@ public sealed partial class Evolution
 {
     internal void LobBroodDust(Vector2 origin, Vector2 landing, int flight = 75)
     {
-        const float gravity = .22f;
-        Vector2 velocity = new((landing.X - origin.X) / flight,
-            (landing.Y - origin.Y) / flight - gravity * (flight + 1) * .5f);
-        Shoot(EvolutionShot.BroodSpit, origin, velocity, delay: 0, lifetime: flight + 35);
+        float speedScale = Phase == 3 ? EvolutionCorridorPressureRules.Speed : 1;
+        flight = EvolutionBroodRangedRules.FlightTicks(flight, speedScale);
+        Vector2 velocity = EvolutionBroodRangedRules.LobVelocity(origin, landing, flight);
+        Shoot(EvolutionShot.BroodSpit, origin, velocity / speedScale, delay: 0, lifetime: flight + 35);
     }
 }
 
@@ -22,7 +22,7 @@ public sealed partial class EvolutionHazard
     private void UpdateBroodSpit(Evolution boss)
     {
         if (Age < Delay) return;
-        Projectile.velocity.Y = Math.Min(15, Projectile.velocity.Y + .22f);
+        Projectile.velocity.Y = Parameter < 0 ? 0 : Math.Min(15, Projectile.velocity.Y + .22f);
         Projectile.tileCollide = Age >= Delay + 4 && !Collision.SolidCollision(Projectile.position, Projectile.width, Projectile.height);
         if (Main.dedServ) return;
         for (int i = 0; i < 3; i++)

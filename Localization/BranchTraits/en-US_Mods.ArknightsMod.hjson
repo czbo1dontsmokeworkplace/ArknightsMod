@@ -1,7 +1,7 @@
 BranchTraits: {
-	Artilleryman: Artilleryman:  Fires in a distinctive mortar arc; descending shells deal 1.25x explosion damage (+25%)
+	Artilleryman: Artilleryman:  Fires in a distinctive mortar arc; shells deal increased damage while descending
 	Crusher: Crusher:  While held, defense becomes zero; maximum life, life regeneration and healing from potions are increased by 30%
-	Reaper: Reaper:  Left click cuts and releases a gray crescent; only physical cuts steal life. Hold right click to spin and radiate light motes that scatter before rapidly seeking enemies; release to stop spinning. Neither right-click attacks nor motes heal
+	Reaper: Reaper:  Swing the scythe to cut enemies and steal life; hold right click to spin it
 	Musha: Musha:  Attacks restore life, but holding this weapon disables healing potions
 	Dreadnought: Dreadnought:  Can hit only one enemy, but deals increasingly higher, stacking damage
 	ArtsFighter: Arts Fighter:  Attacks ignore enemy defense
@@ -10,7 +10,11 @@ BranchTraits: {
 	Phalanx: Phalanx Caster:  Gain higher defense while not attacking; attacking temporarily disables the energy shield
 	Spreadshooter: Spreadshooter:  Standing still improves spread accuracy; deals increased damage at close range
 	Executor: Executor:  Moving quickly, dashing, landing, or respawning counts as triggering a skill
-	Centurion: Centurion:  Attacks all nearby enemies at an extremely high frequency
+	Centurion:
+		'''
+		Centurion:  Attacks all nearby enemies at an extremely high frequency
+		Right click functions as a normal axe
+		'''
 	Medic: Physician:  Lob gravity-affected medical arts to heal allied players
 	ChainCaster: Chain Caster:  Lightning can bounce between multiple enemies
 	SplashCaster: Splash Caster:  Attacks deal sustained damage over time

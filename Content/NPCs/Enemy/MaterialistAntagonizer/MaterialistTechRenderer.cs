@@ -40,11 +40,6 @@ public sealed class MaterialistTechRenderer : ModSystem
             if (boss.Order is FlightOrder.Deploy or FlightOrder.Arrival or FlightOrder.Transition || boss.Shield > 0)
                 DrawPanel(shader, boss.NPC.Center, new Vector2(380, 190), MaterialistVisuals.Cyan *
                     (boss.Order == FlightOrder.Arrival ? .6f * MaterialistFormation.Smooth(boss.Timer / 24f) * (1 - MaterialistFormation.Smooth((boss.Timer - 178) / 32f)) : .6f));
-            if (boss.EscortFire && boss.Timer < boss.OrderDuration - 30)
-            {
-                Vector2 size = boss.Pattern == WingPattern.Gate ? new Vector2(680, 560) : new Vector2(500, 320);
-                DrawPanel(shader, boss.FormationCenter, size, MaterialistVisuals.Cyan * .20f);
-            }
             foreach (NPC npc in Main.ActiveNPCs)
             {
                 if (!npc.TryGetGlobalNPC<MaterialistWing>(out var wing) || !wing.BelongsTo(boss) || wing.Retreating) continue;

@@ -7,17 +7,15 @@ namespace ArknightsMod.Content.NPCs.Enemy.MaterialistAntagonizer;
 public sealed partial class MaterialistAntagonizer
 {
     internal Vector2 CoreAim, CoreSpreadAim;
-    internal CorePattern CorePlan => (CorePattern)Math.Abs((Cycle * 2 + Math.Max(0, (Timer - 60) / 180) +
-        Math.Max(0, Wave - 1) * 3 + (Phase - 1) * 2) % 12);
+    internal CorePattern CorePlan => (CorePattern)Math.Clamp(CoreAttack, 0, 11);
     internal Vector2 CoreMuzzle => NPC.Center + new Vector2(4, 39).RotatedBy(NPC.rotation) * 1.45f;
 
     // Providence reference: alternating radial chains/rings with directed spears and an independent
     // guardian pressure window. These mechanical patterns and projectiles are implemented locally.
-    private void RunCoreBarrage()
+    private void RunCoreBarrage(int beat)
     {
-        if (!Authority || CoreSuppressed || !MaterialistTactics.Active(Timer)) return;
-        int beat = MaterialistTactics.Beat(Timer);
-        int round = Math.Max(0, (Timer - 60) / 180);
+        if (!Authority || CoreSuppressed) return;
+        int round = CoreSerial;
         if (!CorePincerRound && PincerInProgress) return;
         if (RunPincerBattery(beat)) return;
         if (RunSaucerBattery(beat)) return;
@@ -36,16 +34,16 @@ public sealed partial class MaterialistAntagonizer
         float speed = 7.4f + Phase * .65f;
         int arms = MaterialistRules.SpreadRingCount(Phase == 3 ? 4 : 3);
         float gap = ExitAngle + MathF.Sin((int)CorePlan * .7f) * .42f;
-        void Fire(DroneShot kind, Vector2 velocity, int life = 110, float bend = 0) =>
-            Shoot(kind, origin, velocity, duration: life, style: FireStyle.CoreSpread, bend: bend);
-        void Ring(int count, float offset, DroneShot kind)
+        void Fire(DroneShot kind, Vector2 velocity, int life = 110, float bend = 0, bool fixedLeft = false, bool goldenFan = false) =>
+            Shoot(kind, origin, velocity, duration: life, style: FireStyle.CoreSpread, bend: bend, fixedLeftTurn: fixedLeft, goldenFan: goldenFan);
+        void Ring(int count, float offset, DroneShot kind, bool fixedLeft = false)
         {
             count = MaterialistRules.SpreadRingCount(count);
             for (int i = 0; i < count; i++)
             {
                 float angle = offset + i * MathHelper.TwoPi / count;
                 if (Math.Abs(MathHelper.WrapAngle(angle - gap)) < .28f) continue;
-                Fire(kind, angle.ToRotationVector2() * speed);
+                Fire(kind, angle.ToRotationVector2() * speed, fixedLeft: fixedLeft);
             }
         }
         switch (CorePlan)
@@ -56,7 +54,7 @@ public sealed partial class MaterialistAntagonizer
                         Fire(DroneShot.ArcSpark, (aim + (beat - 24) * .055f + i * MathHelper.Pi).ToRotationVector2() * speed, bend: .009f);
                 break;
             case CorePattern.BurstRings:
-                if (beat is 24 or 54) Ring(Phase == 1 ? 16 : 20, beat == 24 ? .1f : .27f, DroneShot.Petal);
+                if (beat is 24 or 54) Ring(Phase == 1 ? 16 : 20, beat == 24 ? .1f : .27f, DroneShot.Petal, fixedLeft: true);
                 break;
             case CorePattern.SquareLattice:
                 if (beat is 24 or 58)
@@ -75,7 +73,7 @@ public sealed partial class MaterialistAntagonizer
                 break;
             case CorePattern.AimedFan:
                 if (beat is 24 or 46 or 66)
-                    for (int i = -2; i <= 2; i++) Fire(DroneShot.Prism, (aim + i * .17f * MaterialistRules.SpreadSpacing + (beat == 46 ? .08f : 0)).ToRotationVector2() * (speed + 1));
+                    for (int i = -2; i <= 2; i++) Fire(DroneShot.Prism, (aim + i * .17f * MaterialistRules.SpreadSpacing * 1.25f + (beat == 46 ? .08f : 0)).ToRotationVector2() * (speed + 1), goldenFan: true);
                 break;
             case CorePattern.NeedleVolley:
                 if (beat is >= 24 and <= 64 && (beat - 24) % 10 == 0)

@@ -63,12 +63,19 @@ public sealed class ReaperSpin : ModProjectile
         owner.ChangeDir(direction); owner.heldProj = Projectile.whoAmI; owner.itemTime = owner.itemAnimation = 2;
         owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, turn - MathHelper.PiOver2);
         // Only the owning client creates gameplay projectiles; observers receive them normally.
-        if (age % ReaperRules.WispInterval == 0 && owner.whoAmI == Main.myPlayer
-            && owner.ownedProjectileCounts[ModContent.ProjectileType<ReaperWisp>()] < ReaperRules.WispLimit) {
-            Vector2 radial = turn.ToRotationVector2().RotatedBy(Main.rand.NextFloat(-.24f, .24f));
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), tip, radial * ReaperRules.WispLaunchSpeed,
-                ModContent.ProjectileType<ReaperWisp>(), Math.Max(1, (int)(Projectile.damage * ReaperRules.WispDamage)),
-                Projectile.knockBack * .2f, owner.whoAmI, (int)Kind);
+        if (age % ReaperRules.WispInterval == 0 && owner.whoAmI == Main.myPlayer) {
+            int type = ModContent.ProjectileType<ReaperWisp>(), active = 0;
+            foreach (Projectile shot in Main.ActiveProjectiles) if (shot.owner == owner.whoAmI && shot.type == type) active++;
+            if (active <= ReaperRules.WispLimit - 2) {
+                // A fresh, independent axis for each pair; neither mouse nor spin phase determines it.
+                Vector2 radial = Main.rand.NextFloat(MathHelper.TwoPi).ToRotationVector2();
+                for (int i = 0; i < 2; i++) {
+                    Vector2 axis = i == 0 ? radial : -radial;
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), grip + axis * reach, axis * ReaperRules.WispLaunchSpeed,
+                        type, Math.Max(1, (int)(Projectile.damage * ReaperRules.WispDamage)),
+                        Projectile.knockBack * .2f, owner.whoAmI, (int)Kind);
+                }
+            }
         }
         if (age % 4 == 0) ReaperVisuals.Shed(tip, tip - previousTip, Kind);
     }

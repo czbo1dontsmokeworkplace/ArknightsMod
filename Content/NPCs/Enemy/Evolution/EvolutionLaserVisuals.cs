@@ -10,6 +10,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution;
 internal static class EvolutionLaserVisuals
 {
     internal const int FadeTicks = 48;
+    internal static float CollisionWidth(EvolutionBeamStyle style, bool corridor) =>
+        EvolutionPianoRules.IsStyle(style) ? 18 : style == EvolutionBeamStyle.Pulse ? 12 : corridor ? 24 : 12;
     internal static bool WorldMaterialReady;
     internal static Effect ActiveMaterial;
     internal static void Draw(Vector2 start, Vector2 end, int age, float envelope, float collisionWidth, Color color, Color core)
@@ -103,7 +105,7 @@ public sealed partial class EvolutionHazard
         !IsAxis && (Kind is EvolutionShot.Beam or EvolutionShot.Spike);
     internal int ContinuousActiveTicks => BeamStyle is EvolutionBeamStyle.Pulse or EvolutionBeamStyle.PianoStaccato ? 6 :
         BeamStyle==EvolutionBeamStyle.Piano ? EvolutionPianoRules.Active : Parent?.CorridorActive==true?32:10;
-    internal float ContinuousCollisionWidth => EvolutionPianoRules.IsStyle(BeamStyle)?18:BeamStyle==EvolutionBeamStyle.Pulse?12:Parent?.CorridorActive==true?24:12;
+    internal float ContinuousCollisionWidth => EvolutionLaserVisuals.CollisionWidth(BeamStyle, Parent?.CorridorActive == true);
     internal int ContinuousFadeTicks => EvolutionPianoRules.IsStyle(BeamStyle)?EvolutionPianoRules.Fade:EvolutionLaserVisuals.FadeTicks;
     internal float ContinuousEnvelope => EvolutionRules.BeamEnvelope(Age-FireAge,ContinuousActiveTicks,ContinuousFadeTicks,
         Parent?.Phase==5);
@@ -145,7 +147,7 @@ public sealed partial class EvolutionHazard
             float envelope=EvolutionRules.BeamEnvelope(fired,EvolutionBroodfallRules.FanActive,EvolutionBroodfallRules.FanFade);
             for(int ray=0;ray<EvolutionBroodfallRules.FanRayCount;ray++)
             {
-                Vector2 direction=EvolutionBroodfallRules.FanDirection(ray);
+                Vector2 direction=CrashFanDirection(ray);
                 DrawRayBody(RayPath(Projectile.Center+direction*75,direction,EvolutionBroodfallRules.FanReach-75),
                     fired,envelope,EvolutionBroodfallRules.FanWidth,EvolutionVisuals.Blood,EvolutionVisuals.Core);
             }

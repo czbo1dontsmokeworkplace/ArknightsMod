@@ -18,7 +18,7 @@ internal static class ReaperVisuals
     private static readonly Dictionary<ReaperKind, Texture2D> art = new();
     internal static void Unload() => art.Clear();
     internal static bool Visible(Vector2 point) => !Main.dedServ && Vector2.DistanceSquared(point,Main.screenPosition+new Vector2(Main.screenWidth,Main.screenHeight)*.5f)<1600*1600;
-    internal static void Blade(Vector2 grip,Vector2 tip,ReaperKind kind,float opacity)
+    internal static void Blade(Vector2 grip,Vector2 tip,ReaperKind kind,float opacity,int cuttingDirection=0)
     {
         if(!Visible(grip)||opacity<=0)return;
         if(!art.TryGetValue(kind,out Texture2D texture)) art[kind]=texture=ModContent.Request<Texture2D>(ReaperRules.Art(kind), AssetRequestMode.ImmediateLoad).Value;
@@ -26,9 +26,13 @@ internal static class ReaperVisuals
         // supplied image uses this same source axis and retains its curved head.
         Vector2 origin=ReaperRules.Grip(kind);
         Vector2 head=ReaperRules.Head(kind);
+        // Mirror the blade about its handle axis for clockwise cuts. Mirroring both
+        // reference points keeps the hand and cutting head aligned with the same path.
+        SpriteEffects effects=SpriteEffects.None;
+        if(cuttingDirection>0){effects=SpriteEffects.FlipVertically;origin.Y=texture.Height-origin.Y;head.Y=texture.Height-head.Y;}
         float scale=Vector2.Distance(grip,tip)/Vector2.Distance(origin,head);
         float rotation=(tip-grip).ToRotation()-(head-origin).ToRotation();
-        Main.EntitySpriteDraw(texture,grip-Main.screenPosition,null,Color.White*opacity,rotation,origin,scale,SpriteEffects.None);
+        Main.EntitySpriteDraw(texture,grip-Main.screenPosition,null,Color.White*opacity,rotation,origin,scale,effects);
         using(new ChargedOperatorVfx.Pass(true)) {
             ChargedOperatorVfx.Sprite("OrbitSmear",tip,new Vector2(39,20)*ReaperRules.LeftScale,ReaperRules.Color(kind)*(.65f*opacity),rotation);
             ChargedOperatorVfx.Sprite("StarCore",tip,new Vector2(14)*ReaperRules.LeftScale,ReaperRules.Edge(kind)*(.85f*opacity));
@@ -56,6 +60,18 @@ internal static class ReaperVisuals
         if(!Visible(q.Center))return;
         // Cherry's existing procedural crescent is the travelling projectile itself.
         ReaperMaterial.LegacyCrescent(q.Center,q.rotation,90f/.72f*q.scale,q.Opacity,1,true);
+    }
+    internal static void WaveMotes(Projectile q)
+    {
+        if(!Visible(q.Center)||ParticleManager.activeParticles.Count>=1200)return;
+        if(q.velocity.LengthSquared()<.1f&&q.timeLeft%9!=0)return;
+        Vector2 forward=q.rotation.ToRotationVector2();
+        for(int i=0;i<3&&ParticleManager.activeParticles.Count<1200;i++){
+            Vector2 ray=(q.rotation+Main.rand.NextFloat(-1.25f,1.25f)).ToRotationVector2();
+            Vector2 point=q.Center+ray*Main.rand.NextFloat(62,86)*q.scale;
+            Vector2 drift=-forward*Main.rand.NextFloat(.1f,.4f)+ray*Main.rand.NextFloat(.05f,.2f);
+            new T_Lingering_MagicMote(point,drift,new Color(164,185,209),new Color(241,248,255),Main.rand.Next(28,46),Main.rand.NextFloat(5,9)).Spawn();
+        }
     }
     internal static void Hit(Vector2 point,ReaperKind kind,float strength)
     {

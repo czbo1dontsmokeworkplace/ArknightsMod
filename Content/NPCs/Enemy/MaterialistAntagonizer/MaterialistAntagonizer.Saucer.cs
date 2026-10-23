@@ -6,8 +6,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.MaterialistAntagonizer;
 
 public sealed partial class MaterialistAntagonizer
 {
-    internal bool CoreSaucerRound => Order == FlightOrder.Command && !CorePincerRound &&
-        Math.Abs(Cycle + Wave + Phase + Math.Max(0, (Timer - 60) / 180)) % 4 == 3;
+    internal bool CoreSaucerRound => CoreSequenceActive && CoreAttack == SaucerAttack;
     internal Vector2 SaucerPort(int side) => NPC.Center + new Vector2(side * 70, 7).RotatedBy(NPC.rotation) * 1.45f;
 
     private bool RunSaucerBattery(int beat)

@@ -12,12 +12,12 @@ internal static class EvolutionArsenalVisuals
 {
     private static ulong smokeTick;
     private static int smokeCount;
-    internal static void Smoke(Vector2 center, Vector2 velocity, float diameter, int lifetime, bool hot = false, Color? theme = null)
+    internal static void Smoke(Vector2 center, Vector2 velocity, float diameter, int lifetime, bool hot = false, Color? theme = null, float opacity = 1)
     {
         if (Main.dedServ || EvolutionCinematics.Reduced && Main.rand.NextBool()) return;
         if (smokeTick != Main.GameUpdateCount) { smokeTick = Main.GameUpdateCount; smokeCount = 0; }
         if (++smokeCount > 18) return;
-        new EvolutionFlameSmoke(center, velocity, diameter, lifetime, hot, theme ?? EvolutionVisuals.Blood).Spawn();
+        new EvolutionFlameSmoke(center, velocity, diameter, lifetime, hot, theme ?? EvolutionVisuals.Blood, opacity).Spawn();
     }
     internal static void Flame(Vector2 center, Vector2 direction, float age, float opacity, float length = 90)
     {
@@ -45,22 +45,22 @@ internal static class EvolutionArsenalVisuals
             delta.ToRotation() + MathHelper.PiOver2, spark.Size() * .5f,
             new Vector2(width * 4, delta.Length() + width) / spark.Size(), SpriteEffects.None, 0);
     }
-    internal static void Burst(Vector2 center, float power, float spatialScale = 1)
+    internal static void Burst(Vector2 center, float power, float spatialScale = 1, float density = 1, float opacity = 1, float intensity = 1)
     {
         if (Main.dedServ) return;
-        for (int i = 0; i < (EvolutionCinematics.Reduced ? 4 : 10); i++)
-            Smoke(center, (Main.rand.NextVector2Circular(5, 4) * power - Vector2.UnitY) * spatialScale,
-                (55 + Main.rand.NextFloat(30)) * power * spatialScale, 34, i % 3 == 0);
-        EvolutionVisuals.Burst(center, power, false, spatialScale: spatialScale);
+        for (int i = 0; i < (int)MathF.Round((EvolutionCinematics.Reduced ? 4 : 10) * density); i++)
+            Smoke(center, (Main.rand.NextVector2Circular(5, 4) * power - Vector2.UnitY) * spatialScale * intensity,
+                (55 + Main.rand.NextFloat(30)) * power * spatialScale * intensity, 34, i % 3 == 0, opacity: opacity);
+        EvolutionVisuals.Burst(center, power, false, spatialScale: spatialScale, density: density, opacity: opacity, intensity: intensity);
     }
-    internal static void Blast(Vector2 center, int age, float radius, Color? theme = null)
+    internal static void Blast(Vector2 center, int age, float radius, Color? theme = null, float opacity = 1, float intensity = 1)
     {
         Texture2D burst = EvolutionVisuals.Asset("ArsenalBurst");
         float t = Math.Clamp(age / 24f, 0, 1);
         Main.spriteBatch.Draw(burst, center - Main.screenPosition, null,
-            ((theme ?? EvolutionVisuals.Blood) with { A = 0 }) * (1 - t) * .8f, t * .2f,
-            burst.Size() * .5f, new Vector2(radius * 2 * (.4f + .6f * t)) / burst.Size(), SpriteEffects.None, 0);
-        EvolutionVisuals.Glow(center, EvolutionVisuals.Core * ((1 - t) * .7f), new Vector2(radius * (1 - t)));
+            ((theme ?? EvolutionVisuals.Blood) with { A = 0 }) * (1 - t) * .8f * opacity, t * .2f,
+            burst.Size() * .5f, new Vector2(radius * 2 * (.4f + .6f * t) * intensity) / burst.Size(), SpriteEffects.None, 0);
+        EvolutionVisuals.Glow(center, EvolutionVisuals.Core * ((1 - t) * .7f * opacity), new Vector2(radius * (1 - t) * intensity));
     }
     internal static void GravityFlare(Vector2 center, float rotation, float opacity)
     {
@@ -79,12 +79,12 @@ public sealed class EvolutionFlameSmoke : Particle
 {
     public override string TexturePath => EvolutionVisuals.Root + "ArsenalSmoke";
     private readonly int variant;
-    private readonly float diameter, spin;
+    private readonly float diameter, spin, opacity;
     private readonly bool hot;
     private readonly Color theme;
-    public EvolutionFlameSmoke(Vector2 center, Vector2 velocity, float diameter, int lifetime, bool hot, Color theme)
+    public EvolutionFlameSmoke(Vector2 center, Vector2 velocity, float diameter, int lifetime, bool hot, Color theme, float opacity = 1)
     {
-        Position = center; Velocity = velocity; this.diameter = diameter; Lifetime = lifetime; this.hot = hot; this.theme = theme;
+        Position = center; Velocity = velocity; this.diameter = diameter; Lifetime = lifetime; this.hot = hot; this.theme = theme; this.opacity = opacity;
         variant = Main.rand.Next(7); spin = Main.rand.NextFloat(-.04f, .04f); Rotation = Main.rand.NextFloat(MathHelper.TwoPi);
     }
     public override void Update() { Velocity *= .89f; Velocity.Y -= .04f; Rotation += spin; }
@@ -96,7 +96,7 @@ public sealed class EvolutionFlameSmoke : Particle
         float size = diameter * (.8f + t * .65f);
         Color tint = Color.Lerp(hot ? Color.Lerp(theme, EvolutionVisuals.Core, .75f) : theme, theme * .35f, t);
         Main.spriteBatch.Draw(Texture, Position - Main.screenPosition, frame,
-            (tint with { A = 0 }) * (fade * (hot ? .5f : .26f)), Rotation, frame.Size() * .5f,
+            (tint with { A = 0 }) * (fade * (hot ? .5f : .26f) * opacity), Rotation, frame.Size() * .5f,
             new Vector2(size) / frame.Size(), SpriteEffects.None, 0);
     }
 }

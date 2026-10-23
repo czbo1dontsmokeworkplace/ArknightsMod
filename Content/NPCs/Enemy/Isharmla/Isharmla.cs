@@ -21,6 +21,8 @@ public sealed partial class Isharmla : ModNPC
     public Vector2 Anchor, Portal, Aim;
     public int Transition, Cast, Serial, MissingPlayers;
     public bool Initialized, DragonSummoned, Victorious;
+    public int SpawnedShots { get; private set; }
+    public int SpawnedLines { get; private set; }
     public TideStage Stage => (TideStage)Math.Max(1, (int)NPC.ai[0]);
     public int Timer => (int)NPC.ai[1];
     public int Attack => (int)NPC.ai[2];
@@ -70,7 +72,7 @@ public sealed partial class Isharmla : ModNPC
     public override bool CanHitPlayer(Player target, ref int cooldownSlot)
     {
         cooldownSlot = ImmunityCooldownID.Bosses;
-        return Stage == TideStage.LastSong && Transition == 0 && Attack == 3 && Cast is >= 85 and < 115;
+        return Stage == TideStage.LastSong && Transition == 0 && Attack == 7 && Cast is >= 85 and < 111;
     }
     public override bool CanHitNPC(NPC target) => false;
     public override void ModifyIncomingHit(ref NPC.HitModifiers modifiers)
@@ -140,17 +142,22 @@ public sealed partial class Isharmla : ModNPC
                 if (Authority && NPC.life <= 1) ChangeStage(TideStage.LastTide, 150, p);
                 break;
             case TideStage.LastTide:
-                Hover(Anchor + new Vector2(0, -650), .045f, 15);
+                if (Dragon is { } finalMount)
+                {
+                    NPC.Center = finalMount.NPC.Center + new Vector2(-25, -115).RotatedBy(finalMount.FacingAngle);
+                    NPC.velocity = Vector2.Zero;
+                    if (finalMount.Dying == 0) CastTogether(p, finalMount);
+                }
                 break;
             case TideStage.Finale:
-                Hover(Anchor - new Vector2(0, 400), .055f, 12); RunFinale(p);
+                NPC.velocity = Vector2.Zero; RunFinale(p);
                 if (Authority && Timer >= IsharmlaRules.FinaleTime)
                 {
                     Victorious = true; Cleanup(false); NPC.dontTakeDamage = false; NPC.life = 0; NPC.checkDead(); NPC.netUpdate = true;
                 }
                 break;
         }
-        if (!Main.dedServ) IsharmlaVisuals.Ambient(NPC.Center, Stage, Timer);
+        if (!Main.dedServ && Stage != TideStage.Finale) IsharmlaVisuals.Ambient(NPC.Center, Stage, Timer);
     }
     internal int Side(Player p) => p.Center.X < Anchor.X ? -1 : 1;
     private void Hover(Vector2 destination, float steering, float speed)
@@ -164,6 +171,7 @@ public sealed partial class Isharmla : ModNPC
         if (!Authority) return;
         Cleanup(false); NPC.ai[0] = (int)stage; NPC.ai[1] = 0; NPC.ai[2] = 0; Cast = 0;
         Transition = duration; Serial++; Aim = p.Center;
+        SpawnedShots = SpawnedLines = 0;
         if (stage == TideStage.Leviathan) Portal = new Vector2(p.Center.X, Math.Max(Anchor.Y + 240, p.Center.Y + 500));
         NPC.netUpdate = true;
     }
@@ -174,9 +182,7 @@ public sealed partial class Isharmla : ModNPC
         {
             NPC.Center = Anchor - new Vector2(0, 82); NPC.velocity = Vector2.Zero;
             if (!Main.dedServ && Transition % 90 == 0) SoundEngine.PlaySound(SoundID.Item26, NPC.Center);
-            // The full-width corridor stays fixed for the entire five-second warning.
-            if (Transition == IsharmlaRules.ArrivalWarning && Authority)
-                SpawnShot(TideShot.Gate, Portal, -Vector2.UnitY, 9999, IsharmlaRules.ArrivalWarning, 1600, 122);
+            // The arrival is conveyed by chanting, water effects and shaking, without a HUD countdown or ray corridor.
             if (!Main.dedServ)
             {
                 IsharmlaVisuals.Shake((1 - Transition / 300f) * 5);
@@ -195,9 +201,10 @@ public sealed partial class Isharmla : ModNPC
         else
         {
             NPC.velocity *= .92f;
-            if (Stage == TideStage.Covenant && Dragon is { } mount)
+            if (Stage is TideStage.Covenant or TideStage.LastTide && Dragon is { } mount)
                 NPC.Center = Vector2.Lerp(NPC.Center, mount.NPC.Center + new Vector2(-25, -115).RotatedBy(mount.FacingAngle), .055f);
-            if (!Main.dedServ) IsharmlaVisuals.Transition(NPC.Center, Transition);
+            if (Stage == TideStage.Finale) NPC.velocity = Vector2.Zero;
+            else if (!Main.dedServ) IsharmlaVisuals.Transition(NPC.Center, Transition);
         }
         Transition--;
         if (Transition == 0) { NPC.ai[1] = 0; if (Authority) NPC.netUpdate = true; }

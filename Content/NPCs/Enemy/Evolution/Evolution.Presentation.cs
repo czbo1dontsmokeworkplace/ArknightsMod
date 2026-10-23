@@ -8,12 +8,36 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution;
 
 internal static class EvolutionPresentationRules
 {
-    internal const int BroodMoltDuration = 150, BroodMoltBurst = 108, BoundaryReady = 510, DeathDuration = 200, DeathFinale = 180;
+    internal const int BroodMoltDuration = 150, BroodMoltBurst = 108, BoundaryReady = 510, DeathLead = 29, DeathExplosionDuration = 200, DeathDuration = DeathLead + DeathExplosionDuration, DeathFinale = DeathLead + 180;
     internal const float DeathScatterScale = 2, DeathExpansionScale = 2;
+    internal const float DeathDensity = .7f, DeathIntensity = .7f, DeathOpacity = .8f;
+    private static readonly int[] deathCounts = BuildDeathCounts(false), reducedDeathCounts = BuildDeathCounts(true);
     internal static float MorphColor(int age) => EvolutionCinematicFrame.Smooth(140, 390, age);
     internal static float BoundaryFade(int age) => EvolutionCinematicFrame.Smooth(390, BoundaryReady, age);
-    internal static bool DeathBurst(int age) => age >= 0 && age < DeathDuration && (age < 120 ? age % 5 == 0 : age % 2 == 0);
-    internal static int DeathBurstCount(int age, bool reduced) => reduced ? 1 : age >= 156 ? 3 : age >= 90 ? 2 : 1;
+    internal static int ExplosionAge(int age) => Math.Max(0, age - DeathLead);
+    private static int BurstScore(int time) => (int)MathF.Floor(time / 16f + .9375f * time * time * time / (3f * 199 * 199));
+    internal static bool DeathBurst(int age)
+    {
+        return DeathBurstCount(age, false) > 0;
+    }
+    private static int[] BuildDeathCounts(bool reduced)
+    {
+        int[] counts = new int[DeathExplosionDuration];
+        int original = 0, kept = 0;
+        for (int time = 0; time < counts.Length; time++)
+        {
+            if (time != 0 && BurstScore(time) == BurstScore(time - 1)) continue;
+            original += reduced ? 1 : time >= 156 ? 3 : time >= 90 ? 2 : 1;
+            int next = (original * 7 + 9) / 10; // Evenly retain 70%, including the first post-camera burst.
+            counts[time] = next - kept; kept = next;
+        }
+        return counts;
+    }
+    internal static int DeathBurstCount(int age, bool reduced)
+    {
+        int time = age - DeathLead;
+        return time < 0 || time >= DeathExplosionDuration ? 0 : (reduced ? reducedDeathCounts : deathCounts)[time];
+    }
     internal static Vector2 DeathPoint(Vector2 center, int age, int index) => center +
         new Vector2(MathF.Sin(age * 1.71f + index * 2.1f) * (65 + age * .18f), MathF.Cos(age * 2.13f + index) * (80 + age * .14f)) * DeathScatterScale;
     internal static float DeathBlastRadius(int age) => (75 + age * .4f) * DeathExpansionScale;
@@ -31,26 +55,30 @@ public sealed partial class Evolution
             deathFinalePlayed = true;
             if (Timer < EvolutionPresentationRules.DeathFinale + 8)
             {
-                EvolutionArsenalVisuals.Burst(NPC.Center, EvolutionCinematics.Reduced ? 2 : 4.4f, EvolutionPresentationRules.DeathExpansionScale);
-                EvolutionImpactSystem.Emit(NPC.Center, 1450 * EvolutionPresentationRules.DeathExpansionScale, 9, false, 36);
+                EvolutionArsenalVisuals.Burst(NPC.Center, EvolutionCinematics.Reduced ? 2 : 4.4f, EvolutionPresentationRules.DeathExpansionScale,
+                    EvolutionPresentationRules.DeathDensity, EvolutionPresentationRules.DeathOpacity, EvolutionPresentationRules.DeathIntensity);
+                EvolutionImpactSystem.Emit(NPC.Center, 1450 * EvolutionPresentationRules.DeathExpansionScale, 9 * EvolutionPresentationRules.DeathIntensity, false, 36);
                 SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = .8f, Pitch = -.6f }, NPC.Center);
             }
         }
         if (!EvolutionPresentationRules.DeathBurst(Timer) || lastDeathBurst >= Timer) return;
         lastDeathBurst = Timer;
-        float power = MathHelper.Lerp(1.7f, 3.6f, Timer / (float)EvolutionPresentationRules.DeathDuration);
+        float power = MathHelper.Lerp(1.7f, 3.6f, EvolutionPresentationRules.ExplosionAge(Timer) / (float)EvolutionPresentationRules.DeathExplosionDuration);
         int count = EvolutionPresentationRules.DeathBurstCount(Timer, EvolutionCinematics.Reduced);
-        for (int i = 0; i < count; i++) EvolutionArsenalVisuals.Burst(EvolutionPresentationRules.DeathPoint(NPC.Center, Timer, i), power, EvolutionPresentationRules.DeathExpansionScale);
+        for (int i = 0; i < count; i++) EvolutionArsenalVisuals.Burst(EvolutionPresentationRules.DeathPoint(NPC.Center, Timer, i), power, EvolutionPresentationRules.DeathExpansionScale,
+            EvolutionPresentationRules.DeathDensity, EvolutionPresentationRules.DeathOpacity, EvolutionPresentationRules.DeathIntensity);
         if (Timer % 12 == 0)
             SoundEngine.PlaySound(SoundID.Item14 with { Volume = .65f, Pitch = -.5f, MaxInstances = 3 }, NPC.Center);
-        if (Timer % 24 == 0) EvolutionImpactSystem.Emit(NPC.Center, (500 + Timer * 2) * EvolutionPresentationRules.DeathExpansionScale, 3, false, 20);
+        if (Timer % 24 == 0) EvolutionImpactSystem.Emit(NPC.Center, (500 + Timer * 2) * EvolutionPresentationRules.DeathExpansionScale, 3 * EvolutionPresentationRules.DeathIntensity, false, 20);
     }
     private void DrawDeathDisplay()
     {
         int age = Timer;
-        DrawTerminalVessels(age);
+        if (age < EvolutionPresentationRules.DeathLead) return;
+        DrawTerminalVessels(EvolutionPresentationRules.ExplosionAge(age));
         if (age >= EvolutionPresentationRules.DeathFinale)
-            EvolutionArsenalVisuals.Blast(NPC.Center, age - EvolutionPresentationRules.DeathFinale, 380 * EvolutionPresentationRules.DeathExpansionScale);
+            EvolutionArsenalVisuals.Blast(NPC.Center, age - EvolutionPresentationRules.DeathFinale, 380 * EvolutionPresentationRules.DeathExpansionScale,
+                opacity: EvolutionPresentationRules.DeathOpacity, intensity: EvolutionPresentationRules.DeathIntensity);
         for (int past = Math.Max(0, age - 30); past <= Math.Min(age, EvolutionPresentationRules.DeathDuration - 1); past++)
         {
             if (!EvolutionPresentationRules.DeathBurst(past)) continue;
@@ -59,12 +87,13 @@ public sealed partial class Evolution
             for (int i = 0; i < EvolutionPresentationRules.DeathBurstCount(past, EvolutionCinematics.Reduced); i++)
             {
                 Vector2 point = EvolutionPresentationRules.DeathPoint(NPC.Center, past, i);
-                EvolutionArsenalVisuals.Blast(point, elapsed, EvolutionPresentationRules.DeathBlastRadius(past));
-                EvolutionVisuals.Ring(point, EvolutionPresentationRules.DeathRingRadius(past, elapsed), 0, EvolutionVisuals.Core * (.45f * fade * fade), 2, false);
+                EvolutionArsenalVisuals.Blast(point, elapsed, EvolutionPresentationRules.DeathBlastRadius(past),
+                    opacity: EvolutionPresentationRules.DeathOpacity, intensity: EvolutionPresentationRules.DeathIntensity);
+                EvolutionVisuals.Ring(point, EvolutionPresentationRules.DeathRingRadius(past, elapsed), 0, EvolutionVisuals.Core * (.45f * fade * fade * EvolutionPresentationRules.DeathOpacity), 2 * EvolutionPresentationRules.DeathIntensity, false);
             }
         }
-        float ending = EvolutionCinematicFrame.Smooth(165, 194, age) * (1 - EvolutionCinematicFrame.Smooth(194, 200, age));
-        EvolutionVisuals.Glow(NPC.Center, EvolutionVisuals.Core * (.8f * ending), new Vector2(540, 32));
+        float ending = EvolutionCinematicFrame.Smooth(165 + EvolutionPresentationRules.DeathLead, 194 + EvolutionPresentationRules.DeathLead, age) * (1 - EvolutionCinematicFrame.Smooth(194 + EvolutionPresentationRules.DeathLead, EvolutionPresentationRules.DeathDuration, age));
+        EvolutionVisuals.Glow(NPC.Center, EvolutionVisuals.Core * (.8f * ending * EvolutionPresentationRules.DeathOpacity), new Vector2(540, 32) * EvolutionPresentationRules.DeathIntensity);
     }
     private void DrawTerminalVessels(int age)
     {
