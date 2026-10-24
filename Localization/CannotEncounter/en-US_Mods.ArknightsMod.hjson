@@ -1,0 +1,18 @@
+CannotEncounter: {
+	SleepSpray: Cannot sprays a potion: Restorative Slumber!
+	RageSpray: Cannot sprays a potion: Undying Rage!
+}
+
+Buffs: {
+	CannotSleep: {
+		DisplayName: Slumber
+		Description: Cannot move, attack, or take damage; restores 4% of maximum life each second
+	}
+
+	CannotUndyingRage: {
+		DisplayName: Undying Rage
+		Description: Life cannot fall below 1; attack damage and attack speed increased by 100%
+	}
+}
+
+NPCs.CannotOriginiutant.DisplayName: Originiutant

@@ -1,0 +1,390 @@
+// New defender route nodes. Existing weapon and skill keys remain stable.
+DefenderRecipeGroups: {
+	BeagleWeapon: BeagleWeapon / CardiWeapon (any one)
+	CroissantHammer: CroissantHammer / BisonShield / HeavyrainBlade (any one)
+	LiskarmPistol: LiskarmPistol / BlitzPistol (any one)
+	AsbestosBlade: AsbestosBlade / ShalemBlade / CzernyBlade (any one)
+	FirewhistleLauncher: FirewhistleLauncher / AshlockLauncher (any one)
+	AuroraAxe: AuroraAxe / CementMaul (any one)
+	PhilaeBlade: PhilaeBlade / BasslineBlade / UnderflowBlade (any one)
+}
+
+Items: {
+	BisonShield: {
+		DisplayName: Bulwark [Bison]
+		Tooltip: Measured strikes with defensive and impact skills
+	}
+
+	HeavyrainBlade: {
+		DisplayName: Rainveil [Heavyrain]
+		Tooltip: Quick cuts with defensive and sustained-attack skills
+	}
+
+	HoshigumaShield: {
+		DisplayName: Hannya [Hoshiguma]
+		Tooltip: Heavy sweeps release an impact pulse during the attack skill
+	}
+
+	LutonHammer: {
+		DisplayName: Iron Maul [Luton]
+		Tooltip: Hits restore health; skills improve sustained combat
+	}
+
+	BlitzPistol: {
+		DisplayName: Flashpoint [Blitz]
+		Tooltip: Fast ammo-free Arts rounds briefly slow enemies
+	}
+
+	JessicaLiberatedGun: {
+		DisplayName: Liberation [Jessica]
+		Tooltip: Piercing electron rounds release area discharge during the attack skill
+	}
+
+	MechanistGun: {
+		DisplayName: Workshop [Mechanist]
+		Tooltip: Fast Arts rounds inflict Ichor to weaken defense
+	}
+
+	FaithMixer: {
+		DisplayName: Faith Mixer
+		Tooltip: Fires three spread Arts rounds dealing 45% attack damage each
+	}
+
+	AsbestosBlade: {
+		DisplayName: Heat Barrier [Asbestos]
+		Tooltip: Skills convert strikes to Arts damage and ignite targets
+	}
+
+	ShalemBlade: {
+		DisplayName: Dusk Edge [Shalem]
+		Tooltip: Skills convert strikes to Arts damage; attack skill adds area impacts
+	}
+
+	CzernyBlade: {
+		DisplayName: Sonata [Czerny]
+		Tooltip: Skills convert strikes to Arts damage; defense skill grants regeneration
+	}
+
+	HoshigumaBlazingBlade: {
+		DisplayName: Karmic Edge [Hoshiguma]
+		Tooltip: Skills convert strikes to Arts damage; attack skill releases searing impacts
+	}
+
+	AshlockLauncher: {
+		DisplayName: Siege Mortar [Ashlock]
+		Tooltip: Consumes grenades for ranged bombardment while guarding
+	}
+
+	BubbleMaul: {
+		DisplayName: Ramming Maul [Bubble]
+		Tooltip: Right-click to dash and rebound; immune during the collision dash
+	}
+
+	AuroraAxe: {
+		DisplayName: Tundra Axe [Aurora]
+		Tooltip: Right-click collision dash; melee hits inflict Frostburn
+	}
+
+	CementMaul: {
+		DisplayName: Bedrock Maul [Cement]
+		Tooltip: Right-click collision dash; defense skill improves defense and regeneration
+	}
+
+	MatterhornBlade: {
+		DisplayName: Mountain Ward [Matterhorn]
+		Tooltip: Hits accumulate Nervous Impairment; skills amplify accumulation
+	}
+
+	PhilaeBlade: {
+		DisplayName: Reedshade [Philae]
+		Tooltip: Hits accumulate Nervous Impairment; attack skill increases buildup
+	}
+
+	BasslineBlade: {
+		DisplayName: Resonance [Bassline]
+		Tooltip: Hits accumulate Necrosis Impairment; defense skill grants regeneration
+	}
+
+	UnderflowBlade: {
+		DisplayName: Riftcurrent [Underflow]
+		Tooltip: Hits accumulate Corrosion Impairment; attack skill increases buildup
+	}
+
+	YuBlade: {
+		DisplayName: Origin [Yu]
+		Tooltip: Hits accumulate Nervous Impairment; attack skill adds area impacts
+	}
+
+	SanbyBlade: {
+		DisplayName: Ember Origin [Sanby]
+		Tooltip: Hits accumulate Burn Impairment; skills improve buildup
+	}
+}
+
+Skills: {
+	BisonShield: {
+		1: {
+			Label: Defensive Stance
+			Desc: For 20 seconds, +80% defense and +2 health regeneration per second
+		}
+
+		2: {
+			Label: Offensive Release
+			Desc: For 20 seconds, +30% defense and +80% damage
+		}
+	}
+
+	HeavyrainBlade: {
+		1: {
+			Label: Defensive Stance
+			Desc: For 20 seconds, +80% defense and +2 health regeneration per second
+		}
+
+		2: {
+			Label: Offensive Release
+			Desc: For 20 seconds, +30% defense and +80% damage
+		}
+	}
+
+	HoshigumaShield: {
+		1: {
+			Label: Defensive Stance
+			Desc: For 20 seconds, +80% defense and +2 health regeneration per second
+		}
+
+		2: {
+			Label: Offensive Release
+			Desc: For 20 seconds, +30% defense and +80% damage
+		}
+	}
+
+	LutonHammer: {
+		1: {
+			Label: Defensive Stance
+			Desc: For 20 seconds, +80% defense and +2 health regeneration per second
+		}
+
+		2: {
+			Label: Offensive Release
+			Desc: For 20 seconds, +30% defense and +80% damage
+		}
+	}
+
+	BlitzPistol: {
+		1: {
+			Label: Defensive Stance
+			Desc: For 20 seconds, +80% defense and +2 health regeneration per second
+		}
+
+		2: {
+			Label: Offensive Release
+			Desc: For 20 seconds, +30% defense and +80% damage; hits release area discharge
+		}
+	}
+
+	JessicaLiberatedGun: {
+		1: {
+			Label: Defensive Stance
+			Desc: For 20 seconds, +80% defense and +2 health regeneration per second
+		}
+
+		2: {
+			Label: Offensive Release
+			Desc: For 20 seconds, +30% defense and +80% damage; hits release area discharge
+		}
+	}
+
+	MechanistGun: {
+		1: {
+			Label: Defensive Stance
+			Desc: For 20 seconds, +80% defense and +2 health regeneration per second
+		}
+
+		2: {
+			Label: Offensive Release
+			Desc: For 20 seconds, +30% defense and +80% damage; hits release area discharge
+		}
+	}
+
+	FaithMixer: {
+		1: {
+			Label: Defensive Stance
+			Desc: For 20 seconds, +80% defense and +2 health regeneration per second
+		}
+
+		2: {
+			Label: Offensive Release
+			Desc: For 20 seconds, +30% defense and +80% damage; hits release area discharge
+		}
+	}
+
+	AsbestosBlade: {
+		1: {
+			Label: Defensive Stance
+			Desc: For 20 seconds, +80% defense and +2 health regeneration per second; strikes deal magic damage
+		}
+
+		2: {
+			Label: Offensive Release
+			Desc: For 20 seconds, +30% defense and +80% damage; strikes deal magic damage
+		}
+	}
+
+	ShalemBlade: {
+		1: {
+			Label: Defensive Stance
+			Desc: For 20 seconds, +80% defense and +2 health regeneration per second; strikes deal magic damage
+		}
+
+		2: {
+			Label: Offensive Release
+			Desc: For 20 seconds, +30% defense and +80% damage; strikes deal magic damage
+		}
+	}
+
+	CzernyBlade: {
+		1: {
+			Label: Defensive Stance
+			Desc: For 20 seconds, +80% defense and +2 health regeneration per second; strikes deal magic damage
+		}
+
+		2: {
+			Label: Offensive Release
+			Desc: For 20 seconds, +30% defense and +80% damage; strikes deal magic damage
+		}
+	}
+
+	HoshigumaBlazingBlade: {
+		1: {
+			Label: Defensive Stance
+			Desc: For 20 seconds, +80% defense and +2 health regeneration per second; strikes deal magic damage
+		}
+
+		2: {
+			Label: Offensive Release
+			Desc: For 20 seconds, +30% defense and +80% damage; strikes deal magic damage
+		}
+	}
+
+	AshlockLauncher: {
+		1: {
+			Label: Defensive Stance
+			Desc: For 20 seconds, +70% bombardment damage
+		}
+
+		2: {
+			Label: Offensive Release
+			Desc: For 20 seconds, +70% bombardment damage and larger explosions
+		}
+	}
+
+	BubbleMaul: {
+		1: {
+			Label: Defensive Stance
+			Desc: For 20 seconds, +80% defense and +2 health regeneration per second
+		}
+
+		2: {
+			Label: Offensive Release
+			Desc: For 20 seconds, +30% defense and +80% damage
+		}
+	}
+
+	AuroraAxe: {
+		1: {
+			Label: Defensive Stance
+			Desc: For 20 seconds, +80% defense and +2 health regeneration per second
+		}
+
+		2: {
+			Label: Offensive Release
+			Desc: For 20 seconds, +30% defense and +80% damage
+		}
+	}
+
+	CementMaul: {
+		1: {
+			Label: Defensive Stance
+			Desc: For 20 seconds, +80% defense and +2 health regeneration per second
+		}
+
+		2: {
+			Label: Offensive Release
+			Desc: For 20 seconds, +30% defense and +80% damage
+		}
+	}
+
+	MatterhornBlade: {
+		1: {
+			Label: Defensive Stance
+			Desc: For 20 seconds, +80% defense and +2 health regeneration per second; double elemental impairment buildup
+		}
+
+		2: {
+			Label: Offensive Release
+			Desc: For 20 seconds, +30% defense and +80% damage; double elemental impairment buildup
+		}
+	}
+
+	PhilaeBlade: {
+		1: {
+			Label: Defensive Stance
+			Desc: For 20 seconds, +80% defense and +2 health regeneration per second; double elemental impairment buildup
+		}
+
+		2: {
+			Label: Offensive Release
+			Desc: For 20 seconds, +30% defense and +80% damage; double elemental impairment buildup
+		}
+	}
+
+	BasslineBlade: {
+		1: {
+			Label: Defensive Stance
+			Desc: For 20 seconds, +80% defense and +2 health regeneration per second; double elemental impairment buildup
+		}
+
+		2: {
+			Label: Offensive Release
+			Desc: For 20 seconds, +30% defense and +80% damage; double elemental impairment buildup
+		}
+	}
+
+	UnderflowBlade: {
+		1: {
+			Label: Defensive Stance
+			Desc: For 20 seconds, +80% defense and +2 health regeneration per second; double elemental impairment buildup
+		}
+
+		2: {
+			Label: Offensive Release
+			Desc: For 20 seconds, +30% defense and +80% damage; double elemental impairment buildup
+		}
+	}
+
+	YuBlade: {
+		1: {
+			Label: Defensive Stance
+			Desc: For 20 seconds, +80% defense and +2 health regeneration per second; double elemental impairment buildup
+		}
+
+		2: {
+			Label: Offensive Release
+			Desc: For 20 seconds, +30% defense and +80% damage; double elemental impairment buildup
+		}
+	}
+
+	SanbyBlade: {
+		1: {
+			Label: Defensive Stance
+			Desc: For 20 seconds, +80% defense and +2 health regeneration per second; double elemental impairment buildup
+		}
+
+		2: {
+			Label: Offensive Release
+			Desc: For 20 seconds, +30% defense and +80% damage; double elemental impairment buildup
+		}
+	}
+}
+
+BranchTraits.PrimalProtector: Primal Protector:  Melee hits build elemental impairment; skills double buildup. Right-click to guard

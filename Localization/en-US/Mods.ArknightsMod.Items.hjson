@@ -2961,7 +2961,11 @@ HazeMagicBook: {
 
 ReedFlameShadowStaff: {
 	DisplayName: Staff [Reed the Flame Shadow]
-	Tooltip: Hits have a 30% chance to inflict Burned Scar for 8 seconds
+	Tooltip:
+		'''
+		Release a golden draconic ember that curves toward enemies ahead after a short flight
+		Hits have a 30% chance to inflict Burned Scar for 8 seconds
+		'''
 }
 
 DN_Weapon: {
@@ -3345,7 +3349,7 @@ CuoraWeapon: {
 
 ClosureScanGun: {
 	DisplayName: Engineering Scanner Gun [Closure]
-	Tooltip: ""
+	Tooltip: Fire a crystalline energy dart with a white pointed core that corrects its course toward enemies ahead
 }
 
 KaltsitBody: {

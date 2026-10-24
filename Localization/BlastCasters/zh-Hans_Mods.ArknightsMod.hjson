@@ -54,6 +54,9 @@ Projectiles: {
 	// StandardBearerHoldout.DisplayName: Standard Bearer Holdout
 	// StandardBearerSkill.DisplayName: Standard Bearer Skill
 	// ManagedSkillBodyController.DisplayName: Managed Skill Body Controller
+	// CannotOriginiutantSlash.DisplayName: Cannot Originiutant Slash
+	// CannotPotionSpray.DisplayName: Cannot Potion Spray
+	// StandardBearerCrescent.DisplayName: Standard Bearer Crescent
 }
 
 Skills: {

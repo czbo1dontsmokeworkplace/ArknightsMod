@@ -31,7 +31,7 @@ public sealed class CrusherUpheaval : ModProjectile
         if (empowered) damage = CrusherRules.Level(skillLevel, 1.7f, 2.7f);
         for (int i = 0; i < count; i++) {
             // World-down is intentional, including for players with inverted gravity.
-            // Predict once; the anchor always travels straight up, never bends back.
+            // Start below the struck NPC; ai[1] keeps that exact target for homing.
             Vector2 aim = target.Center + target.velocity * (10 + i * 3);
             float spread = (i - (count - 1) * .5f) * 100;
             Vector2 start = aim + new Vector2(spread, 400 + (int)kind * 40 + i * 36);
@@ -61,11 +61,33 @@ public sealed class CrusherUpheaval : ModProjectile
     {
         if (Waiting) { Projectile.ai[2] = Math.Max(0, Projectile.ai[2] - 1f / 3); return; }
         if (!launched) { launched = true; CrusherUpheavalVisuals.Launch(Projectile, Kind); }
+        TrackStruckEnemy();
         Projectile.rotation = Projectile.velocity.ToRotation();
         Projectile.Opacity = Math.Min(1, Projectile.timeLeft / 24f);
         for (int i = Math.Min(samples, history.Length - 1); i > 0; i--) history[i] = history[i - 1];
         history[0] = Projectile.Center; samples = Math.Min(samples + 1, history.Length);
         if (Projectile.numUpdates == 0) CrusherUpheavalVisuals.Flight(Projectile, Kind);
+    }
+    private void TrackStruckEnemy()
+    {
+        int id = (int)Projectile.ai[1];
+        if (id < 0) return;
+        if (id >= Main.maxNPCs || !Main.npc[id].active || Main.npc[id].life <= 0
+            || Main.npc[id].friendly || Main.npc[id].dontTakeDamage) {
+            // Never acquire a different enemy if the original victim disappears.
+            Projectile.ai[1] = -1; Projectile.netUpdate = true; return;
+        }
+        NPC target = Main.npc[id];
+        float speed = (36 + (int)Kind * 8) / 3f;
+        Vector2 offset = target.Center - Projectile.Center;
+        float distance = offset.Length();
+        // NPC velocity is per game tick, projectile velocity is per sub-update.
+        // Close in on the actual center near contact instead of overshooting a lead point.
+        float lead = distance < 100 ? 0 : Math.Min(6, distance / (speed * 3));
+        Vector2 wanted = (offset + target.velocity * lead).SafeNormalize(-Vector2.UnitY);
+        float turn = distance < 120 ? .5f : .18f;
+        Vector2 direction = Vector2.Lerp(Projectile.velocity.SafeNormalize(-Vector2.UnitY), wanted, turn).SafeNormalize(wanted);
+        Projectile.velocity = direction * speed;
     }
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
     {
@@ -81,6 +103,10 @@ public sealed class CrusherUpheaval : ModProjectile
     }
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
     {
+        if (target.whoAmI == (int)Projectile.ai[1]) {
+            // Having reached its victim, keep piercing forward without orbiting it.
+            Projectile.ai[1] = -1; Projectile.netUpdate = true;
+        }
         if (Empowered) CrusherCombatNet.Hit(Projectile, target);
         if (Projectile.owner == Main.myPlayer && Projectile.numHits < 5) {
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Hitbox.ClosestPointInRect(Projectile.Center),

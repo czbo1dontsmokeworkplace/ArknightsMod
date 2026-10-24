@@ -11,7 +11,7 @@ namespace ArknightsMod.Common.GlobalItems;
 public sealed class OperatorBranchTraits : GlobalItem
 {
     internal static string Branch(Item item) => item.ModItem?.Mod.Name == "ArknightsMod"
-        ? item.ModItem.Name switch
+        ? global::ArknightsMod.Content.Items.Weapons.Defender.DefenderRouteCatalog.Find(item)?.Branch ?? (item.ModItem.Name switch
     {
         "AnselStaff" or "HibiscusStaff" or "MyrrhStaff" or "WarfarinStaff" or "SussurroStaff" or "SilenceStaff"
             or "TuyeStaff" or "ShiningStaff" => "Medic",
@@ -49,7 +49,7 @@ public sealed class OperatorBranchTraits : GlobalItem
         "KroosCrossbow" or "KroosAlterCrossbow" or "MelaniteCrossbow" or "ProvenceCrossbow"
             or "SchwarzBow" or "GreyThroatCrossbow" or "BluePoisonCrossbow" or "PozemkaCrossbow" => "Crossbowman",
         _ => null
-    } : null;
+    }) : null;
 
     internal static string Profession(string branch) => branch switch
     {
@@ -60,7 +60,7 @@ public sealed class OperatorBranchTraits : GlobalItem
         "Executor" => "Specialist",
         "Charger" or "StandardBearer" => "Vanguard",
         "Medic" or "MedicTherapist" or "MedicMultiTarget" or "MedicChain" or "MedicWandering" => "Medic",
-        "Fortress" or "Protector" or "ArtsProtector" or "SentinelProtector" or "Juggernaut" or "Duelist" => "Defender",
+        "Fortress" or "Protector" or "ArtsProtector" or "SentinelProtector" or "Juggernaut" or "Duelist" or "PrimalProtector" => "Defender",
         "Summoner" => "Supporter",
         _ => null
     };

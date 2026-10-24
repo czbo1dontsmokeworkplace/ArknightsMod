@@ -26,6 +26,8 @@ public sealed class DefenderElectron : ModProjectile
     }
     public override void AI()
     {
+        if (Projectile.localAI[1]++ == 0 && Terraria.ID.ContentSamples.ItemsByType.TryGetValue((int)Projectile.ai[1], out var source)
+            && source.ModItem?.Name == "JessicaLiberatedGun") Projectile.penetrate = 2;
         Projectile.GetGlobalProjectile<ArtsProjectileMarker>().IsArtsDamage = true;
         Projectile.rotation = Projectile.velocity.ToRotation();
         Lighting.AddLight(Projectile.Center, .1f, .45f, .8f);
@@ -36,7 +38,14 @@ public sealed class DefenderElectron : ModProjectile
         }
     }
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
-    { struck = target.whoAmI; target.AddBuff(BuffID.Electrified, 180); }
+    {
+        struck = target.whoAmI;
+        target.AddBuff(BuffID.Electrified, 180);
+        if (Terraria.ID.ContentSamples.ItemsByType.TryGetValue((int)Projectile.ai[1], out var source)) {
+            if (source.ModItem?.Name == "BlitzPistol") target.AddBuff(BuffID.Slow, 90);
+            if (source.ModItem?.Name == "MechanistGun") target.AddBuff(BuffID.Ichor, 180);
+        }
+    }
     public override void OnKill(int timeLeft)
     {
         if (Projectile.owner == Main.myPlayer && Projectile.ai[0] == 1f)

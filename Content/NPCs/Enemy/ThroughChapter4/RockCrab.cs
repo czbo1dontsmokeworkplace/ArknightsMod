@@ -136,6 +136,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		}
 
 		public override void FindFrame(int frameHeight) {
+            if (NPC.GetGlobalNPC<global::ArknightsMod.Content.NPCs.Friendly.CannotSupportNPC>().IsSleeping) return;
 			NPC.TargetClosest(true);
 			Player target = Main.player[NPC.target];
 
@@ -217,7 +218,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				return;
 
 			int hitDirection = target.Center.X >= NPC.Center.X ? 1 : -1;
-			target.Hurt(PlayerDeathReason.ByNPC(NPC.whoAmI), NPC.damage, hitDirection);
+			target.Hurt(PlayerDeathReason.ByNPC(NPC.whoAmI), NPC.damage * (NPC.GetGlobalNPC<global::ArknightsMod.Content.NPCs.Friendly.CannotSupportNPC>().IsRaging ? 2 : 1), hitDirection);
 
 			attackDamageDealt = true;
 			contactHitCooldown = ContactHitCooldown;

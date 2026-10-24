@@ -65,6 +65,10 @@ public sealed class DefenderCombatPlayer : ModPlayer
             "EunectesAxe" => skill == 2 ? 2f : 1f,
             _ => 1f
         };
+        if (Player.HeldItem.ModItem is RoutedDefenderWeapon) {
+            defense = skill == 0 ? 1.8f : 1.3f;
+            if (skill == 0) Player.lifeRegen += 4;
+        }
         Player.statDefense *= defense;
         if ((name == "Vulcan_Weapon" && skill == 0) || (name == "CuoraWeapon" && skill == 1)
             || (name == "EunectesAxe" && skill == 2))

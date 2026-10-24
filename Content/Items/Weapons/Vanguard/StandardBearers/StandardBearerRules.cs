@@ -10,6 +10,12 @@ public static class StandardBearerRules
     public const int AttackFrames = 54;
     public const float AuraRange = 800;
     public const float Reach = 96;
+    public const int WaveSize = 32;
+    public const int WaveLife = 12;
+    public const int WaveTravelFrames = 9;
+    public const float WaveSpeed = 8;
+    // Including a 32x32 hitbox's farthest corner: 72 + sqrt(16^2+16^2) < 96 px.
+    public static float WaveDistance(float age) => Math.Clamp(age, 0, WaveTravelFrames) * WaveSpeed;
     public static int CostTotal(StandardBearerKind kind, int skill) => (kind, skill) switch {
         (StandardBearerKind.Myrtle, 0) => 14,
         (StandardBearerKind.Myrtle, 1) => 16,

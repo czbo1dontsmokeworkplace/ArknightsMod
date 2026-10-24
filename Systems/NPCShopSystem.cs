@@ -187,60 +187,20 @@ namespace ArknightsMod.Systems
 		}
 
 		public static void TryUpdateCannotShop(Mod mod, bool forcedUpdate = false) {
-			if (Main.netMode != NetmodeID.MultiplayerClient) {
-				int countBeforeSkeletron = 1 +
-					(NPC.downedSlimeKing ? 1 : 0) +//鍙茶幈濮?
-					(NPC.downedBoss1 ? 1 : 0) +//鍏嬬溂
-					(NPC.downedBoss2 ? 1 : 0) +//閭伓boss
-					(NPC.downedDeerclops ? 1 : 0);//宸ㄩ箍
-
-
-				int countBetweenSkeletronAndPlantera =
-					(NPC.downedBoss3 ? 1 : 0) +//楠烽珔鐜?
-					(NPC.downedQueenBee ? 1 : 0) +//铚傚悗
-					(Main.hardMode ? 1 : 0) +//鑲夊北
-					(NPC.downedMechBoss1 ? 1 : 0) +//鏈烘1
-					(NPC.downedMechBoss2 ? 1 : 0) +//鏈烘2
-					(NPC.downedMechBoss3 ? 1 : 0);//鏈烘3
-
-				int countBetweenPlanteraAndDukeFishron =
-					(NPC.downedPlantBoss ? 1 : 0) +//涓栬姳
-					(NPC.downedGolemBoss ? 1 : 0);//鐭冲法浜?
-
-				int countFromFishronOnward =
-					(NPC.downedFishron ? 1 : 0) +//鐚波
-					(NPC.downedEmpressOfLight ? 1 : 0) +//鍏夊コ
-					(NPC.downedAncientCultist ? 1 : 0) +//鏁欏緬
-					(NPC.downedMoonlord ? 1 : 0);//鏈堟€?
-
-				int cannotShopCount = countBeforeSkeletron + countBetweenSkeletronAndPlantera + countBetweenPlanteraAndDukeFishron + countFromFishronOnward;
-				if (!forcedUpdate && cannotShopCount == OldCannotShopCount)
-					return;
-
-				var tempShop = new CannotShop();
-				if (countBeforeSkeletron > 0)
-					tempShop.AddPoolFromNameSpace("Rogue.Rarity_l1", countBeforeSkeletron, "ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l1", mod);
-				if (countBetweenSkeletronAndPlantera > 0)
-					tempShop.AddPoolFromNameSpace("Rogue.Rarity_l2", countBetweenSkeletronAndPlantera, "ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l2", mod);
-				if (countBetweenPlanteraAndDukeFishron > 0)
-					tempShop.AddPoolFromNameSpace("Rogue.Rarity_l3", countBetweenPlanteraAndDukeFishron, "ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3", mod);
-				if (countFromFishronOnward > 0)
-					tempShop.AddPoolFromNameSpace("Rogue.Rarity_l4", countFromFishronOnward, "ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l4", mod);
-
-				// 淇濆瓨瀹屾暣鐨?Item 瀵硅薄
-				CannotShopItems.Clear();
-				CannotShopItems.AddRange(tempShop.GenerateNewInventoryList());
-				foreach (var item in CannotShopItems)
-					MakeCannotPriceEven(item);
-
-				if (Main.dedServ)
-					SendUpdateCannotShop(mod);
-
-				OldCannotShopCount = cannotShopCount;
-			}
-			else
-				RequestUpdateCannotShop(mod, forcedUpdate);
-		}
+            if (Main.netMode == NetmodeID.MultiplayerClient) {
+                RequestUpdateCannotShop(mod, forcedUpdate);
+                return;
+            }
+            // Reopening / respawning rebuilds the display, never rerolls unrelated boss slots.
+            int count = CannotProgressionSystem.Instance.Stock.Slots.Count;
+            if (!forcedUpdate && count == OldCannotShopCount) {
+                if (Main.netMode == NetmodeID.Server) SendUpdateCannotShop(mod);
+                return;
+            }
+            CannotShopItems = CannotProgressionSystem.Instance.BuildInventory();
+            OldCannotShopCount = count;
+            if (Main.netMode == NetmodeID.Server) SendUpdateCannotShop(mod);
+        }
 
 		// 坎诺特的商品只能呈现偶数定价：OriginiumIngotCurrency 把 item.value/50000 取整作为显示价格（见 GetItemExpectedPrice），
 		// 这里用同样的换算把价格向上调整为偶数后再换算回 item.value，使商店里显示的价格永远是偶数。
@@ -284,6 +244,7 @@ namespace ArknightsMod.Systems
 			for (int i = 0; i < CannotShopItems.Count; i++) {
 				packet.Write(CannotShopItems[i].type);
 				packet.Write(CannotShopItems[i].shopSpecialCurrency);
+				packet.Write(CannotShopItems[i].value);
 			}
 			packet.Send();
 		}
@@ -309,8 +270,10 @@ namespace ArknightsMod.Systems
 				for (int i = 0; i < count; i++) {
 					int type = reader.ReadInt32();
 					int currency = reader.ReadInt32();
+					int value = reader.ReadInt32();
 					var item = new Item(type) {
-						shopSpecialCurrency = currency
+						shopSpecialCurrency = currency,
+						value = value
 					};
 					MakeCannotPriceEven(item);
 					CannotShopItems.Add(item);

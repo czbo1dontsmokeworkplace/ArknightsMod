@@ -58,6 +58,11 @@ public sealed class StandardBearerHoldout : ModProjectile
         if (!Idle)
         {
             if (Projectile.ai[1] == 16 && !Main.dedServ) SoundEngine.PlaySound(SoundID.Item1 with { Volume = .3f }, grip);
+            // One sheet at full extension; only the owning client creates the synced projectile.
+            if (Projectile.ai[1] == 25 && Projectile.owner == Main.myPlayer)
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), tip, aim * StandardBearerRules.WaveSpeed,
+                    ModContent.ProjectileType<StandardBearerCrescent>(), Projectile.damage, Projectile.knockBack,
+                    Projectile.owner, (int)weapon.Kind, Projectile.identity);
             if (++Projectile.ai[1] >= StandardBearerRules.AttackFrames)
             { Projectile.ai[1] = -1; if (Projectile.owner == Main.myPlayer) Projectile.netUpdate = true; }
         }

@@ -122,6 +122,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 		// 行走动画 (1-7帧)
 		public override void FindFrame(int frameHeight) {
+            if (NPC.GetGlobalNPC<global::ArknightsMod.Content.NPCs.Friendly.CannotSupportNPC>().IsSleeping) return;
 			NPC.TargetClosest(true);
 			NPC.frameCounter++;
 

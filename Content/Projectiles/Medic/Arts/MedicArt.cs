@@ -19,17 +19,20 @@ public sealed class MedicArt : ModProjectile
     private Vector2 previous;
     private bool initialized;
     internal float HomingStartAge = -1;
+    internal int PatientTarget = -1;
     internal Rectangle PatientHitbox => Utils.CenteredRectangle(Projectile.Center, new Vector2(Profile.PatientContactSize));
     internal bool CanTreatPlayers => Age > Profile.ArmingDelay;
     internal float Armed => MathHelper.Clamp((Age - Profile.ArmingDelay + 8) / 8f, 0, 1);
     internal float HomingStrength => Profile.Branch == MedicBranch.Therapist && HomingStartAge >= 0
         ? .35f + .65f * Utils.GetLerpValue(HomingStartAge, HomingStartAge + 24f, Age, true) : 0f;
-    public override void SendExtraAI(BinaryWriter writer) { writer.Write(Age); writer.Write(HomingStartAge); }
+    public override void SendExtraAI(BinaryWriter writer) { writer.Write(Age); writer.Write(HomingStartAge); writer.Write(PatientTarget); writer.Write(Projectile.localAI[0]); }
     public override void ReceiveExtraAI(BinaryReader reader)
     {
         float age = reader.ReadSingle(), start = reader.ReadSingle();
         Age = float.IsFinite(age) ? Math.Clamp(age, 0, 3600) : 0;
         HomingStartAge = float.IsFinite(start) && start >= 0 ? Math.Min(start, Age) : -1;
+        int target=reader.ReadInt32(); PatientTarget=Main.player.IndexInRange(target)?target:-1;
+        Projectile.localAI[0]=reader.ReadSingle()>0?1:0;
     }
     public override void SetStaticDefaults()
     {
@@ -71,19 +74,7 @@ public sealed class MedicArt : ModProjectile
             if (CanTreatPlayers) DeployField();
             return;
         }
-        // Actual gravity remains present even during therapist steering.
-        Projectile.velocity.Y = Math.Min(10, Projectile.velocity.Y + Profile.Gravity * step);
-        if (Age > 18) Projectile.velocity.X *= MathF.Pow(.995f, step);
-        if (Profile.Branch == MedicBranch.Therapist)
-        {
-            // The whole downward half-plane qualifies, including diagonal motion.
-            if (HomingStartAge < 0 && Projectile.velocity.Y > 0)
-            {
-                HomingStartAge = Age;
-                if (Projectile.owner == Main.myPlayer) Projectile.netUpdate = true;
-            }
-            if (HomingStartAge >= 0) HomeTowardPatient(step);
-        }
+        MedicIdentity.Move(this, step);
         Projectile.rotation = Projectile.velocity.ToRotation();
         if (Projectile.numUpdates == 0)
         {
@@ -109,44 +100,6 @@ public sealed class MedicArt : ModProjectile
             }
         }
     }
-    private void HomeTowardPatient(float step)
-    {
-        Player target = FindPatient();
-        if (target == null)
-        {
-            float drift = MathF.Sin((Age + Projectile.identity * 5f) * .08f) * .004f;
-            Projectile.velocity = Projectile.velocity.RotatedBy(drift * step) * MathF.Pow(.992f, step);
-            return;
-        }
-        Vector2 direction = (target.Center - Projectile.Center).SafeNormalize(Vector2.UnitY);
-        float warmup = Utils.GetLerpValue(HomingStartAge, HomingStartAge + 36f, Age, true);
-        float close = Utils.GetLerpValue(360f, 70f, Projectile.Distance(target.Center), true);
-        float pull = MathHelper.Lerp(.35f, 1f, Math.Max(warmup, close * .75f));
-        Vector2 desired = direction * Profile.Speed * MathHelper.Lerp(.65f, .88f, pull);
-        // Retain momentum through broad bends. Normalize inertia to real ticks despite extraUpdates.
-        float inertia = MathHelper.Lerp(32f, 24f, close);
-        float steering = 1f - MathF.Pow(inertia / (inertia + 1f), step * pull);
-        Projectile.velocity = Vector2.Lerp(Projectile.velocity, desired, steering);
-        float sway = MathF.Sin((Age + Projectile.identity * 7f) * .075f) * MathHelper.Lerp(.008f, .003f, pull);
-        Projectile.velocity = Projectile.velocity.RotatedBy(sway * step);
-        float maxSpeed = Profile.Speed * .98f;
-        if (Projectile.velocity.LengthSquared() > maxSpeed * maxSpeed)
-            Projectile.velocity = Projectile.velocity.SafeNormalize(direction) * maxSpeed;
-    }
-    private Player FindPatient()
-    {
-        if (!Main.player.IndexInRange(Projectile.owner)) return null;
-        Player owner = Main.player[Projectile.owner], result = null;
-        float best = 640 * 640;
-        foreach (Player player in Main.ActivePlayers)
-        {
-            if (!MedicHealingNet.Allied(owner, player)
-                || player.statLife >= player.statLifeMax2 && !MedicTreatment.HasCurableDebuff(player)) continue;
-            float distance = player.DistanceSQ(Projectile.Center);
-            if (distance < best) { best = distance; result = player; }
-        }
-        return result;
-    }
     private void DeployField()
     {
         if (deployed || Main.netMode == NetmodeID.MultiplayerClient) return;
@@ -171,6 +124,14 @@ public sealed class MedicArt : ModProjectile
     }
     public override bool OnTileCollide(Vector2 oldVelocity)
     {
+        // Myrrh's vial can ricochet once without creating a second treatment grant.
+        if (ProfileId == 1 && Projectile.localAI[0] == 0)
+        {
+            Projectile.localAI[0]=1;
+            if(Projectile.velocity.X!=oldVelocity.X)Projectile.velocity.X=-oldVelocity.X*.7f;
+            if(Projectile.velocity.Y!=oldVelocity.Y)Projectile.velocity.Y=-oldVelocity.Y*.6f;
+            Projectile.netUpdate=true;return false;
+        }
         if (Profile.Branch == MedicBranch.MultiTarget)
         {
             if (!CanTreatPlayers)

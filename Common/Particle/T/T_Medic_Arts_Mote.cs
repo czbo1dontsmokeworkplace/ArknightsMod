@@ -13,6 +13,7 @@ namespace ArknightsMod.Common.Particle.T;
 public sealed class T_Medic_Arts_Mote : global::ArknightsMod.Common.Particle.Particle
 {
     public override string TexturePath => OperatorTextureEffects.GlowPath;
+    public override SamplerState DrawSamplerState => MedicMaterialVfx.UsesLineArt(profile) ? Main.DefaultSamplerState : SamplerState.LinearClamp;
     private readonly int profile;
     private readonly MedicalMoteKind kind;
     private readonly float size, phase;
@@ -39,8 +40,26 @@ public sealed class T_Medic_Arts_Mote : global::ArknightsMod.Common.Particle.Par
         var p = MedicCatalog.Get(profile);
         float t = MathHelper.Clamp(LifetimeRatio, 0, 1), fade = (1 - t) * (1 - t);
         float s = size * (1 - .25f * t);
+        if(!MedicMaterialVfx.UsesLineArt(profile))
+        {
+            if(kind==MedicalMoteKind.Signature)
+                MedicMaterialVfx.Body(profile,Position,MedicIdentityVisuals.Size(profile)*(size/50f*(.7f+t*.7f)),0,Time,p.Body,p.Core,fade*.75f);
+            else
+            {
+                int frame=kind switch {MedicalMoteKind.Mist=>11,MedicalMoteKind.Feather=>2,MedicalMoteKind.Petal=>5,
+                    MedicalMoteKind.Purity=>7,MedicalMoteKind.Pulse=>9,MedicalMoteKind.Drop=>1,
+                    _=>MedicMaterialVfx.Get(profile).ParticleFrame};
+                Vector2 extent=frame is 0 or 3 or 6 or 10?new Vector2(s*1.7f,s*.7f):new Vector2(s);
+                if(kind==MedicalMoteKind.Mist)extent*=1+t*.8f;
+                MedicMaterialVfx.Sprite(frame,Position,extent,Color.Lerp(p.Core,p.Body,t),fade*(kind==MedicalMoteKind.Mist?.22f:.75f),Rotation);
+            }
+            return;
+        }
         switch (kind)
         {
+            case MedicalMoteKind.Signature:
+                MedicIdentityVisuals.Feedback(Position, profile, size / 50f * (.7f + t * .7f), Time, fade * .75f);
+                break;
             case MedicalMoteKind.Mist:
                 Texture2D mist = MedicArtsVfx.Texture(MedicArtsVfx.MistPath);
                 Main.EntitySpriteDraw(mist, Position - Main.screenPosition, null,

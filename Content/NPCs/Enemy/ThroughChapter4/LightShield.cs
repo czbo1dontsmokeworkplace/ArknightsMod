@@ -1,4 +1,4 @@
-﻿
+
 using ArknightsMod.Systems.Gameplay.Damage;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -67,6 +67,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			genreNPC.artsResistance = 0;
 		}
 		public override void FindFrame(int frameHeight) {
+            if (NPC.GetGlobalNPC<global::ArknightsMod.Content.NPCs.Friendly.CannotSupportNPC>().IsSleeping) return;
 
 			framecounter++;
 			if (framecounter >= FrameSpeed) {

@@ -44,12 +44,5 @@ public sealed class HornGrenadeLauncher : ExpansionWeaponBase
             player.GetModPlayer<HornLauncherPlayer>().Fire(source, damage, knockback);
         return false;
     }
-    public override void AddRecipes() => CreateRecipe()
-     .AddIngredient<global::ArknightsMod.Content.Items.Weapons.Defender.FirewhistleLauncher>()
-     .AddIngredient<global::ArknightsMod.Content.Items.Material.D32Steel>(1)
-     .AddIngredient<global::ArknightsMod.Content.Items.Material.OrironBlock>(2).AddIngredient(ItemID.ObsidianShield)
-        .AddIngredient(ItemID.GrenadeLauncher).AddIngredient(ItemID.ChlorophyteBar, 15)
-        .AddIngredient(ItemID.LavaBucket, 2)
-        .AddIngredient(ItemID.IllegalGunParts)
-        .AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>()).Register();
+    public override void AddRecipes() => global::ArknightsMod.Content.Items.Weapons.Defender.DefenderRecipes.Register(this);
 }

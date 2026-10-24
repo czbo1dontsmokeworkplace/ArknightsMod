@@ -20,6 +20,8 @@ public sealed class DefenderHoldout : ModProjectile
 {
     private readonly ShieldHelper shield = new();
     private readonly HashSet<int> hitGroups = new();
+    private readonly HashSet<int> routeEffectHits = new();
+    private int attackSequence;
     private float aim, duration = 30f, bladeRotation;
     private Vector2 hand;
     private bool arts, impact;
@@ -72,24 +74,28 @@ public sealed class DefenderHoldout : ModProjectile
         Projectile.DamageType = DefenderRules.AttackClass(p);
         arts = Projectile.DamageType == DamageClass.Magic;
         hitGroups.Clear();
+        routeEffectHits.Clear();
+        attackSequence++;
         trailCount = 0;
         Array.Clear(Projectile.localNPCImmunity);
         impact = false;
-        if (p.HeldItem.ModItem?.Name == "LiskarmPistol")
+        if (DefenderRules.IsSentinel(p.HeldItem))
         {
             Vector2 direction = aim.ToRotationVector2();
-            Projectile.NewProjectile(p.GetSource_ItemUse(p.HeldItem), p.MountedCenter + direction * 22f,
-                direction * 20f, ModContent.ProjectileType<DefenderElectron>(), damage, knockback,
-                p.whoAmI, DefenderRules.Skill(p, 1) ? 1f : 0f);
+            DefenderRouteEffects.FireSentinel(p, direction, damage, knockback);
             SoundEngine.PlaySound(SoundID.Item93 with { Volume = .45f }, p.Center);
         }
         else SoundEngine.PlaySound(SoundID.Item1, p.Center);
         Projectile.netUpdate = true;
     }
     public override void SendExtraAI(BinaryWriter writer)
-    { writer.Write(aim); writer.Write(duration); writer.Write(arts); }
+    { writer.Write(aim); writer.Write(duration); writer.Write(arts); writer.Write(attackSequence); }
     public override void ReceiveExtraAI(BinaryReader reader)
-    { aim = reader.ReadSingle(); duration = reader.ReadSingle(); arts = reader.ReadBoolean(); }
+    {
+        aim = reader.ReadSingle(); duration = reader.ReadSingle(); arts = reader.ReadBoolean();
+        int sequence = reader.ReadInt32();
+        if (sequence != attackSequence) { routeEffectHits.Clear(); attackSequence = sequence; }
+    }
     public override bool ShouldUpdatePosition() => false;
     public override void AI()
     {
@@ -118,7 +124,7 @@ public sealed class DefenderHoldout : ModProjectile
         if (Attacking)
         {
             float progress = 1f - Projectile.ai[2] / Math.Max(1f, duration);
-            if (p.HeldItem.ModItem?.Name == "LiskarmPistol") bladeRotation = aim;
+            if (DefenderRules.IsSentinel(p.HeldItem)) bladeRotation = aim;
             else bladeRotation = aim + MathHelper.Lerp(-1.9f, 1.8f, MathHelper.SmoothStep(0, 1, progress)) * p.direction;
             arm = bladeRotation - MathHelper.PiOver2;
             Projectile.ai[2]--;
@@ -131,7 +137,7 @@ public sealed class DefenderHoldout : ModProjectile
             p.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, arm);
         hand = p.GetBackHandPosition(Player.CompositeArmStretchAmount.Full, arm);
         if (Attacking && DefenderRules.MainArt(p.HeldItem) != null
-            && !DefenderRules.IsFortress(p.HeldItem) && p.HeldItem.ModItem?.Name != "LiskarmPistol")
+            && !DefenderRules.IsFortress(p.HeldItem) && !DefenderRules.IsSentinel(p.HeldItem))
         {
             for (int i = trailHands.Length - 1; i > 0; i--)
             { trailHands[i] = trailHands[i - 1]; trailTips[i] = trailTips[i - 1]; }
@@ -155,7 +161,7 @@ public sealed class DefenderHoldout : ModProjectile
         if (p.HeldItem.ModItem is HornGrenadeLauncher)
             Horn.HornVisuals.SkillBody(p, p.GetModPlayer<HornLauncherPlayer>().VisualState, ++Projectile.localAI[0]);
     }
-    public override bool? CanDamage() => Attacking && !Guarding && Owner.HeldItem.ModItem?.Name != "LiskarmPistol"
+    public override bool? CanDamage() => Attacking && !Guarding && !DefenderRules.IsSentinel(Owner.HeldItem)
         && !DefenderRules.IsFortress(Owner.HeldItem) && Projectile.ai[2] < duration * .85f && Projectile.ai[2] > duration * .1f;
     public override bool? CanHitNPC(NPC target) => hitGroups.Contains(target.realLife >= 0 ? target.realLife : target.whoAmI) ? false : null;
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
@@ -168,16 +174,24 @@ public sealed class DefenderHoldout : ModProjectile
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
     {
         hitGroups.Add(target.realLife >= 0 ? target.realLife : target.whoAmI);
+        DefenderRouteCombatNet.Hit(Projectile, target, damageDone, attackSequence);
         if (Projectile.owner != Main.myPlayer) return;
         string name = Owner.HeldItem.ModItem.Name;
         if (name == "Vulcan_Weapon" && DefenderRules.Skill(Owner, 1)) Owner.GetModPlayer<DefenderCombatPlayer>().HealSelf(.04f, 30);
+        if (name == "LutonHammer") Owner.GetModPlayer<DefenderCombatPlayer>().HealSelf(DefenderRules.Skill(Owner, 1) ? .04f : .015f, 60);
         if (name == "MudrockHammer") Owner.GetModPlayer<DefenderCombatPlayer>().HealSelf(DefenderRules.Skill(Owner, 1) ? .06f : .02f, 60);
         if (!impact && ((name == "CroissantHammer" && DefenderRules.Skill(Owner, 1))
-            || (name == "MudrockHammer" && (DefenderRules.Skill(Owner, 1) || DefenderRules.Skill(Owner, 2)))))
+            || (name == "MudrockHammer" && (DefenderRules.Skill(Owner, 1) || DefenderRules.Skill(Owner, 2)))
+            || (name is "HoshigumaShield" or "ShalemBlade" or "HoshigumaBlazingBlade" or "YuBlade" && DefenderRules.Skill(Owner, 1))))
         {
             impact = true;
-            DefenderPulse.Spawn(Owner, target.Center, Projectile.damage, name == "MudrockHammer" ? 140 : 105, false, target.whoAmI);
+            DefenderPulse.Spawn(Owner, target.Center, Projectile.damage, name == "MudrockHammer" ? 140 : 105, arts, target.whoAmI);
         }
+    }
+    internal void ApplyRouteEffects(NPC target, int damageDone, int sequence)
+    {
+        if (sequence != attackSequence || !routeEffectHits.Add(target.realLife >= 0 ? target.realLife : target.whoAmI)) return;
+        DefenderRouteEffects.Contact(Owner, target, Math.Clamp(damageDone, 0, Math.Max(1, Projectile.damage * 4)));
     }
     public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs,
         List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI) => overPlayers.Add(index);
@@ -223,7 +237,7 @@ public sealed class DefenderHoldout : ModProjectile
         if (MainWeaponInHands && DefenderRules.MainArt(p.HeldItem) is string path)
         {
             Texture2D texture = ModContent.Request<Texture2D>(path).Value;
-            bool gun = DefenderRules.IsFortress(p.HeldItem) || p.HeldItem.ModItem?.Name == "LiskarmPistol";
+            bool gun = DefenderRules.IsFortress(p.HeldItem) || DefenderRules.IsSentinel(p.HeldItem);
             if (!gun) shield.DrawMainWeapon(p, texture, hand, bladeRotation, lightColor, DefenderRules.WeaponLength(p.HeldItem));
             else
             {

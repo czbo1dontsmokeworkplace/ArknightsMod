@@ -37,7 +37,7 @@ public abstract class MedicWeapon : ExpansionWeaponBase
         Item.rare = Profile.Tier switch { 0 => ItemRarityID.Blue, 1 => ItemRarityID.Green,
             2 => ItemRarityID.LightRed, 3 => ItemRarityID.Pink, 4 => ItemRarityID.Yellow, _ => ItemRarityID.Red };
         Item.value = Item.sellPrice(silver: 30 + Profile.Tier * 130);
-        Item.shootSpeed = Profile.Speed;
+        Item.shootSpeed = MedicIdentity.Get(ProfileId).Speed;
         Item.shoot = ModContent.ProjectileType<MedicArt>();
     }
 
@@ -78,7 +78,7 @@ public abstract class MedicWeapon : ExpansionWeaponBase
         float skillBonus = Name == "SussurroStaff" && skillState.Skill == 1
             || Name == "ShiningStaff" && skillState.Skill == 0 ? .8f : .4f;
         float power = (1f + EliteStage * .12f) * (1f + (skill.ActiveFor(this) ? skillBonus + skill.Rank * .02f : 0f));
-        Projectile.NewProjectile(source, position, aim * Profile.Speed, type, 0, 0,
+        Projectile.NewProjectile(source, position, aim * MedicIdentity.Get(ProfileId).Speed, type, 0, 0,
             player.whoAmI, ProfileId, power, interval);
         MedicArtsVfx.Cast(position, aim, ProfileId, skill.ActiveFor(this));
         return false;

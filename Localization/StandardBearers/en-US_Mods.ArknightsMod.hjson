@@ -27,6 +27,7 @@ StandardBearers: {
 	Controls:
 		'''
 		Holds the pole upright; left-click to turn toward the cursor, thrust at close range and return
+		Each thrust releases a short magic crescent with infinite piercing; damage stays within 6 tiles of the spear tip and fades in about 0.2 seconds
 		Phasing allows movement but stops your projectiles and minions from dealing damage; switching items or skills ends it
 		Deployment Cost appears as green orbs: 1 Cost restores 1 SP to the currently held weapon; expires after about 10 seconds
 		'''

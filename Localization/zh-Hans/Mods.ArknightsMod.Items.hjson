@@ -3275,7 +3275,11 @@ HazeMagicBook: {
 
 ReedFlameShadowStaff: {
 	DisplayName: 法杖 [焰影苇草]
-	Tooltip: 命中时有30%概率施加持续8秒的灼痕
+	Tooltip:
+		'''
+		放出游龙般的金橙火种，短暂飞行后弯曲追踪前方敌人
+		命中时有30%概率施加持续8秒的灼痕
+		'''
 }
 
 DN_Weapon: {
@@ -3667,7 +3671,7 @@ CuoraWeapon: {
 
 ClosureScanGun: {
 	DisplayName: 工程部特制扫描枪 [可露希尔]
-	// Tooltip: ""
+	Tooltip: 发射晶状能量镖，白色尖芯分段校正方向追踪前方敌人
 }
 
 KaltsitBody: {

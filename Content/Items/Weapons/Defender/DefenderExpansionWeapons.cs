@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Weapons.Defender;
 
-public sealed class FirewhistleLauncher : DefenderWeapon
+public class FirewhistleLauncher : DefenderWeapon
 {
     // Temporary art: the existing Horn mortar, as requested.
     public override string Texture => "ArknightsMod/Content/Items/Weapons/Defender/Horn/HornMortar";

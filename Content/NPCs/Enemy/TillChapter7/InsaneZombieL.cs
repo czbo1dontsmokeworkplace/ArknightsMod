@@ -1,4 +1,4 @@
-﻿
+
 using ArknightsMod.Systems.Gameplay.Damage;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -122,6 +122,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.TillChapter7
 			genreNPC.artsResistance = SpellResist / 100f;
 		}
 		public override void FindFrame(int frameHeight) {
+            if (NPC.GetGlobalNPC<global::ArknightsMod.Content.NPCs.Friendly.CannotSupportNPC>().IsSleeping) return;
 
 			framecounter++;
 			if (framecounter >= FrameSpeed) {

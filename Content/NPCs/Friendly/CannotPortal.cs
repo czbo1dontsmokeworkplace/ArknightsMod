@@ -89,6 +89,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 				return;
 
 			Main.npc[index].GetGlobalNPC<CannotSummonedTag>().OwnerCannot = cannot;
+			Main.npc[index].netUpdate = true;
 		}
 
 		private void SpawnBurst() {

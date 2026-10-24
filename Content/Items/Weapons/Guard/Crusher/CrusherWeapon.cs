@@ -18,7 +18,8 @@ public abstract class CrusherWeapon : ExpansionWeaponBase
         Item.width = 58; Item.height = 58; Item.knockBack = 8 + (int)Kind;
         Item.useTime = Item.useAnimation = CrusherRules.Interval(Kind);
         Item.useStyle = ItemUseStyleID.Shoot; Item.noMelee = Item.noUseGraphic = true;
-        Item.autoReuse = true; Item.shoot = ModContent.ProjectileType<CrusherHeldBlade>(); Item.shootSpeed = 1;
+        Item.autoReuse = true; Item.channel = true;
+        Item.shoot = ModContent.ProjectileType<CrusherHeldBlade>(); Item.shootSpeed = 1;
         Item.rare = Kind switch { CrusherKind.Quartz => ItemRarityID.Green, CrusherKind.WindChimes => ItemRarityID.LightRed,
             CrusherKind.Hoederer => ItemRarityID.Lime, _ => ItemRarityID.Red };
         Item.value = Item.sellPrice(silver: 60 + (int)Kind * 230);
@@ -51,7 +52,7 @@ public abstract class CrusherWeapon : ExpansionWeaponBase
                 type, damage, knockback, player.whoAmI, (int)Kind, player.selectedItem);
             if (id >= 0 && id < Main.maxProjectiles) blade = Main.projectile[id].ModProjectile as CrusherHeldBlade;
         }
-        blade?.BeginSwing(player, damage, knockback);
+        blade?.BeginCharge(player);
         return false;
     }
 }

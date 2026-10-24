@@ -1,0 +1,18 @@
+CannotEncounter: {
+	SleepSpray: 坎诺特使用了药剂喷洒：沉睡疗愈！
+	RageSpray: 坎诺特使用了药剂喷洒：不死狂暴！
+}
+
+Buffs: {
+	CannotSleep: {
+		DisplayName: 沉睡
+		Description: 无法移动、无法攻击、无法受到伤害，每秒恢复4%最大生命值
+	}
+
+	CannotUndyingRage: {
+		DisplayName: 不死狂暴
+		Description: 生命值不会低于1，攻击力和攻击速度提高100%
+	}
+}
+
+NPCs.CannotOriginiutant.DisplayName: 源石畸变体

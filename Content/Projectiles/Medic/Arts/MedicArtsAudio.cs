@@ -15,15 +15,18 @@ internal static class MedicArtsAudio
     internal static (SoundStyle Body, SoundStyle Accent) Styles(int profile, MedicSoundCue cue)
     {
         var p = MedicCatalog.Get(profile);
-        SoundStyle voice = p.Branch switch
+        SoundStyle voice = profile switch
         {
-            MedicBranch.Therapist => SoundID.Item21,
-            MedicBranch.MultiTarget => SoundID.Item8,
-            MedicBranch.Chain => SoundID.Item29,
-            MedicBranch.Wandering => SoundID.Item30,
-            _ => SoundID.Item20
+            0 or 2 or 12 or 19 => SoundID.Item20,
+            1 or 4 or 10 or 18 => SoundID.Item30,
+            3 or 16 => SoundID.Item9,
+            5 or 13 => SoundID.Item8,
+            6 or 7 or 8 => SoundID.Item21,
+            9 or 20 or 23 => SoundID.Item29,
+            14 or 17 or 22 => SoundID.Item4,
+            _ => SoundID.Item27
         };
-        float pitch = -.18f + p.Tier * .045f;
+        float pitch = -.22f + p.Tier * .04f + profile % 4 * .045f;
         (SoundStyle body, SoundStyle accent, float volume, float overtone, float shift) = cue switch
         {
             MedicSoundCue.Cast => (voice, SoundID.Item29, .82f, .30f, 0f),
@@ -42,7 +45,7 @@ internal static class MedicArtsAudio
             Volume = volume,
             Pitch = MathHelper.Clamp(tone, -.8f, .8f),
             PitchVariance = .07f,
-            Identifier = $"ArknightsMod:Medical:{p.Branch}:{cue}:{layer}",
+            Identifier = $"ArknightsMod:Medical:{p.Key}:{cue}:{layer}",
             MaxInstances = cue == MedicSoundCue.FieldPulse ? 2 : 8,
             SoundLimitBehavior = cue == MedicSoundCue.FieldPulse
                 ? SoundLimitBehavior.IgnoreNew : SoundLimitBehavior.ReplaceOldest

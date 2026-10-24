@@ -22,13 +22,13 @@ public sealed class EunectesDashPlayer : ModPlayer
             return null;
         }
     }
-    internal bool Dashing => Player.HeldItem.ModItem is EunectesAxe && !Player.dead && Dash != null;
+    internal bool Dashing => DefenderRules.IsDuelist(Player.HeldItem) && !Player.dead && Dash != null;
     public override void PostUpdate()
     {
         if (cooldown > 0) cooldown--;
         if (Player.whoAmI != Main.myPlayer) return;
         bool right = Main.mouseRight && !Player.mouseInterface;
-        if (right && !lastRight && cooldown == 0 && Player.HeldItem.ModItem is EunectesAxe
+        if (right && !lastRight && cooldown == 0 && DefenderRules.IsDuelist(Player.HeldItem)
             && !Player.dead && !Player.CCed && !Player.noItems && !DefenderHoldout.IsBusy(Player))
         {
             Vector2 aim = (Main.MouseWorld - Player.MountedCenter).SafeNormalize(new Vector2(Player.direction, 0));
@@ -72,7 +72,7 @@ public sealed class EunectesDash : ModProjectile
     public override bool? CanDamage() => Projectile.ai[0] == 0f;
     public override void AI()
     {
-        if (!Owner.active || Owner.dead || Owner.CCed || Owner.noItems || Owner.HeldItem.ModItem is not EunectesAxe)
+        if (!Owner.active || Owner.dead || Owner.CCed || Owner.noItems || !DefenderRules.IsDuelist(Owner.HeldItem))
         { Projectile.Kill(); return; }
         Vector2 direction = Projectile.velocity.SafeNormalize(new Vector2(Owner.direction, 0));
         Projectile.Center = Owner.MountedCenter + direction * 25f;

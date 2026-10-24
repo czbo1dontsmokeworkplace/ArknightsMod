@@ -105,6 +105,10 @@ public static class ManagedSkillVisualCatalog
         Add("EunectesAxe",0xA4D89D,SkillBodyMotif.Spark);
         Add("HornGrenadeLauncher",0xF3CE8A,SkillBodyMotif.Ember);
         Add("FirewhistleLauncher",0xF2A06F,SkillBodyMotif.Ember);
+        foreach (var defender in global::ArknightsMod.Content.Items.Weapons.Defender.DefenderRouteCatalog.Nodes)
+            if (!entries.ContainsKey(defender.Name))
+                Add(defender.Name, defender.Branch == "PrimalProtector" ? 0xB487DCu : 0x9ACFEFu,
+                    defender.Branch == "PrimalProtector" ? SkillBodyMotif.Mist : SkillBodyMotif.Spark);
         foreach (MedicProfile medic in MedicCatalog.Profiles)
             if (medic.Key != "WarfarinStaff") entries.Add(medic.Key, new(medic.Body,
                 medic.Branch == MedicBranch.Therapist ? SkillBodyMotif.Mist

@@ -57,6 +57,7 @@ public abstract class DefenderWeapon : ExpansionWeaponBase
         base.ModifyWeaponDamage(player, ref damage);
         if (!DefenderRules.SkillActive(player)) return;
         int skill = player.GetModPlayer<WeaponPlayer>().Skill;
+        if (this is RoutedDefenderWeapon) { damage *= skill == 1 ? 1.8f : 1f; return; }
         damage *= Name switch
         {
             "DN_Weapon" => 1.8f,

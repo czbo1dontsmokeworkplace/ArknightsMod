@@ -1,0 +1,390 @@
+// New defender route nodes. Existing weapon and skill keys remain stable.
+DefenderRecipeGroups: {
+	BeagleWeapon: 米格鲁／卡缇 中的任意一把
+	CroissantHammer: 可颂／拜松／暴雨 中的任意一把
+	LiskarmPistol: 雷蛇／闪击 中的任意一把
+	AsbestosBlade: 石棉／暮落／车尼尔 中的任意一把
+	FirewhistleLauncher: 火哨／灰毫 中的任意一把
+	AuroraAxe: 极光／洋灰 中的任意一把
+	PhilaeBlade: 菲莱／响石／裂响 中的任意一把
+}
+
+Items: {
+	BisonShield: {
+		DisplayName: 坚盾 [拜松]
+		Tooltip: 稳健挥击，技能强化防御与近身反击
+	}
+
+	HeavyrainBlade: {
+		DisplayName: 雨幕剑盾 [暴雨]
+		Tooltip: 轻快挥砍，技能强化守势与连续攻击
+	}
+
+	HoshigumaShield: {
+		DisplayName: 般若战盾 [星熊]
+		Tooltip: 重盾横扫，攻击技能期间命中引发范围冲击
+	}
+
+	LutonHammer: {
+		DisplayName: 铸铁重锤 [露托]
+		Tooltip: 命中自愈，技能强化续战能力
+	}
+
+	BlitzPistol: {
+		DisplayName: 闪击枪盾 [闪击]
+		Tooltip: 发射无需弹药的快速法术弹；命中使敌人短暂减速
+	}
+
+	JessicaLiberatedGun: {
+		DisplayName: 涤火枪盾 [涤火杰西卡]
+		Tooltip: 发射贯穿电子弹，技能期间释放范围放电
+	}
+
+	MechanistGun: {
+		DisplayName: 工程枪盾 [机械师]
+		Tooltip: 发射快速法术弹，命中削弱敌方防御
+	}
+
+	FaithMixer: {
+		DisplayName: 信仰搅拌机
+		Tooltip: 连发三枚散布法术弹，每枚造成45%攻击伤害
+	}
+
+	AsbestosBlade: {
+		DisplayName: 热障剑盾 [石棉]
+		Tooltip: 技能期间转为法术伤害，并点燃命中目标
+	}
+
+	ShalemBlade: {
+		DisplayName: 暮色剑盾 [暮落]
+		Tooltip: 技能期间转为法术伤害，攻击技能追加范围冲击
+	}
+
+	CzernyBlade: {
+		DisplayName: 奏鸣剑盾 [车尼尔]
+		Tooltip: 技能期间转为法术伤害，防御技能提高生命回复
+	}
+
+	HoshigumaBlazingBlade: {
+		DisplayName: 斩业战刃 [斩业星熊]
+		Tooltip: 技能期间转为法术伤害，攻击技能产生灼热震击
+	}
+
+	AshlockLauncher: {
+		DisplayName: 攻城炮盾 [灰毫]
+		Tooltip: 消耗手榴弹进行远程炮击，可同时举盾防御
+	}
+
+	BubbleMaul: {
+		DisplayName: 冲撞重槌 [泡泡]
+		Tooltip: 右键冲刺撞击并反弹，冲刺撞击阶段完全免伤
+	}
+
+	AuroraAxe: {
+		DisplayName: 冰原战斧 [极光]
+		Tooltip: 右键冲刺撞击，近战命中施加霜燃
+	}
+
+	CementMaul: {
+		DisplayName: 基岩重槌 [洋灰]
+		Tooltip: 右键冲刺撞击，防御技能提高防御与生命回复
+	}
+
+	MatterhornBlade: {
+		DisplayName: 山岳剑盾 [角峰]
+		Tooltip: 命中积累神经损伤，技能强化本源侵蚀
+	}
+
+	PhilaeBlade: {
+		DisplayName: 苇影剑盾 [菲莱]
+		Tooltip: 命中积累神经损伤，攻击技能提高损伤积累
+	}
+
+	BasslineBlade: {
+		DisplayName: 共鸣剑盾 [响石]
+		Tooltip: 命中积累凋亡损伤，防御技能提高生命回复
+	}
+
+	UnderflowBlade: {
+		DisplayName: 裂潮剑盾 [裂响]
+		Tooltip: 命中积累腐蚀损伤，攻击技能提高损伤积累
+	}
+
+	YuBlade: {
+		DisplayName: 归源剑盾 [余]
+		Tooltip: 命中积累神经损伤，攻击技能追加范围震击
+	}
+
+	SanbyBlade: {
+		DisplayName: 灼源剑盾 [珊比]
+		Tooltip: 命中积累灼燃损伤，技能期间提高积累效率
+	}
+}
+
+Skills: {
+	BisonShield: {
+		1: {
+			Label: 坚盾阵势
+			Desc: 20秒内防御力提高80%，生命回复提高每秒2点
+		}
+
+		2: {
+			Label: 重盾强击
+			Desc: 20秒内防御力提高30%，攻击力提高80%
+		}
+	}
+
+	HeavyrainBlade: {
+		1: {
+			Label: 坚盾阵势
+			Desc: 20秒内防御力提高80%，生命回复提高每秒2点
+		}
+
+		2: {
+			Label: 重盾强击
+			Desc: 20秒内防御力提高30%，攻击力提高80%
+		}
+	}
+
+	HoshigumaShield: {
+		1: {
+			Label: 坚盾阵势
+			Desc: 20秒内防御力提高80%，生命回复提高每秒2点
+		}
+
+		2: {
+			Label: 重盾强击
+			Desc: 20秒内防御力提高30%，攻击力提高80%
+		}
+	}
+
+	LutonHammer: {
+		1: {
+			Label: 不屈坚守
+			Desc: 20秒内防御力提高80%，生命回复提高每秒2点
+		}
+
+		2: {
+			Label: 重锤续战
+			Desc: 20秒内防御力提高30%，攻击力提高80%
+		}
+	}
+
+	BlitzPistol: {
+		1: {
+			Label: 枪盾戒备
+			Desc: 20秒内防御力提高80%，生命回复提高每秒2点
+		}
+
+		2: {
+			Label: 法术齐射
+			Desc: 20秒内防御力提高30%，攻击力提高80%；命中释放范围放电
+		}
+	}
+
+	JessicaLiberatedGun: {
+		1: {
+			Label: 枪盾戒备
+			Desc: 20秒内防御力提高80%，生命回复提高每秒2点
+		}
+
+		2: {
+			Label: 法术齐射
+			Desc: 20秒内防御力提高30%，攻击力提高80%；命中释放范围放电
+		}
+	}
+
+	MechanistGun: {
+		1: {
+			Label: 枪盾戒备
+			Desc: 20秒内防御力提高80%，生命回复提高每秒2点
+		}
+
+		2: {
+			Label: 法术齐射
+			Desc: 20秒内防御力提高30%，攻击力提高80%；命中释放范围放电
+		}
+	}
+
+	FaithMixer: {
+		1: {
+			Label: 枪盾戒备
+			Desc: 20秒内防御力提高80%，生命回复提高每秒2点
+		}
+
+		2: {
+			Label: 法术齐射
+			Desc: 20秒内防御力提高30%，攻击力提高80%；命中释放范围放电
+		}
+	}
+
+	AsbestosBlade: {
+		1: {
+			Label: 驭法守势
+			Desc: 20秒内防御力提高80%，生命回复提高每秒2点；期间造成魔法伤害
+		}
+
+		2: {
+			Label: 术刃解放
+			Desc: 20秒内防御力提高30%，攻击力提高80%；期间造成魔法伤害
+		}
+	}
+
+	ShalemBlade: {
+		1: {
+			Label: 驭法守势
+			Desc: 20秒内防御力提高80%，生命回复提高每秒2点；期间造成魔法伤害
+		}
+
+		2: {
+			Label: 术刃解放
+			Desc: 20秒内防御力提高30%，攻击力提高80%；期间造成魔法伤害
+		}
+	}
+
+	CzernyBlade: {
+		1: {
+			Label: 驭法守势
+			Desc: 20秒内防御力提高80%，生命回复提高每秒2点；期间造成魔法伤害
+		}
+
+		2: {
+			Label: 术刃解放
+			Desc: 20秒内防御力提高30%，攻击力提高80%；期间造成魔法伤害
+		}
+	}
+
+	HoshigumaBlazingBlade: {
+		1: {
+			Label: 驭法守势
+			Desc: 20秒内防御力提高80%，生命回复提高每秒2点；期间造成魔法伤害
+		}
+
+		2: {
+			Label: 术刃解放
+			Desc: 20秒内防御力提高30%，攻击力提高80%；期间造成魔法伤害
+		}
+	}
+
+	AshlockLauncher: {
+		1: {
+			Label: 炮击强化
+			Desc: 20秒内炮击伤害提高70%
+		}
+
+		2: {
+			Label: 集束炮击
+			Desc: 20秒内炮击伤害提高70%，并扩大爆炸范围
+		}
+	}
+
+	BubbleMaul: {
+		1: {
+			Label: 决斗壁垒
+			Desc: 20秒内防御力提高80%，生命回复提高每秒2点
+		}
+
+		2: {
+			Label: 全力破阵
+			Desc: 20秒内防御力提高30%，攻击力提高80%
+		}
+	}
+
+	AuroraAxe: {
+		1: {
+			Label: 决斗壁垒
+			Desc: 20秒内防御力提高80%，生命回复提高每秒2点
+		}
+
+		2: {
+			Label: 全力破阵
+			Desc: 20秒内防御力提高30%，攻击力提高80%
+		}
+	}
+
+	CementMaul: {
+		1: {
+			Label: 决斗壁垒
+			Desc: 20秒内防御力提高80%，生命回复提高每秒2点
+		}
+
+		2: {
+			Label: 全力破阵
+			Desc: 20秒内防御力提高30%，攻击力提高80%
+		}
+	}
+
+	MatterhornBlade: {
+		1: {
+			Label: 源质守护
+			Desc: 20秒内防御力提高80%，生命回复提高每秒2点；元素损伤积累翻倍
+		}
+
+		2: {
+			Label: 本源侵蚀
+			Desc: 20秒内防御力提高30%，攻击力提高80%；元素损伤积累翻倍
+		}
+	}
+
+	PhilaeBlade: {
+		1: {
+			Label: 源质守护
+			Desc: 20秒内防御力提高80%，生命回复提高每秒2点；元素损伤积累翻倍
+		}
+
+		2: {
+			Label: 本源侵蚀
+			Desc: 20秒内防御力提高30%，攻击力提高80%；元素损伤积累翻倍
+		}
+	}
+
+	BasslineBlade: {
+		1: {
+			Label: 源质守护
+			Desc: 20秒内防御力提高80%，生命回复提高每秒2点；元素损伤积累翻倍
+		}
+
+		2: {
+			Label: 本源侵蚀
+			Desc: 20秒内防御力提高30%，攻击力提高80%；元素损伤积累翻倍
+		}
+	}
+
+	UnderflowBlade: {
+		1: {
+			Label: 源质守护
+			Desc: 20秒内防御力提高80%，生命回复提高每秒2点；元素损伤积累翻倍
+		}
+
+		2: {
+			Label: 本源侵蚀
+			Desc: 20秒内防御力提高30%，攻击力提高80%；元素损伤积累翻倍
+		}
+	}
+
+	YuBlade: {
+		1: {
+			Label: 源质守护
+			Desc: 20秒内防御力提高80%，生命回复提高每秒2点；元素损伤积累翻倍
+		}
+
+		2: {
+			Label: 本源侵蚀
+			Desc: 20秒内防御力提高30%，攻击力提高80%；元素损伤积累翻倍
+		}
+	}
+
+	SanbyBlade: {
+		1: {
+			Label: 源质守护
+			Desc: 20秒内防御力提高80%，生命回复提高每秒2点；元素损伤积累翻倍
+		}
+
+		2: {
+			Label: 本源侵蚀
+			Desc: 20秒内防御力提高30%，攻击力提高80%；元素损伤积累翻倍
+		}
+	}
+}
+
+BranchTraits.PrimalProtector: 本源铁卫：  近战命中积累元素损伤，技能期间积累量翻倍；右键举盾格挡

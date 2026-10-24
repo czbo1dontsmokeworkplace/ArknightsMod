@@ -27,7 +27,7 @@ public sealed class DefenderBackWeaponPlayer : ModPlayer
         if (drawInfo.shadow != 0f || !ShouldDraw(player)) return;
         Texture2D texture = ModContent.Request<Texture2D>(DefenderRules.MainArt(player.HeldItem)).Value;
         bool vertical = texture.Height > texture.Width * 2;
-        bool gun = DefenderRules.IsFortress(player.HeldItem) || player.HeldItem.ModItem?.Name == "LiskarmPistol";
+        bool gun = DefenderRules.IsFortress(player.HeldItem) || DefenderRules.IsSentinel(player.HeldItem);
         float scale = gun ? 1f : DefenderRules.WeaponLength(player.HeldItem)
             / (vertical ? texture.Height : texture.Size().Length());
         SpriteEffects effects = player.direction < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;

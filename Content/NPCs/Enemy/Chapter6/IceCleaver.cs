@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Items.Material;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -40,6 +40,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 			NPC.alpha = 240;
 		}
 		public override void FindFrame(int frameHeight) {
+            if (NPC.GetGlobalNPC<global::ArknightsMod.Content.NPCs.Friendly.CannotSupportNPC>().IsSleeping) return;
 
 			attackframeY = 10 * frameHeight;
 			NPC.TargetClosest(true);
