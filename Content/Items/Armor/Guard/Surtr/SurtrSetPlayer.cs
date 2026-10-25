@@ -19,6 +19,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Surtr
 		public bool SurtrUndyingActive;
 		private int undyingCooldown;
 		private int undyingIFrameTimer;
+		internal bool HealingBlocked => undyingIFrameTimer > 0;
 
 		public override void ResetEffects() {
 			SurtrHelmetActive = false;
@@ -33,23 +34,13 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Surtr
 			SurtrSetActive = SurtrHelmetActive
 				&& Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<SurtrBody>()
 				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<SurtrLegs>();
+			if (SurtrHelmetActive)
+				Player.GetArmorPenetration(DamageClass.Melee) += 20;
 		}
 
-		public override void ModifyHitNPCWithItem(Item item, NPC target, ref NPC.HitModifiers modifiers) {
-			if (SurtrHelmetActive && item.DamageType.CountsAsClass(DamageClass.Melee))
-				modifiers.ArmorPenetration += 20;
-		}
-
-		public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref NPC.HitModifiers modifiers) {
-			if (SurtrHelmetActive && proj.DamageType.CountsAsClass(DamageClass.Melee))
-				modifiers.ArmorPenetration += 20;
-		}
-
-		public override float UseSpeedMultiplier(Item item) {
-			if (SurtrUndyingActive && item.DamageType.CountsAsClass(DamageClass.Melee))
-				return 1.22f;
-
-			return 1f;
+		private void ApplyArmorAttackSpeed() {
+			if (SurtrUndyingActive)
+				Player.GetAttackSpeed(DamageClass.Melee) += 0.22f;
 		}
 
 		public override bool ConsumableDodge(Player.HurtInfo info) {
@@ -79,8 +70,16 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Surtr
 		}
 
 		public override void GetHealLife(Item item, bool quickHeal, ref int healValue) {
-			if (undyingIFrameTimer > 0)
+			if (HealingBlocked)
 				healValue = 0;
+		}
+
+		public override bool ModifyNurseHeal(NPC nurse, ref int health, ref bool removeDebuffs, ref string chatText) {
+			if (!HealingBlocked)
+				return true;
+			health = 0;
+			chatText = "当前无法接受治疗。";
+			return false;
 		}
 
 		private void TriggerUndying() {
@@ -88,6 +87,10 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Surtr
 			undyingIFrameTimer = 8 * 60;
 			undyingCooldown = 120 * 60;
 			SurtrUndyingActive = true;
+		}
+
+		public override void PostUpdateMiscEffects() {
+			ApplyArmorAttackSpeed();
 		}
 	}
 }

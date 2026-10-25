@@ -44,6 +44,8 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Wisadel
 			WisadelSetActive = WisadelHelmetActive
 				&& Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<WisadelBody>()
 				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<WisadelLegs>();
+			if (WisadelSetActive)
+				Player.GetDamage(DamageClass.Ranged) *= 1.15f;
 		}
 
 		public override void PostUpdate() {
@@ -103,14 +105,12 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Wisadel
 
 		public override void ModifyHitNPCWithItem(Item item, NPC target, ref NPC.HitModifiers modifiers) {
 			if (WisadelSetActive && item.DamageType.CountsAsClass(DamageClass.Ranged)) {
-				modifiers.SourceDamage *= 1.15f;
 				target.AddBuff(ModContent.BuffType<WisadelMarkDebuff>(), MarkDuration);
 			}
 		}
 
 		public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref NPC.HitModifiers modifiers) {
 			if (WisadelSetActive && proj.DamageType.CountsAsClass(DamageClass.Ranged)) {
-				modifiers.SourceDamage *= 1.15f;
 				target.AddBuff(ModContent.BuffType<WisadelMarkDebuff>(), MarkDuration);
 			}
 		}

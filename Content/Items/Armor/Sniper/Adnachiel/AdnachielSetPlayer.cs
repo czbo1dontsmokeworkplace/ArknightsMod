@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria;
 using Terraria.ModLoader;
@@ -25,9 +25,13 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Adnachiel
 				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<AdnachielLegs>();
 		}
 
-		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {
-			if (AdnachielHelmetActive && item.DamageType.CountsAsClass(DamageClass.Ranged))
-				damage *= 1.04f;
+		private void ApplyArmorDamageStats() {
+			if (AdnachielHelmetActive)
+				Player.GetDamage(DamageClass.Ranged) *= 1.04f;
+		}
+
+		public override void PostUpdateMiscEffects() {
+			ApplyArmorDamageStats();
 		}
 	}
 }

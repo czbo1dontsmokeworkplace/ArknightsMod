@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria;
 using Terraria.ModLoader;
@@ -27,9 +27,9 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Catapult
 				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<CatapultLegs>();
 		}
 
-		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {
-			if (CatapultSetActive && item.DamageType.CountsAsClass(DamageClass.Ranged))
-				damage *= 1.03f;
+		private void ApplyArmorDamageStats() {
+			if (CatapultSetActive)
+				Player.GetDamage(DamageClass.Ranged) *= 1.03f;
 		}
 
 		public override void PostUpdate() {
@@ -48,6 +48,10 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Catapult
 		public override void OnRespawn() {
 			if (CatapultSetActive)
 				OperatorSPHelper.TryGainSP(Player, 5);
+		}
+
+		public override void PostUpdateMiscEffects() {
+			ApplyArmorDamageStats();
 		}
 	}
 }

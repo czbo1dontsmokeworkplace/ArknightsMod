@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria;
 using Terraria.ModLoader;
@@ -34,9 +34,9 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Exusiai
 				health *= 1.1f;
 		}
 
-		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {
+		private void ApplyArmorDamageStats() {
 			if (ShouldReceiveExusiaiBonus(Player))
-				damage *= 1.06f;
+				Player.GetDamage(DamageClass.Generic) *= 1.06f;
 		}
 
 		public static bool ShouldReceiveExusiaiBonus(Player player) {
@@ -57,12 +57,15 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Exusiai
 			return false;
 		}
 
-		public override float UseSpeedMultiplier(Item item) {
-			if (ExusiaiHelmetActive && item.DamageType.CountsAsClass(DamageClass.Ranged))
-				return 1.2f;
-
-			return 1f;
+		private void ApplyArmorAttackSpeed() {
+			if (ExusiaiHelmetActive)
+				Player.GetAttackSpeed(DamageClass.Ranged) *= 1.2f;
 		}
 
+
+		public override void PostUpdateMiscEffects() {
+			ApplyArmorDamageStats();
+			ApplyArmorAttackSpeed();
+		}
 	}
 }

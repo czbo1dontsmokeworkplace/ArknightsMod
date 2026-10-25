@@ -30,6 +30,8 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Rosmontis
 			RosmontisSetActive = RosmontisHelmetActive
 				&& Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<RosmontisBody>()
 				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<RosmontisLegs>();
+			if (RosmontisHelmetActive)
+				Player.GetArmorPenetration(DamageClass.Ranged) += 25;
 		}
 
 		public override void PostUpdate() {
@@ -38,16 +40,6 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Rosmontis
 
 			if (RosmontisSetActive && ArknightsKeybinds.RosmontisTacticalDeploy.JustPressed)
 				TryDeployTacticalEquipment();
-		}
-
-		public override void ModifyHitNPCWithItem(Item item, NPC target, ref NPC.HitModifiers modifiers) {
-			if (RosmontisHelmetActive && item.DamageType.CountsAsClass(DamageClass.Ranged))
-				modifiers.ArmorPenetration += 25;
-		}
-
-		public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref NPC.HitModifiers modifiers) {
-			if (RosmontisHelmetActive && proj.DamageType.CountsAsClass(DamageClass.Ranged))
-				modifiers.ArmorPenetration += 25;
 		}
 
 		private void TryDeployTacticalEquipment() {
@@ -80,12 +72,16 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Rosmontis
 			return false;
 		}
 
-		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {
+		private void ApplyArmorDamageStats() {
 			if (!IsRosmontisSetOnField())
 				return;
 
 			if (OperatorCasterSetHelper.WearsFullCasterSet(Player))
-				damage *= 1.08f;
+				Player.GetDamage(DamageClass.Generic) *= 1.08f;
+		}
+
+		public override void PostUpdateMiscEffects() {
+			ApplyArmorDamageStats();
 		}
 	}
 }

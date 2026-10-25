@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
@@ -67,7 +67,7 @@ namespace ArknightsMod.Content.Items.Weapons.Defender.Cardigan
 						{
 							modPlayer.SkillActive = true;
 							modPlayer.SkillTimer = 0;
-							player.statLife = Math.Min(player.statLife + (int)(player.statLifeMax * 0.4f), player.statLifeMax2);
+							player.GetModPlayer<global::ArknightsMod.Players.IncomingHealingPlayer>().HealSilent((int)(player.statLifeMax * 0.4f));
 							modPlayer.DelStockCount();
 							SoundEngine.PlaySound(SkillActive3, player.Center);
 						}

@@ -44,8 +44,23 @@ namespace ArknightsMod.Players
 		// 技能资源管理
 		public int SkillCharge;
 		public int SkillChargeMax;
-		public bool SkillActive;
-		public int SkillTimer;
+		private bool skillActive;
+		public bool SkillActive {
+			get => skillActive;
+			set {
+				bool starting = value && !skillActive;
+				skillActive = value;
+				if (starting) Systems.Gameplay.MujicaFeverSystem.SkillStarted(Player);
+			}
+		}
+		private int skillTimer;
+		public int SkillTimer {
+			get => skillTimer;
+			set {
+				if (value > skillTimer && Systems.Gameplay.MujicaFeverSystem.PauseSkill(Player)) return;
+				skillTimer = value;
+			}
+		}
 		public int SP;
 		public int StockCount;
 		public int Div;
@@ -746,6 +761,7 @@ namespace ArknightsMod.Players
 		}
 
 		public void UpdateActiveSkill() {
+			if (Systems.Gameplay.MujicaFeverSystem.PauseSkill(Player)) return;
 			if (SkillActive) {
 				// 永久技能没有持续时间倒计时；其关闭/重置条件由技能自身处理。
 				if (CurrentSkill?.IsPermanent == true)
@@ -771,6 +787,7 @@ namespace ArknightsMod.Players
 		}
 
 		public void StrikeSkill() {
+			if (Systems.Gameplay.MujicaFeverSystem.PauseSkill(Player)) return;
 			if (SkillActive) {
 				SkillTimer++;
 				if (SkillTimer >= 10 * ActiveDurationMultiplier)

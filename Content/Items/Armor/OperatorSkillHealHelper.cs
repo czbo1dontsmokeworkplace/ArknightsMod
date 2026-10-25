@@ -21,9 +21,6 @@ namespace ArknightsMod.Content.Items.Armor
 				return 0;
 
 			float multiplier = 1f;
-			MatoimaruSetPlayer matoi = target.GetModPlayer<MatoimaruSetPlayer>();
-			if (matoi.MatoimaruHelmetActive)
-				multiplier = 1.25f;
 
 			if (healer != null) {
 				AnselSetPlayer ansel = healer.GetModPlayer<AnselSetPlayer>();

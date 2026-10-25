@@ -29,9 +29,9 @@ public sealed class DroneCoreMedicPlayer : ModPlayer
     internal void Treat()
     {
         if (Main.netMode == NetmodeID.MultiplayerClient || !CanTreat || Cooldown > 0) return;
-        int amount = Math.Min(120, Player.statLifeMax2 - Player.statLife);
+        int amount = Math.Min(Player.GetModPlayer<global::ArknightsMod.Players.IncomingHealingPlayer>().Modify(120), Player.statLifeMax2 - Player.statLife);
         Cooldown = 900;
-        if (Main.netMode == NetmodeID.SinglePlayer) Player.Heal(amount);
+        if (Main.netMode == NetmodeID.SinglePlayer) Player.GetModPlayer<global::ArknightsMod.Players.IncomingHealingPlayer>().HealFinal(amount);
         else
         {
             Player.statLife = Math.Min(Player.statLifeMax2, Player.statLife + amount);
@@ -44,10 +44,10 @@ public sealed class DroneCoreMedicPlayer : ModPlayer
     internal static void ReceiveHealing(BinaryReader reader)
     {
         int owner = reader.ReadByte(), amount = reader.ReadInt16();
-        if (Main.netMode != NetmodeID.MultiplayerClient || owner != Main.myPlayer || amount is <= 0 or > 120) return;
+        if (Main.netMode != NetmodeID.MultiplayerClient || owner != Main.myPlayer || amount is <= 0 or > 150) return;
         Player player = Main.LocalPlayer;
         if (!player.active || player.dead || player.GetModPlayer<EvolutionAccessoryPlayer>().DyingTicks > 0) return;
-        player.Heal(Math.Min(amount, Math.Max(0, player.statLifeMax2 - player.statLife)));
+        player.GetModPlayer<global::ArknightsMod.Players.IncomingHealingPlayer>().HealFinal(Math.Min(amount, Math.Max(0, player.statLifeMax2 - player.statLife)));
         player.GetModPlayer<DroneCoreMedicPlayer>().Cooldown = 900;
         NetMessage.SendData(MessageID.PlayerLifeMana, number: owner);
     }

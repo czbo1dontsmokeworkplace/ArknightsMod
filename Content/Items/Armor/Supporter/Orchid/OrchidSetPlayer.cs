@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Buffs.ArmorSets;
+using ArknightsMod.Content.Buffs.ArmorSets;
 using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria;
@@ -27,9 +27,9 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.Orchid
 				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<OrchidLegs>();
 		}
 
-		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {
-			if (OrchidHelmetActive && item.DamageType.CountsAsClass(DamageClass.Magic))
-				damage *= 1.1f;
+		private void ApplyArmorDamageStats() {
+			if (OrchidHelmetActive)
+				Player.GetDamage(DamageClass.Magic) *= 1.1f;
 		}
 
 		public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone) {
@@ -62,6 +62,10 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.Orchid
 				return;
 
 			target.AddBuff(ModContent.BuffType<OrchidSlowDebuff>(), 48);
+		}
+
+		public override void PostUpdateMiscEffects() {
+			ApplyArmorDamageStats();
 		}
 	}
 }

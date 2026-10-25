@@ -35,15 +35,20 @@ namespace ArknightsMod.Systems.Gameplay.Damage
 				: artsResistance;
 		}
 
+		internal float GetEffectiveArtsResistance(NPC npc, Player attacker) => System.Math.Clamp(
+			GetEffectiveArtsResistance(npc) - (attacker?.GetModPlayer<global::ArknightsMod.Players.MujicaPlayer>().ArtsPenetration ?? 0f), 0f, 1f);
+
 		public override void ModifyHitByItem(NPC npc, Player player, Item item, ref NPC.HitModifiers modifiers) {
 			if (artsResistance > 0f && IsArtsItemHit(player, item))
-				modifiers.FinalDamage *= (1f - GetEffectiveArtsResistance(npc));
+				modifiers.FinalDamage *= (1f - GetEffectiveArtsResistance(npc, player));
 		}
 
 		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers) {
 			// 弹幕算不算法伤，在它生成那一刻就判定好并记在 ArtsProjectileMarker 上了，这里只是读结果。
-			if (artsResistance > 0f && projectile.GetGlobalProjectile<ArtsProjectileMarker>().IsArtsDamage)
-				modifiers.FinalDamage *= (1f - GetEffectiveArtsResistance(npc));
+			if (artsResistance > 0f && projectile.GetGlobalProjectile<ArtsProjectileMarker>().IsArtsDamage) {
+				Player attacker = projectile.owner >= 0 && projectile.owner < Main.maxPlayers ? Main.player[projectile.owner] : null;
+				modifiers.FinalDamage *= (1f - GetEffectiveArtsResistance(npc, attacker));
+			}
 		}
 
 		/// <summary>物品直接命中（近战挥砍/戳刺）算不算法伤：原版武器查固定表，模组武器走带条件的规则。</summary>

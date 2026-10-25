@@ -81,7 +81,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Skadi
 			if (mp.SkillActive && mp.Skill == 2) {
 				player.statDefense *= 2.3f;
 				player.statLifeMax2 += (int)(player.statLifeMax * 1.3f);
-				player.statLife = player.statLifeMax2;
+				player.GetModPlayer<global::ArknightsMod.Players.IncomingHealingPlayer>().RestoreLife(player.statLifeMax2);
 			}
 		}
 	}

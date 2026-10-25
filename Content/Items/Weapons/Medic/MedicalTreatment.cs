@@ -94,11 +94,11 @@ public sealed class MedicalTreatmentPlayer : ModPlayer
         {
             // Negative values carry full-health floating text without authorizing any life gain.
             int displayed = Math.Clamp(Math.Abs(heal), 0,
-                Armor.Defender.Spot.SpotHealingHelper.MaximumAmount(400));
+                (int)Math.Ceiling(Armor.Defender.Spot.SpotHealingHelper.MaximumAmount(400) * 1.25));
             int actual = heal > 0 ? Math.Min(displayed, Math.Max(0, player.statLifeMax2 - player.statLife)) : 0;
             if (actual > 0)
             {
-                player.Heal(actual);
+                player.GetModPlayer<global::ArknightsMod.Players.IncomingHealingPlayer>().HealFinal(actual);
                 NetMessage.SendData(MessageID.PlayerLifeMana, -1, -1, null, index);
             }
             else if (!Main.dedServ) player.HealEffect(displayed);

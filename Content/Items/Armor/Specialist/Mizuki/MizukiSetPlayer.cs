@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria;
@@ -30,9 +30,9 @@ namespace ArknightsMod.Content.Items.Armor.Specialist.Mizuki
 				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<MizukiLegs>();
 		}
 
-		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {
+		private void ApplyArmorDamageStats() {
 			if (MizukiHelmetActive && HasLowHpEnemyNearby())
-				damage *= 1.2f;
+				Player.GetDamage(DamageClass.Generic) *= 1.2f;
 		}
 
 		public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone) {
@@ -111,6 +111,10 @@ namespace ArknightsMod.Content.Items.Armor.Specialist.Mizuki
 				lowest.SimpleStrikeNPC(bonus, 0, false, 0, DamageClass.Magic);
 
 			swingHits.Clear();
+		}
+
+		public override void PostUpdateMiscEffects() {
+			ApplyArmorDamageStats();
 		}
 	}
 }

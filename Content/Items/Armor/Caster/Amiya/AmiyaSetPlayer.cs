@@ -26,9 +26,9 @@ namespace ArknightsMod.Content.Items.Armor.Caster.Amiya
 				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<AmiyaLegs>();
 		}
 
-		public override void ModifyManaCost(Item item, ref float reduce, ref float mult) {
+		private void ApplyArmorManaCost() {
 			if (AmiyaHelmetActive)
-				mult *= 0.8f;
+				Player.manaCost *= 0.8f;
 		}
 
 		public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone) {
@@ -59,6 +59,9 @@ namespace ArknightsMod.Content.Items.Armor.Caster.Amiya
 
 			if (target.life <= 0)
 				OperatorSPHelper.TryGainSP(Player, 8);
+		}
+		public override void PostUpdateMiscEffects() {
+			ApplyArmorManaCost();
 		}
 	}
 }

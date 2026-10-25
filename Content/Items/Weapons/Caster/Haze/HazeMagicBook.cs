@@ -171,7 +171,7 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Haze
             if (_pendingHeal)
             {
                 int newLife = Player.statLife * 4;
-                Player.statLife = newLife > Player.statLifeMax2 ? Player.statLifeMax2 : newLife;
+                Player.GetModPlayer<global::ArknightsMod.Players.IncomingHealingPlayer>().RestoreLife(newLife);
                 _pendingHeal = false;
             }
 

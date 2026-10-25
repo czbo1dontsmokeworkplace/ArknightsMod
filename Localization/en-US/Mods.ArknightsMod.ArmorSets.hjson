@@ -79,7 +79,7 @@ Mostima: {
 Skadi: {
 	HeadName: Skadi's Helmet
 	HelmetEffect: "[c/beebff:Helmet]: Melee damage 120%"
-	SetEffect: "[c/beebff:Set]: -5s respawn; vs boss: survive lethal once (-70% max HP, full heal, +30% melee speed)"
+	SetEffect: "[c/beebff:Set]: -5s respawn; vs boss: survive lethal once per deployment (-70% max HP, full heal, +30% melee speed); effects end when no enemy boss remains, you die, or the set is unequipped"
 	SetBonus: -5s respawn; boss lethal survive once
 }
 
@@ -352,8 +352,8 @@ Mlynar: {
 
 Oblivionis: {
 	HeadName: Oblivionis's Helmet
-	HelmetEffect: "[c/beebff:Helmet]: Each note on field grants Ave Mujica members +3% armor pen and -2% enemy arts resist (max 10)"
-	SetEffect: "[c/beebff:Set]: Hits add Fever +3; all allies +15% attack speed"
+	HelmetEffect: "[c/beebff:Helmet]: Each note projectile in the world grants all Ave Mujica members 3 flat armor penetration and 2 percentage points of arts resistance penetration, up to 10 notes"
+	SetEffect: "[c/beebff:Set]: Hits grant 3 shared Fever (max 450). At full Fever, any Ave Mujica member starting a skill triggers 20 seconds of shared Fever: all members cannot die and their skill duration pauses. No Fever is gained while active. Allies gain 15% attack speed"
 	SetBonus: Fever on hit; ally attack speed +15%
 }
 

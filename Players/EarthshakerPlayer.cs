@@ -109,7 +109,7 @@ public sealed class EarthshakerPlayer : ModPlayer
         if(chargeCooldown>0)chargeCooldown--;
         if(shakeTime>0){shakeTime--;shake*=.87f;}
         if(skillTime>0){if(ActiveMode==0||Player.CCed||Player.noItems)EndSkill();
-            else{skillTime--;var shared=Player.GetModPlayer<WeaponPlayer>();shared.SkillActive=true;shared.SkillTimer=duration-skillTime;if(skillTime==0)EndSkill();}}
+            else{if (!Systems.Gameplay.MujicaFeverSystem.PauseSkill(Player)) skillTime--;var shared=Player.GetModPlayer<WeaponPlayer>();shared.SkillActive=true;shared.SkillTimer=duration-skillTime;if(skillTime==0)EndSkill();}}
         bool key=ArknightsKeybinds.SkillActivatePressed(Player);if(key&&!keyWasDown)TryActivate();keyWasDown=key;
     }
     internal void CreditAttack()

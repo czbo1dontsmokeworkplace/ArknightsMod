@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content.Projectiles.Specialist.Dorothy;
 using Microsoft.Xna.Framework;
@@ -36,15 +36,13 @@ namespace ArknightsMod.Content.Items.Armor.Specialist.Dorothy
 				Player.maxMinions++;
 		}
 
-		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {
-			if (!item.DamageType.CountsAsClass(DamageClass.Summon))
-				return;
+		private void ApplyArmorDamageStats() {
 
 			if (DorothyHelmetActive)
-				damage *= 1.15f;
+				Player.GetDamage(DamageClass.Summon) *= 1.15f;
 
 			if (DorothySetActive && UnusedSlotStacks > 0)
-				damage *= 1f + 0.03f * UnusedSlotStacks;
+				Player.GetDamage(DamageClass.Summon) *= 1f + 0.03f * UnusedSlotStacks;
 		}
 
 		public override void PostUpdate() {
@@ -80,6 +78,10 @@ namespace ArknightsMod.Content.Items.Armor.Specialist.Dorothy
 				(int)Player.GetTotalDamage(DamageClass.Summon).ApplyTo(12f),
 				2f,
 				Player.whoAmI);
+		}
+
+		public override void PostUpdateMiscEffects() {
+			ApplyArmorDamageStats();
 		}
 	}
 }

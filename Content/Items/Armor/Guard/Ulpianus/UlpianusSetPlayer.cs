@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Systems.Gameplay.OperatorTags;
@@ -52,9 +52,9 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Ulpianus
 				health.Base += lifeBonus;
 		}
 
-		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {
+		private void ApplyArmorDamageStats() {
 			if (attackBonus > 0f)
-				damage.Flat += attackBonus;
+				Player.GetDamage(DamageClass.Generic).Flat += attackBonus;
 		}
 
 		public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone) {
@@ -96,6 +96,10 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Ulpianus
 		private static bool HoldsSignatureAnchor() {
 			// 专武「沉向深渊的锚」尚未实装
 			return false;
+		}
+
+		public override void PostUpdateMiscEffects() {
+			ApplyArmorDamageStats();
 		}
 	}
 }

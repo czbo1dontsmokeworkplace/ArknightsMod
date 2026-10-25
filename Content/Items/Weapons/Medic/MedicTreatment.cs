@@ -57,7 +57,7 @@ internal static class MedicTreatment
         }
         bool fullHealth = patient.statLife >= patient.statLifeMax2;
         int healing = SpotHealingHelper.ModifyOutgoingHeal(healer, requested);
-        int amount = Math.Min(state.Resistance.Scale(healing), Math.Max(0, patient.statLifeMax2 - patient.statLife));
+        int amount = Math.Min(patient.GetModPlayer<global::ArknightsMod.Players.IncomingHealingPlayer>().Modify(state.Resistance.Scale(healing)), Math.Max(0, patient.statLifeMax2 - patient.statLife));
         // A full-health ally still catches the art, but an overheal cannot commit resistance or regeneration.
         int displayed = fullHealth ? state.Resistance.Scale(healing) : amount;
         if (!fullHealth && amount <= 0 && removed.Count == 0 && shortened.Count == 0) return false;
@@ -66,7 +66,7 @@ internal static class MedicTreatment
             state.Resistance.Commit(interval, profile.ResistanceDurationMultiplier, profile.ResistanceReduction);
             if (profile.Branch == MedicBranch.Chain)
                 state.Regeneration.Add(profile.StackDuration, profile.RegenPerStack * power, profile.StackLimit, profileId);
-            if (Main.netMode == NetmodeID.SinglePlayer) patient.Heal(amount);
+            if (Main.netMode == NetmodeID.SinglePlayer) patient.GetModPlayer<global::ArknightsMod.Players.IncomingHealingPlayer>().HealFinal(amount);
             else patient.statLife = Math.Min(patient.statLifeMax2, patient.statLife + amount);
             global::ArknightsMod.Content.Items.Armor.DirectHealingEffects.OnDirectHeal(healer, patient, amount);
         }

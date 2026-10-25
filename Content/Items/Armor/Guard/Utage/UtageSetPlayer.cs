@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria;
@@ -45,11 +45,9 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Utage
 			return Math.Min(missingRatio * 0.5f, 0.3f) * 100f;
 		}
 
-		public override float UseSpeedMultiplier(Item item) {
-			if (!UtageSetActive || !item.DamageType.CountsAsClass(DamageClass.Melee))
-				return 1f;
-
-			return 1f + GetMeleeAttackSpeedBonusPercent() / 100f;
+		private void ApplyArmorAttackSpeed() {
+			if (UtageSetActive)
+				Player.GetAttackSpeed(DamageClass.Melee) *= 1f + GetMeleeAttackSpeedBonusPercent() / 100f;
 		}
 
 		public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone) {
@@ -89,6 +87,10 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Utage
 
 			Player.Heal(1);
 			helmetHealCount++;
+		}
+
+		public override void PostUpdateMiscEffects() {
+			ApplyArmorAttackSpeed();
 		}
 	}
 }

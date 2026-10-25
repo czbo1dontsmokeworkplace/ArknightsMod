@@ -129,7 +129,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Specter
 				return;
 			}
 
-			if (--activeSkillTimer <= 0) {
+			if (!global::ArknightsMod.Systems.Gameplay.MujicaFeverSystem.PauseSkill(Player) && --activeSkillTimer <= 0) {
 				EndActiveSkill(weaponPlayer, applyExhaustion: activeSkillMode == 2);
 				return;
 			}

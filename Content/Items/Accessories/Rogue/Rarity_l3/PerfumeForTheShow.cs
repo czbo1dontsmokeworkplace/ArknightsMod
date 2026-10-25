@@ -64,8 +64,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
                     healAmount = 1;
 
                 // 应用治疗效果
-                Player.HealEffect(healAmount);
-                Player.statLife += healAmount;
+                Player.Heal(healAmount);
 
                 // 防止生命值超过上限
                 if (Player.statLife > Player.statLifeMax2)

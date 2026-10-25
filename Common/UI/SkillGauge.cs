@@ -69,6 +69,8 @@ namespace ArknightsMod.Common.UI
 		}
 
 		public override void Draw(SpriteBatch spriteBatch) {
+			if (Systems.Gameplay.MujicaFeverSystem.IsMember(Main.LocalPlayer))
+				DrawFever(spriteBatch);
 			// This prevents drawing unless we are using an ExampleCustomResourceWeapon
 			if (Main.LocalPlayer.HeldItem.ModItem is not UpgradeWeaponBase)
 				return;
@@ -86,6 +88,20 @@ namespace ArknightsMod.Common.UI
 				Main.LocalPlayer.Center - Main.screenPosition,
 				Main.GameViewMatrix.TransformationMatrix);
 			return Vector2.Transform(screenPosition, Matrix.Invert(Main.UIScaleMatrix));
+		}
+
+		private static void DrawFever(SpriteBatch sb) {
+			var meter = Systems.Gameplay.MujicaFeverSystem.Meter;
+			Vector2 position = GetPlayerUIPosition();
+			var outer = new Rectangle((int)position.X - 58, (int)position.Y + 87, 118, 12);
+			Texture2D pixel = TextureAssets.MagicPixel.Value;
+			sb.Draw(pixel, outer, new Color(30, 18, 42));
+			var fill = new Rectangle(outer.X + 1, outer.Y + 1,
+				(int)(116 * meter.DisplayCharge / Systems.Gameplay.MujicaFeverMeter.Maximum), 10);
+			sb.Draw(pixel, fill, meter.Active ? new Color(255, 110, 185) : new Color(164, 105, 220));
+			string label = meter.Active ? $"FEVER {meter.Remaining / 60f:0.0}s" : $"FEVER {meter.Charge}/450";
+			Utils.DrawBorderStringFourWay(sb, FontAssets.MouseText.Value, label, position.X, outer.Bottom + 2,
+				Color.White, Color.Black, new Vector2(FontAssets.MouseText.Value.MeasureString(label).X / 2, 0), .65f);
 		}
 
 		// Here we draw our UI

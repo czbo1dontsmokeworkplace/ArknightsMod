@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Common.VisualEffects;
+using ArknightsMod.Common.VisualEffects;
 using ArknightsMod.Content.Items.Weapons.Defender.Beagle;
 using ArknightsMod.Content.Items.Weapons.Defender.Cuora;
 using ArknightsMod.Content.Items.Weapons.Defender.Durnar;
@@ -61,7 +61,7 @@ public class CuoraProj_Player : ModPlayer
 		if (DefensiveStance) {
 			Player.moveSpeed *= 0.9f;
 			Player.statDefense *= 2.3f;
-			Player.statLife += (Player.statLifeMax2)/300;
+			Player.GetModPlayer<global::ArknightsMod.Players.IncomingHealingPlayer>().HealSilent(Player.statLifeMax2 / 300);
 			if(Player.statLife > Player.statLifeMax2)
 				Player.statLife = Player.statLifeMax2;
 
