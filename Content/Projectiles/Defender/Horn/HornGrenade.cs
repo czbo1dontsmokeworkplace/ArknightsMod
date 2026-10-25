@@ -10,8 +10,9 @@ namespace ArknightsMod.Content.Projectiles.Defender.Horn;
 public sealed class HornGrenade : ModProjectile
 {
     internal byte VisualState;
-    public override void SendExtraAI(BinaryWriter writer) => writer.Write(VisualState);
-    public override void ReceiveExtraAI(BinaryReader reader) => VisualState = reader.ReadByte();
+    internal bool HeavyGravity;
+    public override void SendExtraAI(BinaryWriter writer) { writer.Write(VisualState); writer.Write(HeavyGravity); }
+    public override void ReceiveExtraAI(BinaryReader reader) { VisualState = reader.ReadByte(); HeavyGravity = reader.ReadBoolean(); }
     // Use Terraria's first-tier rocket sprite while retaining Horn's custom arc and explosion logic.
     public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.RocketI;
     public override void SetStaticDefaults()
@@ -30,7 +31,7 @@ public sealed class HornGrenade : ModProjectile
     public override bool? CanDamage() => false; // All damage belongs to the single explosion, never impact + explosion.
     public override void AI()
     {
-        Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y + .16f, -20f, 20f);
+        Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y + (HeavyGravity ? .38f : .16f), -20f, 20f);
         Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
         Lighting.AddLight(Projectile.Center, .6f, .35f, .08f);
         if (!Main.dedServ && Main.rand.NextBool(2))

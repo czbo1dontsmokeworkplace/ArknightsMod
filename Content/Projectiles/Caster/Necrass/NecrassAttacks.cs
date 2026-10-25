@@ -18,7 +18,6 @@ public abstract class NecrassAttack : ModProjectile
 
 public sealed class NecrassSoulBolt : NecrassAttack
 {
-    private int normalTarget = -1;
     private float particleDistance;
     private float lingeringDistance;
     public override void SetStaticDefaults()
@@ -69,19 +68,7 @@ public sealed class NecrassSoulBolt : NecrassAttack
             Projectile.timeLeft = 248;
         }
         float age = Projectile.localAI[0]++;
-        // Let the initial curved shot read clearly before it begins to seek a target.
-        // Keep the original delay and turn cadence in real game frames after reducing sub-updates.
-        if (age >= 104 && (int)age % 10 == 0)
-            normalTarget = NecrassCourt.Target(Projectile.Center, 700, Main.player[Projectile.owner])?.whoAmI ?? -1;
-        if (normalTarget >= 0 && Main.npc[normalTarget].active)
-        {
-            Vector2 delta = Main.npc[normalTarget].Center - Projectile.Center;
-            float turn = MathHelper.WrapAngle(delta.ToRotation() - Projectile.ai[1]);
-            // age counts sub-updates: widen by one degree per two actual game frames.
-            float extraDegrees = MathF.Floor(age / (Projectile.MaxUpdates * 2f));
-            float turnLimit = Math.Min(MathHelper.Pi, .0305f + MathHelper.ToRadians(extraDegrees));
-            Projectile.ai[1] += Math.Clamp(turn, -turnLimit, turnLimit);
-        }
+        // Keep the cast direction and decorative wave; normal attacks never acquire or steer toward targets.
         float speed = MathHelper.Lerp(2.4f, 6f, MathHelper.Clamp(age / 76f, 0, 1));
         float wave = MathF.Sin(age * MathHelper.TwoPi / 69f + Projectile.ai[2]) * .20f
             * (1 - .65f * MathHelper.Clamp(age / 166f, 0, 1));

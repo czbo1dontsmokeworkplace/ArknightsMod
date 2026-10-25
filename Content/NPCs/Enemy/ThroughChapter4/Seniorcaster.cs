@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Systems.Gameplay.Damage;
+using ArknightsMod.Systems.Gameplay.Damage;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -55,6 +55,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			});
 		}
 		public override void FindFrame(int frameHeight) {
+            if (NPC.GetGlobalNPC<global::ArknightsMod.Content.NPCs.Friendly.CannotSupportNPC>().IsSleeping) return;
 
 			attackframeY = 14 * frameHeight;
 			NPC.TargetClosest(true);

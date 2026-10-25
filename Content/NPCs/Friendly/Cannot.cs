@@ -107,6 +107,10 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		private int abandonTimer;
 		private Queue<int> spawnQueue;
 		private CannotWaveStage battleStage;
+		private int supportTimer;
+		private const int SupportFirstDelay = 6 * 60;
+		private const int SupportInterval = 16 * 60;
+		private int[] battleRewardItems = [];
 
 		public static bool Isnpcexist {
 			get {
@@ -411,6 +415,10 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			abandonTimer = 0;
 			spawnQueue.Clear();
 			battleStage = CannotWaves.GetCurrentStage();
+			supportTimer = SupportFirstDelay;
+            NPCShopSystem.TryUpdateCannotShop(Mod, true);
+            int bestPrice = NPCShopSystem.CannotShopItems.Select(i => i.value).DefaultIfEmpty(0).Max();
+            battleRewardItems = NPCShopSystem.CannotShopItems.Where(i => i.value == bestPrice).Select(i => i.type).ToArray();
 
 			Broadcast("Mods.ArknightsMod.NPCs.Cannot.Battle.Begin", Color.OrangeRed);
 			NPC.netUpdate = true;
@@ -423,6 +431,11 @@ namespace ArknightsMod.Content.NPCs.Friendly
 				return;
 			}
 			abandonTimer = 0;
+
+            if (waveInProgress && --supportTimer <= 0) {
+                SprayPotion();
+                supportTimer = SupportInterval;
+            }
 
 			// 准备/波间空档：倒计时到 0 开始下一波
 			if (!waveInProgress) {
@@ -452,6 +465,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			BattleVulnerable = false;
 			waveInProgress = true;
 			portalTimer = 0;
+			supportTimer = SupportFirstDelay;
 
 			foreach (int type in battleStage.GetWave(WaveIndex))
 				spawnQueue.Enqueue(type);
@@ -459,6 +473,33 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			Broadcast("Mods.ArknightsMod.NPCs.Cannot.Wave.Incoming", Color.OrangeRed, WaveIndex, WaveCount);
 			NPC.netUpdate = true;
 		}
+
+        private void SprayPotion() {
+            var enemies = Main.npc.Where(n => n.active && n.life > 0 && !n.friendly && !n.dontTakeDamage &&
+                n.GetGlobalNPC<CannotSummonedTag>().OwnerCannot == NPC.whoAmI).ToList();
+            if (enemies.Count == 0) return;
+            bool sleep = Main.rand.NextBool();
+            int affected = 0;
+            if (sleep) {
+                foreach (NPC enemy in enemies)
+                    if (enemy.GetGlobalNPC<CannotSupportNPC>().ApplySleep(enemy)) affected++;
+            }
+            else {
+                while (enemies.Count > 0 && affected < 2) {
+                    int i = Main.rand.Next(enemies.Count);
+                    NPC enemy = enemies[i];
+                    enemies.RemoveAt(i);
+                    if (enemy.GetGlobalNPC<CannotSupportNPC>().ApplyRage(enemy)) affected++;
+                }
+            }
+            if (affected == 0) return;
+            // TODO: 第三种药剂支援效果尚未提供，当前只在已定义的两种效果中随机。
+            Broadcast(sleep ? "Mods.ArknightsMod.CannotEncounter.SleepSpray" : "Mods.ArknightsMod.CannotEncounter.RageSpray",
+                sleep ? Color.LightGreen : Color.OrangeRed);
+            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center - new Vector2(0, 12),
+                new Vector2(NPC.direction * 3f, -1f), ModContent.ProjectileType<CannotPotionSpray>(),
+                0, 0f, Main.myPlayer, sleep ? 0 : 1);
+        }
 
 		private void OnWaveCleared() {
 			waveInProgress = false;
@@ -597,6 +638,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 					continue;
 
 				tag.OwnerCannot = -1;
+				npc.GetGlobalNPC<CannotSupportNPC>().Clear(npc);
 				if (despawn) {
 					npc.active = false;
 					if (Main.netMode == NetmodeID.Server) {
@@ -658,6 +700,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 
 		public override void OnSpawn(IEntitySource source) {
 			stayTimer = 0;
+			// Persistent boss-owned slots survive merchant arrivals; only boss victories reroll them.
 			NPCShopSystem.TryUpdateCannotShop(Mod, true);
 		}
 
@@ -696,7 +739,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			// 导致坎诺特死亡后下一刻就可能被重新刷出来。
 			if (RespawnCooldown > 0)
 				return 0f;
-			if (!spawnInfo.Invasion && !spawnInfo.Sky && (NPC.downedBoss1 || NPC.downedBoss2 || NPC.downedBoss3))
+			if (!spawnInfo.Invasion && !spawnInfo.Sky && CannotProgressionSystem.Instance.Stock.Unlocked)
 				return 0.2f;
 			return base.SpawnChance(spawnInfo);
 		}
@@ -714,6 +757,13 @@ namespace ArknightsMod.Content.NPCs.Friendly
 			// 逃走时确定性掉落一件“当前正在售卖的藏品”（服务器/单机权威，Item.NewItem 自动同步）
 			if (!Runaway || Main.netMode == NetmodeID.MultiplayerClient)
 				return;
+
+            // One reward as before, guaranteed to come from this battle's highest-price stock.
+            // Snapshotting prevents mid-battle boss kills from changing the promised reward pool.
+            if (battleRewardItems.Length > 0) {
+                Item.NewItem(NPC.GetSource_Death(), NPC.getRect(), battleRewardItems[Main.rand.Next(battleRewardItems.Length)], 1);
+                return;
+            }
 
 			var shopItems = NPCShopSystem.CannotShopItems;
 			if (shopItems.Count == 0) {

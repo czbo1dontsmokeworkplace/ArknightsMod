@@ -1,0 +1,145 @@
+DefenderRecipeGroup: Beagle or Cardigan shield
+
+Items: {
+	FirewhistleLauncher: {
+		DisplayName: Grenade Shield [Firewhistle]
+		Tooltip:
+			'''
+			Consumes 1 Grenade per shot, dealing ranged area damage
+			Shells fall under stronger gravity; guarding grants 50% DEF and 50% damage reduction while allowing fire
+			'''
+	}
+
+	LiskarmPistol: {
+		DisplayName: Shock Pistol and Shield [Liskarm]
+		Tooltip:
+			'''
+			Fires fast electron rounds dealing ranged magic damage without consuming bullets
+			During skill 2, rounds discharge on impact and damage nearby groups
+			'''
+	}
+
+	CroissantHammer: {
+		DisplayName: Hammer and Shield [Croissant]
+		Tooltip: Swing a heavy hammer; hits release area shockwaves during skill 2
+	}
+
+	MudrockHammer: {
+		DisplayName: Earthshaker Hammer [Mudrock]
+		Tooltip:
+			'''
+			Hammer hits restore 2% maximum life, at most once per second
+			Skill 2 empowers shockwaves and healing; skill 3 greatly boosts offense and defense
+			'''
+	}
+
+	EunectesAxe: {
+		DisplayName: Jungle Great Axe [Eunectes]
+		Tooltip:
+			'''
+			Left-click to swing; right-click to charge toward the cursor for 400% attack damage
+			Rebound on enemy or wall impact; fully immune to damage during the charge
+			Charge cooldown: 1.5 seconds; replaces shield guarding
+			'''
+	}
+}
+
+Skills: {
+	FirewhistleLauncher: {
+		1: {
+			Label: Bombardment Up
+			Desc: Shell damage increases by 70% for 20 seconds; damage remains ranged
+		}
+
+		2: {
+			Label: Cluster Bombardment
+			Desc: Shell damage increases by 70% for 25 seconds; larger blasts burn enemies and still deal ranged damage
+		}
+	}
+
+	LiskarmPistol: {
+		1: {
+			Label: Charged Defense
+			Desc: Gain an additional 80% DEF for 20 seconds
+		}
+
+		2: {
+			Label: Counter Arc
+			Desc: Gain 80% ATK for 25 seconds; electron rounds release area Arts discharges
+		}
+	}
+
+	CroissantHammer: {
+		1: {
+			Label: Defense Field
+			Desc: Gain an additional 80% DEF for 25 seconds
+		}
+
+		2: {
+			Label: Magnetic Hammer
+			Desc: Gain 120% ATK for 12 seconds; hits release area shockwaves
+		}
+	}
+
+	MudrockHammer: {
+		1: {
+			Label: Rock Guard
+			Desc: Gain an additional 80% DEF for 25 seconds
+		}
+
+		2: {
+			Label: Crag Splitter
+			Desc:
+				'''
+				Gain 60% ATK for 25 seconds; hits release area shockwaves
+				On-hit healing increases to 6% maximum life, at most once per second
+				'''
+		}
+
+		3: {
+			Label: Impure Earth
+			Desc:
+				'''
+				Gain 140% ATK and 60% DEF for 25 seconds
+				Each hit releases a large shockwave
+				'''
+		}
+	}
+
+	EunectesAxe: {
+		1: {
+			Label: Light Axe
+			Desc: Gain 30% ATK for 25 seconds
+		}
+
+		2: {
+			Label: Intimidating Slash
+			Desc: Gain 100% ATK for 20 seconds
+		}
+
+		3: {
+			Label: Iron Will
+			Desc:
+				'''
+				Gain 180% ATK and 100% DEF for 25 seconds
+				Regenerate approximately 1% maximum life per second
+				'''
+		}
+	}
+
+	Vulcan_Weapon: {
+		1: {
+			Label: Defense Mode
+			Desc: Gain 50% DEF for 25 seconds; regenerate approximately 1% maximum life per second
+		}
+
+		2: {
+			Label: Offensive Mode
+			Desc:
+				'''
+				Gain 90% ATK for 25 seconds
+				Hits restore 4% maximum life, at most once every 0.5 seconds
+				'''
+		}
+	}
+}

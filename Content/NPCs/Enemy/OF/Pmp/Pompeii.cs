@@ -18,6 +18,7 @@ using static Terraria.ModLoader.ModContent;
 
 namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 {
+    [AutoloadBossHead]
     public class Pompeii : ModNPC
     {
         private enum AIState

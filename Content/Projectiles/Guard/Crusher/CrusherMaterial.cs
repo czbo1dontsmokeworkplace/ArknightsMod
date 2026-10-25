@@ -65,5 +65,5 @@ internal static class CrusherMaterial
 }
 public sealed class CrusherVisualSystem : ModSystem
 {
-    public override void Unload() { CrusherMaterial.Unload(); CrusherWaveMaterial.Unload(); CrusherVisuals.Unload(); }
+    public override void Unload() { CrusherMaterial.Unload(); CrusherWaveMaterial.Unload(); CrusherUpheavalVisuals.Unload(); CrusherVisuals.Unload(); }
 }

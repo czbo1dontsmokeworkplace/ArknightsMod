@@ -58,6 +58,7 @@ internal static class CrusherCombatNet
             case CrusherHeldBlade blade: blade.ApplyHitEffects(target); break;
             case CrusherAnchorCast anchor: anchor.ApplyPull(target); break;
             case CrusherAnchorCrash crash: crash.ApplyStun(target); break;
+            case CrusherUpheaval upheaval: upheaval.ApplyPull(target); break;
         }
     }
 }

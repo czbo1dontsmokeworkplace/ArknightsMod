@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Players;
+using ArknightsMod.Content.Projectiles.Sniper.Crossbows;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
@@ -27,31 +27,20 @@ namespace ArknightsMod.Content.Projectiles.Sniper.KroosAlter
             Projectile.velocity -= Projectile.velocity * 0.1f;
             Projectile.Opacity -= 0.1f;
 
-            Lighting.AddLight(Projectile.Center, 0.35f, 0.93f, 0.81f);
+            Lighting.AddLight(Projectile.Center, KroosLegacyVfx.EffectColor((int)Skill).ToVector3() * .6f);
 
             base.AI();
         }
         public override bool PreDraw(ref Color lightColor)
         {
-			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
+			// Colour is captured at spawn, independent of the viewer or held weapon.
 			Texture2D texture = Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Value;
             Vector2 origin = texture.Size() * 0.5f;
             Vector2 position = Projectile.Center - Main.screenPosition;
 
-            Color color;
-            if (modPlayer.Skill == 0 && modPlayer.SkillActive)
-            {
-                color = new Color(204, 126, 57, 0) * Projectile.Opacity;
-            }
-            else if (modPlayer.Skill == 1 && modPlayer.SkillActive)
-            {
-                color = new Color(9, 161, 130, 0) * Projectile.Opacity;
-            }
-            else
-            {
-                color = Color.DarkOrange * Projectile.Opacity;
-                color.A = 0;
-            }
+            Color color = KroosLegacyVfx.EffectColor((int)Skill);
+            color.A = 0;
+            color *= Projectile.Opacity;
 
             Vector2 scale = Projectile.Size / texture.Size() * Projectile.scale * new Vector2(3, Main.rand.NextFloat(4, 6));
 
@@ -114,25 +103,14 @@ namespace ArknightsMod.Content.Projectiles.Sniper.KroosAlter
 
         public override bool PreDraw(ref Color lightColor)
         {
-			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
+			// Colour is captured at spawn, independent of the viewer or held weapon.
 			Texture2D texture = Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Value;
             Vector2 origin = texture.Size() * 0.5f;
             Vector2 position = Projectile.Center - Main.screenPosition;
 
-            Color color;
-            if (modPlayer.Skill == 0 && modPlayer.SkillActive)
-            {
-                color = new Color(204, 126, 57, 0) * Projectile.Opacity;
-            }
-            else if (modPlayer.Skill == 1 && modPlayer.SkillActive)
-            {
-                color = new Color(9, 161, 130, 0) * Projectile.Opacity;
-            }
-            else
-            {
-                color = Color.DarkOrange * Projectile.Opacity;
-                color.A = 0;
-            }
+            Color color = KroosLegacyVfx.EffectColor((int)Skill);
+            color.A = 0;
+            color *= Projectile.Opacity;
 
             Vector2 scale = Projectile.Size / texture.Size() * Projectile.scale * new Vector2(0.2f, 1f);
 
@@ -186,25 +164,14 @@ namespace ArknightsMod.Content.Projectiles.Sniper.KroosAlter
         }
         public override bool PreDraw(ref Color lightColor)
         {
-			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
+			// Colour is captured at spawn, independent of the viewer or held weapon.
 			Texture2D texture = Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Value;
             Vector2 origin = texture.Size() * 0.5f;
             Vector2 position = Projectile.Center - Main.screenPosition;
 
-            Color color;
-            if (modPlayer.Skill == 0 && modPlayer.SkillActive)
-            {
-                color = new Color(204, 126, 57, 0) * Projectile.Opacity;
-            }
-            else if (modPlayer.Skill == 1 && modPlayer.SkillActive)
-            {
-                color = new Color(9, 161, 130, 0) * Projectile.Opacity;
-            }
-            else
-            {
-                color = Color.DarkOrange * Projectile.Opacity;
-                color.A = 0;
-            }
+            Color color = KroosLegacyVfx.EffectColor((int)Skill);
+            color.A = 0;
+            color *= Projectile.Opacity;
 
             Vector2 scale = Projectile.Size / texture.Size() * Projectile.scale;
 

@@ -3,8 +3,10 @@ Items: {
 		DisplayName: Quartz's Greatsword
 		Tooltip:
 			'''
-			Chains two swings with a greatsword, then briefly pauses before striking again
-			Each heavy slash releases a piercing wave that sheds homing cores
+			Hold left click to charge, then release a single custom swing; fully charges in 1 second before attack-speed modifiers
+			Charge increases damage from 100% to 300% and strengthens the outline and slash effects
+			A shared head bar shows charge; a crystal chime signals full charge
+			Only fully charged physical blade hits call a piercing golden crystal from below that homes in on the struck enemy
 			'''
 	}
 
@@ -12,8 +14,10 @@ Items: {
 		DisplayName: Wind Chimes' Heavy Blade
 		Tooltip:
 			'''
-			Chains two swings with a heavy blade, then briefly pauses before striking again
-			Each heavy slash releases a piercing wave that sheds homing cores
+			Hold left click to charge, then release a single custom swing; fully charges in 1 second before attack-speed modifiers
+			Charge increases damage from 100% to 300% and strengthens the outline and slash effects
+			A shared head bar shows charge; a crystal chime signals full charge
+			Only fully charged physical blade hits call two rising wind blades from below that home in on the struck enemy
 			'''
 	}
 
@@ -21,8 +25,10 @@ Items: {
 		DisplayName: Hoederer's Greatsword
 		Tooltip:
 			'''
-			Chains two swings with a greatsword, then briefly pauses before striking again
-			Each heavy slash releases a piercing wave that sheds homing cores
+			Hold left click to charge, then release a single custom swing; fully charges in 1 second before attack-speed modifiers
+			Charge increases damage from 100% to 300% and strengthens the outline and slash effects
+			A shared head bar shows charge; a crystal chime signals full charge
+			Only fully charged physical blade hits erupt into three piercing flames from below that home in on the struck enemy
 			Deals 20% increased damage to stunned enemies
 			'''
 	}
@@ -31,8 +37,10 @@ Items: {
 		DisplayName: Ulpianus's Anchor
 		Tooltip:
 			'''
-			Chains two swings with a anchor, then briefly pauses before striking again
-			Each heavy slash releases a piercing wave that sheds homing cores
+			Hold left click to charge, then release a single custom swing; fully charges in 1 second before attack-speed modifiers
+			Charge increases damage from 100% to 300% and strengthens the outline and slash effects
+			A shared head bar shows charge; a crystal chime signals full charge
+			Only fully charged physical anchor hits call a heavy anchor from below that homes in on the struck enemy with unlimited piercing
 			'''
 	}
 }
@@ -82,7 +90,7 @@ Skills: {
 	UlpianusAnchor: {
 		1: {
 			Label: Contact That Must Be Made
-			Desc: Recover SP over time. At full SP, the next swing throws an extra anchor toward the cursor, dealing 170%-270% damage to up to two enemies and dragging ordinary knockback-vulnerable enemies toward you.
+			Desc: Recover SP over time. At full SP, the next fully charged physical swing hit calls an anchor from below that homes in on the struck enemy, dealing 170%-270% damage with unlimited piercing and dragging the first two ordinary knockback-vulnerable enemies toward you.
 		}
 
 		2: {
@@ -100,6 +108,7 @@ Skills: {
 CrusherStrainDeath: "{0} sank beneath the unquenched embers."
 
 Projectiles: {
+	CrusherUpheaval.DisplayName: Rising Crusher Strike
 	CrusherAnchorFeedback.DisplayName: Abyssal Anchor Impact
 	CrusherWave.DisplayName: Crusher Wave
 	CrusherWaveCore.DisplayName: Guided Light Core

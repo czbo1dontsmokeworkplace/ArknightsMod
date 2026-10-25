@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Common.ItemDropRules;
+using ArknightsMod.Common.ItemDropRules;
 using ArknightsMod.Content.Items.Material;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -335,6 +335,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 		// ===== 动画 =====
 		public override void FindFrame(int frameHeight) {
+            if (NPC.GetGlobalNPC<global::ArknightsMod.Content.NPCs.Friendly.CannotSupportNPC>().IsSleeping) return;
 			NPC.frame.Y = frame * frameHeight;
 		}
 

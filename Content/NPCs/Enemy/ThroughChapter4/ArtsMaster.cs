@@ -233,6 +233,7 @@ public abstract class ArtsMasterDrone : ModNPC
 
     public override void FindFrame(int frameHeight)
     {
+            if (NPC.GetGlobalNPC<global::ArknightsMod.Content.NPCs.Friendly.CannotSupportNPC>().IsSleeping) return;
         NPC.frameCounter++;
         NPC.frame.Y = (int)(NPC.frameCounter / 5) % FrameCount * frameHeight;
     }

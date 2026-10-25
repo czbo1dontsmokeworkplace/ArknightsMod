@@ -29,6 +29,8 @@ internal static class CrusherWaveMaterial
     }
     internal static void DrawAnchorTrail(Projectile projectile,Vector2[] history,int samples)
         => DrawHistory(projectile,history,samples,CrusherKind.Ulpianus,13);
+    internal static void DrawUpheavalTrail(Projectile projectile, Vector2[] history, int samples, CrusherKind kind)
+        => DrawHistory(projectile, history, samples, kind, 24 + (int)kind * 8);
     private static void DrawHistory(Projectile projectile,Vector2[] history,int samples,CrusherKind kind,float halfWidth)
     {
         if (!CrusherVisuals.Visible(projectile.Center)) return;

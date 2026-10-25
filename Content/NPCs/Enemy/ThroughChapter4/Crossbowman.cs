@@ -307,6 +307,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		}
 
 		public override void FindFrame(int frameHeight) {
+            if (NPC.GetGlobalNPC<global::ArknightsMod.Content.NPCs.Friendly.CannotSupportNPC>().IsSleeping) return;
 			frameHeight = 56;
 			if (iswalk == true || isescape == true) {
 				walkframe++;

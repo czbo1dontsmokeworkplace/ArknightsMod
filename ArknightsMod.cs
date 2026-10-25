@@ -219,6 +219,9 @@ namespace ArknightsMod
                 case ArkMessageID.CrusherHit:
                     global::ArknightsMod.Content.Projectiles.Guard.Crusher.CrusherCombatNet.Receive(reader, whoAmI);
                     break;
+                case ArkMessageID.DefenderRouteHit:
+                    global::ArknightsMod.Content.Projectiles.Defender.DefenderRouteCombatNet.Receive(reader, whoAmI);
+                    break;
                 case ArkMessageID.EvolutionCrashCapture:
                     global::ArknightsMod.Content.NPCs.Enemy.Evolution.EvolutionCrashPlayer.ReceiveCapture(reader, whoAmI);
                     break;
@@ -370,6 +373,7 @@ namespace ArknightsMod
             ChenSkillPointGrant,
             DroneCoreHealingGrant,
             LapplandSilenceRequest,
+            DefenderRouteHit,
             MujicaFever,
 		}
 	}

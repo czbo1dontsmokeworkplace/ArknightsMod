@@ -3,7 +3,7 @@ Items: {
 		DisplayName: Life Staff [Hibiscus]
 		Tooltip:
 			'''
-			Lobs a globe of vital energy that heals the allied player who catches it
+			Release a five-lobed star of life that gently curves toward patients
 			Throw it upward to catch it yourself; globes take a brief moment to become active
 			'''
 	}
@@ -12,7 +12,7 @@ Items: {
 		DisplayName: Clarity Staff [Nowell]
 		Tooltip:
 			'''
-			Lobs a globe of water that seeks nearby allied players once it starts falling
+			Send paired waterlight that corrects its course after beginning its descent
 			Healing also shortens the duration of cleansable debuffs
 			'''
 	}
@@ -21,7 +21,7 @@ Items: {
 		DisplayName: Medical Staff [Ansel]
 		Tooltip:
 			'''
-			Lobs a globe of vital energy that heals the allied player who catches it
+			Fire a pink rescue comet that flies swiftly before turning back toward patients
 			Throw it upward to catch it yourself; globes take a brief moment to become active
 			'''
 	}
@@ -30,7 +30,7 @@ Items: {
 		DisplayName: Remedy Staff [Myrrh]
 		Tooltip:
 			'''
-			Lobs a globe of vital energy that heals the allied player who catches it
+			Lob an amber medicine glow that can bounce once off terrain
 			Throw it upward to catch it yourself; globes take a brief moment to become active
 			'''
 	}
@@ -39,7 +39,7 @@ Items: {
 		DisplayName: Medical Staff [Sussurro]
 		Tooltip:
 			'''
-			Lobs a globe of vital energy that heals the allied player who catches it
+			Fire a rapid triple needle stream that turns toward patients after a short flight
 			Throw it upward to catch it yourself; globes take a brief moment to become active
 			'''
 	}
@@ -48,7 +48,7 @@ Items: {
 		DisplayName: Medical Staff [Silence]
 		Tooltip:
 			'''
-			Lobs a globe of vital energy that heals the allied player who catches it
+			Release a feather-shaped cluster of medical light that turns toward patients
 			Throw it upward to catch it yourself; globes take a brief moment to become active
 			'''
 	}
@@ -57,7 +57,7 @@ Items: {
 		DisplayName: First Aid Staff [Tuye]
 		Tooltip:
 			'''
-			Lobs a globe of vital energy that heals the allied player who catches it
+			Send a hexagonal reservoir that slows to build pressure before seeking a patient
 			Throw it upward to catch it yourself; globes take a brief moment to become active
 			'''
 	}
@@ -66,7 +66,7 @@ Items: {
 		DisplayName: Staff [Shining]
 		Tooltip:
 			'''
-			Lobs a globe of vital energy that heals the allied player who catches it
+			Release a silver lance of light veiled in black that accelerates before seeking patients
 			Throw it upward to catch it yourself; globes take a brief moment to become active
 			'''
 	}
@@ -75,7 +75,7 @@ Items: {
 		DisplayName: Water Staff [Purestream]
 		Tooltip:
 			'''
-			Lobs a globe of water that seeks nearby allied players once it starts falling
+			Send flowing waterlight that follows rippling curves after beginning its descent
 			Healing also shortens the duration of cleansable debuffs
 			'''
 	}
@@ -84,7 +84,7 @@ Items: {
 		DisplayName: Dew Staff [Ceylon]
 		Tooltip:
 			'''
-			Lobs a globe of water that seeks nearby allied players once it starts falling
+			Unfold a fan of waterlight that curls toward patients after beginning its descent
 			Healing also shortens the duration of cleansable debuffs
 			'''
 	}
@@ -93,7 +93,7 @@ Items: {
 		DisplayName: Mist Staff [Whisperain]
 		Tooltip:
 			'''
-			Lobs a globe of water that seeks nearby allied players once it starts falling
+			Release drifting rainlight that sheds tiny luminous drops
 			Healing also shortens the duration of cleansable debuffs
 			'''
 	}
@@ -102,7 +102,7 @@ Items: {
 		DisplayName: Guiding Light [Lumen]
 		Tooltip:
 			'''
-			Lobs a globe of water that seeks nearby allied players once it starts falling
+			Send a blue-gold beacon that swiftly seeks patients after beginning its descent
 			Healing also shortens the duration of cleansable debuffs
 			'''
 	}
@@ -111,7 +111,7 @@ Items: {
 		DisplayName: Fragrance Staff [Perfumer]
 		Tooltip:
 			'''
-			Lobs a slowly falling seed of life that creates a healing field on landing or touching an allied player
+			Lob a perfume vessel that unfolds a six-petalled healing field on landing
 			The field repeatedly heals allied players within it
 			'''
 	}
@@ -120,7 +120,7 @@ Items: {
 		DisplayName: Healing Staff [Breeze]
 		Tooltip:
 			'''
-			Lobs a slowly falling seed of life that creates a healing field on landing or touching an allied player
+			Send a spinning wind wheel that lands in an arc and creates a wind healing field
 			The field repeatedly heals allied players within it
 			'''
 	}
@@ -129,7 +129,7 @@ Items: {
 		DisplayName: Medical Staff [Ptilopsis]
 		Tooltip:
 			'''
-			Lobs a slowly falling seed of life that creates a healing field on landing or touching an allied player
+			Launch a silver-blue data streak that brakes into a healing field of floating fragments
 			The field repeatedly heals allied players within it
 			'''
 	}
@@ -138,7 +138,7 @@ Items: {
 		DisplayName: Sanctuary Staff [Nightingale]
 		Tooltip:
 			'''
-			Lobs a slowly falling seed of life that creates a healing field on landing or touching an allied player
+			Release a feathered veil of light that drifts into a protective healing field
 			The field repeatedly heals allied players within it
 			'''
 	}
@@ -147,7 +147,7 @@ Items: {
 		DisplayName: Weaving Staff [Papyrus]
 		Tooltip:
 			'''
-			Lobs interwoven strands of life that heal the allied player who catches them
+			Send a golden plume that glides toward patients and leaves regenerative motes
 			Healing adds stackable regeneration, with a separate duration for each stack
 			'''
 	}
@@ -156,7 +156,7 @@ Items: {
 		DisplayName: Renewal Staff [Paprika]
 		Tooltip:
 			'''
-			Lobs interwoven strands of life that heal the allied player who catches them
+			Send a pink spiral flame that curves toward patients and leaves regenerative motes
 			Healing adds stackable regeneration, with a separate duration for each stack
 			'''
 	}
@@ -165,7 +165,7 @@ Items: {
 		DisplayName: Symbiotic Core [Mon3tr]
 		Tooltip:
 			'''
-			Lobs interwoven strands of life that heal the allied player who catches them
+			Fire emerald prism light that turns rapidly toward patients and sheds regenerative fragments
 			Healing adds stackable regeneration, with a separate duration for each stack
 			'''
 	}
@@ -174,7 +174,7 @@ Items: {
 		DisplayName: Cleansing Staff [Chestnut]
 		Tooltip:
 			'''
-			Lobs a cleansing ribbon that heals the allied player who catches it and removes combat debuffs
+			Send whirling leaf-shaped light to deliver cleansing treatment
 			Each debuff removed increases that heal by 35%
 			'''
 	}
@@ -183,7 +183,7 @@ Items: {
 		DisplayName: Herbal Staff [Honeyberry]
 		Tooltip:
 			'''
-			Lobs a cleansing ribbon that heals the allied player who catches it and removes combat debuffs
+			Send twin berry-coloured glow cores that sway toward patients and cleanse them
 			Each debuff removed increases that heal by 35%
 			'''
 	}
@@ -192,7 +192,7 @@ Items: {
 		DisplayName: Purification Staff [Mulberry]
 		Tooltip:
 			'''
-			Lobs a cleansing ribbon that heals the allied player who catches it and removes combat debuffs
+			Send a blue cleansing ribbon that corrects its course in short bursts
 			Each debuff removed increases that heal by 35%
 			'''
 	}
@@ -201,7 +201,7 @@ Items: {
 		DisplayName: Spring Staff [Eyjafjalla the Hvit Aska]
 		Tooltip:
 			'''
-			Lobs a cleansing ribbon that heals the allied player who catches it and removes combat debuffs
+			Release floating pink bubblelight that drifts toward patients and cleanses them
 			Each debuff removed increases that heal by 35%
 			'''
 	}
@@ -210,7 +210,7 @@ Items: {
 		DisplayName: Plasma Staff [Warfarin]
 		Tooltip:
 			'''
-			Lob a condensed life orb, shedding luminous motes on flight and collection
+			Send a crimson bloodmist vortex that winds toward patients and delivers treatment
 			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
 			'''
 	}

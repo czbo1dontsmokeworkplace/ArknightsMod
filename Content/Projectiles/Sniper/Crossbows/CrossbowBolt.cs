@@ -160,6 +160,8 @@ public sealed class CrossbowBolt : ModProjectile
     {
         if (Kind == CrossbowKind.Schwarz && Projectile.ai[1] == 3)
         {
+            // Keep the terminal skill artwork and layer the shared branch trail beneath it.
+            KroosLegacyVfx.Draw(Projectile, Kind, null, false);
             SchwarzTerminalFlight.Draw(Projectile);
             return false;
         }

@@ -17,9 +17,38 @@ namespace ArknightsMod.Content.Projectiles.Guard.Crusher;
 internal static class CrusherVisuals
 {
     private static readonly Dictionary<CrusherKind, Texture2D> art = new();
+    private static readonly Dictionary<CrusherKind, Texture2D> outlines = new();
+    private const int OutlinePadding = 3;
     internal static bool Visible(Vector2 point) => !Main.dedServ && Vector2.DistanceSquared(point,
         Main.screenPosition + new Vector2(Main.screenWidth, Main.screenHeight) * .5f) < 1800 * 1800;
-    internal static void Unload() => art.Clear();
+    internal static void Unload()
+    {
+        art.Clear();
+        Texture2D[] owned = new Texture2D[outlines.Count]; outlines.Values.CopyTo(owned, 0); outlines.Clear();
+        Main.QueueMainThreadAction(() => { foreach (Texture2D texture in owned) texture.Dispose(); });
+    }
+    private static Texture2D OutlineTexture(CrusherKind kind, Texture2D sprite)
+    {
+        if (outlines.TryGetValue(kind, out Texture2D outline)) return outline;
+        // Derive only the external alpha edge. A white mask keeps dark weapon art
+        // from swallowing the charge tint; the source PNG and body stay untouched.
+        var source = new Color[sprite.Width * sprite.Height]; sprite.GetData(source);
+        int width = sprite.Width + OutlinePadding * 2, height = sprite.Height + OutlinePadding * 2;
+        var pixels = new Color[width * height];
+        for (int y = 0; y < height; y++) for (int x = 0; x < width; x++) {
+            int sx = x - OutlinePadding, sy = y - OutlinePadding, outer = 0;
+            int center = (uint)sx < sprite.Width && (uint)sy < sprite.Height ? source[sy * sprite.Width + sx].A : 0;
+            for (int dy = -2; dy <= 2; dy++) for (int dx = -2; dx <= 2; dx++) {
+                int nx = sx + dx, ny = sy + dy;
+                if (dx * dx + dy * dy > 5 || (uint)nx >= sprite.Width || (uint)ny >= sprite.Height) continue;
+                outer = Math.Max(outer, source[ny * sprite.Width + nx].A);
+            }
+            int alpha = Math.Max(0, outer - center);
+            pixels[y * width + x] = alpha == 0 ? Color.Transparent : new Color(255, 255, 255, alpha);
+        }
+        outline = new Texture2D(Main.spriteBatch.GraphicsDevice, width, height); outline.SetData(pixels);
+        outlines.Add(kind, outline); return outline;
+    }
     internal static void Manifest(Vector2 center, CrusherKind kind)
     {
         if (!Visible(center)) return;
@@ -38,7 +67,7 @@ internal static class CrusherVisuals
         Vector2 axis = (tip - grip).SafeNormalize(Vector2.UnitX);
         new T_Crusher_Fragment(point, axis.RotatedBy(-.6f) * 1.8f, kind, 18, 7, false).Spawn();
     }
-    internal static void DrawBlade(Vector2 grip, Vector2 tip, CrusherKind kind, float opacity, bool hot)
+    internal static void DrawBlade(Vector2 grip, Vector2 tip, CrusherKind kind, float opacity, bool hot, float outline = 1)
     {
         if (!Visible(grip) || opacity <= 0) return;
         if (!art.TryGetValue(kind, out Texture2D sprite)) art[kind] = sprite = ModContent.Request<Texture2D>(CrusherRules.Art(kind), AssetRequestMode.ImmediateLoad).Value;
@@ -49,13 +78,18 @@ internal static class CrusherVisuals
         // in source coordinates, versus about -45deg for the three conventional blades.
         Main.EntitySpriteDraw(sprite, grip - Main.screenPosition, null, Color.White * opacity,
             rotation, CrusherRules.Grip(kind), scale, SpriteEffects.None);
+        outline = Math.Clamp(outline, 0, 1);
+        if (outline <= 0) return;
+        Texture2D edge = OutlineTexture(kind, sprite);
+        Vector2 edgeOrigin = CrusherRules.Grip(kind) + new Vector2(OutlinePadding);
         using (new ChargedOperatorVfx.Pass(true)) {
-            // Layered emissive silhouette stays alive in standby, following the weapon's
-            // own transformed sprite rather than detached flashes around the player.
+            // Charge reveals the glow around the actual transformed weapon from 0 to 1.
+            Main.EntitySpriteDraw(edge, grip - Main.screenPosition, null, CrusherRules.Edge(kind) * (.95f * opacity * outline),
+                rotation, edgeOrigin, scale, SpriteEffects.None);
             for (int i = 0; i < 8; i++) {
                 Vector2 halo = (i * MathHelper.TwoPi / 8).ToRotationVector2() * (2.1f + .5f * MathF.Sin(Main.GlobalTimeWrappedHourly * 8));
-                Main.EntitySpriteDraw(sprite, grip - Main.screenPosition + halo, null, CrusherRules.Tint(kind) * (.105f * opacity),
-                    rotation, CrusherRules.Grip(kind), scale, SpriteEffects.None);
+                Main.EntitySpriteDraw(edge, grip - Main.screenPosition + halo, null, CrusherRules.Tint(kind) * (.12f * opacity * outline),
+                    rotation, edgeOrigin, scale, SpriteEffects.None);
             }
             if (hot) {
                 for (int i = 0; i < 4; i++) {
@@ -63,20 +97,20 @@ internal static class CrusherVisuals
                     Vector2 point = Vector2.Lerp(grip, tip, t);
                     float flutter = .85f + .15f * MathF.Sin(Main.GlobalTimeWrappedHourly * 23 + i * 2.4f);
                     ChargedOperatorVfx.Sprite("ForwardFlame", point, new Vector2(43, 23) * flutter * mantleScale,
-                        CrusherRules.Tint(kind) * (.62f * opacity), axis.ToRotation() - .3f);
+                        CrusherRules.Tint(kind) * (.62f * opacity * outline), axis.ToRotation() - .3f);
                 }
             }
-            ChargedOperatorVfx.Sprite("StarCore", tip, new Vector2(hot ? 31 : 15) * mantleScale, CrusherRules.Edge(kind) * (.55f * opacity), rotation);
+            ChargedOperatorVfx.Sprite("StarCore", tip, new Vector2(hot ? 31 : 15) * mantleScale, CrusherRules.Edge(kind) * (.75f * opacity * outline), rotation);
         }
     }
-    internal static void Shed(Vector2 grip, Vector2 tip, Vector2 oldTip, CrusherKind kind, int tick)
+    internal static void Shed(Vector2 grip, Vector2 tip, Vector2 oldTip, CrusherKind kind, int tick, float charge = 1)
     {
         if (!Visible(tip) || ParticleManager.activeParticles.Count > 1100) return;
         Vector2 tangent = (tip - oldTip).SafeNormalize((tip - grip).SafeNormalize(Vector2.UnitX));
-        int count = 2 + (int)kind / 2;
+        int count = 1 + (int)((3 + (int)kind / 2) * charge);
         for (int i = 0; i < count; i++) {
             Vector2 point = Vector2.Lerp(grip, tip, Main.rand.NextFloat(.55f, 1));
-            new T_Crusher_Fragment(point, tangent * Main.rand.NextFloat(1, 4) + Main.rand.NextVector2Circular(1.8f, 1.8f), kind, 14 + i * 3, 7 + i * 2, false).Spawn();
+            new T_Crusher_Fragment(point, tangent * Main.rand.NextFloat(1, 4) * (1 + charge) + Main.rand.NextVector2Circular(1.8f, 1.8f), kind, 14 + i * 3, (7 + i * 2) * (.6f + charge), false).Spawn();
         }
         if (tick % 4 == 0) {
             ChargedOperatorVfx.Sparkle(tip, tangent * 1.3f, CrusherRules.Edge(kind), tangent.ToRotation(), .55f);
@@ -111,7 +145,8 @@ internal static class CrusherVisuals
             ChargedOperatorVfx.Sparkle(point + ray * 15, ray * 1.2f, CrusherRules.Edge(kind), ray.ToRotation(), .7f * strength);
         }
         for (int i = 0; i < 4; i++) { Dust d = Dust.NewDustPerfect(point, DustID.TintableDustLighted, Main.rand.NextVector2Circular(4, 4), 80, CrusherRules.Tint(kind), 1); d.noGravity = true; }
-        SoundEngine.PlaySound(SoundID.Item14 with { Volume = .38f * strength, Pitch = -.48f, MaxInstances = 3 }, point);
+        SoundEngine.PlaySound(SoundID.Item14 with { Volume = .6f * strength, Pitch = -.58f, MaxInstances = 3 }, point);
+        SoundEngine.PlaySound(SoundID.DD2_MonkStaffGroundImpact with { Volume = .5f * strength, Pitch = -.4f, MaxInstances = 3 }, point);
     }
     internal static void Activate(Player owner, CrusherKind kind)
     {

@@ -14,7 +14,8 @@ internal static class CrossbowVisuals
         if (source is not EntitySource_Parent parent || parent.Entity is not Projectile shot
             || shot.owner != Main.myPlayer) return;
         Projectile.NewProjectile(source, position, direction, ModContent.ProjectileType<CrossbowPulse>(),
-            0, 0f, shot.owner, (int)kind, muzzle ? 1f : 0f);
+            0, 0f, shot.owner, (int)kind, muzzle ? 1f : 0f,
+            KroosLegacyVfx.Handles(kind) ? KroosLegacyVfx.Style(shot, kind) : 0f);
     }
     internal static void DrawMuzzle(Vector2 center, Vector2 aim, CrossbowKind kind, float strength)
         => CrossbowSignatureVfx.DrawMuzzle(center, aim, kind, strength);

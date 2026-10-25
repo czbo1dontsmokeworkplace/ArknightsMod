@@ -1,10 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using ArknightsMod.Systems;
 using ArknightsMod.Content.NPCs.Enemy.Chapter6;
 using ArknightsMod.Content.NPCs.Enemy.ThroughChapter4;
 using ArknightsMod.Content.NPCs.Enemy.TillChapter7;
 using Terraria;
 using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
+using Raptor = ArknightsMod.Content.NPCs.Enemy.ThroughChapter4.RaptorDrone.RaptorDrone;
 
 namespace ArknightsMod.Content.NPCs.Friendly
 {
@@ -15,6 +19,7 @@ namespace ArknightsMod.Content.NPCs.Friendly
 	{
 		/// <summary>仅用于日志/调试。</summary>
 		public string Name;
+		public int Tier;
 
 		/// <summary>这个阶段是否已经解锁。多个阶段同时满足时取列表里靠后的那个。</summary>
 		public Func<bool> Condition;
@@ -59,35 +64,65 @@ namespace ArknightsMod.Content.NPCs.Friendly
 
 		internal static void Unload() => _stages = null;
 
-		private static List<CannotWaveStage> BuildStages() {
-			return [
-				// ── 阶段 0：默认阵容（目前唯一一套，沿用之前"坎诺特精英怪"的五种怪）──
-				// 五种怪的强度：奥内罗斯/高阶术师/盾卫 ≈ 350 血的小怪，冰裂者 1600 血，
-				// 狂躁僵尸 2250 血，所以越往后越重，最后一波压轴。
-				new CannotWaveStage {
-					Name = "默认",
-					Condition = () => true,
-					Waves = [
-						() => [ModContent.NPCType<Seniorcaster>()],
-						() => [ModContent.NPCType<Oneiros>(), ModContent.NPCType<ShieldGuard>()],
-						() => [ModContent.NPCType<Seniorcaster>(), ModContent.NPCType<ShieldGuard>(), ModContent.NPCType<Oneiros>()],
-						() => [ModContent.NPCType<IceCleaver>(), ModContent.NPCType<Seniorcaster>()],
-						() => [ModContent.NPCType<InsaneZombieL>(), ModContent.NPCType<ShieldGuard>()],
-					],
-				},
-			];
-		}
+		private static List<CannotWaveStage> BuildStages() => [
+            new() {
+                Name = "一阶", Tier = 1, Condition = () => true,
+                // TODO: 暴徒、鸡尾酒投掷者没有可用 NPC 帧图，暂不加入。
+                Waves = [
+                    () => [ModContent.NPCType<RockCrab>()],
+                    () => [ModContent.NPCType<Drone>()],
+                    () => [ModContent.NPCType<RockCrab>(), ModContent.NPCType<Drone>()],
+                    () => [ModContent.NPCType<RockCrab>(), ModContent.NPCType<RockCrab>(), ModContent.NPCType<Drone>()],
+                    () => [ModContent.NPCType<RockCrab>(), ModContent.NPCType<Drone>(), ModContent.NPCType<Drone>()]
+                ]
+            },
+            new() {
+                Name = "二阶", Tier = 2, Condition = () => CannotProgressionSystem.CurrentTier >= 2,
+                Waves = [
+                    () => [ModContent.NPCType<LightShield>(), ModContent.NPCType<Crossbowman>()],
+                    () => [ModContent.NPCType<LightShield>(), ModContent.NPCType<Caster>()],
+                    () => [ModContent.NPCType<Crossbowman>(), ModContent.NPCType<ArtsMasterA1>()],
+                    () => [ModContent.NPCType<ShieldGuard>(), ModContent.NPCType<Caster>()],
+                    () => [ModContent.NPCType<ShieldGuard>(), ModContent.NPCType<Crossbowman>(), ModContent.NPCType<ArtsMasterA1>()]
+                ]
+            },
+            new() {
+                Name = "三阶", Tier = 3, Condition = () => CannotProgressionSystem.CurrentTier >= 3,
+                Waves = [
+                    () => [ModContent.NPCType<CannotOriginiutant>(), ModContent.NPCType<MortarGunner>()],
+                    () => [ModContent.NPCType<CannotOriginiutant>(), ModContent.NPCType<Seniorcaster>()],
+                    () => [ModContent.NPCType<MortarGunner>(), ModContent.NPCType<ArtsMasterA2>()],
+                    () => [ModContent.NPCType<IceCleaver>(), ModContent.NPCType<Seniorcaster>()],
+                    () => [ModContent.NPCType<IceCleaver>(), ModContent.NPCType<CannotOriginiutant>(), ModContent.NPCType<ArtsMasterA2>()]
+                ]
+            },
+            new() {
+                Name = "四阶", Tier = 4, Condition = () => CannotProgressionSystem.CurrentTier >= 4,
+                // TODO: 红标渗透者、红标根除者、泥岩巨像缺少可用 NPC 帧图。
+                Waves = [
+                    () => [ModContent.NPCType<Raptor>()],
+                    () => [ModContent.NPCType<InsaneZombieL>()],
+                    () => [ModContent.NPCType<InsaneZombieL>(), ModContent.NPCType<Raptor>()],
+                    () => [ModContent.NPCType<InsaneZombieL>(), ModContent.NPCType<InsaneZombieL>()],
+                    () => [ModContent.NPCType<InsaneZombieL>(), ModContent.NPCType<Raptor>(), ModContent.NPCType<Raptor>()]
+                ]
+            }
+            // TODO: 五阶枯朽萃聚使徒缺少帧图；未完成前沿用四阶，绝不生成空波次。
+        ];
 	}
 
 	/// <summary>
 	/// 标记"这只怪是坎诺特某场战斗里召唤出来的"，以及是被哪只坎诺特召唤的。
-	/// 只在服务器/单人侧使用（判断一波有没有打完），不需要同步给客户端。
+	/// 同步归属，让客户端也能识别本场支援效果以及被支援敌人发出的弹幕。
 	/// </summary>
 	public class CannotSummonedTag : GlobalNPC
 	{
 		public override bool InstancePerEntity => true;
 
 		public int OwnerCannot = -1;
+
+        public override void SendExtraAI(NPC npc, BitWriter bits, BinaryWriter writer) => writer.Write((short)OwnerCannot);
+        public override void ReceiveExtraAI(NPC npc, BitReader bits, BinaryReader reader) => OwnerCannot = reader.ReadInt16();
 
 		public static int CountAlive(int cannotWhoAmI) {
 			int count = 0;

@@ -61,6 +61,14 @@ public sealed class PassengerFlyingDischarge : ModProjectile
             return;
         }
         // 不修改 velocity，不读鼠标、不寻找目标。额外更新只提高移动/碰撞精度。
+        // Sky-spawned lightning passes through ceilings. At the owner's height it
+        // permanently becomes tile-colliding, including when it is still inside solid tiles.
+        Projectile.tileCollide |= Projectile.Center.Y >= owner.Center.Y;
+        if (Projectile.tileCollide && Collision.SolidCollision(Projectile.position, Projectile.width, Projectile.height))
+        {
+            Projectile.Kill();
+            return;
+        }
         if (Main.dedServ || Projectile.numUpdates != 0)
             return;
         Vector2 end = Projectile.Center + Projectile.velocity;

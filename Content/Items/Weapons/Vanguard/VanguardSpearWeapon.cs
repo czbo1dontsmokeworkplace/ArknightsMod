@@ -78,6 +78,7 @@ public abstract class VanguardSpearWeapon : ExpansionWeaponBase
             VanguardSpearRules.ChargeDamage(Kind), VanguardChargeCooldown.Duration / 60,
             (int)VanguardSpearRules.ChargeRange(Kind))));
         tooltips.Add(new TooltipLine(Mod, "VanguardSkill", GetSkillActivateKeyHint()));
+        tooltips.Add(new TooltipLine(Mod, "VanguardCost", Language.GetTextValue("Mods.ArknightsMod.VanguardSpears.Cost")));
         if (Kind is VanguardSpearKind.Grani or VanguardSpearKind.WildMane)
             tooltips.Add(new TooltipLine(Mod, "VanguardPlaceholder", Language.GetTextValue("Mods.ArknightsMod.VanguardSpears.Placeholder")));
     }

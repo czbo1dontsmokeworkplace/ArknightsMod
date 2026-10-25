@@ -11,7 +11,7 @@ namespace ArknightsMod.Common.GlobalItems;
 public sealed class OperatorBranchTraits : GlobalItem
 {
     internal static string Branch(Item item) => item.ModItem?.Mod.Name == "ArknightsMod"
-        ? item.ModItem.Name switch
+        ? global::ArknightsMod.Content.Items.Weapons.Defender.DefenderRouteCatalog.Find(item)?.Branch ?? (item.ModItem.Name switch
     {
         "AnselStaff" or "HibiscusStaff" or "MyrrhStaff" or "WarfarinStaff" or "SussurroStaff" or "SilenceStaff"
             or "TuyeStaff" or "ShiningStaff" => "Medic",
@@ -20,6 +20,7 @@ public sealed class OperatorBranchTraits : GlobalItem
         "PapyrusStaff" or "PaprikaStaff" or "Mon3trCore" => "MedicChain",
         "ChestnutStaff" or "HoneyberryStaff" or "MulberryStaff" or "EyjafjallaAlterStaff" => "MedicWandering",
         "HongdouLance" or "GraniLance" or "WildManeLance" or "BagpipeSpear" => "Charger",
+        "MyrtleStandard" or "ElysiumStandard" or "JacintStandard" or "SaileachStandard" => "StandardBearer",
         "CatapultLauncher" or "MeteoriteCannon" or "FiammettaHandCannon" => "Artilleryman",
         "UtageKatana" or "HellagurOdachi" => "Musha",
         "MelanthasSword" or "MataimaruGlaive" or "FrankaRapier" or "NearlRadiantSword" => "Dreadnought",
@@ -38,12 +39,17 @@ public sealed class OperatorBranchTraits : GlobalItem
         "Lava_Dagger" or "GitanoOrb" or "LeonhardtStaff" or "SkyfireStaff" or "MostimaStaff" => "SplashCaster",
         "AmbrielRifle" or "AndreanaRifle" or "FirewatchRifle" or "TyphonBow" => "Deadeye",
         "NecrassScepter" => "PrimalCaster",
-        "HornGrenadeLauncher" => "Fortress",
+        "NoirShield" or "BeagleWeapon" or "CardiWeapon" or "CuoraWeapon" or "CroissantHammer" or "NianWeapon" => "Protector",
+        "DN_Weapon" => "ArtsProtector",
+        "LiskarmPistol" => "SentinelProtector",
+        "Vulcan_Weapon" or "MudrockHammer" => "Juggernaut",
+        "EunectesAxe" => "Duelist",
+        "HornGrenadeLauncher" or "FirewhistleLauncher" => "Fortress",
         "MagallanController" => "Summoner",
         "KroosCrossbow" or "KroosAlterCrossbow" or "MelaniteCrossbow" or "ProvenceCrossbow"
             or "SchwarzBow" or "GreyThroatCrossbow" or "BluePoisonCrossbow" or "PozemkaCrossbow" => "Crossbowman",
         _ => null
-    } : null;
+    }) : null;
 
     internal static string Profession(string branch) => branch switch
     {
@@ -52,9 +58,9 @@ public sealed class OperatorBranchTraits : GlobalItem
         "ArtsFighter" or "Dreadnought" or "Musha" or "Centurion" or "Crusher" or "Reaper" or "Earthshaker" => "Guard",
         "Artilleryman" or "Deadeye" or "Crossbowman" or "Spreadshooter" => "Sniper",
         "Executor" => "Specialist",
-        "Charger" => "Vanguard",
+        "Charger" or "StandardBearer" => "Vanguard",
         "Medic" or "MedicTherapist" or "MedicMultiTarget" or "MedicChain" or "MedicWandering" => "Medic",
-        "Fortress" => "Defender",
+        "Fortress" or "Protector" or "ArtsProtector" or "SentinelProtector" or "Juggernaut" or "Duelist" or "PrimalProtector" => "Defender",
         "Summoner" => "Supporter",
         _ => null
     };

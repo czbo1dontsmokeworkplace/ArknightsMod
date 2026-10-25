@@ -4,9 +4,11 @@ using ArknightsMod.Content;
 using ArknightsMod.Content.Projectiles.BlastCasters;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
+using Terraria.GameContent;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
@@ -89,6 +91,25 @@ public sealed class IfritFlamethrower : BlastCasterWeapon
     public override string Texture => "ArknightsMod/Content/Items/Weapons/BlastCasters/IfritFlamethrower";
     public override BlastCasterKind Kind => BlastCasterKind.Ifrit;
     protected override int[] EliteDamage => [55, 65, 75];
+    // This source sprite points left. Mirror it wherever the item is displayed,
+    // matching the Ifrit-only mirror used by the holdout and its right-facing muzzle.
+    public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame,
+        Color drawColor, Color itemColor, Vector2 origin, float scale)
+    {
+        spriteBatch.Draw(TextureAssets.Item[Type].Value, position, frame, drawColor, 0f, origin,
+            scale, SpriteEffects.FlipHorizontally, 0f);
+        return false;
+    }
+    public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor,
+        ref float rotation, ref float scale, int whoAmI)
+    {
+        Texture2D texture = TextureAssets.Item[Type].Value;
+        Vector2 position = Item.position - Main.screenPosition
+            + new Vector2(Item.width * .5f, Item.height - texture.Height * .5f);
+        spriteBatch.Draw(texture, position, null, lightColor, rotation, texture.Size() * .5f,
+            scale, SpriteEffects.FlipHorizontally, 0f);
+        return false;
+    }
     public override void AddRecipes() => CreateRecipe().AddIngredient<CorroserumFlamethrower>()
         .AddIngredient(ItemID.ShroomiteBar, 14).AddIngredient(ItemID.Ectoplasm, 8)
         .AddIngredient(ItemID.Gel, 150).AddCondition(Condition.DownedPlantera)

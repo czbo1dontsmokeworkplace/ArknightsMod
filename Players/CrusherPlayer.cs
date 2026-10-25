@@ -138,18 +138,15 @@ public sealed class CrusherPlayer : ModPlayer
         }
         keyWasDown = keyDown; CrusherVisuals.Activate(Player, Kind); SyncAura(); return true;
     }
-    internal float PrepareSwing(out int special)
+    internal float PrepareSwing(out int special, bool fullCharge = true)
     {
         special = 0;
         var shared = Player.GetModPlayer<WeaponPlayer>();
         level = SkillLevel;
-        if (ActiveMode == 0 && shared.StockCount > 0 && shared.Skill == 0 && (Kind == CrusherKind.Hoederer || Kind == CrusherKind.Ulpianus)) {
+        if (ActiveMode == 0 && shared.StockCount > 0 && shared.Skill == 0 && (Kind == CrusherKind.Hoederer || Kind == CrusherKind.Ulpianus && fullCharge)) {
             shared.DelStockCount(); special = Kind == CrusherKind.Hoederer ? 1 : 2;
-            if (special == 2) {
-                Vector2 aim = (Main.MouseWorld - Player.MountedCenter).SafeNormalize(new Vector2(Player.direction, 0));
-                Projectile.NewProjectile(Player.GetSource_ItemUse(Player.HeldItem), Player.MountedCenter, aim * 17,
-                    ModContent.ProjectileType<CrusherAnchorCast>(), (int)(Player.GetWeaponDamage(Player.HeldItem) * L(1.7f, 2.7f)), 10, Player.whoAmI, 0, Player.selectedItem, level);
-            }
+            // Contact That Must Be Made now empowers the on-contact rising anchor.
+            // Preparing a swing must never emit a projectile on a miss.
         }
         return DamageMultiplier * (special == 1 ? L(1.6f, 2.6f) : 1);
     }
@@ -189,7 +186,7 @@ public sealed class CrusherPlayer : ModPlayer
                     ModContent.ProjectileType<CrusherHeldBlade>(), Player.GetWeaponDamage(Player.HeldItem), 12, Player.whoAmI, (int)Kind, slot);
                 if (id >= 0 && id < Main.maxProjectiles) blade = Main.projectile[id].ModProjectile as CrusherHeldBlade;
             }
-            blade?.BeginSwing(Player, Player.GetWeaponDamage(Player.HeldItem), 12, (1 + .5f * charge) * L(1.4f, 3), 3);
+            blade?.BeginSwing(Player, Player.GetWeaponDamage(Player.HeldItem), 12, (1 + .5f * charge) * L(1.4f, 3), 3, charge);
         }
         if (hasReturn && !Player.dead && Player.whoAmI == Main.myPlayer) TryTeleport(returnPosition);
         if (same) { var s = Player.GetModPlayer<WeaponPlayer>(); s.SkillActive = false; s.SkillTimer = 0; }
