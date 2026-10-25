@@ -1,14 +1,7 @@
-using System;
 using ArknightsMod.Content.Buffs.ArmorSets;
-using ArknightsMod.Content.Items.Armor.Defender.Saria;
 using ArknightsMod.Content.Items.Armor.Defender.Spot;
-using ArknightsMod.Content.Items.Armor.Guard.Matoimaru;
-using ArknightsMod.Content.Items.Armor.Medic.Ansel;
-using ArknightsMod.Content.Items.Armor.Medic.Hibiscus;
 using ArknightsMod.Content.Items.Armor.Supporter.CivilightEterna;
-using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor
@@ -20,20 +13,8 @@ namespace ArknightsMod.Content.Items.Armor
 			if (baseAmount <= 0)
 				return 0;
 
-			float multiplier = 1f;
-
-			if (healer != null) {
-				AnselSetPlayer ansel = healer.GetModPlayer<AnselSetPlayer>();
-				if (ansel.AnselHelmetActive)
-					multiplier *= 1.04f;
-
-				HibiscusSetPlayer hibiscus = healer.GetModPlayer<HibiscusSetPlayer>();
-				if (hibiscus.HibiscusHelmetActive)
-					multiplier *= 1.04f;
-			}
-
 			int lifeBefore = target.statLife;
-			int finalAmount = SpotHealingHelper.ModifyOutgoingHeal(healer, (int)(baseAmount * multiplier));
+			int finalAmount = SpotHealingHelper.ModifyOutgoingHeal(healer, baseAmount);
 			target.Heal(finalAmount);
 
 			CivilightEternaSetPlayer civilight = healer?.GetModPlayer<CivilightEternaSetPlayer>();
@@ -49,51 +30,10 @@ namespace ArknightsMod.Content.Items.Armor
 
 			if (healer != null) {
 				global::ArknightsMod.Content.Items.Armor.DirectHealingEffects.OnDirectHeal(healer, target, target.statLife - lifeBefore);
-
-				AnselSetPlayer anselSet = healer.GetModPlayer<AnselSetPlayer>();
-				if (anselSet.AnselSetActive && healer.whoAmI != target.whoAmI)
-					TryAnselChainHeal(healer, target, finalAmount);
 			}
 
 			return finalAmount;
 		}
 
-		private static void TryAnselChainHeal(Player healer, Player primaryTarget, int healAmount) {
-			if (Main.netMode == NetmodeID.MultiplayerClient)
-				return;
-
-			if (Main.rand.NextFloat() >= 0.07f)
-				return;
-
-			Player chainTarget = FindRandomNearbyAlly(healer, primaryTarget);
-			if (chainTarget == null)
-				return;
-
-			int lifeBefore = chainTarget.statLife;
-			chainTarget.Heal(Math.Max(1, healAmount / 2));
-			chainTarget.HealEffect(Math.Max(1, healAmount / 2));
-			global::ArknightsMod.Content.Items.Armor.DirectHealingEffects.OnDirectHeal(healer, chainTarget, chainTarget.statLife - lifeBefore);
-		}
-
-		private static Player FindRandomNearbyAlly(Player healer, Player exclude) {
-			const float maxRange = 800f;
-			Player chosen = null;
-			int count = 0;
-
-			for (int i = 0; i < Main.maxPlayers; i++) {
-				Player other = Main.player[i];
-				if (!other.active || other.dead || other.whoAmI == healer.whoAmI || other.whoAmI == exclude.whoAmI)
-					continue;
-
-				if (Vector2.Distance(healer.Center, other.Center) > maxRange)
-					continue;
-
-				count++;
-				if (Main.rand.Next(count) == 0)
-					chosen = other;
-			}
-
-			return chosen;
-		}
 	}
 }

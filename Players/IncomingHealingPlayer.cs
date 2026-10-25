@@ -1,6 +1,9 @@
 using System;
 using ArknightsMod.Content.Items.Armor.Guard.Matoimaru;
+using ArknightsMod.Content.Items.Armor.Medic.Ansel;
+using ArknightsMod.Content.Items.Armor.Medic.Hibiscus;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
+using ArknightsMod.Content.Items.Weapons.Medic;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -12,8 +15,23 @@ public sealed class IncomingHealingPlayer : ModPlayer
     internal int BypassDepth;
     public bool HealingBlocked => Player.GetModPlayer<global::ArknightsMod.Content.Items.Armor.Guard.Surtr.SurtrSetPlayer>().HealingBlocked;
     // Read equipment directly: server-side heals can arrive outside equipment updates.
-    public float Multiplier => !Player.dead && Player.armor[0].type > 0
-        && Player.armor[0].type == NeoArmorReforgeSetLoader.GetSetType<MatoimaruHead>() ? 1.25f : 1f;
+    public float Multiplier => (float)CalculateMultiplier();
+
+    private double CalculateMultiplier()
+    {
+        if (!Player.active || Player.dead) return 1d;
+        double multiplier = Player.armor[0].type > 0
+            && Player.armor[0].type == NeoArmorReforgeSetLoader.GetSetType<MatoimaruHead>() ? 1.25d : 1d;
+        int ansel = NeoArmorReforgeSetLoader.GetSetType<AnselHead>();
+        int hibiscus = NeoArmorReforgeSetLoader.GetSetType<HibiscusHead>();
+        // Each living allied wearer supplies a world-wide aura, including to themselves.
+        // Multiply sources independently, alongside other incoming-healing bonuses.
+        foreach (Player source in Main.ActivePlayers)
+            if (MedicHealingNet.Allied(source, Player) && source.armor[0].type > 0
+                && (source.armor[0].type == ansel || source.armor[0].type == hibiscus))
+                multiplier *= 1.04d;
+        return multiplier;
+    }
 
     public int Modify(int amount)
     {
@@ -21,9 +39,10 @@ public sealed class IncomingHealingPlayer : ModPlayer
         // Final network grants bypass amplification, never healing suppression.
         if (HealingBlocked) { remainder = 0; return 0; }
         if (BypassDepth > 0) return amount;
-        if (Multiplier == 1f || Player.statLife >= Player.statLifeMax2) { remainder = 0; return amount; }
+        double multiplier = CalculateMultiplier();
+        if (multiplier == 1d || Player.statLife >= Player.statLifeMax2) { remainder = 0; return amount; }
         // Keep fractional healing so repeated 1 HP heals also receive the full bonus.
-        double total = amount * (double)Multiplier + remainder;
+        double total = amount * multiplier + remainder;
         int result = (int)Math.Min(int.MaxValue, Math.Floor(total));
         remainder = total - result;
         return result;

@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using ArknightsMod.Content.Buffs.Medic.Kaltsit;
+using ArknightsMod.Content.Items.Armor.Medic.Kaltsit;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -116,6 +117,7 @@ namespace ArknightsMod.Content.Projectiles.Medic.Kaltsit
 		private int   receiveCooldown;
 		private float bobTimer;
 		private bool  lifeInitialized;
+		private bool crystalBurstApplied;
 
 		// 当前锁定的攻击目标（NPC 下标）。Chasing/Attacking 期间每帧都用"离玩家最近"
 		// 重新核对一遍，核对结果和这个不一致就说明目标该换了——即便正在攻击动画里也会
@@ -190,6 +192,8 @@ namespace ArknightsMod.Content.Projectiles.Medic.Kaltsit
 			}
 
 			bobTimer += 1f;
+			if (state == Mon3trState.Spawning) crystalBurstApplied = false;
+			if (state == Mon3trState.Crystal && life <= 0) TryCrystalBurst(owner);
 
 			switch (state) {
 				case Mon3trState.Spawning:  UpdateSpawning(owner);        break;
@@ -492,6 +496,15 @@ namespace ArknightsMod.Content.Projectiles.Medic.Kaltsit
 			Projectile.velocity = Vector2.Zero;
 			reviveTimer = ReviveTicks;
 			EnterState(Mon3trState.Crystal);
+			TryCrystalBurst(Main.player[Projectile.owner]);
+		}
+
+		private void TryCrystalBurst(Player owner) {
+			// The owner's depletion state reaches the server through extra AI.
+			// Observers never deal damage, and repeated state syncs cannot retrigger it.
+			if (Main.netMode == NetmodeID.MultiplayerClient || crystalBurstApplied) return;
+			crystalBurstApplied = true;
+			KaltsitHelmetEffects.OnMon3trDepleted(owner, Projectile.Center);
 		}
 
 		// ========================= 绘制 =========================

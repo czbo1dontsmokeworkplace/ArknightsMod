@@ -44,7 +44,7 @@ public sealed class DroneCoreMedicPlayer : ModPlayer
     internal static void ReceiveHealing(BinaryReader reader)
     {
         int owner = reader.ReadByte(), amount = reader.ReadInt16();
-        if (Main.netMode != NetmodeID.MultiplayerClient || owner != Main.myPlayer || amount is <= 0 or > 150) return;
+        if (Main.netMode != NetmodeID.MultiplayerClient || owner != Main.myPlayer || amount <= 0) return;
         Player player = Main.LocalPlayer;
         if (!player.active || player.dead || player.GetModPlayer<EvolutionAccessoryPlayer>().DyingTicks > 0) return;
         player.GetModPlayer<global::ArknightsMod.Players.IncomingHealingPlayer>().HealFinal(Math.Min(amount, Math.Max(0, player.statLifeMax2 - player.statLife)));

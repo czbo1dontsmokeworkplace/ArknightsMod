@@ -47,7 +47,7 @@ internal static class MedicHealingNet
     {
         int patient = reader.ReadByte(), amount = reader.ReadInt16();
         if (Main.netMode != NetmodeID.MultiplayerClient || patient != Main.myPlayer
-            || amount <= 0 || amount > (int)Math.Ceiling(SpotHealingHelper.MaximumAmount(48) * 1.25)) return;
+            || amount <= 0) return;
         Player player = Main.LocalPlayer;
         if (player.dead || !player.active) return;
         player.GetModPlayer<global::ArknightsMod.Players.IncomingHealingPlayer>().HealFinal(Math.Min(amount, Math.Max(0, player.statLifeMax2 - player.statLife)));

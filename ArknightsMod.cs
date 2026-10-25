@@ -189,7 +189,7 @@ namespace ArknightsMod
 				return artsPlayer.GetModPlayer<Players.MujicaPlayer>().ArtsPenetration;
 			if (args.Length == 2 && args[0] is string incomingStat && incomingStat == "GetIncomingHealingBonus"
 				&& args[1] is Terraria.Player statPlayer)
-				return statPlayer.GetModPlayer<Content.Items.Armor.Guard.Matoimaru.MatoimaruSetPlayer>().MatoimaruHelmetActive ? .25f : 0f;
+				return statPlayer.GetModPlayer<Players.IncomingHealingPlayer>().Multiplier - 1f;
 			if (args.Length == 3 && args[0] is string incomingCommand && args[1] is Terraria.Player recipient && args[2] is int incomingAmount) {
 				if (incomingCommand == "ModifyIncomingHeal") return recipient.GetModPlayer<global::ArknightsMod.Players.IncomingHealingPlayer>().Modify(incomingAmount);
 				if (incomingCommand == "HealFinal") { recipient.GetModPlayer<global::ArknightsMod.Players.IncomingHealingPlayer>().HealFinal(incomingAmount); return true; }
@@ -236,6 +236,15 @@ namespace ArknightsMod
                     break;
                 case ArkMessageID.SpotHealDodgeGrant:
                     global::ArknightsMod.Content.Items.Armor.Defender.Spot.SpotHealingHelper.ReceiveGrant(reader);
+                    break;
+                case ArkMessageID.AnselChainHealingGrant:
+                    global::ArknightsMod.Content.Items.Armor.Medic.Ansel.AnselHealingHelper.ReceiveGrant(reader);
+                    break;
+                case ArkMessageID.ReedHelmetScarHit:
+                    global::ArknightsMod.Content.Items.Armor.Medic.ReedFlameShadow.ReedFlameShadowSetPlayer.ReceiveScarHit(reader, whoAmI);
+                    break;
+                case ArkMessageID.ReedSelfHealingGrant:
+                    global::ArknightsMod.Content.Items.Armor.Medic.ReedFlameShadow.ReedFlameShadowSetPlayer.ReceiveSelfHealing(reader);
                     break;
                 case ArkMessageID.ChenSkillPointGrant:
                     global::ArknightsMod.Content.Items.Armor.Guard.Chen.ChenSetPlayer.ReceiveGrant(reader);
@@ -379,6 +388,9 @@ namespace ArknightsMod
             DefenderRouteHit,
             MujicaFever,
             UlpianusKillStacks,
+            AnselChainHealingGrant,
+            ReedHelmetScarHit,
+            ReedSelfHealingGrant,
 		}
 	}
 	//public class Ex : GlobalNPC

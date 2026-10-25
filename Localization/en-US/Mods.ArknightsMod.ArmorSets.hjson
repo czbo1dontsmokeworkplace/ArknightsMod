@@ -190,23 +190,23 @@ Surtr: {
 
 Ansel: {
 	HeadName: Ansel's Helmet
-	HelmetEffect: "[c/beebff:Helmet]: Heal output 104%"
-	SetEffect: "[c/beebff:Set]: 7% chance to heal another ally when healing"
-	SetBonus: Heal 104%; 7% chain heal
+	HelmetEffect: "[c/beebff:Helmet]: All allies in the world, including yourself, receive ×1.04 healing; each wearer's effect stacks multiplicatively with other incoming healing bonuses"
+	SetEffect: "[c/beebff:Set]: Successful healing has a 7% chance to restore the same actual HP gain to another injured ally anywhere in the world, including yourself; extra healing cannot trigger another chain heal"
+	SetBonus: All allies receive ×1.04 healing; 7% chain heal
 }
 
 Hibiscus: {
 	HeadName: Hibiscus's Helmet
-	HelmetEffect: "[c/beebff:Helmet]: Heal output 104%"
+	HelmetEffect: "[c/beebff:Helmet]: All allies in the world, including yourself, receive ×1.04 healing; each wearer's effect stacks multiplicatively with other incoming healing bonuses"
 	SetEffect: "[c/beebff:Set]: +30 max life"
-	SetBonus: Heal 104%; +30 max life
+	SetBonus: All allies receive ×1.04 healing; +30 max life
 }
 
 Warfarin: {
 	HeadName: Warfarin's Helmet
-	HelmetEffect: "[c/beebff:Helmet]: Allies below 50% HP get 20 HP/s regen 10s, 60s ICD per ally"
+	HelmetEffect: "[c/beebff:Helmet]: All players in the world, including yourself, gain +20 life regeneration (10 HP/s) while below 50% HP; ends immediately at 50%, with no cooldown or team/PvP restrictions"
 	SetEffect: "[c/beebff:Set]: On nearby enemy kill, self and random nearby ally gain 2 SP"
-	SetBonus: Low-HP ally regen; nearby kill +2 SP for self and random ally
+	SetBonus: All players below 50% HP gain +20 life regen; nearby kill +2 SP for self and random ally
 }
 
 Adnachiel: {
@@ -434,8 +434,16 @@ Necrass: {
 	SetBonus: Equip/respawn summons a Lamenting Servant; kills summon or compound its stats, up to 6 stacks
 }
 
+ReedFlameShadow: {
+	HeadName: Reed the Flame Shadow's Helmet
+	HelmetEffect: "[c/beebff:Helmet]: Hits have a 30% chance to inflict Burned Scar for 8 seconds, reducing enemy attack damage by 20% and increasing magic damage taken to 138%; existing scars are not refreshed"
+	SetEffect: "[c/beebff:Set]: Successfully directly healing another player restores 50% of their actual HP gain to you, rounded down and capped at your maximum life"
+	SetBonus: Hits have a 30% scar chance; heal yourself for 50% of HP restored to others
+}
+
 Kaltsit: {
 	HeadName: 凯尔希的头盔
+	HelmetEffect: "[c/beebff:Helmet]: When M3 runs out of HP and enters crystal standby, enemies within 800 pixels of M3 take 1200 true damage and are stunned for 3 seconds, preventing movement and projectile firing"
 	SetEffect: "[c/beebff:套装效果]：在身后召唤M3伴随战斗，优先攻击距离玩家最近的敌人；M3受到足够伤害后会化为能量水晶，暂时不参与战斗，之后会自动复苏"
 	SetBonus: 召唤M3伴随战斗，倒下后化为水晶待机
 }
