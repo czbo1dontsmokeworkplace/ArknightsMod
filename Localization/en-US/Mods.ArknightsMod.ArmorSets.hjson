@@ -21,8 +21,8 @@ Melantha: {
 
 Utage: {
 	HeadName: Utage's Helmet
-	HelmetEffect: "[c/beebff:Helmet]: Melee hits restore 1 HP, up to 3/s"
-	SetEffect: "[c/beebff:Set]: +0.5% melee speed per 1% missing HP; max +30% at 60% HP lost"
+	HelmetEffect: "[c/beebff:Helmet]: Melee hits restore 1 HP, at most once every 20 ticks"
+	SetEffect: "[c/beebff:Set]: +0.5% additive melee speed per 1% missing HP; max +30% at 60% HP lost"
 	SetEffectActive: "[c/beebff:Set] (active): Current melee speed +{0}% (scales with missing HP, max +30%)"
 	SetBonus: Melee attack speed scales with missing HP, up to +30%
 }
@@ -359,8 +359,8 @@ Oblivionis: {
 
 Ulpianus: {
 	HeadName: Ulpianus's Helmet
-	HelmetEffect: "[c/beebff:Helmet]: +12 max HP and +4 attack per kill (max 9); other Abyssal Hunters get 50%"
-	SetEffect: "[c/beebff:Set]: Heal 12 on hit (16 below 50% HP); doubled while holding signature anchor (not yet implemented)"
+	HelmetEffect: "[c/beebff:Helmet]: Gain 1 stack per kill (max 9); personal stacks reset on death or removing the helmet. All Ulpianus wearers use the highest stack count among active wearers: +12 max HP and +4 attack per stack; other Abyssal Hunters receive 50%"
+	SetEffect: "[c/beebff:Set]: Heal 12 on hit (16 below 50% HP); doubled while holding Ulpianus's Anchor"
 	SetBonus: Heal on hit; low HP boost; anchor doubles heal
 }
 

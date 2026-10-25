@@ -210,6 +210,9 @@ namespace ArknightsMod
 		public override void HandlePacket(BinaryReader reader, int whoAmI) {
 			short id = reader.ReadInt16();
 			switch ((ArkMessageID)id) {
+                case ArkMessageID.UlpianusKillStacks:
+                    Content.Items.Armor.Guard.Ulpianus.UlpianusSetPlayer.ReceiveStacks(reader);
+                    break;
                 case ArkMessageID.MujicaFever:
                     Systems.Gameplay.MujicaFeverSystem.Receive(reader, whoAmI);
                     break;
@@ -375,6 +378,7 @@ namespace ArknightsMod
             LapplandSilenceRequest,
             DefenderRouteHit,
             MujicaFever,
+            UlpianusKillStacks,
 		}
 	}
 	//public class Ex : GlobalNPC
