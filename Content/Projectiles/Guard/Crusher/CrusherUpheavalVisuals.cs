@@ -62,12 +62,14 @@ internal static class CrusherUpheavalVisuals
             float rotation = axis.ToRotation();
             Color edge = CrusherRules.Edge(kind) * q.Opacity;
             if (kind == CrusherKind.Hoederer || kind == CrusherKind.Ulpianus)
-                ChargedOperatorVfx.Sprite("ForwardFlame", q.Center - axis * 35, new Vector2(170, 52 + (int)kind * 8), edge * .8f, rotation);
-            ChargedOperatorVfx.Sprite("StarCore", q.Center + axis * 22, new Vector2(kind == CrusherKind.Quartz ? 36 : 54, 25), Color.White * (.9f * q.Opacity), rotation);
+                ChargedOperatorVfx.Sprite("ForwardFlame", q.Center - axis * 35 * CrusherRules.SizeMultiplier,
+                    new Vector2(170, 52 + (int)kind * 8) * CrusherRules.SizeMultiplier, edge * .8f, rotation);
+            ChargedOperatorVfx.Sprite("StarCore", q.Center + axis * 22 * CrusherRules.SizeMultiplier,
+                new Vector2(kind == CrusherKind.Quartz ? 36 : 54, 25) * CrusherRules.SizeMultiplier, Color.White * (.9f * q.Opacity), rotation);
             if (kind == CrusherKind.WindChimes) {
                 for (int i = -1; i <= 1; i += 2)
-                    ChargedOperatorVfx.Sprite("LinearSpark", q.Center + axis.RotatedBy(i * .5f) * -35,
-                        new Vector2(132, 16), edge * .8f, rotation + i * .16f);
+                    ChargedOperatorVfx.Sprite("LinearSpark", q.Center + axis.RotatedBy(i * .5f) * -35 * CrusherRules.SizeMultiplier,
+                        new Vector2(132, 16) * CrusherRules.SizeMultiplier, edge * .8f, rotation + i * .16f);
             }
         }
     }
@@ -76,6 +78,7 @@ internal static class CrusherUpheavalVisuals
         material ??= ModContent.Request<Effect>("ArknightsMod/Assets/Effects/CrusherUpheaval", AssetRequestMode.ImmediateLoad).Value;
         Vector2 axis = q.velocity.SafeNormalize(-Vector2.UnitY);
         Vector2 x = axis * (kind == CrusherKind.Ulpianus ? 120 : 92), y = axis.RotatedBy(MathHelper.PiOver2) * (30 + (int)kind * 7);
+        x *= CrusherRules.SizeMultiplier; y *= CrusherRules.SizeMultiplier;
         Vector2 center = q.Center - Main.screenPosition;
         quad[0] = new(new Vector3(center - x - y, 0), Color.White, new(0, 0));
         quad[1] = new(new Vector3(center + x - y, 0), Color.White, new(1, 0));

@@ -21,6 +21,15 @@ public sealed class ClickDrone : ModProjectile
     private float spacing = 12;
     private bool stun, empowered;
     internal bool Busy => age >= 0;
+    internal bool HasLockedTarget
+    {
+        get
+        {
+            if (!Busy) return false;
+            foreach (var target in targets) if (Valid(target, out _)) return true;
+            return false;
+        }
+    }
     internal static bool VolleyDue(int tick,float interval) =>
         tick == 15 || tick == 15 + (int)MathF.Ceiling(interval);
     public override void SetDefaults()

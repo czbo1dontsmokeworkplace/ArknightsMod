@@ -47,7 +47,12 @@ NoirShield: {
 
 DurinWand: {
 	DisplayName: wand [Durin]
-	Tooltip: She looks quite sleepy.
+	Tooltip:
+		'''
+		Normal attacks fire three straight shots, 4 frames apart
+		The next burst starts 18 frames after the third shot
+		She looks quite sleepy.
+		'''
 }
 
 _12FWand: {
@@ -1159,6 +1164,7 @@ ExusiaiVector: {
 		Empty magazines reload automatically in 1.2 seconds; weapon switching is locked during reload
 		No manual reload; skill bonus bullets do not consume additional rounds or ammunition
 		Ammo damage is scaled with firing and reload cadence for about 150% of the previous theoretical output
+		Equip in an accessory slot to display the wing effect
 		'''
 }
 
@@ -2966,6 +2972,8 @@ HazeMagicBook: {
 		'''
 		Early Hardmode
 		Fires blue-violet spells; skills empower attacks or trade maximum life for a burst of power
+		Normal attacks fire three straight shots, 4 frames apart
+		The next burst starts 18 frames after the third shot
 		'''
 }
 
@@ -3216,8 +3224,9 @@ StewardStaff: {
 	DisplayName: Staff [Steward]
 	Tooltip:
 		'''
-		Attacks charge an empowered homing spell
-		Seeks nearby enemies with high defense
+		Attacks charge an empowered straight spell
+		Normal attacks fire three straight shots, 4 frames apart
+		The next burst starts 18 frames after the third shot
 		'''
 }
 
@@ -3395,7 +3404,7 @@ EntelechiaScythe: {
 	DisplayName: Entelechia's Great Scythe
 	Tooltip:
 		'''
-		Swings a scythe to release an accelerating, terrain-piercing crescent that sheds homing motes
+		Swings a scythe to release a slowing, terrain-piercing crescent that sheds homing motes
 		Crescents hit up to 7 enemies, losing damage with each hit
 		'''
 }
@@ -3798,7 +3807,7 @@ PassengerConductor: {
 	DisplayName: Electromagnetic Conductor [Passenger]
 	Tooltip:
 		'''
-		Calls down alternating volleys of one or two bolts of golden lightning above the cursor
+		Fires three golden lightning bolts forward from the staff
 		Hits chain to nearby enemies and briefly slow ordinary enemies
 		'''
 }
@@ -3807,7 +3816,7 @@ LeiziStaff: {
 	DisplayName: Thunder Staff [Leizi]
 	Tooltip:
 		'''
-		Calls down alternating volleys of one or two bolts of violet lightning above the cursor
+		Fires three violet lightning bolts forward from the staff
 		Hits chain to nearby enemies and briefly slow ordinary enemies
 		'''
 }
@@ -3816,7 +3825,7 @@ PuddingStaff: {
 	DisplayName: Electromagnetic Staff [Pudding]
 	Tooltip:
 		'''
-		Calls down alternating volleys of one or two bolts of blue arcs above the cursor
+		Fires three blue arcs forward from the staff
 		Hits chain to nearby enemies and briefly slow ordinary enemies
 		'''
 }
@@ -3848,7 +3857,9 @@ HoolheyakWindArts: {
 	Tooltip:
 		'''
 		Available after defeating Golem
-		Fires a wind bolt that creates a homing vortex on hit
+		Fires a straight wind bolt that creates a homing vortex on hit
+		Normal attacks fire three straight shots, 4 frames apart
+		The next burst starts 18 frames after the third shot
 		Vortices pull in and lift ordinary enemies, but cannot lift bosses
 		'''
 }
@@ -3858,7 +3869,9 @@ EbenholzStaff: {
 	Tooltip:
 		'''
 		Fires homing sonata fragments that pursue enemies
-		Stores 1 extra shot per second while held without firing, up to 3
+		Stores one extra shot per actual attack interval while held without firing, up to 3
+		The first/second/third stored shots deal 2x/3x/4x damage with 1.5x/2x/2.5x visual size
+		Each full head-bar cycle grants one stored orb; the bar stays full at three orbs
 		Stored shots persist after switching weapons and join the next valid attack
 		'''
 }
@@ -3868,7 +3881,7 @@ EthanYoyo: {
 	Tooltip:
 		'''
 		Controls a yo-yo that repeatedly strikes enemies and may bind ordinary enemies
-		Reduces aggro and grants a 10% chance to dodge damage while in use
+		Grants a 10% chance to dodge damage while in use
 		'''
 }
 
@@ -3890,7 +3903,9 @@ IndigoStaff: {
 	Tooltip:
 		'''
 		Fires homing globes of water that pursue enemies
-		Stores 1 extra shot per second while held without firing, up to 3
+		Stores one extra shot per actual attack interval while held without firing, up to 3
+		The first/second/third stored shots deal 2x/3x/4x damage with 1.5x/2x/2.5x visual size
+		Each full head-bar cycle grants one stored orb; the bar stays full at three orbs
 		Stored shots persist after switching weapons and join the next valid attack
 		'''
 }
@@ -3900,7 +3915,9 @@ HarmonieStaff: {
 	Tooltip:
 		'''
 		Fires homing musical notes that pursue enemies
-		Stores 1 extra shot per second while held without firing, up to 3
+		Stores one extra shot per actual attack interval while held without firing, up to 3
+		The first/second/third stored shots deal 2x/3x/4x damage with 1.5x/2x/2.5x visual size
+		Each full head-bar cycle grants one stored orb; the bar stays full at three orbs
 		Stored shots persist after switching weapons and join the next valid attack
 		'''
 }

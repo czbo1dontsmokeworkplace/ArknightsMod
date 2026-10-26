@@ -1,4 +1,5 @@
 using System;
+using ArknightsMod.Content.Items.Weapons.Caster;
 using System.Collections.Generic;
 using ArknightsMod.Content.Items.Weapons.Caster.Harmonie;
 using ArknightsMod.Content.Projectiles.Caster.Ebenholz;
@@ -43,11 +44,11 @@ public sealed class HarmonieBurst : ModProjectile
         Lighting.AddLight(Projectile.Center, new Vector3(.10f, .28f, .19f) * (Projectile.timeLeft / 26f));
         if (Projectile.timeLeft != 26) return;
         SoundEngine.PlaySound(SoundID.Item26 with { Volume = .19f, Pitch = .35f, MaxInstances = 3 }, Projectile.Center);
-        HarmonieVisuals.Scatter(Projectile.Center, 8, 3.5f);
+        HarmonieVisuals.Scatter(Projectile.Center, 8, 3.5f * MysticChargeRules.BurstScale(Projectile));
     }
     public override bool PreDraw(ref Color lightColor)
     {
-        HarmonieVisuals.Explosion(Projectile.Center, (26f - Projectile.timeLeft) / 26f, 48f, Projectile.identity);
+        HarmonieVisuals.Explosion(Projectile.Center, (26f - Projectile.timeLeft) / 26f, 48f * MysticChargeRules.BurstScale(Projectile), Projectile.identity);
         return false;
     }
 }
@@ -97,7 +98,7 @@ public sealed class HarmonieOrbit : ModProjectile
             float angle = age * .018f + i * MathHelper.TwoPi / 3f;
             Vector2 offset = new(MathF.Cos(angle) * 35f, -38f + MathF.Sin(angle) * 10f);
             Vector2 center = Projectile.Center + offset;
-            HarmonieVisuals.Note(center, 7f + bloom * 1.5f, age, i + Projectile.owner * 3,
+            HarmonieVisuals.Note(center, (7f + bloom * 1.5f) * MysticChargeRules.VisualMultiplier(i), age, i + Projectile.owner * 3,
                 -MathHelper.PiOver2 + MathF.Sin(age * .025f + i) * .14f, .95f);
         }
         if (Projectile.ai[1] > 0)

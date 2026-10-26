@@ -18,6 +18,7 @@ public class GoldenglowBeacon : ModProjectile
     private int explosionFailures;
     private int previousSkill = -1;
     private Item sourceItem;
+    internal bool HasLockedTarget => Projectile.ai[2] == 0 && GetTarget() != null;
     public static int GetMaxBeacons(Player player)
     {
         var mp = player.GetModPlayer<WeaponPlayer>();

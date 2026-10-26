@@ -1,28 +1,28 @@
-using System;
+﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace ArknightsMod.Content.Projectiles.Caster.CoreCasters;
 
-// Normal premultiplied color layers own the body; explicitly named Glow is the only additive path.
+// Calamity-style fast spell light: pointed colored shells, narrow pale cores and source-textured trails.
 internal static class CoreCasterArt
 {
     internal const string Assets = "ArknightsMod/Content/Textures/CoreCasters/";
     internal const int CrimsonPalette = 10;
     internal static readonly Color Crimson = new(183, 30, 80);
-    private static Texture2D ball, spark, bloom, arc, pressure, fire, ash, crystal, soul, veil, wind, needle, point, ring, circle;
-    internal static bool Ready => ball != null && !ball.IsDisposed;
+    private static Texture2D spark, bloom, arc, pressure, fire, ash, crystal, soul, veil, wind, needle, point, ring, circle, lance, energyStreak, shock;
+    internal static bool Ready => lance != null && !lance.IsDisposed;
     internal static void Assign(Func<string, Texture2D> read)
     {
-        ball = read("PurifiedGelBall"); CoreCasterPalette.Assign(ball);
         spark = read("Spark"); bloom = read("GelBloomCircle"); ring = read("GelBloomRing");
         point = read("GelPoint"); circle = read("GelCircle"); arc = read("DreamArc"); pressure = read("Pressure");
         fire = read("FireTufts"); ash = read("AshCloud"); crystal = read("Crystal"); soul = read("Soul");
+        lance = read("EnergyLance"); energyStreak = read("EnergyStreak"); shock = read("EnergyShock");
         veil = read("Veil"); wind = read("WindCrescent"); needle = read("TechNeedle");
     }
     internal static void Unload()
     {
-        CoreCasterPalette.Unload(); ball = spark = bloom = arc = pressure = fire = ash = crystal = soul = veil = wind = needle = point = ring = circle = null;
+        CoreCasterPalette.Unload(); spark = bloom = arc = pressure = fire = ash = crystal = soul = veil = wind = needle = point = ring = circle = lance = energyStreak = shock = null;
     }
     internal static Color ColorFor(CoreCasterKind kind) => CoreCasterPalette.For((int)kind).Body;
     internal static Color Accent(CoreCasterKind kind, Color color) => CoreCasterPalette.For(Key(kind, color)).Ring;
@@ -42,92 +42,38 @@ internal static class CoreCasterArt
     private static float Angle(Vector2 v) => MathF.Atan2(v.Y, v.X);
     private static Vector2 Unit(Vector2 v) => v.LengthSquared() > .001f ? Vector2.Normalize(v) : Vector2.UnitX;
     private static Vector2 Circle(float angle) => new(MathF.Cos(angle), MathF.Sin(angle));
+    private static Color Light(Color color, float strength) => new Color(color.R, color.G, color.B, 0) * Math.Clamp(strength, 0, 1);
+    private static void Lance(SpriteBatch batch, Vector2 at, Vector2 direction, float length, float width, int key, float opacity)
+    {
+        var p = CoreCasterPalette.For(key);
+        float angle = Angle(direction) + MathHelper.PiOver2;
+        // IonBlast / WingmanShot: colored pointed shell, smaller pale core. No orbiting geometry.
+        Sprite(batch, lance, at, new Vector2(width * 2.8f, length * 1.12f), angle, Light(p.Body, opacity * .35f));
+        Sprite(batch, lance, at, new Vector2(width * 1.25f, length), angle, Light(p.Body, opacity));
+        Sprite(batch, lance, at + Unit(direction) * length * .08f, new Vector2(width * .42f, length * .72f), angle,
+            Light(Color.Lerp(p.Ring, p.Core, .62f), opacity * .95f));
+    }
     internal static void Head(SpriteBatch batch, Vector2 at, Vector2 direction, CoreCasterKind kind, float size, float time, int seed,
         float opacity = 1, bool additive = false, Color? overrideColor = null)
     {
-        int key = Key(kind, overrideColor); var palette = CoreCasterPalette.For(key);
-        Vector2 forward = Unit(direction), side = new(-forward.Y, forward.X);
-        float angle = Angle(direction), spin = time * 26.4f + seed * .73f;
-        Rectangle frame = Frame(ball, ball.Height / 8, (int)(time * 40) + seed);
-        Vector2 bodySize = new(size * 2, size * 2 * 36 / 34);
-        Texture2D atlas = CoreCasterPalette.Ball(key);
-        // Like PurifiedGel_Ball: one larger faint halo, then ONE normally blended animated body.
-        // The opaque source body must always remain visible above the halo and shells.
-        Sprite(batch, atlas, at, bodySize * 1.5f, spin, new Color(255, 255, 255, 0) * (opacity * .12f), frame);
-        Glow(batch, at, new Vector2(size * 3.5f), palette.Body, opacity * .11f);
-        switch (kind) {
-            case CoreCasterKind.Durin:
-                Ink(batch, veil, at - forward * size * .65f, new Vector2(size * 2.7f, size * .9f), angle, key, opacity * .45f);
-                break;
-            case CoreCasterKind.Steward:
-                for (int i = 0; i < 3; i++) {
-                    float orbit = -time * 3.5f + seed + i * MathHelper.TwoPi / 3;
-                    Vector2 offset = Circle(orbit) * new Vector2(size * 1.45f, size * .95f);
-                    Ink(batch, crystal, at + offset, new Vector2(size * 1.05f, size * .45f), orbit + .4f, key, opacity * .92f);
-                }
-                break;
-            case CoreCasterKind.Haze:
-                for (int i = 0; i < 3; i++) {
-                    float phase = time * 5 + seed + i * 2.1f;
-                    Vector2 offset = -forward * size * (.35f + i * .38f) + side * MathF.Sin(phase) * size * .4f;
-                    Ink(batch, ash, at + offset, new Vector2(size * 2.5f, size * 1.8f), phase * .12f, key, opacity * (.38f - i * .06f), Frame(ash, 192, seed + i));
-                    Ink(batch, veil, at + offset, new Vector2(size * 3.8f, size * 2.1f), angle + MathF.Sin(phase) * .18f, key, opacity * (.7f - i * .16f));
-                }
-                break;
-            case CoreCasterKind.Nightmare:
-                for (int i = 0; i < 2; i++) {
-                    float orbit = time * 3.1f + seed + i * 2.7f;
-                    Ink(batch, arc, at + Circle(orbit) * size * .38f, new Vector2(size * (3.4f + i * .6f), size * 2.3f), orbit, key, opacity * (.95f - i * .3f));
-                    Ink(batch, soul, at - forward * size * .8f + side * MathF.Sin(orbit) * size * .9f,
-                        new Vector2(size * .85f, size * .45f), angle + orbit * .1f, key, opacity * .65f);
-                }
-                break;
-            case CoreCasterKind.Absinthe:
-                Ink(batch, needle, at - forward * size * .9f, new Vector2(size * 4.5f, size * .55f), angle, key, opacity * .92f);
-                for (int i = -1; i <= 1; i += 2)
-                    Ink(batch, crystal, at - forward * size * .7f + side * size * i * 1.1f,
-                        new Vector2(size * 1.1f, size * .25f), angle, key, opacity * .85f);
-                break;
-            case CoreCasterKind.Eyjafjalla:
-                Flame(batch, at - forward * size * .7f, forward, size * 3.1f, .15f, seed + (int)(time * 18), opacity * .95f);
-                break;
-            case CoreCasterKind.Hoolheyak:
-                for (int i = 0; i < 3; i++) {
-                    float phase = angle + time * 2.6f + i * 2.4f;
-                    Ink(batch, wind, at - forward * size * (.25f + i * .4f), new Vector2(size * (3.8f + i * .35f), size * 2.5f), phase, key, opacity * (.9f - i * .2f));
-                }
-                break;
+        int key = Key(kind, overrideColor); var p = CoreCasterPalette.For(key);
+        Vector2 forward = Unit(direction);
+        float length = size * (kind == CoreCasterKind.Absinthe ? 4.1f : kind == CoreCasterKind.Nightmare ? 3.5f : 3);
+        float width = size * (kind == CoreCasterKind.Absinthe ? .62f : .85f);
+        if (kind == CoreCasterKind.Eyjafjalla) {
+            // Keep flame texture behind a sharply readable molten head.
+            Flame(batch, at - forward * size, forward, size * 2.2f, .25f, seed + (int)(time * 24), opacity * .55f);
         }
-        Sprite(batch, atlas, at, bodySize, spin, Color.White * opacity, frame);
+        Lance(batch, at, forward, length, width, key, opacity);
     }
     internal static void Bolt(SpriteBatch batch, Vector2 center, Vector2 velocity, Vector2[] history, Vector2 offset,
         CoreCasterKind kind, int mode, float time, int seed)
     {
         int key = CoreCasterPalette.Key(kind, kind == CoreCasterKind.Haze && mode == 2);
-        float limit = CoreCasterTrail.LengthFor(kind, mode), distance = 0, nextEcho = 25;
-        Vector2 previous = center;
-        foreach (Vector2 old in history) {
-            if (old == Vector2.Zero) break;
-            Vector2 at = old + offset, delta = previous - at; float step = delta.Length();
-            if (!float.IsFinite(step) || step > 96) break;
-            distance += step; if (distance > limit) break;
-            if (distance >= nextEcho) {
-                nextEcho += kind == CoreCasterKind.Absinthe ? 35 : 29;
-                float fade = MathF.Pow(1 - distance / limit, 1.6f);
-                Texture2D tex = kind switch { CoreCasterKind.Steward => crystal, CoreCasterKind.Haze => ash,
-                    CoreCasterKind.Nightmare => point, CoreCasterKind.Hoolheyak => wind, _ => spark };
-                if (kind == CoreCasterKind.Eyjafjalla) Flame(batch, at, delta, 26 * fade, .35f + (1 - fade) * .55f, seed, .65f * fade);
-                else if (kind == CoreCasterKind.Haze)
-                    Ink(batch, ash, at, new Vector2(45, 28) * (.7f + (1 - fade) * .4f),
-                        seed + distance * .003f, key, fade * .3f, Frame(ash, 192, seed + (int)(distance / 29)));
-                else Ink(batch, tex, at, (kind == CoreCasterKind.Nightmare ? new Vector2(6, 16) : new Vector2(28, 12)) * (.5f + fade * .5f),
-                    Angle(delta) + (kind == CoreCasterKind.Nightmare ? MathHelper.PiOver2 : MathF.Sin(time * 5 + distance * .02f) * .18f), key, fade * .65f);
-            }
-            previous = at;
-        }
-        float size = kind switch { CoreCasterKind.Durin => 11, CoreCasterKind.Steward => 15, CoreCasterKind.Absinthe => 13,
-            CoreCasterKind.Eyjafjalla => mode == 3 ? 15 : 18, _ => 18 };
-        Head(batch, center, velocity, kind, size * (mode > 0 ? 1.08f : 1), time, seed,
+        float size = kind switch { CoreCasterKind.Durin => 9, CoreCasterKind.Steward => 12,
+            CoreCasterKind.Absinthe => 11, CoreCasterKind.Eyjafjalla => mode == 3 ? 13 : 15, _ => 14 };
+        // Actual curved mesh owns the tail. Do not stack repeated heads, swirls or detached plates on it.
+        Head(batch, center, velocity, kind, size * (mode > 0 ? 1.12f : 1), time, seed,
             overrideColor: key == 7 ? Crimson : null);
     }
     internal static void Flame(SpriteBatch batch, Vector2 at, Vector2 direction, float size, float maturity, int seed, float opacity = 1, bool additive = false)
@@ -144,47 +90,46 @@ internal static class CoreCasterArt
         int key = CoreCasterPalette.Key(kind, variant >= CrimsonPalette); var p = CoreCasterPalette.For(key);
         variant %= CrimsonPalette; progress = Math.Clamp(progress, 0, 1);
         float fade = 1 - progress * progress, angle = Angle(velocity);
-        if (variant == 1)
-            Ink(batch, ash, at, new Vector2(size * (.8f + progress * .7f)), seed + progress * .2f, key,
-                MathF.Sin(progress * MathHelper.Pi) * .32f, Frame(ash, 192, seed));
-        else if (variant == 2) Burst(batch, at, kind, size, progress, seed, overrideColor: key == 7 ? Crimson : null);
-        else if (variant == 3) Flame(batch, at, velocity, size * (1 + progress * .5f), progress, seed, .7f);
-        else if (variant == 4) {
-            Ink(batch, veil, at, new Vector2(size * 2.6f, size * 1.5f) * (1 + progress), angle + progress + seed, key, fade * .6f);
-            Glow(batch, at, new Vector2(size * 1.6f), p.Body, fade * .08f);
+        if (variant == 2) { Burst(batch, at, kind, size, progress, seed, overrideColor: key == 7 ? Crimson : null); return; }
+        if (variant == 3) { Flame(batch, at, velocity, size * (1 + progress * .35f), progress, seed, .7f); return; }
+        if (variant == 1) {
+            // Low coverage aftermath. It must not obscure the contact's bright split-second shape.
+            Ink(batch, ash, at, new Vector2(size * (1 + progress * .7f)), seed * .7f + progress * .15f, key,
+                MathF.Sin(progress * MathHelper.Pi) * .18f, Frame(ash, 192, seed));return;
         }
-        else if (variant == 5) {
-            // Port PointParticle's double narrow draw and cubic fade; keep the colored center.
-            float shrink = MathF.Pow(.95f, progress * 14), alpha = 1 - progress * progress * progress;
-            Vector2 shape = new Vector2(size * .44f, size * 1.25f) * shrink;
-            Ink(batch, point, at, shape, angle + MathHelper.PiOver2, key, alpha * .85f);
-            Ink(batch, point, at, shape * new Vector2(.45f, 1), angle + MathHelper.PiOver2, key, alpha * .65f);
-            Glow(batch, at, new Vector2(size * 1.9f), p.Body, alpha * .15f);
+        if (variant == 7) {
+            // Omicron / Genesis detached luminous streak, drifting independently from the live trail.
+            float length = size * (1 - progress * .65f);
+            Sprite(batch, energyStreak, at, new Vector2(size * .12f * (1 - progress), length), angle + MathHelper.PiOver2,
+                Light(p.Body, fade * .7f));return;
         }
-        else if (variant == 6) {
-            // SquashDust: soft halo around a smaller solid colored bead, squeezed by velocity.
-            float squeeze = Math.Clamp(velocity.Length() / 6, 0, 1);
-            Vector2 shape = new Vector2(1 - squeeze * .4f, 1 + squeeze * 1.1f) * size * (1 - progress);
-            Glow(batch, at, shape * 3.2f, p.Body, fade * .28f, angle + MathHelper.PiOver2);
-            Ink(batch, circle, at, shape * .65f, angle + MathHelper.PiOver2, key, fade * .72f);
+        if (variant == 8) {
+            // Flattened source shock, aligned with the incoming projectile instead of a giant circular icon.
+            float grow = 1 - MathF.Pow(1 - progress, 3);
+            Sprite(batch, shock, at, new Vector2(size, size * .38f) * (.35f + grow), angle + MathHelper.PiOver2,
+                Light(p.Ring, MathF.Pow(1 - progress, 2) * .65f), new Rectangle(36, 952, 2374, 781));return;
         }
-        else {
-            Ink(batch, crystal, at, new Vector2(size * .45f, size * .3f) * (1 - progress * .55f), angle + seed, key, fade);
-            Glow(batch, at, new Vector2(size), p.Body, fade * .13f);
-        }
+        float sparkLength = size * (variant == 5 ? 1.5f : .8f) * (1 - progress * .65f);
+        Lance(batch, at, velocity, sparkLength, Math.Max(1.2f, size * .12f) * (1 - progress), key, fade * .8f);
     }
     internal static void Burst(SpriteBatch batch, Vector2 at, CoreCasterKind kind, float radius, float progress, int seed, bool additive = false, Color? overrideColor = null)
     {
         int key = Key(kind, overrideColor); var p = CoreCasterPalette.For(key);
-        progress = Math.Clamp(progress, 0, 1); float fade = MathF.Pow(1 - progress, 1.35f), grow = 1 - MathF.Pow(1 - progress, 3);
-        if (kind == CoreCasterKind.Eyjafjalla) for (int i = 0; i < (radius > 80 ? 6 : 4); i++) {
-            Vector2 drift = Circle(seed * .3f + i * 2.399963f) * new Vector2(.65f, .4f) * radius * grow * .65f;
-            Flame(batch, at + drift, new Vector2(drift.X * .015f, -1), radius * (.52f + i % 3 * .08f), progress * .85f, seed + i, fade);
+        progress = Math.Clamp(progress, 0, 1);
+        float flash = Math.Max(0, 1 - progress * 5), grow = 1 - MathF.Pow(1 - progress, 3);
+        float fade = MathF.Pow(1 - progress, 2.5f);
+        // The hit is a fast bloom + sharp broken rays, followed by a much dimmer expanding shock.
+        // Spatially sparse and temporally short: no lingering giant disk on every ordinary hit.
+        Glow(batch, at, new Vector2(radius * 2.5f), p.Body, fade * .58f);
+        Glow(batch, at, new Vector2(radius * .9f), p.Core, flash * .85f);
+        for (int i = 0; i < 3; i++) {
+            float angle = seed * .71f + i * 2.399963f;
+            Lance(batch, at, Circle(angle), radius * (1.7f - i * .3f) * flash, radius * .11f * flash, key, flash * .8f);
         }
-        Ink(batch, ring, at, new Vector2(radius * (1 + grow * 1.8f)), seed * .31f, key, fade * .75f);
-        Ink(batch, pressure, at, new Vector2(radius * 2.7f * grow, radius * 2.1f * grow), seed * .31f, key, fade * .6f, Frame(pressure, 256, seed + (int)(progress * 5)));
-        Glow(batch, at, new Vector2(radius * (1 + grow)), p.Body, fade * .24f);
-        Glow(batch, at, new Vector2(radius * .6f), p.Ring, Math.Max(0, 1 - progress * 6) * .5f);
+        if (kind == CoreCasterKind.Eyjafjalla) for (int i = 0; i < (radius > 70 ? 5 : 3); i++) {
+            Vector2 drift = Circle(seed * .3f + i * 2.399963f) * new Vector2(.65f, .4f) * radius * grow * .6f;
+            Flame(batch, at + drift, new Vector2(drift.X * .015f, -1), radius * (.6f + i % 3 * .07f), progress, seed + i, 1 - progress);
+        }
     }
     internal static void WindField(SpriteBatch batch, Vector2 center, float age, float scale, float opacity, int seed)
     {

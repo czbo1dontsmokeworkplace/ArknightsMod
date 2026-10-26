@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using ArknightsMod.Content.Items.Weapons.Caster.Leizi;
 using ArknightsMod.Content.Projectiles.Caster.Passenger;
 using ArknightsMod.Players;
@@ -16,7 +16,7 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Passenger;
 public sealed class PassengerConductor : ExpansionWeaponBase
 {
     private bool stormKeyConsumed;
-    private int shotIndex;
+
     protected override int[] EliteDamage => [131, 131, 131];
     internal const float NormalRange = 720f;
     internal const float FocusRange = 880f;
@@ -32,10 +32,10 @@ public sealed class PassengerConductor : ExpansionWeaponBase
         Item.DamageType = DamageClass.Magic;
         Item.width = Item.height = 40;
         Item.mana = 12;
-        // 对齐深靛的连射节奏，但改为四连发：每发 5 帧，轮次 30 帧。
+        // 向前直射三连发：每发 5 帧，轮次 30 帧。
         Item.useTime = 5;
         Item.useAnimation = 30;
-        Item.useLimitPerAnimation = 4;
+        Item.useLimitPerAnimation = 3;
         Item.useStyle = ItemUseStyleID.Shoot;
         Item.noMelee = true;
         Item.autoReuse = true;
@@ -86,12 +86,12 @@ public sealed class PassengerConductor : ExpansionWeaponBase
     {
         if (!ArknightsKeybinds.SkillActivatePressed(player))
         {
-            // Four-shot burst for normal attacks and Focus Command; UseSpeedMultiplier scales the cadence.
+            // Three-shot burst for normal attacks and Focus Command; UseSpeedMultiplier scales the cadence.
             if (player.itemAnimation <= 0)
             {
                 Item.useTime = 5;
                 Item.useAnimation = 30;
-                Item.useLimitPerAnimation = 4;
+                Item.useLimitPerAnimation = 3;
             }
             return base.CanUseItem(player);
         }
@@ -144,9 +144,9 @@ public sealed class PassengerConductor : ExpansionWeaponBase
         int updates = PassengerFlyingDischarge.FlightUpdates(visibleWidth, focus);
         int rank = SkillRank(skills);
         float candidateMultiplier = skills.Skill == 0 ? (rank == 9 ? 2.5f : 1.5f + rank * 0.1f) : 1f;
-        SkyChainVolley.Fire(player, source, ModContent.ProjectileType<PassengerFlyingDischarge>(),
+        ChainCasterVolley.Fire(player, source, ModContent.ProjectileType<PassengerFlyingDischarge>(),
             damage, knockback, target, PassengerFlyingDischarge.SpeedPerUpdate,
-            shotIndex++, updates, candidateMultiplier, ChainArtsVfx.TargetCount);
+            updates, candidateMultiplier, ChainArtsVfx.TargetCount);
         return false;
     }
 

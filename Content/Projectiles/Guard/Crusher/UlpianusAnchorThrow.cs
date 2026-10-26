@@ -30,7 +30,7 @@ public sealed class UlpianusAnchorThrow : ModProjectile
     }
     public override void SetDefaults()
     {
-        Projectile.width = Projectile.height = 42;
+        Projectile.width = Projectile.height = CrusherRules.AnchorContactSize;
         Projectile.DamageType = DamageClass.Melee; Projectile.friendly = true;
         Projectile.ignoreWater = true; Projectile.tileCollide = true; Projectile.penetrate = -1;
         Projectile.extraUpdates = 2; Projectile.timeLeft = 450; Projectile.netImportant = true;
@@ -61,7 +61,7 @@ public sealed class UlpianusAnchorThrow : ModProjectile
                 && Collision.CanHitLine(Projectile.Center, 1, 1, targetBox.TopLeft(), targetBox.Width, targetBox.Height);
         float distance = 0;
         return Collision.CheckAABBvLineCollision(targetBox.TopLeft(), targetBox.Size(), Projectile.Center - Projectile.velocity,
-            Projectile.Center + Projectile.velocity, 42, ref distance);
+            Projectile.Center + Projectile.velocity, CrusherRules.AnchorContactSize, ref distance);
     }
     public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
     {
@@ -111,7 +111,7 @@ public sealed class UlpianusAnchorThrow : ModProjectile
         if (!terrainSpent && flight.Age >= 10 && Projectile.owner == Main.myPlayer)
         {
             terrainSpent = true;
-            Feedback(Projectile.Center, MathHelper.Lerp(.75f, 1.5f, Charge));
+            Feedback(Projectile.Center, MathHelper.Lerp(.75f, 1.5f, Charge) * 2);
             // Reuse this projectile's one-hit-per-NPC immunity for the one-frame 60% ground shock.
             // Direct hits therefore cannot also receive a second splash hit from the same throw.
             Vector2 center = Projectile.Center; int width = Projectile.width, height = Projectile.height;

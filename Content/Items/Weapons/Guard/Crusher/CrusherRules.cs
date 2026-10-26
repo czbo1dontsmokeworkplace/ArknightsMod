@@ -8,12 +8,16 @@ public enum CrusherKind { Quartz, WindChimes, Hoederer, Ulpianus }
 
 internal static class CrusherRules
 {
+    internal const float SizeMultiplier = 1.5f;
+    internal const int AnchorContactSize = 63; // Previous 42-pixel body, scaled with the weapon art.
     internal const int IdleTicks = 0, FadeTicks = 8;
     internal const int BaseChargeTicks = 60;
     internal static int Interval(CrusherKind kind) => BladeSwingTemplate.BaseTicks;
     internal static int ChargeDuration(float attackSpeed) => Math.Clamp((int)MathF.Ceiling(BaseChargeTicks / Math.Max(.1f, attackSpeed)), 12, 600);
     internal static float ChargeDamage(float progress) => MathHelper.Lerp(1, 3, Math.Clamp(progress, 0, 1));
-    internal static float Reach(CrusherKind kind) => Vector2.Distance(Grip(kind), Head(kind));
+    internal static float Reach(CrusherKind kind) => Vector2.Distance(Grip(kind), Head(kind)) * SizeMultiplier;
+    internal static float ContactWidth(CrusherKind kind) => (kind == CrusherKind.Ulpianus ? 38 : 24) * SizeMultiplier;
+    internal static float PursuitWidth(CrusherKind kind) => (kind == CrusherKind.Ulpianus ? 68 : 26 + (int)kind * 8) * SizeMultiplier;
     internal static Color Tint(CrusherKind kind) => kind switch {
         CrusherKind.Quartz => new(186, 157, 100), CrusherKind.WindChimes => new(73, 194, 172),
         CrusherKind.Hoederer => new(193, 40, 62), _ => new(57, 123, 201) };

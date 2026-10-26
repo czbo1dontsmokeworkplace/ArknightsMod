@@ -18,6 +18,8 @@ public sealed class MechAccordDrone : ModProjectile
     private float cooldown = 16f;
     private int consecutiveHits;
     private int lockedIndex;
+    internal bool HasLockedTarget => lockedIndex > 0 && lockedIndex <= Main.maxNPCs
+        && Main.npc[lockedIndex - 1].CanBeChasedBy();
 
     internal static void RegisterHit(int owner, int npcIndex)
     {

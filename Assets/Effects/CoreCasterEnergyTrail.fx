@@ -1,29 +1,22 @@
 float4x4 Transform;
 float3 Outer, Inner, Shadow;
 float Time, Style;
+texture FlowTexture;
+sampler FlowSampler=sampler_state { Texture=<FlowTexture>; MinFilter=Linear; MagFilter=Linear; MipFilter=Linear; AddressU=Wrap; AddressV=Clamp; };
 struct Input { float3 Position:POSITION0; float4 Color:COLOR0; float2 UV:TEXCOORD0; };
 struct Surface { float4 Position:POSITION0; float4 Color:COLOR0; float2 UV:TEXCOORD0; };
 Surface VS(Input v) { Surface s; s.Position=mul(float4(v.Position,1),Transform); s.Color=v.Color; s.UV=v.UV; return s; }
-float Hash(float2 p) { return frac(sin(dot(p,float2(47.13,91.7)))*14381.37); }
-float Noise(float2 p) {
- float2 i=floor(p),f=frac(p); f=f*f*(3-2*f);
- return lerp(lerp(Hash(i),Hash(i+float2(1,0)),f.x),lerp(Hash(i+float2(0,1)),Hash(i+1),f.x),f.y);
-}
 float4 PS(Surface s):COLOR0 {
- float age=saturate(s.UV.x), side=s.UV.y*2-1;
- float phase=Time*(Style==4?5:2.8);
- float n=Noise(float2(age*9-phase,side*3+Style));
- float fine=Noise(float2(age*19-phase*1.6,side*5)+n);
- float flow=sin(age*19-phase*3+n*3)*age*.15;
- float cross=abs(side+flow);
- float body=(1-smoothstep(.12,1,cross))*lerp(.32,1,n*.65+fine*.35);
- float core=exp2(-abs(side+flow*.5)*18)*(1-age);
- float strand=pow(saturate(.5+.5*sin(side*21+age*18-phase*2+n*5)),7)*body*.26;
- float fade=pow(1-age,1.15)*s.Color.a;
- float smoke=Style==2?1.15:1;
- float coverage=saturate(body*.72*smoke+core*.25)*fade;
- float3 pigment=lerp(Shadow,Outer,saturate(n*.8+fine*.3));
- float3 color=pigment*coverage+Inner*(core*.26+strand*.24)*fade;
- return float4(color,coverage);
+ float age=saturate(s.UV.x), side=abs(s.UV.y*2-1);
+ float fade=pow(1-age,1.3)*s.Color.a;
+ float flow=tex2D(FlowSampler,float2(age*1.8-Time*2.6+Style*.17,s.UV.y)).r;
+ float shape=pow(saturate(1-side),1.25);
+ float filament=pow(saturate(1-side*4),2.5)*(1-age);
+ float grain=tex2D(FlowSampler,float2(age*2.2-Time*3.8, .35+s.UV.y*.3)).r;
+ float coverage=shape*fade*(.6+flow*.4);
+ float3 pigment=lerp(Shadow,Outer,.65+flow*.35);
+ // Colored body, source streak flowing within the real path, small pale spine near the head.
+ float3 rgb=pigment*coverage + Outer*flow*shape*fade*.62 + Inner*filament*fade*.8;
+ return float4(rgb,coverage*.62);
 }
 technique EnergyTrail { pass Energy { VertexShader=compile vs_3_0 VS(); PixelShader=compile ps_3_0 PS(); } }

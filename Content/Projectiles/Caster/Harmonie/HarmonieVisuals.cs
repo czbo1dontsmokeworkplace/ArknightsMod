@@ -1,4 +1,5 @@
 using ArknightsMod.Common.Particle.T;
+using ArknightsMod.Content.Items.Weapons.Caster;
 using System;
 using ArknightsMod.Common.Particle;
 using Microsoft.Xna.Framework;
@@ -84,7 +85,7 @@ internal static class HarmonieVisuals
             Vector2 a = projectile.oldPos[i] + projectile.Size * .5f, b = projectile.oldPos[i - 1] + projectile.Size * .5f;
             float fade = (1f - i / (float)projectile.oldPos.Length) * lifeFade;
             Vector2 normal = (b - a).SafeNormalize(Vector2.UnitX).RotatedBy(MathHelper.PiOver2);
-            float separation = (echo ? 1.1f : 2f) * fade;
+            float separation = (echo ? 1.1f : 2f) * fade * MysticChargeRules.VisualScale(projectile);
             Line(a, b, Teal * (fade * .28f), separation * 5f);
             for (int staff = -2; staff <= 2; staff++)
             {

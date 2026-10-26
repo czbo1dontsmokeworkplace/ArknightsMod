@@ -28,12 +28,13 @@ public sealed class MysticCoordinatedAttack : GlobalItem
         int type = kind == 0 ? ModContent.ProjectileType<IndigoDroplet>()
             : kind == 1 ? ModContent.ProjectileType<HarmonieNote>() : ModContent.ProjectileType<EbenholzCube>();
         int target = EbenholzCombat.FindTarget(player.MountedCenter, 900f, Main.MouseWorld, false);
-        int damage = Math.Max(1, (int)MathF.Round(player.GetWeaponDamage(staff) * 1.15f));
+        int damage = player.GetWeaponDamage(staff);
         for (int i = 0; i < count; i++)
         {
             int id = Projectile.NewProjectile(player.GetSource_ItemUse(staff), player.MountedCenter,
-                aim.RotatedBy((i - (count - 1) * .5f) * .22f) * 11f, type, damage,
-                player.GetWeaponKnockback(staff), player.whoAmI, 1, target + 1, 1 + i * 4);
+                aim.RotatedBy((i - (count - 1) * .5f) * .22f) * 11f, type,
+                Math.Max(1, (int)MathF.Round(damage * MysticChargeRules.DamageMultiplier(i))),
+                player.GetWeaponKnockback(staff), player.whoAmI, MysticChargeRules.StoredMode(i), target + 1, 1 + i * 4);
             if (Main.projectile.IndexInRange(id)) Main.projectile[id].CritChance = player.GetWeaponCrit(staff);
         }
     }

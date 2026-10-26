@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using ArknightsMod.Content.Items.Weapons.Caster.CoreCasters;
 using Microsoft.Xna.Framework;
@@ -34,7 +34,7 @@ public sealed class CoreCasterBolt : ModProjectile, ICoreCasterGuidance
     }
     public override void SetStaticDefaults()
     {
-        ProjectileID.Sets.TrailCacheLength[Type] = 64;
+        ProjectileID.Sets.TrailCacheLength[Type] = 80;
         ProjectileID.Sets.TrailingMode[Type] = 0;
     }
     public override void SetDefaults()
@@ -50,6 +50,7 @@ public sealed class CoreCasterBolt : ModProjectile, ICoreCasterGuidance
         if (Kind == CoreCasterKind.Absinthe)
         { Projectile.extraUpdates = 3; Projectile.timeLeft = 300; }
         if (Volcano) { Projectile.extraUpdates = 2; Projectile.timeLeft = 450; }
+        CoreCasterFlight.Configure(Projectile, Kind, Volcano);
     }
     public override void AI()
     {
@@ -63,7 +64,7 @@ public sealed class CoreCasterBolt : ModProjectile, ICoreCasterGuidance
         if (target != null && (!target.CanBeChasedBy() || Kind == CoreCasterKind.Absinthe && Mode == 2 && CoreCasterRules.LifeFraction(target) > .5f))
             target = null;
         bool seeking = GuidanceReady;
-        if (seeking && target == null && (!Volcano || Projectile.owner == Main.myPlayer) && age % 10 == 1)
+        if (seeking && target == null && (!Volcano || Projectile.owner == Main.myPlayer) && age % (3 * Projectile.MaxUpdates) == 1)
         {
             Vector2 focus = Volcano ? aimPoint ?? Projectile.Center : Projectile.Center;
             var choices = CoreCasterRules.Targets(focus, Volcano ? 360 : 650, focus, Kind == CoreCasterKind.Absinthe,
@@ -114,6 +115,7 @@ public sealed class CoreCasterBolt : ModProjectile, ICoreCasterGuidance
     }
     public override void OnKill(int timeLeft)
     {
+        CoreCasterVisuals.Retire(Projectile, Kind, Mode);
         CoreCasterVisuals.Impact(Projectile.Center, Projectile.velocity, Kind, Mode > 0, Mode);
         if (Kind == CoreCasterKind.Eyjafjalla && Mode is 2 or 3 && CoreCasterRules.Authority)
         {

@@ -1,4 +1,5 @@
 using System;
+using ArknightsMod.Content.Items.Weapons.Caster;
 using System.Collections.Generic;
 using ArknightsMod.Content.Items.Weapons.Caster.Indigo;
 using ArknightsMod.Content.Projectiles.Caster.Ebenholz;
@@ -43,11 +44,11 @@ public sealed class IndigoBurst : ModProjectile
         Lighting.AddLight(Projectile.Center, new Vector3(.18f, .10f, .28f) * (Projectile.timeLeft / 26f));
         if (Projectile.timeLeft != 26) return;
         SoundEngine.PlaySound(SoundID.Item21 with { Volume = .19f, Pitch = .35f, MaxInstances = 3 }, Projectile.Center);
-        IndigoVisuals.Scatter(Projectile.Center, 8, 3.5f);
+        IndigoVisuals.Scatter(Projectile.Center, 8, 3.5f * MysticChargeRules.BurstScale(Projectile));
     }
     public override bool PreDraw(ref Color lightColor)
     {
-        IndigoVisuals.Explosion(Projectile.Center, (26f - Projectile.timeLeft) / 26f, 48f, Projectile.identity);
+        IndigoVisuals.Explosion(Projectile.Center, (26f - Projectile.timeLeft) / 26f, 48f * MysticChargeRules.BurstScale(Projectile), Projectile.identity);
         return false;
     }
 }
@@ -96,9 +97,10 @@ public sealed class IndigoOrbit : ModProjectile
             float angle = age * .018f + i * MathHelper.TwoPi / 3f;
             Vector2 offset = new(MathF.Cos(angle) * 35f, -38f + MathF.Sin(angle) * 10f);
             Vector2 center = Projectile.Center + offset;
-            IndigoVisuals.Droplet(center, 7f + bloom * 1.5f, age, i + Projectile.owner * 3,
+            float scale = MysticChargeRules.VisualMultiplier(i);
+            IndigoVisuals.Droplet(center, (7f + bloom * 1.5f) * scale, age, i + Projectile.owner * 3,
                 -MathHelper.PiOver2 + MathF.Sin(age * .025f + i) * .14f, .95f);
-            IndigoVisuals.Ripple(center + new Vector2(0, 12f), 12f + bloom * 5f, age * .02f, .35f,
+            IndigoVisuals.Ripple(center + new Vector2(0, 12f * scale), (12f + bloom * 5f) * scale, age * .02f, .35f,
                 IndigoVisuals.Light(IndigoVisuals.Pearl, .5f), 1f);
         }
         if (Projectile.ai[1] > 0)

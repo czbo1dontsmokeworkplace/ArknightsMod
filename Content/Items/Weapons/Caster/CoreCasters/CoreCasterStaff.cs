@@ -31,6 +31,7 @@ public abstract class CoreCasterStaff : ExpansionWeaponBase
         Item.UseSound = Kind == CoreCasterKind.Absinthe ? SoundID.Item33 with { Volume = .36f, Pitch = .2f }
             : Kind == CoreCasterKind.Eyjafjalla ? SoundID.Item20 with { Volume = .35f, Pitch = -.25f }
             : SoundID.Item8 with { Volume = .35f, Pitch = -.3f };
+        CoreCasterCadence.Apply(Item);
     }
     public override bool AltFunctionUse(Player player) => false;
     private bool VolcanoActive(Player player) => Kind == CoreCasterKind.Eyjafjalla
@@ -61,6 +62,9 @@ public abstract class CoreCasterStaff : ExpansionWeaponBase
             Item.useTime = burst ? 3 : Kind == CoreCasterKind.Nightmare ? 28 : Kind == CoreCasterKind.Eyjafjalla && active && skills.Skill == 2 ? 6 : 24;
             Item.useAnimation = burst ? 24 : Item.useTime;
             Item.useLimitPerAnimation = burst ? 4 : 1;
+            Item.reuseDelay = 0;
+            if (!burst && !(Kind == CoreCasterKind.Eyjafjalla && active && skills.Skill == 2))
+                CoreCasterCadence.Apply(Item);
             Item.mana = burst ? 3 : Kind == CoreCasterKind.Eyjafjalla && active && skills.Skill == 2 ? 5 : Kind == CoreCasterKind.Eyjafjalla ? 10 : 8;
         }
         return base.CanUseItem(player);

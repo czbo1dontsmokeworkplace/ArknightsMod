@@ -22,7 +22,7 @@ public sealed class CrusherAnchorCast : ModProjectile
     private readonly bool[] effectHits = new bool[Main.maxNPCs];
     public override void SetDefaults()
     {
-        Projectile.width = Projectile.height = 42; Projectile.friendly = true; Projectile.DamageType = DamageClass.Melee;
+        Projectile.width = Projectile.height = CrusherRules.AnchorContactSize; Projectile.friendly = true; Projectile.DamageType = DamageClass.Melee;
         Projectile.tileCollide = true; Projectile.ignoreWater = true; Projectile.timeLeft = 30;
         Projectile.penetrate = -1; Projectile.usesLocalNPCImmunity = true; Projectile.localNPCHitCooldown = -1;
     }
@@ -41,7 +41,8 @@ public sealed class CrusherAnchorCast : ModProjectile
             foreach (NPC n in Main.ActiveNPCs) {
                 if (!n.CanBeChasedBy(this)) continue;
                 float collision = 0;
-                if (Collision.CheckAABBvLineCollision(n.Hitbox.TopLeft(), n.Hitbox.Size(), Projectile.Center, Projectile.Center + Projectile.velocity, 42, ref collision)) { Finish(); return; }
+                if (Collision.CheckAABBvLineCollision(n.Hitbox.TopLeft(), n.Hitbox.Size(), Projectile.Center, Projectile.Center + Projectile.velocity,
+                    CrusherRules.AnchorContactSize, ref collision)) { Finish(); return; }
             }
         }
     }

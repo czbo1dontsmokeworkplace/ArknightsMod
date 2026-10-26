@@ -1,3 +1,4 @@
+﻿using ArknightsMod.Content.Items.Weapons.Caster.CoreCasters;
 using ArknightsMod.Content.Projectiles.Caster.Durin;
 using Terraria;
 using Terraria.ID;
@@ -32,8 +33,14 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Durin
 			Item.shootSpeed = 16f;
 			Item.autoReuse = true;
 
-			Item.UseSound = SoundID.Item20; 
+			Item.UseSound = SoundID.Item20;
+            CoreCasterCadence.Apply(Item);
 		}
+
+		public override bool CanUseItem(Player player) {
+            if (player.itemAnimation <= 0) CoreCasterCadence.Apply(Item);
+            return base.CanUseItem(player);
+        }
 
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe()

@@ -1,3 +1,4 @@
+using ArknightsMod.Content.Items.Weapons.Caster;
 using ArknightsMod.Content.Projectiles.Caster.Ebenholz;
 using System;
 using Microsoft.Xna.Framework;
@@ -51,7 +52,7 @@ public sealed class HarmonieNote : ModProjectile
             || !EbenholzCombat.Clear(Projectile.Center, target.Center))) target = null;
         if (target == null && Projectile.owner == Main.myPlayer && age % 12 == 0)
         {
-            targetIndex = EbenholzCombat.FindTarget(Projectile.Center, 750f, Projectile.Center, Projectile.ai[0] == 1);
+            targetIndex = EbenholzCombat.FindTarget(Projectile.Center, 750f, Projectile.Center, MysticChargeRules.IsStored(Projectile));
             Projectile.ai[1] = targetIndex + 1;
             Projectile.netUpdate = true;
             if (targetIndex >= 0) target = Main.npc[targetIndex];
@@ -65,7 +66,7 @@ public sealed class HarmonieNote : ModProjectile
         if (!Main.dedServ && age % 4 == 0)
         {
             Vector2 velocity = -Projectile.velocity * .1f;
-            Dust dust = Dust.NewDustPerfect(Projectile.Center, DustID.TintableDustLighted, velocity, 80, HarmonieVisuals.Mint, .6f);
+            Dust dust = Dust.NewDustPerfect(Projectile.Center, DustID.TintableDustLighted, velocity, 80, HarmonieVisuals.Mint, .6f * MysticChargeRules.VisualScale(Projectile));
             dust.noGravity = true;
         }
     }
@@ -77,13 +78,13 @@ public sealed class HarmonieNote : ModProjectile
     public override void OnKill(int timeLeft)
     {
         if (Projectile.ai[2] > 0f) return;
-        HarmonieVisuals.Scatter(Projectile.Center, Wisp ? 5 : 9, Wisp ? 2f : 3.2f);
+        HarmonieVisuals.Scatter(Projectile.Center, Wisp ? 5 : 9, (Wisp ? 2f : 3.2f) * MysticChargeRules.VisualScale(Projectile));
         if (Projectile.owner != Main.myPlayer || Wisp) return;
         // 直击目标已经受过伤害；爆炸只补周围敌人，避免同一发重复结算。
         int index = Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
-            ModContent.ProjectileType<HarmonieBurst>(), Projectile.damage, 2f, Projectile.owner, 0, excludedTarget + 1);
+            ModContent.ProjectileType<HarmonieBurst>(), Projectile.damage, 2f, Projectile.owner, 0, excludedTarget + 1, MysticChargeRules.VisualScale(Projectile));
         if (Main.projectile.IndexInRange(index)) Main.projectile[index].CritChance = Projectile.CritChance;
-        if (Projectile.ai[0] != 1f || excludedTarget < 0) return;
+        if (!MysticChargeRules.IsStored(Projectile) || excludedTarget < 0) return;
         int target = EbenholzCombat.FindTarget(Projectile.Center, 600f, Projectile.Center, true);
         if (target < 0) return;
         Vector2 launch = new Vector2(Projectile.identity % 2 == 0 ? 5f : -5f, -7f);
@@ -96,7 +97,7 @@ public sealed class HarmonieNote : ModProjectile
         if (Projectile.ai[2] > 0f) return false;
         HarmonieVisuals.Trail(Projectile, Wisp);
         float fade = MathHelper.Clamp(Projectile.timeLeft / 15f, 0f, 1f);
-        HarmonieVisuals.Note(Projectile.Center, Wisp ? 4.5f : Projectile.ai[0] == 1f ? 10f : 7.5f,
+        HarmonieVisuals.Note(Projectile.Center, Wisp ? 4.5f : MysticChargeRules.IsStored(Projectile) ? 10f * MysticChargeRules.VisualScale(Projectile) : 7.5f,
             age, Projectile.identity, Projectile.rotation, fade);
         return false;
     }

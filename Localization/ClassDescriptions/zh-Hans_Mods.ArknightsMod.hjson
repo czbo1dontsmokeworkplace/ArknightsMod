@@ -1,4 +1,5 @@
 BranchTraits: {
+	Ambusher: 伏击客：  手持武器时超大幅度降低仇恨值
 	DefenderProfession: 重装：  右键举盾防御，优先级高于左键
 	Charger: 冲锋手：  左键进行戳刺，右键进行有冷却的长距离冲刺
 	PrimalCaster: 塑灵术师：  释放紫焰，并在附近敌人死亡时塑造仆役协同攻击

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using ArknightsMod.Content.Projectiles.Caster.Leizi;
 using ArknightsMod.Content.Projectiles.Caster.Passenger;
 using ArknightsMod.Content.Items.Weapons.Caster.Pudding;
@@ -16,7 +16,7 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Leizi;
 /// <summary>五星惊蛰：机械 Boss 后的链电法杖，之后用于合成异客。</summary>
 public sealed class LeiziStaff : ExpansionWeaponBase
 {
-    private int shotIndex;
+
     protected override int[] EliteDamage => [133, 133, 133];
     private static readonly float[] Skill1Bonus = [0.30f, 0.35f, 0.40f, 0.45f, 0.50f, 0.55f, 0.60f, 0.75f, 0.90f, 1f];
     private static readonly float[] Skill2Bonus = [0.60f, 0.65f, 0.70f, 0.80f, 0.85f, 0.90f, 1f, 1.15f, 1.30f, 1.50f];
@@ -81,8 +81,8 @@ public sealed class LeiziStaff : ExpansionWeaponBase
         WeaponPlayer skill = player.GetModPlayer<WeaponPlayer>();
         // 生成时锁存技能状态，飞行中切技能不会改变这发链电的伤害衰减规则。
         int mode = skill.SkillActive && skill.Skill is 0 or 1 ? skill.Skill + 1 : 0;
-        SkyChainVolley.Fire(player, source, type, damage, knockback, Main.MouseWorld,
-            LeiziFlyingDischarge.SpeedPerUpdate, shotIndex++, mode);
+        ChainCasterVolley.Fire(player, source, type, damage, knockback, Main.MouseWorld,
+            LeiziFlyingDischarge.SpeedPerUpdate, mode);
         return false;
     }
 

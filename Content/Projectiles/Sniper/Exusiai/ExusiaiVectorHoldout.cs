@@ -18,7 +18,7 @@ public sealed class VectorVisualLoader : ModSystem
 {
     public override void Load()
     {
-        if (!Main.dedServ) VectorArt.Assign(name => ModContent.Request<Texture2D>("ArknightsMod/Content/Textures/Vector/" + name,
+        if (!Main.dedServ) VectorArt.Assign(name => ModContent.Request<Texture2D>("ArknightsMod/Content/Textures/" + name,
             ReLogic.Content.AssetRequestMode.ImmediateLoad).Value);
     }
     public override void Unload() => VectorArt.Clear();
@@ -29,7 +29,7 @@ public sealed class ExusiaiVectorHoldout : ModProjectile
 {
     private Item boundItem;
     private int seenSerial, remoteReload, remoteRounds = 40;
-    private float flash, recoil, aura;
+    private float flash, recoil;
     private bool wasReloading;
     public override string Texture => "ArknightsMod/Content/Items/Weapons/Sniper/Exusiai/ExusiaiVector";
     private Vector2 Aim => Projectile.velocity.SafeNormalize(Vector2.UnitX);
@@ -67,15 +67,16 @@ public sealed class ExusiaiVectorHoldout : ModProjectile
                 && gun.PickRound(owner, mode, out int damage, out float knockback, out int ammo))
             {
                 Vector2 axis = Aim, normal = axis.RotatedBy(MathHelper.PiOver2);
-                // Distinct parallel chains: no random fan. Every lane is collision-clamped independently.
+                // Main stays on the aim axis; secondaries diverge slightly like SHPC's beam chains.
                 int lanes = VectorBalance.Lanes(mode);
                 for (int i = 0; i < lanes; i++)
                 {
                     Vector2 desired = owner.MountedCenter + axis * 51 + normal * VectorBalance.LaneOffset(mode, i);
                     Vector2 spawn = owner.MountedCenter + Collision.TileCollision(owner.MountedCenter - new Vector2(3),
                         desired - owner.MountedCenter, 6, 6, true, true);
+                    float angle = VectorBalance.LaneAngle(mode, i, i == 0 ? 0 : Main.rand.NextFloat(-1, 1));
                     Projectile shot = Projectile.NewProjectileDirect(owner.GetSource_ItemUse_WithPotentialAmmo(owner.HeldItem, ammo),
-                        spawn, axis * 16, ModContent.ProjectileType<ExusiaiVector_Bullet>(), damage, knockback, owner.whoAmI, mode);
+                        spawn, axis.RotatedBy(angle) * 16, ModContent.ProjectileType<ExusiaiVector_Bullet>(), damage, knockback, owner.whoAmI, mode);
                     shot.CritChance = owner.GetWeaponCrit(owner.HeldItem);
                     shot.ArmorPenetration = owner.GetWeaponArmorPenetration(owner.HeldItem);
                 }
@@ -112,7 +113,6 @@ public sealed class ExusiaiVectorHoldout : ModProjectile
                 }
             }
         }
-        aura = MathHelper.Lerp(aura, Projectile.ai[2] > 0 ? 1 : 0, .16f);
         owner.ChangeDir(Aim.X < 0 ? -1 : 1);
         Projectile.rotation = Aim.ToRotation();
         Projectile.Center = owner.MountedCenter + Aim * (26 - recoil);
@@ -127,8 +127,6 @@ public sealed class ExusiaiVectorHoldout : ModProjectile
     {
         Player owner = Main.player[Projectile.owner];
         int mode = (int)Projectile.ai[2];
-        VectorArt.Aura(Main.spriteBatch, owner.MountedCenter - Main.screenPosition, owner.direction, mode,
-            Main.GlobalTimeWrappedHourly, aura);
         Texture2D texture = TextureAssets.Projectile[Type].Value;
         bool reload = Projectile.owner == Main.myPlayer && owner.HeldItem.ModItem is ExusiaiVector gun ? gun.Magazine.Reloading : remoteReload > 0;
         float rotation = Projectile.rotation + (reload ? -.25f * owner.direction : 0);

@@ -11,24 +11,25 @@ namespace ArknightsMod.Content.Projectiles.Caster.CoreCasters;
 internal static class CoreCasterTrail
 {
     private static Effect material;
+    private static Texture2D flow;
     private static BlendState radiance;
     internal static BlendState Radiance => radiance ??= new BlendState {
         ColorSourceBlend = Blend.One, ColorDestinationBlend = Blend.One,
         AlphaSourceBlend = Blend.One, AlphaDestinationBlend = Blend.One
     };
-    private static readonly Vector2[] points = new Vector2[66];
-    private static readonly float[] distances = new float[66];
-    private static readonly VertexPositionColorTexture[] mesh = new VertexPositionColorTexture[132];
+    private static readonly Vector2[] points = new Vector2[82];
+    private static readonly float[] distances = new float[82];
+    private static readonly VertexPositionColorTexture[] mesh = new VertexPositionColorTexture[164];
     internal static float LengthFor(CoreCasterKind kind, int mode) => kind switch {
-        CoreCasterKind.Durin => 110, CoreCasterKind.Steward => 165, CoreCasterKind.Nightmare => 245,
-        CoreCasterKind.Absinthe => 195, CoreCasterKind.Eyjafjalla => mode == 3 ? 130 : 175, _ => 210
+        CoreCasterKind.Durin => 170, CoreCasterKind.Steward => 230, CoreCasterKind.Nightmare => 310,
+        CoreCasterKind.Absinthe => 420, CoreCasterKind.Eyjafjalla => mode == 3 ? 160 : 300, _ => 320
     };
-    internal static int Build(Projectile p, CoreCasterKind kind, int mode)
+    internal static int Build(Projectile p, CoreCasterKind kind, int mode, float opacity = 1)
     {
         float limit = LengthFor(kind, mode), distance = 0;
-        float width = kind switch { CoreCasterKind.Durin => 17, CoreCasterKind.Steward => 22,
-            CoreCasterKind.Haze => 31, CoreCasterKind.Nightmare => 28, CoreCasterKind.Absinthe => 15,
-            CoreCasterKind.Eyjafjalla => mode == 3 ? 29 : 36, _ => 27 };
+        float width = kind switch { CoreCasterKind.Durin => 10, CoreCasterKind.Steward => 14,
+            CoreCasterKind.Haze => 18, CoreCasterKind.Nightmare => 20, CoreCasterKind.Absinthe => 12,
+            CoreCasterKind.Eyjafjalla => mode == 3 ? 20 : 24, _ => 18 };
         if (mode > 0) width *= 1.08f;
         int count = 1; points[0] = p.Center; distances[0] = 0;
         foreach (Vector2 old in p.oldPos) {
@@ -47,18 +48,20 @@ internal static class CoreCasterTrail
             tangent = CoreCasterFlight.Unit(tangent);
             Vector2 normal = new(-tangent.Y, tangent.X);
             float age = distances[i] / limit;
-            float radius = width * .5f * MathF.Pow(1 - age, .62f);
-            Color alpha = i == count - 1 ? Color.Transparent : Color.White;
+            float radius = width * .5f * MathF.Pow(1 - age, .62f) * MathF.Sqrt(opacity);
+            Color alpha = i == count - 1 ? Color.Transparent : Color.White * opacity;
             Vector2 position = points[i] - Main.screenPosition;
             mesh[i * 2] = new(new Vector3(position + normal * radius, 0), alpha, new(age, 0));
             mesh[i * 2 + 1] = new(new Vector3(position - normal * radius, 0), alpha, new(age, 1));
         }
         return count * 2;
     }
-    internal static void Draw(Projectile p, CoreCasterKind kind, int mode)
+    internal static void Draw(Projectile p, CoreCasterKind kind, int mode, float opacity = 1)
     {
-        int count = Build(p, kind, mode); if (count < 4) return;
+        int count = Build(p, kind, mode, opacity); if (count < 4) return;
         material ??= ModContent.Request<Effect>("ArknightsMod/Assets/Effects/CoreCasterEnergyTrail", AssetRequestMode.ImmediateLoad).Value;
+        flow ??= ModContent.Request<Texture2D>(CoreCasterArt.Assets + "EnergyFlow", AssetRequestMode.ImmediateLoad).Value;
+        material.Parameters["FlowTexture"].SetValue(flow);
         Color color = kind == CoreCasterKind.Haze && mode == 2 ? CoreCasterArt.Crimson : CoreCasterArt.ColorFor(kind);
         material.Parameters["Transform"].SetValue(Main.GameViewMatrix.TransformationMatrix * Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, 0, 1));
         material.Parameters["Outer"].SetValue(color.ToVector3());
@@ -77,7 +80,7 @@ internal static class CoreCasterTrail
                 DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
         }
     }
-    internal static void Unload() { material = null; radiance?.Dispose(); radiance = null; }
+    internal static void Unload() { material = null; flow = null; radiance?.Dispose(); radiance = null; }
 }
 public sealed class CoreCasterVisualSystem : ModSystem
 {

@@ -46,7 +46,7 @@ internal static class CrusherAnchorVisuals
             Vector2 at=history[i],delta=history[i-1]-at;
             if(delta.LengthSquared()<.01f||delta.LengthSquared()>60*60)continue;
             Main.EntitySpriteDraw(chain,at-Main.screenPosition,null,new Color(140,196,220)*(.6f*(1-i/12f)),
-                delta.ToRotation()-MathHelper.PiOver2,chain.Size()*.5f,.8f,SpriteEffects.None);
+                delta.ToRotation()-MathHelper.PiOver2,chain.Size()*.5f,.8f * CrusherRules.SizeMultiplier,SpriteEffects.None);
         }
         Vector2 axis=q.velocity.SafeNormalize(Vector2.UnitX);
         float reach=CrusherRules.Reach(Kind)*1.1f;
@@ -64,19 +64,19 @@ internal static class CrusherAnchorVisuals
         Vector2 z = q.Center - q.velocity.SafeNormalize(Vector2.UnitX) * CrusherRules.Reach(Kind) * .55f;
         float length = Vector2.Distance(a, z);
         if (!float.IsFinite(length) || length > 1400) return;
-        int count = Math.Clamp((int)(length / Math.Max(8, chain.Height * .75f)), 1, 120);
+        int count = Math.Clamp((int)(length / Math.Max(8, chain.Height * .75f * CrusherRules.SizeMultiplier)), 1, 120);
         Vector2 Point(float t) => Vector2.Lerp(a, z, t) + Vector2.UnitY * MathF.Sin(t * MathHelper.Pi) * Math.Min(65, length * .08f);
         for (int i = 0; i < count; i++)
         {
             Vector2 at = Point(i / (float)count), next = Point((i + 1f) / count);
             Main.EntitySpriteDraw(chain, (at + next) / 2 - Main.screenPosition, null, new Color(116, 170, 201),
-                (next - at).ToRotation() - MathHelper.PiOver2, chain.Size() / 2, .9f, SpriteEffects.None);
+                (next - at).ToRotation() - MathHelper.PiOver2, chain.Size() / 2, .9f * CrusherRules.SizeMultiplier, SpriteEffects.None);
         }
     }
     internal static void Impact(Projectile q)
     {
         if(!CrusherVisuals.Visible(q.Center))return;
-        float strength=Math.Clamp(q.ai[0],.35f,1.5f);Vector2 axis=q.velocity.SafeNormalize(Vector2.UnitX);
+        float strength=Math.Clamp(q.ai[0],.35f,3f);Vector2 axis=q.velocity.SafeNormalize(Vector2.UnitX);
         foreach(var p in CrusherVisuals.BurstParticles(q.Center,axis,Kind,strength))if(ParticleManager.activeParticles.Count<1200)p.Spawn();
         for(int i=0;i<(int)(18*strength);i++){
             Vector2 direction=Main.rand.NextVector2CircularEdge(1,1);
@@ -90,7 +90,7 @@ internal static class CrusherAnchorVisuals
     internal static void DrawImpact(Projectile q)
     {
         if(!CrusherVisuals.Visible(q.Center))return;
-        float t=1-q.timeLeft/22f,strength=Math.Clamp(q.ai[0],.35f,1.5f),fade=(1-t)*(1-t);
+        float t=1-q.timeLeft/22f,strength=Math.Clamp(q.ai[0],.35f,3f),fade=(1-t)*(1-t);
         Vector2 axis=q.velocity.SafeNormalize(Vector2.UnitX);float rotation=axis.ToRotation();
         CrusherMaterial.DrawImpact(q.Center,axis,Kind,t,strength);
         using(new ChargedOperatorVfx.Pass(true)){

@@ -35,6 +35,8 @@ public sealed class ChargedOperatorHoldout : ModProjectile
     private Vector2 GunCenter => Projectile.Center + GunAim * (14 - (heavy ? 10 : 5) * Recoil);
     private Item boundItem;
     internal float Completion => ChargedOperatorRules.Completion(Projectile.ai[1], ChargedOperatorRules.ChargeTicks(Kind));
+    internal bool IsSniperCharging(Item item) => !Melee && !AutomaticShot && Projectile.ai[2] == 0
+        && (boundItem == null || ReferenceEquals(boundItem, item));
     private float Reach => ChargedOperatorRules.Reach(Kind, heavy) * (Kind == ChargedOperatorKind.NearlRadiant && skill is 1 or 3 ? 1.15f : 1);
     private float SwingProgress => Math.Clamp((Projectile.ai[2] - 1) / 18f, 0, 1);
     private float BladeAngle => Projectile.velocity.ToRotation() + (Projectile.ai[2] == 0 ? -1.2f
