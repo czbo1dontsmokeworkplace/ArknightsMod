@@ -1,5 +1,6 @@
 using ArknightsMod.Content.Tiles.Infrastructure;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Material
@@ -20,10 +21,12 @@ namespace ArknightsMod.Content.Items.Material
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe();
 			recipe.AddIngredient<OrirockCube>(2);
+			recipe.AddIngredient(ItemID.SilverCoin, 16);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 			recipe = CreateRecipe();
 			recipe.AddIngredient<Device>();
+			recipe.AddIngredient(ItemID.SilverCoin, 10);
 			recipe.AddTile(ModContent.TileType<FactoryTile>());
 			recipe.Register();
 		}

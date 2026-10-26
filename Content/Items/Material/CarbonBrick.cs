@@ -4,7 +4,7 @@ namespace ArknightsMod.Content.Items.Material
 {
 	public class CarbonBrick : ArknightsMaterial
 	{
-		public override int Rarity => 2;
+		public override int Rarity => 0;
 
 		// 碳素是材料货架上唯一用金币结算的常驻商品（见 Closure.PriceMaterialByRarity）：
 		// 不参与合成玉定价与回收，也不打合成玉回收提示。

@@ -127,7 +127,7 @@ namespace ArknightsMod.Systems
 
 			return pool;
 		}
-		// 淇濆瓨瀹屾暣鐨?Item 瀵硅薄鑰屼笉鏄彧淇濆瓨 type
+		// 保存完整的 Item 对象而不是只保存 type
 		public static List<Item> CannotShopItems = [];
 		public static int OldCannotShopCount;
 
@@ -236,7 +236,7 @@ namespace ArknightsMod.Systems
 			packet.Send();
 		}
 
-		// 淇敼锛氬悓姝ヨ嚜瀹氫箟璐у竵淇℃伅
+		// 修改：同步自定义货币信息
 		public static void SendUpdateCannotShop(Mod mod) {
 			var packet = mod.GetPacket();
 			packet.Write((short)ArknightsMod.ArkMessageID.UpdateCannotShop);
@@ -262,7 +262,7 @@ namespace ArknightsMod.Systems
 			}
 		}
 
-		// 璇诲彇骞舵仮澶嶈嚜瀹氫箟璐у竵淇℃伅
+		// 读取并恢复自定义货币信息
 		public static void ReadUpdateCannotShop(BinaryReader reader) {
 			CannotShopItems = [];
 			try {
