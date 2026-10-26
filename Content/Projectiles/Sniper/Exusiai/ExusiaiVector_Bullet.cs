@@ -1,95 +1,76 @@
-﻿using Microsoft.Xna.Framework.Graphics;
 using System;
-using Terraria.Audio;
-using Terraria.GameContent;
+using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria;
-using Microsoft.Xna.Framework;
 
-namespace ArknightsMod.Content.Projectiles.Sniper.Exusiai
+namespace ArknightsMod.Content.Projectiles.Sniper.Exusiai;
+
+public class ExusiaiVector_Bullet : ModProjectile
 {
-    public class ExusiaiVector_Bullet : ModProjectile
+    private Vector2 launch;
+    private bool initialized;
+    public override void SetDefaults()
     {
-        Player player => Main.player[Projectile.owner];
+        Projectile.width = Projectile.height = 8;
+        Projectile.timeLeft = 240;
+        Projectile.DamageType = DamageClass.Ranged;
+        Projectile.friendly = true; Projectile.ignoreWater = true;
+        Projectile.extraUpdates = 6; Projectile.penetrate = 1;
+        Projectile.usesLocalNPCImmunity = true; Projectile.localNPCHitCooldown = -1;
+    }
+    public override void AI()
+    {
+        if (!initialized) { initialized = true; launch = Projectile.Center; }
+        Projectile.rotation = Projectile.velocity.ToRotation();
+        if (Projectile.numUpdates == 0)
+            Lighting.AddLight(Projectile.Center, VectorArt.Theme((int)Projectile.ai[0]).ToVector3() * .3f);
+    }
+    public override bool PreDraw(ref Color lightColor)
+    {
+        VectorArt.Round(Main.spriteBatch, Projectile.Center - Main.screenPosition, Projectile.velocity,
+            initialized ? Vector2.Distance(launch, Projectile.Center) : 0, (int)Projectile.ai[0]);
+        return false;
+    }
+    public override void OnKill(int timeLeft)
+    {
+        // One compact, networked visual burst; decoration never creates damaging projectiles.
+        if (Projectile.owner == Main.myPlayer)
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center,
+                -Projectile.velocity.SafeNormalize(Vector2.UnitX), ModContent.ProjectileType<VectorImpact>(),
+                0, 0, Projectile.owner, Projectile.ai[0], Projectile.identity % 127);
+    }
+}
 
-        public override void SetStaticDefaults()
+public sealed class VectorImpact : ModProjectile
+{
+    private static ulong budgetFrame;
+    private static int dustThisFrame;
+    public override string Texture => "Terraria/Images/MagicPixel";
+    public override void SetDefaults()
+    {
+        Projectile.width = Projectile.height = 2; Projectile.timeLeft = 15;
+        Projectile.tileCollide = false; Projectile.ignoreWater = true; Projectile.penetrate = -1;
+    }
+    public override bool? CanDamage() => false;
+    public override bool ShouldUpdatePosition() => false;
+    public override void AI()
+    {
+        if (Main.dedServ || Projectile.localAI[0]++ != 0 ||
+            Vector2.DistanceSquared(Projectile.Center, Main.LocalPlayer.Center) > 2200 * 2200) return;
+        if (budgetFrame != Main.GameUpdateCount) { budgetFrame = Main.GameUpdateCount; dustThisFrame = 0; }
+        for (int i = 0; i < 3 && dustThisFrame < 24; i++, dustThisFrame++)
         {
-            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 8;
-            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
+            Dust dust = Dust.NewDustPerfect(Projectile.Center, i == 0 ? DustID.Smoke : DustID.Ash,
+                Projectile.velocity.RotatedByRandom(.9f) * Main.rand.NextFloat(1, 4), 150,
+                i == 0 ? new Color(116, 101, 91) : new Color(229, 185, 106), .6f);
+            dust.noGravity = true;
         }
-
-        public override void SetDefaults()
-        {
-            Projectile.width = Projectile.height = 8;
-            Projectile.aiStyle = 1;
-            Projectile.timeLeft = 600;
-            Projectile.DamageType = DamageClass.Ranged;
-            Projectile.friendly = true;
-            Projectile.ignoreWater = true;
-            Projectile.extraUpdates = 6;
-
-            AIType = ProjectileID.Bullet;
-        }
-
-        public override void AI()
-        {
-            Lighting.AddLight(Projectile.Center, 0.48f, 0.33f, 0.11f);
-
-            base.AI();
-        }
-
-        public override bool PreDraw(ref Color lightColor)
-        {
-            Texture2D texture = TextureAssets.Projectile[Type].Value;
-
-            var drawOrigin = new Vector2(texture.Width * 0.5f, Projectile.height * 0.5f);
-
-            for (int k = Projectile.oldPos.Length - 1; k > 0; k--)
-            {
-                Vector2 drawPos = Projectile.oldPos[k] - Main.screenPosition + drawOrigin + new Vector2(0f, Projectile.gfxOffY);
-                Color color = Projectile.GetAlpha(lightColor) * ((Projectile.oldPos.Length - k) / (float)Projectile.oldPos.Length);
-                Main.EntitySpriteDraw(texture,
-                    drawPos,
-                    null,
-                    color,
-                    Projectile.rotation,
-                    drawOrigin,
-                    Projectile.scale,
-                    SpriteEffects.None,
-                    0
-                    );
-            }
-
-            return true;
-        }
-
-        public override void OnKill(int timeLeft)
-        {
-            Collision.HitTiles(Projectile.position + Projectile.velocity, Projectile.velocity, Projectile.width, Projectile.height);
-            SoundEngine.PlaySound(SoundID.Item10, Projectile.position);
-            for (int j = 0; j < 3; j++)
-            {
-                float[] rand = {
-                        Main.rand.NextFloat(-45f, 0f),
-                        Main.rand.NextFloat(-15f, 15f),
-                        Main.rand.NextFloat(0f, 45f)
-                    };
-                for (int i = 0; i < 3; i++)
-                {
-                    float angleMagnitude = Math.Abs(rand[i]);
-
-                    Vector2 vel = Projectile.velocity.RotatedBy(MathHelper.ToRadians(rand[i])) * (1f - angleMagnitude / 30f * 0.3f) * Main.rand.NextFloat(0.5f, 1.5f);
-
-                    Projectile.NewProjectileDirect(
-                        Projectile.GetSource_FromThis(),
-                        Projectile.position,
-                        vel,
-                        ModContent.ProjectileType<Exusiai_Gun_Effect>(),
-                        0, 0, player.whoAmI
-                    );
-                }
-            }
-        }
+    }
+    public override bool PreDraw(ref Color lightColor)
+    {
+        VectorArt.Impact(Main.spriteBatch, Projectile.Center - Main.screenPosition, Projectile.velocity,
+            1 - Projectile.timeLeft / 15f, (int)Projectile.ai[1], (int)Projectile.ai[0]);
+        return false;
     }
 }

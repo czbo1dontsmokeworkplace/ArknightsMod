@@ -37,10 +37,13 @@ Items: {
 		DisplayName: Ulpianus's Anchor
 		Tooltip:
 			'''
-			Hold left click to charge, then release a single custom swing; fully charges in 1 second before attack-speed modifiers
-			Charge increases damage from 100% to 300% and strengthens the outline and slash effects
+			Hold left click to charge, then release to lift and throw the anchor; fully charges in 1 second before attack-speed modifiers
+			Charge increases damage from 100% to 300% and increases throwing speed
 			A shared head bar shows charge; a crystal chime signals full charge
-			Only fully charged physical anchor hits call a heavy anchor from below that homes in on the struck enemy with unlimited piercing
+			Coasts, falls under gravity, then returns along its chain; only one normal anchor may be in flight
+			Each new enemy struck directly triggers a 150x150 arcane blast, dealing one extra hit for 100% of the thrown anchor's melee damage
+			Ground impacts after 10 ticks deal 60% splash damage without hitting the same enemy twice
+			Only fully charged direct anchor hits call a heavy anchor from below that homes in on the struck enemy with unlimited piercing
 			'''
 	}
 }
@@ -90,7 +93,7 @@ Skills: {
 	UlpianusAnchor: {
 		1: {
 			Label: Contact That Must Be Made
-			Desc: Recover SP over time. At full SP, the next fully charged physical swing hit calls an anchor from below that homes in on the struck enemy, dealing 170%-270% damage with unlimited piercing and dragging the first two ordinary knockback-vulnerable enemies toward you.
+			Desc: Recover SP over time. At full SP, the next fully charged direct thrown-anchor hit calls an anchor from below that homes in on the struck enemy, dealing 170%-270% damage with unlimited piercing and dragging the first two ordinary knockback-vulnerable enemies toward you.
 		}
 
 		2: {
@@ -108,6 +111,8 @@ Skills: {
 CrusherStrainDeath: "{0} sank beneath the unquenched embers."
 
 Projectiles: {
+	UlpianusAnchorExplosion.DisplayName: Abyssal Anchor Blast
+	UlpianusAnchorThrow.DisplayName: Charged Anchor Throw
 	CrusherUpheaval.DisplayName: Rising Crusher Strike
 	CrusherAnchorFeedback.DisplayName: Abyssal Anchor Impact
 	CrusherWave.DisplayName: Crusher Wave

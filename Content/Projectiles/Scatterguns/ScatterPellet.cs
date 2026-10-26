@@ -40,8 +40,6 @@ public sealed class ScatterPellet : ModProjectile
             Projectile.extraUpdates = 2;
             Projectile.velocity *= 4f / 3f;
         }
-        Projectile.penetrate = Tier == 2 ? 5 : 2;
-        if (Tier == 2) Projectile.timeLeft = 150;
         Projectile.ArmorPenetration = Tier == 1 ? (Mode == 1 ? 35 : 15) : 0;
     }
     public override void AI()
@@ -49,14 +47,9 @@ public sealed class ScatterPellet : ModProjectile
         ConfigureFlight();
         Projectile.ai[2] += Projectile.velocity.Length();
         Projectile.rotation = Projectile.velocity.ToRotation();
-        if (Tier == 2) Projectile.velocity.Y += .025f;
-        if (Projectile.ai[2] > (Tier == 2 ? 1230 : 820)) Projectile.Kill();
+        if (Projectile.ai[2] > 820) Projectile.Kill();
         Lighting.AddLight(Projectile.Center, ScatterVisuals.ColorFor(Tier).ToVector3() * .18f);
         if (Tier == 1 && Projectile.numUpdates == 0) ScatterVisuals.ExecutorFlight(Projectile);
-        if (Tier == 2 && Projectile.numUpdates == 0)
-        {
-            ScatterVisuals.WaterTrail(Projectile);
-        }
     }
     public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
     {
@@ -66,24 +59,13 @@ public sealed class ScatterPellet : ModProjectile
     }
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
     {
-        ScatterVisuals.Spray(Projectile.Center, -Projectile.velocity.SafeNormalize(Vector2.UnitY), Tier, Tier == 2 ? 12 : 7, 5);
-        if (Tier == 2)
-        {
-            target.AddBuff(BuffID.Wet, 240);
-            if (Mode > 0) target.AddBuff(ModContent.BuffType<HighPressureSoak>(), Mode == 2 ? 180 : 90);
-            if (Mode == 2 && Projectile.owner == Main.myPlayer
-                && Main.player[Projectile.owner].ownedProjectileCounts[ModContent.ProjectileType<ChalterWaterField>()] < 3)
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), target.Center, Vector2.Zero,
-                    ModContent.ProjectileType<ChalterWaterField>(), Math.Max(1, Projectile.damage / 5), 0,
-                    Projectile.owner);
-        }
+        ScatterVisuals.Spray(Projectile.Center, -Projectile.velocity.SafeNormalize(Vector2.UnitY), Tier, 7, 5);
         Projectile.damage = Math.Max(1, (int)(Projectile.damage * .8f));
     }
     public override void OnKill(int timeLeft) => ScatterVisuals.Spray(Projectile.Center,
-        -Projectile.velocity.SafeNormalize(Vector2.UnitY), Tier, Tier == 2 ? 10 : 4, 3);
+        -Projectile.velocity.SafeNormalize(Vector2.UnitY), Tier, 4, 3);
     public override bool PreDraw(ref Color lightColor)
     {
-        if (Tier == 2) return false; // Drawn together by ChalterWaterRenderer, with one shader batch.
         Main.instance.LoadProjectile(ProjectileID.BulletHighVelocity);
         Texture2D bullet = TextureAssets.Projectile[ProjectileID.BulletHighVelocity].Value;
         PhalanxVisuals.Sprite(bullet, Projectile.Center - Main.screenPosition, bullet.Size(),

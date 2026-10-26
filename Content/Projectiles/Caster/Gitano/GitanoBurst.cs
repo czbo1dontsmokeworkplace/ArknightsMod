@@ -1,4 +1,5 @@
 using System;
+using ArknightsMod.Common.VisualEffects.HelldiverExplosions;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -30,6 +31,7 @@ public sealed class GitanoBurst : ModProjectile
 
     public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
     {
+        HelldiverExplosion.Spawn(Projectile, Projectile.Center, 5);
         if (Fate)
         {
             Vector2 center = Projectile.Center;
@@ -71,7 +73,6 @@ public sealed class GitanoBurst : ModProjectile
 
     public override bool PreDraw(ref Color lightColor)
     {
-        GitanoVisuals.DrawBurst(Projectile.Center, Fate, MathHelper.Clamp(Age / Lifetime, 0f, 1f));
         return false;
     }
 }

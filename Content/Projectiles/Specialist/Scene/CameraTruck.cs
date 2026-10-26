@@ -50,14 +50,12 @@ namespace ArknightsMod.Content.Projectiles.Specialist.Scene
 		private const float WalkStopDist = 32f;   // 离目标点此范围内停下
 
 		// 地面攻击（小跳）
-		private const float SearchRadius     = 280f;  // 圆形索敌半径（像素）：发现目标后会主动靠近，
-		                                               // 但不代表能打到——是否起跳攻击看下面 AttackRangeMargin 算出的近战距离。
+		private const float SearchRadius     = 280f;  // 索敌半径；进入朝前延伸一个车身宽度的矩形后起跳攻击。
 		private const int   HopDuration      = 22;
 		private const int   HopCooldownMax   = 180;   // 低频攻击：约3秒
 		private const float HopForward       = 26f;
 		private const float HopHeight        = 15f;
 		private const float LeanMax          = 0.22f;
-		private const float AttackRangeMargin = 8f;   // 近战可攻击距离 = 车身半宽 + 起跳位移 + 目标半宽 + 这个余量
 
 		// 地面头部弹簧
 		private const float HeadSpringK    = 0.20f;
@@ -178,6 +176,20 @@ namespace ArknightsMod.Content.Projectiles.Specialist.Scene
 		public override bool? CanCutTiles() => false;
 
 		public override bool MinionContactDamage() => IsHopping && stunTimer <= 0;
+
+		private Rectangle GetAttackHitbox(int direction) {
+			Rectangle hitbox = Projectile.Hitbox;
+			if (direction < 0)
+				hitbox.X -= hitbox.Width;
+			hitbox.Width *= 2;
+			return hitbox;
+		}
+
+		public override void ModifyDamageHitbox(ref Rectangle hitbox) {
+			// Only outgoing damage reaches forward; terrain and incoming damage retain the physical body.
+			if (IsHopping && !isFlying && stunTimer <= 0)
+				hitbox = GetAttackHitbox(hopDir);
+		}
 
 		public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) {
 			float m = SceneCameraSkills.AttackMult(Main.player[Projectile.owner]);
@@ -313,18 +325,15 @@ namespace ArknightsMod.Content.Projectiles.Specialist.Scene
 			// 重力
 			Projectile.velocity.Y = Math.Min(Projectile.velocity.Y + Gravity, MaxFallSpeed);
 
-			// 索敌：SearchRadius 范围内发现目标后就主动朝目标移动，而不是仍旧原地跟着玩家走；
-			// 只有真正贴近到"近战距离"（车身半宽 + 起跳位移 + 目标半宽 + 余量）才会触发起跳攻击——
-			// 之前是一发现目标（哪怕还隔着一大截 SearchRadius）就在原地跳，位置完全不往怪物那边挪。
+			// 索敌与攻击分开：靠近目标，直到车身及前方一个车身宽度的矩形能碰到目标。
 			bool hasTarget    = TryFindTarget(owner, out NPC target);
 			bool inAttackRange = false;
 			if (hasTarget) {
-				float attackRange = Projectile.width / 2f + HopForward + target.width / 2f + AttackRangeMargin;
-				inAttackRange = Vector2.Distance(target.Center, Projectile.Center) <= attackRange;
+				facingDir = target.Center.X >= Projectile.Center.X ? 1 : -1;
+				inAttackRange = GetAttackHitbox(facingDir).Intersects(target.Hitbox);
 			}
 
-			// 跟随目标 X：有目标就一直朝目标贴过去（哪怕已经进入攻击距离也继续以目标为跟随点，
-			// 这样冷却转好能立刻再打一下，不会先跑回玩家身后再折返）；没有目标才回到玩家身后排队站位。
+			// 有目标时保持在攻击范围边缘；没有目标才回到玩家身后排队站位。
 			float targetX;
 			if (hasTarget) {
 				targetX = target.Center.X;
@@ -335,7 +344,9 @@ namespace ArknightsMod.Content.Projectiles.Specialist.Scene
 			}
 			float dx = targetX - Projectile.Center.X;
 
-			if (Math.Abs(dx) > WalkStopDist) {
+			if (inAttackRange) {
+				Projectile.velocity.X = 0f;
+			} else if (Math.Abs(dx) > WalkStopDist) {
 				int moveDir = dx > 0 ? 1 : -1;
 				facingDir = moveDir;
 				Projectile.velocity.X += moveDir * GroundAccel;
@@ -346,7 +357,9 @@ namespace ArknightsMod.Content.Projectiles.Specialist.Scene
 					facingDir = dx > 0 ? 1 : -1;
 			}
 
-			ApplySeparation(owner);
+			// 排队互斥不能把已经停稳攻击的车继续推入敌人体内。
+			if (!inAttackRange)
+				ApplySeparation(owner);
 
 			// 手动 tile 碰撞（corrVel = 实际可走距离）
 			Vector2 corrVel  = Collision.TileCollision(Projectile.position, Projectile.velocity,
@@ -467,7 +480,7 @@ namespace ArknightsMod.Content.Projectiles.Specialist.Scene
 		}
 
 		// 只负责"在 SearchRadius 范围内有没有可打的目标"，不代表已经近到能攻击——
-		// 是否真的进入近战范围由调用方（UpdateGroundFollow）自己拿返回的 target 算距离判断。
+		// 是否真的进入攻击矩形由调用方（UpdateGroundFollow）判断。
 		private bool TryFindTarget(Player owner, out NPC target) {
 			target = null;
 			Vector2 center = Projectile.Center;

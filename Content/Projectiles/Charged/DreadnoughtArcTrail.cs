@@ -40,7 +40,7 @@ internal static class DreadnoughtArcTrail
         Draw(center, aimAngle, facing, progress, reach, body, shadow, edge);
     }
     internal static void Draw(Vector2 center, float aimAngle, int facing, float progress, float reach,
-        Color body, Color shadow, Color edge, float opacity = 1)
+        Color body, Color shadow, Color edge, float opacity = 1, Func<float, float> sampleAngle = null)
     {
         if (!ChargedOperatorVfx.Visible(center) || progress < .16f || progress >= 1) return;
         shader ??= ModContent.Request<Effect>("ArknightsMod/Assets/Effects/DreadnoughtArcTrail", AssetRequestMode.ImmediateLoad).Value;
@@ -51,7 +51,7 @@ internal static class DreadnoughtArcTrail
         {
             float t = i / (float)(Samples - 1);
             float sample = MathHelper.Lerp(progress, tail, t);
-            float angle = BladeSwingTemplate.Angle(aimAngle, facing, sample);
+            float angle = sampleAngle?.Invoke(sample) ?? BladeSwingTemplate.Angle(aimAngle, facing, sample);
             Vector2 axis = angle.ToRotationVector2();
             Color color = Color.White * (alpha * MathF.Pow(1 - t, .3f));
             // The bright outside edge ends at the visible blade tip, not 45 degrees

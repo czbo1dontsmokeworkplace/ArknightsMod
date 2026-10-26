@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using ArknightsMod.Common.VisualEffects.HelldiverExplosions;
 using ArknightsMod.Content;
 using ArknightsMod.Content.Items.Weapons.Charged;
 using ArknightsMod.Players;
@@ -26,6 +27,7 @@ public sealed class DreadnoughtSwing : ModProjectile
     private bool initialized;
     private int targetsHit;
     private Item boundItem;
+    private bool maximumMomentum;
     private float sweepStartAngle, sweepEndAngle;
     private Vector2 sweepStartCenter, sweepEndCenter;
     private float previousAngle;
@@ -63,6 +65,7 @@ public sealed class DreadnoughtSwing : ModProjectile
         writer.Write(initialized); writer.Write(duration); writer.Write(facing); writer.Write(skill);
         writer.Write(Projectile.damage); writer.Write(Projectile.knockBack); writer.Write(Projectile.CritChance);
         writer.Write(targetsHit);
+        writer.Write(maximumMomentum);
     }
 
     public override void ReceiveExtraAI(BinaryReader reader)
@@ -70,6 +73,7 @@ public sealed class DreadnoughtSwing : ModProjectile
         initialized = reader.ReadBoolean(); duration = reader.ReadSingle(); facing = reader.ReadInt32(); skill = reader.ReadInt32();
         Projectile.damage = reader.ReadInt32(); Projectile.knockBack = reader.ReadSingle(); Projectile.CritChance = reader.ReadInt32();
         targetsHit = reader.ReadInt32();
+        maximumMomentum = reader.ReadBoolean();
         previousAngle = Angle;
         Player owner = Main.player[Projectile.owner];
         previousCenter = owner.MountedCenter + new Vector2(0, owner.gfxOffY);
@@ -90,6 +94,7 @@ public sealed class DreadnoughtSwing : ModProjectile
         facing = (aim.X < 0 ? -1 : 1) * (int)owner.gravDir;
         bool swift = Kind == ChargedOperatorKind.Franka && skill == 1 || Kind == ChargedOperatorKind.NearlRadiant && skill == 1;
         var momentum = owner.GetModPlayer<DreadnoughtPlayer>();
+        maximumMomentum = momentum.Progress >= .9999f;
         duration = DreadnoughtRules.SwingTicks(owner.GetAttackSpeed(DamageClass.Melee), swift);
         momentum.Attacking(weapon.Item);
         Projectile.damage = Math.Max(1, (int)(owner.GetWeaponDamage(weapon.Item) * ChargedOperatorPlayer.DamageMultiplier(Kind, skill)));
@@ -190,6 +195,7 @@ public sealed class DreadnoughtSwing : ModProjectile
         {
             Projectile.NewProjectile(Projectile.GetSource_OnHit(target), point, tangent,
                 ModContent.ProjectileType<DreadnoughtHeavyImpact>(), 0, 0, Projectile.owner, (int)Kind);
+            if (maximumMomentum) HelldiverExplosion.Spawn(Projectile, point, (int)Kind);
         }
     }
 

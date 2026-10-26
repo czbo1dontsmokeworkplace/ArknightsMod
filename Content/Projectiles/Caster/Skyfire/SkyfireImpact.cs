@@ -1,4 +1,5 @@
 using System;
+using ArknightsMod.Common.VisualEffects.HelldiverExplosions;
 using ArknightsMod.Content.Buffs;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -31,6 +32,7 @@ public sealed class SkyfireImpact : ModProjectile
 
     public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
     {
+        HelldiverExplosion.Spawn(Projectile, Projectile.Center, 7);
         Vector2 center = Projectile.Center;
         Projectile.width = Projectile.height = Skyfall ? 470 : 340;
         Projectile.Center = center;
@@ -63,7 +65,6 @@ public sealed class SkyfireImpact : ModProjectile
 
     public override bool PreDraw(ref Color lightColor)
     {
-        SkyfireVisuals.DrawImpact(Projectile.Center, Projectile.width, MathHelper.Clamp(Age / Lifetime, 0f, 1f));
         return false;
     }
 }

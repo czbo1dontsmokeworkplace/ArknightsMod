@@ -33,6 +33,7 @@ public sealed class GavialChainsawHoldout : ModProjectile
         Projectile.friendly = true;
         Projectile.penetrate = -1;
         Projectile.tileCollide = false;
+        Projectile.ownerHitCheck = true;
         Projectile.ignoreWater = true;
         Projectile.aiStyle = -1;
         Projectile.DamageType = DamageClass.Melee;
@@ -132,7 +133,8 @@ public sealed class GavialChainsawHoldout : ModProjectile
         foreach (NPC npc in Main.ActiveNPCs)
         {
             if (!npc.CanBeChasedBy(Projectile) || npc.boss || npc.realLife >= 0
-                || npc.knockBackResist <= 0f || !BladeHits(npc.Hitbox)) continue;
+                || npc.knockBackResist <= 0f || !Projectile.CanHitWithMeleeWeapon(npc)
+                || !BladeHits(npc.Hitbox)) continue;
             Vector2 delta = latch - npc.Center;
             if (delta.LengthSquared() < 28f * 28f) continue;
             Vector2 desired = delta.SafeNormalize(Vector2.Zero) * 5f;
@@ -143,8 +145,7 @@ public sealed class GavialChainsawHoldout : ModProjectile
 
     private bool BladeHits(Rectangle target)
     {
-        if (!Collision.CanHit(Owner.MountedCenter, 1, 1, target.TopLeft(), target.Width, target.Height))
-            return false;
+        // Native ownerHitCheck handles damage occlusion; PullTargets applies the same check explicitly.
         float point = 0f;
         return Collision.CheckAABBvLineCollision(target.TopLeft(), target.Size(),
             hand + aimAngle.ToRotationVector2() * 20f, tip, Width, ref point);

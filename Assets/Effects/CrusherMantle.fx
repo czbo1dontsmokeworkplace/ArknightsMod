@@ -55,8 +55,22 @@ float4 Impact(Surface s):COLOR0 {
     float alpha=saturate(ripple*.72+petals*.55+core)*Opacity*(1-smoothstep(.9,1,radius));
     return float4(lerp(BodyTint,EdgeTint,saturate(core+petals*.55)),alpha);
 }
+float4 AnchorBlast(Surface s):COLOR0 {
+    float2 p=s.UV*2-1;
+    float radius=length(p),a=atan2(p.y,p.x),t=saturate(Phase);
+    float fade=pow(1-t,2),n=Smoke(p*8+float2(t*2,-t*3));
+    float ring=exp2(-abs(radius-(.12+sqrt(t)*.75))*100)*fade;
+    float innerRing=exp2(-abs(radius-(.08+sqrt(t)*.48))*120)*fade*.55;
+    float lobes=pow(saturate(cos(a*7+n*3+t*2)),6);
+    float mist=exp2(-radius*5)*smoothstep(.28,.8,n)*fade*(.5+lobes);
+    float rays=pow(saturate(cos(a*12+n*.5)),26)*exp2(-radius*4)*fade;
+    float core=exp2(-radius*16)*pow(saturate(1-t*5),2);
+    float alpha=saturate(ring+innerRing+mist*.8+rays*.7+core*1.5)*(1-smoothstep(.9,1,radius))*Opacity;
+    return float4(lerp(BodyTint,lerp(EdgeTint,float3(1,1,1),saturate(core*1.5)),saturate(ring+innerRing+core+rays)),alpha);
+}
 technique CrusherMantle {
     pass TrailPass { VertexShader=compile vs_3_0 VS(); PixelShader=compile ps_3_0 Trail(); }
     pass SealPass { VertexShader=compile vs_3_0 VS(); PixelShader=compile ps_3_0 Seal(); }
     pass ImpactPass { VertexShader=compile vs_3_0 VS(); PixelShader=compile ps_3_0 Impact(); }
+    pass AnchorBlastPass { VertexShader=compile vs_3_0 VS(); PixelShader=compile ps_3_0 AnchorBlast(); }
 }

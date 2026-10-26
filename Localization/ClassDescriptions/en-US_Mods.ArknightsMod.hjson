@@ -1,4 +1,5 @@
 BranchTraits: {
+	DefenderProfession: Defender:  Right-click to raise your shield and guard; takes priority over left-click
 	Charger: Charger:  Left-click to thrust; right-click for a long-distance charge with a cooldown
 	PrimalCaster: Primal Caster:  Release violet flames and create allied servants when nearby enemies die
 	Fortress: Fortress:  Launch ranged artillery attacks while guarding with a shield

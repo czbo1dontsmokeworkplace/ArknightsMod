@@ -398,6 +398,9 @@ namespace ArknightsMod.Players
 		}
 
 		public void SetSkill(int skill) {
+			// An active standard-bearer skill owns its slot until its timer ends.
+			if (global::ArknightsMod.Content.Projectiles.Vanguard.StandardBearers.StandardBearerPlayer.IsPhased(Player))
+				return;
 			if (SkillInitialize) {
 				AccessoriesChargeFraction = 0d;
 				Skill = skill;
@@ -1025,17 +1028,17 @@ namespace ArknightsMod.Players
 				IconName = "ExusiaiVector";
 				HowManySkills = 3;
 				SkillLevel = [10, 10, 10];
-				ChargeTypeIsPerSecond = [false, true, false];
-				AutoTrigger = [true, false, false];
+				ChargeTypeIsPerSecond = [false, true, true];
+				AutoTrigger = [true, false, true];
 				ShowSummonIconBySkills = [false, false, false];
 
 				InitialSPs1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 				InitialSPs2List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 25];
 				InitialSPs3List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 20];
-				MaxSPs1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 4];
+				MaxSPs1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 40];
 				MaxSPs2List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 35];
 				MaxSPs3List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 30];
-				SkillActiveTimeS1List = [0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0.2f];
+				SkillActiveTimeS1List = [0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f];
 				SkillActiveTimeS2List = [0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 15f];
 				SkillActiveTimeS3List = [0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 15f];
 				StockMaxS1List = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1];

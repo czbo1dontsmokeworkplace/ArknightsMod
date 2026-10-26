@@ -1,17 +1,28 @@
 using System;
+using ArknightsMod.Content.Projectiles.Caster.CoreCasters;
 using ArknightsMod.Content.Items.Weapons.Caster.Hoolheyak;
 using Microsoft.Xna.Framework;
 using Terraria;
+using System.IO;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles.Caster.Hoolheyak;
 
-public sealed class HoolheyakWindBolt : ModProjectile
+public sealed class HoolheyakWindBolt : ModProjectile, ICoreCasterGuidance
 {
     internal const int SeekingSolo = 1, SeekingPair = 2, Barrage = 3, BarrageFinisher = 4;
     private int Mode => (int)Projectile.ai[0];
     private int Rank => Math.Clamp((int)Projectile.ai[2], 0, 9);
+    private CoreCasterFlight flight;
+    public bool GuidanceReady => flight?.CanGuide(CoreCasterKind.Hoolheyak) == true;
+    public override void SendExtraAI(BinaryWriter writer) => CoreCasterGuidance.Write(writer, flight);
+    public override void ReceiveExtraAI(BinaryReader reader) => flight = CoreCasterGuidance.Read(reader);
+    public override void SetStaticDefaults()
+    {
+        ProjectileID.Sets.TrailCacheLength[Type] = 60;
+        ProjectileID.Sets.TrailingMode[Type] = 0;
+    }
     public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.None;
 
     public override void SetDefaults()
@@ -20,7 +31,8 @@ public sealed class HoolheyakWindBolt : ModProjectile
         Projectile.DamageType = DamageClass.Magic;
         Projectile.friendly = true;
         Projectile.penetrate = 1;
-        Projectile.timeLeft = 90;
+        Projectile.timeLeft = 270;
+        Projectile.extraUpdates = 2;
         Projectile.ignoreWater = true;
         Projectile.usesLocalNPCImmunity = true;
         Projectile.localNPCHitCooldown = -1;
@@ -39,17 +51,25 @@ public sealed class HoolheyakWindBolt : ModProjectile
             return;
         }
         int targetIndex = (int)Projectile.ai[1] - 1;
+        Vector2? destination = null;
+        if (flight == null)
+        {
+            flight = new CoreCasterFlight(Projectile.Center, Projectile.velocity, Projectile.MaxUpdates, Projectile.identity);
+        }
         if (Main.npc.IndexInRange(targetIndex))
         {
             NPC target = Main.npc[targetIndex];
             if (target.CanBeChasedBy(Projectile) && target.DistanceSQ(Projectile.Center) < 1100f * 1100f
                 && HoolheyakWindCombat.ClearPath(Projectile.Center, target.Center))
-                Projectile.velocity = (Projectile.velocity * 11f
-                    + (target.Center - Projectile.Center).SafeNormalize(Projectile.velocity.SafeNormalize(Vector2.UnitX)) * 18f) / 12f;
+                destination = target.Center;
         }
+        if (!destination.HasValue && GuidanceReady)
+            destination = CoreCasterGuidance.Target(Projectile, 1100);
+        flight.Step(CoreCasterKind.Hoolheyak, Mode, Projectile.Center, ref Projectile.velocity, Projectile.MaxUpdates, destination);
         Projectile.rotation = Projectile.velocity.ToRotation();
+        if (Projectile.numUpdates != 0) return;
         Projectile.localAI[0]++;
-        // Keep physical dust and custom particles layered over the procedural spiral throughout flight.
+        // Fine particles follow the shared energy core and the mint wind palette.
         if (!Main.dedServ && Projectile.localAI[0] % 2 == 0)
             HoolheyakWindVisuals.Mote(Projectile.Center, -Projectile.velocity * .08f, .65f);
         if (!Main.dedServ && Projectile.localAI[0] % (Mode >= Barrage ? 4 : 2) == 0)
@@ -87,11 +107,12 @@ public sealed class HoolheyakWindBolt : ModProjectile
         HoolheyakSmallVortex.CreateOrFeed(Projectile, (int)MathF.Round(Projectile.damage / multiplier), target);
     }
 
-    public override void OnKill(int timeLeft) => HoolheyakWindVisuals.Burst(Projectile.Center, Projectile.velocity, Mode >= Barrage ? 4 : 9);
+    public override void OnKill(int timeLeft) => CoreCasterVisuals.Impact(Projectile.Center, Projectile.velocity,
+        CoreCasterKind.Hoolheyak, Mode is SeekingSolo or SeekingPair or BarrageFinisher);
 
     public override bool PreDraw(ref Color lightColor)
     {
-        HoolheyakWindVisuals.Bolt(Projectile.Center, Projectile.rotation, Projectile.localAI[0], Mode >= Barrage ? .65f : 1f);
+        CoreCasterVisuals.Bolt(Projectile, CoreCasterKind.Hoolheyak, Mode >= Barrage ? 0 : Mode);
         return false;
     }
 }

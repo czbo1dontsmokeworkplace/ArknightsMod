@@ -151,6 +151,10 @@ namespace ArknightsMod.Systems.Gameplay.Damage
 			RegisterAlways<SkyfireStaff>();       // 天火的法杖
 			RegisterAlways<PuddingStaff>();       // 布丁的电磁法杖
 			RegisterAlways<StewardStaff>();      // 史都华德的法杖
+			RegisterAlways<global::ArknightsMod.Content.Items.Weapons.Caster.CoreCasters.NightmareStaff>();
+			RegisterAlways<global::ArknightsMod.Content.Items.Weapons.Caster.CoreCasters.AbsintheStaff>();
+			RegisterAlways<global::ArknightsMod.Content.Items.Weapons.Caster.CoreCasters.EyjafjallaStaff>();
+			RegisterAlways<global::ArknightsMod.Content.Items.Weapons.Caster.Hoolheyak.HoolheyakWindArts>();
 			RegisterAlways<ValarqvinWeapon>();   // 凛视的法杖
 			RegisterAlways<BeanstalkOrb>();      // 豆苗的召唤武器
 			RegisterAlways<SaintBell>();         // 圣女的铃铛

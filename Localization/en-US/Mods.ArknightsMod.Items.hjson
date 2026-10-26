@@ -1152,8 +1152,14 @@ SpicyCandy: {
 }
 
 ExusiaiVector: {
-	DisplayName: Vector [Exusiai]
-	Tooltip: ""
+	DisplayName: KRISS-"Vector" [Exusiai]
+	Tooltip:
+		'''
+		40 rounds per magazine, 20 volleys per second; release left click to stop and retain rounds
+		Empty magazines reload automatically in 1.2 seconds; weapon switching is locked during reload
+		No manual reload; skill bonus bullets do not consume additional rounds or ammunition
+		Ammo damage is scaled with firing and reload cadence for about 150% of the previous theoretical output
+		'''
 }
 
 ExusiaiVector_Ammo: {
@@ -2955,8 +2961,12 @@ PipeBlueLightBlock: {
 }
 
 HazeMagicBook: {
-	DisplayName: Magic Book [Haze]
-	Tooltip: ""
+	DisplayName: Staff [Haze]
+	Tooltip:
+		'''
+		Early Hardmode
+		Fires blue-violet spells; skills empower attacks or trade maximum life for a burst of power
+		'''
 }
 
 ReedFlameShadowStaff: {
@@ -3204,7 +3214,11 @@ TexasDefault: {
 
 StewardStaff: {
 	DisplayName: Staff [Steward]
-	Tooltip: ""
+	Tooltip:
+		'''
+		Attacks charge an empowered homing spell
+		Seeks nearby enemies with high defense
+		'''
 }
 
 GoldenglowWand: {
@@ -3381,8 +3395,8 @@ EntelechiaScythe: {
 	DisplayName: Entelechia's Great Scythe
 	Tooltip:
 		'''
-		Swings a scythe to release a crescent that passes through terrain and slows to a stop in midair
-		Crescents hit up to 7 enemies, losing speed and damage with each hit
+		Swings a scythe to release an accelerating, terrain-piercing crescent that sheds homing motes
+		Crescents hit up to 7 enemies, losing damage with each hit
 		'''
 }
 
@@ -3833,6 +3847,7 @@ HoolheyakWindArts: {
 	DisplayName: Windfeather [Ho'olheyak]
 	Tooltip:
 		'''
+		Available after defeating Golem
 		Fires a wind bolt that creates a homing vortex on hit
 		Vortices pull in and lift ordinary enemies, but cannot lift bosses
 		'''
@@ -3988,7 +4003,7 @@ ExecutorShotgun: {
 
 ChalterWatergun: {
 	DisplayName: Pressure Washer [Ch'en the Holungday]
-	Tooltip: Fires a spread of water droplets, each piercing up to 5 enemies
+	Tooltip: Fires a spread of water-energy orbs, each piercing up to 5 enemies
 }
 
 MaterialistUplink: {

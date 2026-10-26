@@ -8,6 +8,7 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Durin
 	public class DurinWand : UpgradeWeaponBase
 	{
 		public override void SetStaticDefaults() {
+			Item.staff[Type] = true;
 			// DisplayName.SetDefault("Durin's wand");
 			// Tooltip.SetDefault("She looks quite sleepy.");
 		}
@@ -22,7 +23,7 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Durin
 			Item.useAnimation = 40;
 			Item.useStyle = ItemUseStyleID.Shoot;
 			Item.noMelee = true;
-			Item.channel = true; //Channel so that you can held the weapon [Important]
+			Item.channel = false;
 			Item.knockBack = 4;
 			Item.value = Item.sellPrice(0, 0, 0, 20);
 			Item.rare = ItemRarityID.White;

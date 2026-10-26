@@ -47,3 +47,7 @@ public sealed class ExampleHeadBar : WeaponHeadBar
 ## 重剑手
 
 四把重剑手武器按住左键蓄力时显示 `CrusherHeadBar`，直接读取 `CrusherHeldBlade.ChargeProgress`，填充不增加平滑延迟。松手隐藏，保留公共8帧淡出；颜色对应金晶、青风、赤焰、深海。铎铃二技能的独立蓄势也由相同条读取 `CrusherPlayer.Charge`，不与普通左键蓄力重复显示。
+
+## 冲锋手
+
+红豆、格拉尼、野鬃、风笛的右键冷却使用 `VanguardChargeHeadBar`，继承 `WeaponHeadBar`。直接读取原有 `VanguardSpearPlayer.Cooldown.Ratio`，0代表刚冲锋、1代表5秒共享冷却结束；不增加计时器或填充平滑。手持时显示，切走以公共8帧淡出，切回以4帧淡入，保留红/蓝/橙/金主题色。独立的旧 `VanguardChargeCooldownLayer` 已移除，避免两条叠画。冷却逻辑、跨武器共享及死亡继续计时不变。

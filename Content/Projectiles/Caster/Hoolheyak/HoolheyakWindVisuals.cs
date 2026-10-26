@@ -1,163 +1,31 @@
-using ArknightsMod.Common.Particle.T;
-using System;
-using ArknightsMod.Common.Particle;
+using ArknightsMod.Content.Projectiles.Caster.CoreCasters;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.GameContent;
-using Terraria.ID;
 
 namespace ArknightsMod.Content.Projectiles.Caster.Hoolheyak;
 
-/// <summary>独立的螺旋风带绘制；全部在局部尺寸内构造，不引用灾厄贴图或全屏滤镜。</summary>
+// The wind fields share the energy spell's textured clouds, palette and particle budget.
 internal static class HoolheyakWindVisuals
 {
-    private static readonly Color Mint = new(137, 220, 192);
-    private static readonly Color Core = new(224, 250, 229);
-    private static readonly Color Shade = new(29, 66, 66);
-    private static readonly Color DeepTeal = new(12, 39, 48);
-    private const float EffectDensity = 1.3f;
-    private static readonly Rectangle Pixel = new(0, 0, 1, 1);
-
-    // MagicPixel 原图并非 1×1；必须显式截取一个像素，避免长度再次乘上贴图宽度。
-    private static void Segment(Vector2 a, Vector2 b, Color color, float width)
-    {
-        Vector2 delta = b - a;
-        float length = delta.Length();
-        if (!float.IsFinite(length) || length < .01f || length > 40f)
-            return;
-        Main.EntitySpriteDraw(TextureAssets.MagicPixel.Value, a - Main.screenPosition, Pixel, color,
-            delta.ToRotation(), new Vector2(0f, .5f), new Vector2(length + .45f, MathHelper.Clamp(width, .3f, 8f)), SpriteEffects.None);
-    }
-
     internal static void Bolt(Vector2 center, float rotation, float age, float scale)
     {
-        Vector2 forward = rotation.ToRotationVector2();
-        Vector2 side = forward.RotatedBy(MathHelper.PiOver2);
-        for (int strand = 0; strand < 3; strand++)
-        {
-            Vector2 previous = Vector2.Zero;
-            for (int i = 0; i <= 24; i++)
-            {
-                float t = i / 24f;
-                float angle = t * MathHelper.TwoPi * 1.3f - age * .55f + strand * MathHelper.TwoPi / 3f;
-                float radius = MathF.Sin(t * MathHelper.Pi) * 9f * scale;
-                Vector2 point = center + forward * ((t - .75f) * 56f * scale) + side * MathF.Sin(angle) * radius;
-                if (i > 0)
-                {
-                    float depth = (MathF.Cos(angle) + 1f) * .5f;
-                    float alpha = MathF.Sin(t * MathHelper.Pi) * (.38f + .35f * depth);
-                    float width = MathHelper.Lerp(.8f, 1.7f, depth) * scale * EffectDensity;
-                    Segment(previous, point, DeepTeal * alpha, width + 2.2f * scale);
-                    Segment(previous, point, Color.Lerp(Shade, Mint, .4f + depth * .6f) * alpha, width);
-                    if (depth > .65f)
-                        Segment(previous, point, Core * (alpha * (depth - .65f) * 1.8f), .55f * scale);
-                }
-                previous = point;
-            }
-        }
+        if (CoreCasterVisuals.Ready()) CoreCasterArt.Head(Main.spriteBatch, center - Main.screenPosition,
+            rotation.ToRotationVector2(), CoreCasterKind.Hoolheyak, scale * 17, age / 60, 0);
     }
-
     internal static void Vortex(Vector2 center, float age, float scale, float opacity, int seed)
     {
-        if (opacity <= 0f)
-            return;
-        float phase = age * .20f + seed * .71f;
-        // 后半圈先画，前半圈后画；窄底宽顶的风带沿竖直轴盘旋，保持透明风眼。
-        for (int front = 0; front < 2; front++)
-        {
-            for (int band = 0; band < 3; band++)
-            {
-                Vector2 previous = Vector2.Zero;
-                for (int i = 0; i <= 64; i++)
-                {
-                    float t = i / 64f;
-                    float angle = phase + band * MathHelper.TwoPi / 3f + t * MathHelper.TwoPi * 2.2f;
-                    float depth = MathF.Sin(angle);
-                    float radius = (10f + 33f * t) * scale;
-                    Vector2 point = center + new Vector2(MathF.Cos(angle) * radius,
-                        (52f - t * 118f) * scale + depth * radius * .22f);
-                    if (i > 0 && (depth >= 0 ? 1 : 0) == front)
-                    {
-                        float edge = MathF.Pow(MathF.Sin(t * MathHelper.Pi), .6f);
-                        float facing = (depth + 1f) * .5f;
-                        float alpha = edge * opacity * (front == 0 ? .30f : .8f);
-                        float width = (1.2f + t * 2.5f) * scale * EffectDensity
-                            * MathHelper.Lerp(.65f, 1f, facing);
-                        Segment(previous, point, DeepTeal * alpha, width + 2.4f * scale);
-                        Segment(previous, point, Color.Lerp(Shade, Mint, .25f + facing * .75f) * alpha, width);
-                        if (front == 1)
-                        {
-                            Vector2 highlight = new Vector2(0f, -.85f * scale);
-                            Segment(previous + highlight, point + highlight,
-                                Core * (alpha * facing * .65f), .65f * scale);
-                        }
-                    }
-                    previous = point;
-                }
-            }
-        }
-        // 顶部碎风弧随旋转交替显现，避免风柱像完整的弹簧。
-        for (int arc = 0; arc < 3; arc++)
-        {
-            Vector2 previous = Vector2.Zero;
-            for (int i = 0; i <= 16; i++)
-            {
-                float t = i / 16f;
-                float angle = -phase * .7f + arc * 2.1f + t * 1.5f;
-                Vector2 point = center + new Vector2(MathF.Cos(angle) * 45f, -54f + MathF.Sin(angle) * 11f) * scale;
-                if (i > 0)
-                    Segment(previous, point, Core * (MathF.Sin(t * MathHelper.Pi) * opacity * .45f), 1.5f * scale);
-                previous = point;
-            }
-        }
+        if (opacity > 0 && CoreCasterVisuals.Ready()) CoreCasterArt.WindField(Main.spriteBatch,
+            center - Main.screenPosition, age, scale, opacity, seed);
     }
-
-    internal static void Mote(Vector2 position, Vector2 velocity, float scale)
-    {
-        if (Main.dedServ)
-            return;
-        // 每次保留原粒子，30% 概率补一组，平均密度提高 30%。
-        int count = Main.rand.NextFloat() < EffectDensity - 1f ? 2 : 1;
-        for (int i = 0; i < count; i++)
-        {
-            Vector2 point = position + (i == 0 ? Vector2.Zero : Main.rand.NextVector2Circular(3f, 3f));
-            Dust dust = Dust.NewDustPerfect(point, DustID.Cloud, velocity, 150, Mint, scale);
-            dust.noGravity = true;
-            dust.noLight = true;
-            if (ParticleManager.activeParticles.Count < 1100)
-                new T_Streak_Particle(point, velocity * .65f, 18, .18f * scale, Core, true)
-                    { Deformation = new Vector2(.5f, 1.7f) }.Spawn();
-        }
-    }
-
-    // 小颗粒沿风带切线逸出，与云尘使用同一密度倍率。
-    internal static void WindSpark(Vector2 position, Vector2 velocity, float scale)
-    {
-        if (Main.dedServ)
-            return;
-        int count = Main.rand.NextFloat() < EffectDensity - 1f ? 2 : 1;
-        for (int i = 0; i < count; i++)
-        {
-            Vector2 point = position + (i == 0 ? Vector2.Zero : Main.rand.NextVector2Circular(3f, 3f));
-            Dust dust = Dust.NewDustPerfect(point, DustID.TintableDustLighted, velocity, 100, Mint, scale);
-            dust.noGravity = true;
-            dust.noLight = true;
-            if (ParticleManager.activeParticles.Count < 1100)
-                new T_Streak_Particle(point, velocity, 22, .23f * scale, Core, true)
-                    { Deformation = new Vector2(.35f, 2.4f) }.Spawn();
-        }
-    }
-
+    internal static void Mote(Vector2 position, Vector2 velocity, float scale) => CoreCasterVisuals.WindMote(position, velocity, scale, false);
+    internal static void WindSpark(Vector2 position, Vector2 velocity, float scale) => CoreCasterVisuals.WindMote(position, velocity, scale, true);
     internal static void Burst(Vector2 center, Vector2 velocity, int count)
     {
-        if (Main.dedServ)
-            return;
-        for (int i = 0; i < count; i++)
-        {
-            Vector2 outward = Main.rand.NextVector2CircularEdge(1f, 1f);
-            Mote(center + outward * 10f, outward * Main.rand.NextFloat(1f, 3f) + velocity * .15f - Vector2.UnitY, .75f);
-            WindSpark(center + outward * 8f, outward.RotatedBy(.7f) * Main.rand.NextFloat(2f, 4f), .9f);
+        if (Main.dedServ) return;
+        for (int i = 0; i < count; i++) {
+            Vector2 outward = Main.rand.NextVector2CircularEdge(1, 1);
+            Mote(center + outward * 10, outward * Main.rand.NextFloat(1, 3) + velocity * .1f - Vector2.UnitY, .75f);
+            WindSpark(center + outward * 8, outward.RotatedBy(.7f) * Main.rand.NextFloat(2, 4), .9f);
         }
     }
 }

@@ -2,36 +2,38 @@ Items: {
 	MyrtleStandard: {
 		DisplayName: Pole Standard [Myrtle]
 		Tooltip: ""
+		FlavorText: '''"Don't anyone wander away."'''
 	}
 
 	ElysiumStandard: {
 		DisplayName: Pole Standard [Elysium]
 		Tooltip: ""
+		FlavorText: '''"Check your headsets, people."'''
 	}
 
 	JacintStandard: {
 		DisplayName: Pole Standard [Jacint]
 		Tooltip: ""
+		FlavorText: '''"Let's set off!"'''
 	}
 
 	SaileachStandard: {
 		DisplayName: Pole Standard [Saileach]
 		Tooltip: ""
+		FlavorText: '''"Follow me. Forward!"'''
 	}
 }
 
 BranchTraits.StandardBearer: Standard Bearer:  Takes no damage during skills, but cannot deal damage
 
 StandardBearers: {
-	Aura: While held, grants you and allies within 800 pixels +{0}% movement speed, +{1} defense, +1 life regeneration per second and +{2}% summon damage (strongest aura applies)
+	Aura: Held aura: +{0}% speed, +{1} defense, +1 life/sec, +{2}% summon damage
 	Controls:
 		'''
-		Holds the pole upright; left-click to turn toward the cursor, thrust at close range and return
-		Each thrust releases a short magic crescent with infinite piercing; damage stays within 6 tiles of the spear tip and fades in about 0.2 seconds
-		Phasing allows movement but stops your projectiles and minions from dealing damage; switching items or skills ends it
-		Deployment Cost appears as green orbs: 1 Cost restores 1 SP to the currently held weapon; expires after about 10 seconds
+		Left-click to thrust and release a short piercing crescent
+		Skills lock this flag in hand; generated Cost restores SP
 		'''
-	SkillKey: Press [{0}] to activate the selected skill
+	SkillKey: Press [{0}] to activate skill
 }
 
 Skills: {

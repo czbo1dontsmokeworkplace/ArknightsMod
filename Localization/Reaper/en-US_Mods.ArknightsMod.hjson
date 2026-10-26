@@ -3,8 +3,8 @@ Items: {
 		DisplayName: Humus's Cutting Scythe
 		Tooltip:
 			'''
-			Swings a scythe to release a crescent that passes through terrain and slows to a stop in midair
-			Crescents hit up to 7 enemies, losing speed and damage with each hit
+			Swings a scythe to release an accelerating, terrain-piercing crescent that sheds homing motes
+			Crescents hit up to 7 enemies, losing damage with each hit
 			'''
 	}
 
@@ -12,8 +12,8 @@ Items: {
 		DisplayName: La Pluma's Scythe
 		Tooltip:
 			'''
-			Swings a scythe to release a crescent that passes through terrain and slows to a stop in midair
-			Crescents hit up to 7 enemies, losing speed and damage with each hit
+			Swings a scythe to release an accelerating, terrain-piercing crescent that sheds homing motes
+			Crescents hit up to 7 enemies, losing damage with each hit
 			'''
 	}
 }

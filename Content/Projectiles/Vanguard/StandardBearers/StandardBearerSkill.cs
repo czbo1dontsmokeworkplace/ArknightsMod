@@ -19,14 +19,28 @@ public sealed class StandardBearerSkill : ModProjectile
     public int Skill => (int)Projectile.ai[1];
     private int duration, emitted, boundSlot;
     private Item boundItem;
+    private bool wasFavorite;
+    internal int BoundSlot => boundSlot;
     public bool Valid(Player owner) => Projectile.active && duration > 0 && owner.active && !owner.dead
-        && !owner.CCed && !owner.noItems && owner.selectedItem == boundSlot
-        && owner.HeldItem.ModItem is StandardBearerWeapon weapon && weapon.Kind == Kind
-        && (owner.whoAmI != Main.myPlayer || ((boundItem == null || ReferenceEquals(boundItem, owner.HeldItem))
-            && owner.GetModPlayer<WeaponPlayer>().SkillActive && owner.GetModPlayer<WeaponPlayer>().Skill == Skill));
+        && (uint)boundSlot < owner.inventory.Length
+        && owner.inventory[boundSlot].ModItem is StandardBearerWeapon weapon && weapon.Kind == Kind
+        && (boundItem == null || ReferenceEquals(boundItem, owner.inventory[boundSlot]));
+    internal void Enforce(Player owner)
+    {
+        if (!Valid(owner)) return;
+        owner.selectedItem = boundSlot;
+        owner.controlUseItem = owner.controlUseTile = owner.controlThrow = false;
+        if (owner.whoAmI == Main.myPlayer)
+        {
+            WeaponPlayer mp = owner.GetModPlayer<WeaponPlayer>();
+            mp.Skill = Skill; mp.SkillActive = true;
+            mp.SkillTimer = (int)Projectile.ai[2];
+        }
+    }
     public void Configure(Player owner, int ticks)
     {
         duration = Math.Clamp(ticks, 1, 1800); boundSlot = owner.selectedItem; boundItem = owner.HeldItem;
+        wasFavorite = boundItem.favorited; boundItem.favorited = true;
         owner.GetModPlayer<StandardBearerPlayer>().Active = this;
         Projectile.netUpdate = true;
     }
@@ -47,12 +61,7 @@ public sealed class StandardBearerSkill : ModProjectile
         Player owner = Main.player[Projectile.owner];
         if (!Valid(owner) || (uint)(int)Kind > 3 || Skill < 0 || Skill > (Kind == StandardBearerKind.Saileach ? 2 : 1))
         { Projectile.Kill(); return; }
-        if (owner.whoAmI == Main.myPlayer)
-        {
-            WeaponPlayer mp = owner.GetModPlayer<WeaponPlayer>();
-            if (!mp.SkillActive || mp.Skill != Skill || mp.CurrentSkill?.Key.Item != owner.HeldItem.ModItem.Name)
-            { Projectile.Kill(); return; }
-        }
+        Enforce(owner);
         owner.GetModPlayer<StandardBearerPlayer>().Active = this;
         Projectile.Center = owner.Center;
         Projectile.timeLeft = 2;
@@ -103,6 +112,7 @@ public sealed class StandardBearerSkill : ModProjectile
     public override void OnKill(int timeLeft)
     {
         Player owner = Main.player[Projectile.owner];
+        if (boundItem != null) boundItem.favorited = wasFavorite;
         if (owner.GetModPlayer<StandardBearerPlayer>().Active == this)
             owner.GetModPlayer<StandardBearerPlayer>().Active = null;
         if (owner.whoAmI == Main.myPlayer && owner.HeldItem.ModItem is StandardBearerWeapon weapon && weapon.Kind == Kind)

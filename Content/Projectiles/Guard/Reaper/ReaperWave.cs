@@ -11,47 +11,48 @@ namespace ArknightsMod.Content.Projectiles.Guard.Reaper;
 
 public sealed class ReaperWave : ModProjectile
 {
-    private int age,hits;
-    // Integrate the previous flight curve and stretch its timeline by 1.5 / 1.3.
-    // This independently guarantees +30% launch speed and +50% no-hit travel distance.
-    private const float TimeStretch = 1.5f / 1.3f;
-    private static readonly float[] referenceDistance = BuildReferenceDistance();
-    private static float[] BuildReferenceDistance()
-    {
-        float[] result = new float[91];
-        float speed = 14;
-        for (int i = 0; i < 90; i++) {
-            speed *= i < 12 ? 1.02f : .9f;
-            if (speed < .12f) speed = 0;
-            result[i + 1] = result[i] + speed;
-        }
-        return result;
-    }
-    private static float DistanceAt(float time)
-    {
-        float t = Math.Clamp(time, 0, 90);
-        int i = Math.Min((int)t, 89);
-        return MathHelper.Lerp(referenceDistance[i], referenceDistance[i + 1], t - i);
-    }
+    private int age,hits,novaCredit;
     public override string Texture => "Terraria/Images/MagicPixel";
     internal static int Spawn(Player owner, IEntitySource source, Vector2 point, Vector2 velocity, int damage, float knockback, ReaperKind kind)
         => Projectile.NewProjectile(source, point, velocity, ModContent.ProjectileType<ReaperWave>(), Math.Max(1, damage), knockback, owner.whoAmI, (int)kind, owner.selectedItem);
     public override void SetDefaults()
     {
         Projectile.width=Projectile.height=100;Projectile.friendly=true;Projectile.DamageType=DamageClass.Melee;
-        Projectile.tileCollide=false;Projectile.ignoreWater=true;Projectile.timeLeft=104;Projectile.penetrate=7;
+        Projectile.tileCollide=false;Projectile.ignoreWater=true;Projectile.timeLeft=65;Projectile.extraUpdates=1;Projectile.penetrate=7;
         Projectile.usesLocalNPCImmunity=true;Projectile.localNPCHitCooldown=-1;
     }
     public override void OnSpawn(IEntitySource source){Projectile.rotation=Projectile.velocity.ToRotation();}
     public override bool? CanDamage()=>hits<7?null:false;
     public override void AI()
     {
-        // Fixed heading, no target searches. Accelerate briefly, then brake to a stop.
-        float distance = (DistanceAt((age + 1) / TimeStretch) - DistanceAt(age / TimeStretch)) * 1.5f;
-        Projectile.velocity = Projectile.rotation.ToRotationVector2() * (distance * MathF.Pow(.9f, hits));
+        // Source UnholyEssence_Wave accelerates by 1.03 per AI call (two calls per game tick).
+        // Keep our fixed crescent orientation, contact geometry and existing shader.
+        Projectile.velocity *= 1.03f;
         age++;
+        if (Projectile.numUpdates == 0) {
+            // Reference: one pair / 3 game ticks. 70% = 7 pairs / 30 ticks, not one / 5.
+            novaCredit += 7;
+            if (novaCredit >= 30) {
+                novaCredit -= 30;
+                if (Projectile.owner == Main.myPlayer) ReleaseTrailingNovas();
+            }
+        }
         Projectile.Opacity=Math.Min(1,age/4f)*Math.Min(1,Projectile.timeLeft/18f);
         if(age%3==0)ReaperVisuals.WaveMotes(Projectile);
+    }
+    private void ReleaseTrailingNovas()
+    {
+        Vector2 forward=Projectile.velocity.SafeNormalize(Vector2.UnitX),right=forward.RotatedBy(MathHelper.PiOver2);
+        for(int i=0;i<2;i++) {
+            float side=(i==0?-1:1)*Main.rand.NextFloat(20,58);
+            Vector2 position=Projectile.Center-forward*Main.rand.NextFloat(70,120)+right*side;
+            Vector2 velocity=(-forward*Main.rand.NextFloat(3.5f,6.5f)+right*Main.rand.NextFloat(-1.4f,1.4f))
+                .SafeNormalize(-forward)*Main.rand.NextFloat(7,10);
+            int index=Projectile.NewProjectile(Projectile.GetSource_FromThis(),position,velocity,
+                ModContent.ProjectileType<ReaperWaveNova>(),Math.Max(1,(int)(Projectile.damage*.15f)),
+                Projectile.knockBack*.15f,Projectile.owner,Projectile.ai[0]);
+            if(Main.projectile.IndexInRange(index))Main.projectile[index].CritChance=Projectile.CritChance;
+        }
     }
     public override bool? Colliding(Rectangle a,Rectangle b)
     {
@@ -62,11 +63,11 @@ public sealed class ReaperWave : ModProjectile
     public override void OnHitNPC(NPC target,NPC.HitInfo hit,int damageDone)
     {
         if(hits>=7)return;
-        hits++;Projectile.velocity*=.9f;Projectile.damage=Math.Max(1,(int)(Projectile.damage*.96f));Projectile.netUpdate=true;
+        hits++;Projectile.damage=Math.Max(1,(int)(Projectile.damage*.96f));Projectile.netUpdate=true;
         ReaperVisuals.Hit(target.Center,(ReaperKind)(int)Projectile.ai[0],.65f);
         if(hits>=7)Projectile.Kill();
     }
     public override bool PreDraw(ref Color lightColor){ReaperVisuals.DrawWave(Projectile);return false;}
-    public override void SendExtraAI(System.IO.BinaryWriter w){w.Write(age);w.Write((byte)hits);}
-    public override void ReceiveExtraAI(System.IO.BinaryReader r){age=Math.Max(0,r.ReadInt32());hits=Math.Clamp((int)r.ReadByte(),0,7);}
+    public override void SendExtraAI(System.IO.BinaryWriter w){w.Write(age);w.Write((byte)hits);w.Write((byte)novaCredit);}
+    public override void ReceiveExtraAI(System.IO.BinaryReader r){age=Math.Max(0,r.ReadInt32());hits=Math.Clamp((int)r.ReadByte(),0,7);novaCredit=Math.Clamp((int)r.ReadByte(),0,29);}
 }

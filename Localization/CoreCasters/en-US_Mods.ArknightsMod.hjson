@@ -1,0 +1,101 @@
+Items: {
+	NightmareStaff: {
+		DisplayName: Dream Staff [Nightmare]
+		Tooltip:
+			'''
+			Available after defeating all three mechanical bosses
+			Fires curling, homing dreamflame
+			Drain Soul returns healing wisps on hit; each restores 3 life, at most once every 24 frames
+			Night Phantom marks up to 3 nearby enemies and deals additional Arts damage based on their movement
+			Only ordinary enemies are slowed; bosses retain their normal behavior
+			'''
+	}
+
+	AbsintheStaff: {
+		DisplayName: Enforcement Staff [Absinthe]
+		Tooltip:
+			'''
+			Available after defeating any mechanical boss
+			Fires swift green Arts needles; deals 25% more damage to enemies at or below 40% life
+			Enforcement Mode warms up to empower attacks and prioritize low-health targets; switching weapons resets it
+			Ultimatum fires four-shot bursts only at enemies at or below 50% life
+			Without a legal target, no attack is made and no mana is consumed
+			'''
+	}
+
+	EyjafjallaStaff: {
+		DisplayName: Volcano Staff [Eyjafjalla]
+		Tooltip:
+			'''
+			Available after defeating Plantera
+			Releases molten fire that burns enemies
+			Ignition stores up to 3 charges, empowering the next hit and its explosion
+			Reduces the primary target's Arts resistance by 25% for 6 seconds
+			Volcano raises the staff and scatters lava skyward; shells rise before falling and tracking up to 6 distinct targets
+			'''
+	}
+}
+
+Skills: {
+	NightmareStaff: {
+		1: {
+			Label: Drain Soul
+			Desc: For 20 seconds: +15% damage; hits release healing wisps that return to you
+		}
+
+		2: {
+			Label: Night Phantom
+			Desc: Automatic: mark up to 3 nearby enemies for 7 seconds, dealing additional damage based on movement; never changes boss behavior
+		}
+	}
+
+	AbsintheStaff: {
+		1: {
+			Label: Enforcement Mode
+			Desc: Automatic warm-up: +80% damage; prioritizes lowest remaining life percentage, lasting until switching weapons or death
+		}
+
+		2: {
+			Label: Ultimatum
+			Desc: For 20 seconds: four-shot bursts against enemies at or below 50% life; each shot deals 62% damage
+		}
+	}
+
+	EyjafjallaStaff: {
+		1: {
+			Label: Duetto
+			Desc: For 25 seconds: +60% attack speed; the second and later activations while continuously held also grant +50% damage
+		}
+
+		2: {
+			Label: Ignition
+			Desc: Automatically stores up to 3 charges: next hit deals 310% damage, splashes half its damage to nearby targets and reduces the primary target's Arts resistance by 25%
+		}
+
+		3: {
+			Label: Volcano
+			Desc: For 15 seconds: greatly reduced attack interval, lava deals 150% damage, seeks up to 6 targets and explodes in a small area
+		}
+	}
+}
+
+Buffs: {
+	NightmareFetter: {
+		DisplayName: Nightmare Fetter
+		Description: Dreams slow your movement
+	}
+
+	EyjafjallaScorch: {
+		DisplayName: Ignition Scorch
+		Description: Arts resistance reduced by 25%
+	}
+}
+
+Projectiles: {
+	CoreCasterBolt.DisplayName: Core Arts
+	CoreCasterPulse.DisplayName: Arts Burst
+	CoreCasterMend.DisplayName: Returning Soul
+	NightmareBrand.DisplayName: Night Phantom
+}
+
+BranchTraits.CoreCaster: Core Caster:  Deals Arts damage with balanced performance

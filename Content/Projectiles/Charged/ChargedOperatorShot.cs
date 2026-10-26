@@ -39,6 +39,8 @@ public sealed class ChargedOperatorShot : ModProjectile
         distance += Projectile.velocity.Length();
         if (distance >= ChargedOperatorRules.ShotRange(Kind, Skill)) { Projectile.Kill(); return; }
         Projectile.rotation = Projectile.velocity.ToRotation();
+        if (!Main.dedServ && ChargedSniperFlightVisuals.UsesHelix(Kind))
+            ChargedSniperFlightVisuals.EmitHelix(Projectile, Kind, distance - Projectile.velocity.Length());
         if (Projectile.numUpdates == 0 && !Main.dedServ)
         {
             Color color = ChargedOperatorRules.ColorFor(Kind);

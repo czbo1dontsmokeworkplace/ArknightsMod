@@ -41,3 +41,5 @@
 
 详细记录见`Doc/Validation/VanguardCharge/README.md`。
 2026-10-21源码构建0错误，实际tModLoader隔离加载8134项检查通过，包含松手前置取消、低惯性、有限转向、连续穿敌与接触/弹幕伤害区分。初版真实FNA显卡68项检查及深浅背景预览为历史视觉证据。没有把离线绘制当作游戏截图，也没有完成实际输入手感或双客户端战斗验收。
+
+2026-10-25：修复费用说明本地化错位。原 `Mods.ArknightsMod.ChargerCost` 文件前缀下的 `VanguardSpears.Cost` 与调用键不符；中英文说明移入正确的 `Mods.ArknightsMod.VanguardSpears.Cost`，旧错位文件移除。右键冷却替换为公共 `WeaponHeadBar` 的 `VanguardChargeHeadBar`，删除独立矩形旧绘制层。仍直接读取原有5秒共享冷却，四把各自主题色保留。冲锋与伤害等玩法源码均未修改；本轮改变的是本地化和冷却显示接入。92项实际加载检查通过，记录见 `Doc/Validation/VanguardUiFix/README.md`；新包仅保留在 `bin/VanguardUiFix/Ready`，未覆盖运行中的游戏。

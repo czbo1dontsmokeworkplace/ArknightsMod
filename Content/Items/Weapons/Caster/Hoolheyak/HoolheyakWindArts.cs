@@ -16,7 +16,7 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Hoolheyak;
 public sealed class HoolheyakWindArts : ExpansionWeaponBase
 {
     public override string Texture => "ArknightsMod/Content/Items/Weapons/Caster/Hoolheyak/HoolheyakWindArts";
-    protected override int[] EliteDamage => [116, 131, 148]; // 原面板提高 7%，取整。
+    protected override int[] EliteDamage => [133, 151, 170]; // 石巨人后档：面板提高约 15%。
     private int barrageShot;
     private bool skillKeyConsumed;
     internal static readonly float[] SeekingDamage = [1.6f, 1.7f, 1.8f, 2f, 2.1f, 2.2f, 2.4f, 2.6f, 2.8f, 3f];
@@ -154,6 +154,7 @@ public sealed class HoolheyakWindArts : ExpansionWeaponBase
 
         void Spawn(Vector2 origin, Vector2 speed, int projectileType, int hitDamage, float ai0 = 0, float ai1 = 0, float ai2 = 0)
         {
+            if (projectileType == ModContent.ProjectileType<HoolheyakWindBolt>()) speed /= 3;
             int index = Projectile.NewProjectile(source, origin, speed, projectileType, hitDamage, 0f, player.whoAmI, ai0, ai1, ai2);
             if (Main.projectile.IndexInRange(index))
                 Main.projectile[index].CritChance = player.GetWeaponCrit(Item);
@@ -163,10 +164,12 @@ public sealed class HoolheyakWindArts : ExpansionWeaponBase
     public override void AddRecipes() => CreateRecipe()
         .AddIngredient<global::ArknightsMod.Content.Items.Material.IntegratedDevice>(1)
         .AddIngredient<global::ArknightsMod.Content.Items.Material.Polyester>(2)
-        .AddIngredient(ItemID.CrystalStorm)
+        .AddIngredient<global::ArknightsMod.Content.Items.Weapons.Caster.CoreCasters.NightmareStaff>()
+        .AddIngredient(ItemID.SpectreBar, 10)
         .AddIngredient(ItemID.CloudinaBottle)
         .AddIngredient(ItemID.Feather, 15)
         .AddIngredient(ItemID.SoulofFlight, 15)
+        .AddCondition(Condition.DownedGolem)
         .AddTile(ModContent.TileType<global::ArknightsMod.Content.Tiles.Infrastructure.FactoryTile>())
         .Register();
 }
