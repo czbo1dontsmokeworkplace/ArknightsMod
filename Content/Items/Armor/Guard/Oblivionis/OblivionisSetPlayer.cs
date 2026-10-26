@@ -1,9 +1,6 @@
-﻿using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
-using ArknightsMod.Systems.Gameplay.Damage;
-using ArknightsMod.Systems.Gameplay.OperatorTags;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Guard.Oblivionis
@@ -12,7 +9,6 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Oblivionis
 	{
 		public bool OblivionisHelmetActive;
 		public bool OblivionisSetActive;
-		public int Fever;
 
 		public override void ResetEffects() {
 			OblivionisHelmetActive = false;
@@ -29,48 +25,6 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Oblivionis
 				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<OblivionisLegs>();
 		}
 
-		public override void ModifyHitNPCWithItem(Item item, NPC target, ref NPC.HitModifiers modifiers) {
-			ApplyHelmetPenetration(modifiers);
-			TryAddFeverOnHit();
-			TryReduceArtsResistance(target);
-		}
-
-		public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref NPC.HitModifiers modifiers) {
-			ApplyHelmetPenetration(modifiers);
-			TryAddFeverOnHit();
-			TryReduceArtsResistance(target);
-		}
-
-		private void ApplyHelmetPenetration(NPC.HitModifiers modifiers) {
-			if (!OblivionisHelmetActive || !OperatorTagHelper.PlayerHasFaction(Player, OperatorFaction.AveMujica))
-				return;
-
-			int noteLayers = System.Math.Min(10, OperatorTagHelper.CountNotesOnField(Player.whoAmI));
-			if (noteLayers <= 0)
-				return;
-
-			modifiers.ScalingArmorPenetration += 0.03f * noteLayers;
-		}
-
-		private void TryReduceArtsResistance(NPC target) {
-			if (!OblivionisHelmetActive || !OperatorTagHelper.PlayerHasFaction(Player, OperatorFaction.AveMujica))
-				return;
-
-			int noteLayers = System.Math.Min(10, OperatorTagHelper.CountNotesOnField(Player.whoAmI));
-			if (noteLayers <= 0)
-				return;
-
-			DamageCategoryNPC cat = target.GetGlobalNPC<DamageCategoryNPC>();
-			cat.artsResistance = System.Math.Max(0f, cat.artsResistance - 0.02f * noteLayers);
-		}
-
-		private void TryAddFeverOnHit() {
-			if (!OblivionisSetActive || Main.netMode == NetmodeID.MultiplayerClient)
-				return;
-
-			Fever += 3;
-		}
-
 		public static bool IsAnyOblivionisSetActive() {
 			for (int i = 0; i < Main.maxPlayers; i++) {
 				Player player = Main.player[i];
@@ -84,8 +38,13 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Oblivionis
 
 	internal class OblivionisAllyAttackSpeedPlayer : ModPlayer
 	{
-		public override float UseSpeedMultiplier(Item item) {
-			return OblivionisSetPlayer.IsAnyOblivionisSetActive() ? 1.15f : 1f;
+		private void ApplyArmorAttackSpeed() {
+			if (OblivionisSetPlayer.IsAnyOblivionisSetActive())
+				Player.GetAttackSpeed(DamageClass.Generic) *= 1.15f;
+		}
+
+		public override void PostUpdateMiscEffects() {
+			ApplyArmorAttackSpeed();
 		}
 	}
 }

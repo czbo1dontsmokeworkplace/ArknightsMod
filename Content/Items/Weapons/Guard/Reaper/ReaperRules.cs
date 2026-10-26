@@ -8,10 +8,13 @@ public enum ReaperKind { Humus, LaPluma, Entelechia }
 internal static class ReaperRules
 {
     internal const float SwingTicks = 54 * .8f;
-    internal const float WaveSpeed = 14 * 1.3f;
+    internal const float WaveSpeed = 24f; // UnholyEssenceEffect's launch speed, per AI update.
     internal const float LeftScale = 1f;
     internal const float SpinStep = MathHelper.TwoPi * 2 / 50 * 1.3f;
     internal const int WispInterval = 8;
+    // Deterministic retained emission per ten original pair opportunities.
+    internal static int WispEmissionTenths(ReaperKind kind) => kind switch {
+        ReaperKind.Humus => 3, ReaperKind.LaPluma => 7, _ => 9 };
     internal const int WispLimit = 12;
     internal const float WispDamage = .2f;
     // Previous |tangent * 6 + radial * 3|, multiplied by the requested 1.3.

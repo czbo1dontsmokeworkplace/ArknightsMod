@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria;
@@ -35,16 +35,14 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.Ling
 				Player.maxMinions++;
 		}
 
-		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {
-			if (!item.DamageType.CountsAsClass(DamageClass.Summon))
-				return;
+		private void ApplyArmorDamageStats() {
 
 			int unused = OperatorMinionSlotHelper.CountUnusedMinionSlots(Player);
 			if (LingHelmetActive && unused > 0)
-				damage *= 1f + 0.2f * unused;
+				Player.GetDamage(DamageClass.Summon) *= 1f + 0.2f * unused;
 
 			if (LingSetActive && SummonDamageStacks > 0)
-				damage *= 1f + 0.05f * SummonDamageStacks;
+				Player.GetDamage(DamageClass.Summon) *= 1f + 0.05f * SummonDamageStacks;
 		}
 
 		public override void PostUpdate() {
@@ -64,6 +62,10 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.Ling
 			}
 
 			lastUnusedSlots = unused;
+		}
+
+		public override void PostUpdateMiscEffects() {
+			ApplyArmorDamageStats();
 		}
 	}
 }

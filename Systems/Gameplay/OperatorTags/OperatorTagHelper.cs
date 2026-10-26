@@ -52,11 +52,11 @@ namespace ArknightsMod.Systems.Gameplay.OperatorTags
 			return count;
 		}
 
-		public static int CountNotesOnField(int ownerWhoAmI) {
+		public static int CountNotesOnField(int ownerWhoAmI = -1) {
 			int count = 0;
 			for (int i = 0; i < Main.maxProjectiles; i++) {
 				Projectile proj = Main.projectile[i];
-				if (!proj.active || proj.owner != ownerWhoAmI)
+				if (!proj.active || (ownerWhoAmI >= 0 && proj.owner != ownerWhoAmI))
 					continue;
 
 				if (proj.ModProjectile is SakiNoteIdle or SakiNoteCommon or SakiNote1 or SakiNote2Dark or SakiNote2Bright)

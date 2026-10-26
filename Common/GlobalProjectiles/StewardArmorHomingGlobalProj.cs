@@ -1,5 +1,6 @@
 using ArknightsMod.Content.Items.Armor.Caster.Steward;
 using ArknightsMod.Systems.Gameplay.Damage;
+using ArknightsMod.Content.Projectiles.Caster.CoreCasters;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
@@ -27,6 +28,8 @@ namespace ArknightsMod.Common.GlobalProjectiles
 		}
 
 		private static bool ShouldHome(Projectile projectile) {
+			if (projectile.ModProjectile is ICoreCasterGuidance core && !core.GuidanceReady)
+				return false;
 			if (projectile.owner < 0 || projectile.owner >= Main.maxPlayers
 				|| !projectile.friendly || projectile.hostile || projectile.damage <= 0
 				|| projectile.minion || projectile.sentry || projectile.aiStyle is 19 or 75

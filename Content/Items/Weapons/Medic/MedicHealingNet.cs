@@ -26,10 +26,10 @@ internal static class MedicHealingNet
         MedicHealingPlayer state = patient.GetModPlayer<MedicHealingPlayer>();
         if (state.Cooldown > 0) return 0;
         int healing = SpotHealingHelper.ModifyOutgoingHeal(healer, Math.Clamp(requested, 0, 48));
-        int amount = Math.Min(healing, patient.statLifeMax2 - patient.statLife);
+        int amount = Math.Min(patient.GetModPlayer<global::ArknightsMod.Players.IncomingHealingPlayer>().Modify(healing), patient.statLifeMax2 - patient.statLife);
         if (amount <= 0) return 0;
         state.Cooldown = Math.Max(1, interval);
-        if (Main.netMode == NetmodeID.SinglePlayer) patient.Heal(amount);
+        if (Main.netMode == NetmodeID.SinglePlayer) patient.GetModPlayer<global::ArknightsMod.Players.IncomingHealingPlayer>().HealFinal(amount);
         else
         {
             patient.statLife = Math.Min(patient.statLifeMax2, patient.statLife + amount);
@@ -47,10 +47,10 @@ internal static class MedicHealingNet
     {
         int patient = reader.ReadByte(), amount = reader.ReadInt16();
         if (Main.netMode != NetmodeID.MultiplayerClient || patient != Main.myPlayer
-            || amount <= 0 || amount > SpotHealingHelper.MaximumAmount(48)) return;
+            || amount <= 0) return;
         Player player = Main.LocalPlayer;
         if (player.dead || !player.active) return;
-        player.Heal(Math.Min(amount, Math.Max(0, player.statLifeMax2 - player.statLife)));
+        player.GetModPlayer<global::ArknightsMod.Players.IncomingHealingPlayer>().HealFinal(Math.Min(amount, Math.Max(0, player.statLifeMax2 - player.statLife)));
         NetMessage.SendData(MessageID.PlayerLifeMana, -1, -1, null, patient);
     }
 }

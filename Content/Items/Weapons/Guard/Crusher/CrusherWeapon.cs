@@ -39,6 +39,7 @@ public abstract class CrusherWeapon : ExpansionWeaponBase
     {
         if (ArknightsKeybinds.SkillActivatePressed(player)) { player.GetModPlayer<CrusherPlayer>().TryActivate(); return false; }
         if (player.altFunctionUse == 2 || player.GetModPlayer<CrusherPlayer>().Charging) return false;
+        if (Kind == CrusherKind.Ulpianus && UlpianusAnchorThrow.Exists(player)) return false;
         CrusherHeldBlade blade = CrusherHeldBlade.Find(player);
         Item.useTime = Item.useAnimation = CrusherRules.Interval(Kind);
         return blade is not { Busy: true } && base.CanUseItem(player);

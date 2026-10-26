@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content;
+using ArknightsMod.Content;
 using ArknightsMod.Content.Projectiles.Guard.Saki;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -33,6 +33,8 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Oblivionis
 				skills++;
 				if (skills > 4)
 					skills = 0;
+				if (skills != 0)
+					global::ArknightsMod.Systems.Gameplay.MujicaFeverSystem.SkillStarted(player);
 			}
 			return player.ownedProjectileCounts[ProjectileType<SakiSwordWhite>()] <= 0 && player.ownedProjectileCounts[ProjectileType<SakiSwordBlack>()] <= 0;
 		}

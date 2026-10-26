@@ -30,20 +30,26 @@ namespace ArknightsMod.Systems.Gameplay.Damage
 		// 仅在本次伤害结算中降低法抗，不改基础字段；重复命中只刷新 Buff，
 		// 不累计减抗。Buff 到期后自动按原法抗结算。
 		internal float GetEffectiveArtsResistance(NPC npc) {
-			return npc.HasBuff<HazeMagicFragileDebuff>()
-				? artsResistance * HazeMagicFragileDebuff.ResistanceMultiplier
-				: artsResistance;
+			float multiplier = npc.HasBuff<HazeMagicFragileDebuff>() ? HazeMagicFragileDebuff.ResistanceMultiplier : 1f;
+			if (npc.HasBuff<global::ArknightsMod.Content.Projectiles.Caster.CoreCasters.EyjafjallaScorch>())
+				multiplier = System.Math.Min(multiplier, .75f);
+			return artsResistance * multiplier;
 		}
+
+		internal float GetEffectiveArtsResistance(NPC npc, Player attacker) => System.Math.Clamp(
+			GetEffectiveArtsResistance(npc) - (attacker?.GetModPlayer<global::ArknightsMod.Players.MujicaPlayer>().ArtsPenetration ?? 0f), 0f, 1f);
 
 		public override void ModifyHitByItem(NPC npc, Player player, Item item, ref NPC.HitModifiers modifiers) {
 			if (artsResistance > 0f && IsArtsItemHit(player, item))
-				modifiers.FinalDamage *= (1f - GetEffectiveArtsResistance(npc));
+				modifiers.FinalDamage *= (1f - GetEffectiveArtsResistance(npc, player));
 		}
 
 		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers) {
 			// 弹幕算不算法伤，在它生成那一刻就判定好并记在 ArtsProjectileMarker 上了，这里只是读结果。
-			if (artsResistance > 0f && projectile.GetGlobalProjectile<ArtsProjectileMarker>().IsArtsDamage)
-				modifiers.FinalDamage *= (1f - GetEffectiveArtsResistance(npc));
+			if (artsResistance > 0f && projectile.GetGlobalProjectile<ArtsProjectileMarker>().IsArtsDamage) {
+				Player attacker = projectile.owner >= 0 && projectile.owner < Main.maxPlayers ? Main.player[projectile.owner] : null;
+				modifiers.FinalDamage *= (1f - GetEffectiveArtsResistance(npc, attacker));
+			}
 		}
 
 		/// <summary>物品直接命中（近战挥砍/戳刺）算不算法伤：原版武器查固定表，模组武器走带条件的规则。</summary>

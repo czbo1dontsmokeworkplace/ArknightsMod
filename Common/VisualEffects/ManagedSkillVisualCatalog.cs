@@ -89,6 +89,9 @@ public static class ManagedSkillVisualCatalog
         Add("BluePoisonCrossbow",0x82CDBE,SkillBodyMotif.Mist);
         Add("PozemkaCrossbow",0xF4A0BE,SkillBodyMotif.Petal);
         Add("HoolheyakWindArts",0x8BD6C9,SkillBodyMotif.Orbit);
+        Add("NightmareStaff",0xBC69EE,SkillBodyMotif.Shadow);
+        Add("AbsintheStaff",0x5FE7B2,SkillBodyMotif.Spark);
+        Add("EyjafjallaStaff",0xFF8022,SkillBodyMotif.Ember);
         Add("EthanYoyo",0x68D3AD,SkillBodyMotif.Shadow);
         Add("NecrassScepter",0xB789F2,SkillBodyMotif.Ember);
         // New defender route referred to in the same document, including Horn.

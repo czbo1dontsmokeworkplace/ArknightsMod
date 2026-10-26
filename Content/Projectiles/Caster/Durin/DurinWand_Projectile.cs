@@ -1,12 +1,23 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using System.IO;
 using Terraria.ID;
 using Terraria.ModLoader;
+using ArknightsMod.Content.Projectiles.Caster.CoreCasters;
 
 namespace ArknightsMod.Content.Projectiles.Caster.Durin
 {
-	public class DurinWand_Projectile : ModProjectile
+	public class DurinWand_Projectile : ModProjectile, ICoreCasterGuidance
 	{
+		private float effectDistance;
+		private CoreCasterFlight flight;
+		public bool GuidanceReady => flight?.CanGuide(CoreCasterKind.Durin) == true;
+		public override void SendExtraAI(BinaryWriter writer) => CoreCasterGuidance.Write(writer, flight);
+		public override void ReceiveExtraAI(BinaryReader reader) => flight = CoreCasterGuidance.Read(reader);
+		public override void SetStaticDefaults() {
+			ProjectileID.Sets.TrailCacheLength[Type] = 16;
+			ProjectileID.Sets.TrailingMode[Type] = 0;
+		}
 
 		public override void SetDefaults() {
 			Projectile.width = 10;
@@ -28,33 +39,24 @@ namespace ArknightsMod.Content.Projectiles.Caster.Durin
 		}
 
 		public override void AI() {
-			if (Main.rand.NextBool(3))
-			{
-				Dust dust = Dust.NewDustDirect(
-					Projectile.position,
-					Projectile.width,
-					Projectile.height,
-					DustID.WhiteTorch,   
-					Projectile.velocity.X * 0.2f,
-					Projectile.velocity.Y * 0.2f,
-					150,     
-					new Color(73, 255, 255),
-					3f  
-				);
-
-				dust.noGravity = true; 
-				dust.fadeIn = 1.6f;  
-				dust.velocity *= 0.5f; 
+			flight ??= new CoreCasterFlight(Projectile.Center, Projectile.velocity, Projectile.MaxUpdates, Projectile.identity);
+			flight.Step(CoreCasterKind.Durin, 0, Projectile.Center, ref Projectile.velocity, Projectile.MaxUpdates,
+				GuidanceReady ? CoreCasterGuidance.Target(Projectile, 380) : null);
+			effectDistance += Projectile.velocity.Length();
+			if (effectDistance >= 32) {
+				effectDistance %= 32;
+				CoreCasterVisuals.Trail(Projectile, CoreCasterKind.Durin);
 			}
-			if (Projectile.ai[0] == 1f)
-			{
-				Vector2 toMouse = Main.MouseWorld - Projectile.Center;
-				Projectile.rotation = toMouse.ToRotation();
-			}
+			Projectile.rotation = Projectile.velocity.ToRotation();
 			Projectile.ai[0] += 1f;
 
 			if (Projectile.ai[0] >= 30f)
 				Projectile.Kill();
+		}
+		public override void OnKill(int timeLeft) => CoreCasterVisuals.Impact(Projectile.Center, Projectile.velocity, CoreCasterKind.Durin);
+		public override bool PreDraw(ref Color lightColor) {
+			CoreCasterVisuals.Bolt(Projectile, CoreCasterKind.Durin);
+			return false;
 		}
 
 	}

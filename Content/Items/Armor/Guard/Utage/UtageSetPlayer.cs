@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria;
@@ -11,8 +11,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Utage
 		public bool UtageHelmetActive;
 		public bool UtageSetActive;
 
-		private int helmetHealCount;
-		private int helmetHealTimer;
+		private ulong nextHelmetHealTick;
 
 		public override void ResetEffects() {
 			UtageHelmetActive = false;
@@ -29,13 +28,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Utage
 				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<UtageLegs>();
 		}
 
-		public override void PostUpdate() {
-			if (helmetHealTimer > 0) {
-				helmetHealTimer--;
-				if (helmetHealTimer <= 0)
-					helmetHealCount = 0;
-			}
-		}
+		public override void OnEnterWorld() => nextHelmetHealTick = 0;
 
 		public float GetMeleeAttackSpeedBonusPercent() {
 			if (!UtageSetActive)
@@ -45,11 +38,9 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Utage
 			return Math.Min(missingRatio * 0.5f, 0.3f) * 100f;
 		}
 
-		public override float UseSpeedMultiplier(Item item) {
-			if (!UtageSetActive || !item.DamageType.CountsAsClass(DamageClass.Melee))
-				return 1f;
-
-			return 1f + GetMeleeAttackSpeedBonusPercent() / 100f;
+		private void ApplyArmorAttackSpeed() {
+			if (UtageSetActive)
+				Player.GetAttackSpeed(DamageClass.Melee) += GetMeleeAttackSpeedBonusPercent() / 100f;
 		}
 
 		public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone) {
@@ -76,19 +67,18 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Utage
 			if (target.friendly || target.lifeMax <= 5 || target.dontTakeDamage || target.immortal)
 				return;
 
-			if (helmetHealTimer <= 0) {
-				helmetHealTimer = 60;
-				helmetHealCount = 0;
-			}
-
-			if (helmetHealCount >= 3)
+			if (Main.GameUpdateCount < nextHelmetHealTick)
 				return;
 
 			if (Player.statLife >= Player.statLifeMax2)
 				return;
 
 			Player.Heal(1);
-			helmetHealCount++;
+			nextHelmetHealTick = Main.GameUpdateCount + 20;
+		}
+
+		public override void PostUpdateMiscEffects() {
+			ApplyArmorAttackSpeed();
 		}
 	}
 }

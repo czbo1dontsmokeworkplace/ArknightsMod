@@ -144,7 +144,7 @@ namespace ArknightsMod.Common
 			// ExusiaiVector - 能天使 - Vector冲锋枪
 			// 原始值: damage=108, useTime=15, useAnimation=15, knockBack=5, shootSpeed=8
 			[typeof(Content.Items.Weapons.Sniper.Exusiai.ExusiaiVector)] = new() {
-				Damage = 108, UseTime = 15, UseAnimation = 15, KnockBack = 5f, ShootSpeed = 8f
+				Damage = 26, UseTime = 3, UseAnimation = 3, KnockBack = 5f, ShootSpeed = 16f
 			},
 
 			// JessicaGun - 杰西卡 - 手枪 (EliteDamage=[37,44,53])
@@ -229,10 +229,9 @@ namespace ArknightsMod.Common
 				Damage = Content.Projectiles.Caster.Goldenglow.GoldenglowLightningBalance.Damage, UseTime = 12, UseAnimation = 12, KnockBack = 6f, ShootSpeed = 1f, Mana = 6, Crit = 4
 			},
 
-			// HazeMagicBook - 阴云 - 魔法书
-			// 原始值: damage=50, useTime=48, useAnimation=48, knockBack=3, shootSpeed=8, mana=6
+			// 夜烟：中坚术师路线的困难模式初期法杖，保留旧内部名称兼容存档。
 			[typeof(Content.Items.Weapons.Caster.Haze.HazeMagicBook)] = new() {
-				Damage = 50, UseTime = 48, UseAnimation = 48, KnockBack = 3f, ShootSpeed = 8f, Mana = 6
+				Damage = 86, UseTime = 38, UseAnimation = 38, KnockBack = 3f, ShootSpeed = 8f, Mana = 8
 			},
 
 			// Lava_Dagger - 炎熔 - 直接施放的扩散术师武器

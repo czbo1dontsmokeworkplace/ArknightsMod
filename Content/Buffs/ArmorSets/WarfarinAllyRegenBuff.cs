@@ -5,9 +5,7 @@ namespace ArknightsMod.Content.Buffs.ArmorSets
 {
 	public class WarfarinAllyRegenBuff : ModBuff
 	{
-		public const int DurationTicks = 10 * 60;
-		public const int RegenPerSecond = 20;
-
+		// Legacy registration only; the helmet now modifies regeneration directly.
 		public override void SetStaticDefaults() {
 			Main.buffNoSave[Type] = true;
 		}

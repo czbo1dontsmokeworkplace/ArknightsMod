@@ -112,7 +112,7 @@ public sealed class ReaperPlayer : ModPlayer
         if (healCooldown > 0) healCooldown--;
         if (mode != 0) {
             if (ActiveMode == 0 || Player.noItems || Player.CCed) EndSkill();
-            else if (--remaining <= 0) EndSkill();
+            else if (!Systems.Gameplay.MujicaFeverSystem.PauseSkill(Player) && --remaining <= 0) EndSkill();
             else { var shared = Player.GetModPlayer<WeaponPlayer>(); shared.SkillActive = true; shared.SkillTimer = duration - remaining; }
         }
         bool keyDown = ArknightsKeybinds.SkillActivatePressed(Player);

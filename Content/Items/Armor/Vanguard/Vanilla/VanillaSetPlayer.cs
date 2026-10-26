@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria;
 using Terraria.ModLoader;
@@ -28,9 +28,13 @@ namespace ArknightsMod.Content.Items.Armor.Vanguard.Vanilla
 				Player.statDefense += 8;
 		}
 
-		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {
-			if (VanillaHelmetActive && item.DamageType.CountsAsClass(DamageClass.Melee))
-				damage *= 1.03f;
+		private void ApplyArmorDamageStats() {
+			if (VanillaHelmetActive)
+				Player.GetDamage(DamageClass.Melee) *= 1.03f;
+		}
+
+		public override void PostUpdateMiscEffects() {
+			ApplyArmorDamageStats();
 		}
 	}
 }

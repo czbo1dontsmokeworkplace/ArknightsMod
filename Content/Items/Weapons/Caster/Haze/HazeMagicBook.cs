@@ -14,10 +14,12 @@ using Terraria.Audio;
 
 namespace ArknightsMod.Content.Items.Weapons.Caster.Haze
 {
-	public class HazeMagicBook : UpgradeWeaponBase
+	public class HazeMagicBook : ExpansionWeaponBase
 	{
-		private float Skill = 0;
-		private static int BaseUseTime ; 
+		protected override int[] EliteDamage => [86, 100, 114];
+		public override string Texture => "Terraria/Images/Item_" + ItemID.AmethystStaff;
+		public override void SetStaticDefaults() => Item.staff[Type] = true;
+		private const int BaseUseTime = 38;
 		private static SoundStyle SkillActiveSound;
 
 		public override void Load()
@@ -30,13 +32,15 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Haze
         }
 
 		public override void SetDefaults() {
-			Item.damage = 50;
-			Item.mana = 6;
+			Item.damage = EliteDamage[0];
+			Item.mana = 8;
 			Item.knockBack = 3;
-			Item.useAnimation = 48;
-			Item.useTime = 48;
+			Item.useAnimation = BaseUseTime;
+			Item.useTime = BaseUseTime;
 			Item.shootSpeed = 8;
-			BaseUseTime = Item.useTime;
+			Item.width = Item.height = 40;
+			Item.autoReuse = true;
+			Item.channel = Item.noUseGraphic = false;
 
 			Item.shoot = ModContent.ProjectileType<Haze_Magicball>();
 			Item.DamageType = DamageClass.Magic;
@@ -51,11 +55,10 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Haze
 		public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe()
-                .AddIngredient<global::ArknightsMod.Content.Items.Material.RMA7012>(1)
-                .AddIngredient<global::ArknightsMod.Content.Items.Material.OrirockCube>(2)
-                .AddIngredient(ItemID.DemonScythe)
-                .AddIngredient(ItemID.Book);
-            recipe.AddTile(ModContent.TileType<FactoryTile>());
+                .AddIngredient<global::ArknightsMod.Content.Items.Weapons.Caster.Steward.StewardStaff>()
+                .AddRecipeGroup(OperatorWeaponRecipeGroups.CobaltOrPalladiumBar, 10)
+                .AddIngredient(ItemID.SoulofNight, 8).AddCondition(Condition.Hardmode);
+            recipe.AddTile(TileID.MythrilAnvil);
             recipe.Register();
         }
 
@@ -127,7 +130,7 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Haze
 
             if (modPlayer.Skill == 1 && modPlayer.SkillActive)
             {
-                Item.useTime = 30;
+                Item.useTime = 24;
                 Item.useAnimation = Item.useTime;
             }
 
@@ -136,6 +139,7 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Haze
 
         public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
         {
+            base.ModifyWeaponDamage(player, ref damage);
             if (Main.myPlayer != player.whoAmI) return;
             var modPlayer = player.GetModPlayer<WeaponPlayer>();
             if (modPlayer.Skill == 0 && modPlayer.SkillActive) damage *= 1.8f;
@@ -171,7 +175,7 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Haze
             if (_pendingHeal)
             {
                 int newLife = Player.statLife * 4;
-                Player.statLife = newLife > Player.statLifeMax2 ? Player.statLifeMax2 : newLife;
+                Player.GetModPlayer<global::ArknightsMod.Players.IncomingHealingPlayer>().RestoreLife(newLife);
                 _pendingHeal = false;
             }
 

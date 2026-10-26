@@ -54,6 +54,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Blaze
 			Projectile.hostile = false;
 			Projectile.penetrate = -1;
 			Projectile.tileCollide = false;
+			Projectile.ownerHitCheck = true;
 			Projectile.ignoreWater = true;
 			Projectile.aiStyle = -1;
 			Projectile.DamageType = DamageClass.Melee;
@@ -197,10 +198,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Blaze
 		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {
 			if (spool < 0.32f)
 				return false;
-			if (!Collision.CanHit(Owner.MountedCenter, 1, 1,
-				targetHitbox.TopLeft(), targetHitbox.Width, targetHitbox.Height))
-				return false;
-
+			// Native ownerHitCheck handles terrain with the player's full melee visibility checks.
 			Vector2 direction = aimAngle.ToRotationVector2();
 			float collisionPoint = 0f;
 			return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(),

@@ -29,6 +29,9 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Melantha
 			MelanthaSetActive = MelanthaHelmetActive
 				&& Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<MelanthaBody>()
 				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<MelanthaLegs>();
+
+			if (MelanthaHelmetActive)
+				Player.GetDamage(DamageClass.Melee) *= 1.04f;
 		}
 
 		public override void PostUpdate() {
@@ -42,14 +45,6 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Melantha
 		public override void UpdateLifeRegen() {
 			if (FearlessStacks > 0)
 				Player.lifeRegen += 3 * FearlessStacks;
-		}
-
-		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {
-			if (!MelanthaHelmetActive)
-				return;
-
-			if (item.DamageType.CountsAsClass(DamageClass.Melee))
-				damage *= 1.04f;
 		}
 
 		public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone) {

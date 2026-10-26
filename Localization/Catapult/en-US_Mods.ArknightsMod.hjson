@@ -41,4 +41,9 @@ Projectiles: {
 	CrusherHeldBlade.DisplayName: Crusher Held Blade
 	CrusherImpact.DisplayName: Crusher Impact
 	SurtrFlameWave.DisplayName: Surtr Flame Wave
+	HelldiverExplosion.DisplayName: Helldiver Explosion
+	ExusiaiVectorHoldout.DisplayName: Exusiai Vector Holdout
+	VectorImpact.DisplayName: Vector Impact
+	PhalanxChargeSoul.DisplayName: Phalanx Charge Soul
+	ChalterSplitOrb.DisplayName: Chalter Split Orb
 }

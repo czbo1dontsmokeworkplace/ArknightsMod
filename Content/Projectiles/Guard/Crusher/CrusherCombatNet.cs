@@ -56,6 +56,7 @@ internal static class CrusherCombatNet
     {
         switch (projectile.ModProjectile) {
             case CrusherHeldBlade blade: blade.ApplyHitEffects(target); break;
+            case UlpianusAnchorThrow thrown: thrown.ApplyHitEffects(target); break;
             case CrusherAnchorCast anchor: anchor.ApplyPull(target); break;
             case CrusherAnchorCrash crash: crash.ApplyStun(target); break;
             case CrusherUpheaval upheaval: upheaval.ApplyPull(target); break;

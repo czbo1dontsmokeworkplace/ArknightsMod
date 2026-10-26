@@ -4,6 +4,7 @@ using Terraria.Audio;
 using Terraria.ID;
 using ArknightsMod.Content.Items.Weapons.Phalanx;
 using ArknightsMod.Content.Items.Weapons;
+using ArknightsMod.Common.VisualEffects;
 using Microsoft.Xna.Framework;
 using Terraria.GameContent;
 using Terraria;
@@ -19,6 +20,19 @@ public sealed class PhalanxFocus : ModProjectile
     private bool attacking;
     private int chargeFrames, releaseSerial;
     private float releaseFlash;
+    internal float ChargeProgress => chargeFrames / (float)PhalanxCycle.ChargeDuration;
+    internal int ReleaseSequence => releaseSerial;
+    internal bool ChargingForEffects => chargeFrames > 0 && HoldingForDraw(Main.player[Projectile.owner])
+        && Main.player[Projectile.owner].active && !Main.player[Projectile.owner].dead;
+    internal Vector2 FocusPosition()
+    {
+        Player player = Main.player[Projectile.owner];
+        if (player.HeldItem.ModItem is not PhalanxStaff staff) return player.MountedCenter;
+        var texture = ModContent.Request<Microsoft.Xna.Framework.Graphics.Texture2D>(staff.HeldTexture).Value;
+        float scale = 58f / Math.Max(texture.Width, texture.Height);
+        return VerticalStaffBase.HeldStaffPoint(player, texture, VerticalStaffBase.HeldStaffCenter(player, staff),
+            staff.VerticalTip, staff.VerticalRotation * player.direction * player.gravDir, staff.VerticalOrigin, scale);
+    }
     public override void SetDefaults()
     {
         Projectile.width = Projectile.height = 2;
@@ -86,6 +100,7 @@ public sealed class PhalanxFocus : ModProjectile
         {
             Lighting.AddLight(player.Center, PhalanxVisuals.Palette((int)Projectile.ai[0]).ToVector3() * .35f);
         }
+        if (!Main.dedServ && ChargingForEffects) PhalanxChargeEffects.Tick(this);
     }
     public override bool PreDraw(ref Color lightColor)
     {
@@ -101,8 +116,7 @@ public sealed class PhalanxFocus : ModProjectile
             Vector2 center = VerticalStaffBase.HeldStaffCenter(player, staff);
             VerticalStaffBase.DrawHeldStaff(player, texture, center,
                 lightColor, Vector2.Zero, rotation, staff.VerticalOrigin, scale);
-            focus = VerticalStaffBase.HeldStaffPoint(player, texture, center, staff.VerticalTip,
-                rotation, staff.VerticalOrigin, scale) - Main.screenPosition;
+            focus = FocusPosition() - Main.screenPosition;
         }
         if (HoldingForDraw(player) && chargeFrames > 0)
         {

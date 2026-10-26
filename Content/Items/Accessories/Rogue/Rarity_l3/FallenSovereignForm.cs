@@ -1,4 +1,4 @@
-﻿using Terraria;
+using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.UI;
@@ -234,7 +234,7 @@ namespace ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l3
 					SpawnShieldHitParticles(sourcePosition, shieldDamage);
 
 				if (Player.statLife < Player.statLifeMax2) {
-					Player.statLife += 1;
+					Player.GetModPlayer<global::ArknightsMod.Players.IncomingHealingPlayer>().HealSilent(1);
 					if (Player.statLife > Player.statLifeMax2)
 						Player.statLife = Player.statLifeMax2;
 				}

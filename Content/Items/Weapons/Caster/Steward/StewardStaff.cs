@@ -2,9 +2,11 @@ using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.Items.Armor.Caster.Steward;
 using ArknightsMod.Players;
 using ArknightsMod.Systems.Gameplay.Skill;
+using ArknightsMod.Content.Projectiles.Caster.CoreCasters;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using System.IO;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -18,6 +20,7 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Steward
 	/// </summary>
 	public class StewardStaff : ExpansionWeaponBase
 	{
+		public override void SetStaticDefaults() => Item.staff[Type] = true;
 		protected override int[] EliteDamage => [43, 54];
 
 		public override void SetDefaults() {
@@ -38,9 +41,14 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Steward
 			Item.shootSpeed = 11f;
 			Item.useTurn = false;
 			Item.useStyle = ItemUseStyleID.Shoot;
-			Item.channel = true;
+			Item.channel = false;
 			Item.staff[Item.type] = true;
 		}
+
+		public override void AddRecipes() => CreateRecipe()
+			.AddIngredient<global::ArknightsMod.Content.Items.Weapons.Caster.Durin.DurinWand>()
+			.AddRecipeGroup(RecipeGroupID.IronBar, 8).AddIngredient(ItemID.Sapphire, 3)
+			.AddIngredient(ItemID.FallenStar, 5).AddTile(TileID.Anvils).Register();
 
 		public override bool CanUseItem(Player player) {
 			if (Main.myPlayer == player.whoAmI) {
@@ -54,6 +62,7 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Steward
 
 		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
 			var mp = player.GetModPlayer<WeaponPlayer>();
+			CoreCasterVisuals.Muzzle(position + velocity * 2, velocity.SafeNormalize(Vector2.UnitX), CoreCasterKind.Steward, mp.StockCount > 0);
 
 			if (mp.StockCount > 0) {
 				// 强力击：消耗 1 层库存，射出强化追踪弹
@@ -73,8 +82,16 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Steward
 	}
 
 	/// <summary>史都华德的追踪法术弹，优先追踪附近防御力最高的敌人。</summary>
-	public class StewardProj : ModProjectile
+	public class StewardProj : ModProjectile, ICoreCasterGuidance
 	{
+		private CoreCasterFlight flight;
+		public bool GuidanceReady => flight?.CanGuide(CoreCasterKind.Steward) == true;
+		public override void SendExtraAI(BinaryWriter writer) => CoreCasterGuidance.Write(writer, flight);
+		public override void ReceiveExtraAI(BinaryReader reader) => flight = CoreCasterGuidance.Read(reader);
+		public override void SetStaticDefaults() {
+			ProjectileID.Sets.TrailCacheLength[Type] = 20;
+			ProjectileID.Sets.TrailingMode[Type] = 0;
+		}
 		public override string Texture => "ArknightsMod/Content/Items/Weapons/Caster/Steward/StewardProj";
 
 		public override void SetDefaults() {
@@ -96,26 +113,17 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Steward
 		}
 
 		public override void AI() {
-			Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height,
-				DustID.Clentaminator_Cyan, 0f, 0f, 0, new Color(255, 255, 255, 255), 1.5f);
-			dust.noGravity = true;
-			dust.velocity = Projectile.velocity / 2f;
-			dust.position = Projectile.Center;
-			Dust dust2 = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height,
-				DustID.BlueFairy, 0f, 0f, 0, new Color(255, 255, 255, 255), 0.7f);
-			dust2.noGravity = true;
-			dust2.position = Projectile.Center;
-
-			if (Projectile.ai[0] == 1f) {
-				Dust dust3 = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height,
-					DustID.Clentaminator_Cyan, 0f, 0f, 0, new Color(255, 255, 255, 255), 1.5f);
-				dust3.noGravity = true;
-				dust3.position = Projectile.Center;
-			}
+			flight ??= new CoreCasterFlight(Projectile.Center, Projectile.velocity, Projectile.MaxUpdates, Projectile.identity);
+			if (Projectile.timeLeft % 3 == 0)
+				CoreCasterVisuals.Trail(Projectile, CoreCasterKind.Steward, (int)Projectile.ai[0]);
 
 			// 穿套装时由全局PostAI统一选择最高防目标，避免两套追踪互相拉扯。
 			if (Main.player[Projectile.owner].GetModPlayer<StewardSetPlayer>().StewardSetActive)
+			{
+				flight.Step(CoreCasterKind.Steward, (int)Projectile.ai[0], Projectile.Center, ref Projectile.velocity, Projectile.MaxUpdates);
+				Projectile.rotation = Projectile.velocity.ToRotation();
 				return;
+			}
 
 			// 优先追踪 200 像素内防御力最高的敌人
 			NPC target = null;
@@ -136,20 +144,15 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Steward
 				}
 			}
 
-			if (target != null) {
-				Vector2 targetVec = (target.Center - Projectile.Center).SafeNormalize(Vector2.Zero) * 18f;
-				Projectile.velocity = (Projectile.velocity * 10f + targetVec) / 11f;
-			}
+			flight.Step(CoreCasterKind.Steward, (int)Projectile.ai[0], Projectile.Center, ref Projectile.velocity, Projectile.MaxUpdates, target?.Center);
+			Projectile.rotation = Projectile.velocity.ToRotation();
 		}
 
 		public override bool PreDraw(ref Color lightColor) {
-			Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
-			if (Projectile.ai[0] == 1f)
-				Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null,
-					new Color(200, 200, 255, 200), 0f, tex.Size() / 2f, 0.75f, SpriteEffects.None, 0);
-			Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null,
-				Color.AliceBlue, 0f, tex.Size() / 2f, 0.64f, SpriteEffects.None, 0);
+			CoreCasterVisuals.Bolt(Projectile, CoreCasterKind.Steward, (int)Projectile.ai[0]);
 			return false;
 		}
+		public override void OnKill(int timeLeft) => CoreCasterVisuals.Impact(Projectile.Center, Projectile.velocity,
+			CoreCasterKind.Steward, Projectile.ai[0] == 1);
 	}
 }

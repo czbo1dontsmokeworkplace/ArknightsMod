@@ -1,11 +1,8 @@
 ﻿using System;
-using ArknightsMod.Content.Buffs.ArmorSets;
 using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Medic.Warfarin
 {
@@ -13,8 +10,6 @@ namespace ArknightsMod.Content.Items.Armor.Medic.Warfarin
 	{
 		public bool WarfarinHelmetActive;
 		public bool WarfarinSetActive;
-
-		private int[] allyRegenCooldown = new int[Main.maxPlayers];
 
 		public override void ResetEffects() {
 			WarfarinHelmetActive = false;
@@ -31,38 +26,19 @@ namespace ArknightsMod.Content.Items.Armor.Medic.Warfarin
 				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<WarfarinLegs>();
 		}
 
-		public override void PostUpdate() {
-			for (int i = 0; i < allyRegenCooldown.Length; i++) {
-				if (allyRegenCooldown[i] > 0)
-					allyRegenCooldown[i]--;
-			}
-
-			if (!WarfarinHelmetActive)
+		public override void UpdateLifeRegen() {
+			if (!Player.active || Player.dead || Player.statLife >= Player.statLifeMax2 * .5d)
 				return;
 
-			const float maxRange = 1200f;
-			for (int i = 0; i < Main.maxPlayers; i++) {
-				Player ally = Main.player[i];
-				if (!ally.active || ally.dead || ally.whoAmI == Player.whoAmI)
+			// Reevaluate the world-wide aura on the recipient every tick. No buff,
+			// duration, cooldown, distance, team or PvP condition is involved.
+			int helmetType = NeoArmorReforgeSetLoader.GetSetType<WarfarinHead>();
+			foreach (Player source in Main.ActivePlayers) {
+				if (source.dead || source.armor[0].type <= 0 || source.armor[0].type != helmetType)
 					continue;
-
-				if (Vector2.Distance(Player.Center, ally.Center) > maxRange)
-					continue;
-
-				if (ally.statLife / (float)ally.statLifeMax2 >= 0.5f)
-					continue;
-
-				if (allyRegenCooldown[i] > 0)
-					continue;
-
-				ally.AddBuff(ModContent.BuffType<WarfarinAllyRegenBuff>(), WarfarinAllyRegenBuff.DurationTicks);
-				allyRegenCooldown[i] = 60 * 60;
+				Player.lifeRegen += 20; // lifeRegen units: 20 = 10 HP per second.
+				break;
 			}
-		}
-
-		public override void UpdateLifeRegen() {
-			if (Player.HasBuff(ModContent.BuffType<WarfarinAllyRegenBuff>()))
-				Player.lifeRegen += WarfarinAllyRegenBuff.RegenPerSecond;
 		}
 
 		public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone) {

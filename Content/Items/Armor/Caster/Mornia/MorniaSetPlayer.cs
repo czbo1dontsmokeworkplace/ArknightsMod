@@ -31,13 +31,17 @@ namespace ArknightsMod.Content.Items.Armor.Caster.Mornia
 			player.GetCritChance(DamageClass.Magic) += 8f;
 		}
 
-		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {
-			if (HelmetActive && item.DamageType.CountsAsClass(DamageClass.Magic))
-				damage *= 1.06f;
+		private void ApplyArmorDamageStats() {
+			if (HelmetActive)
+				Player.GetDamage(DamageClass.Magic) *= 1.06f;
 		}
 
 		// 套装效果后半段「奥术弹幕自动追踪最近的敌人」实现在
 		// Common/GlobalProjectiles/MorniaArcaneHomingGlobalProj.cs——追踪要每帧改弹幕自己的
 		// velocity，挂在弹幕上比在这里遍历 Main.projectile 更直接。它读的就是上面的 SetActive。
+
+		public override void PostUpdateMiscEffects() {
+			ApplyArmorDamageStats();
+		}
 	}
 }

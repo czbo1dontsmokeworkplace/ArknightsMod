@@ -64,6 +64,7 @@ namespace ArknightsMod.Systems.Gameplay.OperatorTags
 			Register<MudrockHead>(OperatorClass.Defender, OperatorFaction.Sarkaz | OperatorFaction.RhodesIsland);
 			Register<MlynarHead>(OperatorClass.Guard, OperatorFaction.Kazimierz);
 			Register<OblivionisHead>(OperatorClass.Guard, OperatorFaction.AveMujica);
+			Register<global::ArknightsMod.Content.Items.Armor.Specialist.Mortis.MortisHead>(OperatorClass.Specialist, OperatorFaction.AveMujica);
 			Register<UlpianusHead>(OperatorClass.Guard, OperatorFaction.AbyssalHunter);
 			Register<SkadiHead>(OperatorClass.Guard, OperatorFaction.AbyssalHunter);
 			Register<RosmontisHead>(OperatorClass.Sniper, OperatorFaction.RhodesIsland);

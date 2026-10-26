@@ -36,17 +36,17 @@ public sealed class StandardBearerHoldout : ModProjectile
         Projectile.netUpdate = true;
     }
     public override bool ShouldUpdatePosition() => false;
-    public override bool? CanDamage() => !Idle && StandardBearerRules.CanStrike(Projectile.ai[1] / StandardBearerRules.AttackFrames)
+    public override bool? CanDamage() => !Idle && StandardBearerRules.CanStrike(Projectile.ai[1] / StandardBearerRules.AttackDuration)
         && !StandardBearerPlayer.IsPhased(Main.player[Projectile.owner]) ? null : false;
     public override void AI()
     {
         Player owner = Main.player[Projectile.owner];
-        if (!owner.active || owner.dead || owner.CCed || owner.noItems
+        if (!owner.active || owner.dead || ((owner.CCed || owner.noItems) && !StandardBearerPlayer.IsPhased(owner))
             || owner.HeldItem.ModItem is not StandardBearerWeapon weapon || (int)weapon.Kind != (int)Projectile.ai[0])
         { Projectile.Kill(); return; }
         Projectile.timeLeft = 2;
         if (StandardBearerPlayer.IsPhased(owner)) Projectile.ai[1] = -1;
-        float progress = Idle ? 0 : Projectile.ai[1] / StandardBearerRules.AttackFrames;
+        float progress = Idle ? 0 : Projectile.ai[1] / StandardBearerRules.AttackDuration;
         StandardBearerRules.Pose(progress, Projectile.ai[2], owner.gravDir, out float angle, out float extension);
         Vector2 aim = angle.ToRotationVector2();
         grip = owner.RotatedRelativePoint(owner.MountedCenter) + new Vector2(10 * owner.direction, -8 * owner.gravDir) + aim * extension;
@@ -57,9 +57,9 @@ public sealed class StandardBearerHoldout : ModProjectile
         owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, angle - MathHelper.PiOver2);
         if (!Idle)
         {
-            if (Projectile.ai[1] == 16 && !Main.dedServ) SoundEngine.PlaySound(SoundID.Item1 with { Volume = .3f }, grip);
+            if (Projectile.ai[1] == StandardBearerRules.ThrustSoundFrame && !Main.dedServ) SoundEngine.PlaySound(SoundID.Item1 with { Volume = .3f }, grip);
             // One sheet at full extension; only the owning client creates the synced projectile.
-            if (Projectile.ai[1] == 25 && Projectile.owner == Main.myPlayer)
+            if (Projectile.ai[1] == StandardBearerRules.CrescentFrame && Projectile.owner == Main.myPlayer)
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), tip, aim * StandardBearerRules.WaveSpeed,
                     ModContent.ProjectileType<StandardBearerCrescent>(), Projectile.damage, Projectile.knockBack,
                     Projectile.owner, (int)weapon.Kind, Projectile.identity);

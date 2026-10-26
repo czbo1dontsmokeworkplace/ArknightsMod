@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria;
 using Terraria.ModLoader;
@@ -33,9 +33,13 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Popukar
 				health.Base += 30;
 		}
 
-		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {
-			if (PopukarHelmetActive && item.DamageType.CountsAsClass(DamageClass.Melee))
-				damage *= 1.03f;
+		private void ApplyArmorDamageStats() {
+			if (PopukarHelmetActive)
+				Player.GetDamage(DamageClass.Melee) *= 1.03f;
+		}
+
+		public override void PostUpdateMiscEffects() {
+			ApplyArmorDamageStats();
 		}
 	}
 }

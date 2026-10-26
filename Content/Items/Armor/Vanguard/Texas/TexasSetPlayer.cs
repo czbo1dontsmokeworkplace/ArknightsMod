@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Players;
 using Terraria;
@@ -28,12 +28,12 @@ namespace ArknightsMod.Content.Items.Armor.Vanguard.Texas
 				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<TexasLegs>();
 		}
 
-		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {
+		private void ApplyArmorDamageStats() {
 			if (!TexasSetActive)
 				return;
 
 			if (Player.GetModPlayer<WeaponPlayer>().SkillActive)
-				damage *= OperatorSetSkillEffectHelper.GetSkillDamageMultiplier(Player);
+				Player.GetDamage(DamageClass.Generic) *= OperatorSetSkillEffectHelper.GetSkillDamageMultiplier(Player);
 		}
 
 		public override void PostUpdate() {
@@ -53,6 +53,10 @@ namespace ArknightsMod.Content.Items.Armor.Vanguard.Texas
 
 		public override void UpdateDead() {
 			deployBonusGranted = false;
+		}
+
+		public override void PostUpdateMiscEffects() {
+			ApplyArmorDamageStats();
 		}
 	}
 }

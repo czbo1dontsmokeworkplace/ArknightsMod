@@ -50,7 +50,7 @@ namespace ArknightsMod.Content.Buffs
 			{
 				S3HealPending = false;
 				S3HealDone = true;
-				Player.statLife = Player.statLifeMax2;
+				Player.GetModPlayer<IncomingHealingPlayer>().RestoreLife(Player.statLifeMax2);
 			}
 
 			// 记录本帧最终生命上限，供 S3 掉血用（掉血在 UpdateBuffs 里算时，

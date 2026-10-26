@@ -1,0 +1,100 @@
+Items: {
+	NightmareStaff: {
+		DisplayName: 梦境法杖 [夜魔]
+		Tooltip:
+			'''
+			击败全部三种机械首领后可制作
+			发射弯曲追踪的梦境魂焰
+			灵魂汲取期间，命中产生返还自身的魂丝；回收恢复3点生命，间隔至少24帧
+			夜魇魔影标记附近至多3个目标，按其移动距离造成额外法术伤害
+			印记仅减速普通敌人，不改变首领的行动
+			'''
+	}
+
+	AbsintheStaff: {
+		DisplayName: 执法法杖 [苦艾]
+		Tooltip:
+			'''
+			击败任意机械首领后可制作
+			发射高速的翠绿色术式针，对生命比例不超过40%的敌人伤害提高25%
+			执法模式暖机后持续强化攻击，优先锁定残血目标；切换武器后重置
+			终结连射开启四连射，仅攻击生命比例不超过50%的目标
+			没有合适目标时不攻击，也不消耗魔力
+			'''
+	}
+
+	EyjafjallaStaff: {
+		DisplayName: 火山法杖 [艾雅法拉]
+		Tooltip:
+			'''
+			击败世纪之花后可制作
+			释放熔火，灼烧命中的敌人
+			点燃可储存至多3次，强化下一击并爆开，降低主目标25%的法术抗性，持续6秒
+			火山期间举杖朝天散射熔火，先升空再下落追踪至多6个独立目标
+			'''
+	}
+}
+
+Skills: {
+	NightmareStaff: {
+		1: {
+			Label: 灵魂汲取
+			Desc: 持续20秒：攻击提高15%，命中凝成返还自身的治疗魂丝
+		}
+
+		2: {
+			Label: 夜魇魔影
+			Desc: 自动：为附近至多3个敌人施加7秒印记，按移动距离造成额外伤害；首领保持正常行动
+		}
+	}
+
+	AbsintheStaff: {
+		1: {
+			Label: 执法模式
+			Desc: 自动暖机：攻击提高80%，优先锁定生命比例最低的目标；持续至切换武器或死亡
+		}
+
+		2: {
+			Label: 终结连射
+			Desc: 持续20秒：以四连射攻击生命比例不超过50%的目标，每发造成62%伤害
+		}
+	}
+
+	EyjafjallaStaff: {
+		1: {
+			Label: 二重咏唱
+			Desc: 持续25秒：攻击速度提高60%；连续持握期间第二次及以后发动时，攻击额外提高50%
+		}
+
+		2: {
+			Label: 点燃
+			Desc: 自动储存至多3次：下一击造成310%伤害，爆炸对周围目标造成该击一半的伤害，降低主目标25%法抗
+		}
+
+		3: {
+			Label: 火山
+			Desc: 持续15秒：攻击间隔大幅缩短，熔火造成150%伤害，追踪至多6个目标并小范围爆开
+		}
+	}
+}
+
+Buffs: {
+	NightmareFetter: {
+		DisplayName: 夜魇束缚
+		Description: 梦境减缓了移动
+	}
+
+	EyjafjallaScorch: {
+		DisplayName: 点燃蚀痕
+		Description: 法术抗性降低25%
+	}
+}
+
+Projectiles: {
+	CoreCasterBolt.DisplayName: 中坚术式
+	CoreCasterPulse.DisplayName: 术式爆发
+	CoreCasterMend.DisplayName: 返还魂丝
+	NightmareBrand.DisplayName: 夜魇魔影
+}
+
+BranchTraits.CoreCaster: 中坚术师：  均衡性的造成法术伤害

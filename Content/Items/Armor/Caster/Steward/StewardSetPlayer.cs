@@ -25,9 +25,13 @@ namespace ArknightsMod.Content.Items.Armor.Caster.Steward
 				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<StewardLegs>();
 		}
 
-		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {
-			if (StewardHelmetActive && item.DamageType.CountsAsClass(DamageClass.Magic))
-				damage *= 1.04f;
+		private void ApplyArmorDamageStats() {
+			if (StewardHelmetActive)
+				Player.GetDamage(DamageClass.Magic) *= 1.04f;
+		}
+
+		public override void PostUpdateMiscEffects() {
+			ApplyArmorDamageStats();
 		}
 	}
 }

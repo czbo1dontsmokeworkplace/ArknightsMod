@@ -46,20 +46,19 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Skadi
 			health = StatModifier.Default;
 			mana = StatModifier.Default;
 
+			ClearExpiredUndyingEffects();
 			if (lifeMaxPenalty > 0)
 				health.Base -= lifeMaxPenalty;
 		}
 
-		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {
-			if (SkadiHelmetActive && item.DamageType.CountsAsClass(DamageClass.Melee))
-				damage *= 1.2f;
+		private void ApplyArmorDamageStats() {
+			if (SkadiHelmetActive)
+				Player.GetDamage(DamageClass.Melee) *= 1.2f;
 		}
 
-		public override float UseSpeedMultiplier(Item item) {
-			if (UndyingBuffActive && item.DamageType.CountsAsClass(DamageClass.Melee))
-				return 1.3f;
-
-			return 1f;
+		private void ApplyArmorAttackSpeed() {
+			if (UndyingBuffActive)
+				Player.GetAttackSpeed(DamageClass.Melee) *= 1.3f;
 		}
 
 		public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource) {
@@ -90,9 +89,20 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Skadi
 			return true;
 		}
 
-		public override void PostUpdate() {
-			if (!OperatorSetBossHelper.AnyBossActive())
-				UndyingBuffActive = false;
+		private void ClearExpiredUndyingEffects() {
+			if (!UndyingBuffActive && lifeMaxPenalty == 0)
+				return;
+
+			// 最大生命结算时装备标记可能尚未更新，直接检查当前盔甲栏。
+			bool setEquipped = Player.armor[0].type == NeoArmorReforgeSetLoader.GetSetType<SkadiHead>()
+				&& Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<SkadiBody>()
+				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<SkadiLegs>();
+			if (setEquipped && OperatorSetBossHelper.AnyBossActive())
+				return;
+
+			UndyingBuffActive = false;
+			lifeMaxPenalty = 0;
+			// 保留本次部署的消耗记录，重新穿戴或出现新首领不会刷新免死次数。
 		}
 
 		public override void OnRespawn() {
@@ -105,8 +115,9 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Skadi
 
 			int currentMax = Player.statLifeMax2;
 			lifeMaxPenalty += (int)(currentMax * 0.7f);
-			Player.statLife = currentMax - lifeMaxPenalty;
-			Player.HealEffect(Player.statLife);
+			Player.GetModPlayer<global::ArknightsMod.Players.IncomingHealingPlayer>().RestoreLife(currentMax - lifeMaxPenalty);
+			if (!Player.GetModPlayer<global::ArknightsMod.Players.IncomingHealingPlayer>().HealingBlocked)
+				Player.HealEffect(Player.statLife);
 		}
 
 		private void ResetDeploymentState() {
@@ -115,6 +126,12 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Skadi
 			lifeMaxPenalty = 0;
 			setActiveAtDeath = false;
 			respawnAdjusted = false;
+		}
+
+		public override void PostUpdateMiscEffects() {
+			ClearExpiredUndyingEffects();
+			ApplyArmorDamageStats();
+			ApplyArmorAttackSpeed();
 		}
 	}
 }

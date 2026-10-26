@@ -101,7 +101,7 @@ public sealed class CrusherPlayer : ModPlayer
             else {
                 var shared = Player.GetModPlayer<WeaponPlayer>();
                 shared.SkillActive = true; shared.SkillTimer = duration - remaining;
-                if (!shared.CurrentSkill.IsPermanent && --remaining <= 0) EndSkill(true);
+                if (!shared.CurrentSkill.IsPermanent && !Systems.Gameplay.MujicaFeverSystem.PauseSkill(Player) && --remaining <= 0) EndSkill(true);
                 if (ActiveMode == 3 && Kind == CrusherKind.Hoederer && ++drainTicks >= 60) {
                     drainTicks = 0; Player.statLife -= Math.Max(1, Player.statLifeMax2 / 100);
                     if (Player.statLife <= 0) Player.KillMe(PlayerDeathReason.ByCustomReason(NetworkText.FromKey("Mods.ArknightsMod.CrusherStrainDeath", Player.name)), 1, 0);

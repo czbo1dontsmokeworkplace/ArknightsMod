@@ -39,20 +39,16 @@ internal static class ScatterVisuals
             dust.noGravity = true;
         }
     }
-    internal static void WaterTrail(Projectile projectile)
+    internal static void WaterBubbles(Projectile projectile, int count = 1)
     {
-        if (Main.dedServ) return;
-        // Compact aquamarine mist and short-lived vanilla bubbles.
-        if (Main.rand.NextBool(3))
+        if (Main.dedServ || (count == 1 && !Main.rand.NextBool(3))) return;
+        for (int i = 0; i < count; i++)
         {
-            Gore bubble = Gore.NewGorePerfect(projectile.GetSource_FromAI(), projectile.Center,
+            Gore bubble = Gore.NewGorePerfect(projectile.GetSource_FromThis(),
+                projectile.Center + Main.rand.NextVector2Circular(4, 4),
                 projectile.velocity * .15f + Main.rand.NextVector2Circular(1, 1), Main.rand.NextBool(3) ? 412 : 411);
             bubble.timeLeft = Main.rand.Next(6, 13); bubble.scale = Main.rand.NextFloat(.35f, .55f);
         }
-        Dust mist = Dust.NewDustPerfect(projectile.Center + Main.rand.NextVector2Circular(5, 5),
-            Main.rand.NextBool(5) ? 267 : 278, -projectile.velocity * Main.rand.NextFloat(.05f, .3f),
-            0, Main.rand.NextBool(5) ? Color.Aqua : Color.Aquamarine, Main.rand.NextFloat(.3f, .5f));
-        mist.noGravity = true;
     }
     internal static void Spray(Vector2 center, Vector2 direction, int tier, int count, float force)
     {

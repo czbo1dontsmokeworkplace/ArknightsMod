@@ -1172,8 +1172,15 @@ SpicyCandy: {
 }
 
 ExusiaiVector: {
-	DisplayName: 维克托 [能天使]
-	Tooltip: “愿我的弹雨能熄灭你们的苦痛”
+	DisplayName: KRISS-"Vector" [能天使]
+	Tooltip:
+		'''
+		每匣40发，每秒20次射击；松开左键立即停火，保留余弹
+		弹匣打空后自动换弹1.2秒，换弹期间无法切换武器
+		无法手动换弹；每次射击消耗一格弹匣，技能追加子弹不额外消耗弹药
+		弹药伤害按射速与换弹周期折算，维持原版约150%的理论总输出
+		“愿我的弹雨能熄灭你们的苦痛”
+		'''
 }
 
 ExusiaiVector_Ammo: {
@@ -3269,8 +3276,12 @@ PipeBlueLightBlock: {
 }
 
 HazeMagicBook: {
-	DisplayName: 魔法书 [夜烟]
-	// Tooltip: ""
+	DisplayName: 法杖 [夜烟]
+	Tooltip:
+		'''
+		困难模式初期
+		释放蓝紫色法术弹，技能可强化攻击或以生命上限换取爆发
+		'''
 }
 
 ReedFlameShadowStaff: {
@@ -3703,8 +3714,8 @@ EntelechiaScythe: {
 	DisplayName: 隐德来希的巨镰
 	Tooltip:
 		'''
-		挥镰释放穿墙月牙，月牙逐渐减速并停留在空中
-		月牙最多命中7名敌人，每次命中后速度与伤害降低
+		挥镰释放持续加速的穿墙月牙，途中释放追踪光团
+		月牙最多命中7名敌人，每次命中后伤害降低
 		'''
 }
 
@@ -4159,6 +4170,7 @@ HoolheyakWindArts: {
 	DisplayName: 御风羽饰 [霍尔海雅]
 	Tooltip:
 		'''
+		击败石巨人后可制作
 		发射风弹，命中后形成追踪风旋
 		风旋吸附并卷起普通敌人，无法卷起首领
 		'''
@@ -4314,7 +4326,7 @@ ExecutorShotgun: {
 
 ChalterWatergun: {
 	DisplayName: 高压水枪 [假日威龙陈]
-	Tooltip: 喷射散射水滴，每滴可贯穿5名敌人
+	Tooltip: 散射水能光球，每枚可贯穿5名敌人
 }
 
 MaterialistUplink: {

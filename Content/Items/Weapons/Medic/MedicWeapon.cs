@@ -17,16 +17,31 @@ public abstract class MedicWeapon : ExpansionWeaponBase
     public MedicProfile Profile => MedicCatalog.Get(ProfileId);
     public override int EliteStageMax => ProfileId is 0 or 22 ? 1 : 2;
     protected override int[] EliteDamage => [0, 0, 0];
-    // Dedicated bag artwork for Ansel and Myrrh; other medics retain their existing staff art.
-    public override string Texture => ProfileId is 0 or 1
+    // Supplied item artwork is shared by inventory, dropped items and vanilla held-item drawing.
+    public override string Texture => ProfileId is 0 or 1 or 12 or 16 or 20 or 22
         ? "ArknightsMod/Content/Items/Weapons/Medic/" + Name
         : Profile.Branch == MedicBranch.Physician && Profile.Tier == 5
         ? "ArknightsMod/Content/Items/Weapons/Medic/Shining/ShiningSword"
         : "ArknightsMod/Content/Items/Weapons/Medic/Sussurro/SussurroStaff";
-    public override void SetStaticDefaults() => Item.staff[Type] = true;
+    public override void SetStaticDefaults() => Item.staff[Type] = ProfileId is not (0 or 1 or 16);
+    public override Vector2? HoldoutOffset() => ProfileId switch
+    {
+        0 or 1 => new Vector2(-8, -2),
+        16 => new Vector2(-2, -2),
+        _ => null
+    };
     public override void SetDefaults()
     {
-        Item.width = Item.height = 40;
+        (Item.width, Item.height) = ProfileId switch
+        {
+            0 => (36, 34),
+            1 => (30, 28),
+            12 => (54, 54),
+            16 => (6, 18),
+            20 => (64, 78),
+            22 => (46, 46),
+            _ => (40, 40)
+        };
         Item.damage = EliteDamage[0];
         Item.DamageType = DamageClass.Magic;
         Item.useTime = Item.useAnimation = Profile.CastAnimation;

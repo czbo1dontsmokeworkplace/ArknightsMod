@@ -32,7 +32,8 @@ public sealed class RecoverySuppressionSystem : ModSystem
         cursor.Index += 2;
         cursor.Emit(OpCodes.Ldarg_0);
         cursor.EmitDelegate((int count, Player player) => {
-            if (!player.GetModPlayer<RecoverySuppressionPlayer>().Equipped) return count;
+            if (!player.GetModPlayer<RecoverySuppressionPlayer>().Equipped
+                && !player.GetModPlayer<global::ArknightsMod.Players.IncomingHealingPlayer>().HealingBlocked) return count;
             player.lifeRegen = Math.Min(0, player.lifeRegen);
             player.lifeRegenCount = Math.Min(0, count);
             player.lifeRegenTime = 0;

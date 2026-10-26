@@ -7,7 +7,12 @@ public enum StandardBearerKind { Myrtle, Elysium, Jacint, Saileach }
 
 public static class StandardBearerRules
 {
-    public const int AttackFrames = 54;
+    public const float AttackSpeed = 2.5f;
+    public const float AttackDuration = 54f / AttackSpeed;
+    // Item timers use whole game frames; pose and events use the same accelerated clock.
+    public const int AttackFrames = 22;
+    public const int ThrustSoundFrame = 7; // ceil(16 / 2.5)
+    public const int CrescentFrame = 10; // 25 / 2.5
     public const float AuraRange = 800;
     public const float Reach = 96;
     public const int WaveSize = 32;

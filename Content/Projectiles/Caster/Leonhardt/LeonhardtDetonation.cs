@@ -1,4 +1,5 @@
 using System;
+using ArknightsMod.Common.VisualEffects.HelldiverExplosions;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
@@ -34,6 +35,7 @@ public sealed class LeonhardtDetonation : ModProjectile
 
     public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
     {
+        HelldiverExplosion.Spawn(Projectile, Projectile.Center, 6);
         Vector2 center = Projectile.Center;
         Projectile.width = Projectile.height = Projectile.ai[1] > 0f
             ? 360 : (int)MathHelper.Lerp(116f, 250f, Charge);
@@ -83,8 +85,6 @@ public sealed class LeonhardtDetonation : ModProjectile
 
     public override bool PreDraw(ref Color lightColor)
     {
-        LeonhardtVisuals.DrawDetonation(Projectile.Center, Projectile.width,
-            MathHelper.Clamp(Age / Lifetime, 0f, 1f));
         return false;
     }
 }

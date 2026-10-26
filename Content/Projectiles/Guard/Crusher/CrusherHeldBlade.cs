@@ -26,6 +26,7 @@ public sealed class CrusherHeldBlade : ModProjectile
     private float swingCharge;
     private float restAngle, entryOffset;
     private Item boundItem;
+    private Func<float, float> sampleAngle;
     private Vector2 grip, tip, previousTip, previousCenter, sweepStartCenter, sweepEndCenter;
     private readonly bool[] effectHits = new bool[Main.maxNPCs];
     internal CrusherKind Kind => (CrusherKind)(int)Projectile.ai[0];
@@ -37,8 +38,10 @@ public sealed class CrusherHeldBlade : ModProjectile
     internal float Progress => age < 0 ? 1 : Math.Clamp(age / length, 0, 1);
     internal float Opacity => Math.Clamp((CrusherRules.IdleTicks + CrusherRules.FadeTicks - idle) / (float)CrusherRules.FadeTicks, 0, 1);
     // Re-aim during the slow wind-up, never teleport the arms at a stroke boundary.
-    private float SwingAim => aim + entryOffset * (1 - MathHelper.SmoothStep(0, 1, Math.Clamp(Progress / .3f, 0, 1)));
-    private float Angle => age >= 0 ? BladeSwingTemplate.Angle(SwingAim, facing, Progress) : restAngle;
+    private float SwingAimAt(float progress) => aim + entryOffset * (1 - MathHelper.SmoothStep(0, 1, Math.Clamp(progress / .3f, 0, 1)));
+    private float SwingAim => SwingAimAt(Progress);
+    private float AngleAt(float progress) => CrusherSwingMotion.Angle(Kind, SwingAimAt(progress), facing, progress);
+    private float Angle => age >= 0 ? AngleAt(Progress) : restAngle;
     internal static CrusherHeldBlade Find(Player player)
     {
         foreach (Projectile p in Main.ActiveProjectiles)
@@ -58,13 +61,14 @@ public sealed class CrusherHeldBlade : ModProjectile
     internal void BeginCharge(Player owner)
     {
         if (Busy || owner.GetModPlayer<CrusherPlayer>().Charging) return;
+        if (Kind == CrusherKind.Ulpianus && UlpianusAnchorThrow.Exists(owner)) return;
         boundItem = owner.HeldItem;
         charging = true; chargeTicks = 0; readyPlayed = false; swingCharge = 0; idle = 0;
         var state = owner.GetModPlayer<CrusherPlayer>();
         chargeLimit = CrusherRules.ChargeDuration(owner.GetAttackSpeed(DamageClass.Melee) * state.SwingSpeed);
         aim = (Main.MouseWorld - owner.MountedCenter).SafeNormalize(new Vector2(owner.direction, 0)).ToRotation();
         facing = (MathF.Cos(aim) >= 0 ? 1 : -1) * (owner.gravDir < 0 ? -1 : 1);
-        if (!poseInitialized) { restAngle = BladeSwingTemplate.Angle(aim, facing, 0); poseInitialized = true; }
+        if (!poseInitialized) { restAngle = CrusherSwingMotion.Angle(Kind, aim, facing, 0); poseInitialized = true; }
         radius = CrusherRules.Reach(Kind) * state.ReachMultiplier * owner.GetAdjustedItemScale(owner.HeldItem);
         UpdatePose(owner); Projectile.netUpdate = true;
     }
@@ -82,12 +86,12 @@ public sealed class CrusherHeldBlade : ModProjectile
         power = forcedPower > 0 ? forcedPower : state.PrepareSwing(out special, swingCharge >= 1);
         if (forcedPower > 0) special = forcedSpecial;
         skillMode = state.ActiveMode; skillLevel = state.SkillLevel;
-        length = forcedSpecial == 3 ? 62 : BladeSwingTemplate.Duration(owner.GetAttackSpeed(DamageClass.Melee) * state.SwingSpeed);
+        length = forcedSpecial == 3 ? 62 : CrusherSwingMotion.ReleaseDuration(Kind, owner.GetAttackSpeed(DamageClass.Melee) * state.SwingSpeed);
         radius = CrusherRules.Reach(Kind) * state.ReachMultiplier * (forcedSpecial == 3 ? 1.22f : 1) * owner.GetAdjustedItemScale(owner.HeldItem);
         attackAim = (Main.MouseWorld - owner.MountedCenter).SafeNormalize(new Vector2(owner.direction, 0)).ToRotation();
         aim = attackAim; facing = (MathF.Cos(aim) >= 0 ? 1 : -1) * (owner.gravDir < 0 ? -1 : 1);
         entryOffset = poseInitialized
-            ? MathHelper.WrapAngle(incomingAngle - BladeSwingTemplate.Angle(aim, facing, 0)) : 0;
+            ? MathHelper.WrapAngle(incomingAngle - CrusherSwingMotion.Angle(Kind, aim, facing, 0)) : 0;
         poseInitialized = true;
         age = 0; idle = hitCount = 0; sequence++; pursuitReleased = false;
         // The manual charge and skill multiplier each apply once. Dedicated skill
@@ -99,6 +103,22 @@ public sealed class CrusherHeldBlade : ModProjectile
         UpdatePose(owner); previousAngle = Angle; previousCenter = grip; previousTip = tip;
         sweepStartAngle = sweepEndAngle = Angle; sweepStartCenter = sweepEndCenter = grip;
         Projectile.netUpdate = true;
+    }
+    private void ThrowAnchor(Player owner)
+    {
+        if (Projectile.owner != Main.myPlayer) return;
+        Vector2 direction = attackAim.ToRotationVector2();
+        Vector2 start = owner.MountedCenter;
+        if (Collision.CanHitLine(start, 1, 1, start + direction * 30, 1, 1)) start += direction * 30;
+        int index = Projectile.NewProjectile(Projectile.GetSource_FromThis(), start,
+            direction * MathHelper.Lerp(20, 30, swingCharge) / 3, ModContent.ProjectileType<UlpianusAnchorThrow>(),
+            Projectile.damage, Projectile.knockBack, Projectile.owner, swingCharge, owner.selectedItem, special);
+        if (Main.projectile.IndexInRange(index))
+        {
+            Main.projectile[index].CritChance = Projectile.CritChance;
+            (Main.projectile[index].ModProjectile as UlpianusAnchorThrow)?.CaptureSkill(skillMode, skillLevel);
+        }
+        Projectile.Kill();
     }
     internal void StopForCharge()
     {
@@ -141,6 +161,7 @@ public sealed class CrusherHeldBlade : ModProjectile
                 }
             }
         }
+        if (!Projectile.active) return;
         previousTip = tip;
         if (Swinging) {
             float before = Progress;
@@ -148,6 +169,7 @@ public sealed class CrusherHeldBlade : ModProjectile
             // its wind-up and follow-through; pose, trail and sweep share Progress.
             age = Math.Min(length, age + (swingCharge >= 1 ? 1.5f : 1f) / (Projectile.extraUpdates + 1));
             UpdatePose(owner);
+            if (Kind == CrusherKind.Ulpianus && age >= length) { ThrowAnchor(owner); return; }
             sweepStartAngle = previousAngle; sweepEndAngle = Angle;
             sweepStartCenter = previousCenter; sweepEndCenter = grip;
             if (before < .36f && Progress >= .36f && !Main.dedServ) {
@@ -165,10 +187,10 @@ public sealed class CrusherHeldBlade : ModProjectile
                 }
             }
             if (!poseInitialized) {
-                restAngle = BladeSwingTemplate.Angle(aim, facing, 1);
+                restAngle = CrusherSwingMotion.Angle(Kind, aim, facing, 1);
                 poseInitialized = true;
             }
-            restAngle = restAngle.AngleLerp(BladeSwingTemplate.Angle(aim, facing, charging ? 0 : 1),
+            restAngle = restAngle.AngleLerp(CrusherSwingMotion.Angle(Kind, aim, facing, charging ? 0 : 1),
                 .1f / (Projectile.extraUpdates + 1));
             UpdatePose(owner);
             if (Busy || state.Charging || HoldingAttack(owner)) idle = 0;
@@ -187,10 +209,10 @@ public sealed class CrusherHeldBlade : ModProjectile
         grip = owner.MountedCenter + new Vector2(0, owner.gfxOffY);
         tip = grip + Angle.ToRotationVector2() * Math.Max(1, radius);
     }
-    public override bool? CanDamage() => Swinging && age > 0 ? null : false;
+    public override bool? CanDamage() => Kind != CrusherKind.Ulpianus && Swinging && age > 0 ? null : false;
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => CanDamage() != false
         && BladeSwingTemplate.Contact(targetHitbox, sweepStartAngle, sweepEndAngle, sweepStartCenter, sweepEndCenter,
-            radius, Kind == CrusherKind.Ulpianus ? 38 : 24, facing, out _, out _);
+            radius, Kind == CrusherKind.Ulpianus ? 38 : 24, CrusherSwingMotion.RotationDirection(Kind, facing), out _, out _);
     public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
     {
         if (Kind == CrusherKind.Hoederer && OperatorStunNPC.HasStun(target)) modifiers.FinalDamage *= 1.2f;
@@ -224,8 +246,9 @@ public sealed class CrusherHeldBlade : ModProjectile
     public override bool PreDraw(ref Color lightColor)
     {
         if (!CrusherVisuals.Visible(Projectile.Center)) return false;
+        sampleAngle ??= AngleAt;
         if (age >= 0) DreadnoughtArcTrail.Draw(grip, SwingAim, facing, Progress, radius,
-            CrusherRules.Tint(Kind), CrusherRules.Tint(Kind) * .2f, CrusherRules.Edge(Kind), Opacity * MathHelper.Lerp(.35f, 1, swingCharge));
+            CrusherRules.Tint(Kind), CrusherRules.Tint(Kind) * .2f, CrusherRules.Edge(Kind), Opacity * MathHelper.Lerp(.35f, 1, swingCharge), sampleAngle);
         CrusherVisuals.DrawBlade(grip, tip, Kind, Opacity, Swinging && swingCharge >= 1, Outline);
         return false;
     }
@@ -240,7 +263,7 @@ public sealed class CrusherHeldBlade : ModProjectile
     public override void ReceiveExtraAI(BinaryReader r)
     {
         int old = sequence;
-        age = r.ReadSingle(); length = Math.Clamp(r.ReadSingle(), 8, 600);
+        age = r.ReadSingle(); length = Math.Clamp(r.ReadSingle(), 4, 600);
         idle = r.ReadInt32(); sequence = r.ReadInt32();
         special = r.ReadInt32(); skillMode = r.ReadInt32(); aim = r.ReadSingle(); attackAim = r.ReadSingle(); radius = Math.Clamp(r.ReadSingle(), 1, 1200);
         facing = r.ReadInt32() >= 0 ? 1 : -1; power = r.ReadSingle(); skillLevel = Math.Clamp(r.ReadInt32(), 1, 10);

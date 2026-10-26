@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Content.Projectiles.Specialist.ExusiaiAlter;
@@ -40,12 +40,12 @@ namespace ArknightsMod.Content.Items.Armor.Specialist.ExusiaiAlter
 			return false;
 		}
 
-		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {
+		private void ApplyArmorDamageStats() {
 			if (!IsExusiaiAlterHelmetOnField() || !OperatorAmmoConsumeHelper.HasAmmoSkill(Player))
 				return;
 
 			float mult = OperatorTagHelper.PlayerHasFaction(Player, OperatorFaction.Laterano) ? 1.18f : 1.09f;
-			damage *= mult;
+			Player.GetDamage(DamageClass.Generic) *= mult;
 		}
 
 		private int lifeDrainTimer;
@@ -106,6 +106,10 @@ namespace ArknightsMod.Content.Items.Armor.Specialist.ExusiaiAlter
 			}
 
 			return best;
+		}
+
+		public override void PostUpdateMiscEffects() {
+			ApplyArmorDamageStats();
 		}
 	}
 }

@@ -92,8 +92,10 @@ ExusiaiVector: {
 		Label: Assault Mode
 		Desc:
 			'''
-			Next attack becomes a [c/3791db:3]-round burst
-			Each shot deals damage equal to [c/3791db:145%] of ATK
+			When ready, empower the next [c/3791db:12] volleys (0.3 magazine)
+			Add [c/3791db:one parallel side chain] beside the main chain at the base firing rate
+			Does not refill ammunition; retain unused empowered volleys when firing stops and reload normally
+			Attack recovery pauses while empowered; charging speed is unchanged
 			'''
 	}
 
@@ -101,8 +103,9 @@ ExusiaiVector: {
 		Label: Sweep Mode
 		Desc:
 			'''
-			Attacks become a [c/3791db:4]-round burst
-			Each shot deals damage equal to [c/3791db:125%] of ATK
+			Each volley fires [c/3791db:1] additional bullet for the skill duration
+			Retain the base firing rate; gain a golden halo and feather-shaped flares
+			Parallel trajectories; normal magazine use and automatic reloads
 			'''
 	}
 
@@ -110,9 +113,9 @@ ExusiaiVector: {
 		Label: Overload Mode
 		Desc:
 			'''
-			Attacks become a [c/3791db:5]-round burst
-			Attack interval [c/3791db:shortened to a degree]
-			ATK increased to [c/3791db:110%]
+			Each volley fires [c/3791db:2] additional bullets for the skill duration
+			Retain the base firing rate; gain an orange-red halo and expanded feather-shaped flares
+			Parallel trajectories; normal magazine use and automatic reloads
 			[c/EDA128:Skill activates automatically]
 			'''
 	}

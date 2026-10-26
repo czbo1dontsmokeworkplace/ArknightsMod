@@ -24,7 +24,8 @@ public abstract class Scattergun : ExpansionWeaponBase
         Item.useStyle = ItemUseStyleID.Shoot;
         Item.noMelee = Item.noUseGraphic = Item.autoReuse = true;
         Item.useAmmo = AmmoID.Bullet;
-        Item.shoot = Tier == 0 ? ProjectileID.NailFriendly : ModContent.ProjectileType<ScatterPellet>();
+        Item.shoot = Tier == 0 ? ProjectileID.NailFriendly : Tier == 2
+            ? ModContent.ProjectileType<ChalterSplitOrb>() : ModContent.ProjectileType<ScatterPellet>();
         Item.shootSpeed = new[] { 12f, 14f, 13f }[Tier];
         Item.knockBack = Tier == 1 ? 6f : 3f;
         Item.rare = new[] { ItemRarityID.Green, ItemRarityID.LightRed, ItemRarityID.Red }[Tier];
@@ -68,8 +69,11 @@ public abstract class Scattergun : ExpansionWeaponBase
             int id = Tier == 0
                 ? Projectile.NewProjectile(source, muzzle, shotVelocity, ProjectileID.NailFriendly,
                     (int)(damage * power), knockback, player.whoAmI)
-                : Projectile.NewProjectile(source, muzzle, shotVelocity, ModContent.ProjectileType<ScatterPellet>(),
-                    (int)(damage * power), knockback, player.whoAmI, Tier, mode);
+                : Tier == 2
+                    ? Projectile.NewProjectile(source, muzzle, shotVelocity, ModContent.ProjectileType<ChalterSplitOrb>(),
+                        (int)(damage * power), knockback, player.whoAmI, 0, mode)
+                    : Projectile.NewProjectile(source, muzzle, shotVelocity, ModContent.ProjectileType<ScatterPellet>(),
+                        (int)(damage * power), knockback, player.whoAmI, Tier, mode);
             if (Main.projectile.IndexInRange(id))
             {
                 Main.projectile[id].CritChance = player.GetWeaponCrit(Item);

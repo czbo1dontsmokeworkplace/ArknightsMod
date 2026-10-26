@@ -94,8 +94,7 @@ public sealed class NecrassRitual : ModProjectile
     public override bool PreDraw(ref Color lightColor)
     {
         float fade = MathHelper.Clamp(1 - age / (Mode == 3 ? 96f * DurationScale : 40f), 0, 1);
-        NecrassVisuals.Seal(Projectile.Center, 34 + Math.Min(age, 28) * 2, age * .035f, fade);
-        if (Mode == 3) NecrassVisuals.Crown(Projectile.Center + new Vector2(0, -48), 50, age * .04f, fade, 6);
+        NecrassVisuals.Ritual(Projectile.Center, 34 + Math.Min(age, 28) * 2, age * .035f, fade, Mode);
         return false;
     }
 }
@@ -127,7 +126,7 @@ public sealed class NecrassOffering : ModProjectile
     }
     public override bool PreDraw(ref Color lightColor)
     {
-        NecrassVisuals.Crown(Projectile.Center, 9, age * .1f, 1, 3);
+        NecrassVisuals.Offering(Projectile.Center, age * .1f);
         return false;
     }
 }

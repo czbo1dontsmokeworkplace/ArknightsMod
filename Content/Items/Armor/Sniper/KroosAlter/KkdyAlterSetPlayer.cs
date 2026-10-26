@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Buffs;
+using ArknightsMod.Content.Buffs;
 using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria;
@@ -27,11 +27,9 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.KroosAlter
 				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<KkdyAlterLegs>();
 		}
 
-		public override float UseSpeedMultiplier(Item item) {
-			if (KkdyAlterHelmetActive && item.DamageType.CountsAsClass(DamageClass.Ranged))
-				return 1.15f;
-
-			return 1f;
+		private void ApplyArmorAttackSpeed() {
+			if (KkdyAlterHelmetActive)
+				Player.GetAttackSpeed(DamageClass.Ranged) *= 1.15f;
 		}
 
 		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {
@@ -61,6 +59,10 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.KroosAlter
 
 			if (Main.rand.NextFloat() < 0.2f)
 				OperatorStunNPC.TryApply(target, 12);
+		}
+
+		public override void PostUpdateMiscEffects() {
+			ApplyArmorAttackSpeed();
 		}
 	}
 }

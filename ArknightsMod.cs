@@ -184,6 +184,16 @@ namespace ArknightsMod
 		// Optional direct-healing integration. The caller supplies the actual source,
 		// recipient and restored life, rather than a generic Heal() notification.
 		public override object Call(params object[] args) {
+			if (args.Length == 2 && args[0] is string artsStat && artsStat == "GetArtsPenetration"
+				&& args[1] is Terraria.Player artsPlayer)
+				return artsPlayer.GetModPlayer<Players.MujicaPlayer>().ArtsPenetration;
+			if (args.Length == 2 && args[0] is string incomingStat && incomingStat == "GetIncomingHealingBonus"
+				&& args[1] is Terraria.Player statPlayer)
+				return statPlayer.GetModPlayer<Players.IncomingHealingPlayer>().Multiplier - 1f;
+			if (args.Length == 3 && args[0] is string incomingCommand && args[1] is Terraria.Player recipient && args[2] is int incomingAmount) {
+				if (incomingCommand == "ModifyIncomingHeal") return recipient.GetModPlayer<global::ArknightsMod.Players.IncomingHealingPlayer>().Modify(incomingAmount);
+				if (incomingCommand == "HealFinal") { recipient.GetModPlayer<global::ArknightsMod.Players.IncomingHealingPlayer>().HealFinal(incomingAmount); return true; }
+			}
 			if (args.Length == 2 && args[0] is string dodgeCommand && dodgeCommand == "GetDodgeStats"
 				&& args[1] is Terraria.Player dodgePlayer)
 				return dodgePlayer.GetModPlayer<Players.DodgePlayer>().Snapshot();
@@ -200,6 +210,12 @@ namespace ArknightsMod
 		public override void HandlePacket(BinaryReader reader, int whoAmI) {
 			short id = reader.ReadInt16();
 			switch ((ArkMessageID)id) {
+                case ArkMessageID.UlpianusKillStacks:
+                    Content.Items.Armor.Guard.Ulpianus.UlpianusSetPlayer.ReceiveStacks(reader);
+                    break;
+                case ArkMessageID.MujicaFever:
+                    Systems.Gameplay.MujicaFeverSystem.Receive(reader, whoAmI);
+                    break;
                 case ArkMessageID.LapplandSilenceRequest:
                     Content.Items.Armor.Guard.Lappland.LapplandSetPlayer.ReceiveSilenceRequest(reader, whoAmI);
                     break;
@@ -220,6 +236,15 @@ namespace ArknightsMod
                     break;
                 case ArkMessageID.SpotHealDodgeGrant:
                     global::ArknightsMod.Content.Items.Armor.Defender.Spot.SpotHealingHelper.ReceiveGrant(reader);
+                    break;
+                case ArkMessageID.AnselChainHealingGrant:
+                    global::ArknightsMod.Content.Items.Armor.Medic.Ansel.AnselHealingHelper.ReceiveGrant(reader);
+                    break;
+                case ArkMessageID.ReedHelmetScarHit:
+                    global::ArknightsMod.Content.Items.Armor.Medic.ReedFlameShadow.ReedFlameShadowSetPlayer.ReceiveScarHit(reader, whoAmI);
+                    break;
+                case ArkMessageID.ReedSelfHealingGrant:
+                    global::ArknightsMod.Content.Items.Armor.Medic.ReedFlameShadow.ReedFlameShadowSetPlayer.ReceiveSelfHealing(reader);
                     break;
                 case ArkMessageID.ChenSkillPointGrant:
                     global::ArknightsMod.Content.Items.Armor.Guard.Chen.ChenSetPlayer.ReceiveGrant(reader);
@@ -361,6 +386,11 @@ namespace ArknightsMod
             DroneCoreHealingGrant,
             LapplandSilenceRequest,
             DefenderRouteHit,
+            MujicaFever,
+            UlpianusKillStacks,
+            AnselChainHealingGrant,
+            ReedHelmetScarHit,
+            ReedSelfHealingGrant,
 		}
 	}
 	//public class Ex : GlobalNPC

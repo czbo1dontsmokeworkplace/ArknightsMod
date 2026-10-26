@@ -47,6 +47,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Specter
 			Projectile.hostile = false;
 			Projectile.penetrate = -1;
 			Projectile.tileCollide = false;
+			Projectile.ownerHitCheck = true;
 			Projectile.ignoreWater = true;
 			Projectile.aiStyle = -1;
 			Projectile.DamageType = DamageClass.Melee;
@@ -194,11 +195,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Specter
 		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {
 			if (spool < 0.32f)
 				return false;
-			if (!Collision.CanHit(Owner.MountedCenter, 1, 1,
-				targetHitbox.TopLeft(), targetHitbox.Width, targetHitbox.Height)) {
-				return false;
-			}
-
+			// Native ownerHitCheck handles terrain; this hook only tests the rotating saw blade.
 			Vector2 direction = aimAngle.ToRotationVector2();
 			float collisionPoint = 0f;
 			return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(),

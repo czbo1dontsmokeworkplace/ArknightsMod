@@ -25,7 +25,7 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Matoimaru
 				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<MatoimaruLegs>();
 
 			if (MatoimaruSetActive)
-				extraDefenseBonus -= 0.2f;
+				Player.statDefense.AdditiveBonus += -0.2f;
 		}
 
 		public override void ModifyMaxStats(out StatModifier health, out StatModifier mana) {

@@ -78,6 +78,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Blaze
 			Projectile.hostile = false;
 			Projectile.penetrate = -1;
 			Projectile.tileCollide = false;
+			Projectile.ownerHitCheck = true;
 			Projectile.ignoreWater = true;
 			Projectile.DamageType = DamageClass.Melee;
 			Projectile.usesLocalNPCImmunity = true;
@@ -215,10 +216,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Blaze
 			if (pulseDamageTicks <= 0 && finalDamageTicks <= 0)
 				return false;
 
-			if (!Collision.CanHit(Owner.MountedCenter, 1, 1,
-				targetHitbox.TopLeft(), targetHitbox.Width, targetHitbox.Height))
-				return false;
-
+			// Use the same native melee terrain check as the ordinary chainsaw holdouts.
 			if (InFinalDamageWindow)
 				return CircleIntersectsRectangle(Owner.MountedCenter, ExplosionRadius, targetHitbox);
 

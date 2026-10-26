@@ -45,6 +45,7 @@ Skills: {
 }
 
 VanguardSpears: {
+	Cost: Kills while held produce 1 Deployment Cost; 1 Cost restores 1 SP to the currently held weapon
 	Controls:
 		'''
 		Charges deal {0}x damage and share a {1}-second cooldown; release or hit terrain to stop

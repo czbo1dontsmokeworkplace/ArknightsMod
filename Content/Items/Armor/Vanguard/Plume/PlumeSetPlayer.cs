@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria;
 using Terraria.ModLoader;
@@ -25,16 +25,14 @@ namespace ArknightsMod.Content.Items.Armor.Vanguard.Plume
 				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<PlumeLegs>();
 		}
 
-		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {
-			if (PlumeHelmetActive && item.DamageType.CountsAsClass(DamageClass.Melee))
-				damage *= 1.03f;
+		private void ApplyArmorDamageStats() {
+			if (PlumeHelmetActive)
+				Player.GetDamage(DamageClass.Melee) *= 1.03f;
 		}
 
-		public override float UseSpeedMultiplier(Item item) {
-			if (PlumeSetActive && item.DamageType.CountsAsClass(DamageClass.Melee))
-				return 1.1f;
-
-			return 1f;
+		private void ApplyArmorAttackSpeed() {
+			if (PlumeSetActive)
+				Player.GetAttackSpeed(DamageClass.Melee) *= 1.1f;
 		}
 
 		public override void PostUpdate() {
@@ -44,6 +42,11 @@ namespace ArknightsMod.Content.Items.Armor.Vanguard.Plume
 			Player.moveSpeed += 0.1f;
 			Player.maxRunSpeed += 0.1f;
 			Player.accRunSpeed += 0.1f;
+		}
+
+		public override void PostUpdateMiscEffects() {
+			ApplyArmorDamageStats();
+			ApplyArmorAttackSpeed();
 		}
 	}
 }

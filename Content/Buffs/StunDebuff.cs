@@ -45,11 +45,10 @@ namespace ArknightsMod.Content.Buffs
 											 ai2: npc.getRect().Width) ;
 
 			//stun parameters
-			npc.velocity.X = 0;
-			if(npc.velocity.Y < 0) npc.velocity.Y = 0;
+			npc.velocity = Vector2.Zero;
 
 			npc.damage = 0;
-			npc.noGravity = false;
+			npc.noGravity = true;
 			npc.noTileCollide = false;
 		}
 	}
@@ -82,6 +81,23 @@ namespace ArknightsMod.Content.Buffs
 
 
 		public override bool InstancePerEntity => true;
+		private bool pinned;
+		private Vector2 anchor;
+
+		public override bool PreAI(NPC npc) {
+			if (!npc.HasBuff<StunDebuff>() && !npc.HasBuff<MostimaClockStun>()) {
+				pinned = false;
+				return true;
+			}
+			if (!pinned) { anchor = npc.position; pinned = true; }
+			npc.position = anchor;
+			npc.velocity = Vector2.Zero;
+			return false;
+		}
+
+		public override void PostAI(NPC npc) {
+			if (pinned) { npc.position = anchor; npc.velocity = Vector2.Zero; }
+		}
 
 		public override void ResetEffects(NPC npc) {
 
@@ -112,6 +128,16 @@ namespace ArknightsMod.Content.Buffs
 				//drawColor.G *= (byte)0.8;
 				//drawColor.B *= (byte)0.8;
 			}
+		}
+	}
+
+	public sealed class StunProjectileSuppression : GlobalProjectile
+	{
+		public override void OnSpawn(Projectile projectile, IEntitySource source) {
+			if (projectile.hostile && source is EntitySource_Parent { Entity: NPC npc }
+				&& OperatorStunNPC.HasStun(npc))
+				// Do not run death effects that could spawn further hostile projectiles.
+				projectile.active = false;
 		}
 	}
 }

@@ -7,7 +7,7 @@ using Terraria.ID;
 
 namespace ArknightsMod.Common.GlobalItems;
 
-// Only the documented weapons receive traits. Only medical weapons show a parent profession.
+// Only the documented weapons receive traits. Medical and Defender weapons also show their parent profession.
 public sealed class OperatorBranchTraits : GlobalItem
 {
     internal static string Branch(Item item) => item.ModItem?.Mod.Name == "ArknightsMod"
@@ -39,6 +39,8 @@ public sealed class OperatorBranchTraits : GlobalItem
         "Lava_Dagger" or "GitanoOrb" or "LeonhardtStaff" or "SkyfireStaff" or "MostimaStaff" => "SplashCaster",
         "AmbrielRifle" or "AndreanaRifle" or "FirewatchRifle" or "TyphonBow" => "Deadeye",
         "NecrassScepter" => "PrimalCaster",
+        "DurinWand" or "StewardStaff" or "HazeMagicBook" or "NightmareStaff" or "AbsintheStaff"
+            or "HoolheyakWindArts" or "EyjafjallaStaff" => "CoreCaster",
         "NoirShield" or "BeagleWeapon" or "CardiWeapon" or "CuoraWeapon" or "CroissantHammer" or "NianWeapon" => "Protector",
         "DN_Weapon" => "ArtsProtector",
         "LiskarmPistol" => "SentinelProtector",
@@ -54,7 +56,7 @@ public sealed class OperatorBranchTraits : GlobalItem
     internal static string Profession(string branch) => branch switch
     {
         "Mystic" or "ChainCaster" or "MechAccord" or "SplashCaster" or "Phalanx"
-            or "PrimalCaster" or "BlastCaster" => "Caster",
+            or "PrimalCaster" or "BlastCaster" or "CoreCaster" => "Caster",
         "ArtsFighter" or "Dreadnought" or "Musha" or "Centurion" or "Crusher" or "Reaper" or "Earthshaker" => "Guard",
         "Artilleryman" or "Deadeye" or "Crossbowman" or "Spreadshooter" => "Sniper",
         "Executor" => "Specialist",
@@ -68,7 +70,7 @@ public sealed class OperatorBranchTraits : GlobalItem
     public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
     {
         // Flavor follows all item-specific controls and numbers, immediately before
-        // the final profession block (two lines for medical weapons).
+        // the final profession block (two lines for medical and Defender weapons).
         if (item.ModItem?.Mod.Name == "ArknightsMod")
         {
             string flavorKey = "Mods.ArknightsMod." + item.ModItem.LocalizationCategory + "." + item.ModItem.Name + ".FlavorText";
@@ -78,9 +80,9 @@ public sealed class OperatorBranchTraits : GlobalItem
         if (Branch(item) is string branch)
         {
             string profession = Profession(branch);
-            if (profession == "Medic")
+            if (profession is "Medic" or "Defender")
             {
-                tooltips.Add(new TooltipLine(Mod, "OperatorClass", Language.GetTextValue("Mods.ArknightsMod.BranchTraits.MedicProfession")));
+                tooltips.Add(new TooltipLine(Mod, "OperatorClass", Language.GetTextValue("Mods.ArknightsMod.BranchTraits." + profession + "Profession")));
             }
             tooltips.Add(new TooltipLine(Mod, "OperatorBranch", Language.GetTextValue("Mods.ArknightsMod.BranchTraits." + branch)));
         }

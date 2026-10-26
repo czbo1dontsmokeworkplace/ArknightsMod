@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Players;
 using Terraria;
@@ -31,12 +31,12 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Melanite
 				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<MelaniteLegs>();
 		}
 
-		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {
-			if (MelaniteHelmetActive && item.DamageType.CountsAsClass(DamageClass.Ranged))
-				damage *= 1.2f;
+		private void ApplyArmorDamageStats() {
+			if (MelaniteHelmetActive)
+				Player.GetDamage(DamageClass.Ranged) *= 1.2f;
 
-			if (skillBonusActive && item.DamageType.CountsAsClass(DamageClass.Ranged))
-				damage *= 1.2f;
+			if (MelaniteSetActive && skillBonusActive)
+				Player.GetDamage(DamageClass.Ranged) *= 1.2f;
 		}
 
 		public override void PostUpdate() {
@@ -75,6 +75,10 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Melanite
 		public override void OnRespawn() {
 			if (MelaniteSetActive)
 				firstSkillBonusPending = true;
+		}
+
+		public override void PostUpdateMiscEffects() {
+			ApplyArmorDamageStats();
 		}
 	}
 }

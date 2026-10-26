@@ -90,8 +90,8 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Beehunter
 				player.statDefense += (int)((int)player.statDefense * 1.3f);
 				if (player.statLife < player.statLifeMax) {
 					float heal = player.statLifeMax * 0.03f / 60f;
-					if (Main.rand.NextFloat() < heal - (int)heal) player.statLife++;
-					player.statLife = System.Math.Min(player.statLife + (int)heal, player.statLifeMax);
+					int amount = (int)heal + (Main.rand.NextFloat() < heal - (int)heal ? 1 : 0);
+					player.GetModPlayer<global::ArknightsMod.Players.IncomingHealingPlayer>().HealSilent(amount);
 				}
 			}
 		}

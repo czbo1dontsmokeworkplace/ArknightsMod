@@ -24,13 +24,10 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Midnight
 				&& Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<MidnightBody>()
 				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<MidnightLegs>();
 
-			if (MidnightHelmetActive)
+			if (MidnightHelmetActive) {
 				Player.statDefense -= 5;
-		}
-
-		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {
-			if (MidnightHelmetActive && item.DamageType.CountsAsClass(DamageClass.Melee))
-				damage *= 1.15f;
+				Player.GetDamage(DamageClass.Melee) *= 1.15f;
+			}
 		}
 
 		public override void ModifyHitNPCWithItem(Item item, NPC target, ref NPC.HitModifiers modifiers) {

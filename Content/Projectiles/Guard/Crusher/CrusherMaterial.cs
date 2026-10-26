@@ -38,6 +38,12 @@ internal static class CrusherMaterial
         Quad(point, new Vector2(105, 77) * strength, direction.ToRotation());
         Draw(quad, 4, "ImpactPass", kind, progress, 1);
     }
+    internal static void DrawAnchorExplosion(Vector2 point, float progress)
+    {
+        if (!CrusherVisuals.Visible(point)) return;
+        Quad(point, new Vector2(110), 0);
+        Draw(quad, 4, "AnchorBlastPass", CrusherKind.Ulpianus, progress, 1);
+    }
     private static void Quad(Vector2 point, Vector2 size, float angle)
     {
         Vector2 x = angle.ToRotationVector2() * size.X, y = (angle + MathHelper.PiOver2).ToRotationVector2() * size.Y;

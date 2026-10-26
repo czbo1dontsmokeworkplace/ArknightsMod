@@ -36,13 +36,13 @@ internal static class CrusherAnchorVisuals
         }
         if(ParticleManager.activeParticles.Count<1100)new T_Crusher_Fragment(q.Center-axis*22,-axis*2,Kind,16,7,false).Spawn();
     }
-    internal static void DrawFlight(Projectile q,Vector2[] history,int samples)
+    internal static void DrawFlight(Projectile q,Vector2[] history,int samples,bool trailingChain=true)
     {
         if(!CrusherVisuals.Visible(q.Center))return;
         CrusherWaveMaterial.DrawAnchorTrail(q,history,samples);
         // A short trailing chain follows flight history, rather than a screen-long tether.
         Texture2D chain=TextureAssets.Chain.Value;
-        for(int i=2;i<Math.Min(samples,12);i++){
+        for(int i=2;trailingChain&&i<Math.Min(samples,12);i++){
             Vector2 at=history[i],delta=history[i-1]-at;
             if(delta.LengthSquared()<.01f||delta.LengthSquared()>60*60)continue;
             Main.EntitySpriteDraw(chain,at-Main.screenPosition,null,new Color(140,196,220)*(.6f*(1-i/12f)),
@@ -55,6 +55,23 @@ internal static class CrusherAnchorVisuals
             CrusherVisuals.DrawBlade(at-axis*reach*.5f,at+axis*reach*.5f,Kind,fade,false);
         }
         CrusherVisuals.DrawBlade(q.Center-axis*reach*.5f,q.Center+axis*reach*.5f,Kind,1,false);
+    }
+    internal static void DrawThrowTether(Projectile q)
+    {
+        if (!CrusherVisuals.Visible(q.Center)) return;
+        Texture2D chain = TextureAssets.Chain.Value;
+        Vector2 a = Main.player[q.owner].MountedCenter;
+        Vector2 z = q.Center - q.velocity.SafeNormalize(Vector2.UnitX) * CrusherRules.Reach(Kind) * .55f;
+        float length = Vector2.Distance(a, z);
+        if (!float.IsFinite(length) || length > 1400) return;
+        int count = Math.Clamp((int)(length / Math.Max(8, chain.Height * .75f)), 1, 120);
+        Vector2 Point(float t) => Vector2.Lerp(a, z, t) + Vector2.UnitY * MathF.Sin(t * MathHelper.Pi) * Math.Min(65, length * .08f);
+        for (int i = 0; i < count; i++)
+        {
+            Vector2 at = Point(i / (float)count), next = Point((i + 1f) / count);
+            Main.EntitySpriteDraw(chain, (at + next) / 2 - Main.screenPosition, null, new Color(116, 170, 201),
+                (next - at).ToRotation() - MathHelper.PiOver2, chain.Size() / 2, .9f, SpriteEffects.None);
+        }
     }
     internal static void Impact(Projectile q)
     {

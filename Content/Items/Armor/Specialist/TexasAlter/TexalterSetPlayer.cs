@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria;
 using Terraria.ID;
@@ -29,14 +29,9 @@ namespace ArknightsMod.Content.Items.Armor.Specialist.TexasAlter
 				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<TexalterLegs>();
 		}
 
-		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {
+		private void ApplyArmorDamageStats() {
 			if (TexalterHelmetActive && OperatorPassiveSkillHelper.IsPassiveSkillActive(Player))
-				damage *= 1.2f;
-		}
-
-		public override void ModifyHurt(ref Player.HurtModifiers modifiers) {
-			if (TexalterSetActive && KillProcReady)
-				modifiers.FinalDamage *= 0.85f;
+				Player.GetDamage(DamageClass.Generic) *= 1.2f;
 		}
 
 		public override void PostUpdate() {
@@ -62,11 +57,19 @@ namespace ArknightsMod.Content.Items.Armor.Specialist.TexasAlter
 			if (!TexalterSetActive || target.life > 0 || Main.netMode == NetmodeID.MultiplayerClient)
 				return;
 
-			Player.statLife = Player.statLifeMax2;
-			Player.HealEffect(Player.statLifeMax2);
+			int lifeBefore = Player.statLife;
+			Player.GetModPlayer<global::ArknightsMod.Players.IncomingHealingPlayer>().RestoreLife(Player.statLifeMax2);
+			if (Player.statLife > lifeBefore)
+				Player.HealEffect(Player.statLife - lifeBefore);
 			OperatorPassiveSkillHelper.TryRetriggerPassiveSkill(Player);
 			KillProcCooldown = 20 * 60;
 			KillProcReady = false;
+		}
+
+		public override void PostUpdateMiscEffects() {
+			ApplyArmorDamageStats();
+			if (TexalterSetActive && KillProcReady)
+				Player.endurance = 1f - (1f - Player.endurance) * 0.85f;
 		}
 	}
 }

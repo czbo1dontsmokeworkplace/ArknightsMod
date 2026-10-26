@@ -20,12 +20,19 @@ public sealed class StandardBearerPlayer : ModPlayer
     private readonly Dictionary<(int, int), (int charge, int stock, int sp)> reserves = new();
     public static bool IsPhased(Player player) => player.active && !player.dead
         && player.GetModPlayer<StandardBearerPlayer>().Active is { } active && active.Valid(player);
+    internal void EnforceFlag() => Active?.Enforce(Player);
+    public override void PreUpdate() => EnforceFlag();
+    public override void SetControls() => EnforceFlag();
+    public override bool PreItemCheck() { EnforceFlag(); return true; }
+    public override bool ShiftClickSlot(Item[] inventory, int context, int slot) => IsPhased(Player)
+        && ReferenceEquals(inventory, Player.inventory) && slot == Active.BoundSlot;
     public static bool Allied(Player source, Player target) => target.active && !target.dead
         && (source.whoAmI == target.whoAmI || (!source.hostile && !target.hostile)
             || (source.team != 0 && source.team == target.team));
     public override void PostUpdate()
     {
         if (Player.whoAmI != Main.myPlayer || Player.dead) return;
+        EnforceFlag();
         bool key = ArknightsKeybinds.SkillActivatePressed(Player);
         if (Player.HeldItem.ModItem is not StandardBearerWeapon weapon)
         { keyDown = key; previousType = previousSkill = -1; return; }

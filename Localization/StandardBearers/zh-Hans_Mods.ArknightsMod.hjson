@@ -2,36 +2,38 @@ Items: {
 	MyrtleStandard: {
 		DisplayName: 长柄军旗 [桃金娘]
 		// Tooltip: ""
+		FlavorText: “大家不要离我太远哦。”
 	}
 
 	ElysiumStandard: {
 		DisplayName: 长柄军旗 [极境]
 		// Tooltip: ""
+		FlavorText: “耳麦都检查好了吗？”
 	}
 
 	JacintStandard: {
 		DisplayName: 长柄军旗 [嘉辛塔]
 		// Tooltip: ""
+		FlavorText: “我们出发吧！”
 	}
 
 	SaileachStandard: {
 		DisplayName: 长柄军旗 [琴柳]
 		// Tooltip: ""
+		FlavorText: “跟着我，前进！”
 	}
 }
 
 BranchTraits.StandardBearer: 执旗手：  开启技能期间自身不受伤害，但也无法造成伤害
 
 StandardBearers: {
-	Aura: 手持时为800像素内的自身与友方玩家提供：移速+{0}%、防御+{1}、每秒生命恢复+1、召唤伤害+{2}%（同类光环取最高）
+	Aura: 手持光环：移速+{0}%、防御+{1}、回血+1/秒、召唤伤害+{2}%
 	Controls:
 		'''
-		平时竖直举起长柄武器；左键转向准星，近距离戳刺后收回
-		戳刺时释放一片短程魔法剑气，无限贯穿；从枪尖起的伤害范围不超过6格，约0.2秒消散
-		虚化期间可以移动，自己的弹幕与召唤物暂停造成伤害；切换物品或技能立即结束
-		部署费用以绿色资源球产出，1点费用可为当前手持武器补充1点技力，约10秒后消失
+		左键戳刺，释放短程贯穿剑气
+		技能期间锁定持旗；产出的费用可补充技力
 		'''
-	SkillKey: 按[{0}]开启选中的技能
+	SkillKey: 按[{0}]开启技能
 }
 
 Skills: {

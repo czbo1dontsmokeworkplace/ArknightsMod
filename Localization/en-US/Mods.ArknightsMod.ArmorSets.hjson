@@ -21,8 +21,8 @@ Melantha: {
 
 Utage: {
 	HeadName: Utage's Helmet
-	HelmetEffect: "[c/beebff:Helmet]: Melee hits restore 1 HP, up to 3/s"
-	SetEffect: "[c/beebff:Set]: +0.5% melee speed per 1% missing HP; max +30% at 60% HP lost"
+	HelmetEffect: "[c/beebff:Helmet]: Melee hits restore 1 HP, at most once every 20 ticks"
+	SetEffect: "[c/beebff:Set]: +0.5% additive melee speed per 1% missing HP; max +30% at 60% HP lost"
 	SetEffectActive: "[c/beebff:Set] (active): Current melee speed +{0}% (scales with missing HP, max +30%)"
 	SetBonus: Melee attack speed scales with missing HP, up to +30%
 }
@@ -79,7 +79,7 @@ Mostima: {
 Skadi: {
 	HeadName: Skadi's Helmet
 	HelmetEffect: "[c/beebff:Helmet]: Melee damage 120%"
-	SetEffect: "[c/beebff:Set]: -5s respawn; vs boss: survive lethal once (-70% max HP, full heal, +30% melee speed)"
+	SetEffect: "[c/beebff:Set]: -5s respawn; vs boss: survive lethal once per deployment (-70% max HP, full heal, +30% melee speed); effects end when no enemy boss remains, you die, or the set is unequipped"
 	SetBonus: -5s respawn; boss lethal survive once
 }
 
@@ -190,23 +190,23 @@ Surtr: {
 
 Ansel: {
 	HeadName: Ansel's Helmet
-	HelmetEffect: "[c/beebff:Helmet]: Heal output 104%"
-	SetEffect: "[c/beebff:Set]: 7% chance to heal another ally when healing"
-	SetBonus: Heal 104%; 7% chain heal
+	HelmetEffect: "[c/beebff:Helmet]: All allies in the world, including yourself, receive ×1.04 healing; each wearer's effect stacks multiplicatively with other incoming healing bonuses"
+	SetEffect: "[c/beebff:Set]: Successful healing has a 7% chance to restore the same actual HP gain to another injured ally anywhere in the world, including yourself; extra healing cannot trigger another chain heal"
+	SetBonus: All allies receive ×1.04 healing; 7% chain heal
 }
 
 Hibiscus: {
 	HeadName: Hibiscus's Helmet
-	HelmetEffect: "[c/beebff:Helmet]: Heal output 104%"
+	HelmetEffect: "[c/beebff:Helmet]: All allies in the world, including yourself, receive ×1.04 healing; each wearer's effect stacks multiplicatively with other incoming healing bonuses"
 	SetEffect: "[c/beebff:Set]: +30 max life"
-	SetBonus: Heal 104%; +30 max life
+	SetBonus: All allies receive ×1.04 healing; +30 max life
 }
 
 Warfarin: {
 	HeadName: Warfarin's Helmet
-	HelmetEffect: "[c/beebff:Helmet]: Allies below 50% HP get 20 HP/s regen 10s, 60s ICD per ally"
+	HelmetEffect: "[c/beebff:Helmet]: All players in the world, including yourself, gain +20 life regeneration (10 HP/s) while below 50% HP; ends immediately at 50%, with no cooldown or team/PvP restrictions"
 	SetEffect: "[c/beebff:Set]: On nearby enemy kill, self and random nearby ally gain 2 SP"
-	SetBonus: Low-HP ally regen; nearby kill +2 SP for self and random ally
+	SetBonus: All players below 50% HP gain +20 life regen; nearby kill +2 SP for self and random ally
 }
 
 Adnachiel: {
@@ -352,15 +352,15 @@ Mlynar: {
 
 Oblivionis: {
 	HeadName: Oblivionis's Helmet
-	HelmetEffect: "[c/beebff:Helmet]: Each note on field grants Ave Mujica members +3% armor pen and -2% enemy arts resist (max 10)"
-	SetEffect: "[c/beebff:Set]: Hits add Fever +3; all allies +15% attack speed"
+	HelmetEffect: "[c/beebff:Helmet]: Each note projectile in the world grants all Ave Mujica members 3 flat armor penetration and 2 percentage points of arts resistance penetration, up to 10 notes"
+	SetEffect: "[c/beebff:Set]: Hits grant 3 shared Fever (max 450). At full Fever, any Ave Mujica member starting a skill triggers 20 seconds of shared Fever: all members cannot die and their skill duration pauses. No Fever is gained while active. Allies gain 15% attack speed"
 	SetBonus: Fever on hit; ally attack speed +15%
 }
 
 Ulpianus: {
 	HeadName: Ulpianus's Helmet
-	HelmetEffect: "[c/beebff:Helmet]: +12 max HP and +4 attack per kill (max 9); other Abyssal Hunters get 50%"
-	SetEffect: "[c/beebff:Set]: Heal 12 on hit (16 below 50% HP); doubled while holding signature anchor (not yet implemented)"
+	HelmetEffect: "[c/beebff:Helmet]: Gain 1 stack per kill (max 9); personal stacks reset on death or removing the helmet. All Ulpianus wearers use the highest stack count among active wearers: +12 max HP and +4 attack per stack; other Abyssal Hunters receive 50%"
+	SetEffect: "[c/beebff:Set]: Heal 12 on hit (16 below 50% HP); doubled while holding Ulpianus's Anchor"
 	SetBonus: Heal on hit; low HP boost; anchor doubles heal
 }
 
@@ -434,8 +434,16 @@ Necrass: {
 	SetBonus: Equip/respawn summons a Lamenting Servant; kills summon or compound its stats, up to 6 stacks
 }
 
+ReedFlameShadow: {
+	HeadName: Reed the Flame Shadow's Helmet
+	HelmetEffect: "[c/beebff:Helmet]: Hits have a 30% chance to inflict Burned Scar for 8 seconds, reducing enemy attack damage by 20% and increasing magic damage taken to 138%; existing scars are not refreshed"
+	SetEffect: "[c/beebff:Set]: Successfully directly healing another player restores 50% of their actual HP gain to you, rounded down and capped at your maximum life"
+	SetBonus: Hits have a 30% scar chance; heal yourself for 50% of HP restored to others
+}
+
 Kaltsit: {
 	HeadName: 凯尔希的头盔
+	HelmetEffect: "[c/beebff:Helmet]: When M3 runs out of HP and enters crystal standby, enemies within 800 pixels of M3 take 1200 true damage and are stunned for 3 seconds, preventing movement and projectile firing"
 	SetEffect: "[c/beebff:套装效果]：在身后召唤M3伴随战斗，优先攻击距离玩家最近的敌人；M3受到足够伤害后会化为能量水晶，暂时不参与战斗，之后会自动复苏"
 	SetBonus: 召唤M3伴随战斗，倒下后化为水晶待机
 }

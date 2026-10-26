@@ -61,7 +61,7 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.Scene
 					}
 				}
 
-				if (holding)
+				if (holding && !global::ArknightsMod.Systems.Gameplay.MujicaFeverSystem.PauseSkill(Player))
 					Skill2Timer--; // 仅手持时推进
 
 				if (Skill2Timer == 0) {

@@ -1,4 +1,5 @@
 using ArknightsMod.Common.VisualEffects;
+using ArknightsMod.Common.VisualEffects.HelldiverExplosions;
 using ArknightsMod.Content.Projectiles.Caster.SpreadArts;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -25,6 +26,7 @@ public sealed class LavaBurst : ModProjectile
     public override bool? CanDamage() => Age <= 2 ? null : false;
     public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
     {
+        HelldiverExplosion.Spawn(Projectile, Projectile.Center, 4);
         if (Projectile.owner == Main.myPlayer)
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero,
                 ModContent.ProjectileType<SpreadAfterfield>(),
@@ -46,7 +48,6 @@ public sealed class LavaBurst : ModProjectile
 
     public override bool PreDraw(ref Color lightColor)
     {
-        SpreadArtsVfx.Burst(Projectile.Center, Projectile.width, Age / 18f, SpreadArt.Ember);
         return false;
     }
 }

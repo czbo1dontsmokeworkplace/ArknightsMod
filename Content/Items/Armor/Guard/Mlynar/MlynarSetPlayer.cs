@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Systems.Gameplay.OperatorTags;
 using Terraria;
@@ -26,23 +26,12 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Mlynar
 				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<MlynarLegs>();
 		}
 
-		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {
-			if (!MlynarHelmetActive || !item.DamageType.CountsAsClass(DamageClass.Melee))
+		private void ApplyArmorDamageStats() {
+			if (!MlynarHelmetActive)
 				return;
 
 			bool boosted = OperatorTagHelper.CountHostileEnemies() >= 3 || OperatorSetBossHelper.AnyBossActive();
-			damage *= boosted ? 1.15f : 1.1f;
-		}
-
-		public override void PostUpdate() {
-			if (MlynarHelmetActive) {
-				bool boosted = OperatorTagHelper.CountHostileEnemies() >= 3 || OperatorSetBossHelper.AnyBossActive();
-				if (boosted)
-					extraDefenseBonus += 0.1f;
-			}
-
-			if (MlynarSetActive)
-				Player.aggro += 750;
+			Player.GetDamage(DamageClass.Melee) *= boosted ? 1.15f : 1.1f;
 		}
 
 		public static bool TryGetActiveMlynarSetPlayer(out Player player, out MlynarSetPlayer modPlayer) {
@@ -62,6 +51,19 @@ namespace ArknightsMod.Content.Items.Armor.Guard.Mlynar
 			player = null;
 			modPlayer = null;
 			return false;
+		}
+
+		public override void PostUpdateMiscEffects() {
+			ApplyArmorDamageStats();
+			if (MlynarHelmetActive) {
+				bool boosted = OperatorTagHelper.CountHostileEnemies() >= 3 || OperatorSetBossHelper.AnyBossActive();
+				if (boosted)
+					Player.endurance += 0.1f;
+			}
+
+			if (MlynarSetActive)
+				Player.aggro += 750;
+
 		}
 	}
 

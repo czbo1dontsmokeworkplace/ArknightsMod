@@ -53,7 +53,7 @@ public sealed class GavialChainsawPlayer : ModPlayer
 
         if (mode != 0)
         {
-            if (ActiveMode == 0 || --remaining <= 0) EndSkill();
+            if (ActiveMode == 0 || (!global::ArknightsMod.Systems.Gameplay.MujicaFeverSystem.PauseSkill(Player) && --remaining <= 0)) EndSkill();
             else
             {
                 var shared = Player.GetModPlayer<WeaponPlayer>();

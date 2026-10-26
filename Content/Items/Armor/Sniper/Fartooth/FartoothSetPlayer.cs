@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Players;
 using Terraria;
@@ -50,35 +50,19 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Fartooth
 		public override void ModifyHitNPCWithItem(Item item, NPC target, ref NPC.HitModifiers modifiers) {
 			if (FartoothHelmetActive && SkillActive)
 				modifiers.ScalingArmorPenetration += 1f;
-
-			ApplySetRangedBonus(item, ref modifiers);
 		}
 
 		public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref NPC.HitModifiers modifiers) {
 			if (FartoothHelmetActive && SkillActive)
 				modifiers.ScalingArmorPenetration += 1f;
-
-			ApplySetRangedBonus(proj, ref modifiers);
 		}
 
-		private void ApplySetRangedBonus(Item item, ref NPC.HitModifiers modifiers) {
-			if (!FartoothSetActive || !item.DamageType.CountsAsClass(DamageClass.Ranged))
-				return;
-
+		public override void PostUpdateMiscEffects() {
+			if (!FartoothSetActive) return;
 			if (noDamageTimer >= 10 * 60)
-				modifiers.SourceDamage *= 1.2f;
+				Player.GetDamage(DamageClass.Ranged) *= 1.2f;
 			else if (bossRangedBoostActive)
-				modifiers.SourceDamage *= 1.3f;
-		}
-
-		private void ApplySetRangedBonus(Projectile proj, ref NPC.HitModifiers modifiers) {
-			if (!FartoothSetActive || !proj.DamageType.CountsAsClass(DamageClass.Ranged))
-				return;
-
-			if (noDamageTimer >= 10 * 60)
-				modifiers.SourceDamage *= 1.2f;
-			else if (bossRangedBoostActive)
-				modifiers.SourceDamage *= 1.3f;
+				Player.GetDamage(DamageClass.Ranged) *= 1.3f;
 		}
 
 		public override void ModifyHurt(ref Player.HurtModifiers modifiers) {

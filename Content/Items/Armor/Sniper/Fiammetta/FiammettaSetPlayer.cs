@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Armor;
+using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using ArknightsMod.Players;
 using Terraria;
@@ -28,14 +28,9 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Fiammetta
 				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<FiammettaLegs>();
 		}
 
-		public override float UseSpeedMultiplier(Item item) {
-			if (FiammettaHelmetActive
-				&& !Player.GetModPlayer<WeaponPlayer>().SkillActive
-				&& item.DamageType.CountsAsClass(DamageClass.Ranged)) {
-				return 1.27f;
-			}
-
-			return 1f;
+		private void ApplyArmorAttackSpeed() {
+			if (FiammettaHelmetActive && !Player.GetModPlayer<WeaponPlayer>().SkillActive)
+				Player.GetAttackSpeed(DamageClass.Ranged) *= 1.27f;
 		}
 
 		public override void PostUpdate() {
@@ -49,15 +44,20 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Fiammetta
 			}
 		}
 
-		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {
-			if (!FiammettaSetActive || !item.DamageType.CountsAsClass(DamageClass.Ranged))
+		private void ApplyArmorDamageStats() {
+			if (!FiammettaSetActive)
 				return;
 
 			float lifeRatio = Player.statLife / (float)Player.statLifeMax2;
 			if (lifeRatio > 0.8f)
-				damage *= 1.5f;
+				Player.GetDamage(DamageClass.Ranged) *= 1.5f;
 			else if (lifeRatio > 0.5f)
-				damage *= 1.25f;
+				Player.GetDamage(DamageClass.Ranged) *= 1.25f;
+		}
+
+		public override void PostUpdateMiscEffects() {
+			ApplyArmorDamageStats();
+			ApplyArmorAttackSpeed();
 		}
 	}
 }
