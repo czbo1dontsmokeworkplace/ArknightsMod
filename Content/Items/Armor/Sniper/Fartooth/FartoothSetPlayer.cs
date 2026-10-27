@@ -11,8 +11,8 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Fartooth
 		public bool FartoothHelmetActive;
 		public bool FartoothSetActive;
 
+		private const int NoDamageTicksRequired = 10 * 60;
 		private int noDamageTimer;
-		private bool bossRangedBoostActive;
 
 		public override void ResetEffects() {
 			FartoothHelmetActive = false;
@@ -27,6 +27,20 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Fartooth
 			FartoothSetActive = FartoothHelmetActive
 				&& Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<FartoothBody>()
 				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<FartoothLegs>();
+
+			if (!FartoothSetActive || Player.dead) {
+				noDamageTimer = 0;
+				return;
+			}
+
+			if (noDamageTimer < NoDamageTicksRequired)
+				noDamageTimer++;
+
+			// 两项独立加算：无伤 +20%，首领在场 +30%，同时满足时合计 +50%。
+			if (noDamageTimer >= NoDamageTicksRequired)
+				Player.GetDamage(DamageClass.Ranged) += 0.2f;
+			if (OperatorSetBossHelper.AnyBossActive())
+				Player.GetDamage(DamageClass.Ranged) += 0.3f;
 		}
 
 		private bool SkillActive => Player.GetModPlayer<WeaponPlayer>().SkillActive;
@@ -34,45 +48,11 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Fartooth
 		public override void PostUpdate() {
 			if (FartoothHelmetActive && SkillActive)
 				Player.aggro -= 750;
-
-			if (FartoothSetActive) {
-				noDamageTimer++;
-				if (noDamageTimer >= 10 * 60)
-					noDamageTimer = 10 * 60;
-
-				if (OperatorSetBossHelper.AnyBossActive())
-					bossRangedBoostActive = true;
-				else
-					bossRangedBoostActive = false;
-			}
 		}
 
-		public override void ModifyHitNPCWithItem(Item item, NPC target, ref NPC.HitModifiers modifiers) {
-			if (FartoothHelmetActive && SkillActive)
-				modifiers.ScalingArmorPenetration += 1f;
-		}
+		// 实际受伤才重置计时；闪避的攻击不会打断无伤奖励。
+		public override void OnHurt(Player.HurtInfo info) => noDamageTimer = 0;
 
-		public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref NPC.HitModifiers modifiers) {
-			if (FartoothHelmetActive && SkillActive)
-				modifiers.ScalingArmorPenetration += 1f;
-		}
-
-		public override void PostUpdateMiscEffects() {
-			if (!FartoothSetActive) return;
-			if (noDamageTimer >= 10 * 60)
-				Player.GetDamage(DamageClass.Ranged) *= 1.2f;
-			else if (bossRangedBoostActive)
-				Player.GetDamage(DamageClass.Ranged) *= 1.3f;
-		}
-
-		public override void ModifyHurt(ref Player.HurtModifiers modifiers) {
-			if (!FartoothSetActive)
-				return;
-
-			modifiers.ModifyHurtInfo += (ref Player.HurtInfo info) => {
-				noDamageTimer = 0;
-				bossRangedBoostActive = false;
-			};
-		}
+		public override void UpdateDead() => noDamageTimer = 0;
 	}
 }

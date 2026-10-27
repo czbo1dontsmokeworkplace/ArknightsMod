@@ -10,8 +10,6 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Catapult
 		public bool CatapultHelmetActive;
 		public bool CatapultSetActive;
 
-		private bool spawnSpGranted;
-
 		public override void ResetEffects() {
 			CatapultHelmetActive = false;
 			CatapultSetActive = false;
@@ -30,24 +28,6 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Catapult
 		private void ApplyArmorDamageStats() {
 			if (CatapultSetActive)
 				Player.GetDamage(DamageClass.Ranged) *= 1.03f;
-		}
-
-		public override void PostUpdate() {
-			if (!CatapultSetActive)
-				return;
-
-			if (!Player.dead && !spawnSpGranted) {
-				OperatorSPHelper.TryGainSP(Player, 5);
-				spawnSpGranted = true;
-			}
-
-			if (Player.dead)
-				spawnSpGranted = false;
-		}
-
-		public override void OnRespawn() {
-			if (CatapultSetActive)
-				OperatorSPHelper.TryGainSP(Player, 5);
 		}
 
 		public override void PostUpdateMiscEffects() {

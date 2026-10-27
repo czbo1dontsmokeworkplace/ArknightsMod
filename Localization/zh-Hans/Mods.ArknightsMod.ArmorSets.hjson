@@ -44,8 +44,8 @@ Saria: {
 KkdyAlter: {
 	HeadName: 寒芒克洛丝的头盔
 	HelmetEffect: "[c/beebff:头盔效果]：获得15%远程攻速"
-	SetEffect: "[c/beebff:套装效果]：远程攻击时有20%概率使当次攻击的攻击力提升至150%，并使敌人眩晕0.2秒"
-	SetBonus: 20%概率远程150%伤害并眩晕0.2秒
+	SetEffect: "[c/beebff:套装效果]：远程攻击时有20%概率使当次攻击的攻击力提升至150%；远程暴击命中时使敌人眩晕0.2秒"
+	SetBonus: 20%概率远程150%伤害；远程暴击眩晕0.2秒
 }
 
 Matoimaru: {
@@ -212,22 +212,22 @@ Warfarin: {
 Adnachiel: {
 	HeadName: 安德切尔的头盔
 	HelmetEffect: "[c/beebff:头盔效果]：远程伤害104%"
-	SetEffect: "[c/beebff:套装效果]：远程攻击对远程敌人有一定追踪能力"
-	SetBonus: 远程104%；远程攻击追踪远程敌人
+	SetEffect: "[c/beebff:套装效果]：远程攻击对所有敌对目标有一定追踪能力"
+	SetBonus: 远程104%；远程攻击追踪敌对目标
 }
 
 Catapult: {
 	HeadName: 空爆的头盔
-	HelmetEffect: "[c/beebff:头盔效果]：部署费用-1（模组暂无部署费用系统，效果预留）"
-	SetEffect: "[c/beebff:套装效果]：远程伤害103%；部署与再部署后获得5点技力"
-	SetBonus: 远程103%；部署/再部署+5技力
+	HelmetEffect: "[c/beebff:头盔效果]：远程武器技力需求-1（最低为1）"
+	SetEffect: "[c/beebff:套装效果]：远程伤害提升至103%"
+	SetBonus: 远程伤害103%
 }
 
 Fartooth: {
 	HeadName: 远牙的头盔
-	HelmetEffect: "[c/beebff:头盔效果]：技能期间降低被瞄准优先级，攻击无视敌人闪避"
-	SetEffect: "[c/beebff:套装效果]：10秒内未受伤时远程伤害+20%；敌方首领在场时远程伤害130%，直到受伤或首领退场"
-	SetBonus: 10秒无伤+20%远程；有首领时130%远程直至受伤
+	HelmetEffect: "[c/beebff:头盔效果]：技能期间降低被瞄准优先级"
+	SetEffect: "[c/beebff:套装效果]：连续10秒未受伤时远程伤害+20%，受伤后失效并重新计时；敌方首领在场时远程伤害额外+30%，不受受伤影响；两项可同时生效，合计+50%；死亡或脱下套装重置无伤计时"
+	SetBonus: 连续10秒无伤远程+20%（受伤重计时）；有首领额外+30%，可叠加
 }
 
 Fiammetta: {

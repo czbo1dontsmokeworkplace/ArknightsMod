@@ -44,8 +44,8 @@ Saria: {
 KkdyAlter: {
 	HeadName: Kroos the Keen Glazer's Helmet
 	HelmetEffect: "[c/beebff:Helmet]: +15% ranged attack speed"
-	SetEffect: "[c/beebff:Set]: 20% chance ranged hits deal 150% damage and stun 0.2s"
-	SetBonus: 20% chance 150% ranged + 0.2s stun
+	SetEffect: "[c/beebff:Set]: 20% chance for ranged attacks to deal 150% damage; ranged critical hits stun enemies for 0.2 seconds"
+	SetBonus: 20% chance for 150% ranged damage; ranged critical hits stun for 0.2s
 }
 
 Matoimaru: {
@@ -212,22 +212,22 @@ Warfarin: {
 Adnachiel: {
 	HeadName: Adnachiel's Helmet
 	HelmetEffect: "[c/beebff:Helmet]: Ranged damage 104%"
-	SetEffect: "[c/beebff:Set]: Ranged attacks home toward ranged-capable enemies"
-	SetBonus: Ranged 104%; homing to ranged enemies
+	SetEffect: "[c/beebff:Set]: Ranged attacks home toward all hostile targets"
+	SetBonus: Ranged 104%; homing to hostile targets
 }
 
 Catapult: {
 	HeadName: Catapult's Helmet
-	HelmetEffect: "[c/beebff:Helmet]: Deploy cost -1 (no deploy cost system yet; reserved)"
-	SetEffect: "[c/beebff:Set]: Ranged damage 103%; +5 SP on deploy/redeploy"
-	SetBonus: Ranged 103%; +5 SP on deploy/redeploy
+	HelmetEffect: "[c/beebff:Helmet]: Ranged weapon SP requirement -1 (minimum 1)"
+	SetEffect: "[c/beebff:Set]: Ranged damage increased to 103%"
+	SetBonus: Ranged damage 103%
 }
 
 Fartooth: {
 	HeadName: Fartooth's Helmet
-	HelmetEffect: "[c/beebff:Helmet]: During skill lower aggro; attacks ignore enemy dodge"
-	SetEffect: "[c/beebff:Set]: If no damage 10s +20% ranged; while boss active 130% ranged until hit or boss leaves"
-	SetBonus: 10s no dmg +20% ranged; boss 130% ranged until hit
+	HelmetEffect: "[c/beebff:Helmet]: Reduced aggro during skills"
+	SetEffect: "[c/beebff:Set]: +20% ranged damage after 10 seconds without taking damage; taking damage removes this bonus and restarts the timer. An additional +30% ranged damage while a boss is present, unaffected by taking damage. Both bonuses stack additively to +50%. Death or removing the set resets the no-damage timer"
+	SetBonus: +20% ranged after 10s without damage (hit resets timer); additional +30% while a boss is present
 }
 
 Fiammetta: {

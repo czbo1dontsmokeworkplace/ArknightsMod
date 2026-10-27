@@ -2,7 +2,6 @@ using ArknightsMod.Content.Buffs;
 using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Sniper.KroosAlter
@@ -38,27 +37,18 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.KroosAlter
 		}
 
 		public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone) {
-			TryStunOnRangedProc(item, target, damageDone);
+			TryStunOnRangedCrit(item.DamageType, target, hit, damageDone);
 		}
 
 		public override void OnHitNPCWithProj(Projectile proj, NPC target, NPC.HitInfo hit, int damageDone) {
-			TryStunOnRangedProc(proj, target, damageDone);
+			TryStunOnRangedCrit(proj.DamageType, target, hit, damageDone);
 		}
 
-		private void TryStunOnRangedProc(Item item, NPC target, int damageDone) {
-			if (!KkdyAlterSetActive || damageDone <= 0 || !item.DamageType.CountsAsClass(DamageClass.Ranged))
+		private void TryStunOnRangedCrit(DamageClass damageType, NPC target, NPC.HitInfo hit, int damageDone) {
+			if (!KkdyAlterSetActive || !hit.Crit || damageDone <= 0 || !damageType.CountsAsClass(DamageClass.Ranged))
 				return;
 
-			if (Main.rand.NextFloat() < 0.2f)
-				OperatorStunNPC.TryApply(target, 12);
-		}
-
-		private void TryStunOnRangedProc(Projectile proj, NPC target, int damageDone) {
-			if (!KkdyAlterSetActive || damageDone <= 0 || !proj.DamageType.CountsAsClass(DamageClass.Ranged))
-				return;
-
-			if (Main.rand.NextFloat() < 0.2f)
-				OperatorStunNPC.TryApply(target, 12);
+			OperatorStunNPC.TryApply(target, 12);
 		}
 
 		public override void PostUpdateMiscEffects() {
