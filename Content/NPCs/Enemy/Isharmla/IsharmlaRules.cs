@@ -6,7 +6,10 @@ namespace ArknightsMod.Content.NPCs.Enemy.Isharmla;
 
 public enum TideStage { Cantor = 1, Leviathan, Covenant, LastSong, LastTide, Finale }
 public enum TideShot { Pearl, Seeker, Column, RainCloud, Rain, Wave, Breath, Gate, Lattice, Mine, Bubble, Typhoon, Tornado, Shark,
-    Note, CharmNote, StormSpark, Bomb, MistField }
+    Note, CharmNote, StormSpark, Bomb, MistField,
+    Canticle, EchoSinger, WakeMark, FoamArc, Current, TideHeart }
+
+public enum TideMotion { Breach, Broadside, Spiral, Gate, Undertow, AtomicBreath }
 
 // All progression and geometry rules are independent of rendering and networking.
 public static class IsharmlaRules
@@ -14,8 +17,19 @@ public static class IsharmlaRules
     public const int DragonSegments = 19;
     public const int ArrivalWarning = 300;
     public const int TransitionTime = 150;
-    public const int FinaleTime = 2160;
-    public const float HumanRadius = 69;
+    public const int FinaleTime = 960;
+    public const float HumanRadius = 46;
+    public const int HazardBudget = 420;
+    public static int HumanPhraseLength(bool fierce) => fierce ? 330 : 420;
+    public static int MotionLength(int pattern, bool final) => pattern switch
+    {
+        0 => 420, 1 => final ? 390 : 450, 2 => 480, 3 => 420, 4 => 420, _ => 510
+    };
+    public static float Envelope(float age, float start, float end, float fade = 24) =>
+        Smooth((age - start) / fade) * Smooth((end - age) / fade);
+    public static Vector2 BoundedAim(Vector2 aim) => new(
+        MathHelper.Clamp(aim.X, 320, Main.maxTilesX * 16 - 320),
+        MathHelper.Clamp(aim.Y, 500, Main.maxTilesY * 16 - 640));
     public const float BodyArtAngle = .2692f;
     public const float HeadArtAngle = .43f;
     public const float DragonScale = .82f;
@@ -53,8 +67,7 @@ public static class IsharmlaRules
     public static int FinalePattern(int timer) => Math.Clamp(timer / 540, 0, 3);
     public static bool IsLineShot(TideShot kind) => kind is TideShot.Column or TideShot.Breath or TideShot.Gate or TideShot.Lattice;
     public static bool AllowsLineShot(int total, int lines) => (lines + 1) * 5 <= total + 1;
-    public static float FinaleOpacity(int timer, int transition) =>
-        1 - Smooth((transition > 0 ? 180 - transition : 180 + timer) / 300f);
+    public static float FinaleOpacity(int timer, int transition) => 1 - Smooth((timer - 800) / 150f);
     // Offsets are frozen around the target when a phrase begins. No zone follows the player.
     public static Vector2[] FinaleOffsets(int pattern, int wave)
     {

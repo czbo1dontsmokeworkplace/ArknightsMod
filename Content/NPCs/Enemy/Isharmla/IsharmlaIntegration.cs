@@ -69,9 +69,7 @@ public sealed class IsharmlaPlayer : ModPlayer
         => RestrictFlight();
     private void RestrictFlight()
     {
-        if (IsharmlaWorld.ActiveBoss() is not { Stage: TideStage.Cantor, Initialized: true } boss) return;
-        if (Vector2.DistanceSquared(Player.Center, boss.Anchor) > 4000 * 4000) return;
-        SuppressFlight(Player);
+        // The encounter is now designed around full post-Moon-Lord movement in every stage.
     }
     public static void SuppressFlight(Player player)
     {

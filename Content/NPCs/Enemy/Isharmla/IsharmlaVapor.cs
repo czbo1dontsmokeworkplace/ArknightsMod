@@ -72,7 +72,7 @@ public sealed class IsharmlaVapor : ModSystem
                 if(tick%9==0)
                 {
                     float side=tick%18==0?1:-1;
-                    Emit(npc.Center+new Vector2(side*45,35),new Vector2(side*.34f,-.25f),new Vector2(125,48),.65f*HumanVisibility(boss),78,side*.15f);
+                    Emit(npc.Center+new Vector2(side*45,35),new Vector2(side*.34f,-.25f),new Vector2(85,32),.25f*HumanVisibility(boss),48,side*.15f);
                 }
                 if(boss.Transition>0 && tick%5==0)
                     Emit(npc.Center+random.NextVector2CircularEdge(75,60),new Vector2(.3f,-.7f),new Vector2(140,62),.75f,85);
@@ -162,7 +162,7 @@ public sealed class IsharmlaVapor : ModSystem
         }
         foreach(NPC npc in Main.ActiveNPCs)
         {
-            if(npc.ModNPC is Isharmla b && b.Initialized)HumanCurrents(b.NPC.Center,HumanVisibility(b)*(b.NPC.dontTakeDamage?.8f:1));
+            if(npc.ModNPC is Isharmla b && b.Initialized)HumanCurrents(b.NPC.Center,HumanVisibility(b)*(.14f+b.Gesture*.18f));
             if(npc.ModNPC is IsharmlaDragon d && wakes.TryGetValue(npc.whoAmI,out Wake w) && tick-w.Seen<3)DrawWake(w,d);
         }
         Flush(batch);

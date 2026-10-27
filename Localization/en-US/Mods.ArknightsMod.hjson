@@ -13,7 +13,7 @@ CommonTooltips: {
 }
 
 RecipeGroups: {
-    AnyVanillaTombstone: Any Tombstone
+	AnyVanillaTombstone: Any Tombstone
 	AnyVanillaBunny: Any Bunny Item
 }
 
