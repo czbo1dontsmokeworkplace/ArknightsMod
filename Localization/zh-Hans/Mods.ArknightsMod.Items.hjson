@@ -2198,17 +2198,17 @@ CatapultLegs: {
 }
 
 KroosBody: {
-	DisplayName: 克洛斯的躯干
+	DisplayName: 克洛丝的躯干
 	// Tooltip: ""
 }
 
 KroosHead: {
-	DisplayName: 克洛斯的头部
+	DisplayName: 克洛丝的头部
 	// Tooltip: ""
 }
 
 KroosLegs: {
-	DisplayName: 克洛斯的腿部
+	DisplayName: 克洛丝的腿部
 	// Tooltip: ""
 }
 
@@ -2303,7 +2303,7 @@ HibiscusDefault: {
 }
 
 KroosDefault: {
-	DisplayName: 克洛斯的服饰（常规）
+	DisplayName: 克洛丝的服饰（常规）
 	Tooltip: 右键点击可打开
 }
 

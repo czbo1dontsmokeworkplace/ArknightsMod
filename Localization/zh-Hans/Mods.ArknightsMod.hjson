@@ -15,6 +15,7 @@ CommonTooltips: {
 RecipeGroups: {
     AnyVanillaTombstone: 任意墓碑
 	AnyVanillaBunny: 任意兔兔元素物品
+	SpicyPepperOrFrostCore: 辣椒或寒霜核
 }
 
 ItemDropRuleCondition: {

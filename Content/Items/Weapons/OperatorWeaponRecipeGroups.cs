@@ -1,3 +1,5 @@
+using ArknightsMod.Content.Items.Weapons.Guard.Chen;
+using ArknightsMod.Content.NPCs.Enemy.FaustAndMephisto;
 using System.Linq;
 using Terraria;
 using Terraria.GameContent;
@@ -18,9 +20,10 @@ public sealed class OperatorWeaponRecipeGroups : ModSystem
     public const string CobaltOrPalladiumChainsaw = "ArknightsMod:CobaltOrPalladiumChainsaw";
     public const string CobaltOrPalladiumBar = "ArknightsMod:CobaltOrPalladiumBar";
     public const string AnyVanillaMeteorPhaseblade = "ArknightsMod:AnyVanillaMeteorPhaseblade";
+	public const string SpicyPepperOrFrostCore = "ArknightsMod:SpicyPepperOrFrostCore";
 
-    /// <summary>兔兔系列：兔子 / 兔兔耳朵 / 兔兔尾巴 / 兔子头盔 / 兔兔雕像（全部是原版物品）。</summary>
-    public const string AnyVanillaBunny = "ArknightsMod:AnyVanillaBunny";
+	/// <summary>兔兔系列：兔子 / 兔兔耳朵 / 兔兔尾巴 / 兔子头盔 / 兔兔雕像（全部是原版物品）。</summary>
+	public const string AnyVanillaBunny = "ArknightsMod:AnyVanillaBunny";
 
     public override void AddRecipeGroups()
     {
@@ -52,7 +55,10 @@ public sealed class OperatorWeaponRecipeGroups : ModSystem
         // 用法：recipe.AddRecipeGroup(OperatorWeaponRecipeGroups.AnyVanillaBunny);
         Register(AnyVanillaBunny, Language.GetTextValue("Mods.ArknightsMod.RecipeGroups.AnyVanillaBunny"),
             ItemID.Bunny, ItemID.BunnyEars, ItemID.BunnyTail, ItemID.BunnyHood, ItemID.BunnyStatue);
-        Register(AnyVanillaTombstone, Language.GetTextValue("Mods.ArknightsMod.RecipeGroups.AnyVanillaTombstone"), tombstones);
+		// 辣椒或寒霜核：辣椒 5277 / 寒霜核 2161。
+		Register(SpicyPepperOrFrostCore, Language.GetTextValue("Mods.ArknightsMod.RecipeGroups.SpicyPepperOrFrostCore"),
+			ItemID.SpicyPepper, ItemID.FrostCore);
+		Register(AnyVanillaTombstone, Language.GetTextValue("Mods.ArknightsMod.RecipeGroups.AnyVanillaTombstone"), tombstones);
     }
 
     public override void AddRecipes()
