@@ -1,8 +1,9 @@
-﻿using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria;
-using static Terraria.ModLoader.ModContent;
+using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova;
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 
 namespace ArknightsMod.Content.Items.BossSummon
 {
@@ -43,8 +44,8 @@ namespace ArknightsMod.Content.Items.BossSummon
         public override void AddRecipes()
 		{
             Recipe recipe1 = CreateRecipe();
-            recipe1.AddIngredient(ItemID.SpicyPepper, 1);
-            recipe1.AddIngredient(ItemID.Shiverthorn, 1);
+            recipe1.AddRecipeGroup(OperatorWeaponRecipeGroups.SpicyPepperOrFrostCore, 1);
+			recipe1.AddIngredient(ItemID.Shiverthorn, 1);
             recipe1.AddIngredient(ItemID.Ale, 1);
             recipe1.Register();
         }

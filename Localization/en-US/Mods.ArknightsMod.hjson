@@ -15,6 +15,7 @@ CommonTooltips: {
 RecipeGroups: {
 	AnyVanillaTombstone: Any Tombstone
 	AnyVanillaBunny: Any Bunny Item
+	SpicyPepperOrFrostCore: Spicy Pepper or Fros tCore
 }
 
 ItemDropRuleCondition: {
@@ -237,7 +238,7 @@ Tiles: {
 	OrirockCubeTile.MapEntry: Orirock Cube Tile
 	RMA7012Tile.MapEntry: R M A7012 Tile
 	FactoryPlusTile.MapEntry: Factory Plus Tile
-	FogRollingGrass.MapEntry: 雾滚草
+	FogRollingGrass.MapEntry: Fog Rolling Grass
 
 	EndfieldNatural: {
 		LightRedColumnFungusTile.MapEntry: Light Red Column Fungus
