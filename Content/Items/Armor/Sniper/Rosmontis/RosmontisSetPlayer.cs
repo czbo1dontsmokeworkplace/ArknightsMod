@@ -38,16 +38,15 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Rosmontis
 			if (tacticalCooldown > 0)
 				tacticalCooldown--;
 
-			if (RosmontisSetActive && ArknightsKeybinds.RosmontisTacticalDeploy.JustPressed)
-				TryDeployTacticalEquipment();
 		}
 
-		private void TryDeployTacticalEquipment() {
+		internal void TryDeployTacticalEquipment() {
 			if (tacticalCooldown > 0 || Player.dead)
 				return;
 
-			Vector2 spawn = Main.MouseWorld;
-			Projectile.NewProjectile(
+			Vector2 destination = Main.MouseWorld;
+			Vector2 spawn = new(destination.X, System.Math.Min(Main.screenPosition.Y, destination.Y) - 128f);
+			int index = Projectile.NewProjectile(
 				Player.GetSource_FromThis(),
 				spawn,
 				Vector2.Zero,
@@ -55,6 +54,9 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Rosmontis
 				0,
 				8f,
 				Player.whoAmI);
+			if (index < 0 || index >= Main.maxProjectiles)
+				return;
+			((RosmontisTacticalEquipment)Main.projectile[index].ModProjectile).BeginDeployment(destination);
 
 			tacticalCooldown = 60 * 60;
 		}
@@ -65,7 +67,10 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Rosmontis
 		public static bool IsRosmontisSetOnField() {
 			for (int i = 0; i < Main.maxPlayers; i++) {
 				Player player = Main.player[i];
-				if (player.active && !player.dead && player.GetModPlayer<RosmontisSetPlayer>().RosmontisSetActive)
+				// 直接检查当前装备，避免依赖其他玩家本帧是否已更新套装状态。
+				if (player.active && !player.dead
+					&& player.armor[0].type == NeoArmorReforgeSetLoader.GetSetType<RosmontisHead>()
+					&& OperatorSniperSetHelper.WearsFullSniperSet(player))
 					return true;
 			}
 
@@ -73,11 +78,12 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Rosmontis
 		}
 
 		private void ApplyArmorDamageStats() {
-			if (!IsRosmontisSetOnField())
+			if (!Player.active || Player.dead || !IsRosmontisSetOnField())
 				return;
 
-			if (OperatorCasterSetHelper.WearsFullCasterSet(Player))
-				Player.GetDamage(DamageClass.Generic) *= 1.08f;
+			if (OperatorCasterSetHelper.WearsFullCasterSet(Player)
+				|| OperatorSniperSetHelper.WearsFullSniperSet(Player))
+				Player.GetDamage(DamageClass.Generic) += 0.08f;
 		}
 
 		public override void PostUpdateMiscEffects() {

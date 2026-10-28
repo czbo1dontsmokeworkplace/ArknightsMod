@@ -12,7 +12,8 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Ebenholz;
 public sealed class EbenholzStaffPlayer : ModPlayer
 {
     private int charges, chargeClock, activeMode, activeRank;
-    private bool keyConsumed;
+    private bool keyConsumed, justCharged;
+    internal float ChargeProgress => MysticChargeRules.Progress(Player, charges, chargeClock, justCharged);
     private Item storedStaff;
     internal void ReleaseCoordinated(Item attack)
     {
@@ -28,6 +29,7 @@ public sealed class EbenholzStaffPlayer : ModPlayer
     {
         int result = charges;
         charges = chargeClock = 0;
+        justCharged = false;
         return result;
     }
     internal void TryActivate()
@@ -91,6 +93,7 @@ public sealed class EbenholzStaffPlayer : ModPlayer
     }
     public override void PostUpdate()
     {
+        justCharged = false;
         if (!ArknightsKeybinds.SkillActivatePressed(Player)) keyConsumed = false;
         if (Player.whoAmI != Main.myPlayer) return;
         if (!Holding)
@@ -98,11 +101,9 @@ public sealed class EbenholzStaffPlayer : ModPlayer
             chargeClock = 0;
             return;
         }
-        if (Player.itemAnimation > 0 || Player.controlUseItem) chargeClock = 0;
-        if (Player.itemAnimation <= 0 && !Player.controlUseItem && charges < 3 && ++chargeClock >= 60)
+        if (MysticChargeRules.Accumulate(Player, ref charges, ref chargeClock))
         {
-            chargeClock = 0;
-            charges++;
+            justCharged = true;
             storedStaff = Player.HeldItem.Clone();
             SoundEngine.PlaySound(SoundID.Item4 with { Volume = .15f, Pitch = -.5f + charges * .12f }, Player.Center);
         }
@@ -125,5 +126,5 @@ public sealed class EbenholzStaffPlayer : ModPlayer
             }
         }
     }
-    public override void UpdateDead() => charges = chargeClock = activeMode = 0;
+    public override void UpdateDead() { charges = chargeClock = activeMode = 0; justCharged = false; }
 }

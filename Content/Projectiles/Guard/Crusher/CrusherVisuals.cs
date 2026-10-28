@@ -73,7 +73,7 @@ internal static class CrusherVisuals
         if (!art.TryGetValue(kind, out Texture2D sprite)) art[kind] = sprite = ModContent.Request<Texture2D>(CrusherRules.Art(kind), AssetRequestMode.ImmediateLoad).Value;
         Vector2 native = CrusherRules.Head(kind) - CrusherRules.Grip(kind), axis = tip - grip;
         float scale = axis.Length() / native.Length(), rotation = axis.ToRotation() - native.ToRotation();
-        float mantleScale = Math.Clamp(axis.Length() / 210f, .4f, 2.8f);
+        float mantleScale = Math.Clamp(axis.Length() / CrusherRules.SizeMultiplier / 210f, .4f, 2.8f) * CrusherRules.SizeMultiplier;
         // Actual anchor art is vertical, with the anchor crown below its grip. This is +90deg
         // in source coordinates, versus about -45deg for the three conventional blades.
         Main.EntitySpriteDraw(sprite, grip - Main.screenPosition, null, Color.White * opacity,
@@ -87,7 +87,8 @@ internal static class CrusherVisuals
             Main.EntitySpriteDraw(edge, grip - Main.screenPosition, null, CrusherRules.Edge(kind) * (.95f * opacity * outline),
                 rotation, edgeOrigin, scale, SpriteEffects.None);
             for (int i = 0; i < 8; i++) {
-                Vector2 halo = (i * MathHelper.TwoPi / 8).ToRotationVector2() * (2.1f + .5f * MathF.Sin(Main.GlobalTimeWrappedHourly * 8));
+                Vector2 halo = (i * MathHelper.TwoPi / 8).ToRotationVector2()
+                    * (2.1f + .5f * MathF.Sin(Main.GlobalTimeWrappedHourly * 8)) * CrusherRules.SizeMultiplier;
                 Main.EntitySpriteDraw(edge, grip - Main.screenPosition + halo, null, CrusherRules.Tint(kind) * (.12f * opacity * outline),
                     rotation, edgeOrigin, scale, SpriteEffects.None);
             }

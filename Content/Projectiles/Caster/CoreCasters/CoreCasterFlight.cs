@@ -1,6 +1,7 @@
-using System;
+﻿using System;
 using System.IO;
 using Microsoft.Xna.Framework;
+using Terraria;
 
 namespace ArknightsMod.Content.Projectiles.Caster.CoreCasters;
 
@@ -14,12 +15,34 @@ internal sealed class CoreCasterFlight
     internal float Time { get; private set; }
     internal bool Descending => volcano?.Descending == true;
     internal static float LaunchTicks(CoreCasterKind kind) => kind switch {
-        CoreCasterKind.Durin => 9, CoreCasterKind.Steward => 15, CoreCasterKind.Haze => 17,
-        CoreCasterKind.Nightmare => 20, CoreCasterKind.Absinthe => 14,
-        CoreCasterKind.Hoolheyak => 18, _ => 16
+        CoreCasterKind.Durin => 4, CoreCasterKind.Steward => 5, CoreCasterKind.Haze => 5,
+        CoreCasterKind.Nightmare => 6, CoreCasterKind.Absinthe => 4,
+        CoreCasterKind.Hoolheyak => 6, _ => 5
     };
+    internal static float SpeedFor(CoreCasterKind kind) => kind switch {
+        CoreCasterKind.Durin => 36, CoreCasterKind.Steward => 44, CoreCasterKind.Haze => 52,
+        CoreCasterKind.Nightmare => 56, CoreCasterKind.Absinthe => 76,
+        CoreCasterKind.Hoolheyak => 68, _ => 60
+    };
+    internal static int UpdatesFor(CoreCasterKind kind) => kind switch {
+        CoreCasterKind.Durin => 4, CoreCasterKind.Steward => 4,
+        CoreCasterKind.Absinthe => 8, CoreCasterKind.Hoolheyak => 6, _ => 6
+    };
+    // Keep each collision step short. Preserve real lifetime when increasing update count.
+    // Spawn already contains authoritative velocity, so this deterministic conversion is safe on peers.
+    internal static void Configure(Projectile p, CoreCasterKind kind, bool volcano = false)
+    {
+        if (volcano) return; // Keep the separately authored upward scatter / falling-shell sequence.
+        int oldUpdates = p.MaxUpdates, updates = UpdatesFor(kind);
+        p.timeLeft = (int)Math.Min(int.MaxValue, (long)p.timeLeft * updates / oldUpdates);
+        p.extraUpdates = updates - 1;
+        p.velocity = Unit(p.velocity) * SpeedFor(kind) / updates;
+    }
+    // Ordinary / empowered shots never acquire steering, including armor-provided homing.
+    // Explicitly retained special attack forms keep their previous guidance.
     internal bool CanGuide(CoreCasterKind kind, int mode = 0) => kind == CoreCasterKind.Eyjafjalla && mode == 3
-        ? Descending : Time > LaunchTicks(kind) + .0001f;
+        ? Descending : (kind == CoreCasterKind.Absinthe && mode == 2 || kind == CoreCasterKind.Hoolheyak && mode >= 3)
+            && Time > LaunchTicks(kind) + .0001f;
     internal CoreCasterFlight(Vector2 center, Vector2 velocity, int updates, int seed, Vector2? aim = null)
     {
         origin = center; direction = Unit(velocity); side = new(-direction.Y, direction.X);
@@ -45,65 +68,27 @@ internal sealed class CoreCasterFlight
         return f;
     }
     internal static Vector2 Unit(Vector2 v) => v.LengthSquared() > .0001f ? Vector2.Normalize(v) : Vector2.UnitX;
-    private static Vector2 Rotate(Vector2 v, float a) => new(v.X * MathF.Cos(a) - v.Y * MathF.Sin(a), v.X * MathF.Sin(a) + v.Y * MathF.Cos(a));
-    private float Wave(float t, float amplitude, float frequency) => sign * amplitude * MathF.Sin(t * frequency);
     internal void Step(CoreCasterKind kind, int mode, Vector2 center, ref Vector2 velocity, int updates, Vector2? target = null)
     {
         updates = Math.Max(1, updates);
-        float dt = 1f / updates, previous = Time; Time += dt;
+        float dt = 1f / updates; Time += dt;
         if (kind == CoreCasterKind.Eyjafjalla && mode == 3) {
             volcano ??= new VolcanoFlight(); volcano.Step(center, ref velocity, updates, target ?? destination); return;
         }
-        float launch = LaunchTicks(kind);
-        Vector2 physical = velocity * updates;
-        if (Time <= launch + .0001f)
-        {
-            // A target cannot bend the independent launch gesture.
-            switch (kind) {
-                case CoreCasterKind.Durin:
-                    physical = direction * speed + side * ((Wave(Time, 3, .28f) - Wave(previous, 3, .28f)) / dt); break;
-                case CoreCasterKind.Steward:
-                    physical = Rotate(direction, sign * .24f * MathF.Sin(Time / launch * MathHelper.TwoPi)) * speed; break;
-                case CoreCasterKind.Haze:
-                    physical = direction * speed + side * ((Wave(Time, 9, .22f) - Wave(previous, 9, .22f)) / dt); break;
-                case CoreCasterKind.Nightmare:
-                    physical = Rotate(direction, sign * .38f * MathF.Sin(Time / launch * MathHelper.TwoPi)) * speed; break;
-                case CoreCasterKind.Absinthe:
-                    physical = direction * speed * (.85f + .15f * Time / launch); break;
-                case CoreCasterKind.Hoolheyak:
-                    physical = direction * speed + side * ((Wave(Time, 13, .19f) - Wave(previous, 13, .19f)) / dt); break;
-                default:
-                    physical = Ballistic(Time, dt, mode); break;
-            }
-            // Last four ticks settle gently, adapting PurifiedGel_Ball's slowdown stage.
-            float settle = Math.Clamp((Time - launch + 4) / 4, 0, 1);
-            physical *= 1 - settle * .12f;
-        }
-        else if (target.HasValue)
+        Vector2 forward = Unit(velocity);
+        if (CanGuide(kind, mode) && target.HasValue)
         {
             guided = true;
             Vector2 offset = target.Value - center;
             float distance = offset.Length();
-            float warmup = Math.Clamp((Time - launch) / 18, 0, 1);
-            float close = 1 - Math.Clamp((distance - 55) / 260, 0, 1);
-            float pull = Math.Max(warmup, close * .8f);
-            float pace = Math.Clamp(speed * (1 + .18f * warmup), 8, kind == CoreCasterKind.Absinthe ? 34 : 28);
-            // Tighten the turn near small enemies instead of orbiting past their hitboxes.
-            pace = Math.Min(pace, Math.Max(5, distance * .32f));
-            Vector2 desired = Unit(offset) * pace;
-            physical = Vector2.Lerp(physical, desired, 1 - MathF.Pow(1 - (.075f + .19f * pull), dt));
-            if (physical.LengthSquared() < 9) physical += Unit(offset) * 1.5f * dt;
+            float delta = MathHelper.WrapAngle(MathF.Atan2(offset.Y, offset.X) - MathF.Atan2(forward.Y, forward.X));
+            // Fast launch followed by an actual curved turn, with no braking, wiggle or orbiting ball.
+            // The physical turning radius contracts near the target, still divided across collision steps.
+            float turn = Math.Clamp(speed / Math.Max(distance, 16) * 1.3f, .12f, 2.4f) * dt;
+            float rotation = Math.Clamp(delta, -turn, turn);
+            float c = MathF.Cos(rotation), s = MathF.Sin(rotation);
+            forward = new(forward.X * c - forward.Y * s, forward.X * s + forward.Y * c);
         }
-        else if (!guided && kind == CoreCasterKind.Eyjafjalla)
-            physical = Ballistic(Time, dt, mode);
-        // Losing a target never resets the launch gesture or the guidance clock.
-        velocity = physical / updates;
-    }
-    private Vector2 Ballistic(float time, float dt, int mode)
-    {
-        float gravity = mode == 2 ? .72f : .46f;
-        float duration = Math.Clamp(Vector2.Distance(origin, destination) / speed, 12, 55);
-        Vector2 launch = (destination - origin) / duration - Vector2.UnitY * (gravity * duration * .5f);
-        return launch + Vector2.UnitY * (gravity * (time - dt * .5f));
+        velocity = forward * speed / updates;
     }
 }

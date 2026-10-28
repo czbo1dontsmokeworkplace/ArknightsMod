@@ -1,4 +1,5 @@
 using System;
+using ArknightsMod.Content.Items.Weapons.Caster;
 using System.Collections.Generic;
 using ArknightsMod.Content.Items.Weapons.Caster.Ebenholz;
 using Microsoft.Xna.Framework;
@@ -96,11 +97,13 @@ public sealed class EbenholzBurst : ModProjectile
         if (Projectile.timeLeft != 26) return;
         SoundEngine.PlaySound(SoundID.Item14 with { Volume = Projectile.ai[0] == 1f ? .55f : .22f,
             Pitch = -.65f, MaxInstances = 3 }, Projectile.Center);
-        EbenholzVisuals.Scatter(Projectile.Center, Projectile.ai[0] == 1f ? 28 : 8, Projectile.ai[0] == 1f ? 7f : 3.5f);
+        EbenholzVisuals.Scatter(Projectile.Center, Projectile.ai[0] == 1f ? 28 : 8,
+            (Projectile.ai[0] == 1f ? 7f : 3.5f) * MysticChargeRules.BurstScale(Projectile));
     }
     public override bool PreDraw(ref Color lightColor)
     {
-        EbenholzVisuals.Explosion(Projectile.Center, (26f - Projectile.timeLeft) / 26f, Radius, Projectile.identity);
+        EbenholzVisuals.Explosion(Projectile.Center, (26f - Projectile.timeLeft) / 26f,
+            Radius * MysticChargeRules.BurstScale(Projectile), Projectile.identity);
         return false;
     }
 }
@@ -135,7 +138,7 @@ public sealed class EbenholzOrbit : ModProjectile
         {
             float angle = age * .018f + i * MathHelper.TwoPi / 3f;
             Vector2 offset = new(MathF.Cos(angle) * 35f, -38f + MathF.Sin(angle) * 10f);
-            EbenholzVisuals.Cube(Projectile.Center + offset, 5.8f, age, i + Projectile.owner * 3);
+            EbenholzVisuals.Cube(Projectile.Center + offset, 5.8f * MysticChargeRules.VisualMultiplier(i), age, i + Projectile.owner * 3);
         }
         if (Projectile.ai[1] is 1f or 3f)
         {

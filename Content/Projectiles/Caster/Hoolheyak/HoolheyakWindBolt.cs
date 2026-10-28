@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using ArknightsMod.Content.Projectiles.Caster.CoreCasters;
 using ArknightsMod.Content.Items.Weapons.Caster.Hoolheyak;
 using Microsoft.Xna.Framework;
@@ -15,12 +15,12 @@ public sealed class HoolheyakWindBolt : ModProjectile, ICoreCasterGuidance
     private int Mode => (int)Projectile.ai[0];
     private int Rank => Math.Clamp((int)Projectile.ai[2], 0, 9);
     private CoreCasterFlight flight;
-    public bool GuidanceReady => flight?.CanGuide(CoreCasterKind.Hoolheyak) == true;
+    public bool GuidanceReady => flight?.CanGuide(CoreCasterKind.Hoolheyak, Mode) == true;
     public override void SendExtraAI(BinaryWriter writer) => CoreCasterGuidance.Write(writer, flight);
     public override void ReceiveExtraAI(BinaryReader reader) => flight = CoreCasterGuidance.Read(reader);
     public override void SetStaticDefaults()
     {
-        ProjectileID.Sets.TrailCacheLength[Type] = 60;
+        ProjectileID.Sets.TrailCacheLength[Type] = 80;
         ProjectileID.Sets.TrailingMode[Type] = 0;
     }
     public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.None;
@@ -42,7 +42,8 @@ public sealed class HoolheyakWindBolt : ModProjectile, ICoreCasterGuidance
     public override bool? CanCutTiles() => false;
     public override bool? CanHitNPC(NPC target) => target.CanBeChasedBy(Projectile) ? null : false;
 
-    public override void AI()
+    public override void OnSpawn(Terraria.DataStructures.IEntitySource source) => CoreCasterFlight.Configure(Projectile, CoreCasterKind.Hoolheyak);
+		public override void AI()
     {
         Player owner = Main.player[Projectile.owner];
         if (!owner.active || owner.dead)
@@ -107,8 +108,8 @@ public sealed class HoolheyakWindBolt : ModProjectile, ICoreCasterGuidance
         HoolheyakSmallVortex.CreateOrFeed(Projectile, (int)MathF.Round(Projectile.damage / multiplier), target);
     }
 
-    public override void OnKill(int timeLeft) => CoreCasterVisuals.Impact(Projectile.Center, Projectile.velocity,
-        CoreCasterKind.Hoolheyak, Mode is SeekingSolo or SeekingPair or BarrageFinisher);
+    public override void OnKill(int timeLeft) { CoreCasterVisuals.Retire(Projectile, CoreCasterKind.Hoolheyak, Mode); CoreCasterVisuals.Impact(Projectile.Center, Projectile.velocity,
+        CoreCasterKind.Hoolheyak, Mode is SeekingSolo or SeekingPair or BarrageFinisher); }
 
     public override bool PreDraw(ref Color lightColor)
     {

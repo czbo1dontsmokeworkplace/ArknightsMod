@@ -134,7 +134,7 @@ namespace ArknightsMod.Content.Items.Armor.NeoArmorReforge
 
 			Profile.OnFullSetActive?.Invoke(player);
 			if (Profile.SetBonusKey != null)
-				player.setBonus = Language.GetTextValue(Profile.SetBonusKey);
+				player.setBonus = ArknightsKeybinds.FormatArmorSetKey(Language.GetTextValue(Profile.SetBonusKey));
 		}
 
 		public override void ModifyTooltips(List<TooltipLine> tooltips) {

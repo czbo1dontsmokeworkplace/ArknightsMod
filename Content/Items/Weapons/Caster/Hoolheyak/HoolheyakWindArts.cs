@@ -1,3 +1,4 @@
+﻿using ArknightsMod.Content.Items.Weapons.Caster.CoreCasters;
 using System;
 using System.Collections.Generic;
 using ArknightsMod.Content.Projectiles.Caster.Hoolheyak;
@@ -27,7 +28,8 @@ public sealed class HoolheyakWindArts : ExpansionWeaponBase
 
     public override void SetStaticDefaults() => Item.staff[Type] = true;
 
-    public override float UseSpeedMultiplier(Player player) => base.UseSpeedMultiplier(player) * 1.2f;
+    public override float UseSpeedMultiplier(Player player) => base.UseSpeedMultiplier(player)
+        * (player.GetModPlayer<WeaponPlayer>().SkillActive && player.GetModPlayer<WeaponPlayer>().Skill is 1 or 2 ? 1.2f : 1f);
 
     public override void SetDefaults()
     {
@@ -39,6 +41,7 @@ public sealed class HoolheyakWindArts : ExpansionWeaponBase
         Item.noMelee = true;
         Item.autoReuse = true;
         Item.useTime = Item.useAnimation = 26;
+        CoreCasterCadence.Apply(Item);
         Item.mana = 10;
         Item.knockBack = 0f;
         Item.rare = ItemRarityID.Lime;
@@ -84,6 +87,8 @@ public sealed class HoolheyakWindArts : ExpansionWeaponBase
             Item.useTime = barrage ? 4 : cyclone ? 65 : 26;
             Item.useAnimation = barrage ? 52 : Item.useTime;
             Item.useLimitPerAnimation = barrage ? 9 : 1;
+            Item.reuseDelay = 0;
+            if (!barrage && !cyclone) CoreCasterCadence.Apply(Item);
             Item.mana = barrage ? 2 : cyclone ? 18 : 10;
             barrageShot = 0;
         }

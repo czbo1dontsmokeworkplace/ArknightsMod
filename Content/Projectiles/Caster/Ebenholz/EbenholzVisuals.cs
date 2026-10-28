@@ -1,4 +1,5 @@
 using System;
+using ArknightsMod.Content.Items.Weapons.Caster;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -112,7 +113,7 @@ internal static class EbenholzVisuals
             if (p.oldPos[i] == Vector2.Zero || p.oldPos[i - 1] == Vector2.Zero) continue;
             Vector2 a = p.oldPos[i] + p.Size * .5f, b = p.oldPos[i - 1] + p.Size * .5f;
             float fade = 1f - i / (float)p.oldPos.Length;
-            float radius = (wisp ? 4f : 7f) * fade;
+            float radius = (wisp ? 4f : 7f) * fade * MysticChargeRules.VisualScale(p);
             Soft(a, radius, Color.Black * (fade * .7f));
             Vector2 side = (b - a).SafeNormalize(Vector2.UnitX).RotatedBy(MathHelper.PiOver2) * radius * .6f;
             Line(a + side, b + side, Light(Gold, fade * .35f), .8f);

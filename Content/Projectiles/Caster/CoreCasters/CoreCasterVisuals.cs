@@ -30,28 +30,28 @@ internal static class CoreCasterVisuals
         CoreCasterArt.Bolt(Main.spriteBatch, p.Center - Main.screenPosition, p.velocity, p.oldPos,
             p.Size / 2 - Main.screenPosition, kind, mode, Main.GlobalTimeWrappedHourly, p.identity);
     }
+    internal static void Retire(Projectile p, CoreCasterKind kind, int mode = 0)
+    {
+        if (Visible(p.Center)) new T_CoreCasterWake(p, kind, mode).Spawn();
+    }
     internal static void Trail(Projectile p, CoreCasterKind kind, int mode = 0)
     {
         if (!Visible(p.Center)) return;
         Vector2 direction = p.velocity.SafeNormalize(Vector2.UnitX);
-        Vector2 side = direction.RotatedBy(MathHelper.PiOver2);
         int palette = kind == CoreCasterKind.Haze && mode == 2 ? CoreCasterArt.CrimsonPalette : 0;
-        float phase = Main.GlobalTimeWrappedHourly * 27 + p.identity;
-        Vector2 orbit = side * MathF.Sin(phase) * (6 + MathF.Cos(phase * .7f) * 2);
-        Add(p.Center + orbit, -direction * .6f + side * MathF.Cos(phase) * .45f,
-            kind, 16, kind == CoreCasterKind.Durin ? 5 : 7, 6 + palette);
-        if (Main.rand.NextBool(2)) Add(p.Center, -direction * Main.rand.NextFloat(.3f, 1.1f), kind, 10, 8, 5 + palette);
-        int variant = kind == CoreCasterKind.Eyjafjalla ? 3 : kind is CoreCasterKind.Haze or CoreCasterKind.Nightmare ? 4 : 0;
-        Add(p.Center - orbit * .7f, -direction * .9f - Vector2.UnitY * .12f,
-            kind, 20, kind == CoreCasterKind.Eyjafjalla ? 14 : 9, variant + palette);
-        if (kind == CoreCasterKind.Eyjafjalla && Main.rand.NextBool(4))
-            Add(p.Center, -direction * .15f - Vector2.UnitY * .2f, kind, 24, 20, 1);
+        Vector2 side = direction.RotatedBy(MathHelper.PiOver2);
+        // Short detached luminous slivers: position belongs to the path, never an orbit around a ball.
+        Add(p.Center + side * Main.rand.NextFloat(-2, 2), -direction * Main.rand.NextFloat(.15f, .65f),
+            kind, 10, kind == CoreCasterKind.Absinthe ? 34 : 24, 7 + palette);
+        if (Main.rand.NextBool(3)) Add(p.Center, -direction.RotatedByRandom(.3f) * Main.rand.NextFloat(.6f, 2), kind, 14, 10, 5 + palette);
+        if (kind == CoreCasterKind.Eyjafjalla && Main.rand.NextBool(2))
+            Add(p.Center - direction * 5, -direction * .4f - Vector2.UnitY * .25f, kind, 15, 17, 3);
     }
     internal static void Muzzle(Vector2 at, Vector2 direction, CoreCasterKind kind, bool empowered)
     {
-        Add(at, direction * .2f, kind, 12, empowered ? 19 : 12, 2);
-        for (int i = 0; i < (empowered ? 3 : 1); i++)
-            Add(at, direction.RotatedByRandom(.4f) * Main.rand.NextFloat(1, 3), kind, 14, 9, 0);
+        Add(at, direction * .01f, kind, 8, empowered ? 34 : 24, 8);
+        for (int i = 0; i < (empowered ? 5 : 3); i++)
+            Add(at, direction.RotatedByRandom(.38f) * Main.rand.NextFloat(2, 6), kind, 10, Main.rand.NextFloat(12, 23), 5);
     }
     internal static void Impact(Vector2 at, Vector2 velocity, CoreCasterKind kind, bool empowered = false, int mode = 0)
     {
@@ -63,12 +63,14 @@ internal static class CoreCasterVisuals
             return;
         }
         int palette = kind == CoreCasterKind.Haze && mode == 2 ? CoreCasterArt.CrimsonPalette : 0;
-        Add(at, Vector2.Zero, kind, 22, empowered ? 31 : 22, 2 + palette);
-        int count = kind == CoreCasterKind.Eyjafjalla ? 4 : empowered ? 8 : 5;
+        Add(at, Vector2.Zero, kind, 12, empowered ? 34 : 23, 2 + palette);
+        Add(at, velocity.SafeNormalize(Vector2.UnitX) * .01f, kind, 15, empowered ? 74 : 50, 8 + palette);
+        int count = kind == CoreCasterKind.Eyjafjalla ? 7 : empowered ? 13 : 9;
         Vector2 direction = velocity.SafeNormalize(Vector2.UnitX);
         for (int i = 0; i < count; i++)
-            Add(at, direction * .7f + Main.rand.NextVector2Circular(2.8f, 2.8f), kind, Main.rand.Next(13, 23),
-                Main.rand.NextFloat(8, 15), (i % 3 == 0 ? 5 : 0) + palette);
+            Add(at, (i % 3 == 0 ? Main.rand.NextVector2Unit() : direction.RotatedByRandom(1.15f)) * Main.rand.NextFloat(2, 8),
+                kind, Main.rand.Next(10, 21), Main.rand.NextFloat(13, 28), 5 + palette);
+        Add(at, -direction * .35f, kind, 22, empowered ? 34 : 22, 1 + palette);
     }
     internal static void Burst(Vector2 at, CoreCasterKind kind, float radius)
     {

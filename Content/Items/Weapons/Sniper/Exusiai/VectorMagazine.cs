@@ -1,4 +1,5 @@
 using System;
+using Microsoft.Xna.Framework;
 
 namespace ArknightsMod.Content.Items.Weapons.Sniper.Exusiai;
 
@@ -64,8 +65,15 @@ public static class VectorBalance
     public const int PanelDamage = 26;
     public const float TargetRatio = 1.5f;
     public static int Lanes(int mode) => mode == 3 ? 3 : mode is 1 or 2 ? 2 : 1;
-    // SHPC-style S1: the original main chain plus one close parallel side chain.
-    public static float LaneOffset(int mode, int index) => mode == 1 ? index * 6f : (index - (Lanes(mode) - 1) / 2f) * 10f;
+    // SHPC: centered main shot, close secondary origins and small angular divergence.
+    public static float LaneOffset(int mode, int index) => index switch { 1=>2.5f, 2=>-4f, _=>0 };
+    public static float LaneAngle(int mode,int index,float sample)
+    {
+        if(index==0)return 0;
+        sample=Math.Clamp(sample,-1,1);
+        float sign=Lanes(mode)==3?(index==1?1:-1):(sample<0?-1:1);
+        return sign*MathHelper.ToRadians(MathHelper.Lerp(.45f,2.2f,Math.Abs(sample)));
+    }
     public static float ShotsPerSecond => 60f * VectorMagazine.Capacity /
         (VectorMagazine.Capacity * VectorMagazine.Interval + VectorMagazine.ReloadDuration);
 

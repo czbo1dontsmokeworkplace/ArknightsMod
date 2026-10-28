@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 // 统一武器数值覆写中心
@@ -220,7 +220,7 @@ namespace ArknightsMod.Common
 			// DurinWand - 杜林 - 法杖
 			// 原始值: damage=24, useTime=40, useAnimation=40, knockBack=4, shootSpeed=16, mana=5, crit=2
 			[typeof(Content.Items.Weapons.Caster.Durin.DurinWand)] = new() {
-				Damage = 24, UseTime = 40, UseAnimation = 40, KnockBack = 4f, ShootSpeed = 16f, Mana = 5, Crit = 2
+				Damage = 24, UseTime = 4, UseAnimation = 12, KnockBack = 4f, ShootSpeed = 16f, Mana = 5, Crit = 2
 			},
 
 			// GoldenglowWand - 澄闪 - 月后持续闪电法杖
@@ -231,7 +231,7 @@ namespace ArknightsMod.Common
 
 			// 夜烟：中坚术师路线的困难模式初期法杖，保留旧内部名称兼容存档。
 			[typeof(Content.Items.Weapons.Caster.Haze.HazeMagicBook)] = new() {
-				Damage = 86, UseTime = 38, UseAnimation = 38, KnockBack = 3f, ShootSpeed = 8f, Mana = 8
+				Damage = 86, UseTime = 4, UseAnimation = 12, KnockBack = 3f, ShootSpeed = 8f, Mana = 8
 			},
 
 			// Lava_Dagger - 炎熔 - 直接施放的扩散术师武器
@@ -243,7 +243,7 @@ namespace ArknightsMod.Common
 			// StewardStaff - 史都华德 - 法杖 (EliteDamage=[43,54])
 			// 原始值: damage=43, useTime=30, useAnimation=30, knockBack=2, shootSpeed=11, mana=7, crit=4
 			[typeof(Content.Items.Weapons.Caster.Steward.StewardStaff)] = new() {
-				Damage = 43, UseTime = 30, UseAnimation = 30, KnockBack = 2f, ShootSpeed = 11f, Mana = 7, Crit = 4
+				Damage = 43, UseTime = 4, UseAnimation = 12, KnockBack = 2f, ShootSpeed = 11f, Mana = 7, Crit = 4
 			},
 
 			// ValarqvinWeapon - 瓦尔薇 - 法杖

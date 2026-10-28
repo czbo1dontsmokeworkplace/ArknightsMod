@@ -44,8 +44,8 @@ Saria: {
 KkdyAlter: {
 	HeadName: Kroos the Keen Glazer's Helmet
 	HelmetEffect: "[c/beebff:Helmet]: +15% ranged attack speed"
-	SetEffect: "[c/beebff:Set]: 20% chance ranged hits deal 150% damage and stun 0.2s"
-	SetBonus: 20% chance 150% ranged + 0.2s stun
+	SetEffect: "[c/beebff:Set]: Each ranged hit has a 20% chance to deal 150% damage and simultaneously stun the enemy for 0.2 seconds"
+	SetBonus: Ranged hits have a 20% chance for 150% damage and a simultaneous 0.2s stun
 }
 
 Matoimaru: {
@@ -212,22 +212,22 @@ Warfarin: {
 Adnachiel: {
 	HeadName: Adnachiel's Helmet
 	HelmetEffect: "[c/beebff:Helmet]: Ranged damage 104%"
-	SetEffect: "[c/beebff:Set]: Ranged attacks home toward ranged-capable enemies"
-	SetBonus: Ranged 104%; homing to ranged enemies
+	SetEffect: "[c/beebff:Set]: Ranged attacks home toward all hostile targets"
+	SetBonus: Ranged 104%; homing to hostile targets
 }
 
 Catapult: {
 	HeadName: Catapult's Helmet
-	HelmetEffect: "[c/beebff:Helmet]: Deploy cost -1 (no deploy cost system yet; reserved)"
-	SetEffect: "[c/beebff:Set]: Ranged damage 103%; +5 SP on deploy/redeploy"
-	SetBonus: Ranged 103%; +5 SP on deploy/redeploy
+	HelmetEffect: "[c/beebff:Helmet]: Ranged weapon SP requirement -1 (minimum 1)"
+	SetEffect: "[c/beebff:Set]: Ranged damage increased to 103%"
+	SetBonus: Ranged damage 103%
 }
 
 Fartooth: {
 	HeadName: Fartooth's Helmet
-	HelmetEffect: "[c/beebff:Helmet]: During skill lower aggro; attacks ignore enemy dodge"
-	SetEffect: "[c/beebff:Set]: If no damage 10s +20% ranged; while boss active 130% ranged until hit or boss leaves"
-	SetBonus: 10s no dmg +20% ranged; boss 130% ranged until hit
+	HelmetEffect: "[c/beebff:Helmet]: Reduced aggro during skills"
+	SetEffect: "[c/beebff:Set]: +20% ranged damage after 10 seconds without taking damage; taking damage removes this bonus and restarts the timer. An additional +30% ranged damage while a boss is present, unaffected by taking damage. Both bonuses stack additively to +50%. Death or removing the set resets the no-damage timer"
+	SetBonus: +20% ranged after 10s without damage (hit resets timer); additional +30% while a boss is present
 }
 
 Fiammetta: {
@@ -260,9 +260,9 @@ Provence: {
 
 Typhon: {
 	HeadName: Typhon's Helmet
-	HelmetEffect: "[c/beebff:Helmet]: During skill, first hit per enemy 160% + 80% slow 3s"
-	SetEffect: "[c/beebff:Set]: Consecutive ranged hits ignore +10% def per hit, max 50%; reset after 8s no ranged attack"
-	SetBonus: Consecutive ranged ignore def stacks max 50%; 8s idle reset
+	HelmetEffect: "[c/beebff:Helmet]: During skills, the first ranged hit against each enemy deals 160% damage and slows it by 80% for 3 seconds"
+	SetEffect: "[c/beebff:Set]: Ranged hits grant 10% armor penetration, stacking up to 50%; resets after 8 seconds without a ranged hit"
+	SetBonus: Ranged hits grant 10% armor penetration (up to 50%); resets after 8s without a ranged hit
 }
 
 Manticore: {
@@ -367,8 +367,8 @@ Ulpianus: {
 Rosmontis: {
 	HeadName: Rosmontis's Helmet
 	HelmetEffect: "[c/beebff:Helmet]: +25 ranged armor penetration"
-	SetEffect: "[c/beebff:Set]: +8% attack for self and Caster operators; bind key deploys tactical gear (stun/block/debuff, 20s, 60s CD)"
-	SetBonus: Caster +8% atk; keybind tactical deploy
+	SetEffect: "[c/beebff:Set]: All players wearing a full Caster or Sniper operator set, including self, gain an additive +8% attack. Press {ArmorSetActivateKey} to summon tactical gear from above the screen to the selected position; on arrival it stuns enemies within 160 pixels for 6 seconds. Gear intercepts hostile projectiles without blocking enemy movement; 500 HP, 48 defense, and 0 aggro (default player level). Enemies within 180 pixels lose a fixed 40 defense and 20 percentage points of Arts Resistance, floored at 0; multiple units do not stack, and reductions end when out of range or the gear disappears. Lasts up to 20 seconds; 60-second cooldown"
+	SetBonus: Caster/Sniper additive +8% attack; tactical gear: 500 HP, 48 defense, 0 aggro; intercepts projectiles and reduces defenses; 20s duration/60s cooldown
 }
 
 Dorothy: {

@@ -10,6 +10,9 @@ public class ExusiaiVector_Bullet : ModProjectile
 {
     private Vector2 launch;
     private bool initialized;
+    private Vector2 trailAnchor,contactPoint,contactReverse;
+    private int sample;
+    private bool contact,wall;
     public override void SetDefaults()
     {
         Projectile.width = Projectile.height = 8;
@@ -21,10 +24,16 @@ public class ExusiaiVector_Bullet : ModProjectile
     }
     public override void AI()
     {
-        if (!initialized) { initialized = true; launch = Projectile.Center; }
+        if (!initialized) { initialized = true; launch = trailAnchor = Projectile.Center; }
         Projectile.rotation = Projectile.velocity.ToRotation();
+        if (!Main.dedServ) {
+            Vector2 delta=Projectile.Center-trailAnchor;
+            int count=Math.Min(10,(int)(delta.Length()/16));
+            Vector2 step=delta.SafeNormalize(Vector2.UnitX)*16;
+            for(int i=0;i<count;i++){trailAnchor+=step;VectorVisualEffects.Flight(trailAnchor,Projectile.velocity,sample++);}
+        }
         if (Projectile.numUpdates == 0)
-            Lighting.AddLight(Projectile.Center, VectorArt.Theme((int)Projectile.ai[0]).ToVector3() * .3f);
+            Lighting.AddLight(Projectile.Center, VectorArt.RoundColor.ToVector3() * .3f);
     }
     public override bool PreDraw(ref Color lightColor)
     {
@@ -32,20 +41,29 @@ public class ExusiaiVector_Bullet : ModProjectile
             initialized ? Vector2.Distance(launch, Projectile.Center) : 0, (int)Projectile.ai[0]);
         return false;
     }
+    public override void OnHitNPC(NPC target,NPC.HitInfo hit,int damageDone)
+    {
+        contact=true;
+        contactPoint=Vector2.Clamp(Projectile.Center,target.position,target.position+target.Size);
+        contactReverse=-Projectile.velocity.SafeNormalize(Vector2.UnitX);
+    }
+    public override bool OnTileCollide(Vector2 oldVelocity)
+    {
+        contact=wall=true;contactPoint=Projectile.Center;
+        contactReverse=-oldVelocity.SafeNormalize(Vector2.UnitX);return true;
+    }
     public override void OnKill(int timeLeft)
     {
         // One compact, networked visual burst; decoration never creates damaging projectiles.
-        if (Projectile.owner == Main.myPlayer)
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center,
-                -Projectile.velocity.SafeNormalize(Vector2.UnitX), ModContent.ProjectileType<VectorImpact>(),
-                0, 0, Projectile.owner, Projectile.ai[0], Projectile.identity % 127);
+        if (contact && Projectile.owner == Main.myPlayer)
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), contactPoint,
+                contactReverse, ModContent.ProjectileType<VectorImpact>(),
+                0, 0, Projectile.owner, Projectile.ai[0], Projectile.identity % 127,wall?1:0);
     }
 }
 
 public sealed class VectorImpact : ModProjectile
 {
-    private static ulong budgetFrame;
-    private static int dustThisFrame;
     public override string Texture => "Terraria/Images/MagicPixel";
     public override void SetDefaults()
     {
@@ -56,16 +74,8 @@ public sealed class VectorImpact : ModProjectile
     public override bool ShouldUpdatePosition() => false;
     public override void AI()
     {
-        if (Main.dedServ || Projectile.localAI[0]++ != 0 ||
-            Vector2.DistanceSquared(Projectile.Center, Main.LocalPlayer.Center) > 2200 * 2200) return;
-        if (budgetFrame != Main.GameUpdateCount) { budgetFrame = Main.GameUpdateCount; dustThisFrame = 0; }
-        for (int i = 0; i < 3 && dustThisFrame < 24; i++, dustThisFrame++)
-        {
-            Dust dust = Dust.NewDustPerfect(Projectile.Center, i == 0 ? DustID.Smoke : DustID.Ash,
-                Projectile.velocity.RotatedByRandom(.9f) * Main.rand.NextFloat(1, 4), 150,
-                i == 0 ? new Color(116, 101, 91) : new Color(229, 185, 106), .6f);
-            dust.noGravity = true;
-        }
+        if (Main.dedServ || Projectile.localAI[0]++ != 0) return;
+        VectorVisualEffects.Contact(Projectile.Center,Projectile.velocity.SafeNormalize(Vector2.UnitX),Projectile.ai[2]>0);
     }
     public override bool PreDraw(ref Color lightColor)
     {

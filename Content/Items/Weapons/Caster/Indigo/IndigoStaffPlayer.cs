@@ -11,7 +11,8 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Indigo;
 public sealed class IndigoStaffPlayer : ModPlayer
 {
     private int charges, chargeClock, activeMode;
-    private bool keyConsumed;
+    private bool keyConsumed, justCharged;
+    internal float ChargeProgress => MysticChargeRules.Progress(Player, charges, chargeClock, justCharged);
     private Item storedStaff;
     internal void ReleaseCoordinated(Item attack)
     {
@@ -27,6 +28,7 @@ public sealed class IndigoStaffPlayer : ModPlayer
     {
         int result = charges;
         charges = chargeClock = 0;
+        justCharged = false;
         return result;
     }
 
@@ -47,16 +49,14 @@ public sealed class IndigoStaffPlayer : ModPlayer
 
     public override void PostUpdate()
     {
+        justCharged = false;
         if (!ArknightsKeybinds.SkillActivatePressed(Player)) keyConsumed = false;
         if (Player.whoAmI != Main.myPlayer) return;
         if (!Holding) { chargeClock = 0; return; }
         if (ArknightsKeybinds.SkillActivatePressed(Player)) TryActivate();
-        // 与黑键相同：停火累计60帧存一枚，最多三枚；一次开火取走全部储能。
-        if (Player.itemAnimation > 0 || Player.controlUseItem) chargeClock = 0;
-        if (Player.itemAnimation <= 0 && !Player.controlUseItem && charges < 3 && ++chargeClock >= 60)
+        if (MysticChargeRules.Accumulate(Player, ref charges, ref chargeClock))
         {
-            chargeClock = 0;
-            charges++;
+            justCharged = true;
             storedStaff = Player.HeldItem.Clone();
             SoundEngine.PlaySound(SoundID.Item4 with { Volume = .17f, Pitch = .15f + charges * .12f }, Player.Center);
         }
@@ -73,5 +73,5 @@ public sealed class IndigoStaffPlayer : ModPlayer
             p.netUpdate = true;
         }
     }
-    public override void UpdateDead() => charges = chargeClock = activeMode = 0;
+    public override void UpdateDead() { charges = chargeClock = activeMode = 0; justCharged = false; }
 }

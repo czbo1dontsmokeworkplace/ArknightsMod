@@ -10,12 +10,15 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.NPCs.Enemy.Isharmla;
 
-public sealed class IsharmlaHazard : ModProjectile
+public sealed partial class IsharmlaHazard : ModProjectile
 {
     public int OwnerIndex = -1, Encounter, Age, Delay, Duration;
     public TideShot Kind;
     public Vector2 Direction, Origin;
     public float Length, Width;
+    public Vector2 Target;
+    public int Style;
+    public bool Modern => Kind >= TideShot.Canticle;
     public override string Texture => "ArknightsMod/Assets/null";
     public override void SetDefaults()
     {
@@ -41,24 +44,31 @@ public sealed class IsharmlaHazard : ModProjectile
         if (Kind == TideShot.Tornado) { Projectile.width = 64; Projectile.height = 260; }
         if (Kind is TideShot.Note or TideShot.CharmNote) { Projectile.width = 18; Projectile.height = 22; }
         if (Kind == TideShot.StormSpark) Projectile.width = Projectile.height = 22;
+        if (Kind == TideShot.Canticle) { Projectile.width = 14; Projectile.height = 18; }
+        if (Kind == TideShot.FoamArc) Projectile.width = Projectile.height = 16;
+        if (Kind == TideShot.Current) { Projectile.width = 22; Projectile.height = 44; }
+        if (Kind == TideShot.TideHeart) Projectile.width = Projectile.height = 100;
         Projectile.Center = center;
     }
     public override void SendExtraAI(BinaryWriter w)
     {
         w.Write(OwnerIndex); w.Write(Encounter); w.Write(Age); w.Write((byte)Kind); w.WriteVector2(Direction); w.WriteVector2(Origin);
         w.Write(Delay); w.Write(Duration); w.Write(Length); w.Write(Width);
+        w.WriteVector2(Target); w.Write(Style);
     }
     public override void ReceiveExtraAI(BinaryReader r)
     {
         OwnerIndex = r.ReadInt32(); Encounter = r.ReadInt32(); Age = r.ReadInt32(); Kind = (TideShot)r.ReadByte();
         Direction = r.ReadVector2(); Origin = r.ReadVector2(); Delay = r.ReadInt32(); Duration = r.ReadInt32(); Length = r.ReadSingle(); Width = r.ReadSingle();
+        Target = r.ReadVector2(); Style = r.ReadInt32();
         SetHitbox();
     }
     internal Isharmla Boss => OwnerIndex >= 0 && OwnerIndex < Main.maxNPCs && Main.npc[OwnerIndex].active &&
         Main.npc[OwnerIndex].ModNPC is Isharmla b && b.Encounter == Encounter ? b : null;
     private bool Ray => IsharmlaRules.IsLineShot(Kind);
     private bool Area => Kind is TideShot.Bomb or TideShot.MistField;
-    private bool Armed => Age >= Delay && (!(Ray || Area) || Age < Delay + Duration) && Kind != TideShot.RainCloud;
+    private bool Armed => Age >= Delay + (Ray ? 6 : 0) && (!(Ray || Area || Modern) || Age < Delay + Duration - 12) &&
+        Kind is not (TideShot.RainCloud or TideShot.EchoSinger or TideShot.WakeMark);
     public override bool ShouldUpdatePosition() => false;
     public override bool CanHitPlayer(Player target) => Armed && Boss != null;
     public override bool? CanDamage() => Armed && Boss != null ? null : false;
@@ -67,10 +77,13 @@ public sealed class IsharmlaHazard : ModProjectile
         var boss = Boss;
         if (boss == null) { if (Main.netMode != NetmodeID.MultiplayerClient) Projectile.Kill(); return; }
         Age++;
+        if (Modern) { ModernAI(boss); return; }
         if (!Main.dedServ) IsharmlaVisuals.HazardParticles(this);
         if (Kind == TideShot.Breath && boss.Dragon is { } dragon)
         { Projectile.Center = dragon.Muzzle; Direction = dragon.FacingAngle.ToRotationVector2(); }
-        if (Age == Delay && !Main.dedServ) SoundEngine.PlaySound(Ray ? SoundID.Item122 : SoundID.Item21, Projectile.Center);
+        if (Age == Delay && !Main.dedServ)
+            SoundEngine.PlaySound(Kind == TideShot.Breath ? new SoundStyle("ArknightsMod/Sounds/Isharmla/Torrent") { Volume = .75f, MaxInstances = 1 } :
+                Ray ? SoundID.Item122 : SoundID.Item21, Projectile.Center);
         if (Ray)
         {
             if (Age >= Delay + Duration) Projectile.Kill();
@@ -155,7 +168,8 @@ public sealed class IsharmlaHazard : ModProjectile
         {
             float point = 0;
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center,
-                Projectile.Center + Direction.SafeNormalize(Vector2.UnitY) * Length, Width, ref point);
+                Projectile.Center + Direction.SafeNormalize(Vector2.UnitY) * Length,
+                Width * Math.Min(1, Math.Max(0, (Delay + Duration - Age) / 9f)), ref point);
         }
         if (Kind == TideShot.Wave)
             return new Rectangle((int)Projectile.Center.X - 38, (int)Projectile.Center.Y - 105, 76, 150).Intersects(targetHitbox);
@@ -164,6 +178,7 @@ public sealed class IsharmlaHazard : ModProjectile
     public override bool PreDraw(ref Color lightColor)
     {
         if (Boss == null) return false;
+        if (Modern) { DrawModern(); return false; }
         Color color = Kind == TideShot.Gate ? new Color(255, 194, 100) : IsharmlaVisuals.Cyan;
         if (Area) { DrawArea(); return false; }
         if (Kind is TideShot.Bubble or TideShot.Typhoon or TideShot.Tornado or TideShot.Shark or TideShot.Note or TideShot.CharmNote or TideShot.StormSpark)

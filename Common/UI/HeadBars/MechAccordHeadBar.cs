@@ -25,18 +25,21 @@ public sealed class MechAccordHeadBar : WeaponHeadBar
         float progress = 0;
         foreach (Projectile projectile in Main.ActiveProjectiles)
         {
-            if (projectile.owner != Player.whoAmI || (int)projectile.ai[1] != Player.selectedItem)
-                continue;
-            if (Player.HeldItem.ModItem is GoldenglowWand && projectile.ModProjectile is GoldenglowHeldStaff goldenglow)
-                progress = goldenglow.CycleProgress;
-            else if (Player.HeldItem.ModItem is ClickStaff or RockrockStaff &&
-                projectile.ModProjectile is MechAccordHeldStaff mechAccord)
-                progress = mechAccord.CycleProgress;
+            if (projectile.owner != Player.whoAmI) continue;
+            // The unit's actual lock is authoritative, not the staff's attack-cycle timer or cursor.
+            bool locked = Player.HeldItem.ModItem switch
+            {
+                ClickStaff => projectile.ModProjectile is ClickDrone { HasLockedTarget: true },
+                RockrockStaff => projectile.ModProjectile is MechAccordDrone { HasLockedTarget: true },
+                GoldenglowWand => projectile.ModProjectile is GoldenglowBeacon { HasLockedTarget: true },
+                _ => false
+            };
+            if (locked) { progress = 1; break; }
         }
         request = new HeadBarRequest(progress,
             new HeadBarStyle(new Color(5, 14, 28, 224), color, Color.Lerp(color, Color.White, .72f))
             {
-                // Follow the real phase exactly: full on the first empowered tick, then drain.
+                // Binary lock state: full or empty, without a misleading interpolation delay.
                 FillSmoothing = 1f
             });
         return true;

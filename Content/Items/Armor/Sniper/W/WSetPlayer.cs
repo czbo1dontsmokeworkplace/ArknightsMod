@@ -54,14 +54,12 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.W
 
 		private static bool IsPhysicalItem(Item item) {
 			return item.DamageType.CountsAsClass(DamageClass.Melee)
-				|| item.DamageType.CountsAsClass(DamageClass.Ranged)
-				|| item.DamageType.CountsAsClass(DamageClass.Summon);
+				|| item.DamageType.CountsAsClass(DamageClass.Ranged);
 		}
 
 		private static bool IsPhysicalProjectile(Projectile projectile) {
 			return projectile.DamageType.CountsAsClass(DamageClass.Melee)
-				|| projectile.DamageType.CountsAsClass(DamageClass.Ranged)
-				|| projectile.DamageType.CountsAsClass(DamageClass.Summon);
+				|| projectile.DamageType.CountsAsClass(DamageClass.Ranged);
 		}
 	}
 }

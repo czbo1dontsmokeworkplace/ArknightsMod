@@ -70,7 +70,7 @@ public sealed class HarmonieStaff : ExpansionWeaponBase
         int stored = state.ReleaseCharges();
         for (int i = 0; i < stored; i++)
             Spawn(player.MountedCenter, aim.RotatedBy((i - (stored - 1) * .5f) * .22f) * 11f,
-                (int)MathF.Round(damage * 1.15f), 1, 1 + i * 4);
+                (int)MathF.Round(damage * MysticChargeRules.DamageMultiplier(i)), MysticChargeRules.StoredMode(i), 1 + i * 4);
         HarmonieVisuals.Muzzle(position, aim, stored > 0);
         SoundEngine.PlaySound(SoundID.Item26 with { Volume = .22f, Pitch = -.2f + Main.rand.NextFloat(.3f), MaxInstances = 3 }, position);
         return false;

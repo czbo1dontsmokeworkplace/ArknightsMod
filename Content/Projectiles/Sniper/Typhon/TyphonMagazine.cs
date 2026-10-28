@@ -32,6 +32,9 @@ public sealed class TyphonMagazine : ModProjectile
     private int halfwaySoundRound = -1, loadFlashAge = 20;
     private bool canLoad;
     private float LoadProgress => loaded >= Capacity || !canLoad ? 0 : Math.Clamp(loadClock / (float)LoadFrames(loaded), 0, 1);
+    // Every completed arrow contributes one sixth; the current insertion fills that same sixth.
+    internal float TotalLoadProgress => Math.Clamp((loaded + LoadProgress) / Capacity, 0, 1);
+    internal bool BelongsTo(Item item) => boundItem == null || ReferenceEquals(boundItem, item);
     private readonly int[] damage = new int[Capacity], ammo = new int[Capacity];
     private readonly float[] knockback = new float[Capacity];
     public override void SetDefaults()

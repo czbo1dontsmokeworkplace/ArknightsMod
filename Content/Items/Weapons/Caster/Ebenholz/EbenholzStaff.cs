@@ -64,7 +64,7 @@ public sealed class EbenholzStaff : ExpansionWeaponBase
         int stored = state.ReleaseCharges();
         for (int i = 0; i < stored; i++)
             Spawn(player.MountedCenter, aim.RotatedBy((i - (stored - 1) * .5f) * .22f) * 11f,
-                (int)MathF.Round(damage * (state.Mode == 3 ? 1.4f : 1.15f)), 1, 1 + i * 4);
+                (int)MathF.Round(damage * MysticChargeRules.DamageMultiplier(i)), MysticChargeRules.StoredMode(i), 1 + i * 4);
         SoundEngine.PlaySound(SoundID.Item103 with { Volume = .32f, Pitch = -.45f, MaxInstances = 3 }, position);
         return false;
 

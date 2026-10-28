@@ -72,7 +72,7 @@ namespace ArknightsMod.Content.Items.Armor
 		}
 
 		public static void AddWrappedEffectLines(Mod mod, List<TooltipLine> tooltips, string localizationKey, string tooltipLineId) {
-			string text = Language.GetTextValue(localizationKey);
+			string text = ArknightsKeybinds.FormatArmorSetKey(Language.GetTextValue(localizationKey));
 			int lineIndex = 0;
 			foreach (string line in WrapLines(text)) {
 				tooltips.Add(new TooltipLine(mod, $"{tooltipLineId}_{lineIndex}", line) {

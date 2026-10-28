@@ -15,7 +15,7 @@ namespace ArknightsMod.Content.Projectiles.Caster.Durin
 		public override void SendExtraAI(BinaryWriter writer) => CoreCasterGuidance.Write(writer, flight);
 		public override void ReceiveExtraAI(BinaryReader reader) => flight = CoreCasterGuidance.Read(reader);
 		public override void SetStaticDefaults() {
-			ProjectileID.Sets.TrailCacheLength[Type] = 16;
+			ProjectileID.Sets.TrailCacheLength[Type] = 80;
 			ProjectileID.Sets.TrailingMode[Type] = 0;
 		}
 
@@ -38,6 +38,7 @@ namespace ArknightsMod.Content.Projectiles.Caster.Durin
 			return new Color(255, 255, 255, 0) * Projectile.Opacity;
 		}
 
+		public override void OnSpawn(Terraria.DataStructures.IEntitySource source) => CoreCasterFlight.Configure(Projectile, CoreCasterKind.Durin);
 		public override void AI() {
 			flight ??= new CoreCasterFlight(Projectile.Center, Projectile.velocity, Projectile.MaxUpdates, Projectile.identity);
 			flight.Step(CoreCasterKind.Durin, 0, Projectile.Center, ref Projectile.velocity, Projectile.MaxUpdates,
@@ -50,10 +51,10 @@ namespace ArknightsMod.Content.Projectiles.Caster.Durin
 			Projectile.rotation = Projectile.velocity.ToRotation();
 			Projectile.ai[0] += 1f;
 
-			if (Projectile.ai[0] >= 30f)
+			if (flight.Time >= 30f)
 				Projectile.Kill();
 		}
-		public override void OnKill(int timeLeft) => CoreCasterVisuals.Impact(Projectile.Center, Projectile.velocity, CoreCasterKind.Durin);
+		public override void OnKill(int timeLeft) { CoreCasterVisuals.Retire(Projectile, CoreCasterKind.Durin, 0); CoreCasterVisuals.Impact(Projectile.Center, Projectile.velocity, CoreCasterKind.Durin); }
 		public override bool PreDraw(ref Color lightColor) {
 			CoreCasterVisuals.Bolt(Projectile, CoreCasterKind.Durin);
 			return false;

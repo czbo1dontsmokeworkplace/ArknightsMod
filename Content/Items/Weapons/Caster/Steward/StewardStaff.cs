@@ -1,3 +1,4 @@
+﻿using ArknightsMod.Content.Items.Weapons.Caster.CoreCasters;
 using ArknightsMod.Content.Items.Weapons;
 using ArknightsMod.Content.Items.Armor.Caster.Steward;
 using ArknightsMod.Players;
@@ -16,7 +17,7 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Steward
 {
 	/// <summary>
 	/// 史都华德的法杖（迁移自 ArknightsWeaponryExpansion 的 SDHD）。
-	/// <br/>1 技能·强力击：攻击充能，每蓄满一次后下一击射出强化追踪弹（优先高防目标）。
+	/// <br/>1 技能·强力击：攻击充能，每蓄满一次后下一击射出强化直线弹。
 	/// </summary>
 	public class StewardStaff : ExpansionWeaponBase
 	{
@@ -43,6 +44,7 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Steward
 			Item.useStyle = ItemUseStyleID.Shoot;
 			Item.channel = false;
 			Item.staff[Item.type] = true;
+            CoreCasterCadence.Apply(Item);
 		}
 
 		public override void AddRecipes() => CreateRecipe()
@@ -51,6 +53,7 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Steward
 			.AddIngredient(ItemID.FallenStar, 5).AddTile(TileID.Anvils).Register();
 
 		public override bool CanUseItem(Player player) {
+            if (player.itemAnimation <= 0) CoreCasterCadence.Apply(Item);
 			if (Main.myPlayer == player.whoAmI) {
 				var mp = player.GetModPlayer<WeaponPlayer>();
 				// 攻击充能：每次攻击积攒技力，蓄满即得到 1 层库存
@@ -89,7 +92,7 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Steward
 		public override void SendExtraAI(BinaryWriter writer) => CoreCasterGuidance.Write(writer, flight);
 		public override void ReceiveExtraAI(BinaryReader reader) => flight = CoreCasterGuidance.Read(reader);
 		public override void SetStaticDefaults() {
-			ProjectileID.Sets.TrailCacheLength[Type] = 20;
+			ProjectileID.Sets.TrailCacheLength[Type] = 80;
 			ProjectileID.Sets.TrailingMode[Type] = 0;
 		}
 		public override string Texture => "ArknightsMod/Content/Items/Weapons/Caster/Steward/StewardProj";
@@ -112,9 +115,10 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Steward
 			Projectile.idStaticNPCHitCooldown = 60;
 		}
 
+		public override void OnSpawn(Terraria.DataStructures.IEntitySource source) => CoreCasterFlight.Configure(Projectile, CoreCasterKind.Steward);
 		public override void AI() {
 			flight ??= new CoreCasterFlight(Projectile.Center, Projectile.velocity, Projectile.MaxUpdates, Projectile.identity);
-			if (Projectile.timeLeft % 3 == 0)
+			if (Projectile.numUpdates == 0)
 				CoreCasterVisuals.Trail(Projectile, CoreCasterKind.Steward, (int)Projectile.ai[0]);
 
 			// 穿套装时由全局PostAI统一选择最高防目标，避免两套追踪互相拉扯。
@@ -152,7 +156,7 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Steward
 			CoreCasterVisuals.Bolt(Projectile, CoreCasterKind.Steward, (int)Projectile.ai[0]);
 			return false;
 		}
-		public override void OnKill(int timeLeft) => CoreCasterVisuals.Impact(Projectile.Center, Projectile.velocity,
-			CoreCasterKind.Steward, Projectile.ai[0] == 1);
+		public override void OnKill(int timeLeft) { CoreCasterVisuals.Retire(Projectile, CoreCasterKind.Steward, (int)Projectile.ai[0]); CoreCasterVisuals.Impact(Projectile.Center, Projectile.velocity,
+			CoreCasterKind.Steward, Projectile.ai[0] == 1); }
 	}
 }

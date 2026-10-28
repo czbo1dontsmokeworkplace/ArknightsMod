@@ -212,7 +212,7 @@ public sealed class CrusherHeldBlade : ModProjectile
     public override bool? CanDamage() => Kind != CrusherKind.Ulpianus && Swinging && age > 0 ? null : false;
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => CanDamage() != false
         && BladeSwingTemplate.Contact(targetHitbox, sweepStartAngle, sweepEndAngle, sweepStartCenter, sweepEndCenter,
-            radius, Kind == CrusherKind.Ulpianus ? 38 : 24, CrusherSwingMotion.RotationDirection(Kind, facing), out _, out _);
+            radius, CrusherRules.ContactWidth(Kind), CrusherSwingMotion.RotationDirection(Kind, facing), out _, out _);
     public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
     {
         if (Kind == CrusherKind.Hoederer && OperatorStunNPC.HasStun(target)) modifiers.FinalDamage *= 1.2f;

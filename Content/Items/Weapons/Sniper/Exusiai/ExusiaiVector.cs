@@ -42,7 +42,14 @@ public class ExusiaiVector : UpgradeWeaponBase
         Item.useAmmo = AmmoID.Bullet; Item.useStyle = ItemUseStyleID.Shoot;
         Item.noMelee = Item.noUseGraphic = true; Item.autoReuse = true;
         Item.rare = ItemRarityID.Green; Item.value = Item.sellPrice(0);
+        Item.accessory = true;
     }
+    // Both slots grant the same cosmetic, including a hidden functional accessory.
+    // No wing slot, flight, skill activation or combat modifiers are granted.
+    public override void UpdateAccessory(Player player, bool hideVisual)
+        => player.GetModPlayer<VectorWingPlayer>().EquippedVisual = true;
+    public override void UpdateVanity(Player player)
+        => player.GetModPlayer<VectorWingPlayer>().EquippedVisual = true;
     public override ModItem Clone(Item newEntity)
     {
         var copy = (ExusiaiVector)base.Clone(newEntity);

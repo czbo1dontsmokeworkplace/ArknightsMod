@@ -43,8 +43,6 @@ public sealed class EthanYoyoPlayer : ModPlayer, global::ArknightsMod.Players.IP
         // Channelled yoyos do not call CanUseItem again when the skill key is pressed.
         if (ArknightsKeybinds.SkillActivatePressed(Player)) TryActivate();
         if (Selected && Skills.Skill == 0) Skills.SkillActive = true;
-        if (Player.ownedProjectileCounts[ModContent.ProjectileType<EthanSpinningYoyo>()] > 0)
-            Player.aggro -= 400;
     }
     public void OnProbabilityDodge(Player.HurtInfo info)
     {

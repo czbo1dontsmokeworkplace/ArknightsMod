@@ -86,31 +86,7 @@ public sealed partial class IsharmlaVisuals : ModSystem
         }
     }
     public static void DrawHuman(SpriteBatch batch, Isharmla boss, Vector2 screen)
-    {
-        Vector2 center = boss.NPC.Center; bool ghost = boss.NPC.dontTakeDamage;
-        Color tint = ghost ? Gold : Cyan;
-        float visibility = (boss.Stage is TideStage.Covenant or TideStage.LastTide) && boss.Dragon is { } mount ? mount.Visibility : 1;
-        if (boss.Stage == TideStage.Finale) visibility *= IsharmlaRules.FinaleOpacity(boss.Timer, boss.Transition);
-        if (visibility <= .001f) return;
-        tint *= visibility;
-        float time = Clock;
-        DrawField(center + new Vector2(0, 48), new Vector2(150, 45), 0, tint * .27f, "Sigil");
-        IsharmlaVapor.DrawHumanFilm(batch,center,visibility);
-        for (int i = 0; i < 3; i++)
-        {
-            float a=time*.31f+i*MathHelper.TwoPi/3;
-            Vector2 droplet=center+new Vector2(MathF.Cos(a)*76,MathF.Sin(a)*61);
-            DrawField(droplet,new Vector2(8,12),a,tint*.46f,"Lens");
-        }
-        Texture2D human = Art("Human");
-        DrawSpriteRim(human, center - screen, human.Size() * .5f, 0, 1.45f, tint * .30f,
-            boss.NPC.spriteDirection < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None);
-        // One complete static image; no frame indexing, no invented dance frames.
-        batch.Draw(human, center - screen + new Vector2(0, MathF.Sin(time * 2) * 2), null,
-            Color.White * ((ghost ? .65f : 1) * visibility), MathF.Sin(time * 2.8f) * .025f,
-            human.Size() * .5f, 1.45f, boss.NPC.spriteDirection < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0);
-        IsharmlaVapor.DrawHumanFilm(batch,center,visibility,true);
-    }
+        => IsharmlaPresentation.DrawHuman(batch, boss, screen);
     public static void DrawDragonPart(SpriteBatch batch, string art, Vector2 center, Vector2 origin, float rotation,
         float scale, TideStage stage, float opacity, Vector2 screen)
     {
@@ -161,7 +137,7 @@ public sealed partial class IsharmlaVisuals : ModSystem
     {
         if (Main.dedServ) return;
         TidalParticles.Burst(center, count);
-        SoundEngine.PlaySound(Terraria.ID.SoundID.Item14 with { Volume = .5f }, center);
+        if (!ClockOverride.HasValue) SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/Isharmla/Impact") { Volume = .35f, MaxInstances = 2 }, center);
     }
     public static void Ambient(Vector2 center, TideStage stage, int timer)
     {

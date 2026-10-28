@@ -16,7 +16,7 @@ Items: {
 			'''
 			Summons Isharmla at the Ocean after defeating the Moon Lord
 			Not consumed
-			The opening song suppresses flight; extra jumps, jump boosts and grappling hooks remain usable
+			A six-movement encounter of song and sea; flight and grappling remain available
 			'''
 	}
 
@@ -75,7 +75,7 @@ Buffs: {
 
 IsharmlaText: {
 	Bestiary: The song still rises from the sea. At last you realize that the immense body beneath the waves breathes in time with it.
-	SpawnInfo: Use the Call of the Tides at the Ocean after defeating the Moon Lord. Wings are suppressed only during the opening song.
+	SpawnInfo: Use the Call of the Tides at the Ocean after defeating the Moon Lord. Flight remains available throughout the six movements of song, sea and coordinated attacks.
 	Stage1: I · SONG WITHOUT WIND
 	Stage2: II · VISITOR FROM THE DEEP
 	Stage3: III · COVENANT OF SEA AND SKY

@@ -45,7 +45,7 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Wisadel
 				&& Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<WisadelBody>()
 				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<WisadelLegs>();
 			if (WisadelSetActive)
-				Player.GetDamage(DamageClass.Ranged) *= 1.15f;
+				Player.GetDamage(DamageClass.Ranged) += 0.15f;
 		}
 
 		public override void PostUpdate() {

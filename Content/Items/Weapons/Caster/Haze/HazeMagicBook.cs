@@ -1,4 +1,5 @@
-﻿using ArknightsMod.Content.Projectiles.Caster.Haze;
+﻿using ArknightsMod.Content.Items.Weapons.Caster.CoreCasters;
+using ArknightsMod.Content.Projectiles.Caster.Haze;
 using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
@@ -37,6 +38,7 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Haze
 			Item.knockBack = 3;
 			Item.useAnimation = BaseUseTime;
 			Item.useTime = BaseUseTime;
+            CoreCasterCadence.Apply(Item);
 			Item.shootSpeed = 8;
 			Item.width = Item.height = 40;
 			Item.autoReuse = true;
@@ -134,6 +136,7 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Haze
                 Item.useAnimation = Item.useTime;
             }
 
+            CoreCasterCadence.Apply(Item);
             return base.CanUseItem(player);
         }
 

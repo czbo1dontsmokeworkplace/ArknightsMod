@@ -8,7 +8,7 @@ public enum ReaperKind { Humus, LaPluma, Entelechia }
 internal static class ReaperRules
 {
     internal const float SwingTicks = 54 * .8f;
-    internal const float WaveSpeed = 24f; // UnholyEssenceEffect's launch speed, per AI update.
+    internal const float WaveSpeed = 17.28f; // Current launch speed reduced by 20%; later motion is unchanged.
     internal const float LeftScale = 1f;
     internal const float SpinStep = MathHelper.TwoPi * 2 / 50 * 1.3f;
     internal const int WispInterval = 8;

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using ArknightsMod.Content.Items.Weapons.Guard.Specter;
@@ -30,7 +30,6 @@ namespace ArknightsMod.Content.Projectiles.Guard.Specter
 		private float spool;
 		private float chainPhase;
 		private bool initialized;
-		private bool ejectaSpawnedThisCycle;
 		private Vector2 handWorld;
 		private Vector2 drawHandWorld;
 		private Vector2 tipWorld;
@@ -164,7 +163,6 @@ namespace ArknightsMod.Content.Projectiles.Guard.Specter
 			if (age % BiteCycleTicks != 0)
 				return;
 			cycleTargets.Clear();
-			ejectaSpawnedThisCycle = false;
 			Projectile.ResetLocalNPCHitImmunity();
 		}
 
@@ -211,11 +209,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Specter
 				CenturionHitVisuals.BloodSpray(target, aimAngle.ToRotationVector2(),
 					CenturionHitVisuals.SpecterIntensity, cycleTargets.Count, CenturionHitVisuals.SpecterColor);
 			cycleTargets.Add(target.whoAmI);
-			Vector2 direction = aimAngle.ToRotationVector2();
-			if (damageDone > 0 && !ejectaSpawnedThisCycle) {
-				ejectaSpawnedThisCycle = true;
-				CenturionHitVisuals.SawEjecta(Projectile, Vector2.Lerp(handWorld, tipWorld, 0.82f), direction);
-			}
+			// Saw contact VFX remain; Specter no longer emits a damaging blood projectile.
 			if (!Main.dedServ) {
 				SoundEngine.PlaySound(SoundID.NPCHit18 with {
 					Volume = SkillMode == 2 ? 0.72f : 0.46f,

@@ -37,7 +37,7 @@ namespace ArknightsMod.Content.Items.Armor.Caster.Mornia
 		}
 
 		// 套装效果后半段「奥术弹幕自动追踪最近的敌人」实现在
-		// Common/GlobalProjectiles/MorniaArcaneHomingGlobalProj.cs——追踪要每帧改弹幕自己的
+		// Common/GlobalProjectiles/EffectHomingGlobalProjectile.cs——追踪要每帧改弹幕自己的
 		// velocity，挂在弹幕上比在这里遍历 Main.projectile 更直接。它读的就是上面的 SetActive。
 
 		public override void PostUpdateMiscEffects() {

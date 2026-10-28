@@ -43,7 +43,24 @@ namespace ArknightsMod.Players
 
 		// 技能资源管理
 		public int SkillCharge;
-		public int SkillChargeMax;
+		private int baseSkillChargeMax;
+		// Setter 始终接收基础充能阈值；Getter 动态应用装备减耗，穿脱时无需重置技能。
+		public int SkillChargeMax {
+			get => Div > 0 && baseSkillChargeMax > 0
+				? baseSkillChargeMax - (baseSkillChargeMax / Div - GetEffectiveSkillSP(baseSkillChargeMax / Div)) * Div
+				: baseSkillChargeMax;
+			set => baseSkillChargeMax = value;
+		}
+
+		/// <summary>读取当前装备下的实际技力需求，不修改武器/CSV 中的基础技能数据。</summary>
+		public int GetEffectiveSkillSP(int baseSP) {
+			if (baseSP <= 0 || CurrentSkill?.UsesCustomCharge == true
+				|| !Player.HeldItem.DamageType.CountsAsClass(DamageClass.Ranged))
+				return baseSP;
+			bool helmet = Player.armor[0].type == Content.Items.Armor.NeoArmorReforge.NeoArmorReforgeSetLoader
+				.GetSetType<Content.Items.Armor.Sniper.Catapult.CatapultHead>();
+			return helmet ? Math.Max(1, baseSP - 1) : baseSP;
+		}
 		private bool skillActive;
 		public bool SkillActive {
 			get => skillActive;
@@ -178,6 +195,19 @@ namespace ArknightsMod.Players
 		public override void PostUpdate() {
 			UnderAttack = false;
 
+			// 装备变化可能让已积攒的技力达到新需求，立即结算并更新显示。
+			if (!Player.dead && !SkillActive && CurrentSkill != null && !CurrentSkill.UsesCustomCharge
+				&& SkillChargeMax > 0 && Div > 0) {
+				int maxStack = CurrentSkill.CurrentLevelData.MaxStack;
+				if (StockCount < maxStack && SkillCharge >= SkillChargeMax) {
+					int gained = Math.Min(SkillCharge / SkillChargeMax, maxStack - StockCount);
+					StockCount += gained;
+					SkillCharge = StockCount >= maxStack ? 0 : SkillCharge % SkillChargeMax;
+				}
+				SP = StockCount >= maxStack ? GetEffectiveSkillSP(CurrentSkill.CurrentLevelData.MaxSP)
+					: SkillCharge / Div;
+			}
+
 			// 换武器后的技能槽 UI 刷新（登记于 ResetEffects，见 pendingSkillSlotRefresh 的说明）。
 			// PostUpdate 只在实际游戏中运行，此时玩家与其 ModPlayer 数组都已初始化；
 			// 同时再校一遍"确实是本地玩家本人"，避免任何非游戏内路径进到 UI 里。
@@ -224,8 +254,8 @@ namespace ArknightsMod.Players
 
 			SkillLevelData data = skill.CurrentLevelData;
 			Div = skill.ChargeType == SkillChargeType.Auto ? 60 : 1;
-			int initSP = data.InitSP;
-			int maxSP = data.MaxSP;
+			int maxSP = GetEffectiveSkillSP(data.MaxSP);
+			int initSP = Math.Min(data.InitSP, maxSP);
 			if (giveCharge) {
 				if (initSP == maxSP) {
 					SkillCharge = 0;
@@ -244,7 +274,7 @@ namespace ArknightsMod.Players
 				StockCount = 0;
 			}
 
-			SkillChargeMax = maxSP * Div;
+			SkillChargeMax = data.MaxSP * Div;
 			SkillTimer = 0;
 			SkillActive = false;
 			SummonMode = false;
@@ -297,7 +327,7 @@ namespace ArknightsMod.Players
 			SkillLevelData data = CurrentSkill.CurrentLevelData;
 			StockCount = data.MaxStack;
 			SkillCharge = 0;
-			SP = data.MaxSP;
+			SP = GetEffectiveSkillSP(data.MaxSP);
 			chargeOpen = true;
 
 			if (Player.HeldItem.ModItem is UpgradeWeaponBase ark)
@@ -340,8 +370,8 @@ namespace ArknightsMod.Players
 				emergencyChargeFraction = 0f;
 			}
 
-			int maxSP = CurrentSkill?.CurrentLevelData.MaxSP
-				?? (Skill >= 0 && Skill < MaxSP.Count ? MaxSP[Skill] ?? 0 : 0);
+			int maxSP = GetEffectiveSkillSP(CurrentSkill?.CurrentLevelData.MaxSP
+				?? (Skill >= 0 && Skill < MaxSP.Count ? MaxSP[Skill] ?? 0 : 0));
 			SP = StockCount >= maxStock ? maxSP : SkillCharge / Math.Max(1, Div);
 		}
 
@@ -378,7 +408,7 @@ namespace ArknightsMod.Players
 			int gainedStock = (int)Math.Min(charge / SkillChargeMax, data.MaxStack - StockCount);
 			StockCount += gainedStock;
 			SkillCharge = StockCount >= data.MaxStack ? 0 : (int)(charge % SkillChargeMax);
-			SP = StockCount >= data.MaxStack ? data.MaxSP : SkillCharge / Div;
+			SP = StockCount >= data.MaxStack ? GetEffectiveSkillSP(data.MaxSP) : SkillCharge / Div;
 			if (acceptedCharge > 0 && !Main.dedServ && Main.netMode != Terraria.ID.NetmodeID.Server) {
 				string amount = (acceptedCharge / (double)Div).ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
 				CombatText.NewText(Player.Hitbox.Modified(0, -24, 0, 0),
@@ -409,17 +439,19 @@ namespace ArknightsMod.Players
 				else
 					Div = 1;
 
-				SkillCharge = InitialSP[Skill] != null ? (int)InitialSP[Skill] * Div : 0;
-				SP = InitialSP[Skill] != null ? (int)InitialSP[Skill] : 0;
+				int maxSP = GetEffectiveSkillSP(MaxSP[Skill] ?? 0);
+				int initSP = Math.Min(InitialSP[Skill] ?? 0, maxSP);
+				SkillCharge = initSP * Div;
+				SP = initSP;
 				SkillChargeMax = MaxSP[Skill] != null ? (int)MaxSP[Skill] * Div : 0;
 				SkillTimer = 0;
 				StockCount = 0;
 				SkillActive = false;
 
-				if (InitialSP[Skill] == MaxSP[Skill]) {
+				if (initSP == maxSP) {
 					SkillCharge = 0;
 					StockCount++;
-					SP = StockCount == StockMax[Skill] ? (int)MaxSP[Skill] : 0;
+					SP = StockCount == StockMax[Skill] ? GetEffectiveSkillSP((int)MaxSP[Skill]) : 0;
 				}
 
 				SummonMode = false;
@@ -533,10 +565,10 @@ namespace ArknightsMod.Players
 					SkillData data = ark.GetSkillData(Skill);
 					if (data != null) {
 						SkillLevelData level = data.CurrentLevelData;
-						if (level.InitSP >= level.MaxSP) {
+						if (level.InitSP >= GetEffectiveSkillSP(level.MaxSP)) {
 							SkillCharge = 0;
 							StockCount = Math.Min(level.MaxStack, 1);
-							SP = level.MaxSP;
+							SP = GetEffectiveSkillSP(level.MaxSP);
 						}
 						else {
 							SkillCharge = Math.Max(SkillCharge, level.InitSP * Div);
@@ -634,7 +666,7 @@ namespace ArknightsMod.Players
 					if (SkillCharge >= SkillChargeMax)
 					{
 						SkillCharge=0;
-						SP = ++StockCount == data.MaxStack ? data.MaxSP : 0;
+						SP = ++StockCount == data.MaxStack ? GetEffectiveSkillSP(data.MaxSP) : 0;
 					}
 				}
 			}
@@ -660,7 +692,7 @@ namespace ArknightsMod.Players
 
 					if (SkillCharge >= SkillChargeMax) {
 						SkillCharge = 0;
-						SP = ++StockCount == data.MaxStack ? data.MaxSP : 0;
+						SP = ++StockCount == data.MaxStack ? GetEffectiveSkillSP(data.MaxSP) : 0;
 					}
 					else {
 						SP = SkillCharge / Div;
@@ -675,7 +707,7 @@ namespace ArknightsMod.Players
 					if (SkillCharge >= SkillChargeMax) {
 						SkillCharge = 0;
 						StockCount += 1;
-						SP = StockCount == StockMax[Skill] ? (int)MaxSP[Skill] : 0;
+						SP = StockCount == StockMax[Skill] ? GetEffectiveSkillSP((int)MaxSP[Skill]) : 0;
 					}
 					else {
 						SP = SkillCharge / Div;
@@ -699,7 +731,7 @@ namespace ArknightsMod.Players
 			}
 
 			int maxStock = CurrentSkill?.CurrentLevelData.MaxStack ?? StockMax[Skill];
-			int maxSp = CurrentSkill?.CurrentLevelData.MaxSP ?? MaxSP[Skill] ?? 0;
+			int maxSp = GetEffectiveSkillSP(CurrentSkill?.CurrentLevelData.MaxSP ?? MaxSP[Skill] ?? 0);
 			double extraCharge = Math.Max(0d, (double)SPRegenMultiplier - 1d) * GlobalSPRegenSpeedMultiplier;
 			if (maxStock <= 0 || StockCount >= maxStock || extraCharge <= 0d) {
 				AccessoriesChargeFraction = 0d;
@@ -744,7 +776,7 @@ namespace ArknightsMod.Players
 
 				if (SkillCharge >= SkillChargeMax) {
 					SkillCharge = 0;
-					SP = ++StockCount == data.MaxStack ? data.MaxSP : 0;
+					SP = ++StockCount == data.MaxStack ? GetEffectiveSkillSP(data.MaxSP) : 0;
 				}
 			}
 			else {
@@ -758,7 +790,7 @@ namespace ArknightsMod.Players
 				if (SkillCharge >= SkillChargeMax) {
 					SkillCharge = 0;
 					StockCount += 1;
-					SP = StockCount == StockMax[Skill] ? (int)MaxSP[Skill] : 0;
+					SP = StockCount == StockMax[Skill] ? GetEffectiveSkillSP((int)MaxSP[Skill]) : 0;
 				}
 			}
 		}

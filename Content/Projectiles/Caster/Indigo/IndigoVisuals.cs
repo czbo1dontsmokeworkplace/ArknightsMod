@@ -1,4 +1,5 @@
 using ArknightsMod.Common.Particle.T;
+using ArknightsMod.Content.Items.Weapons.Caster;
 using System;
 using ArknightsMod.Common.Particle;
 using ArknightsMod.Common.VisualEffects;
@@ -119,7 +120,7 @@ internal static class IndigoVisuals
             Vector2 a = projectile.oldPos[i] + projectile.Size * .5f;
             Vector2 b = projectile.oldPos[i - 1] + projectile.Size * .5f;
             float fade = (1f - i / (float)projectile.oldPos.Length) * lifetimeFade;
-            float width = (wisp ? 3.5f : 7f) * fade;
+            float width = (wisp ? 3.5f : 7f) * fade * MysticChargeRules.VisualScale(projectile);
             Vector2 side = (b - a).SafeNormalize(Vector2.UnitX).RotatedBy(MathHelper.PiOver2);
             Line(a, b, new Color(92, 69, 151) * (fade * .5f), width * 1.7f);
             Line(a, b, Light(Lilac, fade * .32f), width);

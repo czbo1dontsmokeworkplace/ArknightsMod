@@ -8,7 +8,7 @@ namespace ArknightsMod.Common.Particle.T;
 
 public sealed class T_CoreCasterParticle : Particle
 {
-    public override string TexturePath => CoreCasterArt.Assets + "PurifiedGelBall";
+    public override string TexturePath => CoreCasterArt.Assets + "EnergyLance";
     public override BlendState DrawBlendState => BlendState.AlphaBlend;
     public override SamplerState DrawSamplerState => SamplerState.LinearClamp;
     private readonly CoreCasterKind kind;

@@ -247,10 +247,17 @@ internal static class ChargedSniperVisuals
         if (!ChargedOperatorVfx.Visible(p.Center) || ParticleManager.activeParticles.Count > 950) return;
         Color theme = ChargedOperatorRules.ColorFor(kind), dark = Color.Lerp(Color.Black, theme, .1f);
         float rotation = p.velocity.ToRotation();
-        // Dark material is visible against daylight; the restrained themed glint remains visible at night.
-        new T_Nitro_Flight_Spark(p.Center - p.velocity * .6f,
-            -p.velocity * .05f, dark * .8f, .75f, rotation).Spawn();
-        new T_Nitro_Flight_Spark(p.Center, -p.velocity * .05f, theme * .22f, .5f, rotation).Spawn();
+        // Triple the existing parallel material along completed travel, rather than stacking
+        // three copies at the head. Only the first three rifles use this denser flight path.
+        int samples = ChargedSniperFlightVisuals.UsesHelix(kind) ? 3 : 1;
+        float span = p.numUpdates == p.MaxUpdates - 1 ? 1 : 2;
+        for (int i = 0; i < samples && ParticleManager.activeParticles.Count < 950; i++)
+        {
+            Vector2 at = p.Center - p.velocity * (i * span / samples);
+            new T_Nitro_Flight_Spark(at - p.velocity * .6f,
+                -p.velocity * .05f, dark * .8f, .75f, rotation).Spawn();
+            new T_Nitro_Flight_Spark(at, -p.velocity * .05f, theme * .22f, .5f, rotation).Spawn();
+        }
     }
     internal static void BulletLaunchParticles(Projectile p, ChargedOperatorKind kind)
     {

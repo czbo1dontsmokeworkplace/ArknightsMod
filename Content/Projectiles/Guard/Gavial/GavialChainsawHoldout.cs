@@ -171,7 +171,7 @@ public sealed class GavialChainsawHoldout : ModProjectile
         if (damageDone > 0 && !ejectaSpawnedThisCycle)
         {
             ejectaSpawnedThisCycle = true;
-            CenturionHitVisuals.SawEjecta(Projectile, Vector2.Lerp(hand, tip, 0.82f), aimAngle.ToRotationVector2());
+            GavialSawSpark.SpawnFromSaw(Projectile, Vector2.Lerp(hand, tip, 0.82f), aimAngle.ToRotationVector2());
         }
         // 每个被锯刃实际命中的目标各触发一次，不受下方纯视觉节流影响。
         // 由持有者创建；爆炸是独立弹幕，不会递归触发新的锯刃爆炸。

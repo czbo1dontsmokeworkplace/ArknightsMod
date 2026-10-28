@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using ArknightsMod.Content.Projectiles.Caster.CoreCasters;
 using Terraria;
 using System.IO;
@@ -18,7 +18,7 @@ public class Haze_Crimsonball : ModProjectile, ICoreCasterGuidance
     public override void SetStaticDefaults()
     {
         ProjectileID.Sets.TrailingMode[Type] = 2;
-        ProjectileID.Sets.TrailCacheLength[Type] = 38;
+        ProjectileID.Sets.TrailCacheLength[Type] = 80;
     }
     public override void SetDefaults()
     {
@@ -27,7 +27,8 @@ public class Haze_Crimsonball : ModProjectile, ICoreCasterGuidance
         Projectile.aiStyle = -1; Projectile.timeLeft = 120;
         Projectile.friendly = true; Projectile.extraUpdates = 1;
     }
-    public override void AI()
+    public override void OnSpawn(Terraria.DataStructures.IEntitySource source) => CoreCasterFlight.Configure(Projectile, CoreCasterKind.Haze);
+		public override void AI()
     {
         flight ??= new CoreCasterFlight(Projectile.Center, Projectile.velocity, Projectile.MaxUpdates, Projectile.identity);
         flight.Step(CoreCasterKind.Haze, 2, Projectile.Center, ref Projectile.velocity, Projectile.MaxUpdates,
@@ -41,8 +42,8 @@ public class Haze_Crimsonball : ModProjectile, ICoreCasterGuidance
             CoreCasterVisuals.Trail(Projectile, CoreCasterKind.Haze, 2);
         }
     }
-    public override void OnKill(int timeLeft) => CoreCasterVisuals.Impact(Projectile.Center, Projectile.velocity,
-        CoreCasterKind.Haze, true, 2);
+    public override void OnKill(int timeLeft) { CoreCasterVisuals.Retire(Projectile, CoreCasterKind.Haze, 2); CoreCasterVisuals.Impact(Projectile.Center, Projectile.velocity,
+        CoreCasterKind.Haze, true, 2); }
     public override bool PreDraw(ref Color lightColor)
     {
         CoreCasterVisuals.Bolt(Projectile, CoreCasterKind.Haze, 2);

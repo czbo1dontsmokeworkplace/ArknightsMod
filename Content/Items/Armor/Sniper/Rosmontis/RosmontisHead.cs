@@ -18,6 +18,7 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.Rosmontis
 				.AddIngredient<CrystallineElectronicUnit>(6)
 				.AddIngredient<OrirockConcentration>(4),
 			SetBonusKey = "Mods.ArknightsMod.ArmorSets.Rosmontis.SetBonus",
+			OnSetActivate = player => player.GetModPlayer<RosmontisSetPlayer>().TryDeployTacticalEquipment(),
 		};
 	}
 }

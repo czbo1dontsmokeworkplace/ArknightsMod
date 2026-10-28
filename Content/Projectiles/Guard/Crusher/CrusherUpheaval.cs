@@ -49,7 +49,7 @@ public sealed class CrusherUpheaval : ModProjectile
     }
     public override void SetDefaults()
     {
-        Projectile.width = Projectile.height = 32;
+        Projectile.width = Projectile.height = (int)(32 * CrusherRules.SizeMultiplier);
         Projectile.friendly = true; Projectile.DamageType = DamageClass.Melee;
         Projectile.tileCollide = false; Projectile.ignoreWater = true;
         Projectile.penetrate = -1; Projectile.extraUpdates = 2; Projectile.timeLeft = 150;
@@ -93,7 +93,7 @@ public sealed class CrusherUpheaval : ModProjectile
     {
         if (Waiting) return false;
         float collision = 0;
-        float width = Kind == CrusherKind.Ulpianus ? 68 : 26 + (int)Kind * 8;
+        float width = CrusherRules.PursuitWidth(Kind);
         // Swept contact stays reliable at high speed. Anchor crown, shaft and
         // visible leading edge occupy the same axis as this capsule.
         Vector2 axis = Projectile.velocity.SafeNormalize(-Vector2.UnitY);

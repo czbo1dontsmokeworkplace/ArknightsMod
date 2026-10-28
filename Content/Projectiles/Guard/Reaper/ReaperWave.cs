@@ -25,9 +25,8 @@ public sealed class ReaperWave : ModProjectile
     public override bool? CanDamage()=>hits<7?null:false;
     public override void AI()
     {
-        // Source UnholyEssence_Wave accelerates by 1.03 per AI call (two calls per game tick).
-        // Keep our fixed crescent orientation, contact geometry and existing shader.
-        Projectile.velocity *= 1.03f;
+        // Apply drag once per game frame, independent of extra updates.
+        if (Projectile.numUpdates == 0) Projectile.velocity *= .99f;
         age++;
         if (Projectile.numUpdates == 0) {
             // Reference: one pair / 3 game ticks. 70% = 7 pairs / 30 ticks, not one / 5.

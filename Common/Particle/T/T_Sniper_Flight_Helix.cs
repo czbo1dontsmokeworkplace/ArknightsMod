@@ -47,9 +47,12 @@ public sealed class T_Sniper_Flight_Helix : Particle
     private void Strand(Vector2 start, Vector2 end, Color tint, float depth, float fade)
     {
         float front = (depth + 1) * .5f;
-        Segment(start, end, tint * (fade * MathHelper.Lerp(.5f, .9f, front)), MathHelper.Lerp(1.4f, 2.4f, front));
-        Segment(start, end, Color.Lerp(tint, Color.White, .65f) * (fade * .65f), .8f);
+        Segment(start, end, Deepen(tint) * (fade * MathHelper.Lerp(.5f, .9f, front)), MathHelper.Lerp(1.4f, 2.4f, front));
+        Segment(start, end, Deepen(Color.Lerp(tint, Color.White, .65f)) * (fade * .65f), .8f);
     }
+
+    // Apply after the pale-core mix; darkening the base alone would be washed out again.
+    internal static Color Deepen(Color color) => new((byte)(color.R * .8f), (byte)(color.G * .8f), (byte)(color.B * .8f), color.A);
 
     private void Segment(Vector2 start, Vector2 end, Color tint, float width)
     {

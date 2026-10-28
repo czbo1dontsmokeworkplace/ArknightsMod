@@ -6,6 +6,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Crusher;
 // Anchor's coast -> gravity -> recall, measured in real ticks at every update rate.
 internal sealed class UlpianusThrowFlight
 {
+    internal const float FallSpeedMultiplier = 1.5f;
     internal float Age { get; private set; }
     internal bool Returning { get; private set; }
     internal void Recall() => Returning = true;
@@ -24,8 +25,12 @@ internal sealed class UlpianusThrowFlight
         }
         else if (Age >= 10)
         {
-            physical.Y += (.5f + (physical.Y < 0 ? .35f : 0)) * dt;
-            physical.Y = Math.Min(16, physical.Y);
+            // Store the outgoing downward velocity at 1.5x, but integrate gravity in the
+            // original units. Never multiply it repeatedly or alter coast/ascent/recall.
+            float falling = physical.Y;
+            if (Age - dt >= 10 && falling > 0) falling /= FallSpeedMultiplier;
+            falling += (.5f + (falling < 0 ? .35f : 0)) * dt;
+            physical.Y = falling > 0 ? Math.Min(16, falling) * FallSpeedMultiplier : falling;
             physical.X *= MathF.Pow(.95f, dt);
         }
         velocity = physical / updates;

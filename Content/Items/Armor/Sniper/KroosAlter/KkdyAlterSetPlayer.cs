@@ -2,7 +2,6 @@ using ArknightsMod.Content.Buffs;
 using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Armor.Sniper.KroosAlter
@@ -32,33 +31,22 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.KroosAlter
 				Player.GetAttackSpeed(DamageClass.Ranged) *= 1.15f;
 		}
 
-		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {
-			if (KkdyAlterSetActive && item.DamageType.CountsAsClass(DamageClass.Ranged) && Main.rand.NextFloat() < 0.2f)
-				damage *= 1.5f;
+		public override void ModifyHitNPCWithItem(Item item, NPC target, ref NPC.HitModifiers modifiers) {
+			TryRangedProc(item.DamageType, target, ref modifiers);
 		}
 
-		public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone) {
-			TryStunOnRangedProc(item, target, damageDone);
+		public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref NPC.HitModifiers modifiers) {
+			TryRangedProc(proj.DamageType, target, ref modifiers);
 		}
 
-		public override void OnHitNPCWithProj(Projectile proj, NPC target, NPC.HitInfo hit, int damageDone) {
-			TryStunOnRangedProc(proj, target, damageDone);
-		}
-
-		private void TryStunOnRangedProc(Item item, NPC target, int damageDone) {
-			if (!KkdyAlterSetActive || damageDone <= 0 || !item.DamageType.CountsAsClass(DamageClass.Ranged))
+		private void TryRangedProc(DamageClass damageType, NPC target, ref NPC.HitModifiers modifiers) {
+			if (!KkdyAlterSetActive || !damageType.CountsAsClass(DamageClass.Ranged)
+				|| Main.rand.NextFloat() >= 0.2f)
 				return;
 
-			if (Main.rand.NextFloat() < 0.2f)
-				OperatorStunNPC.TryApply(target, 12);
-		}
-
-		private void TryStunOnRangedProc(Projectile proj, NPC target, int damageDone) {
-			if (!KkdyAlterSetActive || damageDone <= 0 || !proj.DamageType.CountsAsClass(DamageClass.Ranged))
-				return;
-
-			if (Main.rand.NextFloat() < 0.2f)
-				OperatorStunNPC.TryApply(target, 12);
+			// 每次命中只判定一次，同一次触发同时获得增伤和眩晕，与普通暴击独立。
+			modifiers.SourceDamage *= 1.5f;
+			OperatorStunNPC.TryApply(target, 12);
 		}
 
 		public override void PostUpdateMiscEffects() {

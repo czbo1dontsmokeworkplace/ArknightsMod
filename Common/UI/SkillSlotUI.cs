@@ -160,6 +160,8 @@ namespace ArknightsMod.Common.UI
 		protected override void DrawChildren(SpriteBatch sb) {
 			if (skillData == null)
 				return;
+			var player = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
+			maxSP.SetText(player.GetEffectiveSkillSP(skillData.CurrentLevelData.MaxSP).ToString());
 			base.DrawChildren(sb);
 			if (Main.LocalPlayer.GetModPlayer<WeaponPlayer>().CurrentSkill == skillData) {
 				sb.Draw(selector, GetDimensions().ToRectangle().TopRight() - Vector2.UnitX * 20, Color.White);

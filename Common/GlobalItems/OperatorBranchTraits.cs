@@ -30,6 +30,7 @@ public sealed class OperatorBranchTraits : GlobalItem
         "BeeswaxStaff" or "CarnelianStaff" or "LinStaff" => "Phalanx",
         "PineconeNailgun" or "ExecutorShotgun" or "ChalterWatergun" => "Spreadshooter",
         "GravelDualBlades" or "RedDagger" or "PhantomDaggers" => "Executor",
+        "EthanYoyo" => "Ambusher",
         "SpecterBoneSaw" or "BlazeGreatsword" or "GavialChainsaw" => "Centurion",
         "QuartzGreatsword" or "WindChimesHeavyBlade" or "HoedererGreatsword" or "UlpianusAnchor" => "Crusher",
         "HumusScythe" or "LaPlumaScythe" or "EntelechiaScythe" => "Reaper",
@@ -59,7 +60,7 @@ public sealed class OperatorBranchTraits : GlobalItem
             or "PrimalCaster" or "BlastCaster" or "CoreCaster" => "Caster",
         "ArtsFighter" or "Dreadnought" or "Musha" or "Centurion" or "Crusher" or "Reaper" or "Earthshaker" => "Guard",
         "Artilleryman" or "Deadeye" or "Crossbowman" or "Spreadshooter" => "Sniper",
-        "Executor" => "Specialist",
+        "Executor" or "Ambusher" => "Specialist",
         "Charger" or "StandardBearer" => "Vanguard",
         "Medic" or "MedicTherapist" or "MedicMultiTarget" or "MedicChain" or "MedicWandering" => "Medic",
         "Fortress" or "Protector" or "ArtsProtector" or "SentinelProtector" or "Juggernaut" or "Duelist" or "PrimalProtector" => "Defender",
@@ -90,6 +91,8 @@ public sealed class OperatorBranchTraits : GlobalItem
 
     public override void HoldItem(Item item, Player player)
     {
+        if (Branch(item) == "Ambusher")
+            player.aggro -= 2000;
         if (Branch(item) == "Musha")
             player.AddBuff(BuffID.PotionSickness, 600);
     }

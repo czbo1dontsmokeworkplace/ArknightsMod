@@ -1,3 +1,4 @@
+using ArknightsMod.Content.Items.Weapons.Caster;
 using System;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -50,7 +51,7 @@ public sealed class EbenholzCube : ModProjectile
             || !EbenholzCombat.Clear(Projectile.Center, target.Center))) target = null;
         if (target == null && Projectile.owner == Main.myPlayer && age % 12 == 0)
         {
-            targetIndex = EbenholzCombat.FindTarget(Projectile.Center, 750f, Projectile.Center, Projectile.ai[0] == 1);
+            targetIndex = EbenholzCombat.FindTarget(Projectile.Center, 750f, Projectile.Center, MysticChargeRules.IsStored(Projectile));
             Projectile.ai[1] = targetIndex + 1;
             Projectile.netUpdate = true;
             if (targetIndex >= 0) target = Main.npc[targetIndex];
@@ -71,13 +72,13 @@ public sealed class EbenholzCube : ModProjectile
     public override void OnKill(int timeLeft)
     {
         if (Projectile.ai[2] > 0f) return;
-        EbenholzVisuals.Scatter(Projectile.Center, Wisp ? 5 : 9, Wisp ? 2f : 3.2f);
+        EbenholzVisuals.Scatter(Projectile.Center, Wisp ? 5 : 9, (Wisp ? 2f : 3.2f) * MysticChargeRules.VisualScale(Projectile));
         if (Projectile.owner != Main.myPlayer || Wisp) return;
         // 直击目标已经受过伤害；爆炸只补周围敌人，避免同一发重复结算。
         int index = Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
-            ModContent.ProjectileType<EbenholzBurst>(), Projectile.damage, 2f, Projectile.owner, 0, excludedTarget + 1);
+            ModContent.ProjectileType<EbenholzBurst>(), Projectile.damage, 2f, Projectile.owner, 0, excludedTarget + 1, MysticChargeRules.VisualScale(Projectile));
         if (Main.projectile.IndexInRange(index)) Main.projectile[index].CritChance = Projectile.CritChance;
-        if (Projectile.ai[0] != 1f || excludedTarget < 0) return;
+        if (!MysticChargeRules.IsStored(Projectile) || excludedTarget < 0) return;
         int target = EbenholzCombat.FindTarget(Projectile.Center, 600f, Projectile.Center, true);
         if (target < 0) return;
         Vector2 launch = new Vector2(Projectile.identity % 2 == 0 ? 5f : -5f, -7f);
@@ -96,7 +97,7 @@ public sealed class EbenholzCube : ModProjectile
             EbenholzVisuals.Arc(Projectile.Center, 5f, Projectile.rotation - 1.3f, 2.6f, 1f,
                 EbenholzVisuals.Light(EbenholzVisuals.Gold, fade * .7f), 1f);
         }
-        else EbenholzVisuals.Cube(Projectile.Center, Projectile.ai[0] == 1f ? 10f : 7.5f, age,
+        else EbenholzVisuals.Cube(Projectile.Center, MysticChargeRules.IsStored(Projectile) ? 10f * MysticChargeRules.VisualScale(Projectile) : 7.5f, age,
             Projectile.identity, fade);
         return false;
     }
