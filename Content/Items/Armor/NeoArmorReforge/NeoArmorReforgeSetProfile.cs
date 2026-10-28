@@ -45,6 +45,13 @@ namespace ArknightsMod.Content.Items.Armor.NeoArmorReforge
 		public Action<Player> OnFullSetActive;
 
 		/// <summary>
+		/// 穿齐三件套装并按下“激活套装效果”时调用一次，只在本地玩家端执行。
+		/// 仅在头部件配置；回调自行处理冷却，生成的实体按正常多人同步流程同步。
+		/// 所有主动套装效果统一接入此回调，不再直接读取各自的按键。
+		/// </summary>
+		public Action<Player> OnSetActivate;
+
+		/// <summary>
 		/// 三件套激活时 player.setBonus 显示的文本 key，对应 ArmorSets.hjson 里的 SetBonus。
 		/// 为 null 时不设置（某些干员的套装效果不适合用一行简述概括）。
 		/// 只需要在"头部件"的 Profile 上填，身体/腿部填了也不会被用到。

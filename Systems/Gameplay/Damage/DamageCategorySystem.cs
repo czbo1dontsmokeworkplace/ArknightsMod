@@ -33,7 +33,10 @@ namespace ArknightsMod.Systems.Gameplay.Damage
 			float multiplier = npc.HasBuff<HazeMagicFragileDebuff>() ? HazeMagicFragileDebuff.ResistanceMultiplier : 1f;
 			if (npc.HasBuff<global::ArknightsMod.Content.Projectiles.Caster.CoreCasters.EyjafjallaScorch>())
 				multiplier = System.Math.Min(multiplier, .75f);
-			return artsResistance * multiplier;
+			float resistance = artsResistance * multiplier;
+			if (global::ArknightsMod.Content.Projectiles.Sniper.Rosmontis.RosmontisTacticalEquipment.IsInDebuffRange(npc))
+				resistance -= global::ArknightsMod.Content.Projectiles.Sniper.Rosmontis.RosmontisTacticalEquipment.ResistanceReduction;
+			return System.Math.Max(0f, resistance);
 		}
 
 		internal float GetEffectiveArtsResistance(NPC npc, Player attacker) => System.Math.Clamp(

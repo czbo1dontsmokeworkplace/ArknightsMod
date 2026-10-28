@@ -31,23 +31,21 @@ namespace ArknightsMod.Content.Items.Armor.Sniper.KroosAlter
 				Player.GetAttackSpeed(DamageClass.Ranged) *= 1.15f;
 		}
 
-		public override void ModifyWeaponDamage(Item item, ref StatModifier damage) {
-			if (KkdyAlterSetActive && item.DamageType.CountsAsClass(DamageClass.Ranged) && Main.rand.NextFloat() < 0.2f)
-				damage *= 1.5f;
+		public override void ModifyHitNPCWithItem(Item item, NPC target, ref NPC.HitModifiers modifiers) {
+			TryRangedProc(item.DamageType, target, ref modifiers);
 		}
 
-		public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone) {
-			TryStunOnRangedCrit(item.DamageType, target, hit, damageDone);
+		public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref NPC.HitModifiers modifiers) {
+			TryRangedProc(proj.DamageType, target, ref modifiers);
 		}
 
-		public override void OnHitNPCWithProj(Projectile proj, NPC target, NPC.HitInfo hit, int damageDone) {
-			TryStunOnRangedCrit(proj.DamageType, target, hit, damageDone);
-		}
-
-		private void TryStunOnRangedCrit(DamageClass damageType, NPC target, NPC.HitInfo hit, int damageDone) {
-			if (!KkdyAlterSetActive || !hit.Crit || damageDone <= 0 || !damageType.CountsAsClass(DamageClass.Ranged))
+		private void TryRangedProc(DamageClass damageType, NPC target, ref NPC.HitModifiers modifiers) {
+			if (!KkdyAlterSetActive || !damageType.CountsAsClass(DamageClass.Ranged)
+				|| Main.rand.NextFloat() >= 0.2f)
 				return;
 
+			// 每次命中只判定一次，同一次触发同时获得增伤和眩晕，与普通暴击独立。
+			modifiers.SourceDamage *= 1.5f;
 			OperatorStunNPC.TryApply(target, 12);
 		}
 

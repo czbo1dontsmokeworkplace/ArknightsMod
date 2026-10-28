@@ -335,7 +335,8 @@ Projectiles: {
 }
 
 Keybinds: {
-	"Rosmontis Tactical Deploy.DisplayName": 罗默林斯战术部署
+	ArmorSetUnbound: 未绑定（请在控制设置中绑定“激活套装效果”）
+	"Rosmontis Tactical Deploy.DisplayName": 激活套装效果
 	"Skill Activate.DisplayName": 技能开启
 }
 

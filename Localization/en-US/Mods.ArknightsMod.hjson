@@ -335,7 +335,8 @@ Projectiles: {
 }
 
 Keybinds: {
-	"Rosmontis Tactical Deploy.DisplayName": Rosmontis  Tactical  Deploy
+	ArmorSetUnbound: Unbound (bind Activate Armor Set Effect in Controls)
+	"Rosmontis Tactical Deploy.DisplayName": Activate Armor Set Effect
 	"Skill Activate.DisplayName": Skill  Activate
 }
 

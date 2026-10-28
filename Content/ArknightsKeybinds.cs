@@ -1,4 +1,5 @@
 using Terraria;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content
@@ -13,7 +14,8 @@ namespace ArknightsMod.Content
 	/// </summary>
 	public static class ArknightsKeybinds
 	{
-		public static ModKeybind RosmontisTacticalDeploy { get; private set; }
+		/// <summary>所有套装主动效果的统一按键，默认 Z。</summary>
+		public static ModKeybind ArmorSetActivate { get; private set; }
 
 		/// <summary>
 		/// 统一的"技能开启"热键，默认 C。取代了原来分散在各武器里的
@@ -23,12 +25,13 @@ namespace ArknightsMod.Content
 		public static ModKeybind SkillActivate { get; private set; }
 
 		internal static void Register(Mod mod) {
-			RosmontisTacticalDeploy = KeybindLoader.RegisterKeybind(mod, "Rosmontis Tactical Deploy", "Z");
+			// 保留旧的内部配置 ID，避免丢失玩家已有改绑；界面名称由本地化改为“激活套装效果”。
+			ArmorSetActivate = KeybindLoader.RegisterKeybind(mod, "Rosmontis Tactical Deploy", "Z");
 			SkillActivate = KeybindLoader.RegisterKeybind(mod, "Skill Activate", "C");
 		}
 
 		internal static void Unregister() {
-			RosmontisTacticalDeploy = null;
+			ArmorSetActivate = null;
 			SkillActivate = null;
 		}
 
@@ -42,6 +45,24 @@ namespace ArknightsMod.Content
 		/// </summary>
 		public static bool SkillActivatePressed(Player player) =>
 			player.whoAmI == Main.myPlayer && SkillActivate.Current;
+
+		public static bool ArmorSetActivatePressed(Player player) =>
+			player.whoAmI == Main.myPlayer && player.active && !player.dead
+			&& ArmorSetActivate?.JustPressed == true;
+
+		public static string ArmorSetActivateKeyDisplay {
+			get {
+				string keys = ArmorSetActivate == null ? "" : string.Join("/",
+					ArmorSetActivate.GetAssignedKeys(Terraria.GameInput.InputMode.Keyboard));
+				return string.IsNullOrEmpty(keys)
+					? Language.GetTextValue("Mods.ArknightsMod.Keybinds.ArmorSetUnbound") : keys;
+			}
+		}
+
+		/// <summary>本地化用此占位符显示当前改绑键位，不缓存结果。</summary>
+		public static string FormatArmorSetKey(string text) =>
+			text.Contains("{ArmorSetActivateKey}")
+				? text.Replace("{ArmorSetActivateKey}", ArmorSetActivateKeyDisplay) : text;
 
 		/// <summary>
 		/// 技能开启键当前实际绑定的按键名，给 tooltip 显示用（玩家改绑后这里也会跟着变，

@@ -138,6 +138,7 @@ namespace ArknightsMod.Content.Items.Armor.NeoArmorReforge
 	//   SetBonusKey         string           三件齐全时 player.setBonus 显示的文案 key
 	//   OnHelmetActive      Action<Player>   头部套装穿在装备栏时**每帧**调用
 	//   OnFullSetActive     Action<Player>   三件齐全时**每帧**调用（在上者之后）
+	//   OnSetActivate       Action<Player>   三件齐全并按下“激活套装效果”时调用一次；主动效果统一用此入口，回调自行处理冷却
 	//
 	//
 	// ── 6. 套装效果怎么写（三种写法，按复杂度递增）────────────────────────────
