@@ -28,12 +28,12 @@ namespace ArknightsMod.Content.Tiles
 
 			LocalizedText name = CreateMapEntryName();
 			// name.SetDefault("{$Mods.ArknightsMod.Tile.OrirockCube}");
-			AddMapEntry(new Color(79, 57, 122), name); // Adds an entry to the minimap for this tile with the given color and display name. This should be called in SetDefaults. 
+			AddMapEntry(new Color(79, 57, 122), name); // Adds an entry to the minimap for this tile with the given color and display name. This should be called in SetDefaults.
 
 			DustType = DustID.Bone;
 			HitSound = SoundID.Tink;
 			// MineResist = 4f;
-			MinPick = 30;
+			MinPick = 65;
 		}
 	}
 

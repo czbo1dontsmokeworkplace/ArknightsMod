@@ -11,6 +11,8 @@ public abstract class NecrassAttack : ModProjectile
     public override string Texture => "Terraria/Images/Projectile_0";
     public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
     {
+        // 护甲召唤伤害不套用法杖的精英天赋。
+        if (Projectile.DamageType != DamageClass.Magic) return;
         if (NecrassCourt.Find(Projectile.owner)?.ModProjectile is NecrassCourt court && court.Elite >= 2
             && target.life < target.lifeMax * .5f) modifiers.SourceDamage *= 1.4f;
     }
@@ -111,6 +113,8 @@ public sealed class NecrassSoulBolt : NecrassAttack
 
 public sealed class NecrassImpact : NecrassAttack
 {
+    // ai[2] 的非负值用于指定 NPC；-2 表示来自护甲仆役，需同步为召唤伤害。
+    private const int ArmorServantSource = -2;
     private int age;
     private int Mode => (int)Projectile.ai[0];
     private float Radius => Math.Clamp(Projectile.ai[1], 8, 400);
@@ -118,7 +122,8 @@ public sealed class NecrassImpact : NecrassAttack
     {
         if (!NecrassCourt.Authority) return;
         Projectile.NewProjectile(source.GetSource_FromThis(), center, direction, ModContent.ProjectileType<NecrassImpact>(),
-            damage, source.knockBack, source.owner, mode, radius, target);
+            damage, source.knockBack, source.owner, mode, radius,
+            source.ModProjectile is NecrassServant { ArmorServant: true } ? ArmorServantSource : target);
     }
     public override void SetDefaults()
     {
@@ -146,6 +151,7 @@ public sealed class NecrassImpact : NecrassAttack
     }
     public override void AI()
     {
+        if ((int)Projectile.ai[2] == ArmorServantSource) Projectile.DamageType = DamageClass.Summon;
         age++;
         if (age == 1)
         {

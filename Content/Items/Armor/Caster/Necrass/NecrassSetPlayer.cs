@@ -54,7 +54,7 @@ namespace ArknightsMod.Content.Items.Armor.Caster.Necrass
 				return;
 			credit.Rewarded = true;
 
-			LamentingServant servant = LamentingServant.FindFor(Player);
+			NecrassServant servant = LamentingServant.FindFor(Player);
 			if (servant == null)
 				LamentingServant.SpawnFor(Player);
 			else

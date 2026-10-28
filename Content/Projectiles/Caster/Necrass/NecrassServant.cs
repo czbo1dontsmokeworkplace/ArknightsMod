@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using ArknightsMod.Content.Items.Armor.Caster.Necrass;
 using ArknightsMod.Content.Items.Weapons.Caster.Necrass;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,14 +13,18 @@ namespace ArknightsMod.Content.Projectiles.Caster.Necrass;
 
 public sealed class NecrassServant : ModProjectile
 {
+    // ai[0]：0 为法杖普通仆役，1 为大兵，2 为护甲仆役。
+    internal const int ArmorMode = 2;
+    private readonly LamentingServantStats armorStats = new();
     private const string SmallTexture = "ArknightsMod/Content/Projectiles/Caster/Necrass/LamentingServant";
     private const string LargeTexture = "ArknightsMod/Content/Projectiles/Caster/Necrass/CrownedServant";
     public override string Texture => SmallTexture;
+    internal bool ArmorServant => Projectile.ai[0] == ArmorMode;
     internal bool Special => Projectile.ai[0] == 1;
-    internal int Level => Math.Clamp((int)Projectile.ai[1], 0, Special ? 6 : 1);
+    internal int Level => ArmorServant ? armorStats.Stacks : Math.Clamp((int)Projectile.ai[1], 0, Special ? 6 : 1);
     internal bool Dying => state == 4;
-    internal float HealthRatio => health / (float)MaxHealth;
-    private int MaxHealth => Special ? 780 + Level * 180 : (Level == 0 ? 260 : 520);
+    internal float HealthRatio => (ArmorServant ? armorStats.Life : health) / (float)MaxHealth;
+    private int MaxHealth => ArmorServant ? armorStats.LifeMax : Special ? 780 + Level * 180 : (Level == 0 ? 260 : 520);
     private int health, timer, hurtCooldown, attackNumber;
     private byte state;
     private bool initialized;
@@ -40,16 +45,22 @@ public sealed class NecrassServant : ModProjectile
         Projectile.netImportant = true;
         Projectile.timeLeft = 180;
         Projectile.DamageType = DamageClass.Magic;
-        // 塑灵仆役有自己的三名上限；不占普通召唤栏，也不使用接触伤害。
+        // 不占普通召唤栏；法杖仆役与护甲仆役分别管理，也不使用接触伤害。
     }
     public override bool? CanDamage() => false;
     public override void SendExtraAI(BinaryWriter writer)
     {
         writer.Write(state); writer.Write((short)timer); writer.Write(health); writer.Write((short)attackNumber);
+        if (ArmorServant) armorStats.Write(writer);
     }
     public override void ReceiveExtraAI(BinaryReader reader)
     {
         state = reader.ReadByte(); timer = reader.ReadInt16(); health = reader.ReadInt32(); attackNumber = reader.ReadInt16();
+        if (ArmorServant)
+        {
+            armorStats.Read(reader);
+            ApplyArmorAttack();
+        }
         initialized = true;
     }
     internal void Dismiss()
@@ -60,18 +71,39 @@ public sealed class NecrassServant : ModProjectile
     }
     internal void Upgrade(int amount, bool fullHeal)
     {
-        if (Dying || !NecrassCourt.Authority) return;
+        if (ArmorServant || Dying || !NecrassCourt.Authority) return;
         Projectile.ai[1] = Math.Min(Special ? 6 : 1, Level + amount);
         health = fullHeal ? MaxHealth : Math.Min(MaxHealth, health + (int)(MaxHealth * .2f * amount));
         Projectile.netUpdate = true;
         NecrassImpact.Spawn(Projectile, Projectile.Center, Vector2.Zero, 0, 5, 62 + Level * 5);
     }
+    // 护甲继续使用原有的六层复利强化，不采用法杖普通仆役的一层强化。
+    internal void ReinforceAndHeal()
+    {
+        if (!ArmorServant || Dying || Projectile.owner != Main.myPlayer) return;
+        armorStats.ReinforceAndHeal();
+        ApplyArmorAttack();
+        Projectile.netUpdate = true;
+    }
+    private void ApplyArmorAttack()
+    {
+        Projectile.DamageType = DamageClass.Summon;
+        Projectile.minion = true;
+        Projectile.minionSlots = 0f;
+        Projectile.originalDamage = armorStats.Attack;
+        Projectile.damage = Math.Max(1, (int)Main.player[Projectile.owner]
+            .GetTotalDamage(DamageClass.Summon).ApplyTo(armorStats.Attack));
+    }
     public override void AI()
     {
         Player owner = Main.player[Projectile.owner];
         if (!initialized) { initialized = true; health = MaxHealth; }
-        if ((!owner.active || owner.dead || owner.HeldItem.ModItem is not NecrassScepter)
+        bool equipmentRemoved = ArmorServant
+            ? !owner.GetModPlayer<NecrassSetPlayer>().NecrassHelmetActive
+            : owner.HeldItem.ModItem is not NecrassScepter;
+        if ((!owner.active || owner.dead || equipmentRemoved)
             && (NecrassCourt.Authority || Projectile.owner == Main.myPlayer)) Dismiss();
+        if (ArmorServant) ApplyArmorAttack();
         Projectile.timeLeft = 180;
         timer++;
         if (flash > 0) flash--;
@@ -122,8 +154,9 @@ public sealed class NecrassServant : ModProjectile
         else
         {
             int slot = 0;
-            foreach (var s in NecrassCourt.Servants(owner.whoAmI))
-                if (s.Projectile.whoAmI < Projectile.whoAmI) slot++;
+            if (!ArmorServant)
+                foreach (var s in NecrassCourt.Servants(owner.whoAmI))
+                    if (s.Projectile.whoAmI < Projectile.whoAmI) slot++;
             destination = owner.Center + new Vector2(-owner.direction * (65 + slot * 54), 8);
         }
         if (Projectile.Distance(owner.Center) > 1400)
@@ -154,6 +187,13 @@ public sealed class NecrassServant : ModProjectile
     }
     private void Strike(NPC target)
     {
+        // 护甲仆役独立攻击，不要求玩家持有法杖或存在法杖控制器。
+        if (ArmorServant)
+        {
+            Vector2 direction = (target.Center - Projectile.Center).SafeNormalize(Vector2.UnitX * Projectile.spriteDirection);
+            NecrassImpact.Spawn(Projectile, Projectile.Center, direction, Projectile.damage, 2, 105);
+            return;
+        }
         Projectile court = NecrassCourt.Find(Projectile.owner);
         if (court?.ModProjectile is not NecrassCourt data) return;
         float multiplier = Special ? 1.4f + Level * .4f : .65f * (Level == 0 ? 1 : data.Elite == 2 ? 2 : 1.5f);
@@ -174,9 +214,10 @@ public sealed class NecrassServant : ModProjectile
         foreach (Projectile p in Main.ActiveProjectiles)
             if (p.hostile && p.damage > 0 && p.Hitbox.Intersects(Projectile.Hitbox)) hit = Math.Max(hit, p.damage);
         if (hit == 0) return;
-        health -= Math.Max(1, hit - (Special ? 32 + Level * 6 : 12 + Level * 12));
-        hurtCooldown = 30; flash = 10; Projectile.netUpdate = true;
-        if (health <= 0) Dismiss();
+        if (ArmorServant) armorStats.TakeDamage(hit);
+        else health -= Math.Max(1, hit - (Special ? 32 + Level * 6 : 12 + Level * 12));
+        hurtCooldown = ArmorServant ? 40 : 30; flash = 10; Projectile.netUpdate = true;
+        if ((ArmorServant ? armorStats.Life : health) <= 0) Dismiss();
     }
     public override bool PreDraw(ref Color lightColor)
     {

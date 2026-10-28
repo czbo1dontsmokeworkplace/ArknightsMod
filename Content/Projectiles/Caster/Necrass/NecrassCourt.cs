@@ -120,7 +120,7 @@ public sealed class NecrassCourt : ModProjectile
     {
         List<NecrassServant> result = [];
         foreach (Projectile p in Main.ActiveProjectiles)
-            if (p.owner == owner && p.ModProjectile is NecrassServant servant && !servant.Dying) result.Add(servant);
+            if (p.owner == owner && p.ModProjectile is NecrassServant servant && !servant.ArmorServant && !servant.Dying) result.Add(servant);
         return result;
     }
     internal static Vector2 SafePosition(Player owner, Vector2 wanted)

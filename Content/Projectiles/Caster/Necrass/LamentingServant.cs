@@ -29,9 +29,10 @@ namespace ArknightsMod.Content.Projectiles.Caster.Necrass
 			Projectile.timeLeft = 2;
 		}
 
-		public static LamentingServant FindFor(Player player) {
+		public static NecrassServant FindFor(Player player) {
 			foreach (Projectile projectile in Main.ActiveProjectiles) {
-				if (projectile.owner == player.whoAmI && projectile.ModProjectile is LamentingServant servant)
+				if (projectile.owner == player.whoAmI && projectile.ModProjectile is NecrassServant servant
+					&& servant.ArmorServant && !servant.Dying)
 					return servant;
 			}
 			return null;
@@ -41,7 +42,8 @@ namespace ArknightsMod.Content.Projectiles.Caster.Necrass
 			if (player.whoAmI != Main.myPlayer || player.dead || FindFor(player) != null)
 				return;
 			int index = Projectile.NewProjectile(player.GetSource_Misc("NecrassArmor"), player.Center,
-				Vector2.Zero, ModContent.ProjectileType<LamentingServant>(), 30, 2f, player.whoAmI);
+				Vector2.Zero, ModContent.ProjectileType<NecrassServant>(), 30, 2f, player.whoAmI,
+				NecrassServant.ArmorMode);
 			if (Main.projectile.IndexInRange(index))
 				Main.projectile[index].originalDamage = 30;
 		}
