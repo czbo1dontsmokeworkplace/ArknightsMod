@@ -6,6 +6,9 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using ArknightsMod.Content;
+using ArknightsMod.Content.Projectiles.Guard.BladeRoutes;
+using Terraria.DataStructures;
+using Microsoft.Xna.Framework;
 
 namespace ArknightsMod.Content.Items.Weapons.Guard.Frostleaf
 {
@@ -32,6 +35,9 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Frostleaf
 			Item.autoReuse = true;
 			Item.useStyle = ItemUseStyleID.Swing;
 			Item.crit = 4;
+            Item.noMelee=Item.noUseGraphic=true;Item.shootsEveryUse=true;
+            Item.shoot=ModContent.ProjectileType<OperatorBladeSwing>();Item.shootSpeed=BladeRouteRules.WaveSpeed;
+            Item.UseSound=SoundID.Item1;
 		}
 
 		public override bool AltFunctionUse(Player player) => false;
@@ -53,8 +59,12 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Frostleaf
 		}
 
 		public override bool CanUseItem(Player player) {
-			return false;
+			return !ArknightsKeybinds.SkillActivatePressed(player) && !BladeRouteCombat.Swinging(player);
 		}
+        public override bool Shoot(Player player,EntitySource_ItemUse_WithAmmo source,Vector2 position,Vector2 velocity,int type,int damage,float knockback)
+        {
+            BladeRouteCombat.Swing(player,source,6,damage,knockback);return false;
+        }
 
 		public override void ModifyWeaponDamage(Player player, ref StatModifier damage) {
 			base.ModifyWeaponDamage(player, ref damage);

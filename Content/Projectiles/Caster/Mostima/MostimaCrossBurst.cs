@@ -61,6 +61,10 @@ public sealed class MostimaCrossBurst : ModProjectile
         Player owner = Main.player[Projectile.owner];
         if (!owner.active || owner.dead) { Projectile.Kill(); return; }
         Projectile.timeLeft = 2;
+        // Per-player uniqueness also protects against duplicated spawn requests.
+        foreach (Projectile clock in Main.ActiveProjectiles)
+            if (clock.type == Type && clock.owner == Projectile.owner && clock.identity < Projectile.identity)
+            { Projectile.Kill(); return; }
         if (Projectile.owner == Main.myPlayer)
         {
             WeaponPlayer skills = owner.GetModPlayer<WeaponPlayer>();
@@ -82,7 +86,7 @@ public sealed class MostimaCrossBurst : ModProjectile
         Projectile.ai[0] += 1f + .3f * Expansion;
         beatThisTick = Projectile.ai[1] == 0f && CrossesBeat(previousTime, Projectile.ai[0]);
         if (beatThisTick && Projectile.owner == Main.myPlayer
-            && !owner.CheckMana(owner.HeldItem, 30, true, false))
+            && !global::ArknightsMod.Content.Items.Weapons.Caster.Mostima.MostimaStaff.PayBeatMana(owner))
         {
             Projectile.ai[1] = 1f;
             Projectile.netUpdate = true;
@@ -107,10 +111,6 @@ public sealed class MostimaCrossBurst : ModProjectile
         if (beatThisTick
             && owner.HeldItem.ModItem is global::ArknightsMod.Content.Items.Weapons.Caster.Mostima.MostimaStaff)
             Projectile.damage = System.Math.Max(1, (int)(owner.GetWeaponDamage(owner.HeldItem) * (Mode == 2 ? .8f : 1f)));
-        // Per-player uniqueness also protects against duplicated spawn requests.
-        foreach (Projectile clock in Main.ActiveProjectiles)
-            if (clock.type == Type && clock.owner == Projectile.owner && clock.identity < Projectile.identity)
-            { Projectile.Kill(); return; }
         if (Main.dedServ) return;
         if (Projectile.localAI[0] == 0f)
         { Projectile.localAI[0] = 1f; SoundEngine.PlaySound(AppearSound, Projectile.Center); }

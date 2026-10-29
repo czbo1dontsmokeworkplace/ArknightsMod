@@ -1,0 +1,60 @@
+BranchTraits: {
+	Swordmaster: 剑豪：  在原地释放旋转刀锋
+	Lord: 领主：  射出无限贯穿且不受攻速影响的弹幕
+}
+
+Items: {
+	CutterBlades: {
+		DisplayName: 双刃 [刻刀]
+		Tooltip:
+			'''
+			挥动剑刃，命中时追加斩击
+			挥动留下短暂旋转的刀锋
+			'''
+	}
+
+	BibeakSword: {
+		DisplayName: 羽剑 [柏喙]
+		Tooltip:
+			'''
+			挥动剑刃，命中时追加斩击
+			挥动留下短暂旋转的刀锋
+			'''
+	}
+
+	IreneSaber: {
+		DisplayName: 审判佩剑 [艾丽妮]
+		Tooltip:
+			'''
+			挥动剑刃，命中时追加斩击
+			挥动留下短暂旋转的刀锋
+			'''
+	}
+
+	MidnightSword: {
+		DisplayName: 夜色长剑 [月见夜]
+		Tooltip:
+			'''
+			挥动剑刃，释放缓慢的等离子簇
+			等离子簇无限贯穿，每秒发射一次
+			'''
+	}
+
+	AreneSword: {
+		DisplayName: 机巧剑 [芳汀]
+		Tooltip:
+			'''
+			挥动剑刃，释放缓慢的等离子簇
+			等离子簇无限贯穿，每秒发射一次
+			'''
+	}
+
+	LapplandSwords: {
+		DisplayName: 狼魂双剑 [拉普兰德]
+		Tooltip:
+			'''
+			挥动剑刃，释放缓慢的等离子簇
+			等离子簇无限贯穿，每秒发射一次
+			'''
+	}
+}

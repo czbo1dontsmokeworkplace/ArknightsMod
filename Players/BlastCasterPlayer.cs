@@ -12,7 +12,7 @@ namespace ArknightsMod.Players;
 
 public sealed class BlastCasterPlayer : ModPlayer
 {
-    private bool skillHeld, rightHeld;
+    private bool skillHeld;
     private int activeType = -1;
     internal ulong NextScorch;
     internal int Rank => Math.Clamp(Player.GetModPlayer<WeaponPlayer>().CurrentSkill?.ForceReplaceLevel
@@ -35,10 +35,7 @@ public sealed class BlastCasterPlayer : ModPlayer
             BlastCasterVisuals.Skill(Player.MountedCenter, weapon.Kind);
         }
         skillHeld = pressed;
-        bool right = Main.mouseRight;
-        if (weapon.Kind == BlastCasterKind.Aphrissa && right && !rightHeld)
-            PlaceRelay(weapon);
-        rightHeld = right;
+        // Relay placement is retired. The implementation below is retained for reference.
     }
     private bool Allowed() => Player.active && !Player.dead && !Player.CCed && !Player.noItems && Main.hasFocus
         && !Main.gameMenu && !Main.playerInventory && !Main.blockInput && !Main.drawingPlayerChat
@@ -65,8 +62,7 @@ public sealed class BlastCasterPlayer : ModPlayer
     public override void PostUpdate()
     {
         if (!ArknightsKeybinds.SkillActivatePressed(Player)) skillHeld = false;
-        if (!Main.mouseRight) rightHeld = false;
         if (Player.HeldItem.ModItem is not BlastCasterWeapon) activeType = -1;
     }
-    public override void UpdateDead() { activeType = -1; skillHeld = rightHeld = false; NextScorch = 0; }
+    public override void UpdateDead() { activeType = -1; skillHeld = false; NextScorch = 0; }
 }

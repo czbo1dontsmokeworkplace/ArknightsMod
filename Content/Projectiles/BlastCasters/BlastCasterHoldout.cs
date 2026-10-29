@@ -80,7 +80,8 @@ public sealed class BlastCasterHoldout : ModProjectile
         if (ticks % 18 == 1 && BlastCasterVisuals.Visible(muzzle))
             SoundEngine.PlaySound((Kind == BlastCasterKind.Aphrissa ? SoundID.Item93 : SoundID.Item34)
                 with { Volume = .22f, Pitch = Kind == BlastCasterKind.Ifrit ? -.15f : .12f, MaxInstances = 3 }, muzzle);
-        if (ticks % 3 == 0) BlastCasterVisuals.Muzzle(muzzle, aim, Kind, ticks);
+        // Esperon's per-packet beam supplies the firing muzzle; legacy flame
+        // muzzle calls are archived with BlastCasterVisuals.Muzzle.
     }
     private void Fire(Player owner, BlastCasterWeapon weapon, Vector2 muzzle, Vector2 aim)
     {

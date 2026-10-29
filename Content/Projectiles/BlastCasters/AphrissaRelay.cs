@@ -8,6 +8,7 @@ namespace ArknightsMod.Content.Projectiles.BlastCasters;
 
 public sealed class AphrissaRelay : ModProjectile
 {
+    public override bool IsLoadingEnabled(Mod mod) => false;
     public override string Texture => "ArknightsMod/Common/Particle/DefaultParticle";
     public override void SetDefaults()
     {
@@ -17,7 +18,8 @@ public sealed class AphrissaRelay : ModProjectile
     }
     public override bool? CanDamage() => false;
     public override bool ShouldUpdatePosition() => false;
-    internal static Projectile Find(Player owner)
+    internal static Projectile Find(Player owner) => null;
+    private static Projectile FindLegacy(Player owner)
     {
         foreach (Projectile relay in Main.ActiveProjectiles)
             if (relay.owner == owner.whoAmI && relay.ModProjectile is AphrissaRelay
@@ -39,6 +41,7 @@ public sealed class AphrissaRelay : ModProjectile
             { Projectile.ai[0] = rotation; Projectile.netUpdate = true; }
         }
         Projectile.rotation = Projectile.ai[0];
+        Projectile.localAI[0]=1;
         if (Projectile.timeLeft % 10 == 0) BlastCasterVisuals.RelayIdle(Projectile.Center, Projectile.rotation);
         Lighting.AddLight(Projectile.Center, .06f, .22f, .20f);
     }

@@ -3,8 +3,8 @@ Items: {
 		DisplayName: Purification Flamethrower [Corroserum]
 		Tooltip:
 			'''
-			Sprays a continuous flame that passes through terrain and inflicts Hellfire and Cursed Inferno
-			Uses gel; scales with ranged damage and counts as Arts damage against resistances
+			Sprays terrain-piercing flames that inflict Hellfire and Cursed Inferno
+			Uses gel; scales with ranged damage
 			'''
 	}
 
@@ -12,8 +12,8 @@ Items: {
 		DisplayName: Incineration Flamethrower [Ifrit]
 		Tooltip:
 			'''
-			Sprays a continuous high-temperature flame that passes through terrain and inflicts Hellfire
-			Uses gel; scales with ranged damage and counts as Arts damage against resistances
+			Sprays terrain-piercing superheated flames that inflict Hellfire
+			Uses gel; scales with ranged damage
 			'''
 	}
 
@@ -21,10 +21,8 @@ Items: {
 		DisplayName: Refraction Projector [Aphrissa]
 		Tooltip:
 			'''
-			Sprays swift flames that pass through terrain and inflict Hellfire
-			Right-click to place or move a relay that redirects flames toward the cursor and extends their range; right-click the relay to recall it
-			The relay lasts 20 seconds and vanishes if you move too far away or switch weapons
-			Uses gel; scales with ranged damage and counts as Arts damage against resistances
+			Projects a terrain-piercing energy beam that inflicts Hellfire
+			Uses gel; scales with ranged damage
 			'''
 	}
 }
@@ -80,7 +78,7 @@ Skills: {
 
 		2: {
 			Label: Flame Burst
-			Desc: Automatically empowers the next emission to deal 220% to 300% damage, with flame size, flight speed, and collision dimensions increased to 150%. The first impact creates a 96-pixel-diameter explosion dealing 50% of that emission's damage. Stores up to 3 charges.
+			Desc: Automatically empowers the next emission to deal 220% to 300% damage, with beam width and collision dimensions increased to 150% while retaining the same flight speed. The first impact creates a 96-pixel-diameter explosion dealing 50% of that emission's damage. Stores up to 3 charges.
 		}
 
 		3: {
@@ -102,7 +100,7 @@ Skills: {
 
 		3: {
 			Label: The Nature of Chaos
-			Desc: Manual. Increases flame damage by 50% to 100% and emission rate by 50%. Passing through the relay increases damage by another 25%. Hits also inflict Ichor for 3 seconds.
+			Desc: Manual. Increases flame damage by 50% to 100% and emission rate by 50%. Hits also inflict Ichor for 3 seconds.
 		}
 	}
 }

@@ -76,7 +76,7 @@ public sealed class ExusiaiVectorHoldout : ModProjectile
                         desired - owner.MountedCenter, 6, 6, true, true);
                     float angle = VectorBalance.LaneAngle(mode, i, i == 0 ? 0 : Main.rand.NextFloat(-1, 1));
                     Projectile shot = Projectile.NewProjectileDirect(owner.GetSource_ItemUse_WithPotentialAmmo(owner.HeldItem, ammo),
-                        spawn, axis.RotatedBy(angle) * 16, ModContent.ProjectileType<ExusiaiVector_Bullet>(), damage, knockback, owner.whoAmI, mode);
+                        spawn, axis.RotatedBy(angle) * ExusiaiVector_Bullet.MuzzleStep, ModContent.ProjectileType<ExusiaiVector_Bullet>(), damage, knockback, owner.whoAmI, mode);
                     shot.CritChance = owner.GetWeaponCrit(owner.HeldItem);
                     shot.ArmorPenetration = owner.GetWeaponArmorPenetration(owner.HeldItem);
                 }

@@ -20,6 +20,7 @@ public sealed class PhantomPerformer : ModProjectile
     internal int Layers { get; private set; }
     internal int Shield;
     private bool initialized;
+    private PhantomPlayerShadow playerShadow;
     private float attackTimer;
     private float aim;
     private int swipe;
@@ -125,7 +126,7 @@ public sealed class PhantomPerformer : ModProjectile
     public override bool PreDraw(ref Color lightColor)
     {
         float fade = Math.Min(1f, Math.Min(Age / 12f, (PhantomBalance.Duration - Age) / 24f));
-        if (IsEcho) PhantomVisuals.DrawEcho(Projectile.Center, aim, Age, fade);
+        if (IsEcho) (playerShadow ??= new PhantomPlayerShadow()).Draw(Owner, Projectile.Center, aim, fade);
         ExecutorStatusVisuals.Draw(Projectile.Center, Age, StatusTint, fade * StatusStrength,
             IsEcho ? 1f : Owner.gravDir);
         return false;

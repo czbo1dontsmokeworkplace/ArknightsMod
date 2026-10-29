@@ -103,9 +103,9 @@ PozemkaCrossbow: {
 	DisplayName: Crossbow [Pozemka]
 	Tooltip:
 		'''
-		Converts wooden arrows into homing rose arrows for rapid automatic fire
-		Rose arrow hits summon two homing star bolts
-		Right-click to deploy a typewriter for supporting fire
+		Rapidly fires wooden arrows as rose bolts
+		On hit, briefly vanishes and reappears nearby to strike the same enemy once more
+		Right-click deploys the Typewriter for support fire
 		'''
 	FlavorText: '''"To live on the surface inevitably means to raise a weapon at some point. So I'm well aware."'''
 }
@@ -1160,11 +1160,10 @@ ExusiaiVector: {
 	DisplayName: KRISS-"Vector" [Exusiai]
 	Tooltip:
 		'''
-		40 rounds per magazine, 20 volleys per second; release left click to stop and retain rounds
-		Empty magazines reload automatically in 1.2 seconds; weapon switching is locked during reload
-		No manual reload; skill bonus bullets do not consume additional rounds or ammunition
-		Ammo damage is scaled with firing and reload cadence for about 150% of the previous theoretical output
-		Equip in an accessory slot to display the wing effect
+		Sprays bullets from a 40-round magazine
+		Reloading takes 1.2 seconds; weapons cannot be switched during reload
+		“May my bullets ease your pain.”
+		Can be equipped in an accessory slot for wing effects
 		'''
 }
 
@@ -1467,9 +1466,8 @@ TyphonBow: {
 	DisplayName: Bow [Typhon]
 	Tooltip:
 		'''
-		Converts arrows into endlessly piercing astral shots
-		Hold right-click to load up to 6 shots, then release a homing volley
-		Loading consumes arrows; switching weapons cancels the loaded volley
+		Converts arrows into infinitely piercing astral shots
+		Hold right-click to charge; a full charge releases sustained twin plasma rays
 		'''
 }
 
@@ -3870,9 +3868,7 @@ EbenholzStaff: {
 		'''
 		Fires homing sonata fragments that pursue enemies
 		Stores one extra shot per actual attack interval while held without firing, up to 3
-		The first/second/third stored shots deal 2x/3x/4x damage with 1.5x/2x/2.5x visual size
-		Each full head-bar cycle grants one stored orb; the bar stays full at three orbs
-		Stored shots persist after switching weapons and join the next valid attack
+		Stored projectiles fly out together with the next attack
 		'''
 }
 
@@ -3904,9 +3900,7 @@ IndigoStaff: {
 		'''
 		Fires homing globes of water that pursue enemies
 		Stores one extra shot per actual attack interval while held without firing, up to 3
-		The first/second/third stored shots deal 2x/3x/4x damage with 1.5x/2x/2.5x visual size
-		Each full head-bar cycle grants one stored orb; the bar stays full at three orbs
-		Stored shots persist after switching weapons and join the next valid attack
+		Stored projectiles fly out together with the next attack
 		'''
 }
 
@@ -3916,9 +3910,7 @@ HarmonieStaff: {
 		'''
 		Fires homing musical notes that pursue enemies
 		Stores one extra shot per actual attack interval while held without firing, up to 3
-		The first/second/third stored shots deal 2x/3x/4x damage with 1.5x/2x/2.5x visual size
-		Each full head-bar cycle grants one stored orb; the bar stays full at three orbs
-		Stored shots persist after switching weapons and join the next valid attack
+		Stored projectiles fly out together with the next attack
 		'''
 }
 
@@ -3958,8 +3950,8 @@ NecrassScepter: {
 	DisplayName: Rekindling Scepter [Necrass]
 	Tooltip:
 		'''
-		Fires volleys of violet flames; nearby enemy deaths create allied servants
-		Servants inherit this weapon's magic damage, use no minion slots, and vanish when you switch weapons
+		Fires alternating twin gamma blasts; nearby deaths raise servants
+		Servants inherit this weapon’s magic damage, use no minion slots, and vanish when switching weapons
 		'''
 }
 
@@ -4078,6 +4070,6 @@ MostimaStaff: {
 		'''
 		Hold left-click to create a clockwork circle at the cursor that repeatedly causes area explosions
 		The circle slowly follows the cursor and fades when released
-		Each explosion costs an additional 30 mana
+		Each minute-hand step costs 30 mana and deals area damage once
 		'''
 }

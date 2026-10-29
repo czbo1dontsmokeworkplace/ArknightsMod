@@ -1,24 +1,31 @@
 using System;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.Graphics.CameraModifiers;
 using Terraria.ModLoader;
+using ArknightsMod.Content.Projectiles.Guard.Reaper.Phoenix;
 
 namespace ArknightsMod.Content.Projectiles.Supporter.Magallan;
 
 public sealed class MagallanShell : ModProjectile
 {
-    private const float FlightSpeed = 20f;
-    private const int StraightFlightTicks = 15;
-    public static Vector2 LaunchVelocity => Vector2.UnitY * FlightSpeed;
+    internal const int MotionUpdates = 2;
+    internal const float IgnitionTick = 24f;
+    internal const float IgnitedAcceleration = 15000f; // X-81's 10000, raised 50% on ignition.
+    internal const float IgnitedMaxSpeed = 4000f; // Twice the source's activated speed cap.
+    private PhoenixMotionFx missileFx;
+    private bool ignited;
+    public static Vector2 LaunchVelocity => Vector2.UnitY * (200f / 60 / MotionUpdates);
+    internal static float SpeedAfterStep(float speed,float ticks)
+        => Math.Clamp(speed+(ticks>=IgnitionTick?IgnitedAcceleration:-200f)/(60*MotionUpdates),0,
+            ticks>=IgnitionTick?IgnitedMaxSpeed:200f);
 
     internal static float MaxTurnRadians(int flightTicks)
     {
-        if (flightTicks <= StraightFlightTicks) return 0f;
-        float progress = MathHelper.Clamp((flightTicks - StraightFlightTicks) / 55f, 0f, 1f);
-        return MathHelper.Lerp(0.18f, MathHelper.Pi, progress * progress);
+        return flightTicks < IgnitionTick ? 0f : MathHelper.ToRadians(900f) / 60f;
     }
 
     public override string Texture => "ArknightsMod/Content/Projectiles/Supporter/Magallan/MagallanDrone";
@@ -37,7 +44,8 @@ public sealed class MagallanShell : ModProjectile
         Projectile.tileCollide = false;
         Projectile.ignoreWater = true;
         Projectile.penetrate = 1;
-        Projectile.timeLeft = 210;
+        Projectile.extraUpdates = MotionUpdates-1;
+        Projectile.timeLeft = 210*MotionUpdates;
     }
 
     public override bool? CanCutTiles() => false;
@@ -46,20 +54,28 @@ public sealed class MagallanShell : ModProjectile
 
     public override void AI()
     {
-        int flightTicks = (int)++Projectile.localAI[0];
-        if (flightTicks > StraightFlightTicks)
+        Projectile.localAI[0]+=1f/MotionUpdates;
+        float ticks=Projectile.localAI[0];
+        if(!Main.dedServ)missileFx??=new PhoenixMotionFx(66,Projectile);
+        Vector2 heading=Projectile.velocity.SafeNormalize(Vector2.UnitY);
+        float speed=SpeedAfterStep(Projectile.velocity.Length()*60*MotionUpdates,ticks);
+        if (ticks >= IgnitionTick)
         {
             NPC target = FindHomingTarget();
             if (target != null)
             {
                 float currentAngle = Projectile.velocity.SafeNormalize(Vector2.UnitY).ToRotation();
                 float desiredAngle = (target.Center - Projectile.Center).SafeNormalize(Vector2.UnitY).ToRotation();
-                float maxTurn = MaxTurnRadians(flightTicks);
+                float maxTurn = MaxTurnRadians((int)ticks)/MotionUpdates;
                 float turn = MathHelper.Clamp(MathHelper.WrapAngle(desiredAngle - currentAngle), -maxTurn, maxTurn);
-                Projectile.velocity = (currentAngle + turn).ToRotationVector2() * FlightSpeed;
+                heading=(currentAngle + turn).ToRotationVector2();
             }
+            missileFx?.Activate("actor.player.weapon.66.activation");
+            if(!ignited){ignited=true;if(Projectile.owner==Main.myPlayer)Projectile.netUpdate=true;}
         }
+        Projectile.velocity=heading*(speed/(60*MotionUpdates));
         Projectile.rotation = Projectile.velocity.ToRotation();
+        if(Projectile.owner==Main.myPlayer && Projectile.numUpdates==0 && (int)ticks%6==0)Projectile.netUpdate=true;
         if (Projectile.owner == Main.myPlayer)
         {
             foreach (NPC npc in Main.ActiveNPCs)
@@ -74,11 +90,9 @@ public sealed class MagallanShell : ModProjectile
                 }
             }
         }
-        if (flightTicks == 1 && !Main.dedServ)
-            SoundEngine.PlaySound(SoundID.Item11 with { Volume = 0.55f, Pitch = -0.4f, MaxInstances = 3 }, Projectile.Center);
+        if (ticks <= 1f/MotionUpdates && !Main.dedServ)
+            PhoenixFx.Burst("actor.player.weapon.66.muzzle",Projectile.Center,heading);
         if (!Main.dedServ) Lighting.AddLight(Projectile.Center, 0.5f, 0.26f, 0.07f);
-        if (!Main.dedServ)
-            MagallanVisuals.MissileTrail(Projectile.Center, Projectile.velocity, flightTicks);
     }
 
     private NPC FindHomingTarget()
@@ -110,17 +124,25 @@ public sealed class MagallanShell : ModProjectile
         return best;
     }
 
+    public override void SendExtraAI(BinaryWriter writer){writer.Write(Projectile.localAI[0]);writer.Write(ignited);}
+    public override void ReceiveExtraAI(BinaryReader reader)
+    {
+        float ticks=reader.ReadSingle();ignited=reader.ReadBoolean();
+        if(float.IsFinite(ticks))Projectile.localAI[0]=Math.Clamp(ticks,0,210);
+    }
+
     public override void OnKill(int timeLeft)
     {
+        missileFx?.Stop();
         if (Projectile.owner == Main.myPlayer)
             Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
                 ModContent.ProjectileType<MagallanExplosion>(), Projectile.damage, Projectile.knockBack,
-                Projectile.owner);
+                Projectile.owner,Projectile.velocity.ToRotation());
     }
 
     public override bool PreDraw(ref Color lightColor)
     {
-        MagallanVisuals.Shell(Projectile.Center, Projectile.velocity);
+        // The shared client graph draws the original missile sprite and twin trails.
         return false;
     }
 }
@@ -155,18 +177,12 @@ public sealed class MagallanExplosion : ModProjectile
     public override void AI()
     {
         if (Projectile.localAI[0]++ != 0 || Main.dedServ) return;
-        SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.95f, Pitch = -0.22f, MaxInstances = 4 }, Projectile.Center);
-        MagallanVisuals.ExplosionSmoke(Projectile.Center, VisualRadius);
-        Player viewer = Main.LocalPlayer;
-        if (viewer.active && Vector2.DistanceSquared(viewer.Center, Projectile.Center) < 900f * 900f)
-            Main.instance.CameraModifiers.Add(new PunchCameraModifier(Projectile.Center,
-                (viewer.Center - Projectile.Center).SafeNormalize(Vector2.UnitY), 4.8f, 4.5f, 6));
+        PhoenixFx.Burst("emitter.player.weapon.66.impact",Projectile.Center,Projectile.ai[0].ToRotationVector2());
     }
 
     public override bool PreDraw(ref Color lightColor)
     {
-        float t = 1f - Projectile.timeLeft / 24f;
-        MagallanVisuals.Explosion(Projectile.Center, VisualRadius, t);
+        // Damage remains this summon explosion; its visuals use X-81's graph.
         return false;
     }
 }

@@ -97,6 +97,8 @@ public sealed partial class Isharmla
     private void EchoChoir(Player p, bool fierce)
     {
         Hover(PhraseAnchor + new Vector2(PhraseSide * 520, -220), .10f, 18);
+        if (Cast >= 216 && Cast <= (fierce ? 276 : 264) && (Cast - 216) % 12 == 0)
+            SpawnDrifter(NPC.Center + new Vector2(-PhraseSide * 30, -20), PhraseAnchor, PhraseSide);
         if (Cast == 40) IsharmlaPresentation.Cue(0, NPC.Center);
         if (Cast == 60)
             for (int i = 0; i < 3; i++)

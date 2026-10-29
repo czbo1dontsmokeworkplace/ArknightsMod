@@ -23,10 +23,12 @@ internal static class BlastCasterRules
     internal static float Range(int mode) => mode == 1 ? 1680f : 1248f;
     internal static float FlightRange(BlastCasterKind kind, int mode)
         => kind == BlastCasterKind.Aphrissa ? Range(mode) : kind == BlastCasterKind.Ifrit ? 752f : 547f;
-    internal static int Updates(BlastCasterKind kind) => kind == BlastCasterKind.Aphrissa ? OpticalUpdates : 3;
-    internal static float Step(BlastCasterKind kind) => kind == BlastCasterKind.Aphrissa ? OpticalStep : 11f;
+    internal static int Updates(BlastCasterKind kind) => OpticalUpdates;
+    internal static float Step(BlastCasterKind kind) => OpticalStep;
+    internal static float FlightTicks(BlastCasterKind kind,int mode,bool redirected=false)
+        => (FlightRange(kind,mode)+(redirected?320:0))/(OpticalStep*OpticalUpdates);
     internal static float ShotStep(BlastCasterKind kind, int mode)
-        => Step(kind) * (kind == BlastCasterKind.Ifrit && mode == 2 ? 1.5f : 1f);
+        => OpticalStep;
     internal static float ShotSize(BlastCasterKind kind, int mode)
         => SizeMultiplier(kind) * (kind == BlastCasterKind.Ifrit && mode == 2 ? 1.5f
             : kind == BlastCasterKind.Aphrissa && mode == 2 ? 1.4f : 1f);

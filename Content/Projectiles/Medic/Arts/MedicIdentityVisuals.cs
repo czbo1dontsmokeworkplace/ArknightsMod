@@ -73,13 +73,16 @@ internal static class MedicIdentityVisuals
         float rotation=id is 1 or 3 or 4 or 8 or 9 or 10 or 12 or 13 or 18 or 20 or 22 or 23 ? 0:q.rotation;
         DrawWake(q,id,p.Body,p.Core,f,art.Age,fade);
         float pulse=1+MathF.Sin(art.Age*(.07f+id%4*.018f))*.06f;
-        if(id==16)
+        if(id is 3 or 9 or 16)
         {
-            // Kal'tsit's horizontal sprite replaces only the in-flight core; keep its existing wake and treatment feedback.
+            // Supplied sprites replace only flight bodies, retaining wakes and treatment feedback.
+            string sprite=id switch { 3=>"SilenceHealingArt",9=>"LumenHealingArt",_=>"Mon3trHealingArt" };
             Texture2D texture=ModContent.Request<Texture2D>(
-                "ArknightsMod/Content/Projectiles/Medic/Arts/Mon3trHealingArt",AssetRequestMode.ImmediateLoad).Value;
-            MedicArtsVfx.Glow(q.Center,new Vector2(34,18)*pulse,p.Body,fade*.18f,q.rotation);
-            Main.EntitySpriteDraw(texture,q.Center-Main.screenPosition,null,Color.White*fade,q.rotation,
+                "ArknightsMod/Content/Projectiles/Medic/Arts/"+sprite,AssetRequestMode.ImmediateLoad).Value;
+            // Silence's ampoule stays upright; Lumen's fish and Mon3tr follow their flight direction.
+            float spriteRotation=id==3?0:q.rotation;
+            MedicArtsVfx.Glow(q.Center,(id==16?new Vector2(34,18):texture.Size())*pulse,p.Body,fade*.18f,spriteRotation);
+            Main.EntitySpriteDraw(texture,q.Center-Main.screenPosition,null,Color.White*fade,spriteRotation,
                 texture.Size()*.5f,1f,SpriteEffects.None);
             return;
         }

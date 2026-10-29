@@ -19,39 +19,41 @@ public abstract class EarthshakerWeapon : ExpansionWeaponBase
         Item.knockBack = 9 + (int)Kind; Item.shootSpeed = 1;
         Item.shoot = ModContent.ProjectileType<EarthshakerHeldHammer>();
         Item.rare = Kind switch { EarthshakerKind.Odda => ItemRarityID.Orange, EarthshakerKind.Zima => ItemRarityID.Lime, _ => ItemRarityID.Red };
-        Item.value = Item.sellPrice(gold: 2 + (int)Kind * 5); Configure(true);
+        Item.value = Item.sellPrice(gold: 2 + (int)Kind * 5); Configure(false);
     }
-    internal void Configure(bool tool)
+    internal void Configure(bool throwing)
     {
-        Item.hammer = EarthshakerRules.HammerPower(Kind);
-        // A nonzero shoot runs ApplyItemTime before vanilla mining, even when Shoot
-        // returns false. A real tool swing must skip that path to pound tiles/walls.
-        Item.shoot = tool ? ProjectileID.None : ModContent.ProjectileType<EarthshakerHeldHammer>();
+        Item.hammer = 0;
+        Item.shoot = throwing ? ModContent.ProjectileType<EarthshakerReturningHammer>() : ModContent.ProjectileType<EarthshakerHeldHammer>();
+        Item.shootSpeed = throwing ? 14f : 1f;
+        Item.knockBack = throwing ? 9f : 9 + (int)Kind;
         Item.useStyle = ItemUseStyleID.Swing;
-        Item.noMelee = !tool; Item.noUseGraphic = false; Item.channel = !tool;
-        Item.useTurn = Item.autoReuse = true;
-        Item.useTime = tool ? 16 - (int)Kind * 4 : 15;
-        Item.useAnimation = tool ? 24 - (int)Kind * 2 : 15;
-        Item.UseSound = SoundID.Item1;
+        Item.noMelee = true; Item.noUseGraphic = throwing; Item.channel = !throwing;
+        Item.useTurn = !throwing; Item.autoReuse = true;
+        Item.useTime = Item.useAnimation = 15;
+        Item.UseSound = throwing ? SoundID.Item1 with { Pitch = -.5f } : SoundID.Item1;
     }
     public override bool AltFunctionUse(Player player) => false;
-    public override float UseSpeedMultiplier(Player player) =>
-        player.GetModPlayer<EarthshakerPlayer>().ToolUse ? .7f : 1f;
     public override bool CanUseItem(Player player)
     {
         var state = player.GetModPlayer<EarthshakerPlayer>();
         if (ArknightsKeybinds.SkillActivatePressed(player)) { state.TryActivate(); return false; }
-        if (state.Busy || EarthshakerHeldHammer.Find(player) != null) return false;
+        if (state.Busy || state.Throwing) return false;
         if(!state.LeftHeld&&!state.RightHeld)return false;
-        bool tool = state.ToolUse;
-        Configure(tool);
-        if(!tool)Item.hammer=0;
+        Configure(state.ThrowUse);
         return base.CanUseItem(player);
     }
     public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
     {
         var state = player.GetModPlayer<EarthshakerPlayer>();
-        if (!state.LeftHeld || state.ToolUse || state.RightHeld || player.whoAmI != Main.myPlayer) return false;
+        if (player.whoAmI != Main.myPlayer) return false;
+        if (state.RightHeld && state.ThrowUse)
+        {
+            Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<EarthshakerReturningHammer>(),
+                damage, knockback, player.whoAmI, 0f, 0f, (int)Kind);
+            return false;
+        }
+        if (!state.LeftHeld || state.ThrowUse || state.RightHeld) return false;
         state.BeginCharge(damage, knockback);
         return false;
     }

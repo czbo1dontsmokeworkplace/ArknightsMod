@@ -1,8 +1,4 @@
-BranchTraits.Earthshaker:
-	'''
-	Earthshaker:  Hold left click to raise and charge the hammer, release to slam; a full charge erupts flames along the ground
-	Right click functions as a normal hammer
-	'''
+BranchTraits.Earthshaker: Earthshaker:  Charge a ground slam with left click to erupt flame pillars; right click throws the hammer
 
 Items: {
 	OddaHammer: {
@@ -44,7 +40,7 @@ Skills: {
 	OddaHammer: {
 		1: {
 			Label: Spark Splash
-			Desc: Melee and ground-flame hits recover SP. At full stock, the next left click deals 140%-240% damage with 35% wider ground flames. Right-click tool swings are unchanged.
+			Desc: Melee and ground-flame hits recover SP. At full stock, the next left click deals 140%-240% damage with 35% wider ground flames. Right-click returning hammers are unchanged.
 		}
 
 		2: {
@@ -73,7 +69,7 @@ Skills: {
 	PepeHammer: {
 		1: {
 			Label: Stamp It!
-			Desc: At full stock, the next left click deals 160%-290% damage with 35% wider ground flames. Right-click tool swings are unchanged.
+			Desc: At full stock, the next left click deals 160%-290% damage with 35% wider ground flames. Right-click returning hammers are unchanged.
 		}
 
 		2: {

@@ -210,6 +210,9 @@ namespace ArknightsMod
 		public override void HandlePacket(BinaryReader reader, int whoAmI) {
 			short id = reader.ReadInt16();
 			switch ((ArkMessageID)id) {
+                case ArkMessageID.IsharmlaDrifterImpact:
+                    Content.NPCs.Enemy.Isharmla.IsharmlaDrifter.ReceiveImpact(reader, whoAmI);
+                    break;
                 case ArkMessageID.UlpianusKillStacks:
                     Content.Items.Armor.Guard.Ulpianus.UlpianusSetPlayer.ReceiveStacks(reader);
                     break;
@@ -391,6 +394,7 @@ namespace ArknightsMod
             AnselChainHealingGrant,
             ReedHelmetScarHit,
             ReedSelfHealingGrant,
+            IsharmlaDrifterImpact,
 		}
 	}
 	//public class Ex : GlobalNPC

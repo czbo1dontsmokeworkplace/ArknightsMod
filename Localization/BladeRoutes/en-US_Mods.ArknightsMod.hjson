@@ -1,0 +1,60 @@
+BranchTraits: {
+	Swordmaster: Swordmaster:  Releases rotating blades that linger in place
+	Lord: Lord:  Fires infinitely piercing projectiles at a fixed rate unaffected by attack speed
+}
+
+Items: {
+	CutterBlades: {
+		DisplayName: Blades [Cutter]
+		Tooltip:
+			'''
+			Slash with the blade; hits trigger an additional cut
+			Swings leave blades that linger and rotate briefly
+			'''
+	}
+
+	BibeakSword: {
+		DisplayName: Feather Sword [Bibeak]
+		Tooltip:
+			'''
+			Slash with the blade; hits trigger an additional cut
+			Swings leave blades that linger and rotate briefly
+			'''
+	}
+
+	IreneSaber: {
+		DisplayName: Inquisitor Saber [Irene]
+		Tooltip:
+			'''
+			Slash with the blade; hits trigger an additional cut
+			Swings leave blades that linger and rotate briefly
+			'''
+	}
+
+	MidnightSword: {
+		DisplayName: Nightfall Sword [Midnight]
+		Tooltip:
+			'''
+			Swing the blade to release slow plasma clusters
+			Clusters pierce indefinitely and fire once per second
+			'''
+	}
+
+	AreneSword: {
+		DisplayName: Mechanical Sword [Arene]
+		Tooltip:
+			'''
+			Swing the blade to release slow plasma clusters
+			Clusters pierce indefinitely and fire once per second
+			'''
+	}
+
+	LapplandSwords: {
+		DisplayName: Wolfspirit Swords [Lappland]
+		Tooltip:
+			'''
+			Swing the blade to release slow plasma clusters
+			Clusters pierce indefinitely and fire once per second
+			'''
+	}
+}

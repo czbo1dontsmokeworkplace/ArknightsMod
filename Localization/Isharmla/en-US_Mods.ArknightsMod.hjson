@@ -7,6 +7,7 @@ NPCs: {
 	IsharmlaDragon.DisplayName: Isharmla, Body of the Deep
 	IsharmlaSegment.DisplayName: Body of the Deep
 	IsharmlaSeaborn.DisplayName: Tideborn Seaborn
+	IsharmlaDrifter.DisplayName: Bone-Sea Drifter
 }
 
 Items: {

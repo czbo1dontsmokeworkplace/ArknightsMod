@@ -16,7 +16,9 @@ namespace ArknightsMod.Content.Projectiles.Guard.Frostleaf
 {
 	public class Frostleaf_Player : ModPlayer
 	{
-		public override void PostUpdate() {
+        // Legacy persistent SwingHelper route is retained, but no longer entered.
+        public override void PostUpdate() { }
+		private void LegacyPostUpdate() {
 			if(Player.HeldItem.type == ModContent.ItemType<FrostleafAxe>())
 			{
 				if(Player.ownedProjectileCounts[ModContent.ProjectileType<Frostleaf_Axe>()] == 0)

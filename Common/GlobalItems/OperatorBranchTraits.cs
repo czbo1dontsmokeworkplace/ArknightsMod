@@ -25,6 +25,8 @@ public sealed class OperatorBranchTraits : GlobalItem
         "UtageKatana" or "HellagurOdachi" => "Musha",
         "MelanthasSword" or "MataimaruGlaive" or "FrankaRapier" or "NearlRadiantSword" => "Dreadnought",
         "MousseGlove" or "AstraSword" or "SurtrLaevatain" => "ArtsFighter",
+        "CutterBlades" or "BibeakSword" or "IreneSaber" => "Swordmaster",
+        "MidnightSword" or "AreneSword" or "LapplandSwords" or "FrostleafAxe" or "SilverAshWeapon" => "Lord",
         "ClickStaff" or "RockrockStaff" or "GoldenglowWand" => "MechAccord",
         "IndigoStaff" or "HarmonieStaff" or "EbenholzStaff" => "Mystic",
         "BeeswaxStaff" or "CarnelianStaff" or "LinStaff" => "Phalanx",
@@ -58,7 +60,7 @@ public sealed class OperatorBranchTraits : GlobalItem
     {
         "Mystic" or "ChainCaster" or "MechAccord" or "SplashCaster" or "Phalanx"
             or "PrimalCaster" or "BlastCaster" or "CoreCaster" => "Caster",
-        "ArtsFighter" or "Dreadnought" or "Musha" or "Centurion" or "Crusher" or "Reaper" or "Earthshaker" => "Guard",
+        "ArtsFighter" or "Dreadnought" or "Musha" or "Centurion" or "Crusher" or "Reaper" or "Earthshaker" or "Swordmaster" or "Lord" => "Guard",
         "Artilleryman" or "Deadeye" or "Crossbowman" or "Spreadshooter" => "Sniper",
         "Executor" or "Ambusher" => "Specialist",
         "Charger" or "StandardBearer" => "Vanguard",

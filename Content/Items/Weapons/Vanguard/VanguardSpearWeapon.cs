@@ -74,12 +74,7 @@ public abstract class VanguardSpearWeapon : ExpansionWeaponBase
     public override void ModifyTooltips(List<TooltipLine> tooltips)
     {
         base.ModifyTooltips(tooltips);
-        tooltips.Add(new TooltipLine(Mod, "VanguardControls", Language.GetTextValue("Mods.ArknightsMod.VanguardSpears.Controls",
-            VanguardSpearRules.ChargeDamage(Kind), VanguardChargeCooldown.Duration / 60,
-            (int)VanguardSpearRules.ChargeRange(Kind))));
-        tooltips.Add(new TooltipLine(Mod, "VanguardSkill", GetSkillActivateKeyHint()));
         tooltips.Add(new TooltipLine(Mod, "VanguardCost", Language.GetTextValue("Mods.ArknightsMod.VanguardSpears.Cost")));
-        if (Kind is VanguardSpearKind.Grani or VanguardSpearKind.WildMane)
-            tooltips.Add(new TooltipLine(Mod, "VanguardPlaceholder", Language.GetTextValue("Mods.ArknightsMod.VanguardSpears.Placeholder")));
+
     }
 }

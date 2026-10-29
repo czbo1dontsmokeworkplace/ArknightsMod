@@ -9,6 +9,8 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles.Guard.Reaper;
 
+// Archived 2026-10-28: retained with its shader and particle types. Normal
+// ReaperWisp flight/impact no longer enters these drawing methods.
 internal static class ReaperWispMaterial
 {
     private static Effect effect;

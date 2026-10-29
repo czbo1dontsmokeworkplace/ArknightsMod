@@ -7,6 +7,8 @@ using Terraria.ID;
 
 namespace ArknightsMod.Content.Projectiles.Guard.Reaper;
 
+// Archived 2026-10-28: kept for reference. ReaperWisp no longer calls this
+// previous flight/impact effect; the active route is Phoenix/ReaperSwarmInstance.
 internal static class ReaperWispVisuals
 {
     private static bool CanSpawn(Vector2 point) => ReaperVisuals.Visible(point) && ParticleManager.activeParticles.Count < 1100;

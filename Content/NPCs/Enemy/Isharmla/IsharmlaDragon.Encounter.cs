@@ -204,6 +204,8 @@ public sealed partial class IsharmlaDragon
     private void SpiralScore(Isharmla boss, Player p, bool final)
     {
         int t = LocalTimer;
+        if (t >= 132 && t <= (final ? 192 : 180) && (t - 132) % 12 == 0)
+            boss.SpawnDrifter(Muzzle, Aim, AttackSide);
         if (t < 90) Navigate(Aim + new Vector2(AttackSide * 720, -120), 28, .06f);
         else if (t < 315)
         {

@@ -1,0 +1,2579 @@
+{
+  "source": "CalamityReforged Phoenix data / build26075936",
+  "resources": {
+    "projectile.player.69": {
+      "on_destruction": {
+        "name": "emitter.player.weapon.69.impact"
+      },
+      "appearance": "appearance.empty",
+      "scale": [
+        1,
+        1
+      ],
+      "z_order": 0.8,
+      "__source": "scripts/player_effects/player_69.lua",
+      "name": "projectile.player.69",
+      "__kind": "projectile",
+      "speed": 450,
+      "attachments": [
+        {
+          "name": "emitter.player.weapon.69.projectile"
+        }
+      ],
+      "hit_circles": [
+        0,
+        0,
+        12
+      ],
+      "damage": 0
+    },
+    "emitter.player.weapon.69.projectile": {
+      "__kind": "emitter",
+      "exponential_distribution": true,
+      "attachments": [
+        {
+          "name": "emitter.player.weapon.69.projectile.flare"
+        },
+        {
+          "name": "emitter.player.weapon.69.projectile.glow"
+        },
+        {
+          "name": "emitter.player.weapon.69.projectile.trail"
+        }
+      ],
+      "particle_time_to_live": [
+        0.3,
+        0
+      ],
+      "particle_alpha_animation_time_frames": [
+        0,
+        0.1,
+        0.8,
+        1
+      ],
+      "random_angle_spread": 360,
+      "particles": [
+        {
+          "appearance": "appearance.projectile.player.69",
+          "bloom": 2
+        },
+        {
+          "color": [
+            1.5,
+            0.5,
+            0.8,
+            1
+          ],
+          "appearance": "appearance.projectile.player.69",
+          "bloom": 2
+        }
+      ],
+      "particle_scale_animation_time_frames": [
+        0,
+        1
+      ],
+      "max_particles": -1,
+      "__source": "scripts/player_effects/player_69.lua",
+      "time_between_each_emission": 0.02,
+      "particle_acceleration": [
+        0,
+        0
+      ],
+      "particle_scale_animations": [
+        [
+          0.1,
+          0.1
+        ],
+        [
+          0.15,
+          0.15
+        ]
+      ],
+      "name": "emitter.player.weapon.69.projectile",
+      "attached_particles": true,
+      "particle_orientation": [
+        0,
+        1
+      ],
+      "particle_alpha_animations": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "particle_speed": [
+        30,
+        6
+      ],
+      "emission_ellipse": [
+        16,
+        18
+      ]
+    },
+    "appearance.projectile.player.69": {
+      "blending_mode": "additive",
+      "name": "appearance.projectile.player.69",
+      "__source": "scripts/appearances_with_bloom.lua",
+      "__kind": "appearance",
+      "size": [
+        24,
+        64
+      ],
+      "texture": "texture.projectile.player.2",
+      "asset": "ArknightsMod/Content/Projectiles/Guard/Reaper/Phoenix/Assets/Sprites/624ff51d0b13145a",
+      "pixel_size": [
+        60,
+        160
+      ]
+    },
+    "texture.projectile.player.2": {
+      "offset": [
+        672,
+        2312
+      ],
+      "__source": "scripts/generated/texturesa.lua",
+      "name": "texture.projectile.player.2",
+      "__kind": "texture",
+      "base_texture": "textures/texturesa/texturesa.png",
+      "size": [
+        60,
+        160
+      ],
+      "asset": "ArknightsMod/Content/Projectiles/Guard/Reaper/Phoenix/Assets/Sprites/c97344342863f3a9",
+      "pixel_size": [
+        60,
+        160
+      ]
+    },
+    "textures/texturesa/texturesa.png": {
+      "__source": "scripts/generated/texturesa.lua",
+      "name": "textures/texturesa/texturesa.png",
+      "__kind": "base_texture",
+      "trilinear": true,
+      "slices": [
+        "textures/texturesa/texturesa_0.png",
+        "textures/texturesa/texturesa_1.png",
+        "textures/texturesa/texturesa_2.png"
+      ],
+      "size": [
+        736,
+        4064
+      ]
+    },
+    "emitter.player.weapon.69.projectile.trail": {
+      "__kind": "emitter",
+      "exponential_distribution": true,
+      "particle_alpha_animations": [
+        0,
+        0.2,
+        0.2,
+        0
+      ],
+      "particle_alpha_animation_time_frames": [
+        0,
+        0.2,
+        0.2,
+        1
+      ],
+      "random_angle_spread": 360,
+      "particles": [
+        {
+          "color": [
+            0.35,
+            0.4,
+            1.5,
+            1
+          ],
+          "bloom": 2,
+          "appearance": "appearance.particle.smoke.0.additive",
+          "attachments": [
+            {
+              "name": "emitter.player.weapon.69.projectile.trail.flashes"
+            }
+          ]
+        },
+        {
+          "color": [
+            0.2,
+            1,
+            1.3,
+            1
+          ],
+          "bloom": 2,
+          "appearance": "appearance.particle.smoke.0.additive",
+          "attachments": [
+            {
+              "name": "emitter.player.weapon.69.projectile.trail.sparks"
+            },
+            {
+              "name": "emitter.player.weapon.69.projectile.trail.flashes"
+            }
+          ]
+        },
+        {
+          "appearance": "appearance.empty"
+        },
+        {
+          "appearance": "appearance.empty"
+        }
+      ],
+      "particle_scale_animation_time_frames": [
+        0,
+        0.3,
+        0.3,
+        1
+      ],
+      "max_particles": -1,
+      "__source": "scripts/player_effects/player_69.lua",
+      "particle_min_speed": 5,
+      "time_between_each_emission": 0.1,
+      "particle_acceleration": [
+        -10,
+        3
+      ],
+      "name": "emitter.player.weapon.69.projectile.trail",
+      "attached_particles": false,
+      "particle_orientation": "random",
+      "particle_speed": [
+        20,
+        5
+      ],
+      "particle_scale_animations": [
+        [
+          0.5,
+          0.5
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1.2,
+          1.2
+        ]
+      ],
+      "particle_time_to_live": [
+        0.8,
+        0
+      ]
+    },
+    "emitter.player.weapon.69.projectile.trail.flashes": {
+      "__kind": "emitter",
+      "particle_alpha_animations": [
+        1,
+        1
+      ],
+      "particle_alpha_animation_time_frames": [
+        0,
+        1
+      ],
+      "random_angle_spread": 360,
+      "particles": [
+        {
+          "color": [
+            0.55,
+            0.4,
+            1.5,
+            1
+          ],
+          "appearance": "appearance.particle.glow.nextgen",
+          "bloom": 10
+        },
+        {
+          "color": [
+            0.2,
+            1,
+            1.3,
+            1
+          ],
+          "appearance": "appearance.particle.glow.nextgen",
+          "bloom": 10
+        },
+        {
+          "color": [
+            0.55,
+            0.4,
+            1.5,
+            1
+          ],
+          "appearance": "appearance.particle.glow.nextgen.small",
+          "bloom": 10
+        },
+        {
+          "color": [
+            0.2,
+            1,
+            1.3,
+            1
+          ],
+          "appearance": "appearance.particle.glow.nextgen.small",
+          "bloom": 10
+        }
+      ],
+      "particle_scale_animation_time_frames": [
+        0,
+        1
+      ],
+      "max_particles": 2,
+      "__source": "scripts/player_effects/player_69.lua",
+      "time_between_each_emission": 0.1,
+      "particle_acceleration": [
+        0,
+        0
+      ],
+      "particle_speed": [
+        0,
+        0
+      ],
+      "name": "emitter.player.weapon.69.projectile.trail.flashes",
+      "attached_particles": false,
+      "particle_orientation": "random",
+      "particle_time_to_live": [
+        0.05,
+        0
+      ],
+      "particle_scale_animations": [
+        [
+          0.2,
+          0.2
+        ],
+        [
+          0.2,
+          0.2
+        ]
+      ],
+      "emission_area": [
+        25,
+        25
+      ]
+    },
+    "appearance.particle.glow.nextgen.small": {
+      "blending_mode": "additive",
+      "name": "appearance.particle.glow.nextgen.small",
+      "__source": "scripts/appearances_with_bloom.lua",
+      "__kind": "appearance",
+      "size": [
+        25,
+        25
+      ],
+      "texture": "texture.particle.glow.nextgen",
+      "asset": "ArknightsMod/Content/Projectiles/Guard/Reaper/Phoenix/Assets/Sprites/94369a78b53c1bec",
+      "pixel_size": [
+        40,
+        40
+      ]
+    },
+    "texture.particle.glow.nextgen": {
+      "offset": [
+        0,
+        24
+      ],
+      "__source": "scripts/generated/texturesa.lua",
+      "name": "texture.particle.glow.nextgen",
+      "__kind": "texture",
+      "base_texture": "textures/texturesa/texturesa.png",
+      "size": [
+        40,
+        40
+      ],
+      "asset": "ArknightsMod/Content/Projectiles/Guard/Reaper/Phoenix/Assets/Sprites/fef0b4d45ae17ebd",
+      "pixel_size": [
+        40,
+        40
+      ]
+    },
+    "appearance.particle.glow.nextgen": {
+      "blending_mode": "additive",
+      "name": "appearance.particle.glow.nextgen",
+      "__source": "scripts/appearances_with_bloom.lua",
+      "__kind": "appearance",
+      "size": [
+        40,
+        40
+      ],
+      "texture": "texture.particle.glow.nextgen",
+      "asset": "ArknightsMod/Content/Projectiles/Guard/Reaper/Phoenix/Assets/Sprites/5af91e9a2e6abb4e",
+      "pixel_size": [
+        40,
+        40
+      ]
+    },
+    "emitter.player.weapon.69.projectile.trail.sparks": {
+      "__kind": "emitter",
+      "particle_alpha_animations": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "particle_alpha_animation_time_frames": [
+        0,
+        0.2,
+        0.2,
+        1
+      ],
+      "random_angle_spread": 360,
+      "particles": [
+        {
+          "color": [
+            0.55,
+            0.4,
+            1.5,
+            1
+          ],
+          "lensflare": 40,
+          "appearance": "appearance.particle.glow.nextgen",
+          "bloom": 10
+        },
+        {
+          "color": [
+            0.2,
+            1,
+            1.3,
+            1
+          ],
+          "appearance": "appearance.particle.glow.nextgen",
+          "bloom": 10
+        },
+        {
+          "color": [
+            0.55,
+            0.4,
+            1.5,
+            1
+          ],
+          "lensflare": 40,
+          "appearance": "appearance.particle.glow.nextgen.small",
+          "bloom": 10
+        },
+        {
+          "color": [
+            0.2,
+            1,
+            1.3,
+            1
+          ],
+          "appearance": "appearance.particle.glow.nextgen.small",
+          "bloom": 10
+        }
+      ],
+      "particle_scale_animation_time_frames": [
+        0,
+        1
+      ],
+      "max_particles": 3,
+      "__source": "scripts/player_effects/player_69.lua",
+      "particle_min_speed": 5,
+      "time_between_each_emission": 0.1,
+      "particle_acceleration": [
+        -12,
+        3
+      ],
+      "particle_speed": [
+        13,
+        4
+      ],
+      "name": "emitter.player.weapon.69.projectile.trail.sparks",
+      "attached_particles": false,
+      "particle_orientation": "random",
+      "particle_time_to_live": [
+        0.6,
+        0
+      ],
+      "particle_scale_animations": [
+        [
+          0.04,
+          0.04
+        ],
+        [
+          0.04,
+          0.04
+        ]
+      ],
+      "emission_area": [
+        15,
+        15
+      ]
+    },
+    "appearance.particle.smoke.0.additive": {
+      "blending_mode": "additive",
+      "name": "appearance.particle.smoke.0.additive",
+      "__source": "scripts/appearances_with_bloom.lua",
+      "__kind": "appearance",
+      "size": [
+        35.166666666666664,
+        35.5
+      ],
+      "texture": "texture.particle.smoke.0",
+      "asset": "ArknightsMod/Content/Projectiles/Guard/Reaper/Phoenix/Assets/Sprites/b37f73047998fef4",
+      "pixel_size": [
+        211,
+        213
+      ]
+    },
+    "texture.particle.smoke.0": {
+      "offset": [
+        184,
+        2704
+      ],
+      "__source": "scripts/generated/texturesa.lua",
+      "name": "texture.particle.smoke.0",
+      "__kind": "texture",
+      "base_texture": "textures/texturesa/texturesa.png",
+      "size": [
+        211,
+        213
+      ],
+      "asset": "ArknightsMod/Content/Projectiles/Guard/Reaper/Phoenix/Assets/Sprites/075157bbd3f28123",
+      "pixel_size": [
+        211,
+        213
+      ]
+    },
+    "emitter.player.weapon.69.projectile.glow": {
+      "__kind": "emitter",
+      "exponential_distribution": true,
+      "particle_time_to_live": [
+        0.5,
+        0.15
+      ],
+      "particle_alpha_animation_time_frames": [
+        0,
+        0.4,
+        0.6,
+        1
+      ],
+      "random_angle_spread": 0,
+      "particles": [
+        {
+          "color": [
+            0.35,
+            0.4,
+            1.5,
+            1
+          ],
+          "appearance": "appearance.particle.glow.nextgen",
+          "bloom": 3
+        },
+        {
+          "color": [
+            0.2,
+            1,
+            1.3,
+            1
+          ],
+          "appearance": "appearance.particle.glow.nextgen",
+          "bloom": 3
+        },
+        {
+          "appearance": "appearance.empty"
+        }
+      ],
+      "particle_scale_animation_time_frames": [
+        0,
+        1
+      ],
+      "max_particles": -1,
+      "__source": "scripts/player_effects/player_69.lua",
+      "time_between_each_emission": 0.8,
+      "particle_acceleration": [
+        0,
+        0
+      ],
+      "name": "emitter.player.weapon.69.projectile.glow",
+      "particle_alpha_animations": [
+        0,
+        0.3,
+        0.3,
+        0
+      ],
+      "particle_orientation": "random",
+      "attached_particles": true,
+      "particle_scale_animations": [
+        [
+          0.3,
+          0.3
+        ],
+        [
+          0.8,
+          0.8
+        ]
+      ],
+      "particle_speed": [
+        0,
+        0
+      ]
+    },
+    "emitter.player.weapon.69.projectile.flare": {
+      "__kind": "emitter",
+      "exponential_distribution": true,
+      "particle_alpha_animations": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "particle_alpha_animation_time_frames": [
+        0,
+        0.4,
+        0.6,
+        1
+      ],
+      "random_angle_spread": 0,
+      "particles": [
+        {
+          "color": [
+            0.35,
+            0.4,
+            1.5,
+            1
+          ],
+          "lensflare": 80,
+          "appearance": "appearance.particle.glow.orb",
+          "bloom": 1
+        },
+        {
+          "color": [
+            1,
+            0.4,
+            1,
+            1
+          ],
+          "lensflare": 80,
+          "appearance": "appearance.particle.glow.orb",
+          "bloom": 1
+        },
+        {
+          "appearance": "appearance.empty"
+        },
+        {
+          "appearance": "appearance.empty"
+        }
+      ],
+      "particle_scale_animation_time_frames": [
+        0,
+        1
+      ],
+      "max_particles": -1,
+      "__source": "scripts/player_effects/player_69.lua",
+      "emission_ellipse": [
+        8,
+        10
+      ],
+      "particle_acceleration": [
+        0,
+        0
+      ],
+      "particle_speed": [
+        0,
+        0
+      ],
+      "name": "emitter.player.weapon.69.projectile.flare",
+      "attached_particles": true,
+      "particle_orientation": "random",
+      "particle_time_to_live": [
+        0.5,
+        0
+      ],
+      "particle_scale_animations": [
+        [
+          0.04,
+          0.04
+        ],
+        [
+          0.04,
+          0.04
+        ]
+      ],
+      "time_between_each_emission": 0.8
+    },
+    "appearance.particle.glow.orb": {
+      "blending_mode": "additive",
+      "name": "appearance.particle.glow.orb",
+      "__source": "scripts/appearances_with_bloom.lua",
+      "__kind": "appearance",
+      "size": [
+        44,
+        44
+      ],
+      "texture": "texture.particle.glow.orb",
+      "asset": "ArknightsMod/Content/Projectiles/Guard/Reaper/Phoenix/Assets/Sprites/b0cf272039f6c1c1",
+      "pixel_size": [
+        44,
+        44
+      ]
+    },
+    "texture.particle.glow.orb": {
+      "offset": [
+        272,
+        88
+      ],
+      "__source": "scripts/generated/texturesa.lua",
+      "name": "texture.particle.glow.orb",
+      "__kind": "texture",
+      "base_texture": "textures/texturesa/texturesa.png",
+      "size": [
+        44,
+        44
+      ],
+      "asset": "ArknightsMod/Content/Projectiles/Guard/Reaper/Phoenix/Assets/Sprites/be88b27326b45825",
+      "pixel_size": [
+        44,
+        44
+      ]
+    },
+    "emitter.player.weapon.69.impact": {
+      "__kind": "emitter",
+      "attachments": [
+        {
+          "name": "emitter.player.weapon.69.impact.shockwave"
+        },
+        {
+          "name": "emitter.player.weapon.69.impact.flashes"
+        },
+        {
+          "name": "emitter.player.weapon.69.impact.sparks.linger"
+        },
+        {
+          "name": "emitter.player.weapon.69.impact.sparks"
+        },
+        {
+          "name": "shake.player.weapon.69.impact"
+        },
+        {
+          "name": "soundemitter.player.69.hit"
+        }
+      ],
+      "emission_area": [
+        30,
+        30
+      ],
+      "particle_alpha_animation_time_frames": [
+        0,
+        0.2,
+        0.2,
+        1
+      ],
+      "random_angle_spread": 360,
+      "particles": [
+        {
+          "color": [
+            0.35,
+            0.4,
+            1.5,
+            1
+          ],
+          "appearance": "appearance.particle.smoke.0.additive",
+          "bloom": 2
+        },
+        {
+          "color": [
+            0.2,
+            1,
+            1.3,
+            1
+          ],
+          "appearance": "appearance.particle.smoke.0.additive",
+          "bloom": 2
+        }
+      ],
+      "particle_scale_animation_time_frames": [
+        0,
+        0.3,
+        0.3,
+        1
+      ],
+      "max_particles": 1,
+      "__source": "scripts/player_effects/player_69.lua",
+      "particle_min_speed": 5,
+      "time_between_each_emission": 0.1,
+      "particle_acceleration": [
+        -10,
+        3
+      ],
+      "particle_scale_animations": [
+        [
+          0.5,
+          0.5
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1.2,
+          1.2
+        ]
+      ],
+      "name": "emitter.player.weapon.69.impact",
+      "attached_particles": false,
+      "particle_orientation": "random",
+      "particle_alpha_animations": [
+        0,
+        0.4,
+        0.4,
+        0
+      ],
+      "particle_speed": [
+        60,
+        15
+      ],
+      "particle_time_to_live": [
+        0.4,
+        0
+      ]
+    },
+    "soundemitter.player.69.hit": {
+      "__kind": "sound",
+      "__source": "scripts/sounds.lua",
+      "name": "soundemitter.player.69.hit",
+      "sound_effect": {
+        "reference_distance": 300,
+        "gain_variation_decibels": 1.5,
+        "pitch_variation_percentage": 15,
+        "samples": [
+          "sounds/weapons/player_69_impact.ogg"
+        ],
+        "name": "sound.player.69.hit",
+        "max_jitter_milliseconds": 25,
+        "start_new_playback_if_maximum_reached": true,
+        "max_simultaneous_playback": 4,
+        "gain": 0.6
+      }
+    },
+    "shake.player.weapon.69.impact": {
+      "__source": "scripts/player_effects/player_69.lua",
+      "name": "shake.player.weapon.69.impact",
+      "amplitude": 1,
+      "duration": 0.05,
+      "__kind": "shake",
+      "frequency": 1
+    },
+    "emitter.player.weapon.69.impact.sparks": {
+      "__kind": "emitter",
+      "particle_alpha_animations": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "particle_alpha_animation_time_frames": [
+        0,
+        0.1,
+        0.1,
+        1
+      ],
+      "random_angle_spread": 360,
+      "particles": [
+        {
+          "color": [
+            0.35,
+            0.4,
+            1.5,
+            1
+          ],
+          "appearance": "appearance.particle.glow.nextgen",
+          "bloom": 8
+        },
+        {
+          "color": [
+            0.2,
+            1,
+            1.3,
+            1
+          ],
+          "appearance": "appearance.particle.glow.nextgen",
+          "bloom": 8
+        },
+        {
+          "color": [
+            0.35,
+            0.4,
+            1.5,
+            1
+          ],
+          "appearance": "appearance.particle.glow.nextgen.small",
+          "bloom": 8
+        },
+        {
+          "color": [
+            0.2,
+            1,
+            1.3,
+            1
+          ],
+          "appearance": "appearance.particle.glow.nextgen.small",
+          "bloom": 8
+        }
+      ],
+      "particle_scale_animation_time_frames": [
+        0,
+        1
+      ],
+      "max_particles": 20,
+      "__source": "scripts/player_effects/player_69.lua",
+      "time_between_each_emission": 0.001,
+      "particle_acceleration": [
+        0,
+        0
+      ],
+      "particle_speed": [
+        350,
+        100
+      ],
+      "name": "emitter.player.weapon.69.impact.sparks",
+      "attached_particles": true,
+      "particle_orientation": "standard",
+      "particle_time_to_live": [
+        0.15,
+        0
+      ],
+      "particle_scale_animations": [
+        [
+          0.07,
+          0.05
+        ],
+        [
+          0.06,
+          1
+        ]
+      ],
+      "emission_area": [
+        5,
+        5
+      ]
+    },
+    "emitter.player.weapon.69.impact.sparks.linger": {
+      "__kind": "emitter",
+      "particle_alpha_animations": [
+        1,
+        0
+      ],
+      "particle_alpha_animation_time_frames": [
+        0,
+        1
+      ],
+      "random_angle_spread": 360,
+      "particles": [
+        {
+          "color": [
+            0.35,
+            0.4,
+            1.5,
+            1
+          ],
+          "appearance": "appearance.particle.glow.nextgen",
+          "bloom": 8
+        },
+        {
+          "color": [
+            0.2,
+            1,
+            1.3,
+            1
+          ],
+          "appearance": "appearance.particle.glow.nextgen",
+          "bloom": 8
+        },
+        {
+          "color": [
+            0.35,
+            0.4,
+            1.5,
+            1
+          ],
+          "appearance": "appearance.particle.glow.nextgen.small",
+          "bloom": 8
+        },
+        {
+          "color": [
+            0.2,
+            1,
+            1.3,
+            1
+          ],
+          "appearance": "appearance.particle.glow.nextgen.small",
+          "bloom": 8
+        }
+      ],
+      "particle_scale_animation_time_frames": [
+        0,
+        1
+      ],
+      "max_particles": 20,
+      "acceleration": [
+        0,
+        -50
+      ],
+      "time_between_each_emission": 0.003,
+      "particle_acceleration": [
+        -40,
+        10
+      ],
+      "__source": "scripts/player_effects/player_69.lua",
+      "particle_speed": [
+        80,
+        15
+      ],
+      "name": "emitter.player.weapon.69.impact.sparks.linger",
+      "attached_particles": true,
+      "particle_orientation": "standard",
+      "particle_time_to_live": [
+        0.6,
+        0
+      ],
+      "particle_scale_animations": [
+        [
+          0.06,
+          0.06
+        ],
+        [
+          0.04,
+          0.04
+        ]
+      ],
+      "emission_area": [
+        15,
+        15
+      ]
+    },
+    "emitter.player.weapon.69.impact.flashes": {
+      "__kind": "emitter",
+      "particle_alpha_animations": [
+        1,
+        1
+      ],
+      "particle_alpha_animation_time_frames": [
+        0,
+        1
+      ],
+      "random_angle_spread": 360,
+      "particles": [
+        {
+          "color": [
+            0.55,
+            0.4,
+            1.5,
+            1
+          ],
+          "appearance": "appearance.particle.glow.nextgen",
+          "bloom": 10
+        },
+        {
+          "color": [
+            0.2,
+            1,
+            1.3,
+            1
+          ],
+          "appearance": "appearance.particle.glow.nextgen",
+          "bloom": 10
+        },
+        {
+          "color": [
+            0.55,
+            0.4,
+            1.5,
+            1
+          ],
+          "appearance": "appearance.particle.glow.nextgen.small",
+          "bloom": 10
+        },
+        {
+          "color": [
+            0.2,
+            1,
+            1.3,
+            1
+          ],
+          "appearance": "appearance.particle.glow.nextgen.small",
+          "bloom": 10
+        }
+      ],
+      "particle_scale_animation_time_frames": [
+        0,
+        1
+      ],
+      "max_particles": 2,
+      "__source": "scripts/player_effects/player_69.lua",
+      "time_between_each_emission": 0.17,
+      "particle_acceleration": [
+        0,
+        0
+      ],
+      "particle_speed": [
+        0,
+        0
+      ],
+      "name": "emitter.player.weapon.69.impact.flashes",
+      "attached_particles": false,
+      "particle_orientation": "random",
+      "particle_time_to_live": [
+        0.05,
+        0
+      ],
+      "particle_scale_animations": [
+        [
+          0.2,
+          0.2
+        ],
+        [
+          0.2,
+          0.2
+        ]
+      ],
+      "emission_area": [
+        45,
+        45
+      ]
+    },
+    "emitter.player.weapon.69.impact.shockwave": {
+      "max_particles": 1,
+      "__source": "scripts/player_effects/player_69.lua",
+      "__kind": "emitter",
+      "particle_alpha_animations": [
+        0.3,
+        0
+      ],
+      "attached_particles": true,
+      "particle_speed": [
+        0,
+        0
+      ],
+      "time_between_each_emission": 0.001,
+      "particle_acceleration": [
+        0,
+        0
+      ],
+      "particle_scale_animations": [
+        [
+          0.05,
+          0.05
+        ],
+        [
+          1.5,
+          1.5
+        ]
+      ],
+      "particle_time_to_live": [
+        0.1,
+        0
+      ],
+      "name": "emitter.player.weapon.69.impact.shockwave",
+      "particle_alpha_animation_time_frames": [
+        0.5,
+        1
+      ],
+      "particle_orientation": "standard",
+      "random_angle_spread": 360,
+      "particles": [
+        {
+          "appearance": "appearance.particle.shockwave.thin",
+          "color": [
+            0.55,
+            0.4,
+            1.5,
+            1
+          ]
+        },
+        {
+          "appearance": "appearance.particle.shockwave.thin",
+          "color": [
+            0.2,
+            1,
+            1.3,
+            1
+          ]
+        },
+        {
+          "appearance": "appearance.particle.shockwave.thin.small",
+          "color": [
+            0.55,
+            0.4,
+            1.5,
+            1
+          ]
+        },
+        {
+          "appearance": "appearance.particle.shockwave.thin.small",
+          "color": [
+            0.2,
+            1,
+            1.3,
+            1
+          ]
+        }
+      ],
+      "particle_scale_animation_time_frames": [
+        0,
+        1
+      ]
+    },
+    "appearance.particle.shockwave.thin.small": {
+      "blending_mode": "additive",
+      "name": "appearance.particle.shockwave.thin.small",
+      "__source": "scripts/appearances_with_bloom.lua",
+      "__kind": "appearance",
+      "size": [
+        65,
+        65
+      ],
+      "texture": "texture.particle.shockwave.thin",
+      "asset": "ArknightsMod/Content/Projectiles/Guard/Reaper/Phoenix/Assets/Sprites/1bf6f8c2c3fc4cf8",
+      "pixel_size": [
+        251,
+        251
+      ]
+    },
+    "texture.particle.shockwave.thin": {
+      "offset": [
+        272,
+        3208
+      ],
+      "__source": "scripts/generated/texturesa.lua",
+      "name": "texture.particle.shockwave.thin",
+      "__kind": "texture",
+      "base_texture": "textures/texturesa/texturesa.png",
+      "size": [
+        251,
+        251
+      ],
+      "asset": "ArknightsMod/Content/Projectiles/Guard/Reaper/Phoenix/Assets/Sprites/a3f7e7354abc336c",
+      "pixel_size": [
+        251,
+        251
+      ]
+    },
+    "appearance.particle.shockwave.thin": {
+      "blending_mode": "additive",
+      "name": "appearance.particle.shockwave.thin",
+      "__source": "scripts/appearances_with_bloom.lua",
+      "__kind": "appearance",
+      "size": [
+        100,
+        100
+      ],
+      "texture": "texture.particle.shockwave.thin",
+      "asset": "ArknightsMod/Content/Projectiles/Guard/Reaper/Phoenix/Assets/Sprites/90c45048f404e49b",
+      "pixel_size": [
+        251,
+        251
+      ]
+    },
+    "projectile.player.67.tier.1": {
+      "__kind": "homing",
+      "scale": [
+        1,
+        1
+      ],
+      "z_order": 0.8,
+      "speed": 30,
+      "damage": 0,
+      "on_destruction": {
+        "name": "emitter.player.weapon.67.impact"
+      },
+      "time_to_live": 4,
+      "__source": "scripts/player_effects/player_67.lua",
+      "acceleration": 650,
+      "appearance": "appearance.projectile.player.67",
+      "attachments": [
+        {
+          "name": "emitter.player.67.projectile.trail",
+          "location": [
+            0,
+            10
+          ]
+        },
+        {
+          "location": [
+            0,
+            9
+          ],
+          "name": "emitter.player.67.projectile.tip",
+          "relative_z": 0.0001
+        }
+      ],
+      "name": "projectile.player.67.tier.1",
+      "color": [
+        0.5,
+        0.3,
+        1.7,
+        1
+      ],
+      "bloom": 0,
+      "maximum_turning_rate": 0,
+      "maximum_speed": 1500,
+      "hit_circles": [
+        0,
+        8,
+        5
+      ]
+    },
+    "emitter.player.67.projectile.tip": {
+      "__kind": "emitter",
+      "exponential_distribution": true,
+      "particle_time_to_live": [
+        0.3,
+        0
+      ],
+      "particle_alpha_animation_time_frames": [
+        0,
+        0.2,
+        0.8,
+        1
+      ],
+      "random_angle_spread": 0,
+      "particles": [
+        {
+          "color": [
+            0.2,
+            0.2,
+            1.5,
+            1
+          ],
+          "appearance": "appearance.projectile.player.67",
+          "bloom": 15
+        },
+        {
+          "color": [
+            1.5,
+            0.3,
+            0.3,
+            1
+          ],
+          "appearance": "appearance.projectile.player.67",
+          "bloom": 15
+        },
+        {
+          "color": [
+            0.5,
+            1.5,
+            0.3,
+            1
+          ],
+          "appearance": "appearance.projectile.player.67",
+          "bloom": 15
+        }
+      ],
+      "particle_scale_animation_time_frames": [
+        0,
+        1
+      ],
+      "max_particles": -1,
+      "__source": "scripts/player_effects/player_67.lua",
+      "time_between_each_emission": 0.12,
+      "particle_acceleration": [
+        0,
+        0
+      ],
+      "name": "emitter.player.67.projectile.tip",
+      "particle_alpha_animations": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "particle_orientation": "standard",
+      "attached_particles": true,
+      "particle_scale_animations": [
+        [
+          0.3,
+          0.3
+        ],
+        [
+          0.3,
+          0.3
+        ]
+      ],
+      "particle_speed": [
+        0,
+        0
+      ]
+    },
+    "appearance.projectile.player.67": {
+      "blending_mode": "additive",
+      "name": "appearance.projectile.player.67",
+      "__source": "scripts/appearances_with_bloom.lua",
+      "__kind": "appearance",
+      "size": [
+        18.25,
+        35
+      ],
+      "texture": "texture.particle.spike.grey",
+      "asset": "ArknightsMod/Content/Projectiles/Guard/Reaper/Phoenix/Assets/Sprites/09e44c8aa3bac187",
+      "pixel_size": [
+        73,
+        100
+      ]
+    },
+    "texture.particle.spike.grey": {
+      "offset": [
+        560,
+        864
+      ],
+      "__source": "scripts/generated/texturesa.lua",
+      "name": "texture.particle.spike.grey",
+      "__kind": "texture",
+      "base_texture": "textures/texturesa/texturesa.png",
+      "size": [
+        73,
+        100
+      ],
+      "asset": "ArknightsMod/Content/Projectiles/Guard/Reaper/Phoenix/Assets/Sprites/83044062340edc16",
+      "pixel_size": [
+        73,
+        100
+      ]
+    },
+    "emitter.player.67.projectile.trail": {
+      "__kind": "emitter",
+      "particle_alpha_animations": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "particle_alpha_animation_time_frames": [
+        0,
+        0.2,
+        0.7,
+        1
+      ],
+      "random_angle_spread": 360,
+      "particles": [
+        {
+          "rotation_speed": 3500,
+          "appearance": "appearance.empty",
+          "attachments": [
+            {
+              "name": "trail.player.67.projectile.1",
+              "location": [
+                0,
+                10
+              ]
+            }
+          ]
+        },
+        {
+          "rotation_speed": 3500,
+          "appearance": "appearance.empty",
+          "attachments": [
+            {
+              "name": "trail.player.67.projectile.2",
+              "location": [
+                0,
+                10
+              ]
+            }
+          ]
+        },
+        {
+          "rotation_speed": 3500,
+          "appearance": "appearance.empty",
+          "attachments": [
+            {
+              "name": "trail.player.67.projectile.3",
+              "location": [
+                0,
+                10
+              ]
+            }
+          ]
+        }
+      ],
+      "particle_scale_animation_time_frames": [
+        0,
+        1
+      ],
+      "max_particles": -1,
+      "__source": "scripts/player_effects/player_67.lua",
+      "time_between_each_emission": 0.04,
+      "particle_acceleration": [
+        0,
+        0
+      ],
+      "particle_speed": [
+        0,
+        0
+      ],
+      "name": "emitter.player.67.projectile.trail",
+      "attached_particles": true,
+      "particle_orientation": "random",
+      "particle_time_to_live": [
+        0.2,
+        0
+      ],
+      "particle_scale_animations": [
+        [
+          0.3,
+          0.3
+        ],
+        [
+          0.3,
+          0.3
+        ]
+      ],
+      "emission_area": [
+        10,
+        3
+      ]
+    },
+    "trail.player.67.projectile.3": {
+      "__source": "scripts/player_effects/player_67.lua",
+      "__kind": "trail",
+      "color": [
+        0.3,
+        0.8,
+        1,
+        0.3
+      ],
+      "width": 3,
+      "blending_mode": "additive",
+      "time": 0.5,
+      "bloom": 0,
+      "fade_out_time": 1,
+      "name": "trail.player.67.projectile.3",
+      "texture": "texture.trail.blue"
+    },
+    "texture.trail.blue": {
+      "offset": [
+        152,
+        2304
+      ],
+      "__source": "scripts/generated/texturesa.lua",
+      "name": "texture.trail.blue",
+      "__kind": "texture",
+      "base_texture": "textures/texturesa/texturesa.png",
+      "size": [
+        88,
+        161
+      ],
+      "asset": "ArknightsMod/Content/Projectiles/Guard/Reaper/Phoenix/Assets/Sprites/86d14fba3875f67c",
+      "pixel_size": [
+        88,
+        161
+      ]
+    },
+    "trail.player.67.projectile.2": {
+      "__source": "scripts/player_effects/player_67.lua",
+      "__kind": "trail",
+      "color": [
+        0.3,
+        0.3,
+        1.5,
+        0.3
+      ],
+      "width": 3,
+      "blending_mode": "additive",
+      "time": 0.5,
+      "bloom": 0,
+      "fade_out_time": 1,
+      "name": "trail.player.67.projectile.2",
+      "texture": "texture.trail.blue"
+    },
+    "trail.player.67.projectile.1": {
+      "__source": "scripts/player_effects/player_67.lua",
+      "__kind": "trail",
+      "color": [
+        1.2,
+        0.3,
+        1.2,
+        0.3
+      ],
+      "width": 3,
+      "blending_mode": "additive",
+      "time": 0.5,
+      "bloom": 0,
+      "fade_out_time": 1,
+      "name": "trail.player.67.projectile.1",
+      "texture": "texture.trail.blue"
+    },
+    "emitter.player.weapon.67.impact": {
+      "__kind": "emitter",
+      "attachments": [
+        {
+          "name": "emitter.player.weapon.67.impact.smoke",
+          "location": [
+            0,
+            30
+          ]
+        },
+        {
+          "name": "emitter.player.weapon.67.impact.shockwave",
+          "location": [
+            0,
+            -14
+          ]
+        },
+        {
+          "name": "emitter.player.weapon.67.impact.sparks",
+          "location": [
+            0,
+            -10
+          ]
+        },
+        {
+          "name": "soundemitter.player.67.hit"
+        }
+      ],
+      "particle_alpha_animations": [
+        3,
+        3,
+        1,
+        0
+      ],
+      "particle_alpha_animation_time_frames": [
+        0,
+        0.05,
+        0.05,
+        1
+      ],
+      "random_angle_spread": 90,
+      "particles": [
+        {
+          "color": [
+            0.2,
+            0.2,
+            1.5,
+            1
+          ],
+          "appearance": "appearance.projectile.player.67",
+          "bloom": 10
+        },
+        {
+          "color": [
+            1.5,
+            0.3,
+            0.3,
+            1
+          ],
+          "appearance": "appearance.projectile.player.67",
+          "bloom": 10
+        },
+        {
+          "color": [
+            0.5,
+            1.2,
+            0.8,
+            1
+          ],
+          "appearance": "appearance.projectile.player.67",
+          "bloom": 10
+        }
+      ],
+      "particle_scale_animation_time_frames": [
+        0,
+        1
+      ],
+      "max_particles": 20,
+      "__source": "scripts/player_effects/player_67.lua",
+      "time_between_each_emission": 0.0001,
+      "particle_acceleration": [
+        0,
+        0
+      ],
+      "particle_speed": [
+        200,
+        60
+      ],
+      "name": "emitter.player.weapon.67.impact",
+      "attached_particles": true,
+      "particle_orientation": "standard",
+      "particle_time_to_live": [
+        0.4,
+        0.1
+      ],
+      "particle_scale_animations": [
+        [
+          0.3,
+          0.3
+        ],
+        [
+          0.3,
+          0.3
+        ]
+      ],
+      "emission_ring_radius": [
+        5,
+        30
+      ]
+    },
+    "soundemitter.player.67.hit": {
+      "__kind": "sound",
+      "__source": "scripts/sounds.lua",
+      "name": "soundemitter.player.67.hit",
+      "sound_effect": {
+        "reference_distance": 300,
+        "gain_variation_decibels": 1.5,
+        "random_pitch_upper_bound": 1,
+        "samples": [
+          "sounds/weapons/player_67_impact.ogg"
+        ],
+        "random_pitch_lower_bound": 1,
+        "name": "sound.player.67.hit",
+        "max_jitter_milliseconds": 35,
+        "start_new_playback_if_maximum_reached": true,
+        "max_simultaneous_playback": 4,
+        "pitch_variation_percentage": 10,
+        "gain": 0.7
+      }
+    },
+    "emitter.player.weapon.67.impact.sparks": {
+      "__kind": "emitter",
+      "particle_alpha_animations": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "particle_alpha_animation_time_frames": [
+        0,
+        0.4,
+        0.5,
+        1
+      ],
+      "random_angle_spread": 30,
+      "particles": [
+        {
+          "color": [
+            0.2,
+            0.2,
+            1.5,
+            1
+          ],
+          "appearance": "appearance.particle.glow.nextgen",
+          "bloom": 20
+        },
+        {
+          "color": [
+            0.2,
+            0.2,
+            1.5,
+            1
+          ],
+          "appearance": "appearance.particle.glow.nextgen.small",
+          "bloom": 20
+        },
+        {
+          "color": [
+            1.5,
+            0.3,
+            0.3,
+            1
+          ],
+          "appearance": "appearance.particle.glow.nextgen.small",
+          "bloom": 20
+        },
+        {
+          "color": [
+            0.5,
+            1.2,
+            0.8,
+            1
+          ],
+          "appearance": "appearance.particle.glow.nextgen",
+          "bloom": 20
+        }
+      ],
+      "particle_scale_animation_time_frames": [
+        0,
+        1
+      ],
+      "max_particles": 70,
+      "__source": "scripts/player_effects/player_67.lua",
+      "time_between_each_emission": 0.0001,
+      "particle_acceleration": [
+        -80,
+        20
+      ],
+      "particle_speed": [
+        350,
+        80
+      ],
+      "name": "emitter.player.weapon.67.impact.sparks",
+      "attached_particles": true,
+      "particle_orientation": "random",
+      "particle_time_to_live": [
+        0.5,
+        0
+      ],
+      "particle_scale_animations": [
+        [
+          0.08,
+          0.08
+        ],
+        [
+          0.04,
+          0.04
+        ]
+      ],
+      "emission_area": [
+        30,
+        40
+      ]
+    },
+    "emitter.player.weapon.67.impact.shockwave": {
+      "max_particles": 1,
+      "__source": "scripts/player_effects/player_67.lua",
+      "__kind": "emitter",
+      "particle_alpha_animations": [
+        1,
+        0
+      ],
+      "attached_particles": true,
+      "particle_speed": [
+        150,
+        0
+      ],
+      "time_between_each_emission": 0.0001,
+      "particle_acceleration": [
+        0,
+        0
+      ],
+      "particle_scale_animations": [
+        [
+          0.5,
+          4
+        ],
+        [
+          4,
+          4
+        ]
+      ],
+      "particle_time_to_live": [
+        0.15,
+        0
+      ],
+      "name": "emitter.player.weapon.67.impact.shockwave",
+      "particle_alpha_animation_time_frames": [
+        0.2,
+        1
+      ],
+      "particle_orientation": "standard",
+      "random_angle_spread": 0,
+      "particles": [
+        {
+          "color": [
+            0.5,
+            0.8,
+            1.5,
+            1
+          ],
+          "appearance": "appearance.particle.spike.grey",
+          "bloom": 3
+        }
+      ],
+      "particle_scale_animation_time_frames": [
+        0,
+        1
+      ]
+    },
+    "appearance.particle.spike.grey": {
+      "blending_mode": "additive",
+      "name": "appearance.particle.spike.grey",
+      "__source": "scripts/appearances_with_bloom.lua",
+      "__kind": "appearance",
+      "size": [
+        14.600000000000001,
+        20
+      ],
+      "texture": "texture.particle.spike.grey",
+      "asset": "ArknightsMod/Content/Projectiles/Guard/Reaper/Phoenix/Assets/Sprites/d379ea5eb5fb4a14",
+      "pixel_size": [
+        73,
+        100
+      ]
+    },
+    "emitter.player.weapon.67.impact.smoke": {
+      "__kind": "emitter",
+      "particle_alpha_animations": [
+        0,
+        0.3,
+        0.3,
+        0
+      ],
+      "particle_alpha_animation_time_frames": [
+        0,
+        0.2,
+        0.2,
+        1
+      ],
+      "random_angle_spread": 30,
+      "particles": [
+        {
+          "color": [
+            0.1,
+            0.2,
+            0.7,
+            1
+          ],
+          "rotation_speed": 200,
+          "appearance": "appearance.particle.smoke.0",
+          "bloom": 1
+        }
+      ],
+      "particle_scale_animation_time_frames": [
+        0,
+        1
+      ],
+      "max_particles": 3,
+      "__source": "scripts/player_effects/player_67.lua",
+      "time_between_each_emission": 0.0001,
+      "particle_acceleration": [
+        0,
+        0
+      ],
+      "particle_speed": [
+        30,
+        5
+      ],
+      "name": "emitter.player.weapon.67.impact.smoke",
+      "attached_particles": true,
+      "particle_orientation": "standard",
+      "particle_time_to_live": [
+        0.6,
+        0
+      ],
+      "particle_scale_animations": [
+        [
+          1.5,
+          1.5
+        ],
+        [
+          1.7,
+          1.7
+        ]
+      ],
+      "emission_area": [
+        30,
+        60
+      ]
+    },
+    "appearance.particle.smoke.0": {
+      "blending_mode": "default",
+      "name": "appearance.particle.smoke.0",
+      "__source": "scripts/appearances.lua",
+      "__kind": "appearance",
+      "size": [
+        35.166666666666664,
+        35.5
+      ],
+      "texture": "texture.particle.smoke.0",
+      "asset": "ArknightsMod/Content/Projectiles/Guard/Reaper/Phoenix/Assets/Sprites/77fa78a3dd9fba65",
+      "pixel_size": [
+        211,
+        213
+      ]
+    },
+    "actor.arknights.projectile.67": {
+      "scale": [
+        1,
+        1
+      ],
+      "z_order": 0.8,
+      "appearance": "appearance.projectile.player.67",
+      "attachments": [
+        {
+          "name": "emitter.player.67.projectile.trail",
+          "location": [
+            0,
+            10
+          ]
+        },
+        {
+          "location": [
+            0,
+            9
+          ],
+          "name": "emitter.player.67.projectile.tip",
+          "relative_z": 0.0001
+        }
+      ],
+      "color": [
+        0.5,
+        0.3,
+        1.7,
+        1
+      ],
+      "bloom": 0,
+      "name": "actor.arknights.projectile.67",
+      "__kind": "actor"
+    },
+    "actor.arknights.projectile.69": {
+      "appearance": "appearance.empty",
+      "scale": [
+        1,
+        1
+      ],
+      "z_order": 0.8,
+      "attachments": [
+        {
+          "name": "emitter.player.weapon.69.projectile"
+        }
+      ],
+      "name": "actor.arknights.projectile.69",
+      "__kind": "actor"
+    },
+    "emitter.player.weapon.69.muzzle": {
+      "max_particles": 1,
+      "__source": "scripts/player_effects/player_69.lua",
+      "__kind": "emitter",
+      "particle_alpha_animations": [
+        0,
+        0
+      ],
+      "attached_particles": false,
+      "particle_speed": [
+        0,
+        0
+      ],
+      "time_between_each_emission": 1e-05,
+      "particle_acceleration": [
+        0,
+        0
+      ],
+      "particle_scale_animations": [
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "particle_time_to_live": [
+        0.5,
+        0
+      ],
+      "name": "emitter.player.weapon.69.muzzle",
+      "particle_alpha_animation_time_frames": [
+        0,
+        1
+      ],
+      "particle_orientation": "standard",
+      "random_angle_spread": 0,
+      "particles": [
+        {
+          "appearance": "appearance.empty",
+          "attachments": [
+            {
+              "location": [
+                30,
+                0
+              ],
+              "rotation_speed": -300,
+              "name": "emitter.player.weapon.69.muzzle.spinner",
+              "orientation": [
+                -1,
+                0
+              ]
+            },
+            {
+              "location": [
+                -30,
+                0
+              ],
+              "rotation_speed": 300,
+              "name": "emitter.player.weapon.69.muzzle.spinner",
+              "orientation": [
+                1,
+                0
+              ]
+            },
+            {
+              "name": "emitter.player.weapon.69.muzzle.shockwave",
+              "location": [
+                0,
+                0
+              ]
+            },
+            {
+              "name": "emitter.player.weapon.69.muzzle.sparks",
+              "location": [
+                0,
+                0
+              ]
+            },
+            {
+              "name": "emitter.player.weapon.69.muzzle.sparks.linger",
+              "location": [
+                0,
+                0
+              ]
+            }
+          ]
+        }
+      ],
+      "particle_scale_animation_time_frames": [
+        0,
+        1
+      ]
+    },
+    "emitter.player.weapon.69.muzzle.sparks.linger": {
+      "__kind": "emitter",
+      "particle_alpha_animations": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "particle_alpha_animation_time_frames": [
+        0,
+        0.1,
+        0.1,
+        1
+      ],
+      "random_angle_spread": 140,
+      "particles": [
+        {
+          "color": [
+            0.35,
+            0.4,
+            1.5,
+            1
+          ],
+          "appearance": "appearance.particle.glow.nextgen",
+          "bloom": 8
+        },
+        {
+          "color": [
+            0.2,
+            1,
+            1.3,
+            1
+          ],
+          "appearance": "appearance.particle.glow.nextgen",
+          "bloom": 8
+        },
+        {
+          "color": [
+            0.35,
+            0.4,
+            1.5,
+            1
+          ],
+          "appearance": "appearance.particle.glow.nextgen.small",
+          "bloom": 8
+        },
+        {
+          "color": [
+            0.2,
+            1,
+            1.3,
+            1
+          ],
+          "appearance": "appearance.particle.glow.nextgen.small",
+          "bloom": 8
+        }
+      ],
+      "particle_scale_animation_time_frames": [
+        0,
+        1
+      ],
+      "max_particles": 50,
+      "acceleration": [
+        0,
+        -160
+      ],
+      "time_between_each_emission": 0.003,
+      "particle_acceleration": [
+        -50,
+        15
+      ],
+      "__source": "scripts/player_effects/player_69.lua",
+      "particle_speed": [
+        140,
+        30
+      ],
+      "name": "emitter.player.weapon.69.muzzle.sparks.linger",
+      "attached_particles": true,
+      "particle_orientation": "standard",
+      "particle_time_to_live": [
+        1,
+        0
+      ],
+      "particle_scale_animations": [
+        [
+          0.06,
+          0.06
+        ],
+        [
+          0.04,
+          0.04
+        ]
+      ],
+      "emission_area": [
+        5,
+        5
+      ]
+    },
+    "emitter.player.weapon.69.muzzle.sparks": {
+      "__kind": "emitter",
+      "particle_alpha_animations": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "particle_alpha_animation_time_frames": [
+        0,
+        0.1,
+        0.1,
+        1
+      ],
+      "random_angle_spread": 140,
+      "particles": [
+        {
+          "color": [
+            0.35,
+            0.4,
+            1.5,
+            1
+          ],
+          "appearance": "appearance.particle.glow.nextgen",
+          "bloom": 8
+        },
+        {
+          "color": [
+            0.2,
+            1,
+            1.3,
+            1
+          ],
+          "appearance": "appearance.particle.glow.nextgen",
+          "bloom": 8
+        },
+        {
+          "color": [
+            0.35,
+            0.4,
+            1.5,
+            1
+          ],
+          "appearance": "appearance.particle.glow.nextgen.small",
+          "bloom": 8
+        },
+        {
+          "color": [
+            0.2,
+            1,
+            1.3,
+            1
+          ],
+          "appearance": "appearance.particle.glow.nextgen.small",
+          "bloom": 8
+        }
+      ],
+      "particle_scale_animation_time_frames": [
+        0,
+        1
+      ],
+      "max_particles": 150,
+      "__source": "scripts/player_effects/player_69.lua",
+      "time_between_each_emission": 0.001,
+      "particle_acceleration": [
+        0,
+        0
+      ],
+      "particle_speed": [
+        400,
+        100
+      ],
+      "name": "emitter.player.weapon.69.muzzle.sparks",
+      "attached_particles": true,
+      "particle_orientation": "standard",
+      "particle_time_to_live": [
+        0.15,
+        0
+      ],
+      "particle_scale_animations": [
+        [
+          0.05,
+          0.05
+        ],
+        [
+          0.05,
+          1.3
+        ]
+      ],
+      "emission_area": [
+        5,
+        5
+      ]
+    },
+    "emitter.player.weapon.69.muzzle.shockwave": {
+      "max_particles": 3,
+      "__source": "scripts/player_effects/player_69.lua",
+      "__kind": "emitter",
+      "particle_alpha_animations": [
+        1,
+        0
+      ],
+      "attached_particles": true,
+      "particle_time_to_live": [
+        0.25,
+        0
+      ],
+      "time_between_each_emission": 0.05,
+      "particle_acceleration": [
+        0,
+        0
+      ],
+      "particle_scale_animations": [
+        [
+          0,
+          0
+        ],
+        [
+          0.5,
+          0.3
+        ]
+      ],
+      "particle": {
+        "color": [
+          0.2,
+          0.6,
+          1.7,
+          1
+        ],
+        "appearance": "appearance.particle.shockwave.half.ellipse",
+        "bloom": 6
+      },
+      "name": "emitter.player.weapon.69.muzzle.shockwave",
+      "particle_alpha_animation_time_frames": [
+        0.3,
+        1
+      ],
+      "particle_orientation": [
+        0,
+        -1
+      ],
+      "random_angle_spread": 0,
+      "particle_speed": [
+        0,
+        0
+      ],
+      "particle_scale_animation_time_frames": [
+        0,
+        1
+      ]
+    },
+    "appearance.particle.shockwave.half.ellipse": {
+      "blending_mode": "additive",
+      "name": "appearance.particle.shockwave.half.ellipse",
+      "__source": "scripts/appearances_with_bloom.lua",
+      "__kind": "appearance",
+      "size": [
+        257,
+        128.5
+      ],
+      "texture": "texture.particle.shockwave.half",
+      "asset": "ArknightsMod/Content/Projectiles/Guard/Reaper/Phoenix/Assets/Sprites/84699aaee3130780",
+      "pixel_size": [
+        257,
+        257
+      ]
+    },
+    "texture.particle.shockwave.half": {
+      "offset": [
+        280,
+        3480
+      ],
+      "__source": "scripts/generated/texturesa.lua",
+      "name": "texture.particle.shockwave.half",
+      "__kind": "texture",
+      "base_texture": "textures/texturesa/texturesa.png",
+      "size": [
+        257,
+        257
+      ],
+      "asset": "ArknightsMod/Content/Projectiles/Guard/Reaper/Phoenix/Assets/Sprites/76ed4690a36b95e3",
+      "pixel_size": [
+        257,
+        257
+      ]
+    },
+    "emitter.player.weapon.69.muzzle.spinner": {
+      "max_particles": 1,
+      "__source": "scripts/player_effects/player_69.lua",
+      "__kind": "emitter",
+      "particle_alpha_animations": [
+        0,
+        0
+      ],
+      "attached_particles": true,
+      "particle_speed": [
+        0,
+        0
+      ],
+      "time_between_each_emission": 0.0001,
+      "particle_acceleration": [
+        0,
+        0
+      ],
+      "particle_scale_animations": [
+        [
+          1,
+          1
+        ],
+        [
+          0.5,
+          0.5
+        ]
+      ],
+      "particle_time_to_live": [
+        1,
+        0
+      ],
+      "name": "emitter.player.weapon.69.muzzle.spinner",
+      "particle_alpha_animation_time_frames": [
+        0,
+        1
+      ],
+      "particle_orientation": "standard",
+      "random_angle_spread": 0,
+      "particles": [
+        {
+          "appearance": "appearance.particle.glow",
+          "attachments": [
+            {
+              "name": "emitter.player.weapon.69.muzzle.clouds",
+              "location": [
+                0,
+                30
+              ]
+            }
+          ]
+        }
+      ],
+      "particle_scale_animation_time_frames": [
+        0,
+        1
+      ]
+    },
+    "emitter.player.weapon.69.muzzle.clouds": {
+      "max_particles": 10,
+      "__source": "scripts/player_effects/player_69.lua",
+      "__kind": "emitter",
+      "particle_alpha_animations": [
+        0,
+        0.2,
+        0.2,
+        0
+      ],
+      "attached_particles": true,
+      "particle_speed": [
+        50,
+        15
+      ],
+      "time_between_each_emission": 1e-05,
+      "particle_acceleration": [
+        0,
+        30
+      ],
+      "particle_scale_animations": [
+        [
+          0.5,
+          0.5
+        ],
+        [
+          1.3,
+          1.3
+        ],
+        [
+          1.3,
+          1.3
+        ],
+        [
+          1.5,
+          1.5
+        ]
+      ],
+      "particle_time_to_live": [
+        0.5,
+        0.05
+      ],
+      "name": "emitter.player.weapon.69.muzzle.clouds",
+      "particle_alpha_animation_time_frames": [
+        0,
+        0.1,
+        0.2,
+        1
+      ],
+      "particle_orientation": "random",
+      "random_angle_spread": 360,
+      "particles": [
+        {
+          "color": [
+            0.35,
+            0.4,
+            1.5,
+            1
+          ],
+          "appearance": "appearance.particle.smoke.0.additive",
+          "bloom": 2
+        },
+        {
+          "color": [
+            0.2,
+            1,
+            1.3,
+            1
+          ],
+          "appearance": "appearance.particle.smoke.0.additive",
+          "bloom": 2
+        }
+      ],
+      "particle_scale_animation_time_frames": [
+        0,
+        0.5,
+        0.5,
+        1
+      ]
+    },
+    "appearance.particle.glow": {
+      "blending_mode": "additive",
+      "name": "appearance.particle.glow",
+      "__source": "scripts/appearances_with_bloom.lua",
+      "__kind": "appearance",
+      "size": [
+        41,
+        41
+      ],
+      "texture": "texture.particle.glow",
+      "asset": "ArknightsMod/Content/Projectiles/Guard/Reaper/Phoenix/Assets/Sprites/1cec3eaa9e3c2c71",
+      "pixel_size": [
+        41,
+        41
+      ]
+    },
+    "texture.particle.glow": {
+      "offset": [
+        528,
+        88
+      ],
+      "__source": "scripts/generated/texturesa.lua",
+      "name": "texture.particle.glow",
+      "__kind": "texture",
+      "base_texture": "textures/texturesa/texturesa.png",
+      "size": [
+        41,
+        41
+      ],
+      "asset": "ArknightsMod/Content/Projectiles/Guard/Reaper/Phoenix/Assets/Sprites/3bdefa2bad6b1527",
+      "pixel_size": [
+        41,
+        41
+      ]
+    }
+  }
+}
