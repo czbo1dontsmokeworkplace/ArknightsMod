@@ -127,6 +127,7 @@ public sealed partial class MaterialistAntagonizer : ModNPC
     {
         if (!Authority || Paused) return;
         DamageShield(Math.Max(1, ShieldMax / 3));
+        if (BomberOperationActive && WingCount() == 0) return;
         if (FinalStand && WingCount() == 0) { FinishFinalStand(); return; }
         if (!Paused && WingCount() == 0) { ClearHazards(); NPC.ai[3] = -1; Enter(FlightOrder.Recover); }
     }
@@ -138,7 +139,7 @@ public sealed partial class MaterialistAntagonizer : ModNPC
             NPC.life = Math.Max(1, NPC.life);
             return false;
         }
-        if (WingCount() > 0)
+        if (WingCount() > 0 || BomberOperationActive)
         {
             NPC.life = LockedPhaseLife;
             if (Authority) BeginPhaseWait();
@@ -156,7 +157,7 @@ public sealed partial class MaterialistAntagonizer : ModNPC
     {
         if (Encounter == 0) return;
         UpdateLockShield();
-        if (Authority && FinalStand && Order != FlightOrder.Death && WingCount() == 0) FinishFinalStand();
+        if (Authority && FinalStand && Order != FlightOrder.Death && WingCount() == 0 && !BomberOperationActive) FinishFinalStand();
         if (FinalStand && Order is not (FlightOrder.Death or FlightOrder.Transition)) NPC.life = LockedPhaseLife;
         if (CoreExposure > 0) CoreExposure--;
         // Player-owned hit hooks run on the attacking client. Observe synchronized life on the authority
@@ -217,6 +218,7 @@ public sealed partial class MaterialistAntagonizer : ModNPC
         ClearHazards(); RecallWing(); Shield = 0; ShieldMax = 0;
         CoreExposure = 0;
         NPC.ai[0]++; NPC.ai[3] = 0;
+        BomberOpeningUsed = false;
         Enter(FlightOrder.Transition);
     }
     private void Enter(FlightOrder order)
@@ -253,7 +255,7 @@ public sealed partial class MaterialistAntagonizer : ModNPC
     {
         if (!Authority) return;
         NPC.ai[3]++;
-        if (Order == FlightOrder.Deploy || WingCount() > 0 || FinalStand) Enter(FlightOrder.Command);
+        if (Order == FlightOrder.Deploy || WingCount() > 0 || FinalStand || BomberOperationActive) Enter(FlightOrder.Command);
         else Enter(FlightOrder.Deploy);
     }
     private void FinishFinalStand()
@@ -294,6 +296,7 @@ public sealed partial class MaterialistAntagonizer : ModNPC
         w.Write(CoreAttack); w.Write(CoreAttackAge); w.Write(CoreSerial); w.Write(AttacksSinceRepair);
         w.Write((int)ContinuousWingPlan); w.WriteVector2(PulseEmitter);
         w.Write(PhaseAge); w.Write(CoreWaiting); w.Write(CoreCooldownRemaining);
+        w.Write(BomberOpeningUsed); w.Write(BombersLaunched);
     }
     public override void ReceiveExtraAI(BinaryReader r)
     {
@@ -317,6 +320,7 @@ public sealed partial class MaterialistAntagonizer : ModNPC
         CoreAttack = r.ReadInt32(); CoreAttackAge = r.ReadInt32(); CoreSerial = r.ReadInt32(); AttacksSinceRepair = r.ReadInt32();
         ContinuousWingPlan = (WingPattern)r.ReadInt32(); PulseEmitter = r.ReadVector2();
         PhaseAge = r.ReadInt32(); CoreWaiting = r.ReadBoolean(); CoreCooldownRemaining = r.ReadInt32();
+        BomberOpeningUsed = r.ReadBoolean(); BombersLaunched = r.ReadInt32();
     }
     public override void ModifyNPCLoot(NPCLoot loot)
     {

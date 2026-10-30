@@ -4,7 +4,7 @@ Items: {
 		Tooltip:
 			'''
 			Hold left click to charge, then release a single custom swing; fully charges in 1 second before attack-speed modifiers
-			Charge increases damage from 100% to 300% and strengthens the outline and slash effects
+			Charge increases damage from 100% to 300%, gradually grows the weapon from its original size to 1.5x, and strengthens the outline and slash effects
 			A shared head bar shows charge; a crystal chime signals full charge
 			Only fully charged physical blade hits call a piercing golden crystal from below that homes in on the struck enemy
 			'''
@@ -15,7 +15,7 @@ Items: {
 		Tooltip:
 			'''
 			Hold left click to charge, then release a single custom swing; fully charges in 1 second before attack-speed modifiers
-			Charge increases damage from 100% to 300% and strengthens the outline and slash effects
+			Charge increases damage from 100% to 300%, gradually grows the weapon from its original size to 1.5x, and strengthens the outline and slash effects
 			A shared head bar shows charge; a crystal chime signals full charge
 			Only fully charged physical blade hits call two rising wind blades from below that home in on the struck enemy
 			'''
@@ -26,7 +26,7 @@ Items: {
 		Tooltip:
 			'''
 			Hold left click to charge, then release a single custom swing; fully charges in 1 second before attack-speed modifiers
-			Charge increases damage from 100% to 300% and strengthens the outline and slash effects
+			Charge increases damage from 100% to 300%, gradually grows the weapon from its original size to 1.5x, and strengthens the outline and slash effects
 			A shared head bar shows charge; a crystal chime signals full charge
 			Only fully charged physical blade hits erupt into three piercing flames from below that home in on the struck enemy
 			Deals 20% increased damage to stunned enemies
@@ -37,13 +37,14 @@ Items: {
 		DisplayName: Ulpianus's Anchor
 		Tooltip:
 			'''
-			Hold left click to charge, then release to lift and throw the anchor; fully charges in 1 second before attack-speed modifiers
-			Charge increases damage from 100% to 300% and increases throwing speed
+			Hold left click to charge, then release to swing the anchor; fully charges in 1 second before attack-speed modifiers
+			Charge increases damage from 100% to 300% and gradually grows the weapon from its original size to 1.5x
 			A shared head bar shows charge; a crystal chime signals full charge
-			Coasts, falls under gravity, then returns along its chain; only one normal anchor may be in flight
+			Only a fully charged first-skill attack at full SP throws the anchor; normal attacks and skills 2 and 3 swing it
+			Thrown anchors coast, fall under gravity, then return along their chain; only one may be in flight
 			Each new enemy struck directly triggers a 150x150 arcane blast, dealing one extra hit for 100% of the thrown anchor's melee damage
 			Ground impacts after 10 ticks deal 60% splash damage without hitting the same enemy twice
-			Only fully charged direct anchor hits call a heavy anchor from below that homes in on the struck enemy with unlimited piercing
+			Only fully charged direct swing or thrown-anchor hits call a heavy anchor from below that homes in on the struck enemy with unlimited piercing
 			'''
 	}
 }
@@ -93,17 +94,17 @@ Skills: {
 	UlpianusAnchor: {
 		1: {
 			Label: Contact That Must Be Made
-			Desc: Recover SP over time. At full SP, the next fully charged direct thrown-anchor hit calls an anchor from below that homes in on the struck enemy, dealing 170%-270% damage with unlimited piercing and dragging the first two ordinary knockback-vulnerable enemies toward you.
+			Desc: Recover SP over time. At full SP, the next fully charged attack throws the anchor. A direct hit calls an anchor from below that homes in on the struck enemy, dealing 170%-270% damage with unlimited piercing and dragging the first two ordinary knockback-vulnerable enemies toward you.
 		}
 
 		2: {
 			Label: Boundary That Must Be Maintained
-			Desc: Automatically activates at full SP: gain 100%-160% attack damage, 20%-60% maximum life and an extra 2-4 life regeneration per second (also increased by 30% by the Crusher trait). Lasts until switching weapons or skills or dying. Maximum-life increases do not heal.
+			Desc: Automatically activates at full SP: swing the anchor to attack, gain 100%-160% attack damage, 20%-60% maximum life and an extra 2-4 life regeneration per second (also increased by 30% by the Crusher trait). Lasts until switching weapons or skills or dying. Maximum-life increases do not heal.
 		}
 
 		3: {
 			Label: Path That Must Be Opened
-			Desc: For 25 seconds, gain 170%-260% attack damage and 20%-80% maximum life. Throw an anchor; on impact or at maximum range it causes a 130%-160% damage shockwave, stuns ordinary knockback-vulnerable enemies for 5 seconds and moves you to the landing point if safe. Press again or let it end to try returning.
+			Desc: For 25 seconds, swing the anchor to attack and gain 170%-260% attack damage and 20%-80% maximum life. Direct swing hits stun ordinary knockback-vulnerable enemies for 5 seconds. Press again to end early.
 		}
 	}
 }

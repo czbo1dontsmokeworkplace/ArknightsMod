@@ -18,6 +18,7 @@ internal sealed class PhoenixFxStyle
     internal bool SkyfireRing,CenteredCut;
     internal bool MonochromeTexture;
     internal bool HideScuuxunPointer;
+    internal bool SuppressShake;
     internal Func<Vector2,Vector2> ProjectPosition,ProjectDirection;
     internal Vector2 SpriteStretch=Vector2.One;
 }
@@ -43,6 +44,16 @@ internal static class PhoenixFx
         style.ParticleLifetimeScale=.3f;
         return style;
     }
+    internal static PhoenixFxStyle NecrassGamma(bool muzzle=false)
+    {
+        var style=Original(muzzle?1.5f:1);
+        style.MonochromeTexture=true;
+        // Keep this dark palette's actual intensity instead of normalizing it
+        // back to the imported pink/white HDR peak.
+        style.Tint=c=>new Vector4(new Vector3(83,35,132)/255f*Math.Max(c.X,Math.Max(c.Y,c.Z)),c.W);
+        if(muzzle)style.Opacity=static()=>.5f;
+        return style;
+    }
     internal static void Burst(string name,Vector2 at,Vector2 direction,PhoenixFxStyle style=null)
     {
         if(Main.dedServ)return;style??=Original();
@@ -51,7 +62,7 @@ internal static class PhoenixFx
     }
     internal static void Sakura(Vector2 at,Vector2 direction,Color primary,Color edge,float scale=1)
     {
-        var style=Colored(primary,edge,scale);style.CenteredCut=true;
+        var style=Colored(primary,edge,scale);style.CenteredCut=true;style.SuppressShake=true;
         Burst("emitter.player.weapon.40.impact",at,direction,style);
     }
     internal static void Skyfire(Vector2 at,float scale,Vector2 direction=default)

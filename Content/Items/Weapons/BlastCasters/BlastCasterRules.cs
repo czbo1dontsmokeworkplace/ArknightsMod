@@ -35,7 +35,7 @@ internal static class BlastCasterRules
     internal static float SizeMultiplier(BlastCasterKind kind) => kind switch
     { BlastCasterKind.Ifrit => 1.2f, BlastCasterKind.Aphrissa => 1.5f, _ => 1f };
     internal static Color FluxAccent(BlastCasterKind kind) => kind switch
-    { BlastCasterKind.Corroserum => new(238, 205, 72), BlastCasterKind.Ifrit => new(255, 206, 91), _ => new(240, 201, 92) };
+    { BlastCasterKind.Corroserum => new(238, 205, 72), BlastCasterKind.Ifrit => new(255, 159, 54), _ => new(240, 201, 92) };
     internal static bool ConsumesGel(int volley) => volley % 3 == 0;
     internal static float RankScale(int rank) => (Math.Clamp(rank, 1, 10) - 1) / 9f;
     internal static float DamageMultiplier(BlastCasterKind kind, int mode, int rank)

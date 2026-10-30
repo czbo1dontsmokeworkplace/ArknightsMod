@@ -25,7 +25,7 @@ public sealed class OperatorBranchTraits : GlobalItem
         "UtageKatana" or "HellagurOdachi" => "Musha",
         "MelanthasSword" or "MataimaruGlaive" or "FrankaRapier" or "NearlRadiantSword" => "Dreadnought",
         "MousseGlove" or "AstraSword" or "SurtrLaevatain" => "ArtsFighter",
-        "CutterBlades" or "BibeakSword" or "IreneSaber" => "Swordmaster",
+        "CutterBlades" or "BibeakSword" or "IreneSaber" or "ChenSword_Item" => "Swordmaster",
         "MidnightSword" or "AreneSword" or "LapplandSwords" or "FrostleafAxe" or "SilverAshWeapon" => "Lord",
         "ClickStaff" or "RockrockStaff" or "GoldenglowWand" => "MechAccord",
         "IndigoStaff" or "HarmonieStaff" or "EbenholzStaff" => "Mystic",

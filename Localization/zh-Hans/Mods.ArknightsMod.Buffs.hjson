@@ -328,3 +328,8 @@ MostimaTemporalDrag: {
 	DisplayName: 主观缓时
 	Description: 移动速度降低50%
 }
+
+FrostDroneChill: {
+	DisplayName: 寒霜冷雾
+	Description: 移动速度降低50%
+}

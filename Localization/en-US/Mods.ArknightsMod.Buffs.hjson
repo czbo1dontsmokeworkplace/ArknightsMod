@@ -297,3 +297,8 @@ MostimaTemporalDrag: {
 	DisplayName: Subjective Time Dilation
 	Description: Movement slowed by 50%
 }
+
+FrostDroneChill: {
+	DisplayName: Frost Mist
+	Description: Movement speed reduced by 50%
+}

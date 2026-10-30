@@ -55,6 +55,9 @@ Projectiles: {
 	CannotOriginiutantSlash.DisplayName: Cannot Originiutant Slash
 	CannotPotionSpray.DisplayName: Cannot Potion Spray
 	StandardBearerCrescent.DisplayName: Standard Bearer Crescent
+	NecrassGammaBlast.DisplayName: Necrass Gamma Blast
+	PozemkaBlinkStrike.DisplayName: Pozemka Blink Strike
+	TyphonPlasmaRay.DisplayName: Typhon Plasma Ray
 }
 
 Skills: {

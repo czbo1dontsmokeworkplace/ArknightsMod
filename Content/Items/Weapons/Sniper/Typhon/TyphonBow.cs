@@ -116,9 +116,9 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
         {
             var state = player.GetModPlayer<WeaponPlayer>();
             Item.useTime = Item.useAnimation = AttackInterval(state.Skill, state.SkillActive, player.GetModPlayer<TyphonState>().S1Stacks);
-            Item.shootSpeed = state.SkillActive && state.Skill != 1 ? 8 : 20;
+            Item.shootSpeed = state.SkillActive && state.Skill == 2 ? 8 : 20;
             // S2 plays the same sound on each actual star-crystal spawn; S3 plays it when charge releases.
-            Item.UseSound = state.SkillActive ? state.Skill is 1 or 2 ? null : SoundID.Item5 : FireSound;
+            Item.UseSound = state.SkillActive && state.Skill is 1 or 2 ? null : FireSound;
         }
         public override bool CanUseItem(Player player)
         {
@@ -132,7 +132,6 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
             if (player.whoAmI != Main.myPlayer) return false;
             Vector2 aim = velocity.SafeNormalize(Vector2.UnitX * player.direction);
             var modPlayer = player.GetModPlayer<WeaponPlayer>();
-            int cleanDamage = ComputeFixedDamage(player);
             if (modPlayer.Skill == 2 && modPlayer.SkillActive)
             {
                 if (player.whoAmI == Main.myPlayer)
@@ -142,7 +141,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
                     Projectile.NewProjectile(
                         source, position, Vector2.Zero,
                         ModContent.ProjectileType<TyphonStar>(),
-                        cleanDamage, knockback, player.whoAmI,
+                        ComputeFixedDamage(player), knockback, player.whoAmI,
                         target.X, target.Y,
                         aimAngle);
                 }
@@ -159,17 +158,8 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
                 return false;
             }
 
-            if (modPlayer.Skill == 0 && modPlayer.SkillActive)
-            {
-                Projectile.NewProjectile(
-                    source, position, velocity,
-                    ModContent.ProjectileType<TyphonArrow>(),
-                    cleanDamage, knockback, player.whoAmI,
-                    0f, 0f, 2f);
-                return false;
-            }
-
-
+            // Normal attacks and S1 share the same star-crystal body, launch,
+            // piercing and effects; S1's damage/speed bonuses are applied above.
             int index = Projectile.NewProjectile(source, player.MountedCenter + aim * 48, aim * 26,
                 ModContent.ProjectileType<TyphonAstralShot>(), damage, knockback, player.whoAmI, 0);
             if (Main.projectile.IndexInRange(index)) Main.projectile[index].CritChance = player.GetWeaponCrit(Item);

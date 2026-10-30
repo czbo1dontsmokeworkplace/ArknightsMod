@@ -280,6 +280,7 @@ public sealed class OperatorScuuxunSpike : ModProjectile
         style.Opacity=()=>Math.Clamp((BladeRouteRules.SpikeLifetime-Projectile.localAI[0])/18f,0,1);
         style.TrailLifetimeScale=.15f;
         style.HideScuuxunPointer=true;
+        style.SuppressShake=true;
         visual=new PhoenixMotionFx(67,Projectile,style,()=>Projectile.rotation.ToRotationVector2());
     }
     public override bool? Colliding(Rectangle projHitbox,Rectangle targetHitbox)

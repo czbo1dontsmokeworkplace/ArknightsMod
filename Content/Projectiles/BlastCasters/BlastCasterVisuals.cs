@@ -60,6 +60,7 @@ internal static class BlastCasterVisuals
         Vector2 aim = p.velocity.SafeNormalize(Vector2.UnitX);
         var style=global::ArknightsMod.Content.Projectiles.Guard.Reaper.Phoenix.PhoenixFx.BlastCaster(
             BlastCasterRules.Tint(kind),BlastCasterRules.FluxAccent(kind),BlastCasterRules.SizeMultiplier(kind));
+        style.MonochromeTexture=kind==BlastCasterKind.Ifrit;
         global::ArknightsMod.Content.Projectiles.Guard.Reaper.Phoenix.PhoenixFx.Burst("emitter.player.weapon.95.beam.hit.sparks",at,-aim,style);
         global::ArknightsMod.Content.Projectiles.Guard.Reaper.Phoenix.PhoenixFx.Burst("actor.player.weapon.95.beam.impact",at,-aim,style);
     }

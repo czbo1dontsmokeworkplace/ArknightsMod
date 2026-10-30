@@ -1533,7 +1533,7 @@ PozyomkaBow: {
 BeagleWeapon: {
 	DisplayName: 剑盾 [米格鲁]
 	FlavorText: “保护大家是我的使命！不管有什么困难，这个信念都不会动摇！”
-	Tooltip: 左键挥剑攻击；技能期间防御力提高25%
+	Tooltip: 左键挥剑攻击；技能期间防御力提高50%
 }
 
 TyphonBow: {
@@ -2001,7 +2001,7 @@ MizukiDefault: {
 
 ChenSword_Item: {
 	DisplayName: 赤霄 [陈]
-	// Tooltip: ""
+	Tooltip: 普通挥刀留下三道短暂旋转的刀锋
 }
 
 OriginiumIngot: {

@@ -12,6 +12,7 @@ namespace ArknightsMod.Content.Items.Weapons.Caster.Necrass;
 public sealed class NecrassScepter : ExpansionWeaponBase
 {
     private const int GammaInterval = 5; // Source 0.08s, rounded to a native 60 Hz item tick.
+    internal const float GammaBarrelOffset = 13.25f, GammaSpread = .75f, GammaSpeed = 8.5f;
     private const int ManaWindow = 40; // Preserve the previous nine-mana burst budget.
     private ulong nextGammaManaTick;
     private bool swapBarrels;
@@ -90,9 +91,9 @@ public sealed class NecrassScepter : ExpansionWeaponBase
         for (int i = 0; i < 2; i++)
         {
             int barrel = (i + (swapBarrels ? 1 : 0)) % 2;
-            Vector2 muzzle = center + direction * 24 + side * (barrel == 0 ? -26.5f : 26.5f);
-            float spread = MathHelper.ToRadians(Main.rand.NextFloat(-1.5f, 1.5f));
-            int index = Projectile.NewProjectile(source, muzzle, direction.RotatedBy(spread) * 5f,
+            Vector2 muzzle = center + direction * 24 + side * (barrel == 0 ? -GammaBarrelOffset : GammaBarrelOffset);
+            float spread = MathHelper.ToRadians(Main.rand.NextFloat(-GammaSpread, GammaSpread));
+            int index = Projectile.NewProjectile(source, muzzle, direction.RotatedBy(spread) * GammaSpeed,
                 ModContent.ProjectileType<NecrassGammaBlast>(), shotDamage, knockback, player.whoAmI);
             if (Main.projectile.IndexInRange(index)) Main.projectile[index].CritChance = player.GetWeaponCrit(Item);
         }

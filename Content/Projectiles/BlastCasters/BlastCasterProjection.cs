@@ -45,6 +45,7 @@ internal static class BlastCasterProjection
     internal static PhoenixFxStyle Style(int owner,BlastCasterKind kind,int mode,float scale,Vector2 origin,Vector2 pivot,Vector2 axis,int relayIdentity=-1)
     {
         var style=PhoenixFx.BlastCaster(BlastCasterRules.Tint(kind),BlastCasterRules.FluxAccent(kind),scale);
+        style.MonochromeTexture=kind==BlastCasterKind.Ifrit;
         BlastCasterShotFrame frame=default;ulong tick=ulong.MaxValue;
         BlastCasterShotFrame Current()
         {

@@ -18,6 +18,7 @@ internal static partial class HornVisuals
         4 => new Color(125, 215, 255),
         3 => new Color(255, 130, 48),
         5 => new Color(255, 55, 35),
+        6 => new Color(255, 135, 65),
         _ => Gold
     };
 

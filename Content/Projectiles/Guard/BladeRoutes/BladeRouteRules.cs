@@ -27,7 +27,7 @@ internal static class BladeRouteRules
     internal static Color Theme(int kind) => kind switch
     {
         0 => new(255, 125, 56), 1 => new(102, 155, 255), 2 => new(255, 205, 104),
-        3 => new(176, 103, 255), 4 => new(126, 235, 151),6=>new(105,218,255),7=>new(210,232,255),_ => new(198, 211, 246)
+        3 => new(176, 103, 255), 4 => new(126, 235, 151),6=>new(105,218,255),7=>new(210,232,255),8=>new(220,65,80),_ => new(198, 211, 246)
     };
     // Excalibur-family half-turn and expanding close-range aura. The 1.2 / 1.0
     // scale terms are the True Excalibur variant, not the smaller Excalibur.
@@ -35,7 +35,7 @@ internal static class BladeRouteRules
         MathHelper.Pi * direction * gravity * progress + (direction < 0 ? MathHelper.Pi : 0) + MathHelper.Pi * direction * gravity;
     internal static float AuraScale(float progress, float itemScale) => (1.2f + progress) * itemScale * .66f;
     internal const int WaveLifetime = 120;
-    internal const float WaveSpeed = 6f;
+    internal const float WaveSpeed = 12f;
     internal const int LordShotInterval=60;
     internal const int SpikeLifetime=36;
     internal const int BoltDelay = 12;

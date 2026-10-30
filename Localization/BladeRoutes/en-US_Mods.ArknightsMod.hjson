@@ -35,7 +35,7 @@ Items: {
 		DisplayName: Nightfall Sword [Midnight]
 		Tooltip:
 			'''
-			Swing the blade to release slow plasma clusters
+			Swing the blade to release plasma clusters
 			Clusters pierce indefinitely and fire once per second
 			'''
 	}
@@ -44,7 +44,7 @@ Items: {
 		DisplayName: Mechanical Sword [Arene]
 		Tooltip:
 			'''
-			Swing the blade to release slow plasma clusters
+			Swing the blade to release plasma clusters
 			Clusters pierce indefinitely and fire once per second
 			'''
 	}
@@ -53,7 +53,7 @@ Items: {
 		DisplayName: Wolfspirit Swords [Lappland]
 		Tooltip:
 			'''
-			Swing the blade to release slow plasma clusters
+			Swing the blade to release plasma clusters
 			Clusters pierce indefinitely and fire once per second
 			'''
 	}

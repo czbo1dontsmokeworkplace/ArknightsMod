@@ -69,23 +69,15 @@ internal static class MedicIdentityVisuals
     {
         int id=art.ProfileId;var q=art.Projectile;var p=art.Profile;var f=MedicIdentity.Get(id);
         float fade=Math.Min(MathHelper.Clamp(art.Age/6,0,1),MathHelper.Clamp(q.timeLeft/24f,0,1));
+        if(MedicSpriteFlightVisuals.Handles(id))
+        {
+            MedicSpriteFlightVisuals.Draw(art,fade);
+            return;
+        }
         // Ampoules, rotors, lanterns, rain and bubbles stay upright; blades follow their flight.
         float rotation=id is 1 or 3 or 4 or 8 or 9 or 10 or 12 or 13 or 18 or 20 or 22 or 23 ? 0:q.rotation;
         DrawWake(q,id,p.Body,p.Core,f,art.Age,fade);
         float pulse=1+MathF.Sin(art.Age*(.07f+id%4*.018f))*.06f;
-        if(id is 3 or 9 or 16)
-        {
-            // Supplied sprites replace only flight bodies, retaining wakes and treatment feedback.
-            string sprite=id switch { 3=>"SilenceHealingArt",9=>"LumenHealingArt",_=>"Mon3trHealingArt" };
-            Texture2D texture=ModContent.Request<Texture2D>(
-                "ArknightsMod/Content/Projectiles/Medic/Arts/"+sprite,AssetRequestMode.ImmediateLoad).Value;
-            // Silence's ampoule stays upright; Lumen's fish and Mon3tr follow their flight direction.
-            float spriteRotation=id==3?0:q.rotation;
-            MedicArtsVfx.Glow(q.Center,(id==16?new Vector2(34,18):texture.Size())*pulse,p.Body,fade*.18f,spriteRotation);
-            Main.EntitySpriteDraw(texture,q.Center-Main.screenPosition,null,Color.White*fade,spriteRotation,
-                texture.Size()*.5f,1f,SpriteEffects.None);
-            return;
-        }
         if(id==5)
             MedicArtsVfx.Glow(q.Center,Size(id)*new Vector2(.95f,.6f),new Color(32,35,65),fade*.6f,rotation);
         else

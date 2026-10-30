@@ -43,7 +43,7 @@ public sealed class DefenderRecipes : ModSystem
             switch (node.Name) {
                 case "CuoraWeapon": r.AddIngredient(ItemID.BatBat).AddRecipeGroup(RecipeGroupID.IronBar, 8); break;
                 case "DN_Weapon": r.AddRecipeGroup(OperatorWeaponRecipeGroups.AnyVanillaMeteorPhaseblade).AddIngredient(ItemID.HellstoneBar, 8); break;
-                case "FirewhistleLauncher": case "AshlockLauncher":
+                case "FirewhistleLauncher":
                     r.AddIngredient(ItemID.Grenade, 30).AddIngredient(ItemID.HellstoneBar, 12).AddIngredient(ItemID.IllegalGunParts); break;
                 case "LutonHammer": r.AddIngredient(ItemID.HellstoneBar, 10).AddIngredient(ItemID.Bone, 20); break;
                 case "BubbleMaul": r.AddIngredient(ItemID.HellstoneBar, 10).AddIngredient(ItemID.Obsidian, 20); break;

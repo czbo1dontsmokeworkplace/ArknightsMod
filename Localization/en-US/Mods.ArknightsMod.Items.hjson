@@ -1459,7 +1459,7 @@ PozyomkaBow: {
 BeagleWeapon: {
 	DisplayName: Sword and Shield [Beagle]
 	FlavorText: Protecting everyone is my mission! No matter the hardship, that conviction will never waver!
-	Tooltip: Left-click to slash; the skill grants 25% DEF
+	Tooltip: Left-click to swing; DEF +50% during the skill.
 }
 
 TyphonBow: {
@@ -1889,7 +1889,7 @@ MizukiDefault: {
 
 ChenSword_Item: {
 	DisplayName: Chi Xiao [Ch'en]
-	Tooltip: ""
+	Tooltip: Normal swings leave three briefly rotating blades
 }
 
 OriginiumIngot: {

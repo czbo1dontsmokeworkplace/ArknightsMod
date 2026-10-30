@@ -10,9 +10,10 @@ namespace ArknightsMod.Content.Projectiles.Defender.Horn;
 public sealed class HornGrenade : ModProjectile
 {
     internal byte VisualState;
-    internal bool HeavyGravity;
-    public override void SendExtraAI(BinaryWriter writer) { writer.Write(VisualState); writer.Write(HeavyGravity); }
-    public override void ReceiveExtraAI(BinaryReader reader) { VisualState = reader.ReadByte(); HeavyGravity = reader.ReadBoolean(); }
+    internal int SourceItemType;
+    internal bool HeavyGravity, FireField;
+    public override void SendExtraAI(BinaryWriter writer) { writer.Write(VisualState); writer.Write(HeavyGravity); writer.Write(FireField); writer.Write(SourceItemType); }
+    public override void ReceiveExtraAI(BinaryReader reader) { VisualState = reader.ReadByte(); HeavyGravity = reader.ReadBoolean(); FireField = reader.ReadBoolean(); SourceItemType = reader.ReadInt32(); }
     // Use Terraria's first-tier rocket sprite while retaining Horn's custom arc and explosion logic.
     public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.RocketI;
     public override void SetStaticDefaults()
@@ -50,6 +51,9 @@ public sealed class HornGrenade : ModProjectile
     {
         if (Projectile.owner == Main.myPlayer)
             Explode(Projectile, Projectile.Center, Projectile.ai[0], (int)Projectile.ai[1], (int)Projectile.ai[2]);
+        if (Projectile.owner == Main.myPlayer && FireField)
+            DefenderSkillArea.Spawn(Main.player[Projectile.owner], Projectile.Center, (int)(Projectile.damage * .85f),
+                100f, DefenderAreaKind.Flame, 360, 60, sourceItemType: SourceItemType, crit: Projectile.CritChance);
         SoundEngine.PlaySound(SoundID.Item14 with { Volume = .55f, MaxInstances = 5 }, Projectile.Center);
     }
     internal static void Explode(Projectile source, Vector2 center, float radius, int flare, int arts)

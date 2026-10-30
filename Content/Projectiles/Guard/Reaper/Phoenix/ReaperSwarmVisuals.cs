@@ -32,6 +32,7 @@ internal static class ReaperSwarmVisuals
             || name=="emitter.player.weapon.81.projectile.spawn.sporecloud")return null;
         var data=ReaperSwarmData.Get(name);
         if(data.ValueKind==JsonValueKind.Undefined)return null;
+        if(style?.SuppressShake==true && data.S("__kind")=="shake")return null;
         return Add(new ReaperSwarmVisualNode(data,pos,dir,life,active,scale??Vector2.One,z,depth,palette,style){Visible=visible});
     }
     internal static void Attach(JsonElement attachment,Func<Vector2> pos,Func<Vector2> dir,Func<bool> active,int depth=0,Vector2? scale=null,float z=0,Func<bool> visible=null,ReaperKind palette=default,PhoenixFxStyle style=null)

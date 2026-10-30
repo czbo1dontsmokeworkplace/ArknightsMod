@@ -417,5 +417,7 @@ ChalterWaterField.DisplayName: 假日水域
 // CannotPortal.DisplayName: Cannot Portal
 // ArtsMasterBeam.DisplayName: Arts Master Beam
 // ArtsMasterNeedle.DisplayName: Arts Master Needle
+BomberDroneBomb.DisplayName: 暴罐
+BomberDroneExplosion.DisplayName: 暴罐爆炸
 MaterialistHazard.DisplayName: 物欲拮抗者的火力
 LamentingServant.DisplayName: 悲叹的仆役

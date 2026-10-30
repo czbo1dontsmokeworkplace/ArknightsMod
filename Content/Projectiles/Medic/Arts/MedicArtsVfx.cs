@@ -70,6 +70,11 @@ internal static class MedicArtsVfx
     internal static void Cast(Vector2 position, Vector2 aim, int id, bool skill)
     {
         if (!Visible(position)) return;
+        if(id==16 && !skill)
+        {
+            MedicSpriteFlightVisuals.Muzzle(position,aim);
+            return;
+        }
         var p = MedicCatalog.Get(id);
         int count = skill ? 18 : 6 + p.Tier;
         for (int i = 0; i < count; i++)
@@ -95,6 +100,11 @@ internal static class MedicArtsVfx
     {
         Projectile projectile = art.Projectile;
         if (!Visible(projectile.Center)) return;
+        if(MedicSpriteFlightVisuals.Handles(art.ProfileId))
+        {
+            MedicSpriteFlightVisuals.Flight(art,previous);
+            return;
+        }
         var p = art.Profile;
         if(!MedicMaterialVfx.UsesLineArt(art.ProfileId))
         {

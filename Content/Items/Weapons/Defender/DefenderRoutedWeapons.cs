@@ -37,8 +37,8 @@ public sealed class CzernyBlade : RoutedDefenderWeapon { }
 public sealed class HoshigumaBlazingBlade : RoutedDefenderWeapon { }
 public sealed class AshlockLauncher : FirewhistleLauncher
 {
-    protected override int[] EliteDamage => [64, 84, 108];
-    protected override int Interval => 54;
+    protected override int[] EliteDamage => [116, 150, 186];
+    protected override int Interval => 38;
 }
 public sealed class BubbleMaul : RoutedDefenderWeapon { }
 public sealed class AuroraAxe : RoutedDefenderWeapon { }

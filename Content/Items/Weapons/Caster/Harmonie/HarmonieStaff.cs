@@ -1,3 +1,4 @@
+using ArknightsMod.Content.Projectiles.Caster;
 using System;
 using ArknightsMod.Content.Items.Weapons.Caster.Indigo;
 using ArknightsMod.Content.Projectiles.Caster.Ebenholz;
@@ -66,6 +67,7 @@ public sealed class HarmonieStaff : ExpansionWeaponBase
         if (EbenholzCombat.Clear(position, position + aim * 34f)) position += aim * 34f;
         int target = EbenholzCombat.FindTarget(position, 900f, Main.MouseWorld, false);
         if (state.Mode == 1) damage = Math.Max(1, (int)MathF.Round(damage * .5f));
+        bool photonFinisher = MysticPhotonVolley.NextNormal(Item);
         Spawn(position, aim.RotatedByRandom(.035f) * 14f, damage, 0, 0);
         int stored = state.ReleaseCharges();
         for (int i = 0; i < stored; i++)
@@ -79,6 +81,11 @@ public sealed class HarmonieStaff : ExpansionWeaponBase
         {
             int index = Projectile.NewProjectile(source, origin, speed, type, hit, knockback,
                 player.whoAmI, mode, target + 1, delay);
+            if (mode == 0 && Main.projectile.IndexInRange(index))
+            {
+                Main.projectile[index].GetGlobalProjectile<MysticPhotonShot>().NormalFinisher = photonFinisher;
+                Main.projectile[index].netUpdate = true;
+            }
             if (Main.projectile.IndexInRange(index)) Main.projectile[index].CritChance = player.GetWeaponCrit(Item);
         }
     }
