@@ -93,6 +93,12 @@ public class CannotProgressionSystem : ModSystem
         stockChanged = true;
     }
 
+    public void RefreshOnCannotDeath() {
+        if (Main.netMode == NetmodeID.MultiplayerClient || !Stock.Unlocked) return;
+        Stock.RerollAll(PickItem);
+        stockChanged = true;
+    }
+
     private static int PickItem(int tier, HashSet<int> used, int previous) {
         string ns = "ArknightsMod.Content.Items.Accessories.Rogue.Rarity_l" + (tier <= 2 ? tier : tier <= 4 ? 3 : 4);
         var pool = ModContent.GetContent<ModItem>()

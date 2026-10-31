@@ -751,30 +751,29 @@ namespace ArknightsMod.Content.NPCs.Friendly
 		}
 
 		public override void OnKill() {
-			if (Main.netMode != NetmodeID.MultiplayerClient)
-				ReleaseSummoned(despawn: false);
+			if (Main.netMode == NetmodeID.MultiplayerClient)
+				return;
+			ReleaseSummoned(despawn: false);
 
 			// 逃走时确定性掉落一件“当前正在售卖的藏品”（服务器/单机权威，Item.NewItem 自动同步）
-			if (!Runaway || Main.netMode == NetmodeID.MultiplayerClient)
-				return;
-
-            // One reward as before, guaranteed to come from this battle's highest-price stock.
-            // Snapshotting prevents mid-battle boss kills from changing the promised reward pool.
-            if (battleRewardItems.Length > 0) {
-                Item.NewItem(NPC.GetSource_Death(), NPC.getRect(), battleRewardItems[Main.rand.Next(battleRewardItems.Length)], 1);
-                return;
-            }
-
-			var shopItems = NPCShopSystem.CannotShopItems;
-			if (shopItems.Count == 0) {
-				// 兜底：若尚未生成商店内容，强制刷新一次
-				NPCShopSystem.TryUpdateCannotShop(Mod, true);
-				shopItems = NPCShopSystem.CannotShopItems;
+			if (Runaway) {
+                // The battle reward uses the stock locked at the start of this fight.
+                if (battleRewardItems.Length > 0)
+                    Item.NewItem(NPC.GetSource_Death(), NPC.getRect(), battleRewardItems[Main.rand.Next(battleRewardItems.Length)], 1);
+                else {
+					var shopItems = NPCShopSystem.CannotShopItems;
+					if (shopItems.Count == 0) {
+						NPCShopSystem.TryUpdateCannotShop(Mod, true);
+						shopItems = NPCShopSystem.CannotShopItems;
+					}
+					if (shopItems.Count > 0) {
+						int type = shopItems[Main.rand.Next(shopItems.Count)].type;
+						Item.NewItem(NPC.GetSource_Death(), NPC.getRect(), type, 1);
+					}
+				}
 			}
-			if (shopItems.Count > 0) {
-				int type = shopItems[Main.rand.Next(shopItems.Count)].type;
-				Item.NewItem(NPC.GetSource_Death(), NPC.getRect(), type, 1);
-			}
+
+			CannotProgressionSystem.Instance.RefreshOnCannotDeath();
 		}
 	}
 
