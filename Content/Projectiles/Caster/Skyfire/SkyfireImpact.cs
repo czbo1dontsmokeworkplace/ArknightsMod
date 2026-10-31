@@ -6,6 +6,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using ArknightsMod.Content.Projectiles.Caster.SpreadArts;
+using ArknightsMod.Content.Projectiles.Guard.Reaper.Phoenix;
 
 namespace ArknightsMod.Content.Projectiles.Caster.Skyfire;
 
@@ -32,7 +33,7 @@ public sealed class SkyfireImpact : ModProjectile
 
     public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
     {
-        HelldiverExplosion.Spawn(Projectile, Projectile.Center, 7);
+        // Previous Helldiver explosion route is archived; damage and afterfield remain.
         Vector2 center = Projectile.Center;
         Projectile.width = Projectile.height = Skyfall ? 470 : 340;
         Projectile.Center = center;
@@ -41,6 +42,8 @@ public sealed class SkyfireImpact : ModProjectile
                 ModContent.ProjectileType<SpreadAfterfield>(), Math.Max(1, (int)(Projectile.damage * .30f)),
                 Projectile.knockBack, Projectile.owner, 3f);
     }
+
+    public override bool ShouldUpdatePosition() => false;
 
     public override bool? CanDamage() => Age <= 2f ? null : false;
 
@@ -60,7 +63,7 @@ public sealed class SkyfireImpact : ModProjectile
     public override void AI()
     {
         if (Projectile.localAI[0]++ != 0f || Main.dedServ) return;
-        SkyfireVisuals.ImpactParticles(Projectile.Center, Skyfall);
+        PhoenixFx.Skyfire(Projectile.Center,Skyfall?1.65f:1.15f,Projectile.velocity);
     }
 
     public override bool PreDraw(ref Color lightColor)

@@ -12,379 +12,379 @@ DefenderRecipeGroups: {
 Items: {
 	BisonShield: {
 		DisplayName: Bulwark [Bison]
-		Tooltip: Measured strikes with defensive and impact skills
+		Tooltip: Defensive skills protect nearby allies; Deepening the Frontline stops attacks and increases aggro.
 	}
 
 	HeavyrainBlade: {
 		DisplayName: Rainveil [Heavyrain]
-		Tooltip: Quick cuts with defensive and sustained-attack skills
+		Tooltip: Emergency Camouflage supports wounded allies; Group Camouflage provides concealment and survival buffs.
 	}
 
 	HoshigumaShield: {
 		DisplayName: Hannya [Hoshiguma]
-		Tooltip: Heavy sweeps release an impact pulse during the attack skill
+		Tooltip: Warpath boosts offense and defense; Saw of Strength adds a continuous shield saw, retaining swing impacts.
 	}
 
 	LutonHammer: {
 		DisplayName: Iron Maul [Luton]
-		Tooltip: Hits restore health; skills improve sustained combat
+		Tooltip: Contact healing; Power Strike empowers one swing, while Magnetic Defense raises a shield and an Arts magnetic field.
 	}
 
 	BlitzPistol: {
 		DisplayName: Flashpoint [Blitz]
-		Tooltip: Fast ammo-free Arts rounds briefly slow enemies
+		Tooltip: Fires fast Arts rounds without ammo; Flash Shield confuses ordinary enemies and Breach the Line accelerates fire.
 	}
 
 	JessicaLiberatedGun: {
 		DisplayName: Liberation [Jessica]
-		Tooltip: Piercing electron rounds release area discharge during the attack skill
+		Tooltip: Fires penetrating electronic rounds; Hold the Line provides lasting buffs, while Covering Protection grants rapid fire and evasion.
 	}
 
 	MechanistGun: {
 		DisplayName: Workshop [Mechanist]
-		Tooltip: Fast Arts rounds inflict Ichor to weaken defense
+		Tooltip: Hits inflict Ichor; Cluster Analysis fires five-round volleys and Defensive Formula provides rebuilding electric barriers.
 	}
 
 	FaithMixer: {
 		DisplayName: Faith Mixer
-		Tooltip: Fires three spread Arts rounds dealing 45% attack damage each
+		Tooltip: Fires three spread Arts rounds at 45% ATK each; skills empower one volley or grant ammunition and lethal-hit protection.
 	}
 
 	AsbestosBlade: {
 		DisplayName: Heat Barrier [Asbestos]
-		Tooltip: Skills convert strikes to Arts damage and ignite targets
+		Tooltip: Defense Mode counters projectiles; Thermal Mode strengthens Arts area swings.
 	}
 
 	ShalemBlade: {
 		DisplayName: Dusk Edge [Shalem]
-		Tooltip: Skills convert strikes to Arts damage; attack skill adds area impacts
+		Tooltip: Quick Resolution boosts HP and attack speed; Blood-Paid Revelry spends HP to add six homing Arts shards per swing.
 	}
 
 	CzernyBlade: {
 		DisplayName: Sonata [Czerny]
-		Tooltip: Skills convert strikes to Arts damage; defense skill grants regeneration
+		Tooltip: Flying Fingers boosts ATK and projectile resistance; Stunning Finale builds ATK when hit and releases an Arts finale on expiry.
 	}
 
 	HoshigumaBlazingBlade: {
 		DisplayName: Karmic Edge [Hoshiguma]
-		Tooltip: Skills convert strikes to Arts damage; attack skill releases searing impacts
+		Tooltip: Bitter Karma retaliates when hit; Beginningless Ignorance deploys an orbiting shield with damage-based healing.
 	}
 
 	AshlockLauncher: {
 		DisplayName: Siege Mortar [Ashlock]
-		Tooltip: Consumes grenades for ranged bombardment while guarding
+		Tooltip: Midgame Hardmode Fortress weapon. Consumes 1 Grenade per shot; shell speed 15, blast radius 90 pixels. S2 grants rapid fire; can fire while guarding.
 	}
 
 	BubbleMaul: {
 		DisplayName: Ramming Maul [Bubble]
-		Tooltip: Right-click to dash and rebound; immune during the collision dash
+		Tooltip: Retains the right-click dash and bounce; S2 stops left-click attacks and retaliates using DEF when hit.
 	}
 
 	AuroraAxe: {
 		DisplayName: Tundra Axe [Aurora]
-		Tooltip: Right-click collision dash; melee hits inflict Frostburn
+		Tooltip: Retains right-click dash; normal hits inflict Frostburn, while Artificial Snowfall builds chill and empowers later hits.
 	}
 
 	CementMaul: {
 		DisplayName: Bedrock Maul [Cement]
-		Tooltip: Right-click collision dash; defense skill improves defense and regeneration
+		Tooltip: Retains right-click dash; Strata Breaker releases an area impact and Structural Reinforcement provides expendable DEF stacks.
 	}
 
 	MatterhornBlade: {
 		DisplayName: Mountain Ward [Matterhorn]
-		Tooltip: Hits accumulate Nervous Impairment; skills amplify accumulation
+		Tooltip: Melee accumulates Nervous Impairment; skills specialize in HP recovery or projectile resistance.
 	}
 
 	PhilaeBlade: {
 		DisplayName: Reedshade [Philae]
-		Tooltip: Hits accumulate Nervous Impairment; attack skill increases buildup
+		Tooltip: Melee accumulates Necrosis; grants an HP barrier or stops attacking to retaliate when hit.
 	}
 
 	BasslineBlade: {
 		DisplayName: Resonance [Bassline]
-		Tooltip: Hits accumulate Necrosis Impairment; defense skill grants regeneration
+		Tooltip: Melee accumulates Nervous Impairment; Guiding Light grants a barrier and recurring impairment waves.
 	}
 
 	UnderflowBlade: {
 		DisplayName: Riftcurrent [Underflow]
-		Tooltip: Hits accumulate Corrosion Impairment; attack skill increases buildup
+		Tooltip: Melee accumulates Corrosion; Run Aground consumes DEF stacks when hit and triggers Corrosion retaliation.
 	}
 
 	YuBlade: {
 		DisplayName: Origin [Yu]
-		Tooltip: Hits accumulate Nervous Impairment; attack skill adds area impacts
+		Tooltip: Melee accumulates Burn; defensive retaliation and offensive Arts swings with increased HP.
 	}
 
 	SanbyBlade: {
 		DisplayName: Ember Origin [Sanby]
-		Tooltip: Hits accumulate Burn Impairment; skills improve buildup
+		Tooltip: Melee accumulates Corrosion; S1 pushes ordinary enemies and S2 lays a lingering slowing glue field.
 	}
 }
 
 Skills: {
 	BisonShield: {
 		1: {
-			Label: Defensive Stance
-			Desc: For 20 seconds, +80% defense and +2 health regeneration per second
+			Label: DEF Up γ
+			Desc: 40s: DEF +100%.
 		}
 
 		2: {
-			Label: Offensive Release
-			Desc: For 20 seconds, +30% defense and +80% damage
+			Label: Deepening the Frontline
+			Desc: 40s: stops attacking and guards; DEF +120%, increased aggro; allies within 480 pixels gain 30% DEF, without stacking.
 		}
 	}
 
 	HeavyrainBlade: {
 		1: {
-			Label: Defensive Stance
-			Desc: For 20 seconds, +80% defense and +2 health regeneration per second
+			Label: Emergency Camouflage
+			Desc: 4s: camouflages the lowest-HP ally below 50% HP within 480 pixels. Self-heal: 4% Max HP/s; ally regen: 4 HP/s. Stores 2 charges.
 		}
 
 		2: {
-			Label: Offensive Release
-			Desc: For 20 seconds, +30% defense and +80% damage
+			Label: Group Camouflage
+			Desc: 20s: stops attacking and guards; DEF and Max HP +55%; camouflages self and allies within 480 pixels, reducing aggro.
 		}
 	}
 
 	HoshigumaShield: {
 		1: {
-			Label: Defensive Stance
-			Desc: For 20 seconds, +80% defense and +2 health regeneration per second
+			Label: Warpath
+			Desc: 30s: ATK +40%; DEF +80%.
 		}
 
 		2: {
-			Label: Offensive Release
-			Desc: For 20 seconds, +30% defense and +80% damage
+			Label: Saw of Strength
+			Desc: 25s: ATK +140%, DEF +90%, attack speed +30%; shield saw deals 35% current ATK every 0.25s nearby. Swing impact retained.
 		}
 	}
 
 	LutonHammer: {
 		1: {
-			Label: Defensive Stance
-			Desc: For 20 seconds, +80% defense and +2 health regeneration per second
+			Label: Power Strike β
+			Desc: The next swing deals 230% ATK. Activates on attack when charged; can remain armed for 30s. Retains contact healing.
 		}
 
 		2: {
-			Label: Offensive Release
-			Desc: For 20 seconds, +30% defense and +80% damage
+			Label: Magnetic Defense
+			Desc: 30s: stops attacking and guards; DEF +130%. Every 2s, deals Arts damage within 190 pixels and gently pulls knockback-susceptible ordinary enemies.
 		}
 	}
 
 	BlitzPistol: {
 		1: {
-			Label: Defensive Stance
-			Desc: For 20 seconds, +80% defense and +2 health regeneration per second
+			Label: Flash Shield
+			Desc: Flashes in front, confusing ordinary enemies within 150 pixels for 3s; does not confuse bosses.
 		}
 
 		2: {
-			Label: Offensive Release
-			Desc: For 20 seconds, +30% defense and +80% damage; hits release area discharge
+			Label: Breach the Line
+			Desc: 7s: attack speed becomes 250%; activation releases a frontal electric impact for 200% ATK. Retains discharge and slow.
 		}
 	}
 
 	JessicaLiberatedGun: {
 		1: {
-			Label: Defensive Stance
-			Desc: For 20 seconds, +80% defense and +2 health regeneration per second
+			Label: Hold the Line
+			Desc: ATK and DEF +70% until switching weapons or skills, or death. Retains penetrating electronic rounds.
 		}
 
 		2: {
-			Label: Offensive Release
-			Desc: For 20 seconds, +30% defense and +80% damage; hits release area discharge
+			Label: Covering Protection
+			Desc: 15s: ATK +75%, attack speed becomes 180%; 50% chance to evade enemy hits. Retains area discharge.
 		}
 	}
 
 	MechanistGun: {
 		1: {
-			Label: Defensive Stance
-			Desc: For 20 seconds, +80% defense and +2 health regeneration per second
+			Label: Cluster Analysis
+			Desc: Loads 3 volleys of five cluster rounds; each deals 55% ATK and creates a small impact area. Attack speed becomes 60%; ends after 3 volleys or 30s.
 		}
 
 		2: {
-			Label: Offensive Release
-			Desc: For 20 seconds, +30% defense and +80% damage; hits release area discharge
+			Label: Defensive Formula
+			Desc: Up to 60s: ATK +150%; gains a 10% Max HP barrier. Breaking it releases an electric burst and spends one charge to rebuild, at most 7 rebuilds.
 		}
 	}
 
 	FaithMixer: {
 		1: {
-			Label: Defensive Stance
-			Desc: For 20 seconds, +80% defense and +2 health regeneration per second
+			Label: Gun-Knight Examiner
+			Desc: The next three-round spread gains 190% ATK, retaining the 45% per-round factor. Activates on attack when charged; armed for up to 30s.
 		}
 
 		2: {
-			Label: Offensive Release
-			Desc: For 20 seconds, +30% defense and +80% damage; hits release area discharge
+			Label: Eight-Armed Chainsaw Knight
+			Desc: Loads 50 volleys for up to 60s: ATK +150%, DEF +130%. Can spend 20 remaining volleys to block a lethal enemy hit.
 		}
 	}
 
 	AsbestosBlade: {
 		1: {
-			Label: Defensive Stance
-			Desc: For 20 seconds, +80% defense and +2 health regeneration per second; strikes deal magic damage
+			Label: Defense Mode
+			Desc: 20s: enemy projectile damage -30%; blocks the next enemy projectile hit. Attacks become Arts damage.
 		}
 
 		2: {
-			Label: Offensive Release
-			Desc: For 20 seconds, +30% defense and +80% damage; strikes deal magic damage
+			Label: Thermal Mode
+			Desc: 50s: ATK +90%, DEF +60%, attack speed becomes 80%; swings produce an Arts impact and ignite targets.
 		}
 	}
 
 	ShalemBlade: {
 		1: {
-			Label: Defensive Stance
-			Desc: For 20 seconds, +80% defense and +2 health regeneration per second; strikes deal magic damage
+			Label: Quick Resolution
+			Desc: 30s: Max HP +50%, attack speed becomes 165%; attacks become Arts damage.
 		}
 
 		2: {
-			Label: Offensive Release
-			Desc: For 20 seconds, +30% defense and +80% damage; strikes deal magic damage
+			Label: Blood-Paid Revelry
+			Desc: 20s: ATK +80%, attack speed +30%; loses 2% Max HP/s, stopping at 1 HP. Each swing fires six Arts shards at visible enemies within 540 pixels, each for 30% current ATK.
 		}
 	}
 
 	CzernyBlade: {
 		1: {
-			Label: Defensive Stance
-			Desc: For 20 seconds, +80% defense and +2 health regeneration per second; strikes deal magic damage
+			Label: Flying Fingers
+			Desc: 40s: ATK +80%; enemy projectile damage -40%; deals Arts damage.
 		}
 
 		2: {
-			Label: Offensive Release
-			Desc: For 20 seconds, +30% defense and +80% damage; strikes deal magic damage
+			Label: Stunning Finale
+			Desc: 30s: Max HP +100%, increased aggro; each hit taken grants 15% ATK, up to 10 stacks. Natural expiry releases a 250% final-ATK Arts finale. Retains close-range retaliation.
 		}
 	}
 
 	HoshigumaBlazingBlade: {
 		1: {
-			Label: Defensive Stance
-			Desc: For 20 seconds, +80% defense and +2 health regeneration per second; strikes deal magic damage
+			Label: Bitter Karma
+			Desc: ATK and DEF +70% until switching weapons or skills, or death; taking damage triggers close Arts retaliation at most every 0.5s.
 		}
 
 		2: {
-			Label: Offensive Release
-			Desc: For 20 seconds, +30% defense and +80% damage; strikes deal magic damage
+			Label: Beginningless Ignorance
+			Desc: 20s: ATK +90%; an orbiting shield strikes each enemy at most every 0.5s and heals 15% of damage, capped at 4% Max HP per heal. Retains swing impacts.
 		}
 	}
 
 	AshlockLauncher: {
 		1: {
-			Label: Defensive Stance
-			Desc: For 20 seconds, +70% bombardment damage
+			Label: ATK Up γ
+			Desc: 30s: shell ATK +100%.
 		}
 
 		2: {
-			Label: Offensive Release
-			Desc: For 20 seconds, +70% bombardment damage and larger explosions
+			Label: Focused Bombardment
+			Desc: 10s: shell ATK +55%, attack speed becomes 250%; blast radius increases from 90 to 105 pixels. Can still fire while guarding.
 		}
 	}
 
 	BubbleMaul: {
 		1: {
-			Label: Defensive Stance
-			Desc: For 20 seconds, +80% defense and +2 health regeneration per second
+			Label: DEF Up β
+			Desc: 35s: DEF +80%; retains right-click collision dash.
 		}
 
 		2: {
-			Label: Offensive Release
-			Desc: For 20 seconds, +30% defense and +80% damage
+			Label: Defensive Current
+			Desc: 25s: stops left-click attacks; DEF +120%, increased aggro. Taking damage retaliates nearby for 50% current DEF at most every 0.5s. Right-click dash remains available.
 		}
 	}
 
 	AuroraAxe: {
 		1: {
-			Label: Defensive Stance
-			Desc: For 20 seconds, +80% defense and +2 health regeneration per second
+			Label: Homeland Guard
+			Desc: 30s: DEF +210%; immune to knockback, Chilled and Frozen. Retains right-click dash.
 		}
 
 		2: {
-			Label: Offensive Release
-			Desc: For 20 seconds, +30% defense and +80% damage
+			Label: Artificial Snowfall
+			Desc: Loads 9 attacks for up to 60s: ATK +75%, attack speed becomes 85%. Hits build chill; targets with two chill stacks take a 2x damage multiplier and Frostburn. Dashes also consume an attack.
 		}
 	}
 
 	CementMaul: {
 		1: {
-			Label: Defensive Stance
-			Desc: For 20 seconds, +80% defense and +2 health regeneration per second
+			Label: Strata Breaker
+			Desc: Immediately releases a 140-pixel impact for 280% ATK.
 		}
 
 		2: {
-			Label: Offensive Release
-			Desc: For 20 seconds, +30% defense and +80% damage
+			Label: Structural Reinforcement
+			Desc: 60s: gains 20 DEF stacks, each granting 8% DEF. Each hit taken removes one stack.
 		}
 	}
 
 	MatterhornBlade: {
 		1: {
-			Label: Defensive Stance
-			Desc: For 20 seconds, +80% defense and +2 health regeneration per second; double elemental impairment buildup
+			Label: Body Strengthening
+			Desc: 30s: Max HP +70%; restores 1.5% Max HP/s. Melee attacks retain Nervous accumulation.
 		}
 
 		2: {
-			Label: Offensive Release
-			Desc: For 20 seconds, +30% defense and +80% damage; double elemental impairment buildup
+			Label: Cold Survival
+			Desc: 30s: Max HP +50%, DEF +30%; enemy projectile damage -30%.
 		}
 	}
 
 	PhilaeBlade: {
 		1: {
-			Label: Defensive Stance
-			Desc: For 20 seconds, +80% defense and +2 health regeneration per second; double elemental impairment buildup
+			Label: Surging Souls
+			Desc: 15s: Max HP +90%; activation grants a barrier equal to 45% pre-skill Max HP. Melee attacks accumulate Necrosis.
 		}
 
 		2: {
-			Label: Offensive Release
-			Desc: For 20 seconds, +30% defense and +80% damage; double elemental impairment buildup
+			Label: Hymn of the Underworld
+			Desc: 40s: stops attacking and guards; Max HP +50%. Taking damage triggers close Arts and Necrosis retaliation at most every 2s.
 		}
 	}
 
 	BasslineBlade: {
 		1: {
-			Label: Defensive Stance
-			Desc: For 20 seconds, +80% defense and +2 health regeneration per second; double elemental impairment buildup
+			Label: Doorframe Brace
+			Desc: 30s: Max HP +130%. Melee attacks accumulate Nervous Impairment.
 		}
 
 		2: {
-			Label: Offensive Release
-			Desc: For 20 seconds, +30% defense and +80% damage; double elemental impairment buildup
+			Label: Guiding Light
+			Desc: 10s: gains a 30% Max HP barrier; releases an Arts and Nervous wave within 190 pixels each second.
 		}
 	}
 
 	UnderflowBlade: {
 		1: {
-			Label: Defensive Stance
-			Desc: For 20 seconds, +80% defense and +2 health regeneration per second; double elemental impairment buildup
+			Label: Set Anchor
+			Desc: 20s: Max HP +100%; restores 2% Max HP/s. Melee attacks accumulate Corrosion.
 		}
 
 		2: {
-			Label: Offensive Release
-			Desc: For 20 seconds, +30% defense and +80% damage; double elemental impairment buildup
+			Label: Run Aground
+			Desc: 45s: gains 5 reinforcement stacks, each granting 20% DEF. Taking damage removes one and triggers close Corrosion retaliation, at most every 0.5s.
 		}
 	}
 
 	YuBlade: {
 		1: {
-			Label: Defensive Stance
-			Desc: For 20 seconds, +80% defense and +2 health regeneration per second; double elemental impairment buildup
+			Label: A Forest of Guests
+			Desc: 30s: Max HP and DEF +70%, increased aggro. Taking damage triggers close retaliation and Burn accumulation, at most every 0.5s.
 		}
 
 		2: {
-			Label: Offensive Release
-			Desc: For 20 seconds, +30% defense and +80% damage; double elemental impairment buildup
+			Label: Bright Hearth
+			Desc: 20s: ATK +190%, Max HP +60%; attacks become Arts damage. Activation releases a Burn impact. Retains swing shockwaves.
 		}
 	}
 
 	SanbyBlade: {
 		1: {
-			Label: Defensive Stance
-			Desc: For 20 seconds, +80% defense and +2 health regeneration per second; double elemental impairment buildup
+			Label: Still Here?
+			Desc: 30s: ATK and DEF +50%; melee pushes knockback-susceptible ordinary enemies. Accumulates Corrosion.
 		}
 
 		2: {
-			Label: Offensive Release
-			Desc: For 20 seconds, +30% defense and +80% damage; double elemental impairment buildup
+			Label: Take Your Time
+			Desc: 20s: ATK and DEF +70%; lays a glue field ahead, dealing 50% current ATK as physical damage and accumulating Corrosion every 0.7s. Slows ordinary enemies.
 		}
 	}
 }
 
-BranchTraits.PrimalProtector: Primal Protector:  Melee hits build elemental impairment; skills double buildup. Right-click to guard
+BranchTraits.PrimalProtector: Primal Protector: melee hits accumulate elemental impairment, doubled during skills; right-click to guard

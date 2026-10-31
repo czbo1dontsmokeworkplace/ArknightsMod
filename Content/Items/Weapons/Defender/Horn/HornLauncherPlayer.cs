@@ -106,6 +106,7 @@ public sealed class HornLauncherPlayer : ModPlayer
         {
             Main.projectile[index].CritChance = Player.GetWeaponCrit(Player.HeldItem);
             ((HornGrenade)Main.projectile[index].ModProjectile).VisualState = visualState;
+            ((HornGrenade)Main.projectile[index].ModProjectile).SourceItemType = Player.HeldItem.type;
             Main.projectile[index].netUpdate = true;
         }
         HornVisuals.Muzzle(origin, aim, false);

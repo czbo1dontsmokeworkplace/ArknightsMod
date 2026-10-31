@@ -57,8 +57,8 @@ public sealed class CrossbowBolt : ModProjectile
         }
         if (Kind == CrossbowKind.Pozemka)
         {
-            Projectile.penetrate = 2;
-            Projectile.localNPCHitCooldown = 30;
+            Projectile.penetrate = 1;
+            Projectile.localNPCHitCooldown = -1;
         }
         if (Kind == CrossbowKind.Melanite) Projectile.penetrate = Projectile.ai[1] == 2 ? 8 : 6;
         if (Kind == CrossbowKind.Provence) Projectile.penetrate = 9;
@@ -69,7 +69,8 @@ public sealed class CrossbowBolt : ModProjectile
         Projectile.extraUpdates = Kind == CrossbowKind.Schwarz ? 3 : Kind == CrossbowKind.Pozemka ? 2 : 1;
         age++;
         if (Kind == CrossbowKind.Schwarz) Projectile.penetrate = -1;
-        else if (Kind == CrossbowKind.Pozemka) UpdateRoseHoming();
+        // The rose arrow ends on first impact; its separate blink strike never turns back.
+        else if (Kind == CrossbowKind.Pozemka) { }
         else if (age >= 15 && Kind < CrossbowKind.Melanite) Projectile.velocity.Y = Math.Min(16f, Projectile.velocity.Y + .2f);
         if (Kind >= CrossbowKind.Melanite && age > 150) { Projectile.Kill(); return; }
         Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
@@ -109,6 +110,7 @@ public sealed class CrossbowBolt : ModProjectile
     }
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
     {
+        if (Kind == CrossbowKind.Pozemka && projHitbox.Intersects(targetHitbox)) return true;
         float point = 0;
         return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(),
             Projectile.Center - Projectile.velocity, Projectile.Center, Kind == CrossbowKind.Schwarz ? 12f : 6f, ref point);
@@ -129,12 +131,6 @@ public sealed class CrossbowBolt : ModProjectile
         lastVisualHitTick = Main.GameUpdateCount;
         if (Kind == CrossbowKind.BluePoison) target.AddBuff(BuffID.Venom, 240);
         if (Kind == CrossbowKind.KroosAlter) target.AddBuff(BuffID.Frostburn, 180);
-        if (Kind == CrossbowKind.Pozemka && Projectile.penetrate == 2)
-        {
-            returnTarget = target.whoAmI;
-            Projectile.ai[2] = -30f;
-            Projectile.netUpdate = true;
-        }
         if (Kind == CrossbowKind.Schwarz)
         {
             // Apply decay to the NEXT target, preserving precision instead of flooring damage every hit.

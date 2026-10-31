@@ -19,6 +19,7 @@ internal static class DefenderRouteCombatNet
             packet.Write(projectile.identity); packet.Write((short)target.whoAmI); packet.Write(damage); packet.Write(sequence); packet.Send();
         }
         else if (projectile.ModProjectile is DefenderHoldout held) held.ApplyRouteEffects(target, damage, sequence);
+        else if (projectile.ModProjectile is EunectesDash dash) dash.ApplyRouteEffects(target, damage, sequence);
     }
     internal static void Receive(BinaryReader reader, int sender)
     {
@@ -27,7 +28,15 @@ internal static class DefenderRouteCombatNet
         Player owner = Main.player[sender]; NPC target = Main.npc[npc];
         if (!owner.active || owner.dead || !DefenderRules.IsWeapon(owner.HeldItem) || !target.active || target.friendly || target.dontTakeDamage) return;
         foreach (var p in Main.ActiveProjectiles) {
-            if (p.owner != sender || p.identity != identity || p.ModProjectile is not DefenderHoldout held || (int)p.ai[0] != owner.HeldItem.type) continue;
+            if (p.owner != sender || p.identity != identity) continue;
+            if (p.ModProjectile is EunectesDash dash && (int)p.ai[1] == owner.HeldItem.type)
+            {
+                if (Vector2.DistanceSquared(owner.Center, target.Hitbox.ClosestPointInRect(owner.Center)) <= 110f * 110f
+                    && Collision.CanHitLine(owner.Center, 1, 1, target.position, target.width, target.height))
+                    dash.ApplyRouteEffects(target, damage, sequence);
+                return;
+            }
+            if (p.ModProjectile is not DefenderHoldout held || (int)p.ai[0] != owner.HeldItem.type) continue;
             if (held.CanDamage() == false) return;
             float reach = DefenderRules.WeaponLength(owner.HeldItem) + 64;
             if (Vector2.DistanceSquared(owner.Center, target.Hitbox.ClosestPointInRect(owner.Center)) > reach * reach

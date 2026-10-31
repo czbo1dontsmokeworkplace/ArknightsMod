@@ -31,14 +31,20 @@ public class KroosAlterCrossbow : CrossbowWeaponBase
     }
 
     public override void AddRecipes() {
-        Recipe recipe = CreateRecipe()
-            .AddIngredient<global::ArknightsMod.Content.Items.Material.OrironCluster>(1)
-            .AddIngredient<global::ArknightsMod.Content.Items.Material.Polyketon>(2);
-        recipe.AddIngredient<global::ArknightsMod.Content.Items.Weapons.Sniper.Kroos.KroosCrossbow>();
-        recipe.AddRecipeGroup(global::ArknightsMod.Content.Items.Weapons.OperatorWeaponRecipeGroups.CobaltOrPalladiumBar, 8);
-        recipe.AddIngredient(ItemID.SoulofLight, 15);
-        recipe.AddIngredient(ItemID.CrystalShard, 5);
-        recipe.AddTile(ModContent.TileType<FactoryTile>());
-        recipe.Register();
+        // Both pre-hardmode crossbows feed the same next-stage weapon.
+        foreach (int crossbow in new[] {
+            ModContent.ItemType<global::ArknightsMod.Content.Items.Weapons.Sniper.Kroos.KroosCrossbow>(),
+            ModContent.ItemType<global::ArknightsMod.Content.Items.Weapons.Sniper.Adnachiel.AdnachielCrossbow>() })
+        {
+            CreateRecipe()
+                .AddIngredient<global::ArknightsMod.Content.Items.Material.OrironCluster>(1)
+                .AddIngredient<global::ArknightsMod.Content.Items.Material.Polyketon>(2)
+                .AddIngredient(crossbow)
+                .AddRecipeGroup(global::ArknightsMod.Content.Items.Weapons.OperatorWeaponRecipeGroups.CobaltOrPalladiumBar, 8)
+                .AddIngredient(ItemID.SoulofLight, 15)
+                .AddIngredient(ItemID.CrystalShard, 5)
+                .AddTile(ModContent.TileType<FactoryTile>())
+                .Register();
+        }
     }
 }

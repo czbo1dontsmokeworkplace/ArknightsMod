@@ -16,10 +16,17 @@ internal static class DefenderRules
     internal static bool IsSentinel(Item item) => DefenderRouteCatalog.Find(item)?.Branch == "SentinelProtector";
     internal static bool IsPrimal(Item item) => DefenderRouteCatalog.Find(item)?.Branch == "PrimalProtector";
     internal static bool SkillActive(Player player) => IsWeapon(player.HeldItem)
-        && player.GetModPlayer<WeaponPlayer>() is { SkillActive: true } skills
-        && skills.CurrentSkill?.Key.Item == player.HeldItem.ModItem.Name;
+        && (player.whoAmI == Main.myPlayer
+            ? player.GetModPlayer<WeaponPlayer>() is { SkillActive: true } skills
+                && skills.CurrentSkill?.Key.Item == player.HeldItem.ModItem.Name
+            : player.GetModPlayer<DefenderCombatPlayer>() is var remote && remote.RemoteSkill >= 0
+                && remote.RemoteItem == player.HeldItem.type && Main.GameUpdateCount <= remote.RemoteUntil);
+    internal static int SkillIndex(Player player) => player.whoAmI == Main.myPlayer
+        ? player.GetModPlayer<WeaponPlayer>().Skill : player.GetModPlayer<DefenderCombatPlayer>().RemoteSkill;
+    internal static int SkillTime(Player player) => player.whoAmI == Main.myPlayer
+        ? player.GetModPlayer<WeaponPlayer>().SkillTimer : player.GetModPlayer<DefenderCombatPlayer>().RemoteTime;
     internal static bool Skill(Player player, int index) => SkillActive(player)
-        && player.GetModPlayer<WeaponPlayer>().Skill == index;
+        && SkillIndex(player) == index;
     internal static float WeaponLength(Item item) => item.ModItem?.Name switch
     {
         "CardiWeapon" => 32.56f,
@@ -34,6 +41,7 @@ internal static class DefenderRules
     internal static DamageClass AttackClass(Player player) => IsFortress(player.HeldItem) ? DamageClass.Ranged
         : IsSentinel(player.HeldItem) ? DamageClass.Magic
         : DefenderRouteCatalog.Find(player.HeldItem)?.Branch == "ArtsProtector" && SkillActive(player) ? DamageClass.Magic
+        : player.HeldItem.ModItem?.Name == "YuBlade" && Skill(player, 1) ? DamageClass.Magic
         : player.HeldItem.ModItem?.Name == "NianWeapon" && Skill(player, 0) ? DamageClass.Magic : DamageClass.Melee;
     internal static string MainArt(Item item) => item.ModItem?.Name switch
     {
@@ -66,6 +74,28 @@ internal static class DefenderRules
     };
     internal static Color Color(Item item) => item.ModItem?.Name switch
     {
+        "BisonShield" => new Color(112, 158, 191),
+        "HeavyrainBlade" => new Color(166, 197, 172),
+        "HoshigumaShield" => new Color(120, 182, 155),
+        "LutonHammer" => new Color(119, 187, 221),
+        "BlitzPistol" => new Color(255, 227, 160),
+        "JessicaLiberatedGun" => new Color(222, 176, 118),
+        "MechanistGun" => new Color(128, 207, 206),
+        "FaithMixer" => new Color(240, 211, 145),
+        "AsbestosBlade" => new Color(142, 214, 189),
+        "ShalemBlade" => new Color(185, 90, 145),
+        "CzernyBlade" => new Color(226, 207, 156),
+        "HoshigumaBlazingBlade" => new Color(244, 126, 89),
+        "AshlockLauncher" => new Color(213, 186, 149),
+        "BubbleMaul" => new Color(202, 178, 135),
+        "AuroraAxe" => new Color(164, 222, 237),
+        "CementMaul" => new Color(201, 180, 155),
+        "MatterhornBlade" => new Color(182, 193, 161),
+        "PhilaeBlade" => new Color(172, 122, 205),
+        "BasslineBlade" => new Color(228, 193, 110),
+        "UnderflowBlade" => new Color(182, 156, 195),
+        "YuBlade" => new Color(240, 155, 95),
+        "SanbyBlade" => new Color(164, 215, 154),
         "DN_Weapon" or "LiskarmPistol" => new Color(135, 180, 255),
         "NianWeapon" => new Color(255, 100, 80),
         "Vulcan_Weapon" or "MudrockHammer" => new Color(195, 160, 115),

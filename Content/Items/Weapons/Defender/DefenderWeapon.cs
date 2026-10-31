@@ -1,3 +1,4 @@
+using System;
 using ArknightsMod.Content.Projectiles.Defender;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
@@ -15,7 +16,8 @@ public abstract class DefenderWeapon : ExpansionWeaponBase
     public override void SetDefaults()
     {
         Item.damage = EliteDamage[0];
-        Item.DamageType = DefenderRules.IsFortress(Item) ? DamageClass.Ranged : DamageClass.Melee;
+        Item.DamageType = DefenderRules.IsFortress(Item) ? DamageClass.Ranged
+            : DefenderRules.IsSentinel(Item) ? DamageClass.Magic : DamageClass.Melee;
         Item.width = Item.height = 48;
         Item.useStyle = ItemUseStyleID.Shoot;
         Item.useTime = Item.useAnimation = Interval;
@@ -25,8 +27,9 @@ public abstract class DefenderWeapon : ExpansionWeaponBase
         if (Name == "NoirShield") Item.knockBack = 12f;
         Item.shoot = ModContent.ProjectileType<DefenderHoldout>();
         Item.shootSpeed = 1f;
-        Item.rare = ItemRarityID.Orange;
-        Item.value = Item.sellPrice(gold: 2);
+        int tier = DefenderRouteCatalog.Find(Name)?.Tier ?? 2;
+        Item.rare = tier switch { 0 => ItemRarityID.White, 1 => ItemRarityID.Blue, 2 => ItemRarityID.Orange, 3 => ItemRarityID.Pink, _ => ItemRarityID.Lime };
+        Item.value = Item.sellPrice(gold: Math.Max(1, tier * 2));
     }
     public override bool AltFunctionUse(Player player) => false;
     public override bool CanUseItem(Player player)
@@ -36,7 +39,12 @@ public abstract class DefenderWeapon : ExpansionWeaponBase
             player.GetModPlayer<DefenderCombatPlayer>().TryActivate();
             return false;
         }
-        return !ShieldGuardRules.IsRaised(player) && !DefenderHoldout.IsBusy(player)
+        var skills = player.GetModPlayer<WeaponPlayer>();
+        if (DefenderSkillRules.UsesOneAttack(Name, skills.Skill) && skills.CurrentSkill?.Key.Item == Name
+            && !skills.SkillActive && skills.StockCount > 0 && !ShieldGuardRules.WantsRaised(player)
+            && !DefenderHoldout.IsBusy(player) && !player.GetModPlayer<EunectesDashPlayer>().Dashing)
+            player.GetModPlayer<DefenderCombatPlayer>().TryActivate();
+        return !ShieldGuardRules.WantsRaised(player) && !DefenderHoldout.IsBusy(player)
             && !player.GetModPlayer<DefenderCombatPlayer>().StopsAttacking
             && !player.GetModPlayer<EunectesDashPlayer>().Dashing;
     }
@@ -55,20 +63,8 @@ public abstract class DefenderWeapon : ExpansionWeaponBase
     public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
     {
         base.ModifyWeaponDamage(player, ref damage);
-        if (!DefenderRules.SkillActive(player)) return;
-        int skill = player.GetModPlayer<WeaponPlayer>().Skill;
-        if (this is RoutedDefenderWeapon) { damage *= skill == 1 ? 1.8f : 1f; return; }
-        damage *= Name switch
-        {
-            "DN_Weapon" => 1.8f,
-            "NianWeapon" => skill == 0 ? 1.45f : skill == 2 ? 2.2f : 1f,
-            "Vulcan_Weapon" => skill == 1 ? 1.9f : 1f,
-            "LiskarmPistol" => skill == 1 ? 1.8f : 1f,
-            "CroissantHammer" => skill == 1 ? 2.2f : 1f,
-            "MudrockHammer" => skill == 2 ? 2.4f : skill == 1 ? 1.6f : 1f,
-            "EunectesAxe" => skill == 2 ? 2.8f : skill == 1 ? 2f : 1.3f,
-            _ => 1f
-        };
+        damage *= DefenderSkillRules.Stats(player).Attack;
     }
+    public override float UseSpeedMultiplier(Player player) => DefenderSkillRules.Stats(player).Speed;
     public override void AddRecipes() => DefenderRecipes.Register(this);
 }

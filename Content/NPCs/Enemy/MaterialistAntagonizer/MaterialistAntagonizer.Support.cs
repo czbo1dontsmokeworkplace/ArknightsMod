@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
+using ArknightsMod.Content.NPCs.Enemy.ThroughChapter4;
 
 namespace ArknightsMod.Content.NPCs.Enemy.MaterialistAntagonizer;
 
@@ -36,7 +37,7 @@ public sealed partial class MaterialistAntagonizer
         if (Authority && SupportMode == 1 && SupportAge >= 42)
             foreach (NPC escort in Main.ActiveNPCs)
             {
-                if (!escort.TryGetGlobalNPC<MaterialistWing>(out var wing) || !wing.BelongsTo(this) || wing.Retreating ||
+                if (escort.ModNPC is BomberDrone || !escort.TryGetGlobalNPC<MaterialistWing>(out var wing) || !wing.BelongsTo(this) || wing.Retreating ||
                     (healedSlots & (1 << wing.Slot)) != 0 || SupportAge < 102 && escort.Distance(SupportOrigin) > RepairRadius) continue;
                 healedSlots |= 1 << wing.Slot;
                 RestoreEscort(escort, (int)Math.Ceiling(escort.lifeMax * .90f));
@@ -63,7 +64,7 @@ public sealed partial class MaterialistAntagonizer
     {
         NPC lowest = null;
         foreach (NPC escort in Main.ActiveNPCs)
-            if (escort.TryGetGlobalNPC<MaterialistWing>(out var wing) && wing.BelongsTo(this) && !wing.Retreating &&
+            if (escort.ModNPC is not BomberDrone && escort.TryGetGlobalNPC<MaterialistWing>(out var wing) && wing.BelongsTo(this) && !wing.Retreating &&
                 wing.Age >= MaterialistRules.EscortGrace && (lowest == null || escort.life < lowest.life)) lowest = escort;
         if (lowest == null) return false;
         SupportMode = supportSequence++ % 2 == 0 ? 1 : 2;

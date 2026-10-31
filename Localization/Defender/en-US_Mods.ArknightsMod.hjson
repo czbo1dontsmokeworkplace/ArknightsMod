@@ -3,143 +3,110 @@ DefenderRecipeGroup: Beagle or Cardigan shield
 Items: {
 	FirewhistleLauncher: {
 		DisplayName: Grenade Shield [Firewhistle]
-		Tooltip:
-			'''
-			Consumes 1 Grenade per shot, dealing ranged area damage
-			Shells fall under stronger gravity; guarding grants 50% DEF and 50% damage reduction while allowing fire
-			'''
+		Tooltip: Pre-Hardmode Fortress weapon. Consumes 1 Grenade per shot; strong shell gravity and 75-pixel blast radius. Wildfire empowers one shell; Scorched Earth leaves burning fields. Can fire while guarding.
 	}
 
 	LiskarmPistol: {
 		DisplayName: Shock Pistol and Shield [Liskarm]
-		Tooltip:
-			'''
-			Fires fast electron rounds dealing ranged magic damage without consuming bullets
-			During skill 2, rounds discharge on impact and damage nearby groups
-			'''
+		Tooltip: Fires electronic Arts rounds without ammo. Taking damage restores 1 SP; Defensive Charge blocks one hit and Counter Arc releases area discharges.
 	}
 
 	CroissantHammer: {
 		DisplayName: Hammer and Shield [Croissant]
-		Tooltip: Swing a heavy hammer; hits release area shockwaves during skill 2
+		Tooltip: Retains hammer swings; Automatic Defense boosts DEF and Magnetic Hammer strengthens attacks and area impacts.
 	}
 
 	MudrockHammer: {
 		DisplayName: Earthshaker Hammer [Mudrock]
-		Tooltip:
-			'''
-			Hammer hits restore 2% maximum life, at most once per second
-			Skill 2 empowers shockwaves and healing; skill 3 greatly boosts offense and defense
-			'''
+		Tooltip: Contact healing; Crag Splitter boosts area shocks and recovery; S3 prepares for 3s before empowered combat.
 	}
 
 	EunectesAxe: {
 		DisplayName: Jungle Great Axe [Eunectes]
-		Tooltip:
-			'''
-			Left-click to swing; right-click to charge toward the cursor for 400% attack damage
-			Rebound on enemy or wall impact; fully immune to damage during the charge
-			Charge cooldown: 1.5 seconds; replaces shield guarding
-			'''
+		Tooltip: Left-click swings; right-click dashes toward the cursor for 400% ATK with a bounce. Invulnerable during collision dash; 1.5s cooldown. Skills boost offense, defense or recovery.
 	}
 }
 
 Skills: {
 	FirewhistleLauncher: {
 		1: {
-			Label: Bombardment Up
-			Desc: Shell damage increases by 70% for 20 seconds; damage remains ranged
+			Label: Wildfire
+			Desc: The next shell deals 185% ATK and ignites targets for 4s. Activates on firing when charged; armed for up to 30s.
 		}
 
 		2: {
-			Label: Cluster Bombardment
-			Desc: Shell damage increases by 70% for 25 seconds; larger blasts burn enemies and still deal ranged damage
+			Label: Scorched Earth
+			Desc: 17s: shells leave 6s burning fields, dealing Arts damage equal to 85% ATK each second. Shell explosions retain ranged damage.
 		}
 	}
 
 	LiskarmPistol: {
 		1: {
-			Label: Charged Defense
-			Desc: Gain an additional 80% DEF for 20 seconds
+			Label: Defensive Charge
+			Desc: 8s: DEF +100%; blocks the next enemy hit. Taking damage while holding the weapon restores 1 SP.
 		}
 
 		2: {
 			Label: Counter Arc
-			Desc: Gain 80% ATK for 25 seconds; electron rounds release area Arts discharges
+			Desc: 20s: ATK +100%, attack speed becomes 80%; electronic rounds discharge on impact or wall contact.
 		}
 	}
 
 	CroissantHammer: {
 		1: {
-			Label: Defense Field
-			Desc: Gain an additional 80% DEF for 25 seconds
+			Label: Automatic Defense
+			Desc: 25s: DEF +80%.
 		}
 
 		2: {
 			Label: Magnetic Hammer
-			Desc: Gain 120% ATK for 12 seconds; hits release area shockwaves
+			Desc: 12s: ATK +120%; the first contact of each swing creates an area impact.
 		}
 	}
 
 	MudrockHammer: {
 		1: {
-			Label: Rock Guard
-			Desc: Gain an additional 80% DEF for 25 seconds
+			Label: DEF Up γ
+			Desc: 40s: DEF +100%.
 		}
 
 		2: {
 			Label: Crag Splitter
-			Desc:
-				'''
-				Gain 60% ATK for 25 seconds; hits release area shockwaves
-				On-hit healing increases to 6% maximum life, at most once per second
-				'''
+			Desc: 25s: ATK +170%; contact causes an area shock and restores 6% Max HP, at most once per second.
 		}
 
 		3: {
-			Label: Impure Earth
-			Desc:
-				'''
-				Gain 140% ATK and 60% DEF for 25 seconds
-				Each hit releases a large shockwave
-				'''
+			Label: Bloodline of Desecrated Earth
+			Desc: 25s: ATK +140%, DEF +80%, attack speed +30%. Begins with 3s of immobile, invulnerable preparation without attacking; subsequent swings create area shocks.
 		}
 	}
 
 	EunectesAxe: {
 		1: {
-			Label: Light Axe
-			Desc: Gain 30% ATK for 25 seconds
+			Label: Lightweight Axe
+			Desc: 25s: ATK +30%, DEF +25%. Retains right-click dash.
 		}
 
 		2: {
-			Label: Intimidating Slash
-			Desc: Gain 100% ATK for 20 seconds
+			Label: Intimidating Chop
+			Desc: 20s: ATK +100%, attack speed becomes 85%. Retains the right-click dash for 400% ATK.
 		}
 
 		3: {
 			Label: Iron Will
-			Desc:
-				'''
-				Gain 180% ATK and 100% DEF for 25 seconds
-				Regenerate approximately 1% maximum life per second
-				'''
+			Desc: 25s: ATK +180%, DEF +100%; restores 3% Max HP/s. Retains dash invulnerability and bounce.
 		}
 	}
 
 	Vulcan_Weapon: {
 		1: {
-			Label: Defense Mode
-			Desc: Gain 50% DEF for 25 seconds; regenerate approximately 1% maximum life per second
+			Label: Guard Mode
+			Desc: 30s: DEF +120%; restores 3% Max HP/s.
 		}
 
 		2: {
-			Label: Offensive Mode
-			Desc:
-				'''
-				Gain 90% ATK for 25 seconds
-				Hits restore 4% maximum life, at most once every 0.5 seconds
-				'''
+			Label: Combat Mode
+			Desc: 30s: ATK +150%, attack speed becomes 85%; restores 4% Max HP on contact, at most once per 0.5s.
 		}
 	}
 }

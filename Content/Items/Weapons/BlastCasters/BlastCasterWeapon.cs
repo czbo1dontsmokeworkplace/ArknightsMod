@@ -36,7 +36,7 @@ public abstract class BlastCasterWeapon : ExpansionWeaponBase
         Item.rare = Kind == BlastCasterKind.Corroserum ? ItemRarityID.LightRed : Kind == BlastCasterKind.Ifrit ? ItemRarityID.Yellow : ItemRarityID.Red;
         Item.value = Item.sellPrice(gold: 3 + (int)Kind * 5);
     }
-    public override bool AltFunctionUse(Player player) => Kind == BlastCasterKind.Aphrissa;
+    public override bool AltFunctionUse(Player player) => false;
     public override bool CanConsumeAmmo(Item ammo, Player player) => pickingAmmo;
     internal bool PickGel(Player player, bool consume, out int damage, out float knockback, out int ammo)
     {
@@ -53,7 +53,7 @@ public abstract class BlastCasterWeapon : ExpansionWeaponBase
     {
         if (ArknightsKeybinds.SkillActivatePressed(player))
         { player.GetModPlayer<BlastCasterPlayer>().HandleInput(this); return false; }
-        if (player.altFunctionUse == 2) return false; // Placement is handled even while channeling.
+        if (player.altFunctionUse == 2) return false; // No alternate-fire action.
         return player.ownedProjectileCounts[ModContent.ProjectileType<BlastCasterHoldout>()] == 0;
     }
     public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
@@ -69,8 +69,7 @@ public abstract class BlastCasterWeapon : ExpansionWeaponBase
     {
         base.ModifyTooltips(tooltips);
         tooltips.Add(new TooltipLine(Mod, "BlastSkillKey", GetSkillActivateKeyHint()));
-        if (Kind != BlastCasterKind.Ifrit)
-            tooltips.Add(new TooltipLine(Mod, "BlastPlaceholder", Language.GetTextValue("Mods.ArknightsMod.BlastCasterText.Placeholder")));
+
     }
 }
 

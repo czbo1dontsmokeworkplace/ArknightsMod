@@ -19,7 +19,7 @@ public sealed class MostimaStaff : ExpansionWeaponBase
         Item.width = Item.height = 48;
         Item.damage = EliteDamage[0];
         Item.DamageType = DamageClass.Magic;
-        Item.mana = 32;
+        Item.mana = 0; // The clock pays once per hand step, with no up-front/double charge.
         Item.useTime = Item.useAnimation = 20;
         Item.useStyle = ItemUseStyleID.Shoot;
         Item.channel = Item.autoReuse = Item.noMelee = Item.noUseGraphic = true;
@@ -28,6 +28,14 @@ public sealed class MostimaStaff : ExpansionWeaponBase
         Item.shootSpeed = 1f;
         Item.rare = ItemRarityID.Red;
         Item.value = Item.sellPrice(gold: 12);
+    }
+    internal static bool PayBeatMana(Player player)
+    {
+        // Use normal mana reductions, item hooks and mana-flower handling for each
+        // paid clock beat, without charging vanilla ItemCheck on initial channel.
+        Item cost = player.HeldItem.Clone();
+        cost.mana = 30;
+        return player.CheckMana(cost, -1, true, false);
     }
     internal static bool SkillActive(Player player, int index)
     {

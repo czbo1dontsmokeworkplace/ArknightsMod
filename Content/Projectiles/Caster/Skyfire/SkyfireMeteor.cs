@@ -65,6 +65,8 @@ public sealed class SkyfireMeteor : ModProjectile
 
     public override bool OnTileCollide(Vector2 oldVelocity)
     {
+        // Tile collision may zero velocity before OnKill; retain the incoming frame.
+        Projectile.velocity = oldVelocity;
         Projectile.Kill();
         return false;
     }
@@ -72,7 +74,7 @@ public sealed class SkyfireMeteor : ModProjectile
     public override void OnKill(int timeLeft)
     {
         if (Projectile.owner == Main.myPlayer)
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero,
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity,
                 ModContent.ProjectileType<SkyfireImpact>(),
                 Math.Max(1, (int)(Projectile.damage * (Skyfall ? 1.75f : 1.4f))),
                 Projectile.knockBack, Projectile.owner, Skyfall ? 1f : 0f);

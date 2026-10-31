@@ -232,6 +232,7 @@ public sealed partial class Isharmla : ModNPC
         foreach (NPC n in Main.ActiveNPCs)
         {
             bool bound = n.ModNPC is IsharmlaSeaborn s && s.OwnerIndex == NPC.whoAmI && s.Encounter == Encounter;
+            bound |= n.ModNPC is IsharmlaDrifter drifter && drifter.OwnerIndex == NPC.whoAmI && drifter.Encounter == Encounter;
             if (removeNpcs) bound |= n.ModNPC is IsharmlaDragon d && d.OwnerIndex == NPC.whoAmI && d.Encounter == Encounter ||
                 n.ModNPC is IsharmlaSegment part && part.OwnerIndex == NPC.whoAmI && part.Encounter == Encounter;
             if (bound) IsharmlaWorld.Deactivate(n);

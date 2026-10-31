@@ -18,7 +18,9 @@ public abstract class MedicWeapon : ExpansionWeaponBase
     public override int EliteStageMax => ProfileId is 0 or 22 ? 1 : 2;
     protected override int[] EliteDamage => [0, 0, 0];
     // Supplied item artwork is shared by inventory, dropped items and vanilla held-item drawing.
-    public override string Texture => ProfileId is 0 or 1 or 12 or 16 or 20 or 22
+    public override string Texture => ProfileId == 16
+        ? "ArknightsMod/Content/Projectiles/Medic/Arts/Mon3trHealingArt"
+        : ProfileId is 0 or 1 or 9 or 12 or 20 or 22
         ? "ArknightsMod/Content/Items/Weapons/Medic/" + Name
         : Profile.Branch == MedicBranch.Physician && Profile.Tier == 5
         ? "ArknightsMod/Content/Items/Weapons/Medic/Shining/ShiningSword"
@@ -27,7 +29,7 @@ public abstract class MedicWeapon : ExpansionWeaponBase
     public override Vector2? HoldoutOffset() => ProfileId switch
     {
         0 or 1 => new Vector2(-8, -2),
-        16 => new Vector2(-2, -2),
+        16 => new Vector2(-4, -1),
         _ => null
     };
     public override void SetDefaults()
@@ -36,8 +38,9 @@ public abstract class MedicWeapon : ExpansionWeaponBase
         {
             0 => (36, 34),
             1 => (30, 28),
+            9 => (50, 52),
             12 => (54, 54),
-            16 => (6, 18),
+            16 => (32, 18),
             20 => (64, 78),
             22 => (46, 46),
             _ => (40, 40)

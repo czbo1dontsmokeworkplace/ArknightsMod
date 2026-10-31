@@ -6,6 +6,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using ArknightsMod.Content.Projectiles.Guard.Reaper.Phoenix;
 
 namespace ArknightsMod.Content.Projectiles.Supporter.Magallan;
 
@@ -14,6 +15,7 @@ public sealed class MagallanLaser : ModProjectile
     public override string Texture => "ArknightsMod/Content/Projectiles/Supporter/Magallan/MagallanDrone";
     private Vector2 start;
     private bool hitTarget;
+    private PhoenixBeamFx beam;
     private const int Lifetime = 15;
     internal const float MaxLength = 19.5f * 16f;
 
@@ -58,6 +60,10 @@ public sealed class MagallanLaser : ModProjectile
 
         start = drone.Muzzle;
         Projectile.Center = Main.npc[targetId].Center;
+        if(!Main.dedServ)beam??=new PhoenixBeamFx("projectile.player.17.1",()=>start,()=>Projectile.Center,
+            ()=>Projectile.active && Projectile.timeLeft>Lifetime-3,MaxLength);
+        beam?.Extend();
+        if(Projectile.timeLeft<=Lifetime-3)beam?.Stop();
         if (Projectile.localAI[0]++ == 0 && !Main.dedServ)
             SoundEngine.PlaySound(SoundID.Item33 with { Volume = 0.4f, Pitch = 0.2f, MaxInstances = 3 }, start);
         if (!Main.dedServ) Lighting.AddLight(Projectile.Center, 0.2f, 0.55f, 0.3f);
@@ -66,14 +72,14 @@ public sealed class MagallanLaser : ModProjectile
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
     {
         hitTarget = true;
-        MagallanVisuals.Puff(target.Center, Vector2.Zero, new Color(151, 200, 174), 28f, 28, 0.4f);
-        MagallanVisuals.SparkBurst(target.Center, MagallanVisuals.ModuleColor(1), 3, 1.5f);
+        beam?.Hit(target.Center);
     }
+
+    public override void OnKill(int timeLeft)=>beam?.Stop();
 
     public override bool PreDraw(ref Color lightColor)
     {
-        float fade = MathF.Pow(Projectile.timeLeft / (float)Lifetime, 3f);
-        ClickTrackerLaser.DrawBeam(start, Projectile.Center, fade, 1, new Color(83, 235, 145));
+        // Three-tick Trireme pulse; detached path glows decay twice as fast afterwards.
         return false;
     }
 }

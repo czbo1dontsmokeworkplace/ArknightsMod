@@ -1,5 +1,6 @@
 using System;
 using ArknightsMod.Content.Items.Weapons.Guard.Reaper;
+using ArknightsMod.Content.Projectiles.Guard.Reaper.Phoenix;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -7,10 +8,12 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles.Guard.Reaper;
 
-// Radial spray followed by fast, direction-aware seeking. Flight and impact art are local.
+// Radial spray followed by fast, direction-aware seeking. Ship 81's visual graph
+// supplies the fluttering body, trails and impact, using each scythe's palette.
 // No ReaperPlayer hit callbacks: these ranged motes neither heal nor recover SP.
 public sealed class ReaperWisp : ModProjectile
 {
+    private ReaperSwarmInstance swarm;
     internal const int Lifetime = 84;
     internal const int DriftTicks = 20;
     internal ReaperKind Kind => (ReaperKind)(int)Projectile.ai[0];
@@ -71,16 +74,20 @@ public sealed class ReaperWisp : ModProjectile
         }
         Projectile.rotation = Projectile.velocity.ToRotation();
         Projectile.Opacity = Math.Min(1, (Age + 1) / 5f) * Math.Min(1, Projectile.timeLeft / 16f);
-        ReaperWispVisuals.Flight(this);
+        if(!Main.dedServ) {
+            swarm ??= new ReaperSwarmInstance(this);
+            swarm.Update(Age);
+            Lighting.AddLight(Projectile.Center,ReaperRules.Color(Kind).ToVector3()*(.38f*Projectile.Opacity));
+        }
     }
     public override void OnKill(int timeLeft)
     {
-        ReaperWispVisuals.Burst(Projectile.Center, Projectile.velocity, Kind, timeLeft > 0);
+        if(!Main.dedServ)swarm?.Stop();
     }
     public override bool PreDraw(ref Color lightColor)
     {
         if (!ReaperVisuals.Visible(Projectile.Center)) return false;
-        ReaperWispMaterial.Draw(this);
+        // The client visual system draws this projectile's imported graph once.
         return false;
     }
 }

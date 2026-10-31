@@ -2,7 +2,7 @@ BranchTraits: {
 	Ambusher: Ambusher:  Greatly reduces aggro while holding the weapon
 	DefenderProfession: Defender:  Right-click to raise your shield and guard; takes priority over left-click
 	Charger: Charger:  Left-click to thrust; right-click for a long-distance charge with a cooldown
-	PrimalCaster: Primal Caster:  Release violet flames and create allied servants when nearby enemies die
+	PrimalCaster: Primal Caster: Create temporary allied servants when enemies die
 	Fortress: Fortress:  Launch ranged artillery attacks while guarding with a shield
 	Protector: Protector:  Hold right-click to guard; cannot attack while guarding, but gains 50% DEF and 50% damage reduction
 	ArtsProtector: Arts Protector:  Attacks deal magic damage during skills

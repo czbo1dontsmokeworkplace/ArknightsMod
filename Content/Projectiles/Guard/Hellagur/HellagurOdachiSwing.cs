@@ -495,7 +495,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Hellagur
 				return;
 
 			slashDirection = slashDirection.SafeNormalize(Vector2.UnitX);
-			SpawnHitParticles(target.Center, empowered, slashDirection);
+            SpawnHitParticles(target.Center, empowered, slashDirection);
 
 			SoundEngine.PlaySound(SoundID.NPCHit1 with {
 				Volume = empowered ? 0.34f : 0.25f,

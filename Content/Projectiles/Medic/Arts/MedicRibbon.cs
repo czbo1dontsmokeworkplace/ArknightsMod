@@ -9,6 +9,7 @@ public sealed class MedicArtsGraphics : ModSystem
         // Effects and textures are ModContent-owned; release references rather than double-dispose them.
         MedicIdentityVisuals.Material = null;
         MedicPointedTrail.Material = null;
+        MedicVortexVisuals.Material = null;
         MedicArtsVfx.Materials.Clear();
     }
 }

@@ -21,7 +21,7 @@ Items: {
 		DisplayName: Medical Staff [Ansel]
 		Tooltip:
 			'''
-			Fire a pink rescue comet that flies swiftly before turning back toward patients
+			Throw a spinning medical supply leaving a pink energy trail that seeks patients after a short flight
 			Throw it upward to catch it yourself; globes take a brief moment to become active
 			'''
 	}
@@ -30,7 +30,7 @@ Items: {
 		DisplayName: Remedy Staff [Myrrh]
 		Tooltip:
 			'''
-			Lob an amber medicine glow that can bounce once off terrain
+			Lob a spinning medicine vial leaving an amber energy trail that can bounce once off terrain
 			Throw it upward to catch it yourself; globes take a brief moment to become active
 			'''
 	}
@@ -48,7 +48,7 @@ Items: {
 		DisplayName: Medical Staff [Silence]
 		Tooltip:
 			'''
-			Release a feather-shaped cluster of medical light that turns toward patients
+			Throw a spinning medical vial leaving an orange energy trail that turns toward patients after a short flight
 			Throw it upward to catch it yourself; globes take a brief moment to become active
 			'''
 	}
@@ -102,7 +102,7 @@ Items: {
 		DisplayName: Guiding Light [Lumen]
 		Tooltip:
 			'''
-			Send a blue-gold beacon that swiftly seeks patients after beginning its descent
+			Send a blue-white fish-shaped medical projectile that faces its flight direction and seeks patients after beginning its descent
 			Healing also shortens the duration of cleansable debuffs
 			'''
 	}
@@ -162,10 +162,10 @@ Items: {
 	}
 
 	Mon3trCore: {
-		DisplayName: Symbiotic Core [Mon3tr]
+		DisplayName: Symbiotic Medical Pistol [Mon3tr]
 		Tooltip:
 			'''
-			Fire emerald prism light that turns rapidly toward patients and sheds regenerative fragments
+			Fire medical rounds from a handheld pistol, turning rapidly toward patients and shedding regenerative fragments
 			Healing adds stackable regeneration, with a separate duration for each stack
 			'''
 	}

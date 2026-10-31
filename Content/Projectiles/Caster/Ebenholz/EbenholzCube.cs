@@ -1,3 +1,4 @@
+using ArknightsMod.Content.Projectiles.Caster;
 using ArknightsMod.Content.Items.Weapons.Caster;
 using System;
 using Microsoft.Xna.Framework;
@@ -72,12 +73,18 @@ public sealed class EbenholzCube : ModProjectile
     public override void OnKill(int timeLeft)
     {
         if (Projectile.ai[2] > 0f) return;
-        EbenholzVisuals.Scatter(Projectile.Center, Wisp ? 5 : 9, (Wisp ? 2f : 3.2f) * MysticChargeRules.VisualScale(Projectile));
+        bool photon = MysticPhotonShot.Eligible(Projectile);
+        if (!photon) EbenholzVisuals.Scatter(Projectile.Center, Wisp ? 5 : 9, (Wisp ? 2f : 3.2f) * MysticChargeRules.VisualScale(Projectile));
         if (Projectile.owner != Main.myPlayer || Wisp) return;
-        // 直击目标已经受过伤害；爆炸只补周围敌人，避免同一发重复结算。
-        int index = Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
-            ModContent.ProjectileType<EbenholzBurst>(), Projectile.damage, 2f, Projectile.owner, 0, excludedTarget + 1, MysticChargeRules.VisualScale(Projectile));
-        if (Main.projectile.IndexInRange(index)) Main.projectile[index].CritChance = Projectile.CritChance;
+        int index;
+        if (photon) MysticPhotonShot.Detonate(Projectile, excludedTarget);
+        else
+        {
+            // Legacy small impact is retained on the other two shots.
+            index = Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
+                ModContent.ProjectileType<EbenholzBurst>(), Projectile.damage, 2f, Projectile.owner, 0, excludedTarget + 1, MysticChargeRules.VisualScale(Projectile));
+            if (Main.projectile.IndexInRange(index)) Main.projectile[index].CritChance = Projectile.CritChance;
+        }
         if (!MysticChargeRules.IsStored(Projectile) || excludedTarget < 0) return;
         int target = EbenholzCombat.FindTarget(Projectile.Center, 600f, Projectile.Center, true);
         if (target < 0) return;

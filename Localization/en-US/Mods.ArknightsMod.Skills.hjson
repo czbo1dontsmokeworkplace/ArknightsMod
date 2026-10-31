@@ -225,7 +225,7 @@ ThornsWeapon: {
 BeagleWeapon: {
 	1: {
 		Label: DEF Up α
-		Desc: DEF [c/3791db:+25%]
+		Desc: 30s: DEF +50%.
 	}
 }
 
@@ -270,15 +270,15 @@ ChenSword_Item: {
 
 	2: {
 		Label: Chixiao: Draw
-		Desc: After a brief charge, deal [c/EDA128:Physical] damage equal to [c/3791db:500%] of ATK and [c/EDA128:Arts] damage equal to [c/3791db:500%] of ATK to enemies in front (can be held)
+		Desc: Automatically draw after a very short wind-up, dealing [c/EDA128:Physical] damage equal to [c/3791db:500%] of ATK and [c/EDA128:Arts] damage equal to [c/3791db:500%] of ATK to enemies in front. No holding required; recovery is faster.
 	}
 
 	3: {
 		Label: Chixiao: Afterimage
 		Desc:
 			'''
-			Hold to charge, then strike the target [c/3791db:10] consecutive times
-			Each strike deals Physical damage equal to [c/3791db:320%] of ATK (can be held)
+			After a quick wind-up, automatically prioritize bosses, then higher contact damage, then the nearest target
+			Perform [c/3791db:10] fast strikes, each dealing Physical damage equal to [c/3791db:320%] of ATK; targeting range and slash travel are doubled
 			'''
 	}
 }
@@ -365,12 +365,12 @@ HazeMagicBook: {
 DN_Weapon: {
 	1: {
 		Label: ATK Up β
-		Desc: ATK [c/3791db:+80%]
+		Desc: 25s: ATK +80%; deals Arts damage. Retains the purple sword trail.
 	}
 
 	2: {
 		Label: Shield Counter
-		Desc: ATK [c/3791db:+80%], attacks become shield charges
+		Desc: 30s: ATK +80%; left-click performs an aimed shield strike dealing Arts damage. Cannot attack while guarding.
 	}
 }
 
@@ -791,25 +791,20 @@ CardiganWeapon: {
 
 CuoraWeapon: {
 	1: {
-		Label: DEF Up γ
-		Desc: Defense [c/3791db:+80%]
+		Label: DEF Up β
+		Desc: 35s: DEF +80%.
 	}
 
 	2: {
 		Label: Shell Defense
-		Desc:
-			'''
-			Defense [c/3791db:+130%]
-			Restores [c/3791db:20%] of Max HP per second
-			Movement speed [c/f6643b:-10%]
-			'''
+		Desc: 30s: stops attacking and raises shield; DEF +130%; restores 3% Max HP/s.
 	}
 }
 
 CardiWeapon: {
 	1: {
 		Label: HP Recovery α
-		Desc: Instantly restores [c/3791db:40%] of Max HP
+		Desc: Immediately restores 40% Max HP.
 	}
 }
 

@@ -3,42 +3,41 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using ArknightsMod.Content.Projectiles.Guard.Reaper.Phoenix;
 
 namespace ArknightsMod.Content.Projectiles.Sniper.Exusiai;
 
 public class ExusiaiVector_Bullet : ModProjectile
 {
-    private Vector2 launch;
-    private bool initialized;
-    private Vector2 trailAnchor,contactPoint,contactReverse;
-    private int sample;
+    internal const int TotalUpdates=8;
+    internal const float MuzzleStep=16f*7/TotalUpdates;
+    private Vector2 contactPoint,contactReverse;
     private bool contact,wall;
+    private PhoenixMotionFx dragonfly;
     public override void SetDefaults()
     {
         Projectile.width = Projectile.height = 8;
-        Projectile.timeLeft = 240;
+        Projectile.timeLeft = (int)MathF.Ceiling(240f*TotalUpdates/7);
         Projectile.DamageType = DamageClass.Ranged;
         Projectile.friendly = true; Projectile.ignoreWater = true;
-        Projectile.extraUpdates = 6; Projectile.penetrate = 1;
+        Projectile.extraUpdates = TotalUpdates-1; Projectile.penetrate = 1;
         Projectile.usesLocalNPCImmunity = true; Projectile.localNPCHitCooldown = -1;
     }
     public override void AI()
     {
-        if (!initialized) { initialized = true; launch = trailAnchor = Projectile.Center; }
         Projectile.rotation = Projectile.velocity.ToRotation();
-        if (!Main.dedServ) {
-            Vector2 delta=Projectile.Center-trailAnchor;
-            int count=Math.Min(10,(int)(delta.Length()/16));
-            Vector2 step=delta.SafeNormalize(Vector2.UnitX)*16;
-            for(int i=0;i<count;i++){trailAnchor+=step;VectorVisualEffects.Flight(trailAnchor,Projectile.velocity,sample++);}
+        if (!Main.dedServ && dragonfly==null)
+        {
+            var style=PhoenixFx.Original();style.SpriteStretch=new Vector2(1,2);
+            dragonfly=new PhoenixMotionFx(45,Projectile,style);
         }
         if (Projectile.numUpdates == 0)
             Lighting.AddLight(Projectile.Center, VectorArt.RoundColor.ToVector3() * .3f);
     }
     public override bool PreDraw(ref Color lightColor)
     {
-        VectorArt.Round(Main.spriteBatch, Projectile.Center - Main.screenPosition, Projectile.velocity,
-            initialized ? Vector2.Distance(launch, Projectile.Center) : 0, (int)Projectile.ai[0]);
+        // Twice the longitudinal light footprint; 14px x 8 steps still travels
+        // 112px per game tick, exactly matching the previous 16px x 7.
         return false;
     }
     public override void OnHitNPC(NPC target,NPC.HitInfo hit,int damageDone)
@@ -54,6 +53,7 @@ public class ExusiaiVector_Bullet : ModProjectile
     }
     public override void OnKill(int timeLeft)
     {
+        dragonfly?.Stop();
         // One compact, networked visual burst; decoration never creates damaging projectiles.
         if (contact && Projectile.owner == Main.myPlayer)
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), contactPoint,
@@ -75,12 +75,12 @@ public sealed class VectorImpact : ModProjectile
     public override void AI()
     {
         if (Main.dedServ || Projectile.localAI[0]++ != 0) return;
-        VectorVisualEffects.Contact(Projectile.Center,Projectile.velocity.SafeNormalize(Vector2.UnitX),Projectile.ai[2]>0);
+        PhoenixFx.Burst("emitter.player.weapon.45.impact.sparks",Projectile.Center,
+            Projectile.velocity.SafeNormalize(Vector2.UnitX));
     }
     public override bool PreDraw(ref Color lightColor)
     {
-        VectorArt.Impact(Main.spriteBatch, Projectile.Center - Main.screenPosition, Projectile.velocity,
-            1 - Projectile.timeLeft / 15f, (int)Projectile.ai[1], (int)Projectile.ai[0]);
+        // The source impact graph is drawn by the shared renderer.
         return false;
     }
 }

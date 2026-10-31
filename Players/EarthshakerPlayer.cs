@@ -13,10 +13,11 @@ public sealed class EarthshakerPlayer : ModPlayer
 {
     public bool RightHeld { get; private set; }
     internal bool LeftHeld { get; private set; }
-    private Item toolItem,preparedItem;
-    // A native right-click swing keeps its tool configuration through release.
-    internal bool ToolUse => toolItem==Player.HeldItem&&toolItem!=null;
+    private Item throwItem;
+    // Keep the throw configuration until its item animation finishes on release.
+    internal bool ThrowUse => throwItem==Player.HeldItem&&throwItem!=null;
     public bool Busy => EarthshakerHeldHammer.Find(Player)!=null;
+    internal bool Throwing => EarthshakerReturningHammer.Find(Player)!=null;
     public bool Charging => EarthshakerHeldHammer.Find(Player)?.IsCharging==true;
     public float ChargeProgress => EarthshakerHeldHammer.Find(Player)?.ChargeProgress??0;
     public EarthshakerKind Kind => Player.HeldItem.ModItem is EarthshakerWeapon w?w.Kind:EarthshakerKind.Odda;
@@ -34,50 +35,37 @@ public sealed class EarthshakerPlayer : ModPlayer
             &&Content.Items.Weapons.Charged.ChargedOperatorWeapon.WorldInputAllowed(Player);
         RightHeld=allowed&&Player.controlUseTile;
         LeftHeld=allowed&&Player.controlUseItem&&!RightHeld;
-        if(!Holding){toolItem=null;previousRight=false;return;}
-        if(toolItem!=Player.HeldItem)toolItem=null;
+        if(!Holding){throwItem=null;previousRight=false;return;}
+        if(throwItem!=Player.HeldItem)throwItem=null;
         // Right click is translated once, before vanilla right-click features run.
         // Do not also enter Terraria's alternate-shooting state machine.
         Player.altFunctionUse=0;
         if(RightHeld){
-            toolItem=Player.HeldItem;
+            throwItem=Player.HeldItem;
             if(EarthshakerHeldHammer.Find(Player) is { } held){
                 held.Projectile.Kill();Player.heldProj=-1;Player.channel=false;
                 Player.itemTime=Player.itemAnimation=0;Player.releaseUseItem=true;
             }
             Player.controlUseTile=false;Player.controlUseItem=true;Player.channel=false;
             if(!previousRight){
-                Player.poundRelease=true;
                 if(Player.itemAnimation==0)Player.releaseUseItem=true;
             }
         }
-        else if(ToolUse){
+        else if(ThrowUse){
             Player.channel=false;
-            if(Player.itemAnimation==0)toolItem=null;
+            if(Player.itemAnimation==0)throwItem=null;
             else Player.controlUseItem=false;
         }
         previousRight=RightHeld;
     }
     public override bool PreItemCheck()
     {
-        if(Player.HeldItem.ModItem is EarthshakerWeapon weapon){
-            preparedItem=Player.HeldItem;
-            bool tool=ToolUse||!LeftHeld&&!Busy;
-            weapon.Configure(tool);
-            // Suppress mining only inside a left-attack ItemCheck. Restore the
-            // actual hammer stat afterwards for inventory/UI and idle release.
-            if(!tool)preparedItem.hammer=0;
-        }
+        if(Player.HeldItem.ModItem is EarthshakerWeapon weapon)weapon.Configure(ThrowUse || Throwing);
         return true;
-    }
-    public override void PostItemCheck()
-    {
-        if(preparedItem?.ModItem is EarthshakerWeapon weapon)preparedItem.hammer=EarthshakerRules.HammerPower(weapon.Kind);
-        preparedItem=null;
     }
     internal void BeginCharge(int damage,float kb)
     {
-        if(Busy||!Holding||!LeftHeld||ToolUse||Player.whoAmI!=Main.myPlayer)return;
+        if(Busy||Throwing||!Holding||!LeftHeld||ThrowUse||Player.whoAmI!=Main.myPlayer)return;
         float attackPower=1,attackRange=1;int impactStatus=0,baseDamage;float knockback;
         level = Math.Clamp(Player.GetModPlayer<WeaponPlayer>().CurrentSkill?.ForceReplaceLevel ?? Player.GetModPlayer<WeaponPlayer>().CurrentSkill?.Level ?? 1, 1, 10);
         attackPower = attackRange = 1; impactStatus = 0;
@@ -145,5 +133,5 @@ public sealed class EarthshakerPlayer : ModPlayer
     {
         if (shakeTime > 0 && Player.whoAmI == Main.myPlayer) Main.screenPosition += new Vector2(MathF.Sin(shakeTime * 2.4f) * .35f, MathF.Cos(shakeTime * 2.7f)) * shake;
     }
-    public override void UpdateDead(){EarthshakerHeldHammer.Find(Player)?.Projectile.Kill();EndSkill();pepeUses=0;shakeTime=0;previousRight=RightHeld=LeftHeld=false;toolItem=null;}
+    public override void UpdateDead(){EarthshakerHeldHammer.Find(Player)?.Projectile.Kill();EarthshakerReturningHammer.Find(Player)?.Projectile.Kill();EndSkill();pepeUses=0;shakeTime=0;previousRight=RightHeld=LeftHeld=false;throwItem=null;}
 }

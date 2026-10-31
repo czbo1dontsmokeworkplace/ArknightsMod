@@ -3,8 +3,8 @@ Items: {
 		DisplayName: 净浊喷火器 [蚀清]
 		Tooltip:
 			'''
-			持续喷射可穿墙的光焰，命中施加狱炎与诅咒狱火
-			消耗凝胶；受射手伤害加成，在抗性判定中视为法术攻击
+			喷射穿墙光焰，命中施加狱炎与诅咒狱火
+			消耗凝胶，受远程伤害加成
 			'''
 	}
 
@@ -12,8 +12,8 @@ Items: {
 		DisplayName: 焚灭喷火器 [伊芙利特]
 		Tooltip:
 			'''
-			持续喷射可穿墙的高热光焰，命中施加狱炎
-			消耗凝胶；受射手伤害加成，在抗性判定中视为法术攻击
+			喷射穿墙高热光焰，命中施加狱炎
+			消耗凝胶，受远程伤害加成
 			'''
 	}
 
@@ -21,10 +21,8 @@ Items: {
 		DisplayName: 折光喷射器 [谬因]
 		Tooltip:
 			'''
-			喷射可穿墙的高速光焰，命中施加狱炎
-			右键放置或移动中继器，使光焰转向鼠标并延长射程；右键中继器将其撤回
-			中继器持续20秒，离开过远或切换武器后消失
-			消耗凝胶；受射手伤害加成，在抗性判定中视为法术攻击
+			喷射穿墙能量束，命中施加狱炎
+			消耗凝胶，受远程伤害加成
 			'''
 	}
 }
@@ -57,6 +55,9 @@ Projectiles: {
 	// CannotOriginiutantSlash.DisplayName: Cannot Originiutant Slash
 	// CannotPotionSpray.DisplayName: Cannot Potion Spray
 	// StandardBearerCrescent.DisplayName: Standard Bearer Crescent
+	// NecrassGammaBlast.DisplayName: Necrass Gamma Blast
+	// PozemkaBlinkStrike.DisplayName: Pozemka Blink Strike
+	// TyphonPlasmaRay.DisplayName: Typhon Plasma Ray
 }
 
 Skills: {
@@ -80,7 +81,7 @@ Skills: {
 
 		2: {
 			Label: 炎爆
-			Desc: 自动强化下一次喷射，造成220%至300%伤害；火焰大小、飞行速度与碰撞尺寸提高至150%。首个命中点引爆直径96像素的火团，造成该次喷射50%的伤害。可储存3次。
+			Desc: 自动强化下一次喷射，造成220%至300%伤害；光束宽度与碰撞尺寸提高至150%，飞行速度保持不变。首个命中点引爆直径96像素的火团，造成该次喷射50%的伤害。可储存3次。
 		}
 
 		3: {
@@ -102,7 +103,7 @@ Skills: {
 
 		3: {
 			Label: 混沌的本质
-			Desc: 手动开启，火焰伤害提高50%至100%，喷射频率提高50%；经过中继器后的伤害再提高25%，命中额外施加3秒灵液。
+			Desc: 手动开启，火焰伤害提高50%至100%，喷射频率提高50%，命中额外施加3秒灵液。
 		}
 	}
 }

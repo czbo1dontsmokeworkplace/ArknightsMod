@@ -7,6 +7,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using ArknightsMod.Content.Projectiles.Guard.Reaper.Phoenix;
 
 namespace ArknightsMod.Content.Projectiles.BlastCasters;
 
@@ -14,13 +15,17 @@ namespace ArknightsMod.Content.Projectiles.BlastCasters;
 // light composition is retained, with no twin lanes or spiral movement.
 public sealed class BlastCasterFluxPacket : ModProjectile
 {
-    private Vector2[] history, axes;
-    private float[] births;
-    private int count, relayIdentity = -1;
-    private float distance, clock, nextStamp;
+    private int relayIdentity = -1;
+    private float distance, clock;
     private bool redirected, fading, exploded;
     private Vector2 target;
     private BlastCasterKind kind = BlastCasterKind.Aphrissa;
+    private PhoenixBeamPulse opticalBeam;
+    private Vector2 beamOrigin;
+    private bool visualStarted;
+    private Vector2 bornAt,bornOwner,bornAxis,relayOrigin,relayAxis;
+    private bool frameReady;
+    private float relayTravel;
     internal void Configure(BlastCasterKind identity, Vector2 aimTarget, int relay)
     {
         kind = identity; target = aimTarget; relayIdentity = relay;
@@ -31,9 +36,6 @@ public sealed class BlastCasterFluxPacket : ModProjectile
     public override string Texture => "ArknightsMod/Common/Particle/DefaultParticle";
     public override void OnSpawn(IEntitySource source)
     {
-        history = new Vector2[BlastCasterRules.OpticalHistory];
-        axes = new Vector2[BlastCasterRules.OpticalHistory];
-        births = new float[BlastCasterRules.OpticalHistory];
         Projectile.GetGlobalProjectile<global::ArknightsMod.Systems.Gameplay.Damage.ArtsProjectileMarker>().IsArtsDamage = true;
     }
     public override void SetDefaults()
@@ -50,12 +52,16 @@ public sealed class BlastCasterFluxPacket : ModProjectile
     {
         writer.Write((byte)kind); writer.WriteVector2(target); writer.Write(relayIdentity);
         writer.Write(redirected); writer.Write(fading);
+        writer.Write(frameReady);writer.WriteVector2(bornAt);writer.WriteVector2(bornOwner);writer.WriteVector2(bornAxis);
+        writer.Write(distance);writer.Write(clock);writer.Write(relayTravel);writer.WriteVector2(relayOrigin);writer.WriteVector2(relayAxis);
     }
     public override void ReceiveExtraAI(BinaryReader reader)
     {
         kind = (BlastCasterKind)Math.Clamp(reader.ReadByte(), (byte)0, (byte)2);
         target = reader.ReadVector2(); relayIdentity = reader.ReadInt32();
         redirected = reader.ReadBoolean(); fading = reader.ReadBoolean();
+        frameReady=reader.ReadBoolean();bornAt=reader.ReadVector2();bornOwner=reader.ReadVector2();bornAxis=reader.ReadVector2();
+        distance=reader.ReadSingle();clock=reader.ReadSingle();relayTravel=reader.ReadSingle();relayOrigin=reader.ReadVector2();relayAxis=reader.ReadVector2();
         ApplySize();
         Projectile.extraUpdates = fading ? 0 : BlastCasterRules.Updates(kind) - 1;
         if (fading) { Projectile.friendly = false; Projectile.velocity = Vector2.Zero; Projectile.timeLeft = Math.Min(7, Projectile.timeLeft); }
@@ -75,51 +81,58 @@ public sealed class BlastCasterFluxPacket : ModProjectile
     {
         if (fading) return;
         fading = true; Projectile.friendly = false; Projectile.extraUpdates = 0;
+        opticalBeam?.Stop();
         Projectile.tileCollide = false;
         Projectile.numUpdates = -1; Projectile.timeLeft = 7; Projectile.velocity = Vector2.Zero;
         if (Projectile.owner == Main.myPlayer) Projectile.netUpdate = true;
     }
-    private void Stamp()
-    {
-        if (Main.dedServ) return;
-        int last = Math.Min(count, history.Length - 1);
-        for (int i = last; i > 0; i--) { history[i] = history[i - 1]; axes[i] = axes[i - 1]; births[i] = births[i - 1]; }
-        history[0] = Projectile.Center; axes[0] = Projectile.velocity.SafeNormalize(Vector2.UnitX); births[0] = clock;
-        count = Math.Min(count + 1, history.Length);
-    }
     public override void AI()
     {
         clock += 1f / Projectile.MaxUpdates;
-        if (fading) { Projectile.extraUpdates = 0; Projectile.numUpdates = -1; return; }
+        if (fading) { opticalBeam?.Stop();Projectile.extraUpdates = 0; Projectile.numUpdates = -1; return; }
         if (!float.IsFinite(Projectile.velocity.X) || !float.IsFinite(Projectile.velocity.Y)) { Projectile.Kill(); return; }
-        if (distance >= FlightRange) { Fade(); return; }
+        if (distance >= FlightRange || clock>BlastCasterRules.FlightTicks(kind,(int)Projectile.ai[0],redirected)+1f/Projectile.MaxUpdates) { Fade(); return; }
+        if(!frameReady)
+        {
+            bornAt=Projectile.Center;bornOwner=Main.player[Projectile.owner].MountedCenter;
+            bornAxis=Projectile.velocity.SafeNormalize(Vector2.UnitX);frameReady=true;
+        }
+        BlastCasterShotFrame frame=redirected?BlastCasterProjection.Relay(Projectile.owner,relayIdentity,relayOrigin,relayAxis)
+            :BlastCasterProjection.Nozzle(Projectile.owner,kind,(int)Projectile.ai[0],bornAt,bornOwner,bornAxis);
+        Projectile.Center=frame.Position(new Vector2(distance-(redirected?relayTravel:0),0));
+        Projectile.velocity=frame.Axis*BlastCasterRules.OpticalStep;
+        if(!visualStarted && !Main.dedServ){visualStarted=true;beamOrigin=Vector2.Zero;StartBeam();}
         if (kind == BlastCasterKind.Aphrissa && !redirected && relayIdentity >= 0)
         {
             Vector2 relayAt = new(Projectile.ai[1], Projectile.ai[2]);
             if (Vector2.DistanceSquared(Projectile.Center, relayAt) <= 22 * 22)
             {
                 Projectile relay = AphrissaRelay.Find(Main.player[Projectile.owner]);
-                redirected = true;
                 if (relay != null && relay.identity == relayIdentity && Vector2.DistanceSquared(relay.Center, relayAt) < 16)
                 {
+                    redirected=true;
                     Projectile.velocity = (target - Projectile.Center).SafeNormalize(Projectile.velocity.SafeNormalize(Vector2.UnitX)) * BlastCasterRules.OpticalStep;
+                    relayTravel=distance;relayOrigin=Projectile.Center;relayAxis=Projectile.velocity.SafeNormalize(Vector2.UnitX);
+                    opticalBeam?.Stop();beamOrigin=Vector2.Zero;
+                    if(!Main.dedServ)StartBeam();
                     if (Projectile.ai[0] == 3) Projectile.damage = (int)(Projectile.damage * 1.25f);
                     BlastCasterVisuals.RelayFlash(relayAt, Projectile.velocity.SafeNormalize(Vector2.UnitX));
                 }
+                else relayIdentity=-1;
                 if (Projectile.owner == Main.myPlayer) Projectile.netUpdate = true;
             }
         }
-        // Constant direction between relay turns: no wave, spiral, homing or hitscan.
-        if (clock >= nextStamp)
-        {
-            Stamp(); nextStamp += 1f / 3f;
-        }
+        // The finite-speed leading edge remains the damage carrier; the source
+        // beam decorates the travelled path and never performs a separate hit.
+        float remaining=Math.Max(0,FlightRange-distance);
+        if(Projectile.velocity.Length()>remaining)
+            Projectile.velocity=Projectile.velocity.SafeNormalize(Vector2.UnitX)*remaining;
         distance += Projectile.velocity.Length();
+        opticalBeam?.Advance(new Vector2(distance-(redirected?relayTravel:0),0));
         if (Projectile.numUpdates == -1)
         {
             Color tint = BlastCasterRules.Tint(kind);
             Lighting.AddLight(Projectile.Center, tint.ToVector3() * .32f);
-            if ((int)clock % 4 == 0) BlastCasterVisuals.FluxWake(Projectile.Center, Projectile.velocity, kind);
         }
     }
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
@@ -142,7 +155,8 @@ public sealed class BlastCasterFluxPacket : ModProjectile
         if (kind == BlastCasterKind.Corroserum && mode == 2 || kind == BlastCasterKind.Aphrissa && mode == 3) npc.AddBuff(BuffID.Ichor, 180);
         if (kind == BlastCasterKind.Ifrit && mode == 3) npc.AddBuff(BuffID.Oiled, 180);
         Vector2 point = Contact(npc);
-        BlastCasterVisuals.Hit(Projectile, npc, point, kind);
+        // Impact VFX (including the HDR flare) are archived in BlastCasterVisuals.Hit.
+        // Damage, debuffs and skill heat remain independent of the optical beam.
         if (Projectile.owner != Main.myPlayer || kind != BlastCasterKind.Ifrit) return;
         if (mode == 2 && !exploded)
         {
@@ -171,7 +185,16 @@ public sealed class BlastCasterFluxPacket : ModProjectile
     }
     public override bool PreDraw(ref Color lightColor)
     {
-        BlastCasterFluxTrail.Draw(history, axes, births, count, clock, kind, WidthScale);
+        // Previous stamped flame material is retained in BlastCasterFluxTrail,
+        // but normal attacks exclusively draw Esperon's imported beam graph.
         return false;
     }
+    private void StartBeam()
+    {
+        var style=BlastCasterProjection.Style(Projectile.owner,kind,(int)Projectile.ai[0],WidthScale,
+            redirected?relayOrigin:bornAt,bornOwner,redirected?relayAxis:bornAxis,redirected?relayIdentity:-1);
+        opticalBeam=PhoenixBeamPulse.Acquire(Projectile.owner,(int)kind*8+(int)Projectile.ai[0]*2+(redirected?1:0),beamOrigin,
+            Vector2.UnitX,FlightRange,style);
+    }
+    public override void OnKill(int timeLeft)=>opticalBeam?.Stop();
 }

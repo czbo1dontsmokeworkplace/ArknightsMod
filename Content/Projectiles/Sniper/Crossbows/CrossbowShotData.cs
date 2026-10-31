@@ -1,3 +1,4 @@
+using ArknightsMod.Content.Projectiles.Sniper.Pozemka;
 using System.IO;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -19,7 +20,7 @@ public sealed class CrossbowShotData : GlobalProjectile
     internal CrossbowFlightEmitter FlightEmitter => flightEmitter ??= new CrossbowFlightEmitter();
     public override void PostAI(Projectile projectile)
     {
-        if (Kind < 0 || Main.dedServ || projectile.ModProjectile is CrossbowBolt) return;
+        if (Kind < 0 || Main.dedServ || projectile.ModProjectile is CrossbowBolt or PozemkaBlinkStrike) return;
         visualHistory ??= new Vector2[28];
         for (int i = visualHistory.Length - 1; i > 0; i--) visualHistory[i] = visualHistory[i - 1];
         visualHistory[0] = projectile.Center;
@@ -27,7 +28,7 @@ public sealed class CrossbowShotData : GlobalProjectile
     }
     public override bool PreDraw(Projectile projectile, ref Color lightColor)
     {
-        if (Kind < 0 || projectile.ModProjectile is CrossbowBolt) return true;
+        if (Kind < 0 || projectile.ModProjectile is CrossbowBolt or PozemkaBlinkStrike) return true;
         if (CrossbowSignatureVfx.Handles((CrossbowKind)Kind))
         {
             CrossbowSignatureVfx.Draw(projectile, (CrossbowKind)Kind, visualHistory, true);
@@ -56,14 +57,15 @@ public sealed class CrossbowShotData : GlobalProjectile
     }
     public override void OnHitNPC(Projectile projectile, NPC target, NPC.HitInfo hit, int damageDone)
     {
-        if (Kind >= 0 && projectile.ModProjectile is not CrossbowBolt)
+        if (Kind >= 0 && projectile.ModProjectile is not (CrossbowBolt or PozemkaBlinkStrike))
         {
             CrossbowSignatureVfx.Hit(projectile, (CrossbowKind)Kind);
             if (KroosLegacyVfx.Handles((CrossbowKind)Kind)) legacyHit = true;
         }
-        if (Kind == (int)CrossbowKind.Pozemka && projectile.owner == Main.myPlayer)
+        if (Kind == (int)CrossbowKind.Pozemka && projectile.owner == Main.myPlayer
+            && projectile.ModProjectile is not PozemkaBlinkStrike)
         {
-            global::ArknightsMod.Content.Projectiles.Sniper.Pozemka.PozemkaStarBolt.SpawnPair(
+            PozemkaBlinkStrike.Spawn(
                 projectile.GetSource_OnHit(target), projectile, target);
         }
         if (Kind == (int)CrossbowKind.KroosAlter && Main.rand.NextFloat() < .4f)

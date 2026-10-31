@@ -48,4 +48,11 @@ Projectiles: {
 	ChalterSplitOrb.DisplayName: Chalter Split Orb
 	ReaperWaveNova.DisplayName: Reaper Wave Nova
 	GavialSawSpark.DisplayName: Gavial Saw Spark
+	OperatorBladeAura.DisplayName: Operator Blade Aura
+	OperatorBladeSwing.DisplayName: Operator Blade Swing
+	OperatorExecutionSlash.DisplayName: Operator Execution Slash
+	OperatorLordBolt.DisplayName: Operator Lord Bolt
+	OperatorLordWave.DisplayName: Operator Lord Wave
+	EarthshakerReturningHammer.DisplayName: Earthshaker Returning Hammer
+	OperatorScuuxunSpike.DisplayName: Operator Scuuxun Spike
 }

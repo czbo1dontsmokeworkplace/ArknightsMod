@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using ArknightsMod.Systems.Gameplay.Damage;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -9,6 +10,7 @@ namespace ArknightsMod.Content.Projectiles.Defender.Horn;
 public sealed class HornBurst : ModProjectile
 {
     private bool emitted;
+    private readonly HashSet<int> hitGroups = new();
     public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.Grenade;
     public override void SetDefaults()
     {
@@ -23,8 +25,10 @@ public sealed class HornBurst : ModProjectile
     }
     public override void AI()
     {
-        // Firewhistle S2: a larger ranged blast with burning, never a magic damage conversion.
-        if (Projectile.ai[2] == 6 && Projectile.width != 130) Projectile.Resize(130, 130);
+        // All launchers use the advertised radius for both the image and the hit area.
+        int diameter = (int)(MathHelper.Clamp(Projectile.ai[0], 24f, 240f) * 2f);
+        if (Projectile.width != diameter) Projectile.Resize(diameter, diameter);
+        Projectile.DamageType = Projectile.ai[1] == 1 ? DamageClass.Magic : DamageClass.Ranged;
         if (!emitted && Projectile.ai[1] == 0)
         {
             emitted = true;
@@ -35,14 +39,18 @@ public sealed class HornBurst : ModProjectile
         Lighting.AddLight(Projectile.Center, .9f * Projectile.timeLeft / 28f, .55f * Projectile.timeLeft / 28f, .15f);
     }
     public override bool ShouldUpdatePosition() => false;
+    public override bool? CanHitNPC(NPC target) => hitGroups.Contains(target.realLife >= 0 ? target.realLife : target.whoAmI) ? false : null;
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
     {
-        if (Projectile.ai[2] == 6) target.AddBuff(BuffID.OnFire3, 180);
+        hitGroups.Add(target.realLife >= 0 ? target.realLife : target.whoAmI);
+        if (Projectile.ai[2] == 6) target.AddBuff(BuffID.OnFire3, 240);
     }
     // Only the first update deals damage; the remaining lifetime is visual only.
     public override bool? CanDamage() => Projectile.timeLeft == 28;
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-        => projHitbox.Intersects(targetHitbox);
+        => Vector2.DistanceSquared(Projectile.Center,
+            Vector2.Clamp(Projectile.Center, targetHitbox.TopLeft(), targetHitbox.BottomRight())) <= Projectile.ai[0] * Projectile.ai[0]
+            && HornCombat.Clear(Projectile.Center, targetHitbox.ClosestPointInRect(Projectile.Center));
     public override bool PreDraw(ref Color lightColor)
     {
         if (Projectile.ai[1] == 0)

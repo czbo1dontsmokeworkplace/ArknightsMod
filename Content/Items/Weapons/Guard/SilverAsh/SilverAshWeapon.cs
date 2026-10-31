@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Tiles.Infrastructure;
+using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Content.Projectiles;
 using ArknightsMod.Players;
 using Microsoft.CodeAnalysis;
@@ -21,6 +21,7 @@ using Terraria.ModLoader;
 using static Terraria.Graphics.VertexStrip;
 using Color = Microsoft.Xna.Framework.Color;
 using ArknightsMod.Content.Rarities;
+using ArknightsMod.Content.Projectiles.Guard.BladeRoutes;
 
 
 namespace ArknightsMod.Content.Items.Weapons.Guard.SilverAsh
@@ -59,6 +60,8 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.SilverAsh
 			Item.UseSound = NoSound;
             Item.useStyle = 13;//?
             Item.channel = true;
+            Item.channel=false;Item.useStyle=ItemUseStyleID.Swing;Item.shootsEveryUse=true;
+            Item.shoot=ModContent.ProjectileType<OperatorBladeSwing>();Item.shootSpeed=BladeRouteRules.WaveSpeed;
             //SoundStyle zji = new SoundStyle("Slashsoul/bgms/yc");
             //Item.UseSound = zji;
         }
@@ -98,7 +101,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.SilverAsh
 		}
 		public override bool AltFunctionUse(Player player) => false;
 		public override bool CanUseItem(Player player) {
-			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
+			var modPlayer = player.GetModPlayer<WeaponPlayer>();
 			if (Main.myPlayer == player.whoAmI) {
 				if (ArknightsKeybinds.SkillActivatePressed(player)) {
 					if (!modPlayer.SummonMode) {
@@ -167,10 +170,10 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.SilverAsh
 					}
 				}
 			}
-			return base.CanUseItem(player);
+			return !BladeRouteCombat.Swinging(player) && base.CanUseItem(player);
 		}
 		public override void HoldItem(Player player) {
-			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
+			var modPlayer = player.GetModPlayer<WeaponPlayer>();
 			if (Main.myPlayer == player.whoAmI) {
 				if (modPlayer.Skill == 1 && modPlayer.SkillActive && Item.type == ModContent.ItemType<SilverAshWeapon>()) {
 					player.GetModPlayer<yinhui2player>().yinhui2 = true;
@@ -196,9 +199,15 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.SilverAsh
 				}
 			}
 		}
-		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+        public override bool Shoot(Player player,EntitySource_ItemUse_WithAmmo source,Vector2 position,Vector2 velocity,int type,int damage,float knockback)
         {
-			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
+            SoundEngine.PlaySound(yinhuiA,player.Center);
+            BladeRouteCombat.Swing(player,source,7,damage,knockback);return false;
+        }
+        // Historical shooting graphs and their projectile types remain archived.
+		private bool LegacyShoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+        {
+			var modPlayer = player.GetModPlayer<WeaponPlayer>();
 			SoundStyle zji2 = new SoundStyle("ArknightsMod/Sounds/yinh1")
             {
                 MaxInstances = 4

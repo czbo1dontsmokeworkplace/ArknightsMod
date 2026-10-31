@@ -18,9 +18,8 @@ public sealed class CrusherPlayer : ModPlayer
     internal const float TraitMultiplier = 1.3f;
     private int regenerationRemainder;
     private int mode, remaining, duration, slot, level = 1, skillItemType, drainTicks;
-    private bool keyWasDown, hasReturn;
+    private bool keyWasDown;
     private Item activeItem;
-    private Vector2 returnPosition;
     internal int Activation { get; private set; }
     public bool Holding => Player.active && !Player.dead && Player.HeldItem.ModItem is CrusherWeapon;
     public CrusherKind Kind => Player.HeldItem.ModItem is CrusherWeapon w ? w.Kind : CrusherKind.Quartz;
@@ -130,12 +129,6 @@ public sealed class CrusherPlayer : ModPlayer
         if (shared.CurrentSkill.IsPermanent) duration = remaining = int.MaxValue;
         shared.DelStockCount(); shared.SkillActive = true; shared.SkillTimer = 0;
         if (Charging) CrusherHeldBlade.Find(Player)?.StopForCharge();
-        if (Kind == CrusherKind.Ulpianus && mode == 3) {
-            returnPosition = Player.position; hasReturn = true;
-            Vector2 aim = (Main.MouseWorld - Player.MountedCenter).SafeNormalize(new Vector2(Player.direction, 0));
-            Projectile.NewProjectile(Player.GetSource_ItemUse(Player.HeldItem), Player.MountedCenter, aim * 18,
-                ModContent.ProjectileType<CrusherAnchorCast>(), (int)(Player.GetWeaponDamage(Player.HeldItem) * L(1.3f, 1.6f)), 10, Player.whoAmI, 1, slot, level);
-        }
         keyWasDown = keyDown; CrusherVisuals.Activate(Player, Kind); SyncAura(); return true;
     }
     internal float PrepareSwing(out int special, bool fullCharge = true)
@@ -145,8 +138,7 @@ public sealed class CrusherPlayer : ModPlayer
         level = SkillLevel;
         if (ActiveMode == 0 && shared.StockCount > 0 && shared.Skill == 0 && (Kind == CrusherKind.Hoederer || Kind == CrusherKind.Ulpianus && fullCharge)) {
             shared.DelStockCount(); special = Kind == CrusherKind.Hoederer ? 1 : 2;
-            // Contact That Must Be Made now empowers the on-contact rising anchor.
-            // Preparing a swing must never emit a projectile on a miss.
+            // Ulpianus throws only when this fully charged first-skill attack is ready.
         }
         return DamageMultiplier * (special == 1 ? L(1.6f, 2.6f) : 1);
     }
@@ -165,6 +157,7 @@ public sealed class CrusherPlayer : ModPlayer
             if (Kind == CrusherKind.Quartz && skillMode == 2 && Main.rand.NextBool(4)) OperatorStunNPC.TryApply(target, 120);
             if (Kind == CrusherKind.Hoederer && skillMode == 2) OperatorStunNPC.TryApply(target, 60);
             if (Kind == CrusherKind.Hoederer && skillMode == 3 && Main.rand.NextBool(4)) OperatorStunNPC.TryApply(target, (int)CrusherRules.Level(skillLevel, 120, 300));
+            if (Kind == CrusherKind.Ulpianus && skillMode == 3) OperatorStunNPC.TryApply(target, 300);
         }
         if (Kind == CrusherKind.Hoederer && skillMode == 3 && ActiveMode == 3) Mark(target);
     }
@@ -188,9 +181,8 @@ public sealed class CrusherPlayer : ModPlayer
             }
             blade?.BeginSwing(Player, Player.GetWeaponDamage(Player.HeldItem), 12, (1 + .5f * charge) * L(1.4f, 3), 3, charge);
         }
-        if (hasReturn && !Player.dead && Player.whoAmI == Main.myPlayer) TryTeleport(returnPosition);
         if (same) { var s = Player.GetModPlayer<WeaponPlayer>(); s.SkillActive = false; s.SkillTimer = 0; }
-        mode = remaining = duration = 0; activeItem = null; hasReturn = false; SyncAura();
+        mode = remaining = duration = 0; activeItem = null; SyncAura();
     }
     internal bool TryTeleport(Vector2 position)
     {
@@ -214,5 +206,5 @@ public sealed class CrusherPlayer : ModPlayer
         mode = Math.Clamp(m, 0, 3); remaining = Math.Max(0, left); duration = Math.Max(1, total);
         slot = Math.Clamp(s, 0, 57); level = Math.Clamp(l, 1, 10); skillItemType = type; Activation = activation;
     }
-    public override void UpdateDead() { mode = remaining = duration = 0; activeItem = null; hasReturn = keyWasDown = false; }
+    public override void UpdateDead() { mode = remaining = duration = 0; activeItem = null; keyWasDown = false; }
 }

@@ -8,7 +8,7 @@ namespace ArknightsMod.Content.Projectiles.Caster.Necrass;
 internal static class NecrassArt
 {
     internal const string Assets = "ArknightsMod/Content/Textures/Necrass/";
-    internal static readonly Color Violet = new(152, 84, 242), Lilac = new(229, 208, 255), Ash = new(68, 58, 86);
+    internal static readonly Color Violet = new(83, 35, 132), Lilac = new(116, 66, 166), Ash = new(45, 31, 63);
     internal static Texture2D Head, Ribbon, Veil, Rupture, Bloom, Shard, Diadem, Slash;
     internal static bool Ready => Head != null && !Head.IsDisposed;
     internal static void Assign(Func<string, Texture2D> load)

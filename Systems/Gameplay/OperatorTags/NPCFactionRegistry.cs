@@ -52,6 +52,8 @@ namespace ArknightsMod.Systems.Gameplay.OperatorTags
 			Register<DroneII>(OperatorFaction.Reunion);
 			Register<ArtsMasterA1>(OperatorFaction.Reunion);
 			Register<ArtsMasterA2>(OperatorFaction.Reunion);
+			Register<FrostDrone>(OperatorFaction.Reunion);
+			Register<BomberDrone>(OperatorFaction.Reunion);
 			Register<OriginiumSlug>(OperatorFaction.Reunion);
 			Register<OriginiumSlugAlpha>(OperatorFaction.Reunion);
 			Register<OriginiumSlugBeta>(OperatorFaction.Reunion);
