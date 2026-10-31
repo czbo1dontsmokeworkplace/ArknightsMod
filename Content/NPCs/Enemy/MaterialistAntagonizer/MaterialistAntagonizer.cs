@@ -329,6 +329,7 @@ public sealed partial class MaterialistAntagonizer : ModNPC
         normal.OnSuccess(ItemDropRule.Common(ModContent.ItemType<global::ArknightsMod.Content.Items.MaterialistArsenal.FighterDispatchTerminal>(), 1));
         normal.OnSuccess(ItemDropRule.Common(ModContent.ItemType<global::ArknightsMod.Content.Items.MaterialistArsenal.MiniGatling>(), 1));
         normal.OnSuccess(ItemDropRule.Common(ModContent.ItemType<global::ArknightsMod.Content.Items.MaterialistArsenal.OrbitalLaser>(), 1));
+        normal.OnSuccess(ItemDropRule.Common(ModContent.ItemType<global::ArknightsMod.Content.Items.MaterialistArsenal.PlasmaProjector>(), 1));
         normal.OnSuccess(ItemDropRule.Common(ModContent.ItemType<global::ArknightsMod.Content.Items.MaterialistArsenal.RotorBladeCraft>(), 1));
         normal.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DroneCommandCore>()));
         normal.OnSuccess(ItemDropRule.Common(ItemID.ChlorophyteBar, 1, 12, 18));

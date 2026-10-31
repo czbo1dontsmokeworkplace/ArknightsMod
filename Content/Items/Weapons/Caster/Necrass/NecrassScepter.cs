@@ -16,7 +16,7 @@ public sealed class NecrassScepter : ExpansionWeaponBase
     private const int ManaWindow = 40; // Preserve the previous nine-mana burst budget.
     private ulong nextGammaManaTick;
     private bool swapBarrels;
-    protected override int[] EliteDamage => [399, 483, 578];
+    protected override int[] EliteDamage => [40, 40, 40];
     public override string Texture => "ArknightsMod/Content/Items/Weapons/Caster/Necrass/NecrassScepter";
     public override void SetStaticDefaults() => Item.staff[Type] = true;
     public override void SetDefaults()
@@ -85,9 +85,8 @@ public sealed class NecrassScepter : ExpansionWeaponBase
         Vector2 center = player.RotatedRelativePoint(player.MountedCenter, true);
         Vector2 direction = velocity.SafeNormalize(new Vector2(player.direction, 0));
         Vector2 side = new(-direction.Y, direction.X);
-        // Two shots every five ticks retain one full panel-damage budget per
-        // former forty-tick cycle. The summon/skill system remains unchanged.
-        int shotDamage = Math.Max(1, (int)MathF.Round(damage / 16f));
+        // Each Gamma shot uses the full, already modified weapon damage.
+        int shotDamage = damage;
         for (int i = 0; i < 2; i++)
         {
             int barrel = (i + (swapBarrels ? 1 : 0)) % 2;

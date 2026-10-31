@@ -52,6 +52,10 @@ public sealed class MedicArt : ModProjectile
         Projectile.ignoreWater = true;
         Projectile.tileCollide = true;
     }
+    public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
+    {
+        if (Profile.Branch == MedicBranch.Chain) Projectile.tileCollide = false;
+    }
     public override bool? CanDamage() => false;
     public override bool? CanHitNPC(NPC target) => false;
     public override bool CanHitPvp(Player target) => false;
@@ -124,8 +128,8 @@ public sealed class MedicArt : ModProjectile
     }
     public override bool OnTileCollide(Vector2 oldVelocity)
     {
-        // Myrrh's vial can ricochet once without creating a second treatment grant.
-        if (ProfileId == 1 && Projectile.localAI[0] == 0)
+        // Every thrown healing art shares Myrrh's single ricochet.
+        if (Profile.Branch != MedicBranch.MultiTarget && Projectile.localAI[0] == 0)
         {
             Projectile.localAI[0]=1;
             if(Projectile.velocity.X!=oldVelocity.X)Projectile.velocity.X=-oldVelocity.X*.7f;

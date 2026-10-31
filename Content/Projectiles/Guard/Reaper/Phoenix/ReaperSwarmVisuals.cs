@@ -359,6 +359,8 @@ internal sealed class ReaperSwarmVisualNode
         if(app.ValueKind==JsonValueKind.Undefined)return;
         if(Style?.HideScuuxunPointer==true && Data.S("appearance")=="appearance.projectile.player.67")return;
         Vector4 color=(Style?.Tint?.Invoke(Data.Tint())??ReaperSwarmPalette.Tint(Data.Tint(),Palette));color.W*=ParticleAlpha*(Style?.Opacity?.Invoke()??1);
+        if(Emitter.S("name") is "emitter.player.weapon.69.projectile.trail.flashes" or "emitter.player.weapon.69.projectile.trail.sparks")
+            color.W*=.5f;
         float bloom=Data.F("bloom");
         Vector2 size=app.V("size",Vector2.One)*Scale*(Style?.SpriteStretch??Vector2.One);
         if(Emitter.S("name")=="emitter.player.weapon.17.beam")
@@ -370,7 +372,7 @@ internal sealed class ReaperSwarmVisualNode
         if(BeamLength!=null){size.Y=BeamLength();position+=Direction*size.Y*.5f;}
         position=Style?.ProjectPosition?.Invoke(position)??position;
         Vector2 drawDirection=Style?.ProjectDirection?.Invoke(Direction)??Direction;
-        if(Emitter.S("name") is "emitter.player.weapon.17.beam" or "emitter.player.weapon.81.projectile" or "emitter.player.weapon.81.projectile.flutter")
+        if(Emitter.S("name") is "emitter.player.weapon.17.beam" or "emitter.player.weapon.69.projectile" or "emitter.player.weapon.81.projectile" or "emitter.player.weapon.81.projectile.flutter")
         {
             // Screen-space blur made these tiny flecks look like vertical
             // pillars even after rotating the sprite. Their two soft glow

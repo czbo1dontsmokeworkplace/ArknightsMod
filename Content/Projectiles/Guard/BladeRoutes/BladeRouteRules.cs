@@ -35,7 +35,7 @@ internal static class BladeRouteRules
         MathHelper.Pi * direction * gravity * progress + (direction < 0 ? MathHelper.Pi : 0) + MathHelper.Pi * direction * gravity;
     internal static float AuraScale(float progress, float itemScale) => (1.2f + progress) * itemScale * .66f;
     internal const int WaveLifetime = 120;
-    internal const float WaveSpeed = 12f;
+    internal const float WaveSpeed = 12f * 1.7f;
     internal const int LordShotInterval=60;
     internal const int SpikeLifetime=36;
     internal const int BoltDelay = 12;

@@ -36,7 +36,16 @@ internal static class MedicIdentity
         new("Hibiscus blossom",6.9f,.095f,.045f,35,.03f,.085f,0,.999f,50,5),
         new("Paired waterlight",8.6f,.075f,.048f,0,.018f,.11f,0,.999f,96,2.5f)
     ];
-    internal static MedicFlight Get(int id) => Flights[Math.Clamp(id,0,Flights.Length-1)];
+    internal static MedicFlight Get(int id)
+    {
+        var f = Flights[Math.Clamp(id, 0, Flights.Length - 1)];
+        var branch = MedicCatalog.Get(id).Branch;
+        if (branch is MedicBranch.Physician || id == 22)
+            return f with { Speed = 5.5f, Gravity = .23f, Turn = 0, SeekAfter = 0, Wave = 0, Acceleration = 0, Drag = .999f };
+        if (branch is MedicBranch.MultiTarget or MedicBranch.Wandering)
+            return f with { Gravity = .23f, Turn = 0, SeekAfter = 0, Wave = 0, Acceleration = 0, Drag = .999f };
+        return f;
+    }
 
     internal static Player Patient(Projectile q, float range = 960)
     {
@@ -52,49 +61,40 @@ internal static class MedicIdentity
         return best;
     }
 
-    internal static void Move(MedicArt art,float step)
+    internal static void Move(MedicArt art, float step)
     {
-        Projectile q=art.Projectile; MedicFlight f=Get(art.ProfileId);
-        // Gravity remains present, but acquired guidance supports the art through a rising turn.
-        q.velocity.Y=Math.Min(10,q.velocity.Y+f.Gravity*step*(art.PatientTarget>=0?.08f:1f));
-        float wave=f.Wave*MathF.Sin(art.Age*f.Frequency+q.identity*.73f);
-        if(art.PatientTarget>=0)wave*=.15f;
-        q.velocity=q.velocity.RotatedBy(wave*step)*MathF.Pow(f.Drag,step);
-        // Tuye stores pressure briefly; Ptilopsis decelerates into a precise field placement.
-        if (art.ProfileId==4 && art.Age is > 12 and < 26) q.velocity*=MathF.Pow(.96f,step);
-        bool therapist=art.Profile.Branch==MedicBranch.Therapist;
-        if (therapist && art.HomingStartAge<0 && q.velocity.Y>0)
-        { art.HomingStartAge=art.Age; if(q.owner==Main.myPlayer)q.netUpdate=true; }
-        bool seek=therapist ? art.HomingStartAge>=0 : f.SeekAfter>0 && art.Age>=f.SeekAfter;
-        if(seek && Main.netMode!=Terraria.ID.NetmodeID.MultiplayerClient && (q.numUpdates==0 && (int)art.Age%12==0 || art.PatientTarget<0))
-        {
-            int next=Patient(q)?.whoAmI??-1;
-            // Keep an acquired wounded ally through the outside of a broad turn.
-            if(next<0 && Main.player.IndexInRange(art.PatientTarget))
-            {
-                Player existing=Main.player[art.PatientTarget];
-                if(MedicHealingNet.Allied(Main.player[q.owner],existing)
-                    && (existing.statLife<existing.statLifeMax2||MedicTreatment.HasCurableDebuff(existing))
-                    && existing.DistanceSQ(q.Center)<1600*1600)next=existing.whoAmI;
-            }
-            if(next!=art.PatientTarget){art.PatientTarget=next;q.netUpdate=true;}
+        Projectile q = art.Projectile;
+        if (art.Profile.Branch == MedicBranch.Chain) return; // Straight ascending lightning spears.
+        if (art.Profile.Branch != MedicBranch.Therapist) {
+            var f = Get(art.ProfileId);
+            q.velocity.Y = Math.Min(10, q.velocity.Y + f.Gravity * step);
+            q.velocity *= MathF.Pow(f.Drag, step);
+            float maximum = f.Speed * 1.4f;
+            if (q.velocity.LengthSquared() > maximum * maximum)
+                q.velocity = q.velocity.SafeNormalize(Vector2.UnitY) * maximum;
+            return;
         }
-        if(seek && Main.player.IndexInRange(art.PatientTarget) && Main.player[art.PatientTarget] is {active:true,dead:false} target)
-        {
-            Vector2 delta=target.Center-q.Center;
-            float angle=q.velocity.ToRotation();
-            float turn=f.Turn*step*(therapist ? .45f+.55f*Utils.GetLerpValue(art.HomingStartAge,art.HomingStartAge+24,art.Age,true):1);
-            if(art.ProfileId==19)turn*=((int)art.Age/8)%2==0?2f:.2f;
-            float wanted=delta.ToRotation();
-            float next=angle+MathHelper.Clamp(MathHelper.WrapAngle(wanted-angle),-turn,turn);
-            float approach=MathHelper.Clamp(delta.Length()*f.Turn*.4f,.65f,f.Speed);
-            // Brake into a reversal rather than orbiting outside the patient's contact box.
-            approach*=MathHelper.Lerp(.24f,1f,Math.Max(0,Vector2.Dot(delta.SafeNormalize(Vector2.UnitY),q.velocity.SafeNormalize(Vector2.UnitY))));
-            float speed=MathHelper.Lerp(q.velocity.Length(),approach,1-MathF.Pow(.90f,step));
-            q.velocity=next.ToRotationVector2()*speed;
+        const int fallTicks = 18;
+        if (art.Age < fallTicks) {
+            q.velocity.X = 0;
+            q.velocity.Y = Math.Min(11, q.velocity.Y + .055f * step);
+            return;
         }
-        if(!seek && f.Acceleration>0 && q.velocity.Length()<f.Speed*1.35f)q.velocity*=1+f.Acceleration*step;
-        float max=f.Speed*1.4f;
-        if(q.velocity.LengthSquared()>max*max)q.velocity=q.velocity.SafeNormalize(Vector2.UnitY)*max;
+        if (art.HomingStartAge < 0) {
+            art.HomingStartAge = fallTicks;
+            q.netUpdate = true;
+        }
+        if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient &&
+            (art.PatientTarget < 0 || q.numUpdates == 0 && (int)art.Age % 6 == 0)) {
+            int next = Patient(q, 3200)?.whoAmI ?? -1;
+            if (next != art.PatientTarget) { art.PatientTarget = next; q.netUpdate = true; }
+        }
+        if (!Main.player.IndexInRange(art.PatientTarget) || Main.player[art.PatientTarget] is not { active: true, dead: false } target) return;
+        Vector2 delta = target.Center - q.Center;
+        float angle = q.velocity.ToRotation();
+        float nextAngle = angle.AngleTowards(delta.ToRotation(), .24f * step);
+        float wantedSpeed = Math.Clamp(delta.Length() * .055f, 1.6f, 13f);
+        float speed = MathHelper.Lerp(q.velocity.Length(), wantedSpeed, 1 - MathF.Pow(.8f, step));
+        q.velocity = nextAngle.ToRotationVector2() * speed;
     }
 }

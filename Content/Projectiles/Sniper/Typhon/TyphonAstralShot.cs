@@ -16,6 +16,7 @@ public sealed class TyphonAstralShot : ModProjectile
 {
     public override string Texture => "ArknightsMod/Content/Projectiles/Sniper/Typhon/TyphonArrow";
     public bool Guided => Projectile.ai[0] == 1;
+    public bool LoadedPiercing => Projectile.ai[0] == 3;
     public bool SkillTwo => Projectile.ai[0] == 2;
     public int Age => (int)Projectile.ai[2];
     public const int WanderFrames = 0;
@@ -56,7 +57,7 @@ public sealed class TyphonAstralShot : ModProjectile
     public override void OnSpawn(IEntitySource source)
     {
         Projectile.penetrate = Guided ? 1 : -1;
-        Projectile.scale = Guided ? RightScale : LeftScale;
+        Projectile.scale = Guided || LoadedPiercing ? RightScale : LeftScale;
         if (!Main.dedServ)
         {
             TyphonAstralVisuals.Fire(Projectile.Center, Projectile.velocity.SafeNormalize(Vector2.UnitX), !Guided);

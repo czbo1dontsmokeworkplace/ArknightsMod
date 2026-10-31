@@ -15,7 +15,8 @@ public sealed class NecrassCourt : ModProjectile
     internal int Mode => Math.Clamp((int)Projectile.ai[0], 0, 2);
     internal int Rank => Math.Clamp((int)Projectile.ai[1], 0, 9);
     internal int Elite => Math.Clamp((int)Projectile.ai[2], 0, 2);
-    private int spawnBudget, budgetTimer, refillCooldown;
+    private readonly Queue<(Vector2 Location, int Attack)> souls = new();
+    private int budgetTimer, refillCooldown;
     public override void SetDefaults()
     {
         Projectile.width = Projectile.height = 2;
@@ -41,22 +42,22 @@ public sealed class NecrassCourt : ModProjectile
         if (++budgetTimer >= 6)
         {
             budgetTimer = 0;
-            if (spawnBudget > 0) { spawnBudget--; Summon(owner.Center); }
+            if (souls.Count > 0) { var soul = souls.Dequeue(); Summon(soul.Location, soul.Attack); }
         }
         if (refillCooldown > 0) refillCooldown--;
         foreach (var servant in Servants(owner.whoAmI))
             if (Mode != 2 && servant.Special) servant.Dismiss();
     }
-    internal void QueueSouls(Vector2 location, int count)
+    internal void QueueSouls(Vector2 location, int count, int attack)
     {
         if (!Authority) return;
-        if (spawnBudget == 0 && budgetTimer == 0)
+        if (souls.Count == 0 && budgetTimer == 0 && count > 0)
         {
-            Summon(location);
+            Summon(location, attack);
             count--;
             budgetTimer = 1;
         }
-        spawnBudget = Math.Min(12, spawnBudget + Math.Max(0, count));
+        for (int i = 0; i < count && souls.Count < 12; i++) souls.Enqueue((location, Math.Max(1, attack)));
     }
     internal bool Seed(Vector2 center)
     {
@@ -67,19 +68,27 @@ public sealed class NecrassCourt : ModProjectile
     }
     internal void Reassemble()
     {
-        int souls = 0;
+        List<int> attacks = [];
         foreach (var servant in Servants(Projectile.owner))
         {
-            souls += servant.Level > 0 ? 2 : 1;
+            attacks.Add(servant.InheritedAttack);
+            if (servant.Level > 0) attacks.Add(servant.InheritedAttack);
             servant.Dismiss();
         }
-        spawnBudget = 0;
-        int total = Math.Max(1, souls);
-        for (int i = 0; i < total; i++) Summon(Projectile.Center + new Vector2((i - (total - 1) * .5f) * 65, 0));
+        souls.Clear();
+        if (attacks.Count == 0) attacks.Add(ResolveAttack(Projectile.Center));
+        for (int i = 0; i < attacks.Count; i++) Summon(Projectile.Center + new Vector2((i - (attacks.Count - 1) * .5f) * 65, 0), attacks[i]);
     }
-    internal void Summon(Vector2 location)
+    private int ResolveAttack(Vector2 location)
+    {
+        int attack = Target(location, 760, Main.player[Projectile.owner])?.damage ?? 40;
+        foreach (var servant in Servants(Projectile.owner)) attack = Math.Max(attack, servant.InheritedAttack);
+        return Math.Max(1, attack);
+    }
+    internal void Summon(Vector2 location, int attack = -1)
     {
         if (!Authority) return;
+        attack = attack < 0 ? ResolveAttack(location) : Math.Max(1, attack);
         Player owner = Main.player[Projectile.owner];
         var servants = Servants(Projectile.owner);
         int cap = Elite == 0 ? 2 : 3;
@@ -92,22 +101,23 @@ public sealed class NecrassCourt : ModProjectile
             if (chosen != null)
             {
                 bool upgrading = chosen.Level == 0;
+                chosen.InheritAttack(Math.Max(chosen.InheritedAttack, attack));
                 chosen.Upgrade(1, true);
-                if (upgrading) BirthExplosion(chosen.Projectile.Center);
+                if (upgrading) BirthExplosion(chosen.Projectile.Center, chosen.InheritedAttack);
             }
             return;
         }
         bool special = Mode == 2 && !servants.Exists(s => s.Special);
         Vector2 center = SafePosition(owner, location);
         int index = Projectile.NewProjectile(Projectile.GetSource_FromThis(), center, Vector2.Zero,
-            ModContent.ProjectileType<NecrassServant>(), Projectile.damage, 3, Projectile.owner, special ? 1 : 0);
+            ModContent.ProjectileType<NecrassServant>(), attack, 3, Projectile.owner, special ? 1 : 0);
         if (!Main.projectile.IndexInRange(index)) return;
         Main.projectile[index].netUpdate = true;
-        BirthExplosion(center);
+        BirthExplosion(center, attack);
     }
-    private void BirthExplosion(Vector2 center)
+    private void BirthExplosion(Vector2 center, int attack)
     {
-        int damage = Mode == 0 ? (int)(Projectile.damage * (2.5f + Rank * 2f / 9)) : 0;
+        int damage = Mode == 0 ? (int)(attack * (2.5f + Rank * 2f / 9)) : 0;
         NecrassImpact.Spawn(Projectile, center, Vector2.Zero, damage, 0, 90);
     }
     internal static Projectile Find(int owner)
@@ -179,7 +189,7 @@ public sealed class NecrassDeaths : GlobalNPC
             if (!inRange)
                 foreach (var servant in NecrassCourt.Servants(player.whoAmI))
                     if (servant.Projectile.Distance(npc.Center) <= 300) { inRange = true; break; }
-            if (inRange) court.QueueSouls(npc.Center, 1 + (NecrassSleep.HasBrand(npc, player.whoAmI) ? 2 : 0));
+            if (inRange) court.QueueSouls(npc.Center, 1 + (NecrassSleep.HasBrand(npc, player.whoAmI) ? 2 : 0), npc.damage);
         }
         // 清除绑定，避免 NPC 槽位重新使用后将沉睡转移给新敌人。
         foreach (Projectile p in Main.ActiveProjectiles)

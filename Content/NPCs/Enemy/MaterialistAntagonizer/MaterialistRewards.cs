@@ -104,6 +104,7 @@ public sealed class MaterialistTreasureBag : ModItem
         loot.Add(ItemDropRule.Common(ModContent.ItemType<FighterDispatchTerminal>(), chanceDenominator: 1));
         loot.Add(ItemDropRule.Common(ModContent.ItemType<MiniGatling>(), chanceDenominator: 1));
         loot.Add(ItemDropRule.Common(ModContent.ItemType<OrbitalLaser>(), chanceDenominator: 1));
+        loot.Add(ItemDropRule.Common(ModContent.ItemType<PlasmaProjector>(), chanceDenominator: 1));
         loot.Add(ItemDropRule.Common(ModContent.ItemType<RotorBladeCraft>(), chanceDenominator: 1));
         loot.Add(ItemDropRule.Common(ModContent.ItemType<DroneCommandCore>(), chanceDenominator: 1));
         loot.Add(ItemDropRule.Common(ItemID.ChlorophyteBar, chanceDenominator: 1, minimumDropped: 18, maximumDropped: 24));

@@ -12,8 +12,15 @@ internal static class ChenSwordRules
 {
     internal const int Skill2StartupTicks = 3; // ceil(21 * .1)
     internal const int Skill2FadeTicks = 25; // ceil(35 * .7)
-    internal const int Skill3StartupTicks = 25; // ceil(81 * .3)
-    internal const int Skill3Duration = 75, Skill3Interval = 6, Skill3Strikes = 10;
+    internal const int Skill3StartupTicks = 8; // ceil(previous 25 * .3)
+    internal const int Skill3FirstStrikeTicks = 2; // ceil(previous 6 * .3)
+    internal const int Skill3Interval = 6, Skill3Strikes = 10;
+    internal const int Skill3SlashTicks = 14; // ceil(previous 45 * .3)
+    internal static float Skill3Speed(int strike) => MathF.Pow(1.6f, Math.Clamp(strike, 0, Skill3Strikes - 1) / 2);
+    internal static int Skill3Gap(int completed) => completed == 0 ? Skill3FirstStrikeTicks
+        : Math.Max(1, (int)MathF.Ceiling(Skill3Interval / Skill3Speed(completed)));
+    internal static int Skill3SlashDuration(float speed) => Math.Max(1, (int)MathF.Ceiling(Skill3SlashTicks / MathF.Max(1, speed)));
+    internal static float Skill3SwingProgress(float progress) => 1 - MathF.Pow(1 - Math.Clamp(progress, 0, 1), 4);
     internal const float Skill3Range = 1000, Skill3OwnerRange = 2000;
     internal static void EndSkill(Player owner, int skill)
     {

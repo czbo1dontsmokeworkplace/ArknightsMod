@@ -18,6 +18,7 @@ BranchTraits: {
 	Medic: 医师：  发射受重力影响的医疗术体，命中友方玩家进行治疗
 	ChainCaster: 链术士：  闪电可在多个敌人之间弹跳
 	SplashCaster: 扩散术师：  攻击能造成持续性伤害
+	TyphonDeadeye: 神射手：  左键进行精准攻击，右键装填一发贯穿箭，松开发射
 	Deadeye: 神射手：  左键进行精准攻击，按住右键进行蓄力发射更猛烈的攻击
 	Crossbowman: 弩手：  快速发射箭矢
 }

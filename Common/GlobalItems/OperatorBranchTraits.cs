@@ -87,7 +87,7 @@ public sealed class OperatorBranchTraits : GlobalItem
             {
                 tooltips.Add(new TooltipLine(Mod, "OperatorClass", Language.GetTextValue("Mods.ArknightsMod.BranchTraits." + profession + "Profession")));
             }
-            tooltips.Add(new TooltipLine(Mod, "OperatorBranch", Language.GetTextValue("Mods.ArknightsMod.BranchTraits." + branch)));
+            tooltips.Add(new TooltipLine(Mod, "OperatorBranch", Language.GetTextValue("Mods.ArknightsMod.BranchTraits." + (item.ModItem.Name == "TyphonBow" ? "TyphonDeadeye" : branch))));
         }
     }
 

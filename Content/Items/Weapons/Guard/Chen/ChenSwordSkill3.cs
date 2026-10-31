@@ -34,7 +34,7 @@ public partial class sw_Proj_2
             if (!local || Projectile.ai[0] < ChenSwordRules.Skill3StartupTicks) return;
             Projectile.localAI[0] = 1;
             Projectile.ai[1] = 0;
-            Projectile.timeLeft = ChenSwordRules.Skill3Duration;
+            Projectile.timeLeft = 3;
             Projectile.netUpdate = true;
         }
         player.velocity = Vector2.Zero;
@@ -43,11 +43,19 @@ public partial class sw_Proj_2
         var protection = player.GetModPlayer<Skill_2_Player>();
         protection.SetScreenPos(AttackPos);
         protection.CanBeDamaged = false;
+        Projectile.timeLeft = 3;
         Projectile.ai[1]++;
-        if (local && Projectile.ai[1] % ChenSwordRules.Skill3Interval == 0 && skill3Strikes < ChenSwordRules.Skill3Strikes) {
+        if (skill3Strikes >= ChenSwordRules.Skill3Strikes) {
+            // Wait only for the final accelerated slash, without an idle tail.
+            if (Projectile.ai[1] >= ChenSwordRules.Skill3SlashDuration(ChenSwordRules.Skill3Speed(skill3Strikes - 1)))
+                Projectile.Kill();
+            return;
+        }
+        if (local && Projectile.ai[1] >= ChenSwordRules.Skill3Gap(skill3Strikes)) {
             UpdateSkill3Target(AttackPos);
             bool final = ++skill3Strikes == ChenSwordRules.Skill3Strikes;
             ReleaseSkill3Strike(final);
+            Projectile.ai[1] = 0;
             Projectile.netUpdate = true;
         }
     }
@@ -63,10 +71,11 @@ public partial class sw_Proj_2
         float angle = final ? 0 : Main.rand.NextFloat(-.9f, .9f);
         int direction = final ? (player.MountedCenter.X < AttackPos.X ? 1 : -1) : (Main.rand.NextBool() ? 1 : -1);
         Vector2 start = AttackPos + new Vector2((final ? 240 : 220) * direction, 0).RotatedBy(angle);
-        Vector2 velocity = (AttackPos - start).SafeNormalize(Vector2.UnitX) * (final ? 70 : 60);
+        float speed = ChenSwordRules.Skill3Speed(skill3Strikes - 1);
+        Vector2 velocity = (AttackPos - start).SafeNormalize(Vector2.UnitX) * ((final ? 70 : 60) * speed);
         int damage = (int)Math.Round(player.GetTotalDamage(DamageClass.Melee).ApplyTo(player.HeldItem.damage) * 3.2f);
         Projectile.NewProjectile(Projectile.GetSource_FromThis(), start, velocity,
-            ModContent.ProjectileType<Skill_3_Attack_Proj>(), damage, 1, player.whoAmI);
+            ModContent.ProjectileType<Skill_3_Attack_Proj>(), damage, 1, player.whoAmI, 0, speed);
         if (!_playedSkill3Sound && !Main.dedServ) {
             SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/ChenSwordSkill3") { MaxInstances = 2 }, player.position);
             _playedSkill3Sound = true;
@@ -75,7 +84,7 @@ public partial class sw_Proj_2
         for (int i = 0; i < (final ? 60 : 30); i++) {
             Dust dust = Dust.NewDustPerfect(AttackPos, Main.rand.NextBool(3) ? 219 : 222);
             dust.noGravity = true;
-            dust.velocity = velocity.RotatedByRandom(.4) * Main.rand.NextFloat(.1f, .3f);
+            dust.velocity = (velocity / speed).RotatedByRandom(.4) * Main.rand.NextFloat(.1f, .3f);
             dust.fadeIn = .4f; dust.scale = final ? .6f : .5f;
         }
         Dust ring = Dust.NewDustPerfect(AttackPos, ModContent.DustType<Skill_3_Dust_4>());

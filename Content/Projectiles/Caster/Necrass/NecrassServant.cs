@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -26,6 +27,19 @@ public sealed class NecrassServant : ModProjectile
     internal float HealthRatio => (ArmorServant ? armorStats.Life : health) / (float)MaxHealth;
     private int MaxHealth => ArmorServant ? armorStats.LifeMax : Special ? 780 + Level * 180 : (Level == 0 ? 260 : 520);
     private int health, timer, hurtCooldown, attackNumber;
+    private int inheritedAttack;
+    internal int InheritedAttack => Math.Max(1, inheritedAttack);
+    internal void InheritAttack(int attack)
+    {
+        if (ArmorServant) return;
+        inheritedAttack = Math.Max(1, attack);
+        Projectile.originalDamage = Projectile.damage = inheritedAttack;
+        Projectile.netUpdate = true;
+    }
+    public override void OnSpawn(IEntitySource source)
+    {
+        if (!ArmorServant) InheritAttack(Projectile.damage);
+    }
     private byte state;
     private bool initialized;
     private int flash;
@@ -51,11 +65,18 @@ public sealed class NecrassServant : ModProjectile
     public override void SendExtraAI(BinaryWriter writer)
     {
         writer.Write(state); writer.Write((short)timer); writer.Write(health); writer.Write((short)attackNumber);
+        writer.Write(inheritedAttack);
         if (ArmorServant) armorStats.Write(writer);
     }
     public override void ReceiveExtraAI(BinaryReader reader)
     {
         state = reader.ReadByte(); timer = reader.ReadInt16(); health = reader.ReadInt32(); attackNumber = reader.ReadInt16();
+        int attack = reader.ReadInt32();
+        if (!ArmorServant)
+        {
+            inheritedAttack = Math.Max(1, attack);
+            Projectile.originalDamage = Projectile.damage = inheritedAttack;
+        }
         if (ArmorServant)
         {
             armorStats.Read(reader);
@@ -196,13 +217,13 @@ public sealed class NecrassServant : ModProjectile
         }
         Projectile court = NecrassCourt.Find(Projectile.owner);
         if (court?.ModProjectile is not NecrassCourt data) return;
-        float multiplier = Special ? 1.4f + Level * .4f : .65f * (Level == 0 ? 1 : data.Elite == 2 ? 2 : 1.5f);
+        float multiplier = Special ? 1.4f + Level * .4f : (Level == 0 ? 1 : data.Elite == 2 ? 2 : 1.5f);
         Vector2 aim = (target.Center - Projectile.Center).SafeNormalize(Vector2.UnitX * Projectile.spriteDirection);
         int reach = Special ? 160 + (Level / 3) * 40 : 105;
-        NecrassImpact.Spawn(Projectile, Projectile.Center, aim, (int)(court.damage * multiplier), 2, reach);
+        NecrassImpact.Spawn(Projectile, Projectile.Center, aim, (int)(InheritedAttack * multiplier), 2, reach);
         if (state == 3)
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, aim * 15,
-                ModContent.ProjectileType<NecrassSoulBolt>(), (int)(court.damage * multiplier * .55f), 4, Projectile.owner, 1);
+                ModContent.ProjectileType<NecrassSoulBolt>(), (int)(InheritedAttack * multiplier * .55f), 4, Projectile.owner, 1);
     }
     private void TakeContactDamage()
     {

@@ -93,13 +93,14 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Surtr
 					SoundEngine.PlaySound(SkillActiveSound, player.Center);
 					return false;
 				}
-				else if (modPlayer.Skill == 2 && modPlayer.StockCount > 0 && !modPlayer.SkillActive)
+				else if (modPlayer.Skill == 2 && modPlayer.StockCount > 0 && !modPlayer.SkillActive
+					&& !player.HasBuff<SurtrLaevatainS3Buff>())
 				{
 					modPlayer.SkillActive = true;
 					modPlayer.SkillTimer = 0;
 					modPlayer.DelStockCount();
 					SoundEngine.PlaySound(SkillActiveSound, player.Center);
-					// 持续效果只在手持本武器并保持三技能开启时生效。
+					// 黄昏一旦开启持续至死亡，切换武器/技能不解除持续代价。
 					player.AddBuff(ModContent.BuffType<SurtrLaevatainS3Buff>(), SurtrLaevatainS3Buff.InitialDuration);
 					player.GetModPlayer<SurtrLaevatain_Player>()
 						.StartTransformationFire(new Color(255, 40, 8));

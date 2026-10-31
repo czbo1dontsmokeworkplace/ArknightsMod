@@ -17,18 +17,23 @@ public abstract class MedicWeapon : ExpansionWeaponBase
     public MedicProfile Profile => MedicCatalog.Get(ProfileId);
     public override int EliteStageMax => ProfileId is 0 or 22 ? 1 : 2;
     protected override int[] EliteDamage => [0, 0, 0];
+    // Classify the item artwork, not the appearance of the projectile it emits.
+    internal bool IsThrownItem => ProfileId is 0 or 1;
+    internal bool UsesStaffPose => ProfileId is not (0 or 1 or 5 or 16);
     // Supplied item artwork is shared by inventory, dropped items and vanilla held-item drawing.
-    public override string Texture => ProfileId == 16
+    public override string Texture => ProfileId == 10 ? "Terraria/Images/Item_" + ItemID.StaffofRegrowth
+        : ProfileId == 11 ? "Terraria/Images/Item_" + ItemID.EmeraldStaff
+        : ProfileId == 13 ? "Terraria/Images/Item_" + ItemID.CrystalSerpent
+        : ProfileId == 16
         ? "ArknightsMod/Content/Projectiles/Medic/Arts/Mon3trHealingArt"
         : ProfileId is 0 or 1 or 9 or 12 or 20 or 22
         ? "ArknightsMod/Content/Items/Weapons/Medic/" + Name
         : Profile.Branch == MedicBranch.Physician && Profile.Tier == 5
         ? "ArknightsMod/Content/Items/Weapons/Medic/Shining/ShiningSword"
         : "ArknightsMod/Content/Items/Weapons/Medic/Sussurro/SussurroStaff";
-    public override void SetStaticDefaults() => Item.staff[Type] = ProfileId is not (0 or 1 or 16);
+    public override void SetStaticDefaults() => Item.staff[Type] = UsesStaffPose;
     public override Vector2? HoldoutOffset() => ProfileId switch
     {
-        0 or 1 => new Vector2(-8, -2),
         16 => new Vector2(-4, -1),
         _ => null
     };
@@ -38,17 +43,25 @@ public abstract class MedicWeapon : ExpansionWeaponBase
         {
             0 => (36, 34),
             1 => (30, 28),
+            5 => (86, 86),
             9 => (50, 52),
             12 => (54, 54),
             16 => (32, 18),
             20 => (64, 78),
             22 => (46, 46),
-            _ => (40, 40)
+            _ => (58, 68)
         };
+        if (ProfileId is 10 or 11 or 13) {
+            var art = new Item(ProfileId == 10 ? ItemID.StaffofRegrowth : ProfileId == 11 ? ItemID.EmeraldStaff : ItemID.CrystalSerpent);
+            Item.width = art.width; Item.height = art.height;
+        }
         Item.damage = EliteDamage[0];
         Item.DamageType = DamageClass.Magic;
         Item.useTime = Item.useAnimation = Profile.CastAnimation;
-        Item.useStyle = ItemUseStyleID.Shoot;
+        Item.useStyle = IsThrownItem || ProfileId == 5 ? ItemUseStyleID.Swing : ItemUseStyleID.Shoot;
+        // Native shuriken/throwing-knife arm motion, with only the independent
+        // projectile visible. Staves, the sword and guns retain their held art.
+        Item.noUseGraphic = IsThrownItem;
         Item.noMelee = Item.autoReuse = true;
         Item.mana = 3 + Profile.Tier * 2;
         Item.knockBack = 0;
@@ -63,7 +76,7 @@ public abstract class MedicWeapon : ExpansionWeaponBase
     public override bool CanUseItem(Player player)
     {
         if (!ArknightsKeybinds.SkillActivatePressed(player))
-            return (Profile.Branch != MedicBranch.MultiTarget || player.GetModPlayer<MedicCastPlayer>().GroupCooldown == 0)
+            return player.GetModPlayer<MedicCastPlayer>().Cooldown == 0
                 && base.CanUseItem(player);
         player.GetModPlayer<MedicSkillPlayer>().TryActivate(this);
         return false;
@@ -75,45 +88,58 @@ public abstract class MedicWeapon : ExpansionWeaponBase
             player.GetModPlayer<MedicSkillPlayer>().TryActivate(this);
     }
 
-    public override float UseSpeedMultiplier(Player player) =>
-        player.GetModPlayer<MedicSkillPlayer>().ActiveFor(this) && Name == "SussurroStaff"
-            && player.GetModPlayer<WeaponPlayer>().Skill == 1 ? 1.35f : 1f;
-
+    // Native arm motion is always eight ticks; cast cadence belongs to the shared clock.
+    public override float UseSpeedMultiplier(Player player) => 1f;
+    public override float UseTimeMultiplier(Player player) => player.GetWeaponAttackSpeed(Item);
+    public override float UseAnimationMultiplier(Player player) => player.GetWeaponAttackSpeed(Item);
     public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source,
         Vector2 position, Vector2 velocity, int type, int damage, float knockback)
     {
-        if (player.whoAmI != Main.myPlayer) return false;
-        // Preserve attack-speed scaling and the full resistance interval after shortening the animation.
-        int interval = player.itemAnimationMax > 0
-            ? Math.Max(1, (int)MathF.Ceiling(Profile.Interval * (float)player.itemAnimationMax / Profile.CastAnimation))
-            : Profile.Interval;
-        if (Profile.Branch == MedicBranch.MultiTarget
-            && !player.GetModPlayer<MedicCastPlayer>().TryStartGroupCast(interval)) return false;
-        Vector2 aim = velocity.SafeNormalize(Vector2.UnitX * player.direction);
-        position = player.MountedCenter + Collision.TileCollision(player.MountedCenter - new Vector2(8), aim * 28, 16, 16, true, true);
+        TryCast(player, source, false);
+        return false;
+    }
+
+    internal float HealingPower(Player player)
+    {
         var skill = player.GetModPlayer<MedicSkillPlayer>();
         var skillState = player.GetModPlayer<WeaponPlayer>();
         float skillBonus = Name == "SussurroStaff" && skillState.Skill == 1
             || Name == "ShiningStaff" && skillState.Skill == 0 ? .8f : .4f;
-        float power = (1f + EliteStage * .12f) * (1f + (skill.ActiveFor(this) ? skillBonus + skill.Rank * .02f : 0f));
-        Projectile.NewProjectile(source, position, aim * MedicIdentity.Get(ProfileId).Speed, type, 0, 0,
-            player.whoAmI, ProfileId, power, interval);
-        MedicArtsVfx.Cast(position, aim, ProfileId, skill.ActiveFor(this));
-        return false;
+        float magic=player.GetTotalDamage(DamageClass.Magic).ApplyTo(Profile.Healing)/Profile.Healing;
+        return Math.Max(0,magic)*(1f + EliteStage * .12f) * (1f + (skill.ActiveFor(this) ? skillBonus + skill.Rank * .02f : 0f));
+    }
+
+    internal bool TryAutomaticCast(Player player) => TryCast(player,
+        new EntitySource_ItemUse_WithAmmo(player, Item, 0, "AutoMedicalPack"), true);
+
+    private bool TryCast(Player player, EntitySource_ItemUse_WithAmmo source, bool payMana)
+    {
+        if (player.whoAmI != Main.myPlayer) return false;
+        var clock = player.GetModPlayer<MedicCastPlayer>();
+        if (clock.Cooldown > 0) return false;
+        if (payMana && !player.CheckMana(Item, -1, true, true)) return false;
+        if (!clock.TryStartCast()) return false;
+        MedicLaunch.Cast(player, source, ProfileId, Item.shoot, HealingPower(player));
+        if (payMana) {
+            player.manaRegenDelay = player.maxRegenDelay;
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+                NetMessage.SendData(MessageID.PlayerMana, -1, -1, null, player.whoAmI);
+        }
+        return true;
     }
 
     public override void ModifyTooltips(List<TooltipLine> tooltips)
     {
         tooltips.Add(new TooltipLine(Mod, "MedicalNumbers", Language.GetTextValue("Mods.ArknightsMod.MedicalArts.Numbers",
-            Profile.Healing, Profile.Interval / 60f, Profile.ArmingDelay / 60f,
-            Profile.Interval * Profile.ResistanceDurationMultiplier / 60f, Profile.ResistanceReduction * 100f)));
+            Math.Max(1,(int)MathF.Round(Profile.Healing*HealingPower(Main.LocalPlayer))), Profile.Interval / 60f, Profile.ArmingDelay / 60f,
+            Profile.Interval * Profile.ResistanceDurationMultiplier / 60f, Profile.ResistanceReduction * 100f,Profile.Healing)));
         if (Profile.Branch == MedicBranch.Chain)
             tooltips.Add(new TooltipLine(Mod, "MedicalRegen", Language.GetTextValue("Mods.ArknightsMod.MedicalArts.Regen",
                 Profile.StackLimit, Profile.RegenPerStack, Profile.StackDuration / 60)));
         if (Profile.Branch == MedicBranch.Wandering)
             tooltips.Add(new TooltipLine(Mod, "MedicalCleanse", Language.GetTextValue("Mods.ArknightsMod.MedicalArts.Cleanse", Profile.CleanseLimit)));
         if (Profile.Branch == MedicBranch.Therapist)
-            tooltips.Add(new TooltipLine(Mod, "MedicalShorten", Language.GetTextValue("Mods.ArknightsMod.MedicalArts.Shorten", Profile.Healing * .1f)));
+            tooltips.Add(new TooltipLine(Mod, "MedicalShorten", Language.GetTextValue("Mods.ArknightsMod.MedicalArts.Shorten", Profile.Healing * HealingPower(Main.LocalPlayer) * .1f)));
         tooltips.Add(new TooltipLine(Mod, "MedicalSkillKey", GetSkillActivateKeyHint()));
     }
     public override string GetSkillActivateKeyHint() => string.IsNullOrEmpty(ArknightsKeybinds.SkillActivateKeyDisplay)

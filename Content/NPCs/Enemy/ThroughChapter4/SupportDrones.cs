@@ -9,7 +9,6 @@ using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Utilities;
 using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Content.Projectiles.Supporter.Magallan;
 using ArknightsMod.Content.NPCs.Enemy.MaterialistAntagonizer;
@@ -65,12 +64,7 @@ public abstract class SupportDrone : ModNPC
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Ester>(), 3, 1, 2));
     }
 
-    public override float SpawnChance(NPCSpawnInfo spawnInfo)
-    {
-        if (!(NPC.downedBoss1 || NPC.downedBoss2 || NPC.downedBoss3 || NPC.downedQueenBee || Main.hardMode))
-            return 0f;
-        return SpawnCondition.OverworldDaySlime.Chance * .02f;
-    }
+    public override float SpawnChance(NPCSpawnInfo spawnInfo) => 0f;
 
     protected Player FindTarget()
     {
@@ -114,13 +108,53 @@ public abstract class SupportDrone : ModNPC
 
 public sealed class FrostDrone : SupportDrone
 {
+    private bool naturallySpawned;
     internal const float MistRadius = 200f;
+    internal const float NearbyLimitRadius = 1600f;
     protected override int FrameCount => 4;
     protected override string BestiaryText => "寒霜：持续释放低温烟雾的控场无人机。冷雾会拖慢玩家，不造成伤害。";
     private Vector2 MistCenter => NPC.Center + new Vector2(0f, 68f);
 
+    internal static float NaturalSpawnWeight(bool hardmode, bool snow, bool surface, bool blizzard, int nearby) =>
+        !hardmode || !snow || !surface || nearby >= 2 ? 0f : blizzard ? .35f : .001f;
+
+    internal static int NearbyCount(Vector2 center, int ignoredIndex = -1)
+    {
+        int count = 0;
+        foreach (NPC npc in Main.ActiveNPCs)
+            if (npc.whoAmI != ignoredIndex && npc.ModNPC is FrostDrone &&
+                Vector2.DistanceSquared(npc.Center, center) < NearbyLimitRadius * NearbyLimitRadius) count++;
+        return count;
+    }
+
+    public override float SpawnChance(NPCSpawnInfo info) => NaturalSpawnWeight(Main.hardMode,
+        info.Player.ZoneSnow, info.Player.ZoneOverworldHeight && info.SpawnTileY <= Main.worldSurface,
+        Main.raining && Math.Abs(Main.windSpeedCurrent) >= .5f, NearbyCount(info.Player.Center));
+
+    public override void OnSpawn(IEntitySource source)
+    {
+        base.OnSpawn(source);
+        naturallySpawned = source is EntitySource_SpawnNPC;
+        if (!Authority || !naturallySpawned) return;
+        // Natural spawns are serialized by the server. Recheck after allocation for overlapping player spawn areas.
+        foreach (Player player in Main.ActivePlayers)
+            if (!player.dead && !player.ghost && Vector2.DistanceSquared(NPC.Center, player.Center) < NearbyLimitRadius * NearbyLimitRadius &&
+                NearbyCount(player.Center, NPC.whoAmI) >= 2) {
+                NPC.active = false;
+                NPC.netUpdate = true;
+                return;
+            }
+    }
+
+    public override void SetBestiary(BestiaryDatabase database, BestiaryEntry entry) => entry.Info.AddRange(
+        new IBestiaryInfoElement[] {
+            BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Snow,
+            new FlavorTextBestiaryInfoElement(BestiaryText)
+        });
+
     public override void AI()
     {
+        if (Authority && naturallySpawned && EnforceNearbyLimit()) return;
         Player target = FindTarget();
         NPC.ai[0]++;
         float lateral = NPC.TryGetGlobalNPC<MaterialistWing>(out var wing) && wing.Bound ? (wing.Slot % 2 == 0 ? -150f : 150f) : 0f;
@@ -138,6 +172,24 @@ public sealed class FrostDrone : SupportDrone
             MagallanVisuals.Puff(NPC.Center + new Vector2(0f, 12f).RotatedBy(NPC.rotation),
                 new Vector2(NPC.velocity.X * .2f, 1.8f), new Color(158, 211, 231), 46f, 38, .42f, .018f);
         }
+    }
+
+    private bool EnforceNearbyLimit()
+    {
+        // Moving player groups can merge. Keep two by stable slot priority, preserving carrier-spawned units.
+        foreach (Player player in Main.ActivePlayers) {
+            if (player.dead || player.ghost || Vector2.DistanceSquared(NPC.Center, player.Center) >= NearbyLimitRadius * NearbyLimitRadius) continue;
+            int higherPriority = 0;
+            foreach (NPC other in Main.ActiveNPCs)
+                if (other.whoAmI != NPC.whoAmI && other.ModNPC is FrostDrone frost &&
+                    (!frost.naturallySpawned || other.whoAmI < NPC.whoAmI) &&
+                    Vector2.DistanceSquared(other.Center, player.Center) < NearbyLimitRadius * NearbyLimitRadius) higherPriority++;
+            if (higherPriority < 2) continue;
+            NPC.active = false;
+            NPC.netUpdate = true;
+            return true;
+        }
+        return false;
     }
 
     internal static bool MistTouches(Vector2 center, Rectangle target)
@@ -178,7 +230,7 @@ public sealed class FrostDroneChillPlayer : ModPlayer
 public sealed class BomberDrone : SupportDrone
 {
     private const int LaunchFrameTicks = 6;
-    internal const int AimTicks = 72, LockTick = 42;
+    internal const int AimTicks = 72, LockTick = 42, MaxSearchTicks = 300;
     private enum FlightState { Seeking, Aiming, Launching, Spent }
     private FlightState State { get => (FlightState)(int)NPC.ai[0]; set => NPC.ai[0] = (int)value; }
     private int Timer { get => (int)NPC.ai[1]; set => NPC.ai[1] = value; }
@@ -187,10 +239,16 @@ public sealed class BomberDrone : SupportDrone
     private Vector2 launchVelocity;
     private float flightTicks;
     private bool aimLocked;
+    private int preparationTicks;
+    private bool hasTargetSnapshot;
+    private Vector2 lastTargetCenter, lastTargetVelocity;
     internal bool Spent => State == FlightState.Spent;
     internal bool PayloadReleased => State is FlightState.Launching or FlightState.Spent;
     internal Vector2 PlannedVelocity => launchVelocity;
     internal float PlannedFlightTicks => flightTicks;
+    internal bool AimLocked => aimLocked;
+    internal bool PreparingDrop => State == FlightState.Aiming;
+    internal int PreparationTicks => preparationTicks;
     internal Vector2 BombMount => NPC.Center + new Vector2(0f, 15f).RotatedBy(NPC.rotation) * NPC.scale;
     internal int DrawFrame => State switch {
         FlightState.Seeking or FlightState.Aiming => (int)(NPC.frameCounter / 6) % 4,
@@ -205,41 +263,57 @@ public sealed class BomberDrone : SupportDrone
         NPC.lifeMax = 320;
         NPC.height = 32;
         NPC.value = Item.buyPrice(silver: 3);
+        NPC.lavaImmune = true;
     }
+
+    internal static float NaturalSpawnWeight(bool hardmode, bool underworld) => hardmode && underworld ? .06f : 0f;
+    public override float SpawnChance(NPCSpawnInfo info) => NaturalSpawnWeight(Main.hardMode,
+        info.Player.ZoneUnderworldHeight && info.SpawnTileY >= Main.UnderworldLayer);
+    public override void SetBestiary(BestiaryDatabase database, BestiaryEntry entry) => entry.Info.AddRange(
+        new IBestiaryInfoElement[] {
+            BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.TheUnderworld,
+            new FlavorTextBestiaryInfoElement(BestiaryText)
+        });
 
     public override void AI()
     {
         Player target = FindTarget();
+        if (State is FlightState.Seeking or FlightState.Aiming) {
+            preparationTicks = Math.Min(preparationTicks + 1, MaxSearchTicks);
+            if (target != null) {
+                hasTargetSnapshot = true;
+                lastTargetCenter = target.Center;
+                lastTargetVelocity = target.velocity;
+            }
+        }
         Timer++;
         switch (State) {
             case FlightState.Seeking:
                 FlyTo(target == null ? Home : target.Center - new Vector2(0f, 176f), 3.8f);
-                if (Authority && target != null && Timer >= 60 &&
+                if (Authority && (preparationTicks >= MaxSearchTicks || target != null && Timer >= 60 &&
                     Math.Abs(NPC.Center.X - target.Center.X) < 220f &&
                     NPC.Center.Y < target.Center.Y - 80f && NPC.Center.Y > target.Center.Y - 480f &&
-                    Collision.CanHitLine(BombMount, 1, 1, target.position, target.width, target.height)) {
+                    Collision.CanHitLine(BombMount, 1, 1, target.position, target.width, target.height))) {
                     State = FlightState.Aiming;
                     Timer = 0;
-                    aimLocked = false;
+                    NPC.velocity = Vector2.Zero;
+                    UpdateDropPlan();
+                    // A failed search still gives the player the full warning. It cannot restart the search clock.
+                    aimLocked = preparationTicks >= MaxSearchTicks;
                     NPC.netUpdate = true;
                 }
                 break;
             case FlightState.Aiming:
                 NPC.velocity = Vector2.Zero;
-                if (!aimLocked && target != null) {
-                    (launchVelocity, flightTicks) = BomberDroneBomb.Plan(BombMount, target.Center, target.velocity);
-                    if (Authority && Timer >= LockTick) { aimLocked = true; NPC.netUpdate = true; }
+                if (!aimLocked) {
+                    UpdateDropPlan();
+                    if (Authority && (Timer >= LockTick || preparationTicks >= MaxSearchTicks)) { aimLocked = true; NPC.netUpdate = true; }
                     else if (Authority && Timer % 6 == 0) NPC.netUpdate = true;
                 }
-                if (Authority && target == null && !aimLocked) {
-                    State = FlightState.Seeking;
-                    Timer = 0;
-                    NPC.netUpdate = true;
-                }
-                else if (Authority && aimLocked && Timer >= AimTicks) {
+                if (Authority && aimLocked && Timer >= AimTicks) {
                     int index = Projectile.NewProjectile(NPC.GetSource_FromAI(), BombMount, launchVelocity,
                         ModContent.ProjectileType<BomberDroneBomb>(), 40, 5f, Main.myPlayer);
-                    if (Main.projectile.IndexInRange(index) && Main.projectile[index].ModProjectile is BomberDroneBomb bomb) {
+                    if (index >= 0 && index < Main.maxProjectiles && Main.projectile[index].ModProjectile is BomberDroneBomb bomb) {
                         if (NPC.TryGetGlobalNPC<MaterialistWing>(out var owner) && owner.Bound)
                             bomb.Bind(owner.OwnerIndex, owner.Encounter);
                         Main.projectile[index].netUpdate = true;
@@ -275,6 +349,14 @@ public sealed class BomberDrone : SupportDrone
         }
     }
 
+    private void UpdateDropPlan()
+    {
+        // Target loss never rolls back an acquired warning. Use the last observation, or safely discard downward.
+        Vector2 center = hasTargetSnapshot ? lastTargetCenter : BombMount + new Vector2(0f, 200f);
+        Vector2 velocity = hasTargetSnapshot ? lastTargetVelocity : Vector2.Zero;
+        (launchVelocity, flightTicks) = BomberDroneBomb.Plan(BombMount, center, velocity);
+    }
+
     private void UpdateEvacuation()
     {
         // Keep the release-side heading committed; changing targets must not turn an empty bomber back.
@@ -294,12 +376,18 @@ public sealed class BomberDrone : SupportDrone
     {
         writer.Write(launchVelocity.X); writer.Write(launchVelocity.Y);
         writer.Write(flightTicks); writer.Write(aimLocked);
+        writer.Write(preparationTicks); writer.Write(hasTargetSnapshot);
+        writer.Write(lastTargetCenter.X); writer.Write(lastTargetCenter.Y);
+        writer.Write(lastTargetVelocity.X); writer.Write(lastTargetVelocity.Y);
     }
 
     public override void ReceiveExtraAI(BinaryReader reader)
     {
         launchVelocity = new Vector2(reader.ReadSingle(), reader.ReadSingle());
         flightTicks = reader.ReadSingle(); aimLocked = reader.ReadBoolean();
+        preparationTicks = reader.ReadInt32(); hasTargetSnapshot = reader.ReadBoolean();
+        lastTargetCenter = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+        lastTargetVelocity = new Vector2(reader.ReadSingle(), reader.ReadSingle());
     }
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)

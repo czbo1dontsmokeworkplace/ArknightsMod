@@ -18,6 +18,7 @@ BranchTraits: {
 	Medic: Physician:  Lob gravity-affected medical arts to heal allied players
 	ChainCaster: Chain Caster:  Lightning can bounce between multiple enemies
 	SplashCaster: Splash Caster:  Attacks deal sustained damage over time
+	TyphonDeadeye: Deadeye:  Left-click for precision attacks; hold right-click to load one piercing arrow, then release to fire
 	Deadeye: Deadeye:  Hold the attack button to charge; a full charge fires a powerful shell
 	Crossbowman: Crossbowman:  Rapidly fires arrows
 }

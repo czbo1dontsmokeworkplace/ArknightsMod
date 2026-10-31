@@ -174,7 +174,7 @@ public sealed class OperatorLordWave : ModProjectile
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
     {
         Vector2 side = Projectile.rotation.ToRotationVector2() * 30;
-        float width=48+2*Projectile.localAI[0]*BladeRouteRules.WaveSpeed*MathF.Tan(MathHelper.ToRadians(2.5f));
+        const float width=48; // Parallel cluster cells never spread during flight.
         float point = 0;
         return targetHitbox.Contains(Projectile.Center.ToPoint()) || Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center - side, Projectile.Center + side, width, ref point);
     }

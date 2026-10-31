@@ -1,6 +1,6 @@
 Items: {
 	QuartzGreatsword: {
-		DisplayName: Quartz's Greatsword
+		DisplayName: Greatsword [Quartz]
 		Tooltip:
 			'''
 			Hold left click to charge, then release a single custom swing; fully charges in 1 second before attack-speed modifiers
@@ -11,7 +11,7 @@ Items: {
 	}
 
 	WindChimesHeavyBlade: {
-		DisplayName: Wind Chimes' Heavy Blade
+		DisplayName: Heavy Blade [Wind Chimes]
 		Tooltip:
 			'''
 			Hold left click to charge, then release a single custom swing; fully charges in 1 second before attack-speed modifiers
@@ -22,7 +22,7 @@ Items: {
 	}
 
 	HoedererGreatsword: {
-		DisplayName: Hoederer's Greatsword
+		DisplayName: Greatsword [Hoederer]
 		Tooltip:
 			'''
 			Hold left click to charge, then release a single custom swing; fully charges in 1 second before attack-speed modifiers
@@ -34,7 +34,7 @@ Items: {
 	}
 
 	UlpianusAnchor: {
-		DisplayName: Ulpianus's Anchor
+		DisplayName: Anchor [Ulpianus]
 		Tooltip:
 			'''
 			Hold left click to charge, then release to swing the anchor; fully charges in 1 second before attack-speed modifiers
@@ -53,58 +53,135 @@ Skills: {
 	QuartzGreatsword: {
 		1: {
 			Label: ATK Up β
-			Desc: Gain 20%-80% attack damage for 25 seconds, scaling with skill level.
+			Desc:
+				'''
+				ATK [c/3791db:+80%]
+				'''
 		}
 
 		2: {
-			Label: All-Out Effort
-			Desc: For 20 seconds, gain 35%-80% attack speed and deal 80%-120% damage per hit, but take 25% more damage. Each target has a 25% chance to be stunned for 2 seconds. Bosses and enemies immune to knockback resist this stun.
+			Label: All-Out Clash
+			Desc:
+				'''
+				Increases damage taken by [c/f6643b:25%],
+				ASPD [c/3791db:+80],
+				each attack deals [c/3791db:120%] ATK as Physical damage and has a [c/3791db:25%] chance to Stun the target for [c/3791db:2] seconds
+				[c/AAA8AA:In this mod: lasts 20 seconds; stuns ][c/AAA8AA:affect only non-boss, non-segmented ][c/AAA8AA:enemies vulnerable to knockback]
+				'''
 		}
 	}
 
 	WindChimesHeavyBlade: {
 		1: {
 			Label: ATK Up γ
-			Desc: Gain 30%-100% attack damage for 30 seconds, scaling with skill level.
+			Desc:
+				'''
+				ATK [c/3791db:+100%]
+				'''
 		}
 
 		2: {
-			Label: Unchanging Homeland
-			Desc: Stop normal attacks and prepare for 5 seconds with 20%-35% damage reduction. Release a heavy aimed cut for 140%-300% damage, increasing by another 50% at full charge, and stun ordinary knockback-vulnerable enemies for 1 second. Press the skill key again to release early.
+			Label: Longing for Home
+			Desc:
+				'''
+				Stops attacking,
+				gains [c/3791db:40%] Sanctuary,
+				ATK gradually increases to [c/3791db:+50%]. When skill expires,
+				deals [c/3791db:230%] ATK as Physical damage to all ground enemies in front and stuns them for [c/3791db:1] sec.
+				[c/EDA128:Can manually deactivate skill (skill ][c/EDA128:can be interrupted at any time)]
+				[c/AAA8AA:In this mod: prepare for 5 seconds with ][c/AAA8AA:35% damage reduction]
+				[c/AAA8AA:On expiry or another skill-key press, ][c/AAA8AA:release a 300%-damage aimed slash; full ][c/AAA8AA:preparation adds another 50%]
+				[c/AAA8AA:Stuns affect only non-boss, ][c/AAA8AA:non-segmented enemies vulnerable to ][c/AAA8AA:knockback]
+				'''
 		}
 	}
 
 	HoedererGreatsword: {
 		1: {
-			Label: Unquenchable Edge
-			Desc: Recover SP by attacking. At full SP, the next sweep deals 160%-260% damage and its first valid hit heals 10%-25% of maximum life. Group hits heal only once per swing.
+			Label: Unquenchable Front
+			Desc:
+				'''
+				The next attack deals [c/3791db:260%] ATK as Physical damage,
+				and restores [c/3791db:25%] HP
+				[c/AAA8AA:In this mod: heal on the empowered ][c/AAA8AA:slash's first valid hit; group hits ][c/AAA8AA:heal only once per slash]
+				'''
 		}
 
 		2: {
-			Label: Ember's Burden
-			Desc: While selected, gain 4%-40% attack damage. Activate to increase attack interval by 20% and stun ordinary knockback-vulnerable enemies for 1 second on a hit. Press again to end; switching weapons or skills also ends it.
+			Label: Burden of Cinder and Ash
+			Desc:
+				'''
+				Passive Effect: ATK [c/3791db:+40%]
+				[c/EDA128:Active Effect: Can switch between the ][c/EDA128:default state and the following state: ]
+				Attack Interval [c/f6643b:increases slightly],
+				Block [c/3791db:+1],
+				attacks Stun targets for [c/3791db:1]s
+				[c/AAA8AA:In this mod: no Block mechanic; ][c/AAA8AA:activation increases attack interval by ][c/AAA8AA:20%]
+				[c/AAA8AA:Ends on switching weapons or skills; ][c/AAA8AA:stuns affect only non-boss, ][c/AAA8AA:non-segmented enemies vulnerable to ][c/AAA8AA:knockback]
+				'''
 		}
 
 		3: {
-			Label: Dying Smoke
-			Desc: For 70 seconds, gain 20% reach, 15%-60% maximum life and 30%-120% attack damage. Lose 1% maximum life each second; the first valid hit per swing heals 5% maximum life. Enemies you contact take 20-40 damage per second until the skill ends. Hits have a 25% chance to stun ordinary knockback-vulnerable enemies for 2-5 seconds.
+			Label: Fog of War Upon Death's Door
+			Desc:
+				'''
+				Consumes [c/f6643b:100] HP per second and deals [c/3791db:200] True damage per second to enemies that have either attacked or been attacked by this unit. Attack Range [c/3791db:+1],
+				Max HP [c/3791db:+60%],
+				ATK [c/3791db:+120%],
+				and each attack restores [c/3791db:5%] HP and has a [c/3791db:25%] chance to stun targets for [c/3791db:5] seconds
+				[c/AAA8AA:In this mod: reach +20%; lose 1% ][c/AAA8AA:maximum life per second]
+				[c/AAA8AA:Damage over time is adjusted to 40 per ][c/AAA8AA:second until the skill ends]
+				[c/AAA8AA:The first valid hit of each slash ][c/AAA8AA:restores 5% maximum life; group hits do ][c/AAA8AA:not repeat healing]
+				[c/AAA8AA:Stuns affect only non-boss, ][c/AAA8AA:non-segmented enemies vulnerable to ][c/AAA8AA:knockback]
+				'''
 		}
 	}
 
 	UlpianusAnchor: {
 		1: {
-			Label: Contact That Must Be Made
-			Desc: Recover SP over time. At full SP, the next fully charged attack throws the anchor. A direct hit calls an anchor from below that homes in on the struck enemy, dealing 170%-270% damage with unlimited piercing and dragging the first two ordinary knockback-vulnerable enemies toward you.
+			Label: Contact Must Be Made
+			Desc:
+				'''
+				Throws an anchor forward,
+				dragging 2 enemies caught by it towards this unit [c/3791db:moderately],
+				dealing [c/3791db:270%] ATK as Physical damage
+				[c/AAA8AA:In this mod: at full SP, the next fully ][c/AAA8AA:charged attack throws the anchor]
+				[c/AAA8AA:A direct hit then calls a rising homing ][c/AAA8AA:anchor with unlimited piercing]
+				[c/AAA8AA:Pulls only the first two non-boss, ][c/AAA8AA:non-segmented enemies vulnerable to ][c/AAA8AA:knockback]
+				'''
 		}
 
 		2: {
-			Label: Boundary That Must Be Maintained
-			Desc: Automatically activates at full SP: swing the anchor to attack, gain 100%-160% attack damage, 20%-60% maximum life and an extra 2-4 life regeneration per second (also increased by 30% by the Crusher trait). Lasts until switching weapons or skills or dying. Maximum-life increases do not heal.
+			Label: Boundaries Must Be Kept
+			Desc:
+				'''
+				Talent 1's effect increases to [c/3791db:2]x,
+				Block [c/3791db:+1],
+				Max HP [c/3791db:+60%],
+				ATK [c/3791db:+160%]
+				[c/EDA128:Unlimited duration]
+				[c/AAA8AA:In this mod: the Talent enhancement ][c/AAA8AA:becomes 4 extra life regeneration per ][c/AAA8AA:second, also increased by 30% by the ][c/AAA8AA:Crusher trait]
+				[c/AAA8AA:No Block mechanic; raising maximum life ][c/AAA8AA:does not heal]
+				[c/AAA8AA:Swing the anchor while active; ends on ][c/AAA8AA:switching weapons or skills or dying]
+				'''
 		}
 
 		3: {
-			Label: Path That Must Be Opened
-			Desc: For 25 seconds, swing the anchor to attack and gain 170%-260% attack damage and 20%-80% maximum life. Direct swing hits stun ordinary knockback-vulnerable enemies for 5 seconds. Press again to end early.
+			Label: Paths Must Be Opened
+			Desc:
+				'''
+				Max HP [c/3791db:+80%],
+				ATK [c/3791db:+260%]. Immediately throws an anchor forward,
+				stopping when hitting a target or reaching the max distance,
+				dealing [c/3791db:160%] ATK as Physical damage to all nearby enemies and Stunning them for [c/3791db:6] seconds. If the anchor stops on a tile he can deploy on,
+				Ulpianus will Move to that tile
+				[c/EDA128:Skill can be manually deactivated;]
+				[c/EDA128:when skill ends,]
+				[c/EDA128:Ulpianus returns to his original ][c/EDA128:position]
+				[c/AAA8AA:In this mod: this skill no longer ][c/AAA8AA:throws an anchor, teleports or returns ][c/AAA8AA:you]
+				[c/AAA8AA:Instead, empower anchor swings for 25 ][c/AAA8AA:seconds; direct hits stun ordinary ][c/AAA8AA:knockback-vulnerable enemies for 5 ][c/AAA8AA:seconds]
+				[c/AAA8AA:Press the skill key again to end early; ][c/AAA8AA:bosses and segmented enemies resist ][c/AAA8AA:this stun]
+				'''
 		}
 	}
 }
