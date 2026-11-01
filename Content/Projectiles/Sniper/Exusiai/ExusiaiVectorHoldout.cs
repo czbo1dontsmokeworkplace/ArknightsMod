@@ -80,7 +80,10 @@ public sealed class ExusiaiVectorHoldout : ModProjectile
                     shot.CritChance = owner.GetWeaponCrit(owner.HeldItem);
                     shot.ArmorPenetration = owner.GetWeaponArmorPenetration(owner.HeldItem);
                 }
-                gun.Magazine.Fire();
+                bool spentSkillRound = mode == 1 && gun.Magazine.EmpoweredShots > 0;
+                if (gun.Magazine.Fire() && spentSkillRound)
+                    Content.Items.Armor.OperatorAmmoConsumeHelper.NotifyAmmoConsumed(owner,
+                        Content.Items.Armor.OperatorAmmoConsumeHelper.AmmoSkillKind.VectorEmpowerment);
                 var skills = owner.GetModPlayer<WeaponPlayer>();
                 if (skills.Skill == 0)
                 {

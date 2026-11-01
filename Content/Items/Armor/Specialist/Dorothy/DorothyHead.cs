@@ -18,6 +18,7 @@ namespace ArknightsMod.Content.Items.Armor.Specialist.Dorothy
 				.AddIngredient<BipolarNanoflake>(6)
 				.AddIngredient<CuttingFluidSolution>(5),
 			SetBonusKey = "Mods.ArknightsMod.ArmorSets.Dorothy.SetBonus",
+			OnSetActivate = player => player.GetModPlayer<DorothySetPlayer>().TryPlaceMine(),
 		};
 	}
 }

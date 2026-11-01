@@ -24,6 +24,7 @@ internal sealed class RedDeploymentState
         Cooldown = Remaining = Duration;
         return true;
     }
+    internal void RefreshDuration() { if (Remaining > 0) Remaining = Duration; }
     internal void CancelEffect() => Remaining = 0;
     internal void Receive(int remaining) => Cooldown = Remaining = Math.Clamp(remaining, 0, Duration);
     // 原版 TeleportationStyleID：传送机、混沌/和谐传送杖、传送门。回城/出生不算。

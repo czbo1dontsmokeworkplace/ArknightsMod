@@ -1,3 +1,4 @@
+using ArknightsMod.Systems.Gameplay.Skill;
 ﻿using System;
 using ArknightsMod.Content.Projectiles.Guard.Utage;
 using ArknightsMod.Players;
@@ -9,8 +10,14 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Weapons.Guard.Utage;
 
-public sealed class UtageCombatPlayer : ModPlayer
+public sealed class UtageCombatPlayer : ModPlayer, IActiveSkillTimeReset
 {
+    public void ResetActiveSkillTime() {
+        if (!CurrentActivation) return;
+        var skill = Player.GetModPlayer<WeaponPlayer>();
+        recoveryLockout = (int)Math.Ceiling(skill.CurrentSkill.CurrentLevelData.ActiveTime * 60f
+            * WeaponPlayer.ActiveDurationMultiplier) + (mode == 1 ? 15 : 30) * 60;
+    }
     private int mode;
     private int healingClock;
     private bool keyWasDown;

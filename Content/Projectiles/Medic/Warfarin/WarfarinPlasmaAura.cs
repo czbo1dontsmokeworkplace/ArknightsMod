@@ -1,3 +1,4 @@
+using ArknightsMod.Systems.Gameplay.Skill;
 using System;
 using ArknightsMod.Content.Items.Weapons.Medic.Warfarin;
 using ArknightsMod.Players;
@@ -9,8 +10,17 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles.Medic.Warfarin;
 
-public sealed class WarfarinPlasmaAura : ModProjectile
+public sealed class WarfarinPlasmaAura : ModProjectile, IActiveSkillTimeReset
 {
+    public void ResetActiveSkillTime() {
+        var owner = Main.player[Projectile.owner];
+        var skill = owner.GetModPlayer<WeaponPlayer>();
+        if (owner.HeldItem.ModItem is not WarfarinStaff || skill.Skill != 1) return;
+        Projectile.ai[0] = Math.Max(1, (int)Math.Ceiling(skill.CurrentSkill.CurrentLevelData.ActiveTime
+            * 60 * WeaponPlayer.ActiveDurationMultiplier));
+        Projectile.netUpdate = true;
+    }
+
     public override string Texture => "Terraria/Images/MagicPixel";
 
     public override void SetDefaults()

@@ -1,4 +1,4 @@
-﻿BurnedScar: {
+BurnedScar: {
 	DisplayName: 灼痕
 	Description: 攻击造成的伤害降低20%，受到的魔法伤害提高至138%
 }
@@ -327,4 +327,14 @@ CarnelianSandBind: {
 MostimaTemporalDrag: {
 	DisplayName: 主观缓时
 	Description: 移动速度降低50%
+}
+
+MortisSubstituteBuff: {
+	DisplayName: 替身状态
+	Description: 无法攻击或回复技力，防御力+20%；存活至结束时回复全部生命并清除损伤积累
+}
+
+NecrosisAfflictionBuff: {
+	DisplayName: 凋亡损伤
+	Description: 凋亡积累达到1000点后爆发15秒
 }

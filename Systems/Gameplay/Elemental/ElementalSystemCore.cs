@@ -94,6 +94,14 @@ namespace ArknightsMod.Systems.Gameplay.Elemental
 		//造成伤害或治疗
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void ApplyDamage(ElementalType elementalType, int dmg, int whoAmI) {
+			if (dmg <= 0 || whoAmI < 0 || whoAmI >= Terraria.Main.maxPlayers) return;
+			var player = Terraria.Main.player[whoAmI];
+			if (elementalType == ElementalType.Necrosis) {
+				player.GetModPlayer<Players.NecrosisPlayer>().AddDamage(dmg);
+				return;
+			}
+			if (Content.Items.Armor.Specialist.Mortis.MortisSetPlayer.HasSet(player))
+				Gameplay.MujicaFeverSystem.ReportMortisDamage(player);
 			ElementalData elemData = elementalRecords[whoAmI].elementalData;
 			byte mask = elemData.Status;
 			//不能伤害元素爆发中的单位
@@ -101,6 +109,11 @@ namespace ArknightsMod.Systems.Gameplay.Elemental
 				return;
 			elemData.ApplyDamage(elementalType, dmg);
 			MarkChanges(whoAmI);
+		}
+		public static void ClearPlayerDamage(int whoAmI) {
+			if (whoAmI < 0 || whoAmI >= Terraria.Main.maxPlayers) return;
+			RegisterEntityElemental(whoAmI, EntityType.Player);
+			Terraria.Main.player[whoAmI].GetModPlayer<Players.NecrosisPlayer>().ClearDamage();
 		}
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void ApplyHealing(ElementalType elementalType, int heal, int whoAmI) {

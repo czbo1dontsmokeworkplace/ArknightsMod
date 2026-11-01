@@ -1,8 +1,10 @@
-using ArknightsMod.Content.Buffs.ArmorSets;
+using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.Supporter.CivilightEterna;
+using ArknightsMod.Content.Items.Weapons.Medic;
 using ArknightsMod.Systems.Gameplay.OperatorTags;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles.Supporter.CivilightEterna
@@ -33,16 +35,19 @@ namespace ArknightsMod.Content.Projectiles.Supporter.CivilightEterna
 			float angle = Main.GlobalTimeWrappedHourly * 2f + slot * MathHelper.TwoPi / 3f;
 			Projectile.Center = owner.Center + angle.ToRotationVector2() * 56f;
 
-			if (Projectile.localAI[0] > 0f) {
-				Projectile.localAI[0]--;
-				if (Projectile.localAI[0] <= 0f)
-					Projectile.Kill();
+			if (Projectile.ai[1] > 0f) {
+				Projectile.ai[1]--;
 				return;
 			}
+
+			if (Main.netMode == NetmodeID.MultiplayerClient)
+				return;
 
 			for (int i = 0; i < Main.maxPlayers; i++) {
 				Player ally = Main.player[i];
 				if (!ally.active || ally.dead || ally.whoAmI == owner.whoAmI)
+					continue;
+				if (!MedicHealingNet.Allied(owner, ally))
 					continue;
 
 				if (!OperatorTagRegistry.TryGetFromHelmet(ally.armor[0].type, out _))
@@ -51,10 +56,13 @@ namespace ArknightsMod.Content.Projectiles.Supporter.CivilightEterna
 				if (Vector2.Distance(ally.Center, Projectile.Center) > 24f)
 					continue;
 
-				ally.AddBuff(ModContent.BuffType<CivilightEternaHealBoostBuff>(), CivilightEternaHealBoostBuff.DurationTicks);
-				Projectile.localAI[0] = 6 * 60;
+				OperatorSkillHealHelper.ApplyHeal(ally, owner.statLifeMax2 / 10, owner);
+				Projectile.ai[1] = 6 * 60;
+				Projectile.netUpdate = true;
 				break;
 			}
 		}
+
+		public override bool PreDraw(ref Color lightColor) => Projectile.ai[1] <= 0f;
 	}
 }

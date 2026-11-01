@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using ArknightsMod.Content.Items.Armor.Guard.Oblivionis;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
+using ArknightsMod.Content.Items.Armor.Specialist.Mortis;
 using ArknightsMod.Systems.Gameplay.OperatorTags;
 using Terraria;
 using Terraria.ID;
@@ -76,13 +77,50 @@ public sealed class MujicaFeverSystem : ModSystem
         }
     }
     internal static void ReportHit(Player player, NPC target, int damage) {
-        if (damage <= 0 || target == null || target.friendly || target.lifeMax <= 5 || !HasSet(player)) return;
+        if (damage <= 0 || target == null || target.friendly || target.lifeMax <= 5 || !IsMember(player)
+            || MortisSetPlayer.BlocksActions(player)) return;
         if (Main.netMode == NetmodeID.MultiplayerClient) {
             if (player.whoAmI != Main.myPlayer) return;
             var packet = Packet(0); packet.Write((short)target.whoAmI); packet.Send();
         }
-        else if (Main.netMode == NetmodeID.SinglePlayer) dirty |= Meter.AddHit();
+        else if (Main.netMode == NetmodeID.SinglePlayer) ApplyMemberHit(player);
         // Owner reports are authoritative for tML player hit callbacks in multiplayer.
+    }
+    private static void ApplyMemberHit(Player player) {
+        if (HasSet(player)) dirty |= Meter.AddHit();
+        foreach (Player member in Main.ActivePlayers) {
+            var mortis = member.GetModPlayer<MortisSetPlayer>();
+            if (member.dead || !mortis.IsSubstitute || !Main.rand.NextBool(5)) continue;
+            if (Main.netMode == NetmodeID.Server) {
+                var packet = Packet(3); packet.Send(member.whoAmI);
+            }
+            else mortis.ShortenSubstitute();
+        }
+    }
+    internal static void ReportMortisDamage(Player player) {
+        if (!MortisSetPlayer.HasSet(player)) return;
+        if (Main.netMode == NetmodeID.MultiplayerClient) {
+            if (player.whoAmI == Main.myPlayer) Packet(5).Send();
+        }
+        else if (Main.netMode == NetmodeID.SinglePlayer) dirty |= Meter.AddHit();
+    }
+    internal static void SyncMortis(Player player, int toWho = -1) {
+        if (Main.netMode == NetmodeID.SinglePlayer
+            || Main.netMode == NetmodeID.MultiplayerClient && player.whoAmI != Main.myPlayer) return;
+        var packet = Packet(4);
+        packet.Write((byte)player.whoAmI);
+        packet.Write((ushort)player.GetModPlayer<MortisSetPlayer>().SubstituteTime);
+        packet.Send(toWho);
+    }
+    internal static void SyncNecrosis(Player player, int toWho = -1) {
+        if (Main.netMode == NetmodeID.SinglePlayer
+            || Main.netMode == NetmodeID.MultiplayerClient && player.whoAmI != Main.myPlayer) return;
+        var state = player.GetModPlayer<Players.NecrosisPlayer>();
+        var packet = Packet(6);
+        packet.Write((byte)player.whoAmI);
+        packet.Write((ushort)state.Accumulation);
+        packet.Write((ushort)state.BurstTime);
+        packet.Send(toWho);
     }
     internal static void SkillStarted(Player player) {
         if (!IsMember(player) || Meter.Active) return;
@@ -120,14 +158,30 @@ public sealed class MujicaFeverSystem : ModSystem
             Player player = Main.player[sender];
             if (kind == 0) {
                 int npcIndex = reader.ReadInt16();
-                if (!HasSet(player) || npcIndex < 0 || npcIndex >= Main.maxNPCs) return;
+                if (!IsMember(player) || MortisSetPlayer.BlocksActions(player)
+                    || npcIndex < 0 || npcIndex >= Main.maxNPCs) return;
                 NPC npc = Main.npc[npcIndex];
                 if (npc.friendly || npc.lifeMax <= 5 || npc.dontTakeDamage) return;
-                dirty |= Meter.AddHit();
+                ApplyMemberHit(player);
             }
             else if (kind == 1 && IsMember(player)) {
                 if (Meter.Activate()) { startedTick = Main.GameUpdateCount; Sync(); }
                 else Sync(sender); // Rejection also releases the client's pending pause.
+            }
+            else if (kind == 4) {
+                int index = reader.ReadByte(), time = reader.ReadUInt16();
+                if (index != sender || time > MortisSetPlayer.SubstituteDuration
+                    || time > 0 && !MortisSetPlayer.HasHelmet(player)) return;
+                player.GetModPlayer<MortisSetPlayer>().SubstituteTime = time;
+                SyncMortis(player);
+            }
+            else if (kind == 5 && MortisSetPlayer.HasSet(player)) dirty |= Meter.AddHit();
+            else if (kind == 6) {
+                int index = reader.ReadByte(), accumulation = reader.ReadUInt16(), time = reader.ReadUInt16();
+                if (index != sender || accumulation >= Players.NecrosisPlayer.Threshold
+                    || time > Players.NecrosisPlayer.BurstDuration) return;
+                player.GetModPlayer<Players.NecrosisPlayer>().SetState(accumulation, time);
+                SyncNecrosis(player);
             }
         }
         else if (Main.netMode == NetmodeID.MultiplayerClient && kind == 2) {
@@ -138,6 +192,18 @@ public sealed class MujicaFeverSystem : ModSystem
             Meter.Set(charge, remaining);
             if (remaining > 0 || charge < MujicaFeverMeter.Maximum)
                 Main.LocalPlayer.GetModPlayer<Players.MujicaPlayer>().ConfirmActivation();
+        }
+        else if (Main.netMode == NetmodeID.MultiplayerClient && kind == 3)
+            Main.LocalPlayer.GetModPlayer<MortisSetPlayer>().ShortenSubstitute();
+        else if (Main.netMode == NetmodeID.MultiplayerClient && kind == 4) {
+            int index = reader.ReadByte(), time = reader.ReadUInt16();
+            if (index < Main.maxPlayers && index != Main.myPlayer && time <= MortisSetPlayer.SubstituteDuration)
+                Main.player[index].GetModPlayer<MortisSetPlayer>().SubstituteTime = time;
+        }
+        else if (Main.netMode == NetmodeID.MultiplayerClient && kind == 6) {
+            int index = reader.ReadByte(), accumulation = reader.ReadUInt16(), time = reader.ReadUInt16();
+            if (index < Main.maxPlayers && index != Main.myPlayer)
+                Main.player[index].GetModPlayer<Players.NecrosisPlayer>().SetState(accumulation, time);
         }
     }
 }

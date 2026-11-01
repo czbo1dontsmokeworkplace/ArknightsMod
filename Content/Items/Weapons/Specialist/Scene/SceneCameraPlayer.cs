@@ -1,3 +1,4 @@
+using ArknightsMod.Systems.Gameplay.Skill;
 using ArknightsMod.Content.Projectiles.Specialist.Scene;
 using ArknightsMod.Players;
 using Terraria;
@@ -10,8 +11,12 @@ namespace ArknightsMod.Content.Items.Weapons.Specialist.Scene
 {
 	// 稀音的摄像机：右键部署冷却（5 秒）+ 两个技能的激活状态/时长管理。
 	// 技能用「Down(S)+右键」释放当前在技能栏选中的技能；技力充能/消耗复用 WeaponPlayer。
-	public class SceneCameraPlayer : ModPlayer
+	public class SceneCameraPlayer : ModPlayer, IActiveSkillTimeReset
 	{
+    public void ResetActiveSkillTime() {
+        if (Player.HeldItem.ModItem is SceneCamera && Player.GetModPlayer<global::ArknightsMod.Players.WeaponPlayer>().Skill == 1 && Skill2Timer > 0) Skill2Timer = Skill2DurationTicks;
+    }
+
 		public const int RedeployCooldownMax = 300; // 5 秒 @60fps
 		public const int Skill2DurationTicks = 20 * 60;
 		public const int Skill2StunTicks = 5 * 60;

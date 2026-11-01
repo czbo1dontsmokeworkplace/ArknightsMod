@@ -1,3 +1,4 @@
+using ArknightsMod.Systems.Gameplay.Skill;
 using System;
 using System.IO;
 using ArknightsMod.Common.VisualEffects;
@@ -11,8 +12,16 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.Projectiles.Specialist.Phantom;
 
 // 本体部署状态与虚影各自保管技能快照、增伤层数和护盾，切技能不能改写现存虚影。
-public sealed class PhantomPerformer : ModProjectile
+public sealed class PhantomPerformer : ModProjectile, IActiveSkillTimeReset
 {
+    public void ResetActiveSkillTime() {
+        if (IsEcho || Owner.HeldItem.ModItem is not PhantomDaggers
+            || Owner.GetModPlayer<global::ArknightsMod.Players.WeaponPlayer>().Skill != Skill) return;
+        Age = 0;
+        Projectile.timeLeft = PhantomBalance.Duration;
+        Projectile.netUpdate = true;
+    }
+
     internal bool IsEcho => Projectile.ai[0] == 1;
     internal int Skill => Math.Clamp((int)Projectile.ai[1], 0, 2);
     internal int Rank => PhantomBalance.Rank((int)Projectile.ai[2]);

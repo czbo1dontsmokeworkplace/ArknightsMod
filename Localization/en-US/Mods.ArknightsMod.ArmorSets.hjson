@@ -265,11 +265,18 @@ Typhon: {
 	SetBonus: Ranged hits grant 10% armor penetration (up to 50%); resets after 8s without a ranged hit
 }
 
+Mortis: {
+	HeadName: Mutsumi Wakaba's Helmet
+	HelmetEffect: "[c/beebff:Helmet Effect]: Converts 30% of incoming damage into Necrosis. Lethal damage in the main form restores full life and enters Substitute for 20 seconds: cannot attack or recover SP, +20% defense. Surviving restores the main form, full life, and clears elemental buildup; lethal damage as Substitute kills normally. Each Ave Mujica member hit has a 20% chance to shorten Substitute by 1 second. At 1000 buildup, Necrosis bursts for 15 seconds: cannot activate skills or recover SP; loses 1 SP and takes 10 Arts damage each second. Buildup resumes after the burst"
+	SetEffect: "[c/beebff:Set Effect]: Taking damage or elemental impairment adds 3 shared Fever. While present, all Ave Mujica members gain 10% maximum life (does not stack with itself)"
+	SetBonus: Taking damage or impairment adds 3 Fever; Ave Mujica members gain 10% maximum life
+}
+
 Manticore: {
 	HeadName: Manticore's Helmet
 	HelmetEffect: "[c/beebff:Helmet]: 10% physical and magic dodge"
-	SetEffect: "[c/beebff:Set]: After 2.5s without attacking, enter stealth; attacking breaks stealth and +50% that hit"
-	SetBonus: Stealth after 2.5s idle; +50% break-stealth hit
+	SetEffect: "[c/beebff:Set]: Gradually enters stealth while not using items, reaching 250 transparency after 2.5 cumulative seconds and reducing aggro. Item use only pauses fading; missed attacks and taking damage do not break stealth. Once fading begins, an item or owned projectile hitting an enemy breaks stealth and deals 150% damage on that hit only; the bonus is not stored in weapon or projectile damage. Unequipping the set or dying clears stealth and its timer"
+	SetBonus: Idle fades to 250 transparency; enemy hit breaks stealth for 150% damage on that hit only
 }
 
 Rope: {
@@ -282,15 +289,15 @@ Rope: {
 Mizuki: {
 	HeadName: Mizuki's Helmet
 	HelmetEffect: "[c/beebff:Helmet]: +20% damage while enemies below 50% HP are nearby"
-	SetEffect: "[c/beebff:Set]: Extra 50% ATK magic hit to lowest-HP target among hits"
-	SetBonus: Bonus hit lowest-HP target for 50% ATK magic
+	SetEffect: "[c/beebff:Set]: Each enemy hit immediately deals additional direct damage to that target equal to 50% of the actual damage dealt, rounded down. Defense and Arts resistance are not applied again. This extra damage cannot trigger itself"
+	SetBonus: Each hit immediately adds 50% actual damage, bypassing defense and Arts resistance
 }
 
 Texalter: {
 	HeadName: Silent Texas's Helmet
-	HelmetEffect: "[c/beebff:Helmet]: +20% damage during passive skill"
-	SetEffect: "[c/beebff:Set]: On kill, full heal and retrigger passive (20s CD); 15% DR while CD ready"
-	SetBonus: Kill full heal + retrigger passive; 15% DR when CD ready
+	HelmetEffect: "[c/beebff:Helmet]: Attack damage x1.2 (multiplicative) while a skill is active"
+	SetEffect: "[c/beebff:Set]: During a skill, a kill fully heals you and resets its duration, once per activation; 15% DR until triggered during that skill"
+	SetBonus: First kill during a skill fully heals and resets duration; 15% DR until triggered
 }
 
 Orchid: {
@@ -302,15 +309,15 @@ Orchid: {
 
 Raidian: {
 	HeadName: Raidian's Helmet
-	HelmetEffect: "[c/beebff:Helmet]: +1 minion slot; minions gain inspire equal to 20% your max HP"
-	SetEffect: "[c/beebff:Set]: +1 minion slot; summon hits mark targets for priority + 8% ATK magic bonus"
-	SetBonus: +1 minion slot; mark + 8% ATK magic on minion hits
+	HelmetEffect: "[c/beebff:Helmet]: +1 minion slot; all your summon-class projectiles gain flat damage equal to 5% of Raidian's maximum life"
+	SetEffect: "[c/beebff:Set]: +1 minion slot; press {ArmorSetActivateKey} to mark the enemy nearest the cursor within 1200 pixels of you, breaking ties by distance to you; minions prioritize marked enemies and deal extra Arts damage equal to 8% ATK"
+	SetBonus: +1 minion slot; press {ArmorSetActivateKey} to mark enemies, prioritize them and deal +8% ATK damage
 }
 
 Fang: {
 	HeadName: Fang's Helmet
-	HelmetEffect: "[c/beebff:Helmet]: +4 SP on deploy and redeploy"
-	SetEffect: "[c/beebff:Set]: +2 SP if no damage taken for 4s"
+	HelmetEffect: "[c/beebff:Helmet]: +4 SP on deploy and redeploy; if SP cannot be gained yet, the grant remains pending until SP is actually gained"
+	SetEffect: "[c/beebff:Set]: +2 SP if no damage taken for 4s; unequipping the set resets the timer"
 	SetBonus: +4 SP on deploy; +2 SP after 4s no hit
 }
 
@@ -374,36 +381,37 @@ Rosmontis: {
 Dorothy: {
 	HeadName: Dorothy's Helmet
 	HelmetEffect: "[c/beebff:Helmet]: +1 minion slot, +15% summon damage"
-	SetEffect: "[c/beebff:Set]: +1 minion slot; +3% summon damage per unused minion slot (max 10), resets on retreat; sweeper drone follows and fires"
-	SetBonus: Extra minion slot; unused slot stacks; sweeper drone
+	SetEffect: "[c/beebff:Set]: +2% summon damage per minion slot. Press {ArmorSetActivateKey} to place a mine at the cursor, up to your total minion slots. Mines consume no minion slots, remain stationary, and last 20 seconds. Contact with an enemy or a creature the player can damage triggers a 48-pixel-radius explosion dealing 30 base summon damage, scaled by your summon damage bonuses, without critical hits. Each mine has a 20% chance on placement to deal double damage and bind enemies hit for 3 seconds (cannot move, but can still attack). No placement at the cap; mines are removed when the set is unequipped or the wearer dies"
+	SetBonus: +2% summon damage per minion slot; press {ArmorSetActivateKey} to place a mine (20% chance for double damage and bind)
 }
 
 ExusiaiAlter: {
 	HeadName: Exusiai the New Covenant's Helmet
-	HelmetEffect: "[c/beebff:Helmet]: Ammo-skill operators +9% attack while on field; Laterano doubled"
-	SetEffect: "[c/beebff:Set]: Constant HP drain; ally ammo use heals 6% HP with 25% chance to bomb nearest enemy for 150% attack splash"
+	HelmetEffect: "[c/beebff:Helmet]: Allies currently selecting an ammo skill gain 9% attack, or 18% for Laterano. Supports Horn's Barrage Orders and Exusiai's Charging Mode. Identical auras do not stack"
+	SetEffect: "[c/beebff:Set]: Loses 1 HP every 0.5 seconds, which can kill the wearer. Each skill round actually spent by another ally heals the wearer for 6% maximum life and has a 25% chance to immediately bomb the nearest enemy within 600 pixels of that ally, dealing 150% of the wearer's held-weapon attack as physical splash damage in a 96-pixel radius. Horn's manual dump triggers once per round; ordinary shots and extra projectile lanes do not generate additional triggers"
 	SetBonus: HP drain; ally ammo triggers heal and bomb
+	LifeDrainDeath: "{0}'s life faded with the New Covenant."
 }
 
 CivilightEterna: {
 	HeadName: Civilight Eterna's Helmet
 	HelmetEffect: "[c/beebff:Helmet]: All allies take -10% damage from Sarkaz enemies while on field"
-	SetEffect: "[c/beebff:Set]: 3 motes orbit; touching an operator grants +50% healing received from Civilight Eterna for 6s; motes respawn after 6s"
-	SetBonus: Motes boost ally healing; respawn after 6s
+	SetEffect: "[c/beebff:Set]: 3 motes orbit; touching another allied operator consumes a mote and heals them for 10% of Civilight Eterna's maximum life; motes respawn after 6s"
+	SetBonus: Motes heal allied operators for 10% of Civilight Eterna's maximum life; respawn after 6s
 }
 
 Ling: {
 	HeadName: Ling's Helmet
 	HelmetEffect: "[c/beebff:Helmet]: +1 minion slot; +20% summon damage per empty minion slot"
-	SetEffect: "[c/beebff:Set]: +1 minion slot; each new unused minion slot grants +2 SP and +5% summon damage (max 5 stacks)"
-	SetBonus: Extra minion slot; unused slots grant SP and summon stacks
+	SetEffect: "[c/beebff:Set]: +1 minion slot; each new unused minion slot grants +0.2 SP/sec natural recovery and +5% summon damage, sharing a maximum of 5 stacks; fractional slot increases accumulate to grant one stack per full slot"
+	SetBonus: Extra minion slot; unused slots stack natural SP recovery and summon damage, up to 5 stacks
 }
 
 Bagpipe: {
 	HeadName: Bagpipe's Helmet
-	HelmetEffect: "[c/beebff:Helmet]: +8 SP to all Vanguard operators on deploy and redeploy"
+	HelmetEffect: "[c/beebff:Helmet]: While on field, all players wearing a full Vanguard set gain +8 initial SP when switching to a Vanguard weapon, capped at the skill's SP requirement; identical auras do not stack"
 	SetEffect: "[c/beebff:Set]: 20% chance melee hits deal an extra 150% damage hit"
-	SetBonus: Vanguard deploy SP; melee proc bonus hit
+	SetBonus: Full Vanguard set wearers gain +8 initial SP on switching to Vanguard weapons; melee hits have a 20% chance for an extra 150% damage hit
 }
 
 Deepcolor: {

@@ -159,7 +159,8 @@ namespace ArknightsMod.Content.Items.Weapons.Medic.Closure
 				Projectiles.Medic.Closure.CommandCenterPet.EnsureFor(player);
 
 			// 一技能：自动释放（技力满则自动开启，不可手动控制）
-			if (isLocal && mp.Skill == 0 && mp.CurrentSkill != null && mp.CurrentSkill.AutoTrigger
+			if (isLocal && !global::ArknightsMod.Players.NecrosisPlayer.BlocksSkill(player)
+			    && mp.Skill == 0 && mp.CurrentSkill != null && mp.CurrentSkill.AutoTrigger
 			    && mp.StockCount > 0 && !mp.SkillActive) {
 				mp.SkillActive = true;
 				mp.SkillTimer = 0;

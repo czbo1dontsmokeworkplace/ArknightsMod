@@ -1,5 +1,6 @@
 ﻿using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -11,7 +12,7 @@ namespace ArknightsMod.Content.Items.Armor.Vanguard.Bagpipe
 		public bool BagpipeHelmetActive;
 		public bool BagpipeSetActive;
 
-		private bool spawnSpGranted;
+		private bool applyingExtraHit;
 
 		public override void ResetEffects() {
 			BagpipeHelmetActive = false;
@@ -28,40 +29,53 @@ namespace ArknightsMod.Content.Items.Armor.Vanguard.Bagpipe
 				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<BagpipeLegs>();
 		}
 
-		public override void PostUpdate() {
-			if (BagpipeHelmetActive && !Player.dead && !spawnSpGranted) {
-				GrantVanguardSp();
-				spawnSpGranted = true;
+		// 技能在 ResetEffects 中初始化；直接读取装备，避免依赖尚未刷新的光环标记。
+		internal static int GetSwitchInitialSpBonus(Player recipient, Item weapon) {
+			if (!recipient.active || recipient.dead || !OperatorVanguardSetHelper.WearsFullVanguardSet(recipient))
+				return 0;
+			string weaponNamespace = weapon.ModItem?.GetType().Namespace;
+			const string vanguardNamespace = "ArknightsMod.Content.Items.Weapons.Vanguard";
+			if (weaponNamespace == null || (weaponNamespace != vanguardNamespace
+				&& !weaponNamespace.StartsWith(vanguardNamespace + ".", StringComparison.Ordinal)))
+				return 0;
+
+			int helmetType = NeoArmorReforgeSetLoader.GetSetType<BagpipeHead>();
+			foreach (Player source in Main.ActivePlayers) {
+				if (!source.dead && source.armor[0].type == helmetType)
+					return 8;
 			}
-
-			if (Player.dead)
-				spawnSpGranted = false;
+			return 0;
 		}
 
-		public override void OnRespawn() {
-			if (BagpipeHelmetActive)
-				GrantVanguardSp();
+		public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone) {
+			if (item.DamageType.CountsAsClass(DamageClass.Melee))
+				TryExtraHit(target, hit, damageDone);
 		}
 
-		private static void GrantVanguardSp() {
-			for (int i = 0; i < Main.maxPlayers; i++) {
-				Player player = Main.player[i];
-				if (!player.active || player.dead)
-					continue;
+		public override void OnHitNPCWithProj(Projectile proj, NPC target, NPC.HitInfo hit, int damageDone) {
+			if (proj.DamageType.CountsAsClass(DamageClass.Melee))
+				TryExtraHit(target, hit, damageDone);
+		}
 
-				if (OperatorVanguardSetHelper.WearsFullVanguardSet(player))
-					OperatorSPHelper.TryGainSP(player, 8);
+		private void TryExtraHit(NPC target, NPC.HitInfo hit, int damageDone) {
+			// 仅攻击者客户端掷骰并同步已结算的额外命中，服务端不重复触发。
+			if (applyingExtraHit || Main.netMode == NetmodeID.Server || Player.whoAmI != Main.myPlayer
+				|| !BagpipeSetActive || damageDone <= 0 || !target.active || target.life <= 0
+				|| target.dontTakeDamage || Main.rand.NextFloat() >= 0.2f)
+				return;
+
+			NPC.HitInfo extraHit = hit;
+			extraHit.Damage = Math.Max(1, (int)Math.Min(int.MaxValue, hit.Damage * 1.5d));
+			extraHit.SourceDamage = Math.Max(1, (int)Math.Min(int.MaxValue, hit.SourceDamage * 1.5d));
+			applyingExtraHit = true;
+			try {
+				target.PlayerInteraction(Player.whoAmI);
+				// 复制已结算的命中，避免再次计算防御或暴击；原命中保持不变。
+				target.StrikeNPC(extraHit);
+				if (Main.netMode != NetmodeID.SinglePlayer)
+					NetMessage.SendStrikeNPC(target, ref extraHit);
 			}
-		}
-
-		public override void ModifyHitNPCWithItem(Item item, NPC target, ref NPC.HitModifiers modifiers) {
-			if (BagpipeSetActive && item.DamageType.CountsAsClass(DamageClass.Melee) && Main.rand.NextFloat() < 0.2f)
-				modifiers.SourceDamage *= 1.5f;
-		}
-
-		public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref NPC.HitModifiers modifiers) {
-			if (BagpipeSetActive && proj.DamageType.CountsAsClass(DamageClass.Melee) && Main.rand.NextFloat() < 0.2f)
-				modifiers.SourceDamage *= 1.5f;
+			finally { applyingExtraHit = false; }
 		}
 	}
 }

@@ -1,3 +1,4 @@
+using System.IO;
 using ArknightsMod.Common.GlobalNPCs;
 using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
@@ -13,8 +14,8 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.Radian
 		/// <summary>套装效果给被标记敌人追加的伤害占召唤物攻击力的比例。</summary>
 		public const float MarkedBonusDamageRatio = 0.08f;
 
-		/// <summary>头盔效果「鼓舞」给召唤物加的生命上限占主人生命上限的比例。</summary>
-		public const float InspireLifeRatio = 0.2f;
+		/// <summary>头盔鼓舞提供相当于主人生命上限5%的固定攻击力。</summary>
+		public const float InspireDamageRatio = 0.05f;
 
 		/// <summary>召唤物"优先攻击被标记敌人"的搜索半径（像素）。</summary>
 		private const float MarkedSearchRangePx = 1200f;
@@ -22,12 +23,9 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.Radian
 		public bool RaidianHelmetActive;
 		public bool RaidianSetActive;
 
-		public int MinionBonusHealth;
-
 		public override void ResetEffects() {
 			RaidianHelmetActive = false;
 			RaidianSetActive = false;
-			MinionBonusHealth = 0;
 		}
 
 		// NeoArmor Reforge：套装件是独立 ItemID，穿上它本身就代表"已经是套装形态"，
@@ -47,10 +45,6 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.Radian
 
 			Player.maxMinions += slotBonus;
 
-			// 「鼓舞」的数值只在这里算，真正加到召唤物身上由 RaidianMinionGlobalProj 负责
-			// （原版召唤物没有生命概念，只有本模组自己建模了生命的召唤物才吃得到）。
-			if (RaidianHelmetActive)
-				MinionBonusHealth = (int)(Player.statLifeMax2 * InspireLifeRatio);
 		}
 
 		public override void PostUpdate() {
@@ -93,36 +87,62 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.Radian
 				Player.MinionAttackTargetNPC = best.whoAmI;
 		}
 
-		public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone) {
-			TryMark(item, target, damageDone);
-		}
-
-		public override void OnHitNPCWithProj(Projectile proj, NPC target, NPC.HitInfo hit, int damageDone) {
-			TryMark(proj, target, damageDone);
-		}
-
-		private void TryMark(Item item, NPC target, int damageDone) {
-			if (!RaidianSetActive || damageDone <= 0 || !item.DamageType.CountsAsClass(DamageClass.Summon))
+		internal void TryActivateMark() {
+			if (Player.whoAmI != Main.myPlayer || !WearsSet(Player))
 				return;
 
-			MarkTarget(target);
+			NPC selected = null;
+			float nearestMouseDistance = float.MaxValue;
+			float nearestPlayerDistance = float.MaxValue;
+			foreach (NPC npc in Main.ActiveNPCs) {
+				if (!CanMark(npc))
+					continue;
+				float distance = Vector2.DistanceSquared(Main.MouseWorld, npc.Center);
+				float playerDistance = Vector2.DistanceSquared(Player.Center, npc.Center);
+				if (distance < nearestMouseDistance
+					|| (distance == nearestMouseDistance && playerDistance < nearestPlayerDistance)) {
+					selected = npc;
+					nearestMouseDistance = distance;
+					nearestPlayerDistance = playerDistance;
+				}
+			}
+			if (selected == null)
+				return;
+
+			Player.MinionAttackTargetNPC = selected.whoAmI;
+			if (Main.netMode == NetmodeID.MultiplayerClient) {
+				var packet = ModContent.GetInstance<ArknightsMod>().GetPacket();
+				packet.Write((short)ArknightsMod.ArkMessageID.RaidianMarkRequest);
+				packet.Write((short)selected.whoAmI);
+				packet.Send();
+			}
+			else
+				MarkTarget(selected);
 		}
 
-		private void TryMark(Projectile proj, NPC target, int damageDone) {
-			if (!RaidianSetActive || damageDone <= 0 || !proj.DamageType.CountsAsClass(DamageClass.Summon))
+		private static bool WearsSet(Player player) => player.active && !player.dead
+			&& player.armor[0].type == NeoArmorReforgeSetLoader.GetSetType<RaidianHead>()
+			&& player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<RaidianBody>()
+			&& player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<RaidianLegs>();
+
+		private bool CanMark(NPC target) => target.active && !target.friendly && !target.dontTakeDamage
+			&& target.lifeMax > 5 && target.CanBeChasedBy(Player)
+			&& Vector2.DistanceSquared(Player.Center, target.Center) <= MarkedSearchRangePx * MarkedSearchRangePx;
+
+		private void MarkTarget(NPC target) {
+			if (!WearsSet(Player) || !CanMark(target))
 				return;
-
-			MarkTarget(target);
-		}
-
-		private static void MarkTarget(NPC target) {
-			if (Main.netMode == NetmodeID.MultiplayerClient)
-				return;
-
-			if (target.friendly || target.lifeMax <= 5)
-				return;
-
 			target.GetGlobalNPC<RaidianMarkGlobalNPC>().RaidianMarked = true;
+			target.netUpdate = true;
+			Player.MinionAttackTargetNPC = target.whoAmI;
+		}
+
+		internal static void ReceiveMarkRequest(BinaryReader reader, int sender) {
+			int target = reader.ReadInt16();
+			if (Main.netMode != NetmodeID.Server || sender < 0 || sender >= Main.maxPlayers
+				|| target < 0 || target >= Main.maxNPCs)
+				return;
+			Main.player[sender].GetModPlayer<RaidianSetPlayer>().MarkTarget(Main.npc[target]);
 		}
 	}
 }

@@ -1,3 +1,4 @@
+using ArknightsMod.Systems.Gameplay.Skill;
 using System;
 using System.IO;
 using ArknightsMod.Content;
@@ -13,8 +14,14 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Players;
 
-public sealed class CrusherPlayer : ModPlayer
+public sealed class CrusherPlayer : ModPlayer, IActiveSkillTimeReset
 {
+    public void ResetActiveSkillTime() {
+        if (ActiveMode == 0) return;
+        remaining = duration;
+        SyncAura();
+    }
+
     internal const float TraitMultiplier = 1.3f;
     private int regenerationRemainder;
     private int mode, remaining, duration, slot, level = 1, skillItemType, drainTicks;
@@ -114,6 +121,7 @@ public sealed class CrusherPlayer : ModPlayer
     }
     internal bool TryActivate()
     {
+        if (NecrosisPlayer.BlocksSkill(Player)) return false;
         var shared = Player.GetModPlayer<WeaponPlayer>();
         if (Player.whoAmI != Main.myPlayer || !Holding || Player.noItems || Player.CCed) return false;
         bool keyDown = ArknightsKeybinds.SkillActivatePressed(Player);
@@ -143,7 +151,7 @@ public sealed class CrusherPlayer : ModPlayer
         special = 0;
         var shared = Player.GetModPlayer<WeaponPlayer>();
         level = SkillLevel;
-        if (ActiveMode == 0 && shared.StockCount > 0 && shared.Skill == 0 && (Kind == CrusherKind.Hoederer || Kind == CrusherKind.Ulpianus && fullCharge)) {
+        if (!NecrosisPlayer.BlocksSkill(Player) && ActiveMode == 0 && shared.StockCount > 0 && shared.Skill == 0 && (Kind == CrusherKind.Hoederer || Kind == CrusherKind.Ulpianus && fullCharge)) {
             shared.DelStockCount(); special = Kind == CrusherKind.Hoederer ? 1 : 2;
             // Contact That Must Be Made now empowers the on-contact rising anchor.
             // Preparing a swing must never emit a projectile on a miss.

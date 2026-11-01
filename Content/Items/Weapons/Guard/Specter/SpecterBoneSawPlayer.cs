@@ -1,3 +1,4 @@
+using ArknightsMod.Systems.Gameplay.Skill;
 using System;
 using ArknightsMod.Content;
 using ArknightsMod.Content.Projectiles.Guard.Specter;
@@ -14,8 +15,12 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Specter
 	/// 幽灵鲨的角色态：天赋再生、两个定时技能，以及二技能结束后的十秒三倍易伤。
 	/// 状态属于武器自己，不向共享 WeaponPlayer 塞入新的角色字段。
 	/// </summary>
-	public sealed class SpecterBoneSawPlayer : ModPlayer, global::ArknightsMod.Players.IGuaranteedAvoidanceSource
+	public sealed class SpecterBoneSawPlayer : ModPlayer, global::ArknightsMod.Players.IGuaranteedAvoidanceSource, IActiveSkillTimeReset
 	{
+    public void ResetActiveSkillTime() {
+        if (HoldingBoneSaw && activeSkillTimer > 0) activeSkillTimer = activeSkillDuration;
+    }
+
     public global::ArknightsMod.Players.GuaranteedAvoidanceState? GuaranteedAvoidance => !Skill2Active ? null
         : new("幽灵鲨·二技能锁血", true, "仅致命伤害触发；生命保持为1");
 

@@ -44,7 +44,8 @@ namespace ArknightsMod.Content
 		/// 效果上保持一致。
 		/// </summary>
 		public static bool SkillActivatePressed(Player player) =>
-			player.whoAmI == Main.myPlayer && SkillActivate.Current;
+			player.whoAmI == Main.myPlayer && !global::ArknightsMod.Players.NecrosisPlayer.BlocksSkill(player)
+			&& SkillActivate.Current;
 
 		public static bool ArmorSetActivatePressed(Player player) =>
 			player.whoAmI == Main.myPlayer && player.active && !player.dead

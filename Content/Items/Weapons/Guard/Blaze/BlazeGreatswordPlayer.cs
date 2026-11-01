@@ -115,7 +115,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Blaze
 					Math.Clamp(weaponPlayer.SkillCharge, 0, ExtensionWarmupMaxTicks));
 
 			if (ExtensionWarmupTicks < ExtensionWarmupMaxTicks
-				&& !SceneCameraSkills.BlocksSkillCharge(Player)) {
+				&& !Player.GetModPlayer<WeaponPlayer>().SkillRecoveryBlocked) {
 				extensionWarmupFraction += WeaponPlayer.GlobalSPRegenSpeedMultiplier
 					* Math.Max(0f, weaponPlayer.SPRegenMultiplier);
 				int wholeTicks = (int)extensionWarmupFraction;

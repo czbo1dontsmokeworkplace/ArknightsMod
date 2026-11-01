@@ -236,12 +236,7 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 				if (aff.IsSuppressed || aff.State == AfflictionState.Idle)
 					continue;
 				Vector2 drawPos = iconPos - new Vector2(0, 15f * scale);
-				float featherScale = aff.FeatherScale * scale;
-				float mainScale = aff.MainScale * scale;
-				Texture2D featherTex = ModContent.Request<Texture2D>(aff.FeatherMaskTexture).Value;
-				spriteBatch.Draw(featherTex, drawPos, null, aff.FeatherColor, 0f, featherTex.Size() * 0.5f, featherScale, SpriteEffects.None, 0);
-				Texture2D iconTex = ModContent.Request<Texture2D>(aff.IconMaskTexture).Value;
-				spriteBatch.Draw(iconTex, drawPos, null, aff.IconColor, 0f, iconTex.Size() * 0.5f, mainScale, SpriteEffects.None, 0);
+				AfflictionIndicatorRenderer.DrawIcon(spriteBatch, aff, drawPos, scale);
 			}
 			spriteBatch.End();
 
@@ -250,8 +245,7 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 					continue;
 				float rawProgress = (float)aff.CurrentValue / aff.MaxValue;
 				float visualProgress = (aff.State == AfflictionState.Cooldown) ? rawProgress : 1f - rawProgress;
-				Color ringColor = (aff.State == AfflictionState.Cooldown) ? new Color(165, 165, 165, 180) : Color.White;
-				RingDrawer.DrawRing(ringPos, 5f * scale, 2.5f * scale, visualProgress, ringColor, 70);
+				AfflictionIndicatorRenderer.DrawRing(ringPos, scale, visualProgress, aff.State == AfflictionState.Cooldown);
 			}
 
 			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState,

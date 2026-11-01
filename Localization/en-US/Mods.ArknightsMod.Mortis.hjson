@@ -1,0 +1,3 @@
+NecrosisDeath: "{0} succumbed to Necrosis."
+NecrosisAccumulation: Necrosis: {0}/1000. At maximum, bursts for 15 seconds: cannot activate skills or recover SP; loses 1 SP and takes 10 Arts damage each second
+NecrosisBurst: Necrosis burst: {0:0.0}s remaining. Cannot activate skills or recover SP; loses 1 SP and takes 10 Arts damage each second. No Necrosis buildup during the burst

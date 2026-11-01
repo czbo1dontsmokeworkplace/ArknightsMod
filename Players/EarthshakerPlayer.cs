@@ -1,3 +1,4 @@
+using ArknightsMod.Systems.Gameplay.Skill;
 using System;
 using ArknightsMod.Content;
 using ArknightsMod.Content.Items.Weapons.Guard.Earthshaker;
@@ -9,8 +10,12 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Players;
 
-public sealed class EarthshakerPlayer : ModPlayer
+public sealed class EarthshakerPlayer : ModPlayer, IActiveSkillTimeReset
 {
+    public void ResetActiveSkillTime() {
+        if (ActiveMode != 0) skillTime = duration;
+    }
+
     public bool RightHeld { get; private set; }
     internal bool LeftHeld { get; private set; }
     private Item throwItem;

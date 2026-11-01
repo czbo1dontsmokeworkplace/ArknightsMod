@@ -15,12 +15,22 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 		public static void Play(NPC npc, Vector2 worldPosition,
 			string mainTex, string featherTex,
 			Color mainColor, Color featherColor) {
-			if (npc == null || string.IsNullOrEmpty(mainTex) || string.IsNullOrEmpty(featherTex))
+			Play((Entity)npc, worldPosition, mainTex, featherTex, mainColor, featherColor);
+		}
+
+		public static void Play(Player player, Vector2 worldPosition,
+			string mainTex, string featherTex, Color mainColor, Color featherColor) {
+			Play((Entity)player, worldPosition, mainTex, featherTex, mainColor, featherColor);
+		}
+
+		private static void Play(Entity owner, Vector2 worldPosition,
+			string mainTex, string featherTex, Color mainColor, Color featherColor) {
+			if (Main.dedServ || owner == null || string.IsNullOrEmpty(mainTex) || string.IsNullOrEmpty(featherTex))
 				return;
 
-			Vector2 offset = worldPosition - npc.Center;
+			Vector2 offset = worldPosition - owner.Center;
 			flashes.Add(new FlashInstance {
-				Npc = npc,
+				Owner = owner,
 				Offset = offset,
 				MainTexPath = mainTex,
 				FeatherTexPath = featherTex,
@@ -53,10 +63,10 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 					continue;
 				}
 
-				if (flash.Npc != null && flash.Npc.active)
-					flash.CurrentWorldPos = flash.Npc.Center + flash.Offset;
+				if (flash.Owner is NPC { active: true } || flash.Owner is Player { active: true, dead: false })
+					flash.CurrentWorldPos = flash.Owner.Center + flash.Offset;
 				else if (!flash.PositionStored) {
-					flash.CurrentWorldPos = flash.Npc?.Center + flash.Offset ?? flash.CurrentWorldPos;
+					flash.CurrentWorldPos = flash.Owner?.Center + flash.Offset ?? flash.CurrentWorldPos;
 					flash.PositionStored = true;
 				}
 
@@ -105,7 +115,7 @@ namespace ArknightsMod.Content.ElementalImpairment.Effect
 
 		private struct FlashInstance
 		{
-			public NPC Npc;
+			public Entity Owner;
 			public Vector2 Offset;
 			public Vector2 CurrentWorldPos;
 			public string MainTexPath;

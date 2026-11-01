@@ -1,4 +1,4 @@
-﻿BurnedScar: {
+BurnedScar: {
 	DisplayName: Burned Scar
 	Description: Attack damage reduced by 20%; magic damage taken increased to 138%
 }
@@ -296,4 +296,14 @@ CarnelianSandBind: {
 MostimaTemporalDrag: {
 	DisplayName: Subjective Time Dilation
 	Description: Movement slowed by 50%
+}
+
+MortisSubstituteBuff: {
+	DisplayName: Substitute
+	Description: Cannot attack or recover SP; +20% defense. Surviving restores full life and clears elemental buildup
+}
+
+NecrosisAfflictionBuff: {
+	DisplayName: Necrosis
+	Description: At 1000 buildup, Necrosis bursts for 15 seconds
 }

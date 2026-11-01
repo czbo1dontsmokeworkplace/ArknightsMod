@@ -1,3 +1,4 @@
+using ArknightsMod.Systems.Gameplay.Skill;
 using System;
 using System.IO;
 using ArknightsMod.Common.VisualEffects;
@@ -10,8 +11,15 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.Projectiles.Specialist.Gravel;
 
 // Both skills use the same small status marker; no filled shield or broad light ring.
-public class GravelShieldVfx : ModProjectile
+public class GravelShieldVfx : ModProjectile, IActiveSkillTimeReset
 {
+    public void ResetActiveSkillTime() {
+        var owner = Main.player[Projectile.owner];
+        if (owner.HeldItem.ModItem is not GravelDualBlades
+            || owner.GetModPlayer<WeaponPlayer>().Skill != (int)Projectile.ai[0]) return;
+        Projectile.ai[1] = 0;
+        Projectile.netUpdate = true;
+    }
     public override string Texture => ArknightsMod.noTexture;
     private float strength = 1f;
     private int Age => (int)Projectile.ai[1];

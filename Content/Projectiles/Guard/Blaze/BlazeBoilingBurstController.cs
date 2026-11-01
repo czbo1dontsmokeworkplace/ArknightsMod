@@ -1,4 +1,6 @@
+using ArknightsMod.Systems.Gameplay.Skill;
 using System;
+using System.IO;
 using ArknightsMod.Content.Buffs;
 using ArknightsMod.Content.Items.Weapons.Guard.Blaze;
 using ArknightsMod.Content.Projectiles.BasePROJ;
@@ -16,8 +18,26 @@ namespace ArknightsMod.Content.Projectiles.Guard.Blaze
 	/// <summary>
 	/// S3「沸腾爆裂」：10 秒维持；前 8 秒的切割间隔从 7 帧逐步缩短至 3 帧，第 9 秒达到最大攻防并终爆。
 	/// </summary>
-	public class BlazeBoilingBurstController : ModProjectile
+	public class BlazeBoilingBurstController : ModProjectile, IActiveSkillTimeReset
 	{
+    public void ResetActiveSkillTime() {
+        if (Owner.HeldItem.ModItem is not BlazeGreatsword
+            || Owner.GetModPlayer<WeaponPlayer>().Skill != 2) return;
+        age = 0;
+        Projectile.timeLeft = 2;
+        Projectile.netUpdate = true;
+    }
+    public override void SendExtraAI(BinaryWriter writer) {
+        writer.Write(age);
+        writer.Write(finalDetonated);
+        writer.Write(selfCostPaid);
+    }
+    public override void ReceiveExtraAI(BinaryReader reader) {
+        age = Math.Clamp(reader.ReadInt32(), 0, TotalTicks);
+        finalDetonated = reader.ReadBoolean();
+        selfCostPaid = reader.ReadBoolean();
+    }
+
 		private const int BaseSecondTicks = 60;
 		private const int BasePulseDamageWindow = 4;
 		private const int BaseFinalDamageWindow = 5;

@@ -129,7 +129,10 @@ public sealed class PhantomPlayer : ModPlayer, global::ArknightsMod.Players.IPro
         if (!Main.projectile.IndexInRange(index)) return false;
         Main.projectile[index].CritChance = Player.GetWeaponCrit(Player.HeldItem);
         if (echo) EchoCooldown = PhantomBalance.EchoCooldown;
-        else DeployCooldown = PhantomBalance.Redeploy;
+        else {
+            DeployCooldown = PhantomBalance.Redeploy;
+            skill.BeginSkillActivation();
+        }
         return true;
     }
     private void UpdateDisplay()

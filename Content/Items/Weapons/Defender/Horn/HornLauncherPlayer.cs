@@ -73,6 +73,7 @@ public sealed class HornLauncherPlayer : ModPlayer
         Vector2 aim = (Main.MouseWorld - Player.MountedCenter).SafeNormalize(new Vector2(Player.direction, 0));
         Player.ChangeDir(aim.X >= 0f ? 1 : -1);
         byte visualState = release ? (byte)4 : VisualState; // Snapshot before the last round ends S2.
+        bool spentSkillRound = release || Mode == 2;
         float physical = 1f, arts = 0f, radius = 95f;
         int flare = 0;
         if (release || Mode == 2)
@@ -108,6 +109,9 @@ public sealed class HornLauncherPlayer : ModPlayer
             ((HornGrenade)Main.projectile[index].ModProjectile).VisualState = visualState;
             Main.projectile[index].netUpdate = true;
         }
+        if (spentSkillRound)
+            Content.Items.Armor.OperatorAmmoConsumeHelper.NotifyAmmoConsumed(Player,
+                Content.Items.Armor.OperatorAmmoConsumeHelper.AmmoSkillKind.HornBarrage);
         HornVisuals.Muzzle(origin, aim, false);
         SoundEngine.PlaySound(SoundID.Item61 with { Volume = .55f, Pitch = -.3f, MaxInstances = 4 }, origin);
         Player.velocity -= aim * .65f;

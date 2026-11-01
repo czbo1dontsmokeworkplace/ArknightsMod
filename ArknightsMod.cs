@@ -210,6 +210,12 @@ namespace ArknightsMod
 		public override void HandlePacket(BinaryReader reader, int whoAmI) {
 			short id = reader.ReadInt16();
 			switch ((ArkMessageID)id) {
+                case ArkMessageID.ManticoreStealth:
+                    Content.Items.Armor.Specialist.Manticore.ManticoreSetPlayer.Receive(reader, whoAmI);
+                    break;
+                case ArkMessageID.OperatorAmmoConsumed:
+                    Content.Items.Armor.OperatorAmmoConsumeHelper.Receive(reader, whoAmI);
+                    break;
                 case ArkMessageID.IsharmlaDrifterImpact:
                     Content.NPCs.Enemy.Isharmla.IsharmlaDrifter.ReceiveImpact(reader, whoAmI);
                     break;
@@ -243,6 +249,12 @@ namespace ArknightsMod
                 case ArkMessageID.AnselChainHealingGrant:
                     global::ArknightsMod.Content.Items.Armor.Medic.Ansel.AnselHealingHelper.ReceiveGrant(reader);
                     break;
+                case ArkMessageID.OperatorSkillHealingGrant:
+                    global::ArknightsMod.Content.Items.Armor.OperatorSkillHealHelper.ReceiveGrant(reader);
+                    break;
+                case ArkMessageID.RaidianMarkRequest:
+                    global::ArknightsMod.Content.Items.Armor.Supporter.Radian.RaidianSetPlayer.ReceiveMarkRequest(reader, whoAmI);
+                    break;
                 case ArkMessageID.ReedHelmetScarHit:
                     global::ArknightsMod.Content.Items.Armor.Medic.ReedFlameShadow.ReedFlameShadowSetPlayer.ReceiveScarHit(reader, whoAmI);
                     break;
@@ -251,6 +263,9 @@ namespace ArknightsMod
                     break;
                 case ArkMessageID.ChenSkillPointGrant:
                     global::ArknightsMod.Content.Items.Armor.Guard.Chen.ChenSetPlayer.ReceiveGrant(reader);
+                    break;
+                case ArkMessageID.FangSkillPointGrant:
+                    global::ArknightsMod.Content.Items.Armor.Vanguard.Fang.FangSetPlayer.ReceiveGrant(reader, whoAmI);
                     break;
                 case ArkMessageID.SariaHealingSPGrant:
                     global::ArknightsMod.Content.Items.Armor.Defender.Saria.SariaHealingHelper.ReceiveGrant();
@@ -395,6 +410,11 @@ namespace ArknightsMod
             ReedHelmetScarHit,
             ReedSelfHealingGrant,
             IsharmlaDrifterImpact,
+            OperatorAmmoConsumed,
+            ManticoreStealth,
+            OperatorSkillHealingGrant,
+            RaidianMarkRequest,
+            FangSkillPointGrant,
 		}
 	}
 	//public class Ex : GlobalNPC

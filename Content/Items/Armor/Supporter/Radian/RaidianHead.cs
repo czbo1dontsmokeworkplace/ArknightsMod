@@ -21,6 +21,7 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.Radian
 				.AddIngredient<CrystallineElectronicUnit>(6)
 				.AddIngredient<CrystallineCircuit>(5),
 			SetBonusKey = "Mods.ArknightsMod.ArmorSets.Raidian.SetBonus",
+			OnSetActivate = player => player.GetModPlayer<RaidianSetPlayer>().TryActivateMark(),
 		};
 	}
 }

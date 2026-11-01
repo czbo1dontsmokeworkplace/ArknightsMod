@@ -1,3 +1,4 @@
+using ArknightsMod.Systems.Gameplay.Skill;
 using System;
 using ArknightsMod.Content.Projectiles.Specialist.Red;
 using ArknightsMod.Players;
@@ -10,8 +11,12 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.Items.Weapons.Specialist.Red;
 
 // 部署由快速移动或快捷栏切入触发，不是自动定时施法；切物品不会刷新已有冷却。
-public sealed class RedDaggerPlayer : ModPlayer, global::ArknightsMod.Players.IProbabilityDodgeSource
+public sealed class RedDaggerPlayer : ModPlayer, global::ArknightsMod.Players.IProbabilityDodgeSource, IActiveSkillTimeReset
 {
+    public void ResetActiveSkillTime() {
+        if (DeploymentActive) Deployment.RefreshDuration();
+    }
+
     public string DodgeName => "红·快速部署";
     public double DodgeChance => ExecutionActive ? .1 + Rank / 90d : 0;
 
@@ -152,6 +157,7 @@ public sealed class RedDaggerPlayer : ModPlayer, global::ArknightsMod.Players.IP
             return false;
         Main.projectile[index].CritChance = Player.GetWeaponCrit(armedKnife);
         Deployment.Start();
+        if (Holding) Player.GetModPlayer<WeaponPlayer>().BeginSkillActivation();
         Rank = armedRank;
         activeSkill = armedSkill;
         // 同步弹幕携带持续时间/技能/等级，远端只接收显示状态，不重复产生伤害弹幕。

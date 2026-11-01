@@ -1,115 +1,97 @@
 using System;
-using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
+using ArknightsMod.Content.Items.Weapons.Medic;
 using ArknightsMod.Content.Projectiles.Specialist.ExusiaiAlter;
+using ArknightsMod.Players;
 using ArknightsMod.Systems.Gameplay.OperatorTags;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
-namespace ArknightsMod.Content.Items.Armor.Specialist.ExusiaiAlter
+namespace ArknightsMod.Content.Items.Armor.Specialist.ExusiaiAlter;
+
+internal class ExusiaiAlterSetPlayer : ArknightsArmorPlayer
 {
-	internal class ExusiaiAlterSetPlayer : ArknightsArmorPlayer
-	{
-		public bool ExusiaiAlterHelmetActive;
-		public bool ExusiaiAlterSetActive;
+    public bool ExusiaiAlterHelmetActive;
+    public bool ExusiaiAlterSetActive;
+    private int lifeDrainTimer;
 
-		public override void ResetEffects() {
-			ExusiaiAlterHelmetActive = false;
-			ExusiaiAlterSetActive = false;
-		}
+    internal static bool HasHelmet(Player player) => player.active && !player.dead
+        && player.armor[0].type == NeoArmorReforgeSetLoader.GetSetType<ExusiaiAlterHead>();
+    internal static bool HasSet(Player player) => HasHelmet(player)
+        && player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<ExusiaiAlterBody>()
+        && player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<ExusiaiAlterLegs>();
 
-		// NeoArmor Reforge：套装件是独立 ItemID，穿上它本身就代表"已经是套装形态"，
-		// 不需要再查 hasUpgraded；player.setBonus 文本交给 ExusiaiAlterHead 的
-		// SetProfile.SetBonusKey 统一设置，这里不再重复设置一遍。
-		public override void PostUpdateEquips() {
-			ExusiaiAlterHelmetActive = Player.armor[0].type == NeoArmorReforgeSetLoader.GetSetType<ExusiaiAlterHead>();
-			ExusiaiAlterSetActive = ExusiaiAlterHelmetActive
-				&& Player.armor[1].type == NeoArmorReforgeSetLoader.GetSetType<ExusiaiAlterBody>()
-				&& Player.armor[2].type == NeoArmorReforgeSetLoader.GetSetType<ExusiaiAlterLegs>();
-		}
+    public override void ResetEffects() => ExusiaiAlterHelmetActive = ExusiaiAlterSetActive = false;
+    public override void PostUpdateEquips() {
+        ExusiaiAlterHelmetActive = HasHelmet(Player);
+        ExusiaiAlterSetActive = HasSet(Player);
+    }
 
-		public static bool IsExusiaiAlterHelmetOnField() {
-			for (int i = 0; i < Main.maxPlayers; i++) {
-				Player player = Main.player[i];
-				if (player.active && !player.dead && player.GetModPlayer<ExusiaiAlterSetPlayer>().ExusiaiAlterHelmetActive)
-					return true;
-			}
+    public override void PostUpdateMiscEffects() {
+        if (!Player.active || Player.dead || !OperatorAmmoConsumeHelper.HasAmmoSkill(Player)) return;
+        foreach (Player source in Main.ActivePlayers) {
+            if (!HasHelmet(source) || !MedicHealingNet.Allied(source, Player)) continue;
+            bool laterano = OperatorTagHelper.PlayerHasFaction(Player, OperatorFaction.Laterano);
+            Player.GetDamage(DamageClass.Generic) *= laterano ? 1.18f : 1.09f;
+            break; // Multiple identical auras do not stack.
+        }
+    }
 
-			return false;
-		}
+    public override void PostUpdate() {
+        if (Main.netMode == NetmodeID.Server || Player.whoAmI != Main.myPlayer) return;
+        if (!HasSet(Player)) { lifeDrainTimer = 0; return; }
+        if (++lifeDrainTimer < 30) return;
+        lifeDrainTimer = 0;
+        Player.statLife--;
+        if (Player.statLife <= 0) {
+            Player.KillMe(PlayerDeathReason.ByCustomReason(Language.GetTextValue(
+                "Mods.ArknightsMod.ArmorSets.ExusiaiAlter.LifeDrainDeath", Player.name)), 1, 0);
+        }
+        SyncLife();
+    }
+    public override void UpdateDead() => lifeDrainTimer = 0;
 
-		private void ApplyArmorDamageStats() {
-			if (!IsExusiaiAlterHelmetOnField() || !OperatorAmmoConsumeHelper.HasAmmoSkill(Player))
-				return;
+    public void OnAllyAmmoConsumed(Player ally) {
+        if (Main.netMode == NetmodeID.Server || Player.whoAmI != Main.myPlayer
+            || !HasSet(Player) || ally.whoAmI == Player.whoAmI || !MedicHealingNet.Allied(ally, Player)) return;
 
-			float mult = OperatorTagHelper.PlayerHasFaction(Player, OperatorFaction.Laterano) ? 1.18f : 1.09f;
-			Player.GetDamage(DamageClass.Generic) *= mult;
-		}
+        int before = Player.statLife;
+        Player.GetModPlayer<IncomingHealingPlayer>().HealSilent(Math.Max(1, (int)(Player.statLifeMax2 * .06f)));
+        int restored = Player.statLife - before;
+        if (restored > 0) {
+            Player.HealEffect(restored);
+            SyncLife();
+        }
 
-		private int lifeDrainTimer;
+        if (!Main.rand.NextBool(4)) return;
+        NPC target = FindNearestEnemy(ally, 600f);
+        if (target == null) return;
+        // GetWeaponDamage includes the held weapon's damage class, prefixes, skills and armor bonuses once.
+        int attack = Player.HeldItem.IsAir ? 0 : Player.GetWeaponDamage(Player.HeldItem);
+        int damage = Math.Max(1, (int)(attack * 1.5f));
+        Projectile.NewProjectile(Player.GetSource_FromThis(), target.Center, Vector2.Zero,
+            ModContent.ProjectileType<ExusiaiAlterBomb>(), damage, 0, Player.whoAmI);
+    }
 
-		public override void PostUpdate() {
-			if (!ExusiaiAlterSetActive || Player.dead || Main.netMode == NetmodeID.MultiplayerClient)
-				return;
+    private void SyncLife() {
+        if (Main.netMode == NetmodeID.MultiplayerClient)
+            NetMessage.SendData(MessageID.PlayerLifeMana, number: Player.whoAmI);
+    }
 
-			lifeDrainTimer++;
-			if (lifeDrainTimer >= 30 && Player.statLife > 0) {
-				lifeDrainTimer = 0;
-				Player.statLife--;
-			}
-		}
-
-		public void OnAllyAmmoConsumed(Player ally) {
-			if (!ExusiaiAlterSetActive || ally.whoAmI == Player.whoAmI || Main.netMode == NetmodeID.MultiplayerClient)
-				return;
-
-			int heal = Math.Max(1, (int)(Player.statLifeMax2 * 0.06f));
-			Player.Heal(heal);
-			Player.HealEffect(heal);
-
-			if (Main.rand.NextFloat() >= 0.25f)
-				return;
-
-			NPC target = FindNearestEnemyToPlayer(ally, 600f);
-			if (target == null)
-				return;
-
-			int baseAttack = Player.HeldItem?.damage ?? 10;
-			int damage = (int)(Player.GetTotalDamage(DamageClass.Ranged).ApplyTo(baseAttack) * 1.5f);
-			Projectile.NewProjectile(
-				Player.GetSource_FromThis(),
-				ally.Center,
-				Vector2.Zero,
-				ModContent.ProjectileType<ExusiaiAlterBomb>(),
-				Math.Max(1, damage),
-				4f,
-				Player.whoAmI,
-				target.whoAmI);
-		}
-
-		private static NPC FindNearestEnemyToPlayer(Player ally, float range) {
-			NPC best = null;
-			float bestDist = range;
-
-			for (int i = 0; i < Main.maxNPCs; i++) {
-				NPC npc = Main.npc[i];
-				if (!npc.active || !npc.CanBeChasedBy() || npc.friendly)
-					continue;
-
-				float dist = Vector2.Distance(ally.Center, npc.Center);
-				if (dist < bestDist) {
-					bestDist = dist;
-					best = npc;
-				}
-			}
-
-			return best;
-		}
-
-		public override void PostUpdateMiscEffects() {
-			ApplyArmorDamageStats();
-		}
-	}
+    private static NPC FindNearestEnemy(Player ally, float range) {
+        NPC nearest = null;
+        float distance = range * range;
+        foreach (NPC npc in Main.ActiveNPCs) {
+            if (npc.friendly || !npc.CanBeChasedBy()) continue;
+            float next = Vector2.DistanceSquared(npc.Center, ally.Center);
+            if (next >= distance) continue;
+            nearest = npc;
+            distance = next;
+        }
+        return nearest;
+    }
 }

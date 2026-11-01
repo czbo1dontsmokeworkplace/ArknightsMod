@@ -1,3 +1,4 @@
+using ArknightsMod.Systems.Gameplay.Skill;
 using System;
 using System.IO;
 using ArknightsMod.Content.Items.Weapons.Vanguard.StandardBearers;
@@ -12,8 +13,14 @@ namespace ArknightsMod.Content.Projectiles.Vanguard.StandardBearers;
 
 // A synchronized, harmless controller. The server alone creates currency and heals;
 // remote clients never need to read another player's unsynchronized WeaponPlayer.
-public sealed class StandardBearerSkill : ModProjectile
+public sealed class StandardBearerSkill : ModProjectile, IActiveSkillTimeReset
 {
+    public void ResetActiveSkillTime() {
+        if (!Valid(Main.player[Projectile.owner])) return;
+        Projectile.ai[2] = 0;
+        Projectile.netUpdate = true;
+    }
+
     public override string Texture => "Terraria/Images/MagicPixel";
     public StandardBearerKind Kind => (StandardBearerKind)(int)Projectile.ai[0];
     public int Skill => (int)Projectile.ai[1];

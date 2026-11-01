@@ -32,16 +32,17 @@ namespace ArknightsMod.Content.Items.Armor.Vanguard.Plume
 
 		private void ApplyArmorAttackSpeed() {
 			if (PlumeSetActive)
-				Player.GetAttackSpeed(DamageClass.Melee) *= 1.1f;
+				Player.GetAttackSpeed(DamageClass.Melee) += 0.1f;
 		}
 
-		public override void PostUpdate() {
+		public override void PostUpdateRunSpeeds() {
 			if (!PlumeSetActive)
 				return;
 
-			Player.moveSpeed += 0.1f;
-			Player.maxRunSpeed += 0.1f;
-			Player.accRunSpeed += 0.1f;
+			// 在实际移动前调整，按描述增加10%加速度与速度上限，避免moveSpeed重复放大。
+			Player.runAcceleration *= 1.1f;
+			Player.maxRunSpeed *= 1.1f;
+			Player.accRunSpeed *= 1.1f;
 		}
 
 		public override void PostUpdateMiscEffects() {

@@ -29,7 +29,7 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.Orchid
 
 		private void ApplyArmorDamageStats() {
 			if (OrchidHelmetActive)
-				Player.GetDamage(DamageClass.Magic) *= 1.1f;
+				Player.GetDamage(DamageClass.Magic) += 0.1f;
 		}
 
 		public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone) {
@@ -61,7 +61,7 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.Orchid
 			if (target.friendly || target.lifeMax <= 5 || target.dontTakeDamage || target.boss)
 				return;
 
-			target.AddBuff(ModContent.BuffType<OrchidSlowDebuff>(), 48);
+			target.AddBuff(ModContent.BuffType<OrchidSlowDebuff>(), OrchidSlowDebuff.DurationTicks);
 		}
 
 		public override void PostUpdateMiscEffects() {

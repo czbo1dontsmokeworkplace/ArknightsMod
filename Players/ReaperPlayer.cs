@@ -1,3 +1,4 @@
+using ArknightsMod.Systems.Gameplay.Skill;
 using System;
 using ArknightsMod.Content;
 using ArknightsMod.Content.Items.Weapons.Guard.Reaper;
@@ -9,8 +10,12 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Players;
 
-public sealed class ReaperPlayer : ModPlayer
+public sealed class ReaperPlayer : ModPlayer, IActiveSkillTimeReset
 {
+    public void ResetActiveSkillTime() {
+        if (ActiveMode != 0) remaining = duration;
+    }
+
     private int mode, remaining, duration, slot, level = 1, healCooldown;
     private Item activeItem;
     private bool keyWasDown, attackCharged, previousRight;

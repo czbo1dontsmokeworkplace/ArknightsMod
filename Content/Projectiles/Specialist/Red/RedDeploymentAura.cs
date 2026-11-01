@@ -1,3 +1,4 @@
+using ArknightsMod.Systems.Gameplay.Skill;
 using System;
 using ArknightsMod.Common.VisualEffects;
 using ArknightsMod.Content.Items.Weapons.Specialist.Red;
@@ -8,8 +9,16 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.Projectiles.Specialist.Red;
 
 // 无伤害的五秒状态载体。ai[0] 同步已过去的时间，迟加入观察者不会重新看到五秒完整效果。
-public sealed class RedDeploymentAura : ModProjectile
+public sealed class RedDeploymentAura : ModProjectile, IActiveSkillTimeReset
 {
+    public void ResetActiveSkillTime() {
+        var owner = Main.player[Projectile.owner];
+        if (owner.HeldItem.ModItem is not RedDagger) return;
+        Projectile.ai[0] = 0;
+        Projectile.timeLeft = RedDeploymentState.Duration;
+        Projectile.netUpdate = true;
+    }
+
     public override string Texture => ArknightsMod.noTexture;
     public override void SetDefaults()
     {

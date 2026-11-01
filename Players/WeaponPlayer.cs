@@ -43,6 +43,7 @@ namespace ArknightsMod.Players
 
 		// 技能资源管理
 		public int SkillCharge;
+        public bool SkillRecoveryBlocked => NecrosisPlayer.BlocksSkill(Player) || SceneCameraSkills.BlocksSkillCharge(Player);
 		private int baseSkillChargeMax;
 		// Setter 始终接收基础充能阈值；Getter 动态应用装备减耗，穿脱时无需重置技能。
 		public int SkillChargeMax {
@@ -62,14 +63,23 @@ namespace ArknightsMod.Players
 			return helmet ? Math.Max(1, baseSP - 1) : baseSP;
 		}
 		private bool skillActive;
+		public uint SkillActivationId { get; private set; }
 		public bool SkillActive {
 			get => skillActive;
 			set {
 				bool starting = value && !skillActive;
-				skillActive = value;
-				if (starting) Systems.Gameplay.MujicaFeverSystem.SkillStarted(Player);
+				if (starting && NecrosisPlayer.BlocksSkill(Player)) return;
+				if (starting) BeginSkillActivation();
+				else skillActive = value;
 			}
 		}
+        // A real redeployment may replace a still-active, extended deployment.
+        internal void BeginSkillActivation() {
+            if (NecrosisPlayer.BlocksSkill(Player)) return;
+            skillActive = true;
+            SkillActivationId++;
+            Systems.Gameplay.MujicaFeverSystem.SkillStarted(Player);
+        }
 		private int skillTimer;
 		public int SkillTimer {
 			get => skillTimer;
@@ -79,6 +89,16 @@ namespace ArknightsMod.Players
 			}
 		}
 		public int SP;
+		internal void DrainSP(int points) {
+			if (points <= 0 || Div <= 0 || SkillChargeMax <= 0) return;
+			long total = Math.Max(0, StockCount) * (long)SkillChargeMax + Math.Max(0, SkillCharge);
+			total = Math.Max(0, total - (long)points * Div);
+			StockCount = (int)(total / SkillChargeMax);
+			SkillCharge = (int)(total % SkillChargeMax);
+			int maxStock = CurrentSkill?.CurrentLevelData.MaxStack
+				?? (Skill >= 0 && Skill < StockMax.Count ? StockMax[Skill] : 0);
+			SP = maxStock > 0 && StockCount >= maxStock ? SkillChargeMax / Div : SkillCharge / Div;
+		}
 		public int StockCount;
 		public int Div;
 		public int Skill;
@@ -242,7 +262,7 @@ namespace ArknightsMod.Players
 			}
 		}
 		//=======================================================================
-		public void InitSkill(bool giveCharge) {
+		public void InitSkill(bool giveCharge, int initialSpBonus = 0) {
 			AccessoriesChargeFraction = 0d;
 			SkillData skill = CurrentSkill;
 
@@ -255,7 +275,7 @@ namespace ArknightsMod.Players
 			SkillLevelData data = skill.CurrentLevelData;
 			Div = skill.ChargeType == SkillChargeType.Auto ? 60 : 1;
 			int maxSP = GetEffectiveSkillSP(data.MaxSP);
-			int initSP = Math.Min(data.InitSP, maxSP);
+			int initSP = Math.Min(data.InitSP + initialSpBonus, maxSP);
 			if (giveCharge) {
 				if (initSP == maxSP) {
 					SkillCharge = 0;
@@ -339,6 +359,7 @@ namespace ArknightsMod.Players
 		/// 这里只推进当前手持武器的当前技能，不改变技能持续时间，也不会凭空重复填满多层库存。
 		/// </summary>
 		internal void ApplyEmergencyOneSecondCharge() {
+			if (SkillRecoveryBlocked) return;
 			if (Player.GetModPlayer<Content.Items.Accessories.Developer.RecoverySuppressionPlayer>().Equipped) {
 				emergencyChargeFraction = 0f;
 				return;
@@ -385,7 +406,7 @@ namespace ArknightsMod.Players
 				|| CurrentSkill == null || CurrentSkill.UsesCustomCharge
 				|| CurrentSkill.ChargeType == SkillChargeType.None
 				|| Div <= 0 || SkillChargeMax <= 0
-				|| SceneCameraSkills.BlocksSkillCharge(Player))
+				|| SkillRecoveryBlocked)
 				return false;
 
 			SkillLevelData data = CurrentSkill.CurrentLevelData;
@@ -522,6 +543,9 @@ namespace ArknightsMod.Players
 							Language.GetTextValue("Mods.ArknightsMod.Skills.ChargeReady"), true);
 				}
 				int type = item.type;
+				int switchInitialSpBonus = type != oldHeld
+					? global::ArknightsMod.Content.Items.Armor.Vanguard.Bagpipe.BagpipeSetPlayer.GetSwitchInitialSpBonus(Player, item)
+					: 0;
 				if (type != oldHeld) {
 					oldSkill = -1;
 					oldHeld = type;
@@ -554,7 +578,7 @@ namespace ArknightsMod.Players
 					// 一律按"初始就绪"授予初始技力 InitSP，使玩家每次换武器/换技能都从初始技力起步。
 					// 不再依赖 ark.chargeReady（该标志只用于 DevFillSkillCharge / 重生等少数场景），
 					// 否则正常游玩中切换不会给初始技力，且与上一处冻结解锁污染初始技力的问题同源。
-					InitSkill(true);
+					InitSkill(true, switchInitialSpBonus);
 					ark.chargeReady[Skill] = false;
 				}
 				else if (ark.chargeReady[Skill] && StockCount == 0) {
@@ -595,7 +619,7 @@ namespace ArknightsMod.Players
 		}
 
 		public void TryAutoCharge() {
-			if (SceneCameraSkills.BlocksSkillCharge(Player)) // 稀音技能持续期间冻结充能
+			if (SkillRecoveryBlocked) // 稀音技能持续期间冻结充能
 				return;
 			// 标记为专属充能的技能由武器自己的部署状态驱动；否则公共条和专属暖机同时推进，
 			// 切换快捷栏后会出现两套进度分叉。
@@ -653,6 +677,7 @@ namespace ArknightsMod.Players
 		/// </summary>
 		public void HurtCharge()
 		{
+			if (SkillRecoveryBlocked) return;
 			if (CurrentSkill != null)
 			{
 				SkillLevelData data = CurrentSkill.CurrentLevelData;
@@ -679,7 +704,7 @@ namespace ArknightsMod.Players
 		public void AutoCharge() {
 			if (Player.GetModPlayer<Content.Items.Accessories.Developer.RecoverySuppressionPlayer>().Equipped)
 				return;
-			if (SceneCameraSkills.BlocksSkillCharge(Player)) // 稀音技能持续期间冻结充能
+			if (SkillRecoveryBlocked) // 稀音技能持续期间冻结充能
 				return;
 			// 自然回复类型 Div=60（SkillCharge 每 60 tick = 1 点可见技力）。倍率 x2 时每 tick
 			// 累加 2 点 SkillCharge，SP 直接按 SkillCharge/Div 换算——和原来"每 60 tick 视觉 +1"
@@ -718,6 +743,7 @@ namespace ArknightsMod.Players
 		//============================================================================
 		private double AccessoriesChargeFraction;
 		public void AccessoriesAutoCharge() {
+			if (SkillRecoveryBlocked) return;
 			if (Player.GetModPlayer<Content.Items.Accessories.Developer.RecoverySuppressionPlayer>().Equipped) {
 				AccessoriesChargeFraction = 0d;
 				return;
@@ -738,7 +764,7 @@ namespace ArknightsMod.Players
 				return;
 			}
 
-			if (SceneCameraSkills.BlocksSkillCharge(Player) || (chargeOpen && !hasNearbyEnemy))
+			if (SkillRecoveryBlocked || (chargeOpen && !hasNearbyEnemy))
 				return;
 
 			// 每帧只重置回复倍率，小数余量保留到后续帧；Div=60 时，
@@ -760,7 +786,7 @@ namespace ArknightsMod.Players
 		}
 		//===============================================================================
 		public void OffensiveRecovery() {
-			if (SceneCameraSkills.BlocksSkillCharge(Player)) // 稀音技能持续期间冻结充能
+			if (SkillRecoveryBlocked) // 稀音技能持续期间冻结充能
 				return;
 
 			// 攻击回复类型同样 Div=1，理由同 HurtCharge：倍率大于 1 时必须用 >= 而不是 ==

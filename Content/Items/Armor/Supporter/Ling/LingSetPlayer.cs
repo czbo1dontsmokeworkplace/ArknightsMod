@@ -1,6 +1,7 @@
 using System;
 using ArknightsMod.Content.Items.Armor;
 using ArknightsMod.Content.Items.Armor.NeoArmorReforge;
+using ArknightsMod.Players;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -12,7 +13,8 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.Ling
 		public bool LingSetActive;
 
 		public int SummonDamageStacks;
-		private int lastUnusedSlots = -1;
+		private float lastUnusedSlots = -1f;
+		private float releasedSlotRemainder;
 
 		public override void ResetEffects() {
 			LingHelmetActive = false;
@@ -31,13 +33,15 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.Ling
 			if (LingHelmetActive)
 				Player.maxMinions++;
 
-			if (LingSetActive)
+			if (LingSetActive) {
 				Player.maxMinions++;
+				Player.GetModPlayer<WeaponPlayer>().SPRegenMultiplier += 0.2f * SummonDamageStacks;
+			}
 		}
 
 		private void ApplyArmorDamageStats() {
 
-			int unused = OperatorMinionSlotHelper.CountUnusedMinionSlots(Player);
+			float unused = OperatorMinionSlotHelper.CountUnusedMinionSlots(Player);
 			if (LingHelmetActive && unused > 0)
 				Player.GetDamage(DamageClass.Summon) *= 1f + 0.2f * unused;
 
@@ -48,17 +52,17 @@ namespace ArknightsMod.Content.Items.Armor.Supporter.Ling
 		public override void PostUpdate() {
 			if (!LingSetActive) {
 				lastUnusedSlots = -1;
+				releasedSlotRemainder = 0f;
 				return;
 			}
 
-			int unused = OperatorMinionSlotHelper.CountUnusedMinionSlots(Player);
+			float unused = OperatorMinionSlotHelper.CountUnusedMinionSlots(Player);
 			if (lastUnusedSlots >= 0 && unused > lastUnusedSlots) {
-				int gained = unused - lastUnusedSlots;
-				for (int i = 0; i < gained; i++) {
-					if (SummonDamageStacks < 5)
-						SummonDamageStacks++;
-					OperatorSPHelper.TryGainSP(Player, 2);
-				}
+				// 小数栏位释放量累计满1 slot才叠层，不把每个召唤物当成一栏。
+				releasedSlotRemainder += unused - lastUnusedSlots;
+				int gained = (int)Math.Floor(releasedSlotRemainder + 0.00001f);
+				releasedSlotRemainder = Math.Max(0f, releasedSlotRemainder - gained);
+				SummonDamageStacks = Math.Min(5, SummonDamageStacks + gained);
 			}
 
 			lastUnusedSlots = unused;

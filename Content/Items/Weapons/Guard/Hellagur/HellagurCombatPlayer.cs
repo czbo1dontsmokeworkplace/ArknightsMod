@@ -1,3 +1,4 @@
+using ArknightsMod.Systems.Gameplay.Skill;
 using System;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
@@ -12,8 +13,12 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Hellagur
 	/// 赫拉格专属的武者状态。这里只维护武器自己的命中充能、短时技能、招架和脱战恢复，
 	/// 不把角色语义塞进全局 WeaponPlayer。
 	/// </summary>
-	public sealed class HellagurCombatPlayer : ModPlayer, global::ArknightsMod.Players.IProbabilityDodgeSource
+	public sealed class HellagurCombatPlayer : ModPlayer, global::ArknightsMod.Players.IProbabilityDodgeSource, IActiveSkillTimeReset
 	{
+    public void ResetActiveSkillTime() {
+        if (HoldingOdachi && activeSkillTimer > 0) activeSkillTimer = activeSkillDuration;
+    }
+
     public string DodgeName => "赫拉格·弦月";
     public double DodgeChance => HoldingOdachi && activeSkillMode == HellagurSkillBridge.Skill2 && activeSkillTimer > 0 ? Skill2ParryChance : 0;
 

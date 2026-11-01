@@ -1,3 +1,4 @@
+using ArknightsMod.Systems.Gameplay.Skill;
 using System;
 using ArknightsMod.Content.Buffs;
 using ArknightsMod.Content.Projectiles.Guard.Gavial;
@@ -10,8 +11,12 @@ using Terraria.ModLoader.IO;
 
 namespace ArknightsMod.Content.Items.Weapons.Guard.Gavial;
 
-public sealed class GavialChainsawPlayer : ModPlayer
+public sealed class GavialChainsawPlayer : ModPlayer, IActiveSkillTimeReset
 {
+    public void ResetActiveSkillTime() {
+        if (ActiveMode != 0) remaining = duration;
+    }
+
     private readonly GavialDamageDebt debt = new();
     private int mode, remaining, duration, slot, healCooldown, pendingDebt;
     private bool keyWasDown;

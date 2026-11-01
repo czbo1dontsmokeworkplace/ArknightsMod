@@ -63,6 +63,7 @@ public sealed class VanguardSpearPlayer : ModPlayer, global::ArknightsMod.Player
     internal int AttackSkill(VanguardSpearKind kind, bool charge)
     {
         WeaponPlayer skills = Player.GetModPlayer<WeaponPlayer>();
+        if (NecrosisPlayer.BlocksSkill(Player)) return skills.SkillActive ? skills.Skill + 1 : 0;
         if (kind == VanguardSpearKind.Bagpipe && skills.Skill == 1)
         {
             if (charge || skills.StockCount <= 0) return 0;
