@@ -19,6 +19,16 @@ MiniGatling: {
 		'''
 }
 
+PlasmaProjector: {
+	DisplayName: Plasma Projector
+	Tooltip:
+		'''
+		Hold left-click to continuously fire twin blue plasma beams
+		Both beams share one target; stops at the first enemy or solid terrain
+		Continuously consumes mana; release left-click to stop
+		'''
+}
+
 OrbitalLaser: {
 	DisplayName: Orbital Laser
 	Tooltip:

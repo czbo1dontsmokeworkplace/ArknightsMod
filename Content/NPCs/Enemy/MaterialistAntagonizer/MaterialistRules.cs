@@ -4,7 +4,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.MaterialistAntagonizer;
 
 internal enum FlightOrder { Arrival, Deploy, Command, Bombard, Sweep, Ram, Recover, Transition, Overload, Death }
 internal enum DroneShot { Bolt, Missile, Bombardment, Beam, Prism, Seeker, FluxMine, RailSlug, TrailBomb, ChaseBeam, ArcSpark, Petal, Lattice, CoreLance, ClusterOrb, OrbitSpark, Needle, MachineRound, GravityOrb, ScanBurst, Beacon, DropMissile, CommandRocket, CannonShell, ArtilleryBlast, ScoutPulse, ArtsOrb, PincerBeam, SaucerRound, RaptorRocket }
-internal enum WingRole { Drone, MkII, ArtsA1, ArtsA2, Raptor }
+internal enum WingRole { Drone, MkII, ArtsA1, ArtsA2, Raptor, Frost, Bomber }
 internal enum WingDuty { Containment, Precision, Scatter, Interceptor, Heavy }
 internal enum FireStyle { Standard, Containment, Precision, Suppression, CoreSpread, CoreFocus }
 internal enum WingPattern { ArcPincer, SpinVolley, RelayDive, Scissor, Battery, Gate, ShieldRelay, HeavyHunt, Spiral, HerdRam, FinalVolley, RailCorridor, MineWeave, PrismCross, PursuitNet, BombRun, TrackingLance }
@@ -58,6 +58,8 @@ internal static class MaterialistRules
     }
     internal static int Threshold(int lifeMax, int phase) => phase == 1 ? (int)(lifeMax * .65f) : phase == 2 ? (int)(lifeMax * .30f) : 0;
     internal static int WingCap(int phase) => phase == 1 ? 6 : phase == 2 ? 8 : 10;
+    internal static int FrostCount(int phase) => phase >= 2 ? 2 : 0;
+    internal static int DeploymentCap(int phase) => WingCap(phase) + FrostCount(phase);
     internal static int Duration(FlightOrder order) => order switch {
         FlightOrder.Arrival => ArrivalTicks, FlightOrder.Deploy => 300, FlightOrder.Command => 480,
         FlightOrder.Bombard => 270, FlightOrder.Sweep => 240, FlightOrder.Ram => 270,
@@ -77,6 +79,6 @@ internal static class MaterialistRules
     };
     internal static int WingLife(WingRole role) => role switch {
         WingRole.Drone => 1400, WingRole.MkII => 1800, WingRole.ArtsA1 => 3300,
-        WingRole.ArtsA2 => 4200, WingRole.Raptor => 9600, _ => 1400
+        WingRole.ArtsA2 => 4200, WingRole.Raptor or WingRole.Frost => 9600, _ => 1400
     };
 }

@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4.RaptorDrone;
 
-public class RaptorDrone : ModNPC
+public partial class RaptorDrone : ModNPC
 {
 	private const string TextureRoot = "ArknightsMod/Content/NPCs/Enemy/ThroughChapter4/RaptorDrone/RaptorDrone";
 
@@ -40,7 +40,9 @@ public class RaptorDrone : ModNPC
 		Idle,
 		Pursue,
 		Attack,
-		Patrol
+		Patrol,
+		SpecialCharge,
+		SpecialStrafe
 	}
 
 	private AiState State {
@@ -126,6 +128,12 @@ public class RaptorDrone : ModNPC
 				break;
 			case AiState.Patrol:
 				UpdatePatrol();
+				break;
+			case AiState.SpecialCharge:
+				UpdateSpecialCharge();
+				break;
+			case AiState.SpecialStrafe:
+				UpdateSpecialStrafe();
 				break;
 			default:
 				if (HasAuthority)
@@ -220,8 +228,11 @@ public class RaptorDrone : ModNPC
 				FireSweepingShot(target, timer);
 		}
 
-		if (HasAuthority && StateTimer >= AttackDuration)
-			EnterIdle();
+		if (HasAuthority && StateTimer >= AttackDuration) {
+			ordinaryRounds++;
+			if (ordinaryRounds >= 3) BeginSpecial(target);
+			else EnterIdle();
+		}
 	}
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private void UpdatePatrol()
@@ -381,6 +392,8 @@ public class RaptorDrone : ModNPC
 	private void UpdateAnimation()
 	{
 		int timer = (int)StateTimer;
+		if (State == AiState.SpecialCharge) { _drawFrame = 13; return; }
+		if (State == AiState.SpecialStrafe) { _drawFrame = timer % 3 == 0 ? 12 : 13; return; }
 		if (State != AiState.Attack) {
 			_drawFrame = 1 + timer / 5 % 5;
 			return;
@@ -392,6 +405,7 @@ public class RaptorDrone : ModNPC
 
 	public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
 	{
+		DrawSpecialWarning();
 		Texture2D texture = ModContent.Request<Texture2D>($"{TextureRoot}_{_drawFrame}").Value;
 		SpriteEffects effects = NPC.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 

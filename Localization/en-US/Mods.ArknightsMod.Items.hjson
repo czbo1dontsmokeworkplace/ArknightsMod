@@ -1459,7 +1459,7 @@ PozyomkaBow: {
 BeagleWeapon: {
 	DisplayName: Sword and Shield [Beagle]
 	FlavorText: Protecting everyone is my mission! No matter the hardship, that conviction will never waver!
-	Tooltip: Left-click to slash; the skill grants 25% DEF
+	Tooltip: Left-click to swing; DEF +50% during the skill.
 }
 
 TyphonBow: {
@@ -1467,7 +1467,7 @@ TyphonBow: {
 	Tooltip:
 		'''
 		Converts arrows into infinitely piercing astral shots
-		Hold right-click to charge; a full charge releases sustained twin plasma rays
+		Hold right-click to load one piercing star-crystal arrow; release to fire. Does not home
 		'''
 }
 
@@ -1889,7 +1889,7 @@ MizukiDefault: {
 
 ChenSword_Item: {
 	DisplayName: Chi Xiao [Ch'en]
-	Tooltip: ""
+	Tooltip: Normal swings leave three briefly rotating blades
 }
 
 OriginiumIngot: {
@@ -3951,7 +3951,7 @@ NecrassScepter: {
 	Tooltip:
 		'''
 		Fires alternating twin gamma blasts; nearby deaths raise servants
-		Servants inherit this weapon’s magic damage, use no minion slots, and vanish when switching weapons
+		Servants inherit the fallen enemy’s contact damage independently of this weapon; use no minion slots and vanish when switching weapons
 		'''
 }
 
@@ -4038,7 +4038,7 @@ DroneCommandCore: {
 
 MaterialistTreasureBag: {
 	DisplayName: Treasure Bag (Materialist Antagonizer)
-	Tooltip: Right click to always receive all four command-network weapons, a Drone Command Core, 18-24 Chlorophyte Bars and coins
+	Tooltip: Right click to always receive all five command-network weapons, a Drone Command Core, 18-24 Chlorophyte Bars and coins
 }
 
 GitanoOrb: {

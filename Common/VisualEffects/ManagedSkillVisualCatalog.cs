@@ -108,6 +108,28 @@ public static class ManagedSkillVisualCatalog
         Add("EunectesAxe",0xA4D89D,SkillBodyMotif.Spark);
         Add("HornGrenadeLauncher",0xF3CE8A,SkillBodyMotif.Ember);
         Add("FirewhistleLauncher",0xF2A06F,SkillBodyMotif.Ember);
+        Add("BisonShield",0x709EBF,SkillBodyMotif.Spark);
+        Add("HeavyrainBlade",0xA6C5AC,SkillBodyMotif.Mist);
+        Add("HoshigumaShield",0x78B69B,SkillBodyMotif.Spark);
+        Add("LutonHammer",0x77BBDD,SkillBodyMotif.Spark);
+        Add("BlitzPistol",0xFFE3A0,SkillBodyMotif.Spark);
+        Add("JessicaLiberatedGun",0xDEB076,SkillBodyMotif.Spark);
+        Add("MechanistGun",0x80CFCE,SkillBodyMotif.Spark);
+        Add("FaithMixer",0xF0D391,SkillBodyMotif.Spark);
+        Add("AsbestosBlade",0x8ED6BD,SkillBodyMotif.Spark);
+        Add("ShalemBlade",0xB95A91,SkillBodyMotif.Ember);
+        Add("CzernyBlade",0xE2CF9C,SkillBodyMotif.Orbit);
+        Add("HoshigumaBlazingBlade",0xF47E59,SkillBodyMotif.Ember);
+        Add("AshlockLauncher",0xD5BA95,SkillBodyMotif.Spark);
+        Add("BubbleMaul",0xCAB287,SkillBodyMotif.Spark);
+        Add("AuroraAxe",0xA4DEED,SkillBodyMotif.Crystal);
+        Add("CementMaul",0xC9B49B,SkillBodyMotif.Crystal);
+        Add("MatterhornBlade",0xB6C1A1,SkillBodyMotif.Crystal);
+        Add("PhilaeBlade",0xAC7ACD,SkillBodyMotif.Mist);
+        Add("BasslineBlade",0xE4C16E,SkillBodyMotif.Orbit);
+        Add("UnderflowBlade",0xB69CC3,SkillBodyMotif.Mist);
+        Add("YuBlade",0xF09B5F,SkillBodyMotif.Ember);
+        Add("SanbyBlade",0xA4D79A,SkillBodyMotif.Mist);
         foreach (var defender in global::ArknightsMod.Content.Items.Weapons.Defender.DefenderRouteCatalog.Nodes)
             if (!entries.ContainsKey(defender.Name))
                 Add(defender.Name, defender.Branch == "PrimalProtector" ? 0xB487DCu : 0x9ACFEFu,

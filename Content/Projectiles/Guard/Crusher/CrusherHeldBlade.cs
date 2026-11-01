@@ -29,11 +29,15 @@ public sealed class CrusherHeldBlade : ModProjectile
     private Func<float, float> sampleAngle;
     private Vector2 grip, tip, previousTip, previousCenter, sweepStartCenter, sweepEndCenter;
     private readonly bool[] effectHits = new bool[Main.maxNPCs];
+    private readonly bool[] exploded = new bool[Main.maxNPCs];
     internal CrusherKind Kind => (CrusherKind)(int)Projectile.ai[0];
     public bool Busy => charging || age >= 0;
     public bool IsCharging => charging;
     public float ChargeProgress => Math.Clamp(chargeTicks / (float)chargeLimit, 0, 1);
     internal float Outline => charging ? ChargeProgress : swingCharge;
+    private float SizeRatio => CrusherRules.ChargeSize(Outline) / CrusherRules.SizeMultiplier;
+    private float CurrentRadius => radius * SizeRatio;
+    private bool ThrowsAnchor => Kind == CrusherKind.Ulpianus && special == 2;
     private bool Swinging => age >= 0 && age < length;
     internal float Progress => age < 0 ? 1 : Math.Clamp(age / length, 0, 1);
     internal float Opacity => Math.Clamp((CrusherRules.IdleTicks + CrusherRules.FadeTicks - idle) / (float)CrusherRules.FadeTicks, 0, 1);
@@ -99,7 +103,7 @@ public sealed class CrusherHeldBlade : ModProjectile
         Projectile.damage = Math.Max(1, (int)(baseDamage * power * (forcedPower > 0 ? 1 : CrusherRules.ChargeDamage(swingCharge))));
         Projectile.originalDamage = Projectile.damage;
         Projectile.knockBack = baseKnockback * MathHelper.Lerp(1, 1.6f, swingCharge); Projectile.CritChance = owner.GetWeaponCrit(owner.HeldItem);
-        Array.Clear(Projectile.localNPCImmunity); Array.Clear(effectHits); Projectile.numHits = 0;
+        Array.Clear(Projectile.localNPCImmunity); Array.Clear(effectHits); Array.Clear(exploded); Projectile.numHits = 0;
         UpdatePose(owner); previousAngle = Angle; previousCenter = grip; previousTip = tip;
         sweepStartAngle = sweepEndAngle = Angle; sweepStartCenter = sweepEndCenter = grip;
         Projectile.netUpdate = true;
@@ -169,7 +173,7 @@ public sealed class CrusherHeldBlade : ModProjectile
             // its wind-up and follow-through; pose, trail and sweep share Progress.
             age = Math.Min(length, age + (swingCharge >= 1 ? 1.5f : 1f) / (Projectile.extraUpdates + 1));
             UpdatePose(owner);
-            if (Kind == CrusherKind.Ulpianus && age >= length) { ThrowAnchor(owner); return; }
+            if (ThrowsAnchor && age >= length) { ThrowAnchor(owner); return; }
             sweepStartAngle = previousAngle; sweepEndAngle = Angle;
             sweepStartCenter = previousCenter; sweepEndCenter = grip;
             if (before < .36f && Progress >= .36f && !Main.dedServ) {
@@ -207,12 +211,12 @@ public sealed class CrusherHeldBlade : ModProjectile
     private void UpdatePose(Player owner)
     {
         grip = owner.MountedCenter + new Vector2(0, owner.gfxOffY);
-        tip = grip + Angle.ToRotationVector2() * Math.Max(1, radius);
+        tip = grip + Angle.ToRotationVector2() * Math.Max(1, CurrentRadius);
     }
-    public override bool? CanDamage() => Kind != CrusherKind.Ulpianus && Swinging && age > 0 ? null : false;
+    public override bool? CanDamage() => !ThrowsAnchor && Swinging && age > 0 ? null : false;
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => CanDamage() != false
         && BladeSwingTemplate.Contact(targetHitbox, sweepStartAngle, sweepEndAngle, sweepStartCenter, sweepEndCenter,
-            radius, CrusherRules.ContactWidth(Kind), CrusherSwingMotion.RotationDirection(Kind, facing), out _, out _);
+            CurrentRadius, CrusherRules.ContactWidth(Kind) * SizeRatio, CrusherSwingMotion.RotationDirection(Kind, facing), out _, out _);
     public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
     {
         if (Kind == CrusherKind.Hoederer && OperatorStunNPC.HasStun(target)) modifiers.FinalDamage *= 1.2f;
@@ -224,6 +228,10 @@ public sealed class CrusherHeldBlade : ModProjectile
         var owner = Main.player[Projectile.owner];
         owner.GetModPlayer<CrusherPlayer>().Hit(target, first, special, skillMode);
         CrusherCombatNet.Hit(Projectile, target);
+        if (Kind == CrusherKind.Ulpianus && Main.myPlayer == Projectile.owner && !exploded[target.whoAmI]) {
+            exploded[target.whoAmI] = true;
+            UlpianusAnchorExplosion.Release(Projectile, target.Hitbox.ClosestPointInRect(tip));
+        }
         if (Main.myPlayer == Projectile.owner && swingCharge >= 1 && !pursuitReleased) {
             pursuitReleased = true;
             CrusherUpheaval.Release(Projectile, target, Kind, special, skillLevel);
@@ -247,7 +255,7 @@ public sealed class CrusherHeldBlade : ModProjectile
     {
         if (!CrusherVisuals.Visible(Projectile.Center)) return false;
         sampleAngle ??= AngleAt;
-        if (age >= 0) DreadnoughtArcTrail.Draw(grip, SwingAim, facing, Progress, radius,
+        if (age >= 0) DreadnoughtArcTrail.Draw(grip, SwingAim, facing, Progress, CurrentRadius,
             CrusherRules.Tint(Kind), CrusherRules.Tint(Kind) * .2f, CrusherRules.Edge(Kind), Opacity * MathHelper.Lerp(.35f, 1, swingCharge), sampleAngle);
         CrusherVisuals.DrawBlade(grip, tip, Kind, Opacity, Swinging && swingCharge >= 1, Outline);
         return false;
@@ -272,7 +280,7 @@ public sealed class CrusherHeldBlade : ModProjectile
         poseInitialized = r.ReadBoolean(); restAngle = r.ReadSingle(); entryOffset = r.ReadSingle();
         charging = r.ReadBoolean(); chargeTicks = Math.Max(0, r.ReadInt32()); chargeLimit = Math.Clamp(r.ReadInt32(), 12, 600);
         chargeTicks = Math.Min(chargeTicks, chargeLimit); swingCharge = Math.Clamp(r.ReadSingle(), 0, 1);
-        if (sequence != old) { Array.Clear(Projectile.localNPCImmunity); Array.Clear(effectHits); hitCount = 0; }
+        if (sequence != old) { Array.Clear(Projectile.localNPCImmunity); Array.Clear(effectHits); Array.Clear(exploded); hitCount = 0; }
         UpdatePose(Main.player[Projectile.owner]); previousAngle = sweepStartAngle = sweepEndAngle = Angle;
         previousCenter = sweepStartCenter = sweepEndCenter = grip; previousTip = tip;
     }

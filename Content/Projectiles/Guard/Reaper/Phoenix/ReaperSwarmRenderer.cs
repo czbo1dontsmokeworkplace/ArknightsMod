@@ -96,16 +96,23 @@ public sealed class ReaperSwarmRenderer : ModSystem
             {
                 g.SetRenderTarget(emission);g.Clear(Color.Transparent);
                 DrawCommands(g,1);
-                Blur(g,emission,quarterA,new Vector2(4f/width,0));
-                Blur(g,quarterA,quarterB,new Vector2(0,1f/quarterA.Height));
-                Blur(g,quarterB,eighthA,new Vector2(4f/quarterB.Width,0));
-                Blur(g,eighthA,eighthB,new Vector2(0,2f/eighthA.Height));
+                // Filter before reducing resolution; sparse wide blur taps copy
+                // narrow source sprites into separate, regularly spaced images.
+                Downsample(g,emission,quarterA,"Downsample4");
+                Blur(g,quarterA,quarterB,new Vector2(1f/quarterA.Width,0));
+                Blur(g,quarterB,quarterA,new Vector2(0,1f/quarterB.Height));
+                (quarterA,quarterB)=(quarterB,quarterA);
+                Downsample(g,quarterB,eighthA,"Downsample2");
+                Blur(g,eighthA,eighthB,new Vector2(1f/eighthA.Width,0));
+                Blur(g,eighthB,eighthA,new Vector2(0,1f/eighthB.Height));
+                (eighthA,eighthB)=(eighthB,eighthA);
                 hasFlare=commands.Any(c=>c.Lensflare>0);
                 if(hasFlare)
                 {
                     g.SetRenderTarget(emission);g.Clear(Color.Transparent);DrawCommands(g,2);
-                    Blur(g,emission,quarterA,new Vector2(8f/width,0));
-                    Blur(g,quarterA,flare,new Vector2(16f/quarterA.Width,0));
+                    Downsample(g,emission,quarterA,"Downsample4");
+                    g.SetRenderTarget(flare);g.Clear(Color.Transparent);g.BlendState=BlendState.Opaque;
+                    FullScreen(g,quarterA,"Flare",step:new Vector2(1f/quarterA.Width,0));
                 }
                 prepared=true;
             }
@@ -211,6 +218,11 @@ public sealed class ReaperSwarmRenderer : ModSystem
     {
         g.SetRenderTarget(output);g.Clear(Color.Transparent);g.BlendState=BlendState.Opaque;
         FullScreen(g,input,"Blur",step:step);
+    }
+    private void Downsample(GraphicsDevice g,Texture2D input,RenderTarget2D output,string technique)
+    {
+        g.SetRenderTarget(output);g.Clear(Color.Transparent);g.BlendState=BlendState.Opaque;
+        FullScreen(g,input,technique,step:new Vector2(1f/input.Width,1f/input.Height));
     }
     private void Composite(GraphicsDevice g,Texture2D input,float gain)
     {g.BlendState=add;FullScreen(g,input,"Copy",gain);}

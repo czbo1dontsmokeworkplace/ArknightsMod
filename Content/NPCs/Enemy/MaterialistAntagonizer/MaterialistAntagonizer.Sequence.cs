@@ -8,13 +8,17 @@ public sealed partial class MaterialistAntagonizer
 {
     internal const int PincerAttack = 12, SaucerAttack = 13, RocketAttack = 14, CannonAttack = 15,
         CrossfireAttack = 16, PulseAttack = 17, SkyAttack = 18, GravityAttack = 19,
-        BeaconAttack = 20, ScanAttack = 21, RepairAttack = 22;
+        BeaconAttack = 20, ScanAttack = 21, RepairAttack = 22, BomberAttack = 23;
+    internal bool BomberOpeningUsed;
+    internal int BombersLaunched;
     internal int CoreAttack = -1, CoreAttackAge, CoreSerial, AttacksSinceRepair;
     internal bool CoreWaiting;
     internal int CoreCooldownRemaining;
     internal WingPattern ContinuousWingPlan;
     internal Vector2 PulseEmitter;
     internal bool CoreSequenceActive => Order == FlightOrder.Command && EscortsReleased && CoreAttack >= 0 && !CoreWaiting;
+    internal bool BomberSortieInProgress => Phase == 3 && Order == FlightOrder.Command &&
+        CoreAttack == BomberAttack && !CoreWaiting && BombersLaunched < 6;
     internal int CoreBeat => CoreAttackAge;
 
     private int CoreAttackDuration => CoreAttack switch
@@ -26,6 +30,7 @@ public sealed partial class MaterialistAntagonizer
         BeaconAttack => 132,
         ScanAttack => MaterialistRules.ScanWarning + 24,
         RepairAttack => SupportMode == 1 ? 112 : 90,
+        BomberAttack => 192,
         _ => 136
     };
 
@@ -42,7 +47,12 @@ public sealed partial class MaterialistAntagonizer
         CoreWaiting = false; CoreCooldownRemaining = 0;
         int previous = CoreAttack;
         if (previous >= 0 && previous != RepairAttack) AttacksSinceRepair++;
-        if (AttacksSinceRepair >= 4 && BeginScheduledRepair())
+        if (Phase == 3 && !BomberOpeningUsed)
+        {
+            CoreAttack = BomberAttack;
+            BomberOpeningUsed = true;
+        }
+        else if (AttacksSinceRepair >= 4 && BeginScheduledRepair())
         {
             CoreAttack = RepairAttack;
             AttacksSinceRepair = 0;
@@ -50,9 +60,11 @@ public sealed partial class MaterialistAntagonizer
         else
         {
             // Uniform random instruments without consecutive repeats; escorts keep their own operation clock.
-            int choice = Main.rand.Next(ScanAttack + 1 - (previous is >= 0 and < RepairAttack ? 1 : 0));
-            CoreAttack = previous is >= 0 and < RepairAttack && choice >= previous ? choice + 1 : choice;
+            int count = ScanAttack + 1 + (Phase == 3 ? 1 : 0);
+            bool previousInPool = previous is >= 0 and <= ScanAttack || Phase == 3 && previous == BomberAttack;
+            CoreAttack = AttackChoice(Phase, previous, Main.rand.Next(count - (previousInPool ? 1 : 0)));
         }
+        BombersLaunched = 0;
         CoreAttackAge = 0; CoreSerial++;
         PulseEmitter = Vector2.Clamp(CoreMuzzle + new Vector2((CoreSerial % 2 == 0 ? -1 : 1) * 84, 35),
             new Vector2(48), new Vector2(Main.maxTilesX * 16 - 48, Main.maxTilesY * 16 - 48));
@@ -69,7 +81,8 @@ public sealed partial class MaterialistAntagonizer
             SelectCoreAttack();
         }
         else if (Authority && CoreAttack >= 0 && (CoreAttack != RepairAttack && CoreAttackAge >= CoreAttackDuration ||
-            CoreAttack == RepairAttack && CoreAttackAge > 0 && SupportMode == 0))
+            CoreAttack == RepairAttack && CoreAttackAge > 0 && SupportMode == 0) &&
+            (CoreAttack != BomberAttack || BombersLaunched >= 6))
         {
             CoreWaiting = true; CoreCooldownRemaining = 90;
             NPC.netUpdate = true;
@@ -103,7 +116,16 @@ public sealed partial class MaterialistAntagonizer
             else if (CoreAttack == GravityAttack) RunPayloadBattery(beat, 0);
             else if (CoreAttack == BeaconAttack) RunPayloadBattery(beat, 2);
             else if (CoreAttack == ScanAttack && beat == 0) FireAreaScan(player);
+            else if (CoreAttack == BomberAttack && Phase == 3) RunBomberSortie(beat);
         }
         CoreAttackAge++;
+    }
+
+    internal static int AttackChoice(int phase, int previous, int choice)
+    {
+        int previousIndex = previous == BomberAttack ? ScanAttack + 1 : previous;
+        bool exclude = previous is >= 0 and <= ScanAttack || phase == 3 && previous == BomberAttack;
+        int index = exclude && choice >= previousIndex ? choice + 1 : choice;
+        return index > ScanAttack ? BomberAttack : index;
     }
 }

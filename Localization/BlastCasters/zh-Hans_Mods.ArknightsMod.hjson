@@ -57,7 +57,6 @@ Projectiles: {
 	// StandardBearerCrescent.DisplayName: Standard Bearer Crescent
 	// NecrassGammaBlast.DisplayName: Necrass Gamma Blast
 	// PozemkaBlinkStrike.DisplayName: Pozemka Blink Strike
-	// TyphonPlasmaRay.DisplayName: Typhon Plasma Ray
 }
 
 Skills: {

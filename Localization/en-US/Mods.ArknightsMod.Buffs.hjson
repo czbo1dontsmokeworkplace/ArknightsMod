@@ -307,3 +307,8 @@ NecrosisAfflictionBuff: {
 	DisplayName: Necrosis
 	Description: At 1000 buildup, Necrosis bursts for 15 seconds
 }
+
+FrostDroneChill: {
+	DisplayName: Frost Mist
+	Description: Movement speed reduced by 50%
+}

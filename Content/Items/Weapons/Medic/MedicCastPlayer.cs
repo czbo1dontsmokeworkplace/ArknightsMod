@@ -3,15 +3,16 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Items.Weapons.Medic;
 
-// Shared by the player's field staves, so switching items or using another copy cannot skip the cooldown.
+// One fixed real-time cooldown shared by every healing branch and automatic casts.
 public sealed class MedicCastPlayer : ModPlayer
 {
-    internal int GroupCooldown { get; private set; }
+    internal const int CooldownTicks = 180;
+    internal int Cooldown { get; private set; }
 
-    internal bool TryStartGroupCast(int interval)
+    internal bool TryStartCast()
     {
-        if (GroupCooldown > 0) return false;
-        GroupCooldown = Math.Max(1, interval);
+        if (Cooldown > 0) return false;
+        Cooldown = CooldownTicks;
         return true;
     }
 
@@ -20,6 +21,6 @@ public sealed class MedicCastPlayer : ModPlayer
 
     private void TickCooldown()
     {
-        if (GroupCooldown > 0) GroupCooldown--;
+        if (Cooldown > 0) Cooldown--;
     }
 }

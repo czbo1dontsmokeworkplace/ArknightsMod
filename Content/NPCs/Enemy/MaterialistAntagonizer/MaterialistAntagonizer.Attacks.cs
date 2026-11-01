@@ -26,11 +26,12 @@ public sealed partial class MaterialistAntagonizer
             case FlightOrder.Deploy:
                 MoveTo(player.Center + new Vector2(0, -300));
                 if (Authority && Timer == 1) Wave++;
-                if (Authority && Timer >= 30 && Timer <= 210 && (Timer - 30) % 20 == 0)
+                int lastDeployment = 30 + (MaterialistRules.DeploymentCap(Phase) - 1) * 20;
+                if (Authority && Timer >= 30 && Timer <= lastDeployment && (Timer - 30) % 20 == 0)
                     DeploySlot((Timer - 30) / 20);
                 // If the NPC pool temporarily filled, finish the missing slots before releasing the wing.
-                if (Authority && Timer > 210 && Timer % 20 == 10)
-                    for (int slot = 0; slot < MaterialistRules.WingCap(Phase); slot++) DeploySlot(slot);
+                if (Authority && Timer > lastDeployment && Timer % 20 == 10)
+                    for (int slot = 0; slot < MaterialistRules.DeploymentCap(Phase); slot++) DeploySlot(slot);
                 if (Authority && Timer == 280 && Phase >= 2 && WingCount() > 0)
                 {
                     ShieldMax = (int)(NPC.lifeMax * (Phase == 2 ? .045f : .060f));
@@ -39,7 +40,7 @@ public sealed partial class MaterialistAntagonizer
                 break;
             case FlightOrder.Command:
                 RunFormationBody();
-                if (Authority && Timer > 120 && WingCount() == 0) { NPC.ai[3] = -1; Enter(FlightOrder.Recover); return; }
+                if (Authority && Timer > 120 && WingCount() == 0 && !BomberOperationActive) { NPC.ai[3] = -1; Enter(FlightOrder.Recover); return; }
                 break;
             case FlightOrder.Bombard:
                 MoveTo(player.Center + new Vector2(side * 320, -270));
@@ -114,28 +115,29 @@ public sealed partial class MaterialistAntagonizer
     {
         int count = 0;
         foreach (NPC n in Main.ActiveNPCs)
-            if (n.TryGetGlobalNPC<MaterialistWing>(out var wing) && wing.BelongsTo(this) && !wing.Retreating) count++;
+            if ((n.ModNPC is not BomberDrone bomber || !bomber.PayloadReleased) &&
+                n.TryGetGlobalNPC<MaterialistWing>(out var wing) && wing.BelongsTo(this) && !wing.Retreating) count++;
         return count;
     }
     private bool DeploymentReady()
     {
         int ready = 0;
         foreach (NPC npc in Main.ActiveNPCs)
-            if (npc.TryGetGlobalNPC<MaterialistWing>(out var wing) && wing.BelongsTo(this) && !wing.Retreating)
+            if (npc.ModNPC is not BomberDrone && npc.TryGetGlobalNPC<MaterialistWing>(out var wing) && wing.BelongsTo(this) && !wing.Retreating)
             {
                 if (wing.Age < MaterialistRules.EscortGrace) return false;
                 ready++;
             }
-        return ready >= MaterialistRules.WingCap(Phase);
+        return ready >= MaterialistRules.DeploymentCap(Phase);
     }
     private void DeploySlot(int slot)
     {
-        int cap = MaterialistRules.WingCap(Phase);
+        int cap = MaterialistRules.DeploymentCap(Phase);
         if (slot >= cap || WingCount() >= cap) return;
         foreach (NPC n in Main.ActiveNPCs)
             if (n.TryGetGlobalNPC<MaterialistWing>(out var wing) && wing.BelongsTo(this) && wing.Slot == slot && !wing.Retreating) return;
         WingDuty duty = MaterialistRules.Duty(Phase, slot);
-        int type = duty switch {
+        int type = slot >= MaterialistRules.WingCap(Phase) ? ModContent.NPCType<FrostDrone>() : duty switch {
             WingDuty.Containment => Phase == 1 ? ModContent.NPCType<Drone>() : ModContent.NPCType<ArtsMasterA2>(),
             WingDuty.Precision => Phase == 1 ? ModContent.NPCType<DroneII>() : ModContent.NPCType<ArtsMasterA1>(),
             WingDuty.Scatter => ModContent.NPCType<DroneII>(),
@@ -249,6 +251,7 @@ public sealed partial class MaterialistAntagonizer
             if (p.ModProjectile is MaterialistHazard h && h.BelongsTo(this) &&
                 (!preservePincer || h.Kind != DroneShot.PincerBeam)) h.Retire();
             else if (p.ModProjectile is MaterialistInstrument instrument && instrument.BelongsTo(this)) instrument.Retire();
+            else if (p.ModProjectile is BomberDronePayload payload && payload.BelongsTo(this)) payload.Cancel();
     }
     private void RecallWing()
     {

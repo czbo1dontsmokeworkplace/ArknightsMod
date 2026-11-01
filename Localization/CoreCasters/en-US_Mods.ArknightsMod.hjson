@@ -1,4 +1,4 @@
-﻿Items: {
+Items: {
 	NightmareStaff: {
 		DisplayName: Dream Staff [Nightmare]
 		Tooltip:
@@ -95,6 +95,9 @@ Buffs: {
 		DisplayName: Ignition Scorch
 		Description: Arts resistance reduced by 25%
 	}
+
+	FrostDroneChill: {
+	}
 }
 
 Projectiles: {
@@ -102,6 +105,8 @@ Projectiles: {
 	CoreCasterPulse.DisplayName: Arts Burst
 	CoreCasterMend.DisplayName: Returning Soul
 	NightmareBrand.DisplayName: Night Phantom
+	DefenderArtsShard.DisplayName: Defender Arts Shard
+	DefenderSkillArea.DisplayName: Defender Skill Area
 }
 
 BranchTraits.CoreCaster: Core Caster:  Fires high-damage Arts energy bolts

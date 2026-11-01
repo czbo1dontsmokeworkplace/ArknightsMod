@@ -174,7 +174,7 @@ public sealed class OperatorLordWave : ModProjectile
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
     {
         Vector2 side = Projectile.rotation.ToRotationVector2() * 30;
-        float width=48+2*Projectile.localAI[0]*BladeRouteRules.WaveSpeed*MathF.Tan(MathHelper.ToRadians(2.5f));
+        const float width=48; // Parallel cluster cells never spread during flight.
         float point = 0;
         return targetHitbox.Contains(Projectile.Center.ToPoint()) || Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center - side, Projectile.Center + side, width, ref point);
     }
@@ -280,6 +280,7 @@ public sealed class OperatorScuuxunSpike : ModProjectile
         style.Opacity=()=>Math.Clamp((BladeRouteRules.SpikeLifetime-Projectile.localAI[0])/18f,0,1);
         style.TrailLifetimeScale=.15f;
         style.HideScuuxunPointer=true;
+        style.SuppressShake=true;
         visual=new PhoenixMotionFx(67,Projectile,style,()=>Projectile.rotation.ToRotationVector2());
     }
     public override bool? Colliding(Rectangle projHitbox,Rectangle targetHitbox)

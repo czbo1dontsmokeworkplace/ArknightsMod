@@ -8,9 +8,9 @@ internal sealed record DefenderRouteNode(string Name, string Operator, string Br
 internal static class DefenderRouteCatalog
 {
     internal static readonly DefenderRouteNode[] Nodes = [
-        new("NoirShield", "黑角", "Protector", 0, [], 10, 32),
-        new("BeagleWeapon", "米格鲁", "Protector", 1, ["NoirShield"], 16, 30),
-        new("CardiWeapon", "卡缇", "Protector", 1, ["NoirShield"], 16, 30),
+        new("NoirShield", "黑角", "Protector", 0, [], 12, 36),
+        new("BeagleWeapon", "米格鲁", "Protector", 1, ["NoirShield"], 23, 25),
+        new("CardiWeapon", "卡缇", "Protector", 1, ["NoirShield"], 23, 25),
         new("CuoraWeapon", "蛇屠箱", "Protector", 2, ["BeagleWeapon", "CardiWeapon"], 28, 30),
         new("CroissantHammer", "可颂", "Protector", 3, ["CuoraWeapon"], 80, 36),
         new("BisonShield", "拜松", "Protector", 3, ["CuoraWeapon"], 74, 30),
@@ -28,11 +28,11 @@ internal static class DefenderRouteCatalog
         new("DN_Weapon", "坚雷", "ArtsProtector", 2, ["BeagleWeapon", "CardiWeapon"], 23, 25),
         new("AsbestosBlade", "石棉", "ArtsProtector", 3, ["DN_Weapon"], 82, 34),
         new("ShalemBlade", "暮落", "ArtsProtector", 3, ["DN_Weapon"], 90, 36),
-        new("CzernyBlade", "车尼尔", "ArtsProtector", 3, ["DN_Weapon"], 76, 28),
+        new("CzernyBlade", "车尔尼", "ArtsProtector", 3, ["DN_Weapon"], 76, 28),
         new("HoshigumaBlazingBlade", "斩业星熊", "ArtsProtector", 4, ["AsbestosBlade", "ShalemBlade", "CzernyBlade"], 190, 34),
         new("FirewhistleLauncher", "火哨", "Fortress", 2, ["BeagleWeapon", "CardiWeapon"], 58, 48),
-        new("AshlockLauncher", "灰毫", "Fortress", 2, ["BeagleWeapon", "CardiWeapon"], 64, 54),
-        new("HornGrenadeLauncher", "号角", "Fortress", 4, ["FirewhistleLauncher", "AshlockLauncher"], 388, 42),
+        new("AshlockLauncher", "灰毫", "Fortress", 3, ["FirewhistleLauncher"], 116, 38),
+        new("HornGrenadeLauncher", "号角", "Fortress", 4, ["AshlockLauncher"], 388, 42),
         new("BubbleMaul", "泡泡", "Duelist", 2, ["BeagleWeapon", "CardiWeapon"], 34, 38),
         new("AuroraAxe", "极光", "Duelist", 3, ["BubbleMaul"], 106, 40),
         new("CementMaul", "洋灰", "Duelist", 3, ["BubbleMaul"], 116, 46),

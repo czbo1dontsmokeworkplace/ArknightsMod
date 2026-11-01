@@ -18,6 +18,7 @@ internal sealed class PhoenixFxStyle
     internal bool SkyfireRing,CenteredCut;
     internal bool MonochromeTexture;
     internal bool HideScuuxunPointer;
+    internal bool SuppressShake;
     internal Func<Vector2,Vector2> ProjectPosition,ProjectDirection;
     internal Vector2 SpriteStretch=Vector2.One;
 }
@@ -43,6 +44,17 @@ internal static class PhoenixFx
         style.ParticleLifetimeScale=.3f;
         return style;
     }
+    internal static PhoenixFxStyle NecrassGamma(bool muzzle=false)
+    {
+        var style=Original(muzzle?1.5f:1);
+        style.SuppressShake=true;
+        style.MonochromeTexture=true;
+        // Keep this dark palette's actual intensity instead of normalizing it
+        // back to the imported pink/white HDR peak.
+        style.Tint=c=>new Vector4(new Vector3(83,35,132)/255f*Math.Max(c.X,Math.Max(c.Y,c.Z)),c.W);
+        if(muzzle)style.Opacity=static()=>.5f;
+        return style;
+    }
     internal static void Burst(string name,Vector2 at,Vector2 direction,PhoenixFxStyle style=null)
     {
         if(Main.dedServ)return;style??=Original();
@@ -51,7 +63,7 @@ internal static class PhoenixFx
     }
     internal static void Sakura(Vector2 at,Vector2 direction,Color primary,Color edge,float scale=1)
     {
-        var style=Colored(primary,edge,scale);style.CenteredCut=true;
+        var style=Colored(primary,edge,scale);style.CenteredCut=true;style.SuppressShake=true;
         Burst("emitter.player.weapon.40.impact",at,direction,style);
     }
     internal static void Skyfire(Vector2 at,float scale,Vector2 direction=default)
@@ -83,7 +95,7 @@ internal sealed class PhoenixMotionFx
 }
 
 // The source rank-6 NC-271 shot is 7 rows x 3 cells, all travelling
-// together within a 5-degree cone. A cell is not the whole plasma cluster.
+// together on parallel paths. A cell is not the whole plasma cluster.
 internal sealed class PhoenixPlasmaClusterFx
 {
     private readonly List<PhoenixMotionFx> cells=new();
@@ -92,14 +104,9 @@ internal sealed class PhoenixPlasmaClusterFx
         for(int row=0;row<7;row++)for(int barrel=0;barrel<3;barrel++)
         {
             Vector2 offset=new((barrel-1)*12,30-row*(60f/7)-((barrel+1)%3)*5);
-            uint seed=unchecked((uint)(host.identity*131+host.owner*977+row*17+barrel*83+69));
-            seed=seed*1664525u+1013904223u;
-            float angle=((seed>>8)%10001/10000f-.5f)*MathHelper.ToRadians(5);
-            Vector2 cellAxis=Vector2.UnitY.Rotate(angle);
-            Vector2 LocalOffset()=>offset*style.Scale+(cellAxis-Vector2.UnitY)*(host.localAI[0]*host.velocity.Length());
             cells.Add(new PhoenixMotionFx(69,host,style,
-                ()=>ReaperSwarmJson.Local(cellAxis,host.velocity.Unit()),
-                ()=>host.Center+ReaperSwarmJson.Local(LocalOffset(),host.velocity.Unit())));
+                ()=>host.velocity.Unit(),
+                ()=>host.Center+ReaperSwarmJson.Local(offset*style.Scale,host.velocity.Unit())));
         }
     }
     internal void Stop(){foreach(var cell in cells)cell.Stop();}

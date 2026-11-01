@@ -7,8 +7,7 @@ internal static class ShieldGuardRules
     internal static bool Supports(Item item) => DefenderRules.IsWeapon(item) && !DefenderRules.IsDuelist(item);
     internal static bool WantsRaised(Player player) => Supports(player.HeldItem) && player.active && !player.dead
         && !player.CCed && !player.noItems && ((player.whoAmI == Main.myPlayer && Main.mouseRight && !player.mouseInterface)
-            || (player.HeldItem.ModItem?.Name == "CuoraWeapon" && DefenderRules.Skill(player, 1))
-            || (player.HeldItem.ModItem?.Name == "NianWeapon" && DefenderRules.Skill(player, 1)));
+            || DefenderSkillRules.StopsAttacking(player));
     internal static bool IsRaised(Player player)
     {
         if (!Supports(player.HeldItem) || !player.active || player.dead || player.CCed || player.noItems) return false;

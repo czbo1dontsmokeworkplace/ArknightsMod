@@ -419,5 +419,8 @@ CrownslayerDespawnGas.DisplayName: Crownslayer Despawn Gas
 CannotPortal.DisplayName: Cannot Portal
 ArtsMasterBeam.DisplayName: Arts Master Beam
 ArtsMasterNeedle.DisplayName: Arts Master Needle
+BomberDroneBomb.DisplayName: Blast Canister
+BomberDroneExplosion.DisplayName: Blast Canister Explosion
 MaterialistHazard.DisplayName: Materialist Fire Support
 LamentingServant.DisplayName: Lamenting Servant
+RaptorGoldenRound.DisplayName: Raptor Tracer Round

@@ -1,30 +1,39 @@
 using System;
 using System.IO;
-using System.Linq;
 using ArknightsMod.Content.Items.Weapons.Charged;
 using ArknightsMod.Content.Items.Weapons.Sniper.Typhon;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles.Sniper.Typhon;
 
-// The former six insertion animations are archived in Doc/PhoenixGammaPlasma.
-// Charging keeps their combined duration and the same owner-bound cancellation.
+// One visible insertion, held until right-button release. Stored arrows are harmless.
 public sealed class TyphonMagazine : ModProjectile
 {
-    public const int Capacity = 6;
-    public static int LoadFrames(int count) => (int)MathF.Ceiling(18 * MathF.Pow(.85f, Math.Clamp(count, 0, Capacity - 1)));
-    internal static readonly int ChargeFrames = Enumerable.Range(0, Capacity).Sum(LoadFrames);
-    internal const int BeamFrames = 48; // Original rank-six Mirage: 0.8 seconds.
-    private Item boundItem;
-    private int chargeTicks;
-    private bool Firing => Projectile.ai[0] > 0;
-    internal float TotalLoadProgress => Firing ? Math.Clamp(1 - Projectile.ai[1] / BeamFrames, 0, 1) : Math.Clamp(chargeTicks / (float)ChargeFrames, 0, 1);
-    internal bool BelongsTo(Item item) => boundItem == null || ReferenceEquals(boundItem, item);
+    public const int Capacity = 1;
+    public const float LoadedArrowDamageMultiplier = .5f;
+    public static int LoadFrames(int count) => 18;
+    internal static string LoadTextKey(int count) => "Mods.ArknightsMod.ChargedArsenal." + (count % 2 == 1 ? "Tick" : "Tock");
+    internal static SoundStyle LoadSound(int count) => count >= Capacity
+        ? SoundID.Item23 with { Volume = .85f, MaxInstances = 6 }
+        : SoundID.Item108 with { Volume = .3f, Pitch = count % 2 == 1 ? .12f : -.12f, MaxInstances = 6 };
     public override string Texture => "Terraria/Images/MagicPixel";
+    private Item boundItem;
+    private int loaded, loadClock, shownCount;
+    private int halfwaySoundRound = -1, loadFlashAge = 20;
+    private bool canLoad;
+    private float LoadProgress => loaded >= Capacity || !canLoad ? 0 : Math.Clamp(loadClock / (float)LoadFrames(loaded), 0, 1);
+    // There is one slot: completing it holds the bar at full until release.
+    internal float TotalLoadProgress => Math.Clamp((loaded + LoadProgress) / Capacity, 0, 1);
+    internal bool BelongsTo(Item item) => boundItem == null || ReferenceEquals(boundItem, item);
+    private readonly int[] damage = new int[Capacity], ammo = new int[Capacity];
+    private readonly float[] knockback = new float[Capacity];
     public override void SetDefaults()
     {
         Projectile.width = Projectile.height = 12; Projectile.tileCollide = false; Projectile.ignoreWater = true;
@@ -32,58 +41,79 @@ public sealed class TyphonMagazine : ModProjectile
     }
     public override bool ShouldUpdatePosition() => false;
     public override bool? CanDamage() => false;
-    public override void SendExtraAI(BinaryWriter writer) => writer.Write(chargeTicks);
-    public override void ReceiveExtraAI(BinaryReader reader) => chargeTicks = Math.Clamp(reader.ReadInt32(), 0, ChargeFrames);
+    public override void SendExtraAI(BinaryWriter writer) { writer.Write((byte)loaded); writer.Write(loadClock); writer.Write(canLoad); }
+    public override void ReceiveExtraAI(BinaryReader reader) { loaded = Math.Clamp((int)reader.ReadByte(), 0, Capacity); loadClock = Math.Max(0, reader.ReadInt32()); canLoad = reader.ReadBoolean(); }
+    private Vector2 SlotDirection(int i) => Projectile.velocity.SafeNormalize(Vector2.UnitX);
+    private Vector2 Slot(int i) => Projectile.Center + SlotDirection(i) * 68;
     public override void AI()
     {
         Player owner = Main.player[Projectile.owner];
         if (!owner.active || owner.dead || owner.CCed || owner.noItems || owner.HeldItem.ModItem is not TyphonBow bow)
         { Projectile.Kill(); return; }
         bool local = Projectile.owner == Main.myPlayer;
-        if (local && !BelongsTo(owner.HeldItem)) { Projectile.Kill(); return; }
+        if (local && boundItem != null && !ReferenceEquals(boundItem, owner.HeldItem)) { Projectile.Kill(); return; }
         boundItem ??= owner.HeldItem;
         Projectile.Center = owner.MountedCenter; Projectile.timeLeft = 2;
-        if (!Firing)
+        // Preserve already paid-for rounds while inventory/autopause blocks world input.
+        if (local && !ChargedOperatorWeapon.WorldInputAllowed(owner)) return;
+        loadFlashAge = Math.Min(20, loadFlashAge + 1);
+        if (local)
         {
-            if (local && !ChargedOperatorWeapon.WorldInputAllowed(owner)) return;
-            if (local && (!Main.mouseRight || !owner.HasAmmo(bow.Item))) { Projectile.Kill(); return; }
-            if (local)
-            {
-                Vector2 next = (Main.MouseWorld - owner.MountedCenter).SafeNormalize(Vector2.UnitX * owner.direction);
-                if (Vector2.DistanceSquared(next, Projectile.velocity) > .0004f)
-                { Projectile.velocity = next; Projectile.netUpdate = true; }
-            }
-            chargeTicks = Math.Min(ChargeFrames, chargeTicks + 1);
-            if (local && chargeTicks >= ChargeFrames) Fire(owner, bow);
-            else if (local && chargeTicks % 6 == 0) Projectile.netUpdate = true;
+            bool available = owner.HasAmmo(bow.Item);
+            if (canLoad != available) { canLoad = available; Projectile.netUpdate = true; }
+            Vector2 aim = (Main.MouseWorld - owner.MountedCenter).SafeNormalize(Vector2.UnitX * owner.direction);
+            if (Vector2.DistanceSquared(aim, Projectile.velocity) > .0004f) { Projectile.velocity = aim; Projectile.netUpdate = true; }
         }
-        else if (++Projectile.ai[1] >= BeamFrames) { Projectile.Kill(); return; }
         Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitX);
         owner.ChangeDir(direction.X < 0 ? -1 : 1); owner.heldProj = Projectile.whoAmI;
         owner.itemTime = owner.itemAnimation = 2; owner.itemRotation = (direction * owner.direction).ToRotation();
         owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, direction.ToRotation() - MathHelper.PiOver2);
-    }
-    private void Fire(Player owner, TyphonBow bow)
-    {
-        int totalDamage = 0, ammo = 0, paid = 0; float knockback = 0;
-        // Pay the former six-round budget together after charging. If fewer
-        // arrows remain, still release the rays with only the paid damage.
-        for (int i = 0; i < Capacity; i++)
+        if (local && !Main.mouseRight)
         {
-            if (!bow.LoadArrow(owner, out int damage, out float kb, out int selectedAmmo)) break;
-            totalDamage += damage; knockback += kb; ammo = selectedAmmo; paid++;
+            if (loaded > 0 && !Main.dedServ)
+            {
+                SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Assets/Sounds/Typhon/StarmadaFire") { Volume = .5f }, owner.Center);
+                SoundEngine.PlaySound(SoundID.Item38 with { Volume = .7f }, owner.Center);
+            }
+            // One paid round, straight through enemies; no volley and no homing.
+            for (int i = 0; i < loaded; i++)
+            {
+                int index = Projectile.NewProjectile(owner.GetSource_ItemUse_WithPotentialAmmo(bow.Item, ammo[i]), Slot(i),
+                    SlotDirection(i) * TyphonAstralShot.LaunchSpeed, ModContent.ProjectileType<TyphonAstralShot>(), Math.Max(1, (int)(damage[i] * LoadedArrowDamageMultiplier)), knockback[i], owner.whoAmI, 3);
+                if (Main.projectile.IndexInRange(index)) Main.projectile[index].CritChance = owner.GetWeaponCrit(bow.Item);
+            }
+            Projectile.Kill(); return;
         }
-        if (paid == 0) { Projectile.Kill(); return; }
-        Projectile.ai[0] = 1; Projectile.ai[1] = 0; Projectile.netUpdate = true;
-        Vector2 axis = Projectile.velocity.SafeNormalize(Vector2.UnitX);
-        // Six hits per beam share the former six half-damage arrows' budget.
-        int perHit = Math.Max(1, (int)MathF.Round(totalDamage / 24f));
-        foreach (int side in new[] { -1, 1 })
+        if (loaded < Capacity && canLoad)
         {
-            var ray = Projectile.NewProjectileDirect(owner.GetSource_ItemUse_WithPotentialAmmo(bow.Item, ammo),
-                owner.MountedCenter, axis, ModContent.ProjectileType<TyphonPlasmaRay>(), perHit,
-                knockback / paid, owner.whoAmI, side, 0, Projectile.identity);
-            ray.CritChance = owner.GetWeaponCrit(bow.Item);
+            int frames = LoadFrames(loaded);
+            // Peers predict only the visible insertion; ammo and completed loads belong to the owner.
+            loadClock = Math.Min(frames, loadClock + 1);
+            if (loadClock >= (frames + 1) / 2 && halfwaySoundRound != loaded)
+            {
+                halfwaySoundRound = loaded;
+                if (!Main.dedServ) SoundEngine.PlaySound(SoundID.Item17 with { Volume = .65f, MaxInstances = 6 }, owner.Center);
+            }
+            if (local && loadClock >= frames)
+            {
+                if (bow.LoadArrow(owner, out int value, out float kb, out int selectedAmmo))
+                {
+                    damage[loaded] = value; knockback[loaded] = kb; ammo[loaded] = selectedAmmo;
+                    loaded++; loadClock = 0; canLoad = owner.HasAmmo(bow.Item); Projectile.netUpdate = true;
+                }
+                else { canLoad = false; loadClock = 0; Projectile.netUpdate = true; }
+            }
+        }
+        if (shownCount < loaded)
+        {
+            shownCount = loaded; loadFlashAge = 0;
+            if (!Main.dedServ)
+            {
+                SoundEngine.PlaySound(LoadSound(loaded), owner.Center);
+                Rectangle textArea = new((int)owner.Center.X - 14, (int)owner.Top.Y - 28, 28, 16);
+                CombatText.NewText(textArea, loaded % 2 == 1 ? new Color(255, 200, 100) : new Color(155, 255, 255),
+                    Language.GetTextValue(LoadTextKey(loaded)), true);
+            }
         }
     }
     public override bool PreDraw(ref Color lightColor)
@@ -91,10 +121,25 @@ public sealed class TyphonMagazine : ModProjectile
         Player owner = Main.player[Projectile.owner];
         if (owner.HeldItem.ModItem is not TyphonBow) return false;
         Main.instance.LoadItem(owner.HeldItem.type);
-        Texture2D bow = TextureAssets.Item[owner.HeldItem.type].Value;
         Vector2 aim = Projectile.velocity.SafeNormalize(Vector2.UnitX);
-        Main.EntitySpriteDraw(bow, Projectile.Center + aim * 12 - Main.screenPosition, null, lightColor,
-            aim.ToRotation(), bow.Size() / 2, 1, owner.direction < 0 ? SpriteEffects.FlipVertically : SpriteEffects.None);
+        Texture2D bow = TextureAssets.Item[owner.HeldItem.type].Value;
+        DrawLoadedArrows();
+        Main.EntitySpriteDraw(bow, Projectile.Center + aim * 12 - Main.screenPosition, null, lightColor, aim.ToRotation(),
+            bow.Size() / 2, 1, owner.direction < 0 ? SpriteEffects.FlipVertically : SpriteEffects.None);
         return false;
+    }
+    private void DrawLoadedArrows()
+    {
+        float flash = Math.Clamp(1 - loadFlashAge / 8f, 0, 1);
+        int visible = loaded + (loaded < Capacity && canLoad ? 1 : 0);
+        for (int i = 0; i < visible; i++)
+        {
+            bool inserting = i == loaded;
+            float opacity = inserting ? LoadProgress : 1;
+            Vector2 pointing = SlotDirection(i);
+            Vector2 position = Slot(i) + pointing * (inserting ? 40 * (1 - LoadProgress) : 0);
+            TyphonAstralVisuals.DrawHead(position, pointing.ToRotation(), TyphonAstralShot.RightScale, i * .15f,
+                opacity, !inserting && (loaded == Capacity || i == loaded - 1) ? flash : 0);
+        }
     }
 }

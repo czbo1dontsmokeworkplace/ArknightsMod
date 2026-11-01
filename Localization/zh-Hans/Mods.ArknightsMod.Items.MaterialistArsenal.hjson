@@ -12,6 +12,16 @@ MiniGatling: {
 	Tooltip: 短暂启动后，向敌人持续倾泻大量高速机枪弹
 }
 
+PlasmaProjector: {
+	DisplayName: 等离子投射器
+	Tooltip:
+		'''
+		按住左键持续发射蓝色双束等离子激光
+		两束共同攻击前方的一个敌人，无法贯穿敌人或墙壁
+		持续消耗魔力，松开左键停止攻击
+		'''
+}
+
 OrbitalLaser: {
 	DisplayName: 轨道激光
 	Tooltip: 释放智能标记，短暂蓄能后从天而降三道激光

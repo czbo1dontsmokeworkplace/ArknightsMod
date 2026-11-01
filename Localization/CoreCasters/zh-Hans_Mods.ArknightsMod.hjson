@@ -1,4 +1,4 @@
-﻿Items: {
+Items: {
 	NightmareStaff: {
 		DisplayName: 梦境法杖 [夜魔]
 		Tooltip:
@@ -91,6 +91,9 @@ Buffs: {
 		DisplayName: 点燃蚀痕
 		Description: 法术抗性降低25%
 	}
+
+	FrostDroneChill: {
+	}
 }
 
 Projectiles: {
@@ -98,6 +101,8 @@ Projectiles: {
 	CoreCasterPulse.DisplayName: 术式爆发
 	CoreCasterMend.DisplayName: 返还魂丝
 	NightmareBrand.DisplayName: 夜魇魔影
+	// DefenderArtsShard.DisplayName: Defender Arts Shard
+	// DefenderSkillArea.DisplayName: Defender Skill Area
 }
 
 BranchTraits.CoreCaster: 中坚术士：  发射高伤害的法术能量弹

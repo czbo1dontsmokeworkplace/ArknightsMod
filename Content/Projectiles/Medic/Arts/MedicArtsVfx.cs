@@ -70,6 +70,11 @@ internal static class MedicArtsVfx
     internal static void Cast(Vector2 position, Vector2 aim, int id, bool skill)
     {
         if (!Visible(position)) return;
+        if(id==16 && !skill)
+        {
+            MedicSpriteFlightVisuals.Muzzle(position,aim);
+            return;
+        }
         var p = MedicCatalog.Get(id);
         int count = skill ? 18 : 6 + p.Tier;
         for (int i = 0; i < count; i++)
@@ -93,8 +98,15 @@ internal static class MedicArtsVfx
 
     internal static void Flight(MedicArt art, Vector2 previous)
     {
+        if (art.Profile.Branch == MedicBranch.Chain) { MedicLightningVfx.Flight(art); return; }
+
         Projectile projectile = art.Projectile;
         if (!Visible(projectile.Center)) return;
+        if(MedicSpriteFlightVisuals.Handles(art.ProfileId))
+        {
+            MedicSpriteFlightVisuals.Flight(art,previous);
+            return;
+        }
         var p = art.Profile;
         if(!MedicMaterialVfx.UsesLineArt(art.ProfileId))
         {
@@ -187,24 +199,7 @@ internal static class MedicArtsVfx
         }
     }
 
-    internal static void FieldAmbient(MedicHealingField field)
-    {
-        Projectile projectile = field.Projectile;
-        if (!Visible(projectile.Center)) return;
-        var p = field.Profile;
-        if (field.Age % 3 == 0)
-        {
-            float angle = Main.rand.NextFloat(MathHelper.TwoPi);
-            Vector2 radial = angle.ToRotationVector2();
-            Mote(projectile.Center + radial * p.FieldRadius * field.Visibility, radial.RotatedBy(MathHelper.PiOver2) * .35f - Vector2.UnitY * .3f,
-                field.ProfileId, p.Tier == 5 ? MedicalMoteKind.Feather : MedicalMoteKind.Petal, 5, 50, angle);
-            Mote(projectile.Center + Main.rand.NextVector2Circular(p.FieldRadius * .8f, p.FieldRadius * .8f),
-                -Vector2.UnitY * Main.rand.NextFloat(.25f, .7f), field.ProfileId, MedicalMoteKind.Pearl, 3, 50);
-        }
-        if (field.Age % 10 == 0)
-            Mote(projectile.Center + Main.rand.NextVector2Circular(p.FieldRadius * .7f, p.FieldRadius * .7f),
-                -Vector2.UnitY * .1f, field.ProfileId, MedicalMoteKind.Mist, 36, 55);
-    }
+    internal static void FieldAmbient(MedicHealingField field) => MedicFieldVfx.Ambient(field);
     internal static void DrawField(MedicHealingField field) => MedicIdentityVisuals.Field(field);
 }
 

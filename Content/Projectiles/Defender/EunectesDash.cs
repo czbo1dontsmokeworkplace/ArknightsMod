@@ -18,7 +18,7 @@ public sealed class EunectesDashPlayer : ModPlayer
         get
         {
             foreach (Projectile p in Main.ActiveProjectiles)
-                if (p.owner == Player.whoAmI && p.ModProjectile is EunectesDash dash && p.ai[0] == 0) return dash;
+                if (p.owner == Player.whoAmI && p.ModProjectile is EunectesDash dash && p.ai[0] == 0 && (int)p.ai[1] == Player.HeldItem.type) return dash;
             return null;
         }
     }
@@ -32,9 +32,10 @@ public sealed class EunectesDashPlayer : ModPlayer
             && !Player.dead && !Player.CCed && !Player.noItems && !DefenderHoldout.IsBusy(Player))
         {
             Vector2 aim = (Main.MouseWorld - Player.MountedCenter).SafeNormalize(new Vector2(Player.direction, 0));
-            Projectile.NewProjectile(Player.GetSource_ItemUse(Player.HeldItem), Player.Center, aim,
+            int index = Projectile.NewProjectile(Player.GetSource_ItemUse(Player.HeldItem), Player.Center, aim,
                 ModContent.ProjectileType<EunectesDash>(), Player.GetWeaponDamage(Player.HeldItem) * 4,
-                12f, Player.whoAmI);
+                12f, Player.whoAmI, 0, Player.HeldItem.type);
+            if (Main.projectile.IndexInRange(index)) Main.projectile[index].CritChance = Player.GetWeaponCrit(Player.HeldItem);
             Player.velocity = aim * 24f;
             cooldown = 90;
             SoundEngine.PlaySound(SoundID.Item1 with { Pitch = -.5f }, Player.Center);
@@ -54,6 +55,7 @@ public sealed class EunectesDashPlayer : ModPlayer
 
 public sealed class EunectesDash : ModProjectile
 {
+    private readonly System.Collections.Generic.HashSet<int> routeHits = new();
     private Player Owner => Main.player[Projectile.owner];
     public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.Bullet;
     public override void SetDefaults()
@@ -72,7 +74,7 @@ public sealed class EunectesDash : ModProjectile
     public override bool? CanDamage() => Projectile.ai[0] == 0f;
     public override void AI()
     {
-        if (!Owner.active || Owner.dead || Owner.CCed || Owner.noItems || !DefenderRules.IsDuelist(Owner.HeldItem))
+        if (!Owner.active || Owner.dead || Owner.CCed || Owner.noItems || !DefenderRules.IsDuelist(Owner.HeldItem) || Owner.HeldItem.type != (int)Projectile.ai[1])
         { Projectile.Kill(); return; }
         Vector2 direction = Projectile.velocity.SafeNormalize(new Vector2(Owner.direction, 0));
         Projectile.Center = Owner.MountedCenter + direction * 25f;
@@ -90,7 +92,17 @@ public sealed class EunectesDash : ModProjectile
             d.noGravity = true;
         }
     }
-    public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) => Bounce(Projectile.velocity.SafeNormalize(Vector2.UnitX));
+    public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+    {
+        DefenderRouteCombatNet.Hit(Projectile, target, damageDone, 0);
+        if (Projectile.owner == Main.myPlayer) Owner.GetModPlayer<DefenderCombatPlayer>().AttackFinished();
+        Bounce(Projectile.velocity.SafeNormalize(Vector2.UnitX));
+    }
+    internal void ApplyRouteEffects(NPC target, int damageDone, int sequence)
+    {
+        if (sequence != 0 || !routeHits.Add(target.realLife >= 0 ? target.realLife : target.whoAmI)) return;
+        DefenderRouteEffects.Contact(Owner, target, System.Math.Clamp(damageDone, 0, System.Math.Max(1, Projectile.damage * 4)));
+    }
     private void Bounce(Vector2 normal)
     {
         if (Projectile.ai[0] != 0) return;

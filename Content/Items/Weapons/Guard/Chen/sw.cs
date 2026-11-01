@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -12,6 +13,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using ArknightsMod.Content;
+using ArknightsMod.Content.Items.Weapons.Guard.BladeRoutes;
 
 namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 {
@@ -59,9 +61,16 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 
 		}
 		private ChenSword_Style testv = ChenSword_Style.Normal;
+		public override float UseSpeedMultiplier(Player player)
+        {
+            var skill = player.GetModPlayer<WeaponPlayer>();
+            return skill.SkillActive && skill.Skill != 0 ? 1 : 2;
+        }
 		public override bool AltFunctionUse(Player player) => false;
 		public override bool CanUseItem(Player player) {
-			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
+			foreach (Projectile active in Main.ActiveProjectiles)
+				if (active.owner == player.whoAmI && active.ModProjectile is sw_Proj_1 or sw_Proj_2) return false;
+			var modPlayer = player.GetModPlayer<WeaponPlayer>();
 			if (Main.myPlayer == player.whoAmI) {
 				if (ArknightsKeybinds.SkillActivatePressed(player)) {
 					if (!modPlayer.SummonMode) {
@@ -117,7 +126,8 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
 			{
 			///写在这 这是一个简单的四种方式轮流使用的样例
-			var modPlayer = Main.LocalPlayer.GetModPlayer<WeaponPlayer>();
+			if (player.whoAmI != Main.myPlayer) return false;
+			var modPlayer = player.GetModPlayer<WeaponPlayer>();
 
 			//CreatProj(ChenSword_Style.Normal, player, source, position, velocity, type, (int)(damage * 5), knockback);
 
@@ -153,6 +163,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 
 		public override void AddRecipes() {
 			Recipe recipe = CreateRecipe()
+				.AddIngredient<IreneSaber>()
 				.AddIngredient<global::ArknightsMod.Content.Items.Material.PolymerizationPreparation>(1)
 				.AddIngredient<global::ArknightsMod.Content.Items.Material.WhiteHorseKohl>(2)
 				.AddIngredient(ItemID.TrueNightsEdge)
@@ -286,6 +297,8 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 										  //Swing_AI
 		}
 		public override void OnSpawn(IEntitySource source) {
+			Sword_Style = (ChenSword_Style)(int)Projectile.ai[2];
+			if (Sword_Style is ChenSword_Style.Normal or ChenSword_Style.Skill_1) Projectile.extraUpdates = 1;
 
 			if (Projectile.ai[2] == 0) {
 				Projectile.timeLeft = 76;
@@ -301,6 +314,10 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 				Projectile.timeLeft = 80;
 
 		}
+        public override void OnKill(int timeLeft)
+        {
+            if (Sword_Style == ChenSword_Style.Skill_2) ChenSwordRules.EndSkill(player, 1);
+        }
 		public override void SetStaticDefaults()
         {
             ProjectileID.Sets.TrailingMode[Type] = 2;
@@ -648,27 +665,24 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
                     d.scale = 0.2f;
                 }
             }
-			if (Projectile.ai[1] == 0) {
+			if (Projectile.ai[1] == 0 && Projectile.owner == Main.myPlayer) {
 				Projectile.velocity = (Main.MouseWorld - player.MountedCenter).SafeNormalize(Vector2.Zero);
 				if (Projectile.velocity.X > 0)
 					player.direction = 1;
 				else
 					player.direction = -1;
 			}
-			if (Main.mouseRight && Projectile.ai[1] == 0)
-            {
-				Projectile.timeLeft = 10;
-            }
-            else if (Projectile.ai[0] > 20)
+            if (Projectile.ai[0] + 1 >= ChenSwordRules.Skill2StartupTicks)
             {
                 if (Projectile.ai[1] == 0)
                 {
+					Projectile.netUpdate = true;
 					SoundStyle S2 = new SoundStyle("ArknightsMod/Sounds/ChenSwordSkill2") {
 
 						MaxInstances = 2
 					};
 					SoundEngine.PlaySound(S2, player.position);
-					Projectile.timeLeft = 35;
+					Projectile.timeLeft = ChenSwordRules.Skill2FadeTicks;
                     Dust.NewDustPerfect(player.Center - Projectile.velocity * 40, ModContent.DustType<Skill_2_Release_Dust_1>(), Projectile.velocity * 50);
 
 					//222黄
@@ -733,7 +747,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
             Projectile.KZ_QuicklyDraw_Proj(Swing_DrawScale);
             if (Projectile.ai[1] > 0)
             {
-                var ControlVal = 13f;
+                var ControlVal = 13f * .7f;
                 var val = Math.Clamp(Projectile.ai[1], 0, ControlVal * 2);
                 var posx = Math.Clamp(Projectile.ai[1], 0, ControlVal) / ControlVal;
                 var invert_posx = 1f - posx;
@@ -774,8 +788,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
             Projectile.rotation = (-MathHelper.Pi + 0.9f) * player.direction;
             Projectile.Center = player.MountedCenter + new Vector2(21 * player.direction, -20);
 
-            if (!Main.mouseRight)
-                Projectile.ai[0]++;
+            Projectile.ai[0]++;
             if (Projectile.ai[0] == 0)
             {
                 Swing_DrawScale = new Vector2(0.9f);
@@ -788,7 +801,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
             foreach (var p in Main.projectile)
             {
                 if (p.active && p != null)
-                    if (p.type == ModContent.ProjectileType<sw_Proj_2>())
+                    if (p.owner == Projectile.owner && p.type == ModContent.ProjectileType<sw_Proj_2>())
                     {
                         return;
                     }
@@ -805,6 +818,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 
         public override void AI()
         {
+			if (!player.active || player.dead || player.CCed || player.HeldItem.ModItem is not ChenSword_Item) { Projectile.Kill(); return; }
 			if (Sword_Style == ChenSword_Style.Normal) {
 				Swing_AI();
 			}
@@ -895,7 +909,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
     /// <summary>
     /// 灰色的剑
     /// </summary>
-    public class sw_Proj_2 : ModProjectile
+    public partial class sw_Proj_2 : ModProjectile
     {
         Texture2D SwordLightTex => sw_Proj_1.SwordLightTex;
         public static Texture2D LightCircle_1;
@@ -928,7 +942,8 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 
 		}
 		public override void OnSpawn(IEntitySource source) {
-
+			Sword_Style = (ChenSword_Style)(int)Projectile.ai[2];
+			if (Sword_Style is ChenSword_Style.Normal or ChenSword_Style.Skill_1) Projectile.extraUpdates = 1;
 			if (Projectile.ai[2] == 0) {
 				Projectile.timeLeft = 76;
 				Projectile.ai[0] = 0;
@@ -994,7 +1009,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
                 player.heldProj = Projectile.whoAmI;
                 Projectile.Center = player.MountedCenter + new Vector2(5).RotatedBy(Projectile.rotation - MathHelper.PiOver2);
                 player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation + MathHelper.Pi);
-                player.itemAnimation = player.itemTime = 6;
+                player.itemAnimation = player.itemTime = Sword_Style == ChenSword_Style.Normal ? 3 : 6;
 
 			}
 			else if (Sword_Style == 0)
@@ -1039,6 +1054,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 				Projectile.Center = Vector2.Lerp(Projectile.Center, player.MountedCenter + new Vector2(19 * player.direction, -30), 0.1f);
 
 			}
+			if (Sword_Style == ChenSword_Style.Normal) ChenSwordRules.Blade(Projectile, (Projectile.ai[0] + 1) / 38f, ref normalBlades);
 			Projectile.ai[0]++;
         }
         private void Swing_Draw(SpriteBatch sb, GraphicsDevice gd)
@@ -1213,7 +1229,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
             foreach (var p in Main.projectile)
             {
                 if(p.active && p != null)
-                    if(p.type == ModContent.ProjectileType<sw_Proj_1>())
+                    if(p.owner == Projectile.owner && p.type == ModContent.ProjectileType<sw_Proj_1>())
                     {
                         return;
                     }
@@ -1433,8 +1449,11 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
             }
             public override void AI()
             {
+                if (RecordPos.Count == 0) {
+                    HeadPos = Projectile.Center;
+                    RecordPos.Add(HeadPos);
+                }
                 if (Projectile.ai[1] == 0)
-
                     Projectile.timeLeft = 40;
                 if(RecordPos.Count > 13)
                 {
@@ -1443,21 +1462,16 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
                 foreach (var p in Main.projectile)
                 {
                     if (p.active && p != null)
-                        if (p.type == ModContent.ProjectileType<sw_Proj_2>())
+                        if (p.owner == Projectile.owner && p.ModProjectile is sw_Proj_2 controller && controller.Sword_Style == ChenSword_Style.Skill_3)
                         {
                             var player = Main.player[Projectile.owner];
                             if(player != null)
                             {
-                                if (!Main.mouseRight)
-                                {
-                                    if (Projectile.ai[1] == 0 && p.ai[0] > 80)
-                                    {
-                                        if (Vector2.Distance(Main.MouseWorld, HeadPos) > 500)
-                                            AttackPos = HeadPos + new Vector2(500, 0).RotatedBy((Main.MouseWorld - HeadPos).ToRotation());
-                                        else AttackPos = Main.MouseWorld;
-                                    }
-                                    Projectile.ai[1]++;
+                                if (Projectile.ai[1] == 0 && p.localAI[0] > 0) {
+                                    AttackPos = controller.AttackPos;
+                                    Projectile.ai[1] = 1;
                                 }
+                                else if (Projectile.ai[1] > 0) Projectile.ai[1]++;
                                 if (Projectile.ai[1] > 0)
                                 {
 
@@ -1509,7 +1523,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
                                 }
                                 OldHeadPos = RecordPos[Math.Clamp(RecordPos.Count - 3, 0, 15)];
 
-                                if (p.ai[0] == 80)
+                                if (p.localAI[0] == 0)
                                 {
                                     var d = Dust.NewDustPerfect(HeadPos, ModContent.DustType<Skill_3_Dust_1>());
                                 }
@@ -1637,14 +1651,36 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
             {
                 T_Count = Main.rand.Next(0, 4);
                 RecordCenter = Projectile.Center;
+                float speed = MathF.Max(1, Projectile.ai[1]);
+                swingDuration = ChenSwordRules.Skill3SlashDuration(speed);
+                Projectile.timeLeft = swingDuration;
+                // Preserve the original 45-tick reach while compressing time.
+                travel = Projectile.velocity / speed * (9 * (1 - MathF.Pow(.9f, 45)));
                 base.OnSpawn(source);
             }
             private Vector2 RecordCenter = Vector2.Zero;
+            private Vector2 travel;
+            private int swingDuration;
+            private float VisualTime => 45 * Math.Clamp(1 - Projectile.ai[0] / swingDuration, 0, 1);
+            public override void SendExtraAI(BinaryWriter writer)
+            {
+                writer.Write(RecordCenter.X); writer.Write(RecordCenter.Y);
+                writer.Write(travel.X); writer.Write(travel.Y);
+                writer.Write(swingDuration); writer.Write(T_Count);
+            }
+            public override void ReceiveExtraAI(BinaryReader reader)
+            {
+                RecordCenter = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+                travel = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+                swingDuration = Math.Clamp(reader.ReadInt32(), 1, ChenSwordRules.Skill3SlashTicks);
+                T_Count = Math.Clamp(reader.ReadInt32(), 0, 3);
+            }
             public override void AI()
             {
-                Projectile.velocity *= 0.9f;
-                Projectile.rotation = Projectile.velocity.ToRotation();
                 Projectile.ai[0]++;
+                float progress = ChenSwordRules.Skill3SwingProgress(Projectile.ai[0] / swingDuration);
+                Projectile.velocity = RecordCenter + travel * progress - Projectile.Center;
+                Projectile.rotation = travel.ToRotation();
 
 				/*switch (T_Count)
                 {
@@ -1670,7 +1706,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 
 						for (float i = 0; i <= 1; i += 0.1f) {
 							var p = Vector2.Lerp(Projectile.Center, RecordCenter, i) - Main.screenPosition;
-							var col = Color.Lerp(Color.White, Color.Red, Math.Clamp(i * 2, 0, 1)) * (Projectile.timeLeft / 20f);
+							var col = Color.Lerp(Color.White, Color.Red, Math.Clamp(i * 2, 0, 1)) * (VisualTime / 20f);
 							// col = Color.Lerp(col, Color.Orange, Math.Clamp((i - 0.3f) * 2, 0, 1))
 							vertices.Add(new Vertex(p + new Vector2(0, -23).RotatedBy(Projectile.rotation), new Vector3(((float)i), 0, 0), col));
 
@@ -1690,7 +1726,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 					}
 
 				}
-				var a = Projectile.timeLeft / 25f;
+				var a = VisualTime / 25f;
 
 				{
 					var plaCopy = player.clientClone();
@@ -1755,11 +1791,17 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
             {
                 return !Target.Contains(target);
             }
+            public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+            {
+                float distance = 0;
+                return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(),
+                    Projectile.Center - Projectile.velocity, Projectile.Center, 30, ref distance);
+            }
         }
         private Vector2 AttackPos = Vector2.Zero;
 		private bool _playedSkill3Sound = false;
 		NPC Skill_3_Target = null;
-		private void Skill_3_AI()
+		private void Legacy_Skill_3_AI()
         {
             var rand = Main.rand;
             player.heldProj = Projectile.whoAmI;
@@ -2061,6 +2103,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
         #endregion
         public override void AI()
         {
+			if (!player.active || player.dead || player.CCed || player.HeldItem.ModItem is not ChenSword_Item) { Projectile.Kill(); return; }
 			if (Sword_Style == ChenSword_Style.Normal) {
 				Swing_AI();
 			}

@@ -298,6 +298,17 @@ namespace ArknightsMod.Players
 			SkillTimer = 0;
 			SkillActive = false;
 			SummonMode = false;
+
+			// 切回仍在持续的黄昏：恢复同一次技能，不触发新施放事件或返还技力。
+			ResumeTwilight();
+		}
+
+		internal void ResumeTwilight() {
+			if (!Player.dead && Skill == 2 && Player.HeldItem.ModItem is SurtrLaevatain
+				&& Player.HasBuff<Content.Buffs.SurtrLaevatainS3Buff>()) {
+				skillActive = true;
+				SkillCharge = SP = StockCount = 0;
+			}
 		}
 
 		/// <summary>

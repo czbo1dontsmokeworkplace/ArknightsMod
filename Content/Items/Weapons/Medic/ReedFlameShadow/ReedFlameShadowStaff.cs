@@ -31,6 +31,8 @@ namespace ArknightsMod.Content.Items.Weapons.Medic.ReedFlameShadow
 		private static SoundStyle SkillActivate2Sfx;
 		private static SoundStyle SkillActivate3Sfx;
 
+		public override void SetStaticDefaults() => Item.staff[Type] = true;
+
 		public override void Load() {
 			SkillActivate2Sfx = new SoundStyle("ArknightsMod/Sounds/SkillActive2") {
 				Volume = 0.5f,

@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles.Guard.Crusher;
 
-// The normal attack is the weapon itself, not a free projectile added to a melee swing.
+// Only a fully charged first-skill attack throws the weapon itself.
 public sealed class UlpianusAnchorThrow : ModProjectile
 {
     public override string Texture => CrusherRules.Art(CrusherKind.Ulpianus);
@@ -78,15 +78,7 @@ public sealed class UlpianusAnchorThrow : ModProjectile
         if (!exploded[target.whoAmI])
         {
             exploded[target.whoAmI] = true;
-            Vector2 point = target.Hitbox.ClosestPointInRect(Projectile.Center);
-            int index = Projectile.NewProjectile(Projectile.GetSource_FromThis(), point, Vector2.Zero,
-                ModContent.ProjectileType<UlpianusAnchorExplosion>(), Projectile.damage, Projectile.knockBack,
-                Projectile.owner);
-            if ((uint)index < Main.maxProjectiles)
-            {
-                Main.projectile[index].CritChance = Projectile.CritChance;
-                Main.projectile[index].netUpdate = true;
-            }
+            UlpianusAnchorExplosion.Release(Projectile, target.Hitbox.ClosestPointInRect(Projectile.Center));
         }
         if (Charge >= 1 && !pursuitReleased)
         {

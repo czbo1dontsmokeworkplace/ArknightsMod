@@ -338,3 +338,8 @@ NecrosisAfflictionBuff: {
 	DisplayName: 凋亡损伤
 	Description: 凋亡积累达到1000点后爆发15秒
 }
+
+FrostDroneChill: {
+	DisplayName: 寒霜冷雾
+	Description: 移动速度降低50%
+}

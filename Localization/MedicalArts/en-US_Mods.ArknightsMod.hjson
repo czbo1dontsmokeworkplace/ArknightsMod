@@ -1,10 +1,20 @@
 Items: {
+	AutoMedicalPack: {
+		DisplayName: Automatic Medical Pack
+		Tooltip:
+			'''
+			While injured, automatically casts the first available Medic weapon in your hotbar toward the cursor using its branch trajectory
+			Does not switch slots or interrupt your weapon; costs mana and shares the fixed 3-second medical cooldown
+			Healing scales with magic damage; waits when mana is insufficient; must be equipped
+			'''
+	}
+
 	HibiscusStaff: {
 		DisplayName: Life Staff [Hibiscus]
 		Tooltip:
 			'''
-			Release a five-lobed star of life that gently curves toward patients
-			Throw it upward to catch it yourself; globes take a brief moment to become active
+			Throws a healing art toward the cursor, affected by gravity and able to bounce once off tiles
+			Cannot heal during its first 10 frames; all healing weapons share a 3-second cooldown
 			'''
 	}
 
@@ -12,8 +22,8 @@ Items: {
 		DisplayName: Clarity Staff [Nowell]
 		Tooltip:
 			'''
-			Send paired waterlight that corrects its course after beginning its descent
-			Healing also shortens the duration of cleansable debuffs
+			Calls a healing art from above the cursor; falls straight down before homing toward an injured ally
+			Lower base healing; hits also shorten removable debuffs
 			'''
 	}
 
@@ -21,8 +31,8 @@ Items: {
 		DisplayName: Medical Staff [Ansel]
 		Tooltip:
 			'''
-			Fire a pink rescue comet that flies swiftly before turning back toward patients
-			Throw it upward to catch it yourself; globes take a brief moment to become active
+			Throws a healing art toward the cursor, affected by gravity and able to bounce once off tiles
+			Cannot heal during its first 10 frames; all healing weapons share a 3-second cooldown
 			'''
 	}
 
@@ -30,8 +40,8 @@ Items: {
 		DisplayName: Remedy Staff [Myrrh]
 		Tooltip:
 			'''
-			Lob an amber medicine glow that can bounce once off terrain
-			Throw it upward to catch it yourself; globes take a brief moment to become active
+			Throws a healing art toward the cursor, affected by gravity and able to bounce once off tiles
+			Cannot heal during its first 10 frames; all healing weapons share a 3-second cooldown
 			'''
 	}
 
@@ -39,8 +49,8 @@ Items: {
 		DisplayName: Medical Staff [Sussurro]
 		Tooltip:
 			'''
-			Fire a rapid triple needle stream that turns toward patients after a short flight
-			Throw it upward to catch it yourself; globes take a brief moment to become active
+			Throws a healing art toward the cursor, affected by gravity and able to bounce once off tiles
+			Cannot heal during its first 10 frames; all healing weapons share a 3-second cooldown
 			'''
 	}
 
@@ -48,8 +58,8 @@ Items: {
 		DisplayName: Medical Staff [Silence]
 		Tooltip:
 			'''
-			Release a feather-shaped cluster of medical light that turns toward patients
-			Throw it upward to catch it yourself; globes take a brief moment to become active
+			Throws a healing art toward the cursor, affected by gravity and able to bounce once off tiles
+			Cannot heal during its first 10 frames; all healing weapons share a 3-second cooldown
 			'''
 	}
 
@@ -57,8 +67,8 @@ Items: {
 		DisplayName: First Aid Staff [Tuye]
 		Tooltip:
 			'''
-			Send a hexagonal reservoir that slows to build pressure before seeking a patient
-			Throw it upward to catch it yourself; globes take a brief moment to become active
+			Throws a healing art toward the cursor, affected by gravity and able to bounce once off tiles
+			Cannot heal during its first 10 frames; all healing weapons share a 3-second cooldown
 			'''
 	}
 
@@ -66,8 +76,8 @@ Items: {
 		DisplayName: Staff [Shining]
 		Tooltip:
 			'''
-			Release a silver lance of light veiled in black that accelerates before seeking patients
-			Throw it upward to catch it yourself; globes take a brief moment to become active
+			Throws a healing art toward the cursor, affected by gravity and able to bounce once off tiles
+			Cannot heal during its first 10 frames; all healing weapons share a 3-second cooldown
 			'''
 	}
 
@@ -75,8 +85,8 @@ Items: {
 		DisplayName: Water Staff [Purestream]
 		Tooltip:
 			'''
-			Send flowing waterlight that follows rippling curves after beginning its descent
-			Healing also shortens the duration of cleansable debuffs
+			Calls a healing art from above the cursor; falls straight down before homing toward an injured ally
+			Lower base healing; hits also shorten removable debuffs
 			'''
 	}
 
@@ -84,8 +94,8 @@ Items: {
 		DisplayName: Dew Staff [Ceylon]
 		Tooltip:
 			'''
-			Unfold a fan of waterlight that curls toward patients after beginning its descent
-			Healing also shortens the duration of cleansable debuffs
+			Calls a healing art from above the cursor; falls straight down before homing toward an injured ally
+			Lower base healing; hits also shorten removable debuffs
 			'''
 	}
 
@@ -93,8 +103,8 @@ Items: {
 		DisplayName: Mist Staff [Whisperain]
 		Tooltip:
 			'''
-			Release drifting rainlight that sheds tiny luminous drops
-			Healing also shortens the duration of cleansable debuffs
+			Calls a healing art from above the cursor; falls straight down before homing toward an injured ally
+			Lower base healing; hits also shorten removable debuffs
 			'''
 	}
 
@@ -102,8 +112,8 @@ Items: {
 		DisplayName: Guiding Light [Lumen]
 		Tooltip:
 			'''
-			Send a blue-gold beacon that swiftly seeks patients after beginning its descent
-			Healing also shortens the duration of cleansable debuffs
+			Calls a healing art from above the cursor; falls straight down before homing toward an injured ally
+			Lower base healing; hits also shorten removable debuffs
 			'''
 	}
 
@@ -111,8 +121,8 @@ Items: {
 		DisplayName: Fragrance Staff [Perfumer]
 		Tooltip:
 			'''
-			Lob a perfume vessel that unfolds a six-petalled healing field on landing
-			The field repeatedly heals allied players within it
+			Throws a healing art toward the cursor, deploying a circular healing field on landing
+			Heals allies inside the barrier aura; shares the 3-second medical cooldown
 			'''
 	}
 
@@ -120,8 +130,8 @@ Items: {
 		DisplayName: Healing Staff [Breeze]
 		Tooltip:
 			'''
-			Send a spinning wind wheel that lands in an arc and creates a wind healing field
-			The field repeatedly heals allied players within it
+			Throws a healing art toward the cursor, deploying a circular healing field on landing
+			Heals allies inside the barrier aura; shares the 3-second medical cooldown
 			'''
 	}
 
@@ -129,8 +139,8 @@ Items: {
 		DisplayName: Medical Staff [Ptilopsis]
 		Tooltip:
 			'''
-			Launch a silver-blue data streak that brakes into a healing field of floating fragments
-			The field repeatedly heals allied players within it
+			Throws a healing art toward the cursor, deploying a circular healing field on landing
+			Heals allies inside the barrier aura; shares the 3-second medical cooldown
 			'''
 	}
 
@@ -138,8 +148,8 @@ Items: {
 		DisplayName: Sanctuary Staff [Nightingale]
 		Tooltip:
 			'''
-			Release a feathered veil of light that drifts into a protective healing field
-			The field repeatedly heals allied players within it
+			Throws a healing art toward the cursor, deploying a circular healing field on landing
+			Heals allies inside the barrier aura; shares the 3-second medical cooldown
 			'''
 	}
 
@@ -147,8 +157,8 @@ Items: {
 		DisplayName: Weaving Staff [Papyrus]
 		Tooltip:
 			'''
-			Send a golden plume that glides toward patients and leaves regenerative motes
-			Healing adds stackable regeneration, with a separate duration for each stack
+			Calls three green healing lightning spears from below the cursor, rising through the targeted point
+			Healing adds stacking regeneration with independent layer durations
 			'''
 	}
 
@@ -156,17 +166,17 @@ Items: {
 		DisplayName: Renewal Staff [Paprika]
 		Tooltip:
 			'''
-			Send a pink spiral flame that curves toward patients and leaves regenerative motes
-			Healing adds stackable regeneration, with a separate duration for each stack
+			Calls three green healing lightning spears from below the cursor, rising through the targeted point
+			Healing adds stacking regeneration with independent layer durations
 			'''
 	}
 
 	Mon3trCore: {
-		DisplayName: Symbiotic Core [Mon3tr]
+		DisplayName: Symbiotic Medical Pistol [Mon3tr]
 		Tooltip:
 			'''
-			Fire emerald prism light that turns rapidly toward patients and sheds regenerative fragments
-			Healing adds stackable regeneration, with a separate duration for each stack
+			Calls three green healing lightning spears from below the cursor, rising through the targeted point
+			Healing adds stacking regeneration with independent layer durations
 			'''
 	}
 
@@ -174,8 +184,8 @@ Items: {
 		DisplayName: Cleansing Staff [Chestnut]
 		Tooltip:
 			'''
-			Send whirling leaf-shaped light to deliver cleansing treatment
-			Each debuff removed increases that heal by 35%
+			Throws a cleansing healing art toward the cursor, affected by gravity and able to bounce once
+			Each debuff removed increases this treatment’s healing by 35%
 			'''
 	}
 
@@ -183,8 +193,8 @@ Items: {
 		DisplayName: Herbal Staff [Honeyberry]
 		Tooltip:
 			'''
-			Send twin berry-coloured glow cores that sway toward patients and cleanse them
-			Each debuff removed increases that heal by 35%
+			Throws a cleansing healing art toward the cursor, affected by gravity and able to bounce once
+			Each debuff removed increases this treatment’s healing by 35%
 			'''
 	}
 
@@ -192,8 +202,8 @@ Items: {
 		DisplayName: Purification Staff [Mulberry]
 		Tooltip:
 			'''
-			Send a blue cleansing ribbon that corrects its course in short bursts
-			Each debuff removed increases that heal by 35%
+			Throws a cleansing healing art toward the cursor, affected by gravity and able to bounce once
+			Each debuff removed increases this treatment’s healing by 35%
 			'''
 	}
 
@@ -201,8 +211,8 @@ Items: {
 		DisplayName: Spring Staff [Eyjafjalla the Hvit Aska]
 		Tooltip:
 			'''
-			Release floating pink bubblelight that drifts toward patients and cleanses them
-			Each debuff removed increases that heal by 35%
+			Throws a cleansing healing art toward the cursor, affected by gravity and able to bounce once
+			Each debuff removed increases this treatment’s healing by 35%
 			'''
 	}
 
@@ -210,8 +220,8 @@ Items: {
 		DisplayName: Plasma Staff [Warfarin]
 		Tooltip:
 			'''
-			Send a crimson bloodmist vortex that winds toward patients and delivers treatment
-			Medical arts pass through players without healing for the first 10 frames; lob them upwards and move to collect
+			Throws a healing art toward the cursor, affected by gravity and able to bounce once off tiles
+			Cannot heal during its first 10 frames; all healing weapons share a 3-second cooldown
 			'''
 	}
 }
@@ -408,8 +418,8 @@ Skills: {
 
 BranchTraits: {
 	MedicProfession: Medic:  These weapons efficiently heal allies, at the cost of being unable to damage enemies
-	MedicTherapist: Therapist:  Medical arts begin inertial homing on first descending and heal less; each hit shortens removable debuffs by 10% of medical attack power in seconds
-	MedicMultiTarget: Multi-target Medic:  Landing or contact creates a persistent healing field for allied players inside
+	MedicTherapist: Therapist:  Lower base healing, but healing arts can home
+	MedicMultiTarget: Multi-target Medic:  Base healing is approximately 66% of a normal Medic at the same progression stage; landing or contact creates a persistent healing field for allied players inside
 	MedicChain: Chain Medic:  Successful healing adds independently expiring stacks of life regeneration
 	MedicWandering: Wandering Medic:  Cleanse removable debuffs; each debuff removed increases healing
 }
@@ -418,7 +428,7 @@ MedicalArts: {
 	Shorten: Each hit shortens every removable debuff; base reduction {0:0.##}s, scaling with medical attack power; excludes potion cooldowns, medication resistance and encounter mechanics
 	Numbers:
 		'''
-		Base healing: {0}; cast interval: {1:0.##}s; arming delay: {2:0.##}s
+		Healing: {0} (base {5}, scales with magic damage); cast interval: {1:0.##}s; arming delay: {2:0.##}s
 		Successful healing applies {3:0.##}s of {4:0}% medication resistance; failed contacts do not refresh it
 		'''
 	Regen: Up to {0} stacks; each restores {1:0.##} life/s for {2}s independently; existing regeneration continues during resistance

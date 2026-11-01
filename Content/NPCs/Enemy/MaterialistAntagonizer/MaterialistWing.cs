@@ -16,7 +16,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.MaterialistAntagonizer;
 public sealed partial class MaterialistWing : GlobalNPC
 {
     public override bool InstancePerEntity => true;
-    public override bool AppliesToEntity(NPC entity, bool lateInstantiation) => entity.ModNPC is Drone or DroneII or ArtsMasterDrone or RaptorDrone;
+    public override bool AppliesToEntity(NPC entity, bool lateInstantiation) => entity.ModNPC is Drone or DroneII or ArtsMasterDrone or RaptorDrone or SupportDrone;
     internal int OwnerIndex = -1, Encounter, Slot, Age, ScaledLife;
     internal bool Retreating;
     private int retreatTime;
@@ -26,6 +26,7 @@ public sealed partial class MaterialistWing : GlobalNPC
     internal bool Bound => Encounter > 0;
     internal bool BelongsTo(MaterialistAntagonizer boss) => Bound && OwnerIndex == boss.NPC.whoAmI && Encounter == boss.Encounter;
     internal static WingRole Role(NPC npc) => npc.ModNPC switch {
+        FrostDrone => WingRole.Frost, BomberDrone => WingRole.Bomber,
         RaptorDrone => WingRole.Raptor, ArtsMasterA2 => WingRole.ArtsA2, ArtsMasterA1 => WingRole.ArtsA1,
         DroneII => WingRole.MkII, _ => WingRole.Drone
     };
@@ -39,6 +40,8 @@ public sealed partial class MaterialistWing : GlobalNPC
             return (texture, texture.Bounds);
         }
         var body = TextureAssets.Npc[npc.type].Value;
+        if (npc.ModNPC is FrostDrone) return (body, body.Frame(1, 4, 0, age / 6 % 4));
+        if (npc.ModNPC is BomberDrone bomber) return (body, body.Frame(1, 9, 0, bomber.DrawFrame));
         return (body, body.Frame(1, npc.ModNPC is ArtsMasterDrone ? 8 : 2, 0, age / 6 % (npc.ModNPC is ArtsMasterDrone ? 8 : 2)));
     }
     internal void Bind(NPC npc, MaterialistAntagonizer boss, int slot)
@@ -50,6 +53,7 @@ public sealed partial class MaterialistWing : GlobalNPC
         npc.knockBackResist = 0; npc.noGravity = npc.noTileCollide = true;
         npc.dontTakeDamage = true; npc.netAlways = true;
         npc.ai[0] = npc.ai[1] = npc.ai[2] = npc.ai[3] = 0;
+        if (npc.ModNPC is SupportDrone) { npc.ai[2] = npc.Center.Y; npc.ai[3] = npc.Center.X; }
     }
     public override bool PreAI(NPC npc)
     {
@@ -79,6 +83,13 @@ public sealed partial class MaterialistWing : GlobalNPC
         if (!boss.NPC.HasValidTarget) return false;
         Player target = Main.player[boss.NPC.target];
         npc.target = target.whoAmI;
+        if (npc.ModNPC is SupportDrone)
+        {
+            if (boss.Paused || !boss.EscortsReleased || boss.Order == FlightOrder.Deploy || Age < MaterialistRules.EscortGrace)
+            { npc.velocity *= .9f; return false; }
+            if (MaterialistAntagonizer.Authority && Age % 45 == 0) npc.netUpdate = true;
+            return true; // Independent targeting, cold emission and the single-payload state machine.
+        }
         FlyFormation(npc, boss);
         if (MaterialistAntagonizer.Authority && Age % 45 == 0) npc.netUpdate = true;
         if (!Main.dedServ && !boundVisual)
@@ -100,7 +111,7 @@ public sealed partial class MaterialistWing : GlobalNPC
         if (!Bound) return true;
         cooldownSlot = ImmunityCooldownID.Bosses;
         var boss = MaterialistAntagonizer.Owner(OwnerIndex, Encounter);
-        return Role(npc) != WingRole.Raptor && !Retreating && Age >= MaterialistRules.EscortGrace && boss != null && boss.EscortsReleased && !boss.ArtilleryActive && boss.EscortFire && boss.Order != FlightOrder.Deploy &&
+        return npc.ModNPC is not SupportDrone && Role(npc) != WingRole.Raptor && !Retreating && Age >= MaterialistRules.EscortGrace && boss != null && boss.EscortsReleased && !boss.ArtilleryActive && boss.EscortFire && boss.Order != FlightOrder.Deploy &&
             (boss.ScoutReady ? MaterialistScoutPlanner.Diving(boss.ScoutAttack(Slot), MaterialistScoutPlanner.LocalBeat(boss, Slot)) :
                 MaterialistTactics.Diving(boss.Pattern, boss.Timer, Slot, MaterialistRules.WingCap(boss.Phase)));
     }
@@ -127,7 +138,7 @@ public sealed partial class MaterialistWing : GlobalNPC
     }
     public override bool PreDraw(NPC npc, SpriteBatch batch, Vector2 screenPos, Color drawColor)
     {
-        if (!Bound) return true;
+        if (!Bound || npc.ModNPC is SupportDrone) return true;
         float alpha = 1 - npc.alpha / 255f;
         var role = Role(npc);
         Texture2D texture;

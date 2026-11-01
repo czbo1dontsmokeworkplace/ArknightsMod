@@ -297,7 +297,7 @@ LutonHammer,0,1,1,0,1,0,0,0,0
 LutonHammer,1,2,1,0,1,0,0,0,0
 BlitzPistol,0,1,1,0,1,0,0,0,0
 BlitzPistol,1,2,1,0,1,0,0,0,0
-JessicaLiberatedGun,0,1,1,0,1,0,0,0,0
+JessicaLiberatedGun,0,1,1,0,1,0,0,1,0
 JessicaLiberatedGun,1,2,1,0,1,0,0,0,0
 MechanistGun,0,1,1,0,1,0,0,0,0
 MechanistGun,1,2,1,0,1,0,0,0,0
@@ -309,7 +309,7 @@ ShalemBlade,0,1,1,0,1,0,0,0,0
 ShalemBlade,1,2,1,0,1,0,0,0,0
 CzernyBlade,0,1,1,0,1,0,0,0,0
 CzernyBlade,1,2,1,0,1,0,0,0,0
-HoshigumaBlazingBlade,0,1,1,0,1,0,0,0,0
+HoshigumaBlazingBlade,0,1,1,0,1,0,0,1,0
 HoshigumaBlazingBlade,1,2,1,0,1,0,0,0,0
 AshlockLauncher,0,1,1,0,1,0,0,0,0
 AshlockLauncher,1,2,1,0,1,0,0,0,0

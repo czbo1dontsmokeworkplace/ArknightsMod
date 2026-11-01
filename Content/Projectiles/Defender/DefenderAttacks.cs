@@ -30,6 +30,8 @@ public sealed class DefenderElectron : ModProjectile
             && source.ModItem?.Name == "JessicaLiberatedGun") Projectile.penetrate = 2;
         Projectile.GetGlobalProjectile<ArtsProjectileMarker>().IsArtsDamage = true;
         Projectile.rotation = Projectile.velocity.ToRotation();
+        if (Projectile.timeLeft % 5 == 0 && !Main.dedServ)
+            DefenderSkillVisuals.Burst(Projectile.Center, new Color(115, 210, 255), 1);
         Lighting.AddLight(Projectile.Center, .1f, .45f, .8f);
         if (!Main.dedServ && Main.rand.NextBool(3))
         {
@@ -48,8 +50,10 @@ public sealed class DefenderElectron : ModProjectile
     }
     public override void OnKill(int timeLeft)
     {
+        if (Projectile.owner == Main.myPlayer && Projectile.ai[0] == 2f)
+            DefenderSkillArea.Spawn(Main.player[Projectile.owner], Projectile.Center, Projectile.damage, 70f, DefenderAreaKind.Impact, sourceItemType: (int)Projectile.ai[1], crit: Projectile.CritChance);
         if (Projectile.owner == Main.myPlayer && Projectile.ai[0] == 1f)
-            DefenderPulse.Spawn(Main.player[Projectile.owner], Projectile.Center, Projectile.damage, 125, true, struck);
+            DefenderPulse.Spawn(Main.player[Projectile.owner], Projectile.Center, Projectile.damage, 125, true, struck, Projectile.CritChance);
     }
     public override bool PreDraw(ref Color lightColor)
     {
@@ -64,11 +68,11 @@ public sealed class DefenderPulse : ModProjectile
 {
     private readonly HashSet<int> hitGroups = new();
     public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.Grenade;
-    internal static void Spawn(Player owner, Vector2 center, int damage, float radius, bool arts, int ignore = -1)
+    internal static void Spawn(Player owner, Vector2 center, int damage, float radius, bool arts, int ignore = -1, int crit = -1)
     {
         int i = Projectile.NewProjectile(owner.GetSource_ItemUse(owner.HeldItem), center, Vector2.Zero,
             ModContent.ProjectileType<DefenderPulse>(), damage, 9f, owner.whoAmI, radius, arts ? 1 : 0, ignore + 1);
-        if (Main.projectile.IndexInRange(i)) Main.projectile[i].CritChance = owner.GetWeaponCrit(owner.HeldItem);
+        if (Main.projectile.IndexInRange(i)) Main.projectile[i].CritChance = crit >= 0 ? crit : owner.GetWeaponCrit(owner.HeldItem);
     }
     public override void SetDefaults()
     {

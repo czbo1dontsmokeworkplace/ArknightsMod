@@ -31,7 +31,14 @@ public sealed class CannotStockLedger
                 owned.Add(slot);
             }
         }
-        foreach (Slot slot in owned) {
+        RerollSlots(owned, pick);
+    }
+
+    public void RerollAll(Func<int, HashSet<int>, int, int> pick) => RerollSlots(Slots, pick);
+
+    private void RerollSlots(IEnumerable<Slot> slots, Func<int, HashSet<int>, int, int> pick)
+    {
+        foreach (Slot slot in slots) {
             HashSet<int> used = Slots.Where(s => s != slot && s.ItemType > 0).Select(s => s.ItemType).ToHashSet();
             slot.ItemType = pick(slot.Tier, used, slot.ItemType);
         }

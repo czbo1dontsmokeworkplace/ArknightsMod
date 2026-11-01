@@ -19,17 +19,17 @@ public sealed class NecrassGammaBlast : NecrassAttack
     public override void OnSpawn(IEntitySource source)
     {
         if (Main.dedServ) return;
-        visual = new PhoenixMotionFx(73, Projectile);
+        visual = new PhoenixMotionFx(73, Projectile, PhoenixFx.NecrassGamma());
         Vector2 at = Projectile.Center, axis = Projectile.velocity.SafeNormalize(Vector2.UnitX);
-        var style = PhoenixFx.Original();
-        ReaperSwarmVisuals.Spawn("actor.player.weapon.73.muzzle", () => at, () => axis, .08f, style: style);
+        var style = PhoenixFx.NecrassGamma(muzzle: true);
+        ReaperSwarmVisuals.Spawn("actor.player.weapon.73.muzzle", () => at, () => axis, .08f, scale: new Vector2(style.Scale), style: style);
         Vector2 center = Main.player[Projectile.owner].MountedCenter;
-        ReaperSwarmVisuals.Spawn("actor.player.weapon.73.ship.effect", () => center, () => axis, .08f, style: style);
+        ReaperSwarmVisuals.Spawn("actor.player.weapon.73.ship.effect", () => center, () => axis, .08f, scale: new Vector2(style.Scale), style: style);
     }
     public override void AI()
     {
         Projectile.rotation = Projectile.velocity.ToRotation();
-        if (!Main.dedServ) Lighting.AddLight(Projectile.Center, .15f, .23f, .05f);
+        if (!Main.dedServ) Lighting.AddLight(Projectile.Center, .12f, .04f, .2f);
     }
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
     {

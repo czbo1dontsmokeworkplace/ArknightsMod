@@ -9,6 +9,7 @@ public enum CrusherKind { Quartz, WindChimes, Hoederer, Ulpianus }
 internal static class CrusherRules
 {
     internal const float SizeMultiplier = 1.5f;
+    internal static float ChargeSize(float progress) => MathHelper.Lerp(1, SizeMultiplier, Math.Clamp(progress, 0, 1));
     internal const int AnchorContactSize = 63; // Previous 42-pixel body, scaled with the weapon art.
     internal const int IdleTicks = 0, FadeTicks = 8;
     internal const int BaseChargeTicks = 60;
