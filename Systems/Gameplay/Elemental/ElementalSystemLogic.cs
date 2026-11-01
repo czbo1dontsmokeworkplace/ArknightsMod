@@ -35,6 +35,15 @@ namespace ArknightsMod.Systems.Gameplay.Elemental
 
 		public static void RegenerateElemental(int WhoAmI) //后续移动到elementallogic 完成
 		{
+			// 未注册时补注册（仅活跃玩家），否则跳过。
+			if ((uint)WhoAmI >= MaxEntities)
+				return;
+			if (!elementalRecords[WhoAmI].elementalData.IsInitialized) {
+				if (WhoAmI < Main.maxPlayers && Main.player[WhoAmI].active)
+					RegisterEntityElemental(WhoAmI, EntityType.Player);
+				else
+					return;
+			}
 			//can use bm1
 			ElementalData elemData = elementalRecords[WhoAmI].elementalData;
 			byte mask = elemData.Status;

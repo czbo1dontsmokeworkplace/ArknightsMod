@@ -30,15 +30,34 @@ namespace ArknightsMod.Players
 			// OnEnterWorld only initializes the local client. Server and remote
 			// instances also run PreUpdate and need their own actual player index.
 			EnsureElementalRegistered();
+			// 未注册时跳过本帧。
+			if (!ElementalSystem.IsRegistered(_playerWhoAmI))
+				return;
 			CheckNearbyEnemies();
 			ElementalSystem.RegenerateElemental(_playerWhoAmI);
 		}
 
+		// 复活后重新确认注册。
+		public override void OnRespawn() {
+			elementalRegistered = false;
+			EnsureElementalRegistered();
+		}
+
+		public override void UpdateDead() {
+			// 死亡期间保持注册有效。
+			EnsureElementalRegistered();
+		}
+
 		private void EnsureElementalRegistered() {
-			if (elementalRegistered && _playerWhoAmI == Player.whoAmI) return;
-			_playerWhoAmI = Player.whoAmI;
+			int whoAmI = Player.whoAmI;
+			if ((uint)whoAmI >= ElementalSystem.MaxEntities)
+				return;
+			// 缓存与真实槽位都有效才提前返回。
+			if (elementalRegistered && _playerWhoAmI == whoAmI && ElementalSystem.IsRegistered(whoAmI))
+				return;
+			_playerWhoAmI = whoAmI;
 			playerElementalData = ElementalSystem.RegisterEntityElemental(_playerWhoAmI, EntityType.Player);
-			elementalRegistered = true;
+			elementalRegistered = ElementalSystem.IsRegistered(_playerWhoAmI);
 		}
 
 

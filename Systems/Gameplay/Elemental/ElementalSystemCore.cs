@@ -50,7 +50,7 @@ namespace ArknightsMod.Systems.Gameplay.Elemental
 		public static void UpdateAllChanges() { //全量更新
 			for (int i = 0; i < MaxEntities; i++) {
 				ref var elementalRecord = ref elementalRecords[i];
-				if (elementalRecord.elementalData.IsActive)
+				if (elementalRecord.elementalData.IsInitialized && elementalRecord.elementalData.IsActive)
 					elementalRecord.elementalData.UpdateStatus();
 				elementalRecord.isDirty = 0;
 			}
@@ -59,9 +59,18 @@ namespace ArknightsMod.Systems.Gameplay.Elemental
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void UpdateChanges() { //脏标记更新
-			for (int i = 0; i < changedNum; i++) {
-			    ref var elementalRecord =ref elementalRecords[changedWhoAmI[i]];
-				elementalRecord.elementalData.UpdateStatus();
+			if (changedWhoAmI == null) {
+				changedNum = 0;
+				return;
+			}
+			int count = Math.Clamp(changedNum, 0, changedWhoAmI.Length);
+			for (int i = 0; i < count; i++) {
+				int whoAmI = changedWhoAmI[i];
+				if ((uint)whoAmI >= MaxEntities)
+					continue;
+			    ref var elementalRecord =ref elementalRecords[whoAmI];
+				if (elementalRecord.elementalData.IsInitialized)
+					elementalRecord.elementalData.UpdateStatus();
 				elementalRecord.isDirty = 0;
 				if (!elementalRecord.elementalData.IsFull & (byte)elementalRecord.entityType < 2) { }
 					//add to healPriority
@@ -70,14 +79,21 @@ namespace ArknightsMod.Systems.Gameplay.Elemental
 		}
 		public static void MarkChanges(int WhoAmI) { //脏标记，不会出现重复实体
 			if (WhoAmI < 0 || WhoAmI >= MaxEntities || changedWhoAmI == null
+				|| changedNum < 0 || changedNum >= changedWhoAmI.Length
 				|| elementalRecords[WhoAmI].isDirty != 0)
 				return;
 			elementalRecords[WhoAmI].isDirty = 1;
 			changedWhoAmI[changedNum++] = WhoAmI;
 		}
 
+		/// <summary>该索引是否已注册（有可用的元素值数组）。</summary>
+		public static bool IsRegistered(int WhoAmI) => (uint)WhoAmI < MaxEntities
+			&& elementalRecords[WhoAmI].elementalData.IsInitialized;
+
 		// 注册实体元素条
 		public static ElementalData RegisterEntityElemental(int WhoAmI, EntityType entityType) {
+			if ((uint)WhoAmI >= MaxEntities)
+				return default;
 			elementalRecords[WhoAmI].elementalData = new ElementalData(entityType,(ushort)WhoAmI);
 			elementalRecords[WhoAmI].entityType = entityType;
 			MarkChanges(WhoAmI);
@@ -87,6 +103,8 @@ namespace ArknightsMod.Systems.Gameplay.Elemental
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void OffElementalBurst(int WhoAmI) {
+			if ((uint)WhoAmI >= MaxEntities)
+				return;
 			elementalRecords[WhoAmI].elementalData.Status &= 0x7F;
 			//no meaning to mark changes
 		}
@@ -94,7 +112,8 @@ namespace ArknightsMod.Systems.Gameplay.Elemental
 		//造成伤害或治疗
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void ApplyDamage(ElementalType elementalType, int dmg, int whoAmI) {
-			if (dmg <= 0 || whoAmI < 0 || whoAmI >= Terraria.Main.maxPlayers) return;
+			if ((uint)whoAmI >= MaxEntities || dmg <= 0 || whoAmI >= Terraria.Main.maxPlayers)
+				return;
 			var player = Terraria.Main.player[whoAmI];
 			if (elementalType == ElementalType.Necrosis) {
 				player.GetModPlayer<Players.NecrosisPlayer>().AddDamage(dmg);
@@ -103,6 +122,8 @@ namespace ArknightsMod.Systems.Gameplay.Elemental
 			if (Content.Items.Armor.Specialist.Mortis.MortisSetPlayer.HasSet(player))
 				Gameplay.MujicaFeverSystem.ReportMortisDamage(player);
 			ElementalData elemData = elementalRecords[whoAmI].elementalData;
+			if (!elemData.IsInitialized)
+				return;
 			byte mask = elemData.Status;
 			//不能伤害元素爆发中的单位
 			if ((mask & 0x20) == 0 && ((mask & 0x80) != 0))
@@ -117,7 +138,11 @@ namespace ArknightsMod.Systems.Gameplay.Elemental
 		}
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void ApplyHealing(ElementalType elementalType, int heal, int whoAmI) {
+			if ((uint)whoAmI >= MaxEntities)
+				return;
 			ElementalData elemData = elementalRecords[whoAmI].elementalData;
+			if (!elemData.IsInitialized)
+				return;
 			byte mask = elemData.Status;
 			//不能治疗满血或元素爆发中的单位
 			if ((mask & 0x20) == 0 && ((mask & 0x80) != 0 || (mask & 0x40) == 0))
@@ -127,7 +152,11 @@ namespace ArknightsMod.Systems.Gameplay.Elemental
 		}
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static int GetElemental(ElementalType elementalType,int whoAmI) {
+			if ((uint)whoAmI >= MaxEntities)
+				return 0;
 			ElementalData elemData = elementalRecords[whoAmI].elementalData;
+			if (!elemData.IsInitialized)
+				return 0;
 			byte mask = elemData.Status;
 			//不能治疗满血或元素爆发中的单位
 			if ((mask & 0x20) == 0)
