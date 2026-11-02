@@ -60,6 +60,41 @@ internal static class DreadnoughtArcTrail
             vertices[i * 2 + 1] = new SlashVertex(center + axis * reach * .4f - Main.screenPosition, color, new Vector2(t, 1));
         }
 
+        Render(body, shadow, edge, vertices.Length);
+    }
+
+    internal static void DrawFlight(Projectile projectile, ChargedOperatorKind kind, bool returning)
+    {
+        if (!ChargedOperatorVfx.Visible(projectile.Center)) return;
+        shader ??= ModContent.Request<Effect>("ArknightsMod/Assets/Effects/DreadnoughtArcTrail", AssetRequestMode.ImmediateLoad).Value;
+        var positions = new System.Collections.Generic.List<Vector2> { projectile.Center };
+        float length = 0;
+        foreach (Vector2 old in projectile.oldPos)
+        {
+            if (old == Vector2.Zero) break;
+            Vector2 next = old + projectile.Size / 2;
+            float distance = Vector2.Distance(next, positions[^1]);
+            if (!float.IsFinite(distance) || distance > 100 || length + distance > 360) break;
+            if (distance < 1) continue;
+            positions.Add(next); length += distance;
+        }
+        if (positions.Count < 3) return;
+        for (int i = 0; i < positions.Count; i++)
+        {
+            float t = i / (float)(positions.Count - 1);
+            Vector2 direction = (positions[Math.Max(0, i - 1)] - positions[Math.Min(positions.Count - 1, i + 1)]).SafeNormalize(Vector2.UnitX);
+            Vector2 normal = new(-direction.Y, direction.X);
+            float width = (returning ? 21 : 13) * MathF.Pow(1 - t, .65f);
+            Color tint = Color.White * (returning ? 1f : .82f);
+            vertices[i * 2] = new SlashVertex(positions[i] + normal * width - Main.screenPosition, tint, new Vector2(t, 0));
+            vertices[i * 2 + 1] = new SlashVertex(positions[i] - normal * width - Main.screenPosition, tint, new Vector2(t, 1));
+        }
+        var palette = Palette(kind);
+        Render(palette.Body, palette.Shadow, palette.Edge, positions.Count * 2);
+    }
+
+    private static void Render(Color body, Color shadow, Color edge, int count)
+    {
         shader.Parameters["BodyTint"].SetValue(body.ToVector3());
         shader.Parameters["ShadowTint"].SetValue(shadow.ToVector3());
         shader.Parameters["EdgeTint"].SetValue(edge.ToVector3());
@@ -74,7 +109,7 @@ internal static class DreadnoughtArcTrail
         try
         {
             shader.CurrentTechnique.Passes["ArcPass"].Apply();
-            device.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices, 0, vertices.Length - 2);
+            device.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices, 0, count - 2);
         }
         finally
         {

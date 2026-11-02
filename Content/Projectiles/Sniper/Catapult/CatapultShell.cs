@@ -10,6 +10,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Catapult;
 public sealed class CatapultShell : FiammettaMortarShell
 {
     protected override int FlightMode => 0;
+    protected override float FlightMaximumRange => ArtilleryBallistics.MaximumRange;
     protected override Color TrailOuter => new(244, 132, 30);
     protected override Color TrailInner => new(255, 237, 160);
     protected override float TrailWidth => 17f;

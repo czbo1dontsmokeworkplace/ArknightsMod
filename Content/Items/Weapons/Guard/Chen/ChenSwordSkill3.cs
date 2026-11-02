@@ -9,7 +9,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen;
 
 public partial class sw_Proj_2
 {
-    private int normalBlades, skill3Strikes;
+    private int skill3Strikes;
 
     private void Skill_3_AI()
     {
@@ -77,7 +77,7 @@ public partial class sw_Proj_2
         Projectile.NewProjectile(Projectile.GetSource_FromThis(), start, velocity,
             ModContent.ProjectileType<Skill_3_Attack_Proj>(), damage, 1, player.whoAmI, 0, speed);
         if (!_playedSkill3Sound && !Main.dedServ) {
-            SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/ChenSwordSkill3") { MaxInstances = 2 }, player.position);
+            SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/ChenSwordSkill3Fast") { MaxInstances = 2 }, player.position);
             _playedSkill3Sound = true;
         }
         if (Main.dedServ) return;

@@ -28,7 +28,7 @@ public abstract class ChargedOperatorWeapon : ExpansionWeaponBase
         Item.width = 52; Item.height = 52;
         Item.damage = EliteDamage[0];
         Item.DamageType = Melee ? DamageClass.Melee : DamageClass.Ranged;
-        Item.useStyle = ItemUseStyleID.Shoot;
+        Item.useStyle = Melee ? ItemUseStyleID.Swing : ItemUseStyleID.Shoot;
         Item.useTime = Item.useAnimation = Melee ? DreadnoughtRules.BaseSwingTicks : 60;
         Item.noMelee = true; Item.noUseGraphic = Melee;
         Item.channel = false;
@@ -36,7 +36,7 @@ public abstract class ChargedOperatorWeapon : ExpansionWeaponBase
         Item.useTurn = Melee;
         Item.knockBack = Melee ? 6f : 4f;
         Item.shootSpeed = 16f;
-        Item.shoot = Melee ? ModContent.ProjectileType<DreadnoughtSwing>() : ProjectileID.Bullet;
+        Item.shoot = Melee ? ModContent.ProjectileType<DreadnoughtThrownBlade>() : ProjectileID.Bullet;
         Item.useAmmo = Melee ? 0 : AmmoID.Bullet;
         Item.rare = Rarity;
         Item.value = Item.sellPrice(silver: 30 * (Rarity + 1));
@@ -51,7 +51,14 @@ public abstract class ChargedOperatorWeapon : ExpansionWeaponBase
         return clone;
     }
     public override bool CanConsumeAmmo(Item ammo, Player player) => consumingAmmo || !Melee && player.altFunctionUse != 2;
-    public override bool AltFunctionUse(Player player) => !Melee;
+    public override bool AltFunctionUse(Player player) => true;
+    public override float UseSpeedMultiplier(Player player)
+    {
+        if (!Melee) return 1f;
+        int skill = ChargedOperatorPlayer.ActiveSkill(player);
+        bool swift = Kind is ChargedOperatorKind.Franka or ChargedOperatorKind.NearlRadiant && skill == 1;
+        return swift ? 4f / 3f : 1f;
+    }
     public override bool MeleePrefix() => Melee;
     public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
     {
@@ -71,7 +78,14 @@ public abstract class ChargedOperatorWeapon : ExpansionWeaponBase
                 if (p.owner == player.whoAmI && p.ModProjectile is ChargedOperatorHoldout)
                 { Item.noUseGraphic = true; break; }
         }
-        if (Melee || player.whoAmI != Main.myPlayer) return;
+        if (Melee)
+        {
+            if (player.whoAmI == Main.myPlayer && WorldInputAllowed(player) && Main.mouseRight
+                && !player.tileInteractionHappened && !ArknightsKeybinds.SkillActivatePressed(player))
+                DreadnoughtThrownBlade.Recall(player, Kind);
+            return;
+        }
+        if (player.whoAmI != Main.myPlayer) return;
         var state = player.GetModPlayer<ChargedOperatorPlayer>();
         bool world = WorldInputAllowed(player);
         if (!Main.mouseRight) state.SuppressSniperRight = false;
@@ -102,10 +116,19 @@ public abstract class ChargedOperatorWeapon : ExpansionWeaponBase
             tooltips.Add(new TooltipLine(Mod, "ChargedPlaceholder", Language.GetTextValue("Mods.ArknightsMod.ChargedArsenal.Placeholder")));
     }
     // Right hold is polled in HoldItem; left fire uses Terraria's normal item animation.
-    public override bool CanUseItem(Player player) => !ArknightsKeybinds.SkillActivatePressed(player)
-        && (Melee || player.altFunctionUse != 2 && !Main.mouseRight && WorldInputAllowed(player))
-        && (Melee || player.GetModPlayer<ChargedOperatorPlayer>().Recovery == 0)
-        && player.ownedProjectileCounts[Melee ? ModContent.ProjectileType<DreadnoughtSwing>() : ModContent.ProjectileType<ChargedOperatorHoldout>()] == 0;
+    public override bool CanUseItem(Player player)
+    {
+        if (ArknightsKeybinds.SkillActivatePressed(player) || !WorldInputAllowed(player)) return false;
+        if (Melee)
+        {
+            if (player.altFunctionUse == 2 || Main.mouseRight)
+            { DreadnoughtThrownBlade.Recall(player, Kind); return false; }
+            return true;
+        }
+        return player.altFunctionUse != 2 && !Main.mouseRight
+            && player.GetModPlayer<ChargedOperatorPlayer>().Recovery == 0
+            && player.ownedProjectileCounts[ModContent.ProjectileType<ChargedOperatorHoldout>()] == 0;
+    }
     public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position,
         Vector2 velocity, int type, int damage, float knockback)
     {
@@ -123,9 +146,15 @@ public abstract class ChargedOperatorWeapon : ExpansionWeaponBase
             }
             return false;
         }
-        if (player.whoAmI == Main.myPlayer)
-            Projectile.NewProjectile(source, player.MountedCenter, velocity.SafeNormalize(Vector2.UnitX * player.direction),
-                ModContent.ProjectileType<DreadnoughtSwing>(), damage, knockback, player.whoAmI, (int)Kind);
+        if (player.whoAmI == Main.myPlayer && player.altFunctionUse != 2)
+        {
+            DreadnoughtThrownBlade.MakeRoom(player, Kind);
+            var blade = Projectile.NewProjectileDirect(source, player.MountedCenter, velocity.SafeNormalize(Vector2.UnitX * player.direction),
+                ModContent.ProjectileType<DreadnoughtThrownBlade>(),
+                Math.Max(1, (int)(damage * ChargedOperatorPlayer.DamageMultiplier(Kind, ChargedOperatorPlayer.ActiveSkill(player)))),
+                knockback, player.whoAmI, (int)Kind);
+            blade.CritChance = player.GetWeaponCrit(Item);
+        }
         return false;
     }
     public override Vector2? HoldoutOffset() => Melee ? null : new Vector2(-10, 8);

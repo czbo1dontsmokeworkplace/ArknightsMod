@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using ArknightsMod.Content.Items.Weapons.Sniper.Fiammetta;
 using ArknightsMod.Content.Projectiles.Sniper.Artillery;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -19,6 +20,8 @@ public class FiammettaMortarShell : ModProjectile
     private float gravityDirection = 1;
     private Vector2 MouseTarget => new(Projectile.ai[0], Projectile.ai[1]);
     protected virtual int FlightMode => Math.Clamp((int)Projectile.ai[2], 0, 3);
+    protected virtual float FlightMaximumRange => FlightMode == 1 ? FiammettaHandCannon.ProvocateMaximumRange
+        : FlightMode == 3 ? FiammettaHandCannon.ReponiteMaximumRange : ArtilleryBallistics.MaximumRange;
     protected virtual Color TrailOuter => new(255, 55, 20);
     protected virtual Color TrailInner => new(255, 233, 160);
     protected virtual float TrailWidth => FlightMode == 3 ? 26 : 23;
@@ -41,6 +44,15 @@ public class FiammettaMortarShell : ModProjectile
     {
         Player owner = Main.player[Projectile.owner];
         gravityDirection = owner.gravDir < 0 ? -1 : 1;
+        // NukeOfBliss reads the live, screen-clamped cursor while staging.
+        // Reponite deliberately retains its skill's fixed bombardment point.
+        if (Projectile.owner == Main.myPlayer && FlightMode != 3 && flight.Rain > 0)
+        {
+            Vector2 cursor = Vector2.Clamp(Main.MouseWorld, owner.MountedCenter - new Vector2(960, 540), owner.MountedCenter + new Vector2(960, 540));
+            Vector2 aim = FiammettaHandCannon.ClampTarget(owner, cursor, FlightMaximumRange);
+            if (Vector2.DistanceSquared(MouseTarget, aim) > .01f) Projectile.netUpdate = true;
+            Projectile.ai[0] = aim.X; Projectile.ai[1] = aim.Y;
+        }
         if (Projectile.owner == Main.myPlayer && flight.Time > 120 && (lockedTargetIndex < 0 || flight.Rain > 0)) LockTarget();
         NPC target = Main.npc.IndexInRange(lockedTargetIndex) ? Main.npc[lockedTargetIndex] : null;
         if (target != null && (!target.CanBeChasedBy(Projectile) || (target.Center.Y - Projectile.Center.Y) * gravityDirection <= 0))
@@ -50,11 +62,13 @@ public class FiammettaMortarShell : ModProjectile
         }
         Vector2 center = Projectile.Center; bool diving = flight.Diving;
         bool transfer = flight.Step(ref center, ref Projectile.velocity, MouseTarget, owner.Center, target?.Center, gravityDirection);
+        // The reference explicitly discards its pre-dive target at rain == 1.
+        if (flight.Time > 120 && flight.Rain == 1) { lockedTargetIndex = -1; target = null; }
         Projectile.Center = center; Projectile.Opacity = flight.Opacity; Projectile.localAI[0] = flight.Time;
         if (transfer) Array.Fill(Projectile.oldPos, Projectile.position);
         if (flight.Rain <= 1 && flight.Time > 120) Projectile.extraUpdates = 10;
         if (flight.Diving && !diving && Projectile.owner == Main.myPlayer) Projectile.netUpdate = true;
-        if (flight.Staging) return;
+        if (flight.Staging) { Projectile.position += Projectile.velocity; return; }
         bool collideTiles = flight.Diving && (Projectile.Center.Y - MouseTarget.Y) * gravityDirection > 0;
         int steps = Math.Max(1, (int)MathF.Ceiling(Projectile.velocity.Length() / 4));
         Vector2 step = Projectile.velocity / steps;
@@ -64,12 +78,6 @@ public class FiammettaMortarShell : ModProjectile
             if (collideTiles && Collision.SolidCollision(next, Projectile.width, Projectile.height)) { Detonate(); return; }
             Projectile.position = next;
             if (TouchesEnemy()) { Detonate(); return; }
-        }
-        if (flight.Diving)
-        {
-            Vector2 strike = target?.Center ?? MouseTarget;
-            float distance = Vector2.Distance(Projectile.Center, strike);
-            if (target == null && distance <= 26 || distance <= 74 && Vector2.Dot(strike - Projectile.Center, Projectile.velocity) < 0) { Detonate(); return; }
         }
         Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
         if (!Main.dedServ && Projectile.Opacity > .2f)
@@ -90,10 +98,13 @@ public class FiammettaMortarShell : ModProjectile
         float best = flight.Rain == 0 ? 350 : 250; int index = -1;
         foreach (NPC npc in Main.ActiveNPCs)
         {
-            if (!npc.CanBeChasedBy(Projectile) || (npc.Center.Y - Projectile.Center.Y) * gravityDirection <= 0) continue;
+            if (!npc.CanBeChasedBy(Projectile)) continue;
             float distance = Vector2.Distance(focus, npc.Center);
             if (distance < best) { best = distance; index = npc.whoAmI; }
         }
+        // Like ClosestNPCAt followed by the reference's height check: do not
+        // skip the nearest target to steer toward a farther enemy below it.
+        if (index >= 0 && (Main.npc[index].Center.Y - Projectile.Center.Y) * gravityDirection <= 0) index = -1;
         if (index != lockedTargetIndex) { lockedTargetIndex = index; Projectile.netUpdate = true; }
     }
     private void Detonate()

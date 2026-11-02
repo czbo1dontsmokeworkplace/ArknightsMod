@@ -1,10 +1,21 @@
 using ArknightsMod.Content.Projectiles.Phalanx;
 using Microsoft.Xna.Framework;
+using Terraria;
 
 namespace ArknightsMod.Content.NPCs.Enemy.MaterialistAntagonizer;
 
 internal static partial class MaterialistVisuals
 {
+    internal static void DrawFrostShield(NPC npc, float progress)
+    {
+        float opacity = MaterialistFormation.Smooth(progress) * (1 - npc.alpha / 255f);
+        Vector2 size = new Vector2(npc.width + 48, npc.height + 48) * npc.scale;
+        Color color = new Color(112, 217, 255);
+        if (!PhalanxVisuals.ShieldSurface(npc.Center, size, color, opacity))
+            Glow(npc.Center, color * (.18f * opacity), size);
+        MaterialistTechRenderer.LockShieldMaterial(npc.Center, size * .98f, 0, progress, color * (.27f * opacity));
+    }
+
     private static void DrawLockShield(MaterialistAntagonizer boss)
     {
         float progress = boss.LockShieldProgress;

@@ -11,19 +11,19 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.Items.MaterialistArsenal;
 
 // Reuses the former Typhon right-click plasma rendering. Both visible beams
-// belong to one damage projectile and stop at the same nearest target.
+// each deal an independent pulse, piercing everything along a sixty-tile beam.
 public sealed class PlasmaProjectorHoldout : ModProjectile
 {
-    internal const float Range = 1200, Width = 28;
+    internal const float Range = 60 * 16, Width = 28;
+    internal const int DamageInterval = 8;
     private const float BeamOffset = 11.3f;
-    private readonly float[] scan = new float[3];
     private readonly PhoenixBeamFx[] beams = new PhoenixBeamFx[2];
     private readonly ReaperSwarmVisualNode[] muzzles = new ReaperSwarmVisualNode[2];
     private ReaperSwarmVisualNode contact;
     private Item boundItem;
-    private Vector2 start, end;
+    private Vector2 start, end, contactPoint;
     private bool blocked, started;
-    private int targetIndex = -1;
+    private int damageClock;
     private Vector2 Axis => Projectile.velocity.SafeNormalize(Vector2.UnitX);
     private Vector2 Offset(int side) => new Vector2(-Axis.Y, Axis.X) * ((side * 2 - 1) * BeamOffset);
     public override string LocalizationCategory => "Projectiles.MaterialistArsenal";
@@ -31,16 +31,13 @@ public sealed class PlasmaProjectorHoldout : ModProjectile
     public override void SetDefaults()
     {
         Projectile.width = Projectile.height = 6;
-        Projectile.friendly = true; Projectile.DamageType = DamageClass.Magic;
+        Projectile.DamageType = DamageClass.Magic;
         Projectile.penetrate = -1; Projectile.timeLeft = 2;
         Projectile.tileCollide = false; Projectile.ignoreWater = true;
-        Projectile.usesLocalNPCImmunity = true;
-        Projectile.localNPCHitCooldown = PlasmaProjector.ManaInterval;
         Projectile.netImportant = true;
     }
     public override bool ShouldUpdatePosition() => false;
-    public override bool? CanDamage() => targetIndex >= 0 ? null : false;
-    public override bool? CanHitNPC(NPC target) => target.whoAmI == targetIndex ? null : false;
+    public override bool? CanDamage() => false;
     public override void AI()
     {
         Player owner = Main.player[Projectile.owner];
@@ -75,7 +72,16 @@ public sealed class PlasmaProjectorHoldout : ModProjectile
         owner.itemRotation = (axis * owner.direction).ToRotation();
         owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation - MathHelper.PiOver2);
         Projectile.timeLeft = 2; owner.manaRegenDelay = owner.maxRegenDelay;
+        damageClock = damageClock % DamageInterval + 1;
         Trace(owner);
+        if (local && damageClock == 1)
+            for (int side = 0; side < 2; side++)
+            {
+                var pulse = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), start + Offset(side), axis,
+                    ModContent.ProjectileType<PlasmaProjectorPulse>(), Projectile.damage, Projectile.knockBack,
+                    Projectile.owner, 0, Main.rand.Next(1 << 24));
+                pulse.CritChance = Projectile.CritChance;
+            }
         if (Main.dedServ) return;
         if (!started)
         {
@@ -96,33 +102,27 @@ public sealed class PlasmaProjectorHoldout : ModProjectile
             beams[i].Extend();
         }
         if (blocked && contact == null)
-            contact = ReaperSwarmVisuals.Spawn("actor.player.weapon.75.impact", () => end, () => -Axis,
+            contact = ReaperSwarmVisuals.Spawn("actor.player.weapon.75.impact", () => contactPoint, () => -Axis,
                 active: () => Projectile.active && blocked, style: PhoenixFx.Original());
         else if (!blocked) { contact?.Stop(); contact = null; }
     }
     private void Trace(Player owner)
     {
         Vector2 axis = Axis;
-        // Trace from the player's hand, so a barrel beyond a thin wall cannot
-        // create a laser on the far side. Both beam edges use the shortest scan.
-        Collision.LaserScan(owner.MountedCenter, axis, Width, Range + 48, scan);
-        float handLength = MathF.Min(scan[0], MathF.Min(scan[1], scan[2]));
-        float muzzleDistance = MathF.Min(48, handLength);
-        start = owner.MountedCenter + axis * muzzleDistance;
-        float length = MathF.Min(Range, MathF.Max(0, handLength - muzzleDistance));
-        blocked = handLength < Range + 47; targetIndex = -1;
-        float closest = length;
+        start = owner.MountedCenter + axis * 48;
+        end = start + axis * Range;
+        blocked = false;
+        float closest = Range;
         foreach (NPC npc in Main.ActiveNPCs)
         {
             if (!npc.CanBeChasedBy(Projectile)) continue;
             float distance = 0;
             if (!Collision.CheckAABBvLineCollision(npc.position, npc.Size, start,
-                start + axis * length, Width, ref distance)) continue;
-            if (distance <= closest && (targetIndex < 0 || distance < closest))
-            { closest = MathF.Max(0, distance); targetIndex = npc.whoAmI; }
+                end, Width, ref distance)) continue;
+            if (distance <= closest)
+            { closest = MathF.Max(0, distance); blocked = true; }
         }
-        if (targetIndex >= 0) { length = closest; blocked = true; }
-        end = start + axis * length;
+        contactPoint = start + axis * closest;
     }
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
     {

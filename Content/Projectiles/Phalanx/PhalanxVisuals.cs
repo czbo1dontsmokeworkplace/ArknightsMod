@@ -91,7 +91,7 @@ public sealed class PhalanxVisuals : ModSystem
             barrier.Parameters["uHitFlash"].SetValue(flash);
             barrier.Parameters["uOpacity"].SetValue(.86f * opacity);
             barrier.Parameters["uRotation"].SetValue(rotation);
-            Texture2D noise = ModContent.Request<Texture2D>("ArknightsMod/Assets/Effects/Phalanx/NoiseSoft").Value;
+            Texture2D noise = ModContent.Request<Texture2D>("ArknightsMod/Assets/Effects/Phalanx/NoiseSoft", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             Main.spriteBatch.End(); ended = true;
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp,
                 DepthStencilState.None, RasterizerState.CullNone, barrier, Main.GameViewMatrix.TransformationMatrix);

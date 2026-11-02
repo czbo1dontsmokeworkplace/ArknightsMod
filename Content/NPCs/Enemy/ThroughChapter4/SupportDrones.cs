@@ -113,7 +113,7 @@ public sealed class FrostDrone : SupportDrone
     internal const float NearbyLimitRadius = 1600f;
     protected override int FrameCount => 4;
     protected override string BestiaryText => "寒霜：持续释放低温烟雾的控场无人机。冷雾会拖慢玩家，不造成伤害。";
-    private Vector2 MistCenter => NPC.Center + new Vector2(0f, 68f);
+    internal Vector2 MistCenter => NPC.Center + new Vector2(0f, 68f);
 
     internal static float NaturalSpawnWeight(bool hardmode, bool snow, bool surface, bool blizzard, int nearby) =>
         !hardmode || !snow || !surface || nearby >= 2 ? 0f : blizzard ? .35f : .001f;
@@ -161,13 +161,18 @@ public sealed class FrostDrone : SupportDrone
         FlyTo(target == null ? Home + new Vector2(MathF.Sin(NPC.ai[0] / 100f) * 120f, 0f)
             : target.Center + new Vector2(lateral, -116f), 2.7f);
 
+        EmitMist((int)NPC.ai[0]);
+    }
+
+    internal void EmitMist(int timer, int chillDuration = 30)
+    {
         // Apply the debuff independently of damage/immunity. Only the owning client changes its player buffs.
         if (!Main.dedServ && Main.LocalPlayer.active && !Main.LocalPlayer.dead &&
             MistTouches(MistCenter, Main.LocalPlayer.Hitbox) &&
             Collision.CanHitLine(MistCenter, 1, 1, Main.LocalPlayer.position, Main.LocalPlayer.width, Main.LocalPlayer.height))
-            Main.LocalPlayer.AddBuff(ModContent.BuffType<FrostDroneChill>(), 30);
+            Main.LocalPlayer.AddBuff(ModContent.BuffType<FrostDroneChill>(), chillDuration);
 
-        if (!Main.dedServ && (int)NPC.ai[0] % 4 == 0) {
+        if (!Main.dedServ && timer % 4 == 0) {
             MagallanVisuals.ColdMist(MistCenter, MistRadius, false);
             MagallanVisuals.Puff(NPC.Center + new Vector2(0f, 12f).RotatedBy(NPC.rotation),
                 new Vector2(NPC.velocity.X * .2f, 1.8f), new Color(158, 211, 231), 46f, 38, .42f, .018f);

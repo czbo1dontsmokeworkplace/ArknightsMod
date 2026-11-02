@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Buffs;
+using ArknightsMod.Content.Buffs;
 using ArknightsMod.Content.Rarities;
 using ArknightsMod.Content.Tiles.Infrastructure;
 using ArknightsMod.Players;
@@ -22,15 +22,11 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Thorns
 {
     public class ThornsWeapon : UpgradeWeaponBase
 	{
-		public override void AddRecipes() {
-			Recipe recipe = CreateRecipe()
-				.AddIngredient<global::ArknightsMod.Content.Items.Material.PolymerizationPreparation>(1)
-				.AddIngredient<global::ArknightsMod.Content.Items.Material.OrironBlock>(2)
-				.AddIngredient(ItemID.TerraBlade)
-				.AddIngredient(ItemID.VialofVenom, 10);
-			recipe.AddTile(ModContent.TileType<FactoryTile>());
-			recipe.Register();
-		}
+        public override float UseSpeedMultiplier(Player player) => 1.3f;
+        public override void AddRecipes() => CreateRecipe()
+            .AddIngredient<global::ArknightsMod.Content.Items.Weapons.Guard.SilverAsh.SilverAshWeapon>()
+            .AddIngredient(ItemID.FragmentSolar, 12).AddIngredient(ItemID.VialofVenom, 10)
+            .AddTile(TileID.LunarCraftingStation).Register();
 		private int skillcs = 0;
 
 		private static SoundStyle SkillActive1;

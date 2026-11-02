@@ -31,12 +31,12 @@ public abstract class OperatorBladeWeapon : ExpansionWeaponBase
         Item.value = Item.sellPrice(silver: 50 + Kind % 3 * 100);
     }
     public override bool AltFunctionUse(Player player) => false;
-    public override bool CanUseItem(Player player) => !ArknightsKeybinds.SkillActivatePressed(player)
-        && !Main.projectile.Any(q => q.active && q.owner == player.whoAmI && q.ModProjectile is OperatorBladeSwing);
+    public override bool CanUseItem(Player player) => !ArknightsKeybinds.SkillActivatePressed(player) && !BladeRouteCombat.Swinging(player);
     public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
     {
         if (player.whoAmI != Main.myPlayer) return false;
-        BladeRouteCombat.Swing(player,source,Kind,damage,knockback);
+        if (Kind == 5) LordReworkCombat.Swing(player, source, Kind, damage, knockback);
+        else BladeRouteCombat.Swing(player,source,Kind,damage,knockback);
         return false;
     }
     public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
@@ -72,6 +72,7 @@ public sealed class IreneSaber : OperatorBladeWeapon
 }
 public sealed class MidnightSword : OperatorBladeWeapon
 {
+    public override bool IsLoadingEnabled(Mod mod) => false;
     public override int Kind => 3;
     protected override int[] EliteDamage => [12, 16];
     public override void AddRecipes() => CreateRecipe().AddRecipeGroup(OperatorWeaponRecipeGroups.IronOrLeadBar, 8)
@@ -79,6 +80,7 @@ public sealed class MidnightSword : OperatorBladeWeapon
 }
 public sealed class AreneSword : OperatorBladeWeapon
 {
+    public override bool IsLoadingEnabled(Mod mod) => false;
     public override int Kind => 4;
     protected override int[] EliteDamage => [29, 36, 43];
     public override void AddRecipes() => CreateRecipe().AddIngredient<global::ArknightsMod.Content.Items.Weapons.Guard.Frostleaf.FrostleafAxe>()
@@ -88,21 +90,9 @@ public sealed class LapplandSwords : OperatorBladeWeapon
 {
     public override int Kind => 5;
     protected override int[] EliteDamage => [52, 64, 76];
-    public override void AddRecipes() => CreateRecipe().AddIngredient<AreneSword>().AddIngredient(ItemID.HallowedBar, 12)
-        .AddIngredient(ItemID.SoulofNight, 8).AddTile(TileID.MythrilAnvil).Register();
+    public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.BeamSword)
+        .AddRecipeGroup(OperatorWeaponRecipeGroups.CobaltOrPalladiumBar, 12).AddIngredient(ItemID.SoulofNight, 8)
+        .AddIngredient(ItemID.CrystalShard, 10).AddTile(TileID.MythrilAnvil).Register();
 }
 
-// Additional bridge recipes leave the existing weapons' combat, skills and old
-// recipes intact. The new sequence can be followed without rewriting legacy items.
-public sealed class BladeRouteRecipes : ModSystem
-{
-    public override void AddRecipes()
-    {
-        Recipe.Create(ModContent.ItemType<global::ArknightsMod.Content.Items.Weapons.Guard.Frostleaf.FrostleafAxe>())
-            .AddIngredient<MidnightSword>().AddIngredient(ItemID.IceBlock, 30).AddIngredient(ItemID.Bone, 15).AddTile(TileID.Anvils).Register();
-        Recipe.Create(ModContent.ItemType<global::ArknightsMod.Content.Items.Weapons.Guard.SilverAsh.SilverAshWeapon>())
-            .AddIngredient<LapplandSwords>().AddIngredient(ItemID.TrueExcalibur).AddIngredient(ItemID.Feather, 3).AddTile(TileID.MythrilAnvil).Register();
-        Recipe.Create(ModContent.ItemType<global::ArknightsMod.Content.Items.Weapons.Guard.Thorns.ThornsWeapon>())
-            .AddIngredient<LapplandSwords>().AddIngredient(ItemID.TerraBlade).AddIngredient(ItemID.VialofVenom, 10).AddTile(TileID.MythrilAnvil).Register();
-    }
-}
+// The retained Lord weapons own their three progression recipes.

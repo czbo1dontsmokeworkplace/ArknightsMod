@@ -40,7 +40,6 @@ public sealed partial class MaterialistAntagonizer
                 break;
             case FlightOrder.Command:
                 RunFormationBody();
-                if (Authority && Timer > 120 && WingCount() == 0 && !BomberOperationActive) { NPC.ai[3] = -1; Enter(FlightOrder.Recover); return; }
                 break;
             case FlightOrder.Bombard:
                 MoveTo(player.Center + new Vector2(side * 320, -270));
@@ -94,7 +93,7 @@ public sealed partial class MaterialistAntagonizer
                 }
                 break;
             case FlightOrder.Recover:
-                Enter(FlightOrder.Deploy);
+                Enter(FlightOrder.Command);
                 return;
         }
         if (Timer >= OrderDuration && (Order != FlightOrder.Deploy || DeploymentReady())) NextOrder();
@@ -121,19 +120,18 @@ public sealed partial class MaterialistAntagonizer
     }
     private bool DeploymentReady()
     {
-        int ready = 0;
+        if (!PhaseDeploymentComplete) return false;
         foreach (NPC npc in Main.ActiveNPCs)
             if (npc.ModNPC is not BomberDrone && npc.TryGetGlobalNPC<MaterialistWing>(out var wing) && wing.BelongsTo(this) && !wing.Retreating)
             {
                 if (wing.Age < MaterialistRules.EscortGrace) return false;
-                ready++;
             }
-        return ready >= MaterialistRules.DeploymentCap(Phase);
+        return true;
     }
     private void DeploySlot(int slot)
     {
         int cap = MaterialistRules.DeploymentCap(Phase);
-        if (slot >= cap || WingCount() >= cap) return;
+        if (slot < 0 || slot >= cap || (DeployedSlots & (1 << slot)) != 0) return;
         foreach (NPC n in Main.ActiveNPCs)
             if (n.TryGetGlobalNPC<MaterialistWing>(out var wing) && wing.BelongsTo(this) && wing.Slot == slot && !wing.Retreating) return;
         WingDuty duty = MaterialistRules.Duty(Phase, slot);
@@ -150,6 +148,8 @@ public sealed partial class MaterialistAntagonizer
         NPC escort = Main.npc[index];
         var data = escort.GetGlobalNPC<MaterialistWing>();
         data.Bind(escort, this, slot);
+        // Consume a slot only after allocation succeeds; deaths never make that slot available again.
+        DeployedSlots |= 1 << slot;
         escort.Center = origin;
         escort.netUpdate = true;
         NPC.netUpdate = true;

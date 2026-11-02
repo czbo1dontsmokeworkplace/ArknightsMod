@@ -1,5 +1,4 @@
 using System;
-using ArknightsMod.Content.Projectiles.Guard.BladeRoutes;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -26,9 +25,21 @@ internal static class ChenSwordRules
     {
         if (owner.whoAmI != Main.myPlayer || owner.HeldItem.ModItem is not ChenSword_Item) return;
         var state = owner.GetModPlayer<WeaponPlayer>();
-        if (state.Skill == skill && state.CurrentSkill?.Key.Item == nameof(ChenSword_Item)) {
+        // The held-item guard already identifies Chen. A just-ended attack
+        // must not wait for the cached skill descriptor to refresh first.
+        if (state.Skill == skill) {
             state.SkillActive = false; state.SkillTimer = 0;
         }
+    }
+
+    internal static void FinishSkillOne(Projectile source)
+    {
+        if (source.owner != Main.myPlayer) return;
+        Player player = Main.player[source.owner];
+        foreach (Projectile p in Main.ActiveProjectiles)
+            if (p.owner == source.owner && p.ai[2] == 1 && p.ModProjectile is sw_Proj_1 or sw_Proj_2) p.Kill();
+        EndSkill(player, 0);
+        player.itemAnimation = player.itemTime = 0;
     }
 
     internal static NPC FindTarget(Player owner, Vector2 origin)
@@ -50,16 +61,4 @@ internal static class ChenSwordRules
         return result;
     }
 
-    internal static void Blade(Projectile sword, float progress, ref int count)
-    {
-        if (sword.owner != Main.myPlayer) return;
-        Player owner = Main.player[sword.owner];
-        while (count < 3 && progress >= .22f + count * .18f) {
-            Vector2 radial = (sword.rotation - MathHelper.PiOver2).ToRotationVector2();
-            Projectile.NewProjectile(sword.GetSource_FromThis(), owner.MountedCenter + radial * 95 * owner.GetAdjustedItemScale(owner.HeldItem),
-                Vector2.Zero, ModContent.ProjectileType<OperatorScuuxunSpike>(), Math.Max(1, (int)(sword.damage * .35f)),
-                sword.knockBack * .3f, sword.owner, 8, radial.ToRotation(), owner.direction * owner.gravDir);
-            count++;
-        }
-    }
 }

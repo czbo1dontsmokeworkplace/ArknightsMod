@@ -15,7 +15,7 @@ public sealed class PlasmaProjector : ModItem
     public override void SetDefaults()
     {
         Item.width = 46; Item.height = 28;
-        Item.damage = 80; Item.DamageType = DamageClass.Magic;
+        Item.damage = 45; Item.DamageType = DamageClass.Magic;
         Item.mana = 4; Item.useTime = Item.useAnimation = ManaInterval;
         Item.useStyle = ItemUseStyleID.Shoot;
         Item.noMelee = Item.noUseGraphic = Item.channel = true;

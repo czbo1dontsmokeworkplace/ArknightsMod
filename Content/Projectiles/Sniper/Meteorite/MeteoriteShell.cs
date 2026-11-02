@@ -10,6 +10,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Meteorite;
 // Share the ascent, sky transfer, constrained descent and synchronized target lock.
 public sealed class MeteoriteShell : FiammettaMortarShell
 {
+    protected override float FlightMaximumRange => Artillery.ArtilleryBallistics.MaximumRange;
     private int Mode => Math.Clamp((int)Projectile.ai[2], 0, 2);
     protected override Color TrailOuter => new(244, 70, 28);
     protected override Color TrailInner => new(255, 222, 132);

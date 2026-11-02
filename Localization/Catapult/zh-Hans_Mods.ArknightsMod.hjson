@@ -1,7 +1,7 @@
 CatapultText: {
 	SkillKey: 按[{0}]开启选中的手动技能
 	Unbound: 请在控制设置中绑定“技能开启”键
-	Placeholder: 武器外观与技能图标暂用现有贴图
+	Placeholder: 技能图标暂用现有贴图
 }
 
 Items: {
@@ -56,4 +56,6 @@ Projectiles: {
 	// EarthshakerReturningHammer.DisplayName: Earthshaker Returning Hammer
 	// OperatorScuuxunSpike.DisplayName: Operator Scuuxun Spike
 	// MysticPhotonBlast.DisplayName: Mystic Photon Blast
+	// ChenSkillTwoOverlay.DisplayName: Chen Skill Two Overlay
+	// OperatorTerraWave.DisplayName: Operator Terra Wave
 }

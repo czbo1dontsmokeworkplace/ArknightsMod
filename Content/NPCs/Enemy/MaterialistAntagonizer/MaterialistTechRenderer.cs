@@ -43,7 +43,7 @@ public sealed class MaterialistTechRenderer : ModSystem
             foreach (NPC npc in Main.ActiveNPCs)
             {
                 if (!npc.TryGetGlobalNPC<MaterialistWing>(out var wing) || !wing.BelongsTo(boss) || wing.Retreating) continue;
-                if (MaterialistWing.Role(npc) == WingRole.Raptor) continue;
+                if (MaterialistWing.Role(npc) is WingRole.Raptor or WingRole.Frost) continue;
                 Color dutyColor = MaterialistWing.DutyColor(MaterialistRules.Duty(boss.Phase, wing.Slot));
                 DrawPanel(shader, npc.Center, new Vector2(npc.width + 38, npc.height + 30), dutyColor * (wing.Age < 72 ? .7f : .20f));
                 // A second, scanning hull layer is visible during launch without replacing the chassis.

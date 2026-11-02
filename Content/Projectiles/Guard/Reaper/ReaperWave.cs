@@ -48,7 +48,7 @@ public sealed class ReaperWave : ModProjectile
             Vector2 velocity=(-forward*Main.rand.NextFloat(3.5f,6.5f)+right*Main.rand.NextFloat(-1.4f,1.4f))
                 .SafeNormalize(-forward)*Main.rand.NextFloat(7,10);
             int index=Projectile.NewProjectile(Projectile.GetSource_FromThis(),position,velocity,
-                ModContent.ProjectileType<ReaperWaveNova>(),Math.Max(1,(int)(Projectile.damage*.15f)),
+                ModContent.ProjectileType<ReaperWisp>(),Math.Max(1,(int)(Projectile.damage*.15f)),
                 Projectile.knockBack*.15f,Projectile.owner,Projectile.ai[0]);
             if(Main.projectile.IndexInRange(index))Main.projectile[index].CritChance=Projectile.CritChance;
         }

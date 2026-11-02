@@ -1,0 +1,257 @@
+Items: {
+	HarbingerGuillotine: {
+		DisplayName: 邪兆裁断
+		Tooltip: 挥剑释放穿墙、旋转并逐渐减速的赤色镰刃
+	}
+
+	CatastropheSalvo: {
+		DisplayName: 榴霰弹
+		Tooltip:
+			'''
+			每次射击消耗一发火箭，平行发射两枚榴霰弹
+			沿直线持续加速，不追踪；命中产生半径280像素的爆炸
+			'''
+	}
+
+	ScarletMeson: {
+		DisplayName: 猩红介子炮
+		Tooltip:
+			'''
+			按住左键发射单束红色介子激光，无限贯穿敌人，受地形阻挡
+			发射30帧、停歇24帧循环，每8帧造成一次伤害
+			'''
+	}
+
+	UrsusArtilleryLink: {
+		DisplayName: 乌萨斯火控终端
+		Tooltip:
+			'''
+			召唤一台火控无人机，占用1个仆从栏
+			接近远处目标、退让近处目标，悬停并进行三连发炮击
+			'''
+	}
+
+	WinterScar: {
+		DisplayName: 冬痕
+		Tooltip:
+			'''
+			快速挥剑，每次平行释放1至2道寒冰剑芒
+			剑芒旋转加速，末段减速消散，最多伤害2名敌人
+			'''
+	}
+
+	YetiSnowGrenade: {
+		DisplayName: 雪怪冰弹
+		Tooltip:
+			'''
+			掷出飞得更远的冰雪手榴弹
+			触地弹跳，命中敌人或引信耗尽后产生220×220范围的冰爆
+			'''
+	}
+
+	BlackIceCoffin: {
+		DisplayName: 黑冰镇棺
+		Tooltip:
+			'''
+			在鼠标上方凝成边长5格的黑冰方棺
+			整体凝结12帧后急速下砸，在鼠标位置、敌人或地面爆发冰霜冲击
+			撞地会在附近地表点燃持续1秒的黑冰地火
+			'''
+	}
+
+	YetiChime: {
+		DisplayName: 雪祀风铃
+		Tooltip:
+			'''
+			召唤唯一的冰霜光环，替换现有仆从并占用全部仆从栏
+			伤害随占用栏位数等比例提升
+			先释放多批追踪冰弹，再瞄准敌人发射持续激光
+			'''
+	}
+
+	BasaltBreaker: {
+		DisplayName: 熔壳碎锋
+		Tooltip: 挥剑命中引起火山爆发，并向四周迸射2至4枚能造成伤害的火星
+	}
+
+	CalderaBellows: {
+		DisplayName: 火山风箱
+		Tooltip:
+			'''
+			消耗凝胶持续喷射逐渐扩散的烈焰
+			火焰可以贯穿敌人并持续造成伤害
+			'''
+	}
+
+	CinderTestament: {
+		DisplayName: 炼狱余烬录
+		Tooltip:
+			'''
+			按住左键蓄力1秒，释放滞留0.8秒的炼狱激光，随后间隔0.3秒
+			光束固定在释放的位置与方向，不随移动改变
+			存在期间无限贯穿，每10帧可再次伤害同一敌人
+			'''
+	}
+
+	BasaltBrood: {
+		DisplayName: 熔岩育巢
+		Tooltip:
+			'''
+			召唤一只熔岩幼体，占用1个仆从栏
+			在玩家附近漂浮蓄势，向上抛射会爆开的熔岩团
+			'''
+	}
+
+	HarbingerRewardBag: {
+		DisplayName: 邪魔炮火中枢先兆者宝藏袋
+		Tooltip:
+			'''
+			右键打开
+			包含本Boss四把武器中的一把、专属专家饰品和金币；有概率获得面具
+			'''
+	}
+
+	HarbingerEmblem: {
+		DisplayName: 炮火校准芯
+		Tooltip: 远程与魔法伤害提高8%
+	}
+
+	HarbingerMask: {
+		DisplayName: 邪魔炮火中枢先兆者面具
+		Tooltip: 可穿戴的纪念面具
+	}
+
+	HarbingerTrophy: {
+		DisplayName: 邪魔炮火中枢先兆者纪念章
+		Tooltip: 可放置
+	}
+
+	HarbingerRelic: {
+		DisplayName: 邪魔炮火中枢先兆者圣物
+		Tooltip: 可放置
+	}
+
+	FrostNovaRewardBag: {
+		DisplayName: 霜星宝藏袋
+		Tooltip:
+			'''
+			右键打开
+			包含本Boss四把武器中的一把、专属专家饰品和金币；有概率获得面具
+			'''
+	}
+
+	FrostNovaEmblem: {
+		DisplayName: 冬痕护符
+		Tooltip: 魔力上限增加20，免疫寒冷与霜焰
+	}
+
+	FrostNovaMask: {
+		DisplayName: 霜星面具
+		Tooltip: 可穿戴的纪念面具
+	}
+
+	FrostNovaTrophy: {
+		DisplayName: 霜星纪念章
+		Tooltip: 可放置
+	}
+
+	FrostNovaRelic: {
+		DisplayName: 霜星圣物
+		Tooltip: 可放置
+	}
+
+	PompeiiRewardBag: {
+		DisplayName: 庞贝宝藏袋
+		Tooltip:
+			'''
+			右键打开
+			包含本Boss四把武器中的一把、专属专家饰品和金币；有概率获得面具
+			'''
+	}
+
+	PompeiiEmblem: {
+		DisplayName: 熔壳余温
+		Tooltip: 免疫着火，攻击速度提高6%
+	}
+
+	PompeiiMask: {
+		DisplayName: 庞贝面具
+		Tooltip: 可穿戴的纪念面具
+	}
+
+	PompeiiTrophy: {
+		DisplayName: 庞贝纪念章
+		Tooltip: 可放置
+	}
+
+	PompeiiRelic: {
+		DisplayName: 庞贝圣物
+		Tooltip: 可放置
+	}
+
+	FirstToTalkRewardBag: {
+		DisplayName: 首言者宝藏袋
+		Tooltip:
+			'''
+			右键打开
+			包含专属专家饰品和金币；有概率获得面具
+			'''
+	}
+
+	FirstToTalkEmblem: {
+		DisplayName: 深海呼吸囊
+		Tooltip: 增加4点防御，允许水下呼吸
+	}
+
+	FirstToTalkMask: {
+		DisplayName: 首言者面具
+		Tooltip: 可穿戴的纪念面具
+	}
+
+	FirstToTalkTrophy: {
+		DisplayName: 首言者纪念章
+		Tooltip: 可放置
+	}
+
+	FirstToTalkRelic: {
+		DisplayName: 首言者圣物
+		Tooltip: 可放置
+	}
+}
+
+Projectiles: {
+	BossArsenalShot.DisplayName: 战利品弹幕
+	BossArsenalBurst.DisplayName: 战利品冲击
+	BossArsenalHoldout.DisplayName: 能量武器
+	BossArsenalBeam.DisplayName: 能量光束
+	BossArsenalMinion.DisplayName: 战利品仆从
+	HarbingerSickle.DisplayName: 邪兆镰刃
+	WinterScarBeam.DisplayName: 冬痕剑芒
+	BasaltSpark.DisplayName: 熔壳火星
+	BlackIceGroundFire.DisplayName: 黑冰地火
+	YetiCrownBeam.DisplayName: 雪祀光束
+}
+
+Buffs: {
+	BossArsenalMinionBuff: {
+		DisplayName: 战斗伙伴
+		Description: 召唤物与你并肩作战
+	}
+
+	UrsusArtilleryBuff: {
+		DisplayName: 火控无人机
+		Description: 为你战斗
+	}
+
+	YetiChimeBuff: {
+		DisplayName: 雪祀光环
+		Description: 为你战斗
+	}
+
+	BasaltBroodBuff: {
+		DisplayName: 熔岩幼体
+		Description: 为你战斗
+	}
+}
+
+Tiles.BossRewardMementoTile.MapEntry: 战利品陈列

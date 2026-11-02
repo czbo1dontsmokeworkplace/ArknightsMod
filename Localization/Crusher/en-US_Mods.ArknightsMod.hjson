@@ -53,10 +53,7 @@ Skills: {
 	QuartzGreatsword: {
 		1: {
 			Label: ATK Up β
-			Desc:
-				'''
-				ATK [c/3791db:+80%]
-				'''
+			Desc: ATK [c/3791db:+80%]
 		}
 
 		2: {
@@ -74,10 +71,7 @@ Skills: {
 	WindChimesHeavyBlade: {
 		1: {
 			Label: ATK Up γ
-			Desc:
-				'''
-				ATK [c/3791db:+100%]
-				'''
+			Desc: ATK [c/3791db:+100%]
 		}
 
 		2: {

@@ -1,6 +1,6 @@
 BranchTraits: {
-	Swordmaster: Swordmaster:  Releases rotating blades that linger in place
-	Lord: Lord:  Fires infinitely piercing projectiles at a fixed rate unaffected by attack speed
+	Swordmaster: Swordmaster:  Hits cause an additional cutting effect
+	Lord: Lord:  Swings the weapon and releases its distinct ranged attack
 }
 
 Items: {
@@ -9,7 +9,7 @@ Items: {
 		Tooltip:
 			'''
 			Slash with the blade; hits trigger an additional cut
-			Swings leave blades that linger and rotate briefly
+			Swings release one straight Terra Blade-style beam
 			'''
 	}
 
@@ -18,7 +18,7 @@ Items: {
 		Tooltip:
 			'''
 			Slash with the blade; hits trigger an additional cut
-			Swings leave blades that linger and rotate briefly
+			Swings release one straight Terra Blade-style beam
 			'''
 	}
 
@@ -27,7 +27,7 @@ Items: {
 		Tooltip:
 			'''
 			Slash with the blade; hits trigger an additional cut
-			Swings leave blades that linger and rotate briefly
+			Swings release one straight Terra Blade-style beam
 			'''
 	}
 
@@ -53,8 +53,11 @@ Items: {
 		DisplayName: Wolfspirit Swords [Lappland]
 		Tooltip:
 			'''
-			Swing the blade to release plasma clusters
-			Clusters pierce indefinitely and fire once per second
+			White Thorns-style sword arcs release a small Nox-style light bolt
+			Fires once per second with infinite piercing and continuous acceleration
+			The bolt flies straight without homing
 			'''
 	}
 }
+
+Projectiles.LapplandNoxShard.DisplayName: Wolfspirit Light Bolt

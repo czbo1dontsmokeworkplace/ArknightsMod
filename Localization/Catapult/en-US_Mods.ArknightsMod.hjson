@@ -1,7 +1,7 @@
 CatapultText: {
 	SkillKey: Press [{0}] to activate the selected manual skill
 	Unbound: Bind the Skill Activate key in Controls
-	Placeholder: Weapon art and skill icons use temporary sprites
+	Placeholder: Skill icons use temporary sprites
 }
 
 Items: {
@@ -56,4 +56,6 @@ Projectiles: {
 	EarthshakerReturningHammer.DisplayName: Earthshaker Returning Hammer
 	OperatorScuuxunSpike.DisplayName: Operator Scuuxun Spike
 	MysticPhotonBlast.DisplayName: Mystic Photon Blast
+	ChenSkillTwoOverlay.DisplayName: Chen Skill Two Overlay
+	OperatorTerraWave.DisplayName: Operator Terra Wave
 }

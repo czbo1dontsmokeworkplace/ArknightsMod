@@ -8,8 +8,7 @@ namespace ArknightsMod.Content.Items.Weapons.Caster;
 internal static class MysticChargeRules
 {
     internal const int Capacity = 3;
-    internal static int ChargeTicks(Player player) => Math.Max(1,
-        CombinedHooks.TotalUseTime(player.HeldItem.useTime, player, player.HeldItem));
+    internal static int ChargeTicks(Player player) => 60;
     internal static float DamageMultiplier(int ordinal) => 2f + Math.Clamp(ordinal, 0, 2);
     internal static float VisualMultiplier(int ordinal) => 1.5f + .5f * Math.Clamp(ordinal, 0, 2);
     // ai[0] 0 = normal, 1 = legacy stored, 2 = echo; 3/4/5 preserve the new stored ordinal over the network.
@@ -25,5 +24,5 @@ internal static class MysticChargeRules
         clock = 0; charges++; return true;
     }
     internal static float Progress(Player player, int charges, int clock, bool justCharged)
-        => charges >= Capacity || justCharged ? 1 : Math.Clamp(clock / (float)ChargeTicks(player), 0, 1);
+        => justCharged ? 1 : charges >= Capacity ? 0 : Math.Clamp(clock / (float)ChargeTicks(player), 0, 1);
 }

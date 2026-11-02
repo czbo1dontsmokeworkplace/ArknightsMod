@@ -57,6 +57,8 @@ Projectiles: {
 	StandardBearerCrescent.DisplayName: Standard Bearer Crescent
 	NecrassGammaBlast.DisplayName: Necrass Gamma Blast
 	PozemkaBlinkStrike.DisplayName: Pozemka Blink Strike
+	LordThornsSwing.DisplayName: Lord Thorns Swing
+	SilverAshMacaw.DisplayName: Silver Ash Macaw
 }
 
 Skills: {

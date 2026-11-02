@@ -15,8 +15,10 @@ internal sealed class PhoenixFxStyle
     internal float TrailLifetimeScale=1;
     internal float Scale=1;
     internal float ParticleLifetimeScale=1;
+    internal float SoundVolume=1;
     internal bool SkyfireRing,CenteredCut;
     internal bool MonochromeTexture;
+    internal bool MonochromeHalo;
     internal bool HideScuuxunPointer;
     internal bool SuppressShake;
     internal Func<Vector2,Vector2> ProjectPosition,ProjectDirection;
@@ -99,10 +101,12 @@ internal sealed class PhoenixMotionFx
 internal sealed class PhoenixPlasmaClusterFx
 {
     private readonly List<PhoenixMotionFx> cells=new();
-    internal PhoenixPlasmaClusterFx(Projectile host,PhoenixFxStyle style)
+    internal PhoenixPlasmaClusterFx(Projectile host,PhoenixFxStyle style,int cellCount=21)
     {
         for(int row=0;row<7;row++)for(int barrel=0;barrel<3;barrel++)
         {
+            // Four corner cells removed for Lappland: round(21 * .8) = 17.
+            if(cellCount == 17 && (row == 0 || row == 6) && barrel != 1) continue;
             Vector2 offset=new((barrel-1)*12,30-row*(60f/7)-((barrel+1)%3)*5);
             cells.Add(new PhoenixMotionFx(69,host,style,
                 ()=>host.velocity.Unit(),
@@ -160,6 +164,15 @@ internal sealed class PhoenixBeamFx
         var data=ReaperSwarmData.Get(source);
         PhoenixFx.Burst(data.S("emitter_on_hit"),at,-Direction,style);
         PhoenixFx.Burst(data.S("actor_on_hit"),at,-Direction,style);
+    }
+    internal void HitAlong(float distance)
+    {
+        var data=ReaperSwarmData.Get(source);
+        foreach(string name in new[]{data.S("emitter_on_hit"),data.S("actor_on_hit")})
+            if(!string.IsNullOrEmpty(name))
+                ReaperSwarmVisuals.Spawn(name,()=>from()+Direction*Math.Clamp(distance,0,Math.Min(maxLength,Length)),
+                    ()=>-Direction,ReaperSwarmVisuals.BurstLife(name),active:()=>Alive,
+                    scale:new Vector2(style.Scale),style:style);
     }
     internal void Stop(){if(stopped)return;stopped=true;foreach(var node in roots)node.Stop();}
 }

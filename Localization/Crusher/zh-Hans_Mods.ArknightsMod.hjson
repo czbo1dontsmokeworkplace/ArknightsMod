@@ -53,10 +53,7 @@ Skills: {
 	QuartzGreatsword: {
 		1: {
 			Label: 攻击力强化·β型
-			Desc:
-				'''
-				攻击力[c/3791db:+80%]
-				'''
+			Desc: 攻击力[c/3791db:+80%]
 		}
 
 		2: {
@@ -74,10 +71,7 @@ Skills: {
 	WindChimesHeavyBlade: {
 		1: {
 			Label: 攻击力强化·γ型
-			Desc:
-				'''
-				攻击力[c/3791db:+100%]
-				'''
+			Desc: 攻击力[c/3791db:+100%]
 		}
 
 		2: {

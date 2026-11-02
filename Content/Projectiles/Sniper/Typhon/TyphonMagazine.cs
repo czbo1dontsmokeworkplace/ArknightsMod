@@ -17,8 +17,8 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Typhon;
 public sealed class TyphonMagazine : ModProjectile
 {
     public const int Capacity = 1;
-    public const float LoadedArrowDamageMultiplier = .5f;
-    public static int LoadFrames(int count) => 18;
+    public const float LoadedArrowDamageMultiplier = 1.25f;
+    public static int LoadFrames(int count) => 54;
     internal static string LoadTextKey(int count) => "Mods.ArknightsMod.ChargedArsenal." + (count % 2 == 1 ? "Tick" : "Tock");
     internal static SoundStyle LoadSound(int count) => count >= Capacity
         ? SoundID.Item23 with { Volume = .85f, MaxInstances = 6 }

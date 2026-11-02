@@ -9,7 +9,8 @@ internal sealed class BlissfulMortarFlight
     internal int Time, Rain = 150;
     internal bool Diving => Time > 120 && Rain == 0;
     internal bool Staging => Time > 120 && Rain > 1;
-    internal float Opacity => Rain <= 0 ? 1 : Math.Clamp((120 - Time) / 36f, 0, 1);
+    // Step increments Time after motion; NukeOfBliss computes its fade first.
+    internal float Opacity => Rain <= 0 ? 1 : Math.Clamp((121 - Time) / 36f, 0, 1);
     internal bool Step(ref Vector2 center, ref Vector2 velocity, Vector2 mouse, Vector2 owner, Vector2? target, float gravity = 1)
     {
         bool transfer = false;

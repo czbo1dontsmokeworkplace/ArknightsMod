@@ -18,7 +18,6 @@ public class OperatorBladeSwing : ModProjectile
     private int facing;
     private float gravity;
     private bool released;
-    private int spikes;
     public override void SetDefaults()
     {
         Projectile.width = Projectile.height = 16;
@@ -55,18 +54,16 @@ public class OperatorBladeSwing : ModProjectile
                         ModContent.ProjectileType<OperatorLordWave>(), Math.Max(1, (int)(Projectile.damage * .8f)), Projectile.knockBack, Projectile.owner, Kind);
                 }
             }
-            // Place one spike at each sampled point of the swing. Their world
-            // positions remain fixed even when the wielder moves afterwards.
-            if(Kind<3 && Projectile.owner==Main.myPlayer)
-                while(spikes<3 && Progress>=.22f+spikes*.18f)
+            if (Kind < 3 && !released && Progress >= .4f)
+            {
+                released = true;
+                if (Projectile.owner == Main.myPlayer)
                 {
-                    float sample=.22f+spikes*.18f;
-                    float angle=BladeRouteRules.Angle(sample,facing,gravity)+player.fullRotation;
-                    Vector2 at=Projectile.Center+angle.ToRotationVector2()*(BladeRouteRules.Length(Kind)+25)*Projectile.ai[2];
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(),at,Vector2.Zero,ModContent.ProjectileType<OperatorScuuxunSpike>(),
-                        Math.Max(1,(int)(Projectile.damage*.35f)),Projectile.knockBack*.3f,Projectile.owner,Kind,angle,facing*gravity);
-                    spikes++;
+                    Vector2 aim = (Main.MouseWorld - player.MountedCenter).SafeNormalize(new Vector2(facing, 0));
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), player.MountedCenter + aim * 26, aim * 18,
+                        ModContent.ProjectileType<OperatorTerraWave>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
                 }
+            }
         }
         if (!Main.dedServ && Main.rand.NextBool(2)) BladeRouteArt.Mote(Projectile.Center + Projectile.rotation.ToRotationVector2() * BladeRouteRules.Length(Kind) * Projectile.scale, Kind);
         if (Projectile.localAI[0] >= Math.Max(1, Projectile.ai[1])) Projectile.Kill();
@@ -131,7 +128,10 @@ public sealed class OperatorExecutionSlash : ModProjectile
         {
             visualStarted = true;
             Color theme = BladeRouteRules.Theme((int)Projectile.ai[0]);
-            PhoenixFx.Sakura(Projectile.Center,Projectile.velocity,theme,Color.Lerp(theme,Color.White,.65f));
+            var style = PhoenixFx.Colored(theme, Color.Lerp(theme, Color.White, .65f));
+            style.CenteredCut = style.SuppressShake = true;
+            style.Opacity = static () => .85f; style.SoundVolume = .8f;
+            PhoenixFx.Burst("emitter.player.weapon.40.impact", Projectile.Center, Projectile.velocity, style);
         }
     }
     public override bool? CanDamage() => Projectile.timeLeft >= 10;
@@ -164,10 +164,11 @@ public sealed class OperatorLordWave : ModProjectile
         Projectile.rotation = Projectile.velocity.ToRotation();
         if(!Main.dedServ && visual==null)
         {
-            visual=new PhoenixPlasmaClusterFx(Projectile,BladePhoenixStyle.For((int)Projectile.ai[0]));
+            visual=new PhoenixPlasmaClusterFx(Projectile,BladePhoenixStyle.For((int)Projectile.ai[0]), (int)Projectile.ai[0] == 5 ? 17 : 21);
             PhoenixFx.Burst("emitter.player.weapon.69.muzzle",Projectile.Center-Projectile.velocity.SafeNormalize(Vector2.UnitX)*26,
                 Projectile.velocity.SafeNormalize(Vector2.UnitX),BladePhoenixStyle.For((int)Projectile.ai[0]));
         }
+        if ((int)Projectile.ai[0] == 5) { Projectile.velocity *= 1.008f; LordLightingBolts.Flight(Projectile); }
         Projectile.scale=1;
         // One intact 21-cell plasma cluster; no travelling fork or homing children.
     }
@@ -176,6 +177,9 @@ public sealed class OperatorLordWave : ModProjectile
         Vector2 side = Projectile.rotation.ToRotationVector2() * 30;
         const float width=48; // Parallel cluster cells never spread during flight.
         float point = 0;
+        if ((int)Projectile.ai[0] == 5 && Projectile.oldPos.Length > 0 && Projectile.oldPos[0] != Vector2.Zero
+            && Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(),
+                Projectile.oldPos[0] + Projectile.Size * .5f, Projectile.Center, width, ref point)) return true;
         return targetHitbox.Contains(Projectile.Center.ToPoint()) || Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center - side, Projectile.Center + side, width, ref point);
     }
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
@@ -229,7 +233,9 @@ internal static class BladePhoenixStyle
     internal static PhoenixFxStyle For(int kind,float scale=1)
     {
         var style=PhoenixFx.Colored(BladeRouteRules.Theme(kind),Color.Lerp(BladeRouteRules.Theme(kind),Color.White,.65f),scale);
-        style.MonochromeTexture=true;return style;
+        style.MonochromeTexture=true;
+        if(kind == 5) { style.Opacity = static () => .8f; style.MonochromeHalo = true; }
+        return style;
     }
     internal static void Impact(Projectile projectile)
     {
@@ -290,4 +296,16 @@ public sealed class OperatorScuuxunSpike : ModProjectile
     }
     public override bool PreDraw(ref Color lightColor)=>false;
     public override void OnKill(int timeLeft)=>visual?.Stop();
+}
+
+public sealed class OperatorTerraWave : ModProjectile
+{
+    public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.TerraBeam;
+    public override void SetDefaults()
+    {
+        Projectile.CloneDefaults(ProjectileID.TerraBeam);
+        AIType = ProjectileID.TerraBeam;
+        Projectile.DamageType = DamageClass.Melee;
+        Projectile.usesLocalNPCImmunity = true; Projectile.localNPCHitCooldown = -1;
+    }
 }

@@ -22,7 +22,7 @@ internal static class BladeRouteRules
         "CutterBlades"=>0,"BibeakSword"=>1,"IreneSaber"=>2,"MidnightSword"=>3,
         "AreneSword"=>4,"LapplandSwords"=>5,"FrostleafAxe"=>6,"SilverAshWeapon"=>7,_=>-1
     };
-    internal static int UseTicks(int kind) => kind switch { 0 => 28, 1 => 26, 2 => 24, 3 => 34, 4 => 30, 6=>31,7=>39,_ => 28 };
+    internal static int UseTicks(int kind) => kind switch { 0 or 1 or 2 => new Item(ItemID.BeamSword).useAnimation, 3 => 34, 4 => 30, 6=>31,7=>39,_ => 28 };
     internal static float Length(int kind) => kind switch { 0 => 54, 1 => 62, 2 => 72, 3 => 54, 4 => 62,6=>68,7=>76,_ => 70 };
     internal static Color Theme(int kind) => kind switch
     {

@@ -1,26 +1,55 @@
 Items: {
 	MelanthasSword: {
 		DisplayName: Standard Sword [Melantha]
-		Tooltip: Hold left-click to chain slashes with the sword
+		Tooltip:
+			'''
+			Left-click: immediately throw a blade that embeds in enemies or terrain; the throw deals 300% damage and always crits
+			Right-click: recall all blades of this weapon, dealing one extra hit on extraction
+			Returning blades ignore terrain and pierce infinitely; each hits each enemy only once during recall
+			Up to 5 blades per enemy and 24 per weapon; excess old blades return automatically
+			The overhead bar counts blades in the last enemy hit; at 5, it prompts you to recall
+			Successful hits build damage momentum without increasing throwing frequency
+			'''
 	}
 
 	MataimaruGlaive: {
 		DisplayName: Naginata [Matoimaru]
-		Tooltip: Hold left-click to chain slashes with the naginata
+		Tooltip:
+			'''
+			Left-click: immediately throw a blade that embeds in enemies or terrain; the throw deals 300% damage and always crits
+			Right-click: recall all blades of this weapon, dealing one extra hit on extraction
+			Returning blades ignore terrain and pierce infinitely; each hits each enemy only once during recall
+			Up to 5 blades per enemy and 24 per weapon; excess old blades return automatically
+			The overhead bar counts blades in the last enemy hit; at 5, it prompts you to recall
+			Successful hits build damage momentum without increasing throwing frequency
+			'''
 	}
 
 	FrankaRapier: {
 		DisplayName: Thermite Rapier [Franka]
 		Tooltip:
 			'''
-			Hold left-click to chain slashes with the thermite blade
-			Slashes have a 25% chance to ignore defense and set enemies ablaze
+			Left-click: immediately throw a blade that embeds in enemies or terrain; the throw deals 300% damage and always crits
+			Right-click: recall all blades of this weapon, dealing one extra hit on extraction
+			Returning blades ignore terrain and pierce infinitely; each hits each enemy only once during recall
+			Up to 5 blades per enemy and 24 per weapon; excess old blades return automatically
+			The overhead bar counts blades in the last enemy hit; at 5, it prompts you to recall
+			Successful hits build damage momentum without increasing throwing frequency
+			Hits have a 25% chance to ignore defense and set enemies ablaze
 			'''
 	}
 
 	NearlRadiantSword: {
 		DisplayName: Blazing Sun Swordlance [Radiant Nearl]
-		Tooltip: Hold left-click to chain slashes with the swordlance
+		Tooltip:
+			'''
+			Left-click: immediately throw a blade that embeds in enemies or terrain; the throw deals 300% damage and always crits
+			Right-click: recall all blades of this weapon, dealing one extra hit on extraction
+			Returning blades ignore terrain and pierce infinitely; each hits each enemy only once during recall
+			Up to 5 blades per enemy and 24 per weapon; excess old blades return automatically
+			The overhead bar counts blades in the last enemy hit; at 5, it prompts you to recall
+			Successful hits build damage momentum without increasing throwing frequency
+			'''
 	}
 
 	AmbrielRifle: {
@@ -109,19 +138,19 @@ Skills: {
 	FrankaRapier: {
 		1: {
 			Label: Swift Strike γ
-			Desc: Manual: ATK +45%; base rotation time becomes 21 ticks.
+			Desc: Manual: ATK +45%; base throwing interval becomes 21 ticks.
 		}
 
 		2: {
 			Label: Vorpal Edge
-			Desc: Manual: ATK +100%, your defense becomes 0; slash defense-ignore chance rises from 25% to 75%.
+			Desc: Manual: ATK +100%, your defense becomes 0; blade-hit defense-ignore chance rises from 25% to 75%.
 		}
 	}
 
 	NearlRadiantSword: {
 		1: {
 			Label: Flaming Edge
-			Desc: Manual: ATK +70%, slash reach +15%, base rotation time becomes 21 ticks.
+			Desc: Manual: ATK +70%, blade length +15%, base throwing interval becomes 21 ticks.
 		}
 
 		2: {
@@ -133,7 +162,7 @@ Skills: {
 			Label: Blazing Sun's Obeisance
 			Desc:
 				'''
-				Manual: ATK +140%, DEF +20, slash reach +15%; slashes ignore defense.
+				Manual: ATK +140%, DEF +20, blade length +15%; blade hits ignore defense.
 				Place a Blazing Sun within 480 pixels toward the cursor; it strikes and briefly stuns every second in a 120-pixel radius.
 				'''
 		}
@@ -229,6 +258,7 @@ Skills: {
 }
 
 ChargedArsenal: {
+	RecallReady: 5 blades embedded: right-click to recall
 	Tick: Tick
 	Tock: Tock
 	SkillKey: Press [{0}] to activate the selected manual skill (rebind in Settings → Controls)
@@ -241,4 +271,9 @@ Crossbows: {
 	Provence: Slow heavy bolts pierce nine enemies with 25 armor penetration.
 	GreyThroat: Hold left-click for rapid three-shot bursts.
 	BluePoison: Hold left-click for rapid four-shot bursts. Venom bolts hit up to two enemies and inflict Venom for 4 seconds.
+}
+
+Projectiles: {
+	DreadnoughtThrownBlade.DisplayName: Dreadnought Blade
+	DreadnoughtThrowImpact.DisplayName: Blade Extraction Flash
 }

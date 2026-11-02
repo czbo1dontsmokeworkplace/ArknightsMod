@@ -14,19 +14,17 @@ public sealed class VanguardSpearSpark : ModProjectile
     public static void Release(Projectile source, Vector2 point, VanguardSpearKind kind, bool heavy)
     {
         if (source.owner != Main.myPlayer) return;
-        int type = ModContent.ProjectileType<VanguardSpearSpark>();
-        Player owner = Main.player[source.owner];
-        int count = Math.Min(heavy ? 6 + (int)kind : Main.rand.Next(1, 4), 36 - owner.ownedProjectileCounts[type]);
-        Vector2 aim = source.velocity.SafeNormalize(Vector2.UnitX * owner.direction);
-        for (int i = 0; i < count; i++)
-        {
-            Vector2 velocity = VanguardSpearRules.SparkLaunchVelocity(aim, owner.gravDir, heavy,
-                Main.rand.NextFloat(), Main.rand.NextFloat(), Main.rand.NextFloat());
-            Projectile p = Projectile.NewProjectileDirect(source.GetSource_FromThis(), point, velocity,
-                type, Math.Max(1, (int)(source.damage * (heavy ? .1f : .18f))), source.knockBack * .15f,
-                source.owner, (int)kind);
-            p.CritChance = source.CritChance;
-        }
+        // Replace the entire spark spray with one native grenade already in
+        // its explosion phase. Retain the spray's combined base damage budget.
+        int count = heavy ? 6 + (int)kind : Main.rand.Next(1, 4);
+        int damage = Math.Max(1, (int)(source.damage * (heavy ? .1f : .18f))) * count;
+        Projectile grenade = Projectile.NewProjectileDirect(source.GetSource_FromThis(), point, Vector2.Zero,
+            ProjectileID.Grenade, damage, source.knockBack * .15f, source.owner);
+        grenade.DamageType = DamageClass.Melee; grenade.CritChance = source.CritChance;
+        grenade.usesLocalNPCImmunity = true; grenade.localNPCHitCooldown = -1;
+        grenade.timeLeft = 1;
+        grenade.PrepareBombToBlow();
+        grenade.netUpdate = true;
     }
     public override void SetDefaults()
     {

@@ -185,7 +185,7 @@ public sealed class VanguardLanceCharge : ModProjectile
         if (pulseCount++ < 6) VanguardChargePulse.Spawn(Projectile, point, true);
         if (impactSpent) return;
         impactSpent = true;
-        VanguardSpearSpark.Release(Projectile, point, Kind, true);
+        VanguardSpearSpark.Release(Projectile, target.Center, Kind, true);
         float radius = Kind == VanguardSpearKind.Bagpipe ? 76 : 40;
         int blast = Kind == VanguardSpearKind.Bagpipe ? Projectile.damage
             : Kind == VanguardSpearKind.Vigna ? Projectile.damage / 2 : 0;

@@ -275,7 +275,7 @@ internal sealed class ReaperSwarmVisualNode
         if(name.Length==0)return;
         var style=new SoundStyle("ArknightsMod/Content/Projectiles/Guard/Reaper/Phoenix/Assets/"+name[..^4])
         {
-            Volume=Math.Clamp(effect.F("gain",1)*MathF.Pow(10,Main.rand.NextFloat(-1,1)*effect.F("gain_variation_decibels")/20),0,1),
+            Volume=Math.Clamp(effect.F("gain",1)*MathF.Pow(10,Main.rand.NextFloat(-1,1)*effect.F("gain_variation_decibels")/20)*(Style?.SoundVolume??1),0,1),
             PitchVariance=Math.Clamp(MathF.Log2(1+effect.F("pitch_variation_percentage")/100),0,1),
             MaxInstances=Math.Max(1,(int)effect.F("max_simultaneous_playback",4)),
             SoundLimitBehavior=effect.B("start_new_playback_if_maximum_reached")?SoundLimitBehavior.ReplaceOldest:SoundLimitBehavior.IgnoreNew,
@@ -378,9 +378,11 @@ internal sealed class ReaperSwarmVisualNode
             // pillars even after rotating the sprite. Their two soft glow
             // layers now live in the beam's frame too, including afterglow.
             Vector4 halo=color;halo.W*=.18f;
-            renderer.Quad(app.S("asset"),position,size+new Vector2(14,18),drawDirection,halo,0,true,Z);
+            string haloAsset=app.S("asset");
+            if(Style?.MonochromeHalo==true && haloAsset.Length>0)haloAsset+="#monochrome";
+            renderer.Quad(haloAsset,position,size+new Vector2(14,18),drawDirection,halo,0,true,Z);
             halo=color;halo.W*=.8f;
-            renderer.Quad(app.S("asset"),position,size+new Vector2(6,10),drawDirection,halo,0,true,Z);
+            renderer.Quad(haloAsset,position,size+new Vector2(6,10),drawDirection,halo,0,true,Z);
             bloom=0;
         }
         string asset=app.S("asset");if(Style?.MonochromeTexture==true && asset.Length>0)asset+="#monochrome";

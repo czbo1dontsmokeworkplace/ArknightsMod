@@ -78,7 +78,7 @@ internal static class MaterialistRules
         DroneShot.ScoutPulse => 30, DroneShot.ArtsOrb => 33, DroneShot.PincerBeam => 26, DroneShot.SaucerRound => 30, DroneShot.RaptorRocket => 38, _ => 0
     };
     internal static int WingLife(WingRole role) => role switch {
-        WingRole.Drone => 1400, WingRole.MkII => 1800, WingRole.ArtsA1 => 3300,
-        WingRole.ArtsA2 => 4200, WingRole.Raptor or WingRole.Frost => 9600, _ => 1400
+        WingRole.Drone or WingRole.Bomber => 1120, WingRole.MkII => 1440, WingRole.ArtsA1 => 3300,
+        WingRole.ArtsA2 => 4200, WingRole.Raptor or WingRole.Frost => 9600, _ => 1120
     };
 }

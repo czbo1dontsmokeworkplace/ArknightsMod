@@ -24,7 +24,9 @@ PlasmaProjector: {
 	Tooltip:
 		'''
 		Hold left-click to continuously fire twin blue plasma beams
-		Both beams share one target; stops at the first enemy or solid terrain
+		Each beam is 60 tiles long, pierces all enemies and terrain, and deals damage every 8 ticks
+		Each beam independently multiplies subsequent damage by a random 80%-90% after every 2-4 enemies pierced
+		Attenuation resets each damage pulse; continued firing never weakens damage to the first target
 		Continuously consumes mana; release left-click to stop
 		'''
 }

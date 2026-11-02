@@ -160,7 +160,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
 
             // Normal attacks and S1 share the same star-crystal body, launch,
             // piercing and effects; S1's damage/speed bonuses are applied above.
-            int index = Projectile.NewProjectile(source, player.MountedCenter + aim * 48, aim * 26,
+            int index = Projectile.NewProjectile(source, player.MountedCenter + aim * 48, aim * TyphonAstralShot.LaunchSpeed,
                 ModContent.ProjectileType<TyphonAstralShot>(), damage, knockback, player.whoAmI, 0);
             if (Main.projectile.IndexInRange(index)) Main.projectile[index].CritChance = player.GetWeaponCrit(Item);
             return false;
@@ -173,7 +173,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
         }
         internal static void SpawnS2Crystal(Player player, IEntitySource source, Vector2 aim, int damage, float knockback, int crit, int target)
         {
-            int index = Projectile.NewProjectile(source, player.MountedCenter + aim * 48, aim * 26,
+            int index = Projectile.NewProjectile(source, player.MountedCenter + aim * 48, aim * TyphonAstralShot.LaunchSpeed,
                 ModContent.ProjectileType<TyphonAstralShot>(), damage, knockback, player.whoAmI, 2, target, 0);
             if (Main.projectile.IndexInRange(index)) Main.projectile[index].CritChance = crit;
         }

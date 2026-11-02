@@ -12,7 +12,7 @@ internal static class BladeRouteArt
 {
     // Optional reader lets the offline GPU review call these exact draw routines.
     internal static Func<string, Texture2D> TextureReader;
-    private static Texture2D Read(string path) => TextureReader?.Invoke(path) ?? ModContent.Request<Texture2D>(path,ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+    internal static Texture2D Read(string path) => TextureReader?.Invoke(path) ?? ModContent.Request<Texture2D>(path,ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
     private static Texture2D Vanilla(int type,string key)
     {
         if(TextureReader!=null)return TextureReader(key);

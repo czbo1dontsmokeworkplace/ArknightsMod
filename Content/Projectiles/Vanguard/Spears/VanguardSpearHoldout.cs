@@ -102,7 +102,7 @@ public sealed class VanguardSpearHoldout : ModProjectile
         Vector2 impact = target.Hitbox.ClosestPointInRect(tip);
         VanguardSpearVfx.Impact(impact, (tip - grip).SafeNormalize(Vector2.UnitX), Kind, false);
         if (Projectile.owner != Main.myPlayer) return;
-        VanguardSpearSpark.Release(Projectile, impact, Kind, false);
+        VanguardSpearSpark.Release(Projectile, target.Center, Kind, false);
         if (Kind == VanguardSpearKind.Bagpipe && skill is 2 or 3 && echoTargets++ < 6)
         {
             int echoes = skill == 3 ? 2 : 1;

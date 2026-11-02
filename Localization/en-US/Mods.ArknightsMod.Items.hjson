@@ -84,7 +84,7 @@ BagpipeSpear: {
 	DisplayName: Siege Lance [Bagpipe]
 	Tooltip:
 		'''
-		Thrusts forward, scattering damaging sparks on hit
+		Thrusts forward, detonating a vanilla grenade on the enemy on hit
 		The first hit of a charge explodes, dealing additional area damage
 		'''
 }
@@ -1466,8 +1466,9 @@ TyphonBow: {
 	DisplayName: Bow [Typhon]
 	Tooltip:
 		'''
-		Converts arrows into infinitely piercing astral shots
-		Hold right-click to load one piercing star-crystal arrow; release to fire. Does not home
+		Converts arrows into astral shots that hit up to two times
+		Hold right-click for 54 frames to load one star-crystal arrow; release to fire for 125% damage
+		Loaded arrows pierce infinitely without homing and fly as fast as normal shots; holds one arrow
 		'''
 }
 
@@ -1529,7 +1530,11 @@ Shirayuki_Shuriken: {
 
 ThornsWeapon: {
 	DisplayName: Sword [Thorns]
-	Tooltip: ""
+	Tooltip:
+		'''
+		""
+		Retains its original attacks and skills with 30% increased attack speed
+		'''
 }
 
 RAmeat: {
@@ -1764,7 +1769,12 @@ SurtrLaevatain: {
 
 SilverAshWeapon: {
 	DisplayName: Cane [SilverAsh]
-	Tooltip: ""
+	Tooltip:
+		'''
+		""
+		Silver Thorns-style sword arcs call a macaw from above the player each time
+		The bird dives at the enemy nearest the cursor, then slows and fades after impact
+		'''
 }
 
 DamagedDevice: {
@@ -3281,7 +3291,7 @@ HongdouLance: {
 	DisplayName: Lance [Vigna]
 	Tooltip:
 		'''
-		Thrusts forward, scattering damaging sparks on hit
+		Thrusts forward, detonating a vanilla grenade on the enemy on hit
 		Each attack cycle has a 10% chance to deal double damage, increased to 30% during skills
 		The first hit of a charge releases a small shockwave
 		'''
@@ -3867,7 +3877,7 @@ EbenholzStaff: {
 	Tooltip:
 		'''
 		Fires homing sonata fragments that pursue enemies
-		Stores one extra shot per actual attack interval while held without firing, up to 3
+		Stores one extra shot each second while held without firing, up to 3; the overhead bar shows the current loading cycle
 		Stored projectiles fly out together with the next attack
 		'''
 }
@@ -3899,7 +3909,7 @@ IndigoStaff: {
 	Tooltip:
 		'''
 		Fires homing globes of water that pursue enemies
-		Stores one extra shot per actual attack interval while held without firing, up to 3
+		Stores one extra shot each second while held without firing, up to 3; the overhead bar shows the current loading cycle
 		Stored projectiles fly out together with the next attack
 		'''
 }
@@ -3909,7 +3919,7 @@ HarmonieStaff: {
 	Tooltip:
 		'''
 		Fires homing musical notes that pursue enemies
-		Stores one extra shot per actual attack interval while held without firing, up to 3
+		Stores one extra shot each second while held without firing, up to 3; the overhead bar shows the current loading cycle
 		Stored projectiles fly out together with the next attack
 		'''
 }

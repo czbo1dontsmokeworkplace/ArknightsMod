@@ -28,16 +28,10 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.SilverAsh
 {
     public class SilverAshWeapon : UpgradeWeaponBase
 	{
-		public override void AddRecipes() {
-			Recipe recipe = CreateRecipe()
-				.AddIngredient<global::ArknightsMod.Content.Items.Material.D32Steel>(1)
-				.AddIngredient<global::ArknightsMod.Content.Items.Material.WhiteHorseKohl>(2)
-				.AddIngredient(ItemID.TrueExcalibur)
-				.AddIngredient(ItemID.Feather, 3)
-				.AddIngredient(ItemID.SnowBlock, 20);
-			recipe.AddTile(ModContent.TileType<FactoryTile>());
-			recipe.Register();
-		}
+        public override void AddRecipes() => CreateRecipe()
+            .AddIngredient<global::ArknightsMod.Content.Items.Weapons.Guard.BladeRoutes.LapplandSwords>()
+            .AddIngredient(ItemID.ChlorophyteBar, 12).AddIngredient(ItemID.Ectoplasm, 8).AddIngredient(ItemID.Feather, 10)
+            .AddCondition(Condition.DownedPlantera).AddTile(TileID.MythrilAnvil).Register();
 		public override bool MeleePrefix() => true;
         public override void SetDefaults()
         {
@@ -202,7 +196,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.SilverAsh
         public override bool Shoot(Player player,EntitySource_ItemUse_WithAmmo source,Vector2 position,Vector2 velocity,int type,int damage,float knockback)
         {
             SoundEngine.PlaySound(yinhuiA,player.Center);
-            BladeRouteCombat.Swing(player,source,7,damage,knockback);return false;
+            LordReworkCombat.Swing(player,source,7,damage,knockback);return false;
         }
         // Historical shooting graphs and their projectile types remain archived.
 		private bool LegacyShoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)

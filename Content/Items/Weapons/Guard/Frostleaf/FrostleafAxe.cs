@@ -14,6 +14,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Frostleaf
 {
 	public class FrostleafAxe : ExpansionWeaponBase
 	{
+        public override bool IsLoadingEnabled(Mod mod) => false;
 		protected override int[] EliteDamage => [40, 48, 58];
 
 		private static SoundStyle SkillActiveSfx;

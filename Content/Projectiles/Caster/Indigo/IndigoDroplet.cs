@@ -80,13 +80,12 @@ public sealed class IndigoDroplet : ModProjectile
     {
         if (Projectile.ai[2] > 0f) return;
         bool photon = MysticPhotonShot.Eligible(Projectile);
-        if (!photon) IndigoVisuals.Scatter(Projectile.Center, Wisp ? 5 : 9, (Wisp ? 2f : 3.2f) * MysticChargeRules.VisualScale(Projectile));
+        IndigoVisuals.Scatter(Projectile.Center, Wisp ? 5 : 9, (Wisp ? 2f : 3.2f) * MysticChargeRules.VisualScale(Projectile));
         if (Projectile.owner != Main.myPlayer || Wisp) return;
         int index;
         if (photon) MysticPhotonShot.Detonate(Projectile, excludedTarget);
-        else
         {
-            // Legacy small impact is retained on the other two shots.
+            // Restore the original impact on every shot; the optional carrier now plays sound only.
             index = Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
                 ModContent.ProjectileType<IndigoBurst>(), Projectile.damage, 2f, Projectile.owner, 0, excludedTarget + 1, MysticChargeRules.VisualScale(Projectile));
             if (Main.projectile.IndexInRange(index)) Main.projectile[index].CritChance = Projectile.CritChance;

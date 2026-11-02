@@ -1,0 +1,257 @@
+Items: {
+	HarbingerGuillotine: {
+		DisplayName: Harbinger Guillotine
+		Tooltip: Swings and fires a wall-piercing, spinning sickle that gradually slows
+	}
+
+	CatastropheSalvo: {
+		DisplayName: Shrapnel Grenade
+		Tooltip:
+			'''
+			Consumes one rocket to fire two parallel shrapnel grenades
+			Accelerates in a straight line without homing; impacts explode in a 280-pixel radius
+			'''
+	}
+
+	ScarletMeson: {
+		DisplayName: Scarlet Meson
+		Tooltip:
+			'''
+			Hold left-click for one red meson beam; pierces enemies and stops at terrain
+			Fires for 30 frames, rests for 24, and deals damage every 8 frames
+			'''
+	}
+
+	UrsusArtilleryLink: {
+		DisplayName: Ursus Artillery Link
+		Tooltip:
+			'''
+			Summons an artillery drone using one minion slot
+			Approaches distant enemies, backs away from nearby enemies, and fires three-shot artillery bursts
+			'''
+	}
+
+	WinterScar: {
+		DisplayName: Winter Scar
+		Tooltip:
+			'''
+			Fast swings launch 1 to 2 parallel frost blades
+			Blades spin and accelerate, then slow and fade; hit up to 2 enemies
+			'''
+	}
+
+	YetiSnowGrenade: {
+		DisplayName: Yeti Snow Grenade
+		Tooltip:
+			'''
+			Throws an icy grenade farther than a normal grenade
+			Bounces off terrain; explodes on enemy contact or fuse expiry with a 220 by 220 area
+			'''
+	}
+
+	BlackIceCoffin: {
+		DisplayName: Black Ice Coffin
+		Tooltip:
+			'''
+			Forms a black-ice coffin five tiles wide above the cursor
+			Scales into shape for 12 frames, then rapidly slams into the cursor location, enemies or terrain
+			Ground impacts kindle black ice flames on nearby surfaces for 1 second
+			'''
+	}
+
+	YetiChime: {
+		DisplayName: Yeti Chime
+		Tooltip:
+			'''
+			Summons one frost halo, replacing existing minions and occupying all minion slots
+			Damage scales directly with the number of occupied slots
+			Fires several homing ice volleys, then aims a sustained laser at its target
+			'''
+	}
+
+	BasaltBreaker: {
+		DisplayName: Basalt Breaker
+		Tooltip: Hits cause a volcanic eruption and scatter 2 to 4 damaging embers
+	}
+
+	CalderaBellows: {
+		DisplayName: Caldera Bellows
+		Tooltip:
+			'''
+			Consumes gel to continuously spray spreading flames
+			Flames pierce enemies and deal repeated damage
+			'''
+	}
+
+	CinderTestament: {
+		DisplayName: Cinder Testament
+		Tooltip:
+			'''
+			Hold left-click: charge for 1 second, fire a lingering beam for 0.8 seconds, rest for 0.3 seconds
+			The beam retains its release position and direction
+			Infinite piercing; can damage the same enemy every 10 frames while active
+			'''
+	}
+
+	BasaltBrood: {
+		DisplayName: Basalt Brood
+		Tooltip:
+			'''
+			Summons a lava broodling using one minion slot
+			Floats near the player, rises and lobs erupting magma upwards
+			'''
+	}
+
+	HarbingerRewardBag: {
+		DisplayName: Harbinger Treasure Bag
+		Tooltip:
+			'''
+			Right-click to open
+			Contains one of this boss's four weapons, its expert accessory and coins; may contain a mask
+			'''
+	}
+
+	HarbingerEmblem: {
+		DisplayName: Artillery Calibration Core
+		Tooltip: Ranged and magic damage +8%
+	}
+
+	HarbingerMask: {
+		DisplayName: Harbinger Mask
+		Tooltip: Vanity mask
+	}
+
+	HarbingerTrophy: {
+		DisplayName: Harbinger Trophy
+		Tooltip: Can be placed
+	}
+
+	HarbingerRelic: {
+		DisplayName: Harbinger Relic
+		Tooltip: Can be placed
+	}
+
+	FrostNovaRewardBag: {
+		DisplayName: FrostNova Treasure Bag
+		Tooltip:
+			'''
+			Right-click to open
+			Contains one of this boss's four weapons, its expert accessory and coins; may contain a mask
+			'''
+	}
+
+	FrostNovaEmblem: {
+		DisplayName: Winter Scar Charm
+		Tooltip: Maximum mana +20; immunity to Chilled and Frostburn
+	}
+
+	FrostNovaMask: {
+		DisplayName: FrostNova Mask
+		Tooltip: Vanity mask
+	}
+
+	FrostNovaTrophy: {
+		DisplayName: FrostNova Trophy
+		Tooltip: Can be placed
+	}
+
+	FrostNovaRelic: {
+		DisplayName: FrostNova Relic
+		Tooltip: Can be placed
+	}
+
+	PompeiiRewardBag: {
+		DisplayName: Pompeii Treasure Bag
+		Tooltip:
+			'''
+			Right-click to open
+			Contains one of this boss's four weapons, its expert accessory and coins; may contain a mask
+			'''
+	}
+
+	PompeiiEmblem: {
+		DisplayName: Volcanic Carapace
+		Tooltip: Immunity to On Fire; attack speed +6%
+	}
+
+	PompeiiMask: {
+		DisplayName: Pompeii Mask
+		Tooltip: Vanity mask
+	}
+
+	PompeiiTrophy: {
+		DisplayName: Pompeii Trophy
+		Tooltip: Can be placed
+	}
+
+	PompeiiRelic: {
+		DisplayName: Pompeii Relic
+		Tooltip: Can be placed
+	}
+
+	FirstToTalkRewardBag: {
+		DisplayName: The First to Talk Treasure Bag
+		Tooltip:
+			'''
+			Right-click to open
+			Contains its expert accessory and coins; may contain a mask
+			'''
+	}
+
+	FirstToTalkEmblem: {
+		DisplayName: Abyssal Air Sac
+		Tooltip: Defense +4; allows underwater breathing
+	}
+
+	FirstToTalkMask: {
+		DisplayName: The First to Talk Mask
+		Tooltip: Vanity mask
+	}
+
+	FirstToTalkTrophy: {
+		DisplayName: The First to Talk Trophy
+		Tooltip: Can be placed
+	}
+
+	FirstToTalkRelic: {
+		DisplayName: The First to Talk Relic
+		Tooltip: Can be placed
+	}
+}
+
+Projectiles: {
+	BossArsenalShot.DisplayName: Boss Shot
+	BossArsenalBurst.DisplayName: Boss Burst
+	BossArsenalHoldout.DisplayName: Boss Holdout
+	BossArsenalBeam.DisplayName: Boss Beam
+	BossArsenalMinion.DisplayName: Boss Minion
+	HarbingerSickle.DisplayName: Harbinger Sickle
+	WinterScarBeam.DisplayName: Winter Scar Blade
+	BasaltSpark.DisplayName: Basalt Ember
+	BlackIceGroundFire.DisplayName: Black Ice Flames
+	YetiCrownBeam.DisplayName: Yeti Beam
+}
+
+Buffs: {
+	BossArsenalMinionBuff: {
+		DisplayName: Battle Companions
+		Description: Your summoned companions fight at your side
+	}
+
+	UrsusArtilleryBuff: {
+		DisplayName: Artillery Drone
+		Description: Fights for you
+	}
+
+	YetiChimeBuff: {
+		DisplayName: Yeti Halo
+		Description: Fights for you
+	}
+
+	BasaltBroodBuff: {
+		DisplayName: Lava Broodling
+		Description: Fights for you
+	}
+}
+
+Tiles.BossRewardMementoTile.MapEntry: Boss Memento

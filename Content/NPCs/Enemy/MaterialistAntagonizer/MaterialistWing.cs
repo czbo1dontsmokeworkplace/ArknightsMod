@@ -79,6 +79,11 @@ public sealed partial class MaterialistWing : GlobalNPC
             if (retreatTime >= 45) MaterialistAntagonizer.Remove(npc);
             return false;
         }
+        if (npc.ModNPC is FrostDrone)
+        {
+            UpdateFrostProtection(npc, boss);
+            UpdateFrostShieldVisual(boss);
+        }
         npc.dontTakeDamage = Age < MaterialistRules.EscortGrace || !boss.EscortsReleased || boss.Order == FlightOrder.Deploy;
         if (!boss.NPC.HasValidTarget) return false;
         Player target = Main.player[boss.NPC.target];
@@ -87,6 +92,12 @@ public sealed partial class MaterialistWing : GlobalNPC
         {
             if (boss.Paused || !boss.EscortsReleased || boss.Order == FlightOrder.Deploy || Age < MaterialistRules.EscortGrace)
             { npc.velocity *= .9f; return false; }
+            if (npc.ModNPC is FrostDrone frost)
+            {
+                RunFrost(npc, frost, boss, target);
+                if (MaterialistAntagonizer.Authority && Age % 45 == 0) npc.netUpdate = true;
+                return false;
+            }
             if (MaterialistAntagonizer.Authority && Age % 45 == 0) npc.netUpdate = true;
             return true; // Independent targeting, cold emission and the single-payload state machine.
         }
@@ -101,10 +112,18 @@ public sealed partial class MaterialistWing : GlobalNPC
     }
     public override void UpdateLifeRegen(NPC npc, ref int damage)
     {
-        if (!Bound || !npc.dontTakeDamage) return;
-        npc.lifeRegen = Math.Max(0, npc.lifeRegen);
-        npc.lifeRegenCount = Math.Max(0, npc.lifeRegenCount);
-        damage = 0;
+        if (!Bound) return;
+        if (npc.dontTakeDamage)
+        {
+            npc.lifeRegen = Math.Max(0, npc.lifeRegen);
+            npc.lifeRegenCount = Math.Max(0, npc.lifeRegenCount);
+            damage = 0;
+        }
+        else if (npc.ModNPC is FrostDrone && !FrostExposed && npc.lifeRegen < 0)
+        {
+            npc.lifeRegen = (int)(npc.lifeRegen * FrostShieldMultiplier);
+            damage = Math.Max(1, (int)Math.Ceiling(damage * 3d / 5d));
+        }
     }
     public override bool CanHitPlayer(NPC npc, Player target, ref int cooldownSlot)
     {
@@ -192,6 +211,7 @@ public sealed partial class MaterialistWing : GlobalNPC
         w.Write(scoutSeenRevision); w.WriteVector2(scoutAim);
         w.Write(flightRoute); w.Write(blendAge); w.WriteVector2(blendStart); w.WriteVector2(lastFlightGoal); w.WriteVector2(goalVelocity);
         w.Write(goalReady); w.Write(maneuverLocked); w.WriteVector2(maneuverCenter); w.Write(maneuverExit);
+        if (Role(npc) == WingRole.Frost) WriteFrostAI(w);
     }
     public override void ReceiveExtraAI(NPC npc, BitReader bitReader, BinaryReader r)
     {
@@ -203,6 +223,7 @@ public sealed partial class MaterialistWing : GlobalNPC
         scoutSeenRevision = r.ReadInt32(); scoutAim = r.ReadVector2();
         flightRoute = r.ReadInt32(); blendAge = r.ReadInt32(); blendStart = r.ReadVector2(); lastFlightGoal = r.ReadVector2(); goalVelocity = r.ReadVector2();
         goalReady = r.ReadBoolean(); maneuverLocked = r.ReadBoolean(); maneuverCenter = r.ReadVector2(); maneuverExit = r.ReadSingle();
+        if (Role(npc) == WingRole.Frost) ReadFrostAI(npc, r);
         npc.lifeMax = ScaledLife;
     }
 }

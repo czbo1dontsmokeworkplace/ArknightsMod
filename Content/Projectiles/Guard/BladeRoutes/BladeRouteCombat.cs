@@ -8,8 +8,7 @@ using ArknightsMod.Players;
 
 namespace ArknightsMod.Content.Projectiles.Guard.BladeRoutes;
 
-// A player clock shared by all five Lords: attack speed and weapon swapping
-// cannot create an extra parent wave. The wave's six children belong to it.
+// Lappland's plasma release clock survives weapon swapping and attack-speed changes.
 public sealed class LordShotClock : ModPlayer
 {
     private ulong nextShot;
@@ -24,7 +23,7 @@ internal static class BladeRouteCombat
 {
     internal static bool Swinging(Player player)
     {
-        foreach(var p in Main.ActiveProjectiles)if(p.owner==player.whoAmI && p.ModProjectile is OperatorBladeSwing)return true;
+        foreach(var p in Main.ActiveProjectiles)if(p.owner==player.whoAmI && p.ModProjectile is OperatorBladeSwing or LordThornsSwing)return true;
         return false;
     }
     internal static void Swing(Player player,IEntitySource source,int kind,int damage,float knockback)

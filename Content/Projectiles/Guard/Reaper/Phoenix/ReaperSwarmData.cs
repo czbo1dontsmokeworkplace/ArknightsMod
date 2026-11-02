@@ -11,7 +11,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Reaper.Phoenix;
 // assembly, Phoenix installation, gameplay scheduler or external script is used.
 internal static class ReaperSwarmData
 {
-    private static JsonDocument document, assignments, blades, gammaPlasma, proteus;
+    private static JsonDocument document, assignments, blades, gammaPlasma, proteus, bossRewards, nox;
     private static readonly Dictionary<string,JsonElement> resources=new(StringComparer.Ordinal);
     internal static void Ensure()
     {
@@ -31,12 +31,18 @@ internal static class ReaperSwarmData
         proteus=JsonDocument.Parse(ModContent.GetInstance<ArknightsMod>().GetFileBytes(
             "Content/Projectiles/Guard/Reaper/Phoenix/Assets/ProteusAssignments.json"));
         foreach(var item in proteus.RootElement.GetProperty("resources").EnumerateObject())resources[item.Name]=item.Value;
+        bossRewards=JsonDocument.Parse(ModContent.GetInstance<ArknightsMod>().GetFileBytes(
+            "Content/Projectiles/Guard/Reaper/Phoenix/Assets/BossRewardAssignments.json"));
+        foreach(var item in bossRewards.RootElement.GetProperty("resources").EnumerateObject())resources.TryAdd(item.Name,item.Value);
+        nox=JsonDocument.Parse(ModContent.GetInstance<ArknightsMod>().GetFileBytes(
+            "Content/Projectiles/Guard/Reaper/Phoenix/Assets/NoxAssignments.json"));
+        foreach(var item in nox.RootElement.GetProperty("resources").EnumerateObject())resources.TryAdd(item.Name,item.Value);
     }
     internal static JsonElement Get(string name)
     {
         Ensure();return name!=null && resources.TryGetValue(name,out var value)?value:default;
     }
-    internal static void Unload(){document?.Dispose();assignments?.Dispose();blades?.Dispose();gammaPlasma?.Dispose();proteus?.Dispose();document=assignments=blades=gammaPlasma=proteus=null;resources.Clear();}
+    internal static void Unload(){document?.Dispose();assignments?.Dispose();blades?.Dispose();gammaPlasma?.Dispose();proteus?.Dispose();bossRewards?.Dispose();nox?.Dispose();document=assignments=blades=gammaPlasma=proteus=bossRewards=nox=null;resources.Clear();}
 }
 
 internal static class ReaperSwarmJson

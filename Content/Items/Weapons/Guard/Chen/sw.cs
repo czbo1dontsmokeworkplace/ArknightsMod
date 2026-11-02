@@ -37,7 +37,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
             Item.knockBack = 9f;
             Item.value = Item.buyPrice(0, 0, 80, 0);
             Item.useTurn = false;
-            Item.autoReuse = false;
+            Item.autoReuse = true;
             Item.DamageType = DamageClass.Melee;
             Item.shoot = ModContent.ProjectileType<sw_Proj_2>();
             Item.useStyle = ItemUseStyleID.HiddenAnimation;
@@ -61,7 +61,24 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 
 		}
 		private ChenSword_Style testv = ChenSword_Style.Normal;
-		public override float UseSpeedMultiplier(Player player)
+		private bool skill2KeyHeld;
+        public override void HoldItem(Player player)
+        {
+            base.HoldItem(player);
+            bool pressed = ArknightsKeybinds.SkillActivatePressed(player);
+            var state = player.GetModPlayer<WeaponPlayer>();
+            if (player.whoAmI == Main.myPlayer && pressed && !skill2KeyHeld && state.Skill == 1
+                && state.StockCount > 0 && !state.SkillActive && !state.SummonMode && !player.dead && !player.CCed)
+            {
+                state.DelStockCount(); state.SkillActive = true; state.SkillTimer = 0;
+                Vector2 axis = (Main.MouseWorld - player.MountedCenter).SafeNormalize(Vector2.UnitX * player.direction);
+                Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.MountedCenter, axis,
+                    ModContent.ProjectileType<ChenSkillTwoOverlay>(), player.GetWeaponDamage(Item) * 5,
+                    player.GetWeaponKnockback(Item), player.whoAmI);
+            }
+            skill2KeyHeld = pressed;
+        }
+        public override float UseSpeedMultiplier(Player player)
         {
             var skill = player.GetModPlayer<WeaponPlayer>();
             return skill.SkillActive && skill.Skill != 0 ? 1 : 2;
@@ -72,18 +89,10 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 				if (active.owner == player.whoAmI && active.ModProjectile is sw_Proj_1 or sw_Proj_2) return false;
 			var modPlayer = player.GetModPlayer<WeaponPlayer>();
 			if (Main.myPlayer == player.whoAmI) {
-				if (ArknightsKeybinds.SkillActivatePressed(player)) {
+				if (ArknightsKeybinds.SkillActivatePressed(player) && modPlayer.Skill != 1) {
 					if (!modPlayer.SummonMode) {
-						//s2
-						if (modPlayer.Skill == 1 && modPlayer.StockCount > 0 && !modPlayer.SkillActive) {
-							player.controlUseItem = false;
-							modPlayer.SkillActive = true;
-							modPlayer.SkillTimer = 0;
-
-							modPlayer.DelStockCount();
-						}
 						//s3
-						else if (modPlayer.Skill == 2 && modPlayer.StockCount > 0 && !modPlayer.SkillActive) {
+						if (modPlayer.Skill == 2 && modPlayer.StockCount > 0 && !modPlayer.SkillActive) {
 							modPlayer.SkillActive = true;
 							modPlayer.SkillTimer = 0;
 							modPlayer.DelStockCount();
@@ -139,13 +148,11 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 				CreatProj(ChenSword_Style.Skill_1, player, source, position, velocity, type, (int)(damage * 3.2), knockback);
 
 			}
-			else if (modPlayer.Skill == 1 && modPlayer.SkillActive) {
-				CreatProj(ChenSword_Style.Skill_2, player, source, position, velocity, type, (int)(damage * 5), knockback);
-				//CreatProj(ChenSword_Style.Skill_2, player, source, position, velocity, type, (int)(damage * 5), knockback);
-
-				modPlayer.StockCount = 0;
-			}
-			else if (modPlayer.Skill == 2 && modPlayer.SkillActive) {
+			else if (modPlayer.Skill == 1) {
+                SoundEngine.PlaySound(NS, player.position);
+                CreatProj(ChenSword_Style.Normal, player, source, position, velocity, type, damage, knockback);
+            }
+            else if (modPlayer.Skill == 2 && modPlayer.SkillActive) {
 				CreatProj(ChenSword_Style.Skill_3, player, source, position, velocity, type, (int)(damage * 3.2), knockback);
 
 				modPlayer.StockCount = 0;
@@ -827,6 +834,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 					Projectile.ai[0] = 39;
 				}
 				Swing_AI();
+                if (Projectile.ai[0] >= 84) ChenSwordRules.FinishSkillOne(Projectile);
 
 			}
 			if (Sword_Style == ChenSword_Style.Skill_2) {
@@ -1054,7 +1062,6 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 				Projectile.Center = Vector2.Lerp(Projectile.Center, player.MountedCenter + new Vector2(19 * player.direction, -30), 0.1f);
 
 			}
-			if (Sword_Style == ChenSword_Style.Normal) ChenSwordRules.Blade(Projectile, (Projectile.ai[0] + 1) / 38f, ref normalBlades);
 			Projectile.ai[0]++;
         }
         private void Swing_Draw(SpriteBatch sb, GraphicsDevice gd)

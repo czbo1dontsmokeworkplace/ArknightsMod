@@ -13,16 +13,24 @@ public class T_PhalanxChargeMote : Particle
     private readonly Vector2 size;
     private readonly Color tint;
     private readonly bool mark;
+    private readonly Func<Vector2> anchor;
+    private Vector2 previousAnchor;
     public override string TexturePath => ShpcEnergyVisuals.Assets + "BloomCircle";
     public override BlendState DrawBlendState => BlendState.Additive;
     public override SamplerState DrawSamplerState => SamplerState.LinearClamp;
-    internal T_PhalanxChargeMote(Vector2 position, Vector2 velocity, Color tint, int life, Vector2 size, bool mark)
+    internal T_PhalanxChargeMote(Vector2 position, Vector2 velocity, Color tint, int life, Vector2 size, bool mark, Func<Vector2> anchor = null)
     {
         Position = position; Velocity = velocity; this.tint = tint; this.size = size;
         this.mark = mark; Lifetime = life; Rotation = velocity.ToRotation();
+        this.anchor = anchor; previousAnchor = anchor?.Invoke() ?? Vector2.Zero;
     }
     public override void Update()
     {
+        if (anchor != null)
+        {
+            Vector2 current = anchor();
+            Position += current - previousAnchor; previousAnchor = current;
+        }
         Velocity *= .94f;
         Rotation += mark ? .08f : 0;
     }

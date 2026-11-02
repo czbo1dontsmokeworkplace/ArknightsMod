@@ -14,7 +14,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Catapult;
 
 public sealed class CatapultHoldout : ModProjectile
 {
-    public override string Texture => "Terraria/Images/Item_" + ItemID.GrenadeLauncher;
+    public override string Texture => "ArknightsMod/Content/Items/Weapons/Sniper/Catapult/CatapultLauncher";
     internal static Vector2 Muzzle(Player owner, Vector2 aim) => owner.MountedCenter
         + Collision.TileCollision(owner.MountedCenter - new Vector2(4f), aim * 30f, 8, 8, true, true);
 
@@ -61,14 +61,14 @@ public sealed class CatapultHoldout : ModProjectile
     }
     public override bool PreDraw(ref Color lightColor)
     {
-        Texture2D texture = TextureAssets.Item[ItemID.GrenadeLauncher].Value;
+        Texture2D texture = TextureAssets.Projectile[Type].Value;
         int age = CatapultLauncher.AttackInterval - Projectile.timeLeft;
         float recoil = age == 0 ? 0f : 5f * MathF.Pow(.80f, age);
         Vector2 aim = Projectile.velocity.SafeNormalize(Vector2.UnitX);
-        // 占位图缩至48px宽：中心前移8px，炮口约在玩家前方30px。
+        // 原图炮口朝左，水平翻转后沿瞄准方向绘制；保持48px手持宽度与炮口位置。
         Main.EntitySpriteDraw(texture, Projectile.Center + aim * (8f - recoil) - Main.screenPosition,
             null, lightColor, Projectile.rotation, texture.Size() * .5f, 48f / texture.Width,
-            Projectile.direction < 0 ? SpriteEffects.FlipVertically : SpriteEffects.None);
+            SpriteEffects.FlipHorizontally | (Projectile.direction < 0 ? SpriteEffects.FlipVertically : SpriteEffects.None));
         return false;
     }
 }
