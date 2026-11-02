@@ -3284,7 +3284,11 @@ EstelleGlove: {
 
 FrostleafAxe: {
 	DisplayName: Axe [Frostleaf]
-	Tooltip: ""
+	Tooltip:
+		'''
+		Swing with an icy Thorns-style arc and release a native Ice Queen Frost Wave once per second
+		Waves pierce walls and enemies indefinitely, hitting each enemy once
+		'''
 }
 
 HongdouLance: {

@@ -92,10 +92,23 @@ public sealed class LordThornsSwing : ModProjectile
             {
                 Vector2 aim = (Main.MouseWorld - player.MountedCenter).SafeNormalize(radial);
                 int damage = Math.Max(1, (int)(Projectile.damage * .8f));
-                if (Kind == 5 && player.GetModPlayer<LordShotClock>().TryRelease(Main.GameUpdateCount))
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), player.MountedCenter + aim * 26,
-                        aim * BladeRouteRules.WaveSpeed, ModContent.ProjectileType<LapplandNoxShard>(), damage,
-                        Projectile.knockBack, Projectile.owner, 5);
+                var clock = player.GetModPlayer<LordShotClock>();
+                if (Kind is 3 or 5 or 6 && clock.TryRelease(Main.GameUpdateCount))
+                {
+                    Vector2 origin = player.MountedCenter + aim * 26;
+                    if (Kind == 3)
+                    {
+                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), origin, aim * (clock.Sequence % 2 == 0 ? 9 : 11),
+                            ModContent.ProjectileType<MidnightVeil>(), damage, Projectile.knockBack, Projectile.owner);
+                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), origin, aim,
+                            ModContent.ProjectileType<MidnightVeilImpact>(), 0, 0, Projectile.owner, 0, .45f);
+                    }
+                    else if (Kind == 6)
+                        FrostleafQueenWave.Spawn(Projectile, origin, aim * (clock.Sequence % 2 == 0 ? 7.5f : 9f), damage);
+                    else
+                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), origin, aim * BladeRouteRules.WaveSpeed,
+                            ModContent.ProjectileType<LapplandNoxShard>(), damage, Projectile.knockBack, Projectile.owner, 5);
+                }
                 else if (Kind == 7)
                 {
                     Vector2 cursor = Main.MouseWorld; NPC target = LordReworkCombat.BirdTarget(cursor);
@@ -113,6 +126,10 @@ public sealed class LordThornsSwing : ModProjectile
     {
         float collision = 0;
         return Collision.CheckAABBvLineCollision(b.TopLeft(), b.Size(), Projectile.Center, tip, 16 * Projectile.scale, ref collision);
+    }
+    public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+    {
+        if (Kind == 6) BladeRouteCombat.FrostleafHit(Main.player[Projectile.owner], target);
     }
     public override bool PreDraw(ref Color lightColor)
     {

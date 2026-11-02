@@ -35,8 +35,8 @@ Items: {
 		DisplayName: Nightfall Sword [Midnight]
 		Tooltip:
 			'''
-			Swing the blade to release plasma clusters
-			Clusters pierce indefinitely and fire once per second
+			Swing with a dark Thorns-style arc and release an ink blade once per second
+			Ink blades accelerate straight through walls and enemies, hitting each enemy once
 			'''
 	}
 

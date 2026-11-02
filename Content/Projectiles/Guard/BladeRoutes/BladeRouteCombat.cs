@@ -8,14 +8,15 @@ using ArknightsMod.Players;
 
 namespace ArknightsMod.Content.Projectiles.Guard.BladeRoutes;
 
-// Lappland's plasma release clock survives weapon swapping and attack-speed changes.
+// The ranged Lord release clock survives weapon swapping and attack-speed changes.
 public sealed class LordShotClock : ModPlayer
 {
     private ulong nextShot;
+    internal int Sequence { get; private set; }
     internal bool TryRelease(ulong tick)
     {
         if(tick<nextShot)return false;
-        nextShot=tick+BladeRouteRules.LordShotInterval;return true;
+        nextShot=tick+BladeRouteRules.LordShotInterval;Sequence++;return true;
     }
 }
 

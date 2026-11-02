@@ -3595,7 +3595,11 @@ EstelleGlove: {
 
 FrostleafAxe: {
 	DisplayName: 巨斧 [霜叶]
-	// Tooltip: ""
+	Tooltip:
+		'''
+		挥出冰蓝色棘刺式刀光，每秒释放一道原版冰雪女王寒霜冲击波
+		冲击波穿墙、无限贯穿；每道波对同一敌人只命中一次
+		'''
 }
 
 HongdouLance: {

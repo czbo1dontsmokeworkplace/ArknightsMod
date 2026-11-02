@@ -35,7 +35,7 @@ public abstract class OperatorBladeWeapon : ExpansionWeaponBase
     public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
     {
         if (player.whoAmI != Main.myPlayer) return false;
-        if (Kind == 5) LordReworkCombat.Swing(player, source, Kind, damage, knockback);
+        if (Kind is 3 or 5) LordReworkCombat.Swing(player, source, Kind, damage, knockback);
         else BladeRouteCombat.Swing(player,source,Kind,damage,knockback);
         return false;
     }
@@ -72,7 +72,6 @@ public sealed class IreneSaber : OperatorBladeWeapon
 }
 public sealed class MidnightSword : OperatorBladeWeapon
 {
-    public override bool IsLoadingEnabled(Mod mod) => false;
     public override int Kind => 3;
     protected override int[] EliteDamage => [12, 16];
     public override void AddRecipes() => CreateRecipe().AddRecipeGroup(OperatorWeaponRecipeGroups.IronOrLeadBar, 8)
@@ -90,9 +89,9 @@ public sealed class LapplandSwords : OperatorBladeWeapon
 {
     public override int Kind => 5;
     protected override int[] EliteDamage => [52, 64, 76];
-    public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.BeamSword)
+    public override void AddRecipes() => CreateRecipe().AddIngredient<global::ArknightsMod.Content.Items.Weapons.Guard.Frostleaf.FrostleafAxe>()
         .AddRecipeGroup(OperatorWeaponRecipeGroups.CobaltOrPalladiumBar, 12).AddIngredient(ItemID.SoulofNight, 8)
         .AddIngredient(ItemID.CrystalShard, 10).AddTile(TileID.MythrilAnvil).Register();
 }
 
-// The retained Lord weapons own their three progression recipes.
+// Each retained Lord weapon owns its progression recipe.

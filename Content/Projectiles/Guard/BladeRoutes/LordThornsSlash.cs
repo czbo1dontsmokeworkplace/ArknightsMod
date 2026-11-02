@@ -20,7 +20,7 @@ public sealed class LordThornsSlash : ModSystem
         float[] angles = new float[arc.Length];
         for (int i = 1; i < arc.Length; i++) angles[i] = (arc[i - 1] - arc[i]).ToRotation();
         angles[0] = angles[1];
-        Color theme = kind == 7 ? new Color(165, 185, 205) : BladeRouteRules.Theme(kind);
+        Color theme = kind == 3 ? new Color(69, 64, 91) : kind == 7 ? new Color(165, 185, 205) : BladeRouteRules.Theme(kind);
         Color rim = Color.Lerp(theme, Color.White, .6f);
         VertexStrip shadow = new(), outer = new(), core = new();
         Vector2 offset = center - Main.screenPosition;

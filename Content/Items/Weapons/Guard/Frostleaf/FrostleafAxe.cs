@@ -14,8 +14,11 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Frostleaf
 {
 	public class FrostleafAxe : ExpansionWeaponBase
 	{
-        public override bool IsLoadingEnabled(Mod mod) => false;
 		protected override int[] EliteDamage => [40, 48, 58];
+
+        public override void AddRecipes() => CreateRecipe()
+            .AddIngredient<global::ArknightsMod.Content.Items.Weapons.Guard.BladeRoutes.MidnightSword>()
+            .AddIngredient(ItemID.IceBlock, 30).AddIngredient(ItemID.Bone, 15).AddTile(TileID.Anvils).Register();
 
 		private static SoundStyle SkillActiveSfx;
 
@@ -37,7 +40,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Frostleaf
 			Item.useStyle = ItemUseStyleID.Swing;
 			Item.crit = 4;
             Item.noMelee=Item.noUseGraphic=true;Item.shootsEveryUse=true;
-            Item.shoot=ModContent.ProjectileType<OperatorBladeSwing>();Item.shootSpeed=BladeRouteRules.WaveSpeed;
+            Item.shoot=ModContent.ProjectileType<LordThornsSwing>();Item.shootSpeed=BladeRouteRules.WaveSpeed;
             Item.UseSound=SoundID.Item1;
 		}
 
@@ -64,7 +67,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Frostleaf
 		}
         public override bool Shoot(Player player,EntitySource_ItemUse_WithAmmo source,Vector2 position,Vector2 velocity,int type,int damage,float knockback)
         {
-            BladeRouteCombat.Swing(player,source,6,damage,knockback);return false;
+            LordReworkCombat.Swing(player,source,6,damage,knockback);return false;
         }
 
 		public override void ModifyWeaponDamage(Player player, ref StatModifier damage) {
