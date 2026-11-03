@@ -1,66 +1,85 @@
+using System;
+using ArknightsMod.Content.Buffs;
 using ArknightsMod.Content.Items.Weapons.Charged;
 using ArknightsMod.Content.Projectiles.Charged;
-using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.Audio;
-using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace ArknightsMod.Players;
 
 public sealed class DreadnoughtPlayer : ModPlayer
 {
-    internal float Momentum;
-    internal float Multiplier => 1f + Momentum;
-    private int targetIndex = -1, targetType;
-    private ChargedOperatorKind targetKind;
-    private bool readyAnnounced;
-    internal int EmbeddedCount => DreadnoughtThrownBlade.EmbeddedCount(Player, targetKind, targetIndex, targetType);
-    internal float Progress => EmbeddedCount / (float)DreadnoughtThrownBlade.BladesPerTarget;
-    internal float ProgressFor(ChargedOperatorKind kind) => kind == targetKind ? Progress : 0;
-    private int idleTicks;
-    private Item fightingItem;
+    internal int IdleTicks { get; private set; }
+    internal bool InAttack { get; private set; }
+    private bool empoweredAttack;
+    private float attackCrit;
+    private bool attackJustEnded;
+    internal bool Ready => IdleTicks >= DreadnoughtRules.ReadyTicks;
+    internal bool HasMoment => Ready || empoweredAttack;
+    internal float Progress => empoweredAttack ? 1 : InAttack ? 0 : IdleTicks / (float)DreadnoughtRules.ReadyTicks;
+    internal float CritChance(float baseline) => InAttack ? attackCrit : Math.Clamp(baseline, 0, 100)
+        + (100 - Math.Clamp(baseline, 0, 100)) * Progress;
 
-    internal void Attacking(Item item)
+    // Capture crit first, then mark this attack as consuming the preparation.
+    internal bool BeginAttack(int crit)
     {
-        fightingItem = item;
-        idleTicks = 0;
+        bool charged = Ready;
+        attackCrit = crit;
+        IdleTicks = 0;
+        InAttack = true;
+        empoweredAttack = charged;
+        attackJustEnded = false;
+        if (charged) Player.AddBuff(ModContent.BuffType<AstonishingMoment>(), 2);
+        return charged;
     }
-
-    internal void RegisterHit() => Momentum = DreadnoughtRules.Gain(Momentum);
-
-    internal void TrackTarget(NPC target, ChargedOperatorKind kind)
+    internal void ObserveAttack(bool empowered, int crit)
     {
-        if (targetIndex != target.whoAmI || targetType != target.type || targetKind != kind) readyAnnounced = false;
-        targetIndex = target.whoAmI; targetType = target.type; targetKind = kind;
+        IdleTicks = 0;
+        InAttack = true;
+        empoweredAttack = empowered;
+        attackCrit = crit;
+        if (empowered) Player.AddBuff(ModContent.BuffType<AstonishingMoment>(), 2);
     }
-
+    internal void EndAttack()
+    {
+        InAttack = empoweredAttack = false;
+        IdleTicks = 0;
+        attackJustEnded = true;
+        Player.ClearBuff(ModContent.BuffType<AstonishingMoment>());
+    }
     public override void PostUpdate()
     {
-        idleTicks = System.Math.Min(DreadnoughtRules.IdleGraceTicks + 1, idleTicks + 1);
-        bool switchedAway = !ReferenceEquals(Player.HeldItem, fightingItem);
-        if (switchedAway || idleTicks > DreadnoughtRules.IdleGraceTicks)
-            Momentum = DreadnoughtRules.Decay(Momentum, switchedAway);
-        int count = EmbeddedCount;
-        if (count < DreadnoughtThrownBlade.BladesPerTarget) readyAnnounced = false;
-        else if (!readyAnnounced && Player.whoAmI == Main.myPlayer)
-        {
-            readyAnnounced = true;
-            if (!Main.dedServ)
-            {
-                SoundEngine.PlaySound(SoundID.MaxMana with { Volume = .65f }, Player.Center);
-                CombatText.NewText(new Rectangle((int)Player.Center.X - 30, (int)Player.Top.Y - 46, 60, 20),
-                    ChargedOperatorRules.ColorFor(targetKind), Language.GetTextValue("Mods.ArknightsMod.ChargedArsenal.RecallReady"), true);
+        if (!Player.active || Player.dead) { Reset(); return; }
+        bool held = Player.HeldItem.ModItem is ChargedOperatorWeapon { Melee: true };
+        if (!held) { Reset(); return; }
+        if (InAttack) {
+            if (empoweredAttack) Player.AddBuff(ModContent.BuffType<AstonishingMoment>(), 2);
+            return;
+        }
+        if (attackJustEnded) { attackJustEnded = false; return; }
+        if (Player.itemAnimation > 0 || Player.noItems || Player.CCed) {
+            IdleTicks = 0;
+            Player.ClearBuff(ModContent.BuffType<AstonishingMoment>());
+            return;
+        }
+        bool wasReady = Ready;
+        IdleTicks = Math.Min(DreadnoughtRules.ReadyTicks, IdleTicks + 1);
+        if (Ready) {
+            Player.AddBuff(ModContent.BuffType<AstonishingMoment>(), 2);
+            if (!wasReady && Player.whoAmI == Main.myPlayer) {
+                var weapon = (ChargedOperatorWeapon)Player.HeldItem.ModItem;
+                Projectile.NewProjectile(Player.GetSource_Misc("DreadnoughtReady"), Player.Top,
+                    Microsoft.Xna.Framework.Vector2.Zero, ModContent.ProjectileType<DreadnoughtMomentFlash>(),
+                    0, 0, Player.whoAmI, (int)weapon.Kind);
             }
         }
     }
-
-    public override void UpdateDead()
+    private void Reset()
     {
-        Momentum = 0;
-        idleTicks = 0;
-        fightingItem = null;
-        targetIndex = -1; readyAnnounced = false;
+        IdleTicks = 0;
+        InAttack = empoweredAttack = attackJustEnded = false;
+        Player.ClearBuff(ModContent.BuffType<AstonishingMoment>());
     }
+    public override void UpdateDead() => Reset();
+    public override void OnEnterWorld() => Reset();
 }

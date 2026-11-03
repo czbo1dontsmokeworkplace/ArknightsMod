@@ -14,7 +14,7 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 {
 	[AutoloadBossHead]
-	public partial class Crownslayer : ModNPC
+	public partial class Crownslayer : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		public AIState LastSkill = AIState.Idle; // 记录上一个技能
 		public int FogSkillCooldown = 0;
@@ -607,7 +607,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				return;
 			}
 
-			if (StateTimer <= 0) {
+			if (StateTimer <= 0 && Main.netMode != NetmodeID.MultiplayerClient) {
+				NPC.netUpdate = true;
 				float distanceInTiles = distance / 16f;
 				float healthPercent = (float)NPC.life / NPC.lifeMax;
 				var weightedSkills = BuildWeightedSkillPool(distanceInTiles, healthPercent, respectLastSkill: true);
@@ -775,7 +776,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 		private void FinishDaggerSkill() {
 			suppressSkill1AfterSkill3 = 90;
-			DaggerSkillCooldown = Main.rand.Next(480, 661);
+			{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { DaggerSkillCooldown = Main.rand.Next(480, 661); NPC.netUpdate = true; } }
 			ResetToIdle();
 		}
 
@@ -877,7 +878,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			if (offset.HasValue)
 				pos += offset.Value;
 
-			int projIndex = Projectile.NewProjectile(
+			int projIndex = global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(
 				NPC.GetSource_FromAI(),
 				pos,
 				Vector2.Zero,
@@ -992,7 +993,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				CurrentAnimation = NPCState.Attack2;
 				SetPhysics(false, false);
 				SpawnCrownslayerSwordSlashAtBlade(thrust: false, rotation: slashRot);
-				Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero,
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero,
 					ModContent.ProjectileType<TransparentSlash>(), damage, 3f, Main.myPlayer);
 				SoundEngine.PlaySound(SoundID.Item1, NPC.Center);
 				NPC.netUpdate = true;
@@ -1005,7 +1006,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				NPC.spriteDirection = NPC.velocity.X >= 0f ? -1 : 1;
 
 				if (StateTimer == 38) {
-					Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero,
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero,
 						ModContent.ProjectileType<TransparentSlash>(), damage / 2, 2f, Main.myPlayer);
 				}
 
@@ -1036,7 +1037,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				Vector2 baseVel = Vector2.Normalize(toTarget) * 16f;
 				for (int i = -1; i <= 1; i++) {
 					Vector2 shotVel = baseVel.RotatedBy(MathHelper.ToRadians(i * 25f));
-					Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, shotVel,
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, shotVel,
 						ModContent.ProjectileType<GravityDagger>(), (int)(damage * 0.4f), 2f, Main.myPlayer);
 				}
 
@@ -1148,7 +1149,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				SoundEngine.PlaySound(SoundID.Item74, NPC.Center);
 				if (Main.netMode != NetmodeID.MultiplayerClient) {
 					// 生成 RedMagicBlade，不再跟随玩家斜角，而是固定在原地
-					Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero,
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero,
 						ModContent.ProjectileType<RedMagicBlade>(), (int)(damage * 1f), 0f, Main.myPlayer, target.whoAmI);
 				}
 			}
@@ -1224,7 +1225,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 							Vector2 spawnPos = new Vector2(NPC.Center.X + (i * 120f), NPC.Center.Y - 800f - (i * 200f));
 
 							// 这里的参数必须补全，否则小刀 AI 内部检测不到 owner 会直接 Kill
-							Projectile.NewProjectile(
+							global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(
 								NPC.GetSource_FromAI(),
 								spawnPos,
 								new Vector2(0, 10f),               // 初始速度给 0，防止它直接飞走
@@ -1328,7 +1329,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				if (StateTimer % Skill6DaggerInterval == 0 && StateTimer / Skill6DaggerInterval < daggerCount) {
 					Vector2 targetPos = target.Center + new Vector2(Main.rand.NextFloat(-330, 330), Main.rand.NextFloat(-320, -150));
 					Vector2 launchVel = (targetPos - NPC.Center) / 25f;
-					Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, launchVel,
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, launchVel,
 						ModContent.ProjectileType<StallDagger>(), daggerDamage, 2f, Main.myPlayer, NPC.whoAmI, targetPos.Y);
 					SoundEngine.PlaySound(SoundID.Item71, NPC.Center);
 
@@ -1438,7 +1439,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				NPC.noTileCollide = false;
 				if (StateTimer == 30) {
 					// 在原地留下一把插在地上的红色刀（装饰性弹幕）
-					Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Bottom, Vector2.Zero,
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), NPC.Bottom, Vector2.Zero,
 						ModContent.ProjectileType<GroundDagger>(), 0, 0, Main.myPlayer);
 					SoundEngine.PlaySound(SoundID.Item71, NPC.Center);
 				}
@@ -1513,7 +1514,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 						FaceTargetHorizontal(focusTarget);
 
 						if (skill7StepTimer == 1)
-							skill7WillThrowDagger = Main.rand.NextBool(38);
+							{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { skill7WillThrowDagger = Main.rand.NextBool(38); NPC.netUpdate = true; } }
 
 						CurrentAnimation = skill7WillThrowDagger ? NPCState.Attack2 : NPCState.Lurk;
 
@@ -1584,7 +1585,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				NPC.velocity = push * 14f;
 
 				SpawnCrownslayerSwordSlashAtBlade(thrust: false, rotation: slashRot);
-				Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero,
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero,
 					ModContent.ProjectileType<TransparentSlash>(), damage, 0f, Main.myPlayer);
 				SoundEngine.PlaySound(SoundID.Item1, NPC.Center);
 			}
@@ -1632,7 +1633,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 				EmitThrustBurstParticles();
 				SpawnCrownslayerSwordSlashAtBlade(thrust: true, rotation: dir.ToRotation());
-				Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero,
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero,
 					ModContent.ProjectileType<TransparentSlash>(), damage, 2f, Main.myPlayer);
 				SoundEngine.PlaySound(SoundID.Item71, NPC.Center);
 			}
@@ -1799,7 +1800,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			SoundEngine.PlaySound(SoundID.Item71, NPC.Center);
 			for (int i = -1; i <= 1; i++) {
 				Vector2 shotVel = baseVel.RotatedBy(MathHelper.ToRadians(i * 20f));
-				Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, shotVel,
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, shotVel,
 					ModContent.ProjectileType<GravityDagger>(), (int)(damage * 0.4f), 3f, Main.myPlayer);
 			}
 		}
@@ -1813,7 +1814,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				toTarget = new Vector2(-NPC.spriteDirection, 0f);
 
 			Vector2 shotVel = Vector2.Normalize(toTarget) * 16f;
-			Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, shotVel,
+			global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, shotVel,
 				ModContent.ProjectileType<GravityDagger>(), (int)(damage * 0.4f), 3f, Main.myPlayer);
 			SoundEngine.PlaySound(SoundID.Item71, NPC.Center);
 		}
@@ -1823,7 +1824,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			SoundEngine.PlaySound(SoundID.Item71, NPC.Center);
 			for (int i = -2; i <= 2; i++) {
 				Vector2 shotVel = baseVel.RotatedBy(MathHelper.ToRadians(i * 15f));
-				Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, shotVel,
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, shotVel,
 				ModContent.ProjectileType<GravityDagger>(), (int)(damage * 0.4f), 3f, Main.myPlayer);
 			}
 
@@ -1862,7 +1863,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			for (int i = 0; i < count; i++) {
 				float offset = (i - (count - 1) / 2f) * spacing;
 				Vector2 spawnPos = centerPoint + perpDir * offset;
-				Projectile.NewProjectile(
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(
 					NPC.GetSource_FromAI(),
 					spawnPos,
 					Vector2.Zero,
@@ -2124,7 +2125,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			if (Main.netMode == NetmodeID.MultiplayerClient)
 				return;
 
-			int index = Projectile.NewProjectile(NPC.GetSource_FromAI(),
+			int index = global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(),
 				NPC.Center + Main.rand.NextVector2Circular(10f, 14f),
 				Main.rand.NextVector2Circular(0.35f, 0.5f) + new Vector2(0f, -0.25f),
 				ModContent.ProjectileType<CrownslayerDespawnGas>(), 0, 0f, Main.myPlayer,
@@ -2145,7 +2146,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			float spawnY = spawnTarget.Center.Y - 32f;
 
 			Vector2 spawnPos = FindSafeSpot(new Vector2(spawnX, spawnY));
-			int index = NPC.NewNPC(NPC.GetSource_FromAI(), (int)spawnPos.X, (int)spawnPos.Y, type);
+			int index = global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(NPC.GetSource_FromAI(), (int)spawnPos.X, (int)spawnPos.Y, type);
 			if (index >= 0 && index < Main.maxNPCs) {
 				Main.npc[index].GetGlobalNPC<CrownslayerSummonGlobalNPC>().IsCrownslayerSummon = true;
 				MinionWhoAmIs.Add(index);
@@ -2177,7 +2178,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			for (int i = -1; i <= 1; i += 2) { // -1为左，1为右
 				for (int j = 1; j <= 6; j++) {
 					Vector2 waveVel = new Vector2(i * j * 7f, 0f); // 速度逐渐变快的阶梯状弹幕
-					Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Bottom, waveVel,
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), NPC.Bottom, waveVel,
 						ModContent.ProjectileType<TransparentSlash>(), damage / 2, 6f, Main.myPlayer);
 				}
 			}
@@ -2346,7 +2347,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		// 确保它没有伤害判定
 		public override bool? CanDamage() => false;
 	}
-	public class StallDagger : ModProjectile
+	public partial class StallDagger : ModProjectile
 	{
 		public override string Texture => "ArknightsMod/Content/NPCs/Enemy/ThroughChapter4/GravityDagger_Barrage";
 		public override void SetDefaults() {
@@ -2426,7 +2427,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		}
 
 	}
-	public class DelayDagger : ModProjectile
+	public partial class DelayDagger : ModProjectile
 	{
 		public override string Texture => "ArknightsMod/Content/NPCs/Enemy/ThroughChapter4/GravityDagger_Barrage";
 		public override void SetDefaults() {
@@ -2528,7 +2529,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			}
 		}
 	}
-	public class GravityDagger : ModProjectile
+	public partial class GravityDagger : ModProjectile
 	{
 		public override string Texture => "ArknightsMod/Content/NPCs/Enemy/ThroughChapter4/GravityDagger_Barrage";
 		public override void SetStaticDefaults() {
@@ -2592,7 +2593,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 
 	}
-	public class RedMagicBlade : ModProjectile
+	public partial class RedMagicBlade : ModProjectile
 	{
 		public override string Texture => "ArknightsMod/Content/NPCs/Enemy/ThroughChapter4/GravityDagger_Barrage";
 
@@ -2712,7 +2713,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		}
 	}
 
-	public class DaggerPredictLine : ModProjectile
+	public partial class DaggerPredictLine : ModProjectile
 	{
 		private const int TelegraphTicks = 48;
 		private const int AfterShotTicks = 12;
@@ -2734,7 +2735,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				if (Main.netMode != NetmodeID.MultiplayerClient) {
 					float speed = Projectile.ai[0] > 0f ? Projectile.ai[0] : BarrageSpeed;
 					Vector2 velocity = Projectile.ai[1].ToRotationVector2() * speed;
-					int dagger = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, velocity,
+					int dagger = global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, velocity,
 						ModContent.ProjectileType<BarrageDagger>(), 20, 1f, Projectile.owner);
 					if (dagger >= 0 && dagger < Main.maxProjectiles) {
 						Main.projectile[dagger].netUpdate = true;
@@ -2769,7 +2770,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		}
 
 	}
-	public class BarrageDagger : ModProjectile
+	public partial class BarrageDagger : ModProjectile
 	{
 		private const float SharedViewHalfWidth = 1320f;
 		private const float SharedViewHalfHeight = 760f;

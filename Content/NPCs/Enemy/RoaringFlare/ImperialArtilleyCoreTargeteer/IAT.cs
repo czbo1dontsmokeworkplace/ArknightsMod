@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Items.Material;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -13,7 +13,7 @@ using static Terraria.ModLoader.ModContent;
 
 namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTargeteer
 {
-	public class IAT : ModNPC
+	public partial class IAT : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		public override void SetStaticDefaults() {
 			Main.npcFrameCount[NPC.type] = 1;//贴图帧数
@@ -452,13 +452,13 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 			{
 				if (truestage2 == 1 && timer2 >= normalatkcooldown) {
 					SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Assets/Sound/ImperialArtilleyCoreTargeteer/AlertPro") with { Volume = 1f, Pitch = 0f }, NPC.Center);
-					Projectile.NewProjectile(newSource, Player.Center.X, Player.Center.Y, 0, 0, ProjectileType<ExplodeAim>(), NPC.damage, 0f, 0, 0);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, Player.Center.X, Player.Center.Y, 0, 0, ProjectileType<ExplodeAim>(), NPC.damage, 0f, 0, 0);
 					timer2 = 0;
 				}
 				if (timer2 >= normalatkcooldown && stage != 2) {
 					timer2 = 0;
 					SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Assets/Sound/ImperialArtilleyCoreTargeteer/AlertPro") with { Volume = 1f, Pitch = 0f }, NPC.Center);
-					Projectile.NewProjectile(newSource, Player.Center.X, Player.Center.Y, 0, 0, ProjectileType<ExplodeAimSmall>(), NPC.damage, 0f, 0, 0);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, Player.Center.X, Player.Center.Y, 0, 0, ProjectileType<ExplodeAimSmall>(), NPC.damage, 0f, 0, 0);
 				}
 
 				//灯光判定
@@ -634,7 +634,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 							targetY = (float)(-stage1to2r * Math.Cos(2 * stg1to2safetimer * Math.PI / (stage1to2locktime - 180)));
 							NPC.velocity = new Vector2(Player.Center.X, Player.Center.Y) + new Vector2(targetX, targetY) - NPC.Center;//期间的位置变动
 							if ((int)stg1to2safetimer % stage1to2atkspeed == 0) {
-								Projectile.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ProjectileType<ExplodeAim>(), NPC.damage, 0f, 0, 0);
+								global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ProjectileType<ExplodeAim>(), NPC.damage, 0f, 0, 0);
 							}
 						}
 					}
@@ -660,7 +660,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 					if (deathtimer >= 180)//下坠3秒后爆炸并触发爆炸粒子
 					{
 						deathcheck = 2;
-						Projectile.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ProjectileType<Deathdust>(), 0, 0f, 0, 0);//爆炸粒子
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ProjectileType<Deathdust>(), 0, 0f, 0, 0);//爆炸粒子
 					}
 					NPC.velocity.X = NPC.velocity.X * (360 - deathtimer) / 360;
 					downAcceleration = deathtimer * 0.01f;
@@ -685,7 +685,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 
 		public override bool CheckDead()//锁血及锁血解除
 		{
-			Player Player = Main.player[Main.myPlayer];
+			Player Player = Main.player[NPC.target < Main.maxPlayers ? NPC.target : 0];
 			if (deathcheck == 2)//死亡
 			{
 				if (!Main.dedServ)//Gore
@@ -711,7 +711,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		#endregion
 	}
 
-	public class ExplodeAimSmall : ModProjectile
+	public partial class ExplodeAimSmall : ModProjectile
 	{
 		public override void SetStaticDefaults() {
 		}
@@ -741,7 +741,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 			if (missled != true) {
 				randomx = Main.rand.NextFloat(-300, 300);
 
-				Projectile.NewProjectile(newSource, Projectile.Center.X + randomx, Projectile.Center.Y - 1800, -randomx / 60, 0, ProjectileType<Missle>(), 10, 0f, 0, 0);
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, Projectile.Center.X + randomx, Projectile.Center.Y - 1800, -randomx / 60, 0, ProjectileType<Missle>(), 10, 0f, 0, 0);
 				missled = true;
 			}
 
@@ -770,18 +770,18 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 
 			if (timer == 10) {
 				for (int i = 0; i < 4; i++) {
-					Projectile.NewProjectile(newSource, (float)(Projectile.Center.X - 30 * Math.Tan((1 + 2 * i) * MathHelper.PiOver4)), (float)(Projectile.Center.Y - 30 * Math.Sqrt(2) * Math.Sin((1 + 2 * i) * MathHelper.PiOver4)), 0, 0, ProjectileType<HitboxRedCorner>(), 0, 0f, 0, i + 4);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, (float)(Projectile.Center.X - 30 * Math.Tan((1 + 2 * i) * MathHelper.PiOver4)), (float)(Projectile.Center.Y - 30 * Math.Sqrt(2) * Math.Sin((1 + 2 * i) * MathHelper.PiOver4)), 0, 0, ProjectileType<HitboxRedCorner>(), 0, 0f, 0, i + 4);
 				}
 			}
 
 			if (timer == 50) {
-				Projectile.NewProjectile(newSource, Projectile.Center.X, Projectile.Center.Y, 0, 0, ProjectileType<ExplodeWave>(), 10, 0f, 0, 0);
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, Projectile.Center.X, Projectile.Center.Y, 0, 0, ProjectileType<ExplodeWave>(), 10, 0f, 0, 0);
 
 			}
 
 			if (timer == 60) {
 				SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Assets/Sound/ImperialArtilleyCoreTargeteer/Explode") with { Volume = 1f, Pitch = 0f }, Projectile.Center);
-				Projectile.NewProjectile(newSource, Projectile.Center.X, Projectile.Center.Y, 0, 0, ProjectileType<ExplodeAreaSmall>(), 10, 0f, 0, 0);
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, Projectile.Center.X, Projectile.Center.Y, 0, 0, ProjectileType<ExplodeAreaSmall>(), 10, 0f, 0, 0);
 			}
 		}
 	}
@@ -825,7 +825,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		}
 
 	}
-	public class IATIntro : ModNPC
+	public partial class IATIntro : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		public override string Texture => "ArknightsMod/Content/NPCs/Enemy/RoaringFlare/ImperialArtilleyCoreTargeteer/IAT";
 		public override void SetStaticDefaults() {
@@ -865,7 +865,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		private float aimheight;
 
 		public override void AI() {
-			Player Player = Main.player[Main.myPlayer];
+			Player Player = Main.player[NPC.target];
 			timer++;
 
 			//移动方式
@@ -901,7 +901,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 
 			if (Math.Pow(NPC.Center.X - Player.Center.X, 2) / 102400 + Math.Pow(NPC.Center.Y - Player.Center.Y, 2) / 57600 <= 1) {
 				Main.NewText(Language.GetTextValue("Mods.ArknightsMod.StatusMessage.IACT.Intro"), 138, 0, 18);
-				NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X, (int)(NPC.Center.Y + 19), NPCType<IAT>());
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X, (int)(NPC.Center.Y + 19), NPCType<IAT>());
 				SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/iactstage1to2") with { Volume = 1f, Pitch = 0f }, NPC.Center);
 				NPC.life = 0;
 			}
@@ -913,7 +913,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		public override bool CheckDead()//锁血及锁血解除
 		{
 			Main.NewText(Language.GetTextValue("Mods.ArknightsMod.StatusMessage.IACT.Intro"), 138, 0, 18);
-			NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X, (int)NPC.Center.Y, NPCType<IAT>());
+			global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X, (int)NPC.Center.Y, NPCType<IAT>());
 			return true;
 		}
 	}

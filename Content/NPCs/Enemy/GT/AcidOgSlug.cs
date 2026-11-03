@@ -15,7 +15,7 @@ using static Terraria.ModLoader.ModContent;
 
 namespace ArknightsMod.Content.NPCs.Enemy.GT
 {
-	public class AcidOgSlug : ModNPC
+	public partial class AcidOgSlug : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		private int status;
 		private int Frame_State;
@@ -227,7 +227,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.GT
 				float theta = new Vector2(x, y).ToRotation();
 				float addSpeed = Math.Abs(Main.player[NPC.target].Center.X - NPC.Center.X) / 60; // Change speed according to distance
 
-				Projectile.NewProjectile(NPC.GetSource_FromAI(), position, (8f + addSpeed) * new Vector2((float)Math.Cos(theta), (float)Math.Sin(theta)), ProjectileType<AcidOgSlugProjectile>(), 10, 0f, Main.myPlayer);
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), position, (8f + addSpeed) * new Vector2((float)Math.Cos(theta), (float)Math.Sin(theta)), ProjectileType<AcidOgSlugProjectile>(), 10, 0f, Main.myPlayer);
 			}
 		}
 

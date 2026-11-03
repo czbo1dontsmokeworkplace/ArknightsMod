@@ -75,7 +75,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 
 			if (Main.netMode != NetmodeID.MultiplayerClient)
 			{
-				NPC.NewNPC(Projectile.GetSource_FromAI(), (int)landPos.X, (int)landPos.Y, NPCType<PmpSlugEggLandNPC>());
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Projectile.GetSource_FromAI(), (int)landPos.X, (int)landPos.Y, NPCType<PmpSlugEggLandNPC>());
 			}
 
 			return true;

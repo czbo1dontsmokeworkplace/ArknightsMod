@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using ArknightsMod.Common.VisualEffects;
 using ArknightsMod.Systems;
@@ -16,7 +16,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 	/// <summary>
 	/// 霜星二阶段：冰晶祭坛。可被玩家摧毁，每隔约 4～9 秒（随机）经短暂蓄力（贴图骤亮偏白）后释放一轮完整冲击波动画（总时长约 0.4～0.5 秒不等）：向内收缩预警环（无伤害）、短促喷发、造成少量伤害并概率冰冻玩家；粒子渐隐结束。登场后附近间歇生成飘向祭坛的风絮线条（<see cref="IceAltarInboundWisp"/>）。周身双线拖尾环与霜星无敌时特效同源（亮蓝色）。
 	/// </summary>
-	public class IceCrystalAltar : ModNPC
+	public partial class IceCrystalAltar : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		public const int MaxConcurrentAltars = 5;
 
@@ -153,8 +153,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 				twinLineRingsSpawned = true;
 				int w = NPC.whoAmI;
 				var src = NPC.GetSource_FromThis();
-				Projectile.NewProjectile(src, NPC.Center, Vector2.Zero, ModContent.ProjectileType<IceAltarTwinLineRing>(), 0, 0f, Main.myPlayer, w, 1f);
-				Projectile.NewProjectile(src, NPC.Center, Vector2.Zero, ModContent.ProjectileType<IceAltarTwinLineRing>(), 0, 0f, Main.myPlayer, w, -1f);
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(src, NPC.Center, Vector2.Zero, ModContent.ProjectileType<IceAltarTwinLineRing>(), 0, 0f, Main.myPlayer, w, 1f);
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(src, NPC.Center, Vector2.Zero, ModContent.ProjectileType<IceAltarTwinLineRing>(), 0, 0f, Main.myPlayer, w, -1f);
 			}
 			NPC.velocity = Vector2.Zero;
 			NPC.TargetClosest();
@@ -200,7 +200,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 						if (len > maxAmbientRadius)
 							offset *= maxAmbientRadius / Math.Max(len, 0.01f);
 						Vector2 start = NPC.Center + offset;
-						Projectile.NewProjectile(NPC.GetSource_FromThis(), start, Vector2.Zero, inboundType, 0, 0f, Main.myPlayer, NPC.whoAmI);
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromThis(), start, Vector2.Zero, inboundType, 0, 0f, Main.myPlayer, NPC.whoAmI);
 					}
 					_ambientWispCooldown = Main.rand.Next(22, 62);
 				}
@@ -215,7 +215,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 						var src = NPC.GetSource_FromAI();
 						int owner = NPC.target >= 0 && NPC.target < Main.maxPlayers ? NPC.target : Main.myPlayer;
 						RollShockwavePhaseTicks(out int warnTicks, out int blastTicks);
-						Projectile.NewProjectile(src, NPC.Center, Vector2.Zero, ModContent.ProjectileType<IceAltarShockwave>(), 32, 2f, owner, warnTicks, blastTicks);
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(src, NPC.Center, Vector2.Zero, ModContent.ProjectileType<IceAltarShockwave>(), 32, 2f, owner, warnTicks, blastTicks);
 						shockwaveIntervalTicks = Main.rand.Next(MinShockwaveIntervalTicks, MaxShockwaveIntervalTicks + 1);
 						shockwaveTimer = 0;
 						NPC.netUpdate = true;
@@ -268,7 +268,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 	/// <summary>
 	/// 祭坛周身双线拖尾：与 <see cref="FNInvincibleEffect"/> 相同运动，配色为亮蓝。
 	/// </summary>
-	public class IceAltarTwinLineRing : ModProjectile
+	public partial class IceAltarTwinLineRing : ModProjectile
 	{
 		public override string Texture => ArknightsMod.noTexture;
 
@@ -341,7 +341,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 	/// <summary>
 	/// 从霜星沿曲线飞向祭坛落点（风絮拖尾）；抵达后在落点爆开粒子并于其中生成 <see cref="IceCrystalAltar"/>。
 	/// </summary>
-	public class IceAltarSummonWisp : ModProjectile
+	public partial class IceAltarSummonWisp : ModProjectile
 	{
 		public override string Texture => ArknightsMod.noTexture;
 
@@ -405,7 +405,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 				Vector2 altarHitboxCenter = IceCrystalAltar.HitboxCenterFromSpawnTopLeft(target);
 				Projectile.ai[2] = 1f;
 				if (IceCrystalAltar.CountActiveAltars() < IceCrystalAltar.MaxConcurrentAltars) {
-					NPC.NewNPC(Projectile.GetSource_FromThis(), (int)target.X, (int)target.Y, ModContent.NPCType<IceCrystalAltar>());
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Projectile.GetSource_FromThis(), (int)target.X, (int)target.Y, ModContent.NPCType<IceCrystalAltar>());
 				}
 				SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/SpawnDevice") with { Volume = 0.95f, Pitch = 0.05f }, altarHitboxCenter);
 				Projectile.Kill();
@@ -471,7 +471,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 	/// <summary>
 	/// 祭坛存在时从附近随机位置飘向视觉中心：整体为一段柔和二次曲线，弦向侧摆仅 1～2 个波瓣，无高频缠绕；末段<strong>直线</strong>贴向中心后短渐隐。弹幕仅 <c>localAI[0..1]</c> 可用；步进尺度与侧摆周期由 <see cref="Projectile.identity"/> 确定性推导。
 	/// </summary>
-	public class IceAltarInboundWisp : ModProjectile
+	public partial class IceAltarInboundWisp : ModProjectile
 	{
 		public override string Texture => ArknightsMod.noTexture;
 
@@ -654,7 +654,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 	/// <summary>
 	/// 祭坛脉冲：先由外向内收缩的预警亮线（无伤害，弱扭曲），再在喷发阶段于 <see cref="ShockwaveMaxRadius"/> 内叠多层气雾（仅 <c>Aerosol/Aerosol00</c>～<c>Aerosol03</c>，黑底加法混合），并叠加自中心外扩的亮蓝圆环（纯顶点色）；喷发伤害结算后仍可延长纯视觉时间（<see cref="BlastVisualExtraTicks"/>），圆环与气雾扩张为 ease-out、透明度线性降至零。单次预警+喷发刻数仍由生成时随机（总时长约 0.4～0.5 秒量级）。范围内玩家受到少量伤害并有 <see cref="FreezeChance"/> 概率获得 <see cref="BuffID.Frozen"/>。预警环粒子仍在寿命末段渐隐外散。
 	/// </summary>
-	public class IceAltarShockwave : ModProjectile, IIceAltarWarpDraw
+	public partial class IceAltarShockwave : ModProjectile, IIceAltarWarpDraw
 	{
 		public override string Texture => ArknightsMod.noTexture;
 

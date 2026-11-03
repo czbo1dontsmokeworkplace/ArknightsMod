@@ -14,7 +14,7 @@ using Terraria.ModLoader.Utilities;
 
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 {
-	public class Drone : ModNPC
+	public partial class Drone : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		// ===== 基础属性 =====
 		private int targetPlayer;
@@ -105,6 +105,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		}
 
 		public override void OnSpawn(IEntitySource source) {
+            if (!NPC.HasValidTarget) NPC.TargetClosest(false);
 			targetPlayer = NPC.FindClosestPlayer();
 			Player player = Main.player[targetPlayer];
 
@@ -219,8 +220,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			NPC.spriteDirection = NPC.direction; // 贴图 = 移动方向
 
 			// —— 屏幕边缘兜底（复刻 DroneII 的写法，可按需改成 homeAnchor±半径）——
-			float screenLeft = Main.screenPosition.X + Main.screenWidth / 6f;
-			float screenRight = Main.screenPosition.X + Main.screenWidth * 5f / 6f - NPC.width;
+			float patrolCenter = Main.player[Player.FindClosest(NPC.position, NPC.width, NPC.height)].Center.X;
+			float screenLeft = patrolCenter - 480f;
+			float screenRight = patrolCenter + 480f - NPC.width;
 
 			bool edgeTurn =
 				(!idleMode && NPC.position.X < screenLeft && NPC.velocity.X < 0) ||
@@ -263,7 +265,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			isInAttackPhase = true;
 			attackCooldown = 30;
 
-			Projectile.NewProjectile(
+			global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(
 				NPC.GetSource_FromAI(),
 				NPC.Center,
 				velocity,
@@ -371,7 +373,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 		// ===== 高度越界自毁（可选） =====
 		private void CheckHeightDanger(Player player) {
-			float screenH = Main.screenHeight;
+			const float screenH = 1080f;
 			float heightDiff = NPC.position.Y - player.position.Y; // 负值：在玩家上方
 			if (heightDiff < -screenH * MaxAllowedHeight) {
 				if (++heightAlarmTimer > MaxHeightTime) {

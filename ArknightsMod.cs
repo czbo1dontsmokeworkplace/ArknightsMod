@@ -359,6 +359,9 @@ namespace ArknightsMod
 						global::ArknightsMod.Content.Projectiles.Bosses.W.WD12.TryDetachFromPacket(projIndex, whoAmI);
 					}
 					break;
+				case ArkMessageID.SeabornContact:
+					global::ArknightsMod.Common.Networking.SeabornContactSync.Receive(reader, whoAmI);
+					break;
 			}
 		}
 
@@ -415,6 +418,7 @@ namespace ArknightsMod
             OperatorSkillHealingGrant,
             RaidianMarkRequest,
             FangSkillPointGrant,
+            SeabornContact,
 		}
 	}
 	//public class Ex : GlobalNPC

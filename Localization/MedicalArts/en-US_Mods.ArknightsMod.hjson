@@ -121,8 +121,8 @@ Items: {
 		DisplayName: Fragrance Staff [Perfumer]
 		Tooltip:
 			'''
-			Throws a healing art toward the cursor, deploying a circular healing field on landing
-			Heals allies inside the barrier aura; shares the 3-second medical cooldown
+			Hold left-click to form a circular healing art at the cursor; activates after 1 second
+			Each hold heals allies in range once; release early to cancel; shares the 3-second medical cooldown
 			'''
 	}
 
@@ -130,8 +130,8 @@ Items: {
 		DisplayName: Healing Staff [Breeze]
 		Tooltip:
 			'''
-			Throws a healing art toward the cursor, deploying a circular healing field on landing
-			Heals allies inside the barrier aura; shares the 3-second medical cooldown
+			Hold left-click to form a circular healing art at the cursor; activates after 1 second
+			Each hold heals allies in range once; release early to cancel; shares the 3-second medical cooldown
 			'''
 	}
 
@@ -139,8 +139,8 @@ Items: {
 		DisplayName: Medical Staff [Ptilopsis]
 		Tooltip:
 			'''
-			Throws a healing art toward the cursor, deploying a circular healing field on landing
-			Heals allies inside the barrier aura; shares the 3-second medical cooldown
+			Hold left-click to form a circular healing art at the cursor; activates after 1 second
+			Each hold heals allies in range once; release early to cancel; shares the 3-second medical cooldown
 			'''
 	}
 
@@ -148,8 +148,8 @@ Items: {
 		DisplayName: Sanctuary Staff [Nightingale]
 		Tooltip:
 			'''
-			Throws a healing art toward the cursor, deploying a circular healing field on landing
-			Heals allies inside the barrier aura; shares the 3-second medical cooldown
+			Hold left-click to form a circular healing art at the cursor; activates after 1 second
+			Each hold heals allies in range once; release early to cancel; shares the 3-second medical cooldown
 			'''
 	}
 
@@ -419,7 +419,7 @@ Skills: {
 BranchTraits: {
 	MedicProfession: Medic:  These weapons efficiently heal allies, at the cost of being unable to damage enemies
 	MedicTherapist: Therapist:  Lower base healing, but healing arts can home
-	MedicMultiTarget: Multi-target Medic:  Base healing is approximately 66% of a normal Medic at the same progression stage; landing or contact creates a persistent healing field for allied players inside
+	MedicMultiTarget: Multi-target Medic:  Base healing is approximately 66% of a normal Medic at the same progression stage; hold left-click for 1 second to heal allies in the cursor area once
 	MedicChain: Chain Medic:  Successful healing adds independently expiring stacks of life regeneration
 	MedicWandering: Wandering Medic:  Cleanse removable debuffs; each debuff removed increases healing
 }

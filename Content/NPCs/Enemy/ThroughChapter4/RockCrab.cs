@@ -12,7 +12,7 @@ using static Terraria.ModLoader.ModContent;
 
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 {
-	public class RockCrab : ModNPC
+	public partial class RockCrab : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		private const int FrameHeight = 46;
 		private const int AttackStartFrame = 0;
@@ -83,6 +83,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		}
 
 		public override void AI() {
+			if (Main.netMode == NetmodeID.SinglePlayer) TickClientPresentation();
 			NPC.TargetClosest(true);
 			Player target = Main.player[NPC.target];
 
@@ -137,7 +138,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 		public override void FindFrame(int frameHeight) {
             if (NPC.GetGlobalNPC<global::ArknightsMod.Content.NPCs.Friendly.CannotSupportNPC>().IsSleeping) return;
-			NPC.TargetClosest(true);
+
 			Player target = Main.player[NPC.target];
 
 			bool attacking = NPC.localAI[0] > 0f;
@@ -189,12 +190,19 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			if (NPC.localAI[0] > 0f)
 				return false;
 
-			return contactHitCooldown <= 0;
+			return contactHitCooldown <= 0 && localContactHitCooldown <= 0;
 		}
 
 		public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo) {
-			contactHitCooldown = ContactHitCooldown;
+			localContactHitCooldown = ContactHitCooldown;
 			target.immuneTime = Math.Max(target.immuneTime, ContactPlayerImmunity);
+		}
+
+		// Hurt callbacks run on the victim's client. Server snapshots must not
+		// clear that client's contact immunity, or leave its timer frozen forever.
+		private int localContactHitCooldown;
+		protected override void TickClientPresentation() {
+			if (localContactHitCooldown > 0) localContactHitCooldown--;
 		}
 
 		private int GetAttackSpriteDirection(Player target) {

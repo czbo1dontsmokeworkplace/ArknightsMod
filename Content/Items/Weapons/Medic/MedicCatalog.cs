@@ -13,14 +13,13 @@ public sealed record MedicProfile(string Key, MedicBranch Branch, int Tier, int 
 {
     public int Interval => MedicCastPlayer.CooldownTicks;
     public int Healing => MedicBalanceRules.HealingFor(Branch,Progression);
-    public int ArmingDelay { get; init; } = 10;
+    public int ArmingDelay => Branch == MedicBranch.MultiTarget ? 60 : 10;
     public int PatientContactSize => Branch == MedicBranch.MultiTarget ? 64 : 32;
     public float ResistanceDurationMultiplier { get; init; } = 2f;
     public float ResistanceReduction { get; init; } = 1f;
     // Slow field deployment uses a short hand animation and a separate player cooldown.
     public int CastAnimation => 8;
     public float ArtRadius => (10f + Tier * .75f) * (Branch == MedicBranch.MultiTarget ? 2f : 1f);
-    public int FieldDuration => Math.Max(600, LegacyInterval * 3 + 60);
 }
 
 public static class MedicCatalog

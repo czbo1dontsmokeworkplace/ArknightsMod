@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Items.Material;
 using ArknightsMod.Systems.Gameplay.Damage;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,7 +12,7 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 {
-	public class PrimalSeaPiercer:ModNPC
+	public partial class PrimalSeaPiercer:global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		public override void SetDefaults() {
 			NPC.width = 50;
@@ -58,7 +58,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 			});
 		}
 		public override void FindFrame(int frameHeight) {
-			NPC.TargetClosest(true);
+
 			NPC.spriteDirection = -NPC.direction;
 			Player p = Main.player[NPC.target];
 			int Startframe = 0;
@@ -144,7 +144,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 				leavetime = 0;
 			}
 			if (attacktime == 10) {
-				Projectile.NewProjectile(newSource, NPC.Center, new Vector2(directionchoose * 12f, 0).RotatedBy(angle), ModContent.ProjectileType<PSPShoot>(), 25, 0.8f, 0, NPC.whoAmI);
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center, new Vector2(directionchoose * 12f, 0).RotatedBy(angle), ModContent.ProjectileType<PSPShoot>(), 25, 0.8f, 0, NPC.whoAmI);
 			}
 			if (leave == true) {
 				approach = false;
@@ -205,7 +205,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 		}
 
 	}
-	public class PSPShoot : ModProjectile
+	public partial class PSPShoot : ModProjectile
 	{
 
 		public override void SetStaticDefaults() {

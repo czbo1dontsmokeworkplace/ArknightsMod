@@ -29,7 +29,6 @@ public sealed class CatapultLauncher : ExpansionWeaponBase
     public override void ModifyTooltips(System.Collections.Generic.List<TooltipLine> tooltips)
     {
         base.ModifyTooltips(tooltips);
-        tooltips.Add(new TooltipLine(Mod, "CatapultSkillKey", GetSkillActivateKeyHint()));
         tooltips.Add(new TooltipLine(Mod, "CatapultPlaceholder", Language.GetTextValue("Mods.ArknightsMod.CatapultText.Placeholder")));
     }
 

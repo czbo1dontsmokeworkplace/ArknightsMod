@@ -12,7 +12,7 @@ using ArknightsMod.Systems.Gameplay.Damage;
 
 namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 {
-    public class DeepSeaSlider : ModNPC
+    public partial class DeepSeaSlider : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
     {
         public override void SetStaticDefaults()
         {
@@ -153,7 +153,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             
-            NPC.ai[3] = 200;
+            global::ArknightsMod.Common.Networking.SeabornContactSync.Report(NPC, target);
             
         }
 		public override void HitEffect(NPC.HitInfo hit) {

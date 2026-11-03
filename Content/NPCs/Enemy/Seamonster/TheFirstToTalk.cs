@@ -1,4 +1,4 @@
-﻿using Terraria;
+using Terraria;
 using Terraria.Localization;
 using Terraria.GameContent.Bestiary;
 using Terraria.ID;
@@ -14,7 +14,7 @@ using ArknightsMod.Common.VisualEffects;
 
 namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 {
-	public class TFTTRush : ModProjectile
+	public partial class TFTTRush : ModProjectile
 	{
 		public override void SetStaticDefaults() {
 			Main.projFrames[Projectile.type] = 1;
@@ -59,7 +59,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 			return true;
 		}
 	}
-	public class TFTTRush2 : ModProjectile
+	public partial class TFTTRush2 : ModProjectile
 	{
 		public override void SetStaticDefaults() {
 			Main.projFrames[Projectile.type] = 1;
@@ -144,7 +144,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 	}
 
 	[AutoloadBossHead]
-	public class TheFirstToTalk : ModNPC
+	public partial class TheFirstToTalk : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		public override void SetDefaults() {
 			NPC.width = 60;
@@ -196,7 +196,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 		private Vector2 rushd = new Vector2();
 
 		public override void FindFrame(int frameHeight) {
-			NPC.TargetClosest(true);
+
 			NPC.spriteDirection = -NPC.direction;
 			Player p = Main.player[NPC.target];
 			NPC.frameCounter++;
@@ -266,25 +266,27 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 			jumpCD++;
 			if (leave==false){
 				spawntimer++;
-				if (new Random().Next(0, 5) <= 2) {
+				if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.Next(0, 5) <= 2) {
 					spawntimer += 1;
 				}
-				if (spawntimer== 14) {
-					spawn = new Random().Next(0, 200);
+				if (spawntimer >= 14 && Main.netMode != NetmodeID.MultiplayerClient) {
+					spawntimer = 0;
+					{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { spawn = Main.rand.Next(0, 200); NPC.netUpdate = true; } }
+					NPC.netUpdate = true;
 					if (spawn <= 4) {
-						NPC.NewNPC(NPC.GetSource_FromThis(), (int)(Main.screenPosition.X - 0.55 * Main.screenWidth), (int)(Main.screenPosition.Y), ModContent.NPCType<DeepSeaSlider>());
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(NPC.GetSource_FromThis(), (int)(Main.player[NPC.target].Center.X - 720f), (int)(Main.player[NPC.target].Center.Y - 240f), ModContent.NPCType<DeepSeaSlider>());
 					}
 					if (spawn <= 8 && spawn >4) {
-						NPC.NewNPC(NPC.GetSource_FromThis(), (int)(Main.screenPosition.X + 0.55 * Main.screenWidth), (int)(Main.screenPosition.Y), ModContent.NPCType<DeepSeaSlider>());
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(NPC.GetSource_FromThis(), (int)(Main.player[NPC.target].Center.X + 720f), (int)(Main.player[NPC.target].Center.Y - 240f), ModContent.NPCType<DeepSeaSlider>());
 					}
 					if (spawn <= 15 && spawn > 8) {
-						NPC.NewNPC(NPC.GetSource_FromThis(), (int)(Main.screenPosition.X + 0.55 * Main.screenWidth), (int)(Main.screenPosition.Y), ModContent.NPCType<ShellSeaRunner>());
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(NPC.GetSource_FromThis(), (int)(Main.player[NPC.target].Center.X + 720f), (int)(Main.player[NPC.target].Center.Y - 240f), ModContent.NPCType<ShellSeaRunner>());
 					}
 					if (spawn <= 22 && spawn > 15) {
-						NPC.NewNPC(NPC.GetSource_FromThis(), (int)(Main.screenPosition.X - 0.55 * Main.screenWidth), (int)(Main.screenPosition.Y), ModContent.NPCType<ShellSeaRunner>());
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(NPC.GetSource_FromThis(), (int)(Main.player[NPC.target].Center.X - 720f), (int)(Main.player[NPC.target].Center.Y - 240f), ModContent.NPCType<ShellSeaRunner>());
 					}
 					if (spawn <= 26 && spawn > 22) {
-						NPC.NewNPC(NPC.GetSource_FromThis(), (int)(Main.screenPosition.X - 0.55 * Main.screenWidth), (int)(Main.screenPosition.Y), ModContent.NPCType<ShellSeaRunner>());
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(NPC.GetSource_FromThis(), (int)(Main.player[NPC.target].Center.X - 720f), (int)(Main.player[NPC.target].Center.Y - 240f), ModContent.NPCType<ShellSeaRunner>());
 					}
 
 				}
@@ -387,8 +389,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 					SP += 1;
 				}
 				if (NPC.life<=NPC.lifeMax *0.5 && ask == false) {
-					NPC.NewNPC(NPC.GetSource_FromThis(), (int)(p.position.X+0.55*Main.screenWidth), (int)(p.position.Y), ModContent.NPCType<BasinSeaReaper>());
-					NPC.NewNPC(NPC.GetSource_FromThis(), (int)(p.position.X - 0.55 * Main.screenWidth), (int)(p.position.Y), ModContent.NPCType<BasinSeaReaper>());
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(NPC.GetSource_FromThis(), (int)(p.position.X+720f), (int)(p.position.Y), ModContent.NPCType<BasinSeaReaper>());
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(NPC.GetSource_FromThis(), (int)(p.position.X - 720f), (int)(p.position.Y), ModContent.NPCType<BasinSeaReaper>());
 					ask = true;
 					SP += 2000;
 				}
@@ -415,11 +417,11 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 					NPC.velocity = 13 * rushd;
 					SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/TFTTRush") with { Volume = 0.7f, Pitch = 0f }, NPC.Center);
 					for (int i = 1; i < 4; i++) {
-						Projectile.NewProjectile(newSource, NPC.Center, new Vector2(directionchoose * (8 + i * 2), 0).RotatedBy(angle + MathHelper.Pi / 6f), ModContent.ProjectileType<TFTTRush>(), 17, 0.8f, 0, 0);
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center, new Vector2(directionchoose * (8 + i * 2), 0).RotatedBy(angle + MathHelper.Pi / 6f), ModContent.ProjectileType<TFTTRush>(), 17, 0.8f, 0, 0);
 
 					}
 					for (int i = 1; i < 4; i++) {
-						Projectile.NewProjectile(newSource, NPC.Center, new Vector2(directionchoose * (8 + i * 2), 0).RotatedBy(angle - MathHelper.Pi / 6f), ModContent.ProjectileType<TFTTRush2>(), 17, 0.8f, 0, 0);
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center, new Vector2(directionchoose * (8 + i * 2), 0).RotatedBy(angle - MathHelper.Pi / 6f), ModContent.ProjectileType<TFTTRush2>(), 17, 0.8f, 0, 0);
 
 					}
 
@@ -458,9 +460,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 				NPC.velocity.X = 0;
 				if (shoottime == 50) {
 					SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/TFTTShoot") with { Volume = 1.5f, Pitch = 0f }, NPC.Center);
-					Projectile.NewProjectile(newSource, NPC.Center, PWV, ModContent.ProjectileType<PWTFTT>(), 18, 0.8f, 0, 0);
-					Projectile.NewProjectile(newSource, NPC.Center + new Vector2(60, -100), new Vector2(0, 0), ModContent.ProjectileType<splitwater2>(), 0,0);
-					Projectile.NewProjectile(newSource, NPC.Center + new Vector2(-60, -100), new Vector2(0, 0), ModContent.ProjectileType<splitwater2>(), 0,0);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center, PWV, ModContent.ProjectileType<PWTFTT>(), 18, 0.8f, 0, 0);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center + new Vector2(60, -100), new Vector2(0, 0), ModContent.ProjectileType<splitwater2>(), 0,0);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center + new Vector2(-60, -100), new Vector2(0, 0), ModContent.ProjectileType<splitwater2>(), 0,0);
 					//Projectile.NewProjectile(newSource, NPC.Center, new Vector2(directionchoose * 25f, 0).RotatedBy(angle), ModContent.ProjectileType<seashoot>(), 18, 0.8f, 0, NPC.whoAmI, NPC.target);
 					//Projectile.NewProjectile(newSource, NPC.Center, new Vector2(15f, 0).RotatedBy(-MathHelper.PiOver4), ModContent.ProjectileType<seashoot>(), 18, 0.8f, 0, NPC.whoAmI, NPC.target);
 					//Projectile.NewProjectile(newSource, NPC.Center, new Vector2(15f, 0).RotatedBy(-(MathHelper.Pi / 4) * 3), ModContent.ProjectileType<seashoot>(), 18, 0.8f, 0, NPC.whoAmI, NPC.target);
@@ -470,14 +472,14 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 				
 				}
 				if (shoottime == 99 && NPC.life < 0.5 * NPC.lifeMax) {
-					Projectile.NewProjectile(newSource, NPC.Center, new Vector2(15f, 0).RotatedBy(-MathHelper.PiOver4), ModContent.ProjectileType<seashoot>(), 18, 0.8f, 0, NPC.whoAmI, NPC.target);
-					Projectile.NewProjectile(newSource, NPC.Center, new Vector2(15f, 0).RotatedBy(-(MathHelper.Pi / 4) * 3), ModContent.ProjectileType<seashoot>(), 18, 0.8f, 0, NPC.whoAmI, NPC.target);
-					Projectile.NewProjectile(newSource, NPC.Center, new Vector2(15f, 0).RotatedBy((MathHelper.Pi / 4) * 3), ModContent.ProjectileType<seashoot>(), 18, 0.8f, 0, NPC.whoAmI, NPC.target);
-					Projectile.NewProjectile(newSource, NPC.Center, new Vector2(15f, 0).RotatedBy(MathHelper.Pi / 4), ModContent.ProjectileType<seashoot>(), 18, 0.8f, 0, NPC.whoAmI, NPC.target);
-					Projectile.NewProjectile(newSource, NPC.Center, new Vector2(15f, 0).RotatedBy(-MathHelper.PiOver2), ModContent.ProjectileType<seashoot>(), 18, 0.8f, 0, NPC.whoAmI, NPC.target);
-					Projectile.NewProjectile(newSource, NPC.Center, new Vector2(15f, 0).RotatedBy(-(MathHelper.Pi / 2) * 3), ModContent.ProjectileType<seashoot>(), 18, 0.8f, 0, NPC.whoAmI, NPC.target);
-					Projectile.NewProjectile(newSource, NPC.Center, new Vector2(15f, 0).RotatedBy((MathHelper.Pi) * 3), ModContent.ProjectileType<seashoot>(), 18, 0.8f, 0, NPC.whoAmI, NPC.target);
-					Projectile.NewProjectile(newSource, NPC.Center, new Vector2(15f, 0).RotatedBy((MathHelper.Pi) * 2), ModContent.ProjectileType<seashoot>(), 18, 0.8f, 0, NPC.whoAmI, NPC.target);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center, new Vector2(15f, 0).RotatedBy(-MathHelper.PiOver4), ModContent.ProjectileType<seashoot>(), 18, 0.8f, 0, NPC.whoAmI, NPC.target);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center, new Vector2(15f, 0).RotatedBy(-(MathHelper.Pi / 4) * 3), ModContent.ProjectileType<seashoot>(), 18, 0.8f, 0, NPC.whoAmI, NPC.target);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center, new Vector2(15f, 0).RotatedBy((MathHelper.Pi / 4) * 3), ModContent.ProjectileType<seashoot>(), 18, 0.8f, 0, NPC.whoAmI, NPC.target);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center, new Vector2(15f, 0).RotatedBy(MathHelper.Pi / 4), ModContent.ProjectileType<seashoot>(), 18, 0.8f, 0, NPC.whoAmI, NPC.target);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center, new Vector2(15f, 0).RotatedBy(-MathHelper.PiOver2), ModContent.ProjectileType<seashoot>(), 18, 0.8f, 0, NPC.whoAmI, NPC.target);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center, new Vector2(15f, 0).RotatedBy(-(MathHelper.Pi / 2) * 3), ModContent.ProjectileType<seashoot>(), 18, 0.8f, 0, NPC.whoAmI, NPC.target);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center, new Vector2(15f, 0).RotatedBy((MathHelper.Pi) * 3), ModContent.ProjectileType<seashoot>(), 18, 0.8f, 0, NPC.whoAmI, NPC.target);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center, new Vector2(15f, 0).RotatedBy((MathHelper.Pi) * 2), ModContent.ProjectileType<seashoot>(), 18, 0.8f, 0, NPC.whoAmI, NPC.target);
 				}
 
 
@@ -501,61 +503,61 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 					SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/TFTTSkillS") with { Volume = 1f, Pitch = 0f }, NPC.Center);
 				}
 				if (skilltime == 40) {
-					Projectile.NewProjectile(newSource, NPC.Center + new Vector2(0, -100), new Vector2(0, 0), ModContent.ProjectileType<splitwater2>(), 0, 0);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center + new Vector2(0, -100), new Vector2(0, 0), ModContent.ProjectileType<splitwater2>(), 0, 0);
 
 				}
 				if (skilltime == 50) {
-					NPC.NewNPC(newSource, (int)NPC.Center.X, (int)NPC.Center.Y-100, ModContent.NPCType<ShellSeaRunner>());
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(newSource, (int)NPC.Center.X, (int)NPC.Center.Y-100, ModContent.NPCType<ShellSeaRunner>());
 				}
 				if (skilltime == 70) {
-					Projectile.NewProjectile(newSource, NPC.Center + new Vector2(0, -100), new Vector2(0, 0), ModContent.ProjectileType<splitwater2>(), 0, 0);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center + new Vector2(0, -100), new Vector2(0, 0), ModContent.ProjectileType<splitwater2>(), 0, 0);
 					
 				}
 				if (skilltime == 80) {
-					NPC.NewNPC(newSource, (int)NPC.Center.X, (int)NPC.Center.Y-100, ModContent.NPCType<ShellSeaRunner>());
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(newSource, (int)NPC.Center.X, (int)NPC.Center.Y-100, ModContent.NPCType<ShellSeaRunner>());
 				}
 				if (skilltime == 100) {
-					Projectile.NewProjectile(newSource, NPC.Center + new Vector2(0, -100), new Vector2(0, 0), ModContent.ProjectileType<splitwater2>(), 0, 0);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center + new Vector2(0, -100), new Vector2(0, 0), ModContent.ProjectileType<splitwater2>(), 0, 0);
 				}
 				if (skilltime == 110) {
-					NPC.NewNPC(newSource, (int)NPC.Center.X, (int)NPC.Center.Y-100, ModContent.NPCType<ShellSeaRunner>());
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(newSource, (int)NPC.Center.X, (int)NPC.Center.Y-100, ModContent.NPCType<ShellSeaRunner>());
 				}
 				if (skilltime == 70) {
 					for (int i = 1; i < 4; i++) {
-						Projectile.NewProjectile(newSource, NPC.Center - new Vector2(60, -50), new Vector2(1 * (8 + i * 2), 0).RotatedBy(-MathHelper.Pi / 6f), ModContent.ProjectileType<TFTTRush>(), 17, 0.8f, 0, 0);
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center - new Vector2(60, -50), new Vector2(1 * (8 + i * 2), 0).RotatedBy(-MathHelper.Pi / 6f), ModContent.ProjectileType<TFTTRush>(), 17, 0.8f, 0, 0);
 
 					}
 					for (int i = 1; i < 4; i++) {
-						Projectile.NewProjectile(newSource, NPC.Center - new Vector2(-60, -50), new Vector2(1 * (8 + i * 2), 0).RotatedBy(7 * MathHelper.Pi / 6f), ModContent.ProjectileType<TFTTRush2>(), 17, 0.8f, 0, 0);
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center - new Vector2(-60, -50), new Vector2(1 * (8 + i * 2), 0).RotatedBy(7 * MathHelper.Pi / 6f), ModContent.ProjectileType<TFTTRush2>(), 17, 0.8f, 0, 0);
 
 					}
 				}
 				if (skilltime == 100) {
 					for (int i = 1; i < 4; i++) {
-						Projectile.NewProjectile(newSource, NPC.Center + new Vector2(0, -40), new Vector2(1 * (11 + i * 2), 0).RotatedBy(i * MathHelper.Pi / 9f), ModContent.ProjectileType<TFTTSkillshoot>(), 17, 0.8f, 0, 0);
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center + new Vector2(0, -40), new Vector2(1 * (11 + i * 2), 0).RotatedBy(i * MathHelper.Pi / 9f), ModContent.ProjectileType<TFTTSkillshoot>(), 17, 0.8f, 0, 0);
 					}
 					for (int i = 6; i < 9; i++) {
-						Projectile.NewProjectile(newSource, NPC.Center + new Vector2(0, -40), new Vector2(1 * (11 + (9 - i) * 2), 0).RotatedBy(i * MathHelper.Pi / 9f), ModContent.ProjectileType<TFTTSkillshoot>(), 17, 0.8f, 0, 0);
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center + new Vector2(0, -40), new Vector2(1 * (11 + (9 - i) * 2), 0).RotatedBy(i * MathHelper.Pi / 9f), ModContent.ProjectileType<TFTTSkillshoot>(), 17, 0.8f, 0, 0);
 					}
 				}
 				if (skilltime == 150) {
 
-					Projectile.NewProjectile(newSource, p.Center - new Vector2(0, 800), new Vector2(17, 0).RotatedBy(MathHelper.Pi / 2f), ModContent.ProjectileType<TFTTShoot>(), 21, 0.8f, 0, 0);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, p.Center - new Vector2(0, 800), new Vector2(17, 0).RotatedBy(MathHelper.Pi / 2f), ModContent.ProjectileType<TFTTShoot>(), 21, 0.8f, 0, 0);
 				}
 				if (skilltime == 200) {
-					Projectile.NewProjectile(newSource, p.Center - new Vector2(0, 800), new Vector2(17, 0).RotatedBy(MathHelper.Pi / 2f), ModContent.ProjectileType<TFTTShoot>(), 21, 0.8f, 0, 0);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, p.Center - new Vector2(0, 800), new Vector2(17, 0).RotatedBy(MathHelper.Pi / 2f), ModContent.ProjectileType<TFTTShoot>(), 21, 0.8f, 0, 0);
 				}
 				if (skilltime == 250) {
-					Projectile.NewProjectile(newSource, p.Center - new Vector2(0, 800), new Vector2(17, 0).RotatedBy(MathHelper.Pi / 2f), ModContent.ProjectileType<TFTTShoot>(), 21, 0.8f, 0, 0);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, p.Center - new Vector2(0, 800), new Vector2(17, 0).RotatedBy(MathHelper.Pi / 2f), ModContent.ProjectileType<TFTTShoot>(), 21, 0.8f, 0, 0);
 				}
 				if (skilltime == 300) {
-					Projectile.NewProjectile(newSource, p.Center - new Vector2(0, 800), new Vector2(17, 0).RotatedBy(MathHelper.Pi / 2f), ModContent.ProjectileType<TFTTShoot>(), 21, 0.8f, 0, 0);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, p.Center - new Vector2(0, 800), new Vector2(17, 0).RotatedBy(MathHelper.Pi / 2f), ModContent.ProjectileType<TFTTShoot>(), 21, 0.8f, 0, 0);
 				}
 				if (skilltime == 350) {
-					Projectile.NewProjectile(newSource, p.Center - new Vector2(0, 800), new Vector2(17, 0).RotatedBy(MathHelper.Pi / 2f), ModContent.ProjectileType<TFTTShoot>(), 21, 0.8f, 0, 0);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, p.Center - new Vector2(0, 800), new Vector2(17, 0).RotatedBy(MathHelper.Pi / 2f), ModContent.ProjectileType<TFTTShoot>(), 21, 0.8f, 0, 0);
 				}
 				if (skilltime == 400) {
-					Projectile.NewProjectile(newSource, p.Center - new Vector2(0, 800), new Vector2(17, 0).RotatedBy(MathHelper.Pi / 2f), ModContent.ProjectileType<TFTTShoot>(), 21, 0.8f, 0, 0);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, p.Center - new Vector2(0, 800), new Vector2(17, 0).RotatedBy(MathHelper.Pi / 2f), ModContent.ProjectileType<TFTTShoot>(), 21, 0.8f, 0, 0);
 				}
 
 				if (skilltime == 500) {
@@ -638,7 +640,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 	}
 
 #pragma warning disable CS8981
-		public class seashoot : ModProjectile
+		public partial class seashoot : ModProjectile
 		{
 
 			public override void SetStaticDefaults() {
@@ -748,7 +750,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 			Projectile.timeLeft = 1;
 			Dust dust;
 			dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.WhiteTorch, 0f, -2f, 500, Color.SkyBlue, 5f);
-			Projectile.NewProjectile(newSource, Projectile.Center+new Vector2(100,140), new Vector2(0, 0), ModContent.ProjectileType<waterbombdie>(), 0, 0);
+			global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, Projectile.Center+new Vector2(100,140), new Vector2(0, 0), ModContent.ProjectileType<waterbombdie>(), 0, 0);
 			return false;
 
 		}
@@ -800,7 +802,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 			
 		}
 	}
-	public class PWTFTT : ModProjectile {
+	public partial class PWTFTT : ModProjectile {
 		private float G = 0.12f;// common gravity 一秒内达到10格/秒的速度的加速度
 		public override void AI() {
 			Projectile.velocity.Y += G;

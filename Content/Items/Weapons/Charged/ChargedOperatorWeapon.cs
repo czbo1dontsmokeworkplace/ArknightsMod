@@ -36,7 +36,7 @@ public abstract class ChargedOperatorWeapon : ExpansionWeaponBase
         Item.useTurn = Melee;
         Item.knockBack = Melee ? 6f : 4f;
         Item.shootSpeed = 16f;
-        Item.shoot = Melee ? ModContent.ProjectileType<DreadnoughtThrownBlade>() : ProjectileID.Bullet;
+        Item.shoot = Melee ? ModContent.ProjectileType<DreadnoughtSwing>() : ProjectileID.Bullet;
         Item.useAmmo = Melee ? 0 : AmmoID.Bullet;
         Item.rare = Rarity;
         Item.value = Item.sellPrice(silver: 30 * (Rarity + 1));
@@ -51,7 +51,7 @@ public abstract class ChargedOperatorWeapon : ExpansionWeaponBase
         return clone;
     }
     public override bool CanConsumeAmmo(Item ammo, Player player) => consumingAmmo || !Melee && player.altFunctionUse != 2;
-    public override bool AltFunctionUse(Player player) => true;
+    public override bool AltFunctionUse(Player player) => !Melee;
     public override float UseSpeedMultiplier(Player player)
     {
         if (!Melee) return 1f;
@@ -60,10 +60,9 @@ public abstract class ChargedOperatorWeapon : ExpansionWeaponBase
         return swift ? 4f / 3f : 1f;
     }
     public override bool MeleePrefix() => Melee;
-    public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
+    public override void ModifyWeaponCrit(Player player, ref float crit)
     {
-        base.ModifyWeaponDamage(player, ref damage);
-        if (Melee) damage *= player.GetModPlayer<DreadnoughtPlayer>().Multiplier;
+        if (Melee) crit = player.GetModPlayer<DreadnoughtPlayer>().CritChance(crit);
     }
     internal static bool WorldInputAllowed(Player player) => Main.hasFocus && !Main.gameMenu && !Main.playerInventory
         && !Main.blockInput && !Main.drawingPlayerChat && !player.mouseInterface && player.talkNPC < 0
@@ -78,13 +77,7 @@ public abstract class ChargedOperatorWeapon : ExpansionWeaponBase
                 if (p.owner == player.whoAmI && p.ModProjectile is ChargedOperatorHoldout)
                 { Item.noUseGraphic = true; break; }
         }
-        if (Melee)
-        {
-            if (player.whoAmI == Main.myPlayer && WorldInputAllowed(player) && Main.mouseRight
-                && !player.tileInteractionHappened && !ArknightsKeybinds.SkillActivatePressed(player))
-                DreadnoughtThrownBlade.Recall(player, Kind);
-            return;
-        }
+        if (Melee) return;
         if (player.whoAmI != Main.myPlayer) return;
         var state = player.GetModPlayer<ChargedOperatorPlayer>();
         bool world = WorldInputAllowed(player);
@@ -111,7 +104,6 @@ public abstract class ChargedOperatorWeapon : ExpansionWeaponBase
     public override void ModifyTooltips(System.Collections.Generic.List<TooltipLine> tooltips)
     {
         base.ModifyTooltips(tooltips);
-        tooltips.Add(new TooltipLine(Mod, "ChargedSkillKey", GetSkillActivateKeyHint()));
         if (Kind is not (ChargedOperatorKind.Melantha or ChargedOperatorKind.Matoimaru))
             tooltips.Add(new TooltipLine(Mod, "ChargedPlaceholder", Language.GetTextValue("Mods.ArknightsMod.ChargedArsenal.Placeholder")));
     }
@@ -121,8 +113,9 @@ public abstract class ChargedOperatorWeapon : ExpansionWeaponBase
         if (ArknightsKeybinds.SkillActivatePressed(player) || !WorldInputAllowed(player)) return false;
         if (Melee)
         {
-            if (player.altFunctionUse == 2 || Main.mouseRight)
-            { DreadnoughtThrownBlade.Recall(player, Kind); return false; }
+            if (player.altFunctionUse == 2 || Main.mouseRight) return false;
+            foreach (Projectile swing in Main.ActiveProjectiles)
+                if (swing.owner == player.whoAmI && swing.ModProjectile is DreadnoughtSwing) return false;
             return true;
         }
         return player.altFunctionUse != 2 && !Main.mouseRight
@@ -148,12 +141,14 @@ public abstract class ChargedOperatorWeapon : ExpansionWeaponBase
         }
         if (player.whoAmI == Main.myPlayer && player.altFunctionUse != 2)
         {
-            DreadnoughtThrownBlade.MakeRoom(player, Kind);
+            var state = player.GetModPlayer<DreadnoughtPlayer>();
+            int crit = player.GetWeaponCrit(Item);
+            bool ready = state.BeginAttack(crit);
             var blade = Projectile.NewProjectileDirect(source, player.MountedCenter, velocity.SafeNormalize(Vector2.UnitX * player.direction),
-                ModContent.ProjectileType<DreadnoughtThrownBlade>(),
+                ModContent.ProjectileType<DreadnoughtSwing>(),
                 Math.Max(1, (int)(damage * ChargedOperatorPlayer.DamageMultiplier(Kind, ChargedOperatorPlayer.ActiveSkill(player)))),
-                knockback, player.whoAmI, (int)Kind);
-            blade.CritChance = player.GetWeaponCrit(Item);
+                knockback, player.whoAmI, (int)Kind, 0, ready ? 1 : 0);
+            blade.CritChance = crit;
         }
         return false;
     }

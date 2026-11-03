@@ -10,7 +10,7 @@ using static Terraria.ModLoader.ModContent;
 
 namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 {
-	public class PmpSlugEggLandNPC : ModNPC
+	public partial class PmpSlugEggLandNPC : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		private const int Phase1WaitTicks = 60;
 		private const int Phase2ShakeTicks = 30;
@@ -129,7 +129,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 
 			if (Main.netMode != NetmodeID.MultiplayerClient)
 			{
-				NPC.NewNPC(NPC.GetSource_FromAI(), (int)hatchPos.X, (int)hatchPos.Y, NPCType<ThroughChapter4.FieryOriginiumSlugNPC>());
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(NPC.GetSource_FromAI(), (int)hatchPos.X, (int)hatchPos.Y, NPCType<ThroughChapter4.FieryOriginiumSlugNPC>());
 			}
 
 			NPC.life = 0;

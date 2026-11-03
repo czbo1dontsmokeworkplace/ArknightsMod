@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.ID;
@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 {
-	internal class SnowSniper : ModNPC
+	internal partial class SnowSniper : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		public override void SetStaticDefaults() {
 			Main.npcFrameCount[Type] = 28;
@@ -42,7 +42,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 		public override void FindFrame(int frameHeight) {
 
 			attackframeY = 14 * frameHeight;
-			NPC.TargetClosest(true);
+
 			framecounter++;
 			/*
 			if (walk==true) {
@@ -146,7 +146,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 				NPC.velocity.X = 0;
 				AttackCD++;
 				if (AttackCD == 18) {
-					Projectile.NewProjectile(NPC.GetSource_FromThis(), new Vector2(NPC.position.X, NPC.position.Y + 20), new Vector2(directionchoose * 10f, 0).RotatedBy(angle), ModContent.ProjectileType<SnowSniper_Shot>(),14, 0.8f);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromThis(), new Vector2(NPC.position.X, NPC.position.Y + 20), new Vector2(directionchoose * 10f, 0).RotatedBy(angle), ModContent.ProjectileType<SnowSniper_Shot>(),14, 0.8f);
 				}
 				if (AttackCD > 45) {
 					attack = false;
@@ -173,7 +173,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 				modifiers.SourceDamage *= 2f;   // 大师模式伤害 ×2
 		}
 	}
-		public class SnowSniper_Shot : ModProjectile
+		public partial class SnowSniper_Shot : ModProjectile
 	{
 		public override void SetDefaults() {
 			Projectile.width = 32;

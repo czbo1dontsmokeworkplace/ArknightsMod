@@ -54,10 +54,6 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Deepcolor
 		public override string GetSkillActivateKeyHint()
 			=> Language.GetTextValue("Mods.ArknightsMod.Items.DeepcolorSketch.SkillActivateKey", ArknightsKeybinds.SkillActivateKeyDisplay);
 
-		public override void ModifyTooltips(List<TooltipLine> tooltips) {
-			tooltips.Add(new TooltipLine(Mod, "DeepcolorSketchSkillKey",
-				Language.GetTextValue("Mods.ArknightsMod.Items.DeepcolorSketch.SkillActivateKey", ArknightsKeybinds.SkillActivateKeyDisplay)));
-		}
 
 		public override bool CanUseItem(Player player) {
 			if (player.altFunctionUse == 2)

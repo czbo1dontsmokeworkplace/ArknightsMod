@@ -19,7 +19,7 @@ using static Terraria.ModLoader.ModContent;
 namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 {
     [AutoloadBossHead]
-    public class Pompeii : ModNPC
+    public class Pompeii : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
     {
         private enum AIState
         {
@@ -268,10 +268,10 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
             UpdateAnimation();
 
 			if ((float)NPC.life / (float)NPC.lifeMax <= 0.5f && !ispmpstg2) {
-				Projectile.NewProjectile(null, NPC.Center, Vector2.Zero, ProjectileType<PMPSTG2Effect>(), 0, 0f, -1, 1800, 1);
-				Projectile.NewProjectile(null, NPC.Center, Vector2.Zero, ProjectileType<PMPSTG2Effect>(), 0, 0f, -1, 1800, 0.5f);
-				Projectile.NewProjectile(null, NPC.Center, Vector2.Zero, ProjectileType<PMPSTG2Effect>(), 0, 0f, -1, 1800, -0.5f);
-				Projectile.NewProjectile(null, NPC.Center, Vector2.Zero, ProjectileType<PMPSTG2Effect>(), 0, 0f, -1, 1800, -1);
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, NPC.Center, Vector2.Zero, ProjectileType<PMPSTG2Effect>(), 0, 0f, -1, 1800, 1);
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, NPC.Center, Vector2.Zero, ProjectileType<PMPSTG2Effect>(), 0, 0f, -1, 1800, 0.5f);
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, NPC.Center, Vector2.Zero, ProjectileType<PMPSTG2Effect>(), 0, 0f, -1, 1800, -0.5f);
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, NPC.Center, Vector2.Zero, ProjectileType<PMPSTG2Effect>(), 0, 0f, -1, 1800, -1);
 				ispmpstg2 = true;
 				_stg2BurstCount = 5; // 立即触发5连快速喷卵
 				_stg2BurstTimer = 0;
@@ -289,10 +289,10 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 						Vector2 burstTargetPoint = GetSlugEggTargetPoint(burstTarget);
 						Vector2 bp1 = NPC.Center + new Vector2(55f * NPC.direction, -35f);
 						Vector2 bv1 = SolveSlugEggLaunchVelocity(bp1, burstTargetPoint, false);
-						Projectile.NewProjectile(NPC.GetSource_FromAI(), bp1, bv1, ModContent.ProjectileType<PmpSlugEgg>(), 0, 0f, Main.myPlayer);
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), bp1, bv1, ModContent.ProjectileType<PmpSlugEgg>(), 0, 0f, Main.myPlayer);
 						Vector2 bp2 = NPC.Center + new Vector2(-25f * NPC.direction, -70f);
 						Vector2 bv2 = SolveSlugEggLaunchVelocity(bp2, burstTargetPoint + new Vector2(Main.rand.NextFloat(-20f, 20f), Main.rand.NextFloat(-12f, 12f)), true);
-						Projectile.NewProjectile(NPC.GetSource_FromAI(), bp2, bv2, ModContent.ProjectileType<PmpSlugEgg>(), 0, 0f, Main.myPlayer);
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), bp2, bv2, ModContent.ProjectileType<PmpSlugEgg>(), 0, 0f, Main.myPlayer);
 					}
 					_stg2BurstCount--;
 				}
@@ -302,6 +302,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 
 		public override void SendExtraAI(System.IO.BinaryWriter writer)
 		{
+			base.SendExtraAI(writer);
 			writer.Write((byte)_currentState);
 			writer.Write(_platformLockActive);
 			writer.Write(_platformLockBottomY);
@@ -312,10 +313,16 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 			writer.Write(_jumpGravity);
 			writer.Write(_heightMismatchTimer);
 			writer.Write(ispmpstg2);
+			writer.Write(_modeTimer); writer.Write(_explosionCooldown); writer.Write(_tailKillDuration);
+			writer.Write(_tailKillDebrisSpawned); writer.Write(_tailKillStartPos.X); writer.Write(_tailKillStartPos.Y);
+			writer.Write(_fireRainCounter); writer.Write(_currentFrame); writer.Write(_frameCounter); writer.Write(_frameResetFlag);
+			writer.Write(escapetimer); writer.Write(_slugEggCooldown); writer.Write(_jumpTimer); writer.Write(_jumpPrepCompleted);
+			writer.Write(_stg2BurstCount); writer.Write(_stg2BurstTimer);
 		}
 
 		public override void ReceiveExtraAI(System.IO.BinaryReader reader)
 		{
+			base.ReceiveExtraAI(reader);
 			_currentState = (AIState)reader.ReadByte();
 			_platformLockActive = reader.ReadBoolean();
 			_platformLockBottomY = reader.ReadSingle();
@@ -325,7 +332,14 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 			_jumpGravity = reader.ReadSingle();
 			_heightMismatchTimer = reader.ReadInt32();
 			ispmpstg2 = reader.ReadBoolean();
+			_modeTimer = reader.ReadInt32(); _explosionCooldown = reader.ReadInt32(); _tailKillDuration = reader.ReadInt32();
+			_tailKillDebrisSpawned = reader.ReadBoolean(); _tailKillStartPos = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+			_fireRainCounter = reader.ReadInt32(); _currentFrame = reader.ReadInt32(); _frameCounter = reader.ReadInt32(); _frameResetFlag = reader.ReadInt32();
+			escapetimer = reader.ReadSingle(); _slugEggCooldown = reader.ReadInt32(); _jumpTimer = reader.ReadInt32(); _jumpPrepCompleted = reader.ReadBoolean();
+			_stg2BurstCount = reader.ReadInt32(); _stg2BurstTimer = reader.ReadInt32();
 		}
+
+		protected override bool PredictClientAI => true;
 
         private void ExecuteStateMachine(Player player)
         {
@@ -468,8 +482,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 			Vector2 spawnPos2 = NPC.Center + new Vector2(-25f * NPC.direction, -70f);
 			Vector2 vel1 = SolveSlugEggLaunchVelocity(spawnPos1, targetPoint, false);
 			Vector2 vel2 = SolveSlugEggLaunchVelocity(spawnPos2, targetPoint + new Vector2(Main.rand.NextFloat(-20f, 20f), Main.rand.NextFloat(-12f, 12f)), true);
-			Projectile.NewProjectile(NPC.GetSource_FromAI(), spawnPos1, vel1, ModContent.ProjectileType<PmpSlugEgg>(), 0, 0f, Main.myPlayer);
-			Projectile.NewProjectile(NPC.GetSource_FromAI(), spawnPos2, vel2, ModContent.ProjectileType<PmpSlugEgg>(), 0, 0f, Main.myPlayer);
+			global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), spawnPos1, vel1, ModContent.ProjectileType<PmpSlugEgg>(), 0, 0f, Main.myPlayer);
+			global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), spawnPos2, vel2, ModContent.ProjectileType<PmpSlugEgg>(), 0, 0f, Main.myPlayer);
 
 			// 重置随机CD
 			_slugEggCooldown = Main.rand.Next(120, 241);
@@ -727,21 +741,21 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
             {
                 for (int i = 0; i < shootnum; i++)
                 {
-					Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + new Vector2(55f * NPC.direction, -35f), Vector2.Zero, ModContent.ProjectileType<PmpFireBall>(), 30, 6f, Main.myPlayer);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + new Vector2(55f * NPC.direction, -35f), Vector2.Zero, ModContent.ProjectileType<PmpFireBall>(), 30, 6f, Main.myPlayer);
                 }
                 SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
             }
 
 			if ((Main.expertMode || Main.masterMode) && _modeTimer == 40) {
 				for (int i = 0; i < shootnum; i++) {
-					Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + new Vector2(55f * NPC.direction, -35f), Vector2.Zero, ModContent.ProjectileType<PmpFireBall>(), 40, 6f, Main.myPlayer);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + new Vector2(55f * NPC.direction, -35f), Vector2.Zero, ModContent.ProjectileType<PmpFireBall>(), 40, 6f, Main.myPlayer);
 				}
 				SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
 			}
 
 			if (modetimermax == 90 && _modeTimer == 60) {
 				for (int i = 0; i < shootnum; i++) {
-					Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + new Vector2(55f * NPC.direction, -35f), Vector2.Zero, ModContent.ProjectileType<PmpFireBall>(), 40, 6f, Main.myPlayer);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + new Vector2(55f * NPC.direction, -35f), Vector2.Zero, ModContent.ProjectileType<PmpFireBall>(), 40, 6f, Main.myPlayer);
 				}
 				SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
 			}
@@ -754,7 +768,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 
         private void Mode3Idle()
         {
-			Player Player = Main.player[Main.myPlayer];
+			Player Player = Main.player[NPC.target];
 			//float timecount = Main.masterMode ? 2 : Main.expertMode ? 2.5f : 3;
 			float timecount = 3;
 
@@ -766,11 +780,11 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 					dust.noGravity = true;
 				}
 				SoundEngine.PlaySound(SoundID.Item14, NPC.Center);
-				Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<PmpExplode>(), 50, 0, Main.myPlayer, 0);
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<PmpExplode>(), 50, 0, Main.myPlayer, 0);
 			}
 
 			if (_modeTimer >= 90 && _modeTimer <= 105) {
-				Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + new Vector2(-25f * NPC.direction, -70f), Vector2.Zero, ModContent.ProjectileType<PmpFireRain>(), 0, 0, Main.myPlayer, 0);
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + new Vector2(-25f * NPC.direction, -70f), Vector2.Zero, ModContent.ProjectileType<PmpFireRain>(), 0, 0, Main.myPlayer, 0);
 			}
 
 			if (_modeTimer == 90) {
@@ -796,7 +810,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
                 for (int i = 0; i < fireballCount; i++)
                 {
                     Vector2 spawnPos = new Vector2(player.Center.X + Main.rand.NextFloat(-600, 600), player.Center.Y + Main.rand.NextFloat(-120, 120) - 600);
-					Projectile.NewProjectile(NPC.GetSource_FromAI(), spawnPos, Vector2.Zero, ModContent.ProjectileType<PmpFireRain>(), 35, 6f, Main.myPlayer, 1);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), spawnPos, Vector2.Zero, ModContent.ProjectileType<PmpFireRain>(), 35, 6f, Main.myPlayer, 1);
                 }
                 _fireRainCounter++;
                 SoundEngine.PlaySound(SoundID.Item34, NPC.Center);
@@ -821,7 +835,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 					dust.noGravity = true;
 				}
 				SoundEngine.PlaySound(SoundID.Item14, NPC.Center);
-				Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<PmpExplode>(), 50, 0, Main.myPlayer, 0);
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<PmpExplode>(), 50, 0, Main.myPlayer, 0);
 			}
 
 			if (++_modeTimer >= 60 * timecount)
@@ -869,7 +883,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 					SoundEngine.PlaySound(SoundID.Item14, NPC.Center);
 					if (Main.netMode != NetmodeID.MultiplayerClient)
 					{
-						Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<PmpExplode>(), 50, 0, Main.myPlayer, 0);
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<PmpExplode>(), 50, 0, Main.myPlayer, 0);
 					}
 					_jumpPrepCompleted = true;
 				}
@@ -980,7 +994,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 
 			if (Main.netMode != NetmodeID.MultiplayerClient)
 			{
-				Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<PmpExplode>(), 50, 0f, Main.myPlayer, 0);
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<PmpExplode>(), 50, 0f, Main.myPlayer, 0);
 			}
 		}
 
@@ -1037,6 +1051,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 		}
 		private void SelectNextAttackState(AIState? previousState = null)
 		{
+			if (Main.netMode == NetmodeID.MultiplayerClient) return;
 			bool lowHp = (float)NPC.life / NPC.lifeMax <= 0.5f;
 			Player selTarget = Main.player[NPC.target];
 			bool sameLevel = Math.Abs(selTarget.Center.Y - NPC.Center.Y) < 180f;
@@ -1124,7 +1139,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 
 			if (_tailKillDuration >= 90 && _tailKillDuration % 48 == 0) {
 				for (int i = 0; i <= Main.rand.Next(3,7); i++) {
-					Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + new Vector2(-25f * NPC.direction, -70f), Vector2.Zero, ModContent.ProjectileType<PmpFireRain>(), 0, 0, Main.myPlayer, 0);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + new Vector2(-25f * NPC.direction, -70f), Vector2.Zero, ModContent.ProjectileType<PmpFireRain>(), 0, 0, Main.myPlayer, 0);
 				}
 				SoundEngine.PlaySound(SoundID.Item11, NPC.Center);
 			}
@@ -1146,7 +1161,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
             {
 				if (_tailKillDuration <= (shoottime - 1) * shootdelta) {
 					for (int j = 0; j <= Main.rand.Next(3, 7); j++) {
-						Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + new Vector2(-25f * NPC.direction, -70f), Vector2.Zero, ModContent.ProjectileType<PmpFireRain>(), 0, 0, Main.myPlayer, 0);
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + new Vector2(-25f * NPC.direction, -70f), Vector2.Zero, ModContent.ProjectileType<PmpFireRain>(), 0, 0, Main.myPlayer, 0);
 					}
 				}
 
@@ -1154,7 +1169,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
                 {
 					//Vector2 spawnPos = new Vector2(NPC.Center.X + Main.rand.NextFloat(-600, 600), NPC.Center.Y + Main.rand.NextFloat(-60, 60) - 540);
 					Vector2 spawnPos = new Vector2(player.Center.X + Main.rand.NextFloat(-600, 600), player.Center.Y + Main.rand.NextFloat(-120, 120) - 720);
-					Projectile.NewProjectile(NPC.GetSource_FromAI(), spawnPos, Vector2.Zero, ModContent.ProjectileType<PmpFireRain>(), 50, 6f, Main.myPlayer, 1);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), spawnPos, Vector2.Zero, ModContent.ProjectileType<PmpFireRain>(), 50, 6f, Main.myPlayer, 1);
 				}
                 SoundEngine.PlaySound(SoundID.Item11, NPC.Center);
             }
@@ -1169,11 +1184,11 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 
 		private void HandleTailKillDeath()
         {
-			Player Player = Main.player[Main.myPlayer];
+			Player Player = Main.player[NPC.target];
 			_tailKillDuration++;
 
 			if (_tailKillDuration == 45) {
-				Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<PmpExplode>(), 0, 0, -1);
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<PmpExplode>(), 0, 0, -1);
 			}
 
 			if (_tailKillDuration == 60)
@@ -1216,7 +1231,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
     }
 
 	//火球
-	public class PmpFireBall : ModProjectile
+	public partial class PmpFireBall : ModProjectile
 	{
 		public override string Texture => ArknightsMod.noTexture;
 
@@ -1264,7 +1279,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 		}
 
 		public override void AI() {
-			Player Player = Main.player[Main.myPlayer];
+			Player Player = Main.player[Player.FindClosest(Projectile.position, Projectile.width, Projectile.height)];
 			Lighting.AddLight(Projectile.Center, 10);
 			Projectile.rotation = Projectile.velocity.ToRotation() + float.Pi / 2;
 			Vector2 deltaPos = Player.Center - spawnPos;
@@ -1304,7 +1319,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 	}
 
 	//火雨
-	public class PmpFireRain : ModProjectile
+	public partial class PmpFireRain : ModProjectile
 	{
 
 		public override string Texture => ArknightsMod.noTexture;
@@ -1429,7 +1444,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 	}
 
 	//爆炸
-	public class PmpExplode : ModProjectile
+	public partial class PmpExplode : ModProjectile
 	{
 
 		public override string Texture => ArknightsMod.noTexture;
@@ -1492,7 +1507,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.OF.Pmp
 		}
 	}
 
-	public class PMPSTG2Effect : ModProjectile
+	public partial class PMPSTG2Effect : ModProjectile
 	{
 		public override string Texture => ArknightsMod.noTexture;
 

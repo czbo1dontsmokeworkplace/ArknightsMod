@@ -47,12 +47,7 @@ NoirShield: {
 
 DurinWand: {
 	DisplayName: wand [Durin]
-	Tooltip:
-		'''
-		Normal attacks fire three straight shots, 4 frames apart
-		The next burst starts 18 frames after the third shot
-		She looks quite sleepy.
-		'''
+	Tooltip: Fires three Arts bolts in a straight-line burst
 }
 
 _12FWand: {
@@ -2976,13 +2971,7 @@ PipeBlueLightBlock: {
 
 HazeMagicBook: {
 	DisplayName: Staff [Haze]
-	Tooltip:
-		'''
-		Early Hardmode
-		Fires blue-violet spells; skills empower attacks or trade maximum life for a burst of power
-		Normal attacks fire three straight shots, 4 frames apart
-		The next burst starts 18 frames after the third shot
-		'''
+	Tooltip: Fires three blue-violet Arts bolts in a straight-line burst
 }
 
 ReedFlameShadowStaff: {
@@ -3230,12 +3219,7 @@ TexasDefault: {
 
 StewardStaff: {
 	DisplayName: Staff [Steward]
-	Tooltip:
-		'''
-		Attacks charge an empowered straight spell
-		Normal attacks fire three straight shots, 4 frames apart
-		The next burst starts 18 frames after the third shot
-		'''
+	Tooltip: Fires three Arts bolts in a straight-line burst, with empowered shots after charging
 }
 
 GoldenglowWand: {
@@ -3866,14 +3850,7 @@ RedDagger: {
 
 HoolheyakWindArts: {
 	DisplayName: Windfeather [Ho'olheyak]
-	Tooltip:
-		'''
-		Available after defeating Golem
-		Fires a straight wind bolt that creates a homing vortex on hit
-		Normal attacks fire three straight shots, 4 frames apart
-		The next burst starts 18 frames after the third shot
-		Vortices pull in and lift ordinary enemies, but cannot lift bosses
-		'''
+	Tooltip: Fires three straight wind bolts in a burst, creating seeking vortices on hit
 }
 
 EbenholzStaff: {

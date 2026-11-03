@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.GameContent.Bestiary;
 using Terraria.ID;
@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.NPCs.Enemy.Evolution
 {
 
-	public class tumor2 : ModNPC
+	public partial class tumor2 : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		// 是否有实心方块
 		private int direction = 1; // 1 for right, -1 for left

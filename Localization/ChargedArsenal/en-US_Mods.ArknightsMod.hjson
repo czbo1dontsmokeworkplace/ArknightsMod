@@ -3,12 +3,10 @@ Items: {
 		DisplayName: Standard Sword [Melantha]
 		Tooltip:
 			'''
-			Left-click: immediately throw a blade that embeds in enemies or terrain; the throw deals 300% damage and always crits
-			Right-click: recall all blades of this weapon, dealing one extra hit on extraction
-			Returning blades ignore terrain and pierce infinitely; each hits each enemy only once during recall
-			Up to 5 blades per enemy and 24 per weapon; excess old blades return automatically
-			The overhead bar counts blades in the last enemy hit; at 5, it prompts you to recall
-			Successful hits build damage momentum without increasing throwing frequency
+			Left-click to swing; critical strike chance rises while idle, reaching 100% after 3 seconds
+			A flash and sound announce Astonishing Moment when preparation completes
+			Astonishing Moment lasts until the next swing ends, including a missed swing
+			The overhead bar tracks preparation; switching to other weapons clears it
 			'''
 	}
 
@@ -16,12 +14,10 @@ Items: {
 		DisplayName: Naginata [Matoimaru]
 		Tooltip:
 			'''
-			Left-click: immediately throw a blade that embeds in enemies or terrain; the throw deals 300% damage and always crits
-			Right-click: recall all blades of this weapon, dealing one extra hit on extraction
-			Returning blades ignore terrain and pierce infinitely; each hits each enemy only once during recall
-			Up to 5 blades per enemy and 24 per weapon; excess old blades return automatically
-			The overhead bar counts blades in the last enemy hit; at 5, it prompts you to recall
-			Successful hits build damage momentum without increasing throwing frequency
+			Left-click to swing; critical strike chance rises while idle, reaching 100% after 3 seconds
+			A flash and sound announce Astonishing Moment when preparation completes
+			Astonishing Moment lasts until the next swing ends, including a missed swing
+			The overhead bar tracks preparation; switching to other weapons clears it
 			'''
 	}
 
@@ -29,12 +25,10 @@ Items: {
 		DisplayName: Thermite Rapier [Franka]
 		Tooltip:
 			'''
-			Left-click: immediately throw a blade that embeds in enemies or terrain; the throw deals 300% damage and always crits
-			Right-click: recall all blades of this weapon, dealing one extra hit on extraction
-			Returning blades ignore terrain and pierce infinitely; each hits each enemy only once during recall
-			Up to 5 blades per enemy and 24 per weapon; excess old blades return automatically
-			The overhead bar counts blades in the last enemy hit; at 5, it prompts you to recall
-			Successful hits build damage momentum without increasing throwing frequency
+			Left-click to swing; critical strike chance rises while idle, reaching 100% after 3 seconds
+			A flash and sound announce Astonishing Moment when preparation completes
+			Astonishing Moment lasts until the next swing ends, including a missed swing
+			The overhead bar tracks preparation; switching to other weapons clears it
 			Hits have a 25% chance to ignore defense and set enemies ablaze
 			'''
 	}
@@ -43,12 +37,10 @@ Items: {
 		DisplayName: Blazing Sun Swordlance [Radiant Nearl]
 		Tooltip:
 			'''
-			Left-click: immediately throw a blade that embeds in enemies or terrain; the throw deals 300% damage and always crits
-			Right-click: recall all blades of this weapon, dealing one extra hit on extraction
-			Returning blades ignore terrain and pierce infinitely; each hits each enemy only once during recall
-			Up to 5 blades per enemy and 24 per weapon; excess old blades return automatically
-			The overhead bar counts blades in the last enemy hit; at 5, it prompts you to recall
-			Successful hits build damage momentum without increasing throwing frequency
+			Left-click to swing; critical strike chance rises while idle, reaching 100% after 3 seconds
+			A flash and sound announce Astonishing Moment when preparation completes
+			Astonishing Moment lasts until the next swing ends, including a missed swing
+			The overhead bar tracks preparation; switching to other weapons clears it
 			'''
 	}
 
@@ -138,7 +130,7 @@ Skills: {
 	FrankaRapier: {
 		1: {
 			Label: Swift Strike γ
-			Desc: Manual: ATK +45%; base throwing interval becomes 21 ticks.
+			Desc: Manual: ATK +45%; base swing duration becomes 21 ticks.
 		}
 
 		2: {
@@ -150,7 +142,7 @@ Skills: {
 	NearlRadiantSword: {
 		1: {
 			Label: Flaming Edge
-			Desc: Manual: ATK +70%, blade length +15%, base throwing interval becomes 21 ticks.
+			Desc: Manual: ATK +70%, blade length +15%, base swing duration becomes 21 ticks.
 		}
 
 		2: {
@@ -258,7 +250,6 @@ Skills: {
 }
 
 ChargedArsenal: {
-	RecallReady: 5 blades embedded: right-click to recall
 	Tick: Tick
 	Tock: Tock
 	SkillKey: Press [{0}] to activate the selected manual skill (rebind in Settings → Controls)
@@ -273,7 +264,11 @@ Crossbows: {
 	BluePoison: Hold left-click for rapid four-shot bursts. Venom bolts hit up to two enemies and inflict Venom for 4 seconds.
 }
 
-Projectiles: {
-	DreadnoughtThrownBlade.DisplayName: Dreadnought Blade
-	DreadnoughtThrowImpact.DisplayName: Blade Extraction Flash
+Buffs: {
+	AstonishingMoment: {
+		DisplayName: Astonishing Moment
+		Description: Your next Dreadnought swing has 100% critical strike chance until the attack ends
+	}
 }
+
+Projectiles.DreadnoughtMomentFlash.DisplayName: Astonishing Moment

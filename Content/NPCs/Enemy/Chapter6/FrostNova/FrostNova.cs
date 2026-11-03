@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Common.VisualEffects;
+using ArknightsMod.Common.VisualEffects;
 using ArknightsMod.Content.BossBars;
 using ArknightsMod.Content.Items.Material;
 using Microsoft.Xna.Framework;
@@ -19,7 +19,7 @@ using static Terraria.ModLoader.ModContent;
 namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 {
 	[AutoloadBossHead]
-	public class FrostNova : ModNPC
+	public partial class FrostNova : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		#region 基本属性设置
 		public override void SetStaticDefaults() {
@@ -322,7 +322,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 						FNTPOpacity = NPC.Opacity;
 						if (JumpTimer == 40) {
 							for (int i = 0; i < 2; i++) {
-								Projectile.NewProjectile(null, NPC.Center, new Vector2(1f * NPC.direction, 1f), ProjectileType<FrostNovaJump>(), 0, 0f, -1, 0, 40, 0);
+								global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, NPC.Center, new Vector2(1f * NPC.direction, 1f), ProjectileType<FrostNovaJump>(), 0, 0f, -1, 0, 40, 0);
 							}
 							SoundEngine.PlaySound(SoundID.NPCHit5, NPC.Center);
 						}
@@ -341,7 +341,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 					else if (JumpTimer <= 135) {
 						if (JumpTimer == 91) {
 							for (int i = 0; i < 2; i++) {
-								Projectile.NewProjectile(null, NPC.Center, new Vector2(1f * NPC.direction, 1f), ProjectileType<FrostNovaJump>(), 0, 0f, -1, 0, 40, 0);
+								global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, NPC.Center, new Vector2(1f * NPC.direction, 1f), ProjectileType<FrostNovaJump>(), 0, 0f, -1, 0, 40, 0);
 							}
 							SoundEngine.PlaySound(SoundID.NPCHit5, NPC.Center);
 						}
@@ -483,13 +483,13 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 						float positionX = NPC.Center.X + Main.rand.NextFloat(-15, 15) * NPC.direction;
 						float positionY = NPC.Center.Y + Main.rand.NextFloat(0, 5);
 						Vector2 position = new Vector2(positionX, positionY);
-						Projectile.NewProjectile(null, position, new Vector2(0, -1f), ProjectileType<FrostNovaJump>(), 0, 0f, -1, 0, 40, 0);
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, position, new Vector2(0, -1f), ProjectileType<FrostNovaJump>(), 0, 0f, -1, 0, 40, 0);
 					}
 					for (int i = 0; i < 3; i++) {
 						float positionX = NPC.Center.X + Main.rand.NextFloat(-15, 15) * NPC.direction;
 						float positionY = NPC.Center.Y + Main.rand.NextFloat(0, 5);
 						Vector2 position = new Vector2(positionX, positionY);
-						Projectile.NewProjectile(null, position, new Vector2(0, -1f), ProjectileType<FrostNovaJump>(), 0, 0f, -1, 0, 40, 0);
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, position, new Vector2(0, -1f), ProjectileType<FrostNovaJump>(), 0, 0f, -1, 0, 40, 0);
 					}
 					NPC.Center = Vector2.Zero;
 					NPC.active = false;
@@ -513,13 +513,13 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 							float positionX = NPC.Center.X + Main.rand.NextFloat(-15, 15) * NPC.direction;
 							float positionY = NPC.Center.Y + Main.rand.NextFloat(0, 5);
 							Vector2 position = new Vector2(positionX, positionY);
-							Projectile.NewProjectile(null, position, new Vector2(0, -1f), ProjectileType<FrostNovaJump>(), 0, 0f, -1, 0, 40, 0);
+							global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, position, new Vector2(0, -1f), ProjectileType<FrostNovaJump>(), 0, 0f, -1, 0, 40, 0);
 						}
 						for (int i = 0; i < 3; i++) {
 							float positionX = NPC.Center.X + Main.rand.NextFloat(-15, 15) * NPC.direction;
 							float positionY = NPC.Center.Y + Main.rand.NextFloat(0, 5);
 							Vector2 position = new Vector2(positionX, positionY);
-							Projectile.NewProjectile(null, position, new Vector2(0, -1f), ProjectileType<FrostNovaJump>(), 0, 0f, -1, 0, 40, 0);
+							global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, position, new Vector2(0, -1f), ProjectileType<FrostNovaJump>(), 0, 0f, -1, 0, 40, 0);
 						}
 					}
 					if (BirthTimer <= 60) {
@@ -561,26 +561,26 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 						if (FNATKTimer == 176) {
 							FNBFChecker += 1;
 							SoundEngine.PlaySound(SoundID.Item28, NPC.Center);
-							Projectile.NewProjectile(null, NPC.Center + new Vector2(-80f * NPC.direction, -48f), Vector2.Zero, ProjectileType<BlackIceIntro>(), 10, 0.2f, -1, 0);
+							global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, NPC.Center + new Vector2(-80f * NPC.direction, -48f), Vector2.Zero, ProjectileType<BlackIceIntro>(), 10, 0.2f, -1, 0);
 						}
 						if (FNATKTimer == 186 & FNBFChecker % 3 == 2) {
 							SoundEngine.PlaySound(SoundID.Item28, NPC.Center);
-							NumOfBanFloorOneTime = Main.masterMode ? Main.rand.Next(4, 7) : Main.expertMode ? Main.rand.Next(3, 6) : Main.rand.Next(2, 5);
+							{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { NumOfBanFloorOneTime = Main.masterMode ? Main.rand.Next(4, 7) : Main.expertMode ? Main.rand.Next(3, 6) : Main.rand.Next(2, 5); NPC.netUpdate = true; } }
 							int NumOfFNBF = 36 - IndexOfFNBF > 3 ? NumOfBanFloorOneTime : 36 - IndexOfFNBF;
 							for (int i = IndexOfFNBF; i < IndexOfFNBF + NumOfFNBF; i++) {
 								Vector2 SlicePos = new Vector2(IceFloorCandidate[i], NPC.Center.Y - 120) + new Vector2(Main.rand.NextFloat(-4, 4), Main.rand.NextFloat(-16, 16));
-								Projectile.NewProjectile(null, SlicePos, Vector2.Zero, ProjectileType<FNBanFloor>(), 0, 0);
+								global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, SlicePos, Vector2.Zero, ProjectileType<FNBanFloor>(), 0, 0);
 							}
 							IndexOfFNBF += NumOfFNBF;
 						}
 						if (FNATKTimer == 196) {
 							SoundEngine.PlaySound(SoundID.Item28, NPC.Center);
-							Projectile.NewProjectile(null, NPC.Center + new Vector2(-48f * NPC.direction, -80f), Vector2.Zero, ProjectileType<BlackIceIntro>(), 10, 0.2f, -1, 0);
+							global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, NPC.Center + new Vector2(-48f * NPC.direction, -80f), Vector2.Zero, ProjectileType<BlackIceIntro>(), 10, 0.2f, -1, 0);
 						}
 					}
 					if (FNATKTimer == 186) {
 						SoundEngine.PlaySound(SoundID.Item28, NPC.Center);
-						Projectile.NewProjectile(null, NPC.Center + new Vector2(-64f * NPC.direction, -64f), Vector2.Zero, ProjectileType<BlackIceIntro>(), 10, 0.2f, -1, 0);
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, NPC.Center + new Vector2(-64f * NPC.direction, -64f), Vector2.Zero, ProjectileType<BlackIceIntro>(), 10, 0.2f, -1, 0);
 					}
 				}
 				else {
@@ -625,22 +625,22 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 					if (FNStage == 2 && FNSkillChoice % 4 == 0) {//二阶段要发射3个alpha冰环
 						if (FNSkillTimer == 484) {
 							SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/FNIceRingStg2Start") with { Volume = 1f, Pitch = 0f }, NPC.Center);
-							Projectile.NewProjectile(null, NPC.Center + new Vector2(0, -48f), Vector2.Zero, ProjectileType<FNIceRingChoice>(), 10, 0.2f, -1, FNStage, FNSkillChoice, -float.Pi / 4);
+							global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, NPC.Center + new Vector2(0, -48f), Vector2.Zero, ProjectileType<FNIceRingChoice>(), 10, 0.2f, -1, FNStage, FNSkillChoice, -float.Pi / 4);
 						}
 						if (FNSkillTimer == 494) {
 							SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/FNIceRingStg2Start") with { Volume = 1f, Pitch = 0f }, NPC.Center);
-							Projectile.NewProjectile(null, NPC.Center + new Vector2(0, -48f), Vector2.Zero, ProjectileType<FNIceRingChoice>(), 10, 0.2f, -1, FNStage, FNSkillChoice, 0);
+							global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, NPC.Center + new Vector2(0, -48f), Vector2.Zero, ProjectileType<FNIceRingChoice>(), 10, 0.2f, -1, FNStage, FNSkillChoice, 0);
 						}
 						if (FNSkillTimer == 504) {
 							SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/FNIceRingStg2Start") with { Volume = 1f, Pitch = 0f }, NPC.Center);
-							Projectile.NewProjectile(null, NPC.Center + new Vector2(0, -48f), Vector2.Zero, ProjectileType<FNIceRingChoice>(), 10, 0.2f, -1, FNStage, FNSkillChoice, float.Pi / 4);
+							global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, NPC.Center + new Vector2(0, -48f), Vector2.Zero, ProjectileType<FNIceRingChoice>(), 10, 0.2f, -1, FNStage, FNSkillChoice, float.Pi / 4);
 							FNSkillChoice += 1;
 						}
 					}
 					else {
 						if (FNSkillTimer == 504) {
 							SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/FNIceRingStg2Start") with { Volume = 1f, Pitch = 0f }, NPC.Center);
-							Projectile.NewProjectile(null, NPC.Center + new Vector2(0, -48f), Vector2.Zero, ProjectileType<FNIceRingChoice>(), 10, 0.2f, -1, FNStage, FNSkillChoice, 0);
+							global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, NPC.Center + new Vector2(0, -48f), Vector2.Zero, ProjectileType<FNIceRingChoice>(), 10, 0.2f, -1, FNStage, FNSkillChoice, 0);
 							FNSkillChoice += 1;
 						}
 					}
@@ -662,7 +662,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 						if (IceCrystalAltar.CountActiveAltars() < IceCrystalAltar.MaxConcurrentAltars) {
 							float spawnX = player.Center.X + Main.rand.NextFloat(-420f, 420f);
 							float spawnY = player.Center.Y + Main.rand.NextFloat(-100f, 100f);
-							Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero, ProjectileType<IceAltarSummonWisp>(), 0, 0f, -1, spawnX, spawnY);
+							global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero, ProjectileType<IceAltarSummonWisp>(), 0, 0f, -1, spawnX, spawnY);
 						}
 					}
 				}
@@ -684,35 +684,35 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 				switch (SummonTypeChoice)
 				{
 					case 0:
-						NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowCaster>());
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowCaster>());
 						for(int i = 0; i < 3; i++) {
-							NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowSoldier>());
+							global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowSoldier>());
 						}
 						break;
 					case 1:
-						NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowCaster>());
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowCaster>());
 						for(int i = 0; i < 2; i++) {
-							NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowHound>());
+							global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowHound>());
 						}
 						break;
 					case 2:
 						for (int i = 0; i < 2; i++) {
-							NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowSniper>());
-							NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<Oneiros>());
+							global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowSniper>());
+							global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<Oneiros>());
 						}
 						break;
 					case 3:
-						NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<IceCleaver>());
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<IceCleaver>());
 						for(int i = 0; i < 2; i++) {
-							NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowHound>());
+							global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowHound>());
 						}
 						break;
 					case 4:
 						for (int i = 0; i < 3; i++) {
-							NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowSoldier>());
+							global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowSoldier>());
 						}
 						for(int i = 0; i < 2; i++) {
-							NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowSniper>());
+							global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowSniper>());
 						}
 						break;
 
@@ -740,13 +740,13 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 						float positionX = NPC.Center.X - 4 * NPC.direction;
 						float positionY = NPC.Center.Y - 7;
 						Vector2 position = new Vector2(positionX, positionY);
-						Projectile.NewProjectile(null, position, Vector2.Zero, ProjectileType<FrostNovaRevival>(), 0, 0f, -1, NPC.direction);
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, position, Vector2.Zero, ProjectileType<FrostNovaRevival>(), 0, 0f, -1, NPC.direction);
 					}
 					if (DeathTimer == 411) {
 						float positionX = NPC.Center.X - 4 * NPC.direction;
 						float positionY = NPC.Center.Y - 4;
 						Vector2 position = new Vector2(positionX, positionY);
-						Projectile.NewProjectile(null, position, Vector2.Zero, ProjectileType<FrostNovaWhiteRing>(), 0, 0f, -1, NPC.direction);
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, position, Vector2.Zero, ProjectileType<FrostNovaWhiteRing>(), 0, 0f, -1, NPC.direction);
 					}
 					if (DeathTimer >= 600) {
 						FNStage = 2f;
@@ -798,35 +798,35 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 						int randomChoice =j==0?Choice1:Choice2;//四选二
 						switch (randomChoice) {
 							case 0:
-								NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowCaster>());
+								global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowCaster>());
 								for (int i = 0; i < 3; i++) {
-									NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowSoldier>());
+									global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowSoldier>());
 								}
 								break;
 							case 1:
-								NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowCaster>());
+								global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowCaster>());
 								for (int i = 0; i < 2; i++) {
-									NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowHound>());
+									global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowHound>());
 								}
 								break;
 							case 2:
 								for (int i = 0; i < 2; i++) {
-									NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowSniper>());
-									NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<Oneiros>());
+									global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowSniper>());
+									global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<Oneiros>());
 								}
 								break;
 							case 3:
-								NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<IceCleaver>());
+								global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<IceCleaver>());
 								for (int i = 0; i < 2; i++) {
-									NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowHound>());
+									global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowHound>());
 								}
 								break;
 							case 4:
 								for (int i = 0; i < 3; i++) {
-									NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowSoldier>());
+									global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowSoldier>());
 								}
 								for (int i = 0; i < 2; i++) {
-									NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? Main.screenWidth / 2 + Main.rand.Next(0, 160) : -(Main.screenWidth / 2 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowSniper>());
+									global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowSniper>());
 								}
 								break;
 
@@ -856,7 +856,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 					NPC.velocity.X = 0;
 					if (ReBirthTimer == 30) {
 						for (int i = -1; i < 3; i += 2) {
-							Projectile.NewProjectile(null, NPC.Center - new Vector2(0, NPC.height / 1.5f), Vector2.Zero, ProjectileType<BlizzardStormStarter>(), 10, 0f, -1, i);
+							global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, NPC.Center - new Vector2(0, NPC.height / 1.5f), Vector2.Zero, ProjectileType<BlizzardStormStarter>(), 10, 0f, -1, i);
 						}
 					}
 					if (BirthTimer <= 60) {
@@ -871,8 +871,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 					jumptimes = -1;
 				}
 				if (ReBirthTimer == 1) {
-					Projectile.NewProjectile(null, NPC.Center, Vector2.Zero, ProjectileType<FNInvincibleEffect>(), 10, 0f, -1, 1800, 1);
-					Projectile.NewProjectile(null, NPC.Center, Vector2.Zero, ProjectileType<FNInvincibleEffect>(), 10, 0f, -1, 1800, -1);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, NPC.Center, Vector2.Zero, ProjectileType<FNInvincibleEffect>(), 10, 0f, -1, 1800, 1);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, NPC.Center, Vector2.Zero, ProjectileType<FNInvincibleEffect>(), 10, 0f, -1, 1800, -1);
 				}
 
 				if (ReBirthTimer >= 1175 && ReBirthTimer < 1185) {//检测冰晶坐标，开始给场地切块
@@ -928,7 +928,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 				}
 				if ((int)ReBirthTimer % 60 == 0) {
 					for (int i = 0; i < 6; i++) {
-						Projectile.NewProjectile(null, NPC.Center, Vector2.Zero, ProjectileType<FNIceDust>(), 0, 0f, -1, i, (int)ReBirthTimer / 30);
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, NPC.Center, Vector2.Zero, ProjectileType<FNIceDust>(), 0, 0f, -1, i, (int)ReBirthTimer / 30);
 					}
 				}
 			}
@@ -991,25 +991,25 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 						float positionX = NPC.Center.X + Main.rand.NextFloat(-20, 23) * NPC.direction;
 						float positionY = NPC.Center.Y + Main.rand.NextFloat(0, 45);
 						Vector2 position = new Vector2(positionX, positionY);
-						Projectile.NewProjectile(null, position, new Vector2(0.5f * NPC.direction, -0.3f), ProjectileType<FrostNovaSmoke>(), 0, 0f, -1, 0, 90, 0);
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, position, new Vector2(0.5f * NPC.direction, -0.3f), ProjectileType<FrostNovaSmoke>(), 0, 0f, -1, 0, 90, 0);
 					}
 					for (int i = 0; i < 4; i++) {
 						float positionX = NPC.Center.X + Main.rand.NextFloat(-34, 16) * NPC.direction;
 						float positionY = NPC.Center.Y + Main.rand.NextFloat(-10, 34);
 						Vector2 position = new Vector2(positionX, positionY);
-						Projectile.NewProjectile(null, position, new Vector2(2.8f * NPC.direction, -0.5f), ProjectileType<FrostNovaSmoke>(), 0, 0f, -1, 0, 80, -1);
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, position, new Vector2(2.8f * NPC.direction, -0.5f), ProjectileType<FrostNovaSmoke>(), 0, 0f, -1, 0, 80, -1);
 					}
 					for (int i = 0; i < 4; i++) {
 						float positionX = NPC.Center.X + Main.rand.NextFloat(-18, 28) * NPC.direction;
 						float positionY = NPC.Center.Y + Main.rand.NextFloat(-29, 16);
 						Vector2 position = new Vector2(positionX, positionY);
-						Projectile.NewProjectile(null, position, new Vector2(-3f * NPC.direction, 0.7f), ProjectileType<FrostNovaSmoke>(), 0, 0f, -1, 0, 85, 1);
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, position, new Vector2(-3f * NPC.direction, 0.7f), ProjectileType<FrostNovaSmoke>(), 0, 0f, -1, 0, 85, 1);
 					}
 					for (int i = 0; i < 3; i++) {
 						float positionX = NPC.Center.X + Main.rand.NextFloat(-10, 33) * NPC.direction;
 						float positionY = NPC.Center.Y + Main.rand.NextFloat(10, 36);
 						Vector2 position = new Vector2(positionX, positionY);
-						Projectile.NewProjectile(null, position, new Vector2(-0.9f * NPC.direction, -0.4f), ProjectileType<FrostNovaSmoke>(), 0, 0f, -1, 0, 85, 1);
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, position, new Vector2(-0.9f * NPC.direction, -0.4f), ProjectileType<FrostNovaSmoke>(), 0, 0f, -1, 0, 85, 1);
 					}
 				}
 
@@ -1206,7 +1206,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		#endregion
 	}
 
-	public class FrostNovaJump : ModProjectile
+	public partial class FrostNovaJump : ModProjectile
 	{
 		public override string Texture => ArknightsMod.noTexture;
 
@@ -1346,7 +1346,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 			}
 		}
 	}
-	public class FrostNovaSmoke : ModProjectile
+	public partial class FrostNovaSmoke : ModProjectile
 	{
 		public override string Texture => ArknightsMod.noTexture;
 
@@ -1500,7 +1500,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		}
 	}
 	//往左右方向抛出的冰球，ai0分别设置为-1和1（由霜星发射时判定），同值传递给Storm
-	public class BlizzardStormStarter : ModProjectile
+	public partial class BlizzardStormStarter : ModProjectile
 	{
 		public override string Texture => ArknightsMod.noTexture;
 		public override void SetStaticDefaults() {
@@ -1526,7 +1526,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 
 		public override bool OnTileCollide(Vector2 oldVelocity) {
 			var newSource = Projectile.GetSource_FromThis();
-			Projectile.NewProjectile(newSource, Projectile.Center - new Vector2(0, 14), Vector2.Zero, ModContent.ProjectileType<BlizzardStorm>(), Projectile.damage, 0f, 0, Projectile.ai[0]);
+			global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, Projectile.Center - new Vector2(0, 14), Vector2.Zero, ModContent.ProjectileType<BlizzardStorm>(), Projectile.damage, 0f, 0, Projectile.ai[0]);
 			SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/FNSummonIceAltar") with { Volume = 0.8f, Pitch = 0f }, Projectile.Center);
 			return true;
 		}
@@ -1604,7 +1604,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 				Projectile.velocity.Y = 0f;
 				Projectile.velocity.X = float.Lerp(Projectile.velocity.X, 0, 0.00625f);
 				if (Math.Abs(Projectile.velocity.X) <= 0.25f) {
-					Projectile.NewProjectile(newSource, Projectile.Center - new Vector2(0, 14), Vector2.Zero, ModContent.ProjectileType<BlizzardStorm>(), Projectile.damage, 0f, 0, Projectile.ai[0]);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, Projectile.Center - new Vector2(0, 14), Vector2.Zero, ModContent.ProjectileType<BlizzardStorm>(), Projectile.damage, 0f, 0, Projectile.ai[0]);
 					SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/FNSummonIceAltar") with { Volume = 0.8f, Pitch = 0f }, Projectile.Center);
 					Projectile.Kill();
 				}
@@ -1618,7 +1618,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		}
 	}
 	//浮在空中的源石冰晶
-	public class BlizzardStorm : ModProjectile
+	public partial class BlizzardStorm : ModProjectile
 	{
 		public override string Texture => "ArknightsMod/Content/NPCs/Enemy/Chapter6/FrostNova/FNIceCrystal";
 
@@ -1670,7 +1670,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		}
 
 		public override void AI() {
-			Player Player = Main.player[Main.myPlayer];
+			Player Player = Main.player[Player.FindClosest(Projectile.position, Projectile.width, Projectile.height)];
 			var newSource = Projectile.GetSource_FromThis();
 			timer++;
 
@@ -1691,7 +1691,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 			if (timer >= 30) {
 				if ((int)timer % 30 == 0) {
 					for (int i = 0; i < trailnum; i++) {//生成轨迹，ai0为相位，2iπ/个数
-						Projectile.NewProjectile(newSource, new Vector2(Projectile.Center.X, startY + 292), Vector2.Zero, ModContent.ProjectileType<Blizzard>(), Projectile.damage, 0f, 0, 2 * i * MathHelper.Pi / trailnum);
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, new Vector2(Projectile.Center.X, startY + 292), Vector2.Zero, ModContent.ProjectileType<Blizzard>(), Projectile.damage, 0f, 0, 2 * i * MathHelper.Pi / trailnum);
 					}
 				}
 			}
@@ -1737,7 +1737,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		}
 	}
 	//单个的龙卷风团
-	public class Blizzard : ModProjectile
+	public partial class Blizzard : ModProjectile
 	{
 		public override string Texture => ArknightsMod.noTexture;
 
@@ -1781,7 +1781,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		}
 
 		public override void AI() {
-			Player Player = Main.player[Main.myPlayer];
+			Player Player = Main.player[Player.FindClosest(Projectile.position, Projectile.width, Projectile.height)];
 
 			timer++;
 			ScreenMedPlaceDisRate = Math.Abs(2 * (Projectile.Center.Y - Player.Center.Y) / Main.screenHeight);
@@ -1811,7 +1811,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		}
 	}
 	//冰柱
-	public class BlackIceProjectile : ModProjectile
+	public partial class BlackIceProjectile : ModProjectile
 	{
 		public override void SetStaticDefaults() {
 			Main.projFrames[Projectile.type] = 6;
@@ -1931,7 +1931,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		}
 	}
 	//冰晶（引物）
-	public class BlackIceIntro : ModProjectile
+	public partial class BlackIceIntro : ModProjectile
 	{
 		public override void SetStaticDefaults() {
 			Main.projFrames[Projectile.type] = 15;
@@ -1973,7 +1973,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 			timer++;
 			deltatime = (Projectile.ai[0] - Projectile.ai[1]) * 8;//越晚越短，ai0是总数，ai1是编号
 			Projectile.Opacity = Math.Min(timer / 30f, 1f);
-			Player Player = Main.player[Main.myPlayer];
+			Player Player = Main.player[Player.FindClosest(Projectile.position, Projectile.width, Projectile.height)];
 
 			if (Projectile.frame < 12) {
 				Projectile.rotation = Projectile.DirectionTo(Player.Center).ToRotation();
@@ -1982,7 +1982,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 				skilloffsetrotation = Projectile.ai[0] == 0 ? 0 : 0.075f * float.Pi * MathF.Sin(2 * Projectile.ai[1] * float.Pi / Projectile.ai[0]);
 				IceVelocity = new Vector2(0, -Math.Min(((timer - deltatime) - 20f) / 5f, 16f)).RotatedBy(Projectile.rotation + skilloffsetrotation);
 				if (!isProjShooted) {
-					Projectile.NewProjectile(null, Projectile.Center, IceVelocity, ModContent.ProjectileType<BlackIce>(), Projectile.damage, 0.25f, -1, skilloffsetrotation);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, Projectile.Center, IceVelocity, ModContent.ProjectileType<BlackIce>(), Projectile.damage, 0.25f, -1, skilloffsetrotation);
 					isProjShooted = true;
 				}
 			}
@@ -2008,7 +2008,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		}
 	}
 	//冰晶（飞行）
-	public class BlackIce : ModProjectile
+	public partial class BlackIce : ModProjectile
 	{
 		public override void SetStaticDefaults() {
 			Main.projFrames[Projectile.type] = 1;
@@ -2058,7 +2058,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 
 		public override void AI() {
 			timer++;
-			Player Player = Main.player[Main.myPlayer];
+			Player Player = Main.player[Player.FindClosest(Projectile.position, Projectile.width, Projectile.height)];
 			if (timer <= 1f) {
 				Projectile.rotation = Projectile.DirectionTo(Player.Center).ToRotation() + MathHelper.PiOver4 + Projectile.ai[0];
 			}
@@ -2084,7 +2084,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 
 		public override void OnKill(int timeLeft) {
 			Vector2 position = Projectile.Center + new Vector2(0, -12f).RotatedBy(Projectile.rotation);
-			Projectile.NewProjectile(null, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<BlackIceExplode>(), Projectile.damage, 0.25f, -1, Projectile.ai[0]);
+			global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<BlackIceExplode>(), Projectile.damage, 0.25f, -1, Projectile.ai[0]);
 			for (int i = 0; i < 3; i++) {
 				Dust.NewDust(position, 16, 16, DustID.Granite, -0.5f * Projectile.velocity.X, -0.5f * Projectile.velocity.Y, 0, new Color(255, 255, 255), 1f);
 				Dust.NewDust(position, 16, 16, DustID.PortalBolt, -0.5f * Projectile.velocity.X, -0.5f * Projectile.velocity.Y, 0, new Color(255, 255, 255), 1f);
@@ -2144,7 +2144,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		}
 	}
 	//技能分发弹幕，整合了8种冰环技能
-	public class FNIceRingChoice : ModProjectile
+	public partial class FNIceRingChoice : ModProjectile
 	{
 		public override string Texture => ArknightsMod.noTexture;
 
@@ -2201,8 +2201,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 				}
 			}
 			if (!hasChild) {
-				Projectile.NewProjectile(source, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FNIceRingRound>(), Projectile.damage, 0f, -1, -1, Projectile.whoAmI);
-				Projectile.NewProjectile(source, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FNIceRingRound>(), Projectile.damage, 0f, -1, 1, Projectile.whoAmI);
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(source, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FNIceRingRound>(), Projectile.damage, 0f, -1, -1, Projectile.whoAmI);
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(source, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FNIceRingRound>(), Projectile.damage, 0f, -1, 1, Projectile.whoAmI);
 			}
 			//寻找主体
 			for (int i = 0; i < Main.maxNPCs; i++) {
@@ -2224,7 +2224,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		}
 
 		public override void AI() {
-			Player Player = Main.player[Main.myPlayer];
+			Player Player = Main.player[Player.FindClosest(Projectile.position, Projectile.width, Projectile.height)];
 			var newSource = Projectile.GetSource_FromThis();
 			timer++;
 
@@ -2232,7 +2232,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 				speedY = timer >= 240f ? 0 : (Projectile.ai[2] == 0 ? -2 : -2 * MathF.Sqrt(2)) * MathF.Sin(float.Pi * timer / 240f);//960 / π像素
 				Projectile.velocity = new Vector2(0, speedY).RotatedBy(Projectile.ai[2]);
 				if (timer >= 300f && (int)(timer - 300) % 8 == 0 && icenumshooted < icenum) {
-					Projectile.NewProjectile(newSource, Projectile.Center + new Vector2(0, -72f).RotatedBy(icenumshooted * 2 * float.Pi / icenum) + new Vector2(1f, 14f).RotatedBy(0), Vector2.Zero, ModContent.ProjectileType<BlackIceIntro>(), Projectile.damage, 0f, -1, icenum, icenumshooted);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, Projectile.Center + new Vector2(0, -72f).RotatedBy(icenumshooted * 2 * float.Pi / icenum) + new Vector2(1f, 14f).RotatedBy(0), Vector2.Zero, ModContent.ProjectileType<BlackIceIntro>(), Projectile.damage, 0f, -1, icenum, icenumshooted);
 					SoundEngine.PlaySound(SoundID.Item30, Projectile.Center);
 					icenumshooted++;
 				}
@@ -2257,7 +2257,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 				}
 
 				if (timer >= 300f && (int)(timer - 300) % (Projectile.ai[0] == 1 ? 2 : 1) == 0 && timer < 390f) {
-					Projectile.NewProjectile(newSource, Projectile.Center + new Vector2(0, 32f).RotatedBy((icenumshooted) * 2 * float.Pi / icenum), Vector2.Zero, ModContent.ProjectileType<BlackIceProjectile>(), Projectile.damage, 0f, -1, icenum, icenumshooted - 1, Projectile.ai[1]);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, Projectile.Center + new Vector2(0, 32f).RotatedBy((icenumshooted) * 2 * float.Pi / icenum), Vector2.Zero, ModContent.ProjectileType<BlackIceProjectile>(), Projectile.damage, 0f, -1, icenum, icenumshooted - 1, Projectile.ai[1]);
 					if ((int)(timer - 300) % 2 == 0) {
 						SoundEngine.PlaySound(SoundID.Item30, Projectile.Center);
 					}
@@ -2267,7 +2267,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 			else {//周身冰环（β和δ）,ai1（技能次数）会传给子弹幕的ai2，除以4余1的时候是不同时间发射的冰环（β），除以4余3是同时间发射的冰环（δ）
 				Projectile.Center = HostNPC.Center;
 				if (timer >= 300f && (int)(timer - 300) % (Projectile.ai[0] == 1 ? 4 : 2) == 0 && icenumshooted < icenum) {
-					Projectile.NewProjectile(newSource, Projectile.Center + new Vector2(0, -72f).RotatedBy(icenumshooted * 2 * float.Pi / icenum) + new Vector2(1f, 0f).RotatedBy(0), Vector2.Zero, ModContent.ProjectileType<BlackIceProjectile>(), Projectile.damage, 0f, -1, icenum, icenumshooted, Projectile.ai[1] + 0.1f * (Projectile.ai[0] - 1));
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, Projectile.Center + new Vector2(0, -72f).RotatedBy(icenumshooted * 2 * float.Pi / icenum) + new Vector2(1f, 0f).RotatedBy(0), Vector2.Zero, ModContent.ProjectileType<BlackIceProjectile>(), Projectile.damage, 0f, -1, icenum, icenumshooted, Projectile.ai[1] + 0.1f * (Projectile.ai[0] - 1));
 					SoundEngine.PlaySound(SoundID.Item30, Projectile.Center);
 					icenumshooted++;
 				}
@@ -2279,7 +2279,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		}
 	}
 	//环绕弹幕
-	public class FNIceRingRound : ModProjectile
+	public partial class FNIceRingRound : ModProjectile
 	{
 		public override string Texture => ArknightsMod.noTexture;
 
@@ -2371,7 +2371,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		}
 	}
 	//无敌特效
-	public class FNInvincibleEffect : ModProjectile
+	public partial class FNInvincibleEffect : ModProjectile
 	{
 		public override string Texture => ArknightsMod.noTexture;
 
@@ -2456,7 +2456,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		}
 	}
 	//封印地板的冰柱
-	public class FNBanFloor : ModProjectile
+	public partial class FNBanFloor : ModProjectile
 	{
 		public override void SetStaticDefaults() {
 			Main.projFrames[Projectile.type] = 1;
@@ -2522,7 +2522,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 
 		public override void AI() {
 			timer++;
-			Player Player = Main.player[Main.myPlayer];
+			Player Player = Main.player[Player.FindClosest(Projectile.position, Projectile.width, Projectile.height)];
 			if (timer <= 30f) {
 				GateScaleX = timer / 60f;
 				GateScaleY = 2f + timer / 15f;
@@ -2568,7 +2568,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 				Dust.NewDust(position, 16, 16, DustID.Granite, -0.5f * Projectile.velocity.X, -0.5f * Projectile.velocity.Y, 0, new Color(255, 255, 255), 1f);
 				Dust.NewDust(position, 16, 16, DustID.PortalBolt, -0.5f * Projectile.velocity.X, -0.5f * Projectile.velocity.Y, 0, new Color(255, 255, 255), 1f);
 			}
-			Projectile.NewProjectile(null, Projectile.Center, Vector2.Zero, ProjectileType<BlackIceFloor>(), 20, 0f, -1, Main.rand.Next(0, 12));
+			global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, Projectile.Center, Vector2.Zero, ProjectileType<BlackIceFloor>(), 20, 0f, -1, Main.rand.Next(0, 12));
 		}
 	}
 	//被封印的地板
@@ -2638,7 +2638,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		}
 	}
 	//冷气粒子效果
-	public class FNIceDust : ModProjectile
+	public partial class FNIceDust : ModProjectile
 	{
 		public override string Texture => ArknightsMod.noTexture;
 

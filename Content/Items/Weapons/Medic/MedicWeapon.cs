@@ -62,14 +62,17 @@ public abstract class MedicWeapon : ExpansionWeaponBase
         // Native shuriken/throwing-knife arm motion, with only the independent
         // projectile visible. Staves, the sword and guns retain their held art.
         Item.noUseGraphic = IsThrownItem;
-        Item.noMelee = Item.autoReuse = true;
+        Item.noMelee = true;
+        Item.channel = Profile.Branch == MedicBranch.MultiTarget;
+        Item.autoReuse = !Item.channel;
         Item.mana = 3 + Profile.Tier * 2;
         Item.knockBack = 0;
         Item.rare = Profile.Tier switch { 0 => ItemRarityID.Blue, 1 => ItemRarityID.Green,
             2 => ItemRarityID.LightRed, 3 => ItemRarityID.Pink, 4 => ItemRarityID.Yellow, _ => ItemRarityID.Red };
         Item.value = Item.sellPrice(silver: 30 + Profile.Tier * 130);
         Item.shootSpeed = MedicIdentity.Get(ProfileId).Speed;
-        Item.shoot = ModContent.ProjectileType<MedicArt>();
+        Item.shoot = Profile.Branch == MedicBranch.MultiTarget
+            ? ModContent.ProjectileType<MedicHealingField>() : ModContent.ProjectileType<MedicArt>();
     }
 
     public override bool AltFunctionUse(Player player) => false;
@@ -77,6 +80,7 @@ public abstract class MedicWeapon : ExpansionWeaponBase
     {
         if (!ArknightsKeybinds.SkillActivatePressed(player))
             return player.GetModPlayer<MedicCastPlayer>().Cooldown == 0
+                && (Profile.Branch != MedicBranch.MultiTarget || !player.GetModPlayer<MedicCastPlayer>().AreaHoldConsumed)
                 && base.CanUseItem(player);
         player.GetModPlayer<MedicSkillPlayer>().TryActivate(this);
         return false;
@@ -116,10 +120,14 @@ public abstract class MedicWeapon : ExpansionWeaponBase
     {
         if (player.whoAmI != Main.myPlayer) return false;
         var clock = player.GetModPlayer<MedicCastPlayer>();
-        if (clock.Cooldown > 0) return false;
+        if (clock.Cooldown > 0 || (Profile.Branch == MedicBranch.MultiTarget && !payMana && clock.AreaHoldConsumed)) return false;
+        if (Profile.Branch == MedicBranch.MultiTarget)
+            foreach (Projectile pending in Main.ActiveProjectiles)
+                if (pending.owner == player.whoAmI && pending.ModProjectile is MedicHealingField) return false;
         if (payMana && !player.CheckMana(Item, -1, true, true)) return false;
         if (!clock.TryStartCast()) return false;
-        MedicLaunch.Cast(player, source, ProfileId, Item.shoot, HealingPower(player));
+        if (Profile.Branch == MedicBranch.MultiTarget && !payMana) clock.AreaHoldConsumed = true;
+        MedicLaunch.Cast(player, source, ProfileId, Item.shoot, HealingPower(player), payMana);
         if (payMana) {
             player.manaRegenDelay = player.maxRegenDelay;
             if (Main.netMode == NetmodeID.MultiplayerClient)
@@ -140,7 +148,6 @@ public abstract class MedicWeapon : ExpansionWeaponBase
             tooltips.Add(new TooltipLine(Mod, "MedicalCleanse", Language.GetTextValue("Mods.ArknightsMod.MedicalArts.Cleanse", Profile.CleanseLimit)));
         if (Profile.Branch == MedicBranch.Therapist)
             tooltips.Add(new TooltipLine(Mod, "MedicalShorten", Language.GetTextValue("Mods.ArknightsMod.MedicalArts.Shorten", Profile.Healing * HealingPower(Main.LocalPlayer) * .1f)));
-        tooltips.Add(new TooltipLine(Mod, "MedicalSkillKey", GetSkillActivateKeyHint()));
     }
     public override string GetSkillActivateKeyHint() => string.IsNullOrEmpty(ArknightsKeybinds.SkillActivateKeyDisplay)
         ? Language.GetTextValue("Mods.ArknightsMod.ChargedArsenal.Unbound")

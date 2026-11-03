@@ -8,6 +8,7 @@ public sealed class MedicCastPlayer : ModPlayer
 {
     internal const int CooldownTicks = 180;
     internal int Cooldown { get; private set; }
+    internal bool AreaHoldConsumed;
 
     internal bool TryStartCast()
     {
@@ -22,5 +23,6 @@ public sealed class MedicCastPlayer : ModPlayer
     private void TickCooldown()
     {
         if (Cooldown > 0) Cooldown--;
+        if (!Player.controlUseItem && !Player.channel) AreaHoldConsumed = false;
     }
 }

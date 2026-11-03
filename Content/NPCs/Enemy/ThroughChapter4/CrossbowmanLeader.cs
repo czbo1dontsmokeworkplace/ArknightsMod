@@ -12,7 +12,7 @@ using Terraria.ModLoader.Utilities;
 
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 {
-	public class CrossbowmanLeader : ModNPC
+	public partial class CrossbowmanLeader : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		public override void SetStaticDefaults() {
 			Main.npcFrameCount[Type] = 19;
@@ -308,7 +308,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				if (attacktimer == 50) {
 					directionchoose = Player.Center.X - NPC.Center.X >= 0 ? 1 : -1;
 					angle = (float)Math.Atan((Player.Center.Y - NPC.Center.Y) / (Player.Center.X - NPC.Center.X));
-					Projectile.NewProjectile(newSource, NPC.Center, new Vector2(directionchoose * 8f, 0).RotatedBy(angle), ModContent.ProjectileType<CrossbowmanBolt>(), 16, 0.8f, 0, 0);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center, new Vector2(directionchoose * 8f, 0).RotatedBy(angle), ModContent.ProjectileType<CrossbowmanBolt>(), 16, 0.8f, 0, 0);
 					SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/Crossbow") with { Volume = 1f, Pitch = 0f }, NPC.Center);
 				}
 			}

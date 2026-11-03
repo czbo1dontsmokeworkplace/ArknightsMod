@@ -3,7 +3,7 @@ BranchTraits: {
 	Crusher: Crusher:  While held, defense becomes zero; maximum life, life regeneration and healing from potions are increased by 30%
 	Reaper: Reaper:  Swing the scythe to cut enemies and steal life; hold right click to spin it
 	Musha: Musha:  Attacks restore life, but holding this weapon disables healing potions
-	Dreadnought: Dreadnought:  Throw shortswords into enemies; right-click at the right moment to recall them all
+	Dreadnought: Dreadnought:  Critical strike chance rises while idle, reaching 100% after 3 seconds and granting Astonishing Moment until the next attack ends
 	ArtsFighter: Arts Fighter:  Attacks ignore enemy defense
 	MechAccord: Mech-Accord Caster:  Only enemies close enough to the cursor can be selected
 	Mystic: Mystic:  Store additional projectiles while not attacking and release them together

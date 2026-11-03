@@ -13,7 +13,7 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.NPCs.Enemy.FaustAndMephisto;
 
 [AutoloadBossHead]
-public sealed class Mephisto : ModNPC
+public sealed partial class Mephisto : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 {
     internal bool Retreating => NPC.ai[2] == 1;
     public override string LocalizationCategory => "FaustAndMephisto.NPCs";
@@ -74,7 +74,7 @@ public sealed class Mephisto : ModNPC
         // Distinct targets; wounded allies are prioritised by health fraction, then distance.
         foreach (NPC ally in Main.npc.Take(Main.maxNPCs).Where(n => DuoEncounter.HealTarget(n, NPC))
             .OrderBy(n => n.life / (float)n.lifeMax).ThenBy(n => n.DistanceSQ(NPC.Center)).Take(3))
-            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center - new Vector2(0, 16),
+            global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), NPC.Center - new Vector2(0, 16),
                 (ally.Center - NPC.Center).SafeNormalize(Vector2.UnitY) * 5,
                 ModContent.ProjectileType<MephistoMedicine>(), 0, 0, Main.myPlayer,
                 NPC.ai[0], NPC.ai[3], ally.whoAmI + 1);

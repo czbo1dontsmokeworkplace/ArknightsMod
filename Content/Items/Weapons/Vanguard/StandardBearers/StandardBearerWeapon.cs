@@ -57,7 +57,6 @@ public abstract class StandardBearerWeapon : ExpansionWeaponBase
         tooltips.Add(new TooltipLine(Mod, "StandardBearerAura", Language.GetTextValue("Mods.ArknightsMod.StandardBearers.Aura",
             5 + (int)Kind * 2, 2 + (int)Kind * 2, 3 + (int)Kind * 2)));
         tooltips.Add(new TooltipLine(Mod, "StandardBearerControls", Language.GetTextValue("Mods.ArknightsMod.StandardBearers.Controls")));
-        tooltips.Add(new TooltipLine(Mod, "StandardBearerSkill", GetSkillActivateKeyHint()));
     }
 }
 

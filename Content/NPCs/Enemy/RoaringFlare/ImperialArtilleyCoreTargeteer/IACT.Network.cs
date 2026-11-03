@@ -1,0 +1,130 @@
+// Explicit wire layout for legacy enemy state. Keep send/receive order identical.
+namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTargeteer;
+
+public partial class IACT
+{
+    protected override bool PredictClientAI => true;
+    public override void SendExtraAI(System.IO.BinaryWriter writer)
+    {
+        base.SendExtraAI(writer);
+        writer.Write(expertHealthFrac);
+        writer.Write(bartimer);
+        writer.Write(barscale);
+        writer.Write(crashtimer);
+        writer.Write(bardistance);
+        writer.Write(stage1healthscale);
+        writer.Write(stage1to2healthscale);
+        writer.Write(stage2healthscale);
+        writer.Write(stage2to3healthscale);
+        writer.Write(stage3healthscale);
+        writer.Write(atkscale);
+        writer.Write(MISSChance);
+        writer.Write(hpdecreasecooldown);
+        writer.Write(ontransform);
+        writer.Write(lightsOn);
+        writer.Write(normalatkcooldown);
+        writer.Write(aimheight);
+        writer.Write(aimX);
+        writer.Write(basedistance);
+        writer.Write(truestage1to2);
+        writer.Write(truestage2);
+        writer.Write(truestage2to3);
+        writer.Write(timer1);
+        writer.Write(timer2);
+        writer.Write(stage2timer);
+        writer.Write(stage3timer);
+        writer.Write(stage);
+        writer.Write(deathtimer);
+        writer.Write(deathcheck);
+        writer.Write(prefire);
+        writer.Write(playerprefire);
+        writer.Write(downAcceleration);
+        writer.Write(timer1to2);
+        writer.Write(timer2to3);
+        writer.Write(targetX);
+        writer.Write(targetY);
+        writer.Write(vx);
+        writer.Write(vy);
+        writer.Write(stage1to2r);
+        writer.Write(stage1to2atkspeed);
+        writer.Write(stage1to2locktime);
+        writer.Write(stage2to3r);
+        writer.Write(stage2to3atkspeed);
+        writer.Write(stage2to3locktime);
+        writer.Write(IACTcrashed);
+        writer.Write(endtimer);
+        writer.Write(movetimer);
+        writer.Write(endexplodespeed);
+        writer.Write(diffX);
+        writer.Write(diffY);
+        writer.Write(stg1to2movementsafe);
+        writer.Write(stg1to2safetimer);
+        writer.Write(stg2to3movementsafe);
+        writer.Write(stg2to3safetimer);
+        writer.Write(stgendmovementsafe);
+        writer.Write(stgendsafetimer);
+        writer.Write(redlightscale);
+    }
+
+    public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+    {
+        base.ReceiveExtraAI(reader);
+        expertHealthFrac = reader.ReadSingle();
+        bartimer = reader.ReadInt32();
+        barscale = reader.ReadSingle();
+        crashtimer = reader.ReadInt32();
+        bardistance = reader.ReadSingle();
+        stage1healthscale = reader.ReadSingle();
+        stage1to2healthscale = reader.ReadSingle();
+        stage2healthscale = reader.ReadSingle();
+        stage2to3healthscale = reader.ReadSingle();
+        stage3healthscale = reader.ReadSingle();
+        atkscale = reader.ReadSingle();
+        MISSChance = reader.ReadSingle();
+        hpdecreasecooldown = reader.ReadInt32();
+        ontransform = reader.ReadBoolean();
+        lightsOn = reader.ReadBoolean();
+        normalatkcooldown = reader.ReadInt32();
+        aimheight = reader.ReadSingle();
+        aimX = reader.ReadSingle();
+        basedistance = reader.ReadSingle();
+        truestage1to2 = reader.ReadInt32();
+        truestage2 = reader.ReadInt32();
+        truestage2to3 = reader.ReadInt32();
+        timer1 = reader.ReadInt32();
+        timer2 = reader.ReadInt32();
+        stage2timer = reader.ReadInt32();
+        stage3timer = reader.ReadInt32();
+        stage = reader.ReadSingle();
+        deathtimer = reader.ReadInt32();
+        deathcheck = reader.ReadInt32();
+        prefire = reader.ReadSingle();
+        playerprefire = reader.ReadInt32();
+        downAcceleration = reader.ReadSingle();
+        timer1to2 = reader.ReadSingle();
+        timer2to3 = reader.ReadSingle();
+        targetX = reader.ReadSingle();
+        targetY = reader.ReadSingle();
+        vx = reader.ReadSingle();
+        vy = reader.ReadSingle();
+        stage1to2r = reader.ReadSingle();
+        stage1to2atkspeed = reader.ReadSingle();
+        stage1to2locktime = reader.ReadSingle();
+        stage2to3r = reader.ReadSingle();
+        stage2to3atkspeed = reader.ReadSingle();
+        stage2to3locktime = reader.ReadSingle();
+        IACTcrashed = reader.ReadBoolean();
+        endtimer = reader.ReadSingle();
+        movetimer = reader.ReadSingle();
+        endexplodespeed = reader.ReadSingle();
+        diffX = reader.ReadSingle();
+        diffY = reader.ReadSingle();
+        stg1to2movementsafe = reader.ReadBoolean();
+        stg1to2safetimer = reader.ReadSingle();
+        stg2to3movementsafe = reader.ReadBoolean();
+        stg2to3safetimer = reader.ReadSingle();
+        stgendmovementsafe = reader.ReadBoolean();
+        stgendsafetimer = reader.ReadSingle();
+        redlightscale = reader.ReadSingle();
+    }
+}

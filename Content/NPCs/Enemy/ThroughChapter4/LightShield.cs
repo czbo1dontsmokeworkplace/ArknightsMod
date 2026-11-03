@@ -11,7 +11,7 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 {
-	public class LightShield : ModNPC
+	public partial class LightShield : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 
 	{
 		private int fadeTimer;
@@ -97,6 +97,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		}
 
 		public override void OnSpawn(IEntitySource source) {
+            if (!NPC.HasValidTarget) NPC.TargetClosest(false);
 			fadeTimer = 60; // 持续60帧
 			NPC.color = Color.Black; // 初始为纯黑
 			NPC.alpha = 240;
@@ -150,7 +151,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 					NPC.velocity.X = 0;
 					NPC.damage = 0;
 					if (attackCD == 21) {
-						Projectile.NewProjectile(NPC.GetSource_FromThis(), new Vector2(NPC.Center.X, NPC.Center.Y), new Vector2(0, 0), ModContent.ProjectileType<LightShieldCut>(), AttackDamage / 2, 0.8f);
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromThis(), new Vector2(NPC.Center.X, NPC.Center.Y), new Vector2(0, 0), ModContent.ProjectileType<LightShieldCut>(), AttackDamage / 2, 0.8f);
 					}
 					if (attackCD >= FrameSpeed * (AttackEndFrame - AttackStartFrame + 1)) {
 						InMove = true;

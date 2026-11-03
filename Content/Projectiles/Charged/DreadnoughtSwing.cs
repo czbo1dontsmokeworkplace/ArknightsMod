@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using ArknightsMod.Common.VisualEffects.HelldiverExplosions;
 using ArknightsMod.Content;
 using ArknightsMod.Content.Items.Weapons.Charged;
 using ArknightsMod.Players;
@@ -15,8 +14,8 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.Projectiles.Charged;
 
-// Stellar Striker timing: a live swept blade deals damage on contact. Each full
-// rotation permits exactly one enemy hit, then keeps animating without damage.
+// One custom melee swing, one enemy contact. Crit is captured when the attack starts.
+// Its readiness buff survives the entire animation, including a missed swing.
 public sealed class DreadnoughtSwing : ModProjectile
 {
     public override string Texture => "Terraria/Images/MagicPixel";
@@ -27,7 +26,7 @@ public sealed class DreadnoughtSwing : ModProjectile
     private bool initialized;
     private int targetsHit;
     private Item boundItem;
-    private bool maximumMomentum;
+    private bool astonishingMoment;
     private float sweepStartAngle, sweepEndAngle;
     private Vector2 sweepStartCenter, sweepEndCenter;
     private float previousAngle;
@@ -65,7 +64,7 @@ public sealed class DreadnoughtSwing : ModProjectile
         writer.Write(initialized); writer.Write(duration); writer.Write(facing); writer.Write(skill);
         writer.Write(Projectile.damage); writer.Write(Projectile.knockBack); writer.Write(Projectile.CritChance);
         writer.Write(targetsHit);
-        writer.Write(maximumMomentum);
+        writer.Write(astonishingMoment);
     }
 
     public override void ReceiveExtraAI(BinaryReader reader)
@@ -73,7 +72,7 @@ public sealed class DreadnoughtSwing : ModProjectile
         initialized = reader.ReadBoolean(); duration = reader.ReadSingle(); facing = reader.ReadInt32(); skill = reader.ReadInt32();
         Projectile.damage = reader.ReadInt32(); Projectile.knockBack = reader.ReadSingle(); Projectile.CritChance = reader.ReadInt32();
         targetsHit = reader.ReadInt32();
-        maximumMomentum = reader.ReadBoolean();
+        astonishingMoment = reader.ReadBoolean();
         previousAngle = Angle;
         Player owner = Main.player[Projectile.owner];
         previousCenter = owner.MountedCenter + new Vector2(0, owner.gfxOffY);
@@ -93,14 +92,9 @@ public sealed class DreadnoughtSwing : ModProjectile
         Projectile.velocity = aim;
         facing = (aim.X < 0 ? -1 : 1) * (int)owner.gravDir;
         bool swift = Kind == ChargedOperatorKind.Franka && skill == 1 || Kind == ChargedOperatorKind.NearlRadiant && skill == 1;
-        var momentum = owner.GetModPlayer<DreadnoughtPlayer>();
-        maximumMomentum = momentum.Progress >= .9999f;
+        astonishingMoment = Projectile.ai[2] > 0;
         duration = DreadnoughtRules.SwingTicks(owner.GetAttackSpeed(DamageClass.Melee), swift);
-        momentum.Attacking(weapon.Item);
-        Projectile.damage = Math.Max(1, (int)(owner.GetWeaponDamage(weapon.Item) * ChargedOperatorPlayer.DamageMultiplier(Kind, skill)));
         Projectile.originalDamage = Projectile.damage;
-        Projectile.knockBack = owner.GetWeaponKnockback(weapon.Item);
-        Projectile.CritChance = owner.GetWeaponCrit(weapon.Item);
         previousAngle = Angle;
         previousCenter = owner.MountedCenter + new Vector2(0, owner.gfxOffY);
         Projectile.netUpdate = true;
@@ -120,14 +114,8 @@ public sealed class DreadnoughtSwing : ModProjectile
             if (!local) { Projectile.timeLeft = 2; return; }
             BeginSwing(owner, weapon);
         }
-        bool holding = !local || owner.controlUseItem && !ArknightsKeybinds.SkillActivatePressed(owner)
-            && ChargedOperatorWeapon.WorldInputAllowed(owner);
-        if (Age >= duration)
-        {
-            if (!local) { Projectile.timeLeft = 2; return; }
-            if (!holding) { Projectile.Kill(); return; }
-            BeginSwing(owner, weapon);
-        }
+        if (Age >= duration) { Projectile.Kill(); return; }
+        if (!local) owner.GetModPlayer<DreadnoughtPlayer>().ObserveAttack(astonishingMoment, Projectile.CritChance);
         Projectile.timeLeft = 2;
         Projectile.Center = owner.MountedCenter + new Vector2(0, owner.gfxOffY);
         owner.ChangeDir(Projectile.velocity.X < 0 ? -1 : 1);
@@ -141,7 +129,6 @@ public sealed class DreadnoughtSwing : ModProjectile
         sweepStartCenter = previousCenter;
         sweepEndCenter = Projectile.Center;
         BladeSwingTemplate.Pose(owner, Angle);
-        if (local) owner.GetModPlayer<DreadnoughtPlayer>().Attacking(weapon.Item);
         if (before < .36f && Progress >= .36f && !Main.dedServ)
             SoundEngine.PlaySound(SoundID.Item71 with { Volume = .45f, Pitch = .1f + (int)Kind * -.04f }, owner.Center);
         if (Projectile.numUpdates == 0 && !Main.dedServ && Progress > .3f && Progress < .7f)
@@ -172,12 +159,6 @@ public sealed class DreadnoughtSwing : ModProjectile
 
     public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
     {
-        if (DreadnoughtRules.OpeningHit(targetsHit))
-        {
-            modifiers.SourceDamage *= 3;
-            modifiers.Knockback *= 3;
-            modifiers.SetCrit();
-        }
         if (Kind == ChargedOperatorKind.Franka && Main.rand.NextFloat() < (skill == 2 ? .75f : .25f)
             || Kind == ChargedOperatorKind.NearlRadiant && skill == 3) modifiers.DefenseEffectiveness *= 0;
         modifiers.HitDirectionOverride = target.Center.X < Projectile.Center.X ? -1 : 1;
@@ -189,16 +170,23 @@ public sealed class DreadnoughtSwing : ModProjectile
         targetsHit++;
         Projectile.netUpdate = true;
         if (damageDone <= 0) return;
-        Main.player[Projectile.owner].GetModPlayer<DreadnoughtPlayer>().RegisterHit();
         if (Kind == ChargedOperatorKind.Franka) target.AddBuff(BuffID.OnFire3, 180);
         if (Projectile.owner == Main.myPlayer && TryBladeContact(target.Hitbox, out Vector2 point, out Vector2 tangent))
         {
             Projectile.NewProjectile(Projectile.GetSource_OnHit(target), point, tangent,
                 ModContent.ProjectileType<DreadnoughtHeavyImpact>(), 0, 0, Projectile.owner, (int)Kind);
-            if (maximumMomentum) HelldiverExplosion.Spawn(Projectile, point, (int)Kind);
         }
     }
 
+    public override void OnKill(int timeLeft)
+    {
+        Player owner = Main.player[Projectile.owner];
+        owner.GetModPlayer<DreadnoughtPlayer>().EndAttack();
+        if (owner.heldProj == Projectile.whoAmI) {
+            owner.itemTime = owner.itemAnimation = 0;
+            owner.heldProj = -1;
+        }
+    }
     public override bool PreDraw(ref Color lightColor)
     {
         if (!initialized) return false;

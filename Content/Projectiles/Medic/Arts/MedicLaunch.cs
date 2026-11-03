@@ -11,12 +11,18 @@ internal static class MedicLaunch
     internal static Vector2 ClampPoint(Vector2 point) => Vector2.Clamp(point,
         new Vector2(32), new Vector2(Main.maxTilesX * 16 - 32, Main.maxTilesY * 16 - 32));
 
-    internal static void Cast(Player player, EntitySource_ItemUse_WithAmmo source, int id, int type, float power)
+    internal static void Cast(Player player, EntitySource_ItemUse_WithAmmo source, int id, int type, float power, bool automatic = false)
     {
         Vector2 target = Main.MouseWorld;
         if (!float.IsFinite(target.X) || !float.IsFinite(target.Y)) target = player.MountedCenter + Vector2.UnitX * player.direction * 120;
         target = ClampPoint(target);
         MedicBranch branch = MedicCatalog.Get(id).Branch;
+        if (branch == MedicBranch.MultiTarget) {
+            Projectile.NewProjectile(source, target, Vector2.Zero,
+                Terraria.ModLoader.ModContent.ProjectileType<MedicHealingField>(), 0, 0, player.whoAmI,
+                id, power, automatic ? -MedicCastPlayer.CooldownTicks : MedicCastPlayer.CooldownTicks);
+            return;
+        }
         int count = branch == MedicBranch.Chain ? 3 : 1;
         for (int i = 0; i < count; i++)
         {

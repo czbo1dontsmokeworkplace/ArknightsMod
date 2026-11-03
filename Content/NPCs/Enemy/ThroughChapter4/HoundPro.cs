@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Placeable.Banners;
+using ArknightsMod.Content.Items.Placeable.Banners;
 using ArknightsMod.Systems.Gameplay.Damage;
 using Microsoft.Xna.Framework;
 using System;
@@ -12,7 +12,7 @@ using static Terraria.ModLoader.ModContent;
 
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4 //记得把BakaMod改成ArknightsMod
 {
-	public class HoundPro : ModNPC
+	public partial class HoundPro : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		public override void SetStaticDefaults() {
 			Main.npcFrameCount[NPC.type] = 5;

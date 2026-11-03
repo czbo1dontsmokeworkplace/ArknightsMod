@@ -10,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 {
-	public class Seniorcaster : ModNPC
+	public partial class Seniorcaster : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		public override void SetStaticDefaults() {
 			Main.npcFrameCount[Type] = 31;
@@ -58,7 +58,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
             if (NPC.GetGlobalNPC<global::ArknightsMod.Content.NPCs.Friendly.CannotSupportNPC>().IsSleeping) return;
 
 			attackframeY = 14 * frameHeight;
-			NPC.TargetClosest(true);
+
 			if ((walk && NPC.velocity.X != 0) || attack) {
 				framecounter++;
 			}
@@ -125,7 +125,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				NPC.velocity.X = 0;
 				AttackCD++;
 				if (AttackCD == 1) {
-					Projectile.NewProjectile(NPC.GetSource_FromThis(), new Vector2(p.position.X + 20 * p.velocity.X, p.position.Y + 12 * p.velocity.Y), new Vector2(0, 0).RotatedBy(angle), ModContent.ProjectileType<SCproj>(), 12, 0.8f);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromThis(), new Vector2(p.position.X + 20 * p.velocity.X, p.position.Y + 12 * p.velocity.Y), new Vector2(0, 0).RotatedBy(angle), ModContent.ProjectileType<SCproj>(), 12, 0.8f);
 				}
 				if (AttackCD > 90) {
 					attack = false;
@@ -177,7 +177,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		}
 	}
 
-	public class SCproj : ModProjectile
+	public partial class SCproj : ModProjectile
 	{
 		public override void SetStaticDefaults() {
 			Main.projFrames[Projectile.type] = 13;

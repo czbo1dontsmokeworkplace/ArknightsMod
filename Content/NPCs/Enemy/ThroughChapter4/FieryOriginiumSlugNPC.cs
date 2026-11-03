@@ -9,7 +9,7 @@ using static Terraria.ModLoader.ModContent;
 
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 {
-	public class FieryOriginiumSlugNPC : ModNPC
+	public partial class FieryOriginiumSlugNPC : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		private enum ActionState { Walk, Attack }
 
@@ -150,7 +150,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			if (NPC.ai[3] == 15 && distance <= AttackRange && Main.netMode != NetmodeID.MultiplayerClient)
 			{
 				Vector2 velocity = CalculateArcVelocity(target.Center, NPC.Center, 8.5f, 0.22f);
-				Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity,
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity,
 					ProjectileType<FierySlugFireballProjectile>(), 4, 0f, Main.myPlayer);
 			}
 

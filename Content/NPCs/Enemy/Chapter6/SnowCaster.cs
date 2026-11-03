@@ -1,4 +1,4 @@
-﻿using Terraria;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using System;
@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework;
 
 namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 {
-	public class SnowCaster : ModNPC {
+	public partial class SnowCaster : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork {
 		public override void SetStaticDefaults() {
 			Main.npcFrameCount[Type] = 20;
 			NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers() { // Influences how the NPC looks in the Bestiary
@@ -43,7 +43,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 		public override void FindFrame(int frameHeight) {
 
 			attackframeY = 6 * frameHeight;
-			NPC.TargetClosest(true);
+
 			framecounter++;
 			/*if (walk == true && NPC.frame.Y >= attackframeY) {
 				NPC.frame.Y = 0;
@@ -147,7 +147,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 				NPC.velocity.X = 0;
 				AttackCD++;
 				if (AttackCD == 1) {
-					Projectile.NewProjectile(NPC.GetSource_FromThis(), new Vector2(NPC.position.X,NPC.position.Y+20), new Vector2(directionchoose * 0.8f, 0).RotatedBy(angle), ModContent.ProjectileType<Snowcastershoot>(), 16, 0.8f);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromThis(), new Vector2(NPC.position.X,NPC.position.Y+20), new Vector2(directionchoose * 0.8f, 0).RotatedBy(angle), ModContent.ProjectileType<Snowcastershoot>(), 16, 0.8f);
 				}
 				if (AttackCD > 54) {
 						attack = false;
@@ -164,7 +164,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 		}
 
 	}
-	public class Snowcastershoot : ModProjectile
+	public partial class Snowcastershoot : ModProjectile
 	{
 		public override void SetStaticDefaults() {
 			Main.projFrames[Projectile.type] = 5;

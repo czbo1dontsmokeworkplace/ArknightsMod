@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Common.VisualEffects;
+using ArknightsMod.Common.VisualEffects;
 using ArknightsMod.Content.BossBars;
 using ArknightsMod.Content.Items.Material;
 using Microsoft.Xna.Framework;
@@ -18,7 +18,7 @@ using static Terraria.ModLoader.ModContent;
 namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTargeteer
 {
 	[AutoloadBossHead]
-	public class AACT : ModNPC
+	public partial class AACT : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		public override void SetStaticDefaults() {
 			Main.npcFrameCount[NPC.type] = 1;//贴图帧数
@@ -202,7 +202,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		}
 		//时间盾闪避近战+传送
 		public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers) {
-			Player Player = Main.player[Main.myPlayer];
+			Player Player = Main.player[NPC.target < Main.maxPlayers ? NPC.target : 0];
 
 			MISSChance = Main.rand.NextFloat(1);
 			if (MISSChance > 0.9f && nodamage == false && AACTstage == 2 && zoomtimer == 0) {
@@ -214,7 +214,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		}
 		//时间盾闪避远程+传送
 		public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers) {
-			Player Player = Main.player[Main.myPlayer];
+			Player Player = Main.player[NPC.target < Main.maxPlayers ? NPC.target : 0];
 
 			MISSChance = Main.rand.NextFloat(1);
 			if (MISSChance > 0.9f && nodamage == false && AACTstage == 2 && zoomtimer == 0) {
@@ -507,7 +507,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 						NPC.Center = Player.Center + new Vector2(0, randtplength).RotateRandom(Math.PI * 2);//传送
 					}
 					else if (AACTstage == 3) {
-						random1in3 = Main.rand.Next(4);
+						{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { random1in3 = Main.rand.Next(4); NPC.netUpdate = true; } }
 						//NPC传送到玩家对称点
 						if (random1in3 == 0) {
 							NPC.Center = 2 * Player.Center - NPC.Center;
@@ -796,14 +796,14 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 				//2阶段之后的玩家判定区
 				if ((truestage2 == 1 || truestage3 == 1) && timer1 >= playerprefire) {
 					SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Assets/Sound/ImperialArtilleyCoreTargeteer/AlertPro") with { Volume = 1f, Pitch = 0f }, NPC.Center);
-					Projectile.NewProjectile(newSource, Player.Center.X + prefire * Player.velocity.X, Player.Center.Y + prefire * Player.velocity.Y, 0, 0, ProjectileType<CollapsedHitboxblueCore>(), 0, 0, 0, 0, 0);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, Player.Center.X + prefire * Player.velocity.X, Player.Center.Y + prefire * Player.velocity.Y, 0, 0, ProjectileType<CollapsedHitboxblueCore>(), 0, 0, 0, 0, 0);
 					timer1 = 0;
 				}
 
 				//固定判定区，数秒一个
 				if (timer2 >= normalatkcooldown && AACTstage <= 2) {
 					SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Assets/Sound/ImperialArtilleyCoreTargeteer/Alert") with { Volume = 1f, Pitch = 0f }, NPC.Center);
-					Projectile.NewProjectile(newSource, Player.Center.X + Main.rand.NextFloat(-128, 128), Player.Center.Y + Main.rand.NextFloat(-128, 128), 0, 0, ProjectileType<ExplodeAim>(), NPC.damage, 0f, 0, 0);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, Player.Center.X + Main.rand.NextFloat(-128, 128), Player.Center.Y + Main.rand.NextFloat(-128, 128), 0, 0, ProjectileType<ExplodeAim>(), NPC.damage, 0f, 0, 0);
 					timer2 = 0;
 				}
 
@@ -953,22 +953,22 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 
 				if (InitializedSTGChange1 == false) {
 					if (Main.masterMode) {
-						stage1to2locktime = Main.rand.Next(420, 451);
-						stage1to2r = Main.rand.Next(270, 331);
-						stage1to2atkspeed = Main.rand.Next(16, 25);
-						firstChangeSTGLoop = Main.rand.Next(240, 361);
+						{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { stage1to2locktime = Main.rand.Next(420, 451); NPC.netUpdate = true; } }
+						{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { stage1to2r = Main.rand.Next(270, 331); NPC.netUpdate = true; } }
+						{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { stage1to2atkspeed = Main.rand.Next(16, 25); NPC.netUpdate = true; } }
+						{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { firstChangeSTGLoop = Main.rand.Next(240, 361); NPC.netUpdate = true; } }
 					}
 					else if (Main.expertMode) {
-						stage1to2locktime = Main.rand.Next(420, 481);
-						stage1to2r = Main.rand.Next(360, 421);
-						stage1to2atkspeed = Main.rand.Next(24, 33);
-						firstChangeSTGLoop = Main.rand.Next(150, 241);
+						{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { stage1to2locktime = Main.rand.Next(420, 481); NPC.netUpdate = true; } }
+						{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { stage1to2r = Main.rand.Next(360, 421); NPC.netUpdate = true; } }
+						{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { stage1to2atkspeed = Main.rand.Next(24, 33); NPC.netUpdate = true; } }
+						{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { firstChangeSTGLoop = Main.rand.Next(150, 241); NPC.netUpdate = true; } }
 					}
 					else {
-						stage1to2locktime = Main.rand.Next(450, 511);
-						stage1to2r = Main.rand.Next(480, 511);
-						stage1to2atkspeed = Main.rand.Next(36, 46);
-						firstChangeSTGLoop = Main.rand.Next(60, 151);
+						{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { stage1to2locktime = Main.rand.Next(450, 511); NPC.netUpdate = true; } }
+						{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { stage1to2r = Main.rand.Next(480, 511); NPC.netUpdate = true; } }
+						{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { stage1to2atkspeed = Main.rand.Next(36, 46); NPC.netUpdate = true; } }
+						{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { firstChangeSTGLoop = Main.rand.Next(60, 151); NPC.netUpdate = true; } }
 					}
 					InitializedSTGChange1 = true;
 				}
@@ -980,7 +980,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 					if (timer1to2 < 120) {
 						NPC.velocity = Vector2.Lerp(NPC.velocity, Vector2.Zero, 0.05f);
 						if ((int)timer1to2 == 115) {
-							Projectile.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ProjectileType<IACTScreenWave>(), 0, 0f, 0, 0);
+							global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ProjectileType<IACTScreenWave>(), 0, 0f, 0, 0);
 							SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/AACTTeleport") with { Volume = 1f, Pitch = 0f }, Player.Center);
 							DeathTP();
 						}
@@ -1026,7 +1026,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 							targetY = (float)(-stage1to2r * Math.Cos(2 * stg1to2safetimer * Math.PI / (stage1to2locktime - 300)));
 							NPC.velocity = new Vector2(Player.Center.X, Player.Center.Y) + new Vector2(targetX, targetY) - NPC.Center;//期间的位置变动
 							if ((int)stg1to2safetimer % stage1to2atkspeed == 0) {
-								Projectile.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ProjectileType<ExplodeAimPro>(), NPC.damage, 0f, 0, 0);
+								global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ProjectileType<ExplodeAimPro>(), NPC.damage, 0f, 0, 0);
 								resetChangeSTG();
 							}
 						}
@@ -1053,22 +1053,22 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 
 				if (InitializedSTGChange2 == false) {
 					if (Main.masterMode) {
-						stage2to3locktime = Main.rand.Next(360, 373);
-						stage2to3r = Main.rand.Next(240, 331);
-						stage2to3atkspeed = Main.rand.Next(16, 25);
-						secondChangeSTGLoop = Main.rand.Next(360, 481);
+						{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { stage2to3locktime = Main.rand.Next(360, 373); NPC.netUpdate = true; } }
+						{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { stage2to3r = Main.rand.Next(240, 331); NPC.netUpdate = true; } }
+						{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { stage2to3atkspeed = Main.rand.Next(16, 25); NPC.netUpdate = true; } }
+						{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { secondChangeSTGLoop = Main.rand.Next(360, 481); NPC.netUpdate = true; } }
 					}
 					else if (Main.expertMode) {
-						stage2to3locktime = Main.rand.Next(330, 361);
-						stage2to3r = Main.rand.Next(330, 421);
-						stage2to3atkspeed = Main.rand.Next(24, 33);
-						secondChangeSTGLoop = Main.rand.Next(240, 361);
+						{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { stage2to3locktime = Main.rand.Next(330, 361); NPC.netUpdate = true; } }
+						{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { stage2to3r = Main.rand.Next(330, 421); NPC.netUpdate = true; } }
+						{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { stage2to3atkspeed = Main.rand.Next(24, 33); NPC.netUpdate = true; } }
+						{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { secondChangeSTGLoop = Main.rand.Next(240, 361); NPC.netUpdate = true; } }
 					}
 					else {
-						stage2to3locktime = Main.rand.Next(300, 331);
-						stage2to3r = Main.rand.Next(390, 481);
-						stage2to3atkspeed = Main.rand.Next(32, 43);
-						secondChangeSTGLoop = Main.rand.Next(120, 241);
+						{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { stage2to3locktime = Main.rand.Next(300, 331); NPC.netUpdate = true; } }
+						{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { stage2to3r = Main.rand.Next(390, 481); NPC.netUpdate = true; } }
+						{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { stage2to3atkspeed = Main.rand.Next(32, 43); NPC.netUpdate = true; } }
+						{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { secondChangeSTGLoop = Main.rand.Next(120, 241); NPC.netUpdate = true; } }
 					}
 					InitializedSTGChange2 = true;
 				}
@@ -1080,7 +1080,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 					if (timer2to3 < 240) {
 						NPC.velocity = Vector2.Lerp(NPC.velocity, Vector2.Zero, 0.05f);
 						if ((int)timer2to3 == 235) {
-							Projectile.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ProjectileType<IACTScreenWave>(), 0, 0f, 0, 0);
+							global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ProjectileType<IACTScreenWave>(), 0, 0f, 0, 0);
 						}
 						if ((int)timer2to3 == 238) {
 							Player.GetModPlayer<ShakeEffectPlayer>().screenShakeOnlyOnY = true;//纵向震动
@@ -1125,7 +1125,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 							targetY = (float)(-stage2to3r * Math.Cos(2 * stg2to3safetimer * Math.PI / (stage2to3locktime - 480)));
 							NPC.velocity = new Vector2(Player.Center.X, Player.Center.Y) + new Vector2(targetX, targetY) - NPC.Center;//期间的位置变动
 							if ((int)stg2to3safetimer % stage2to3atkspeed == 0) {
-								Projectile.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ProjectileType<ExplodeAimPro>(), NPC.damage, 0f, 0, 0);
+								global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ProjectileType<ExplodeAimPro>(), NPC.damage, 0f, 0, 0);
 								resetChangeSTG2();
 							}
 						}
@@ -1201,13 +1201,15 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 				}
 
 				NPC.velocity = Vector2.Lerp(NPC.velocity, Vector2.Zero, 0.01f);
-				if (truestage3 == 1)//开启定点系统
+				if (truestage3 == 1 && Main.netMode != NetmodeID.MultiplayerClient)//开启定点系统
 				{
-					NPC minionNPC = Main.npc[NPC.NewNPC(newSource, (int)(2 * Player.Center.X - NPC.Center.X), (int)(2 * Player.Center.Y - NPC.Center.Y), NPCType<IACTStage3target>(), NPC.whoAmI)];
-					if (minionNPC.ModNPC is IACTStage3target minion) {
-						minion.ParentIndex = NPC.whoAmI;
+					int minionIndex = global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(newSource, (int)(2 * Player.Center.X - NPC.Center.X), (int)(2 * Player.Center.Y - NPC.Center.Y), NPCType<IACTStage3target>(), NPC.whoAmI);
+					if ((uint)minionIndex < Main.maxNPCs) {
+						NPC minionNPC = Main.npc[minionIndex];
+						if (minionNPC.ModNPC is IACTStage3target minion) minion.ParentIndex = NPC.whoAmI;
+						minionNPC.netUpdate = true;
+						truestage3 = 2;
 					}
-					truestage3 = 2;
 				}
 				if (stage3timer - stage2to3locktime >= 0 && truestage3 == 2) {
 					AACTStage3timer++;
@@ -1273,7 +1275,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 								stgendsafetimer++;
 							}
 							if ((int)stgendsafetimer == 0) {
-								Projectile.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ProjectileType<AACTEndShow>(), 0, 0f, 0, 0);
+								global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ProjectileType<AACTEndShow>(), 0, 0f, 0, 0);
 								//Projectile Endshow = Projectile.NewProjectileDirect(newSource, NPC.Center, Vector2.Zero, ModContent.ProjectileType<AACTEndSHow>(), 0, 0, NPC.whoAmI);
 								//AACTEndSHow SubEnd = (AACTEndSHow)Endshow.ModProjectile;
 								//SubEnd.ParentIndex = NPC.whoAmI;
@@ -1284,9 +1286,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 								targetX = (float)(480 * (t - t * stgendsafetimer / 1500) * Math.Sin(2 * stgendsafetimer * Math.PI / 180 / (1 - stgendsafetimer / 1800)));
 								targetY = (float)(-480 * (t - t * stgendsafetimer / 1500) * Math.Cos(2 * stgendsafetimer * Math.PI / 180 / (1 - stgendsafetimer / 1800)));
 								NPC.velocity = new Vector2(OldCenter.X, OldCenter.Y) + new Vector2(targetX, targetY) - NPC.Center;//期间的位置变动
-								endexplodespeed = (int)Main.rand.NextFloat(0, 60);
+								{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { endexplodespeed = (int)Main.rand.NextFloat(0, 60); NPC.netUpdate = true; } }
 								if ((int)endexplodespeed >= 57) {
-									Projectile.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ProjectileType<ExplodeAimPro>(), NPC.damage, 0f, 0, 0);
+									global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ProjectileType<ExplodeAimPro>(), NPC.damage, 0f, 0, 0);
 								}
 							}
 						}
@@ -1295,7 +1297,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 						AACTcrashed = true;
 						deathtimer++;
 						if (deathtimer <= 1) {
-							Projectile.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ProjectileType<IACTScreenWave>(), 0, 0f, 0, 0);
+							global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ProjectileType<IACTScreenWave>(), 0, 0f, 0, 0);
 						}
 						if (deathtimer <= 360) {
 							NPC.velocity.X = NPC.velocity.X * (360 - deathtimer) / 360;
@@ -1319,8 +1321,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 
 						if (deathtimer >= 380) {
 							deathcheck = 2;
-							Projectile.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ProjectileType<IACTScreenWave>(), 0, 0f, 0, 0);
-							Projectile.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ProjectileType<AACTDeathdust>(), 0, 0f, 0, 0);//爆炸粒子
+							global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ProjectileType<IACTScreenWave>(), 0, 0f, 0, 0);
+							global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ProjectileType<AACTDeathdust>(), 0, 0f, 0, 0);//爆炸粒子
 						}
 
 						Vector2 dustPos = NPC.Center + new Vector2(Main.rand.NextFloat(12), 0).RotatedByRandom(MathHelper.TwoPi);
@@ -1354,16 +1356,16 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		private void resetChangeSTG() {//刷新投弹属性
 			Player Player = Main.player[NPC.target];
 			if (Main.masterMode) {
-				stage1to2r = Main.rand.Next(240, 421);
-				stage1to2atkspeed = Main.rand.Next(16, 25);
+				{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { stage1to2r = Main.rand.Next(240, 421); NPC.netUpdate = true; } }
+				{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { stage1to2atkspeed = Main.rand.Next(16, 25); NPC.netUpdate = true; } }
 			}
 			else if (Main.expertMode) {
-				stage1to2r = Main.rand.Next(360, 481);
-				stage1to2atkspeed = Main.rand.Next(24, 33);
+				{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { stage1to2r = Main.rand.Next(360, 481); NPC.netUpdate = true; } }
+				{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { stage1to2atkspeed = Main.rand.Next(24, 33); NPC.netUpdate = true; } }
 			}
 			else {
-				stage1to2r = Main.rand.Next(450, 511);
-				stage1to2atkspeed = Main.rand.Next(36, 46);
+				{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { stage1to2r = Main.rand.Next(450, 511); NPC.netUpdate = true; } }
+				{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { stage1to2atkspeed = Main.rand.Next(36, 46); NPC.netUpdate = true; } }
 			}
 			SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/AACTTeleport") with { Volume = 1f, Pitch = 0f }, Player.Center);
 			return;
@@ -1372,16 +1374,16 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		private void resetChangeSTG2() {//刷新投弹属性
 			Player Player = Main.player[NPC.target];
 			if (Main.masterMode) {
-				stage2to3r = Main.rand.Next(240, 331);
-				stage2to3atkspeed = Main.rand.Next(16, 25);
+				{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { stage2to3r = Main.rand.Next(240, 331); NPC.netUpdate = true; } }
+				{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { stage2to3atkspeed = Main.rand.Next(16, 25); NPC.netUpdate = true; } }
 			}
 			else if (Main.expertMode) {
-				stage2to3r = Main.rand.Next(330, 421);
-				stage2to3atkspeed = Main.rand.Next(24, 33);
+				{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { stage2to3r = Main.rand.Next(330, 421); NPC.netUpdate = true; } }
+				{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { stage2to3atkspeed = Main.rand.Next(24, 33); NPC.netUpdate = true; } }
 			}
 			else {
-				stage2to3r = Main.rand.Next(390, 481);
-				stage2to3atkspeed = Main.rand.Next(32, 43);
+				{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { stage2to3r = Main.rand.Next(390, 481); NPC.netUpdate = true; } }
+				{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { stage2to3atkspeed = Main.rand.Next(32, 43); NPC.netUpdate = true; } }
 			}
 			SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/AACTTeleport") with { Volume = 1f, Pitch = 0f }, Player.Center);
 			return;
@@ -1389,7 +1391,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 
 		public override bool CheckDead()//锁血及锁血解除
 		{
-			Player Player = Main.player[Main.myPlayer];
+			Player Player = Main.player[NPC.target < Main.maxPlayers ? NPC.target : 0];
 			if (deathcheck == 2)//死亡
 			{
 				Main.NewText(Language.GetTextValue("瀹冨氨鐞嗗簲琚姽娑堛€�"), 138, 0, 18);
@@ -1407,7 +1409,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		#endregion
 	}
 
-	public class AACTIntro : ModNPC
+	public partial class AACTIntro : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		public override string Texture => ArknightsMod.noTexture;
 		public override void SetStaticDefaults() {
@@ -1435,12 +1437,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 
 		private float timer = 0;
 		public override void AI() {
-			Player Player = Main.player[Main.myPlayer];
+			Player Player = Main.player[NPC.target];
 			NPC.Center = Player.Center;
 			timer++;
 			if (timer == 330) {
 				Main.NewText(Language.GetTextValue("钀ㄧ背鍥犻潪鍐板師鐩樿笧鐨勯偑榄�"), 138, 0, 18);
-				NPC.NewNPC(Terraria.Entity.GetSource_TownSpawn(), (int)Player.Center.X, (int)Player.Center.Y - 1200, NPCType<AACT>());
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_TownSpawn(), (int)Player.Center.X, (int)Player.Center.Y - 1200, NPCType<AACT>());
 				NPC.life = 0;
 			}
 		}
@@ -1467,7 +1469,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		}
 
 		public override void AI() {
-			Player Player = Main.player[Main.myPlayer];
+			Player Player = Main.player[Player.FindClosest(Projectile.position, Projectile.width, Projectile.height)];
 			Player.GetModPlayer<ShakeEffectPlayer>().screenShakeOnlyOnY = true;//只在纵向震动
 			Player.GetModPlayer<ShakeEffectPlayer>().screenShakeTime = 30;
 			Vector2 dustPos = Projectile.Center + new Vector2(Main.rand.NextFloat(10), 0).RotatedByRandom(Math.PI);
@@ -1484,7 +1486,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		}
 	}
 
-	public class CollapsedHitboxblueCore : ModProjectile
+	public partial class CollapsedHitboxblueCore : ModProjectile
 	{
 		public override void SetStaticDefaults() {
 			Main.projFrames[Projectile.type] = 8;
@@ -1513,7 +1515,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		public override void AI()//ai
 		{
 			var newSource = Projectile.GetSource_FromThis();
-			Player Player = Main.player[Main.myPlayer];
+			Player Player = Main.player[Player.FindClosest(Projectile.position, Projectile.width, Projectile.height)];
 			click++;
 			skilltimer++;
 			frametimer++;
@@ -1553,10 +1555,10 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 
 			if (skilltimer == 120) {
 				if (Player.velocity.X * Player.velocity.X + Player.velocity.Y * Player.velocity.Y >= 100) {
-					Projectile.NewProjectile(newSource, Projectile.Center.X + 0.25f * prefire * Player.velocity.X, Projectile.Center.Y + 0.25f * prefire * Player.velocity.Y, 0, 0, ProjectileType<CollapsedExplodeAim>(), 0, 0, 0, 0);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, Projectile.Center.X + 0.25f * prefire * Player.velocity.X, Projectile.Center.Y + 0.25f * prefire * Player.velocity.Y, 0, 0, ProjectileType<CollapsedExplodeAim>(), 0, 0, 0, 0);
 				}
 				else {
-					Projectile.NewProjectile(newSource, Projectile.Center.X, Projectile.Center.Y, 0, 0, ProjectileType<CollapsedExplodeAim>(), 0, 0, 0, 0);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, Projectile.Center.X, Projectile.Center.Y, 0, 0, ProjectileType<CollapsedExplodeAim>(), 0, 0, 0, 0);
 				}
 				skilltimer = 0;
 			}
@@ -1564,7 +1566,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		}
 	}
 
-	public class CollapsedExplodeAim : ModProjectile
+	public partial class CollapsedExplodeAim : ModProjectile
 	{
 		public override void SetStaticDefaults() {
 			Main.projFrames[Projectile.type] = 8;
@@ -1609,7 +1611,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 
 		public override void AI() {
 			var newSource = Projectile.GetSource_FromThis();
-			Player player = Main.player[Main.myPlayer];
+			Player player = Main.player[Player.FindClosest(Projectile.position, Projectile.width, Projectile.height)];
 			frametimer++;
 			if (frametimer > 3) {
 				randt = Main.rand.Next(2, 31);
@@ -1659,7 +1661,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 					randvelocity = new Vector2(randspeed, 0).RotatedBy(randrotation);
 					VelocityABCDxy[i, 0] = randspeed;//存储每个顶点的发射速度向量模长
 					VelocityABCDxy[i, 1] = randrotation;//存储每个顶点的发射速度角度
-					Projectile.NewProjectile(newSource, Projectile.Center, randvelocity, ProjectileType<CollapsedFrame>(), 0, 0f, -1, i, randvelocity.X, randvelocity.Y);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, Projectile.Center, randvelocity, ProjectileType<CollapsedFrame>(), 0, 0f, -1, i, randvelocity.X, randvelocity.Y);
 				}
 				//summonedframes = true;
 				//}
@@ -1721,7 +1723,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 			}
 
 			if (timer == 60) {
-				Projectile.NewProjectile(newSource, Projectile.Center.X, Projectile.Center.Y, 0, 0, ProjectileType<ExplodeWave>(), 10, 0f, 0, 0);
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, Projectile.Center.X, Projectile.Center.Y, 0, 0, ProjectileType<ExplodeWave>(), 10, 0f, 0, 0);
 			}
 
 			if (timer == 70) {
@@ -1755,7 +1757,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		}
 	}
 
-	public class CollapsedFrame : ModProjectile
+	public partial class CollapsedFrame : ModProjectile
 	{
 		public override void SetStaticDefaults() {
 			Main.projFrames[Projectile.type] = 8;
@@ -1830,7 +1832,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		}
 	}
 
-	public class AACTStage3TrueHealth : ModNPC
+	public partial class AACTStage3TrueHealth : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		public override string Texture => ArknightsMod.noTexture;
 		public override void SetStaticDefaults() {
@@ -1898,7 +1900,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		}
 		//血量修改
 		public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers) {
-			Player Player = Main.player[Main.myPlayer];
+			Player Player = Main.player[NPC.target < Main.maxPlayers ? NPC.target : 0];
 			SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/AACTShield") with { Volume = 1f, Pitch = 0f }, Player.Center);
 			iscooldownsoundplayed = true;
 			cooldown = Main.rand.Next(60, 121);
@@ -1907,7 +1909,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		}
 		//血量修改
 		public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers) {
-			Player Player = Main.player[Main.myPlayer];
+			Player Player = Main.player[NPC.target < Main.maxPlayers ? NPC.target : 0];
 			SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Assets/Sound/ImperialArtilleyCoreTargeteer/AACTSTG3HIT") with { Volume = 1f, Pitch = 0f }, Player.Center);
 			iscooldownsoundplayed = true;
 			cooldown = Main.rand.Next(60, 121);
@@ -1926,7 +1928,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		}
 
 		public override void AI() {
-			Player Player = Main.player[Main.myPlayer];
+			Player Player = Main.player[NPC.target];
 			//var AACT = ModContent.GetModNPC(ModContent.NPCType<AACT>());
 			NPC HostNPC = Main.npc[Host];
 			NPC.Center = HostNPC.Center;
@@ -1966,7 +1968,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		}
 	}
 
-	public class IACTStage3target : ModNPC
+	public partial class IACTStage3target : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		public override string Texture => ArknightsMod.noTexture;
 		public override void SetStaticDefaults() {
@@ -2013,13 +2015,13 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 				stage3atkloop = 630;
 			}
 			if (timer % stage3atkloop == 0) {
-				Projectile.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ProjectileType<ISTG3InCore>(), 0, 0f, 0, NPC.whoAmI);
-				Projectile.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ProjectileType<ISTG3InRing>(), 0, 0f, 0, NPC.whoAmI);
-				Projectile.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ProjectileType<ISTG3OutPrism>(), 0, 0f, 0, NPC.whoAmI);
-				Projectile.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ProjectileType<ISTG3OutRing>(), 0, 0f, 0, NPC.whoAmI);
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ProjectileType<ISTG3InCore>(), 0, 0f, 0, NPC.whoAmI);
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ProjectileType<ISTG3InRing>(), 0, 0f, 0, NPC.whoAmI);
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ProjectileType<ISTG3OutPrism>(), 0, 0f, 0, NPC.whoAmI);
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center.X, NPC.Center.Y, 0, 0, ProjectileType<ISTG3OutRing>(), 0, 0f, 0, NPC.whoAmI);
 			}
 			timer++;
-			Player Player = Main.player[Main.myPlayer];
+			Player Player = Main.player[NPC.target];
 			NPC parentNPC = Main.npc[ParentIndex];
 			NPC.dontTakeDamage = true;
 			NPC.Center = 2 * Player.Center - parentNPC.Center;
@@ -2047,7 +2049,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		}
 	}
 
-	public class ISTG3InCore : ModProjectile
+	public partial class ISTG3InCore : ModProjectile
 	{
 		private const string ChainTextPath = "ArknightsMod/Content/NPCs/Enemy/RoaringFlare/ImperialArtilleyCoreTargeteer/ISTG3InCore";
 
@@ -2084,7 +2086,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 
 		public override void AI() {
 			timer++;
-			Player Player = Main.player[Main.myPlayer];
+			Player Player = Main.player[Player.FindClosest(Projectile.position, Projectile.width, Projectile.height)];
 			NPC parentNPC = Main.npc[ParentIndex];
 			Projectile.Center = 2 * Player.Center - parentNPC.Center;
 			if (Main.masterMode) {
@@ -2126,7 +2128,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		}
 	}
 
-	public class ISTG3InRing : ModProjectile
+	public partial class ISTG3InRing : ModProjectile
 	{
 		private const string ChainTextPath = "ArknightsMod/Content/NPCs/Enemy/RoaringFlare/ImperialArtilleyCoreTargeteer/ISTG3InRing";
 
@@ -2163,7 +2165,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 
 		public override void AI() {
 			timer++;
-			Player Player = Main.player[Main.myPlayer];
+			Player Player = Main.player[Player.FindClosest(Projectile.position, Projectile.width, Projectile.height)];
 			NPC parentNPC = Main.npc[ParentIndex];
 			Projectile.Center = 2 * Player.Center - parentNPC.Center;
 			Projectile.rotation = -0.05f * timer;
@@ -2206,7 +2208,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		}
 	}
 
-	public class ISTG3OutRing : ModProjectile
+	public partial class ISTG3OutRing : ModProjectile
 	{
 		private const string ChainTextPath = "ArknightsMod/Content/NPCs/Enemy/RoaringFlare/ImperialArtilleyCoreTargeteer/ISTG3OutRing";
 
@@ -2243,7 +2245,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 
 		public override void AI() {
 			timer++;
-			Player Player = Main.player[Main.myPlayer];
+			Player Player = Main.player[Player.FindClosest(Projectile.position, Projectile.width, Projectile.height)];
 			NPC parentNPC = Main.npc[ParentIndex];
 
 			Projectile.Center = 2 * Player.Center - parentNPC.Center;
@@ -2287,7 +2289,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		}
 	}
 
-	public class ISTG3OutPrism : ModProjectile
+	public partial class ISTG3OutPrism : ModProjectile
 	{
 		private const string ChainTextPath = "ArknightsMod/Content/NPCs/Enemy/RoaringFlare/ImperialArtilleyCoreTargeteer/ISTG3OutPrism";
 
@@ -2324,7 +2326,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 
 		public override void AI() {
 			timer++;
-			Player Player = Main.player[Main.myPlayer];
+			Player Player = Main.player[Player.FindClosest(Projectile.position, Projectile.width, Projectile.height)];
 			NPC parentNPC = Main.npc[ParentIndex];
 			Projectile.Center = 2 * Player.Center - parentNPC.Center;
 			Projectile.rotation = 0.05f * timer;
@@ -2367,7 +2369,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		}
 	}
 
-	public class AACTEndShow : ModProjectile
+	public partial class AACTEndShow : ModProjectile
 	{
 		public override string Texture => ArknightsMod.noTexture;
 		public override void SetStaticDefaults() {

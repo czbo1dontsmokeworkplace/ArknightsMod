@@ -7,10 +7,7 @@ internal static class DreadnoughtRules
 {
     internal const int BaseSwingTicks = BladeSwingTemplate.BaseTicks;
     internal const float WeaponScale = .5f;
-    internal const float MaxMomentum = 2f;
-    internal const float MomentumPerSwing = .2f;
-    internal const int IdleGraceTicks = 60;
-    internal const float MomentumDecay = MaxMomentum / 240f;
+    internal const int ReadyTicks = 180;
 
     // Smooth full turn with a sharper acceleration into the front half. The speed
     // stays positive at the rear, connecting each turn directly to the next.
@@ -27,11 +24,7 @@ internal static class DreadnoughtRules
 
     internal static float TrailIntensity(float progress) => Math.Clamp((TurnSpeed(progress) - .1f) / 2.4f, 0, 1);
 
-    internal static bool OpeningHit(int previousTargets) => previousTargets == 0;
     internal static bool CanStrike(int previousTargets) => previousTargets == 0;
-    internal static float Gain(float momentum) => Math.Min(MaxMomentum, momentum + MomentumPerSwing);
-    internal static float Decay(float momentum, bool switchedAway = false) =>
-        Math.Max(0, momentum - MomentumDecay * (switchedAway ? 3f : 1f));
     internal static float SwingTicks(float attackSpeed, bool swiftSkill) =>
         BladeSwingTemplate.Duration(attackSpeed, swiftSkill);
 }

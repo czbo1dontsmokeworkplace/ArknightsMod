@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Common.ItemDropRules;
+using ArknightsMod.Common.ItemDropRules;
 using ArknightsMod.Content.Items.Material.ReclamAlgor;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,7 +12,7 @@ using static Terraria.ModLoader.ModContent;
 namespace ArknightsMod.Content.NPCs.Enemy.ReclamationAlgorithm
 {
 	// Party Zombie is a pretty basic clone of a vanilla NPC. To learn how to further adapt vanilla NPC behaviors, see https://github.com/tModLoader/tModLoader/wiki/Advanced-Vanilla-Code-Adaption#example-npc-npc-clone-with-modified-projectile-hoplite
-	public class LeporibeastShorthorn : ModNPC
+	public partial class LeporibeastShorthorn : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		private int status;
 		private float preposition;

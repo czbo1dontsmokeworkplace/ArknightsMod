@@ -23,7 +23,6 @@ public abstract class BranchCrossbowWeapon : CrossbowWeaponBase
     public override void ModifyTooltips(System.Collections.Generic.List<TooltipLine> tooltips)
     {
         base.ModifyTooltips(tooltips);
-        tooltips.Add(new TooltipLine(Mod, "BranchSkillKey", GetSkillActivateKeyHint()));
         if (Kind != CrossbowKind.Provence)
             tooltips.Add(new TooltipLine(Mod, "BranchPlaceholder", Language.GetTextValue("Mods.ArknightsMod.ChargedArsenal.Placeholder")));
     }

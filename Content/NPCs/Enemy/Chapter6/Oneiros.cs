@@ -1,4 +1,4 @@
-﻿using Terraria;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using System;
@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 {
-	public class Oneiros : ModNPC
+	public partial class Oneiros : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		public override void SetStaticDefaults() {
 			Main.npcFrameCount[Type] = 9;
@@ -54,7 +54,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 		public override void FindFrame(int frameHeight) {
 
 			attackframeY = 4 * frameHeight;
-			NPC.TargetClosest(true);
+
 			NPC.frameCounter++;
 			if (NPC.frame.Y == 0) {
 				NPC.frame.Y = 0;
@@ -156,7 +156,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 					Holdtime++;
 					NPC.velocity = Vector2.Zero;
 					if (Holdtime >= 90) {
-						Projectile.NewProjectile(NPC.GetSource_FromThis(), new Vector2(NPC.position.X+20, NPC.position.Y + 60), new Vector2(directionchoose * 0.8f, 0).RotatedBy(angle), ModContent.ProjectileType<Oneirosbomb>(), 0, 0.8f);
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromThis(), new Vector2(NPC.position.X+20, NPC.position.Y + 60), new Vector2(directionchoose * 0.8f, 0).RotatedBy(angle), ModContent.ProjectileType<Oneirosbomb>(), 0, 0.8f);
 						attack = true;
 						walk = false;
 						preattack = false;
@@ -176,7 +176,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 			}
 		}
 	}
-	public class Oneirosbomb : ModProjectile {
+	public partial class Oneirosbomb : ModProjectile {
 		// 配置参数
 		private const float HoverTime = 0.4f;     // 停留时间(秒)
 		private const float LaunchSpeed = 15f;    // 冲刺速度
@@ -298,7 +298,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 				}
 			}
 			if (Main.netMode != NetmodeID.MultiplayerClient)
-				Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero,
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero,
 					ModContent.ProjectileType<Iceexplode>(), 25, 0.8f, Main.myPlayer);
 			// 爆炸伤害
 			//foreach (Player player in Main.player) {
@@ -311,7 +311,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 			//}
 		}
 	}
-	public class Iceexplode : ModProjectile {
+	public partial class Iceexplode : ModProjectile {
 		public override void SetStaticDefaults() {
 			Main.projFrames[Projectile.type] = 5;
 			ProjectileID.Sets.TrailingMode[Type] = 2;

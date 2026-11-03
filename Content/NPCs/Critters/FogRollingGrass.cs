@@ -49,6 +49,8 @@ namespace ArknightsMod.Content.NPCs.Critters
 
 		public override void AI() {
 			wobble += 0.05f;
+			if (Main.netMode == NetmodeID.Server && Main.GameUpdateCount % 120 == (ulong)(NPC.whoAmI % 120))
+				NPC.netUpdate = true;
 
 			float windPush = Main.windSpeedCurrent * 1.2f;
 			NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, windPush, 0.02f);
@@ -69,5 +71,8 @@ namespace ArknightsMod.Content.NPCs.Critters
 				dust.noGravity = true;
 			}
 		}
+
+		public override void SendExtraAI(System.IO.BinaryWriter writer) => writer.Write(wobble);
+		public override void ReceiveExtraAI(System.IO.BinaryReader reader) => wobble = reader.ReadSingle();
 	}
 }

@@ -16,7 +16,7 @@ using Terraria.ModLoader.Utilities;
 
 namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 { 
-	public class FloatingSeaDrifter:ModNPC
+	public partial class FloatingSeaDrifter:global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		public override void FindFrame(int frameHeight) {
 			NPC.spriteDirection = NPC.direction;
@@ -180,7 +180,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 			}
 
 			if (attacktime == 20) {
-				Projectile.NewProjectile(newSource, NPC.Center, new Vector2(directionchoose * 8f, 0).RotatedBy(angle), ModContent.ProjectileType<FloatingSeaDrifterShoot>(), 12, 0.8f, 0, 0);
+				global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, NPC.Center, new Vector2(directionchoose * 8f, 0).RotatedBy(angle), ModContent.ProjectileType<FloatingSeaDrifterShoot>(), 12, 0.8f, 0, 0);
 			}
 		}
 

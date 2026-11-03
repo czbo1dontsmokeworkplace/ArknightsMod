@@ -65,12 +65,6 @@ public abstract class BlastCasterWeapon : ExpansionWeaponBase
     }
     public override string GetSkillActivateKeyHint() => Language.GetTextValue("Mods.ArknightsMod.BlastCasterText.SkillKey",
         string.IsNullOrEmpty(ArknightsKeybinds.SkillActivateKeyDisplay) ? "?" : ArknightsKeybinds.SkillActivateKeyDisplay);
-    public override void ModifyTooltips(List<TooltipLine> tooltips)
-    {
-        base.ModifyTooltips(tooltips);
-        tooltips.Add(new TooltipLine(Mod, "BlastSkillKey", GetSkillActivateKeyHint()));
-
-    }
 }
 
 public sealed class CorroserumFlamethrower : BlastCasterWeapon

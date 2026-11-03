@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 {
 	// 弑君者刀光：纯视觉。ai[0]=斩/刺；ai[1]=spriteDirection；ai[2]=Boss whoAmI。
-	public class SwordSlashEffect : ModProjectile
+	public partial class SwordSlashEffect : ModProjectile
 	{
 		public override string Texture =>
 			"ArknightsMod/Content/NPCs/Enemy/ThroughChapter4/Crownslayer_Slash";

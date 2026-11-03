@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Material;
+using ArknightsMod.Content.Items.Material;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 {
-	public class SnowSoldier : ModNPC {
+	public partial class SnowSoldier : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork {
 		public override void SetStaticDefaults() {
 			Main.npcFrameCount[Type] = 19;
 			NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers() { // Influences how the NPC looks in the Bestiary
@@ -44,7 +44,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 		public override void FindFrame(int frameHeight) {
 
 			attackframeY = 10 * frameHeight;
-			NPC.TargetClosest(true);
+
 			NPC.frameCounter++;
 			/*if(NPC.frame.Y == 0) {
 				NPC.frame.Y = -8;

@@ -13,7 +13,7 @@ internal static class DuoVisuals
     {
         Vector2 delta = to - from;
         if (delta.LengthSquared() < .001f) return;
-        batch.Draw(TextureAssets.MagicPixel.Value, from, null, color, delta.ToRotation(), new Vector2(0, .5f), new Vector2(delta.Length(), width), SpriteEffects.None, 0);
+        batch.Draw(TextureAssets.MagicPixel.Value, from, new Rectangle(0, 0, 1, 1), color, delta.ToRotation(), new Vector2(0, .5f), new Vector2(delta.Length(), width), SpriteEffects.None, 0);
     }
     internal static void Ring(SpriteBatch batch, Vector2 center, float radius, Color color, int segments = 24)
     {

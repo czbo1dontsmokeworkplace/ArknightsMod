@@ -16,7 +16,7 @@ using ArknightsMod.Common.VisualEffects;
 
 namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 {
-	public class PocketSeaCrawler : ModNPC
+	public partial class PocketSeaCrawler : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		public override void FindFrame(int frameHeight) {
 			NPC.spriteDirection = NPC.direction;
@@ -112,7 +112,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 		}
 		public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo) {
 			
-			NPC.ai[3] = 200;
+			global::ArknightsMod.Common.Networking.SeabornContactSync.Report(NPC, target);
 
 		}
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {

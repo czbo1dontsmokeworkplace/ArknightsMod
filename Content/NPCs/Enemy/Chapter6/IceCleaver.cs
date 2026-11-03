@@ -11,7 +11,7 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 {
-	public class IceCleaver:ModNPC
+	public partial class IceCleaver:global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		private int fadeTimer;
 		public override void SetStaticDefaults() {
@@ -35,6 +35,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 			NPC.scale = 1f;
 		}
 		public override void OnSpawn(IEntitySource source) {
+            if (!NPC.HasValidTarget) NPC.TargetClosest(false);
 			fadeTimer = 60; // 持续60帧
 			NPC.color = Color.Black; // 初始为纯黑
 			NPC.alpha = 240;
@@ -43,7 +44,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
             if (NPC.GetGlobalNPC<global::ArknightsMod.Content.NPCs.Friendly.CannotSupportNPC>().IsSleeping) return;
 
 			attackframeY = 10 * frameHeight;
-			NPC.TargetClosest(true);
+
 			framecounter++;
 			
 
@@ -313,11 +314,11 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 				NPC.damage = 76;
 				if (AttackCD == 25) {
 					if (NPC.spriteDirection < 0) {
-						Projectile.NewProjectile(NPC.GetSource_FromThis(), new Vector2(NPC.Center.X + 60, NPC.Center.Y + 40), new Vector2(0, 0), ModContent.ProjectileType<Icebreak>(), 38, 0.8f);
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromThis(), new Vector2(NPC.Center.X + 60, NPC.Center.Y + 40), new Vector2(0, 0), ModContent.ProjectileType<Icebreak>(), 38, 0.8f);
 
 					}
 					if (NPC.spriteDirection > 0) {
-						Projectile.NewProjectile(NPC.GetSource_FromThis(), new Vector2(NPC.Center.X - 60, NPC.Center.Y + 40), new Vector2(0, 0), ModContent.ProjectileType<Icebreak>(), 38, 0.8f);
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromThis(), new Vector2(NPC.Center.X - 60, NPC.Center.Y + 40), new Vector2(0, 0), ModContent.ProjectileType<Icebreak>(), 38, 0.8f);
 
 					}
 				}
@@ -354,7 +355,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 		}
 	}
 
-	public class Icebreak : ModProjectile
+	public partial class Icebreak : ModProjectile
 	{
 		public override string Texture => ArknightsMod.noTexture;
 

@@ -12,7 +12,7 @@ using Terraria.Audio;
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 {
 	// Party Zombie is a pretty basic clone of a vanilla NPC. To learn how to further adapt vanilla NPC behaviors, see https://github.com/tModLoader/tModLoader/wiki/Advanced-Vanilla-Code-Adaption#example-npc-npc-clone-with-modified-projectile-hoplite
-	public class SoldierLeader : ModNPC
+	public partial class SoldierLeader : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		public override void SetStaticDefaults() {
 			Main.npcFrameCount[Type] = 28;
@@ -46,7 +46,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		private float maxspeed2 = 2.2f;
 		private int Framespeed = 9;
 		public override void FindFrame(int frameHeight) {
-			NPC.TargetClosest(true);
+
 
 			Player p = Main.player[NPC.target];
 			NPC.frameCounter++;

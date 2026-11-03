@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Content.Items.Placeable.Banners;
+using ArknightsMod.Content.Items.Placeable.Banners;
 using ArknightsMod.Systems.Gameplay.Damage;
 using Microsoft.Xna.Framework;
 using System;
@@ -13,7 +13,7 @@ using static Terraria.ModLoader.ModContent;
 
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4 //记得把BakaMod改成ArknightsMod
 {
-	public class Hound : ModNPC
+	public partial class Hound : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		public override void SetStaticDefaults() {
 			Main.npcFrameCount[NPC.type] = 5;
@@ -67,6 +67,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4 //记得把BakaMod改�
 		}
 		private int fadeTimer;
 		public override void OnSpawn(IEntitySource source) {
+            if (!NPC.HasValidTarget) NPC.TargetClosest(false);
 			fadeTimer = 60; // 持续60帧
 			NPC.color = Color.Black; // 初始为纯黑
 			NPC.alpha = 240;

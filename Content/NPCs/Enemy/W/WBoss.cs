@@ -19,7 +19,7 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.NPCs.Enemy.W
 {
 	[AutoloadBossHead]
-	public partial class WBoss : ModNPC, INpcStateContext
+	public partial class WBoss : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork, INpcStateContext
 	{
 		// ---- 帧表（0 基行号 = 策划案 1 基帧号 - 1；GIF 100ms/帧 = 6 tick/帧）----
 		public const int RowSwingStart = 0, RowSwingEnd = 4;            //挥臂 1-5
@@ -548,10 +548,14 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 		public override void SendExtraAI(System.IO.BinaryWriter writer) {
 			writer.WriteVector2(TeleportDest);
+			WriteCombatSnapshot(writer);
+			base.SendExtraAI(writer);
 		}
 
 		public override void ReceiveExtraAI(System.IO.BinaryReader reader) {
 			TeleportDest = reader.ReadVector2();
+			ReadCombatSnapshot(reader);
+			base.ReceiveExtraAI(reader);
 		}
 
 		// ---- 死亡演出：锁血 → 倒地动画 → 真死掉落（镜像 FrostNova 的 CheckDead 模式）----

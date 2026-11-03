@@ -29,7 +29,7 @@ public sealed class DreadnoughtHeavyImpact : ModProjectile
     {
         if (Projectile.localAI[0]++ != 0 || !ChargedOperatorVfx.Visible(Projectile.Center)) return;
         SoundEngine.PlaySound(SoundID.Item14 with { Volume = .8f, Pitch = -.35f, MaxInstances = 4 }, Projectile.Center);
-        SoundEngine.PlaySound(SoundID.Item71 with { Volume = .9f, Pitch = -.5f, MaxInstances = 4 }, Projectile.Center);
+        SoundEngine.PlaySound(SoundID.Item68 with { Volume = .9f, Pitch = 0, MaxInstances = 4 }, Projectile.Center);
         Color color = ChargedOperatorRules.ColorFor(Kind);
         Vector2 aim = Projectile.velocity.SafeNormalize(Vector2.UnitX);
         for (int i = 0; i < 26 && ParticleManager.activeParticles.Count < 1200; i++)

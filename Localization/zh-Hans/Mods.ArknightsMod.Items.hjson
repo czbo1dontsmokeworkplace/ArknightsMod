@@ -48,11 +48,7 @@ NoirShield: {
 
 DurinWand: {
 	DisplayName: 法杖 [杜林]
-	Tooltip:
-		'''
-		普通攻击为直线三连发，发间隔4帧，第三发后间隔18帧
-		她看起来十分困乏
-		'''
+	Tooltip: 连续发射三枚沿直线飞行的法术弹
 }
 
 _12FWand: {
@@ -3289,12 +3285,7 @@ PipeBlueLightBlock: {
 
 HazeMagicBook: {
 	DisplayName: 法杖 [夜烟]
-	Tooltip:
-		'''
-		困难模式初期
-		释放蓝紫色法术弹，技能可强化攻击或以生命上限换取爆发
-		普通攻击为直线三连发，发间隔4帧，第三发后间隔18帧
-		'''
+	Tooltip: 连续发射三枚沿直线飞行的蓝紫色法术弹
 }
 
 ReedFlameShadowStaff: {
@@ -3542,11 +3533,7 @@ TexasDefault: {
 
 StewardStaff: {
 	DisplayName: 法杖 [史都华德]
-	Tooltip:
-		'''
-		连续攻击蓄力，下一击射出强化直线法弹
-		普通攻击为直线三连发，发间隔4帧，第三发后间隔18帧
-		'''
+	Tooltip: 连续发射三枚直线法术弹，蓄力后射出强化法弹
 }
 
 GoldenglowWand: {
@@ -4185,13 +4172,7 @@ RedDagger: {
 
 HoolheyakWindArts: {
 	DisplayName: 御风羽饰 [霍尔海雅]
-	Tooltip:
-		'''
-		击败石巨人后可制作
-		发射直线风弹，命中后形成追踪风旋
-		普通攻击为直线三连发，发间隔4帧，第三发后间隔18帧
-		风旋吸附并卷起普通敌人，无法卷起首领
-		'''
+	Tooltip: 连续发射三枚直线风弹，命中后形成追踪风旋
 }
 
 EbenholzStaff: {

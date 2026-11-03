@@ -27,6 +27,11 @@ internal static class MedicFieldVfx
         Circle(center, radius, p.Body, 1.5f, .8f * visibility);
         float pulse = .5f + .5f * MathF.Sin(field.Age * .055f);
         Circle(center, radius * (.87f + pulse * .025f), p.Core, .8f, .24f * visibility);
+        // A cursor-centered sweep shows the one-second channel, then fades after one pulse.
+        if (!field.Activated) {
+            float angle = -MathHelper.PiOver2 + MathHelper.TwoPi * field.Progress;
+            MedicArtsVfx.Glow(center + angle.ToRotationVector2() * radius, new Vector2(10), p.Core, visibility);
+        }
         // Distinct radial motifs preserve the same circle at every angle.
         int petals = field.ProfileId switch { 10 => 6, 11 => 8, 12 => 12, _ => 16 };
         for (int i = 0; i < petals; i++)
@@ -83,7 +88,7 @@ internal static class MedicFieldVfx
                 MedicArtsVfx.Mote(center + offset * sign, -Vector2.UnitY * .15f, field.ProfileId, MedicalMoteKind.Petal, 4, 45);
             }
         }
-        if (field.Age is 1 or 14 || field.Age % 90 == 14)
+        if (field.Age == 1 || field.Age == MedicHealingField.ChargeTicks)
             MedicArtsVfx.Mote(center, Vector2.Zero, field.ProfileId, MedicalMoteKind.Pulse, radius * .9f, 28);
     }
 }

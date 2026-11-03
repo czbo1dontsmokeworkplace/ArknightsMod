@@ -1,4 +1,4 @@
-﻿using ArknightsMod.Systems.Gameplay.Damage;
+using ArknightsMod.Systems.Gameplay.Damage;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 {
-	internal class SnowHound:ModNPC
+	internal partial class SnowHound:global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		public override void SetStaticDefaults() {
 			Main.npcFrameCount[NPC.type] = 5;
@@ -66,6 +66,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 		}
 		private int fadeTimer;
 		public override void OnSpawn(IEntitySource source) {
+            if (!NPC.HasValidTarget) NPC.TargetClosest(false);
 			fadeTimer = 60; // 持续60帧
 			NPC.color = Color.Black; // 初始为纯黑
 			NPC.alpha = 240;

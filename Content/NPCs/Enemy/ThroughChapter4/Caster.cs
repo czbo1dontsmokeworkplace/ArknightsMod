@@ -12,7 +12,7 @@ using Terraria.ModLoader.Utilities;
 
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 {
-	public class Caster : ModNPC
+	public partial class Caster : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		// AI状态枚举
 		private enum AIState
@@ -123,7 +123,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		// 行走动画 (1-7帧)
 		public override void FindFrame(int frameHeight) {
             if (NPC.GetGlobalNPC<global::ArknightsMod.Content.NPCs.Friendly.CannotSupportNPC>().IsSleeping) return;
-			NPC.TargetClosest(true);
+
 			NPC.frameCounter++;
 
 			// 计算当前帧索引
@@ -182,7 +182,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			if (Main.netMode == NetmodeID.MultiplayerClient)
 				return;
 
-			NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y,
+			global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y,
 				ModContent.NPCType<CasterShoot>(), Target: NPC.target);
 		}
 
@@ -391,7 +391,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 			// modifiers.SourceDamage *= 0.5f; // 例如减半伤害
 		}
 	}
-	public class CasterShoot : ModNPC {
+	public partial class CasterShoot : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork {
 		private static BasicEffect trailEffect;
 
 		public override string Texture => "ArknightsMod/Content/NPCs/Enemy/ThroughChapter4/explode";
@@ -419,6 +419,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		private Vector2 speedPos;
 
 		public override void OnSpawn(IEntitySource source) {
+            if (!NPC.HasValidTarget) NPC.TargetClosest(false);
 			Player target = Main.player[NPC.target];
 			speedPos = (target.MountedCenter - NPC.Center).SafeNormalize(Vector2.UnitY) * MoveSpeed;
 		}

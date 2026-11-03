@@ -1,4 +1,4 @@
-﻿using Terraria.ID;
+using Terraria.ID;
 using Terraria;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
@@ -14,7 +14,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ReclamationAlgorithm.Cragpincer
 	/// <summary>
 	/// 峭壁钳
 	/// </summary>
-	public class Cragpincer : ModNPC
+	public partial class Cragpincer : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		private const string _tex = "ArknightsMod/Content/NPCs/Enemy/ReclamationAlgorithm/Cragpincer/Cragpincer";
 		public override string Texture => _tex + "_Common";
@@ -56,6 +56,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ReclamationAlgorithm.Cragpincer
 		}
 		public override void OnSpawn(IEntitySource source)
 		{
+            if (!NPC.HasValidTarget) NPC.TargetClosest(false);
 			_state = State.Common;
 			NPC.friendly = true;
 		}

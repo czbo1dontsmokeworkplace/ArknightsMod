@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 {
-	public class ShieldGuard : ModNPC {
+	public partial class ShieldGuard : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork {
 		// 动画常量
 		private const int TotalFrames = 23;
 		private const int FrameRate = 7;
@@ -118,7 +118,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				// 在攻击第4帧生成盾牌弹幕
 				if (currentFrame == ShieldExtendFrame && frameCounter == 0) {
 					if (Main.netMode != NetmodeID.MultiplayerClient) {
-						Projectile.NewProjectile(
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(
 							NPC.GetSource_FromAI(),
 							NPC.Center,
 							Vector2.Zero,

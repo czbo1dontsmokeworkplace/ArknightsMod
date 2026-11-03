@@ -163,56 +163,76 @@ public sealed class MedicArt : ModProjectile
 
 public sealed class MedicHealingField : ModProjectile
 {
+    internal const int ChargeTicks = 60;
+    private const int FadeTicks = 24;
     public override string Texture => "Terraria/Images/Projectile_0";
     internal int ProfileId => Math.Clamp((int)Projectile.ai[0], 10, 13);
     internal MedicProfile Profile => MedicCatalog.Get(ProfileId);
     internal int Age;
-    internal float Visibility => Math.Min(MathHelper.Clamp(Age / 14f, 0, 1), MathHelper.Clamp(Projectile.timeLeft / 40f, 0, 1));
+    private bool completed;
+    private bool finalized;
+    internal bool Automatic => Projectile.ai[2] < 0;
+    internal bool Activated => finalized;
+    internal float Progress => Math.Clamp(Age / (float)ChargeTicks, 0, 1);
+    internal float Visibility => Math.Min(MathHelper.Clamp(Age / 14f, 0, 1),
+        finalized ? MathHelper.Clamp(Projectile.timeLeft / (float)FadeTicks, 0, 1) : 1);
     public override void SetStaticDefaults() => ProjectileID.Sets.DrawScreenCheckFluff[Type] = 256;
     public override void SetDefaults()
     {
         Projectile.width = Projectile.height = 4;
-        Projectile.tileCollide = false;
-        Projectile.ignoreWater = true;
-        Projectile.penetrate = -1;
-        Projectile.timeLeft = 1500;
+        Projectile.tileCollide = false; Projectile.ignoreWater = true;
+        Projectile.friendly = Projectile.hostile = false;
+        Projectile.penetrate = -1; Projectile.timeLeft = 180;
         Projectile.netImportant = true;
     }
+    public override bool ShouldUpdatePosition() => false;
     public override bool? CanDamage() => false;
     public override bool? CanHitNPC(NPC target) => false;
     public override bool CanHitPvp(Player target) => false;
+    public override void SendExtraAI(BinaryWriter writer) { writer.Write(Age); writer.Write(completed); }
+    public override void ReceiveExtraAI(BinaryReader reader)
+    {
+        int age = Math.Clamp(reader.ReadInt32(), 0, ChargeTicks + FadeTicks);
+        bool request = reader.ReadBoolean();
+        Age = Math.Max(Age, age);
+        // Completion is an explicit owner event, not an inferred remote button state.
+        // Healing itself remains exclusively on the server/single-player authority.
+        completed |= request && age >= ChargeTicks;
+    }
     public override void AI()
     {
-        if (Age++ == 0)
-        {
-            MedicArtsAudio.Play(Projectile.Center, ProfileId, MedicSoundCue.FieldOpen);
-            Projectile.timeLeft = Profile.FieldDuration;
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                // Bound overlapping fields from one caster without limiting the team's player count.
-                int count = 0; Projectile oldest = null;
-                foreach (Projectile other in Main.ActiveProjectiles)
-                    if (other.owner == Projectile.owner && other.type == Type && other.whoAmI != Projectile.whoAmI && other.timeLeft > 40)
-                    {
-                        count++;
-                        if (oldest == null || other.timeLeft < oldest.timeLeft) oldest = other;
-                    }
-                if (count >= 2 && oldest != null) { oldest.timeLeft = 40; oldest.netUpdate = true; }
-            }
-        }
-        if (Age >= 14 && Age % 90 == 14)
-            MedicArtsAudio.Play(Projectile.Center, ProfileId, MedicSoundCue.FieldPulse);
-        MedicArtsVfx.FieldAmbient(this);
-        if (Main.netMode == NetmodeID.MultiplayerClient || Age < 14 || Age % 15 != 0
-            || !Main.player.IndexInRange(Projectile.owner)) return;
+        if (!Main.player.IndexInRange(Projectile.owner)) { Projectile.Kill(); return; }
         Player owner = Main.player[Projectile.owner];
         if (!owner.active || owner.dead) { Projectile.Kill(); return; }
-        foreach (Player patient in Main.ActivePlayers)
-            if (patient.DistanceSQ(Projectile.Center) <= Profile.FieldRadius * Profile.FieldRadius)
-                MedicTreatment.TryTreat(owner, patient, ProfileId, Math.Clamp(Projectile.ai[1], 1, 3),
-                    Math.Clamp((int)Projectile.ai[2], 20, 1800));
+        if (!completed && !Automatic && Projectile.owner == Main.myPlayer) {
+            if (!owner.channel || owner.noItems || owner.CCed || owner.silence
+                || owner.HeldItem.ModItem is not MedicWeapon weapon || weapon.ProfileId != ProfileId) {
+                Projectile.Kill(); return;
+            }
+            Vector2 cursor = Main.MouseWorld;
+            if (float.IsFinite(cursor.X) && float.IsFinite(cursor.Y)) Projectile.Center = MedicLaunch.ClampPoint(cursor);
+            owner.itemTime = owner.itemAnimation = 2;
+            if (Age % 6 == 0) Projectile.netUpdate = true;
+        }
+        if (Age++ == 0) MedicArtsAudio.Play(Projectile.Center, ProfileId, MedicSoundCue.FieldOpen);
+        if (!completed && Age >= ChargeTicks && (Automatic || Projectile.owner == Main.myPlayer)) {
+            completed = true; Projectile.netUpdate = true;
+        }
+        if (completed && Age >= ChargeTicks && !finalized) {
+            finalized = true; Projectile.timeLeft = FadeTicks;
+            MedicArtsAudio.Play(Projectile.Center, ProfileId, MedicSoundCue.FieldPulse);
+            if (Main.netMode != NetmodeID.MultiplayerClient) {
+                foreach (Player patient in Main.ActivePlayers)
+                    if (patient.DistanceSQ(Projectile.Center) <= Profile.FieldRadius * Profile.FieldRadius)
+                        MedicTreatment.TryTreat(owner, patient, ProfileId, Math.Clamp(Projectile.ai[1], 1, 3),
+                            Math.Clamp((int)Math.Abs(Projectile.ai[2]), 20, 1800));
+                Projectile.netUpdate = true;
+            }
+        }
+        MedicArtsVfx.FieldAmbient(this);
     }
-    public override void OnKill(int timeLeft) => MedicArtsAudio.Play(Projectile.Center, ProfileId, MedicSoundCue.FieldClose);
+    public override void OnKill(int timeLeft)
+    { if (finalized) MedicArtsAudio.Play(Projectile.Center, ProfileId, MedicSoundCue.FieldClose); }
     public override bool PreDraw(ref Color lightColor)
     {
         MedicArtsVfx.DrawField(this); return false;

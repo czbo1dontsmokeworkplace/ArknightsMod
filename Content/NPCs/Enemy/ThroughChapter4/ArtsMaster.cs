@@ -224,11 +224,15 @@ public abstract class ArtsMasterDrone : ModNPC
     {
         writer.Write(lockedTarget.X);
         writer.Write(lockedTarget.Y);
+        writer.Write(patrolCenterX);
+        writer.Write(patrolAltitudeY);
     }
 
     public override void ReceiveExtraAI(BinaryReader reader)
     {
         lockedTarget = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+        patrolCenterX = reader.ReadSingle();
+        patrolAltitudeY = reader.ReadSingle();
     }
 
     public override void FindFrame(int frameHeight)
@@ -303,7 +307,7 @@ public sealed class ArtsMasterNeedle : ModProjectile
     }
 }
 
-public sealed class ArtsMasterBeam : ModProjectile
+public sealed partial class ArtsMasterBeam : ModProjectile
 {
     private const float MaxLength = 1200f;
     private readonly bool[] hitPlayers = new bool[Main.maxPlayers];

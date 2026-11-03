@@ -12,7 +12,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 {
 
 
-	public class MortarGunner : ModNPC
+	public partial class MortarGunner : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		public override void SetStaticDefaults() {
 			Main.npcFrameCount[Type] = 25;
@@ -57,7 +57,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		}
 		public override void FindFrame(int frameHeight) {
             if (NPC.GetGlobalNPC<global::ArknightsMod.Content.NPCs.Friendly.CannotSupportNPC>().IsSleeping) return;
-			NPC.TargetClosest(true);
+
 
 			Player p = Main.player[NPC.target];
 			NPC.frameCounter++;
@@ -132,7 +132,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				NPC.velocity.X = 0;
 				AttackCD++;
 				if (AttackCD == 30) {
-					Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<Motarbomb>(), 0, 0.8f);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<Motarbomb>(), 0, 0.8f);
 					SoundEngine.PlaySound(SoundID.Item61, NPC.position);
 				}
 				if (AttackCD > 45) {
@@ -332,13 +332,13 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 				dust.velocity *= 1.4f;
 				dust.noGravity = true;
 			}
-			Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, new Vector2(0, 0), ModContent.ProjectileType<explode>(), 20, 0.8f);
+			global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, new Vector2(0, 0), ModContent.ProjectileType<explode>(), 20, 0.8f);
 
 		}
 	}
 
 #pragma warning disable CS8981
-	public class explode : ModProjectile {
+	public partial class explode : ModProjectile {
 		public override void SetDefaults() {
 			Projectile.width = 100;
 			Projectile.height = 100;

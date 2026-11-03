@@ -13,7 +13,7 @@ using Terraria.ModLoader;
 
 namespace ArknightsMod.Content.NPCs.Enemy.TillChapter7
 {
-	public class InsaneZombieL : ModNPC
+	public partial class InsaneZombieL : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 
 	{
 		private float diffX;
@@ -152,6 +152,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.TillChapter7
 		}
 
 		public override void OnSpawn(IEntitySource source) {
+            if (!NPC.HasValidTarget) NPC.TargetClosest(false);
 			fadeTimer = 60; // 持续60帧
 			NPC.color = Color.Black; // 初始为纯黑
 			NPC.alpha = 240;
@@ -252,7 +253,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.TillChapter7
 					Vector2 projectilePos = new Vector2(NPC.Center.X + xOffset, NPC.Center.Y);
 
 					// 生成射弹（位置随玩家方向动态偏移）
-					Projectile.NewProjectile(
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(
 						NPC.GetSource_FromThis(),
 						projectilePos,
 						new Vector2(0, 0),

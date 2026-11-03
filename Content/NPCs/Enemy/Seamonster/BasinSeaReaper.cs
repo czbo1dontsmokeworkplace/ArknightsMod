@@ -1,4 +1,4 @@
-﻿using Terraria;
+using Terraria;
 using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -15,7 +15,7 @@ using ArknightsMod.Systems.Gameplay.Damage;
 
 namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 {
-	public class BasinSeaReaper : ModNPC
+	public partial class BasinSeaReaper : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		public override void SetDefaults() {
 			NPC.width = 80;
@@ -62,7 +62,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 		private float diffY;
 		
 		public override void FindFrame(int frameHeight) {
-			NPC.TargetClosest(true);
+
 			NPC.spriteDirection = -NPC.direction;
 			Player p = Main.player[NPC.target];
 			int Startframe = 0;

@@ -14,7 +14,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Critters
 	// 迷珍巧械：不主动攻击，玩家靠近或打中它都会朝反方向逃跑。
 	// 贴图分三张：本体 + 前轮 + 后轮，PreDraw 里手动叠图，
 	// 默认（未翻转）朝向下前轮贴在本体左下角、后轮贴在右下角；转向逃跑时随本体一起镜像翻转。
-	public class MiZhenQiaoXie : ModNPC
+	public partial class MiZhenQiaoXie : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		private const float DetectRange = 500f;
 		private const float MaxSpeed = 7f; // 明显快于玩家步行速度，逃跑才看得出来是在逃跑

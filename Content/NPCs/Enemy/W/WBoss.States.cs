@@ -258,7 +258,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 	// 骰子路径（召唤物）：W 已站在骰子炸出的烟团里 → 肩扛发射器走出来 → 站定看你 → 卡牌飘落 + 名牌 → 收枪 → 行走
 	// 通用路径（其他生成方式）：原生刷怪点在屏外，开场传到玩家身侧，烟先到、人后到、再静场一拍
 	[VaultState(0, typeof(WBoss))]
-	public class WSpawnState : VaultState<WBoss>
+	public partial class WSpawnState : WNetworkState
 	{
 		// 通用路径
 		private const int BurstTick = 30;   // 落点烟雾炸开
@@ -407,7 +407,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 	// ---------- 1 一阶段行走保距（类似哥布林弓箭手）+ 技能调度 ----------
 	[VaultState(1, typeof(WBoss))]
-	public class WWalkState : VaultState<WBoss>
+	public class WWalkState : WNetworkState
 	{
 		private const float BandNear = 180f; // 近于此距离后拉开
 		private const float BandFar = 420f;  // 远于此距离则接近
@@ -460,7 +460,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 	// ---------- 2 烟雾传送（封烟跑路 29-39：烟雾弹飞出→炸烟→人在烟里渐隐→一道烟带贴地冲到落点→现身） ----------
 	[VaultState(2, typeof(WBoss))]
-	public class WSmokeTeleportState : VaultState<WBoss>
+	public partial class WSmokeTeleportState : WNetworkState
 	{
 		// 封烟动作整体放慢到 1.5 倍（AnimT 把 Timer 换算回原 60 帧的动作时间轴）
 		private const int VanishTick = 90;
@@ -569,7 +569,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 	// ---------- 3 一阶段普攻：抛雷引爆（21-28，手雷 23~24 帧出手）；三连投复用此动作 ----------
 	[VaultState(3, typeof(WBoss))]
-	public class WThrowGrenadeState : VaultState<WBoss>
+	public class WThrowGrenadeState : WNetworkState
 	{
 		protected const int ReleaseTick = 18; // 行 23 起点：出手帧
 		protected const int EndTick = 60;
@@ -618,7 +618,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 	// ---------- 4 技能1 红桃K：举臂瞄准（激光压上来）→ 收线一拍 → 发射器快弹（雷管范围，200% + 混乱） ----------
 	[VaultState(4, typeof(WBoss))]
-	public class WKingHeartsState : VaultState<WBoss>
+	public class WKingHeartsState : WNetworkState
 	{
 		private const int FireTick = 30; // 前 30 tick 为可读前摇（激光 + 两声蜂鸣）
 		private const int EndTick = 54;
@@ -734,7 +734,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 	// ---------- 5 倒数计时（47-64 背身装定，60-62 帧闪光）→ 掷出一阶段 D12 ----------
 	[VaultState(5, typeof(WBoss))]
-	public class WCountdownState : VaultState<WBoss>
+	public class WCountdownState : WNetworkState
 	{
 		private const int FrameHold = 5;             // 快放一档：背身装定从 2s 压到 1.7s，仍然读得清
 		private const int FlashStart = 13 * FrameHold; // 行 59（第一张闪光帧）= 65
@@ -789,7 +789,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 	// ---------- 6 二阶段转场：怒吼定格一拍 → 封烟跑路 → 烟里现身时已持发射器 → 激光压上玩家 → 直接接红桃K ----------
 	[VaultState(6, typeof(WBoss))]
-	public class WPhaseTransitState : VaultState<WBoss>
+	public partial class WPhaseTransitState : WNetworkState
 	{
 		private const int StillEnd = 24;                 // 定格
 		private const int SmokeStart = StillEnd;         // 封烟动作起点（内部计时 t = Timer - SmokeStart）
@@ -904,7 +904,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 	// ---------- 7 二阶段站桩（不再行走，常态持发射器，枪口跟着玩家微晃）+ 调度 ----------
 	[VaultState(7, typeof(WBoss))]
-	public class WStandState : VaultState<WBoss>
+	public class WStandState : WNetworkState
 	{
 		public override IVaultState<WBoss> OnUpdate(VaultStateMachine<WBoss> machine, WBoss ctx) {
 			base.OnUpdate(machine, ctx);
@@ -951,7 +951,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 	// ---------- 8 二阶段躲避传送（快放封烟，烟带反方向窜出）→ 现身即三连发反击 ----------
 	[VaultState(8, typeof(WBoss))]
-	public class WDodgeTeleportState : VaultState<WBoss>
+	public partial class WDodgeTeleportState : WNetworkState
 	{
 		private const int FrameHold = 4;   // 快放：4 tick/帧
 		private const int VanishTick = 40; // 烟带出发
@@ -1062,7 +1062,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 	// ---------- 9 二阶段普攻：发射器抛物线口红弹（短前摇，开火帧对齐挥臂第 4 帧） ----------
 	[VaultState(9, typeof(WBoss))]
-	public class WLauncherShotState : VaultState<WBoss>
+	public class WLauncherShotState : WNetworkState
 	{
 		private const int FireTick = 12;
 		private const int EndTick = 36;
@@ -1108,7 +1108,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 	// ---------- 10 技能2 此面向敌：从手里把 3 颗阔剑雷抛向玩家附近的空地（29-36 那颗飞出去的东西就是它） ----------
 	[VaultState(10, typeof(WBoss))]
-	public class WClaymoreState : VaultState<WBoss>
+	public class WClaymoreState : WNetworkState
 	{
 		private const int DeployTick = 24;
 		private const int EndTick = 60;
@@ -1164,7 +1164,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 	// ---------- 11 技能3 D12：切向加速大骰子（更远黏附/落地成雷）；71 帧手里的骰子亮起来再掷出 ----------
 	[VaultState(11, typeof(WBoss))]
-	public class WD12ThrowState : VaultState<WBoss>
+	public class WD12ThrowState : WNetworkState
 	{
 		private const int ThrowTick = 48; // 行 72 出手（71 帧手持白骰）
 		private const int EndTick = 84;
@@ -1214,7 +1214,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 	// ---------- 12 死亡演出：倒地不起 → 发射器脱手落地 → 最后一掷（必是 12，哑弹）→ 静场淡出 → 真死掉落 + 一张卡牌 ----------
 	[VaultState(12, typeof(WBoss))]
-	public class WDeathState : VaultState<WBoss>
+	public class WDeathState : WNetworkState
 	{
 		private const int DownEnd = 42;       // 倒地动画 7 帧 ×6
 		private const int LauncherTick = 48;  // 发射器脱手
@@ -1296,7 +1296,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 	// ---------- 13 脱战：封烟跑路离场 ----------
 	[VaultState(13, typeof(WBoss))]
-	public class WDespawnState : VaultState<WBoss>
+	public class WDespawnState : WNetworkState
 	{
 		private const int VanishTick = 60;
 		private const int EndTick = 78;
@@ -1345,7 +1345,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 	// ---------- 14 跃退投雷（一阶段新增）：蓄势半步 → 后跃/前跃 → 顶点出手 → 落地起尘 ----------
 	[VaultState(14, typeof(WBoss))]
-	public class WHopTossState : VaultState<WBoss>
+	public partial class WHopTossState : WNetworkState
 	{
 		private const int BraceEnd = 10;
 		private const int TimeoutTick = 100;
@@ -1464,7 +1464,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 	// ---------- 16 三连发（二阶段新增普攻变体）：短前摇后三发抛物线弹连打，手臂随每发上下顿 ----------
 	[VaultState(16, typeof(WBoss))]
-	public class WBurstShotState : VaultState<WBoss>
+	public class WBurstShotState : WNetworkState
 	{
 		private const int FirstFire = 14;
 		private const int Interval = 8;
@@ -1527,7 +1527,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 	// ---------- 17 曲射弹幕（二阶段 ≤35% 解锁）：发射器抬向天顶，六发高抛弹在玩家周围落成一片 ----------
 	[VaultState(17, typeof(WBoss))]
-	public class WMortarState : VaultState<WBoss>
+	public class WMortarState : WNetworkState
 	{
 		private const int FirstFire = 24;
 		private const int Interval = 6;
@@ -1601,7 +1601,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 	// ---------- 18 倒数计时→全场起爆（二阶段 set-piece）：背身按下起爆器，场上所有已布设的雷/骰子同时进入 2 秒倒数 ----------
 	// 复用 47-64 帧：转身背对 → 装定 → 60-62 帧闪光（按下那一刻）→ 转回。没有出手动作，与一阶段的 D12 掷出区分。
 	[VaultState(18, typeof(WBoss))]
-	public class WDetonateAllState : VaultState<WBoss>
+	public class WDetonateAllState : WNetworkState
 	{
 		private const int FrameHold = 5;
 		private const int PressTick = 13 * FrameHold; // 行 59（第一张闪光帧）：按下 = 65
@@ -1653,7 +1653,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 	// ---------- 21 烟带撒雷 + 顺序起爆（二阶段 ≤45%）：慢速烟带穿过玩家到对面，一路落雷；落地后背身按起爆器，雷从最远端依次滚爆过来 ----------
 	[VaultState(21, typeof(WBoss))]
-	public class WMineRunState : VaultState<WBoss>
+	public partial class WMineRunState : WNetworkState
 	{
 		private const int FrameHold = 4;
 		private const int VanishTick = 32;       // 烟带出发
@@ -1764,7 +1764,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 	// ---------- 22 骰子雨（二阶段 ≤45%）：D12 动作，一把掷出三颗会弹跳的骰子，各自滚出点数、各自倒数 ----------
 	[VaultState(22, typeof(WBoss))]
-	public class WDiceRainState : VaultState<WBoss>
+	public class WDiceRainState : WNetworkState
 	{
 		private const int FirstThrow = 48;  // 行 72 出手
 		private const int EndTick = 90;
@@ -1817,7 +1817,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 	// ---------- 23 红桃K·满注（二阶段 ≤25%，双管）：四道激光从枪口画向玩家四角的落点 → 四发红桃K 连射，爆点呈 X，安全区是四个楔形 ----------
 	[VaultState(23, typeof(WBoss))]
-	public class WAllInKingState : VaultState<WBoss>
+	public class WAllInKingState : WNetworkState
 	{
 		private const int FirstFire = 60;
 		private const int Interval = 6;
@@ -1915,7 +1915,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 	// ---------- 空中动作骨架：蓄势 → 起跳 → 顶点悬停（关重力若干帧）→ 下落 → 重落地。子类在钩子里塞动作与弹幕 ----------
 	// 人形 boss 的记忆点大半来自纵向：这套骨架保证每个空中招都有"腾空—定格—落地"三拍，残影与落地起尘由骨架统一给。
-	public abstract class WAerialState : VaultState<WBoss>
+	public abstract partial class WAerialState : WNetworkState
 	{
 		protected enum AirPhase { Brace, Rising, Hang, Falling, Landed }
 
@@ -2134,7 +2134,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 	// ---------- 25 凌空扫射（二阶段 ≤45%）：跃到玩家头顶悬停 40 帧，激光从左到右扫过地面，五发榴弹沿地面连爆 ----------
 	[VaultState(25, typeof(WBoss))]
-	public class WAirStrafeState : WAerialState
+	public partial class WAirStrafeState : WAerialState
 	{
 		private const int Shots = 5;
 		private const int ShotInterval = 7;
@@ -2203,7 +2203,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 	// ---------- 26 烟火（一阶段手抛 / 二阶段 ≤45% 发射器朝天）：一发大弹升到顶点金光炸开成 12 颗子弹环形洒下 ----------
 	[VaultState(26, typeof(WBoss))]
-	public class WFireworkState : VaultState<WBoss>
+	public class WFireworkState : WNetworkState
 	{
 		private const int LauncherFireTick = 30;
 		private const int HandReleaseTick = 18; // 抛雷 23 帧出手
@@ -2272,7 +2272,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 	// ---------- 28 核爆「W 的大礼」（二阶段 ≤40%，首次到达必触发）：背身装定 + 警报加速 + 地面锁定圈 → 抛出黑红核骰 → 转身不看爆炸 ----------
 	[VaultState(28, typeof(WBoss))]
-	public class WNukeState : VaultState<WBoss>
+	public class WNukeState : WNetworkState
 	{
 		private const int FrameHold = 5;
 		private const int ArmTick = 5 * FrameHold;    // 装定咔哒
@@ -2348,7 +2348,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 	// ---------- 29 烟幕地狱（二阶段 ≤45%，场上 ≥2 团烟）：举枪点火，全场烟团由灰转橙、噼啪作响，由近到远依次炸成火球 ----------
 	[VaultState(29, typeof(WBoss))]
-	public class WIgniteState : VaultState<WBoss>
+	public class WIgniteState : WNetworkState
 	{
 		private const int FireTick = 24;
 		private const int EndTick = 52;
@@ -2402,7 +2402,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.W
 
 	// ---------- 27 地毯轰炸（二阶段）：地面上依次亮起五个 X，激光沿地面推进，五发定时红桃K 弹沿线连爆成一道朝玩家推进的墙 ----------
 	[VaultState(27, typeof(WBoss))]
-	public class WCarpetState : VaultState<WBoss>
+	public partial class WCarpetState : WNetworkState
 	{
 		private const int Markers = 5;
 		private const int MarkerGap = 100;      // 落点间距 px

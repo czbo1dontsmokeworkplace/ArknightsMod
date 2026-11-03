@@ -12,7 +12,7 @@ using Terraria.ModLoader.Utilities;
 
 namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 {
-    public class ShellSeaRunner: ModNPC
+    public partial class ShellSeaRunner: global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
     {
         public override void SetStaticDefaults()
         {
@@ -187,7 +187,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Seamonster
 
             //This makes it 5 seconds, one second is 60 ticks
 
-            NPC.ai[3] = 202;
+            global::ArknightsMod.Common.Networking.SeabornContactSync.Report(NPC, target);
 
         }
         public override void OnKill()

@@ -12,7 +12,7 @@ using static Terraria.ModLoader.ModContent;
 namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 {
 	// Party Zombie is a pretty basic clone of a vanilla NPC. To learn how to further adapt vanilla NPC behaviors, see https://github.com/tModLoader/tModLoader/wiki/Advanced-Vanilla-Code-Adaption#example-npc-npc-clone-with-modified-projectile-hoplite
-	public class OriginiumSlugBeta : ModNPC
+	public partial class OriginiumSlugBeta : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
 		private int status;
 		private float preposition;
