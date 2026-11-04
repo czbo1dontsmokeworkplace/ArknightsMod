@@ -10,12 +10,13 @@ namespace ArknightsMod.Content.Items.BossArsenal;
 
 public abstract class BossArsenalWeapon : ModItem
 {
+    private bool extraHarbingerShot;
     public abstract int Kind { get; }
     internal static readonly string[] Names = { "HarbingerGuillotine", "CatastropheSalvo", "ScarletMeson", "UrsusArtilleryLink",
         "WinterScar", "YetiSnowGrenade", "BlackIceCoffin", "YetiChime", "BasaltBreaker", "CalderaBellows", "CinderTestament", "BasaltBrood" };
-    internal static readonly int[] Art = { ItemID.BreakerBlade, ItemID.RocketLauncher, ItemID.LaserMachinegun, ItemID.DeadlySphereStaff,
+    internal static readonly int[] Art = { ItemID.BreakerBlade, ItemID.RocketLauncher, ItemID.LaserMachinegun, ItemID.SnowmanCannon,
         ItemID.IceBlade, ItemID.Grenade, ItemID.WaterBolt, ItemID.BlizzardStaff, ItemID.FieryGreatsword, ItemID.Flamethrower, ItemID.BookofSkulls, ItemID.SlimeStaff };
-    internal static readonly int[] Damage = { 82, 66, 42, 48, 48, 58, 78, 34, 26, 15, 22, 15 };
+    internal static readonly int[] Damage = { 82, 66, 105, 48, 48, 133, 78, 34, 26, 15, 37, 15 };
     public override string Texture => "Terraria/Images/Item_" + Art[Kind];
     public override void SetDefaults()
     {
@@ -29,12 +30,22 @@ public abstract class BossArsenalWeapon : ModItem
         Item.rare = Kind < 4 ? ItemRarityID.Pink : Kind < 8 ? ItemRarityID.LightRed : ItemRarityID.Orange;
         Item.value = Item.sellPrice(gold: Kind < 8 ? 4 : 2);
         Item.shoot = ModContent.ProjectileType<BossArsenalShot>(); Item.shootSpeed = 14;
-        if (Kind == 4) Item.useTime = Item.useAnimation = (int)MathF.Round(28 / 2.2f);
-        if (Kind == 9) Item.useAmmo = AmmoID.Gel;
+        if (Kind == 1) Item.useTime = Item.useAnimation = 48; // 72 / 1.5: 50% more attacks per second.
+        if (Kind == 4) Item.useTime = Item.useAnimation = 38; // Half the previous 19-tick attack rate.
+        if (Kind == 8) Item.useTime = Item.useAnimation = (int)MathF.Round(28 / .85f);
+        if (Kind == 9) {
+            var vanilla = new Item(ItemID.Flamethrower);
+            Item.useTime = vanilla.useTime; Item.useAnimation = vanilla.useAnimation; Item.reuseDelay = vanilla.reuseDelay;
+            Item.shootSpeed = vanilla.shootSpeed; Item.useAmmo = vanilla.useAmmo;
+            Item.consumeAmmoOnFirstShotOnly = vanilla.consumeAmmoOnFirstShotOnly;
+            Item.consumeAmmoOnLastShotOnly = vanilla.consumeAmmoOnLastShotOnly;
+            Item.shoot = ModContent.ProjectileType<CalderaFlame>();
+        }
         if (Kind == 1) Item.useAmmo = AmmoID.Rocket;
         if (Kind is 2 or 10) { Item.channel = Item.noUseGraphic = true; Item.shoot = ModContent.ProjectileType<BossArsenalHoldout>(); Item.useTime = Item.useAnimation = 20; }
         if (role == 3) { Item.shoot = ModContent.ProjectileType<BossArsenalMinion>(); Item.buffType = BossArsenalMinionBuff.ForKind(Kind); }
         Item.UseSound = role switch { 0 => SoundID.Item1, 1 => Kind == 9 ? SoundID.Item34 : SoundID.Item11, 2 => SoundID.Item8, _ => SoundID.Item44 };
+        if (Kind == 5) { var grenade = new Item(ItemID.Grenade); Item.UseSound = grenade.UseSound; Item.noUseGraphic = true; }
     }
     public override bool AltFunctionUse(Player player) => Kind % 4 == 3;
     public override bool CanUseItem(Player player)
@@ -47,23 +58,29 @@ public abstract class BossArsenalWeapon : ModItem
     {
         if (player.whoAmI != Main.myPlayer) return false;
         Vector2 aim = (Main.MouseWorld - player.MountedCenter).SafeNormalize(Vector2.UnitX * player.direction);
-        if (Kind == 0) Spawn(player.MountedCenter + aim * 25, aim * 15, ModContent.ProjectileType<HarbingerSickle>(), 0);
+        if (Kind == 0) {
+            int rainCount = extraHarbingerShot ? 7 : 6;
+            extraHarbingerShot = !extraHarbingerShot;
+            Spawn(player.MountedCenter + aim * 25, aim * 20, ModContent.ProjectileType<HarbingerRain>(), Main.MouseWorld.X, Main.MouseWorld.Y);
+            for (int i = 0; i < rainCount; i++) {
+                Vector2 from = new(Main.MouseWorld.X + Main.rand.NextFloat(-180, 180), player.Center.Y - 480 - i * 64);
+                Vector2 direction = (Main.MouseWorld - from).SafeNormalize(Vector2.UnitY);
+                Spawn(from, direction * Main.rand.NextFloat(18, 23), ModContent.ProjectileType<HarbingerRain>(), Main.MouseWorld.X, Main.MouseWorld.Y);
+            }
+        }
         else if (Kind == 4) {
-            int count = Main.rand.Next(1, 3);
-            Vector2 normal = aim.RotatedBy(MathHelper.PiOver2);
-            for (int i = 0; i < count; i++) Spawn(player.MountedCenter + aim * 28 + normal * ((i - (count - 1) * .5f) * 24),
-                aim * 4, ModContent.ProjectileType<WinterScarBeam>(), 0);
+            Spawn(player.MountedCenter + aim * 28, aim * 12, ModContent.ProjectileType<WinterScarBeam>(), 0);
         }
         else if (Kind is 2 or 10) Spawn(player.MountedCenter, aim, type, Kind);
         else if (Kind % 4 == 3)
         {
-            if (Kind == 7) {
+            if (Kind is 3 or 7) {
                 foreach (Projectile old in Main.ActiveProjectiles)
                     if (old.owner == player.whoAmI && old.minion && old.minionSlots > 0) old.Kill();
             }
             player.AddBuff(Item.buffType, 2);
             var q = Spawn(Main.MouseWorld, Vector2.Zero, type, Kind); q.originalDamage = Item.damage;
-            if (Kind == 7) {
+            if (Kind is 3 or 7) {
                 q.ai[2] = Item.damage;
                 BossArsenalMinion.RefreshCrown(q, player);
                 q.netUpdate = true;
@@ -71,21 +88,38 @@ public abstract class BossArsenalWeapon : ModItem
         }
         else if (Kind == 6)
         {
-            Vector2 target = player.MountedCenter + (Main.MouseWorld - player.MountedCenter).SafeNormalize(aim)
-                * Math.Min(900, Vector2.Distance(player.MountedCenter, Main.MouseWorld));
-            Spawn(target - Vector2.UnitY * 400, Vector2.Zero, type, Kind, target.Y);
+            // Lock the three nearest distinct enemies; their crystals follow until launch.
+            var targets = new System.Collections.Generic.List<NPC>();
+            foreach (NPC npc in Main.ActiveNPCs)
+                if (npc.CanBeChasedBy(player) && Vector2.DistanceSquared(player.Center, npc.Center) <= 1200 * 1200)
+                    targets.Add(npc);
+            targets.Sort((a, b) => Vector2.DistanceSquared(player.Center, a.Center).CompareTo(Vector2.DistanceSquared(player.Center, b.Center)));
+            var roots = new System.Collections.Generic.HashSet<int>();
+            var distinct = new System.Collections.Generic.List<NPC>();
+            foreach (NPC target in targets) {
+                if (!roots.Add(target.realLife >= 0 ? target.realLife : target.whoAmI)) continue;
+                distinct.Add(target); if (distinct.Count == 3) break;
+            }
+            if (distinct.Count > 0) for (int i = 0; i < 3; i++) {
+                NPC target = distinct[i % distinct.Count];
+                float lane = distinct.Count == 1 ? i + 1 : distinct.Count == 2 && i != 1 ? (i == 0 ? 1 : 3) : 0;
+                var ice = Spawn(target.Top - Vector2.UnitY * 160, Vector2.Zero, ModContent.ProjectileType<BlackIceJudgement>(), target.whoAmI);
+                ice.ai[2] = lane; ice.netUpdate = true;
+            }
         }
         else if (Kind == 1)
-            for (int i = 0; i < 2; i++) {
-                Vector2 side = aim.RotatedBy(MathHelper.PiOver2) * ((i * 2 - 1) * 7);
-                Spawn(player.MountedCenter + aim * 30 + side, aim * Main.rand.NextFloat(7, 9) * 1.35f,
-                    ModContent.ProjectileType<BossArsenalShot>(), Kind, i);
-            }
+            Spawn(player.MountedCenter + aim * 30, aim * Main.rand.NextFloat(7, 9) * 1.35f,
+                ModContent.ProjectileType<BossArsenalShot>(), Kind);
         else if (Kind == 5) Spawn(player.MountedCenter, aim * 18 - Vector2.UnitY * 2, type, Kind);
-        else if (Kind == 9) Spawn(player.MountedCenter + aim * 34, aim.RotatedByRandom(.045f) * Main.rand.NextFloat(8, 11), ModContent.ProjectileType<BossArsenalShot>(), Kind);
+        else if (Kind == 8) {
+            for (int i = 0; i < 2; i++)
+                Spawn(position + aim * 28, aim.RotatedBy((i * 2 - 1) * .13f) * Main.rand.NextFloat(9, 12) - Vector2.UnitY * 2,
+                    ModContent.ProjectileType<BasaltRollingMeteor>(), 0);
+        }
+        else if (Kind == 9) Spawn(position, velocity, ModContent.ProjectileType<CalderaFlame>(), 0);
 
         return false;
-        Projectile Spawn(Vector2 at, Vector2 speed, int shot, int kind, float b = 0)
+        Projectile Spawn(Vector2 at, Vector2 speed, int shot, float kind, float b = 0)
         {
             var p = Projectile.NewProjectileDirect(source, at, speed, shot, damage, knockback, player.whoAmI, kind, b);
             p.CritChance = player.GetWeaponCrit(Item); return p;
@@ -94,13 +128,14 @@ public abstract class BossArsenalWeapon : ModItem
     public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
     {
         if (Kind % 4 != 0 || player.whoAmI != Main.myPlayer) return;
+        if (Kind == 0) {
+            HarbingerEmber.Seed(player.GetSource_OnHit(target), target.Center, target.whoAmI, damageDone / 2, player.whoAmI, 2);
+            return;
+        }
         if (Kind == 8) {
             Projectile.NewProjectile(player.GetSource_OnHit(target), target.Center, Vector2.Zero,
                 ProjectileID.Volcano, Math.Max(1, damageDone / 3), 4, player.whoAmI);
-            int count = Main.rand.Next(2, 5);
-            for (int i = 0; i < count; i++) Projectile.NewProjectile(player.GetSource_OnHit(target), target.Center,
-                (-Vector2.UnitY).RotatedBy(MathHelper.TwoPi * i / count + Main.rand.NextFloat(-.3f, .3f)) * Main.rand.NextFloat(5, 10),
-                ModContent.ProjectileType<BasaltSpark>(), Math.Max(1, damageDone / 4), 1, player.whoAmI);
+            target.AddBuff(BuffID.OnFire, 180);
             return;
         }
         if (Kind == 4) target.AddBuff(BuffID.Frostburn2, 180);
@@ -108,6 +143,7 @@ public abstract class BossArsenalWeapon : ModItem
         var q = Projectile.NewProjectileDirect(player.GetSource_OnHit(target), target.Center, Vector2.Zero,
             ModContent.ProjectileType<BossArsenalBurst>(), Math.Max(1, damageDone / 3), 0, player.whoAmI, Kind, Kind == 0 ? 96 : 72);
         q.DamageType = DamageClass.Melee;
+        if (Kind == 4) q.ai[2] = (target.Center - player.Center).ToRotation();
     }
 }
 

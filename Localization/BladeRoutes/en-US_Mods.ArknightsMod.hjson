@@ -1,6 +1,6 @@
 BranchTraits: {
 	Swordmaster: Swordmaster:  Hits cause an additional cutting effect
-	Lord: Lord:  Swings the weapon and releases its distinct ranged attack
+	Lord: Lord:  Allows ranged projectile attacks
 }
 
 Items: {

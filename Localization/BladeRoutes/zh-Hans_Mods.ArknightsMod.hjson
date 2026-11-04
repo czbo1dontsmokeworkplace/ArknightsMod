@@ -1,6 +1,6 @@
 BranchTraits: {
 	Swordmaster: 剑豪：  命中敌人时造成额外的切割效果
-	Lord: 领主：  挥动武器并释放各自的远程攻击
+	Lord: 领主：  允许进行远程弹幕攻击
 }
 
 Items: {

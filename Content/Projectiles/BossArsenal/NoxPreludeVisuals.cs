@@ -9,6 +9,7 @@ internal static class NoxPreludeVisuals
     internal static PhoenixFxStyle Style(bool white)
     {
         var style = PhoenixFx.Colored(white ? new Color(198, 211, 246) : new Color(125, 215, 255), Color.White, .75f);
+        style.SuppressShake = true;
         if (white) { style.MonochromeTexture = true; style.MonochromeHalo = true; style.Opacity = static () => .8f; }
         return style;
     }

@@ -1,33 +1,29 @@
 Items: {
 	HarbingerGuillotine: {
 		DisplayName: Harbinger Guillotine
-		Tooltip: Swings and fires a wall-piercing, spinning sickle that gradually slows
+		Tooltip:
+			'''
+			Fires crimson streaks and calls down a rain of light
+			Hits leave lingering flames that seek enemies and explode
+			'''
 	}
 
 	CatastropheSalvo: {
 		DisplayName: Shrapnel Grenade
-		Tooltip:
-			'''
-			Consumes one rocket to fire two parallel shrapnel grenades
-			Accelerates in a straight line without homing; impacts explode in a 280-pixel radius
-			'''
+		Tooltip: Consumes rockets to fire accelerating shells with large explosions
 	}
 
 	ScarletMeson: {
 		DisplayName: Scarlet Meson
-		Tooltip:
-			'''
-			Hold left-click for one red meson beam; pierces enemies and stops at terrain
-			Fires for 30 frames, rests for 24, and deals damage every 8 frames
-			'''
+		Tooltip: Hold left-click for intermittent lasers that stop at the first enemy or terrain
 	}
 
 	UrsusArtilleryLink: {
-		DisplayName: Ursus Artillery Link
+		DisplayName: Ursus Portable Mortar Emplacement
 		Tooltip:
 			'''
-			Summons an artillery drone using one minion slot
-			Approaches distant enemies, backs away from nearby enemies, and fires three-shot artillery bursts
+			Summons one following mortar to bombard enemies with arcing shells
+			Occupies all minion slots, gaining damage for each slot
 			'''
 	}
 
@@ -35,27 +31,23 @@ Items: {
 		DisplayName: Winter Scar
 		Tooltip:
 			'''
-			Fast swings launch 1 to 2 parallel frost blades
-			Blades spin and accelerate, then slow and fade; hit up to 2 enemies
+			Swings launch accelerating frost waves
+			Pierces up to 4 enemies, fading with each hit
 			'''
 	}
 
 	YetiSnowGrenade: {
 		DisplayName: Yeti Snow Grenade
-		Tooltip:
-			'''
-			Throws an icy grenade farther than a normal grenade
-			Bounces off terrain; explodes on enemy contact or fuse expiry with a 220 by 220 area
-			'''
+		Tooltip: Throws bouncing frost grenades that explode on enemy contact or fuse expiry
 	}
 
 	BlackIceCoffin: {
 		DisplayName: Black Ice Coffin
 		Tooltip:
 			'''
-			Forms a black-ice coffin five tiles wide above the cursor
-			Scales into shape for 12 frames, then rapidly slams into the cursor location, enemies or terrain
-			Ground impacts kindle black ice flames on nearby surfaces for 1 second
+			Forms three crystals above enemies that charge and fall
+			Hits blacken nearby blocks; touching them removes 120 life per second
+			Also harms players and bosses; overlapping areas do not stack
 			'''
 	}
 
@@ -63,43 +55,33 @@ Items: {
 		DisplayName: Yeti Chime
 		Tooltip:
 			'''
-			Summons one frost halo, replacing existing minions and occupying all minion slots
-			Damage scales directly with the number of occupied slots
-			Fires several homing ice volleys, then aims a sustained laser at its target
+			Summons one frost crystal, occupying all minion slots and scaling with their number
+			Fires homing ice volleys, then a laser locked to one enemy
 			'''
 	}
 
 	BasaltBreaker: {
 		DisplayName: Basalt Breaker
-		Tooltip: Hits cause a volcanic eruption and scatter 2 to 4 damaging embers
+		Tooltip:
+			'''
+			Swings throw two rolling meteors that last 3 seconds
+			Direct blade hits cause volcanic eruptions
+			'''
 	}
 
 	CalderaBellows: {
 		DisplayName: Caldera Bellows
-		Tooltip:
-			'''
-			Consumes gel to continuously spray spreading flames
-			Flames pierce enemies and deal repeated damage
-			'''
+		Tooltip: Consumes gel to spray piercing flames
 	}
 
 	CinderTestament: {
 		DisplayName: Cinder Testament
-		Tooltip:
-			'''
-			Hold left-click: charge for 1 second, fire a lingering beam for 0.8 seconds, rest for 0.3 seconds
-			The beam retains its release position and direction
-			Infinite piercing; can damage the same enemy every 10 frames while active
-			'''
+		Tooltip: Hold left-click to charge a piercing laser fixed at its release position
 	}
 
 	BasaltBrood: {
 		DisplayName: Basalt Brood
-		Tooltip:
-			'''
-			Summons a lava broodling using one minion slot
-			Floats near the player, rises and lobs erupting magma upwards
-			'''
+		Tooltip: Summons a lava broodling that charges and thrusts at enemies
 	}
 
 	HarbingerRewardBag: {
@@ -230,6 +212,16 @@ Projectiles: {
 	BasaltSpark.DisplayName: Basalt Ember
 	BlackIceGroundFire.DisplayName: Black Ice Flames
 	YetiCrownBeam.DisplayName: Yeti Beam
+	UrsusMortarShell.DisplayName: Ursus Mortar Shell
+	BlackIceJudgement.DisplayName: Black Ice Judgement
+	BlackIceFracture.DisplayName: Black Ice Fracture
+	BlackIceStain.DisplayName: Black Frost Ground
+	CalderaFlame.DisplayName: Caldera Flame
+	HarbingerRain.DisplayName: Harbinger Rain
+	HarbingerEmber.DisplayName: Harbinger Afterflame
+	HarbingerOpticalBlast.DisplayName: Harbinger Detonation
+	BasaltRollingMeteor.DisplayName: Rolling Magma Meteor
+	BasaltImpactFlash.DisplayName: Magma Impact
 }
 
 Buffs: {
@@ -239,7 +231,7 @@ Buffs: {
 	}
 
 	UrsusArtilleryBuff: {
-		DisplayName: Artillery Drone
+		DisplayName: Ursus Portable Mortar Emplacement
 		Description: Fights for you
 	}
 
@@ -252,6 +244,12 @@ Buffs: {
 		DisplayName: Lava Broodling
 		Description: Fights for you
 	}
+
+	BlackIceFrost: {
+		DisplayName: Black Frost
+		Description: Slows your movement; touching blackened blocks removes 2 life per frame
+	}
 }
 
 Tiles.BossRewardMementoTile.MapEntry: Boss Memento
+BossWeaponOrigin: This weapon comes from {0}

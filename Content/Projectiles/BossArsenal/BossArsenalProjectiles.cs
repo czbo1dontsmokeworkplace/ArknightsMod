@@ -40,7 +40,7 @@ public sealed class BossArsenalShot : ModProjectile
         Projectile.DamageType = Kind == 6 ? DamageClass.Magic : DamageClass.Ranged;
         if (Kind == 6) { Projectile.Resize(80, 80); Projectile.tileCollide = false; Projectile.timeLeft = 180; }
         if (Kind == 5) Projectile.timeLeft = 100;
-        if (Kind == 7) { Projectile.extraUpdates = 1; Projectile.timeLeft = 150; }
+        if (Kind == 7) { Projectile.extraUpdates = 1; Projectile.timeLeft = 240; }
         if (Kind == 9) { Projectile.timeLeft = 32; Projectile.penetrate = -1; Projectile.localNPCHitCooldown = 10; }
         if (Kind is 3 or 7 or 11) Projectile.DamageType = DamageClass.Summon;
     }
@@ -50,7 +50,11 @@ public sealed class BossArsenalShot : ModProjectile
         Projectile.localAI[0]++;
         if (Kind == 1)
         {
-            if (!Main.dedServ) { missile ??= new PhoenixMotionFx(36, Projectile); if (Age == 1) missile.Activate("actor.player.weapon.36.activation"); }
+            if (!Main.dedServ) {
+                var style = PhoenixFx.Original(); style.Opacity = static () => .7f; style.SuppressShake = true;
+                missile ??= new PhoenixMotionFx(36, Projectile, style);
+                if (Age == 1) missile.Activate("actor.player.weapon.36.activation");
+            }
             float speed = Projectile.velocity.Length();
             if (speed > 0) Projectile.velocity *= Math.Min(32, speed + .24f) / speed;
         }
@@ -59,9 +63,15 @@ public sealed class BossArsenalShot : ModProjectile
             NPC target = Projectile.ai[1] > 0 && Main.npc.IndexInRange((int)Projectile.ai[1] - 1) ? Main.npc[(int)Projectile.ai[1] - 1] : null;
             if (target == null || !target.CanBeChasedBy(Projectile)) target = Projectile.FindTargetWithinRange(900, true);
             float speed = Math.Min(14, Projectile.velocity.Length() + .18f);
-            float angle = Projectile.velocity.ToRotation();
-            if (target != null && Age > 8) angle = angle.AngleTowards((target.Center - Projectile.Center).ToRotation(), .07f);
-            Projectile.velocity = angle.ToRotationVector2() * speed;
+            if (target != null && Age > 8) {
+                Vector2 delta = target.Center - Projectile.Center;
+                float strength = Math.Clamp((Age - 8) / 100f, 0, 1);
+                float inertia = MathHelper.Lerp(32, 1, strength);
+                float arrival = Math.Min(speed, Math.Max(2, delta.Length() / 4));
+                Vector2 moving = Projectile.velocity.SafeNormalize(Vector2.UnitY) * Math.Min(speed, arrival);
+                Projectile.velocity = (moving * inertia + delta.SafeNormalize(Vector2.UnitY) * arrival) / (inertia + 1);
+            }
+            else Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY) * speed;
         }
         else if (Kind == 3) Projectile.velocity.Y = Math.Min(18, Projectile.velocity.Y + .14f);
         else if (Kind == 5) { Projectile.velocity.Y = Math.Min(14, Projectile.velocity.Y + .22f); Projectile.rotation += Projectile.velocity.X * .025f; }
@@ -77,10 +87,11 @@ public sealed class BossArsenalShot : ModProjectile
         else if (Kind == 9) { Projectile.velocity *= .96f; Projectile.scale = 1 + Age * .045f; Projectile.Resize((int)(22 * Projectile.scale), (int)(22 * Projectile.scale)); }
         else if (Kind == 11) Projectile.velocity.Y += .16f;
         Projectile.rotation = Kind is 5 or 6 ? Projectile.rotation : Projectile.velocity.ToRotation();
-        if (!Main.dedServ) Lighting.AddLight(Projectile.Center, BossArsenalFx.Tint(Kind).ToVector3() * .4f);
+        if (!Main.dedServ) Lighting.AddLight(Projectile.Center, BossArsenalFx.Tint(Kind).ToVector3() * (Kind == 1 ? .28f : .4f));
     }
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
     {
+        if (Kind == 1) Projectile.ai[2] = 1;
         if (Kind is 5 or 6 or 7) target.AddBuff(BuffID.Frostburn2, 180);
         if (Kind is 9 or 11) target.AddBuff(BuffID.OnFire, 180);
     }
@@ -105,7 +116,7 @@ public sealed class BossArsenalShot : ModProjectile
         if (Projectile.owner != Main.myPlayer || Kind == 9 || Kind == 7) return;
         float radius = Kind switch { 1 => 280, 5 => 110, 6 => 160, _ => 64 };
         var p = Projectile.NewProjectileDirect(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
-            ModContent.ProjectileType<BossArsenalBurst>(), Projectile.damage, Projectile.knockBack, Projectile.owner, Kind, radius);
+            ModContent.ProjectileType<BossArsenalBurst>(), Projectile.damage, Projectile.knockBack, Projectile.owner, Kind, radius, Projectile.ai[2]);
         p.DamageType = Projectile.DamageType; p.CritChance = Projectile.CritChance;
     }
     public override bool PreDraw(ref Color lightColor)
@@ -145,13 +156,14 @@ public sealed class BossArsenalBurst : ModProjectile
     public override void AI()
     {
         if (Projectile.localAI[0]++ != 0 || Main.dedServ) return;
+        if (Kind == 4) { WinterHitVisuals.Emit(Projectile.Center, Projectile.ai[2].ToRotationVector2()); return; }
         SoundEngine.PlaySound(SoundID.Item14 with { Volume = Kind == 1 ? 1 : .7f, Pitch = Kind == 6 ? -.5f : 0 }, Projectile.Center);
         if (Kind == 5) BossArsenalPolishVisuals.SnowBurst(Projectile.Center);
         if (Kind == 1) { SalvoExplosionVisuals.Burst(Projectile.Center); return; }
         for (int i = 0; i < (Kind == 1 ? 60 : 28); i++)
         {
             Vector2 ray = (i * 2.399963f).ToRotationVector2();
-            Dust d = Dust.NewDustPerfect(Projectile.Center + ray * Main.rand.NextFloat(5, 30), Kind is 5 or 6 ? DustID.IceTorch : Kind / 4 == 2 ? DustID.Torch : DustID.FireworksRGB,
+            Dust d = Dust.NewDustPerfect(Projectile.Center + ray * Main.rand.NextFloat(5, 30), Kind is 4 or 5 or 6 ? DustID.IceTorch : Kind / 4 == 2 ? DustID.Torch : DustID.FireworksRGB,
                 ray * Main.rand.NextFloat(3, Kind == 1 ? 17 : 10), 0, BossArsenalFx.Tint(Kind), Kind == 1 ? 2 : 1.3f); d.noGravity = true;
         }
     }
@@ -163,9 +175,10 @@ public sealed class BossArsenalBurst : ModProjectile
     public override bool PreDraw(ref Color lightColor)
     {
         if (Kind == 1) { SalvoExplosionVisuals.Draw(Projectile.Center, Projectile.localAI[0] / 36f, Projectile.ai[1], Projectile.identity); return false; }
+        if (Kind == 4) return false;
         float t = Projectile.localAI[0] / 24f;
         BossArsenalFx.Ring(Projectile.Center, Projectile.ai[1] * MathF.Sqrt(Math.Min(1, t * 2)), BossArsenalFx.Tint(Kind), (1 - t) * .8f);
-        if (Kind == 5) BossArsenalPolishVisuals.DrawSnowBurst(Projectile.Center, t);
+        if (Kind is 4 or 5) BossArsenalPolishVisuals.DrawSnowBurst(Projectile.Center, t);
         if (Kind == 6)
         {
             BossArsenalFx.Ring(Projectile.Center, Projectile.ai[1] * t, Color.LightCyan, 1 - t);

@@ -1156,7 +1156,7 @@ ExusiaiVector: {
 	Tooltip:
 		'''
 		Sprays bullets from a 40-round magazine
-		Reloading takes 1.2 seconds; weapons cannot be switched during reload
+		Weapons cannot be switched while replacing the magazine
 		“May my bullets ease your pain.”
 		Can be equipped in an accessory slot for wing effects
 		'''
@@ -1767,8 +1767,8 @@ SilverAshWeapon: {
 	Tooltip:
 		'''
 		""
-		Silver Thorns-style sword arcs call a macaw from above the player each time
-		The bird dives at the enemy nearest the cursor, then slows and fades after impact
+		Silver Thorns-style sword arcs call Tenzin from above the player each time
+		Tenzin dives at the enemy nearest the cursor, then slows and fades after impact
 		'''
 }
 

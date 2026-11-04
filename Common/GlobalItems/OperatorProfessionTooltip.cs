@@ -15,7 +15,8 @@ namespace ArknightsMod.Common.GlobalItems
         {
             bool isProfession = line.Name == "OperatorClass";
             bool isBranch = line.Name == "OperatorBranch";
-            if (line.Mod != Mod.Name || (!isProfession && !isBranch))
+            bool isBossOrigin = line.Name == "BossWeaponOrigin";
+            if (line.Mod != Mod.Name || (!isProfession && !isBranch && !isBossOrigin))
                 return true;
 
             DrawCrystalWarning(line);

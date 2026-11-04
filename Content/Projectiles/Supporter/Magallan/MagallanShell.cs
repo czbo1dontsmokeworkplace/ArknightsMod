@@ -23,9 +23,15 @@ public sealed class MagallanShell : ModProjectile
         => Math.Clamp(speed+(ticks>=IgnitionTick?IgnitedAcceleration:-200f)/(60*MotionUpdates),0,
             ticks>=IgnitionTick?IgnitedMaxSpeed:200f);
 
-    internal static float MaxTurnRadians(int flightTicks)
+    // AcidRocket/HomeInOnNPC's velocity-inertia blend, with arrival braking so a
+    // fast missile cannot stay in a fixed-radius orbit around a nearby enemy.
+    internal static Vector2 SmoothHomingVelocity(Vector2 current, Vector2 delta, float maxStepSpeed)
     {
-        return flightTicks < IgnitionTick ? 0f : MathHelper.ToRadians(900f) / 60f;
+        float distance = delta.Length();
+        float inertia = Math.Clamp(distance / Math.Max(1, maxStepSpeed * 4), 1.5f, 20) * MotionUpdates;
+        float arrivalSpeed = Math.Min(maxStepSpeed, Math.Max(.5f, distance / (4 * MotionUpdates)));
+        Vector2 moving = current.SafeNormalize(Vector2.UnitY) * Math.Min(current.Length(), arrivalSpeed);
+        return (moving * inertia + delta.SafeNormalize(Vector2.UnitY) * arrivalSpeed) / (inertia + 1);
     }
 
     public override string Texture => "ArknightsMod/Content/Projectiles/Supporter/Magallan/MagallanDrone";
@@ -59,21 +65,18 @@ public sealed class MagallanShell : ModProjectile
         if(!Main.dedServ)missileFx??=new PhoenixMotionFx(66,Projectile);
         Vector2 heading=Projectile.velocity.SafeNormalize(Vector2.UnitY);
         float speed=SpeedAfterStep(Projectile.velocity.Length()*60*MotionUpdates,ticks);
+        Vector2 nextVelocity = heading * (speed / (60 * MotionUpdates));
         if (ticks >= IgnitionTick)
         {
             NPC target = FindHomingTarget();
             if (target != null)
             {
-                float currentAngle = Projectile.velocity.SafeNormalize(Vector2.UnitY).ToRotation();
-                float desiredAngle = (target.Center - Projectile.Center).SafeNormalize(Vector2.UnitY).ToRotation();
-                float maxTurn = MaxTurnRadians((int)ticks)/MotionUpdates;
-                float turn = MathHelper.Clamp(MathHelper.WrapAngle(desiredAngle - currentAngle), -maxTurn, maxTurn);
-                heading=(currentAngle + turn).ToRotationVector2();
+                nextVelocity = SmoothHomingVelocity(nextVelocity, target.Center - Projectile.Center, speed / (60 * MotionUpdates));
             }
             missileFx?.Activate("actor.player.weapon.66.activation");
             if(!ignited){ignited=true;if(Projectile.owner==Main.myPlayer)Projectile.netUpdate=true;}
         }
-        Projectile.velocity=heading*(speed/(60*MotionUpdates));
+        Projectile.velocity=nextVelocity;
         Projectile.rotation = Projectile.velocity.ToRotation();
         if(Projectile.owner==Main.myPlayer && Projectile.numUpdates==0 && (int)ticks%6==0)Projectile.netUpdate=true;
         if (Projectile.owner == Main.myPlayer)

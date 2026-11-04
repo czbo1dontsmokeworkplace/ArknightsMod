@@ -1,33 +1,29 @@
 Items: {
 	HarbingerGuillotine: {
 		DisplayName: 邪兆裁断
-		Tooltip: 挥剑释放穿墙、旋转并逐渐减速的赤色镰刃
+		Tooltip:
+			'''
+			挥剑射出赤色流光，并召来天降光雨
+			命中留下滞留火焰，追踪敌人后爆破
+			'''
 	}
 
 	CatastropheSalvo: {
 		DisplayName: 榴霰弹
-		Tooltip:
-			'''
-			每次射击消耗一发火箭，平行发射两枚榴霰弹
-			沿直线持续加速，不追踪；命中产生半径280像素的爆炸
-			'''
+		Tooltip: 消耗火箭发射加速炮弹，命中引发大范围爆炸
 	}
 
 	ScarletMeson: {
 		DisplayName: 猩红介子炮
-		Tooltip:
-			'''
-			按住左键发射单束红色介子激光，无限贯穿敌人，受地形阻挡
-			发射30帧、停歇24帧循环，每8帧造成一次伤害
-			'''
+		Tooltip: 按住左键发射间歇激光，在首个敌人或地形处停止
 	}
 
 	UrsusArtilleryLink: {
-		DisplayName: 乌萨斯火控终端
+		DisplayName: 乌萨斯单兵迫击阵地
 		Tooltip:
 			'''
-			召唤一台火控无人机，占用1个仆从栏
-			接近远处目标、退让近处目标，悬停并进行三连发炮击
+			召唤唯一的随行迫击炮，以抛物线炮击敌人
+			占满仆从栏，伤害随栏位数提升
 			'''
 	}
 
@@ -35,27 +31,23 @@ Items: {
 		DisplayName: 冬痕
 		Tooltip:
 			'''
-			快速挥剑，每次平行释放1至2道寒冰剑芒
-			剑芒旋转加速，末段减速消散，最多伤害2名敌人
+			挥剑释放逐渐加速的寒霜光波
+			最多贯穿4名敌人，命中后逐渐淡出
 			'''
 	}
 
 	YetiSnowGrenade: {
 		DisplayName: 雪怪冰弹
-		Tooltip:
-			'''
-			掷出飞得更远的冰雪手榴弹
-			触地弹跳，命中敌人或引信耗尽后产生220×220范围的冰爆
-			'''
+		Tooltip: 投掷弹跳冰弹，命中或引信耗尽后引发冰爆
 	}
 
 	BlackIceCoffin: {
 		DisplayName: 黑冰镇棺
 		Tooltip:
 			'''
-			在鼠标上方凝成边长5格的黑冰方棺
-			整体凝结12帧后急速下砸，在鼠标位置、敌人或地面爆发冰霜冲击
-			撞地会在附近地表点燃持续1秒的黑冰地火
+			自动在敌人头顶凝结三枚黑冰，蓄力后下坠
+			命中染黑附近方块，接触者每秒失去120点生命
+			同样伤害玩家与首领，重叠区域不叠加
 			'''
 	}
 
@@ -63,43 +55,33 @@ Items: {
 		DisplayName: 雪祀风铃
 		Tooltip:
 			'''
-			召唤唯一的冰霜光环，替换现有仆从并占用全部仆从栏
-			伤害随占用栏位数等比例提升
-			先释放多批追踪冰弹，再瞄准敌人发射持续激光
+			召唤唯一的冰霜水晶，占满仆从栏并随栏位增伤
+			先释放追踪冰弹，再以激光锁定一个敌人
 			'''
 	}
 
 	BasaltBreaker: {
 		DisplayName: 熔壳碎锋
-		Tooltip: 挥剑命中引起火山爆发，并向四周迸射2至4枚能造成伤害的火星
+		Tooltip:
+			'''
+			挥剑掷出两颗可滚动的陨石，持续3秒
+			刀刃直接命中引发火山爆发
+			'''
 	}
 
 	CalderaBellows: {
 		DisplayName: 火山风箱
-		Tooltip:
-			'''
-			消耗凝胶持续喷射逐渐扩散的烈焰
-			火焰可以贯穿敌人并持续造成伤害
-			'''
+		Tooltip: 消耗凝胶持续喷射贯穿敌人的烈焰
 	}
 
 	CinderTestament: {
 		DisplayName: 炼狱余烬录
-		Tooltip:
-			'''
-			按住左键蓄力1秒，释放滞留0.8秒的炼狱激光，随后间隔0.3秒
-			光束固定在释放的位置与方向，不随移动改变
-			存在期间无限贯穿，每10帧可再次伤害同一敌人
-			'''
+		Tooltip: 按住左键蓄力，释放固定在原地的贯穿激光
 	}
 
 	BasaltBrood: {
 		DisplayName: 熔岩育巢
-		Tooltip:
-			'''
-			召唤一只熔岩幼体，占用1个仆从栏
-			在玩家附近漂浮蓄势，向上抛射会爆开的熔岩团
-			'''
+		Tooltip: 召唤熔岩幼体，以冲撞和突刺攻击敌人
 	}
 
 	HarbingerRewardBag: {
@@ -230,6 +212,16 @@ Projectiles: {
 	BasaltSpark.DisplayName: 熔壳火星
 	BlackIceGroundFire.DisplayName: 黑冰地火
 	YetiCrownBeam.DisplayName: 雪祀光束
+	UrsusMortarShell.DisplayName: 乌萨斯单兵迫击阵地弹
+	BlackIceJudgement.DisplayName: 悬决黑冰
+	BlackIceFracture.DisplayName: 黑冰碎裂
+	BlackIceStain.DisplayName: 黑霜地面
+	CalderaFlame.DisplayName: 火山烈焰
+	HarbingerRain.DisplayName: 邪兆光雨
+	HarbingerEmber.DisplayName: 邪兆余焰
+	HarbingerOpticalBlast.DisplayName: 邪兆爆破
+	BasaltRollingMeteor.DisplayName: 熔岩滚石
+	BasaltImpactFlash.DisplayName: 熔岩爆裂
 }
 
 Buffs: {
@@ -239,7 +231,7 @@ Buffs: {
 	}
 
 	UrsusArtilleryBuff: {
-		DisplayName: 火控无人机
+		DisplayName: 乌萨斯单兵迫击阵地
 		Description: 为你战斗
 	}
 
@@ -252,6 +244,12 @@ Buffs: {
 		DisplayName: 熔岩幼体
 		Description: 为你战斗
 	}
+
+	BlackIceFrost: {
+		DisplayName: 黑霜侵蚀
+		Description: 黑霜减缓你的移动；接触染黑的方块时每帧失去2点生命
+	}
 }
 
 Tiles.BossRewardMementoTile.MapEntry: 战利品陈列
+BossWeaponOrigin: 该武器来自{0}

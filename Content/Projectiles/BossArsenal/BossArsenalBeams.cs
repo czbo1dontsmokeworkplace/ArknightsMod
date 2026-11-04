@@ -41,8 +41,8 @@ public sealed class BossArsenalHoldout : ModProjectile
         owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, axis.ToRotation() - MathHelper.PiOver2);
         int phase = Clock % Cycle;
         if (Kind == 10 && !Main.dedServ && phase == 0)
-            charge = ReaperSwarmVisuals.Spawn("actor.player.weapon.74.charge", () => Projectile.Center, () => axis,
-                active: () => Projectile.active && Clock % Cycle < 60);
+            charge = ReaperSwarmVisuals.Spawn("emitter.player.weapon.74.charge.core", () => Projectile.Center, () => Projectile.velocity,
+                active: () => Projectile.active && Clock % Cycle < 60, style: new PhoenixFxStyle { SuppressShake = true });
         if (local && phase == (Kind == 2 ? 0 : 60))
         {
             charge?.Stop();
@@ -69,6 +69,7 @@ public sealed class BossArsenalBeam : ModProjectile
 {
     private PhoenixBeamFx beam;
     private ReaperSwarmVisualNode muzzle;
+    private int firstTarget = -1;
     internal int Kind => (int)Projectile.ai[0];
     internal float Length { get; private set; }
     internal int DamageInterval => Kind == 10 ? 10 : 8;
@@ -99,26 +100,55 @@ public sealed class BossArsenalBeam : ModProjectile
         // Inferno Laser retains its birth position and direction after release.
         Vector2 axis = Projectile.velocity.SafeNormalize(Vector2.UnitX);
         Length = 0;
-        for (int distance = 8; distance <= 960; distance += 8)
+        int range = Kind == 2 ? 1920 : 1440;
+        for (int distance = 8; distance <= range; distance += 8)
         {
             if (Collision.SolidCollision(Projectile.Center + axis * distance - new Vector2(2), 4, 4)) break;
             Length = distance;
+        }
+        firstTarget = -1;
+        if (Kind == 2) {
+            // Clip against the first enemy's near face, not its center or slot order.
+            float nearest = Length;
+            foreach (NPC npc in Main.ActiveNPCs) {
+                // Target dummies are immortal, so CanBeChasedBy deliberately rejects
+                // them even though ordinary player weapons must be able to hit them.
+                if (!npc.CanBeChasedBy(Projectile) && npc.type != Terraria.ID.NPCID.TargetDummy) continue;
+                if (ArsenalBeamGeometry.Entry(Projectile.Center, axis, npc.Hitbox, Length, 5, out float entry)
+                    && (firstTarget < 0 || entry < nearest)) { nearest = entry; firstTarget = npc.whoAmI; }
+            }
+            if (firstTarget >= 0) Length = Math.Min(Length, nearest + 2);
         }
         if (Main.dedServ) return;
         if (beam == null)
         {
             var style = Kind == 2 ? PhoenixFx.Colored(new Color(255, 30, 45), new Color(255, 170, 170)) : PhoenixFx.Original();
-            if (Kind == 2) style.MonochromeTexture = true;
+            style.SuppressShake = true;
+            if (Kind == 2) {
+                style.MonochromeTexture = true;
+                // Keep impact graphics, move their sound to the start of every firing pulse.
+                style.SoundVolume = 0;
+                var fireStyle = PhoenixFx.Original(); fireStyle.SoundVolume = .65f; fireStyle.SuppressShake = true;
+                PhoenixFx.Burst("soundemitter.player.34.hit", Projectile.Center, axis, fireStyle);
+            }
+            else PhoenixFx.Burst("soundemitter.player.74.hit", Projectile.Center, axis, style);
             beam = new PhoenixBeamFx(Kind == 2 ? "projectile.player.34.1" : "projectile.player.74",
                 () => Projectile.Center, () => Projectile.Center + Projectile.velocity * Length,
-                () => Projectile.active, 960, style);
+                () => Projectile.active, range, style);
             if (Kind == 2) muzzle = ReaperSwarmVisuals.Spawn("actor.player.weapon.34.muzzle", () => Projectile.Center,
                 () => Projectile.velocity, active: () => Projectile.active, style: style);
         }
         beam.Extend(); Lighting.AddLight(Projectile.Center, BossArsenalFx.Tint(Kind).ToVector3() * .7f);
     }
+    public override bool? CanHitNPC(NPC target) => Kind == 2 && target.whoAmI != firstTarget ? false : null;
     public override bool? Colliding(Rectangle a, Rectangle b)
     {
+        if (Kind == 2) {
+            if (firstTarget < 0) return false;
+            // Use the same slab test as target selection. A vanilla line's endpoint
+            // test can reject a beam visually clipped to the expanded near face.
+            return ArsenalBeamGeometry.Entry(Projectile.Center, Projectile.velocity.SafeNormalize(Vector2.UnitX), b, Length, 5, out _);
+        }
         float at = 0;
         return Collision.CheckAABBvLineCollision(b.TopLeft(), b.Size(), Projectile.Center,
             Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitX) * Length, Kind == 10 ? 22 : 10, ref at);

@@ -26,6 +26,15 @@ internal static class BossArsenalPolishVisuals
         flame.localAI[0] = Math.Clamp(age * 72, 1, 71); flame.ai[0] = 0;
         DrawVanillaFlame(flame);
     }
+    internal static void VanillaFlame(Projectile host)
+    {
+        Main.instance.LoadProjectile(ProjectileID.Flames);
+        flame ??= new Projectile(); flame.type = ProjectileID.Flames;
+        flame.Center = host.Center; flame.velocity = host.velocity; flame.rotation = host.rotation;
+        flame.scale = host.scale; flame.alpha = host.alpha; flame.timeLeft = host.timeLeft;
+        flame.localAI[0] = host.localAI[0]; flame.localAI[1] = host.localAI[1]; flame.ai[0] = host.ai[0];
+        DrawVanillaFlame(flame);
+    }
     internal static void Missile(Projectile shot)
     {
         Main.instance.LoadProjectile(ProjectileID.RocketI); Texture2D tex = TextureAssets.Projectile[ProjectileID.RocketI].Value;
@@ -43,27 +52,15 @@ internal static class BossArsenalPolishVisuals
     }
     internal static void Crown(Projectile shot)
     {
-        using var pass = new ChargedOperatorVfx.Pass(true);
-        float clock = shot.ai[1], phase = clock % 180;
-        float power = phase >= 60 && phase < 126 ? 1 : .65f;
-        Vector2 at = shot.Center;
-        for (int i = 0; i < 96; i++)
-        {
-            float angle = i * MathHelper.TwoPi / 96 + clock * .007f;
-            Vector2 a = at + angle.ToRotationVector2() * 30, b = at + (angle + MathHelper.TwoPi / 96).ToRotationVector2() * 30;
-            ChargedOperatorVfx.Line(a, b, Color.LightCyan * power, 1.7f);
+        Texture2D crystal = Terraria.ModLoader.ModContent.Request<Texture2D>("ArknightsMod/Content/NPCs/Enemy/Chapter6/FrostNova/FNIceCrystal").Value;
+        Vector2 at = shot.Center - Main.screenPosition;
+        float pulse = .65f + .2f * MathF.Sin(shot.ai[1] * .05f);
+        for (int i = 0; i < 8; i++) {
+            Vector2 offset = (i * MathHelper.PiOver4).ToRotationVector2() * 2;
+            Main.EntitySpriteDraw(crystal, at + offset, null, new Color(85, 190, 255, 0) * pulse,
+                -.4f, crystal.Size() * .5f, shot.scale * .8f, SpriteEffects.None);
         }
-        for (int i = 0; i < 16; i++)
-        {
-            float angle = i * MathHelper.TwoPi / 16 - clock * .012f;
-            Vector2 ray = angle.ToRotationVector2();
-            float pulse = 3 + 2 * MathF.Sin(clock * .05f + i * MathHelper.Pi);
-            ChargedOperatorVfx.Line(at + ray * (35 + pulse), at + ray * (43 + pulse), Color.Cyan * power, 2);
-            Vector2 point = at + ray * 24;
-            ChargedOperatorVfx.Line(point - ray.RotatedBy(.5f) * 4, point, Color.White * (.5f * power), 1);
-        }
-        ChargedOperatorVfx.Sprite("RuptureRing", at, new Vector2(60), Color.Cyan * .24f * power);
-        ChargedOperatorVfx.Sprite("LinearSpark", at, new Vector2(13, 26), Color.White * .6f * power, clock * .02f);
+        Main.EntitySpriteDraw(crystal, at, null, Color.White, -.4f, crystal.Size() * .5f, shot.scale * .8f, SpriteEffects.None);
     }
     internal static void SnowBurst(Vector2 at)
     {
