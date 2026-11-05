@@ -16,6 +16,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Surtr
 	public class SurtrLaevatain : UpgradeWeaponBase
 	{
 		public static SoundStyle SkillActiveSound;
+		internal const float SkillOneDamageMultiplier = 3.1f;
 
 		public override void SetDefaults()
 		{
@@ -114,8 +115,8 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Surtr
 		public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
 		{
 			var modPlayer = player.GetModPlayer<WeaponPlayer>();
-			if (modPlayer.Skill == 0 && modPlayer.SkillActive)
-				damage *= 3.1f;
+			// S1 is a single automatic empowered swing. Its damage is captured by
+			// the held blade, rather than a six-tick global SkillActive window.
 			if (modPlayer.Skill == 1 && modPlayer.SkillActive)
 				damage *= 2.2f; // 只命中一个敌人时 ×1.5 的加成在 LaevatainProjectile_2 里实现
 			if (modPlayer.Skill == 2 && modPlayer.SkillActive)

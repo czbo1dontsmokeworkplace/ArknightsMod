@@ -18,7 +18,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 	/// </summary>
 	public partial class IceCrystalAltar : global::ArknightsMod.Common.Networking.LegacyEnemyNetwork
 	{
-		public const int MaxConcurrentAltars = 5;
+		public const int MaxConcurrentAltars = 3;
 
 		/// <summary>祭坛碰撞箱宽高（与 <see cref="SetDefaults"/> 一致）。</summary>
 		public const int AltarNpcWidth = 56;
@@ -70,7 +70,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		/// <summary>冲击波最大间隔（刻），9 秒 @60TPS（原 4.5 秒一倍放慢）。</summary>
 		private const int MaxShockwaveIntervalTicks = 540;
 		/// <summary>发射冲击波前蓄力帧数（同步于 <see cref="NPC.ai"/>[0]）；先变白增亮再生成 <see cref="IceAltarShockwave"/>。</summary>
-		private const int ShockwaveChargeVisualTicks = 14;
+		private const int ShockwaveChargeVisualTicks = 36;
 
 		public override string Texture => "ArknightsMod/Content/NPCs/Enemy/Chapter6/FrostNova/FNIceCrystal_dir";
 
@@ -215,7 +215,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 						var src = NPC.GetSource_FromAI();
 						int owner = NPC.target >= 0 && NPC.target < Main.maxPlayers ? NPC.target : Main.myPlayer;
 						RollShockwavePhaseTicks(out int warnTicks, out int blastTicks);
-						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(src, NPC.Center, Vector2.Zero, ModContent.ProjectileType<IceAltarShockwave>(), 32, 2f, owner, warnTicks, blastTicks);
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(src, NPC.Center, Vector2.Zero, ModContent.ProjectileType<IceAltarShockwave>(), 23, 2f, owner, warnTicks, blastTicks);
 						shockwaveIntervalTicks = Main.rand.Next(MinShockwaveIntervalTicks, MaxShockwaveIntervalTicks + 1);
 						shockwaveTimer = 0;
 						NPC.netUpdate = true;
@@ -954,27 +954,13 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 			}
 		}
 
-		private void ApplyBlastHit() {
-			if (Main.netMode == NetmodeID.MultiplayerClient)
-				return;
-			for (int p = 0; p < Main.maxPlayers; p++) {
-				Player plr = Main.player[p];
-				if (!plr.active || plr.dead || plr.ghost)
-					continue;
-				if (Vector2.Distance(plr.Center, Anchor) > ShockwaveMaxRadius)
-					continue;
-				plr.buffImmune[BuffID.Chilled] = false;
-				plr.buffImmune[BuffID.Frozen] = false;
-				if (plr.HasBuff(BuffID.Frozen))
-					continue;
-				if (plr.HasBuff(BuffID.Chilled)) {
-					plr.AddBuff(BuffID.Frozen, FrozenOnChilledHitTicks);
-					SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/Frozen") with { Volume = 0.85f, Pitch = Main.rand.NextFloat(-0.08f, 0.08f) }, plr.Center);
-					continue;
-				}
-				plr.AddBuff(BuffID.Chilled, ChilledOnFirstHitTicks);
-			}
-		}
+        private void ApplyBlastHit() {
+            // Vanilla Hurt is owner-authoritative: the local client applies its own frost state.
+            if (Main.netMode == NetmodeID.Server) return;
+            Player plr = Main.LocalPlayer;
+            if (plr.active && !plr.dead && !plr.ghost && Vector2.Distance(plr.Center, Anchor) <= ShockwaveMaxRadius)
+                FrostNovaChill.Apply(plr, 120, 30);
+        }
 
 		private static float WarningRingOpacity(float r) {
 			return MathHelper.Clamp(Utils.GetLerpValue(ShockwaveStartRadius * 0.4f, ShockwaveMaxRadius * 0.95f, r, clamped: true), 0.12f, 1f);

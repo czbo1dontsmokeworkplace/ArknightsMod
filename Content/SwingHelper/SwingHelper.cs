@@ -129,7 +129,7 @@ namespace ArknightsMod.Content.SwingHelper
         /// <summary>
         /// 贴图大小
         /// </summary>
-        public Vector2 texSize => projTexture.Size();
+        public virtual Vector2 texSize => projTexture.Size();
         /// <summary>
         /// 大小倍率
         /// </summary>

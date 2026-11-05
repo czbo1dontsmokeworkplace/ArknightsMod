@@ -121,909 +121,18 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 			Main.EntitySpriteDraw(BarTexTop, new Vector2(Main.screenWidth / 2, Main.screenHeight / 2 + (Main.screenHeight / 2 - 108 * fixedscr) / Main.GameZoomTarget), new Rectangle(0, 0, (int)(BarTexTop.Width), BarTexTop.Height), Color.White * (Bartimer / 30), 0, new Vector2(BarTexTop.Width / 2, BarTexTop.Height / 2), 1 / Main.GameZoomTarget, SpriteEffects.None, 0);
 		}
 		#endregion
-		#region 变量与自定义函数声明
-		//时间轴变量
-		private float BirthTimer;
-		private float ReBirthTimer;
-		private float escapetimer;
-		private float DeathTimer;
-		private float JumpTimer = 0;
+        // Lifecycle and animation clocks shared by the encounter scheduler and sprite sheet.
+        private float BirthTimer, ReBirthTimer, escapetimer, DeathTimer, FNShaderRingTimer;
+        private float FNStage, FNATKTimer, FNSkillTimer;
+        private bool FNBirth, FNBirthEnd, FNRevival, FNRevivalStart, FNRevivalEnd, FNEnd, FNDeathStart;
+        private bool FNOnATK, FNOnSkill, FNATKFrameInitialized, FNSkillFrameInitialized;
 
-		//限制阈变量
-		private float FNShaderRingTimer;
-		private float FNRevivalShaderRingTimer;
-		private float FNShaderRingIntensity;
-		private float FNShaderRingOpacity;
-		private float FNShaderRingProgress;
-		private float FNShaderRingColorR;
-		private float FNShaderRingColorG;
-		private float FNShaderRingColorB;
-		private float FNTPOpacity = 1;
-
-		//阶段变量
-		private float FNStage;
-		private bool FNBirth = false;
-		private bool FNBirthEnd = false;
-		private bool FNRevival = false;
-		private bool FNRevivalStart = false;
-		private bool FNRevivalEnd = false;
-		private bool FNEnd = false;
-		private bool FNDeathStart = false;
-
-		//跳跃机制变量
-		private bool isstuck = false;
-		private bool isstand = false;
-		private int jumpstage;
-		private int jumptimes = -1;
-		private float statplrposX;
-		private float statplrposY;
-
-		//攻击机制变量
-		private float FNATKTimer;
-		private bool FNOnATK;
-		private bool FNATKFrameInitialized = false;
-		private float FNSkillTimer;
-		private bool FNOnSkill;
-		private bool FNSkillFrameInitialized = false;
-		private float FNSkillChoice;
-		private int FNAttackTimes=0;
-
-		//封地板机制变量
-		private float[] Stage2BorderCoordX = new float[2] { 0, 0 };
-		private float deltaX = 0;
-		private float slice = 36f;
-		private float[] IceFloorCandidate = new float[36];
-		private int IndexOfFNBF;
-		private int FNBFChecker;
-		private int KillPlayerBecauseAllFloorAreBanned = 0;
-		private int NumOfBanFloorOneTime = 0;
-
-		//召唤雪怪小队机制变量
-		int summontime = Main.masterMode ?4: Main.expertMode ? 3: 2;//召唤总波次
-		int summontimes = 0;//当前召唤波次
-		int summonCD = 0;
-		bool isnpcdefeated;
-		int isallnpcdefeated = 0;
-		private int iceAltarSpawnCooldown;
-		int[] subNPCType = new int[6] { ModContent.NPCType<SnowCaster>(), ModContent.NPCType<SnowSoldier>(), ModContent.NPCType<Oneiros>(), ModContent.NPCType<IceCleaver>(),ModContent.NPCType<SnowSniper>(),ModContent.NPCType<SnowHound>() };
-		int SummonTypeChoice=0;
-		int LeftSummonCount;
-		int CurCount;
-
-		public static int IceAltarType() {
-			return ModContent.ProjectileType<BlizzardStorm>();
-		}
-
-		private static void ShuffleArray(float[] array) {
-			if (array == null || array.Length <= 1)
-				return;
-
-			for (int i = array.Length - 1; i > 0; i--) {
-				int j = Main.rand.Next(i + 1);
-				float temp = array[i];
-				array[i] = array[j];
-				array[j] = temp;
-			}
-		}
-		#endregion
-		public override void AI() {
-			#region 初始化与机制小作文
-			Player player = Main.player[NPC.target];
-			Vector2 disDiff = NPC.Center - player.Center;
-			player.buffImmune[BuffID.Chilled] = false;
-			player.buffImmune[BuffID.Frozen] = false;
-
-			//霜星的具体阶段比较复杂，有两个标识种类，阶段表示法和状态表示法
-			//生成时候是0阶段，FNBirth和FNBirthEnd不生效，然后FNBirth的判定是生成动画播完，FNBirthEnd的判定是机制出完（BirthTimer 达到4秒），生成结束后进入1阶段
-			//一阶段没血后锁血进入1.5阶段，同时播放复活动画，FNRevivalStart启用，复活回满血持续10秒，这之间动画播完后结束后FNRevivalEnd生效，回到走路动画
-			//复活阶段结束后FNRevival启用，FNRevivalStart和FNRevivalEnd被禁用，进入2阶段
-			//二阶段起始前四秒（ReBirthTimer达到四秒）会召唤龙卷风，四秒后进入正常AI，n秒后解除无敌
-			//二阶段没血后锁血进入2.5阶段（还没写），后面还没写
-
-			//准确来概况详细过程是：以stage0生成，240帧内BirthTimer++，240后stage改为1，设置标志FNBirthEnd为true，这期间使用的帧图是吟唱部分（56-76）
-			//stage1正常状态下是走路的动画，血条空了之后，执行checkdead函数，此时检测到还没有重生（!FNRevival），锁血无敌，阶段变为1.5
-			//设置标志FNRevivalStart为true，复活阶段10秒后将stage设置为2，设置标志位FNRevival为true，FNRevivalStart和FNRevivalEnd为false，这期间使用第34-54帧
-			//进入2阶段后前300帧召唤龙卷风和源石冰晶，使用吟唱动画（56-76帧），之后解除无敌
-			//2阶段血条空了之后执行checkdead函数，发现此时还没有设置FNEnd为true，不执行死亡，锁血无敌，stage变为3，
-			//设置标志物FNDeathStart为true，这期间使用第34-38帧，之后FNDeathStart为true时释放粒子效果，设置FNEnd为true，强制检查死亡
-
-			//以上是绘制和阶段判断的机制，接下来是行为模式机制：
-			//霜星在卡墙时会尝试跳跃，一共尝试4次，越跳越高，中间第3次跳跃不成功时会存储玩家位置，第四次跳跃若仍不成功则后退并传送
-			//以下机制仅为进一步构想，实际未实现：
-			//霜星检测到玩家的高度低于自己的高度+50时会每2秒尝试将自己的高度+1（尝试下平台），如果累计到一定尝试次数，第三次不成功的时候会存储玩家位置，第四次仍不成功则传送
-			//检测到自己的位置低于玩家的高度+50时候，会开始计时，当计时达到6秒时会存储玩家位置，8秒时进行传送
-			//平A攻击前，会提前在预设位置放下一个编号0的不可见预判弹幕，弹幕遍历从那个位置到玩家位置的十个等分点，如果过程中撞墙了则死亡，否则最终附着在玩家的center，此时霜星检测弹幕是否存活
-			//如果存活，照常发射弹幕，如果不存活，再生成16个编号为1-16的不可见预判弹幕环绕玩家并在五个等分点内靠近玩家，记录存活情况，如果检测到存活的则从那个位置的那个角度进行发射
-			//如果这16个弹幕仍然全部死亡，直接在玩家位置召唤弹幕
-
-			//攻击循环机制：
-			//一阶段的攻击方式是：A-A-A-（0）冰环α，上升冰环，交火攻击-A-A-A-（1）冰环β，周身冰环，倒序攻击-A-A-A-（2）冰环α-A-A-A-（3）冰环γ，周身冰环，同时攻击-构成循环
-			//二阶段起始保持无敌会召唤2个源石冰晶并以其作为风暴发出点，之后召唤雪怪小队，雪怪小队死亡之前只进行平A，然后给玩家周期性上寒冷debuff，雪怪小队全部死亡后解除无敌
-			//两个源石冰晶会把x轴位置传参给霜星，霜星将其存储后进行切割，判断要进行多少次封印地板，每次封印地板的落点为何，之后打乱这个坐标数组，每次往后遍历3个值直到遍历完成
-			//本身不携带寒冷buff时站在地板上先赋予寒冷，随后数秒赋予冻结，被攻击也冻结，如果本身就携带寒冷的情况下站在地板上就直接赋予冻结，然后一旦赋予了冻结，进入CD读条，数秒后才能再次造成冻结
-			//遍历结束后，霜星会发射一个全屏冲击波秒杀玩家来结束战斗，之后退场
-			//二阶段的攻击方式是：AAA-AAA（同时召唤坠冰封印地块）-AAA-（0）两个冰环α（同时间）-AAA-AAA（同时封印）-AAA-（1）冰环β+，周身冰环，绕圈发射-AAA-AAA（同时封印）-
-			//AAA-（2）两个冰环α（同时间）-AAA-AAA（同时封印）-AAA-（3）冰环γ＋，周身冰环，同时发射一层，拥有数层-构成循环
-
-			//技能分发弹幕机制：
-			//霜星在放技能的时候会把当前阶段传递给技能分发弹幕MKI的ai0，技能次数传给ai1
-			//MKI无论如何都会生成两个轨迹弹幕，ai0分别设置为±1，ai1用来同步位置，ai2用于计算绘制显示
-			//MKI会读取ai0和ai1的值，做出分发判断，ai0决定是否加强，ai1进行判断，若除以四余0为交火冰环，余1为螺旋冰环，余2为坠冰冰环，余3为辐向冰环，其中余数为奇数（螺旋和辐向）时
-			//还会额外读取BOSS的位置进行附着
-
-			//专家模式debuff时间为2倍，大师模式为2.5倍，则基于平A间隔：4.5s，寒冷时长：5s / 6s / 7.5s，冰冻时长：1.5s / 2s / 2.5s
-			//封地板：站上去赋予永寒，3秒后冰冻4s / 6s / 7.5s，或者仁慈一点，3s / 4s / 5s
-
-			//最后没按这个写，但是还是把这篇小作文保留下来吧（
-			#endregion
-			#region 音乐
-			if (!Main.dedServ) {
-				if (FNStage <= 1) {
-					Music = MusicLoader.GetMusicSlot(Mod, "Sounds/Music/FrostnovaStage1");//一阶段
-				}
-				else if (FNStage == 1.5f || FNStage == 2) {
-					Music = MusicLoader.GetMusicSlot(Mod, "Sounds/Music/FrostnovaStage2");//二阶段
-				}
-				else if (FNStage >= 3) {
-					Music = MusicLoader.GetMusicSlot(Mod, "Sounds/Music/FrostnovaDeath");//死亡
-				}
-			}
-			#endregion
-			#region 移动方式
-			if (!FNRevivalStart && FNBirthEnd && FNStage != 3 && !FNOnATK && !FNOnSkill && (ReBirthTimer == 0 || ReBirthTimer >= 300)) {
-				//方向
-				float ax = 0.1f;
-				float vx = 0.25f;
-				int direction = (Main.player[NPC.target].Center.X > NPC.Center.X).ToDirectionInt();
-				NPC.direction = direction;
-				Vector2 velDiff = NPC.velocity - player.velocity;
-				int haltDirectionX = velDiff.X > 0 ? 1 : -1;
-				float haltPointX = NPC.Center.X + haltDirectionX * (velDiff.X * velDiff.X) / (2 * ax);
-				//撞墙后跳跃准备，跳跃K次后记录玩家位置，K+1次后传送到该位置
-				float jumpspeed = jumptimes < 3 ? 4f * (jumptimes + 1) : 0;
-				//int antijump = jumptimes == 2 ? -1 : 1;
-				//跳跃
-				if (NPC.velocity.X == 0 && jumptimes != 4 && !(FNStage == 2 && ReBirthTimer < 240)) {//撞墙，排除二阶段起始
-					isstuck = true;
-
-					if (player.Center.X > haltPointX) {
-						NPC.velocity.X += /*antijump * */ax;
-					}
-					else {
-						NPC.velocity.X -= /*antijump * */ax;
-					}
-					NPC.velocity.X = Math.Min(/*antijump * */vx, Math.Max(-vx/* * antijump*/, NPC.velocity.X));
-					if (NPC.velocity.Y == 0) {
-						jumpstage += 1;
-						if (jumpstage >= 1) {
-							NPC.velocity.Y -= jumpspeed;
-							jumpstage = 0;
-							jumptimes += 1;
-							if (jumptimes == 2) {
-								statplrposX = player.Center.X;
-								statplrposY = player.Center.Y;
-							}
-						}
-					}
-				}
-				else if (jumptimes == 4) {//传送
-					JumpTimer++;
-					if (JumpTimer <= 30) {
-						if (player.Center.X > haltPointX) {
-							NPC.velocity.X -= 0.05f * ax;
-						}
-						else {
-							NPC.velocity.X += 0.05f * ax;
-						}
-					}
-					else if (JumpTimer <= 60) {
-						NPC.velocity.X = float.Lerp(NPC.velocity.X, 0, 0.01f);
-						NPC.Opacity = 2 - JumpTimer / 30;
-						FNTPOpacity = NPC.Opacity;
-						if (JumpTimer == 40) {
-							for (int i = 0; i < 2; i++) {
-								global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, NPC.Center, new Vector2(1f * NPC.direction, 1f), ProjectileType<FrostNovaJump>(), 0, 0f, -1, 0, 40, 0);
-							}
-							SoundEngine.PlaySound(SoundID.NPCHit5, NPC.Center);
-						}
-						if (JumpTimer >= 40) {
-							Dust dust = Main.dust[Dust.NewDust(NPC.position + new Vector2(0, NPC.height / 2), NPC.width, NPC.height / 2, DustType<Dusts.Bosses.FrostNovaDeathDust>(), 0f, 0f)];
-							dust.noGravity = true;
-							dust.fadeIn = 0f;
-							dust.scale = 1f;
-						}
-					}
-					else if (JumpTimer <= 90) {
-						if (JumpTimer == 90) {
-							NPC.Center = new Vector2(statplrposX, statplrposY - 8);
-						}
-					}
-					else if (JumpTimer <= 135) {
-						if (JumpTimer == 91) {
-							for (int i = 0; i < 2; i++) {
-								global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, NPC.Center, new Vector2(1f * NPC.direction, 1f), ProjectileType<FrostNovaJump>(), 0, 0f, -1, 0, 40, 0);
-							}
-							SoundEngine.PlaySound(SoundID.NPCHit5, NPC.Center);
-						}
-						if (JumpTimer <= 120) {
-							Dust dust = Main.dust[Dust.NewDust(NPC.position + new Vector2(0, NPC.height / 2), NPC.width, NPC.height / 2, DustType<Dusts.Bosses.FrostNovaDeathDust>(), 0f, 0f)];
-							dust.noGravity = true;
-							dust.fadeIn = 0f;
-							dust.scale = 1f;
-						}
-						NPC.Opacity = Math.Min(JumpTimer / 45 - 2, 1);
-						FNTPOpacity = NPC.Opacity;
-					}
-					else {
-						JumpTimer = 0;
-						jumptimes = -1;
-					}
-				}
-				else {//没有撞墙
-					isstuck = false;
-					jumptimes = -1;
-					jumpstage = 0;
-					if (Math.Abs(player.Center.X - NPC.Center.X) > 16) {
-						if (player.Center.X > haltPointX) {
-							NPC.velocity.X += ax;
-						}
-						else {
-							NPC.velocity.X -= ax;
-						}
-					}
-					else {
-						isstand = true;
-						NPC.velocity.X = 0;
-					}
-					NPC.velocity.X = Math.Min(vx, Math.Max(-vx, NPC.velocity.X));
-				}
-			}
-			#endregion
-			#region 限制阈和玩家减速、拉回效果,progress为半径，intensity为不透明度，time为形变，opacity为粗细
-			if (FNStage == 1) {
-				FNShaderRingTimer++;
-				//半径、颜色等与阶段有关
-				FNShaderRingProgress = Math.Min(FNShaderRingTimer / 60, 0.75f);
-				//浅蓝白色
-				FNShaderRingColorR = 0.5f * 200 / 255;
-				FNShaderRingColorG = 0.5f * (17.5f * (float)Math.Sin(FNShaderRingTimer * Math.PI / 180) + 237.5f) / 255;
-				FNShaderRingColorB = 0.5f * 1;
-				//不透明度
-				if (FNShaderRingTimer <= 30) {
-					FNShaderRingIntensity = Math.Min(FNShaderRingTimer / 30, 0.75f);
-				}
-				else {
-					FNShaderRingIntensity = 0.125f * (float)Math.Sin(FNShaderRingTimer * Math.PI / 240) + 0.875f;
-				}
-
-				//环完全展开时出环给玩家上减速
-				if (FNShaderRingProgress == 0.75f) {
-					player.buffImmune[BuffID.Chilled] = false;
-					if (disDiff.Length() >= 450f) {//半径为450像素
-						player.AddBuff(BuffID.Chilled, Main.masterMode ? 10 : Main.expertMode ? 10 : 15);
-					}
-				}
-			}
-			else if (FNStage == 1.5f) {
-				//透明化
-				FNShaderRingIntensity -= 0.00833f;
-				if (FNShaderRingIntensity <= 0) {
-					FNShaderRingIntensity = 0;
-				}
-				//颜色锁定
-				FNShaderRingColorR = 0.5f * 200 / 255;
-				FNShaderRingColorG = 0.5f * (17.5f * (float)Math.Sin(FNShaderRingTimer * Math.PI / 180) + 237.5f) / 255;
-				FNShaderRingColorB = 0.5f * 1;
-			}
-			else if (FNStage == 2) {
-				FNRevivalShaderRingTimer++;
-				//半径先略微减小后增加
-				FNShaderRingProgress = Math.Min(0.125f * FNRevivalShaderRingTimer / 60 * FNRevivalShaderRingTimer / 60 - 0.125f * FNRevivalShaderRingTimer / 60 + 0.75f, 1);
-				//透明度恢复
-				if (FNRevivalShaderRingTimer <= 30) {
-					FNShaderRingIntensity = Math.Min(FNRevivalShaderRingTimer / 30, 1);
-				}
-				else {
-					FNShaderRingIntensity = 0.125f * (float)Math.Sin(FNRevivalShaderRingTimer * Math.PI / 240) + 0.875f;
-				}
-				//颜色
-				FNShaderRingColorR = (80 * (float)Math.Sin(FNRevivalShaderRingTimer * Math.PI / 180) + 135) / 255;
-				FNShaderRingColorG = (90 * (float)Math.Sin(FNRevivalShaderRingTimer * Math.PI / 180) + 145) / 255;
-				FNShaderRingColorB = (100 * (float)Math.Sin(FNRevivalShaderRingTimer * Math.PI / 180) + 155) / 255;
-
-				//环完全展开时出环给玩家上减速，并拉回玩家
-				//if (FNShaderRingProgress == 1f) {
-				player.buffImmune[BuffID.Chilled] = false;
-				if (disDiff.Length() >= 600f * FNShaderRingProgress && disDiff.Length() <= 1500f) {//半径为600像素，不超过场地极限
-					player.AddBuff(BuffID.Chilled, Main.masterMode ? 20 : Main.expertMode ? 20 : 30);
-					player.velocity = disDiff * 0.01f;
-				}
-				//}
-			}
-			if (!FNDeathStart) {
-				//粗细只和是否死亡有关，与阶段无关
-				FNShaderRingOpacity = Math.Min(FNShaderRingTimer / 60, 1);
-				//形变和其他因素无关
-				if (Main.netMode != NetmodeID.Server && !Terraria.Graphics.Effects.Filters.Scene["FNTwistedRing"].IsActive()) {
-					Terraria.Graphics.Effects.Filters.Scene.Activate("FNTwistedRing", NPC.Center).GetShader().UseColor(FNShaderRingColorR, FNShaderRingColorG, FNShaderRingColorB).UseTargetPosition(NPC.Center + new Vector2(0, 3)).UseIntensity(FNShaderRingIntensity * FNTPOpacity).UseOpacity(FNShaderRingOpacity).UseProgress(FNShaderRingProgress * FNTPOpacity);
-					ArknightsMod.FNTwistedRing.Value.Parameters["uTime"].SetValue((float)Main.time / 64);
-					//SoundEngine.PlaySound(SoundID.NPCHit5);
-				}
-				if (Main.netMode != NetmodeID.Server && Terraria.Graphics.Effects.Filters.Scene["FNTwistedRing"].IsActive()) {
-					Terraria.Graphics.Effects.Filters.Scene.Activate("FNTwistedRing", NPC.Center).GetShader().UseColor(FNShaderRingColorR, FNShaderRingColorG, FNShaderRingColorB).UseTargetPosition(NPC.Center + new Vector2(0, 3)).UseIntensity(FNShaderRingIntensity * FNTPOpacity).UseOpacity(FNShaderRingOpacity).UseProgress(FNShaderRingProgress * FNTPOpacity);
-					ArknightsMod.FNTwistedRing.Value.Parameters["uTime"].SetValue((float)Main.time / 64);
-				}
-			}
-			else if (FNDeathStart || escapetimer != 0 || player.dead || player.active == false) {
-				FNShaderRingIntensity -= 0.01667f;
-				FNShaderRingOpacity -= 0.01667f;
-				FNShaderRingProgress -= 0.01667f;
-
-				if (FNShaderRingIntensity <= 0) {
-					FNShaderRingIntensity = 0;
-				}
-				if (FNShaderRingOpacity <= 0) {
-					FNShaderRingOpacity = 0;
-				}
-				if (FNShaderRingProgress <= 0) {
-					FNShaderRingProgress = 0;
-				}
-				if (Main.netMode != NetmodeID.Server && Terraria.Graphics.Effects.Filters.Scene["FNTwistedRing"].IsActive() && FNShaderRingIntensity == 0 && FNShaderRingOpacity == 0 && FNShaderRingProgress == 0) {
-					Terraria.Graphics.Effects.Filters.Scene["FNTwistedRing"].Deactivate();
-				}
-			}
-			#endregion
-			#region 玩家死亡后消失
-			if (!player.active || player.dead || (player.Center - NPC.Center).Length() > Main.screenWidth) {
-				NPC.TargetClosest(false);
-				player = Main.player[NPC.target];
-				escapetimer++;
-				if (escapetimer > 60) {
-					for (int i = 0; i < 3; i++) {
-						float positionX = NPC.Center.X + Main.rand.NextFloat(-15, 15) * NPC.direction;
-						float positionY = NPC.Center.Y + Main.rand.NextFloat(0, 5);
-						Vector2 position = new Vector2(positionX, positionY);
-						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, position, new Vector2(0, -1f), ProjectileType<FrostNovaJump>(), 0, 0f, -1, 0, 40, 0);
-					}
-					for (int i = 0; i < 3; i++) {
-						float positionX = NPC.Center.X + Main.rand.NextFloat(-15, 15) * NPC.direction;
-						float positionY = NPC.Center.Y + Main.rand.NextFloat(0, 5);
-						Vector2 position = new Vector2(positionX, positionY);
-						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, position, new Vector2(0, -1f), ProjectileType<FrostNovaJump>(), 0, 0f, -1, 0, 40, 0);
-					}
-					NPC.Center = Vector2.Zero;
-					NPC.active = false;
-				}
-				if (Main.netMode != NetmodeID.Server && Terraria.Graphics.Effects.Filters.Scene["FNTwistedRing"].IsActive()) {
-					Terraria.Graphics.Effects.Filters.Scene["FNTwistedRing"].Deactivate();
-				}
-				return;
-			}
-			#endregion
-			#region 生成（0阶段）
-			if (!FNBirthEnd) {
-				if (BirthTimer < 240) {
-					BirthTimer++;
-					NPC.damage = 0;
-					NPC.dontTakeDamage = true;
-					NPC.Opacity = BirthTimer / 120;
-					NPC.velocity.X = 0;
-					if (BirthTimer == 30) {
-						for (int i = 0; i < 3; i++) {
-							float positionX = NPC.Center.X + Main.rand.NextFloat(-15, 15) * NPC.direction;
-							float positionY = NPC.Center.Y + Main.rand.NextFloat(0, 5);
-							Vector2 position = new Vector2(positionX, positionY);
-							global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, position, new Vector2(0, -1f), ProjectileType<FrostNovaJump>(), 0, 0f, -1, 0, 40, 0);
-						}
-						for (int i = 0; i < 3; i++) {
-							float positionX = NPC.Center.X + Main.rand.NextFloat(-15, 15) * NPC.direction;
-							float positionY = NPC.Center.Y + Main.rand.NextFloat(0, 5);
-							Vector2 position = new Vector2(positionX, positionY);
-							global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, position, new Vector2(0, -1f), ProjectileType<FrostNovaJump>(), 0, 0f, -1, 0, 40, 0);
-						}
-					}
-					if (BirthTimer <= 60) {
-						Dust dust = Main.dust[Dust.NewDust(NPC.position + new Vector2(0, NPC.height / 2), NPC.width, NPC.height / 2, DustType<Dusts.Bosses.FrostNovaDeathDust>(), 0f, 0f)];
-						dust.noGravity = true;
-						dust.fadeIn = 0f;
-						dust.scale = 1f;
-					}
-				}
-				else {
-					FNStage = 1;
-					NPC.damage = 12;
-					NPC.dontTakeDamage = false;
-					NPC.Opacity = 1;
-					FNBirthEnd = true;
-					//NPC.lifeMax = 20000;
-				}
-			}
-			#endregion
-			#region 封印地板数量达到上限时杀死玩家
-			if (IndexOfFNBF == 36) {
-				KillPlayerBecauseAllFloorAreBanned++;
-				if (KillPlayerBecauseAllFloorAreBanned == 105) {
-					player.KillMe(PlayerDeathReason.ByCustomReason(NetworkText.FromKey("Mods.ArknightsMod.StatusMessage.FN.AllFloorBanned", player.name)), 1224, 0);
-				}
-			}
-			#endregion
-			#region 普通攻击
-			if ((FNStage == 1 || (FNStage == 2 && isallnpcdefeated == 2)) && !FNOnSkill) {
-				FNATKTimer++;
-				if (FNATKTimer >= 270) {//攻击间隔4.5s
-					FNATKTimer = 0;
-					FNAttackTimes++;
-				}
-				if (FNATKTimer >= 156) {
-					FNOnATK = true;
-					NPC.velocity.X = 0;
-					if (FNStage == 2) {
-						if (FNATKTimer == 176) {
-							FNBFChecker += 1;
-							SoundEngine.PlaySound(SoundID.Item28, NPC.Center);
-							global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, NPC.Center + new Vector2(-80f * NPC.direction, -48f), Vector2.Zero, ProjectileType<BlackIceIntro>(), 10, 0.2f, -1, 0);
-						}
-						if (FNATKTimer == 186 & FNBFChecker % 3 == 2) {
-							SoundEngine.PlaySound(SoundID.Item28, NPC.Center);
-							{ if (Main.netMode != Terraria.ID.NetmodeID.MultiplayerClient) { NumOfBanFloorOneTime = Main.masterMode ? Main.rand.Next(4, 7) : Main.expertMode ? Main.rand.Next(3, 6) : Main.rand.Next(2, 5); NPC.netUpdate = true; } }
-							int NumOfFNBF = 36 - IndexOfFNBF > 3 ? NumOfBanFloorOneTime : 36 - IndexOfFNBF;
-							for (int i = IndexOfFNBF; i < IndexOfFNBF + NumOfFNBF; i++) {
-								Vector2 SlicePos = new Vector2(IceFloorCandidate[i], NPC.Center.Y - 120) + new Vector2(Main.rand.NextFloat(-4, 4), Main.rand.NextFloat(-16, 16));
-								global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, SlicePos, Vector2.Zero, ProjectileType<FNBanFloor>(), 0, 0);
-							}
-							IndexOfFNBF += NumOfFNBF;
-						}
-						if (FNATKTimer == 196) {
-							SoundEngine.PlaySound(SoundID.Item28, NPC.Center);
-							global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, NPC.Center + new Vector2(-48f * NPC.direction, -80f), Vector2.Zero, ProjectileType<BlackIceIntro>(), 10, 0.2f, -1, 0);
-						}
-					}
-					if (FNATKTimer == 186) {
-						SoundEngine.PlaySound(SoundID.Item28, NPC.Center);
-						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, NPC.Center + new Vector2(-64f * NPC.direction, -64f), Vector2.Zero, ProjectileType<BlackIceIntro>(), 10, 0.2f, -1, 0);
-					}
-				}
-				else {
-					FNOnATK = false;
-					FNATKFrameInitialized = false;
-				}
-			}
-			#endregion
-			#region 几乎所有的技能类型（冰环α交火冰环、冰环β螺旋冰环、冰环γ坠冰冰环、冰环δ辐向冰环，以及对应的强化版）
-			if ((FNStage == 1 || (FNStage == 2 && isallnpcdefeated == 2)) && !FNOnATK) {
-				FNSkillTimer++;
-				if (FNSkillTimer >= 1040) {
-					FNSkillTimer = 0;
-				}
-				if (FNSkillTimer >= 480) {
-					FNOnSkill = true;
-
-					//所有冰环都会阻挡
-					if (disDiff.Length() <= 60f) {//玩家距离霜星太近
-						player.AddBuff(BuffID.Chilled, Main.masterMode ? 20 : Main.expertMode ? 20 : 30);
-						player.velocity = -disDiff * 0.08f;
-					}
-
-					//放射粒子
-					for (int i = 0; i < 2; i++) {
-						Vector2 dustPos = NPC.Center + new Vector2(Main.rand.NextFloat(12), 0).RotatedByRandom(MathHelper.TwoPi);
-						Dust dust = Dust.NewDustPerfect(dustPos, DustType<Dusts.Bosses.FrostNovaDeathDust>(), Velocity: Vector2.Zero, Scale: 0.5f);
-						//dust.noGravity = true;
-						dust.velocity = (1 * dustPos - 1 * NPC.Center);
-					}
-
-					//环状冰环的阻挡功能粒子视觉效果
-					if (FNSkillTimer % 10 == 0) {
-						for (int i = 0; i < 48; i++) {
-							Vector2 speed = Main.rand.NextVector2CircularEdge(1f, 1f);
-							Dust d = Dust.NewDustPerfect(NPC.Center + speed * 48, DustID.Snow, speed * 0.1f, Scale: 1f);
-							d.noGravity = true;
-						}
-					}
-
-					NPC.velocity.X = 0;
-					if (FNStage == 2 && FNSkillChoice % 4 == 0) {//二阶段要发射3个alpha冰环
-						if (FNSkillTimer == 484) {
-							SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/FNIceRingStg2Start") with { Volume = 1f, Pitch = 0f }, NPC.Center);
-							global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, NPC.Center + new Vector2(0, -48f), Vector2.Zero, ProjectileType<FNIceRingChoice>(), 10, 0.2f, -1, FNStage, FNSkillChoice, -float.Pi / 4);
-						}
-						if (FNSkillTimer == 494) {
-							SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/FNIceRingStg2Start") with { Volume = 1f, Pitch = 0f }, NPC.Center);
-							global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, NPC.Center + new Vector2(0, -48f), Vector2.Zero, ProjectileType<FNIceRingChoice>(), 10, 0.2f, -1, FNStage, FNSkillChoice, 0);
-						}
-						if (FNSkillTimer == 504) {
-							SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/FNIceRingStg2Start") with { Volume = 1f, Pitch = 0f }, NPC.Center);
-							global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, NPC.Center + new Vector2(0, -48f), Vector2.Zero, ProjectileType<FNIceRingChoice>(), 10, 0.2f, -1, FNStage, FNSkillChoice, float.Pi / 4);
-							FNSkillChoice += 1;
-						}
-					}
-					else {
-						if (FNSkillTimer == 504) {
-							SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/FNIceRingStg2Start") with { Volume = 1f, Pitch = 0f }, NPC.Center);
-							global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, NPC.Center + new Vector2(0, -48f), Vector2.Zero, ProjectileType<FNIceRingChoice>(), 10, 0.2f, -1, FNStage, FNSkillChoice, 0);
-							FNSkillChoice += 1;
-						}
-					}
-				}
-				else {
-					FNOnSkill = false;
-					FNSkillFrameInitialized = false;
-				}
-			}
-			#endregion
-			#region 冰晶祭坛（仅二阶段：雪怪全灭且重生计时满足后周期召唤；风絮前兆 + 场上最多 5 座）
-			bool iceAltarSpawnAllowed = FNStage == 2f && isallnpcdefeated == 2 && ReBirthTimer >= 300;
-			if (iceAltarSpawnAllowed) {
-				if (Main.netMode != NetmodeID.MultiplayerClient) {
-					const int iceAltarSpawnInterval = 900;
-					iceAltarSpawnCooldown++;
-					if (iceAltarSpawnCooldown >= iceAltarSpawnInterval) {
-						iceAltarSpawnCooldown = 0;
-						if (IceCrystalAltar.CountActiveAltars() < IceCrystalAltar.MaxConcurrentAltars) {
-							float spawnX = player.Center.X + Main.rand.NextFloat(-420f, 420f);
-							float spawnY = player.Center.Y + Main.rand.NextFloat(-100f, 100f);
-							global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero, ProjectileType<IceAltarSummonWisp>(), 0, 0f, -1, spawnX, spawnY);
-						}
-					}
-				}
-			}
-			#endregion
-			#region 一阶段攻击计数召唤小怪
-			/* 0 1雪怪术士+3雪怪士兵
-			1 1雪怪术士+2霜牙
-			2 2虚幻+2狙击手
-			3 1破冰者+2霜牙
-			4 3雪怪士兵+2雪怪狙击手   */
-			if (FNAttackTimes == 3&&FNStage==1)//一阶段每三次普攻召唤一次小怪
-			{
-				FNAttackTimes = 0;
-				if (SummonTypeChoice>4)
-				{
-					SummonTypeChoice = 0;
-				}
-				switch (SummonTypeChoice)
-				{
-					case 0:
-						global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowCaster>());
-						for(int i = 0; i < 3; i++) {
-							global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowSoldier>());
-						}
-						break;
-					case 1:
-						global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowCaster>());
-						for(int i = 0; i < 2; i++) {
-							global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowHound>());
-						}
-						break;
-					case 2:
-						for (int i = 0; i < 2; i++) {
-							global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowSniper>());
-							global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<Oneiros>());
-						}
-						break;
-					case 3:
-						global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<IceCleaver>());
-						for(int i = 0; i < 2; i++) {
-							global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowHound>());
-						}
-						break;
-					case 4:
-						for (int i = 0; i < 3; i++) {
-							global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowSoldier>());
-						}
-						for(int i = 0; i < 2; i++) {
-							global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowSniper>());
-						}
-						break;
-
-
-				}
-
-				SummonTypeChoice++;
-			}
-			#endregion
-			#region 复活（1.5阶段）
-			if (FNRevivalStart) {
-				if (FNStage == 1.5f) {
-					NPC.velocity.X = 0f;
-					DeathTimer++;
-					if (DeathTimer <= 320) {
-						NPC.life = 1;
-					}
-					else if (DeathTimer <= 500) {
-						NPC.life = (int)((NPC.lifeMax - 1) * Math.Sin((DeathTimer - 320) * Math.PI / 360) + 1);
-					}
-					else {
-						NPC.life = NPC.lifeMax;
-					}
-					if (DeathTimer == 325) {
-						float positionX = NPC.Center.X - 4 * NPC.direction;
-						float positionY = NPC.Center.Y - 7;
-						Vector2 position = new Vector2(positionX, positionY);
-						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, position, Vector2.Zero, ProjectileType<FrostNovaRevival>(), 0, 0f, -1, NPC.direction);
-					}
-					if (DeathTimer == 411) {
-						float positionX = NPC.Center.X - 4 * NPC.direction;
-						float positionY = NPC.Center.Y - 4;
-						Vector2 position = new Vector2(positionX, positionY);
-						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, position, Vector2.Zero, ProjectileType<FrostNovaWhiteRing>(), 0, 0f, -1, NPC.direction);
-					}
-					if (DeathTimer >= 600) {
-						FNStage = 2f;
-						FNRevival = true;
-						FNRevivalStart = false;
-						FNRevivalEnd = false;
-						FNOnATK = false;
-						FNOnSkill = false;
-						FNSkillChoice = 0;
-						FNBFChecker = 0;
-					}
-				}
-			}
-			#endregion
-			#region 复活后召唤龙卷风和雪怪小队并将场地切片
-			if (FNStage == 2f) {
-				ReBirthTimer++;
-				if (summonCD > 600 || summonCD == 0) {
-					summonCD = 0;
-				}
-				else {
-					summonCD++;
-				}
-				isnpcdefeated = true;
-				CurCount= 0;
-				for (int i = 0; i < Main.maxNPCs; i++) {
-					NPC SeekForNPCs = Main.npc[i];
-					if (SeekForNPCs.active && Array.Exists(subNPCType, x => x == SeekForNPCs.type)) {
-						CurCount++;
-						isnpcdefeated = false;//判断是否有雪怪小队存活
-					}
-				}
-				if (LeftSummonCount==0) {
-					LeftSummonCount = CurCount;
-				}
-				if (CurCount < LeftSummonCount) {
-					Main.NewText("击败支援霜星的雪怪小队，当前雪怪小队剩余数量：" + CurCount + "，剩余召唤次数：" + (summontime - summontimes), 0, 255, 255);
-					LeftSummonCount = CurCount;
-				}
-				if (summonCD==0&&isnpcdefeated&&summontimes<summontime)
-				{
-					Main.NewText("击败支援霜星的雪怪小队,当前"+(summontimes+1)+"/"+(summontime+1));
-					summontimes++;
-					isnpcdefeated = false;
-					int Choice1,Choice2;
-					Choice1= Main.rand.Next(0, 5);
-					Choice2=Main.rand.Next(0, 5);
-					for (int j=0; j < 2; j++) {
-						int randomChoice =j==0?Choice1:Choice2;//四选二
-						switch (randomChoice) {
-							case 0:
-								global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowCaster>());
-								for (int i = 0; i < 3; i++) {
-									global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowSoldier>());
-								}
-								break;
-							case 1:
-								global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowCaster>());
-								for (int i = 0; i < 2; i++) {
-									global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowHound>());
-								}
-								break;
-							case 2:
-								for (int i = 0; i < 2; i++) {
-									global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowSniper>());
-									global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<Oneiros>());
-								}
-								break;
-							case 3:
-								global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<IceCleaver>());
-								for (int i = 0; i < 2; i++) {
-									global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowHound>());
-								}
-								break;
-							case 4:
-								for (int i = 0; i < 3; i++) {
-									global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowSoldier>());
-								}
-								for (int i = 0; i < 2; i++) {
-									global::ArknightsMod.Common.Networking.EnemyAuthority.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), (int)NPC.Center.X + (Main.rand.NextBool() ? 960 + Main.rand.Next(0, 160) : -(960 + Main.rand.Next(0, 160))), (int)(NPC.Center.Y - Main.rand.Next(120, 180)), NPCType<SnowSniper>());
-								}
-								break;
-
-
-						}
-					}
-				}
-
-
-
-				if (ReBirthTimer > (Main.masterMode ? 1920f : Main.expertMode ? 1080f : 480f)&&summontimes>=summontime) {
-					bool isnpcexist = false;
-					for (int i = 0; i < Main.maxNPCs; i++) {
-						NPC SeekForNPCs = Main.npc[i];
-						if (SeekForNPCs.active && Array.Exists(subNPCType, x => x == SeekForNPCs.type)) {
-							isnpcexist = true;
-							break;
-						}
-					}
-					if (!isnpcexist) {
-						isallnpcdefeated = 1;
-					}
-				}
-
-				if (ReBirthTimer < 300) {
-					NPC.dontTakeDamage = true;
-					NPC.velocity.X = 0;
-					if (ReBirthTimer == 30) {
-						for (int i = -1; i < 3; i += 2) {
-							global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, NPC.Center - new Vector2(0, NPC.height / 1.5f), Vector2.Zero, ProjectileType<BlizzardStormStarter>(), 10, 0f, -1, i);
-						}
-					}
-					if (BirthTimer <= 60) {
-						Dust dust = Main.dust[Dust.NewDust(NPC.position + new Vector2(0, NPC.height / 2), NPC.width, (int)(NPC.height / 1.5f), DustType<Dusts.Bosses.FrostNovaDeathDust>(), 0f, -5f)];
-						dust.noGravity = true;
-						dust.fadeIn = 0f;
-						dust.scale = 1f;
-					}
-				}
-				else {
-					NPC.damage = 24;
-					jumptimes = -1;
-				}
-				if (ReBirthTimer == 1) {
-					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, NPC.Center, Vector2.Zero, ProjectileType<FNInvincibleEffect>(), 10, 0f, -1, 1800, 1);
-					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, NPC.Center, Vector2.Zero, ProjectileType<FNInvincibleEffect>(), 10, 0f, -1, 1800, -1);
-				}
-
-				if (ReBirthTimer >= 1175 && ReBirthTimer < 1185) {//检测冰晶坐标，开始给场地切块
-					for (int i = 0; i < Main.maxProjectiles; i++) {
-						Projectile SeekForProjs = Main.projectile[i];
-						if (SeekForProjs.active && SeekForProjs.type == IceAltarType()) {
-							if (SeekForProjs.ai[0] == -1) {//左侧
-								Stage2BorderCoordX[0] = SeekForProjs.Center.X;
-							}
-							else if (SeekForProjs.ai[0] == 1) {//右侧
-								Stage2BorderCoordX[1] = SeekForProjs.Center.X;
-							}
-						}
-					}
-				}
-
-				if (ReBirthTimer >= 1190 && ReBirthTimer < 1195) {//计算36个冰晶的横坐标并填入数组
-					deltaX = Stage2BorderCoordX[1] - Stage2BorderCoordX[0];
-					for (int i = 0; i < (int)slice; i++) {
-						IceFloorCandidate[i] = Stage2BorderCoordX[0] + ((i + 0.5f) / slice) * deltaX;
-					}
-					ShuffleArray(IceFloorCandidate);//打乱冰晶坐标点位
-				}
-
-				//可视化切片效果
-				//if (ReBirthTimer >= 1200) {
-				//	deltaX = Stage2BorderCoordX[1] - Stage2BorderCoordX[0];
-
-				//	for (int i = 0; i <= (int)slice; i++) {//切片可视化（用粒子效果）
-				//		Dust.NewDustPerfect(new Vector2(Stage2BorderCoordX[0] + (i / slice) * deltaX, NPC.Bottom.Y), 6, new Vector2(0f, 0f), 0, new Color(255, 255, 255), 1.5f);
-				//	}
-
-				//	if (IceFloorCandidate.Length != 0) {//冰晶召唤出来的点坐标
-				//		for (int i = 0; i < IceFloorCandidate.Length; i++) {
-				//			Vector2 SlicePos = new Vector2(IceFloorCandidate[i], NPC.Center.Y - 120) + new Vector2(Main.rand.NextFloat(12), 0).RotatedByRandom(MathHelper.TwoPi);
-				//			Dust IceCore = Dust.NewDustPerfect(SlicePos, 6, new Vector2(0f, 0f), 0, new Color(255, 255, 255), 1.5f);
-				//			IceCore.noGravity = true;
-				//		}
-				//	}
-				//}
-
-				if (ReBirthTimer > 1800 && isallnpcdefeated == 1) {//30秒后且所有雪怪小队均被打败后解除无敌
-					NPC.dontTakeDamage = false;
-					isallnpcdefeated = 2;
-				}
-			}
-			#endregion
-			#region 限制阈内寒冷冲击波（第二阶段雪怪小队存活时或低血量）
-			if (FNStage == 2 && (isallnpcdefeated == 0 || NPC.life < NPC.lifeMax * (Main.masterMode ? 0.5f : Main.expertMode ? 0.33f : 0.25f))) {
-				player.buffImmune[BuffID.Chilled] = false;
-				if ((int)ReBirthTimer % (int)(Main.masterMode ? 150 : Main.expertMode ? 180 : 240) == 0) {
-					player.AddBuff(BuffID.Chilled, Main.masterMode ? 50 : Main.expertMode ? 50 : 75);
-				}
-				if ((int)ReBirthTimer % 60 == 0) {
-					for (int i = 0; i < 6; i++) {
-						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, NPC.Center, Vector2.Zero, ProjectileType<FNIceDust>(), 0, 0f, -1, i, (int)ReBirthTimer / 30);
-					}
-				}
-			}
-			#endregion
-			#region 控制暴风雪
-			float stg1rainpercent = 0.25f;
-			float stg2rainpercent = 0.9f;
-
-			if (!FNBirthEnd) {
-				if (BirthTimer < 240) {
-					if (!Main.raining) {
-						Main.StartRain();
-					}
-					Main.cloudAlpha = stg1rainpercent * BirthTimer / 240;
-					Main.maxRaining = stg1rainpercent * BirthTimer / 240;
-				}
-				else {
-					if (!Main.raining) {
-						Main.StartRain();
-					}
-					Main.cloudAlpha = stg1rainpercent;
-					Main.maxRaining = stg1rainpercent;
-				}
-			}
-			if (FNStage == 1) {
-				if (!Main.raining) {
-					Main.StartRain();
-				}
-				Main.cloudAlpha = stg1rainpercent;
-				Main.maxRaining = stg1rainpercent;
-			}
-			else if(FNStage == 1.5f) {
-				if (!Main.raining) {
-					Main.StartRain();
-				}
-				Main.cloudAlpha = stg1rainpercent + (stg2rainpercent - stg1rainpercent) * DeathTimer / 600;
-				Main.maxRaining = stg1rainpercent + (stg2rainpercent - stg1rainpercent) * DeathTimer / 600;
-			}
-			else if(FNStage == 2) {
-				if (!Main.raining) {
-					Main.StartRain();
-				}
-				Main.cloudAlpha = stg2rainpercent;
-				Main.maxRaining = stg2rainpercent;
-			}
-			else if (FNDeathStart) {
-				if (Main.raining) {
-					Main.StopRain();
-				}
-				Main.cloudAlpha = stg2rainpercent * (1 - DeathTimer / 135);
-				Main.maxRaining = stg2rainpercent * (1 - DeathTimer / 135);
-			}
-			#endregion
-			#region 死亡
-			if (FNDeathStart == true) {
-				DeathTimer++;
-				NPC.velocity = Vector2.Zero;
-				if (DeathTimer == 130) {
-					for (int i = 0; i < 3; i++) {
-						float positionX = NPC.Center.X + Main.rand.NextFloat(-20, 23) * NPC.direction;
-						float positionY = NPC.Center.Y + Main.rand.NextFloat(0, 45);
-						Vector2 position = new Vector2(positionX, positionY);
-						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, position, new Vector2(0.5f * NPC.direction, -0.3f), ProjectileType<FrostNovaSmoke>(), 0, 0f, -1, 0, 90, 0);
-					}
-					for (int i = 0; i < 4; i++) {
-						float positionX = NPC.Center.X + Main.rand.NextFloat(-34, 16) * NPC.direction;
-						float positionY = NPC.Center.Y + Main.rand.NextFloat(-10, 34);
-						Vector2 position = new Vector2(positionX, positionY);
-						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, position, new Vector2(2.8f * NPC.direction, -0.5f), ProjectileType<FrostNovaSmoke>(), 0, 0f, -1, 0, 80, -1);
-					}
-					for (int i = 0; i < 4; i++) {
-						float positionX = NPC.Center.X + Main.rand.NextFloat(-18, 28) * NPC.direction;
-						float positionY = NPC.Center.Y + Main.rand.NextFloat(-29, 16);
-						Vector2 position = new Vector2(positionX, positionY);
-						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, position, new Vector2(-3f * NPC.direction, 0.7f), ProjectileType<FrostNovaSmoke>(), 0, 0f, -1, 0, 85, 1);
-					}
-					for (int i = 0; i < 3; i++) {
-						float positionX = NPC.Center.X + Main.rand.NextFloat(-10, 33) * NPC.direction;
-						float positionY = NPC.Center.Y + Main.rand.NextFloat(10, 36);
-						Vector2 position = new Vector2(positionX, positionY);
-						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, position, new Vector2(-0.9f * NPC.direction, -0.4f), ProjectileType<FrostNovaSmoke>(), 0, 0f, -1, 0, 85, 1);
-					}
-				}
-
-				if (DeathTimer >= 135) {
-					FNDeathStart = false;
-					FNEnd = true;
-					NPC.life = 0;
-					NPC.checkDead();
-				}
-			}
-			#endregion
-		}
+		public override void AI() => RunReworkedAI();
 		#region 死亡检查机制
 		public override bool CheckDead() {
+			RetireEncounter();
+			ResetCombat();
+			NPC.netUpdate = true;
 			if (!FNRevival) {
 				NPC.dontTakeDamage = true;
 				DeathTimer = 0;
@@ -1045,6 +154,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		}
 
 		public override void OnKill() {
+			RetireEncounter();
 			if (Main.netMode != NetmodeID.Server && Terraria.Graphics.Effects.Filters.Scene["FNTwistedRing"].IsActive()) {
 				Terraria.Graphics.Effects.Filters.Scene["FNTwistedRing"].Deactivate();
 			}
@@ -1057,8 +167,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 			int finalFrame;
 			int frameSpeed;
 			NPC.spriteDirection = NPC.direction;
+            if (AirbornePhase && ReBirthTimer > FrostNovaCombatRules.PhaseTwoEntrance && !FNOnATK && !FNOnSkill) {
+                NPC.frame.Y = 55 * frameHeight;
+                return;
+            }
 			//走路
-			if ((FNStage == 1 || (FNStage == 2 && ReBirthTimer > 300) || FNRevivalEnd) && !FNOnATK && !FNOnSkill) {
+			if ((FNStage == 1 || (FNStage == 2 && ReBirthTimer > FrostNovaCombatRules.PhaseTwoEntrance) || FNRevivalEnd) && !FNOnATK && !FNOnSkill) {
 				startFrame = 0;
 				finalFrame = 4;
 				frameSpeed = 5;
@@ -1068,7 +182,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 				NPC.frameCounter += 0.5f;
 				if (NPC.frameCounter > frameSpeed) {
 					NPC.frameCounter = 0;
-					if (!isstand) { // 距离过近时站着不动
+					if (Math.Abs(NPC.velocity.X) > .1f) { // 距离过近时站着不动
 						NPC.frame.Y += frameHeight;
 					}
 
@@ -1078,7 +192,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 				}
 			}
 			//普通攻击
-			if ((FNStage == 1 || (FNStage == 2 && ReBirthTimer > 300) || FNRevivalEnd) && FNOnATK && FNATKTimer >= 156) {
+			if ((FNStage == 1 || (FNStage == 2 && ReBirthTimer > FrostNovaCombatRules.PhaseTwoEntrance) || FNRevivalEnd) && FNOnATK && FNATKTimer >= 156) {
 				startFrame = 5;
 				finalFrame = 15;
 				frameSpeed = 6;
@@ -1097,7 +211,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 				}
 			}
 			//技能
-			if ((FNStage == 1 || (FNStage == 2 && ReBirthTimer > 300) || FNRevivalEnd) && FNOnSkill && FNSkillTimer >= 480) {
+			if ((FNStage == 1 || (FNStage == 2 && ReBirthTimer > FrostNovaCombatRules.PhaseTwoEntrance) || FNRevivalEnd) && FNOnSkill && FNSkillTimer >= 480) {
 				startFrame = 16;
 				finalFrame = 33;
 				frameSpeed = 12;
@@ -1175,11 +289,11 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 				}
 			}
 			//出场吟唱
-			if (BirthTimer < 240 || (FNStage == 2 && ReBirthTimer < 300)) {
+			if (BirthTimer < 240 || (FNStage == 2 && ReBirthTimer < FrostNovaCombatRules.PhaseTwoEntrance)) {
 				startFrame = 55;
 				finalFrame = 75;
 				frameSpeed = 7;
-				if (!FNBirth || (FNStage == 2 && ReBirthTimer < 300)) {
+				if (!FNBirth || (FNStage == 2 && ReBirthTimer < FrostNovaCombatRules.PhaseTwoEntrance)) {
 					NPC.frameCounter++;
 					//如果超出范围就锁定第一帧
 					if (NPC.frame.Y == finalFrame * frameHeight) {
@@ -1541,11 +655,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 
 		//碰上就冻结
 		public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers) {
-			target.buffImmune[BuffID.Frozen] = false;
-			if (!target.HasBuff(BuffID.Frozen)) {
-				target.AddBuff(BuffID.Frozen, Main.masterMode ? 60 : Main.expertMode ? 60 : 90);
-				SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/Frozen") with { Volume = 1f, Pitch = 0f }, target.Center);
-			}
+			FrostNovaChill.Apply(target, 120, 30);
 		}
 
 		public static int HostNPCType() {
@@ -1647,11 +757,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 
 		//碰上就冻结
 		public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers) {
-			target.buffImmune[BuffID.Frozen] = false;
-			if (!target.HasBuff(BuffID.Frozen)) {
-				target.AddBuff(BuffID.Frozen, Main.masterMode ? 60 : Main.expertMode ? 60 : 90);
-				SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/Frozen") with { Volume = 1f, Pitch = 0f }, target.Center);
-			}
+			FrostNovaChill.Apply(target, 120, 30);
 		}
 
 		private float timer;
@@ -1689,9 +795,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 			}
 
 			if (timer >= 30) {
-				if ((int)timer % 30 == 0) {
-					for (int i = 0; i < trailnum; i++) {//生成轨迹，ai0为相位，2iπ/个数
-						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, new Vector2(Projectile.Center.X, startY + 292), Vector2.Zero, ModContent.ProjectileType<Blizzard>(), Projectile.damage, 0f, 0, 2 * i * MathHelper.Pi / trailnum);
+				if ((int)timer % 60 == 0) {
+					for (int i = 0; i < Math.Min(6, trailnum); i++) {//生成轨迹，ai0为相位，2iπ/个数
+						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(newSource, new Vector2(Projectile.Center.X, startY + 292), Vector2.Zero, ModContent.ProjectileType<Blizzard>(), Projectile.damage, 0f, 0, 2 * i * MathHelper.Pi / Math.Min(6, trailnum));
 					}
 				}
 			}
@@ -1721,13 +827,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 				Projectile.Opacity = Projectile.timeLeft / 30f;
 			}
 
-			//超出左右龙卷风各自的范围就回弹
-			if (Projectile.ai[0] == -1 ? Player.Center.X < Projectile.Center.X : Player.Center.X > Projectile.Center.X) {
-				Player.velocity.X -= Projectile.ai[0] * 5f;
-			}
 
-			//口瓜！我不要看口牙！我不要看到嵌套三元运算符口牙！
-			//Player.velocity.X -= Projectile.ai[0] == -1 ? Player.Center.X < Projectile.Center.X ? Projectile.ai[0] * 5f : 0 : Player.Center.X > Projectile.Center.X ? Projectile.ai[0] * 5f : 0;
 		}
 
 		public override void OnKill(int timeLeft) {
@@ -1773,18 +873,14 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 
 		//碰上就冻结
 		public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers) {
-			target.buffImmune[BuffID.Frozen] = false;
-			if (!target.HasBuff(BuffID.Frozen)) {
-				target.AddBuff(BuffID.Frozen, Main.masterMode ? 60 : Main.expertMode ? 60 : 90);
-				SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/Frozen") with { Volume = 1f, Pitch = 0f }, target.Center);
-			}
+			FrostNovaChill.Apply(target, 120, 30);
 		}
 
 		public override void AI() {
 			Player Player = Main.player[Player.FindClosest(Projectile.position, Projectile.width, Projectile.height)];
 
 			timer++;
-			ScreenMedPlaceDisRate = Math.Abs(2 * (Projectile.Center.Y - Player.Center.Y) / Main.screenHeight);
+			ScreenMedPlaceDisRate = Math.Abs(2 * (Projectile.Center.Y - Player.Center.Y) / 1080);
 			addspeedy = -timer / 90;
 			cosspeedy = ScreenMedPlaceDisRate * Math.Min(timer / 240, 1) * (timer / 45) * (float)Math.Cos(timer * MathHelper.Pi / 120 + Projectile.ai[0]);
 			sinspeedx = (float)((Math.Pow(1.004f, 1.6f * timer) - 1) * Math.Min(timer / 360, 1) * Math.Sin(timer * MathHelper.Pi / 120 + Projectile.ai[0]));
@@ -1861,14 +957,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		}
 
 		public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers) {
-			target.buffImmune[BuffID.Chilled] = false;
-			target.buffImmune[BuffID.Frozen] = false;
-			if (!target.HasBuff(BuffID.Chilled)) {
-				target.AddBuff(BuffID.Chilled, Main.masterMode ? 180 : Main.expertMode ? 180 : 300);
-			}
-			else {
-				target.AddBuff(BuffID.Frozen, Main.masterMode ? 60 : Main.expertMode ? 60 : 90);
-			}
+			FrostNovaChill.Apply(target, 120, 30);
 		}
 
 		public override void OnKill(int timeLeft) {
@@ -1882,6 +971,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		}
 
 		public override void AI() {//ai0为icenum（总数），1为numshooted（编号，0开始），2为技能种类
+			if (formationShard) { RunFormationShard(); return; }
 			timer++;
 			if ((int)Projectile.ai[2] != Projectile.ai[2]) {//二阶段
 				offsettime = (int)Projectile.ai[2] % 4 == 1 ? 4 : 2;
@@ -1959,14 +1049,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		private Vector2 IceVelocity;
 
 		public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers) {
-			target.buffImmune[BuffID.Chilled] = false;
-			target.buffImmune[BuffID.Frozen] = false;
-			if (!target.HasBuff(BuffID.Chilled)) {
-				target.AddBuff(BuffID.Chilled, Main.masterMode ? 180 : Main.expertMode ? 180 : 300);
-			}
-			else {
-				target.AddBuff(BuffID.Frozen, Main.masterMode ? 60 : Main.expertMode ? 60 : 90);
-			}
+			FrostNovaChill.Apply(target, 120, 30);
 		}
 
 		public override void AI() {//ai0为0时是平A召唤，否则为技能召唤
@@ -1982,7 +1065,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 				skilloffsetrotation = Projectile.ai[0] == 0 ? 0 : 0.075f * float.Pi * MathF.Sin(2 * Projectile.ai[1] * float.Pi / Projectile.ai[0]);
 				IceVelocity = new Vector2(0, -Math.Min(((timer - deltatime) - 20f) / 5f, 16f)).RotatedBy(Projectile.rotation + skilloffsetrotation);
 				if (!isProjShooted) {
-					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, Projectile.Center, IceVelocity, ModContent.ProjectileType<BlackIce>(), Projectile.damage, 0.25f, -1, skilloffsetrotation);
+					global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, IceVelocity, ModContent.ProjectileType<BlackIce>(), Projectile.damage, 0.25f, -1, skilloffsetrotation);
 					isProjShooted = true;
 				}
 			}
@@ -2033,14 +1116,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		private readonly Vector2[] oldPos = new Vector2[13]; //残影个数
 
 		public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers) {
-			target.buffImmune[BuffID.Chilled] = false;
-			target.buffImmune[BuffID.Frozen] = false;
-			if (!target.HasBuff(BuffID.Chilled)) {
-				target.AddBuff(BuffID.Chilled, Main.masterMode ? 180 : Main.expertMode ? 180 : 300);
-			}
-			else {
-				target.AddBuff(BuffID.Frozen, Main.masterMode ? 60 : Main.expertMode ? 60 : 90);
-			}
+			FrostNovaChill.Apply(target, 120, 30);
 		}
 
 		public override void OnHitPlayer(Player target, Player.HurtInfo info) {
@@ -2084,7 +1160,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 
 		public override void OnKill(int timeLeft) {
 			Vector2 position = Projectile.Center + new Vector2(0, -12f).RotatedBy(Projectile.rotation);
-			global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<BlackIceExplode>(), Projectile.damage, 0.25f, -1, Projectile.ai[0]);
+			global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<BlackIceExplode>(), Projectile.damage, 0.25f, -1, Projectile.ai[0]);
 			for (int i = 0; i < 3; i++) {
 				Dust.NewDust(position, 16, 16, DustID.Granite, -0.5f * Projectile.velocity.X, -0.5f * Projectile.velocity.Y, 0, new Color(255, 255, 255), 1f);
 				Dust.NewDust(position, 16, 16, DustID.PortalBolt, -0.5f * Projectile.velocity.X, -0.5f * Projectile.velocity.Y, 0, new Color(255, 255, 255), 1f);
@@ -2114,14 +1190,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		}
 
 		public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers) {
-			target.buffImmune[BuffID.Chilled] = false;
-			target.buffImmune[BuffID.Frozen] = false;
-			if (!target.HasBuff(BuffID.Chilled)) {
-				target.AddBuff(BuffID.Chilled, Main.masterMode ? 180 : Main.expertMode ? 180 : 300);
-			}
-			else {
-				target.AddBuff(BuffID.Frozen, Main.masterMode ? 60 : Main.expertMode ? 60 : 90);
-			}
+			FrostNovaChill.Apply(target, 120, 30);
 		}
 
 		public override void AI() {
@@ -2177,11 +1246,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 
 		//碰上就冻结
 		public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers) {
-			target.buffImmune[BuffID.Frozen] = false;
-			if (!target.HasBuff(BuffID.Frozen)) {
-				target.AddBuff(BuffID.Frozen, Main.masterMode ? 100 : Main.expertMode ? 100 : 180);
-				SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/Frozen") with { Volume = 1f, Pitch = 0f }, target.Center);
-			}
+			FrostNovaChill.Apply(target, 120, 30);
 		}
 
 		public static int CHildProjType1() {
@@ -2224,6 +1289,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		}
 
 		public override void AI() {
+			if (formationConfigured) { RunFormation(); return; }
 			Player Player = Main.player[Player.FindClosest(Projectile.position, Projectile.width, Projectile.height)];
 			var newSource = Projectile.GetSource_FromThis();
 			timer++;
@@ -2313,11 +1379,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 
 		//碰上就冻结
 		public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers) {
-			target.buffImmune[BuffID.Frozen] = false;
-			if (!target.HasBuff(BuffID.Frozen)) {
-				target.AddBuff(BuffID.Frozen, Main.masterMode ? 100 : Main.expertMode ? 100 : 180);
-				SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/Frozen") with { Volume = 1f, Pitch = 0f }, target.Center);
-			}
+			FrostNovaChill.Apply(target, 120, 30);
 		}
 
 		public static int HostProjType1() {
@@ -2334,6 +1396,14 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		}
 
 		public override void AI() {
+            int hostSlot = (int)Projectile.ai[1];
+            if (!Main.projectile.IndexInRange(hostSlot) || !Main.projectile[hostSlot].active || Main.projectile[hostSlot].ModProjectile is not FNIceRingChoice) {
+                Projectile.hostile = false;
+                if (Main.netMode != NetmodeID.MultiplayerClient || timer++ > 90) Projectile.Kill();
+                return;
+            }
+            HostProj = Main.projectile[hostSlot];
+            Projectile.hostile = false;
 			timer++;
 			Projectile.velocity = Vector2.Zero;
 			dis = Math.Min(timer / 4, 36f);
@@ -2488,8 +1558,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		private Vector2 SpawnPos;
 
 		public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers) {
-			target.buffImmune[BuffID.Frozen] = false;
-			target.AddBuff(BuffID.Frozen, Main.masterMode ? 90 : Main.expertMode ? 90 : 120);
+			FrostNovaChill.Apply(target, 120, 30);
 		}
 
 		public override void OnSpawn(IEntitySource source) {
@@ -2568,7 +1637,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 				Dust.NewDust(position, 16, 16, DustID.Granite, -0.5f * Projectile.velocity.X, -0.5f * Projectile.velocity.Y, 0, new Color(255, 255, 255), 1f);
 				Dust.NewDust(position, 16, 16, DustID.PortalBolt, -0.5f * Projectile.velocity.X, -0.5f * Projectile.velocity.Y, 0, new Color(255, 255, 255), 1f);
 			}
-			global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(null, Projectile.Center, Vector2.Zero, ProjectileType<BlackIceFloor>(), 20, 0f, -1, Main.rand.Next(0, 12));
+			global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ProjectileType<BlackIceFloor>(), 20, 0f, -1, Main.rand.Next(0, 12));
 		}
 	}
 	//被封印的地板
@@ -2598,14 +1667,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		}
 
 		public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers) {
-			target.buffImmune[BuffID.Chilled] = false;
-			target.buffImmune[BuffID.Frozen] = false;
-			if (!target.HasBuff(BuffID.Chilled)) {
-				target.AddBuff(BuffID.Chilled, Main.masterMode ? 180 : Main.expertMode ? 180 : 300);
-			}
-			else {
-				target.AddBuff(BuffID.Frozen, Main.masterMode ? 90 : Main.expertMode ? 90 : 120);
-			}
+			FrostNovaChill.Apply(target, 120, 30);
 		}
 
 		public override void AI() {

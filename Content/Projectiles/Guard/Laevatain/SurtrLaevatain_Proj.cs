@@ -83,6 +83,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 		public ProjMode projMode = ProjMode.Move;
 		public WeaponPlayer mp => player.GetModPlayer<WeaponPlayer>();
 		private bool hitFeedbackPlayed;
+		private bool empoweredNormalSwing;
 		private int swingFlamesSpawned;
 		private const int MaxSwingFlames = 15;
 		private readonly HashSet<int> stabHitTargets = new();
@@ -111,8 +112,17 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 			stabHitTargets.Clear();
 			stabEffect.Reset();
 			projMode = ProjMode.Attack;
+			// The shared SP system converts a full charge to StockCount and resets
+			// SkillCharge. Consume that stock before taking this swing's snapshot.
+			empoweredNormalSwing = mp.Skill == 0 && mp.StockCount > 0;
+			if (mp.Skill == 0) {
+				if (empoweredNormalSwing) mp.DelStockCount();
+				else mp.SkillCharge++;
+			}
 			// 常驻剑弹幕不会重生；每次挥砍都要重新读取当前技能的武器伤害。
 			Projectile.damage = player.GetWeaponDamage(player.HeldItem);
+			if (empoweredNormalSwing)
+				Projectile.damage = Math.Max(1, (int)(Projectile.damage * SurtrLaevatain.SkillOneDamageMultiplier));
 			Projectile.originalDamage = Projectile.damage;
 			float aimAngle = Projectile.velocity.ToRotation();
             comboFacing = AimFacing();
@@ -122,16 +132,13 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
             helper.ResetTime();
 			helper.ReloadIndex();
 			helper.SetScale(new Vector2(1f, 1f));
-			helper.SetScale(NormalSwingSize * (mp.Skill == 0 && mp.SkillActive ? 1.2f : 1f));
+			helper.SetScale(NormalSwingSize);
 			if (mp.Skill == 0) {
-				if (mp.SkillCharge >= mp.SkillChargeMax) {
+				if (empoweredNormalSwing) {
 					helper.SetScale(new Vector2(1f, 0.856f));
-					helper.SetScale(NormalSwingSize * (mp.SkillActive ? 1.4f : 1.3f));
-					mp.SkillCharge = 0;
+					helper.SetScale(NormalSwingSize * 1.3f);
 					SoundEngine.PlaySound(SurtrLaevatain.SkillActiveSound, player.Center);
 				}
-				else
-					mp.SkillCharge++;
 			}
 			else if (mp.Skill == 1 && mp.SkillActive) {
 				helper.SetScale(1.2f);
@@ -225,6 +232,8 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
             writer.Write(helper.scale.X);
             writer.Write(helper.scale.Y);
             writer.Write(helper.lenScale);
+            writer.Write(empoweredNormalSwing);
+            writer.Write(Projectile.damage);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -236,6 +245,8 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
             normalPower = reader.ReadSingle();
             helper.scale = new Vector2(reader.ReadSingle(), reader.ReadSingle());
             helper.SetScale(reader.ReadSingle());
+            empoweredNormalSwing = reader.ReadBoolean();
+            Projectile.originalDamage = Projectile.damage = reader.ReadInt32();
             if (previous != projMode && projMode == ProjMode.Stab)
             {
                 helper.ResetTime();

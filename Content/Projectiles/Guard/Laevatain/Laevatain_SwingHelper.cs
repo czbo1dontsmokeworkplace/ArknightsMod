@@ -15,6 +15,9 @@ namespace ArknightsMod.Content.Projectiles.Guard.Laevatain
 	/// </summary>
 	public partial class Laevatain_SwingHelper : SwingHelper.SwingHelper
 	{
+		// Match the 64x70 blade asset without requiring a GPU texture for combat
+		// geometry. Dedicated servers must be able to advance swings and stabs.
+		public override Vector2 texSize => new Vector2(64f, 70f);
 		public const float StabAreaScale = 1.75f;
 		public const float StabBaseLineWidth = 24f;
 		public const float StabLineWidth = StabBaseLineWidth * StabAreaScale;

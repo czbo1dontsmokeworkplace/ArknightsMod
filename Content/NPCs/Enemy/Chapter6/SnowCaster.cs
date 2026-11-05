@@ -204,6 +204,10 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 			
 		}
 		public override void OnHitPlayer(Player target, Player.HurtInfo info) {
+            if (Projectile.GetGlobalProjectile<FrostNova.FrostNovaOwnedProjectile>().Token != 0) {
+                FrostNova.FrostNovaChill.Apply(target, 120, 30);
+                return;
+            }
 			Projectile.playerImmune[target.whoAmI] = 10;
 			
 			if (target.HasBuff(BuffID.Chilled)) {
@@ -214,7 +218,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 			}
 		}
 		public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers) {
-			modifiers.ArmorPenetration += 9999f;
+			if (Projectile.GetGlobalProjectile<FrostNova.FrostNovaOwnedProjectile>().Token != 0) return;
+            modifiers.ArmorPenetration += 9999f;
 			if (Main.expertMode)
 				modifiers.FinalDamage *= 0.9f; // 专家模式伤害 ×1.5
 			else if (Main.masterMode)

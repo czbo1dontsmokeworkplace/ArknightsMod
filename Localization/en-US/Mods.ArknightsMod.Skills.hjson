@@ -831,9 +831,8 @@ SurtrLaevatain: {
 		Label: Flame Sword
 		Desc:
 			'''
-			ATK [c/3791db:+210%]
-			Empowered attacks
-			Lasts [c/3791db:35] seconds
+			Every [c/3791db:2] swings automatically empower the next swing
+			Empowered swing damage [c/3791db:+210%] with increased reach
 			'''
 	}
 

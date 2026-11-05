@@ -9,6 +9,7 @@ public partial class BlackIceProjectile : global::ArknightsMod.Common.Networking
         writer.Write(timer);
         writer.Write(deltatime);
         writer.Write(offsettime);
+        WriteFormationShard(writer);
     }
 
     public override void ReceiveExtraAI(System.IO.BinaryReader reader)
@@ -17,5 +18,6 @@ public partial class BlackIceProjectile : global::ArknightsMod.Common.Networking
         timer = reader.ReadSingle();
         deltatime = reader.ReadSingle();
         offsettime = reader.ReadSingle();
+        ReadFormationShard(reader);
     }
 }
