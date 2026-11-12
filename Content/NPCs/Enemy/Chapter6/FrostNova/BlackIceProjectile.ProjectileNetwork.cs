@@ -9,6 +9,7 @@ public partial class BlackIceProjectile : global::ArknightsMod.Common.Networking
         writer.Write(timer);
         writer.Write(deltatime);
         writer.Write(offsettime);
+        writer.Write(flightTicks);
         WriteFormationShard(writer);
     }
 
@@ -18,6 +19,7 @@ public partial class BlackIceProjectile : global::ArknightsMod.Common.Networking
         timer = reader.ReadSingle();
         deltatime = reader.ReadSingle();
         offsettime = reader.ReadSingle();
+        flightTicks = System.Math.Clamp(reader.ReadInt32(), 0, 600);
         ReadFormationShard(reader);
     }
 }

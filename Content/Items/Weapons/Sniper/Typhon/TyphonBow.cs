@@ -38,15 +38,15 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
         }
         private const int OriginalSkillUseTime = 72;
         private static readonly SoundStyle SkillActiveSound = new("ArknightsMod/Sounds/SkillActive1") { Volume = .4f, MaxInstances = 4 };
-        protected override int[] EliteDamage => [571, 672, 784];
+        protected override int[] EliteDamage => [210, 248, 288];
         private bool consuming;
         public override void SetDefaults()
         {
             Item.damage = EliteDamage[0]; Item.DamageType = DamageClass.Ranged;
-            Item.width = 40; Item.height = 40; Item.useTime = Item.useAnimation = 60;
+            Item.width = 40; Item.height = 40; Item.useTime = Item.useAnimation = 36;
             Item.useStyle = ItemUseStyleID.Shoot; Item.noMelee = true; Item.autoReuse = true;
             Item.knockBack = 6; Item.rare = ItemRarityID.Red; Item.value = Item.buyPrice(gold: 1);
-            Item.shoot = ModContent.ProjectileType<TyphonAstralShot>(); Item.shootSpeed = 20;
+            Item.shoot = ProjectileID.WoodenArrowFriendly; Item.shootSpeed = 20;
             Item.useAmmo = AmmoID.Arrow;
             Item.UseSound = FireSound;
         }
@@ -54,7 +54,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
         public override bool AltFunctionUse(Player player) => true;
         public override Vector2? HoldoutOffset() => new(-8, 0);
         public override bool CanConsumeAmmo(Item ammo, Player player) => consuming || player.altFunctionUse != 2;
-        public override void AddRecipes() => CreateRecipe().AddIngredient<global::ArknightsMod.Content.Items.Weapons.Charged.FirewatchRifle>()
+        public override void AddRecipes() => CreateRecipe().AddIngredient<global::ArknightsMod.Content.Items.Weapons.Sniper.Archers.ArchettoBow>()
             .AddIngredient(ItemID.FragmentVortex, 14).AddIngredient(ItemID.ShroomiteBar, 12).AddTile(TileID.LunarCraftingStation).Register();
         public override void HoldItem(Player player)
         {
@@ -107,11 +107,11 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
         }
 
         public static int AttackInterval(int skill, bool active, int stacks)
-            => !active ? 60 : skill switch {
-                0 => Math.Max(1, (int)(OriginalSkillUseTime / (1.45f + .05f * Math.Clamp(stacks, 0, 30)))),
+            => 2 * (!active ? 18 : skill switch {
+                0 => Math.Max(1, (int)(18 / (1.45f + .05f * Math.Clamp(stacks, 0, 30)))),
                 2 => OriginalSkillUseTime + 93,
-                _ => OriginalSkillUseTime
-            };
+                _ => 18
+            });
         private void ConfigureAttack(Player player)
         {
             var state = player.GetModPlayer<WeaponPlayer>();
@@ -132,6 +132,7 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
             if (player.whoAmI != Main.myPlayer) return false;
             Vector2 aim = velocity.SafeNormalize(Vector2.UnitX * player.direction);
             var modPlayer = player.GetModPlayer<WeaponPlayer>();
+            if (!global::ArknightsMod.Content.Items.Weapons.Sniper.Archers.ArcherRoute.Converts(type)) return true;
             if (modPlayer.Skill == 2 && modPlayer.SkillActive)
             {
                 if (player.whoAmI == Main.myPlayer)
@@ -158,17 +159,13 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
                 return false;
             }
 
-            // Normal attacks and S1 share the same star-crystal body, launch,
-            // piercing and effects; S1's damage/speed bonuses are applied above.
-            int index = Projectile.NewProjectile(source, player.MountedCenter + aim * 48, aim * TyphonAstralShot.LaunchSpeed,
-                ModContent.ProjectileType<TyphonAstralShot>(), damage, knockback, player.whoAmI, 0);
-            if (Main.projectile.IndexInRange(index)) Main.projectile[index].CritChance = player.GetWeaponCrit(Item);
-            return false;
+            // Ordinary left-click and S1 preserve the player's selected arrow.
+            return true;
         }
-        internal bool LoadArrow(Player player, out int damage, out float knockback, out int ammo)
+        internal bool LoadArrow(Player player, out int damage, out float knockback, out int ammo, out int projectileType, out float speed)
         {
             consuming = true;
-            try { return player.PickAmmo(Item, out _, out _, out damage, out knockback, out ammo); }
+            try { return player.PickAmmo(Item, out projectileType, out speed, out damage, out knockback, out ammo); }
             finally { consuming = false; }
         }
         internal static void SpawnS2Crystal(Player player, IEntitySource source, Vector2 aim, int damage, float knockback, int crit, int target)

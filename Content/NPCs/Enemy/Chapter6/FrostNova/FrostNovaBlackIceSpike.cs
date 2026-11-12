@@ -114,14 +114,14 @@ public sealed class FrostNovaBlackIceSpike : ModProjectile
         {
             released = true;
             Projectile.Center = lockedCenter;
-            Projectile.velocity = Vector2.UnitY * 10f;
+            Projectile.velocity = Vector2.UnitY * 4.8f;
             Projectile.tileCollide = true;
             Projectile.Opacity = 1;
             Projectile.netUpdate = Main.netMode != NetmodeID.MultiplayerClient;
             if (!Main.dedServ && ChargedOperatorVfx.Visible(Projectile.Center))
                 SoundEngine.PlaySound(SoundID.Item28 with { Volume = .55f, Pitch = -.25f }, Projectile.Center);
         }
-        else Projectile.velocity = Vector2.UnitY * Math.Min(12, Projectile.velocity.Y + .08f);
+        else Projectile.velocity = Vector2.UnitY * Math.Min(12, Projectile.velocity.Y + .42f);
 
         Projectile.rotation = -MathHelper.PiOver4;
         if (!Main.dedServ && ChargedOperatorVfx.Visible(Projectile.Center) && age % 5 == 0)
@@ -144,6 +144,7 @@ public sealed class FrostNovaBlackIceSpike : ModProjectile
     public override bool OnTileCollide(Vector2 oldVelocity)
     {
         if (!released) return false;
+        FrostNovaIceBurstSystem.Emit(Projectile.Bottom, 1.55f);
         if (Main.netMode != NetmodeID.MultiplayerClient && !madeRegion
             && FrostNovaBlackIceRegion.IsOwnerActive((int)Projectile.ai[0], hostToken))
         {
@@ -168,6 +169,7 @@ public sealed class FrostNovaBlackIceSpike : ModProjectile
         if (!initialized || !FrostNovaBlackIceRegion.IsOwnerActive((int)Projectile.ai[0], hostToken)) return false;
         if (released) ChargedOperatorVfx.Trail(Projectile, new Color(100, 190, 225), 12);
         Texture2D body = ModContent.Request<Texture2D>(Texture).Value;
+        FrostNovaVisuals.Outline(body, Projectile.Center, null, Projectile.rotation, body.Size() * .5f, new Vector2(1.65f), Projectile.Opacity);
         Main.EntitySpriteDraw(body, Projectile.Center - Main.screenPosition, null, Color.White * Projectile.Opacity,
             Projectile.rotation, body.Size() * .5f, 1.65f, SpriteEffects.None);
 

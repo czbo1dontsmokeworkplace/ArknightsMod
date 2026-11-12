@@ -243,7 +243,8 @@ public sealed partial class Isharmla : ModNPC
     {
         loot.Add(ItemDropRule.BossBag(ModContent.ItemType<IsharmlaTreasureBag>()));
         var normal = new LeadingConditionRule(new Conditions.NotExpert());
-        normal.OnSuccess(ItemDropRule.OneFromOptions(1, IsharmlaRewards.WeaponTypes));
+        if (IsharmlaRewards.WeaponsEnabled)
+            normal.OnSuccess(ItemDropRule.OneFromOptions(1, IsharmlaRewards.WeaponTypes));
         normal.OnSuccess(ItemDropRule.Common(ModContent.ItemType<HeartOfTheTides>())); loot.Add(normal);
     }
     public override void OnKill() { if (Victorious) IsharmlaWorld.MarkDowned(); }

@@ -23,6 +23,7 @@ public sealed class FrostNovaBarrage : ModProjectile
     private bool validatedHost;
     private bool hostReady;
     private int hostWaitTicks;
+    private bool phaseTwo;
     private int Mode => Math.Clamp((int)Projectile.ai[1], 0, 2);
 
     public override void SetStaticDefaults()
@@ -41,15 +42,17 @@ public sealed class FrostNovaBarrage : ModProjectile
         Projectile.ignoreWater = true;
         Projectile.netImportant = true;
         Projectile.penetrate = 1;
-        Projectile.timeLeft = 300;
+        Projectile.extraUpdates = FrostNovaCombatRules.BarrageUpdates - 1;
+        Projectile.timeLeft = 300 * FrostNovaCombatRules.BarrageUpdates;
         CooldownSlot = ImmunityCooldownID.Bosses;
     }
 
     public override void OnSpawn(IEntitySource source)
     {
+        if (Mode != 2) Projectile.velocity *= 1.15f;
         int slot = (int)Projectile.ai[0];
         if (slot >= 0 && slot < Main.maxNPCs && Main.npc[slot].ModNPC is FrostNova frost)
-            encounterToken = frost.EncounterToken;
+        { encounterToken = frost.EncounterToken; phaseTwo = frost.AirbornePhase; }
         if (Mode == 2 && Projectile.ai[2] <= 0) Projectile.ai[2] = 60;
         Projectile.ai[2] = Math.Clamp(Projectile.ai[2], 0, 180);
     }
@@ -66,16 +69,32 @@ public sealed class FrostNovaBarrage : ModProjectile
     {
         writer.Write(encounterToken);
         writer.Write((ushort)Math.Clamp(age, 0, ushort.MaxValue));
+        writer.Write(phaseTwo);
     }
     public override void ReceiveExtraAI(BinaryReader reader)
     {
         encounterToken = reader.ReadInt32();
         age = reader.ReadUInt16();
+        phaseTwo = reader.ReadBoolean();
     }
-    public override bool ShouldUpdatePosition() => hostReady && Mode != 2 && Projectile.ai[2] <= 0;
+    // Velocity remains real-tick speed in snapshots. Substeps integrate it below.
+    public override bool ShouldUpdatePosition() => false;
     public override bool? CanDamage() => Mode != 2 && Projectile.ai[2] <= 0 && HostActive();
 
     public override void AI()
+    {
+        if (Projectile.numUpdates == 0) TickRealTime();
+        if (Projectile.active && Mode != 2 && CanDamage() == true) {
+            Vector2 step = Projectile.velocity / Projectile.MaxUpdates;
+            // Self-integrated motion needs an explicit tile sweep per substep.
+            Vector2 clipped = Collision.TileCollision(Projectile.position, step, Projectile.width, Projectile.height);
+            Projectile.position += clipped;
+            if (Vector2.DistanceSquared(step, clipped) > .0001f) {
+                Projectile.damage = 0; Projectile.hostile = false; Projectile.Kill();
+            }
+        }
+    }
+    private void TickRealTime()
     {
         hostReady = HostActive();
         if (!hostReady)
@@ -120,7 +139,7 @@ public sealed class FrostNovaBarrage : ModProjectile
         age++;
         Projectile.hostile = true;
         float speed = Projectile.velocity.Length();
-        if (speed < .1f) Projectile.velocity = -Vector2.UnitY * 4.5f;
+        if (speed < .1f) Projectile.velocity = -Vector2.UnitY * (4.5f * 1.15f);
         else
         {
             Vector2 direction = Projectile.velocity / speed;
@@ -132,7 +151,8 @@ public sealed class FrostNovaBarrage : ModProjectile
                     * MathF.Sin(MathHelper.Pi * Math.Clamp(age / 70f, 0, 1));
                 direction = direction.RotatedBy(turn);
             }
-            Projectile.velocity = direction * Math.Min(8.8f, speed + (Mode == 0 ? .055f : .035f));
+            float factor = phaseTwo && Mode == 1 ? FrostNovaFlightRules.CurvedFactor(age) : 1.01f;
+            Projectile.velocity = direction * (age == 1 ? speed : speed * factor);
         }
         Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
         Lighting.AddLight(Projectile.Center, FrostNovaVisuals.Ice.ToVector3() * .28f);
@@ -156,6 +176,7 @@ public sealed class FrostNovaBarrage : ModProjectile
                     Type, Projectile.damage, 0, Main.myPlayer, Projectile.ai[0], 0, 0);
         }
         FrostNovaVisuals.Cast(Projectile.Center, 0, 1.2f);
+        if (phaseTwo) FrostNovaIceBurstSystem.Emit(Projectile.Center, 1.1f);
         if (!Main.dedServ) SoundEngine.PlaySound(SoundID.Item27 with { Volume = .48f, Pitch = -.15f }, Projectile.Center);
         Projectile.Kill();
     }
@@ -165,7 +186,7 @@ public sealed class FrostNovaBarrage : ModProjectile
 
     public override void OnKill(int timeLeft)
     {
-        if (!cancelled && !detonated) FrostNovaVisuals.Cast(Projectile.Center, 3, .55f);
+        if (!cancelled && !detonated) FrostNovaVisuals.Shatter(Projectile.Center, Projectile.velocity);
     }
 
     public override bool PreDraw(ref Color lightColor)

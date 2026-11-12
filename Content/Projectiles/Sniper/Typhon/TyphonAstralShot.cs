@@ -20,7 +20,7 @@ public sealed class TyphonAstralShot : ModProjectile
     public bool SkillTwo => Projectile.ai[0] == 2;
     public int Age => (int)Projectile.ai[2];
     public const int WanderFrames = 0;
-    public const float LeftScale = 1.7f, RightScale = LeftScale * .7f, LaunchSpeed = 26f;
+    public const float LeftScale = 1.7f, RightScale = LeftScale, LaunchSpeed = 26f;
     public const float RightTargetRange = 1024f;
     private NPC guidedTarget;
     // PrecisionBolt uses two updates per tick: normalize its turn and recalibration to real time.
@@ -95,7 +95,7 @@ public sealed class TyphonAstralShot : ModProjectile
     {
         float point = 0;
         return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center - Projectile.velocity,
-            Projectile.Center, Guided ? 12 : 28, ref point);
+            Projectile.Center, (Guided ? 12 : 28) * Projectile.scale / (LoadedPiercing ? RightScale : LeftScale), ref point);
     }
     public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
     {

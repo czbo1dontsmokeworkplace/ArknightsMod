@@ -16,7 +16,7 @@ public abstract class BossArsenalWeapon : ModItem
         "WinterScar", "YetiSnowGrenade", "BlackIceCoffin", "YetiChime", "BasaltBreaker", "CalderaBellows", "CinderTestament", "BasaltBrood" };
     internal static readonly int[] Art = { ItemID.BreakerBlade, ItemID.RocketLauncher, ItemID.LaserMachinegun, ItemID.SnowmanCannon,
         ItemID.IceBlade, ItemID.Grenade, ItemID.WaterBolt, ItemID.BlizzardStaff, ItemID.FieryGreatsword, ItemID.Flamethrower, ItemID.BookofSkulls, ItemID.SlimeStaff };
-    internal static readonly int[] Damage = { 82, 66, 105, 48, 48, 133, 78, 34, 26, 15, 37, 15 };
+    internal static readonly int[] Damage = { 82, 99, 200, 48, 48, 133, 78, 34, 26, 15, 37, 15 };
     public override string Texture => "Terraria/Images/Item_" + Art[Kind];
     public override void SetDefaults()
     {

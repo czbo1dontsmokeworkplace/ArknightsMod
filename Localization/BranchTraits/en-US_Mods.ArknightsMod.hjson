@@ -1,4 +1,5 @@
 BranchTraits: {
+	Archer: Archer: hold right-click to draw the bow and charge a stronger attack
 	Artilleryman: Artilleryman:  Fires in a distinctive mortar arc; shells deal increased damage while descending
 	Crusher: Crusher:  While held, defense becomes zero; maximum life, life regeneration and healing from potions are increased by 30%
 	Reaper: Reaper:  Swing the scythe to cut enemies and steal life; hold right click to spin it

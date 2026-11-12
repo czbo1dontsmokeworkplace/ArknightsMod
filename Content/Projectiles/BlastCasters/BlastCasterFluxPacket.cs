@@ -26,6 +26,10 @@ public sealed class BlastCasterFluxPacket : ModProjectile
     private Vector2 bornAt,bornOwner,bornAxis,relayOrigin,relayAxis;
     private bool frameReady;
     private float relayTravel;
+    private Vector2[] history, axes;
+    private float[] births;
+    private int stampCount;
+    private float nextStamp;
     internal void Configure(BlastCasterKind identity, Vector2 aimTarget, int relay)
     {
         kind = identity; target = aimTarget; relayIdentity = relay;
@@ -86,6 +90,17 @@ public sealed class BlastCasterFluxPacket : ModProjectile
         Projectile.numUpdates = -1; Projectile.timeLeft = 7; Projectile.velocity = Vector2.Zero;
         if (Projectile.owner == Main.myPlayer) Projectile.netUpdate = true;
     }
+    private void Stamp()
+    {
+        if (Main.dedServ) return;
+        history ??= new Vector2[BlastCasterRules.OpticalHistory];
+        axes ??= new Vector2[BlastCasterRules.OpticalHistory];
+        births ??= new float[BlastCasterRules.OpticalHistory];
+        int last = Math.Min(stampCount, history.Length - 1);
+        for (int i = last; i > 0; i--) { history[i] = history[i - 1]; axes[i] = axes[i - 1]; births[i] = births[i - 1]; }
+        history[0] = Projectile.Center; axes[0] = Projectile.velocity.SafeNormalize(Vector2.UnitX); births[0] = clock;
+        stampCount = Math.Min(stampCount + 1, history.Length);
+    }
     public override void AI()
     {
         clock += 1f / Projectile.MaxUpdates;
@@ -97,11 +112,13 @@ public sealed class BlastCasterFluxPacket : ModProjectile
             bornAt=Projectile.Center;bornOwner=Main.player[Projectile.owner].MountedCenter;
             bornAxis=Projectile.velocity.SafeNormalize(Vector2.UnitX);frameReady=true;
         }
-        BlastCasterShotFrame frame=redirected?BlastCasterProjection.Relay(Projectile.owner,relayIdentity,relayOrigin,relayAxis)
+        BlastCasterShotFrame frame=kind==BlastCasterKind.Corroserum ? new(bornAt,bornAxis)
+            :redirected?BlastCasterProjection.Relay(Projectile.owner,relayIdentity,relayOrigin,relayAxis)
             :BlastCasterProjection.Nozzle(Projectile.owner,kind,(int)Projectile.ai[0],bornAt,bornOwner,bornAxis);
         Projectile.Center=frame.Position(new Vector2(distance-(redirected?relayTravel:0),0));
         Projectile.velocity=frame.Axis*BlastCasterRules.OpticalStep;
-        if(!visualStarted && !Main.dedServ){visualStarted=true;beamOrigin=Vector2.Zero;StartBeam();}
+        if(kind!=BlastCasterKind.Corroserum && !visualStarted && !Main.dedServ){visualStarted=true;beamOrigin=Vector2.Zero;StartBeam();}
+        if (kind == BlastCasterKind.Corroserum && clock >= nextStamp) { Stamp(); nextStamp += 1f / 3; }
         if (kind == BlastCasterKind.Aphrissa && !redirected && relayIdentity >= 0)
         {
             Vector2 relayAt = new(Projectile.ai[1], Projectile.ai[2]);
@@ -155,8 +172,7 @@ public sealed class BlastCasterFluxPacket : ModProjectile
         if (kind == BlastCasterKind.Corroserum && mode == 2 || kind == BlastCasterKind.Aphrissa && mode == 3) npc.AddBuff(BuffID.Ichor, 180);
         if (kind == BlastCasterKind.Ifrit && mode == 3) npc.AddBuff(BuffID.Oiled, 180);
         Vector2 point = Contact(npc);
-        // Impact VFX (including the HDR flare) are archived in BlastCasterVisuals.Hit.
-        // Damage, debuffs and skill heat remain independent of the optical beam.
+        if (kind == BlastCasterKind.Corroserum) BlastCasterVisuals.Hit(Projectile, npc, point, kind);
         if (Projectile.owner != Main.myPlayer || kind != BlastCasterKind.Ifrit) return;
         if (mode == 2 && !exploded)
         {
@@ -185,8 +201,8 @@ public sealed class BlastCasterFluxPacket : ModProjectile
     }
     public override bool PreDraw(ref Color lightColor)
     {
-        // Previous stamped flame material is retained in BlastCasterFluxTrail,
-        // but normal attacks exclusively draw Esperon's imported beam graph.
+        if (kind == BlastCasterKind.Corroserum && stampCount > 0)
+            BlastCasterFluxTrail.Draw(history, axes, births, stampCount, clock, kind, WidthScale);
         return false;
     }
     private void StartBeam()

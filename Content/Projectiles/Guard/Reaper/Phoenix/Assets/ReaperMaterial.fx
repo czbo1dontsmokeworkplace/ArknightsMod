@@ -17,6 +17,9 @@ float4 MaterialPS(VO i):COLOR0 {
     float4 sample=tex2D(SourceSampler,i.uv);
     float4 c=sample*float4(i.color.rgb*i.color.a,i.color.a);
     if(uEmission>.5) return float4(c.rgb*(uEmission>1.5?i.radiance.y:i.radiance.x),0);
+    // Keep premultiplied RGB; zero alpha gives One/One RGB under AlphaBlend.
+    // The negative flag is used only by the base pass, never HDR emission.
+    if(i.radiance.x<0)c.a=0;
     return c;
 }
 float4 BlurPS(VO i):COLOR0 {

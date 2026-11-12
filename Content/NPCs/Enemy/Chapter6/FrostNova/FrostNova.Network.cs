@@ -33,6 +33,13 @@ public partial class FrostNova
         writer.Write(attackAnchor.X); writer.Write(attackAnchor.Y);
         writer.Write(attackAim.X); writer.Write(attackAim.Y);
         writer.Write(dashDirection.X); writer.Write(dashDirection.Y);
+        writer.Write(NPC.width); writer.Write(NPC.height);
+        writer.Write(revivalAnchorSet);
+        writer.Write(revivalAnchor.X); writer.Write(revivalAnchor.Y);
+        writer.Write(haloInitialized); writer.Write(haloCenter.X); writer.Write(haloCenter.Y);
+        writer.Write(relocationArmed);
+        writer.Write(relocationOrigin.X); writer.Write(relocationOrigin.Y);
+        writer.Write(relocationTarget.X); writer.Write(relocationTarget.Y);
     }
     public override void ReceiveExtraAI(System.IO.BinaryReader reader) {
         base.ReceiveExtraAI(reader);
@@ -63,5 +70,13 @@ public partial class FrostNova
         attackAnchor = new Microsoft.Xna.Framework.Vector2(reader.ReadSingle(), reader.ReadSingle());
         attackAim = new Microsoft.Xna.Framework.Vector2(reader.ReadSingle(), reader.ReadSingle());
         dashDirection = new Microsoft.Xna.Framework.Vector2(reader.ReadSingle(), reader.ReadSingle());
+        NPC.width = System.Math.Clamp(reader.ReadInt32(), 40, ShieldTargetSize);
+        NPC.height = System.Math.Clamp(reader.ReadInt32(), 58, ShieldTargetSize);
+        revivalAnchorSet = reader.ReadBoolean();
+        revivalAnchor = new Microsoft.Xna.Framework.Vector2(reader.ReadSingle(), reader.ReadSingle());
+        haloInitialized = reader.ReadBoolean(); haloCenter = new(reader.ReadSingle(), reader.ReadSingle());
+        relocationArmed = reader.ReadBoolean();
+        relocationOrigin = new(reader.ReadSingle(), reader.ReadSingle());
+        relocationTarget = new(reader.ReadSingle(), reader.ReadSingle());
     }
 }

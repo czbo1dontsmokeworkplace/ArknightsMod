@@ -213,6 +213,17 @@ public sealed class FrostNovaBlackIceRegion : ModProjectile
         }
         float opacity = Math.Clamp(Projectile.timeLeft / (float)FadeTicks, 0, 1);
         float radius = WidthInTiles * .5f * Math.Clamp((age + 1) / 24f, 0, 1);
+        // Restore the old floor-seal's gate/mask identity as a purely visual
+        // overlay. Never reinstate its world-tile conversion behavior.
+        Texture2D gate = FrostNovaVisuals.Texture("FNBanFloorGate");
+        Texture2D mask = FrostNovaVisuals.Texture("FNBanFloorMask");
+        foreach (Point point in surfaces) {
+            if (point.X % 4 != 0 || Math.Abs(point.X - Projectile.ai[1]) > radius || !IsSupportTile(point.X, point.Y)) continue;
+            float x = point.X * 16 + 8;
+            Vector2 seal = new(x, SurfaceY(point.X, point.Y, x) - 10);
+            FrostNovaVisuals.Sprite(gate, seal, new Vector2(42, 27), Color.White * (opacity * .5f));
+            FrostNovaVisuals.Sprite(mask, seal, new Vector2(34, 24), Color.White * (opacity * .25f), age * .005f);
+        }
         using var pass = new ChargedOperatorVfx.Pass(true);
         foreach (Point point in surfaces)
         {
@@ -327,6 +338,11 @@ public sealed class FrostNovaBlackIceTileTint : GlobalTile
 
 public sealed class FrostNovaBlackIcePlayer : ModPlayer
 {
+    public override void PostUpdateBuffs()
+    {
+        if (FrostNovaBlackIceSystem.StandingOnBlackIce(Player))
+            Player.AddBuff(ModContent.BuffType<FrostNovaZeroSlow>(), 2);
+    }
     public override void PostUpdateRunSpeeds()
     {
         if (!FrostNovaBlackIceSystem.StandingOnBlackIce(Player)) return;
@@ -338,6 +354,18 @@ public sealed class FrostNovaBlackIcePlayer : ModPlayer
         float cap = Math.Max(Player.maxRunSpeed, Player.accRunSpeed);
         if (cap > 0 && Math.Abs(Player.velocity.X) > cap)
             Player.velocity.X = Math.Sign(Player.velocity.X) * cap;
+    }
+}
+
+// Visible status only: the original ground-contact code above owns all slowing.
+public sealed class FrostNovaZeroSlow : ModBuff
+{
+    public override string Texture => "Terraria/Images/Buff_" + BuffID.Frostburn;
+    public override void SetStaticDefaults()
+    {
+        Main.debuff[Type] = true;
+        Main.buffNoSave[Type] = true;
+        Main.buffNoTimeDisplay[Type] = true;
     }
 }
 

@@ -101,7 +101,7 @@ public sealed class EvolutionLaserRenderer : ModSystem
 
 public sealed partial class EvolutionHazard
 {
-    internal bool UsesContinuousLaser => Kind is EvolutionShot.Radiation or EvolutionShot.CrashFan ||
+    internal bool UsesContinuousLaser => Kind == EvolutionShot.CrashFan ||
         !IsAxis && (Kind is EvolutionShot.Beam or EvolutionShot.Spike);
     internal int ContinuousActiveTicks => BeamStyle is EvolutionBeamStyle.Pulse or EvolutionBeamStyle.PianoStaccato ? 6 :
         BeamStyle==EvolutionBeamStyle.Piano ? EvolutionPianoRules.Active : Parent?.CorridorActive==true?32:10;
@@ -112,15 +112,12 @@ public sealed partial class EvolutionHazard
     private void UpdateContinuousLaserDust()
     {
         if(Main.dedServ||!UsesContinuousLaser||Age<FireAge||Age%6!=0)return;
-        float envelope=Kind==EvolutionShot.Radiation?
-            EvolutionRules.BeamEnvelope(Age-FireAge,8,EvolutionNestRules.LaserFadeTicks,true):ContinuousEnvelope;
+        float envelope=ContinuousEnvelope;
         if(envelope<.05f)return;
-        int count=Kind==EvolutionShot.Radiation?5:1;
         Color color=Parent?.ThemeColor??EvolutionVisuals.Blood;
-        for(int i=0;i<count;i++)
         {
-            Vector2 direction=Kind==EvolutionShot.Radiation?EvolutionNestRules.Direction((int)Parameter,i).ToRotationVector2():Projectile.velocity.SafeNormalize(Vector2.UnitY);
-            float reach=Kind==EvolutionShot.Radiation?EvolutionNestRules.RadiationReach:Parameter;
+            Vector2 direction=Projectile.velocity.SafeNormalize(Vector2.UnitY);
+            float reach=Parameter;
             Vector2 point=Projectile.Center+direction*Main.rand.NextFloat(.2f,.95f)*reach;
             Dust dust=Dust.NewDustPerfect(point,DustID.FireworkFountain_Red,
                 direction*Main.rand.NextFloat(2,5)+direction.RotatedBy(MathHelper.PiOver2)*Main.rand.NextFloat(-1,1),0,color,.8f*envelope);
@@ -129,18 +126,6 @@ public sealed partial class EvolutionHazard
     }
     internal void DrawContinuousBodies()
     {
-        if(Kind==EvolutionShot.Radiation)
-        {
-            int fired=Age-FireAge;
-            float envelope=EvolutionRules.BeamEnvelope(fired,EvolutionNestRules.LaserActiveTicks,EvolutionNestRules.LaserFadeTicks,true);
-            for(int ray=0;ray<5;ray++)
-            {
-                Vector2 direction=EvolutionNestRules.Direction((int)Parameter,ray).ToRotationVector2();
-                EvolutionLaserVisuals.Draw(Projectile.Center,Projectile.Center+direction*EvolutionNestRules.RadiationReach,
-                    fired,envelope,EvolutionNestRules.LaserWidth,EvolutionVisuals.Sand,EvolutionVisuals.SandCore);
-            }
-            return;
-        }
         if(Kind==EvolutionShot.CrashFan)
         {
             int fired=Age-Delay;

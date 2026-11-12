@@ -58,6 +58,7 @@ internal static class BlastCasterVisuals
         if (Main.GameUpdateCount < clock.NextFlash) return;
         clock.NextFlash = Main.GameUpdateCount + 8;
         Vector2 aim = p.velocity.SafeNormalize(Vector2.UnitX);
+        if (kind == BlastCasterKind.Corroserum) { ImpactParticles(at, aim, kind); return; }
         var style=global::ArknightsMod.Content.Projectiles.Guard.Reaper.Phoenix.PhoenixFx.BlastCaster(
             BlastCasterRules.Tint(kind),BlastCasterRules.FluxAccent(kind),BlastCasterRules.SizeMultiplier(kind));
         style.MonochromeTexture=kind==BlastCasterKind.Ifrit;

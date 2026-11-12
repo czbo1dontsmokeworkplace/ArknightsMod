@@ -30,6 +30,7 @@ internal static class EvolutionVisuals
                 "Bloom" => "ArknightsMod/Common/Particle/DefaultParticle",
                 "CinematicRing" => "ArknightsMod/Content/Textures/circle_03",
                 "EnergyNoise" => "ArknightsMod/Content/Projectiles/Medic/Shining/NoiseSoft",
+                "PressureNoise" => "ArknightsMod/Content/Projectiles/Defender/ShieldNoise_tex",
                 _ => Root + name
             }, AssetRequestMode.ImmediateLoad);
         // Never cache .Value from an asynchronous request: it may be the transparent 1x1 fallback.

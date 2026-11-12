@@ -10,7 +10,7 @@ Items: {
 
 	CatastropheSalvo: {
 		DisplayName: 榴霰弹
-		Tooltip: 消耗火箭发射加速炮弹，命中引发大范围爆炸
+		Tooltip: 消耗火箭发射具有微弱追踪能力的加速炮弹，命中引发大范围爆炸
 	}
 
 	ScarletMeson: {
@@ -76,7 +76,7 @@ Items: {
 
 	CinderTestament: {
 		DisplayName: 炼狱余烬录
-		Tooltip: 按住左键蓄力，释放固定在原地的贯穿激光
+		Tooltip: 按住左键持续发射固定长度的炼狱激光，跟随鼠标瞄准并无限贯穿，命中时喷发余烬
 	}
 
 	BasaltBrood: {

@@ -77,8 +77,11 @@ public sealed class FrostNovaOwnedProjectile : GlobalProjectile
     }
     public override void PostAI(Projectile projectile) {
         if (Token == 0) return;
+        // Black shards now accelerate by 1.01 per real tick; the old shared cap
+        // must not silently cancel their acceleration.
+        bool acceleratingIce = projectile.ModProjectile is BlackIceProjectile or BlackIce or FrostNovaBarrage;
         float absoluteCap = projectile.ModProjectile is FrostNovaBlackIceSpike ? 12 : FrostNovaCombatRules.LegacyShardSpeed;
-        if (projectile.hostile && projectile.velocity.LengthSquared() > absoluteCap * absoluteCap)
+        if (!acceleratingIce && projectile.hostile && projectile.velocity.LengthSquared() > absoluteCap * absoluteCap)
             projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * absoluteCap;
         if (projectile.ModProjectile is Blizzard) {
             projectile.hostile = false;
@@ -97,7 +100,7 @@ public sealed class FrostNovaOwnedProjectile : GlobalProjectile
                     aim.RotatedBy(i * .22f) * 4.8f, ModContent.ProjectileType<FrostNovaBarrage>(), 21, 0, Main.myPlayer, Host, 0, 48);
             }
         }
-        if (projectile.ModProjectile is BlackIceProjectile or BlackIce or BlackIceIntro) {
+        if (projectile.ModProjectile is BlackIceIntro) {
             float max = FrostNovaCombatRules.LegacyShardSpeed;
             if (projectile.velocity.LengthSquared() > max * max)
                 projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * max;
@@ -174,6 +177,14 @@ public sealed class FrostNovaWeather : ModSystem
     private bool holding, wasRaining;
     private float savedRain, savedCloud, savedWind, savedCurrentWind;
     private double savedRainTime;
+    private int stormTicks;
+    private static float StormStrength() {
+        float strength = 0;
+        foreach (NPC npc in Main.ActiveNPCs)
+            if (npc.ModNPC is FrostNova boss && boss.AirbornePhase && boss.CombatHazardsActive)
+                strength = Math.Max(strength, boss.StormProgress);
+        return strength;
+    }
     private static bool StormWanted() {
         foreach (NPC npc in Main.ActiveNPCs)
             if (npc.ModNPC is FrostNova boss && boss.AirbornePhase && boss.CombatHazardsActive) return true;
@@ -185,12 +196,16 @@ public sealed class FrostNovaWeather : ModSystem
             if (!holding) {
                 holding = true; wasRaining = Main.raining; savedRain = Main.maxRaining; savedCloud = Main.cloudAlpha;
                 savedWind = Main.windSpeedTarget; savedCurrentWind = Main.windSpeedCurrent; savedRainTime = Main.rainTime;
+                stormTicks = 0;
             }
-            bool changed = !Main.raining || Main.maxRaining < .9f;
-            Main.raining = true; Main.rainTime = Math.Max(Main.rainTime, 3600);
-            Main.maxRaining = .95f; Main.cloudAlpha = .95f;
-            Main.windSpeedTarget = .85f; Main.windSpeedCurrent = .8f;
-            if (changed && Main.netMode == NetmodeID.Server) NetMessage.SendData(MessageID.WorldData);
+            float strength = StormStrength();
+            Main.raining = wasRaining || strength > .02f;
+            Main.rainTime = Math.Max(Main.rainTime, 3600);
+            Main.maxRaining = MathHelper.Lerp(savedRain, Math.Max(savedRain, .95f), strength);
+            Main.cloudAlpha = MathHelper.Lerp(savedCloud, Math.Max(savedCloud, .95f), strength);
+            Main.windSpeedTarget = MathHelper.Lerp(savedWind, .85f, strength);
+            Main.windSpeedCurrent = MathHelper.Lerp(savedCurrentWind, .8f, strength);
+            if (Main.netMode == NetmodeID.Server && stormTicks++ % 30 == 0) NetMessage.SendData(MessageID.WorldData);
         }
         else if (holding) Restore();
     }
@@ -207,6 +222,8 @@ public sealed class FrostNovaWeather : ModSystem
         // World-independent snowfall: leaving the snow biome never turns this fight into rain.
         // This layer sits behind hostile projectiles and never hides their warnings.
         float time = (float)Main.GlobalTimeWrappedHourly;
+        float strength = StormStrength();
+        if (strength <= .001f) return;
         int count = Math.Clamp(Main.screenWidth * Main.screenHeight / 15000, 55, 170);
         Texture2D pixel = TextureAssets.MagicPixel.Value;
         Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp,
@@ -217,7 +234,7 @@ public sealed class FrostNovaWeather : ModSystem
             float x = ((i * 317.3f + time * 170 * layer - Main.screenPosition.X * .16f) % (Main.screenWidth + 100) + Main.screenWidth + 100) % (Main.screenWidth + 100) - 50;
             float y = ((i * 193.7f + time * 115 * layer - Main.screenPosition.Y * .12f) % (Main.screenHeight + 80) + Main.screenHeight + 80) % (Main.screenHeight + 80) - 40;
             Main.spriteBatch.Draw(pixel, new Vector2(x, y), new Rectangle(0, 0, 1, 1),
-                new Color(172, 211, 230) * (.16f + (i % 3) * .035f), -.82f, Vector2.Zero,
+                new Color(172, 211, 230) * ((.16f + (i % 3) * .035f) * strength), -.82f, Vector2.Zero,
                 new Vector2(1.1f, 5.5f) * layer, SpriteEffects.None, 0);
         }
         }

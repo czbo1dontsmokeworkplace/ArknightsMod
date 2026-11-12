@@ -127,7 +127,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
         private bool FNBirth, FNBirthEnd, FNRevival, FNRevivalStart, FNRevivalEnd, FNEnd, FNDeathStart;
         private bool FNOnATK, FNOnSkill, FNATKFrameInitialized, FNSkillFrameInitialized;
 
-		public override void AI() => RunReworkedAI();
+		public override void AI() { RunReworkedAI(); UpdateHaloAnchor(); }
 		#region 死亡检查机制
 		public override bool CheckDead() {
 			RetireEncounter();
@@ -139,6 +139,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 				NPC.life = 1;
 				FNStage = 1.5f;
 				FNRevivalStart = true;
+				BeginRevivalMotion();
 				return false;
 			}
 			else if (!FNEnd) {
@@ -163,10 +164,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		#region 帧图绘制
 		//帧动画，霜星一共76帧，1~5为走路，6~16为普攻，17~34为坠冰技能，35~55为重生（35~39为死亡），56~76为吟唱
 		public override void FindFrame(int frameHeight) {
+			if (TryRevivalFrame(frameHeight)) return;
 			int startFrame;
 			int finalFrame;
 			int frameSpeed;
 			NPC.spriteDirection = NPC.direction;
+            if (TryCombatCastFrame(frameHeight)) return;
             if (AirbornePhase && ReBirthTimer > FrostNovaCombatRules.PhaseTwoEntrance && !FNOnATK && !FNOnSkill) {
                 NPC.frame.Y = 55 * frameHeight;
                 return;
@@ -932,6 +935,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		private readonly Vector2[] oldPos = new Vector2[13]; //残影个数
 		private float deltatime;
 		private float offsettime;
+		private int flightTicks;
+
+		// PostDraw owns the animated crystal and its trail. The default sprite uses
+		// a different origin and would draw a second, displaced crystal underneath.
+		public override bool PreDraw(ref Color lightColor) => false;
+		public override bool OnTileCollide(Vector2 oldVelocity) { Projectile.damage = 0; Projectile.hostile = false; return true; }
 
 		public override void PostDraw(Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */ {
 			Texture2D Ice = ModContent.Request<Texture2D>("ArknightsMod/Content/NPCs/Enemy/Chapter6/FrostNova/BlackIceProjectile").Value;
@@ -945,6 +954,10 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 				}
 			}
 			Main.EntitySpriteDraw(Ice, Projectile.Center - Main.screenPosition + new Vector2(0, 3) + new Vector2(0, (Projectile.frame * Ice.Height / 6 / 2)).RotatedBy(Projectile.rotation), new Rectangle(0, (int)(Projectile.frame * Ice.Height / 6f), Ice.Width, Ice.Height / 6), Color.White, Projectile.rotation, new Vector2(Ice.Width / 2, (Projectile.frame + 1) * (Ice.Height / 6) / 2), 1f, SpriteEffects.None, 0);
+			if (phaseTwoShard || FrostNovaVisuals.SecondPhase(Projectile)) FrostNovaVisuals.Outline(Ice,
+				Projectile.Center + new Vector2(0, 3) + new Vector2(0, Projectile.frame * Ice.Height / 6 / 2).RotatedBy(Projectile.rotation),
+				new Rectangle(0, Projectile.frame * Ice.Height / 6, Ice.Width, Ice.Height / 6), Projectile.rotation,
+				new Vector2(Ice.Width / 2, (Projectile.frame + 1) * (Ice.Height / 6) / 2), Vector2.One, Projectile.Opacity, 6);
 
 		}
 
@@ -961,13 +974,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		}
 
 		public override void OnKill(int timeLeft) {
-			Vector2 position = Projectile.Center + new Vector2(0, -32f).RotatedBy(Projectile.rotation);
-			SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/FNIceRingStg1") with { Volume = 1f, Pitch = 0f }, Projectile.Center);
-
-			for (int i = 0; i < 5; i++) {
-				Dust.NewDust(position, 16, 16, DustID.Granite, -0.5f * Projectile.velocity.X, -0.5f * Projectile.velocity.Y, 0, new Color(255, 255, 255), 1.25f);
-				Dust.NewDust(position, 16, 16, DustID.PortalBolt, -0.5f * Projectile.velocity.X, -0.5f * Projectile.velocity.Y, 0, new Color(255, 255, 255), 1.25f);
-			}
+			FrostNovaVisuals.Shatter(Projectile.Center, Projectile.velocity);
+			if (!Main.dedServ)
+				SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/FNIceRingStg1") with { Volume = .55f }, Projectile.Center);
 		}
 
 		public override void AI() {//ai0为icenum（总数），1为numshooted（编号，0开始），2为技能种类
@@ -1000,7 +1009,10 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 				}
 			}
 			else {
-				Projectile.velocity = new Vector2(0, -Math.Min(((timer - deltatime) - 20f) / 5f, 16f)).RotatedBy(Projectile.rotation);
+				Projectile.tileCollide = true;
+				float speed = flightTicks++ == 0 ? Math.Max(.5f, Math.Min(((timer - deltatime) - 20f) / 5f, 16f)) * 1.15f : Projectile.velocity.Length() * 1.01f;
+				if (flightTicks == 1) Projectile.timeLeft = Math.Min(Projectile.timeLeft, 300);
+				Projectile.velocity = new Vector2(0, -speed).RotatedBy(Projectile.rotation);
 				if (timer % 1 == 0) {
 					for (int i = oldPos.Length - 1; i > 0; i--) {
 						oldPos[i] = oldPos[i - 1];
@@ -1093,6 +1105,15 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 	//冰晶（飞行）
 	public partial class BlackIce : ModProjectile
 	{
+		private bool shatteredOnTile;
+		public override bool PreDraw(ref Color lightColor) {
+			if (FrostNovaVisuals.SecondPhase(Projectile)) {
+				Texture2D body = ModContent.Request<Texture2D>(Texture).Value;
+				FrostNovaVisuals.Outline(body, Projectile.Center, null, Projectile.rotation, body.Size() * .5f, new Vector2(Projectile.scale), Projectile.Opacity);
+			}
+			return true;
+		}
+		public override bool OnTileCollide(Vector2 oldVelocity) { shatteredOnTile = true; Projectile.damage = 0; Projectile.hostile = false; return true; }
 		public override void SetStaticDefaults() {
 			Main.projFrames[Projectile.type] = 1;
 		}
@@ -1139,7 +1160,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 				Projectile.rotation = Projectile.DirectionTo(Player.Center).ToRotation() + MathHelper.PiOver4 + Projectile.ai[0];
 			}
 			else {
-				Projectile.velocity = new Vector2(0, -Math.Min(timer / 5f + 4f, 16f)).RotatedBy(Projectile.rotation + MathHelper.PiOver4);
+				float speed = timer <= 2 ? (timer / 5f + 4f) * 1.15f : Projectile.velocity.Length() * 1.01f;
+				if (timer <= 2) Projectile.timeLeft = Math.Min(Projectile.timeLeft, 300);
+				Projectile.velocity = new Vector2(0, -speed).RotatedBy(Projectile.rotation + MathHelper.PiOver4);
 				if (timer % 1 == 0) {
 					for (int i = oldPos.Length - 1; i > 0; i--) {
 						oldPos[i] = oldPos[i - 1];
@@ -1160,6 +1183,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 
 		public override void OnKill(int timeLeft) {
 			Vector2 position = Projectile.Center + new Vector2(0, -12f).RotatedBy(Projectile.rotation);
+			if (shatteredOnTile) { FrostNovaVisuals.Shatter(Projectile.Center, Projectile.velocity); return; }
 			global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<BlackIceExplode>(), Projectile.damage, 0.25f, -1, Projectile.ai[0]);
 			for (int i = 0; i < 3; i++) {
 				Dust.NewDust(position, 16, 16, DustID.Granite, -0.5f * Projectile.velocity.X, -0.5f * Projectile.velocity.Y, 0, new Color(255, 255, 255), 1f);
@@ -1170,6 +1194,15 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 	//冰晶爆炸
 	public class BlackIceExplode : ModProjectile
 	{
+		public override bool PreDraw(ref Color lightColor) {
+			if (FrostNovaVisuals.SecondPhase(Projectile)) {
+				Texture2D body = FrostNovaVisuals.Texture("BlackIceExplode");
+				Rectangle source = body.Frame(1, 6, 0, Projectile.frame);
+				FrostNovaVisuals.Outline(body, Projectile.Center, source, Projectile.rotation, source.Size() * .5f,
+					new Vector2(Projectile.scale), Projectile.Opacity, 6);
+			}
+			return true;
+		}
 		public override void SetStaticDefaults() {
 			Main.projFrames[Projectile.type] = 6;
 		}

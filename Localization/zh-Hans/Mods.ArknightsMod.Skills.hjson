@@ -1645,3 +1645,17 @@ MostimaStaff: {
 			'''
 	}
 }
+
+PlatinumBow: {
+	1: {
+		Label: 逐星连射
+		Desc: 12秒内射速提高、伤害增加40%
+	}
+}
+
+ArchettoBow: {
+	1: {
+		Label: 鸣弦协奏
+		Desc: 12秒内双箭齐射、射速提高、伤害增加15%
+	}
+}

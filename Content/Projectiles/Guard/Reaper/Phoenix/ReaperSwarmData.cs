@@ -42,7 +42,7 @@ internal static class ReaperSwarmData
     {
         Ensure();return name!=null && resources.TryGetValue(name,out var value)?value:default;
     }
-    internal static void Unload(){document?.Dispose();assignments?.Dispose();blades?.Dispose();gammaPlasma?.Dispose();proteus?.Dispose();bossRewards?.Dispose();nox?.Dispose();document=assignments=blades=gammaPlasma=proteus=bossRewards=nox=null;resources.Clear();}
+    internal static void Unload(){ReaperSwarmDefinition.Clear();document?.Dispose();assignments?.Dispose();blades?.Dispose();gammaPlasma?.Dispose();proteus?.Dispose();bossRewards?.Dispose();nox?.Dispose();document=assignments=blades=gammaPlasma=proteus=bossRewards=nox=null;resources.Clear();}
 }
 
 internal static class ReaperSwarmJson

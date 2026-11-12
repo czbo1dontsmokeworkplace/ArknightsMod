@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using ArknightsMod.Common.Particle;
-using ArknightsMod.Content.Projectiles.Caster.CoreCasters;
 using ArknightsMod.Content.Projectiles.Charged;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -13,7 +12,7 @@ using Terraria.ModLoader;
 namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova;
 
 // All dimensions in this renderer are final world pixels. Existing FrostNova art
-// stays the silhouette; the caster's graded materials supply frost, flow and facets.
+// stays the silhouette; added layers use FrostNova's original ice/wind artwork.
 internal static class FrostNovaVisuals
 {
     internal const string Assets = "ArknightsMod/Content/NPCs/Enemy/Chapter6/FrostNova/";
@@ -25,6 +24,36 @@ internal static class FrostNovaVisuals
     private static Effect trail;
     private static Texture2D flow;
     private static readonly Dictionary<string, Texture2D> textures = new(StringComparer.Ordinal);
+    private static readonly Dictionary<Texture2D, Texture2D> outlines = new();
+
+    internal static bool SecondPhase(Projectile projectile)
+    {
+        var owner = projectile.GetGlobalProjectile<FrostNovaOwnedProjectile>();
+        return FrostNovaOwnedProjectile.Resolve(owner.Host, owner.Token, out FrostNova boss) && boss.AirbornePhase;
+    }
+    // One cached silhouette pass, using original alpha. Bright rims do not fill
+    // the black crystal or turn it into several displaced copies of the sprite.
+    internal static void Outline(Texture2D body, Vector2 position, Rectangle? source, float rotation, Vector2 origin, Vector2 scale, float opacity, int frames = 1)
+    {
+        if (Main.dedServ || opacity <= 0) return;
+        if (!outlines.TryGetValue(body, out Texture2D edge)) {
+            int w = body.Width, h = body.Height / frames, ew = w + 2, eh = h + 2;
+            var pixels = new Color[body.Width * body.Height]; body.GetData(pixels);
+            var mask = new Color[ew * eh * frames];
+            for (int frame = 0; frame < frames; frame++)
+                for (int y = -1; y <= h; y++) for (int x = -1; x <= w; x++) {
+                    int Alpha(int px, int py) => px >= 0 && px < w && py >= 0 && py < h ? pixels[(frame * h + py) * w + px].A : 0;
+                    int a = Math.Max(Math.Max(Alpha(x - 1, y), Alpha(x + 1, y)), Math.Max(Alpha(x, y - 1), Alpha(x, y + 1)));
+                    byte alpha = (byte)Math.Max(0, a - Alpha(x, y));
+                    mask[((frame * eh) + y + 1) * ew + x + 1] = new Color(alpha, alpha, alpha, alpha);
+                }
+            edge = new Texture2D(Main.spriteBatch.GraphicsDevice, ew, eh * frames); edge.SetData(mask); outlines.Add(body, edge);
+        }
+        Rectangle src = source ?? new Rectangle(0, 0, body.Width, body.Height / frames);
+        int index = src.Y / Math.Max(1, body.Height / frames), height = edge.Height / frames;
+        Main.EntitySpriteDraw(edge, position - Main.screenPosition, new Rectangle(0, index * height, edge.Width, height),
+            Pale * opacity, rotation, origin + Vector2.One, scale, SpriteEffects.None);
+    }
 
     internal static bool Visible(Vector2 at, float margin = 400)
         => !Main.dedServ && float.IsFinite(at.X) && float.IsFinite(at.Y)
@@ -34,16 +63,22 @@ internal static class FrostNovaVisuals
     internal static Texture2D Texture(string name)
     {
         if (!textures.TryGetValue(name, out Texture2D texture))
-            textures[name] = texture = ModContent.Request<Texture2D>(Assets + name).Value;
+            textures[name] = texture = ModContent.Request<Texture2D>(Assets + name, ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         return texture;
     }
     internal static Texture2D Material(string name)
     {
         if (!textures.TryGetValue("material/" + name, out Texture2D texture))
-            textures["material/" + name] = texture = CoreCasterPalette.Material(
-                ModContent.Request<Texture2D>(CoreCasterArt.Assets + name).Value, 1);
+            textures["material/" + name] = texture = ModContent.Request<Texture2D>(OriginalMaterialPath(name), ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         return texture;
     }
+    internal static string OriginalMaterialPath(string name) => name switch {
+        "WindCrescent" => Assets + "ICRing",
+        "Crystal" or "EnergyLance" => Assets + "FNIceCrystal",
+        "Veil" => Assets + "Aerosol/Aerosol01",
+        "EnergyFlow" => "ArknightsMod/Common/VisualEffects/WindTrail",
+        _ => Assets + "ICGlow"
+    };
 
     internal static void Sprite(Texture2D texture, Vector2 center, Vector2 size, Color tint, float rotation = 0)
     {
@@ -75,6 +110,9 @@ internal static class FrostNovaVisuals
         // The original elliptical ice ring establishes the ground plane. A broken
         // inner seal and faceted spokes rotate slowly inside that fixed silhouette.
         Sprite(Texture("ICRing"), center, new Vector2(radius * 2.2f, radius * .64f), Color.White * (opacity * .65f));
+        Sprite(Texture("ICGlow"), center, new Vector2(radius * 1.8f, radius * .65f), Color.White * (opacity * .22f), clock * .08f);
+        Sprite(Texture("ICRing"), center + new Vector2(0, -3), new Vector2(radius * 1.75f, radius * .48f),
+            Pale * (opacity * .3f), -.025f * MathF.Sin(clock));
         for (int i = 0; i < 48; i++)
         {
             if (i % 8 == 0) continue;
@@ -99,29 +137,9 @@ internal static class FrostNovaVisuals
         float opacity = npc.Opacity;
         float clock = Main.GlobalTimeWrappedHourly;
         float charge = float.IsFinite(attackProgress) ? Math.Clamp(attackProgress, 0, 1) : 0;
-        Vector2 feet = npc.Bottom + new Vector2(0, airborne ? 13 : 3);
-        if (airborne)
-        {
-            // Two offset, textured wind veils have independent speeds and depth.
-            // Their low coverage leaves the actual boss and incoming shots readable.
-            for (int i = 0; i < 3; i++)
-            {
-                float angle = clock * (.4f + i * .13f) * (i == 1 ? -1 : 1) + i * 1.9f;
-                Vector2 at = feet + new Vector2(MathF.Sin(clock * 1.4f + i) * 10, 3 + i * 8);
-                Sprite(Material("WindCrescent"), at, new Vector2(102 + i * 21, 31 + i * 6),
-                    Color.White * (opacity * (.2f - i * .025f)), angle * .13f);
-            }
-            Glow(npc.Center + new Vector2(0, 8), new Vector2(94, 116), Ice, .09f * opacity);
-            DrawSigil(feet, 52 + charge * 12, opacity * (.4f + charge * .25f));
-            for (int i = 0; i < 6; i++)
-            {
-                float a = clock * .42f + i * MathHelper.TwoPi / 6;
-                Vector2 at = npc.Center + a.ToRotationVector2() * new Vector2(47 + charge * 13, 20 + charge * 6);
-                at.Y += MathF.Sin(clock * 1.7f + i) * 4;
-                Sprite(Texture("FNIceCrystal"), at, new Vector2(8, 13), Color.White * (opacity * .7f), a * .2f);
-            }
-        }
-        else if (charge > .03f)
+        Vector2 feet = npc.Center + new Vector2(0, 29 + (airborne ? 13 : 3));
+        if (airborne) return; // Persistent airborne ornament is the six-curve gold halo.
+        if (charge > .03f)
             DrawSigil(feet, 35 + charge * 22, charge * opacity * .65f, 4 + Math.Abs(pattern % 4));
 
         // A compact glow at the hand resolves the start of each cast without
@@ -140,6 +158,11 @@ internal static class FrostNovaVisuals
         if (!Visible(center) || !float.IsFinite(strength) || ParticleManager.activeParticles.Count >= 820) return;
         strength = Math.Clamp(strength, .25f, 2.5f);
         int count = Math.Clamp((int)((kind == 2 ? 22 : kind == 3 ? 6 : 12) * strength), 4, 44);
+        for (int i = 0; i < Math.Min(10, count / 2); i++) {
+            Vector2 axis = (i * MathHelper.TwoPi / Math.Max(1, count / 2)).ToRotationVector2();
+            Dust d = Dust.NewDustPerfect(center, i % 2 == 0 ? 240 : 263, axis * (1.2f + strength),
+                90, Color.White, .8f + strength * .3f); d.noGravity = true;
+        }
         for (int i = 0; i < count && ParticleManager.activeParticles.Count < 860; i++)
         {
             float angle = MathHelper.TwoPi * i / count + Main.rand.NextFloat(-.16f, .16f);
@@ -154,6 +177,20 @@ internal static class FrostNovaVisuals
         }
     }
 
+    internal static void Shatter(Vector2 center, Vector2 velocity, int count = 9)
+    {
+        if (!Visible(center)) return;
+        count = Math.Clamp(count, 3, 28);
+        for (int i = 0; i < count && ParticleManager.activeParticles.Count < 860; i++) {
+            Vector2 speed = Main.rand.NextVector2Circular(3.5f, 3.5f) - Vector2.UnitY * 1.5f + velocity * .06f;
+            new FrostNovaBlackIceShardParticle(center, speed, Main.rand.Next(18, 33), Main.rand.NextFloat(3, 7)).Spawn();
+            if (i % 3 == 0) {
+                Dust dust = Dust.NewDustPerfect(center, DustID.IceTorch, speed, 100, Pale, .8f);
+                dust.noGravity = true;
+            }
+        }
+    }
+
     internal static void DrawShard(Projectile projectile, float opacity)
     {
         Vector2 direction = projectile.velocity.SafeNormalize(-Vector2.UnitY);
@@ -163,7 +200,12 @@ internal static class FrostNovaVisuals
         // lance behind it and a narrow pale fracture along its leading edge.
         Sprite(Material("EnergyLance"), projectile.Center - direction * 7,
             new Vector2(15, 44), Color.White * (opacity * .5f), angle);
-        Sprite(Texture("FNIceCrystal"), projectile.Center, new Vector2(13, 22), Color.White * opacity, angle);
+        Texture2D crystal = Texture("BlackIceProjectile");
+        int frame = projectile.ai[2] > 0 ? Math.Clamp(5 - (int)(projectile.ai[2] / 9), 0, 4) : 5;
+        Rectangle source = crystal.Frame(1, 6, 0, frame);
+        Outline(crystal, projectile.Center, source, angle, source.Size() * .5f, new Vector2(15, 29) / source.Size(), opacity, 6);
+        Main.EntitySpriteDraw(crystal, projectile.Center - Main.screenPosition, source, Color.White * opacity,
+            angle, source.Size() * .5f, new Vector2(15, 29) / source.Size(), SpriteEffects.None);
         Sprite(Material("EnergyLance"), projectile.Center + direction * 2,
             new Vector2(3, 18), Color.White * (opacity * .7f), angle);
     }
@@ -198,8 +240,8 @@ internal static class FrostNovaVisuals
             mesh[i * 2] = new(new Vector3(path[i] - normal * width - Main.screenPosition, 0), tint, new Vector2(t, 0));
             mesh[i * 2 + 1] = new(new Vector3(path[i] + normal * width - Main.screenPosition, 0), tint, new Vector2(t, 1));
         }
-        trail ??= ModContent.Request<Effect>("ArknightsMod/Assets/Effects/CoreCasterEnergyTrail").Value;
-        flow ??= ModContent.Request<Texture2D>(CoreCasterArt.Assets + "EnergyFlow").Value;
+        trail ??= ModContent.Request<Effect>("ArknightsMod/Assets/Effects/CoreCasterEnergyTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+        flow ??= Material("EnergyFlow");
         var device = Main.spriteBatch.GraphicsDevice;
         Main.spriteBatch.End();
         try
@@ -226,14 +268,28 @@ internal static class FrostNovaVisuals
         }
     }
 
-    internal static void Clear() { trail = null; flow = null; textures.Clear(); }
+    internal static void Clear() {
+        trail = null; flow = null; textures.Clear();
+        foreach (Texture2D texture in outlines.Values) texture.Dispose();
+        outlines.Clear();
+    }
+    internal static void CrystalWake(Vector2 center, float rotation, int age)
+    {
+        if (!Visible(center)) return;
+        for (int i = 0; i < 2; i++) {
+            Vector2 offset = new Vector2((i == 0 ? 1 : -1) * 7 * MathF.Sin(age * MathHelper.Pi / 18), -18).RotatedBy(rotation);
+            Dust dust = Dust.NewDustPerfect(center + offset, i == 0 ? 240 : 263, Vector2.Zero, 60, Color.White, 1.1f);
+            dust.noGravity = true;
+        }
+    }
 }
 
 // Client-only facets, slowing ice streaks and low-coverage vapor. Every particle
 // has a finite life and shares the established mod particle budget.
 public sealed class FrostNovaFrostMote : Particle
 {
-    public override string TexturePath => "ArknightsMod/Content/Textures/CoreCasters/EnergyLance";
+    public override string TexturePath => FrostNovaVisuals.Assets + "FNIceCrystal";
+    public override BlendState DrawBlendState => style == 2 ? BlendState.Additive : BlendState.AlphaBlend;
     private int style;
     private float size;
     private float spin;

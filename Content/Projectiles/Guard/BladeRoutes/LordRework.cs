@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using ArknightsMod.Content.Projectiles.Charged;
 using ArknightsMod.Players;
 using Microsoft.Xna.Framework;
@@ -48,6 +49,7 @@ public sealed class LordThornsSwing : ModProjectile
 {
     private readonly Vector2[] tips = new Vector2[14];
     private bool released;
+    private float entryOffset;
     internal int Kind => (int)Projectile.ai[0];
     internal float Progress => Projectile.localAI[0] / Math.Max(1, Projectile.ai[2]);
     private Vector2 tip;
@@ -60,6 +62,29 @@ public sealed class LordThornsSwing : ModProjectile
         Projectile.ownerHitCheck = true;
     }
     public override bool ShouldUpdatePosition() => false;
+    public override void OnSpawn(IEntitySource source)
+    {
+        // Carry the actual visible pose into the next stroke, including recovery.
+        foreach (Projectile other in Main.ActiveProjectiles)
+            if (other.whoAmI != Projectile.whoAmI && other.owner == Projectile.owner
+                && other.ModProjectile is LordThornsSwing previous && previous.Kind == Kind)
+            {
+                Projectile.rotation = other.rotation;
+                entryOffset = MathHelper.WrapAngle(other.rotation - OrbitAngle(0));
+                other.Kill();
+            }
+    }
+    private float OrbitAngle(float progress)
+    {
+        int facing = MathF.Cos(Projectile.ai[1]) >= 0 ? 1 : -1;
+        float sweep = Math.Min(1, progress / .82f), exit = Math.Max(0, progress - .82f) * .4f;
+        float theta = facing > 0 ? MathHelper.Pi * (1.75f + 1.25f * sweep + exit)
+            : MathHelper.Pi * (1.15f + 1.35f * sweep + exit);
+        float t = facing > 0 ? -Projectile.ai[1] : Projectile.ai[1];
+        return (facing > 0 ? new Vector2(MathF.Sin(theta + t), MathF.Cos(theta + t))
+            : new Vector2(MathF.Cos(theta + t), MathF.Sin(theta + t))).ToRotation();
+    }
+    public override bool? CanDamage() => Progress < 1;
     public override void AI()
     {
         Player player = Main.player[Projectile.owner];
@@ -69,14 +94,14 @@ public sealed class LordThornsSwing : ModProjectile
         Projectile.Center = player.MountedCenter;
         int facing = MathF.Cos(Projectile.ai[1]) >= 0 ? 1 : -1;
         player.ChangeDir(facing); player.heldProj = Projectile.whoAmI;
-        // Thorns' sin/cos orbit: a broad advancing arc followed by a slower exit.
-        float sweep = Math.Min(1, Progress / .82f), exit = Math.Max(0, Progress - .82f) * .4f;
-        float theta = facing > 0 ? MathHelper.Pi * (1.75f + 1.25f * sweep + exit)
-            : MathHelper.Pi * (1.15f + 1.35f * sweep + exit);
-        float t = facing > 0 ? -Projectile.ai[1] : Projectile.ai[1];
-        Vector2 radial = facing > 0 ? new Vector2(MathF.Sin(theta + t), MathF.Cos(theta + t))
-            : new Vector2(MathF.Cos(theta + t), MathF.Sin(theta + t));
-        Projectile.rotation = radial.ToRotation();
+        // Keep the original attack arc, blend its entry and give it six harmless
+        // recovery ticks. The next stroke can take over immediately at any point.
+        float blend = MathHelper.SmoothStep(0, 1, Math.Clamp(Progress / .22f, 0, 1));
+        Projectile.rotation = OrbitAngle(Math.Min(1, Progress)) + entryOffset * (1 - blend);
+        if (Progress >= 1)
+            Projectile.rotation = OrbitAngle(1).AngleLerp(OrbitAngle(0),
+                MathHelper.SmoothStep(0, 1, Math.Clamp((Projectile.localAI[0] - Projectile.ai[2]) / 6, 0, 1)));
+        Vector2 radial = Projectile.rotation.ToRotationVector2();
         Projectile.scale = player.GetAdjustedItemScale(player.HeldItem);
         var skills = player.GetModPlayer<WeaponPlayer>();
         if (Kind == 7 && skills.SkillActive && skills.Skill == 2) Projectile.scale *= 1.35f;
@@ -120,8 +145,10 @@ public sealed class LordThornsSwing : ModProjectile
                 }
             }
         }
-        if (Progress >= 1) Projectile.Kill();
+        if (Projectile.localAI[0] >= Projectile.ai[2] + 6) Projectile.Kill();
     }
+    public override void SendExtraAI(BinaryWriter writer) => writer.Write(entryOffset);
+    public override void ReceiveExtraAI(BinaryReader reader) => entryOffset = reader.ReadSingle();
     public override bool? Colliding(Rectangle a, Rectangle b)
     {
         float collision = 0;

@@ -1363,3 +1363,17 @@ MostimaStaff: {
 			'''
 	}
 }
+
+PlatinumBow: {
+	1: {
+		Label: Starseeker
+		Desc: 12 seconds: faster fire and +40% damage
+	}
+}
+
+ArchettoBow: {
+	1: {
+		Label: Songstring Volley
+		Desc: 12 seconds: faster twin volleys and +15% damage
+	}
+}

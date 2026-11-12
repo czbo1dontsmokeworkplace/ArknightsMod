@@ -11,7 +11,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.Isharmla;
 
 public static class IsharmlaRewards
 {
-    public static int[] WeaponTypes => new[] { ModContent.ItemType<AbyssalSpine>(), ModContent.ItemType<HeavensDeluge>(),
+    // Temporary release gate. Source and art stay available for re-enabling this set.
+    public static bool WeaponsEnabled => false;
+    public static int[] WeaponTypes => !WeaponsEnabled ? System.Array.Empty<int>() : new[] { ModContent.ItemType<AbyssalSpine>(), ModContent.ItemType<HeavensDeluge>(),
         ModContent.ItemType<FinalTideFlute>(), ModContent.ItemType<TidebornStaff>() };
 }
 
@@ -69,6 +71,7 @@ public sealed class CallOfTheTides : TideItem
 
 public sealed class AbyssalSpine : TideItem
 {
+    public override bool IsLoadingEnabled(Mod mod) => IsharmlaRewards.WeaponsEnabled;
     public override void SetDefaults()
     {
         Weapon(245, DamageClass.Melee, 28); Item.channel = true; Item.noUseGraphic = true;
@@ -79,6 +82,7 @@ public sealed class AbyssalSpine : TideItem
 
 public sealed class HeavensDeluge : TideItem
 {
+    public override bool IsLoadingEnabled(Mod mod) => IsharmlaRewards.WeaponsEnabled;
     public override void SetDefaults()
     {
         Weapon(190, DamageClass.Ranged, 24); Item.useAmmo = AmmoID.Gel; Item.shootSpeed = 23; Item.noUseGraphic = true;
@@ -96,6 +100,7 @@ public sealed class HeavensDeluge : TideItem
 
 public sealed class FinalTideFlute : TideItem
 {
+    public override bool IsLoadingEnabled(Mod mod) => IsharmlaRewards.WeaponsEnabled;
     protected override string IconArt => "Fin";
     protected override float IconRotation => -.45f;
     public override void SetDefaults()
@@ -113,6 +118,7 @@ public sealed class FinalTideFlute : TideItem
 
 public sealed class TidebornStaff : TideItem
 {
+    public override bool IsLoadingEnabled(Mod mod) => IsharmlaRewards.WeaponsEnabled;
     protected override string IconArt => "Human";
     protected override Rectangle? IconCrop => new Rectangle(32, 4, 20, 48);
     public override void SetStaticDefaults()
@@ -159,7 +165,8 @@ public sealed class IsharmlaTreasureBag : TideItem
     public override bool CanRightClick() => true;
     public override void ModifyItemLoot(ItemLoot loot)
     {
-        loot.Add(ItemDropRule.OneFromOptions(1, IsharmlaRewards.WeaponTypes));
+        if (IsharmlaRewards.WeaponsEnabled)
+            loot.Add(ItemDropRule.OneFromOptions(1, IsharmlaRewards.WeaponTypes));
         loot.Add(ItemDropRule.Common(ModContent.ItemType<HeartOfTheTides>()));
         loot.Add(ItemDropRule.CoinsBasedOnNPCValue(ModContent.NPCType<Isharmla>()));
     }

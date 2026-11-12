@@ -10,7 +10,7 @@ Items: {
 
 	CatastropheSalvo: {
 		DisplayName: Shrapnel Grenade
-		Tooltip: Consumes rockets to fire accelerating shells with large explosions
+		Tooltip: Consumes rockets to fire accelerating, weakly homing shells with large explosions
 	}
 
 	ScarletMeson: {
@@ -76,7 +76,7 @@ Items: {
 
 	CinderTestament: {
 		DisplayName: Cinder Testament
-		Tooltip: Hold left-click to charge a piercing laser fixed at its release position
+		Tooltip: Hold left-click to sustain a fixed-length inferno laser that follows your aim, pierces all targets and erupts in embers on impact
 	}
 
 	BasaltBrood: {

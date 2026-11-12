@@ -56,6 +56,7 @@ internal static class TyphonAstralVisuals
     }
     internal static Color Tint(float phase) => Color.Lerp(new Color(246, 189, 104), new Color(190, 124, 244), .5f + MathF.Sin(phase) * .5f);
     internal static Color DarkTint(float amount) => Color.Lerp(new Color(78, 24, 112), new Color(7, 3, 13), Math.Clamp(amount, 0, 1));
+    internal static int ArrowLength => Texture("OriginalArrow").Height;
     internal static void DrawHead(Vector2 center, float rotation, float scale, float phase, float opacity = 1, float flash = 0)
     {
         DrawArrow(center, rotation, scale, phase, true, opacity, flash);
@@ -64,7 +65,7 @@ internal static class TyphonAstralVisuals
     {
         Texture2D arrow = Texture("OriginalArrow");
         Vector2 position = center - Main.screenPosition, origin = arrow.Size() / 2;
-        // The source arrow points upward; +Pi/2 aligns its tip with velocity.
+        // The source crystal points downward; -Pi/2 aligns its tip with velocity.
         float angle = rotation + MathHelper.PiOver2;
         if (outlined)
         {

@@ -10,7 +10,7 @@ public sealed class TyphonHeadBar : WeaponHeadBar
     protected override bool TryGetBar(out HeadBarRequest request)
     {
         request = default;
-        if (Player.HeldItem.ModItem is not TyphonBow) return false;
+        if (!global::ArknightsMod.Content.Items.Weapons.Sniper.Archers.ArcherCharge.Supports(Player.HeldItem)) return false;
         foreach (Projectile projectile in Main.ActiveProjectiles)
         {
             if (projectile.owner != Player.whoAmI || projectile.ModProjectile is not TyphonMagazine magazine

@@ -88,7 +88,7 @@ public sealed partial class EvolutionHazard : ModProjectile
             EvolutionShot.Eruption => Age >= FireAge + 6 && Age < FireAge + 26 ? null : false,
             EvolutionShot.Rock when Parameter > 0 => Age >= FireAge ? null : false,
             EvolutionShot.Pulse => Age >= 30 ? null : false,
-            EvolutionShot.Radiation => Age >= FireAge && Age < FireAge + EvolutionNestRules.RadiationDuration ? null : false,
+            EvolutionShot.Radiation => Parent.Phase == 1 && Age >= FireAge && Age < FireAge + EvolutionNestRules.RadiationDuration ? null : false,
             _ => Age >= 18 ? null : false
         };
     }

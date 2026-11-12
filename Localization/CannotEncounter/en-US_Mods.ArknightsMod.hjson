@@ -13,6 +13,9 @@ Buffs: {
 		DisplayName: Undying Rage
 		Description: Life cannot fall below 1; attack damage and attack speed increased by 100%
 	}
+
+	FrostNovaWhiteout: {
+	}
 }
 
 NPCs.CannotOriginiutant.DisplayName: Originiutant

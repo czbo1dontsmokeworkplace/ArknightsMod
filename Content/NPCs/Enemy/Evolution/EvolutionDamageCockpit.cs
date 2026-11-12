@@ -36,7 +36,7 @@ internal static class EvolutionDamageCockpit
         (EvolutionShot.Lance,       "血喷",       "Blood Lance",         30), // 高速移动尖梭，包括横排/竖排血喷、光轴侧刃与仆从齐射。
         (EvolutionShot.CrimsonBomb, "深红炸弹",   "Crimson Bomb",        35), // 仅范围爆炸型使用此伤害；分裂型只由碎片伤人。
         (EvolutionShot.Eruption,    "血色喷柱",   "Blood Eruption",      30), // 从地面/平台向上喷发的柱体。
-        (EvolutionShot.Radiation,   "育生闪耀激光", "Brood Flash Laser",     27), // 第一阶段五向瞬发激光；预警无伤害，亮起后8帧生效。
+        (EvolutionShot.Radiation,   "育生冲击波", "Brood Pressure Wave",     27), // 第一阶段扩散波前；五个预警安全扇区无伤害，不判定整片圆盘。
         (EvolutionShot.Reflection,  "反射血刃",   "Reflected Blood Blade", 30), // 保留旧弹幕类型兼容；光轴护盾已改为虚化，不再吞弹或反击。
         (EvolutionShot.CrashFan,    "坠生扇形光束", "Broodfall Fan",        27),
         (EvolutionShot.Flame,       "育生喷焰",     "Brood Flame",          19),

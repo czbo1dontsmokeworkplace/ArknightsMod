@@ -24,7 +24,9 @@ internal static class BladeRouteCombat
 {
     internal static bool Swinging(Player player)
     {
-        foreach(var p in Main.ActiveProjectiles)if(p.owner==player.whoAmI && p.ModProjectile is OperatorBladeSwing or LordThornsSwing)return true;
+        foreach(var p in Main.ActiveProjectiles)
+            if(p.owner==player.whoAmI && (p.ModProjectile is OperatorBladeSwing
+                || p.ModProjectile is LordThornsSwing lord && lord.Progress < 1)) return true;
         return false;
     }
     internal static void Swing(Player player,IEntitySource source,int kind,int damage,float knockback)
