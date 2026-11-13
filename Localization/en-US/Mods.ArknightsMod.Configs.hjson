@@ -92,56 +92,116 @@ MusicConfig: {
 }
 
 Dropconfig: {
-	DisplayName: Loot Drop Chances
+	DisplayName: Loot Drop Chances and Quantities
 
 	DropOriginiumSlugPercent: {
 		Label: Originium Slug Orirock Cube chance (%)
-		Tooltip: Enter a percentage: 0 disables the drop, 100 guarantees it. Decimals are supported; changes apply when saved.
+		Tooltip: Chance to drop this item; 0% never drops, 100% always drops. Quantity is configured separately. Luck has no effect; changes apply when saved.
 	}
 
-	DropOriginiumSlugAlphaPercent: {
-		Label: Originium Slug Alpha Orirock Cube chance (%)
-		Tooltip: Enter a percentage: 0 disables the drop, 100 guarantees it. Decimals are supported; changes apply when saved.
-	}
-
-	DropOriginiumSlugBetaPercent: {
-		Label: Originium Slug Beta Orirock Cube chance (%)
-		Tooltip: Enter a percentage: 0 disables the drop, 100 guarantees it. Decimals are supported; changes apply when saved.
-	}
-
-	DropSoldier1Percent: {
-		Label: Soldier Damaged Device chance (%)
-		Tooltip: Enter a percentage: 0 disables the drop, 100 guarantees it. Decimals are supported; changes apply when saved.
-	}
-
-	DropSoldier2Percent: {
-		Label: Soldier Diketon chance (%)
-		Tooltip: Enter a percentage: 0 disables the drop, 100 guarantees it. Decimals are supported; changes apply when saved.
+	DropOriginiumSlugMaxStack: {
+		Label: Originium Slug Orirock Cube drop quantity
+		Tooltip: Fixed quantity after a successful chance roll; this value does not change the chance. Set to 0 to disable. Changes apply when saved.
 	}
 
 	DropLSPercent: {
 		Label: Shorthorn Leporibeast Round Meat chance (%)
-		Tooltip: Enter a percentage: 0 disables the drop, 100 guarantees it. Decimals are supported; changes apply when saved.
+		Tooltip: Chance to drop this item; 0% never drops, 100% always drops. Quantity is configured separately. Luck has no effect; changes apply when saved.
+	}
+
+	DropLSMaxStack: {
+		Label: Shorthorn Leporibeast Round Meat drop quantity
+		Tooltip: Fixed quantity after a successful chance roll; this value does not change the chance. Set to 0 to disable. Changes apply when saved.
+	}
+
+	DropOriginiumSlugAlphaPercent: {
+		Label: Originium Slug Alpha Orirock Cube chance (%)
+		Tooltip: Chance to drop this item; 0% never drops, 100% always drops. Quantity is configured separately. Luck has no effect; changes apply when saved.
+	}
+
+	DropOriginiumSlugAlphaMaxStack: {
+		Label: Originium Slug Alpha Orirock Cube drop quantity
+		Tooltip: Fixed quantity after a successful chance roll; this value does not change the chance. Set to 0 to disable. Changes apply when saved.
+	}
+
+	DropOriginiumSlugBetaPercent: {
+		Label: Originium Slug Beta Orirock Cube chance (%)
+		Tooltip: Chance to drop this item; 0% never drops, 100% always drops. Quantity is configured separately. Luck has no effect; changes apply when saved.
+	}
+
+	DropOriginiumSlugBetaMaxStack: {
+		Label: Originium Slug Beta Orirock Cube drop quantity
+		Tooltip: Fixed quantity after a successful chance roll; this value does not change the chance. Set to 0 to disable. Changes apply when saved.
+	}
+
+	DropSoldier1Percent: {
+		Label: Soldier Damaged Device chance (%)
+		Tooltip: Chance to drop this item; 0% never drops, 100% always drops. Quantity is configured separately. Luck has no effect; changes apply when saved.
+	}
+
+	DropSoldier1MaxStack: {
+		Label: Soldier Damaged Device drop quantity
+		Tooltip: Fixed quantity after a successful chance roll; this value does not change the chance. Set to 0 to disable. Changes apply when saved.
+	}
+
+	DropSoldier2Percent: {
+		Label: Soldier Diketon chance (%)
+		Tooltip: Chance to drop this item; 0% never drops, 100% always drops. Quantity is configured separately. Luck has no effect; changes apply when saved.
+	}
+
+	DropSoldier2MaxStack: {
+		Label: Soldier Diketon drop quantity
+		Tooltip: Fixed quantity after a successful chance roll; this value does not change the chance. Set to 0 to disable. Changes apply when saved.
 	}
 
 	DropAcidOgSlug1Percent: {
 		Label: Acid Originium Slug Polyester chance (%)
-		Tooltip: Enter a percentage: 0 disables the drop, 100 guarantees it. Decimals are supported; changes apply when saved.
+		Tooltip: Chance to drop this item; 0% never drops, 100% always drops. Quantity is configured separately. Luck has no effect; changes apply when saved.
+	}
+
+	DropAcidOgSlug1MaxStack: {
+		Label: Acid Originium Slug Polyester drop quantity
+		Tooltip: Fixed quantity after a successful chance roll; this value does not change the chance. Set to 0 to disable. Changes apply when saved.
 	}
 
 	DropAcidOgSlug2Percent: {
 		Label: Acid Originium Slug Loxic Kohl chance (%)
-		Tooltip: Enter a percentage: 0 disables the drop, 100 guarantees it. Decimals are supported; changes apply when saved.
+		Tooltip: Chance to drop this item; 0% never drops, 100% always drops. Quantity is configured separately. Luck has no effect; changes apply when saved.
+	}
+
+	DropAcidOgSlug2MaxStack: {
+		Label: Acid Originium Slug Loxic Kohl drop quantity
+		Tooltip: Fixed quantity after a successful chance roll; this value does not change the chance. Set to 0 to disable. Changes apply when saved.
 	}
 
 	DropDrone1Percent: {
 		Label: Drone Oriron Shard chance (%)
-		Tooltip: Drone and Drone II share this percentage. 0 disables the drop; 100 guarantees it. Changes apply when saved.
+		Tooltip: Drone and Drone II share this chance. Chance to drop this item; 0% never drops, 100% always drops. Quantity is configured separately. Luck has no effect; changes apply when saved.
+	}
+
+	DropDrone1MaxStack: {
+		Label: Drone Oriron Shard drop quantity
+		Tooltip: Fixed quantity after a successful chance roll; this value does not change the chance. Set to 0 to disable. Changes apply when saved.
+	}
+
+	DropDroneII1MaxStack: {
+		Label: Drone II Oriron Shard drop quantity
+		Tooltip: Fixed quantity after a successful chance roll; this value does not change the chance. Set to 0 to disable. Changes apply when saved.
 	}
 
 	DropDrone2Percent: {
 		Label: Drone Ester chance (%)
-		Tooltip: Drone and Drone II share this percentage. 0 disables the drop; 100 guarantees it. Changes apply when saved.
+		Tooltip: Drone and Drone II share this chance. Chance to drop this item; 0% never drops, 100% always drops. Quantity is configured separately. Luck has no effect; changes apply when saved.
+	}
+
+	DropDrone2MaxStack: {
+		Label: Drone Ester drop quantity
+		Tooltip: Fixed quantity after a successful chance roll; this value does not change the chance. Set to 0 to disable. Changes apply when saved.
+	}
+
+	DropDroneII2MaxStack: {
+		Label: Drone II Ester drop quantity
+		Tooltip: Fixed quantity after a successful chance roll; this value does not change the chance. Set to 0 to disable. Changes apply when saved.
 	}
 }
 

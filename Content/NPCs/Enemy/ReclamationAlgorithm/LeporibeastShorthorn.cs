@@ -62,7 +62,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.ReclamationAlgorithm
 
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
 
-			npcLoot.Add(new ConfiguredPercentageDropRule(ItemType<RAMeat>(), () => ModContent.GetInstance<Dropconfig>().DropLSPercent, 1, 2));
+			npcLoot.Add(new ConfiguredPercentageDropRule(ItemType<RAMeat>(), () => ModContent.GetInstance<Dropconfig>().DropLSPercent,
+			() => ModContent.GetInstance<Dropconfig>().DropLSMaxStack));
 
 		}
 

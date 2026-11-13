@@ -100,8 +100,10 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
 			// Drone 掉落：Oriron 1–3、Ester 1–2
-			npcLoot.Add(new ConfiguredPercentageDropRule(ModContent.ItemType<OrironShard>(), () => ModContent.GetInstance<Dropconfig>().DropDrone1Percent, 1, 3));
-			npcLoot.Add(new ConfiguredPercentageDropRule(ModContent.ItemType<Ester>(), () => ModContent.GetInstance<Dropconfig>().DropDrone2Percent, 1, 2));
+			npcLoot.Add(new ConfiguredPercentageDropRule(ModContent.ItemType<OrironShard>(), () => ModContent.GetInstance<Dropconfig>().DropDrone1Percent,
+			() => ModContent.GetInstance<Dropconfig>().DropDrone1MaxStack));
+			npcLoot.Add(new ConfiguredPercentageDropRule(ModContent.ItemType<Ester>(), () => ModContent.GetInstance<Dropconfig>().DropDrone2Percent,
+			() => ModContent.GetInstance<Dropconfig>().DropDrone2MaxStack));
 		}
 
 		public override void OnSpawn(IEntitySource source) {

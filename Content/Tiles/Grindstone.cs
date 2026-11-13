@@ -27,12 +27,12 @@ namespace ArknightsMod.Content.Tiles
 			Main.tileBlockLight[Type] = true;
 
 			LocalizedText name = CreateMapEntryName();
-			AddMapEntry(new Color(229, 183, 194), name); // Adds an entry to the minimap for this tile with the given color and display name. This should be called in SetDefaults. 
+			AddMapEntry(new Color(229, 183, 194), name); // Adds an entry to the minimap for this tile with the given color and display name. This should be called in SetDefaults.
 
 			DustType = DustID.Bone;
 			HitSound = SoundID.Tink;
 			// MineResist = 4f;
-			MinPick = 30;
+			MinPick = 65;
 		}
 	}
 

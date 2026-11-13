@@ -175,8 +175,10 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
 
 
-			npcLoot.Add(new ConfiguredPercentageDropRule(ModContent.ItemType<Items.Material.DamagedDevice>(), () => ModContent.GetInstance<Dropconfig>().DropSoldier1Percent));
-			npcLoot.Add(new ConfiguredPercentageDropRule(ModContent.ItemType<Items.Material.Diketon>(), () => ModContent.GetInstance<Dropconfig>().DropSoldier2Percent));
+			npcLoot.Add(new ConfiguredPercentageDropRule(ModContent.ItemType<Items.Material.DamagedDevice>(), () => ModContent.GetInstance<Dropconfig>().DropSoldier1Percent,
+			() => ModContent.GetInstance<Dropconfig>().DropSoldier1MaxStack));
+			npcLoot.Add(new ConfiguredPercentageDropRule(ModContent.ItemType<Items.Material.Diketon>(), () => ModContent.GetInstance<Dropconfig>().DropSoldier2Percent,
+			() => ModContent.GetInstance<Dropconfig>().DropSoldier2MaxStack));
 
 
 		}

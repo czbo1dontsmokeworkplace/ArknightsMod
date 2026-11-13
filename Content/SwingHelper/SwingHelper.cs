@@ -78,8 +78,8 @@ namespace ArknightsMod.Content.SwingHelper
         public static Effect NoiseTrail;
 
 
-	        public enum SwingEffect
-	        {
+        public enum SwingEffect
+        {
 	        Zero,
 	        Dissolve,
 	        Flow,
@@ -175,7 +175,8 @@ namespace ArknightsMod.Content.SwingHelper
         public float mouseRad;
 
         private int swingFacing = 1;
-        /// <summary>本次挥砍的实际起手世界角度（弧度，不折叠整圈）。</summary>
+        /// <summary>
+        /// 本次挥砍的实际起手世界角度（弧度，不折叠整圈）。</summary>
         public float startRad { get; private set; }
         /// <summary>
         /// 手部弧度
@@ -260,6 +261,7 @@ namespace ArknightsMod.Content.SwingHelper
         /// 戳刺时间
         /// </summary>
         public int stabTime;
+
         /// <summary>
         /// 行进速率
         /// </summary>
@@ -482,7 +484,7 @@ namespace ArknightsMod.Content.SwingHelper
             return startRad + swingRad * EaseSwingProgress(swingTime / (float)SwingUseTime) * (int)direction;
         }
 
-        protected virtual float EaseSwingProgress(float progress) => RotationHelper.EaseOutCubic(progress);
+        protected virtual float  EaseSwingProgress(float progress) => RotationHelper.EaseOutCubic(progress);
 
         public SwingHelper SetDashRad(float rad) {
 	        dashRad = rad;
@@ -662,7 +664,7 @@ namespace ArknightsMod.Content.SwingHelper
                 swordDirection = Vector2.UnitX.RotatedBy(rawSwordRotation);
             float visualSwordRotation = swordDirection.ToRotation();
 
-            // Composite arm rotation is measured from the downward axis for both facings.
+            //复合臂旋转是从下轴测量的，适用于两种方向。
             float armAngle = visualHandRotation - MathF.PI / 2f;
             if (isBackArm) {
 	            player.SetCompositeArmBack(true, armType, armAngle);

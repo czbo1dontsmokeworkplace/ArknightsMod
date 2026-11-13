@@ -53,7 +53,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.ThroughChapter4
 
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
 
-			npcLoot.Add(new ConfiguredPercentageDropRule(ItemType<Items.Material.OrirockCube>(), () => ModContent.GetInstance<Dropconfig>().DropOriginiumSlugPercent, 1, 2));
+			npcLoot.Add(new ConfiguredPercentageDropRule(ItemType<Items.Material.OrirockCube>(), () => ModContent.GetInstance<Dropconfig>().DropOriginiumSlugPercent,
+			() => ModContent.GetInstance<Dropconfig>().DropOriginiumSlugMaxStack));
 
 		}
 

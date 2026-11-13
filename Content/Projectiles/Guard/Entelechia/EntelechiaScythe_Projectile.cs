@@ -38,7 +38,7 @@ namespace ArknightsMod.Content.Projectiles.Guard.Entelechia
 				.SetProj(Projectile)
 				.SetPlayer(Main.player[Projectile.owner])
 				.SetSwingRad(MathF.PI)
-				.SetIndex(30);;
+				.SetIndex(30);
 			Helper.handleLength = new Vector2(30, 0);
 			Helper.swordLength = new Vector2(73, 0);
 			Helper.setoff = new Vector2(-25, 0);

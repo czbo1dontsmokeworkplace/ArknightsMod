@@ -62,8 +62,10 @@ namespace ArknightsMod.Content.NPCs.Enemy.GT
 
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
 
-			npcLoot.Add(new ConfiguredPercentageDropRule(ItemType<Items.Material.Polyester>(), () => ModContent.GetInstance<Dropconfig>().DropAcidOgSlug1Percent, 1, 2));
-			npcLoot.Add(new ConfiguredPercentageDropRule(ItemType<Items.Material.LoxicKohl>(), () => ModContent.GetInstance<Dropconfig>().DropAcidOgSlug2Percent, 1, 2));
+			npcLoot.Add(new ConfiguredPercentageDropRule(ItemType<Items.Material.Polyester>(), () => ModContent.GetInstance<Dropconfig>().DropAcidOgSlug1Percent,
+			() => ModContent.GetInstance<Dropconfig>().DropAcidOgSlug1MaxStack));
+			npcLoot.Add(new ConfiguredPercentageDropRule(ItemType<Items.Material.LoxicKohl>(), () => ModContent.GetInstance<Dropconfig>().DropAcidOgSlug2Percent,
+			() => ModContent.GetInstance<Dropconfig>().DropAcidOgSlug2MaxStack));
 
 		}
 

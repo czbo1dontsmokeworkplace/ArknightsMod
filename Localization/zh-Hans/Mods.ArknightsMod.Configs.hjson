@@ -92,56 +92,116 @@ MusicConfig: {
 }
 
 Dropconfig: {
-	DisplayName: 战利品掉落率设置
+	DisplayName: 战利品掉落率与数量设置
 
 	DropOriginiumSlugPercent: {
 		Label: 源石虫的固源岩掉落率（%）
-		Tooltip: 输入百分比：0 为不掉落，100 为必定掉落；支持小数，保存后生效
+		Tooltip: 先按此百分比判断是否掉落：0%不掉落，100%必掉；成功后按数量配置掉落。概率不受数量或幸运值影响，保存后生效。
 	}
 
-	DropOriginiumSlugAlphaPercent: {
-		Label: 源石虫Alpha的固源岩掉落率（%）
-		Tooltip: 输入百分比：0 为不掉落，100 为必定掉落；支持小数，保存后生效
-	}
-
-	DropOriginiumSlugBetaPercent: {
-		Label: 源石虫Beta的固源岩掉落率（%）
-		Tooltip: 输入百分比：0 为不掉落，100 为必定掉落；支持小数，保存后生效
-	}
-
-	DropSoldier1Percent: {
-		Label: 士兵的破损装置掉落率（%）
-		Tooltip: 输入百分比：0 为不掉落，100 为必定掉落；支持小数，保存后生效
-	}
-
-	DropSoldier2Percent: {
-		Label: 士兵的双酮掉落率（%）
-		Tooltip: 输入百分比：0 为不掉落，100 为必定掉落；支持小数，保存后生效
+	DropOriginiumSlugMaxStack: {
+		Label: 源石虫的固源岩掉落数量
+		Tooltip: 概率判定成功后掉落的固定数量，不影响掉落率；例如1%掉100个，或100%掉1个。设为0可关闭，保存后生效。
 	}
 
 	DropLSPercent: {
 		Label: 小角跳兽的圆圆肉片掉落率（%）
-		Tooltip: 输入百分比：0 为不掉落，100 为必定掉落；支持小数，保存后生效
+		Tooltip: 先按此百分比判断是否掉落：0%不掉落，100%必掉；成功后按数量配置掉落。概率不受数量或幸运值影响，保存后生效。
+	}
+
+	DropLSMaxStack: {
+		Label: 小角跳兽的圆圆肉片掉落数量
+		Tooltip: 概率判定成功后掉落的固定数量，不影响掉落率；例如1%掉100个，或100%掉1个。设为0可关闭，保存后生效。
+	}
+
+	DropOriginiumSlugAlphaPercent: {
+		Label: 源石虫Alpha的固源岩掉落率（%）
+		Tooltip: 先按此百分比判断是否掉落：0%不掉落，100%必掉；成功后按数量配置掉落。概率不受数量或幸运值影响，保存后生效。
+	}
+
+	DropOriginiumSlugAlphaMaxStack: {
+		Label: 源石虫Alpha的固源岩掉落数量
+		Tooltip: 概率判定成功后掉落的固定数量，不影响掉落率；例如1%掉100个，或100%掉1个。设为0可关闭，保存后生效。
+	}
+
+	DropOriginiumSlugBetaPercent: {
+		Label: 源石虫Beta的固源岩掉落率（%）
+		Tooltip: 先按此百分比判断是否掉落：0%不掉落，100%必掉；成功后按数量配置掉落。概率不受数量或幸运值影响，保存后生效。
+	}
+
+	DropOriginiumSlugBetaMaxStack: {
+		Label: 源石虫Beta的固源岩掉落数量
+		Tooltip: 概率判定成功后掉落的固定数量，不影响掉落率；例如1%掉100个，或100%掉1个。设为0可关闭，保存后生效。
+	}
+
+	DropSoldier1Percent: {
+		Label: 士兵的破损装置掉落率（%）
+		Tooltip: 先按此百分比判断是否掉落：0%不掉落，100%必掉；成功后按数量配置掉落。概率不受数量或幸运值影响，保存后生效。
+	}
+
+	DropSoldier1MaxStack: {
+		Label: 士兵的破损装置掉落数量
+		Tooltip: 概率判定成功后掉落的固定数量，不影响掉落率；例如1%掉100个，或100%掉1个。设为0可关闭，保存后生效。
+	}
+
+	DropSoldier2Percent: {
+		Label: 士兵的双酮掉落率（%）
+		Tooltip: 先按此百分比判断是否掉落：0%不掉落，100%必掉；成功后按数量配置掉落。概率不受数量或幸运值影响，保存后生效。
+	}
+
+	DropSoldier2MaxStack: {
+		Label: 士兵的双酮掉落数量
+		Tooltip: 概率判定成功后掉落的固定数量，不影响掉落率；例如1%掉100个，或100%掉1个。设为0可关闭，保存后生效。
 	}
 
 	DropAcidOgSlug1Percent: {
 		Label: 酸液源石虫的聚酸酯掉落率（%）
-		Tooltip: 输入百分比：0 为不掉落，100 为必定掉落；支持小数，保存后生效
+		Tooltip: 先按此百分比判断是否掉落：0%不掉落，100%必掉；成功后按数量配置掉落。概率不受数量或幸运值影响，保存后生效。
+	}
+
+	DropAcidOgSlug1MaxStack: {
+		Label: 酸液源石虫的聚酸酯掉落数量
+		Tooltip: 概率判定成功后掉落的固定数量，不影响掉落率；例如1%掉100个，或100%掉1个。设为0可关闭，保存后生效。
 	}
 
 	DropAcidOgSlug2Percent: {
 		Label: 酸液源石虫的扭转醇掉落率（%）
-		Tooltip: 输入百分比：0 为不掉落，100 为必定掉落；支持小数，保存后生效
+		Tooltip: 先按此百分比判断是否掉落：0%不掉落，100%必掉；成功后按数量配置掉落。概率不受数量或幸运值影响，保存后生效。
+	}
+
+	DropAcidOgSlug2MaxStack: {
+		Label: 酸液源石虫的扭转醇掉落数量
+		Tooltip: 概率判定成功后掉落的固定数量，不影响掉落率；例如1%掉100个，或100%掉1个。设为0可关闭，保存后生效。
 	}
 
 	DropDrone1Percent: {
 		Label: 无人机的异铁碎片掉落率（%）
-		Tooltip: 无人机与无人机II共用此百分比；0 为不掉落，100 为必定掉落，保存后生效
+		Tooltip: 无人机与无人机II共用此掉落率。先按此百分比判断是否掉落：0%不掉落，100%必掉；成功后按数量配置掉落。概率不受数量或幸运值影响，保存后生效。
+	}
+
+	DropDrone1MaxStack: {
+		Label: 无人机的异铁碎片掉落数量
+		Tooltip: 概率判定成功后掉落的固定数量，不影响掉落率；例如1%掉100个，或100%掉1个。设为0可关闭，保存后生效。
+	}
+
+	DropDroneII1MaxStack: {
+		Label: 无人机II的异铁碎片掉落数量
+		Tooltip: 概率判定成功后掉落的固定数量，不影响掉落率；例如1%掉100个，或100%掉1个。设为0可关闭，保存后生效。
 	}
 
 	DropDrone2Percent: {
 		Label: 无人机的酯原料掉落率（%）
-		Tooltip: 无人机与无人机II共用此百分比；0 为不掉落，100 为必定掉落，保存后生效
+		Tooltip: 无人机与无人机II共用此掉落率。先按此百分比判断是否掉落：0%不掉落，100%必掉；成功后按数量配置掉落。概率不受数量或幸运值影响，保存后生效。
+	}
+
+	DropDrone2MaxStack: {
+		Label: 无人机的酯原料掉落数量
+		Tooltip: 概率判定成功后掉落的固定数量，不影响掉落率；例如1%掉100个，或100%掉1个。设为0可关闭，保存后生效。
+	}
+
+	DropDroneII2MaxStack: {
+		Label: 无人机II的酯原料掉落数量
+		Tooltip: 概率判定成功后掉落的固定数量，不影响掉落率；例如1%掉100个，或100%掉1个。设为0可关闭，保存后生效。
 	}
 }
 
