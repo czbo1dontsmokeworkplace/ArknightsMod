@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using ArknightsMod.Content.Items.Weapons.Guard.Earthshaker;
 using ArknightsMod.Players;
+using ArknightsMod.Content.Projectiles.Guard.Gavial;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
@@ -16,6 +17,17 @@ public sealed class EarthshakerReturningHammer : ModProjectile
 {
     private bool shockwavePending, shockwaveDamage, impacted, impactPlayed;
     private Vector2 impactPosition;
+    private bool hasExploded;
+    private ulong lastExplosionTick;
+
+    internal bool TryGrenadeExplosion(ulong tick)
+    {
+        // extraUpdates must not turn twelve game ticks into four ticks.
+        if (hasExploded && tick - lastExplosionTick < 12) return false;
+        hasExploded = true;
+        lastExplosionTick = tick;
+        return true;
+    }
     internal EarthshakerKind Kind => (EarthshakerKind)(int)Projectile.ai[2];
     public override string Texture => "Terraria/Images/Projectile_301";
 
@@ -174,6 +186,10 @@ public sealed class EarthshakerReturningHammer : ModProjectile
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
     {
         target.AddBuff(BuffID.BrokenArmor, 90);
+        if (Projectile.owner == Main.myPlayer && TryGrenadeExplosion(Main.GameUpdateCount))
+            Projectile.NewProjectile(Projectile.GetSource_OnHit(target), Projectile.Center, Vector2.Zero,
+                ModContent.ProjectileType<GavialChainsawExplosion>(), Projectile.damage, Projectile.knockBack,
+                Projectile.owner);
         Projectile.damage = (int)(Projectile.damage * .9f);
         Projectile.netUpdate = true;
         Main.player[Projectile.owner].GetModPlayer<EarthshakerPlayer>().CreditAttack();

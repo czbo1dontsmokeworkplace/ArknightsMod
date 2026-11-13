@@ -10,6 +10,7 @@ public partial class FNIceRingChoice : global::ArknightsMod.Common.Networking.IL
         writer.Write(icenum);
         writer.Write(icenumshooted);
         writer.Write(speedY);
+        WriteFormation(writer);
     }
 
     public override void ReceiveExtraAI(System.IO.BinaryReader reader)
@@ -19,5 +20,6 @@ public partial class FNIceRingChoice : global::ArknightsMod.Common.Networking.IL
         icenum = reader.ReadInt32();
         icenumshooted = reader.ReadInt32();
         speedY = reader.ReadSingle();
+        ReadFormation(reader);
     }
 }

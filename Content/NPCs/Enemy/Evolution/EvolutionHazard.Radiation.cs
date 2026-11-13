@@ -1,65 +1,53 @@
-using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
+using Terraria.GameContent;
 
 namespace ArknightsMod.Content.NPCs.Enemy.Evolution;
 
 public sealed partial class EvolutionHazard
 {
-    // 保留弹种编号和伤害驾驶舱入口；原来的五组弧线已替换为五条瞬发激光。
+    private bool pressureIgnited;
+    internal bool PressureLive => Kind == EvolutionShot.Radiation && Parent is Evolution boss && boss.Phase == 1 && boss.Serial == Serial;
+    internal int PressureAge => Age - FireAge;
     private void UpdateRadiation(Evolution boss)
     {
         if (boss.Phase != 1) { Projectile.Kill(); return; }
-        UpdateContinuousLaserDust();
-        if (Age == FireAge && !Main.dedServ)
+        if (!pressureIgnited && Age >= FireAge)
         {
-            SoundEngine.PlaySound(SoundID.Zombie104 with { Volume = .6f, Pitch = .15f }, Projectile.Center);
-            EvolutionVisuals.Burst(Projectile.Center, 1.15f, false, EvolutionVisuals.Sand);
-            EvolutionImpactSystem.Emit(Projectile.Center, 260, 2);
-            // 实体能量冲击波随点亮推出；只有装饰波纹，原8帧伤害窗不延长。
-            EvolutionImpactSystem.Emit(Projectile.Center, 760, 3.5f, false, 42);
-        }
-    }
-
-    internal bool RadiationCollides(Rectangle box)
-    {
-        for (int ray = 0; ray < 5; ray++)
-        {
-            Vector2 end = Projectile.Center + EvolutionNestRules.Direction((int)Parameter, ray).ToRotationVector2() * EvolutionNestRules.RadiationReach;
-            float hit = 0;
-            if (Collision.CheckAABBvLineCollision(box.TopLeft(), box.Size(), Projectile.Center, end,
-                EvolutionNestRules.LaserWidth, ref hit)) return true;
-        }
-        return false;
-    }
-
-    private void DrawRadiation()
-    {
-        float warning = MathHelper.SmoothStep(0, 1, Math.Clamp(Age / 20f, 0, 1)) *
-            (1 - MathHelper.SmoothStep(0, 1, Math.Clamp((Age - Delay) / 16f, 0, 1)));
-        int fired = Age - FireAge;
-        float flash = EvolutionRules.BeamEnvelope(fired,EvolutionNestRules.LaserActiveTicks,EvolutionNestRules.LaserFadeTicks,true);
-        for (int ray = 0; ray < 5; ray++)
-        {
-            Vector2 direction = EvolutionNestRules.Direction((int)Parameter, ray).ToRotationVector2();
-            Vector2 end = Projectile.Center + direction * EvolutionNestRules.RadiationReach;
-            if (warning > .001f)
+            pressureIgnited = true;
+            if (!Main.dedServ && PressureAge <= 3)
             {
-                Vector2 edge = direction.RotatedBy(MathHelper.PiOver2) * (EvolutionNestRules.LaserWidth * .5f);
-                EvolutionVisuals.Line(Projectile.Center, end, EvolutionVisuals.Sand * (.8f * warning), 2);
-                EvolutionVisuals.Line(Projectile.Center + edge, end + edge, EvolutionVisuals.Sand * (.3f * warning), 1, false);
-                EvolutionVisuals.Line(Projectile.Center - edge, end - edge, EvolutionVisuals.Sand * (.3f * warning), 1, false);
+                SoundEngine.PlaySound(SoundID.Zombie104 with { Volume = .6f, Pitch = .15f }, Projectile.Center);
+                EvolutionImpactSystem.Kick(Projectile.Center, 5.5f);
             }
         }
-        if(!EvolutionLaserVisuals.WorldMaterialReady) DrawContinuousBodies();
-        if (flash > 0)
-        {
-            EvolutionVisuals.Glow(Projectile.Center, EvolutionVisuals.SandCore * flash, new Vector2(160));
-            EvolutionLaserVisuals.DrawMuzzle(Projectile.Center,-Vector2.UnitY,flash,60,fired,EvolutionVisuals.SandCore);
-            if(fired>=0&&fired<42)
-                EvolutionVisuals.Ring(Projectile.Center,65+fired*15,0,EvolutionVisuals.Sand*((1-fired/42f)*.65f),3,false);
-        }
+    }
+    internal bool RadiationCollides(Rectangle box) => EvolutionShockwaveRules.Collides(box, Projectile.Center, Parameter, PressureAge);
+    internal void DrawPressureMaterial(Effect material)
+    {
+        Vector2 at = Projectile.Center - Main.screenPosition;
+        if (PressureAge < 0)
+            EvolutionShockwaveVisuals.DrawWarningMaterial(Main.spriteBatch, material, EvolutionVisuals.Asset("PressureNoise"), at,
+                EvolutionShockwaveRules.Reach, Parameter, Age, Delay, FireAge, EvolutionVisuals.Sand, EvolutionVisuals.SandCore);
+        else if (PressureAge < EvolutionShockwaveRules.Duration)
+            EvolutionShockwaveVisuals.DrawPressureFront(Main.spriteBatch, material, EvolutionVisuals.Asset("PressureNoise"), at,
+                PressureAge, Parameter, EvolutionVisuals.Sand, EvolutionVisuals.SandCore);
+    }
+    internal void DrawPressureDetails(bool fallback)
+    {
+        if (PressureAge < 0 || PressureAge >= EvolutionShockwaveRules.Duration) return;
+        EvolutionShockwaveVisuals.DrawPressureDebris(Main.spriteBatch, EvolutionVisuals.Asset("Bloom"), TextureAssets.MagicPixel.Value,
+            EvolutionVisuals.Asset("CinematicRing"), Projectile.Center - Main.screenPosition,
+            PressureAge, Parameter, EvolutionVisuals.Sand, EvolutionVisuals.SandCore, EvolutionCinematics.Reduced, fallback);
+    }
+    private void DrawRadiation()
+    {
+        if (PressureAge >= 0) return;
+        EvolutionShockwaveVisuals.DrawWarningGuides(Main.spriteBatch, TextureAssets.MagicPixel.Value, EvolutionVisuals.Asset("Bloom"),
+            Projectile.Center - Main.screenPosition, EvolutionShockwaveRules.Reach, Parameter, Age, Delay, FireAge,
+            EvolutionVisuals.Sand, EvolutionVisuals.SandCore, EvolutionCinematics.Reduced);
     }
 }

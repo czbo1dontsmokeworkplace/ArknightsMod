@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 // 统一武器数值覆写中心
@@ -168,7 +168,7 @@ namespace ArknightsMod.Common
 			// MeteorBow - 流星 - 弓 (EliteDamage=[35,42,51])
 			// 原始值: damage=35, useTime=30, useAnimation=30, knockBack=2, shootSpeed=12, crit=4
 			[typeof(Content.Items.Weapons.Sniper.Meteor.MeteorBow)] = new() {
-				Damage = 35, UseTime = 30, UseAnimation = 30, KnockBack = 2f, ShootSpeed = 12f, Crit = 4
+				Damage = 35, UseTime = 15, UseAnimation = 15, KnockBack = 2f, ShootSpeed = 15f, Crit = 4
 			},
 
 			// PozemkaCrossbow - 帕捷契卡 - 十字弩
@@ -180,7 +180,7 @@ namespace ArknightsMod.Common
 			// RangersBow - 猎人 - 弓
 			// 原始值: damage=16, useTime=30, useAnimation=30, knockBack=4, shootSpeed=160, crit=2
 			[typeof(Content.Items.Weapons.Sniper.Rangers.RangersBow)] = new() {
-				Damage = 16, UseTime = 30, UseAnimation = 30, KnockBack = 4f, ShootSpeed = 160f, Crit = 2
+				Damage = 16, UseTime = 17, UseAnimation = 17, KnockBack = 4f, ShootSpeed = 13f, Crit = 2
 			},
 
 			// SchwarzBow - 黑 - 弩
@@ -198,7 +198,7 @@ namespace ArknightsMod.Common
 			// TyphonBow - 提丰 - 弓
 			// 原始值: damage=209, useTime=72, useAnimation=72, knockBack=6, shootSpeed=8
 			[typeof(Content.Items.Weapons.Sniper.Typhon.TyphonBow)] = new() {
-				Damage = 571, UseTime = 60, UseAnimation = 60, KnockBack = 6f, ShootSpeed = 20f
+                Damage = 210, UseTime = 36, UseAnimation = 36, KnockBack = 6f, ShootSpeed = 20f
 			},
 
 			// WisadelCannon - 维什戴尔 - 祖宗发射器(炮台)

@@ -1,0 +1,8 @@
+Buffs: {
+	CognitiveOverwrite: {
+		DisplayName: Cognitive Overwrite
+		Description: The artillery core is rewriting your perception
+	}
+}
+
+Projectiles.HarbingerHazard.DisplayName: Harbinger Fire-Control Signal

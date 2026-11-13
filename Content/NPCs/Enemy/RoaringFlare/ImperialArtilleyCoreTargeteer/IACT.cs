@@ -2186,12 +2186,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 			if (shadertimer <= 60) {
 				if (Projectile.ai[0] == 0) {
 					Projectile.ai[0] = 1;
-					if (Main.netMode != NetmodeID.Server && !Terraria.Graphics.Effects.Filters.Scene["IACTSW"].IsActive()) {
+					if (!Main.dedServ && Main.netMode != NetmodeID.Server && !Terraria.Graphics.Effects.Filters.Scene["IACTSW"].IsActive()) {
 						Terraria.Graphics.Effects.Filters.Scene.Activate("IACTSW", Projectile.Center).GetShader().UseColor(ammount, scalesize, wavevelocity).UseTargetPosition(Projectile.Center);
 					}
 				}
 
-				if (Main.netMode != NetmodeID.Server && Terraria.Graphics.Effects.Filters.Scene["IACTSW"].IsActive()) {
+				if (!Main.dedServ && Main.netMode != NetmodeID.Server && Terraria.Graphics.Effects.Filters.Scene["IACTSW"].IsActive()) {
 					float progress = shadertimer / 60f;
 					Terraria.Graphics.Effects.Filters.Scene["IACTSW"].GetShader().UseProgress(3 * progress).UseOpacity(distortStrength * (1 - progress / 1f));
 				}
@@ -2199,7 +2199,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		}
 
 		public override void OnKill(int timeLeft) {
-			if (Main.netMode != NetmodeID.Server && Terraria.Graphics.Effects.Filters.Scene["IACTSW"].IsActive()) {
+			if (!Main.dedServ && Main.netMode != NetmodeID.Server && Terraria.Graphics.Effects.Filters.Scene["IACTSW"].IsActive()) {
 				Terraria.Graphics.Effects.Filters.Scene["IACTSW"].Deactivate();
 			}
 		}
@@ -2246,12 +2246,12 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 			if (shadertimer <= 60) {
 				if (Projectile.ai[0] == 0) {
 					Projectile.ai[0] = 1;
-					if (Main.netMode != NetmodeID.Server && !Terraria.Graphics.Effects.Filters.Scene["IACTSW"].IsActive()) {
+					if (!Main.dedServ && Main.netMode != NetmodeID.Server && !Terraria.Graphics.Effects.Filters.Scene["IACTSW"].IsActive()) {
 						Terraria.Graphics.Effects.Filters.Scene.Activate("IACTSW", Projectile.Center).GetShader().UseColor(ammount, scalesize, wavevelocity).UseTargetPosition(Projectile.Center);
 					}
 				}
 
-				if (Main.netMode != NetmodeID.Server && Terraria.Graphics.Effects.Filters.Scene["IACTSW"].IsActive()) {
+				if (!Main.dedServ && Main.netMode != NetmodeID.Server && Terraria.Graphics.Effects.Filters.Scene["IACTSW"].IsActive()) {
 					float progress = shadertimer / 30f;
 					Terraria.Graphics.Effects.Filters.Scene["IACTSW"].GetShader().UseProgress(3 * progress).UseOpacity(distortStrength * (1 - progress / 1f));
 				}
@@ -2259,7 +2259,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		}
 
 		public override void OnKill(int timeLeft) {
-			if (Main.netMode != NetmodeID.Server && Terraria.Graphics.Effects.Filters.Scene["IACTSW"].IsActive()) {
+			if (!Main.dedServ && Main.netMode != NetmodeID.Server && Terraria.Graphics.Effects.Filters.Scene["IACTSW"].IsActive()) {
 				Terraria.Graphics.Effects.Filters.Scene["IACTSW"].Deactivate();
 			}
 		}
@@ -2305,7 +2305,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		}
 
 		public override bool PreDraw(ref Color lightColor) {
-			Texture2D trailtexture = Request<Texture2D>("ArknightsMod/Common/VisualEffects/FlameTrail").Value;
+			Texture2D trailtexture = Request<Texture2D>("ArknightsMod/Common/VisualEffects/FlameTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 			TrailMaker.ProjectileDrawTailByConstWidth(Projectile, trailtexture, new Vector2(12, -12), new Color(255, 80, 0), new Color(235, 100, 0), 15f, true);
 			return true;
 		}
@@ -2351,7 +2351,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTarge
 		}
 
 		public override bool PreDraw(ref Color lightColor) {
-			Texture2D trailtexture = Request<Texture2D>("ArknightsMod/Common/VisualEffects/FlameTrail").Value;
+			Texture2D trailtexture = Request<Texture2D>("ArknightsMod/Common/VisualEffects/FlameTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 			TrailMaker.ProjectileDrawTailByConstWidth(Projectile, trailtexture, new Vector2(12, -12), new Color(255, 60, 0), new Color(220, 20, 0), 15f, true);
 			return true;
 		}

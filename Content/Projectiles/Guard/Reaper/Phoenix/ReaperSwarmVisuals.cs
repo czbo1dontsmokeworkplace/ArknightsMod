@@ -156,6 +156,16 @@ internal sealed class ReaperSwarmVisualNode
     private readonly float life;
     private readonly int depth;
     private readonly string kind;
+    private readonly ReaperSwarmDefinition definition;
+    private ReaperSwarmDefinition emitterDefinition;
+    private ReaperSwarmDefinition Emission => emitterDefinition ??= ReaperSwarmDefinition.Get(Emitter);
+    private readonly Vector4 paletteColor;
+    private Func<Vector2> followPosition, followDirection;
+    private Func<bool> followAlive, followVisible;
+    private Func<Vector2> FollowPosition => followPosition ??= () => Position;
+    private Func<Vector2> FollowDirection => followDirection ??= () => Direction;
+    private Func<bool> FollowAlive => followAlive ??= () => Alive;
+    private Func<bool> FollowVisible => followVisible ??= () => Visible?.Invoke() ?? true;
     private float age,emissionClock,rotation,motionSpeed,acceleration,particleRotation;
     private int emitted;
     private bool initialized,stopped,soundPlayed;
@@ -172,12 +182,15 @@ internal sealed class ReaperSwarmVisualNode
     internal bool Alive=>!stopped;
     internal bool IsShake=>kind=="shake";
     internal float ShakeAge=>age;
-    private readonly List<TrailPoint> trail=new();
+    private readonly List<TrailPoint> trail;
     private readonly record struct TrailPoint(Vector2 Position,float Time);
     internal ReaperSwarmVisualNode(JsonElement data,Func<Vector2> pos,Func<Vector2> dir,float lifetime,Func<bool> active,Vector2 scale,float z,int depth,ReaperKind palette,PhoenixFxStyle style)
     {
         Style=style;Palette=palette;Data=data;sourcePosition=pos;sourceDirection=dir;life=lifetime;sourceActive=active;inheritedScale=scale;Z=z;this.depth=depth;
-        kind=data.S("__kind");Position=pos();Direction=dir().Unit();Scale=scale*data.V("scale",Vector2.One);
+        definition=ReaperSwarmDefinition.Get(data);kind=definition.Kind;
+        if(kind=="trail")trail=new();
+        paletteColor=ReaperSwarmPalette.Tint(definition.Color,Palette);
+        Position=pos();Direction=dir().Unit();Scale=scale*definition.Scale;
         emissionClock=data.F("time_before_first_emission");
         motionSpeed=0;
     }
@@ -198,7 +211,7 @@ internal sealed class ReaperSwarmVisualNode
     {
         if(stopped)return;stopped=true;
         if(!Main.dedServ)ReaperSwarmVisuals.Destruction(Data,Position,Direction,Z,Palette,Style);
-        if(Data.B("looping") && SoundEngine.TryGetActiveSound(soundSlot,out var sound))sound.Stop();
+        if(definition.Looping && SoundEngine.TryGetActiveSound(soundSlot,out var sound))sound.Stop();
     }
     internal void Update(float dt)
     {
@@ -212,27 +225,27 @@ internal sealed class ReaperSwarmVisualNode
         {
             initialized=true;
             foreach(var a in Data.At("attachments").Array())
-                ReaperSwarmVisuals.Attach(a,()=>Position,()=>Direction,()=>Alive,depth+1,Scale,Z,()=>Visible?.Invoke()??true,Palette,Style);
+                ReaperSwarmVisuals.Attach(a,FollowPosition,FollowDirection,FollowAlive,depth+1,Scale,Z,FollowVisible,Palette,Style);
         }
         age+=dt;
         bool active=sourceActive?.Invoke()??true;
         // A beam emitter can leave and re-enter the visible section as the hit
         // endpoint changes. Other attached actors stop when their host stops.
-        if(!active || age>life || kind=="shake" && age>Data.F("duration",.1f)) {Stop();return;}
+        if(!active || age>life || kind=="shake" && age>definition.Duration) {Stop();return;}
         Vector2 basis=sourceDirection().Unit();
-        rotation-=MathHelper.ToRadians(Data.F("rotation_speed")+AttachmentRotationSpeed)*dt;
+        rotation-=MathHelper.ToRadians(definition.RotationSpeed+AttachmentRotationSpeed)*dt;
         Direction=basis.Rotate(rotation);
         if(IsParticle)
         {
             motionSpeed+=acceleration*dt;
-            motionSpeed=Math.Clamp(motionSpeed,Emitter.F("particle_min_speed",-100000),Emitter.F("particle_max_speed",100000));
+            motionSpeed=Math.Clamp(motionSpeed,Emission.MinimumSpeed,Emission.MaximumSpeed);
             localParticlePosition+=localParticleVelocity*motionSpeed*dt;
             Position=(Attached?sourcePosition():Vector2.Zero)+(Attached?ReaperSwarmJson.Local(localParticlePosition,basis):localParticlePosition);
             Direction=(Attached?basis:Vector2.UnitX).Rotate(particleRotation+rotation);
             float t=Math.Clamp(age/life,0,1);
-            ParticleAlpha=ReaperSwarmVisuals.Curve(Emitter.At("particle_alpha_animation_time_frames"),Emitter.At("particle_alpha_animations"),t,1);
-            Scale=inheritedScale*Data.V("scale",Vector2.One)*ReaperSwarmVisuals.ScaleCurve(Emitter.At("particle_scale_animation_time_frames"),Emitter.At("particle_scale_animations"),t);
-            if(Style?.SkyfireRing==true && Emitter.S("name")=="emitter.player.weapon.24.impact.shockwave")
+            ParticleAlpha=Emission.Alpha(t);
+            Scale=inheritedScale*definition.Scale*Emission.ParticleScale(t);
+            if(Style?.SkyfireRing==true && Emission.Name=="emitter.player.weapon.24.impact.shockwave")
             {
                 // A soft, continuous 27-tick expansion replaces the source's
                 // bright 12-tick snap/plateau. Inner fire and sparks keep their curves.
@@ -242,9 +255,7 @@ internal sealed class ReaperSwarmVisualNode
         }
         else
         {
-            Vector2 accel=Data.V("acceleration",Vector2.Zero);
-            if(Data.At("acceleration").ValueKind==JsonValueKind.Number)accel=new(0,Data.F("acceleration"));
-            motion+=Data.V("direction",Vector2.Zero)*dt+accel*age*dt;
+            motion+=definition.MotionDirection*dt+definition.Acceleration*age*dt;
             Position=sourcePosition()+ReaperSwarmJson.Local(motion,basis);
         }
         if(kind=="emitter" && (Visible?.Invoke()??true))Emit(dt);
@@ -254,11 +265,11 @@ internal sealed class ReaperSwarmVisualNode
             PruneTrail();
         }
         if(kind=="sound")PlaySound();
-        if(Data.B("looping") && SoundEngine.TryGetActiveSound(soundSlot,out var snd))snd.Position=Position;
+        if(definition.Looping && SoundEngine.TryGetActiveSound(soundSlot,out var snd))snd.Position=Position;
     }
     private void PruneTrail()
     {
-        float oldest=age-(Data.F("time",.3f)+Data.F("fade_out_time",0))*(Style?.TrailLifetimeScale??1);
+        float oldest=age-(definition.History+definition.Fade)*(Style?.TrailLifetimeScale??1);
         int remove=0;while(remove<trail.Count && trail[remove].Time<oldest)remove++;
         if(remove>0)trail.RemoveRange(0,remove);
     }
@@ -338,14 +349,14 @@ internal sealed class ReaperSwarmVisualNode
         ReaperSwarmVisualNode n;
         if(attached)
         {
-            n=new ReaperSwarmVisualNode(particle,()=>Position,()=>Direction,ttl,null,particleScale,Z,depth+1,Palette,Style){Emitter=Data,Attached=true};
+            n=new ReaperSwarmVisualNode(particle,FollowPosition,FollowDirection,ttl,null,particleScale,Z,depth+1,Palette,Style){Emitter=Data,emitterDefinition=definition,Attached=true};
             // Particle coordinates are expressed with +X right and +Y forward.
             n.InitializeParticle(offset*Scale,v,ReaperSwarmVisuals.Range(Data.At("particle_speed")),ReaperSwarmVisuals.Range(Data.At("particle_acceleration")),orientation,subAge);
         }
         else
         {
             Vector2 origin=Position;
-            n=new ReaperSwarmVisualNode(particle,()=>Vector2.Zero,()=>Vector2.UnitX,ttl,null,particleScale,Z,depth+1,Palette,Style){Emitter=Data,Attached=false};
+            n=new ReaperSwarmVisualNode(particle,()=>Vector2.Zero,()=>Vector2.UnitX,ttl,null,particleScale,Z,depth+1,Palette,Style){Emitter=Data,emitterDefinition=definition,Attached=false};
             n.InitializeParticle(origin+ReaperSwarmJson.Local(offset*Scale,Direction),ReaperSwarmJson.Local(v,Direction),ReaperSwarmVisuals.Range(Data.At("particle_speed")),ReaperSwarmVisuals.Range(Data.At("particle_acceleration")),Direction.ToRotation()+orientation,subAge);
         }
         if(depth<16)ReaperSwarmVisuals.Add(n);
@@ -355,15 +366,15 @@ internal sealed class ReaperSwarmVisualNode
         if(stopped && kind!="trail")return;
         if(!(Visible?.Invoke()??true))return;
         if(kind=="trail") {DrawTrail(renderer);return;}
-        JsonElement app=ReaperSwarmData.Get(Data.S("appearance"));
-        if(app.ValueKind==JsonValueKind.Undefined)return;
-        if(Style?.HideScuuxunPointer==true && Data.S("appearance")=="appearance.projectile.player.67")return;
-        Vector4 color=(Style?.Tint?.Invoke(Data.Tint())??ReaperSwarmPalette.Tint(Data.Tint(),Palette));color.W*=ParticleAlpha*(Style?.Opacity?.Invoke()??1);
-        if(Emitter.S("name") is "emitter.player.weapon.69.projectile.trail.flashes" or "emitter.player.weapon.69.projectile.trail.sparks")
+        ReaperSwarmDefinition app=definition.Appearance;
+        if(app.Data.ValueKind==JsonValueKind.Undefined)return;
+        if(Style?.HideScuuxunPointer==true && definition.AppearanceName=="appearance.projectile.player.67")return;
+        Vector4 color=(Style?.Tint?.Invoke(definition.Color)??paletteColor);color.W*=ParticleAlpha*(Style?.Opacity?.Invoke()??1);
+        if(Emission.Name is "emitter.player.weapon.69.projectile.trail.flashes" or "emitter.player.weapon.69.projectile.trail.sparks")
             color.W*=.5f;
-        float bloom=Data.F("bloom");
-        Vector2 size=app.V("size",Vector2.One)*Scale*(Style?.SpriteStretch??Vector2.One);
-        if(Emitter.S("name")=="emitter.player.weapon.17.beam")
+        float bloom=definition.Bloom;
+        Vector2 size=app.Size*Scale*(Style?.SpriteStretch??Vector2.One);
+        if(Emission.Name=="emitter.player.weapon.17.beam")
         {
             // This source fleck is round; make its actual footprint axial.
             size*=new Vector2(.6f,6);color.W*=.5f;
@@ -372,35 +383,34 @@ internal sealed class ReaperSwarmVisualNode
         if(BeamLength!=null){size.Y=BeamLength();position+=Direction*size.Y*.5f;}
         position=Style?.ProjectPosition?.Invoke(position)??position;
         Vector2 drawDirection=Style?.ProjectDirection?.Invoke(Direction)??Direction;
-        if(Emitter.S("name") is "emitter.player.weapon.17.beam" or "emitter.player.weapon.69.projectile" or "emitter.player.weapon.81.projectile" or "emitter.player.weapon.81.projectile.flutter")
+        if(Emission.Name is "emitter.player.weapon.17.beam" or "emitter.player.weapon.69.projectile" or "emitter.player.weapon.81.projectile" or "emitter.player.weapon.81.projectile.flutter")
         {
             // Screen-space blur made these tiny flecks look like vertical
             // pillars even after rotating the sprite. Their two soft glow
             // layers now live in the beam's frame too, including afterglow.
             Vector4 halo=color;halo.W*=.18f;
-            string haloAsset=app.S("asset");
-            if(Style?.MonochromeHalo==true && haloAsset.Length>0)haloAsset+="#monochrome";
+            string haloAsset=Style?.MonochromeHalo==true?app.MonochromeAsset:app.Asset;
             renderer.Quad(haloAsset,position,size+new Vector2(14,18),drawDirection,halo,0,true,Z);
             halo=color;halo.W*=.8f;
             renderer.Quad(haloAsset,position,size+new Vector2(6,10),drawDirection,halo,0,true,Z);
             bloom=0;
         }
-        string asset=app.S("asset");if(Style?.MonochromeTexture==true && asset.Length>0)asset+="#monochrome";
-        renderer.Quad(asset,position,size,drawDirection,color,bloom,app.S("blending_mode")=="additive",Z,Data.F("lensflare"),app.S("shader")=="shader.invisible");
+        string asset=Style?.MonochromeTexture==true?app.MonochromeAsset:app.Asset;
+        renderer.Quad(asset,position,size,drawDirection,color,bloom,app.Additive,Z,definition.Lensflare,app.Invisible);
     }
     private void DrawTrail(ReaperSwarmRenderer renderer)
     {
-        var texture=ReaperSwarmData.Get(Data.S("texture"));
-        float history=Data.F("time",.3f)*(Style?.TrailLifetimeScale??1),fade=Data.F("fade_out_time",0)*(Style?.TrailLifetimeScale??1),width=Data.F("width",2)*Scale.X;
-        Vector4 tint=(Style?.Tint?.Invoke(Data.Tint())??ReaperSwarmPalette.Tint(Data.Tint(),Palette));
+        var texture=definition.Texture;
+        float history=definition.History*(Style?.TrailLifetimeScale??1),fade=definition.Fade*(Style?.TrailLifetimeScale??1),width=definition.Width*Scale.X;
+        Vector4 tint=(Style?.Tint?.Invoke(definition.Color)??paletteColor);
         for(int i=1;i<trail.Count;i++)
         {
             var a=trail[i-1];var b=trail[i];
             float u0=Math.Clamp((age-a.Time)/Math.Max(.001f,history),0,1),u1=Math.Clamp((age-b.Time)/Math.Max(.001f,history),0,1);
             float opacity=fade>0?Math.Clamp((history+fade-age+a.Time)/fade,0,1):1;
             Vector4 color=tint;color.W*=opacity*(Style?.Opacity?.Invoke()??1);
-            string asset=texture.S("asset");if(Style?.MonochromeTexture==true && asset.Length>0)asset+="#monochrome";
-            renderer.Ribbon(asset,Style?.ProjectPosition?.Invoke(a.Position)??a.Position,Style?.ProjectPosition?.Invoke(b.Position)??b.Position,width,color,Data.F("bloom"),Data.S("blending_mode")=="additive",Z,u0,u1);
+            string asset=Style?.MonochromeTexture==true?texture.MonochromeAsset:texture.Asset;
+            renderer.Ribbon(asset,Style?.ProjectPosition?.Invoke(a.Position)??a.Position,Style?.ProjectPosition?.Invoke(b.Position)??b.Position,width,color,definition.Bloom,definition.Additive,Z,u0,u1);
         }
     }
 }

@@ -26,8 +26,8 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Meteor
 			Item.DamageType = DamageClass.Ranged;
 			Item.width = 24;
 			Item.height = 56;
-			Item.useTime = 30;
-			Item.useAnimation = 30;
+			Item.useTime = 15;
+			Item.useAnimation = 15;
 			Item.knockBack = 2f;
 			Item.value = Item.sellPrice(silver: 30);
 			Item.rare = ItemRarityID.Green;
@@ -36,10 +36,11 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Meteor
 			Item.shoot = ProjectileID.WoodenArrowFriendly;
 			Item.useAmmo = AmmoID.Arrow;
 			Item.crit = 4;
-			Item.shootSpeed = 12f;
+			Item.shootSpeed = 15f;
 			Item.useStyle = ItemUseStyleID.Shoot;
 		}
 
+        public override void AddRecipes() => CreateRecipe().AddIngredient<Rangers.RangersBow>().AddIngredient(ItemID.HellstoneBar, 12).AddTile(TileID.Anvils).Register();
 		public override bool AltFunctionUse(Player player) => false;
 
 		public override bool CanUseItem(Player player) {
@@ -101,14 +102,16 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Meteor
 			var mp = player.GetModPlayer<WeaponPlayer>();
 
 			if (mp.SkillActive && mp.Skill == 0) {
-				// 发射穿墙穿透箭，弹幕内部处理5目标上限和视野销毁
-				Projectile.NewProjectile(source, position, velocity,
-					ModContent.ProjectileType<MeteorArrow>(), damage, knockback, player.whoAmI);
+				// Enhance the selected ammunition without replacing its projectile.
+				if (player.whoAmI == Main.myPlayer) {
+					int index = Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI);
+					if (Main.projectile.IndexInRange(index))
+						Main.projectile[index].GetGlobalProjectile<Archers.MeteorArrowEnhancement>().Configure(Main.projectile[index]);
+				}
 				mp.SkillActive = false;
-				return false; // 不再发射普通箭矢
+				return false;
 			}
-
-			return base.Shoot(player, source, position, velocity, type, damage, knockback);
+            return base.Shoot(player, source, position, velocity, type, damage, knockback);
 		}
 	}
 }

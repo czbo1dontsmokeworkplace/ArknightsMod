@@ -9,15 +9,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.Evolution;
 // 第一阶段专用：地面育生核心，不复用后两阶段的飞行与光球攻击。
 internal static class EvolutionNestRules
 {
-    internal const int RadiationInterval = 300; // 每五秒一次，包含一秒预警。
-    internal const int RadiationWarning = 60;
-    internal const int LaserActiveTicks = 8;
-    internal const int LaserFadeTicks = 54;
-    internal const int RadiationDuration = LaserActiveTicks;
-    internal const float RadiationReach = 1450 * EvolutionRules.LaserReachMultiplier;
-    internal const float LaserWidth = 64;
-    internal static float Direction(int cycle, int ray) => -MathHelper.PiOver2 + cycle % 4 * MathHelper.Pi / 10 + ray * MathHelper.TwoPi / 5;
-
+    internal const int RadiationInterval = EvolutionShockwaveRules.Interval;
+    internal const int RadiationWarning = EvolutionShockwaveRules.WarningTicks;
+    internal const int RadiationDuration = EvolutionShockwaveRules.DamageTicks;
 }
 
 public sealed partial class Evolution
@@ -79,10 +73,19 @@ public sealed partial class Evolution
             BirthGroundBrood(kind, clutch * 2);
             BirthGroundBrood(clutch % 2 == 0 ? EvolutionBrood.Spider : EvolutionBrood.Abomination, clutch * 2 + 1);
         }
-        if (Timer % EvolutionNestRules.RadiationInterval == 60)
+        int beat = Timer % EvolutionNestRules.RadiationInterval;
+        if (beat == EvolutionShockwaveRules.WaveStart)
             Shoot(EvolutionShot.Radiation, NPC.Center, Vector2.Zero,
-                Timer / EvolutionNestRules.RadiationInterval, EvolutionNestRules.RadiationWarning,
-                EvolutionNestRules.RadiationWarning + 16 + EvolutionNestRules.LaserFadeTicks + 20);
+                EvolutionShockwaveRules.GapAngle((player.Center - NPC.Center).ToRotation(), Timer / EvolutionNestRules.RadiationInterval),
+                EvolutionNestRules.RadiationWarning, EvolutionNestRules.RadiationWarning + EvolutionShockwaveRules.ReleaseTicks + EvolutionShockwaveRules.Duration + 18);
+        if (beat == EvolutionShockwaveRules.LaserStart)
+        {
+            // Two locked rays flank the current position, leaving the middle open during recovery.
+            float angle = (player.Center - NPC.Center).ToRotation();
+            float gap = MathF.Atan2(180, Math.Max(100, Vector2.Distance(player.Center, NPC.Center)));
+            for (int side = -1; side <= 1; side += 2)
+                Shoot(EvolutionShot.Beam, NPC.Center, (angle + side * gap).ToRotationVector2(), 1450, 48, 140);
+        }
     }
 
     private void BirthGroundBrood(EvolutionBrood kind, int slot)

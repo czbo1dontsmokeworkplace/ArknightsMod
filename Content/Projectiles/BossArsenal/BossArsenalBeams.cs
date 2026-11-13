@@ -12,10 +12,10 @@ namespace ArknightsMod.Content.Projectiles.BossArsenal;
 public sealed class BossArsenalHoldout : ModProjectile
 {
     private Item bound;
-    private ReaperSwarmVisualNode charge;
     internal int Kind => (int)Projectile.ai[0];
     internal int Clock => (int)Projectile.ai[1];
-    internal int Cycle => Kind == 2 ? 54 : 126;
+    internal int Cycle => Kind == 2 ? 54 : 20;
+    private Projectile sustainedBeam;
     public override string Texture => "Terraria/Images/MagicPixel";
     public override void SetDefaults() { Projectile.width = Projectile.height = 4; Projectile.timeLeft = 2; Projectile.netImportant = true; Projectile.tileCollide = false; }
     public override bool ShouldUpdatePosition() => false;
@@ -28,6 +28,10 @@ public sealed class BossArsenalHoldout : ModProjectile
         bool local = Projectile.owner == Main.myPlayer;
         if (local && (!owner.channel || bound != null && !ReferenceEquals(bound, owner.HeldItem))) { Projectile.Kill(); return; }
         bound ??= owner.HeldItem;
+        if (Kind == 10) {
+            Projectile.damage = owner.GetWeaponDamage(bound);
+            Projectile.CritChance = owner.GetWeaponCrit(bound);
+        }
         if (local)
         {
             Vector2 aim = (Main.MouseWorld - owner.MountedCenter).SafeNormalize(Vector2.UnitX * owner.direction);
@@ -40,19 +44,25 @@ public sealed class BossArsenalHoldout : ModProjectile
         owner.itemTime = owner.itemAnimation = 2; owner.itemRotation = (axis * owner.direction).ToRotation();
         owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, axis.ToRotation() - MathHelper.PiOver2);
         int phase = Clock % Cycle;
-        if (Kind == 10 && !Main.dedServ && phase == 0)
-            charge = ReaperSwarmVisuals.Spawn("emitter.player.weapon.74.charge.core", () => Projectile.Center, () => Projectile.velocity,
-                active: () => Projectile.active && Clock % Cycle < 60, style: new PhoenixFxStyle { SuppressShake = true });
-        if (local && phase == (Kind == 2 ? 0 : 60))
+        bool missingBeam = sustainedBeam == null || !sustainedBeam.active || sustainedBeam.owner != Projectile.owner
+            || sustainedBeam.ModProjectile is not BossArsenalBeam activeBeam || activeBeam.Kind != 10
+            || (int)sustainedBeam.ai[1] != Projectile.identity + 1;
+        if (local && (Kind == 2 ? phase == 0 : missingBeam))
         {
-            charge?.Stop();
             var beam = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, axis,
-                ModContent.ProjectileType<BossArsenalBeam>(), Projectile.damage, Projectile.knockBack, Projectile.owner, Kind);
+                ModContent.ProjectileType<BossArsenalBeam>(), Projectile.damage, Projectile.knockBack, Projectile.owner, Kind,
+                Kind == 10 ? Projectile.identity + 1 : 0);
             beam.CritChance = Projectile.CritChance;
+            if (Kind == 10) sustainedBeam = beam;
         }
         Projectile.ai[1]++;
     }
-    public override void OnKill(int timeLeft) => charge?.Stop();
+    public override void OnKill(int timeLeft)
+    {
+        if (sustainedBeam is { active: true } && sustainedBeam.owner == Projectile.owner
+            && sustainedBeam.ModProjectile is BossArsenalBeam { Kind: 10 }
+            && (int)sustainedBeam.ai[1] == Projectile.identity + 1) sustainedBeam.Kill();
+    }
     public override bool PreDraw(ref Color lightColor)
     {
         Player owner = Main.player[Projectile.owner];
@@ -70,9 +80,15 @@ public sealed class BossArsenalBeam : ModProjectile
     private PhoenixBeamFx beam;
     private ReaperSwarmVisualNode muzzle;
     private int firstTarget = -1;
+    private Vector2 visualOrigin, visualAxis;
+    private ulong dustTick;
+    private int dustHits;
+    internal const float CinderLength = 1440;
     internal int Kind => (int)Projectile.ai[0];
     internal float Length { get; private set; }
     internal int DamageInterval => Kind == 10 ? 10 : 8;
+    internal Vector2 VisualPosition(Vector2 point) => visualOrigin + visualAxis * point.X + new Vector2(-visualAxis.Y, visualAxis.X) * point.Y;
+    internal Vector2 VisualDirection(Vector2 direction) => visualAxis * direction.X + new Vector2(-visualAxis.Y, visualAxis.X) * direction.Y;
     public override string Texture => "Terraria/Images/MagicPixel";
     public override void SetDefaults()
     {
@@ -97,11 +113,24 @@ public sealed class BossArsenalBeam : ModProjectile
             }
             Projectile.Center = owner.MountedCenter + Projectile.velocity * 32;
         }
-        // Inferno Laser retains its birth position and direction after release.
+        if (Kind == 10)
+        {
+            Projectile source = null;
+            foreach (Projectile candidate in Main.ActiveProjectiles)
+                if (candidate.owner == Projectile.owner && candidate.identity + 1 == (int)Projectile.ai[1]
+                    && candidate.ModProjectile is BossArsenalHoldout { Kind: 10 }) { source = candidate; break; }
+            if (source == null || owner.HeldItem.ModItem is not CinderTestament || owner.noItems || owner.CCed || owner.silence)
+            { Projectile.Kill(); return; }
+            Projectile.velocity = source.velocity.SafeNormalize(Vector2.UnitX * owner.direction);
+            Projectile.Center = owner.MountedCenter + Projectile.velocity * 32;
+            Projectile.timeLeft = 2;
+            Projectile.damage = source.damage; Projectile.CritChance = source.CritChance;
+        }
         Vector2 axis = Projectile.velocity.SafeNormalize(Vector2.UnitX);
-        Length = 0;
+        visualOrigin = Projectile.Center; visualAxis = axis;
+        Length = Kind == 10 ? CinderLength : 0;
         int range = Kind == 2 ? 1920 : 1440;
-        for (int distance = 8; distance <= range; distance += 8)
+        for (int distance = 8; Kind != 10 && distance <= range; distance += 8)
         {
             if (Collision.SolidCollision(Projectile.Center + axis * distance - new Vector2(2), 4, 4)) break;
             Length = distance;
@@ -124,6 +153,12 @@ public sealed class BossArsenalBeam : ModProjectile
         {
             var style = Kind == 2 ? PhoenixFx.Colored(new Color(255, 30, 45), new Color(255, 170, 170)) : PhoenixFx.Original();
             style.SuppressShake = true;
+            if (Kind == 10) {
+                // Keep emitted particles in beam coordinates as well as the
+                // damage line. Turning cannot leave a stationary visual beam.
+                style.ProjectPosition = VisualPosition;
+                style.ProjectDirection = VisualDirection;
+            }
             if (Kind == 2) {
                 style.MonochromeTexture = true;
                 // Keep impact graphics, move their sound to the start of every firing pulse.
@@ -131,9 +166,10 @@ public sealed class BossArsenalBeam : ModProjectile
                 var fireStyle = PhoenixFx.Original(); fireStyle.SoundVolume = .65f; fireStyle.SuppressShake = true;
                 PhoenixFx.Burst("soundemitter.player.34.hit", Projectile.Center, axis, fireStyle);
             }
-            else PhoenixFx.Burst("soundemitter.player.74.hit", Projectile.Center, axis, style);
+            else PhoenixFx.Burst("soundemitter.player.74.hit", Vector2.Zero, Vector2.UnitX, style);
             beam = new PhoenixBeamFx(Kind == 2 ? "projectile.player.34.1" : "projectile.player.74",
-                () => Projectile.Center, () => Projectile.Center + Projectile.velocity * Length,
+                () => Kind == 10 ? Vector2.Zero : Projectile.Center,
+                () => Kind == 10 ? Vector2.UnitX * Length : Projectile.Center + Projectile.velocity * Length,
                 () => Projectile.active, range, style);
             if (Kind == 2) muzzle = ReaperSwarmVisuals.Spawn("actor.player.weapon.34.muzzle", () => Projectile.Center,
                 () => Projectile.velocity, active: () => Projectile.active, style: style);
@@ -156,7 +192,30 @@ public sealed class BossArsenalBeam : ModProjectile
     internal Vector2 HitPosition(Vector2 target) => Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitX)
         * Math.Clamp(Vector2.Dot(target - Projectile.Center, Projectile.velocity.SafeNormalize(Vector2.UnitX)), 0, Length);
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
-        => beam?.HitAlong(Vector2.Distance(Projectile.Center, HitPosition(target.Center)));
+    {
+        Vector2 point = HitPosition(target.Center);
+        if (Kind == 10) {
+            if (dustTick != Main.GameUpdateCount) { dustTick = Main.GameUpdateCount; dustHits = 0; }
+            if (dustHits++ >= 4) return; // Visual budget only; all enemies still take damage.
+        }
+        beam?.HitAlong(Vector2.Distance(Projectile.Center, point));
+        if (Kind == 10 && !Main.dedServ) CinderImpact(point, Projectile.velocity.SafeNormalize(Vector2.UnitX));
+    }
+    internal static void CinderImpact(Vector2 point, Vector2 axis)
+    {
+        // A bounded radial scatter plus a forward eruption; pure visual particles.
+        for (int i = 0; i < 10; i++) {
+            Vector2 direction = (MathHelper.TwoPi * i / 10 + Main.rand.NextFloat(-.14f, .14f)).ToRotationVector2();
+            Dust spark = Dust.NewDustPerfect(point, Terraria.ID.DustID.Torch,
+                direction * Main.rand.NextFloat(1.6f, 4.5f), 90, default, Main.rand.NextFloat(.9f, 1.5f));
+            spark.noGravity = true;
+        }
+        for (int i = 0; i < 5; i++) {
+            Vector2 velocity = axis.RotatedByRandom(.65f) * Main.rand.NextFloat(3.5f, 7.5f) - Vector2.UnitY * 1.2f;
+            Dust flame = Dust.NewDustPerfect(point, Terraria.ID.DustID.InfernoFork, velocity, 70, default, 1.2f);
+            flame.noGravity = true;
+        }
+    }
     public override void OnKill(int timeLeft) { beam?.Stop(); muzzle?.Stop(); }
     public override bool PreDraw(ref Color lightColor) => false;
 }

@@ -103,16 +103,14 @@ public sealed class IfritFlamethrower : BlastCasterWeapon
             scale, SpriteEffects.FlipHorizontally, 0f);
         return false;
     }
-    public override void AddRecipes() => CreateRecipe().AddIngredient<CorroserumFlamethrower>()
-        .AddIngredient(ItemID.ShroomiteBar, 14).AddIngredient(ItemID.Ectoplasm, 8)
-        .AddIngredient(ItemID.Gel, 150).AddCondition(Condition.DownedPlantera)
-        .AddTile(TileID.MythrilAnvil).Register();
+    // Retain old inventory items; Cinder Testament now occupies this route slot.
+    public override void AddRecipes() { }
 }
 public sealed class AphrissaProjector : BlastCasterWeapon
 {
     public override BlastCasterKind Kind => BlastCasterKind.Aphrissa;
     protected override int[] EliteDamage => [72, 84, 96];
-    public override void AddRecipes() => CreateRecipe().AddIngredient<IfritFlamethrower>()
+    public override void AddRecipes() => CreateRecipe().AddIngredient<global::ArknightsMod.Content.Items.BossArsenal.CinderTestament>()
         .AddIngredient(ItemID.FragmentVortex, 18).AddIngredient(ItemID.FragmentNebula, 12)
         .AddIngredient(ItemID.ShroomiteBar, 12).AddIngredient(ItemID.Gel, 200)
         .AddTile(TileID.LunarCraftingStation).Register();

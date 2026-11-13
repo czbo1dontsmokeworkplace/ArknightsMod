@@ -90,7 +90,7 @@ internal static class EvolutionRules
     public static int ChargeActiveTicks(bool perfect) => perfect ? 44 : 52;
     public static float ChargeDistance(bool perfect, bool desperate) => ChargeActiveTicks(perfect) * (perfect ? 36 * 2.2f : 32 * 1.6f) * (desperate ? 1.1f : 1);
     public static bool IsLaser(EvolutionShot kind) => kind is EvolutionShot.Beam or EvolutionShot.Spike or EvolutionShot.Eruption;
-    public static int FireTime(EvolutionShot kind, int delay) => delay + (kind == EvolutionShot.Radiation ? 16 : IsLaser(kind) ? LaserFadeTicks / 2 : 4);
+    public static int FireTime(EvolutionShot kind, int delay) => delay + (kind == EvolutionShot.Radiation ? EvolutionShockwaveRules.ReleaseTicks : IsLaser(kind) ? LaserFadeTicks / 2 : 4);
     // 预警淡出中点（50%亮度）与真实光束开火使用同一时钟。
     public static float LaserWarningOpacity(int age, int delay)
     {

@@ -104,7 +104,7 @@ public abstract class ChargedOperatorWeapon : ExpansionWeaponBase
     public override void ModifyTooltips(System.Collections.Generic.List<TooltipLine> tooltips)
     {
         base.ModifyTooltips(tooltips);
-        if (Kind is not (ChargedOperatorKind.Melantha or ChargedOperatorKind.Matoimaru))
+        if (!Melee)
             tooltips.Add(new TooltipLine(Mod, "ChargedPlaceholder", Language.GetTextValue("Mods.ArknightsMod.ChargedArsenal.Placeholder")));
     }
     // Right hold is polled in HoldItem; left fire uses Terraria's normal item animation.

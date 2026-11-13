@@ -139,6 +139,7 @@ namespace ArknightsMod.Systems.Gameplay.Damage
 			// ── 术师：职业特性，全部攻击都是法术伤害 ──
 			RegisterAlways<global::ArknightsMod.Content.Items.Weapons.BlastCasters.CorroserumFlamethrower>();
 			RegisterAlways<global::ArknightsMod.Content.Items.Weapons.BlastCasters.IfritFlamethrower>();
+			RegisterAlways<global::ArknightsMod.Content.Items.BossArsenal.CinderTestament>();
 			RegisterAlways<global::ArknightsMod.Content.Items.Weapons.BlastCasters.AphrissaProjector>();
 			RegisterAlways<_12FWand>();          // 12F的法杖
 			RegisterAlways<DurinWand>();         // 杜林的法杖

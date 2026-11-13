@@ -106,14 +106,17 @@ public sealed class BlackIceFracture : ModProjectile
     public override bool? CanDamage() => Projectile.timeLeft >= 28 ? null : false;
     public override void AI() { Projectile.frame = Math.Min(5, (30 - Projectile.timeLeft) / 5); }
     public override bool PreDraw(ref Color lightColor) {
-        Texture2D body = ModContent.Request<Texture2D>(Texture).Value;
-        Rectangle frame = body.Frame(1, 6, 0, Projectile.frame);
-        Main.EntitySpriteDraw(body, Projectile.Center - Main.screenPosition, frame, Color.White,
-            0, frame.Size() * .5f, 1.65f, SpriteEffects.None);
+        DrawAppearance(Projectile.Center, Projectile.frame);
+        return false;
+    }
+    internal static void DrawAppearance(Vector2 center, int animationFrame, float scale = 1f, float opacity = 1f, Texture2D body = null) {
+        body ??= ModContent.Request<Texture2D>("ArknightsMod/Content/NPCs/Enemy/Chapter6/FrostNova/BlackIceExplode").Value;
+        Rectangle frame = body.Frame(1, 6, 0, animationFrame);
+        Main.EntitySpriteDraw(body, center - Main.screenPosition, frame, Color.White * opacity,
+            0, frame.Size() * .5f, 1.65f * scale, SpriteEffects.None);
         // Parallel fracture flashes share the same texture and deal no extra damage.
         for (int side = -1; side <= 1; side += 2)
-            Main.EntitySpriteDraw(body, Projectile.Center + new Vector2(side * 36, -8) - Main.screenPosition, frame,
-                Color.White * .4f, side * .12f, frame.Size() * .5f, 1.1f, SpriteEffects.None);
-        return false;
+            Main.EntitySpriteDraw(body, center + new Vector2(side * 36, -8) * scale - Main.screenPosition, frame,
+                Color.White * (.4f * opacity), side * .12f, frame.Size() * .5f, 1.1f * scale, SpriteEffects.None);
     }
 }

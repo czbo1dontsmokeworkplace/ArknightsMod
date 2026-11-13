@@ -3,10 +3,8 @@ Items: {
 		DisplayName: Standard Sword [Melantha]
 		Tooltip:
 			'''
-			Left-click to swing; critical strike chance rises while idle, reaching 100% after 3 seconds
-			A flash and sound announce Astonishing Moment when preparation completes
-			Astonishing Moment lasts until the next swing ends, including a missed swing
-			The overhead bar tracks preparation; switching to other weapons clears it
+			Swing the weapon to slash enemies
+			Rest for 3 seconds to gain Striking Moment and guarantee a critical strike on your next swing
 			'''
 	}
 
@@ -14,10 +12,8 @@ Items: {
 		DisplayName: Naginata [Matoimaru]
 		Tooltip:
 			'''
-			Left-click to swing; critical strike chance rises while idle, reaching 100% after 3 seconds
-			A flash and sound announce Astonishing Moment when preparation completes
-			Astonishing Moment lasts until the next swing ends, including a missed swing
-			The overhead bar tracks preparation; switching to other weapons clears it
+			Swing the weapon to slash enemies
+			Rest for 3 seconds to gain Striking Moment and guarantee a critical strike on your next swing
 			'''
 	}
 
@@ -25,10 +21,8 @@ Items: {
 		DisplayName: Thermite Rapier [Franka]
 		Tooltip:
 			'''
-			Left-click to swing; critical strike chance rises while idle, reaching 100% after 3 seconds
-			A flash and sound announce Astonishing Moment when preparation completes
-			Astonishing Moment lasts until the next swing ends, including a missed swing
-			The overhead bar tracks preparation; switching to other weapons clears it
+			Swing the weapon to slash enemies
+			Rest for 3 seconds to gain Striking Moment and guarantee a critical strike on your next swing
 			Hits have a 25% chance to ignore defense and set enemies ablaze
 			'''
 	}
@@ -37,10 +31,8 @@ Items: {
 		DisplayName: Blazing Sun Swordlance [Radiant Nearl]
 		Tooltip:
 			'''
-			Left-click to swing; critical strike chance rises while idle, reaching 100% after 3 seconds
-			A flash and sound announce Astonishing Moment when preparation completes
-			Astonishing Moment lasts until the next swing ends, including a missed swing
-			The overhead bar tracks preparation; switching to other weapons clears it
+			Swing the weapon to slash enemies
+			Rest for 3 seconds to gain Striking Moment and guarantee a critical strike on your next swing
 			'''
 	}
 
@@ -264,11 +256,4 @@ Crossbows: {
 	BluePoison: Hold left-click for rapid four-shot bursts. Venom bolts hit up to two enemies and inflict Venom for 4 seconds.
 }
 
-Buffs: {
-	AstonishingMoment: {
-		DisplayName: Astonishing Moment
-		Description: Your next Dreadnought swing has 100% critical strike chance until the attack ends
-	}
-}
-
-Projectiles.DreadnoughtMomentFlash.DisplayName: Astonishing Moment
+Projectiles.DreadnoughtMomentFlash.DisplayName: Striking Moment

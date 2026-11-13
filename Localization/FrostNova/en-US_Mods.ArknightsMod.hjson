@@ -1,0 +1,11 @@
+Buffs: {
+	FrostNovaZeroSlow: {
+		DisplayName: Zero-degree Sluggishness
+		Description: Greatly reduces movement speed
+	}
+
+	FrostNovaWhiteout: {
+		DisplayName: Bone-deep Frost
+		Description: Extreme cold reduces damage dealt by 75%
+	}
+}

@@ -169,6 +169,7 @@ public sealed class DreadnoughtSwing : ModProjectile
         if (!DreadnoughtRules.CanStrike(targetsHit)) return;
         targetsHit++;
         Projectile.netUpdate = true;
+        Main.player[Projectile.owner].GetModPlayer<DreadnoughtPlayer>().RefreshMoment();
         if (damageDone <= 0) return;
         if (Kind == ChargedOperatorKind.Franka) target.AddBuff(BuffID.OnFire3, 180);
         if (Projectile.owner == Main.myPlayer && TryBladeContact(target.Hitbox, out Vector2 point, out Vector2 tangent))

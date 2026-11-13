@@ -214,5 +214,10 @@ public sealed class CrusherPlayer : ModPlayer, IActiveSkillTimeReset
         mode = Math.Clamp(m, 0, 3); remaining = Math.Max(0, left); duration = Math.Max(1, total);
         slot = Math.Clamp(s, 0, 57); level = Math.Clamp(l, 1, 10); skillItemType = type; Activation = activation;
     }
+    public override void UpdateAutopause()
+    {
+        // Projectile AI does not run during real single-player autopause.
+        if (Player.whoAmI == Main.myPlayer) CrusherHeldBlade.Find(Player)?.SuspendInput();
+    }
     public override void UpdateDead() { mode = remaining = duration = 0; activeItem = null; keyWasDown = false; }
 }

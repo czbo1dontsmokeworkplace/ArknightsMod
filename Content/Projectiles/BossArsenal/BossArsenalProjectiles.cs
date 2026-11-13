@@ -55,6 +55,11 @@ public sealed class BossArsenalShot : ModProjectile
                 missile ??= new PhoenixMotionFx(36, Projectile, style);
                 if (Age == 1) missile.Activate("actor.player.weapon.36.activation");
             }
+            // The weapon shares the boss shell's deliberately weak steering.
+            NPC seek = Projectile.FindTargetWithinRange(850, false);
+            if (seek != null)
+                Projectile.velocity = global::ArknightsMod.Content.NPCs.Enemy.RoaringFlare.ImperialArtilleyCoreTargeteer.HarbingerRules.WeakHoming(
+                    Projectile.velocity, seek.Center - Projectile.Center, .0035f);
             float speed = Projectile.velocity.Length();
             if (speed > 0) Projectile.velocity *= Math.Min(32, speed + .24f) / speed;
         }

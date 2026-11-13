@@ -57,7 +57,11 @@ _12FWand: {
 
 RangersBow: {
 	DisplayName: Bow [Rangers]
-	Tooltip: You like me that much, huh? Weird taste, I gotta say.
+	Tooltip:
+		'''
+		Left-click preserves your arrow ammo; charge right-click to launch a fast, single-impact explosive arrow.
+		You like me that much, huh? Weird taste, I gotta say.
+		'''
 }
 
 KroosCrossbow: {
@@ -1461,9 +1465,9 @@ TyphonBow: {
 	DisplayName: Bow [Typhon]
 	Tooltip:
 		'''
-		Converts arrows into astral shots that hit up to two times
-		Hold right-click for 54 frames to load one star-crystal arrow; release to fire for 125% damage
-		Loaded arrows pierce infinitely without homing and fly as fast as normal shots; holds one arrow
+		Normal left-click attacks preserve your arrow ammo
+		Hold right-click for 54 frames to load one arrow; release a fast explosive arrow with triple damage
+		Explodes after one direct hit or terrain impact; loading wooden arrows adds homing
 		'''
 }
 
@@ -3302,7 +3306,7 @@ JessicaGun: {
 
 MeteorBow: {
 	DisplayName: Bow [Meteor]
-	Tooltip: ""
+	Tooltip: Left-click preserves your arrow ammo; charge right-click to launch a fast, single-impact explosive arrow
 }
 
 GravelDualBlades: {
@@ -4063,4 +4067,14 @@ MostimaStaff: {
 		The circle slowly follows the cursor and fades when released
 		Each minute-hand step costs 30 mana and deals area damage once
 		'''
+}
+
+PlatinumBow: {
+	DisplayName: Starseeker Bow [Platinum]
+	Tooltip: Left-click preserves your arrow ammo; charge right-click for a fast, single-impact explosive arrow. Skill: faster fire and +40% damage for 12 seconds.
+}
+
+ArchettoBow: {
+	DisplayName: Songstring Bow [Archetto]
+	Tooltip: Left-click preserves your arrow ammo; charge right-click for a fast, single-impact explosive arrow. Skill: twin shots and +15% damage for 12 seconds, one arrow consumed per volley.
 }

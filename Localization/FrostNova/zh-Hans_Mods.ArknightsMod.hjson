@@ -1,0 +1,11 @@
+Buffs: {
+	FrostNovaZeroSlow: {
+		DisplayName: 零度迟缓
+		Description: 大幅降低玩家移动速度
+	}
+
+	FrostNovaWhiteout: {
+		DisplayName: 白霜蚀骨
+		Description: 极寒侵蚀身体，造成的伤害降低75%
+	}
+}

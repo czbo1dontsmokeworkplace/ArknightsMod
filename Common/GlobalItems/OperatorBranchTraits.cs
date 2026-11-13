@@ -38,9 +38,10 @@ public sealed class OperatorBranchTraits : GlobalItem
         "HumusScythe" or "LaPlumaScythe" or "EntelechiaScythe" => "Reaper",
         "OddaHammer" or "ZimaFuryHammer" or "PepeHammer" => "Earthshaker",
         "PuddingStaff" or "LeiziStaff" or "PassengerConductor" => "ChainCaster",
-        "CorroserumFlamethrower" or "IfritFlamethrower" or "AphrissaProjector" => "BlastCaster",
+        "CorroserumFlamethrower" or "CinderTestament" or "AphrissaProjector" => "BlastCaster",
         "Lava_Dagger" or "GitanoOrb" or "LeonhardtStaff" or "SkyfireStaff" or "MostimaStaff" => "SplashCaster",
-        "AmbrielRifle" or "AndreanaRifle" or "FirewatchRifle" or "TyphonBow" => "Deadeye",
+        "AmbrielRifle" or "AndreanaRifle" or "FirewatchRifle" => "Deadeye",
+        "RangersBow" or "MeteorBow" or "PlatinumBow" or "ArchettoBow" or "TyphonBow" => "Archer",
         "NecrassScepter" => "PrimalCaster",
         "DurinWand" or "StewardStaff" or "HazeMagicBook" or "NightmareStaff" or "AbsintheStaff"
             or "HoolheyakWindArts" or "EyjafjallaStaff" => "CoreCaster",
@@ -61,7 +62,7 @@ public sealed class OperatorBranchTraits : GlobalItem
         "Mystic" or "ChainCaster" or "MechAccord" or "SplashCaster" or "Phalanx"
             or "PrimalCaster" or "BlastCaster" or "CoreCaster" => "Caster",
         "ArtsFighter" or "Dreadnought" or "Musha" or "Centurion" or "Crusher" or "Reaper" or "Earthshaker" or "Swordmaster" or "Lord" => "Guard",
-        "Artilleryman" or "Deadeye" or "Crossbowman" or "Spreadshooter" => "Sniper",
+        "Artilleryman" or "Deadeye" or "Crossbowman" or "Archer" or "Spreadshooter" => "Sniper",
         "Executor" or "Ambusher" => "Specialist",
         "Charger" or "StandardBearer" => "Vanguard",
         "Medic" or "MedicTherapist" or "MedicMultiTarget" or "MedicChain" or "MedicWandering" => "Medic",
@@ -87,7 +88,7 @@ public sealed class OperatorBranchTraits : GlobalItem
             {
                 tooltips.Add(new TooltipLine(Mod, "OperatorClass", Language.GetTextValue("Mods.ArknightsMod.BranchTraits." + profession + "Profession")));
             }
-            tooltips.Add(new TooltipLine(Mod, "OperatorBranch", Language.GetTextValue("Mods.ArknightsMod.BranchTraits." + (item.ModItem.Name == "TyphonBow" ? "TyphonDeadeye" : branch))));
+            tooltips.Add(new TooltipLine(Mod, "OperatorBranch", Language.GetTextValue("Mods.ArknightsMod.BranchTraits." + branch)));
         }
     }
 

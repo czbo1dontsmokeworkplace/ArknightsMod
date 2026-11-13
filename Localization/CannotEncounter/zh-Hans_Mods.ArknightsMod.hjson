@@ -13,6 +13,9 @@ Buffs: {
 		DisplayName: 不死狂暴
 		Description: 生命值不会低于1，攻击力和攻击速度提高100%
 	}
+
+	FrostNovaWhiteout: {
+	}
 }
 
 NPCs.CannotOriginiutant.DisplayName: 源石畸变体

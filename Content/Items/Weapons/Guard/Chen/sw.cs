@@ -337,7 +337,9 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
         private void Swing_AI()
         {
 			//Main.NewText(Projectile.ai[0]);
-            Projectile.ai[0]++;
+            // Only halve S1's reverse red blade startup; keep its strike speed.
+            float startupRate = Sword_Style == ChenSword_Style.Skill_1 && Projectile.ai[0] < 74 ? 2 : 1;
+            Projectile.ai[0] += startupRate;
             if (Projectile.ai[0] >= 39)
             {
 				if (Sword_Style == 0)
@@ -384,7 +386,7 @@ namespace ArknightsMod.Content.Items.Weapons.Guard.Chen
 
                 }
 				if (time < 17)
-					Projectile.ai[0]++;
+					Projectile.ai[0] += startupRate;
 
 				Swing_DrawScale = Vector2.Lerp(Swing_DrawScale, new Vector2(1), 0.1f);
             }

@@ -1,0 +1,8 @@
+Buffs: {
+	CognitiveOverwrite: {
+		DisplayName: 认知覆写
+		Description: 邪魔炮火中枢正在改写你的感知
+	}
+}
+
+Projectiles.HarbingerHazard.DisplayName: 邪兆火力信号

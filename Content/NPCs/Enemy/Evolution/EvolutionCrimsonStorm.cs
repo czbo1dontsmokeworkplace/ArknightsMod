@@ -118,8 +118,10 @@ public sealed class EvolutionCrimsonStorm : ModSystem
             barrier ??= new Effect(device, Mod.GetFileBytes("Assets/Effects/Phalanx/PhalanxBarrier.fxc"));
             Texture2D noise = ModContent.Request<Texture2D>("ArknightsMod/Assets/Effects/Phalanx/NoiseSoft").Value;
             float opacity = MathHelper.SmoothStep(0, 1, Math.Clamp(boss.NPC.ai[3] / 75f, 0, 1));
-            float beat = Math.Max(0, boss.Timer % EvolutionNestRules.RadiationInterval - 60) / 60f;
-            float charge = boss.Timer % EvolutionNestRules.RadiationInterval is >= 60 and < 136 ? Math.Clamp(beat, 0, 1) : 0;
+            float charge = 0;
+            foreach (Projectile projectile in Main.ActiveProjectiles)
+                if (projectile.ModProjectile is EvolutionHazard h && h.PressureLive && h.Encounter == boss.Encounter && h.PressureAge < 0)
+                    charge = Math.Max(charge, Math.Clamp(h.Age / (float)Math.Max(1, h.Delay), 0, 1));
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp,
                 DepthStencilState.None, RasterizerState.CullNone, barrier, Main.GameViewMatrix.TransformationMatrix);
             begun = true;

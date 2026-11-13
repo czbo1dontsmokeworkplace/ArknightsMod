@@ -831,9 +831,8 @@ SurtrLaevatain: {
 		Label: Flame Sword
 		Desc:
 			'''
-			ATK [c/3791db:+210%]
-			Empowered attacks
-			Lasts [c/3791db:35] seconds
+			Every [c/3791db:2] swings automatically empower the next swing
+			Empowered swing damage [c/3791db:+210%] with increased reach
 			'''
 	}
 
@@ -1362,5 +1361,19 @@ MostimaStaff: {
 			Can activate while channeling; the clock expands with a nonlinear curve
 			Clock and blast radius reach [c/3791db:130%], and attack frequency reaches [c/3791db:130%]
 			'''
+	}
+}
+
+PlatinumBow: {
+	1: {
+		Label: Starseeker
+		Desc: 12 seconds: faster fire and +40% damage
+	}
+}
+
+ArchettoBow: {
+	1: {
+		Label: Songstring Volley
+		Desc: 12 seconds: faster twin volleys and +15% damage
 	}
 }

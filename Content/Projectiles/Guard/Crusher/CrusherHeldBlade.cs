@@ -21,7 +21,7 @@ public sealed class CrusherHeldBlade : ModProjectile
     private float aim, attackAim, radius, power = 1, previousAngle, sweepStartAngle, sweepEndAngle;
     private int facing = 1, baseDamage;
     private float baseKnockback;
-    private bool pursuitReleased, poseInitialized, charging, readyPlayed;
+    private bool pursuitReleased, poseInitialized, charging, readyPlayed, inputSuspended;
     private int chargeTicks, chargeLimit = CrusherRules.BaseChargeTicks;
     private float swingCharge;
     private float restAngle, entryOffset;
@@ -131,6 +131,12 @@ public sealed class CrusherHeldBlade : ModProjectile
     }
     private static bool HoldingAttack(Player owner) => owner.controlUseItem && !ArknightsKeybinds.SkillActivatePressed(owner)
         && ChargedOperatorWeapon.WorldInputAllowed(owner);
+    internal void SuspendInput()
+    {
+        if (inputSuspended) return;
+        inputSuspended = true;
+        Projectile.netUpdate = true;
+    }
     public override void AI()
     {
         Player owner = Main.player[Projectile.owner]; bool local = owner.whoAmI == Main.myPlayer;
@@ -139,6 +145,17 @@ public sealed class CrusherHeldBlade : ModProjectile
             || local && boundItem != null && !ReferenceEquals(boundItem, owner.HeldItem)) { Projectile.Kill(); return; }
         boundItem ??= owner.HeldItem;
         Projectile.timeLeft = 2; Projectile.Center = owner.MountedCenter + new Vector2(0, owner.gfxOffY);
+        // Inventory/chat may consume the mouse release. Preserve both the pose
+        // and charge, then require a fresh held press before accepting release.
+        if (local && (Main.gamePaused || !ChargedOperatorWeapon.WorldInputAllowed(owner))) SuspendInput();
+        else if (local && inputSuspended && (!charging || owner.controlUseItem)) {
+            inputSuspended = false; Projectile.netUpdate = true;
+        }
+        if (inputSuspended) {
+            owner.heldProj = Projectile.whoAmI;
+            BladeSwingTemplate.Pose(owner, Angle, true);
+            return;
+        }
         if (Projectile.numUpdates == 0) manifestAge++;
         var state = owner.GetModPlayer<CrusherPlayer>();
         if (state.Charging) { StopForCharge(); swingCharge = state.Charge; }
@@ -148,7 +165,6 @@ public sealed class CrusherHeldBlade : ModProjectile
             }
             if (!Busy && local && HoldingAttack(owner)) BeginCharge(owner);
             if (charging) {
-                if (local && !ChargedOperatorWeapon.WorldInputAllowed(owner)) { Projectile.Kill(); return; }
                 // Check release before advancing: one frame short is never full charge.
                 if (local && !owner.controlUseItem)
                     BeginSwing(owner, owner.GetWeaponDamage(w.Item), owner.GetWeaponKnockback(w.Item), releasedCharge: ChargeProgress);
@@ -267,6 +283,7 @@ public sealed class CrusherHeldBlade : ModProjectile
         w.Write(manifestAge); w.Write(pursuitReleased); w.Write(Projectile.damage); w.Write(Projectile.knockBack); w.Write(Projectile.CritChance);
         w.Write(poseInitialized); w.Write(restAngle); w.Write(entryOffset);
         w.Write(charging); w.Write(chargeTicks); w.Write(chargeLimit); w.Write(swingCharge);
+        w.Write(inputSuspended);
     }
     public override void ReceiveExtraAI(BinaryReader r)
     {
@@ -280,6 +297,7 @@ public sealed class CrusherHeldBlade : ModProjectile
         poseInitialized = r.ReadBoolean(); restAngle = r.ReadSingle(); entryOffset = r.ReadSingle();
         charging = r.ReadBoolean(); chargeTicks = Math.Max(0, r.ReadInt32()); chargeLimit = Math.Clamp(r.ReadInt32(), 12, 600);
         chargeTicks = Math.Min(chargeTicks, chargeLimit); swingCharge = Math.Clamp(r.ReadSingle(), 0, 1);
+        inputSuspended = r.ReadBoolean();
         if (sequence != old) { Array.Clear(Projectile.localNPCImmunity); Array.Clear(effectHits); Array.Clear(exploded); hitCount = 0; }
         UpdatePose(Main.player[Projectile.owner]); previousAngle = sweepStartAngle = sweepEndAngle = Angle;
         previousCenter = sweepStartCenter = sweepEndCenter = grip; previousTip = tip;

@@ -58,4 +58,8 @@ Projectiles: {
 	// MysticPhotonBlast.DisplayName: Mystic Photon Blast
 	// ChenSkillTwoOverlay.DisplayName: Chen Skill Two Overlay
 	// OperatorTerraWave.DisplayName: Operator Terra Wave
+	// ArcherArrow.DisplayName: Archer Arrow
+	// ArcherArrowExplosion.DisplayName: Archer Arrow Explosion
+	// ArcherChargedArrow.DisplayName: Archer Charged Arrow
+	// HarbingerCollapseArea.DisplayName: Harbinger Collapse Area
 }

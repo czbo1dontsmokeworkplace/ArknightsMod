@@ -37,28 +37,40 @@ public sealed class ReaperSwarmRenderer : ModSystem
     internal int LastDrawCalls {get;private set;}
     private readonly Dictionary<string,Texture2D> textures=new(StringComparer.Ordinal);
     private readonly List<Texture2D> ownedTextures=new();
+    private readonly ReaperSwarmAtlas atlas = new();
+    private Func<string,Texture2D> readTexture;
+    private readonly Dictionary<string,(Texture2D Texture,Vector2 Offset,Vector2 Scale)> bindings = new(StringComparer.Ordinal);
     private readonly ReaperSwarmVertex[] quadVertices=new ReaperSwarmVertex[6];
     private readonly ReaperSwarmVertex[] batchVertices=new ReaperSwarmVertex[24576];
     private Effect effect;
     private RenderTarget2D emission,quarterA,quarterB,eighthA,eighthB,flare;
     private bool hasFlare;
     private bool prepared,failed;
+    private bool unloaded;
     private int width,height;
     // Both passes receive float4 colors; no 8-bit Color conversion clips HDR RGB.
     private static readonly BlendState add=new(){ColorSourceBlend=Blend.One,ColorDestinationBlend=Blend.One,AlphaSourceBlend=Blend.Zero,AlphaDestinationBlend=Blend.One};
     public override void Load()
     {
         if(Main.dedServ)return;
+        unloaded=false;
         On_Main.CheckMonoliths+=PrepareTargets;
+    }
+    public override void PostSetupContent()
+    {
+        if(Main.dedServ)return;
+        // Read back source texels once during loading, never on the first swing.
+        Main.QueueMainThreadAction(()=>{if(!unloaded)atlas.Prepare(Main.instance.GraphicsDevice,Texture);});
     }
     public override void Unload()
     {
+        unloaded=true;
         if(!Main.dedServ)On_Main.CheckMonoliths-=PrepareTargets;
         Effect old=effect;effect=null;var targets=new[]{emission,quarterA,quarterB,eighthA,eighthB,flare};
         emission=quarterA=quarterB=eighthA=eighthB=flare=null;
-        var tinted=ownedTextures.ToArray();ownedTextures.Clear();
-        textures.Clear();commands.Clear();radianceCommands.Clear();prepared=failed=false;
-        Main.QueueMainThreadAction(()=>{old?.Dispose();foreach(var t in targets)t?.Dispose();foreach(var t in tinted)t.Dispose();});
+        var tinted=ownedTextures.ToArray();ownedTextures.Clear();Texture2D atlasTexture=atlas.Release();
+        textures.Clear();bindings.Clear();commands.Clear();radianceCommands.Clear();prepared=failed=false;
+        Main.QueueMainThreadAction(()=>{old?.Dispose();foreach(var t in targets)t?.Dispose();foreach(var t in tinted)t.Dispose();atlasTexture?.Dispose();});
     }
     private void PrepareTargets(On_Main.orig_CheckMonoliths orig)
     {
@@ -178,25 +190,35 @@ public sealed class ReaperSwarmRenderer : ModSystem
     }
     private void DrawCommands(GraphicsDevice g,int pass)
     {
+        readTexture ??= Texture;
         effect.CurrentTechnique=effect.Techniques["Material"];
         effect.Parameters["uTransform"].SetValue(Main.GameViewMatrix.TransformationMatrix*Matrix.CreateOrthographicOffCenter(0,width,height,0,-1,1));
         effect.Parameters["uEmission"].SetValue((float)pass);
         g.DepthStencilState=DepthStencilState.None;g.RasterizerState=RasterizerState.CullNone;g.SamplerStates[0]=SamplerState.LinearClamp;
-        string asset=null;bool additive=false;int count=0;
+        Texture2D texture=null;int count=0;
         void Flush()
         {
             if(count==0)return;
-            g.BlendState=additive?add:BlendState.AlphaBlend;
-            effect.Parameters["uTexture"].SetValue(Texture(asset));effect.CurrentTechnique.Passes[0].Apply();
+            g.BlendState=pass>0?add:BlendState.AlphaBlend;
+            effect.Parameters["uTexture"].SetValue(texture);effect.CurrentTechnique.Passes[0].Apply();
             g.DrawUserPrimitives(PrimitiveType.TriangleList,batchVertices,0,count/3);count=0;LastDrawCalls++;
         }
         foreach(var c in pass==0?commands:radianceCommands)
         {
             if(pass==0 && c.HideBase || pass==1 && c.Bloom<=0 || pass==2 && c.Lensflare<=0)continue;
-            bool mode=pass>0 || c.Additive;
-            if(asset!=c.Asset || additive!=mode || count+6>batchVertices.Length)Flush();
-            asset=c.Asset;additive=mode;
-            Fill(c.A-Main.screenPosition,c.B-Main.screenPosition,c.C-Main.screenPosition,c.D-Main.screenPosition,c.UV0,c.UV1,c.Color,c.Bloom,c.Lensflare);
+            if(!bindings.TryGetValue(c.Asset,out var binding)) {
+                binding=atlas.TryGet(c.Asset,g,readTexture,out Vector2 offset,out Vector2 scale)
+                    ? (atlas.Texture,offset,scale) : (Texture(c.Asset),Vector2.Zero,Vector2.One);
+                bindings.Add(c.Asset,binding);
+            }
+            Texture2D next=binding.Texture;
+            Vector2 uv0=binding.Offset+c.UV0*binding.Scale,uv1=binding.Offset+c.UV1*binding.Scale;
+            if(!ReferenceEquals(texture,next) || count+6>batchVertices.Length)Flush();
+            texture=next;
+            // Alpha=0 after premultiplication makes ordinary AlphaBlend exactly
+            // reproduce One/One additive RGB, without changing layer order.
+            float emission=pass==0?(c.Additive?-1:0):c.Bloom;
+            Fill(c.A-Main.screenPosition,c.B-Main.screenPosition,c.C-Main.screenPosition,c.D-Main.screenPosition,uv0,uv1,c.Color,emission,c.Lensflare);
             System.Array.Copy(quadVertices,0,batchVertices,count,6);count+=6;
         }
         Flush();
