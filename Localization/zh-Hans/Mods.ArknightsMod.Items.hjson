@@ -4211,8 +4211,3 @@ BagpipeGreaves: {
 	DisplayName: 风笛的腿甲
 	// Tooltip: ""
 }
-
-RosmontisSwordShield: {
-	DisplayName: 迷迭香的剑盾
-	// Tooltip: A sword and shield used by Rosmontis
-}

@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
-using Terraria.Graphics;
 using Terraria.ModLoader;
 using WisdelItem = ArknightsMod.Content.Items.Weapons.Sniper.Wisadel.WisadelCannon;
 
@@ -79,9 +78,6 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Wisadel
 				screenshakeTimer = 0;
 			}
 		}
-
-		public override void DrawPlayer(Camera camera) => base.DrawPlayer(camera);
-
 		public override void ModifyDrawInfo(ref PlayerDrawSet drawInfo)
 		{
 			if (Player.HeldItem.type == ModContent.ItemType<WisdelItem>() && mode == 1)

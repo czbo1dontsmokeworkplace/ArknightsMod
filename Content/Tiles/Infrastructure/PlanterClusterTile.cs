@@ -45,7 +45,7 @@ namespace ArknightsMod.Content.Tiles.Infrastructure
 			return true;
 		}
 
-		public override void RandomUpdate(int i, int j, bool underground) {
+		public override void RandomUpdate(int i, int j) {
 			if (!WorldGen.InWorld(i, j, 1))
 				return;
 

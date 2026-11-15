@@ -308,20 +308,3 @@ SaintBell: {
 		Desc: Expands attack range, immediately lures all enemies in range to reachable ground near you for [c/3791db:10] seconds, frost accumulation speed increased, ATK [c/3791db:+100%], ASPD [c/3791db:+13%], attacks ignore [c/3791db:10] Arts Resistance, each attack deals Arts damage equal to [c/3791db:260%] ATK
 	}
 }
-
-RosmontisSwordShield: {
-	1: {
-		Label: Expanding Mind
-		Desc: Skill effect not implemented yet
-	}
-
-	2: {
-		Label: Terminal Blockade
-		Desc: Skill effect not implemented yet
-	}
-
-	3: {
-		Label: As You Wish
-		Desc: Skill effect not implemented yet
-	}
-}

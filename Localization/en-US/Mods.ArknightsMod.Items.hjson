@@ -3849,8 +3849,3 @@ BagpipeGreaves: {
 	DisplayName: Bagpipe's Greaves
 	Tooltip: ""
 }
-
-RosmontisSwordShield: {
-	DisplayName: Rosmontis's Sword and Shield
-	Tooltip: A sword and shield used by Rosmontis
-}
