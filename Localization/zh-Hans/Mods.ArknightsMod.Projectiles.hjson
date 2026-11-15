@@ -427,3 +427,6 @@ RaptorGoldenRound.DisplayName: 威龙金色曳光弹
 FrostNovaBarrage.DisplayName: 霜星的冰晶
 FrostNovaBlackIceSpike.DisplayName: 黑冰裁决
 FrostNovaBlackIceRegion.DisplayName: 黑冰封锁区
+// RosmontisProjectileBase.DisplayName: Rosmontis Projectile Base
+// RosmontisProjectileExplosionInAir.DisplayName: Rosmontis Projectile Explosion In Air
+// RosmontisProjectileExplosionInGround.DisplayName: Rosmontis Projectile Explosion In Ground

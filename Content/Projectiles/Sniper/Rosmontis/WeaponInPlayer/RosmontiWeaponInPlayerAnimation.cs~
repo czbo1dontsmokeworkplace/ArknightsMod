@@ -1,0 +1,129 @@
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
+using Terraria;
+
+namespace ArknightsMod.Content.Projectiles.Sniper.Rosmontis.WeaponInPlayer
+{
+	/// <summary>
+	/// 负责单个迷迭香剑盾的跟随、位移、旋转和显隐动画。
+	/// </summary>
+	public class RosmontiWeaponInPlayerAnimation : RosmontiWeaponInPlayerAnimationBase
+	{
+
+		private const float FollowStrength = 0.18f;
+		private const float VelocityDamping = 0.8f;
+		private const float MaxSpeed = 12f;
+		private const float MaxDistanceFromTarget = 20f;
+		private const float TurnRepositionStrength = 0.8f;
+		private const float TurnVelocityRetention = 1f;
+
+		private int lastPlayerDirection;
+
+		public RosmontiWeaponInPlayerAnimation(RosmontiWeaponInPlayerDrawer drawer)
+			: base(drawer)
+		{
+			drawer.Position = GetChasingPlayerTargetPosition();
+			lastPlayerDirection = drawer.Player.direction;
+			SpriteEffects = GetChasingPlayerTargetSpriteEffects();
+		}
+
+		protected override void UpdateAnimation()
+		{
+
+
+			Vector2 targetPosition = GetChasingPlayerTargetPosition();
+			if (drawer.Player.direction != lastPlayerDirection)
+			{
+				lastPlayerDirection = drawer.Player.direction;
+				drawer.Position = Vector2.Lerp(drawer.Position, targetPosition, TurnRepositionStrength);
+				drawer.Velocity *= TurnVelocityRetention;
+				drawer.Acceleration = Vector2.Zero;
+			}
+			else
+			{
+				drawer.Acceleration = (targetPosition - drawer.Position) * FollowStrength;
+				drawer.Velocity = (drawer.Velocity + drawer.Acceleration) * VelocityDamping;
+
+				if (drawer.Velocity.LengthSquared() > MaxSpeed * MaxSpeed)
+					drawer.Velocity = drawer.Velocity.SafeNormalize(Vector2.Zero) * MaxSpeed;
+
+				drawer.Position += drawer.Velocity;
+			}
+
+			ConstrainToTarget(targetPosition);
+			UpdateMotionRotation();
+			drawer.Rotation = GetChasingPlayerTargetRotation();
+			SpriteEffects = GetChasingPlayerTargetSpriteEffects();
+		}
+
+		private void ConstrainToTarget(Vector2 targetPosition)
+		{
+			Vector2 offset = drawer.Position - targetPosition;
+			if (offset.LengthSquared() <= MaxDistanceFromTarget * MaxDistanceFromTarget)
+				return;
+
+			Vector2 outwardDirection = offset.SafeNormalize(Vector2.UnitY);
+			drawer.Position = targetPosition + outwardDirection * MaxDistanceFromTarget;
+
+			float outwardSpeed = Vector2.Dot(drawer.Velocity, outwardDirection);
+			if (outwardSpeed > 0f)
+				drawer.Velocity -= outwardDirection * outwardSpeed;
+		}
+
+		private void UpdateMotionRotation()
+		{
+			Player player = drawer.Player;
+			float horizontalPercent = MathHelper.Clamp(MathF.Abs(player.velocity.X) / 12f, 0f, 1f);
+			Vector2 rotatedVelocity = new Vector2(player.velocity.X).RotatedBy(MathHelper.PiOver4);
+			float horizontalRotation = player.velocity.Length() < 0.1f
+				? 0f
+				: MathF.Atan2(rotatedVelocity.Y, rotatedVelocity.X) * horizontalPercent;
+
+			bool absoluteRight = player.direction == 1 && (drawer.Index == 0 || drawer.Index == 2)
+				|| player.direction == -1 && (drawer.Index == 1 || drawer.Index == 3);
+			float verticalPercent = MathHelper.Clamp(player.velocity.Y / 12f, -1f, 1f);
+			float verticalRotation = absoluteRight
+				? verticalPercent * MathHelper.PiOver4 / 3f
+				: -verticalPercent * MathHelper.PiOver4 / 3f;
+
+			MotionRotationOffset = MathHelper.Lerp(
+				MotionRotationOffset,
+				horizontalRotation * 0.2f + verticalRotation,
+				0.8f);
+		}
+
+		private Vector2 GetChasingPlayerTargetPosition()
+		{
+			Player player = drawer.Player;
+			return drawer.Index switch
+			{
+				0 => player.Center + new Vector2(-30, -10) * player.Directions,
+				1 => player.Center + new Vector2(30, -10) * player.Directions,
+				2 => player.Center + new Vector2(-40, -25) * player.Directions,
+				3 => player.Center + new Vector2(40, -25) * player.Directions,
+				_ => player.Center,
+			};
+		}
+
+		private float GetChasingPlayerTargetRotation()
+		{
+			Player player = drawer.Player;
+			return drawer.Index switch
+			{
+				0 => MathHelper.ToRadians(25 * player.direction),
+				1 => MathHelper.ToRadians(-25 * player.direction),
+				2 => MathHelper.ToRadians(55 * player.direction),
+				3 => MathHelper.ToRadians(-55 * player.direction),
+				_ => 0f,
+			};
+		}
+
+		private SpriteEffects GetChasingPlayerTargetSpriteEffects()
+		{
+			return drawer.Player.direction == 1
+				? SpriteEffects.FlipHorizontally
+				: SpriteEffects.None;
+		}
+	}
+}

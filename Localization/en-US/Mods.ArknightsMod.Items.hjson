@@ -4078,3 +4078,8 @@ ArchettoBow: {
 	DisplayName: Songstring Bow [Archetto]
 	Tooltip: Left-click preserves your arrow ammo; charge right-click for a fast, single-impact explosive arrow. Skill: twin shots and +15% damage for 12 seconds, one arrow consumed per volley.
 }
+
+RosmontisSwordShield: {
+	DisplayName: Rosmontis's Sword and Shield
+	Tooltip: A sword and shield used by Rosmontis
+}

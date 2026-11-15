@@ -427,3 +427,6 @@ RaptorGoldenRound.DisplayName: Raptor Tracer Round
 FrostNovaBarrage.DisplayName: FrostNova Ice Crystal
 FrostNovaBlackIceSpike.DisplayName: Black Ice Judgement
 FrostNovaBlackIceRegion.DisplayName: Black Ice Lockdown
+RosmontisProjectileBase.DisplayName: Rosmontis Projectile Base
+RosmontisProjectileExplosionInAir.DisplayName: Rosmontis Projectile Explosion In Air
+RosmontisProjectileExplosionInGround.DisplayName: Rosmontis Projectile Explosion In Ground

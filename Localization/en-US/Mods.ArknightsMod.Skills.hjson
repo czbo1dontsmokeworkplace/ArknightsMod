@@ -1377,3 +1377,20 @@ ArchettoBow: {
 		Desc: 12 seconds: faster twin volleys and +15% damage
 	}
 }
+
+RosmontisSwordShield: {
+	1: {
+		Label: Expanding Mind
+		Desc: Skill effect not implemented yet
+	}
+
+	2: {
+		Label: Terminal Blockade
+		Desc: Skill effect not implemented yet
+	}
+
+	3: {
+		Label: As You Wish
+		Desc: Skill effect not implemented yet
+	}
+}

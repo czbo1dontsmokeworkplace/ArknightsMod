@@ -1659,3 +1659,20 @@ ArchettoBow: {
 		Desc: 12秒内双箭齐射、射速提高、伤害增加15%
 	}
 }
+
+RosmontisSwordShield: {
+	1: {
+		Label: 思维膨大
+		Desc: 技能效果待实现
+	}
+
+	2: {
+		Label: 末梢阻断
+		Desc: 技能效果待实现
+	}
+
+	3: {
+		Label: 如你所愿
+		Desc: 技能效果待实现
+	}
+}

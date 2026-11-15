@@ -4400,3 +4400,8 @@ ArchettoBow: {
 	DisplayName: 鸣弦弓 [空弦]
 	Tooltip: 左键保留所用箭矢；右键蓄力释放单次命中的高速爆炸箭。技能：双箭齐射、伤害增加15%，持续12秒，每次齐射消耗一支箭
 }
+
+RosmontisSwordShield: {
+	DisplayName: 迷迭香的剑盾
+	// Tooltip: A sword and shield used by Rosmontis
+}
