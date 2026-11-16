@@ -12,7 +12,7 @@ using Terraria.GameContent;
 namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova;
 
 // Source inheritance gives every child the encounter identity, including old ice effects.
-public sealed class FrostNovaOwnedProjectile : GlobalProjectile
+public sealed partial class FrostNovaOwnedProjectile : GlobalProjectile
 {
     public override bool InstancePerEntity => true;
     internal int Host = -1, Token, Age;
@@ -54,10 +54,12 @@ public sealed class FrostNovaOwnedProjectile : GlobalProjectile
     }
     public override bool PreAI(Projectile projectile) {
         if (Token == 0) return true;
+        if (Retiring) { UpdateRetirement(projectile); return false; }
+        if (RetirementDue(projectile)) { Retire(projectile); return false; }
         if (projectile.ModProjectile is FrostNovaSmoke) {
             projectile.hostile = false; projectile.damage = 0;
             if (++Age <= 180) return true;
-            projectile.active = false; return false;
+            Retire(projectile); return false;
         }
         bool alive = Resolve(Host, Token, out FrostNova boss);
         bool visual = projectile.ModProjectile is FrostNovaJump or FrostNovaRevival or FrostNovaWhiteRing or FrostNovaSmoke or FNInvincibleEffect;
@@ -66,10 +68,14 @@ public sealed class FrostNovaOwnedProjectile : GlobalProjectile
         if (valid) ownerConfirmed = true;
         Age++;
         if (!alive || (!boss.CombatHazardsActive && !visual) || Age > (projectile.ModProjectile is BlizzardStorm ? 720 : 1200)) {
-            projectile.damage = 0; projectile.hostile = false;
-            // No death callback: retirement must not spawn a fresh damaging child.
-            projectile.active = false;
+            Retire(projectile);
             return false;
+        }
+        if (projectile.ModProjectile is FNIceRingRound && Main.projectile.IndexInRange((int)projectile.ai[1])) {
+            Projectile parent = Main.projectile[(int)projectile.ai[1]];
+            if (!parent.active || parent.GetGlobalProjectile<FrostNovaOwnedProjectile>().Retiring) {
+                Retire(projectile); return false;
+            }
         }
         if (projectile.ModProjectile is FNIceRingRound or FNIceRingChoice) projectile.hostile = false;
         if (projectile.ModProjectile is Blizzard) projectile.hostile = false;
@@ -77,6 +83,7 @@ public sealed class FrostNovaOwnedProjectile : GlobalProjectile
     }
     public override void PostAI(Projectile projectile) {
         if (Token == 0) return;
+        if (Retiring) return;
         // Black shards now accelerate by 1.01 per real tick; the old shared cap
         // must not silently cancel their acceleration.
         bool acceleratingIce = projectile.ModProjectile is BlackIceProjectile or BlackIce or FrostNovaBarrage;
@@ -85,12 +92,12 @@ public sealed class FrostNovaOwnedProjectile : GlobalProjectile
             projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * absoluteCap;
         if (projectile.ModProjectile is Blizzard) {
             projectile.hostile = false;
-            if (Age > 180) projectile.active = false;
+            if (Age > 180) Retire(projectile);
             float cap = 8.8f;
             if (projectile.velocity.LengthSquared() > cap * cap) projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * cap;
         }
-        if (projectile.ModProjectile is BlizzardStorm && Age % 120 == 0 && Main.netMode != NetmodeID.MultiplayerClient
-            && Resolve(Host, Token, out FrostNova boss) && boss.CombatHazardsActive) {
+        if (projectile.ModProjectile is BlizzardStorm && Age % 210 == 0 && Main.netMode != NetmodeID.MultiplayerClient
+            && Resolve(Host, Token, out FrostNova boss) && boss.CombatHazardsActive && boss.CombatPattern != 3) {
             int count = 0;
             foreach (Projectile p in Main.ActiveProjectiles) if (p.hostile && p.GetGlobalProjectile<FrostNovaOwnedProjectile>().BelongsTo(Host, Token)) count++;
             if (count <= FrostNovaCombatRules.HazardCap - 3) {
@@ -107,12 +114,16 @@ public sealed class FrostNovaOwnedProjectile : GlobalProjectile
         }
     }
     public override bool CanHitPlayer(Projectile projectile, Player target) =>
-        Token == 0 || (Resolve(Host, Token, out FrostNova boss) && boss.CombatHazardsActive);
+        Token == 0 || (!Retiring && Resolve(Host, Token, out FrostNova boss) && boss.CombatHazardsActive);
     public override void SendExtraAI(Projectile projectile, BitWriter bitWriter, BinaryWriter writer) {
-        writer.Write(Host); writer.Write(Token); writer.Write(Age);
+        writer.Write(Host); writer.Write(Token); writer.Write(Age); writer.Write(RetirementAge);
     }
     public override void ReceiveExtraAI(Projectile projectile, BitReader bitReader, BinaryReader reader) {
-        Host = reader.ReadInt32(); Token = reader.ReadInt32(); Age = reader.ReadInt32();
+        Host = reader.ReadInt32(); Token = reader.ReadInt32(); Age = reader.ReadInt32(); RetirementAge = reader.ReadInt32();
+        if (Retiring) {
+            Disarm(projectile);
+            projectile.timeLeft = Math.Max(projectile.timeLeft, (Math.Max(0, RetirementTicks - RetirementAge) + 2) * projectile.MaxUpdates);
+        }
     }
 }
 
@@ -140,6 +151,11 @@ public sealed class FrostNovaOwnedNPC : GlobalNPC
             npc.damage = 0; npc.active = false; npc.netUpdate = true; return false;
         }
         npc.damage = Math.Min(npc.damage, 24);
+        if (npc.ModNPC is not IceCrystalAltar) {
+            npc.TargetClosest(false);
+            if (npc.HasValidTarget && npc.ModNPC is not Oneiros)
+                npc.direction = Main.player[npc.target].Center.X >= npc.Center.X ? 1 : -1;
+        }
         return true;
     }
     public override void PostAI(NPC npc) {
@@ -225,7 +241,7 @@ public sealed class FrostNovaWeather : ModSystem
         float strength = StormStrength();
         if (strength <= .001f) return;
         int count = Math.Clamp(Main.screenWidth * Main.screenHeight / 15000, 55, 170);
-        Texture2D pixel = TextureAssets.MagicPixel.Value;
+        Texture2D pixel = TextureAssets.Extra[ExtrasID.ThePerfectGlow].Value;
         Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp,
             DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
         try {
@@ -233,9 +249,9 @@ public sealed class FrostNovaWeather : ModSystem
             float layer = .65f + (i % 5) * .09f;
             float x = ((i * 317.3f + time * 170 * layer - Main.screenPosition.X * .16f) % (Main.screenWidth + 100) + Main.screenWidth + 100) % (Main.screenWidth + 100) - 50;
             float y = ((i * 193.7f + time * 115 * layer - Main.screenPosition.Y * .12f) % (Main.screenHeight + 80) + Main.screenHeight + 80) % (Main.screenHeight + 80) - 40;
-            Main.spriteBatch.Draw(pixel, new Vector2(x, y), new Rectangle(0, 0, 1, 1),
+            Main.spriteBatch.Draw(pixel, new Vector2(x, y), null,
                 new Color(172, 211, 230) * ((.16f + (i % 3) * .035f) * strength), -.82f, Vector2.Zero,
-                new Vector2(1.1f, 5.5f) * layer, SpriteEffects.None, 0);
+                new Vector2(3.2f, 5.5f) * layer / pixel.Size(), SpriteEffects.None, 0);
         }
         }
         finally { Main.spriteBatch.End(); }

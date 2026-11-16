@@ -20,7 +20,8 @@ public sealed partial class IsharmlaDragon : ModNPC
     public bool PortalOpen, PortalCrossed;
     public int PortalExitTimer, AttackSide = 1;
     public float PortalCrossTravel;
-    public float Visibility => Spine.Initialized ? Spine.Visibility(0) : 1;
+    public float WallVisibility => Pattern == 6 && Boss?.Stage == TideStage.LastTide ? 1-IsharmlaRules.Envelope(LocalTimer,28,440,28) : 1;
+    public float Visibility => (Spine.Initialized ? Spine.Visibility(0) : 1)*WallVisibility;
     private int waterCooldown, previousPattern = -1;
     private bool wasAbove;
     private TideStage previousStage;
@@ -28,9 +29,9 @@ public sealed partial class IsharmlaDragon : ModNPC
     public Vector2 SweepDirection;
     public bool ContactActive;
     private int motionSequence;
-    private readonly int[] patternBag = new int[6];
+    private readonly int[] patternBag = new int[7];
     private readonly IsharmlaSegment[] drawSegments = new IsharmlaSegment[IsharmlaRules.DragonSegments];
-    private int bagPosition = 6, bagSize;
+    private int bagPosition = 7, bagSize;
     public float FacingAngle => Direction.ToRotation();
     public Vector2 NeckJoint => NeckAt(NPC.Center, Direction);
     private static Vector2 NeckAt(Vector2 center, Vector2 direction) => center + new Vector2(-108, -55).RotatedBy(direction.ToRotation() - IsharmlaRules.HeadArtAngle) * IsharmlaRules.DragonScale;
@@ -46,7 +47,7 @@ public sealed partial class IsharmlaDragon : ModNPC
     }
     public override void SetDefaults()
     {
-        NPC.width = 180; NPC.height = 160; NPC.lifeMax = 520000; NPC.defense = 80; NPC.damage = 180;
+        NPC.width = 180; NPC.height = 160; NPC.lifeMax = 364000; NPC.defense = 80; NPC.damage = 180;
         NPC.boss = NPC.noGravity = NPC.noTileCollide = NPC.netAlways = true;
         NPC.aiStyle = -1; NPC.knockBackResist = 0; NPC.npcSlots = 10; NPC.value = 0;
         NPC.HitSound = SoundID.NPCHit4; NPC.DeathSound = SoundID.NPCDeath14;
@@ -154,7 +155,7 @@ public sealed class IsharmlaSegment : ModNPC
     public override void SetStaticDefaults() => NPCID.Sets.NPCBestiaryDrawOffset.Add(Type, new NPCID.Sets.NPCBestiaryDrawModifiers { Hide = true });
     public override void SetDefaults()
     {
-        NPC.width = 120; NPC.height = 106; NPC.lifeMax = 520000; NPC.defense = 80; NPC.damage = 145;
+        NPC.width = 120; NPC.height = 106; NPC.lifeMax = 364000; NPC.defense = 80; NPC.damage = 145;
         NPC.noGravity = NPC.noTileCollide = NPC.netAlways = true; NPC.aiStyle = -1; NPC.knockBackResist = 0;
         NPC.npcSlots = 0; NPC.dontCountMe = true; NPC.HitSound = SoundID.NPCHit4;
     }
@@ -169,14 +170,10 @@ public sealed class IsharmlaSegment : ModNPC
             (front.Position - rear.Position).SafeNormalize(pose.Forward) : pose.Forward;
         NPC.rotation = tangent.ToRotation() - NativeAngle;
         NPC.Center = pose.Position;
-        if (Order > 0 && PreviousIndex >= 0 && PreviousIndex < Main.maxNPCs && Main.npc[PreviousIndex].ModNPC is IsharmlaSegment previous &&
-            head.Spine.Sample(IsharmlaRules.SegmentDistance(Order - 1)).Leg == pose.Leg)
-        {
-            float spacing = IsharmlaRules.SegmentDistance(Order) - IsharmlaRules.SegmentDistance(Order - 1);
-            Vector2 delta = NPC.Center - previous.NPC.Center;
-            if (delta.LengthSquared() > spacing * spacing) NPC.Center = previous.NPC.Center + delta.SafeNormalize(-tangent) * spacing;
-        }
-        Visibility = head.Spine.Visibility(behind);
+        // Every center remains on its own recorded arc-length point. A recursive
+        // socket correction translates all following segments sideways in a turn.
+        // The 42px longitudinal overlap covers the art without pulling the chain.
+        Visibility = head.Spine.Visibility(behind)*head.WallVisibility;
         NPC.velocity = Vector2.Zero;
     }
     public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position) => false;

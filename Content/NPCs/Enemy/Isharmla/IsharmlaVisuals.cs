@@ -6,6 +6,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ModLoader;
+using ReLogic.Content;
 
 namespace ArknightsMod.Content.NPCs.Enemy.Isharmla;
 
@@ -15,13 +16,16 @@ public sealed partial class IsharmlaVisuals : ModSystem
     public static readonly Color Abyss = new(3, 17, 72), Azure = new(0, 72, 230), Crest = new(35, 240, 255);
     private static Effect material;
     private static Texture2D glow, ring;
+    private static Texture2D shaderSurface;
+    internal static Texture2D ShaderSurface => shaderSurface ??= ModContent.Request<Texture2D>(
+        "ArknightsMod/Assets/null", AssetRequestMode.ImmediateLoad).Value;
     private static bool failed;
     private static readonly Dictionary<string, Texture2D> artCache = new();
     internal static float? ClockOverride;
     public static float Clock => ClockOverride ?? Main.GlobalTimeWrappedHourly;
     public static Texture2D Art(string name)
     {
-        if (!artCache.TryGetValue(name, out var texture)) artCache[name] = texture = ModContent.Request<Texture2D>(Isharmla.Root + name).Value;
+        if (!artCache.TryGetValue(name, out var texture)) artCache[name] = texture = ModContent.Request<Texture2D>(Isharmla.Root + name, AssetRequestMode.ImmediateLoad).Value;
         return texture;
     }
     public static Texture2D Glow
@@ -57,7 +61,7 @@ public sealed partial class IsharmlaVisuals : ModSystem
     }
     public override void Unload()
     {
-        var fx = material; var g = glow; var r = ring; material = null; glow = ring = null; failed = false; artCache.Clear(); ClockOverride = null;
+        var fx = material; var g = glow; var r = ring; material = null; glow = ring = shaderSurface = null; failed = false; artCache.Clear(); ClockOverride = null;
         TidalParticles.Clear();
         if (!Main.dedServ) Main.QueueMainThreadAction(() => { fx?.Dispose(); g?.Dispose(); r?.Dispose(); TidalParticles.DisposeTextures(); });
     }
@@ -159,7 +163,11 @@ public sealed partial class IsharmlaVisuals : ModSystem
     }
     public static void Shake(float amount)
     {
-        if (!Main.dedServ && Main.LocalPlayer.active) Main.LocalPlayer.GetModPlayer<IsharmlaPlayer>().Shake = Math.Min(6, amount);
+        if (!Main.dedServ && Main.LocalPlayer.active)
+        {
+            var player = Main.LocalPlayer.GetModPlayer<IsharmlaPlayer>();
+            player.Shake = Math.Max(player.Shake, Math.Min(9, amount));
+        }
     }
     public override void PostUpdateEverything() { if (!Main.dedServ) TidalParticles.Update(); }
     public override void PostDrawTiles() { if (!Main.dedServ) TidalParticles.Draw(); }

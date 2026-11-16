@@ -1,0 +1,18 @@
+Items: {
+	SR25: {
+		DisplayName: SR25
+		Tooltip:
+			'''
+			Left click: fire at 300 RPM; convert Musket Balls, Silver Bullets and Tungsten Bullets
+			Hold right click to scope at double damage taken; equip for automatic 360-degree nearest-target radar
+			Marked enemies take 20% more damage and attract all players' moving non-summon projectiles
+			'''
+		Signature: Hold your breath. The world narrows to you.
+		DeveloperNote: Developer Item
+	}
+}
+
+Projectiles: {
+	SR25Holdout.DisplayName: SR25
+	SR25Round.DisplayName: SR25 Special Round
+}

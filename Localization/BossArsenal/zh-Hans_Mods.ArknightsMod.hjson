@@ -15,7 +15,7 @@ Items: {
 
 	ScarletMeson: {
 		DisplayName: 猩红介子炮
-		Tooltip: 按住左键发射间歇激光，在首个敌人或地形处停止
+		Tooltip: 按住左键，短暂蓄能后发射间歇激光，在首个敌人或地形处停止
 	}
 
 	UrsusArtilleryLink: {

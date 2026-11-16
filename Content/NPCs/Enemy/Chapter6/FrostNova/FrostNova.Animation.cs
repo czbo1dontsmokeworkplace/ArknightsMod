@@ -17,9 +17,9 @@ public partial class FrostNova
             return true;
         }
         if (!FNOnSkill) return false;
-        int release = CombatPattern switch { 4 => 40, 6 => 72, 9 => 78, 10 => 120, _ => 36 };
-        if (CombatPattern == 8 && combatTimer >= 88) release = 108;
-        if (CombatPattern == 9 && AirbornePhase && combatTimer >= 150) release = 198;
+        int release = CombatPattern switch { 0 => 48, 4 => 40, 6 or 9 or 10 => 90, _ => 36 };
+        if (CombatPattern == 8 && combatTimer >= 130) release = 156;
+        if (CombatPattern == 9 && AirbornePhase && combatTimer >= 150) release = 210;
         int frame;
         if (combatTimer < release)
             frame = 16 + Math.Min(9, combatTimer * 10 / Math.Max(1, release));

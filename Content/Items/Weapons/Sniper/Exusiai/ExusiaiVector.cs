@@ -36,7 +36,7 @@ public class ExusiaiVector : UpgradeWeaponBase
     public override void SetDefaults()
     {
         Item.width = 54; Item.height = 28; Item.damage = VectorBalance.PanelDamage;
-        Item.DamageType = DamageClass.Ranged; Item.knockBack = 5;
+        Item.DamageType = DamageClass.Ranged; Item.knockBack = 5; Item.ArmorPenetration=VectorBalance.InnateArmorPenetration;
         Item.useTime = Item.useAnimation = VectorMagazine.Interval; Item.reuseDelay = 0;
         Item.shootSpeed = 16; Item.shoot = ModContent.ProjectileType<ExusiaiVectorHoldout>();
         Item.useAmmo = AmmoID.Bullet; Item.useStyle = ItemUseStyleID.Shoot;
@@ -108,13 +108,7 @@ public class ExusiaiVector : UpgradeWeaponBase
         {
             if (!player.PickAmmo(Item, out _, out _, out int selectedDamage, out knockback, out ammo)) return false;
             int currentBase = player.GetWeaponDamage(Item);
-            int saved = Item.damage;
-            int legacyBase;
-            // Reuse the real damage hooks, prefixes and player modifiers for the old 108 panel.
-            // Restore even if another mod throws; the current item must keep its new panel.
-            try { Item.damage = Math.Max(1, (int)MathF.Round(108f * saved / VectorBalance.PanelDamage)); legacyBase = player.GetWeaponDamage(Item); }
-            finally { Item.damage = saved; }
-            damage = VectorBalance.Damage(legacyBase, Math.Max(0, selectedDamage - currentBase), mode);
+            damage = VectorBalance.Damage(currentBase, Math.Max(0, selectedDamage - currentBase), mode);
             return true;
         }
         finally { pickingAmmo = false; }

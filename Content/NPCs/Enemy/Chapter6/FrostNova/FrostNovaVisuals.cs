@@ -88,47 +88,12 @@ internal static class FrostNovaVisuals
             texture.Size() * .5f, size / texture.Size(), SpriteEffects.None);
     }
 
-    internal static void Line(Vector2 from, Vector2 to, Color tint, float width = 1)
-    {
-        Vector2 delta = to - from;
-        if (!float.IsFinite(delta.X) || !float.IsFinite(delta.Y) || delta.LengthSquared() < .01f
-            || delta.LengthSquared() > 700 * 700) return;
-        Main.EntitySpriteDraw(TextureAssets.MagicPixel.Value, from - Main.screenPosition, new Rectangle(0, 0, 1, 1),
-            tint, delta.ToRotation(), new Vector2(0, .5f), new Vector2(delta.Length(), Math.Clamp(width, .5f, 12)), SpriteEffects.None);
-    }
-
     internal static void Glow(Vector2 center, Vector2 size, Color color, float opacity)
         => Sprite(TextureAssets.Extra[ExtrasID.ThePerfectGlow].Value, center, size, color * Math.Clamp(opacity, 0, 1));
 
     internal static void DrawSigil(Vector2 center, float radius, float opacity, int spokes = 6)
     {
-        if (!Visible(center) || !float.IsFinite(radius) || !float.IsFinite(opacity) || opacity <= 0) return;
-        radius = Math.Clamp(radius, 8, 240);
-        opacity = Math.Clamp(opacity, 0, .9f);
-        spokes = Math.Clamp(spokes, 3, 12);
-        float clock = Main.GlobalTimeWrappedHourly;
-        // The original elliptical ice ring establishes the ground plane. A broken
-        // inner seal and faceted spokes rotate slowly inside that fixed silhouette.
-        Sprite(Texture("ICRing"), center, new Vector2(radius * 2.2f, radius * .64f), Color.White * (opacity * .65f));
-        Sprite(Texture("ICGlow"), center, new Vector2(radius * 1.8f, radius * .65f), Color.White * (opacity * .22f), clock * .08f);
-        Sprite(Texture("ICRing"), center + new Vector2(0, -3), new Vector2(radius * 1.75f, radius * .48f),
-            Pale * (opacity * .3f), -.025f * MathF.Sin(clock));
-        for (int i = 0; i < 48; i++)
-        {
-            if (i % 8 == 0) continue;
-            float a = i * MathHelper.TwoPi / 48 + clock * .14f;
-            Vector2 from = center + a.ToRotationVector2() * new Vector2(radius, radius * .3f);
-            Vector2 to = center + (a + MathHelper.TwoPi / 48).ToRotationVector2() * new Vector2(radius, radius * .3f);
-            Line(from, to, Ice * (opacity * .5f), 1);
-        }
-        for (int i = 0; i < spokes; i++)
-        {
-            float a = i * MathHelper.TwoPi / spokes - clock * .11f;
-            Vector2 axis = a.ToRotationVector2();
-            Vector2 at = center + axis * new Vector2(radius * .72f, radius * .22f);
-            Line(center + axis * new Vector2(radius * .5f, radius * .15f), at, Pale * (opacity * .5f));
-            Sprite(Texture("FNIceCrystal"), at, new Vector2(6, 10), Color.White * opacity, a + MathHelper.PiOver2);
-        }
+        // Casting is now emitted as real mist/ice particles in AI, never drawn as rings.
     }
 
     internal static void DrawBoss(NPC npc, bool airborne, float attackProgress, int pattern)
@@ -138,7 +103,7 @@ internal static class FrostNovaVisuals
         float clock = Main.GlobalTimeWrappedHourly;
         float charge = float.IsFinite(attackProgress) ? Math.Clamp(attackProgress, 0, 1) : 0;
         Vector2 feet = npc.Center + new Vector2(0, 29 + (airborne ? 13 : 3));
-        if (airborne) return; // Persistent airborne ornament is the six-curve gold halo.
+        // Both phases chant on the ground; the halo is drawn around the body separately.
         if (charge > .03f)
             DrawSigil(feet, 35 + charge * 22, charge * opacity * .65f, 4 + Math.Abs(pattern % 4));
 
@@ -155,15 +120,16 @@ internal static class FrostNovaVisuals
 
     internal static void Cast(Vector2 center, int kind, float strength = 1)
     {
-        if (!Visible(center) || !float.IsFinite(strength) || ParticleManager.activeParticles.Count >= 820) return;
+        if (!Visible(center) || !float.IsFinite(strength) || ParticleManager.activeParticles.Count >= 1900) return;
         strength = Math.Clamp(strength, .25f, 2.5f);
+        if (kind != 3) FrostNovaColdMistSystem.Begin(center);
         int count = Math.Clamp((int)((kind == 2 ? 22 : kind == 3 ? 6 : 12) * strength), 4, 44);
         for (int i = 0; i < Math.Min(10, count / 2); i++) {
             Vector2 axis = (i * MathHelper.TwoPi / Math.Max(1, count / 2)).ToRotationVector2();
             Dust d = Dust.NewDustPerfect(center, i % 2 == 0 ? 240 : 263, axis * (1.2f + strength),
                 90, Color.White, .8f + strength * .3f); d.noGravity = true;
         }
-        for (int i = 0; i < count && ParticleManager.activeParticles.Count < 860; i++)
+        for (int i = 0; i < count && ParticleManager.activeParticles.Count < 1950; i++)
         {
             float angle = MathHelper.TwoPi * i / count + Main.rand.NextFloat(-.16f, .16f);
             Vector2 outward = angle.ToRotationVector2();
@@ -181,7 +147,7 @@ internal static class FrostNovaVisuals
     {
         if (!Visible(center)) return;
         count = Math.Clamp(count, 3, 28);
-        for (int i = 0; i < count && ParticleManager.activeParticles.Count < 860; i++) {
+        for (int i = 0; i < count && ParticleManager.activeParticles.Count < 1950; i++) {
             Vector2 speed = Main.rand.NextVector2Circular(3.5f, 3.5f) - Vector2.UnitY * 1.5f + velocity * .06f;
             new FrostNovaBlackIceShardParticle(center, speed, Main.rand.Next(18, 33), Main.rand.NextFloat(3, 7)).Spawn();
             if (i % 3 == 0) {
@@ -200,12 +166,13 @@ internal static class FrostNovaVisuals
         // lance behind it and a narrow pale fracture along its leading edge.
         Sprite(Material("EnergyLance"), projectile.Center - direction * 7,
             new Vector2(15, 44), Color.White * (opacity * .5f), angle);
-        Texture2D crystal = Texture("BlackIceProjectile");
-        int frame = projectile.ai[2] > 0 ? Math.Clamp(5 - (int)(projectile.ai[2] / 9), 0, 4) : 5;
-        Rectangle source = crystal.Frame(1, 6, 0, frame);
-        Outline(crystal, projectile.Center, source, angle, source.Size() * .5f, new Vector2(15, 29) / source.Size(), opacity, 6);
+        Texture2D crystal = Texture("BlackIcePrism");
+        int frame = projectile.ai[2] > 0 ? Math.Clamp(4 - (int)(projectile.ai[2] / 15), 0, 3) : 4;
+        Rectangle source = crystal.Frame(1, 5, 0, frame);
+        Vector2 size = new(30, 60);
+        Outline(crystal, projectile.Center, source, angle, source.Size() * .5f, size / source.Size(), opacity, 5);
         Main.EntitySpriteDraw(crystal, projectile.Center - Main.screenPosition, source, Color.White * opacity,
-            angle, source.Size() * .5f, new Vector2(15, 29) / source.Size(), SpriteEffects.None);
+            angle, source.Size() * .5f, size / source.Size(), SpriteEffects.None);
         Sprite(Material("EnergyLance"), projectile.Center + direction * 2,
             new Vector2(3, 18), Color.White * (opacity * .7f), angle);
     }
@@ -269,6 +236,7 @@ internal static class FrostNovaVisuals
     }
 
     internal static void Clear() {
+        FrostNovaProjectileArt.ExternalTextures.Clear();
         trail = null; flow = null; textures.Clear();
         foreach (Texture2D texture in outlines.Values) texture.Dispose();
         outlines.Clear();

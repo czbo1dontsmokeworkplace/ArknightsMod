@@ -16,6 +16,7 @@ public partial class Oneiros
         writer.Write(directionchoose);
         writer.Write(Holdtime);
         writer.Write(preattack);
+        writer.Write(payloadReleased);writer.Write(sortieAge);
     }
 
     public override void ReceiveExtraAI(System.IO.BinaryReader reader)
@@ -31,5 +32,6 @@ public partial class Oneiros
         directionchoose = reader.ReadInt32();
         Holdtime = reader.ReadInt32();
         preattack = reader.ReadBoolean();
+        payloadReleased=reader.ReadBoolean();sortieAge=reader.ReadInt32();
     }
 }

@@ -31,6 +31,9 @@ public sealed partial class Isharmla : ModNPC
     public TideStage Stage => (TideStage)Math.Max(1, (int)NPC.ai[0]);
     public int Timer => (int)NPC.ai[1];
     public int Attack => (int)NPC.ai[2];
+    public int StepBeat => Cast % (Stage == TideStage.LastSong ? 96 : 120);
+    public bool Dashing => Transition == 0 && Attack == 2 && Stage is TideStage.Cantor or TideStage.LastSong
+        && StepBeat is >= 42 and < 72;
     internal bool Authority => Main.netMode != NetmodeID.MultiplayerClient;
     public IsharmlaDragon Dragon => DragonIndex >= 0 && DragonIndex < Main.maxNPCs && Main.npc[DragonIndex].active &&
         Main.npc[DragonIndex].ModNPC is IsharmlaDragon d && d.Encounter == Encounter ? d : null;
@@ -44,7 +47,7 @@ public sealed partial class Isharmla : ModNPC
     }
     public override void SetDefaults()
     {
-        NPC.width = 82; NPC.height = 92; NPC.lifeMax = 270000; NPC.defense = 65; NPC.damage = 130;
+        NPC.width = 82; NPC.height = 92; NPC.lifeMax = 81000; NPC.defense = 65; NPC.damage = 130;
         NPC.boss = NPC.noGravity = NPC.noTileCollide = NPC.netAlways = true;
         NPC.aiStyle = -1; NPC.knockBackResist = 0; NPC.npcSlots = 12; NPC.value = Item.buyPrice(gold: 45);
         NPC.HitSound = SoundID.NPCHit5; NPC.DeathSound = SoundID.NPCDeath7;
@@ -77,8 +80,7 @@ public sealed partial class Isharmla : ModNPC
     public override bool CanHitPlayer(Player target, ref int cooldownSlot)
     {
         cooldownSlot = ImmunityCooldownID.Bosses;
-        return Stage == TideStage.LastSong && Transition == 0 && Attack == 2 &&
-            (Cast is >= 90 and < 113 || Cast is >= 174 and < 197);
+        return Dashing;
     }
     public override bool CanHitNPC(NPC target) => false;
     public override void ModifyIncomingHit(ref NPC.HitModifiers modifiers)

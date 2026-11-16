@@ -7,9 +7,9 @@ namespace ArknightsMod.Content.NPCs.Enemy.Isharmla;
 public enum TideStage { Cantor = 1, Leviathan, Covenant, LastSong, LastTide, Finale }
 public enum TideShot { Pearl, Seeker, Column, RainCloud, Rain, Wave, Breath, Gate, Lattice, Mine, Bubble, Typhoon, Tornado, Shark,
     Note, CharmNote, StormSpark, Bomb, MistField,
-    Canticle, EchoSinger, WakeMark, FoamArc, Current, TideHeart }
+    Canticle, EchoSinger, WakeMark, FoamArc, Current, TideHeart, Harpoon, TideSeed, TideRay }
 
-public enum TideMotion { Breach, Broadside, Spiral, Gate, Undertow, AtomicBreath }
+public enum TideMotion { Breach, Broadside, Spiral, Gate, Undertow, AtomicBreath, LaserWall }
 
 // All progression and geometry rules are independent of rendering and networking.
 public static class IsharmlaRules
@@ -20,10 +20,10 @@ public static class IsharmlaRules
     public const int FinaleTime = 960;
     public const float HumanRadius = 46;
     public const int HazardBudget = 420;
-    public static int HumanPhraseLength(bool fierce) => fierce ? 330 : 420;
+    public static int HumanPhraseLength(bool fierce) => fierce ? 288 : 360;
     public static int MotionLength(int pattern, bool final) => pattern switch
     {
-        0 => 420, 1 => final ? 390 : 450, 2 => 480, 3 => 420, 4 => 420, _ => 510
+        0 => 330, 1 => 320, 2 => 350, 3 => 360, 4 => 320, 6 => 480, _ => 360
     };
     public static float Envelope(float age, float start, float end, float fade = 24) =>
         Smooth((age - start) / fade) * Smooth((end - age) / fade);
@@ -37,7 +37,8 @@ public static class IsharmlaRules
     public static float SegmentDistance(int order)
     {
         float distance = 58;
-        for (int i = 1; i <= order; i++) distance += (SegmentSpan(i - 1) + SegmentSpan(i)) * .5f - 72;
+        // Match the socket solver's 42px overlap, including the portal visibility/travel clock.
+        for (int i = 1; i <= order; i++) distance += (SegmentSpan(i - 1) + SegmentSpan(i)) * .5f - 42;
         return distance;
     }
     public static Vector2 BoltSize(TideShot kind) => kind switch

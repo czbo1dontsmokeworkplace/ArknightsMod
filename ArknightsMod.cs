@@ -362,6 +362,9 @@ namespace ArknightsMod
 				case ArkMessageID.SeabornContact:
 					global::ArknightsMod.Common.Networking.SeabornContactSync.Receive(reader, whoAmI);
 					break;
+				case ArkMessageID.SR25TargetState:
+					global::ArknightsMod.Content.Projectiles.Developer.SR25Player.Receive(reader);
+					break;
 			}
 		}
 
@@ -419,6 +422,7 @@ namespace ArknightsMod
             RaidianMarkRequest,
             FangSkillPointGrant,
             SeabornContact,
+            SR25TargetState,
 		}
 	}
 	//public class Ex : GlobalNPC

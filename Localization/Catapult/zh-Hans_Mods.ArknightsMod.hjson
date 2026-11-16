@@ -62,4 +62,7 @@ Projectiles: {
 	// ArcherArrowExplosion.DisplayName: Archer Arrow Explosion
 	// ArcherChargedArrow.DisplayName: Archer Charged Arrow
 	// HarbingerCollapseArea.DisplayName: Harbinger Collapse Area
+	// FrostNovaRitualPulse.DisplayName: Frost Nova Ritual Pulse
+	// SnowSupportPortal.DisplayName: Snow Support Portal
+	// DreadnoughtDrawnBlade.DisplayName: Dreadnought Drawn Blade
 }

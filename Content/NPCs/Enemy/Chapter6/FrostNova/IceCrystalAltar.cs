@@ -30,7 +30,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 
 		/// <summary>由祭坛生成用的左上角世界坐标推算碰撞箱中心。</summary>
 		public static Vector2 HitboxCenterFromSpawnTopLeft(Vector2 spawnTopLeftWorld) =>
-			spawnTopLeftWorld + new Vector2(AltarNpcWidth * 0.5f, AltarNpcHeight * 0.5f);
+			spawnTopLeftWorld - new Vector2(0, AltarNpcHeight * 0.5f);
 
 		/// <summary>祭坛于落点出现时：在碰撞箱中心世界坐标处爆开亮蓝粒子（仅图形端；勿在纯 dedServ 调用）。联机上需在客户端也调用（例如风絮 <see cref="IceAltarSummonWisp.Kill"/>）。</summary>
 		public static void SpawnAltarAppearBurstAt(Vector2 altarHitboxCenterWorld) {
@@ -207,6 +207,10 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 				else
 					_ambientWispCooldown--;
 
+
+                var ownerState = NPC.GetGlobalNPC<FrostNovaOwnedNPC>();
+                if (FrostNovaOwnedProjectile.Resolve(ownerState.Host, ownerState.Token, out FrostNova caster)
+                    && caster.CombatPattern == 3) { NPC.ai[0] = 0; return; }
 				if (shockwaveIntervalTicks <= 0)
 					shockwaveIntervalTicks = Main.rand.Next(MinShockwaveIntervalTicks, MaxShockwaveIntervalTicks + 1);
 				if (NPC.ai[0] > 0f) {
@@ -215,7 +219,14 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 						var src = NPC.GetSource_FromAI();
 						int owner = NPC.target >= 0 && NPC.target < Main.maxPlayers ? NPC.target : Main.myPlayer;
 						RollShockwavePhaseTicks(out int warnTicks, out int blastTicks);
-						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(src, NPC.Center, Vector2.Zero, ModContent.ProjectileType<IceAltarShockwave>(), 23, 2f, owner, warnTicks, blastTicks);
+						var encounter = NPC.GetGlobalNPC<FrostNovaOwnedNPC>();
+                        if (FrostNovaOwnedProjectile.Resolve(encounter.Host, encounter.Token, out FrostNova boss)) {
+                            Vector2 axis = (Main.player[NPC.target].Center - NPC.Center).SafeNormalize(Vector2.UnitY);
+                            global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(src, NPC.Center, axis,
+                                ModContent.ProjectileType<FrostNovaRitualPulse>(), 21, 0, owner,
+                                encounter.Host, boss.AirbornePhase ? 1 : 0, NPC.whoAmI + 1);
+                        }
+                        else global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(src, NPC.Center, Vector2.Zero, ModContent.ProjectileType<IceAltarShockwave>(), 23, 2f, owner, warnTicks, blastTicks);
 						shockwaveIntervalTicks = Main.rand.Next(MinShockwaveIntervalTicks, MaxShockwaveIntervalTicks + 1);
 						shockwaveTimer = 0;
 						NPC.netUpdate = true;

@@ -73,10 +73,32 @@ public sealed partial class IsharmlaHazard
             return;
         }
         if (time < 0) return;
-        if (Kind == TideShot.Canticle)
+        if(Kind==TideShot.Harpoon) {
+            Direction=Direction.SafeNormalize(Vector2.UnitX)*Math.Min(15,Direction.Length()+.045f);
+            Projectile.Center+=Direction;
+        }
+        else if(Kind==TideShot.TideSeed) {
+            if(time<40)Projectile.Center+=Direction*MathHelper.Lerp(1,.08f,time/40f);
+            else if(time==76){Direction=(Target-Projectile.Center).SafeNormalize(Vector2.UnitY)*8.8f;Projectile.netUpdate=Main.netMode!=NetmodeID.MultiplayerClient;}
+            if(time>=76){Direction*=1.003f;Projectile.Center+=Direction;}
+        }
+        else if(Kind==TideShot.TideRay) {
+            if(time<42)Direction=Direction.ToRotation().AngleTowards((Target-Projectile.Center).ToRotation(),.006f).ToRotationVector2()*Direction.Length();
+            Vector2 normal=Direction.SafeNormalize(Vector2.UnitX).RotatedBy(MathHelper.PiOver2);
+            float wave=MathF.Sin(time*.065f)-MathF.Sin((time-1)*.065f);
+            Projectile.Center+=Direction+normal*wave*28;
+        }
+        else if (Kind == TideShot.Canticle)
         {
+            float speed = Math.Min(18, Direction.Length() + .065f);
+            float angle = Direction.ToRotation();
+            if (Style == 1 && time < 34)
+                angle = angle.AngleTowards((Target - Projectile.Center).ToRotation(), .012f);
+            else if (Style == 0 && time < 65) angle += .0028f * (Projectile.identity % 2 == 0 ? 1 : -1);
+            Direction = angle.ToRotationVector2() * speed;
             Vector2 normal = Direction.SafeNormalize(Vector2.UnitX).RotatedBy(MathHelper.PiOver2);
-            Projectile.Center = Origin + Direction * time + normal * MathF.Sin(time * .065f + Style * MathHelper.Pi) * 12;
+            float sway = MathF.Sin(time * .1f) - MathF.Sin((time - 1) * .1f);
+            Projectile.Center += Direction + normal * sway * 14;
         }
         else if (Kind == TideShot.FoamArc)
         {
@@ -88,64 +110,5 @@ public sealed partial class IsharmlaHazard
             TidalParticles.Emit(TideParticle.Foam, Projectile.Center, -Direction * .06f, new Vector2(4), IsharmlaVisuals.Crest, 15);
     }
 
-    public void DrawModern()
-    {
-        float opacity = Age < Delay ? .22f + .48f * IsharmlaRules.Smooth(Age / (float)Math.Max(1, Delay)) :
-            Math.Min(1, Math.Max(0, (Delay + Duration - Age) / 20f));
-        Vector2 at = Projectile.Center;
-        Color color = Style % 2 == 0 ? IsharmlaVisuals.Crest : new Color(159, 201, 255);
-        if (Kind == TideShot.EchoSinger)
-        {
-            float fade = IsharmlaRules.Envelope(Age, 0, Delay + Duration, 24);
-            IsharmlaPresentation.DrawSinger(Main.spriteBatch, Origin, 1.7f, Direction.X >= 0 ? 1 : -1,
-                .85f, -.06f, color * (.52f * fade), true);
-            IsharmlaPresentation.Arc(Origin, new Vector2(48, 65), -.5f, 3.8f, color * (.5f * fade), 2);
-            return;
-        }
-        if (Kind == TideShot.WakeMark)
-        {
-            Vector2 axis = Direction.SafeNormalize(Vector2.UnitX);
-            float charge = IsharmlaRules.Smooth(Age / (float)Math.Max(1, Delay));
-            IsharmlaVisuals.Line(at - axis * Length * .5f, at + axis * Length * .5f,
-                color * (opacity * .7f), 2 + charge * 3);
-            for (int side = -1; side <= 1; side += 2)
-                IsharmlaPresentation.Chevron(at + axis.RotatedBy(MathHelper.PiOver2) * side * (12 + charge * 13),
-                    axis.RotatedBy(MathHelper.PiOver2) * side, color * opacity, 6);
-            return;
-        }
-        if (Kind == TideShot.TideHeart)
-        {
-            float progress = IsharmlaRules.Smooth(Age / (float)Math.Max(1, Delay));
-            float radius = 16 + progress * 64;
-            IsharmlaVisuals.DrawField(at, new Vector2(radius * 2.4f), Age * .014f, IsharmlaVisuals.Azure * (.9f * opacity), "Lens");
-            IsharmlaPresentation.Arc(at, new Vector2(radius * 1.28f, radius * .55f), Age * .018f, 5.2f, color * opacity, 3);
-            IsharmlaPresentation.Arc(at, new Vector2(radius * .65f, radius * 1.3f), -Age * .02f, 4.6f, color * (.7f * opacity), 2);
-            IsharmlaVisuals.Orb(at, new Vector2(radius * .65f), color * (.65f * opacity));
-            if (Age >= Delay - 48 && Age < Delay)
-                for (int i = 1; i <= 4; i++) IsharmlaPresentation.Chevron(at + Direction.SafeNormalize(Vector2.UnitY) * (100 + i * 50),
-                    Direction, color * .75f, 12);
-            return;
-        }
-        if (Kind == TideShot.Canticle)
-        {
-            for (int i = 3; i > 0; i--)
-                IsharmlaPresentation.Note(at - Direction * i * 1.4f, Direction.ToRotation(), color * (opacity * (4 - i) * .07f), 1);
-            IsharmlaPresentation.Note(at, Direction.ToRotation(), color * opacity, 1);
-        }
-        else
-        {
-            Vector2 size = Kind == TideShot.Current ? new Vector2(31, 67) : new Vector2(26, 19);
-            float rotation = Direction.ToRotation() + (Kind == TideShot.Current ? MathHelper.PiOver2 : 0);
-            Texture2D atlas = IsharmlaVisuals.Art("ParticleAtlasV2");
-            Rectangle frame = new(atlas.Width / 3, 0, atlas.Width / 3, atlas.Height / 3);
-            var batch = Main.spriteBatch;
-            for (int i = 3; i > 0; i--)
-                batch.Draw(atlas, at - Direction * i * 1.6f - Main.screenPosition, frame, color * (opacity * .10f), rotation,
-                    frame.Size() * .5f, size / frame.Size() * (1 - i * .12f), SpriteEffects.None, 0);
-            batch.Draw(atlas, at - Main.screenPosition, frame, IsharmlaVisuals.Azure * opacity, rotation, frame.Size() * .5f,
-                size / frame.Size() * 1.15f, SpriteEffects.None, 0);
-            batch.Draw(atlas, at - Main.screenPosition, frame, color * opacity, rotation, frame.Size() * .5f, size / frame.Size(), SpriteEffects.None, 0);
-            IsharmlaVisuals.Orb(at, size * .32f, Color.White * (opacity * .65f));
-        }
-    }
+    public void DrawModern() => DrawCombatArt();
 }

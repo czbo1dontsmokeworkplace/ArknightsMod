@@ -233,7 +233,7 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Rosmontis
 			}
 		}
 
-		public override bool PreDraw(Player player, ref Color lightColor) {
+		public override bool PreDraw(ref Color lightColor) {
 			switch (state) {
 				case State.Ready:
 
@@ -285,10 +285,10 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Rosmontis
 				AftershockTimer = AftershockTimerMax;
 
 
-				 Terraria.Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), position, Vector2.Zero, projType, Projectile.damage, Projectile.knockBack, Projectile.owner,modifer:
-					 (proj) => {
-						 proj.scale = scale;
-					 });
+				 Projectile aftershock = Terraria.Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), position,
+					 Vector2.Zero, projType, Projectile.damage, Projectile.knockBack, Projectile.owner);
+				 aftershock.scale = scale;
+				 aftershock.netUpdate = true;
 
 			}
 		}

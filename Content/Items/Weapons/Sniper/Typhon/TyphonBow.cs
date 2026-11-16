@@ -132,7 +132,6 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
             if (player.whoAmI != Main.myPlayer) return false;
             Vector2 aim = velocity.SafeNormalize(Vector2.UnitX * player.direction);
             var modPlayer = player.GetModPlayer<WeaponPlayer>();
-            if (!global::ArknightsMod.Content.Items.Weapons.Sniper.Archers.ArcherRoute.Converts(type)) return true;
             if (modPlayer.Skill == 2 && modPlayer.SkillActive)
             {
                 if (player.whoAmI == Main.myPlayer)
@@ -159,8 +158,13 @@ namespace ArknightsMod.Content.Items.Weapons.Sniper.Typhon
                 return false;
             }
 
-            // Ordinary left-click and S1 preserve the player's selected arrow.
-            return true;
+            // Typhon always uses its own normal/S1 star-crystal projectile.
+            // Ammo still supplies damage and consumption through the item pipeline.
+            int index = Projectile.NewProjectile(source, player.MountedCenter + aim * 48,
+                aim * TyphonAstralShot.LaunchSpeed, ModContent.ProjectileType<TyphonAstralShot>(),
+                damage, knockback, player.whoAmI, 0);
+            if (Main.projectile.IndexInRange(index)) Main.projectile[index].CritChance = player.GetWeaponCrit(Item);
+            return false;
         }
         internal bool LoadArrow(Player player, out int damage, out float knockback, out int ammo, out int projectileType, out float speed)
         {

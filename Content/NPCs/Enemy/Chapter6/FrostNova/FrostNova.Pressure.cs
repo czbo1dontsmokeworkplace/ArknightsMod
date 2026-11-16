@@ -17,16 +17,8 @@ public partial class FrostNova
         bool radial = (attackSerial + combatTimer / 96) % 2 == 0;
         FrostNovaVisuals.Cast(NPC.Center, radial ? 0 : 1, .85f);
         if (radial) {
-            // 12/16 beams is the Cryogen tier; the near-player opening is fixed
-            // at emission, so the attack rewards moving through the formation.
-            int count = AirbornePhase ? 16 : 12;
-            float opening = FrostNovaCombatRules.RingGap(phase) + .12f;
-            for (int i = 0; i < count; i++) {
-                float angle = gap + (i + .5f) * MathHelper.TwoPi / count;
-                if (FrostNovaCombatRules.InGap(angle, gap, opening)) continue;
-                Vector2 axis = angle.ToRotationVector2();
-                FireShot(NPC.Center + axis * 42, axis * (AirbornePhase ? 7.2f : 6.4f), 0, 30);
-            }
+            Vector2 axis=(target-NPC.Center).SafeNormalize(Vector2.UnitY);
+            FireFan(NPC.Center,axis,AirbornePhase?5:3,AirbornePhase?.16f:.21f,AirbornePhase?8.2f:7.2f,0,34);
         }
         else {
             Vector2 aim = (target - NPC.Center).SafeNormalize(Vector2.UnitY);

@@ -48,6 +48,9 @@ public sealed partial class IsharmlaHazard : ModProjectile
         if (Kind == TideShot.FoamArc) Projectile.width = Projectile.height = 16;
         if (Kind == TideShot.Current) { Projectile.width = 22; Projectile.height = 44; }
         if (Kind == TideShot.TideHeart) Projectile.width = Projectile.height = 100;
+        if(Kind==TideShot.Harpoon){Projectile.width=24;Projectile.height=12;}
+        if(Kind==TideShot.TideSeed)Projectile.width=Projectile.height=22;
+        if(Kind==TideShot.TideRay){Projectile.width=24;Projectile.height=18;}
         Projectile.Center = center;
     }
     public override void SendExtraAI(BinaryWriter w)
@@ -68,6 +71,7 @@ public sealed partial class IsharmlaHazard : ModProjectile
     private bool Ray => IsharmlaRules.IsLineShot(Kind);
     private bool Area => Kind is TideShot.Bomb or TideShot.MistField;
     private bool Armed => Age >= Delay + (Ray ? 6 : 0) && (!(Ray || Area || Modern) || Age < Delay + Duration - 12) &&
+        (Kind!=TideShot.TideSeed || Age>=Delay+76) &&
         Kind is not (TideShot.RainCloud or TideShot.EchoSinger or TideShot.WakeMark);
     public override bool ShouldUpdatePosition() => false;
     public override bool CanHitPlayer(Player target) => Armed && Boss != null;
@@ -177,89 +181,8 @@ public sealed partial class IsharmlaHazard : ModProjectile
     }
     public override bool PreDraw(ref Color lightColor)
     {
-        if (Boss == null) return false;
-        if (Modern) { DrawModern(); return false; }
-        Color color = Kind == TideShot.Gate ? new Color(255, 194, 100) : IsharmlaVisuals.Cyan;
-        if (Area) { DrawArea(); return false; }
-        if (Kind is TideShot.Bubble or TideShot.Typhoon or TideShot.Tornado or TideShot.Shark or TideShot.Note or TideShot.CharmNote or TideShot.StormSpark)
-        {
-            int art = Kind == TideShot.Bubble ? ProjectileID.Bubble : Kind == TideShot.Typhoon ? ProjectileID.Typhoon :
-                Kind == TideShot.Tornado ? ProjectileID.Sharknado : Kind == TideShot.Shark ? ProjectileID.MiniSharkron :
-                Kind == TideShot.StormSpark ? ProjectileID.Electrosphere : ProjectileID.QuarterNote + Projectile.identity % 3;
-            if (!TextureAssets.Projectile[art].IsLoaded) Main.instance.LoadProjectile(art);
-            var texture = TextureAssets.Projectile[art].Value;
-            if (Kind == TideShot.Tornado) { DrawTornado(texture); return false; }
-            int frames = NativeFrames(art); int frameHeight = texture.Height / frames;
-            var frame = new Rectangle(0, Age / 5 % frames * frameHeight, texture.Width, frameHeight);
-            Vector2 size = Kind == TideShot.Tornado ? new Vector2(110, 320) : Kind == TideShot.Typhoon ? new Vector2(56) :
-                Kind == TideShot.Shark ? new Vector2(50, 26) : Kind == TideShot.StormSpark ? new Vector2(36) :
-                Kind is TideShot.Note or TideShot.CharmNote ? new Vector2(28, 32) : new Vector2(28);
-            float opacity = Age < Delay ? .35f + .35f * Age / Math.Max(1f, Delay) : 1;
-            float rotation = Kind == TideShot.Typhoon ? Age * .13f : Kind == TideShot.Shark ? Direction.ToRotation() :
-                Kind is TideShot.Note or TideShot.CharmNote ? MathF.Sin(Age * .09f) * .15f : 0;
-            Color tint = Kind == TideShot.CharmNote ? new Color(190, 150, 255) : Color.White;
-            if (Kind is TideShot.Note or TideShot.CharmNote or TideShot.StormSpark)
-                IsharmlaVisuals.Orb(Projectile.Center, new Vector2(24), (Kind == TideShot.CharmNote ? new Color(115, 40, 235) : color) * (.45f * opacity));
-            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, frame, tint * opacity, rotation,
-                frame.Size() * .5f, size / frame.Size(), Kind == TideShot.Shark && Direction.X < 0 ? SpriteEffects.FlipVertically : SpriteEffects.None, 0);
-            return false;
-        }
-        if (Ray)
-        {
-            IsharmlaVisuals.RayField(this, color);
-        }
-        else if (Kind == TideShot.RainCloud)
-        {
-            IsharmlaVisuals.DrawField(Projectile.Center, new Vector2(Width * 1.45f, 95), 0, color * .85f, "Cloud");
-        }
-        else if (Kind == TideShot.Wave)
-        {
-            IsharmlaVisuals.DrawField(Projectile.Center - new Vector2(0, 38), new Vector2(130, 155), 0, color * .9f, "Surge");
-        }
-        else if (Kind == TideShot.Mine)
-        {
-            float progress = MathHelper.Clamp(Age / (float)Math.Max(1, Delay), 0, 1);
-            IsharmlaVisuals.DrawField(Projectile.Center, new Vector2(22), 0, color * (.35f + progress * .65f), "Lens");
-            IsharmlaVisuals.Ring(Projectile.Center, 16 + progress * 9, color * .6f, 1.5f);
-        }
-        else
-        {
-            IsharmlaVisuals.OpticalBolt(Projectile.Center, Direction, Kind, Age < Delay ? .5f : 1);
-        }
+        if (Boss != null) DrawCombatArt();
         return false;
-    }
-    private void DrawArea()
-    {
-        bool mist = Kind == TideShot.MistField;
-        float warning = MathHelper.Clamp(Age / (float)Math.Max(1, Delay), 0, 1);
-        bool active = Age >= Delay;
-        float fade = active ? Math.Min(1, (Delay + Duration - Age) / (mist ? 25f : 8f)) : .25f + warning * .5f;
-        Color color = mist ? new Color(35, 94, 230) : new Color(70, 220, 255);
-        // The round footprint, including the charging outline, matches the damaging radius.
-        IsharmlaVisuals.Ring(Projectile.Center, Width, color * (fade * .8f), active ? 3 : 2);
-        if (!active) IsharmlaVisuals.Ring(Projectile.Center, Width * warning, color * .45f, 2);
-        int art = mist ? ProjectileID.ToxicCloud : ProjectileID.Electrosphere;
-        if (!TextureAssets.Projectile[art].IsLoaded) Main.instance.LoadProjectile(art);
-        Texture2D texture = TextureAssets.Projectile[art].Value;
-        int frames = NativeFrames(art); int height = texture.Height / frames;
-        Rectangle frame = new(0, Age / 5 % frames * height, texture.Width, height);
-        if (mist)
-        {
-            for (int i = 0; i < 5; i++)
-            {
-                Vector2 offset = i == 0 ? Vector2.Zero : (i * MathHelper.PiOver2 + Age * .006f).ToRotationVector2() * Width * .38f;
-                float scale = Width * (i == 0 ? 1.45f : 1.1f);
-                Main.spriteBatch.Draw(texture, Projectile.Center + offset - Main.screenPosition, frame, color * (fade * .7f),
-                    i + Age * .003f, frame.Size() * .5f, new Vector2(scale) / frame.Size(), SpriteEffects.None, 0);
-            }
-        }
-        else
-        {
-            float size = active ? Width * 2 : 32 + warning * 28;
-            IsharmlaVisuals.Orb(Projectile.Center, new Vector2(active ? Width : size), color * (.6f * fade));
-            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, frame, color * fade, 0,
-                frame.Size() * .5f, new Vector2(size) / frame.Size(), SpriteEffects.None, 0);
-        }
     }
     private static int NativeFrames(int art) => art switch
     {

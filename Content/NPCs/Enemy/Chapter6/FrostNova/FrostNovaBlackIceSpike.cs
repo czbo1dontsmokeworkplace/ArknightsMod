@@ -30,6 +30,8 @@ public sealed class FrostNovaBlackIceSpike : ModProjectile
     private bool madeRegion;
     private Vector2 lockedCenter;
     private Vector2 impactPoint;
+    internal bool Released => released;
+    internal Vector2 WarningTarget => impactPoint;
 
     public override string Texture => "ArknightsMod/Content/NPCs/Enemy/Chapter6/FrostNova/BlackIce";
     public override void SetStaticDefaults()
@@ -166,40 +168,7 @@ public sealed class FrostNovaBlackIceSpike : ModProjectile
 
     public override bool PreDraw(ref Color lightColor)
     {
-        if (!initialized || !FrostNovaBlackIceRegion.IsOwnerActive((int)Projectile.ai[0], hostToken)) return false;
-        if (released) ChargedOperatorVfx.Trail(Projectile, new Color(100, 190, 225), 12);
-        Texture2D body = ModContent.Request<Texture2D>(Texture).Value;
-        FrostNovaVisuals.Outline(body, Projectile.Center, null, Projectile.rotation, body.Size() * .5f, new Vector2(1.65f), Projectile.Opacity);
-        Main.EntitySpriteDraw(body, Projectile.Center - Main.screenPosition, null, Color.White * Projectile.Opacity,
-            Projectile.rotation, body.Size() * .5f, 1.65f, SpriteEffects.None);
-
-        using var pass = new ChargedOperatorVfx.Pass(true);
-        if (!released)
-        {
-            float charge = Math.Clamp(age / (float)warningTicks, 0, 1);
-            Color cyan = new Color(100, 205, 245) * (.25f + charge * .5f);
-            // The two lane edges show the real 22-pixel collision width. Dashes stop at the
-            // first support tile; the remaining arena is never crossed by infinite white lines.
-            Vector2 start = lockedCenter + new Vector2(0, Projectile.height * .5f);
-            float distance = Math.Clamp(impactPoint.Y - start.Y, 0, 1760);
-            for (int side = -1; side <= 1; side += 2)
-            {
-                Vector2 offset = new(side * Projectile.width * .5f, 0);
-                for (float y = 0; y < distance; y += 34)
-                    ChargedOperatorVfx.Line(start + offset + new Vector2(0, y),
-                        start + offset + new Vector2(0, Math.Min(distance, y + 13)), cyan, 1.2f);
-            }
-            float halfMark = 17 + 6 * charge;
-            ChargedOperatorVfx.Line(impactPoint + new Vector2(-halfMark, -2), impactPoint + new Vector2(halfMark, -2), cyan, 2);
-            for (int side = -1; side <= 1; side += 2)
-                ChargedOperatorVfx.Line(impactPoint + new Vector2(side * halfMark, -2),
-                    impactPoint + new Vector2(side * (halfMark - 5), -8), cyan, 1.5f);
-        }
-        else
-        {
-            ChargedOperatorVfx.Line(Projectile.Center + new Vector2(-5, -9), Projectile.Center + new Vector2(-1, 8),
-                new Color(175, 235, 255) * .75f, 1.2f);
-        }
+        FrostNovaProjectileArt.Draw(Projectile, Projectile.GetGlobalProjectile<FrostNovaOwnedProjectile>().Visibility);
         return false;
     }
 

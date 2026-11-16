@@ -22,6 +22,7 @@ public sealed class FrostNovaIceBurstSystem : ModSystem
         bursts[cursor] = new Burst { Center = center, Scale = Math.Clamp(scale, .5f, 1.7f) };
         cursor = (cursor + 1) % bursts.Length;
         FrostNovaVisuals.Shatter(center, Vector2.Zero, (int)(12 * scale));
+        FrostNovaColdMistSystem.Begin(center);
         FrostNovaVisuals.Cast(center, 2, scale);
     }
     public override void PostUpdateEverything()
@@ -31,17 +32,7 @@ public sealed class FrostNovaIceBurstSystem : ModSystem
     }
     internal static void Draw(Vector2 center, int age, float scale)
     {
-        if (!FrostNovaVisuals.Visible(center) || age < 0 || age >= 36) return;
-        float t = age / 36f, fade = Math.Min(1, (36 - age) / 10f);
-        Texture2D fracture = FrostNovaVisuals.Texture("BlackIceExplode");
-        BlackIceFracture.DrawAppearance(center, Math.Min(5, age / 5), scale, fade, fracture);
-        // Real ice silhouettes, an offset secondary fracture and a broad low
-        // wind ring establish the blast; small debris carries its fading motion.
-        if (age >= 6) BlackIceFracture.DrawAppearance(center + new Vector2(0, -18) * scale,
-            Math.Min(5, (age - 6) / 5), scale * .64f, fade * .32f, fracture);
-        FrostNovaVisuals.Sprite(FrostNovaVisuals.Texture("ICRing"), center,
-            new Vector2(210, 70) * scale * (.3f + MathF.Sqrt(t)), Color.White * ((1 - t) * .55f));
-        FrostNovaVisuals.Glow(center, new Vector2(86, 48) * scale, FrostNovaVisuals.Ice, (1 - t) * .2f);
+        // Impact visuals are actual particles, emitted once by Emit; no drawing projectile or expanding circle.
     }
     public override void PostDrawTiles()
     {

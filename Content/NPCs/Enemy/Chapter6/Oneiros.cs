@@ -50,6 +50,8 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 		private int directionchoose;
 		private int Holdtime;
 		private bool preattack;
+        private bool payloadReleased;
+        private int sortieAge;
 
 		public override void FindFrame(int frameHeight) {
 
@@ -71,110 +73,39 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6
 			}
 
 		}
-		public override void AI() {
-			Player p = Main.player[NPC.target];
-			directionchoose = p.Center.X - NPC.Center.X >= 0 ? 1 : -1;
-			float angle = (float)Math.Atan((p.Center.Y - NPC.Center.Y) / (p.Center.X - NPC.Center.X));
-			if (walk == true) {
-				walktimer++;
-				//Dust dust;
-				//dust = Dust.NewDustDirect(Targetpos1, 22, 22, DustID.IceTorch, 0, 0, 0, default, 4);
-				//dust.noGravity = true;
-			}
-			NPC.TargetClosest(true);
-			if (p.position.X - NPC.position.X > 0) {
-				Targetpos1.X = (p.position.X - Math.Min(((720-walktimer) * Main.screenWidth / 1080), Main.screenWidth / 3));
-				Targetpos1.Y = (p.position.Y -100- ((NPC.life / NPC.lifeMax) * 0.6f + 0.4f) * Math.Max((720 - walktimer), 0) * Main.screenHeight / 1440);
-			}
-			if (p.position.X - NPC.position.X <= 0) {
-				Targetpos1.X = (p.position.X + Math.Min(((720 - walktimer) * Main.screenWidth / 1080), Main.screenWidth / 3));
-				Targetpos1.Y = (p.position.Y -100 - ((NPC.life / NPC.lifeMax) * 0.6f + 0.4f) * Math.Max((720 - walktimer), 0) * Main.screenHeight / 1440);
-
-			}
-			if (p.position.X - NPC.position.X > 0) {
-				Targetpos2 = new Vector2(p.position.X -  (int)(Main.screenWidth*0.5), p.position.Y-Main.screenHeight/3);
-
-			}
-			if (p.position.X - NPC.position.X <= 0) {
-				Targetpos2 = new Vector2(p.position.X + (int)(Main.screenWidth * 0.5), p.position.Y - Main.screenHeight / 3);
-
-			}
-			if (walk) {
-				Vplus = new Vector2(Math.Max(-0.2f,Math.Min((Targetpos1.X - NPC.position.X)/750,0.2f)) , Math.Max(-0.2f, Math.Min((Targetpos1.Y - NPC.position.Y)/520, 0.2f)));
-				if (Math.Abs(NPC.velocity.X) <= 1.75f) {
-					NPC.velocity.X += Math.Max(-0.2f, Math.Min((Targetpos1.X - NPC.position.X) / 750, 0.2f));
-				}
-				if (NPC.velocity.X >= 1.75f) {
-					NPC.velocity.X = 1.75f;
-				}
-				if (NPC.velocity.X <= -1.75f) {
-					NPC.velocity.X = -1.75f;
-				}
-
-				if (Math.Abs(NPC.velocity.Y) <= 1.75f) {
-					NPC.velocity.Y += Math.Max(-0.2f, Math.Min((Targetpos1.Y - NPC.position.Y) / 520, 0.2f));
-				}
-				if (NPC.velocity.Y >= 1.75f) {
-					NPC.velocity.Y = 1.75f;
-				}
-				if (NPC.velocity.Y <= -1.75f) {
-					NPC.velocity.Y = -1.75f;
-				}
-			}
-			if (attack) {
-				if (Holdtime <= 20) {
-					NPC.velocity.X = 0;
-					NPC.velocity.Y = 0;
-				}
-				Vplus = new Vector2(Math.Max(-0.3f, Math.Min((Targetpos2.X - NPC.position.X) / 750, 0.3f)), Math.Max(-0.3f, Math.Min((Targetpos2.Y - NPC.position.Y) / 520, 0.3f)));
-				if (Math.Abs(NPC.velocity.X) < 2.8f) {
-					NPC.velocity.X += Math.Max(-0.3f, Math.Min((Targetpos2.X - NPC.position.X) / 750, 0.3f));
-				}
-				if (NPC.velocity.X >= 2.8f) {
-					NPC.velocity.X = 2.8f;
-				}
-				if (NPC.velocity.X <= -2.8f) {
-					NPC.velocity.X = -2.8f;
-				}
-				if (Math.Abs(NPC.velocity.Y) < 2.8f) {
-					NPC.velocity.Y += Math.Max(-0.3f, Math.Min((Targetpos2.Y - NPC.position.Y) / 520, 0.3f));
-				}
-				if (NPC.velocity.Y >= 2.8f) {
-					NPC.velocity.Y = 2.8f;
-				}
-				if (NPC.velocity.Y <= -2.8f) {
-					NPC.velocity.Y = -2.8f;
-				}
-			}
-			if (walk) {
-				AttackCD++;
-				if (AttackCD >= 200 && Math.Abs(NPC.position.X - p.position.X)<208 && Math.Abs(NPC.position.Y - p.position.Y) < 208) {
-					preattack = true;
-					AttackCD = 0;
-				}
-				if (preattack == true) {
-					Holdtime++;
-					NPC.velocity = Vector2.Zero;
-					if (Holdtime >= 90) {
-						global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromThis(), new Vector2(NPC.position.X+20, NPC.position.Y + 60), new Vector2(directionchoose * 0.8f, 0).RotatedBy(angle), ModContent.ProjectileType<Oneirosbomb>(), 0, 0.8f);
-						attack = true;
-						walk = false;
-						preattack = false;
-						Holdtime = 0;
-					}
-				}
-			}
-			if (attack) {
-				Holdtime++;
-				if (Math.Abs(NPC.position.X - Targetpos2.X) < 400) {
-					walk = true;
-					attack = false;
-					walktimer = 0;
-					AttackCD = 0;
-					Holdtime = 0;
-				}
-			}
-		}
+        public override void AI() {
+            NPC.TargetClosest(true);
+            if(!NPC.HasValidTarget){NPC.velocity=Vector2.Lerp(NPC.velocity,new Vector2(0,-7),.06f);NPC.EncourageDespawn(90);return;}
+            Player p=Main.player[NPC.target];sortieAge++;
+            if(payloadReleased) {
+                walk=false;attack=true;Holdtime++;
+                NPC.velocity=Vector2.Lerp(NPC.velocity,new Vector2(directionchoose*5,-7),.045f);
+                NPC.noTileCollide=true;
+                if(Holdtime>150)NPC.EncourageDespawn(10);
+                return;
+            }
+            directionchoose=NPC.Center.X<p.Center.X?-1:1;
+            Targetpos1=p.Center+new Vector2(directionchoose*100,-320);
+            NPC.noTileCollide=true;walk=true;attack=false;
+            if(!preattack) {
+                Vector2 desired=(Targetpos1-NPC.Center).SafeNormalize(-Vector2.UnitY)*5;
+                NPC.velocity=Vector2.Lerp(NPC.velocity,desired,.055f);
+                if(p.Center.Y-NPC.Center.Y>=240&&Math.Abs(p.Center.X-NPC.Center.X)<=500) {
+                    preattack=true;Holdtime=0;NPC.netUpdate=true;
+                }
+            }
+            else {
+                NPC.velocity*=.91f;Holdtime++;
+                if(!Main.dedServ&&Holdtime%5==0) {
+                    Dust dust=Dust.NewDustPerfect(NPC.Bottom+new Vector2(0,12),DustID.IceTorch,new Vector2(0,1.5f),100,default,1.1f);dust.noGravity=true;
+                }
+                if(Holdtime>=45) {
+                    if(Main.netMode!=NetmodeID.MultiplayerClient)
+                        global::ArknightsMod.Common.Networking.EnemyAuthority.NewProjectile(NPC.GetSource_FromAI(),NPC.Bottom+new Vector2(0,15),new Vector2(0,1),ModContent.ProjectileType<Oneirosbomb>(),0,.8f);
+                    payloadReleased=true;preattack=false;walk=false;attack=true;Holdtime=0;NPC.netUpdate=true;
+                }
+            }
+        }
 	}
 	public partial class Oneirosbomb : ModProjectile {
 		// 配置参数

@@ -62,7 +62,8 @@ public sealed class VectorMagazine
 
 public static class VectorBalance
 {
-    public const int PanelDamage = 26;
+    public const int PanelDamage = 64;
+    public const int InnateArmorPenetration = 35;
     public const float TargetRatio = 1.5f;
     public static int Lanes(int mode) => mode == 3 ? 3 : mode is 1 or 2 ? 2 : 1;
     // SHPC: centered main shot, close secondary origins and small angular divergence.
@@ -77,19 +78,12 @@ public static class VectorBalance
     public static float ShotsPerSecond => 60f * VectorMagazine.Capacity /
         (VectorMagazine.Capacity * VectorMagazine.Interval + VectorMagazine.ReloadDuration);
 
-    // Legacy: 15 animation + 15 reuse; S2 has 4 shots/30 ticks;
-    // S3 has 4 shots/(8 animation + 15 reuse). S1 cycles 4 singles + one triple burst.
-    // The original rework's per-projectile damage is retained. S1's 12-shot/two-chain
-    // duration/count reduction intentionally lowers its total effect; do not compensate it here.
-    public static float ExactDamage(float legacyBase, float ammo, int mode)
+    // Direct per-shot damage, including ammo and the real player modifiers.
+    // High rate of fire no longer divides every bullet below enemy defense.
+    public static float ExactDamage(float weapon, float ammo, int mode)
     {
-        float normal = legacyBase + ammo;
-        return mode switch {
-            1 => .056f * normal + .072f * (legacyBase * 1.45f + ammo),
-            2 => TargetRatio * 8f / (ShotsPerSecond * 2) * (legacyBase * 1.25f + ammo),
-            3 => TargetRatio * (240f / 23f) / (ShotsPerSecond * 3) * (legacyBase * 1.1f + ammo),
-            _ => TargetRatio * 2f / ShotsPerSecond * normal
-        };
+        float multiplier=mode switch {1=>1.16f,2=>1.22f,3=>1.30f,_=>1};
+        return weapon*multiplier+ammo;
     }
     public static int Damage(float legacyBase, float ammo, int mode) => Math.Max(1, (int)MathF.Ceiling(ExactDamage(legacyBase, ammo, mode)));
 }

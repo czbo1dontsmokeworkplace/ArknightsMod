@@ -1,0 +1,19 @@
+Items: {
+	SR25: {
+		DisplayName: SR-25 精确射手步枪
+		Tooltip:
+			'''
+			左键对目标进行精准点射，按住右键扩大视野并开镜
+			能够扫描大范围的敌人并标记
+			标记的敌人将额外受到伤害并吸引弹幕
+			佩戴在身上时可自动进行标记
+			'''
+		Signature: “什么时候上桥”
+		DeveloperNote: 「开发者物品」
+	}
+}
+
+Projectiles: {
+	SR25Holdout.DisplayName: SR-25 精确射手步枪
+	SR25Round.DisplayName: SR25特种弹
+}

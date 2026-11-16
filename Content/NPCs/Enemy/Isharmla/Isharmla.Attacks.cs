@@ -39,7 +39,8 @@ public sealed partial class Isharmla
         for (int i = 0; i < count; i++)
         {
             float angle = count == 1 ? 0 : MathHelper.Lerp(-spread * .5f, spread * .5f, i / (float)(count - 1));
-            SpawnShot(TideShot.Canticle, origin, direction.RotatedBy(angle) * speed, 88, delay, duration: 210, style: style);
+            SpawnShot(TideShot.Harpoon, origin, direction.RotatedBy(angle) * speed, 105, Math.Max(18, delay), duration: 180, style: style,
+                target: Main.player[NPC.target].Center + Main.player[NPC.target].velocity * 12);
         }
     }
     internal void BubbleRing(Vector2 origin, int count, float speed, float rotation)
@@ -74,6 +75,7 @@ public sealed partial class Isharmla
         BeginPhrase(p, Math.Max(0, Timer) / duration);
         Lean = MathHelper.Lerp(Lean, MathHelper.Clamp(NPC.velocity.X * .014f, -.30f, .30f), .12f);
         Gesture = IsharmlaRules.Envelope(Cast, 24, fierce ? 260 : 330);
+        RunTrialScore(p,Cast,Attack,fierce,PhraseAnchor,NPC.Center);
         switch (Attack)
         {
             case 0: ProcessionalSong(p, fierce); break;
@@ -82,80 +84,51 @@ public sealed partial class Isharmla
             case 3: ConductTide(p, fierce); break;
         }
     }
-    private void ProcessionalSong(Player p, bool fierce)
+    private Vector2 Intercept(Player p, float lead = 14)
+        => IsharmlaRules.BoundedAim(p.Center + Vector2.Clamp(p.velocity * lead, new Vector2(-340), new Vector2(340)));
+    private void ProcessionalSong(Player p,bool fierce)
     {
-        int end = fierce ? 252 : 312;
-        float wave = MathF.Sin(Math.Max(0, Cast - 60) * .038f);
-        Hover(PhraseAnchor + new Vector2(PhraseSide * 610, -140 + wave * 205), .12f, fierce ? 22 : 18);
-        if (Cast == 36) IsharmlaPresentation.Cue(0, NPC.Center);
-        if (Cast < 72 || Cast > end || Cast % (fierce ? 12 : 16) != 0) return;
-        Vector2 muzzle = NPC.Center + new Vector2(-PhraseSide * 34, -23);
-        if (Cast % 64 == 0) IsharmlaPresentation.Cue(1, muzzle);
-        Score(muzzle, new Vector2(-PhraseSide, 0), fierce ? 3 : 2, .13f, 9.5f, 0);
-        if (Cast % 48 == 0) Score(muzzle, new Vector2(-PhraseSide, 0), 2, .20f, 6.4f, 1, 20);
+        float phase=Cast/(float)IsharmlaRules.HumanPhraseLength(fierce);
+        Hover(Intercept(p,8)+new Vector2(PhraseSide*(620-phase*1000),-260+MathF.Sin(phase*MathHelper.TwoPi)*180),.16f,fierce?29:25);
+        if(Cast==24)IsharmlaPresentation.Cue(0,NPC.Center);
     }
-    private void EchoChoir(Player p, bool fierce)
+    private void EchoChoir(Player p,bool fierce)
     {
-        Hover(PhraseAnchor + new Vector2(PhraseSide * 520, -220), .10f, 18);
-        if (Cast >= 216 && Cast <= (fierce ? 276 : 264) && (Cast - 216) % 12 == 0)
-            SpawnDrifter(NPC.Center + new Vector2(-PhraseSide * 30, -20), PhraseAnchor, PhraseSide);
-        if (Cast == 40) IsharmlaPresentation.Cue(0, NPC.Center);
-        if (Cast == 60)
-            for (int i = 0; i < 3; i++)
-            {
-                Vector2 at = PhraseAnchor + new Vector2(-PhraseSide * (480 - i * 230), -380 - (i % 2) * 90);
-                SpawnShot(TideShot.EchoSinger, at, (PhraseAnchor - at).SafeNormalize(Vector2.UnitY) * 8.5f,
-                    85, 78 + i * 28, duration: fierce ? 130 : 150, style: i, target: PhraseAnchor);
-            }
-        if (Cast is 96 or 144 or 192)
-        {
-            IsharmlaPresentation.Cue(1, NPC.Center);
-            Score(NPC.Center + new Vector2(0, -25), (PhraseAnchor - NPC.Center).SafeNormalize(Vector2.UnitY),
-                fierce ? 9 : 7, 1.32f, fierce ? 11 : 9, 0);
-        }
+        float angle=Cast*.018f*PhraseSide;
+        Hover(Intercept(p,7)+new Vector2(MathF.Cos(angle)*660,MathF.Sin(angle)*290-200),.15f,28);
+        if(Cast is 48 or 172)IsharmlaPresentation.Cue(1,NPC.Center);
     }
     private void TideStep(Player p, bool fierce)
     {
-        bool dash = Cast is >= 90 and < 113 || fierce && Cast is >= 174 and < 197;
-        if (Cast < 76) Hover(PhraseAnchor + new Vector2(PhraseSide * 620, -190), .13f, 22);
-        else if (Cast is >= 130 and < 160 && fierce) Hover(PhraseAnchor + new Vector2(-PhraseSide * 620, 120), .15f, 25);
-        else if (!dash) NPC.velocity = IsharmlaMotion.Brake(NPC.velocity, .13f, 1.65f);
-        if ((Cast == 90 || fierce && Cast == 174) && Authority)
+        int beat = Cast % (fierce ? 96 : 120);
+        if (beat < 42)
         {
-            Aim = IsharmlaRules.BoundedAim(p.Center + p.velocity * 9);
-            DashDirection = (Aim - NPC.Center).SafeNormalize(Vector2.UnitX) * (fierce ? 32 : 27);
-            NPC.netUpdate = true;
-        }
-        if (Cast is 68 or 152) IsharmlaPresentation.Cue(2, NPC.Center);
-        if (dash)
-        {
-            int age = Cast - (Cast >= 174 ? 174 : 90);
-            NPC.velocity = IsharmlaMotion.Rush(NPC.velocity, DashDirection, fierce ? 32 : 27, age, 23, .24f);
-            Lean = NPC.velocity.X * .012f;
-            if (Cast % 5 == 0) SpawnShot(TideShot.WakeMark, NPC.Center, DashDirection.SafeNormalize(Vector2.UnitX),
-                90, 64, length: 80, duration: 50, style: fierce ? 1 : 0);
-        }
-        if (Cast == (fierce ? 230 : 190))
-            Score(NPC.Center, (PhraseAnchor - NPC.Center).SafeNormalize(Vector2.UnitY), fierce ? 11 : 9, 1.6f, 8);
-        if (!fierce && Cast > 240) Hover(PhraseAnchor + new Vector2(PhraseSide * 450, -180), .06f, 12);
-    }
-    private void ConductTide(Player p, bool fierce)
-    {
-        Hover(PhraseAnchor + new Vector2(0, -370), .10f, 18);
-        if (Cast == 44) IsharmlaPresentation.Cue(0, NPC.Center);
-        if (Cast is 80 or 152 or 224)
-        {
-            int beat = (Cast - 80) / 72;
-            float gap = PhraseAnchor.X + MathF.Sin(beat * 1.5f) * 170;
-            for (int i = -7; i <= 7; i++)
+            Hover(Intercept(p, 12) + new Vector2(PhraseSide * 650, beat < 24 ? -250 : -80), .18f, 30);
+            if (beat == 18)
             {
-                float x = PhraseAnchor.X + i * 110;
-                if (Math.Abs(x - gap) < 135) continue;
-                SpawnShot(TideShot.Current, new Vector2(x, PhraseAnchor.Y + 420), new Vector2(0, fierce ? -10 : -8),
-                    95, 56, duration: 150, style: 0);
+                if (Authority) { Aim = Intercept(p, 18); NPC.netUpdate = true; }
+                IsharmlaPresentation.Cue(2, NPC.Center);
             }
-            Score(NPC.Center, Vector2.UnitY, fierce ? 9 : 7, 1.9f, 6.2f, 1, 18);
         }
+        if (beat == 42 && Authority)
+        { DashDirection = (Aim - NPC.Center).SafeNormalize(Vector2.UnitX); NPC.netUpdate = true; }
+        if (beat is >= 42 and < 72)
+        {
+            NPC.velocity = IsharmlaMotion.Rush(NPC.velocity, DashDirection, fierce ? 39 : 33, beat - 42, 30, .22f);
+            if (beat % 10 == 2) SpawnShot(TideShot.WakeMark, NPC.Center, DashDirection, 110, 50, duration: 48);
+        }
+        if (beat == 73)
+        {
+            PhraseSide *= -1; if (Authority) NPC.netUpdate = true;
+            Score(NPC.Center, (Intercept(p, 10) - NPC.Center).SafeNormalize(Vector2.UnitY), 7, 1.1f, 13, 0, 30);
+        }
+        if (beat >= 72) Hover(Intercept(p, 8) + new Vector2(PhraseSide * 580, -280), .16f, 28);
+        Lean = MathHelper.Clamp(NPC.velocity.X * .012f, -.45f, .45f);
+    }
+    private void ConductTide(Player p,bool fierce)
+    {
+        Hover(Intercept(p,8)+new Vector2(MathF.Sin(Cast*.023f)*620,-420),.15f,27);
+        if(Cast is 54 or 210)IsharmlaPresentation.Cue(1,NPC.Center);
     }
     private void CastTogether(Player p, IsharmlaDragon dragon)
     {
@@ -169,6 +142,8 @@ public sealed partial class Isharmla
             if (dragon.Pattern == 2) destination = dragon.Aim + new Vector2(0, -350);
             Hover(destination, .13f, 24);
         }
+        if(dragon.Pattern==6)return; // The laser-wall sequence owns this entire window.
+        RunTrialScore(p,t,dragon.Pattern%4,final,dragon.Aim,NPC.Center);
         if (dragon.Visibility < .7f || t < 70) return;
         Vector2 origin = NPC.Center + new Vector2(0, -30);
         switch (dragon.Pattern)
@@ -225,18 +200,7 @@ public sealed partial class Isharmla
                         new Vector2(-side * 8, 0), 90, 60, duration: 215, style: side > 0 ? 1 : 0);
             IsharmlaPresentation.Cue(1, NPC.Center);
         }
-        if (Timer is 450 or 570 or 690)
-        {
-            float rotation = (Timer - 450) / 120 * .20f;
-            for (int i = 0; i < 40; i++)
-            {
-                float angle = MathHelper.TwoPi * i / 40 + rotation;
-                if (Math.Abs(MathHelper.WrapAngle(angle - MathHelper.PiOver2)) < .30f) continue;
-                Vector2 direction = angle.ToRotationVector2();
-                SpawnShot(TideShot.FoamArc, Aim + direction * 340, direction * 6.5f, 95, 55, duration: 170, style: 1);
-            }
-            IsharmlaPresentation.Impact(Aim, 1.5f);
-        }
+        if(Timer>=420&&Timer<780)RunTrialScore(p,Timer-372,1,true,Aim,NPC.Center);
         if (Timer == 820 && Authority) Cleanup(false);
         if (Timer == 860) IsharmlaPresentation.Cue(3, NPC.Center);
     }

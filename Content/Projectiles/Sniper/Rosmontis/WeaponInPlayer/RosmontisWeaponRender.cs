@@ -112,10 +112,10 @@ namespace ArknightsMod.Content.Projectiles.Sniper.Rosmontis.WeaponInPlayer
 				Color color = Color.White * MathHelper.Clamp(alpha, 0f, 1f);
 
 				vertices[i * 2] = new VertexPositionColorTexture(
-					(current - normal * width * 0.5f - Main.screenPosition).ToVector3(),
+					new Vector3(current - normal * width * 0.5f - Main.screenPosition, 0),
 					color, new Vector2(u, 0f));
 				vertices[i * 2 + 1] = new VertexPositionColorTexture(
-					(current + normal * width * 0.5f - Main.screenPosition).ToVector3(),
+					new Vector3(current + normal * width * 0.5f - Main.screenPosition, 0),
 					color, new Vector2(u, 1f));
 			}
 

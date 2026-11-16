@@ -193,3 +193,20 @@ technique ParticleCrest { pass P0 { PixelShader = compile ps_3_0 ParticleCrestPi
 technique ParticleGlow { pass P0 { PixelShader = compile ps_3_0 ParticleGlowPixel(); } }
 technique Disintegration { pass P0 { PixelShader = compile ps_3_0 DisintegrationPixel(); } }
 technique PressureMuzzle { pass P0 { PixelShader = compile ps_3_0 PressureMuzzlePixel(); } }
+
+// Full-volume pressure beam. Its bright body covers the collision width;
+// warnings retain the thin water material, so charging and firing read distinctly.
+float4 LatticePixel(float4 tint:COLOR0,float2 uv:TEXCOORD0):COLOR0
+{
+    float x=uv.x*uSize.x;float y=abs(uv.y*2-1);
+    float grain=Noise(float2(x*.028-uTime*31,uv.y*12+uTime*5));
+    float edge=.61+(grain-.5)*.045;
+    float body=1-smoothstep(edge-.05,edge+.04,y);
+    float core=1-smoothstep(.10,.42,y);
+    float threads=pow(saturate(sin(x*.16-uTime*83+uv.y*27)),7);
+    float glow=pow(saturate(1-y),2)*.38;
+    float alpha=saturate(body*.90+glow)*tint.a;
+    float3 rgb=lerp(float3(.04,.60,1),float3(.80,1,1),core*.80+threads*.16);
+    return float4(rgb*alpha,alpha);
+}
+technique Lattice {pass P0 {PixelShader=compile ps_3_0 LatticePixel();}}

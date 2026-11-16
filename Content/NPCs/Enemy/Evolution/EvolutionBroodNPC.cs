@@ -61,6 +61,7 @@ public abstract partial class EvolutionBroodNPC : ModNPC
     public override void ReceiveExtraAI(BinaryReader r) { Encounter = r.ReadInt32(); Fuse = r.ReadInt32(); Gap = r.ReadSingle(); FlightAnchor = r.ReadVector2(); FlightDirection = r.ReadVector2(); Preset = (EvolutionBroodPreset)r.ReadByte(); Formation = r.ReadInt32(); Molting = r.ReadBoolean(); }
     public override void AI()
     {
+        ShareLostLife();
         Evolution boss = Parent;
         if (boss == null) { NPC.active = false; return; }
         charging = false; warning = 0;
@@ -190,6 +191,7 @@ public abstract partial class EvolutionBroodNPC : ModNPC
     }
     public override void HitEffect(NPC.HitInfo hit)
     {
+        ShareLostLife();
         // HitEffect也会在远端客户端收到死亡时执行；OnKill仅负责服务端的分裂。
         if (NPC.life > 0 || Main.dedServ || Retiring || SupportOnly || deathSmokeEmitted) return;
         deathSmokeEmitted = true;
@@ -197,6 +199,7 @@ public abstract partial class EvolutionBroodNPC : ModNPC
     }
     public override void OnKill()
     {
+        ShareLostLife();
         if (Retiring || SupportOnly || Parent is not Evolution boss || boss.Transitioning || boss.Phase >= 4) return;
         // 岩蛛死亡后分裂幼体；沿用总上限与单种上限，幼体不再递归分裂。
         int offspring = Kind switch

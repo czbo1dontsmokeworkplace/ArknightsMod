@@ -12,6 +12,15 @@ internal static class EvolutionNestRules
     internal const int RadiationInterval = EvolutionShockwaveRules.Interval;
     internal const int RadiationWarning = EvolutionShockwaveRules.WarningTicks;
     internal const int RadiationDuration = EvolutionShockwaveRules.DamageTicks;
+    internal const int LaserCount = 7;
+    internal static Vector2 LaserDirection(Vector2 origin, Vector2 target, Vector2 velocity, int lane)
+    {
+        float lead = lane switch { 1 => 14, 4 => 28, 5 => 42, _ => 0 };
+        Vector2 prediction = velocity * lead;
+        if (prediction.LengthSquared() > 320 * 320) prediction = prediction.SafeNormalize(Vector2.Zero) * 320;
+        float offset = lane switch { 0 => -.65f, 1 => -.30f, 2 => -.14f, 3 => 0, 4 => .08f, 5 => .32f, _ => .65f };
+        return (target + prediction - origin).SafeNormalize(Vector2.UnitY).RotatedBy(offset);
+    }
 }
 
 public sealed partial class Evolution
@@ -80,11 +89,11 @@ public sealed partial class Evolution
                 EvolutionNestRules.RadiationWarning, EvolutionNestRules.RadiationWarning + EvolutionShockwaveRules.ReleaseTicks + EvolutionShockwaveRules.Duration + 18);
         if (beat == EvolutionShockwaveRules.LaserStart)
         {
-            // Two locked rays flank the current position, leaving the middle open during recovery.
-            float angle = (player.Center - NPC.Center).ToRotation();
-            float gap = MathF.Atan2(180, Math.Max(100, Vector2.Distance(player.Center, NPC.Center)));
-            for (int side = -1; side <= 1; side += 2)
-                Shoot(EvolutionShot.Beam, NPC.Center, (angle + side * gap).ToRotationVector2(), 1450, 48, 140);
+            // Seven snapshot rays: direct aim, three motion predictions and outer containment lanes.
+            // Directions lock during the original volley's warning, including the shared laser timing rules.
+            for (int lane = 0; lane < EvolutionNestRules.LaserCount; lane++)
+                Shoot(EvolutionShot.Beam, NPC.Center,
+                    EvolutionNestRules.LaserDirection(NPC.Center, player.Center, player.velocity, lane), 1450, 48, 140);
         }
     }
 

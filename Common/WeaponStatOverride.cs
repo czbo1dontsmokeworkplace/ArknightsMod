@@ -144,7 +144,7 @@ namespace ArknightsMod.Common
 			// ExusiaiVector - 能天使 - Vector冲锋枪
 			// 原始值: damage=108, useTime=15, useAnimation=15, knockBack=5, shootSpeed=8
 			[typeof(Content.Items.Weapons.Sniper.Exusiai.ExusiaiVector)] = new() {
-				Damage = 26, UseTime = 3, UseAnimation = 3, KnockBack = 5f, ShootSpeed = 16f
+				Damage = Content.Items.Weapons.Sniper.Exusiai.VectorBalance.PanelDamage, UseTime = 3, UseAnimation = 3, KnockBack = 5f, ShootSpeed = 16f
 			},
 
 			// JessicaGun - 杰西卡 - 手枪 (EliteDamage=[37,44,53])

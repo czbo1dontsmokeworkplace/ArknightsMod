@@ -18,12 +18,12 @@ internal static class IsharmlaMotion
         float alignment = IsharmlaRules.Smooth((error - .45f) / 1.85f);
         float braking = .75f + speed * .012f;
         float arrival = Math.Min(distance * .085f, MathF.Sqrt(2 * braking * distance));
-        float target = Math.Min(speed * MathHelper.Lerp(1, .34f, alignment), arrival);
+        float target = speed * MathHelper.Lerp(1, .60f, alignment);
         float steering = turn * MathHelper.Lerp(1.55f, .78f, MathHelper.Clamp(current / speed, 0, 1));
         // Keep the turning radius inside the remaining approach. Otherwise a slow orbit can sustain itself forever.
-        if (error > .35f) target = Math.Min(target, distance * steering * .55f);
+        // A leviathan banks past waypoints instead of parking on them.
+        target = Math.Max(Math.Min(12, speed), target);
         float next = Approach(current, target, target > current ? .28f + speed * .012f : braking);
-        if (distance < 12 && current < 1) return velocity * .78f;
         return angle.AngleTowards(goal, steering).ToRotationVector2() * next;
     }
 

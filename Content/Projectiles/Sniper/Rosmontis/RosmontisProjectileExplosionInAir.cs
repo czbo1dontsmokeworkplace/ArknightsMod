@@ -32,11 +32,11 @@ public class RosmontisProjectileExplosionInAir : ModProjectile
 			float angle1 = startAngle + angleRange * (i + 1) / segments;
 			Vector2 edge0 = screenCenter + new Vector2(MathF.Cos(angle0), MathF.Sin(angle0)) * radius;
 			Vector2 edge1 = screenCenter + new Vector2(MathF.Cos(angle1), MathF.Sin(angle1)) * radius;
-			vertices[i * 3] = new(screenCenter.ToVector3(), color, Vector2.Zero);
+			vertices[i * 3] = new(new Vector3(screenCenter, 0), color, Vector2.Zero);
 			float edgeValue0 = i / (float)segments;
 			float edgeValue1 = (i + 1) / (float)segments;
-			vertices[i * 3 + 1] = new(edge0.ToVector3(), color, new Vector2(edgeValue0, 1f));
-			vertices[i * 3 + 2] = new(edge1.ToVector3(), color, new Vector2(edgeValue1, 1f));
+			vertices[i * 3 + 1] = new(new Vector3(edge0, 0), color, new Vector2(edgeValue0, 1f));
+			vertices[i * 3 + 2] = new(new Vector3(edge1, 0), color, new Vector2(edgeValue1, 1f));
 		}
 
 		GraphicsDevice device = Main.graphics.GraphicsDevice;
@@ -111,7 +111,7 @@ public class RosmontisProjectileExplosionInAir : ModProjectile
 		return null;
 	}
 
-	public override bool PreDraw(Player player, ref Color lightColor) {
+	public override bool PreDraw(ref Color lightColor) {
 		DrawCirclePrimitive(Projectile.Center, Projectile.width / 2f * Projectile.scale, Color.White * 0.5f);
 		return false;
 	}

@@ -1465,7 +1465,7 @@ TyphonBow: {
 	DisplayName: Bow [Typhon]
 	Tooltip:
 		'''
-		Normal left-click attacks preserve your arrow ammo
+		Left-click and Skill 1 fire Typhon’s signature star-crystal arrows with their original piercing and effects
 		Hold right-click for 54 frames to load one arrow; release a fast explosive arrow with triple damage
 		Explodes after one direct hit or terrain impact; loading wooden arrows adds homing
 		'''

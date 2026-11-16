@@ -6,7 +6,6 @@ using Terraria.ModLoader;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.Graphics.Effects;
-using Terraria.Graphics.Shaders;
 using Terraria.GameContent;
 
 namespace ArknightsMod.Content.NPCs.Enemy.Evolution;
@@ -31,7 +30,7 @@ public sealed class EvolutionImpactSystem : ModSystem
     private static int shakeAge;
     private static ulong lastSoundTick;
     private const string WarpKey = "ArknightsMod:EvolutionPressure";
-    private Effect material, warp;
+    private Effect material;
     private bool materialFailed;
     internal static void Kick(Vector2 center, float force)
     {
@@ -178,57 +177,19 @@ public sealed class EvolutionImpactSystem : ModSystem
             byte[] bytes = Mod.GetFileBytes("Assets/Effects/EvolutionShockwave.fxc");
             material = new Effect(Main.instance.GraphicsDevice, bytes);
             material.CurrentTechnique = material.Techniques["PressureFront"];
-            warp = new Effect(Main.instance.GraphicsDevice, bytes);
-            warp.CurrentTechnique = warp.Techniques["PressureWarp"];
-            Filters.Scene[WarpKey] = new Filter(new ScreenShaderData(new Ref<Effect>(warp), "WarpPass").UseOpacity(0), EffectPriority.High);
-            Filters.Scene[WarpKey].Load();
         }
         catch (Exception error)
         {
             materialFailed = true;
-            material?.Dispose(); warp?.Dispose(); material = warp = null;
+            material?.Dispose(); material = null;
             Mod.Logger.Warn("Evolution pressure-front material unavailable; using sprite fallback: " + error.Message);
         }
     }
-    private void UpdateWarp()
-    {
-        if (warp == null) return;
-        Filter filter = Filters.Scene[WarpKey];
-        var config = ModContent.GetInstance<EvolutionCinematicConfig>();
-        if (Main.gameMenu || Main.LocalPlayer.dead || config.ReducedEffects || !config.ScreenFilters) { ResetWarp(); return; }
-        Pulse strongest = default;
-        float score = 0;
-        foreach (var p in pulses)
-        {
-            if (p.Duration <= 0 || p.Inward || p.Radius < 400 || p.Force < 3) continue;
-            float proximity = 1 - EvolutionCinematicFrame.Smooth(1200, 2600, Vector2.Distance(Main.LocalPlayer.Center, p.Center));
-            float weight = EvolutionShockwaveVisuals.Opacity(EvolutionShockwaveVisuals.Progress(p.Age, p.Duration)) * p.Force * proximity;
-            if (weight > score) { strongest = p; score = weight; }
-        }
-        foreach (Projectile projectile in Main.ActiveProjectiles)
-        {
-            if (!Pressure(projectile, out var hazard) || hazard.PressureAge < 0) continue;
-            float proximity = 1 - EvolutionCinematicFrame.Smooth(1200, 2600, Vector2.Distance(Main.LocalPlayer.Center, projectile.Center));
-            float weight = EvolutionShockwaveVisuals.Opacity(EvolutionShockwaveVisuals.Progress(hazard.PressureAge, EvolutionShockwaveRules.Duration)) * 5.5f * proximity;
-            if (weight <= score) continue;
-            score = weight;
-            strongest = new Pulse { Center = projectile.Center, Radius = EvolutionShockwaveRules.Reach, Age = hazard.PressureAge,
-                Duration = EvolutionShockwaveRules.Duration, GapAngle = hazard.Parameter, GapCount = EvolutionShockwaveRules.GapCount,
-                GapHalfWidth = EvolutionShockwaveRules.GapHalfWidth };
-        }
-        if (score <= .01f) { ResetWarp(); return; }
-        float u = EvolutionShockwaveVisuals.Progress(strongest.Age, strongest.Duration);
-        warp.Parameters["uWaveRadius"].SetValue(EvolutionShockwaveVisuals.Radius(strongest.Radius, u));
-        warp.Parameters["uWaveWidth"].SetValue(EvolutionShockwaveVisuals.Width(strongest.Radius, u));
-        warp.Parameters["uWaveStrength"].SetValue(Math.Min(22, score * 4));
-        EvolutionShockwaveVisuals.SetGaps(warp, strongest.GapAngle, strongest.GapCount, strongest.GapHalfWidth);
-        if (!filter.IsActive()) Filters.Scene.Activate(WarpKey, strongest.Center);
-        filter.GetShader().UseTargetPosition(strongest.Center).UseOpacity(1);
-    }
+    // Pressure waves are world-space light only; never install or activate a screen refraction pass.
+    private void UpdateWarp() => ResetWarp();
     private void ResetWarp()
     {
-        if (warp == null) return;
-        warp.Parameters["uWaveStrength"].SetValue(0);
+        if (Main.dedServ) return;
         Filter filter = Filters.Scene[WarpKey];
         filter?.GetShader().UseOpacity(0);
         if (filter?.IsActive() == true) filter.Deactivate();
@@ -237,8 +198,8 @@ public sealed class EvolutionImpactSystem : ModSystem
     public override void Unload()
     {
         OnWorldUnload();
-        Effect oldMaterial = material, oldWarp = warp;
-        material = warp = null; materialFailed = false;
-        Main.QueueMainThreadAction(() => { oldMaterial?.Dispose(); oldWarp?.Dispose(); });
+        Effect oldMaterial = material;
+        material = null; materialFailed = false;
+        Main.QueueMainThreadAction(() => oldMaterial?.Dispose());
     }
 }

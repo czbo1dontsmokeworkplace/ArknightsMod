@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using System.Text;
 using Microsoft.Xna.Framework;
@@ -35,8 +36,13 @@ public sealed class HarbingerInterference : ModSystem
     private static readonly Dictionary<string, string> textCache = new();
     private static int textTick = -1;
     private static bool dialog;
+    private static bool dialogClosing;
+    private static long dialogOpenedAt, dialogClosingAt;
+    private static Vector3 dialogClosingFrom;
+    private const double DialogLifetime = 5, DialogOpenDuration = .18, DialogCloseDuration = .14;
     private static Vector2 layerOffset;
     private static bool mouseAdjusted;
+    private static int hudTextDepth;
     private RenderTarget2D copy;
     private SpriteBatch compositor;
     private bool compositorFailed;
@@ -53,7 +59,7 @@ public sealed class HarbingerInterference : ModSystem
             ?? throw new MissingMethodException("DynamicSpriteFont.InternalDraw");
         hooks.Add(new Hook(method, (FontOrig orig, DynamicSpriteFont font, string text, SpriteBatch batch, Vector2 pos, Color color,
             float rotation, Vector2 origin, ref Vector2 scale, SpriteEffects effects, float depth) => {
-                if (!Corrupting || string.IsNullOrWhiteSpace(text)) { orig(font, text, batch, pos, color, rotation, origin, ref scale, effects, depth); return; }
+                if (!Corrupting || hudTextDepth > 0 || string.IsNullOrWhiteSpace(text)) { orig(font, text, batch, pos, color, rotation, origin, ref scale, effects, depth); return; }
                 string corrupted = TransformText(text);
                 Vector2 localScale = scale;
                 float width = font.MeasureString(corrupted).X;
@@ -108,7 +114,7 @@ public sealed class HarbingerInterference : ModSystem
     }
     internal static string TransformText(string source)
     {
-        if (!Corrupting || string.IsNullOrEmpty(source)) return source;
+        if (!Corrupting || hudTextDepth > 0 || string.IsNullOrEmpty(source)) return source;
         int tick = (int)(Main.GameUpdateCount / 4);
         if (tick != textTick) { textTick = tick; textCache.Clear(); }
         if (!textCache.TryGetValue(source, out string value)) {
@@ -203,8 +209,14 @@ public sealed class HarbingerInterference : ModSystem
             gd.BlendState = blend; gd.SamplerStates[0] = sampler; gd.RasterizerState = raster; gd.DepthStencilState = depth;
         }
     }
-    public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers) => layers.Add(new LegacyGameInterfaceLayer(
-        "ArknightsMod: Harbinger interference and error", DrawOverlay, InterfaceScaleType.UI));
+    public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
+    {
+        // Vanilla draws its mouse text and cursor after this layer. Appending to the
+        // list covered the already-drawn cursor with the opaque dialog panel.
+        int index = layers.FindIndex(layer => layer.Name is "Vanilla: Mouse Text" or "Vanilla: Cursor");
+        layers.Insert(index < 0 ? layers.Count : index, new LegacyGameInterfaceLayer(
+            "ArknightsMod: Harbinger interference and error", DrawOverlay, InterfaceScaleType.UI));
+    }
     private static bool DrawOverlay()
     {
         if (Main.gameMenu) return true;
@@ -223,62 +235,108 @@ public sealed class HarbingerInterference : ModSystem
                 int x = (tick * 97 + i * 193) % Math.Max(1, (int)w), y = (tick * 53 + i * 101) % Math.Max(1, (int)h);
                 b.Draw(TextureAssets.MagicPixel.Value, new Rectangle(x, y, 40 + i * 9, 3 + i % 3 * 5), (i % 2 == 0 ? HarbingerVisuals.Red : HarbingerVisuals.Cyan) * (hack * .13f));
             }
+            if (hack > 0) DrawHackHud(b, w, h, Current.Clock, Current.EncounterToken * 431 + Current.Pattern * 97, hack);
         }
         if (dialog) DrawError(b, w, h);
         return true;
     }
+    private static void DrawHackHud(SpriteBatch batch, float width, float height, int clock, int seed, float strength)
+    {
+        // These glyphs are already authored visual noise. Keep the red code's syntax
+        // and color instead of feeding it through the separate all-text corruption hook.
+        hudTextDepth++;
+        try { HarbingerHackHud.Draw(batch, width, height, clock, seed, strength); }
+        finally { hudTextDepth--; }
+    }
     internal static void ShowError()
     {
         if (Main.dedServ || Main.gameMenu || dialog) return;
-        dialog = true;
+        dialog = true; dialogClosing = false; dialogOpenedAt = Stopwatch.GetTimestamp();
         SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/HarbingerWindowsError") with { Volume = .8f, MaxInstances = 1 });
+    }
+    private static Vector3 DialogPose(long now)
+    {
+        if (dialogClosing) {
+            float t = Math.Clamp((float)((now - dialogClosingAt) / (double)Stopwatch.Frequency / DialogCloseDuration), 0, 1);
+            t = t * t * (3 - 2 * t);
+            return Vector3.Lerp(dialogClosingFrom, new Vector3(.94f, 0, 8), t);
+        }
+        float progress = Math.Clamp((float)((now - dialogOpenedAt) / (double)Stopwatch.Frequency / DialogOpenDuration), 0, 1);
+        float ease = 1 - MathF.Pow(1 - progress, 3);
+        return new Vector3(.92f + .08f * ease + MathF.Sin(progress * MathHelper.Pi) * .018f, ease, 14 * (1 - ease));
+    }
+    private static void BeginCloseDialog(long now)
+    {
+        if (!dialog || dialogClosing) return;
+        dialogClosingFrom = DialogPose(now); dialogClosingAt = now; dialogClosing = true;
+    }
+    private static void UpdateDialog(long now)
+    {
+        if (!dialog) return;
+        long expires = dialogOpenedAt + (long)(DialogLifetime * Stopwatch.Frequency);
+        if (!dialogClosing && now >= expires) BeginCloseDialog(expires);
+        if (dialogClosing && now - dialogClosingAt >= DialogCloseDuration * Stopwatch.Frequency) {
+            dialog = false; dialogClosing = false;
+        }
     }
     private static void DrawError(SpriteBatch b, float screenW, float screenH)
     {
+        long now = Stopwatch.GetTimestamp(); UpdateDialog(now);
+        if (!dialog) return;
+        Vector3 pose = DialogPose(now);
+        float animationScale = pose.X, opacity = pose.Y;
         float width = Math.Min(490, screenW - 24), height = 210;
         Rectangle panel = new((int)((screenW - width) / 2), (int)((screenH - height) / 2), (int)width, (int)height);
-        void Fill(Rectangle r, Color c) => b.Draw(TextureAssets.MagicPixel.Value, r, c);
+        Vector2 pivot = panel.Center.ToVector2(), offset = new(0, pose.Z);
+        Vector2 At(Vector2 point) => pivot + (point - pivot) * animationScale + offset;
+        void Fill(Rectangle r, Color c) {
+            Vector2 at = At(r.TopLeft());
+            b.Draw(TextureAssets.MagicPixel.Value, new Rectangle((int)at.X, (int)at.Y,
+                Math.Max(1, (int)MathF.Round(r.Width * animationScale)), Math.Max(1, (int)MathF.Round(r.Height * animationScale))), c * opacity);
+        }
+        void Line(Vector2 a, Vector2 end, Color c, float thickness) => HarbingerVisuals.Line(b, At(a), At(end), c * opacity, thickness * animationScale);
         Fill(new Rectangle(panel.X + 6, panel.Y + 6, panel.Width, panel.Height), Color.Black * .45f);
         Fill(panel, new Color(192, 192, 192));
         Fill(new Rectangle(panel.X + 3, panel.Y + 3, panel.Width - 6, 27), new Color(0, 0, 128));
-        HarbingerVisuals.Line(b, new(panel.Left, panel.Bottom), new(panel.Left, panel.Top), Color.White, 2);
-        HarbingerVisuals.Line(b, new(panel.Left, panel.Top), new(panel.Right, panel.Top), Color.White, 2);
-        HarbingerVisuals.Line(b, new(panel.Right, panel.Top), new(panel.Right, panel.Bottom), new Color(64, 64, 64), 2);
-        HarbingerVisuals.Line(b, new(panel.Right, panel.Bottom), new(panel.Left, panel.Bottom), new Color(64, 64, 64), 2);
+        Line(new(panel.Left, panel.Bottom), new(panel.Left, panel.Top), Color.White, 2);
+        Line(new(panel.Left, panel.Top), new(panel.Right, panel.Top), Color.White, 2);
+        Line(new(panel.Right, panel.Top), new(panel.Right, panel.Bottom), new Color(64, 64, 64), 2);
+        Line(new(panel.Right, panel.Bottom), new(panel.Left, panel.Bottom), new Color(64, 64, 64), 2);
         int tick = (int)(Main.GameUpdateCount / 5);
         void Text(string value, Vector2 pos, Color color, float scale = .8f) =>
-            b.DrawString(FontAssets.MouseText.Value, HarbingerRules.Corrupt(value, tick, 713), pos, color,
-                0, Vector2.Zero, scale, SpriteEffects.None, 0);
+            b.DrawString(FontAssets.MouseText.Value, HarbingerRules.Corrupt(value, tick, 713), At(pos), color * opacity,
+                0, Vector2.Zero, scale * animationScale, SpriteEffects.None, 0);
         Text("ERROR::0xDEAD//NULL", new(panel.X + 10, panel.Y + 5), Color.White);
         Vector2 icon = new(panel.X + 39, panel.Y + 76);
         for (int y = -17; y <= 17; y++) {
             int span = (int)MathF.Sqrt(Math.Max(0, 17 * 17 - y * y));
             Fill(new Rectangle((int)icon.X - span, (int)icon.Y + y, span * 2 + 1, 1), new Color(195, 0, 0));
         }
-        HarbingerVisuals.Line(b, icon - new Vector2(7), icon + new Vector2(7), Color.White, 4);
-        HarbingerVisuals.Line(b, icon + new Vector2(7, -7), icon + new Vector2(-7, 7), Color.White, 4);
+        Line(icon - new Vector2(7), icon + new Vector2(7), Color.White, 4);
+        Line(icon + new Vector2(7, -7), icon + new Vector2(-7, 7), Color.White, 4);
         Text("0xDEAD // TERMINAL REFERENCE LOST", new(panel.X + 70, panel.Y + 53), Color.Black, .72f);
         Text("NULL::01AF / CORE NOT FOUND", new(panel.X + 70, panel.Y + 80), Color.Black, .72f);
         Text("FATAL EXCEPTION 0xC0000005", new(panel.X + 70, panel.Y + 107), Color.Black, .72f);
         Rectangle close = new(panel.Right - 27, panel.Y + 6, 20, 20);
         Rectangle ok = new(panel.Center.X - 48, panel.Bottom - 45, 96, 29);
         Fill(close, new Color(192, 192, 192)); Fill(ok, new Color(220, 220, 220));
-        HarbingerVisuals.Line(b, ok.TopLeft(), new(ok.Right, ok.Top), Color.White, 2);
-        HarbingerVisuals.Line(b, new(ok.Right, ok.Top), new(ok.Right, ok.Bottom), Color.Gray, 2);
-        HarbingerVisuals.Line(b, new(ok.Right, ok.Bottom), ok.BottomLeft(), Color.Gray, 2);
-        HarbingerVisuals.Line(b, new(close.X + 6, close.Y + 6), new(close.Right - 6, close.Bottom - 6), Color.Black, 2);
-        HarbingerVisuals.Line(b, new(close.Right - 6, close.Y + 6), new(close.X + 6, close.Bottom - 6), Color.Black, 2);
+        Line(ok.TopLeft(), new(ok.Right, ok.Top), Color.White, 2);
+        Line(new(ok.Right, ok.Top), new(ok.Right, ok.Bottom), Color.Gray, 2);
+        Line(new(ok.Right, ok.Bottom), ok.BottomLeft(), Color.Gray, 2);
+        Line(new(close.X + 6, close.Y + 6), new(close.Right - 6, close.Bottom - 6), Color.Black, 2);
+        Line(new(close.Right - 6, close.Y + 6), new(close.X + 6, close.Bottom - 6), Color.Black, 2);
         Text("OK", new(ok.Center.X - 12, ok.Y + 2), Color.Black);
-        Vector2 mouse = new(Main.mouseX, Main.mouseY);
+        Vector2 mouse = pivot + (new Vector2(Main.mouseX, Main.mouseY) - pivot - offset) / animationScale;
         if (panel.Contains(mouse.ToPoint())) Main.LocalPlayer.mouseInterface = true;
         if ((ok.Contains(mouse.ToPoint()) || close.Contains(mouse.ToPoint())) && Main.mouseLeft && Main.mouseLeftRelease) {
-            dialog = false; Main.mouseLeftRelease = false; Main.LocalPlayer.mouseInterface = true;
+            BeginCloseDialog(now); Main.mouseLeftRelease = false; Main.LocalPlayer.mouseInterface = true;
         }
     }
     private void Reset()
     {
         if (!Main.dedServ && Filters.Scene[FilterKey]?.IsActive() == true) Filters.Scene[FilterKey].Deactivate();
-        Current = null; dialog = false; layerOffset = Vector2.Zero; mouseAdjusted = false;
+        Current = null; dialog = dialogClosing = false; dialogOpenedAt = dialogClosingAt = 0;
+        layerOffset = Vector2.Zero; mouseAdjusted = false; hudTextDepth = 0;
         textCache.Clear(); textTick = -1; compositorFailed = false;
     }
     public override void OnWorldUnload() => Reset();

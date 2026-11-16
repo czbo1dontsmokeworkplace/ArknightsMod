@@ -15,7 +15,7 @@ Items: {
 
 	ScarletMeson: {
 		DisplayName: Scarlet Meson
-		Tooltip: Hold left-click for intermittent lasers that stop at the first enemy or terrain
+		Tooltip: Hold left-click to charge briefly before firing intermittent lasers that stop at the first enemy or terrain
 	}
 
 	UrsusArtilleryLink: {

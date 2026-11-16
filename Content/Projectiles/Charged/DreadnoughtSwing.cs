@@ -24,7 +24,7 @@ public sealed class DreadnoughtSwing : ModProjectile
     private float duration = DreadnoughtRules.BaseSwingTicks;
     private int facing = 1, skill;
     private bool initialized;
-    private int targetsHit;
+    private int targetsHit, hitPause;
     private Item boundItem;
     private bool astonishingMoment;
     private float sweepStartAngle, sweepEndAngle;
@@ -33,7 +33,7 @@ public sealed class DreadnoughtSwing : ModProjectile
     private Vector2 previousCenter;
     private readonly List<(float Angle, Vector2 Center, float Age)> bladeHistory = new();
     private float Progress => Math.Clamp(Age / duration, 0, 1);
-    private float Angle => BladeSwingTemplate.Angle(Projectile.velocity.ToRotation(), facing, Progress);
+    private float Angle => DreadnoughtSwingMotion.Angle(Projectile.velocity.ToRotation(), facing, Progress);
     private float Reach => ChargedOperatorRules.Reach(Kind, true) * DreadnoughtRules.WeaponScale
         * (Kind == ChargedOperatorKind.NearlRadiant && skill is 1 or 3 ? 1.15f : 1f);
 
@@ -53,17 +53,17 @@ public sealed class DreadnoughtSwing : ModProjectile
     }
 
     public override bool ShouldUpdatePosition() => false;
-    public override bool? CanDamage() => initialized && DreadnoughtRules.CanStrike(targetsHit);
+    public override bool? CanDamage() => initialized && DreadnoughtSwingMotion.Striking(Progress) && DreadnoughtRules.CanStrike(targetsHit);
     public override bool CanHitPvp(Player target) => false;
-    public override bool? CanHitNPC(NPC target) => DreadnoughtRules.CanStrike(targetsHit) ? null : false;
+    public override bool? CanHitNPC(NPC target) => CanDamage() == true ? null : false;
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) =>
-        TryBladeContact(targetHitbox, out _, out _);
+        CanDamage() == true && TryBladeContact(targetHitbox, out _, out _);
 
     public override void SendExtraAI(BinaryWriter writer)
     {
         writer.Write(initialized); writer.Write(duration); writer.Write(facing); writer.Write(skill);
         writer.Write(Projectile.damage); writer.Write(Projectile.knockBack); writer.Write(Projectile.CritChance);
-        writer.Write(targetsHit);
+        writer.Write(targetsHit); writer.Write(hitPause);
         writer.Write(astonishingMoment);
     }
 
@@ -71,7 +71,7 @@ public sealed class DreadnoughtSwing : ModProjectile
     {
         initialized = reader.ReadBoolean(); duration = reader.ReadSingle(); facing = reader.ReadInt32(); skill = reader.ReadInt32();
         Projectile.damage = reader.ReadInt32(); Projectile.knockBack = reader.ReadSingle(); Projectile.CritChance = reader.ReadInt32();
-        targetsHit = reader.ReadInt32();
+        targetsHit = reader.ReadInt32(); hitPause = reader.ReadInt32();
         astonishingMoment = reader.ReadBoolean();
         previousAngle = Angle;
         Player owner = Main.player[Projectile.owner];
@@ -123,15 +123,17 @@ public sealed class DreadnoughtSwing : ModProjectile
         owner.heldProj = Projectile.whoAmI;
         owner.itemTime = owner.itemAnimation = 2;
         float before = Progress;
-        Age = BladeSwingTemplate.Advance(Age, duration, Projectile.extraUpdates);
+        if (hitPause > 0) hitPause--;
+        else Age = BladeSwingTemplate.Advance(Age, duration, Projectile.extraUpdates);
         sweepStartAngle = previousAngle;
         sweepEndAngle = Angle;
         sweepStartCenter = previousCenter;
         sweepEndCenter = Projectile.Center;
         BladeSwingTemplate.Pose(owner, Angle);
-        if (before < .36f && Progress >= .36f && !Main.dedServ)
-            SoundEngine.PlaySound(SoundID.Item71 with { Volume = .45f, Pitch = .1f + (int)Kind * -.04f }, owner.Center);
-        if (Projectile.numUpdates == 0 && !Main.dedServ && Progress > .3f && Progress < .7f)
+        if (!Main.dedServ && (before < .10f && Progress >= .10f || before < .40f && Progress >= .40f))
+            SoundEngine.PlaySound(SoundID.Item71 with { Volume = Progress < .3f ? .35f : .75f,
+                Pitch = Progress < .3f ? .25f : -.2f }, owner.Center);
+        if (Projectile.numUpdates == 0 && !Main.dedServ && DreadnoughtSwingMotion.Striking(Progress))
         {
             Color color = ChargedOperatorRules.ColorFor(Kind);
             Vector2 tip = Projectile.Center + Angle.ToRotationVector2() * Reach;
@@ -154,7 +156,7 @@ public sealed class DreadnoughtSwing : ModProjectile
     {
         return BladeSwingTemplate.Contact(box, sweepStartAngle, sweepEndAngle,
             sweepStartCenter, sweepEndCenter, Reach, 24 * DreadnoughtRules.WeaponScale,
-            facing, out point, out tangent);
+            -facing, out point, out tangent);
     }
 
     public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
@@ -171,6 +173,7 @@ public sealed class DreadnoughtSwing : ModProjectile
         Projectile.netUpdate = true;
         Main.player[Projectile.owner].GetModPlayer<DreadnoughtPlayer>().RefreshMoment();
         if (damageDone <= 0) return;
+        hitPause = 2 * (Projectile.extraUpdates + 1);
         if (Kind == ChargedOperatorKind.Franka) target.AddBuff(BuffID.OnFire3, 180);
         if (Projectile.owner == Main.myPlayer && TryBladeContact(target.Hitbox, out Vector2 point, out Vector2 tangent))
         {
@@ -206,8 +209,14 @@ public sealed class DreadnoughtSwing : ModProjectile
         Vector2 origin = layout.Origin(texture.Width, flip);
         float scale = Reach / layout.Axis(flip).Length();
         SpriteEffects effects = flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-        DreadnoughtArcTrail.Draw(center, Projectile.velocity.ToRotation(), facing, Progress, Reach, Kind);
-        float fade = DreadnoughtRules.TrailIntensity(Progress);
+        float fade = DreadnoughtSwingMotion.Intensity(Progress);
+        if (fade > 0) {
+            float start = Progress < DreadnoughtSwingMotion.BackEnd ? .08f : DreadnoughtSwingMotion.CutStart;
+            Color tint = ChargedOperatorRules.ColorFor(Kind);
+            DreadnoughtArcTrail.Draw(center, Projectile.velocity.ToRotation(), -facing, Progress, Reach,
+                tint, tint * .18f, Color.White, fade,
+                sample => DreadnoughtSwingMotion.Angle(Projectile.velocity.ToRotation(), facing, Math.Max(start, sample)));
+        }
         for (int i = 0; i < bladeHistory.Count - 1; i += 2)
         {
             var sample = bladeHistory[i];

@@ -33,7 +33,7 @@ public sealed class FrostNovaBlackIceRegion : ModProjectile
     private bool playedImpact;
     private int ownerWaitTicks;
 
-    public override string Texture => "Terraria/Images/MagicPixel";
+    public override string Texture => "ArknightsMod/Assets/null";
     public override void SetDefaults()
     {
         Projectile.width = Projectile.height = 2;
@@ -143,10 +143,10 @@ public sealed class FrostNovaBlackIceRegion : ModProjectile
 
     internal void ContributeTiles(Dictionary<Point, float> tiles)
     {
-        if (!ready || !IsOwnerActive((int)Projectile.ai[0], hostToken)) return;
+        if (!ready || !IsOwnerActive((int)Projectile.ai[0], hostToken) || Projectile.GetGlobalProjectile<FrostNovaOwnedProjectile>().Retiring) return;
         int age = totalLifetime - Projectile.timeLeft;
         float radius = WidthInTiles * .5f * Math.Clamp((age + 1) / 24f, 0, 1);
-        float opacity = Math.Clamp(Projectile.timeLeft / (float)FadeTicks, 0, 1);
+        float opacity = Math.Clamp(Projectile.timeLeft / (float)FadeTicks, 0, 1) * Projectile.GetGlobalProjectile<FrostNovaOwnedProjectile>().Visibility;
         foreach (Point point in infectedTiles)
         {
             if (Math.Abs(point.X - Projectile.ai[1]) > radius || !IsSupportTile(point.X, point.Y)) continue;
@@ -177,6 +177,7 @@ public sealed class FrostNovaBlackIceRegion : ModProjectile
             && ChargedOperatorVfx.Visible(Projectile.Center) && ParticleManager.activeParticles.Count < 1200)
         {
             Point point = surfaces[Main.rand.Next(surfaces.Count)];
+            FrostNovaColdMistSystem.Surface(new Vector2(point.X*16+8,SurfaceY(point.X,point.Y,point.X*16+8)));
             if (Math.Abs(point.X - Projectile.ai[1]) < WidthInTiles * .5f * Math.Clamp((age + 1) / 24f, 0, 1))
                 new FrostNovaBlackIceShardParticle(new Vector2(point.X * 16 + 8, SurfaceY(point.X, point.Y, point.X * 16 + 8)),
                     new Vector2(Main.rand.NextFloat(-.35f, .35f), Main.rand.NextFloat(-1.15f, -.45f)),
@@ -187,6 +188,7 @@ public sealed class FrostNovaBlackIceRegion : ModProjectile
     private void EmitImpact()
     {
         if (!ChargedOperatorVfx.Visible(Projectile.Center)) return;
+        FrostNovaColdMistSystem.Begin(Projectile.Center);
         SoundEngine.PlaySound(new SoundStyle("ArknightsMod/Sounds/FNIceRingStg1") with { Volume = .7f }, Projectile.Center);
         for (int i = 0; i < 14; i++)
         {
@@ -202,44 +204,7 @@ public sealed class FrostNovaBlackIceRegion : ModProjectile
 
     public override bool PreDraw(ref Color lightColor)
     {
-        if (!ready || !IsOwnerActive((int)Projectile.ai[0], hostToken)) return false;
-        int age = totalLifetime - Projectile.timeLeft;
-        if (age < 30)
-        {
-            Texture2D explosion = ModContent.Request<Texture2D>("ArknightsMod/Content/NPCs/Enemy/Chapter6/FrostNova/BlackIceExplode").Value;
-            Rectangle frame = explosion.Frame(1, 6, 0, Math.Clamp(age / 5, 0, 5));
-            Main.EntitySpriteDraw(explosion, Projectile.Center - Main.screenPosition, frame, Color.White,
-                0, frame.Size() * .5f, 1.2f, SpriteEffects.None);
-        }
-        float opacity = Math.Clamp(Projectile.timeLeft / (float)FadeTicks, 0, 1);
-        float radius = WidthInTiles * .5f * Math.Clamp((age + 1) / 24f, 0, 1);
-        // Restore the old floor-seal's gate/mask identity as a purely visual
-        // overlay. Never reinstate its world-tile conversion behavior.
-        Texture2D gate = FrostNovaVisuals.Texture("FNBanFloorGate");
-        Texture2D mask = FrostNovaVisuals.Texture("FNBanFloorMask");
-        foreach (Point point in surfaces) {
-            if (point.X % 4 != 0 || Math.Abs(point.X - Projectile.ai[1]) > radius || !IsSupportTile(point.X, point.Y)) continue;
-            float x = point.X * 16 + 8;
-            Vector2 seal = new(x, SurfaceY(point.X, point.Y, x) - 10);
-            FrostNovaVisuals.Sprite(gate, seal, new Vector2(42, 27), Color.White * (opacity * .5f));
-            FrostNovaVisuals.Sprite(mask, seal, new Vector2(34, 24), Color.White * (opacity * .25f), age * .005f);
-        }
-        using var pass = new ChargedOperatorVfx.Pass(true);
-        foreach (Point point in surfaces)
-        {
-            if (Math.Abs(point.X - Projectile.ai[1]) > radius || !IsSupportTile(point.X, point.Y)) continue;
-            float centerX = point.X * 16 + 8;
-            Vector2 at = new(centerX, SurfaceY(point.X, point.Y, centerX));
-            Vector2 left = new(centerX - 5, SurfaceY(point.X, point.Y, centerX - 5));
-            Vector2 right = new(centerX + 5, SurfaceY(point.X, point.Y, centerX + 5));
-            float pulse = .4f + .15f * MathF.Sin(age * .045f + point.X * .6f);
-            // Narrow cracks are anchored to the tile, rather than covering the arena in lines.
-            ChargedOperatorVfx.Line(left, at + new Vector2(1, 2),
-                new Color(70, 155, 195) * (opacity * pulse), 1);
-            ChargedOperatorVfx.Line(at + new Vector2(1, 2), right - new Vector2(0, 1),
-                new Color(120, 205, 225) * (opacity * pulse), 1);
-        }
-        return false;
+        return false; // Ground tint is owned by GlobalTile; surface dressing is particles only.
     }
 
     public override void SendExtraAI(BinaryWriter writer)

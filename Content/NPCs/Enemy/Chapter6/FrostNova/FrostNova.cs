@@ -127,7 +127,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
         private bool FNBirth, FNBirthEnd, FNRevival, FNRevivalStart, FNRevivalEnd, FNEnd, FNDeathStart;
         private bool FNOnATK, FNOnSkill, FNATKFrameInitialized, FNSkillFrameInitialized;
 
-		public override void AI() { RunReworkedAI(); UpdateHaloAnchor(); }
+		public override void AI() { RunReworkedAI(); }
 		#region 死亡检查机制
 		public override bool CheckDead() {
 			RetireEncounter();
@@ -170,10 +170,6 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 			int frameSpeed;
 			NPC.spriteDirection = NPC.direction;
             if (TryCombatCastFrame(frameHeight)) return;
-            if (AirbornePhase && ReBirthTimer > FrostNovaCombatRules.PhaseTwoEntrance && !FNOnATK && !FNOnSkill) {
-                NPC.frame.Y = 55 * frameHeight;
-                return;
-            }
 			//走路
 			if ((FNStage == 1 || (FNStage == 2 && ReBirthTimer > FrostNovaCombatRules.PhaseTwoEntrance) || FNRevivalEnd) && !FNOnATK && !FNOnSkill) {
 				startFrame = 0;
@@ -767,6 +763,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		private float startY;
 
 		public override void PostDraw(Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */ {
+            if (Projectile.GetGlobalProjectile<FrostNovaOwnedProjectile>().Token != 0) return;
 			Texture2D ICGlowT = ModContent.Request<Texture2D>("ArknightsMod/Content/NPCs/Enemy/Chapter6/FrostNova/ICGlow").Value;
 			Texture2D ICRingT = ModContent.Request<Texture2D>("ArknightsMod/Content/NPCs/Enemy/Chapter6/FrostNova/ICRing").Value;
 			Main.EntitySpriteDraw(ICGlowT, Projectile.Center - Main.screenPosition + new Vector2(0, 0), new Rectangle(0, 0, ICGlowT.Width, ICGlowT.Height), Color.White * Projectile.Opacity, Projectile.rotation, new Vector2(ICGlowT.Width / 2, ICGlowT.Height / 2), 1f, SpriteEffects.None, 0);
@@ -943,6 +940,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		public override bool OnTileCollide(Vector2 oldVelocity) { Projectile.damage = 0; Projectile.hostile = false; return true; }
 
 		public override void PostDraw(Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */ {
+            if (Projectile.GetGlobalProjectile<FrostNovaOwnedProjectile>().Token != 0) return;
 			Texture2D Ice = ModContent.Request<Texture2D>("ArknightsMod/Content/NPCs/Enemy/Chapter6/FrostNova/BlackIceProjectile").Value;
 
 			if (Projectile.frame == 5) {
@@ -1145,6 +1143,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		}
 
 		public override void PostDraw(Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */ {
+            if (Projectile.GetGlobalProjectile<FrostNovaOwnedProjectile>().Token != 0) return;
 			Texture2D Ice = ModContent.Request<Texture2D>("ArknightsMod/Content/NPCs/Enemy/Chapter6/FrostNova/BlackIce").Value;
 			for (int i = oldPos.Length - 1; i > 0; i--) {
 				if (oldPos[i] != Vector2.Zero && i % 3 == 0) {//1%3是为了增大残影绘制间隔；Color.White * 1 * (1 - m*f * i)是残影淡化； (oldPos[i - 1] - oldPos[i]).ToRotation() + (float)(0.5 * MathHelper.Pi)是速度变化角度（基准为0.5pi，前面随速度变化不需要），1 * (1 - n*f * i)是大小逐级递减（也不需要）
@@ -1606,6 +1605,7 @@ namespace ArknightsMod.Content.NPCs.Enemy.Chapter6.FrostNova
 		}
 
 		public override void PostDraw(Color lightColor)/* tModPorter Replace 'Main.player[Projectile.owner]' with 'player'. */ {
+            if (Projectile.GetGlobalProjectile<FrostNovaOwnedProjectile>().Token != 0) return;
 			Texture2D Ice = ModContent.Request<Texture2D>("ArknightsMod/Content/NPCs/Enemy/Chapter6/FrostNova/FNBanFloor").Value;
 			Texture2D Mask = ModContent.Request<Texture2D>("ArknightsMod/Content/NPCs/Enemy/Chapter6/FrostNova/FNBanFloorMask").Value;
 			Main.EntitySpriteDraw(Ice, Projectile.Center - Main.screenPosition, new Rectangle(0, 0, Ice.Width, Ice.Height), Color.White * ProjOpacity, Projectile.rotation, new Vector2(Ice.Width / 2, Ice.Height / 2), Projscale, SpriteEffects.None, 0);

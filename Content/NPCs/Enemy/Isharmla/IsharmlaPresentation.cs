@@ -113,8 +113,7 @@ public sealed class IsharmlaPresentation : ModSystem
         Vector2 at = boss.NPC.Center;
         Color water = (boss.NPC.dontTakeDamage ? new Color(153, 188, 221) : IsharmlaVisuals.Crest) * visibility;
         float gesture = boss.Transition > 0 ? .8f : boss.Gesture;
-        bool dash = boss.Stage == TideStage.LastSong && boss.Attack == 2 &&
-            (boss.Cast is >= 90 and < 113 || boss.Cast is >= 174 and < 197);
+        bool dash = boss.Dashing;
         if (dash)
             for (int i = 4; i > 0; i--)
                 DrawSinger(batch, at - boss.NPC.velocity * i * 1.2f, 1.7f, boss.NPC.spriteDirection, gesture, boss.Lean,
@@ -123,10 +122,10 @@ public sealed class IsharmlaPresentation : ModSystem
         DrawSinger(batch, at, 1.7f, boss.NPC.spriteDirection, gesture, boss.Lean, Color.White * visibility);
         if (boss.Stage == TideStage.Leviathan || boss.NPC.dontTakeDamage && boss.Stage != TideStage.Finale)
             Arc(at, new Vector2(52, 60), -1.2f, 5f, water * .30f, 1.5f);
-        if (boss.Attack == 2 && boss.Stage is TideStage.Cantor or TideStage.LastSong && boss.Cast is >= 62 and < 90)
+        if (boss.Attack == 2 && boss.Stage is TideStage.Cantor or TideStage.LastSong && boss.StepBeat is >= 18 and < 42)
         {
             Vector2 forward = (boss.Aim - at).SafeNormalize(Vector2.UnitX);
-            for (int i = 1; i <= 3; i++) Chevron(at + forward * (65 + i * 40), forward, water * .65f, 11);
+            IsharmlaVisuals.DrawField(at + forward * 340, new Vector2(680, 22), forward.ToRotation(), water * .25f, "Water");
         }
     }
 
@@ -157,26 +156,13 @@ public sealed class IsharmlaPresentation : ModSystem
     public static void DrawDragonTell(IsharmlaDragon dragon)
     {
         if (dragon.Boss is not { Transition: 0 } boss || dragon.Dying > 0) return;
-        int t = dragon.LocalTimer;
-        if (dragon.Pattern == 0 && t < 90)
-        {
-            Vector2 at = new(dragon.Aim.X, boss.Anchor.Y);
-            for (int i = 0; i < 3; i++) Arc(at, new Vector2(80 + i * 55, 13 + i * 8), t * .012f + i, 4.8f,
-                IsharmlaVisuals.Crest * (.15f + dragon.Charge * .30f), 2);
-            for (int i = 0; i < 3; i++) Chevron(at - new Vector2(0, 25 + i * 25), -Vector2.UnitY,
-                IsharmlaVisuals.Crest * dragon.Charge * .55f, 9);
-        }
-        if (dragon.Pattern == 1 && (t is >= 70 and < 110 || t is >= 230 and < 270))
-        {
-            Vector2 direction = new(t < 200 ? -dragon.AttackSide : dragon.AttackSide, 0);
-            for (int i = 0; i < 4; i++) Chevron(dragon.NPC.Center + direction * (180 + i * 70), direction,
-                IsharmlaVisuals.Crest * (.25f + dragon.Charge * .35f), 14);
-        }
-        if (dragon.Pattern == 5 && t is >= 100 and < 205)
-        {
-            for (int i = 0; i < 3; i++) Arc(dragon.Muzzle, new Vector2(45 + i * 24), -t * .025f + i * 1.7f, 4.2f,
-                IsharmlaVisuals.Crest * (.25f + dragon.Charge * .45f), 2 + i * .3f);
-        }
+        if (dragon.Charge <= .05f) return;
+        Vector2 axis = (dragon.Aim - dragon.Muzzle).SafeNormalize(dragon.Direction);
+        IsharmlaVisuals.DrawField(dragon.Muzzle, new Vector2(130 + dragon.Charge * 90), -dragon.LocalTimer * .025f,
+            IsharmlaVisuals.Crest * (dragon.Charge * .65f), "Halo");
+        if (dragon.Pattern != 5)
+            IsharmlaVisuals.DrawField(dragon.Muzzle + axis * 650, new Vector2(1300, 38), axis.ToRotation(),
+                IsharmlaVisuals.Crest * (dragon.Charge * .17f), "Water");
     }
     public static void DragonParticles(IsharmlaDragon dragon)
     {

@@ -30,6 +30,8 @@ public partial class FrostNova
             NPC.netUpdate = true;
         }
         UpdateShieldTarget();
+        UpdateDomainCenter();
+        UpdateColdAir();
         NPC.TargetClosest(false);
         Player player = Main.player[NPC.target];
         bool valid = player.active && !player.dead && !player.ghost && NPC.Distance(player.Center) < 10000;
@@ -68,11 +70,11 @@ public partial class FrostNova
         }
         if (AirbornePhase) {
             ReBirthTimer++;
-            NPC.noGravity = true; NPC.noTileCollide = true;
+            NPC.noGravity = false; NPC.noTileCollide = false;
             DisableDistanceRing();
             if (ReBirthTimer <= FrostNovaCombatRules.PhaseTwoEntrance) {
                 NPC.dontTakeDamage = true; NPC.damage = 0;
-                MoveTo(player.Center + new Vector2(-NPC.direction * 320, -260), 7.5f, .055f);
+                NPC.velocity.X *= .85f;
                 if (ReBirthTimer == 30) {
                     FrostNovaVisuals.Cast(NPC.Center, 2, 1.4f);
                     SummonStorms(player.Center, 1000);
@@ -88,29 +90,23 @@ public partial class FrostNova
             UpdateDistanceRing(player);
         }
         NPC.dontTakeDamage = false;
-        // The caster's body is safe outside the explicitly warned sweeping attack.
+        // All attacks are spells; the caster has no contact-damage movement.
         NPC.damage = 0;
         int phase = AirbornePhase ? 2 : 1, pattern = CombatPattern;
         if (!attackInitialized) InitializeAttack(player);
         if (!attackInitialized) return; // Wait for the authority's locked formation anchor.
         bool recovery = FrostNovaCombatRules.InRecovery(phase, pattern, combatTimer);
-        FNOnATK = !recovery && pattern == 0;
+        FNOnATK = false;
         FNATKTimer = FNOnATK ? 156 + combatTimer % 110 : 0;
-        FNOnSkill = !recovery && pattern != 0;
+        FNOnSkill = !recovery;
         FNSkillTimer = FNOnSkill ? 480 + combatTimer : 0;
         if (recovery) {
-            if (AirbornePhase) MoveTo(attackAnchor, 6, .055f);
-            else NPC.velocity.X *= .85f;
+            NPC.velocity.X *= .85f;
         }
         else if (!TickPlannedRelocation(player, pattern)) {
             MoveForAttack(player, pattern);
             DoAttack(player, pattern);
             AddCryogenicPressure(player, pattern);
-        }
-        if (++supportTimer >= (AirbornePhase ? 1440 : 1260)) {
-            supportTimer = 0;
-            if (AirbornePhase) SummonAltar(player);
-            else SummonSnowSupport(player);
         }
         combatTimer++;
         if (combatTimer >= FrostNovaCombatRules.AttackDuration(phase, pattern)) {
@@ -131,66 +127,31 @@ public partial class FrostNova
         attackInitialized = true;
         float side = attackSerial % 2 == 0 ? -1 : 1;
         attackAim = player.Center;
-        attackAnchor = player.Center + new Vector2(side * (AirbornePhase ? 350 : 240), AirbornePhase ? -230 : -24);
+        attackAnchor = player.Center + new Vector2(side * 300, 0);
         dashDirection = (attackAim - attackAnchor).SafeNormalize(Vector2.UnitX);
         NPC.netUpdate = true;
     }
-    private void MoveTo(Vector2 point, float speed, float smoothing) {
-        Vector2 desired = (point - NPC.Center) * .045f;
-        if (desired.Length() > speed) desired = desired.SafeNormalize(Vector2.Zero) * speed;
-        NPC.velocity = Vector2.Lerp(NPC.velocity, desired, smoothing);
-    }
     private void MoveForAttack(Player player, int pattern) {
-        if (TickNewMotion(player, pattern)) return;
-        if (AirbornePhase) {
-            if (pattern == 6 && combatTimer >= 30 && combatTimer < 72) {
-                NPC.velocity = Vector2.Zero; // The warned corridor starts at this exact locked origin.
-                return;
-            }
-            if (pattern == 6 && combatTimer >= 72 && combatTimer < 114) {
-                NPC.velocity = dashDirection * FrostNovaCombatRules.DashSpeed;
-                NPC.damage = FrostNovaCombatRules.ShotDamage(2, true);
-                return;
-            }
-            Vector2 drift = new Vector2(MathF.Sin(combatTimer / 65f) * 70, MathF.Sin(combatTimer / 40f) * 25);
-            if (!FrostNovaCombatRules.IsMotion(pattern)) {
-                // Keep the formation's locked aim, while the caster itself follows
-                // the player rather than spending a whole spell at an old anchor.
-                float side = attackSerial % 2 == 0 ? -1 : 1;
-                Vector2 follow = player.Center + player.velocity * 10 + new Vector2(side * 340, -220);
-                attackAnchor = Vector2.Lerp(attackAnchor, follow, .065f);
-            }
-            // Follow at range between patterns; once the warning starts the attack anchor stays fixed.
-            MoveTo(attackAnchor + drift, pattern == 6 ? 10 : FrostNovaCombatRules.FlightSpeed, .09f);
-            if (NPC.Distance(player.Center) > 1500 && combatTimer < 45) {
-                attackAnchor = player.Center + new Vector2(-NPC.direction * 350, -230);
-            }
-        }
-        else {
-            // Outside the arena she catches up on foot; distance never changes her position directly.
-            float moveX = NPC.Distance(player.Center) > FrostNovaDomainRules.Radius
-                ? player.Center.X - NPC.direction * 200 : attackAnchor.X;
-            float delta = moveX - NPC.Center.X;
-            float desired = MathHelper.Clamp(delta * .025f, -3.6f, 3.6f);
-            NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, combatTimer < 70 ? desired : desired * .25f, .11f);
-            if (NPC.collideX && NPC.velocity.Y == 0) NPC.velocity.Y = -7.5f;
-        }
+        NPC.noGravity = false; NPC.noTileCollide = false;
+        float moveX = Math.Abs(player.Center.X - NPC.Center.X) > FrostNovaDomainRules.Radius
+            ? player.Center.X - NPC.direction * 240 : attackAnchor.X;
+        float delta = moveX - NPC.Center.X;
+        float speed = AirbornePhase ? 1.35f : 1.1f;
+        float desired = Math.Abs(delta) < 30 ? 0 : MathHelper.Clamp(delta * .012f, -speed, speed);
+        // Feet stay planted while chanting. No launches, hover chase, or contact dash.
+        if (combatTimer < 72 || pattern == 3) desired *= .25f;
+        NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, desired, .08f);
+        if (NPC.collideX) NPC.velocity.X = 0;
     }
     private void DoAttack(Player player, int pattern) {
         int t = combatTimer, phase = AirbornePhase ? 2 : 1;
         switch (pattern) {
             case 0:
-                if (t == 12) {
-                    int count = AirbornePhase ? 3 : 1;
-                    for (int i = 0; i < count; i++)
-                        SpawnHazard(NPC.Center + new Vector2((i - (count - 1) * .5f) * 30, -48), Vector2.Zero,
-                            ModContent.ProjectileType<BlackIceIntro>(), FrostNovaCombatRules.ShotDamage(phase, true),
-                            count == 1 ? 0 : count, i);
-                }
-                if (t == 48 || t == 84 || (AirbornePhase && t == 126)) {
-                    Vector2 aim = (player.Center + player.velocity * 12 - NPC.Center).SafeNormalize(Vector2.UnitY);
-                    FireFan(NPC.Center + new Vector2(0, -24), aim, AirbornePhase ? 7 : 5, .17f, AirbornePhase ? 7.6f : 6.8f, 0, 30);
-                    FrostNovaVisuals.Cast(NPC.Center, 0, .65f);
+                if (t == 48) SummonAltar(player);
+                if (t == 144 || AirbornePhase && t == 240) {
+                    Vector2 aim = (attackAim - NPC.Center).SafeNormalize(Vector2.UnitY);
+                    FireFan(NPC.Center + new Vector2(0, -24), aim, 3, .28f, 5.8f, 0, 54);
+                    FrostNovaVisuals.Cast(NPC.Center, 0, .85f);
                 }
                 break;
             case 1:
@@ -201,33 +162,26 @@ public partial class FrostNova
                 break;
             case 2:
                 if (t == 36) SpawnIceRing(attackAim + new Vector2(0, -220), 1, attackAim, 54);
-                if (AirbornePhase && t == 150) FireFan(NPC.Center, Vector2.UnitY, 3, .5f, 4.6f, 1, 48);
+
                 break;
             case 3:
-                if (t == 36) {
-                    SummonSnowSupport(player);
-                    if (AirbornePhase) SummonAltar(player);
-                }
-                if (t == 96 || t == 150) FireFan(NPC.Center, (attackAim - NPC.Center).SafeNormalize(Vector2.UnitY), 3, .28f, 4.8f, 1, 42);
+                if (t == 0) { AnnounceSupport(); QuietForSupport(); }
+                if (t == 36) SummonSnowSupport(player);
+                // A full dedicated support window: no extra fan, altar or pressure salvo.
                 break;
             case 4:
                 if (t == 40) SpawnIceRing(attackAim + new Vector2(0, -180), 3, attackAim, 60);
-                if (AirbornePhase && t == 134) SpawnIceRing(attackAim + new Vector2(300 * (attackSerial % 2 == 0 ? 1 : -1), -80), 3, attackAim, 60);
+
                 break;
             case 5:
                 if (t == 36) SpawnIceRing(attackAim + new Vector2(0, -260), 2, attackAim, 60);
                 break;
             case 6:
-                if (t == 30) {
-                    attackAnchor = NPC.Center;
-                    attackAim = player.Center;
-                    dashDirection = (attackAim - NPC.Center).SafeNormalize(Vector2.UnitX);
-                    NPC.netUpdate = true;
-                    FrostNovaVisuals.Cast(NPC.Center, 1);
-                }
-                if (t >= 72 && t < 114 && t % 14 == 2)
-                    FireShot(NPC.Center, new Vector2(0, -1), 2, 64);
-                if (t == 114) { attackAnchor = NPC.Center; NPC.velocity *= .2f; NPC.netUpdate = true; }
+            case 9:
+            case 10:
+                if (AirbornePhase) CastRemoteMotion(pattern);
+                // Phase one retains its warned local teleport. In phase two,
+                // the caster walks while the spell appears above the locked aim.
                 break;
             case 7:
                 if (t == 36) for (int i = -1; i <= 1; i++) {
@@ -237,7 +191,7 @@ public partial class FrostNova
                 }
                 break;
             case 8:
-                if (t == 36 || t == 108) {
+                if (t == 36 || t == 156) {
                     float x = attackAim.X + (t == 36 ? -240 : 240);
                     Vector2 at = new(x, attackAim.Y - 420);
                     SpawnHazard(at, Vector2.UnitY * 10, ModContent.ProjectileType<FrostNovaBlackIceSpike>(),
@@ -248,6 +202,24 @@ public partial class FrostNova
         }
         if (AirbornePhase && t == 48 && attackSerial > 0 && attackSerial % 5 == 0) SummonStorms(attackAim, 900);
     }
+    private void CastRemoteMotion(int pattern) {
+        int t = combatTimer;
+        if (pattern == 10) {
+            if (t == 36 || t == 132) {
+                Vector2 at = attackAim + new Vector2(t == 36 ? -180 : 180, -420);
+                SpawnHazard(at, Vector2.UnitY, ModContent.ProjectileType<FrostNovaBlackIceSpike>(),
+                    FrostNovaCombatRules.ShotDamage(2, true), NPC.whoAmI, 72, 600);
+                FrostNovaVisuals.Cast(at, 3, 1.1f);
+            }
+            return;
+        }
+        if (t != 42 && !(pattern == 9 && t == 150)) return;
+        Vector2 center = attackAim + new Vector2(t == 42 ? -260 : 260, -180);
+        SpawnHazard(center, (attackAim - center).SafeNormalize(Vector2.UnitY),
+            ModContent.ProjectileType<FrostNovaRitualPulse>(), FrostNovaCombatRules.ShotDamage(2), NPC.whoAmI, 1);
+        FrostNovaVisuals.Cast(center, 1, 1.1f);
+    }
+
     private int HazardCount() {
         int count = 0;
         foreach (Projectile p in Main.ActiveProjectiles)
@@ -287,19 +259,15 @@ public partial class FrostNova
         foreach (NPC n in Main.ActiveNPCs) if (n.GetGlobalNPC<FrostNovaOwnedNPC>().BelongsTo(NPC.whoAmI, encounterToken)) count++;
         return count;
     }
-    private void SummonSnowSupport(Player player) {
-        if (Main.netMode == NetmodeID.MultiplayerClient || SupportCount() >= FrostNovaCombatRules.SupportCap) return;
-        int[] types = { ModContent.NPCType<SnowCaster>(), ModContent.NPCType<SnowSniper>(), ModContent.NPCType<SnowSoldier>(), ModContent.NPCType<SnowHound>(), ModContent.NPCType<Oneiros>(), ModContent.NPCType<IceCleaver>() };
-        for (int side = -1; side <= 1; side += 2) {
-            if (SupportCount() >= FrostNovaCombatRules.SupportCap) break;
-            Vector2 at = FindSurface(player.Center + new Vector2(side * 460, -80));
-            EnemyAuthority.NewNPC(NPC.GetSource_FromAI(), (int)at.X, (int)at.Y - 16, types[(attackSerial + (side + 1) / 2) % types.Length]);
-        }
-    }
+    private void SummonSnowSupport(Player player) => OpenSupportPortals(player);
     private void SummonAltar(Player player) {
-        if (Main.netMode == NetmodeID.MultiplayerClient || SupportCount() >= FrostNovaCombatRules.SupportCap || IceCrystalAltar.CountActiveAltars() >= 3) return;
-        Vector2 at = player.Center + new Vector2(attackSerial % 2 == 0 ? -340 : 340, -50);
-        SpawnHazard(NPC.Center, Vector2.Zero, ModContent.ProjectileType<IceAltarSummonWisp>(), 0, at.X, at.Y);
+        if (Main.netMode == NetmodeID.MultiplayerClient || PendingSupport() >= FrostNovaCombatRules.SupportCap
+            || IceCrystalAltar.CountActiveAltars() >= (AirbornePhase ? 2 : 1)) return;
+        Vector2 seed = NPC.Center + new Vector2(attackSerial % 2 == 0 ? -240 : 240, 0);
+        if (!TryStandingCenter(seed, IceCrystalAltar.AltarNpcWidth, IceCrystalAltar.AltarNpcHeight, out Vector2 at)) return;
+        // The wisp carries a destination, never a scaled flying altar sprite.
+        Vector2 bottom = at + new Vector2(0, IceCrystalAltar.AltarNpcHeight * .5f);
+        SpawnHazard(NPC.Center, Vector2.Zero, ModContent.ProjectileType<IceAltarSummonWisp>(), 0, bottom.X, bottom.Y);
     }
     internal static Vector2 FindSurface(Vector2 from) {
         from.X = MathHelper.Clamp(from.X, 160, Main.maxTilesX * 16 - 176);
@@ -323,7 +291,7 @@ public partial class FrostNova
         if (DeathTimer == 411) SpawnHazard(NPC.Center, Vector2.Zero, ModContent.ProjectileType<FrostNovaWhiteRing>(), 0, NPC.direction);
         if (DeathTimer >= FrostNovaCombatRules.RevivalDuration) {
             NPC.life = NPC.lifeMax; FNStage = 2; FNRevival = true; FNRevivalStart = FNRevivalEnd = false;
-            ReBirthTimer = 0; NPC.noGravity = NPC.noTileCollide = true;
+            ReBirthTimer = 0; NPC.noGravity = NPC.noTileCollide = false;
             ResetCombat(); NPC.netUpdate = true;
         }
     }
@@ -362,8 +330,7 @@ public partial class FrostNova
     private void RetireEncounter() {
         foreach (Projectile p in Main.ActiveProjectiles) {
             if (p.GetGlobalProjectile<FrostNovaOwnedProjectile>().BelongsTo(NPC.whoAmI, encounterToken) && p.ModProjectile is not FrostNovaSmoke) {
-                p.damage = 0; p.hostile = false; p.active = false; p.netUpdate = true;
-                if (Main.netMode == NetmodeID.Server) NetMessage.SendData(MessageID.KillProjectile, number: p.identity, number2: p.owner);
+                p.GetGlobalProjectile<FrostNovaOwnedProjectile>().Retire(p);
             }
         }
         foreach (NPC n in Main.ActiveNPCs) {
@@ -373,14 +340,13 @@ public partial class FrostNova
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
         DrawOrbitHalo(spriteBatch, screenPos);
         DrawRelocationWarning(spriteBatch, screenPos);
-        DrawMotionWarning(spriteBatch, screenPos);
-        FrostNovaVisuals.DrawBoss(NPC, AirbornePhase, CombatHazardsActive ? combatTimer / (float)FrostNovaCombatRules.AttackDuration(AirbornePhase ? 2 : 1, CombatPattern) : 0, CombatPattern);
-        if (AirbornePhase && CombatPattern == 6 && combatTimer >= 30 && combatTimer < 72) {
-            // The locked sweep uses the same axis as its warning.
-            Vector2 end = attackAnchor + dashDirection * FrostNovaCombatRules.DashSpeed * 42;
-            for (int i = 0; i < 16; i++) FrostNovaHaloVisuals.Marker(spriteBatch,
-                Vector2.Lerp(attackAnchor, end, i / 15f), screenPos, 13, .65f);
+        if (CombatHazardsActive && CombatPattern == 0 && combatTimer < 48) {
+            var crystal = FrostNovaVisuals.Texture("BlackIceIntro");
+            Rectangle frame = crystal.Frame(1, 15, 0, Math.Clamp(combatTimer * 15 / 48, 0, 14));
+            spriteBatch.Draw(crystal, NPC.Center + new Vector2(NPC.direction * 28, -18) - screenPos,
+                frame, Color.White, 0, frame.Size() * .5f, 1.2f, SpriteEffects.None, 0);
         }
+        FrostNovaVisuals.DrawBoss(NPC, AirbornePhase, CombatHazardsActive ? combatTimer / (float)FrostNovaCombatRules.AttackDuration(AirbornePhase ? 2 : 1, CombatPattern) : 0, CombatPattern);
         if (AirbornePhase) {
             // The enlarged target must not stretch or bottom-align the original character art.
             var texture = TextureAssets.Npc[Type].Value;

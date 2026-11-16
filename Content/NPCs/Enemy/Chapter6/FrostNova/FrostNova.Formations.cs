@@ -66,7 +66,7 @@ public partial class FNIceRingChoice
         Vector2 aim = (formationAim - Projectile.Center).SafeNormalize(Vector2.UnitY);
         switch (kind) {
             case 0: // Opposed fans cross in distinct beats rather than continuously re-aiming.
-                if (active % 32 == 0 && active <= 96) {
+                if (active % 48 == 0 && active <= 96) {
                     // Leave phase one's five rays unchanged. Phase two keeps
                     // this array's original +/-0.66 outer rays and center ray.
                     int half = host.AirbornePhase ? 1 : 2;
@@ -74,19 +74,18 @@ public partial class FNIceRingChoice
                     for (int i = -half; i <= half; i++) Shard(Projectile.Center, aim.RotatedBy(i * spacing) * 7.3f, 24);
                 }
                 break;
-            case 1: // A double spiral with a stable, visible opening toward the arena center.
-                if (active % 6 == 0) {
-                    float rotation = active * .057f + aim.ToRotation() + .6f;
-                    for (int i = 0; i < 2; i++) {
-                        float angle = rotation + i * MathHelper.Pi;
-                        if (!FrostNovaCombatRules.InGap(angle, aim.ToRotation(), .36f))
-                            Shard(Projectile.Center, angle.ToRotationVector2() * 6.6f, 30);
+            case 1: // Straight crossing volleys lock their aim before release.
+                if(active%40==0&&active<=80) {
+                    int wave=active/40;
+                    for(int lane=-2;lane<=2;lane++) {
+                        Vector2 at=formationAim+new Vector2(wave%2==0?-520:520,lane*110-100);
+                        Shard(at,new Vector2(wave%2==0?7.4f:-7.4f,.8f*(1-wave)),34);
                     }
                 }
                 break;
             case 2: // Three staggered curtains, each preserving one traversable lane.
-                if (active % 36 == 0 && active <= 72) {
-                    int wave = active / 36;
+                if (active % 54 == 0 && active <= 108) {
+                    int wave = active / 54;
                     for (int i = -3; i <= 3; i++) {
                         if (i == wave - 1) continue;
                         Vector2 at = formationAim + new Vector2(i * 145, -370 - Math.Abs(i) * 10);
@@ -94,14 +93,12 @@ public partial class FNIceRingChoice
                     }
                 }
                 break;
-            case 3: // Offset concentric salvos share a broad corridor.
-                if (active % 42 == 0 && active <= 84) {
-                    float gap = aim.ToRotation();
-                    int count = Projectile.ai[0] == 2 ? 20 : 16;
-                    for (int i = 0; i < count; i++) {
-                        float angle = FrostNovaCombatRules.FormationAngle(i, count, gap) + (active / 42 % 2) * .09f;
-                        if (FrostNovaCombatRules.InGap(angle, gap, .4f)) continue;
-                        Shard(Projectile.Center + angle.ToRotationVector2() * 40, angle.ToRotationVector2() * (5.8f + active * .006f), 30);
+            case 3: // Discrete descending spears, never a contracting gap circle.
+                if(active%48==0&&active<=96) {
+                    int wave=active/48;
+                    for(int lane=-2;lane<=2;lane++) {
+                        Vector2 at=formationAim+new Vector2(lane*150+(wave%2==0?-55:55),-440);
+                        Shard(at,new Vector2((wave-1)*1.1f,7.6f),38);
                     }
                 }
                 break;
@@ -117,7 +114,7 @@ public partial class FNIceRingChoice
         if (slot < Main.maxProjectiles && Main.projectile[slot].ModProjectile is BlackIceProjectile shard)
         {
             shard.ConfigureShard(velocity, delay);
-            shard.SetFlightProfile(Main.npc[formationHost].ModNPC is FrostNova { AirbornePhase: true }, (int)Projectile.ai[1] % 4 == 1);
+            shard.SetFlightProfile(Main.npc[formationHost].ModNPC is FrostNova { AirbornePhase: true }, false);
         }
     }
 }

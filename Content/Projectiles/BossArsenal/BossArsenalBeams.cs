@@ -11,10 +11,11 @@ namespace ArknightsMod.Content.Projectiles.BossArsenal;
 
 public sealed class BossArsenalHoldout : ModProjectile
 {
+    internal const int MesonWaitTicks = 24, MesonFireTicks = 30;
     private Item bound;
     internal int Kind => (int)Projectile.ai[0];
     internal int Clock => (int)Projectile.ai[1];
-    internal int Cycle => Kind == 2 ? 54 : 20;
+    internal int Cycle => Kind == 2 ? MesonWaitTicks + MesonFireTicks : 20;
     private Projectile sustainedBeam;
     public override string Texture => "Terraria/Images/MagicPixel";
     public override void SetDefaults() { Projectile.width = Projectile.height = 4; Projectile.timeLeft = 2; Projectile.netImportant = true; Projectile.tileCollide = false; }
@@ -47,7 +48,9 @@ public sealed class BossArsenalHoldout : ModProjectile
         bool missingBeam = sustainedBeam == null || !sustainedBeam.active || sustainedBeam.owner != Projectile.owner
             || sustainedBeam.ModProjectile is not BossArsenalBeam activeBeam || activeBeam.Kind != 10
             || (int)sustainedBeam.ai[1] != Projectile.identity + 1;
-        if (local && (Kind == 2 ? phase == 0 : missingBeam))
+        // Pay the quiet part of every meson cycle before firing, including a new
+        // holdout. Releasing/reclicking resets the wait instead of granting a free pulse.
+        if (local && (Kind == 2 ? phase == MesonWaitTicks : missingBeam))
         {
             var beam = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, axis,
                 ModContent.ProjectileType<BossArsenalBeam>(), Projectile.damage, Projectile.knockBack, Projectile.owner, Kind,
@@ -97,7 +100,7 @@ public sealed class BossArsenalBeam : ModProjectile
         Projectile.usesLocalNPCImmunity = true; Projectile.netImportant = true;
     }
     public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
-    { Projectile.timeLeft = Kind == 10 ? 48 : 30; Projectile.localNPCHitCooldown = DamageInterval; }
+    { Projectile.timeLeft = Kind == 10 ? 48 : BossArsenalHoldout.MesonFireTicks; Projectile.localNPCHitCooldown = DamageInterval; }
     public override bool ShouldUpdatePosition() => false;
     public override void AI()
     {

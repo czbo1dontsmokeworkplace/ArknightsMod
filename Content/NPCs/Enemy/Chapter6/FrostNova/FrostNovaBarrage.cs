@@ -24,6 +24,7 @@ public sealed class FrostNovaBarrage : ModProjectile
     private bool hostReady;
     private int hostWaitTicks;
     private bool phaseTwo;
+    internal bool IsSecondPhase => phaseTwo;
     private int Mode => Math.Clamp((int)Projectile.ai[1], 0, 2);
 
     public override void SetStaticDefaults()
@@ -170,15 +171,14 @@ public sealed class FrostNovaBarrage : ModProjectile
         if (Main.netMode != NetmodeID.MultiplayerClient)
         {
             float axis = Projectile.velocity.SafeNormalize(Vector2.UnitY).ToRotation();
-            for (int i = 1; i < 9; i++)
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center,
-                    (axis + i * MathHelper.TwoPi / 9).ToRotationVector2() * 5.6f,
-                    Type, Projectile.damage, 0, Main.myPlayer, Projectile.ai[0], 0, 0);
+            for (int i=-2;i<=2;i++)
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(),Projectile.Center,
+                    (axis+i*.14f).ToRotationVector2()*7.2f,Type,Projectile.damage,0,Main.myPlayer,Projectile.ai[0],0,18);
         }
         FrostNovaVisuals.Cast(Projectile.Center, 0, 1.2f);
         if (phaseTwo) FrostNovaIceBurstSystem.Emit(Projectile.Center, 1.1f);
         if (!Main.dedServ) SoundEngine.PlaySound(SoundID.Item27 with { Volume = .48f, Pitch = -.15f }, Projectile.Center);
-        Projectile.Kill();
+        Projectile.GetGlobalProjectile<FrostNovaOwnedProjectile>().Retire(Projectile);
     }
 
     public override void OnHitPlayer(Player target, Player.HurtInfo info)
@@ -191,60 +191,8 @@ public sealed class FrostNovaBarrage : ModProjectile
 
     public override bool PreDraw(ref Color lightColor)
     {
-        if (!FrostNovaVisuals.Visible(Projectile.Center)) return false;
-        Vector2 axis = Projectile.velocity.SafeNormalize(Vector2.UnitY);
-        if (Mode == 2)
-        {
-            DrawMine(axis);
-            return false;
-        }
-        if (Projectile.ai[2] > 0)
-        {
-            float warning = .22f + .5f * (1 - Math.Clamp(Projectile.ai[2] / 60f, 0, 1));
-            FrostNovaVisuals.Line(Projectile.Center + axis * 16, Projectile.Center + axis * 174,
-                FrostNovaVisuals.Ice * (warning * .45f), 1.2f);
-            FrostNovaVisuals.DrawShard(Projectile, warning);
-            return false;
-        }
-        float fade = Math.Min(1, Projectile.timeLeft / 20f);
-        FrostNovaVisuals.DrawShardTrail(Projectile, fade * .8f);
-        FrostNovaVisuals.DrawShard(Projectile, fade);
+        FrostNovaProjectileArt.Draw(Projectile, Projectile.GetGlobalProjectile<FrostNovaOwnedProjectile>().Visibility);
         return false;
     }
 
-    private void DrawMine(Vector2 axis)
-    {
-        float charge = 1 - Math.Clamp(Projectile.ai[2] / 60f, 0, 1);
-        float radius = 36 + (1 - charge) * 18;
-        float angle = axis.ToRotation();
-        FrostNovaVisuals.Glow(Projectile.Center, new Vector2(65), FrostNovaVisuals.Ice, .13f + charge * .12f);
-        // Preview the exact outgoing directions. The opening never rotates after
-        // spawn; its two pale rails distinguish it from the blue attack rays.
-        for (int i = 1; i < 9; i++)
-        {
-            Vector2 ray = (angle + i * MathHelper.TwoPi / 9).ToRotationVector2();
-            FrostNovaVisuals.Line(Projectile.Center + ray * 20, Projectile.Center + ray * (70 + charge * 20),
-                FrostNovaVisuals.Ice * (.2f + charge * .32f));
-            FrostNovaVisuals.Sprite(FrostNovaVisuals.Texture("FNIceCrystal"),
-                Projectile.Center + ray * radius, new Vector2(5, 9), Color.White * (.45f + charge * .45f), ray.ToRotation() + MathHelper.PiOver2);
-        }
-        for (int i = 1; i < 41; i++)
-        {
-            // Exclude +/-40 degrees around the escape axis from the warning arc.
-            float from = angle + MathHelper.ToRadians(40) + i * MathHelper.ToRadians(280) / 41;
-            float to = from + MathHelper.ToRadians(280) / 41;
-            FrostNovaVisuals.Line(Projectile.Center + from.ToRotationVector2() * radius,
-                Projectile.Center + to.ToRotationVector2() * radius,
-                FrostNovaVisuals.Ice * (.32f + charge * .4f), 1.25f);
-        }
-        for (int side = -1; side <= 1; side += 2)
-        {
-            Vector2 rail = (angle + side * MathHelper.ToRadians(30)).ToRotationVector2();
-            FrostNovaVisuals.Line(Projectile.Center + rail * 23, Projectile.Center + rail * 66,
-                FrostNovaVisuals.Pale * (.4f + charge * .2f));
-        }
-        FrostNovaVisuals.Sprite(FrostNovaVisuals.Texture("FNIceCrystal"),
-            Projectile.Center, new Vector2(19, 28) * (1 + charge * .1f), Color.White * .9f,
-            Main.GlobalTimeWrappedHourly * .5f);
-    }
 }

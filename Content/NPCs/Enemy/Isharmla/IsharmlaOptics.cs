@@ -19,7 +19,8 @@ public sealed partial class IsharmlaVisuals
     public static void DrawField(Vector2 center, Vector2 size, float rotation, Color color, string technique, float strength = 1)
     {
         EnsureEffect(); if (material == null || color.A == 0) return;
-        var batch = Main.spriteBatch; Texture2D pixel = Terraria.GameContent.TextureAssets.MagicPixel.Value;
+        var batch = Main.spriteBatch;
+        Texture2D pixel = ShaderSurface;
         batch.End();
         material.Parameters["uTime"].SetValue(Clock); material.Parameters["uStrength"].SetValue(strength);
         material.Parameters["uSize"].SetValue(size); material.Parameters["uDetail"].SetValue(Art("ParticleAtlasV2"));

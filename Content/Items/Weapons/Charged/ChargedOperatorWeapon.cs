@@ -77,7 +77,18 @@ public abstract class ChargedOperatorWeapon : ExpansionWeaponBase
                 if (p.owner == player.whoAmI && p.ModProjectile is ChargedOperatorHoldout)
                 { Item.noUseGraphic = true; break; }
         }
-        if (Melee) return;
+        if (Melee) {
+            if (player.whoAmI == Main.myPlayer && !player.dead && !player.noItems && !player.CCed) {
+                bool exists = false;
+                foreach (Projectile p in Main.ActiveProjectiles)
+                    if (p.owner == player.whoAmI && p.ModProjectile is DreadnoughtDrawnBlade
+                        && (int)p.ai[0] == (int)Kind) { exists = true; break; }
+                if (!exists) Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.MountedCenter,
+                    (Main.MouseWorld - player.MountedCenter).SafeNormalize(Vector2.UnitX * player.direction),
+                    ModContent.ProjectileType<DreadnoughtDrawnBlade>(), 0, 0, player.whoAmI, (int)Kind);
+            }
+            return;
+        }
         if (player.whoAmI != Main.myPlayer) return;
         var state = player.GetModPlayer<ChargedOperatorPlayer>();
         bool world = WorldInputAllowed(player);
