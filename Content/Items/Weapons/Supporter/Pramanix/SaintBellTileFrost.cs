@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Enums;
+using Terraria.GameContent;
 using Terraria.GameContent.Drawing;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -26,6 +27,7 @@ public sealed class SaintBellTileFrost : ModSystem
     private const int StyleCount = 4;
     private const int SnowflakeStyle = StyleCount;
     private const int CellSize = 16;
+    private const byte FrostAbove = 1, FrostBelow = 2, FrostLeft = 4, FrostRight = 8;
     // 两格以内的轻微走动不重开霜域，避免原地摆动反复重置传播。
     private const float WaveRelocationDistance = 2f * CellSize;
     private static readonly Point[] Offsets = BuildOffsets();
@@ -38,6 +40,8 @@ public sealed class SaintBellTileFrost : ModSystem
     private readonly int[] snowValues = new int[Main.maxPlayers];
     private readonly FrostWave[] waves = new FrostWave[Main.maxPlayers];
     private readonly Dictionary<MaskKey, MaskRun[]> masks = new();
+    private readonly Dictionary<Point, ushort[]> materialRows = new();
+    private readonly Dictionary<OutlineKey, Rectangle[]> outlines = new();
     private ReLogic.Content.Asset<Texture2D> atlas;
     private ulong nextWaveId;
 
@@ -53,6 +57,7 @@ public sealed class SaintBellTileFrost : ModSystem
     private readonly record struct DomainDraw(Vector2 Center, float Radius, byte Tier);
     private readonly record struct MaskRun(byte X, byte Y, byte Width, byte Height, byte Alpha);
     private readonly record struct MaskKey(Texture2D Texture, Rectangle Frame, SlopeType Slope, bool Half, SpriteEffects Effect);
+    private readonly record struct OutlineKey(MaskRun[] Mask, Point Frame, byte Neighbors);
 
     public override void Load()
     {
@@ -69,6 +74,8 @@ public sealed class SaintBellTileFrost : ModSystem
         expired.Clear();
         visibleDomains.Clear();
         masks.Clear();
+        materialRows.Clear();
+        outlines.Clear();
         Array.Clear(sourceStates);
         Array.Clear(sourceSeen);
         Array.Clear(waves);
@@ -277,15 +284,91 @@ public sealed class SaintBellTileFrost : ModSystem
             int frameX = style * CellSize;
             int frameY = (tier - 1) * CellSize;
             Vector2 pos = world - Main.screenPosition + new Vector2(0, top);
-            Color tint = Lighting.GetColor(p.X, p.Y) * MaterialCoverage(tier);
+            Color light = Lighting.GetColor(p.X, p.Y);
+            Color tint = light * MaterialCoverage(tier);
             foreach (MaskRun run in mask)
                 batch.Draw(frostTexture, pos + new Vector2(run.X, run.Y),
                     new Rectangle(frameX + run.X, frameY + run.Y, run.Width, run.Height), tint * (run.Alpha / 255f));
+            byte neighbors = GetFrostNeighbors(p, now);
+            var outline = GetOutline(frostTexture, new Point(frameX, frameY), mask, neighbors);
+            Color edge = light * 0.80f;
+            foreach (Rectangle run in outline)
+                batch.Draw(TextureAssets.MagicPixel.Value,
+                    new Rectangle((int)pos.X + run.X, (int)pos.Y + run.Y, run.Width, 1),
+                    new Rectangle(0, 0, 1, 1), edge);
         }
         // 范围特效独立于已结霜方块，空中或霜线尚未到达时也照常显示。
         foreach (var domain in visibleDomains)
             PramanixFrostDomainVisuals.Draw(batch, domain.Center, domain.Tier, domain.Radius);
         batch.End();
+    }
+
+    private byte GetFrostNeighbors(Point p, ulong now)
+    {
+        byte mask = 0;
+        if (HasVisibleFrost(new Point(p.X, p.Y - 1), now)) mask |= FrostAbove;
+        if (HasVisibleFrost(new Point(p.X, p.Y + 1), now)) mask |= FrostBelow;
+        if (HasVisibleFrost(new Point(p.X - 1, p.Y), now)) mask |= FrostLeft;
+        if (HasVisibleFrost(new Point(p.X + 1, p.Y), now)) mask |= FrostRight;
+        return mask;
+    }
+
+    private bool HasVisibleFrost(Point p, ulong now) => cells.TryGetValue(p, out Frost frost)
+        && VisibleTier(frost, now) > 0 && Matches(p, frost) && TileDrawing.IsVisible(Main.tile[p.X, p.Y]);
+
+    private Rectangle[] GetOutline(Texture2D texture, Point frame, MaskRun[] mask, byte neighbors)
+    {
+        var key = new OutlineKey(mask, frame, neighbors);
+        if (outlines.TryGetValue(key, out Rectangle[] outline))
+            return outline;
+        if (!materialRows.TryGetValue(frame, out ushort[] art)) {
+            art = new ushort[CellSize];
+            var pixels = new Color[CellSize * CellSize];
+            texture.GetData(0, new Rectangle(frame.X, frame.Y, CellSize, CellSize), pixels, 0, pixels.Length);
+            for (int y = 0; y < CellSize; y++)
+                for (int x = 0; x < CellSize; x++)
+                    if (pixels[y * CellSize + x].A > 0)
+                        art[y] |= (ushort)(1 << x);
+            materialRows.Add(frame, art);
+        }
+
+        // 对贴图实际 Alpha 与方块遮罩的交集描边，斜坡、半砖、平台空隙维持原样。
+        Span<ushort> rows = stackalloc ushort[CellSize];
+        rows.Clear();
+        foreach (MaskRun run in mask) {
+            ushort span = (ushort)(((1 << run.Width) - 1) << run.X);
+            for (int y = run.Y; y < run.Y + run.Height; y++)
+                rows[y] |= (ushort)(art[y] & span);
+        }
+        var runs = new List<Rectangle>();
+        for (int y = 0; y < CellSize; y++) {
+            int border = OutlineRow(rows, y, neighbors);
+            for (int x = 0; x < CellSize; x++) {
+                if ((border & (1 << x)) == 0)
+                    continue;
+                int start = x;
+                while (x + 1 < CellSize && (border & (1 << (x + 1))) != 0)
+                    x++;
+                runs.Add(new Rectangle(start, y, x - start + 1, 1));
+            }
+        }
+        outline = runs.ToArray();
+        if (outlines.Count >= 4096)
+            outlines.Clear();
+        outlines.Add(key, outline);
+        return outline;
+    }
+
+    private static ushort OutlineRow(ReadOnlySpan<ushort> rows, int y, byte neighbors)
+    {
+        const int full = ushort.MaxValue;
+        int row = rows[y];
+        int above = y > 0 ? rows[y - 1] : (neighbors & FrostAbove) != 0 ? full : 0;
+        int below = y < CellSize - 1 ? rows[y + 1] : (neighbors & FrostBelow) != 0 ? full : 0;
+        int left = (row << 1) | ((neighbors & FrostLeft) != 0 ? 1 : 0);
+        int right = (row >> 1) | ((neighbors & FrostRight) != 0 ? 1 << (CellSize - 1) : 0);
+        // 内描边：四个方向均被覆盖的像素不画，相邻冰雪不按等级区分。
+        return (ushort)(row & ~(above & below & left & right));
     }
 
     private static int GetMaterialStyle(Point p, byte tier)
