@@ -23,7 +23,6 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Pramanix
 		public const float Skill1KnockbackForce    = 52f;
 		public const float Skill1KnockbackVertical = 10f;
 		public const float Skill1BossKnockbackMin  = 5f;
-		public const float Skill1SnowSpreadTiles = 5f;  // 积雪扩散距离（格）
 
 		public const int Skill3LureDuration = 600;
 		public const float Skill3LureOrbitRadius = 148f;
@@ -233,7 +232,6 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Pramanix
 
 			Vector2 aim = (Main.MouseWorld - Player.Center).SafeNormalize(new Vector2(Player.direction, 0f));
 			SpawnSkill1Snowflakes(aim);
-			SpawnSkill1GroundSnow(aim);
 		}
 
 		private void SpawnSkill1Snowflakes(Vector2 aim) {
@@ -258,29 +256,6 @@ namespace ArknightsMod.Content.Items.Weapons.Supporter.Pramanix
 				float sideSpeed = Main.rand.NextFloat(-0.45f, 0.45f);
 				Vector2 vel = aim * forwardSpeed + spread * sideSpeed;
 				Projectile.NewProjectile(source, pos, vel, projType, 0, 0f, Player.whoAmI);
-			}
-		}
-
-		// 积雪向前方地面扩散（最多5格）的视觉效果
-		private void SpawnSkill1GroundSnow(Vector2 aim) {
-			if (Player.whoAmI != Main.myPlayer || Main.netMode == NetmodeID.Server)
-				return;
-
-			Vector2 feet = Player.Bottom;
-			int dir      = aim.X == 0f ? Player.direction : Math.Sign(aim.X);
-			float maxX   = Skill1SnowSpreadTiles * 16f;
-
-			for (int i = 0; i < 22; i++) {
-				float t    = i / 21f;
-				float xOff = t * maxX * dir + Main.rand.NextFloat(-7f, 7f);
-				float yOff = Main.rand.NextFloat(0f, 6f);
-				Vector2 pos = feet + new Vector2(xOff, yOff);
-
-				Dust d = Dust.NewDustPerfect(pos, DustID.Snow,
-					new Vector2(dir * Main.rand.NextFloat(0.4f, 2f), Main.rand.NextFloat(-1f, -0.2f)),
-					115, new Color(215, 238, 255), 0.65f + Main.rand.NextFloat(0.45f));
-				d.noGravity = false;
-				d.fadeIn    = 0.3f;
 			}
 		}
 

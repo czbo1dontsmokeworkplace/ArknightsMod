@@ -352,6 +352,10 @@ namespace ArknightsMod
 					if (IsValidClientRequest(whoAmI))
 						DeploymentCost.ReceiveAbsorbResult(reader, whoAmI);
 					break;
+				case ArkMessageID.SaintBellFrostSource:
+					if (Main.netMode == NetmodeID.MultiplayerClient)
+						global::ArknightsMod.Content.Items.Weapons.Supporter.Pramanix.SaintBellTileFrost.ReceiveSource(reader);
+					break;
 				case ArkMessageID.WD12Detach:
 					// 客户端 → 服务端：请求甩脱黏附在自己身上的 D12（15 连点达成）
 					if (Main.netMode == NetmodeID.Server) {
@@ -423,6 +427,7 @@ namespace ArknightsMod
             FangSkillPointGrant,
             SeabornContact,
             SR25TargetState,
+            SaintBellFrostSource,
 		}
 	}
 	//public class Ex : GlobalNPC
