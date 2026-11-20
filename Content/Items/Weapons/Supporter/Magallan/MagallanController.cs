@@ -102,7 +102,24 @@ public sealed class MagallanController : ExpansionWeaponBase
 public sealed class MagallanPlayer : ModPlayer
 {
     private bool holdingController;
+    private readonly List<int> formation = new();
+    private ulong formationTick = ulong.MaxValue;
     public int Module { get; private set; }
+
+    internal int FormationIndex(int identity)
+    {
+        if (formationTick != Main.GameUpdateCount)
+        {
+            formationTick = Main.GameUpdateCount;
+            formation.Clear();
+            foreach (Projectile p in Main.ActiveProjectiles)
+                if (p.owner == Player.whoAmI && p.ModProjectile is MagallanDrone drone && !drone.Recalling)
+                    formation.Add(p.identity);
+            formation.Sort();
+        }
+        int index = formation.BinarySearch(identity);
+        return index >= 0 ? index : ~index;
+    }
 
     public override void PostUpdate()
     {

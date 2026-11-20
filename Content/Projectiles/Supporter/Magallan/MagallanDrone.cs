@@ -110,10 +110,10 @@ public sealed class MagallanDrone : ModProjectile
 
         // Only the owner creates attacks; ordinary projectile replication carries them to peers.
         if (Projectile.owner != Main.myPlayer) return;
-        if (cooldown > 0) cooldown--;
+        if (cooldown > 0 && --cooldown > 0) return;
         float range = Module switch { 0 => Boosted ? 280f : 230f, 1 => MagallanLaser.MaxLength, _ => 120f * 16f };
         NPC target = FindTarget(range);
-        if (target == null || cooldown > 0) return;
+        if (target == null) return;
         Projectile.spriteDirection = target.Center.X >= Projectile.Center.X ? 1 : -1;
         Vector2 aim = (target.Center - Muzzle).SafeNormalize(Vector2.UnitX);
         Projectile.ai[2] = Module == 0 ? 0f : AttackDuration;
@@ -153,11 +153,7 @@ public sealed class MagallanDrone : ModProjectile
 
     private void FollowOwner(Player owner)
     {
-        int index = 0;
-        foreach (Projectile p in Main.ActiveProjectiles)
-            if (p.owner == Projectile.owner && p.identity < Projectile.identity
-                && p.ModProjectile is MagallanDrone drone && !drone.Recalling)
-                index++;
+        int index = owner.GetModPlayer<MagallanPlayer>().FormationIndex(Projectile.identity);
         float angle = index * 2.399963f;
         float radius = 36f + MathF.Sqrt(index) * 26f;
         Vector2 destination = owner.MountedCenter + new Vector2(
@@ -210,24 +206,25 @@ public sealed class MagallanDrone : ModProjectile
     private NPC FindTarget(float range)
     {
         Player owner = Main.player[Projectile.owner];
+        Vector2 muzzle = Muzzle;
+        float distance = range * range;
         if (owner.HasMinionAttackTargetNPC)
         {
             NPC marked = Main.npc[owner.MinionAttackTargetNPC];
-            if (ValidTarget(marked, range)) return marked;
+            if (Vector2.DistanceSquared(marked.Center, muzzle) <= distance && ValidTarget(marked, muzzle))
+                return marked;
         }
         NPC best = null;
-        float distance = range * range;
         foreach (NPC npc in Main.ActiveNPCs)
         {
-            float next = Vector2.DistanceSquared(npc.Center, Muzzle);
-            if (next < distance && ValidTarget(npc, range)) { distance = next; best = npc; }
+            float next = Vector2.DistanceSquared(npc.Center, muzzle);
+            if (next < distance && ValidTarget(npc, muzzle)) { distance = next; best = npc; }
         }
         return best;
     }
 
-    private bool ValidTarget(NPC npc, float range) => npc.CanBeChasedBy(Projectile)
-        && Vector2.DistanceSquared(npc.Center, Muzzle) <= range * range
-        && (Module == 2 || Collision.CanHitLine(Muzzle, 1, 1, npc.position, npc.width, npc.height));
+    private bool ValidTarget(NPC npc, Vector2 muzzle) => npc.CanBeChasedBy(Projectile)
+        && (Module == 2 || Collision.CanHitLine(muzzle, 1, 1, npc.position, npc.width, npc.height));
 
     public override bool PreDraw(ref Color lightColor)
     {

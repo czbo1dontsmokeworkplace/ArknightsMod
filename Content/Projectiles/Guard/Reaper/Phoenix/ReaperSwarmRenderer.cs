@@ -44,10 +44,11 @@ public sealed class ReaperSwarmRenderer : ModSystem
     private readonly ReaperSwarmVertex[] batchVertices=new ReaperSwarmVertex[24576];
     private Effect effect;
     private RenderTarget2D emission,quarterA,quarterB,eighthA,eighthB,flare;
-    private bool hasFlare;
+    private bool hasBloom, hasFlare;
     private bool prepared,failed;
     private bool unloaded;
     private int width,height;
+    private Matrix worldToScreen;
     // Both passes receive float4 colors; no 8-bit Color conversion clips HDR RGB.
     private static readonly BlendState add=new(){ColorSourceBlend=Blend.One,ColorDestinationBlend=Blend.One,AlphaSourceBlend=Blend.Zero,AlphaDestinationBlend=Blend.One};
     public override void Load()
@@ -76,9 +77,14 @@ public sealed class ReaperSwarmRenderer : ModSystem
     {
         orig();
         prepared=false;
+        commands.Clear();
+        radianceCommands.Clear();
+        LastDrawCalls=0;
         if(Main.gameMenu || Main.dedServ || failed || ReaperSwarmVisuals.Nodes.Count==0)return;
-        GraphicsDevice g=Main.instance.GraphicsDevice;
-        commands.Clear();foreach(var n in ReaperSwarmVisuals.Nodes)n.Collect(this);
+        width=Main.screenWidth;height=Main.screenHeight;
+        worldToScreen=Matrix.CreateTranslation(-Main.screenPosition.X,-Main.screenPosition.Y,0)
+            * Main.GameViewMatrix.TransformationMatrix;
+        foreach(var n in ReaperSwarmVisuals.Nodes)n.Collect(this);
         if(commands.Count==0)return;
         commands.Sort((a,b)=>a.Z.CompareTo(b.Z));
         // Addition is commutative. Reorder only uninterrupted additive spans in
@@ -89,16 +95,27 @@ public sealed class ReaperSwarmRenderer : ModSystem
             int start=i;while(i<commands.Count && commands[i].Additive)i++;
             commands.Sort(start,i-start,textureComparer);
         }
-        radianceCommands.Clear();
-        foreach(var c in commands)if(c.Bloom>0 || c.Lensflare>0)radianceCommands.Add(c);
-        radianceCommands.Sort(byTexture);LastDrawCalls=0;
+        hasBloom=hasFlare=false;
+        foreach(var c in commands)
+        {
+            if(c.Bloom<=0 && c.Lensflare<=0)continue;
+            hasBloom|=c.Bloom>0;
+            hasFlare|=c.Lensflare>0;
+            radianceCommands.Add(c);
+        }
+        radianceCommands.Sort(byTexture);
+        GraphicsDevice g=Main.instance.GraphicsDevice;
         try
         {
             effect??=new Effect(g,Mod.GetFileBytes("Content/Projectiles/Guard/Reaper/Phoenix/Assets/ReaperMaterial.fxc"));
-            if(emission==null || emission.IsDisposed || width!=Main.screenWidth || height!=Main.screenHeight)
+            if(!hasBloom && !hasFlare)
+            {
+                prepared=true;
+                return;
+            }
+            if(emission==null || emission.IsDisposed || width!=emission.Width || height!=emission.Height)
             {
                 emission?.Dispose();quarterA?.Dispose();quarterB?.Dispose();eighthA?.Dispose();eighthB?.Dispose();flare?.Dispose();
-                width=Main.screenWidth;height=Main.screenHeight;
                 emission=Target(g,width,height);quarterA=Target(g,Math.Max(1,width/4),Math.Max(1,height/4));quarterB=Target(g,quarterA.Width,quarterA.Height);
                 eighthA=Target(g,Math.Max(1,width/8),Math.Max(1,height/8));eighthB=Target(g,eighthA.Width,eighthA.Height);
                 flare=Target(g,quarterA.Width,quarterA.Height);
@@ -106,19 +123,20 @@ public sealed class ReaperSwarmRenderer : ModSystem
             var state=new DeviceState(g);
             try
             {
-                g.SetRenderTarget(emission);g.Clear(Color.Transparent);
-                DrawCommands(g,1);
-                // Filter before reducing resolution; sparse wide blur taps copy
-                // narrow source sprites into separate, regularly spaced images.
-                Downsample(g,emission,quarterA,"Downsample4");
-                Blur(g,quarterA,quarterB,new Vector2(1f/quarterA.Width,0));
-                Blur(g,quarterB,quarterA,new Vector2(0,1f/quarterB.Height));
-                (quarterA,quarterB)=(quarterB,quarterA);
-                Downsample(g,quarterB,eighthA,"Downsample2");
-                Blur(g,eighthA,eighthB,new Vector2(1f/eighthA.Width,0));
-                Blur(g,eighthB,eighthA,new Vector2(0,1f/eighthB.Height));
-                (eighthA,eighthB)=(eighthB,eighthA);
-                hasFlare=commands.Any(c=>c.Lensflare>0);
+                if(hasBloom)
+                {
+                    g.SetRenderTarget(emission);g.Clear(Color.Transparent);
+                    DrawCommands(g,1);
+                    // Filter before reducing resolution so narrow sprites don't repeat across wide blur taps.
+                    Downsample(g,emission,quarterA,"Downsample4");
+                    Blur(g,quarterA,quarterB,new Vector2(1f/quarterA.Width,0));
+                    Blur(g,quarterB,quarterA,new Vector2(0,1f/quarterB.Height));
+                    (quarterA,quarterB)=(quarterB,quarterA);
+                    Downsample(g,quarterB,eighthA,"Downsample2");
+                    Blur(g,eighthA,eighthB,new Vector2(1f/eighthA.Width,0));
+                    Blur(g,eighthB,eighthA,new Vector2(0,1f/eighthB.Height));
+                    (eighthA,eighthB)=(eighthB,eighthA);
+                }
                 if(hasFlare)
                 {
                     g.SetRenderTarget(emission);g.Clear(Color.Transparent);DrawCommands(g,2);
@@ -144,8 +162,11 @@ public sealed class ReaperSwarmRenderer : ModSystem
         try
         {
             DrawCommands(g,0);
-            Composite(g,quarterB,.65f);
-            Composite(g,eighthB,.35f);
+            if(hasBloom)
+            {
+                Composite(g,quarterB,.65f);
+                Composite(g,eighthB,.35f);
+            }
             if(hasFlare)Composite(g,flare,1);
         }
         finally {state.Restore(g);}
@@ -175,18 +196,28 @@ public sealed class ReaperSwarmRenderer : ModSystem
     {
         if(string.IsNullOrEmpty(asset) || size.X==0 || size.Y==0 || color.W<=0)return;
         Vector2 right=new Vector2(-direction.Y,direction.X)*size.X*.5f,forward=direction*size.Y*.5f;
-        commands.Add(new(asset,position-right+forward,position+right+forward,position+right-forward,position-right-forward,color,bloom,additive,z,Vector2.Zero,Vector2.One,lensflare,hideBase));
+        Enqueue(new(asset,position-right+forward,position+right+forward,position+right-forward,position-right-forward,color,bloom,additive,z,Vector2.Zero,Vector2.One,lensflare,hideBase));
     }
     internal void Geometry(string asset,Vector2 a,Vector2 b,Vector2 c,Vector2 d,Vector4 color,float bloom,bool additive,float z)
     {
         if(string.IsNullOrEmpty(asset))return;
-        commands.Add(new(asset,a,b,c,d,color,bloom,additive,z,Vector2.Zero,Vector2.One));
+        Enqueue(new(asset,a,b,c,d,color,bloom,additive,z,Vector2.Zero,Vector2.One));
     }
     internal void Ribbon(string asset,Vector2 from,Vector2 to,float width,Vector4 color,float bloom,bool additive,float z,float v0,float v1)
     {
         if(string.IsNullOrEmpty(asset))return;
         Vector2 direction=(to-from).Unit(),normal=new Vector2(direction.Y,-direction.X)*width*.5f;
-        commands.Add(new(asset,from-normal,from+normal,to+normal,to-normal,color,bloom,additive,z,new(0,v0),new(1,v1)));
+        Enqueue(new(asset,from-normal,from+normal,to+normal,to-normal,color,bloom,additive,z,new(0,v0),new(1,v1)));
+    }
+    private void Enqueue(Command command)
+    {
+        if(command.HideBase && command.Bloom<=0 && command.Lensflare<=0)return;
+        Vector2 a=Vector2.Transform(command.A,worldToScreen), b=Vector2.Transform(command.B,worldToScreen);
+        Vector2 c=Vector2.Transform(command.C,worldToScreen), d=Vector2.Transform(command.D,worldToScreen);
+        Vector2 min=Vector2.Min(Vector2.Min(a,b),Vector2.Min(c,d));
+        Vector2 max=Vector2.Max(Vector2.Max(a,b),Vector2.Max(c,d));
+        if(max.X>=0 && max.Y>=0 && min.X<=width && min.Y<=height)
+            commands.Add(command);
     }
     private void DrawCommands(GraphicsDevice g,int pass)
     {

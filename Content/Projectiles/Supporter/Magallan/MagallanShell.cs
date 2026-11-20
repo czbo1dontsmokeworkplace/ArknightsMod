@@ -81,12 +81,20 @@ public sealed class MagallanShell : ModProjectile
         if(Projectile.owner==Main.myPlayer && Projectile.numUpdates==0 && (int)ticks%6==0)Projectile.netUpdate=true;
         if (Projectile.owner == Main.myPlayer)
         {
+            const float hitWidth = 13f;
+            Vector2 start = Projectile.Center;
+            Vector2 end = start + Projectile.velocity;
+            Vector2 padding = new(hitWidth);
+            Vector2 min = Vector2.Min(start, end) - padding;
+            Vector2 max = Vector2.Max(start, end) + padding;
             foreach (NPC npc in Main.ActiveNPCs)
             {
+                Vector2 position = npc.position;
+                if (position.X > max.X || position.Y > max.Y
+                    || position.X + npc.width < min.X || position.Y + npc.height < min.Y) continue;
                 if (!npc.CanBeChasedBy(Projectile)) continue;
                 float hit = 0f;
-                if (Collision.CheckAABBvLineCollision(npc.position, npc.Size, Projectile.Center,
-                    Projectile.Center + Projectile.velocity, 13f, ref hit))
+                if (Collision.CheckAABBvLineCollision(position, npc.Size, start, end, hitWidth, ref hit))
                 {
                     Projectile.Kill();
                     return;

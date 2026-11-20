@@ -13,6 +13,7 @@ internal static class ReaperSwarmData
 {
     private static JsonDocument document, assignments, blades, gammaPlasma, proteus, bossRewards, nox;
     private static readonly Dictionary<string,JsonElement> resources=new(StringComparer.Ordinal);
+    private static readonly Dictionary<string,ReaperSwarmDefinition> definitions=new(StringComparer.Ordinal);
     internal static void Ensure()
     {
         if(document!=null)return;
@@ -42,7 +43,14 @@ internal static class ReaperSwarmData
     {
         Ensure();return name!=null && resources.TryGetValue(name,out var value)?value:default;
     }
-    internal static void Unload(){ReaperSwarmDefinition.Clear();document?.Dispose();assignments?.Dispose();blades?.Dispose();gammaPlasma?.Dispose();proteus?.Dispose();bossRewards?.Dispose();nox?.Dispose();document=assignments=blades=gammaPlasma=proteus=bossRewards=nox=null;resources.Clear();}
+    internal static ReaperSwarmDefinition Definition(string name)
+    {
+        name??=string.Empty;
+        if(!definitions.TryGetValue(name,out var definition))
+            definitions.Add(name,definition=ReaperSwarmDefinition.Get(Get(name)));
+        return definition;
+    }
+    internal static void Unload(){definitions.Clear();ReaperSwarmDefinition.Clear();document?.Dispose();assignments?.Dispose();blades?.Dispose();gammaPlasma?.Dispose();proteus?.Dispose();bossRewards?.Dispose();nox?.Dispose();document=assignments=blades=gammaPlasma=proteus=bossRewards=nox=null;resources.Clear();}
 }
 
 internal static class ReaperSwarmJson
@@ -60,5 +68,10 @@ internal static class ReaperSwarmJson
     internal static IEnumerable<JsonElement> Array(this JsonElement e)=>e.ValueKind==JsonValueKind.Array?e.EnumerateArray():System.Array.Empty<JsonElement>();
     internal static Vector2 Local(Vector2 p,Vector2 forward)=>forward*p.Y+new Vector2(-forward.Y,forward.X)*p.X;
     internal static Vector2 Unit(this Vector2 p)=>p.LengthSquared()>.000001f?Vector2.Normalize(p):Vector2.UnitX;
-    internal static Vector2 Rotate(this Vector2 p,float angle)=>new(p.X*MathF.Cos(angle)-p.Y*MathF.Sin(angle),p.X*MathF.Sin(angle)+p.Y*MathF.Cos(angle));
+    internal static Vector2 Rotate(this Vector2 p,float angle)
+    {
+        if(angle==0f)return p;
+        (float sin,float cos)=MathF.SinCos(angle);
+        return new(p.X*cos-p.Y*sin,p.X*sin+p.Y*cos);
+    }
 }

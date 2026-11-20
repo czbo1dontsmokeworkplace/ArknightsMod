@@ -118,6 +118,7 @@ internal sealed class PhoenixPlasmaClusterFx
 
 internal sealed class PhoenixBeamFx
 {
+    private const int MaximumAlongBeamEmitters = 32;
     private readonly Func<Vector2> directionFallback;
     private readonly Func<Vector2> from,to;
     private readonly Func<bool> active;
@@ -126,11 +127,11 @@ internal sealed class PhoenixBeamFx
     private readonly List<ReaperSwarmVisualNode> roots=new();
     private readonly Func<bool> emitting;
     private readonly float maxLength,spacing;
-    private float nextDistance;
+    private Vector2 origin, direction;
+    internal float Length { get; private set; }
+    private int nextEmitter;
     private readonly string along;
     private bool stopped;
-    internal float Length=>Vector2.Distance(from(),to());
-    private Vector2 Direction=>(to()-from()).LengthSquared()>.000001f?(to()-from()).Unit():(directionFallback?.Invoke()??Vector2.UnitX).Unit();
     private bool Alive=>!stopped && active();
     internal PhoenixBeamFx(string source,Func<Vector2> from,Func<Vector2> to,Func<bool> active,float maxLength,PhoenixFxStyle style=null,Func<Vector2> directionFallback=null,Func<bool> emitting=null)
     {
@@ -138,23 +139,34 @@ internal sealed class PhoenixBeamFx
         this.maxLength=maxLength;this.emitting=emitting;
         if(source=="projectile.player.17.1")this.style.Playback=()=>stopped?2:1;
         var data=ReaperSwarmData.Get(source);
-        var body=ReaperSwarmVisuals.Spawn(source,from,()=>Direction,active:()=>Alive,scale:new Vector2(this.style.Scale),visible:()=>Emitting,style:this.style);
-        if(body!=null){body.BeamLength=()=>Math.Min(maxLength,Length);roots.Add(body);}
-        spacing=Math.Max(1,data.F("distance_between_emitters_along_beam",30));
+        RefreshGeometry();
+        var body=ReaperSwarmVisuals.Spawn(source,()=>origin,()=>direction,active:()=>Alive,scale:new Vector2(this.style.Scale),visible:()=>Emitting,style:this.style);
+        if(body!=null){body.BeamLength=()=>Length;roots.Add(body);}
+        float minimumSpacing = source == "projectile.player.17.1" ? 40f : 1f;
+        spacing=Math.Max(Math.Max(minimumSpacing,data.F("distance_between_emitters_along_beam",30)),maxLength/MaximumAlongBeamEmitters);
         along=data.S("emitter_along_beam");
         Extend();
     }
     private bool Emitting=>Alive && (emitting?.Invoke()??true);
+    private void RefreshGeometry()
+    {
+        origin=from();
+        Vector2 delta=to()-origin;
+        float distance=delta.Length();
+        Length=float.IsFinite(distance)?Math.Min(maxLength,distance):0f;
+        direction=distance>.001f && float.IsFinite(distance) ? delta/distance : (directionFallback?.Invoke()??Vector2.UnitX).Unit();
+    }
     // Growing packets allocate only the portion actually reached by their head.
     // Existing emitters pause without accumulating a catch-up emission burst.
     internal void Extend()
     {
         if(stopped)return;
-        float length=Math.Min(maxLength,Length);
-        for(;nextDistance<length;nextDistance+=spacing)
+        RefreshGeometry();
+        if(string.IsNullOrEmpty(along))return;
+        for(;nextEmitter<MaximumAlongBeamEmitters && nextEmitter*spacing<Length;nextEmitter++)
         {
-            float distance=nextDistance;
-            var emitter=ReaperSwarmVisuals.Spawn(along,()=>from()+Direction*distance,()=>Direction,
+            float distance=nextEmitter*spacing;
+            var emitter=ReaperSwarmVisuals.Spawn(along,()=>origin+direction*distance,()=>direction,
                 active:()=>Alive,scale:new Vector2(style.Scale),visible:()=>Emitting && distance<Length,style:style);
             if(emitter!=null)roots.Add(emitter);
         }
@@ -162,16 +174,16 @@ internal sealed class PhoenixBeamFx
     internal void Hit(Vector2 at)
     {
         var data=ReaperSwarmData.Get(source);
-        PhoenixFx.Burst(data.S("emitter_on_hit"),at,-Direction,style);
-        PhoenixFx.Burst(data.S("actor_on_hit"),at,-Direction,style);
+        PhoenixFx.Burst(data.S("emitter_on_hit"),at,-direction,style);
+        PhoenixFx.Burst(data.S("actor_on_hit"),at,-direction,style);
     }
     internal void HitAlong(float distance)
     {
         var data=ReaperSwarmData.Get(source);
         foreach(string name in new[]{data.S("emitter_on_hit"),data.S("actor_on_hit")})
             if(!string.IsNullOrEmpty(name))
-                ReaperSwarmVisuals.Spawn(name,()=>from()+Direction*Math.Clamp(distance,0,Math.Min(maxLength,Length)),
-                    ()=>-Direction,ReaperSwarmVisuals.BurstLife(name),active:()=>Alive,
+                ReaperSwarmVisuals.Spawn(name,()=>origin+direction*Math.Clamp(distance,0,Length),
+                    ()=>-direction,ReaperSwarmVisuals.BurstLife(name),active:()=>Alive,
                     scale:new Vector2(style.Scale),style:style);
     }
     internal void Stop(){if(stopped)return;stopped=true;foreach(var node in roots)node.Stop();}

@@ -15,6 +15,7 @@ public sealed class MagallanLaser : ModProjectile
     public override string Texture => "ArknightsMod/Content/Projectiles/Supporter/Magallan/MagallanDrone";
     private Vector2 start;
     private bool hitTarget;
+    private int droneSlot = -1;
     private PhoenixBeamFx beam;
     private const int Lifetime = 15;
     internal const float MaxLength = 19.5f * 16f;
@@ -48,10 +49,7 @@ public sealed class MagallanLaser : ModProjectile
     public override void AI()
     {
         Projectile.GetGlobalProjectile<ArtsProjectileMarker>().IsArtsDamage = true;
-        MagallanDrone drone = null;
-        foreach (Projectile p in Main.ActiveProjectiles)
-            if (p.owner == Projectile.owner && p.identity == (int)Projectile.ai[0] && p.ModProjectile is MagallanDrone found)
-            { drone = found; break; }
+        MagallanDrone drone = FindDrone();
         int targetId = Math.Abs((int)Projectile.ai[2]) - 1;
         if (drone == null || drone.Module != 1 || drone.Recalling ||
             targetId < 0 || targetId >= Main.maxNPCs || !Main.npc[targetId].CanBeChasedBy() ||
@@ -67,6 +65,25 @@ public sealed class MagallanLaser : ModProjectile
         if (Projectile.localAI[0]++ == 0 && !Main.dedServ)
             SoundEngine.PlaySound(SoundID.Item33 with { Volume = 0.4f, Pitch = 0.2f, MaxInstances = 3 }, start);
         if (!Main.dedServ) Lighting.AddLight(Projectile.Center, 0.2f, 0.55f, 0.3f);
+    }
+
+    private MagallanDrone FindDrone()
+    {
+        int identity = (int)Projectile.ai[0];
+        if (droneSlot >= 0)
+        {
+            Projectile cached = Main.projectile[droneSlot];
+            if (cached.active && cached.owner == Projectile.owner && cached.identity == identity
+                && cached.ModProjectile is MagallanDrone drone)
+                return drone;
+        }
+        foreach (Projectile p in Main.ActiveProjectiles)
+            if (p.owner == Projectile.owner && p.identity == identity && p.ModProjectile is MagallanDrone drone)
+            {
+                droneSlot = p.whoAmI;
+                return drone;
+            }
+        return null;
     }
 
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)

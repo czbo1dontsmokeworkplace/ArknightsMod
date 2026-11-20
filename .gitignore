@@ -11,4 +11,5 @@ obj/
 .codegraph/
 .claude/
 .omo/
+/.codex-attachments/
 /Doc/
